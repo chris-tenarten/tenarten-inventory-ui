@@ -123,7 +123,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
-          <h2 className="text-xl font-semibold text-[#f7f0d0]">Suggested Gio demo path</h2>
+          <h2 className="text-xl font-semibold text-[#f7f0d0]">Intended workflow</h2>
           <ol className="mt-4 space-y-3 text-sm text-neutral-300">
             <li>1. Start on Catalog and search for a known item.</li>
             <li>2. Show how notes and warnings can explain why similarly named materials should not be mixed.</li>
