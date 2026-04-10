@@ -17,11 +17,15 @@ type CatalogRow = {
   appearance_notes: string;
   price: string | number;
   price_basis: string;
+  updated_at?: string;
 };
 
 export default function CatalogPage() {
   const [catalogRows, setCatalogRows] = useState<CatalogRow[]>([]);
+  const [recentAnnotations, setRecentAnnotations] = useState<CatalogRow[]>([]);
+
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selected, setSelected] = useState<CatalogRow | null>(null);
 
   const [notes, setNotes] = useState('');
@@ -32,13 +36,34 @@ export default function CatalogPage() {
   const [saveMessage, setSaveMessage] = useState('');
   const [loadError, setLoadError] = useState('');
 
+  // 🔹 debounce search
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 250);
+
+    return () => clearTimeout(t);
+  }, [search]);
+
+  // 🔹 fetch search results
   useEffect(() => {
     async function loadCatalog() {
-      const { data, error } = await supabase
+      let query = supabase
         .from('vendor_catalog')
         .select('*')
         .order('vendor', { ascending: true })
-        .order('item_name', { ascending: true });
+        .order('item_name', { ascending: true })
+        .limit(100);
+
+      if (debouncedSearch) {
+        const term = debouncedSearch.toLowerCase();
+
+        query = query.or(
+          `item_name.ilike.%${term}%,vendor.ilike.%${term}%,category.ilike.%${term}%,material_class.ilike.%${term}%`
+        );
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Failed to load:', error);
@@ -46,46 +71,34 @@ export default function CatalogPage() {
         return;
       }
 
-      const cleaned: CatalogRow[] = (data || []).map((row) => ({
-        id: row.id,
-        vendor: row.vendor || '',
-        item_name: row.item_name || '',
-        size: row.size || '',
-        category: row.category || '',
-        material_class: row.material_class || '',
-        unit: row.unit || '',
-        source_file: row.source_file || '',
-        notes: row.notes || '',
-        match_warning: row.match_warning || '',
-        appearance_notes: row.appearance_notes || '',
-        price: row.price || '',
-        price_basis: row.price_basis || '',
-      }));
-
-      setCatalogRows(cleaned);
+      setCatalogRows(data || []);
     }
 
     loadCatalog();
+  }, [debouncedSearch]);
+
+  // 🔹 fetch recent annotations
+  useEffect(() => {
+    async function loadRecentAnnotations() {
+      const { data, error } = await supabase
+        .from('vendor_catalog')
+        .select('*')
+        .or(
+          'notes.not.is.null,match_warning.not.is.null,appearance_notes.not.is.null'
+        )
+        .order('updated_at', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error('Failed to load recent annotations:', error);
+        return;
+      }
+
+      setRecentAnnotations(data || []);
+    }
+
+    loadRecentAnnotations();
   }, []);
-
-  const filtered = useMemo(() => {
-    if (!search.trim()) return [];
-
-    const s = search.toLowerCase();
-
-    return catalogRows
-      .filter((row) => {
-        return (
-          row.item_name.toLowerCase().includes(s) ||
-          row.vendor.toLowerCase().includes(s) ||
-          row.size.toLowerCase().includes(s) ||
-          row.unit.toLowerCase().includes(s) ||
-          row.category.toLowerCase().includes(s) ||
-          row.material_class.toLowerCase().includes(s)
-        );
-      })
-      .slice(0, 100);
-  }, [search, catalogRows]);
 
   async function handleSaveAnnotation() {
     if (!selected) return;
@@ -121,6 +134,18 @@ export default function CatalogPage() {
       prev.map((row) => (row.id === selected.id ? updatedRow : row))
     );
 
+    // refresh recent annotations after save
+    const { data } = await supabase
+      .from('vendor_catalog')
+      .select('*')
+      .or(
+        'notes.not.is.null,match_warning.not.is.null,appearance_notes.not.is.null'
+      )
+      .order('updated_at', { ascending: false })
+      .limit(10);
+
+    setRecentAnnotations(data || []);
+
     setSaveMessage('Annotation saved.');
     setIsSaving(false);
   }
@@ -133,6 +158,50 @@ export default function CatalogPage() {
           <p className="mt-2 text-sm text-neutral-400">
             Search vendor materials, review details, and save mismatch annotations.
           </p>
+        </div>
+
+        {/* 🔥 NEW: RECENT ANNOTATIONS */}
+        <div className="mb-6 rounded border border-neutral-800 p-4">
+          <h2 className="mb-3 text-lg text-yellow-400">Recent Annotations</h2>
+
+          {recentAnnotations.length === 0 ? (
+            <div className="text-neutral-500 text-sm">
+              No annotated entries yet.
+            </div>
+          ) : (
+            <div className="grid gap-2 md:grid-cols-2">
+              {recentAnnotations.map((row) => (
+                <div
+                  key={row.id}
+                  onClick={() => {
+                    setSelected(row);
+                    setNotes(row.notes || '');
+                    setMatchWarning(row.match_warning || '');
+                    setAppearanceNotes(row.appearance_notes || '');
+                    setSaveMessage('');
+                  }}
+                  className="cursor-pointer rounded border border-neutral-700 bg-neutral-900 p-3 hover:bg-neutral-800"
+                >
+                  <div className="font-medium">{row.item_name}</div>
+                  <div className="text-xs text-neutral-400">
+                    {row.vendor} • {row.size || '—'}
+                  </div>
+
+                  {row.match_warning && (
+                    <div className="mt-1 text-xs text-red-400">
+                      ⚠ {row.match_warning}
+                    </div>
+                  )}
+
+                  {row.notes && (
+                    <div className="mt-1 text-xs text-neutral-300 line-clamp-2">
+                      {row.notes}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="mb-6">
@@ -151,16 +220,17 @@ export default function CatalogPage() {
         )}
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {/* RESULTS */}
           <div className="rounded border border-neutral-800 p-4">
             <h2 className="mb-3 text-lg">Results</h2>
 
             {search.trim() === '' ? (
               <div className="text-neutral-500">Start typing to search the catalog.</div>
-            ) : filtered.length === 0 ? (
+            ) : catalogRows.length === 0 ? (
               <div className="text-neutral-500">No matching materials found.</div>
             ) : (
               <div className="max-h-[500px] space-y-2 overflow-y-auto">
-                {filtered.map((row) => (
+                {catalogRows.map((row) => (
                   <div
                     key={row.id}
                     onClick={() => {
@@ -180,8 +250,17 @@ export default function CatalogPage() {
                     <div className="text-sm text-neutral-400">
                       {row.vendor} • {row.size || '—'} • {row.unit || '—'}
                     </div>
-                    {(row.notes || row.match_warning) && (
-                      <div className="mt-2 text-xs text-yellow-300">Annotated entry</div>
+
+                    {row.match_warning && (
+                      <div className="mt-1 text-xs text-red-400">
+                        ⚠ {row.match_warning}
+                      </div>
+                    )}
+
+                    {row.notes && (
+                      <div className="mt-1 text-xs text-yellow-300">
+                        Annotated
+                      </div>
                     )}
                   </div>
                 ))}
@@ -189,55 +268,22 @@ export default function CatalogPage() {
             )}
           </div>
 
+          {/* DETAILS */}
           <div className="rounded border border-neutral-800 p-4">
             <h2 className="mb-3 text-lg">Details & Annotation</h2>
 
             {selected ? (
               <div className="space-y-4">
-                <div>
-                  <div className="text-sm text-neutral-400">Vendor</div>
-                  <div>{selected.vendor}</div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-neutral-400">Item</div>
-                  <div>{selected.item_name}</div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-neutral-400">Size</div>
-                  <div>{selected.size || '—'}</div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-neutral-400">Unit</div>
-                  <div>{selected.unit || '—'}</div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-neutral-400">Category</div>
-                  <div>{selected.category || '—'}</div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-neutral-400">Material Class</div>
-                  <div>{selected.material_class || '—'}</div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-neutral-400">Price</div>
-                  <div>{selected.price || '—'}</div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-neutral-400">Price Basis</div>
-                  <div>{selected.price_basis || '—'}</div>
-                </div>
+                <div><div className="text-sm text-neutral-400">Vendor</div><div>{selected.vendor}</div></div>
+                <div><div className="text-sm text-neutral-400">Item</div><div>{selected.item_name}</div></div>
+                <div><div className="text-sm text-neutral-400">Size</div><div>{selected.size || '—'}</div></div>
+                <div><div className="text-sm text-neutral-400">Unit</div><div>{selected.unit || '—'}</div></div>
+                <div><div className="text-sm text-neutral-400">Category</div><div>{selected.category || '—'}</div></div>
+                <div><div className="text-sm text-neutral-400">Material Class</div><div>{selected.material_class || '—'}</div></div>
 
                 <div>
                   <label className="text-sm text-neutral-400">Notes</label>
-                  <textarea
-                    className="w-full rounded border border-neutral-700 bg-neutral-900 p-2"
+                  <textarea className="w-full rounded border border-neutral-700 bg-neutral-900 p-2"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     rows={4}
@@ -246,8 +292,7 @@ export default function CatalogPage() {
 
                 <div>
                   <label className="text-sm text-neutral-400">Match Warning</label>
-                  <textarea
-                    className="w-full rounded border border-neutral-700 bg-neutral-900 p-2"
+                  <textarea className="w-full rounded border border-neutral-700 bg-neutral-900 p-2"
                     value={matchWarning}
                     onChange={(e) => setMatchWarning(e.target.value)}
                     rows={3}
@@ -256,8 +301,7 @@ export default function CatalogPage() {
 
                 <div>
                   <label className="text-sm text-neutral-400">Appearance Notes</label>
-                  <textarea
-                    className="w-full rounded border border-neutral-700 bg-neutral-900 p-2"
+                  <textarea className="w-full rounded border border-neutral-700 bg-neutral-900 p-2"
                     value={appearanceNotes}
                     onChange={(e) => setAppearanceNotes(e.target.value)}
                     rows={3}
@@ -266,7 +310,7 @@ export default function CatalogPage() {
 
                 <div className="flex items-center gap-3">
                   <button
-                    className="rounded bg-yellow-600 px-4 py-2 text-black hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded bg-yellow-600 px-4 py-2 text-black hover:bg-yellow-500 disabled:opacity-60"
                     onClick={handleSaveAnnotation}
                     disabled={isSaving}
                   >

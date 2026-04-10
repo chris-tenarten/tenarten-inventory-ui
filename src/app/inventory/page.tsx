@@ -10,6 +10,10 @@ type AppendBalanceRow = {
     unit: string;
     qty_on_hand: number;
     last_transaction_at: string | null;
+
+    // 🔥 injected from catalog
+    notes?: string;
+    match_warning?: string;
 };
 
 type CurrentInventoryRow = {
@@ -24,6 +28,14 @@ type CurrentInventoryRow = {
     match_confidence: number | string | null;
 };
 
+type CatalogRow = {
+    vendor: string;
+    item_name: string;
+    size: string;
+    notes: string | null;
+    match_warning: string | null;
+};
+
 type ViewMode = 'append' | 'current';
 
 export default function InventoryPage() {
@@ -32,41 +44,65 @@ export default function InventoryPage() {
 
     const [appendRows, setAppendRows] = useState<AppendBalanceRow[]>([]);
     const [currentRows, setCurrentRows] = useState<CurrentInventoryRow[]>([]);
+    const [catalogMap, setCatalogMap] = useState<Record<string, CatalogRow>>({});
 
     const [loading, setLoading] = useState(true);
-    const [errorMessage, setErrorMessage] = useState('');
     const [search, setSearch] = useState('');
 
+    // 🔥 LOAD EVERYTHING
     useEffect(() => {
-        async function loadInventoryViews() {
+        async function loadData() {
             setLoading(true);
 
-            const [appendResult, currentResult] = await Promise.all([
+            const [appendResult, currentResult, catalogResult] = await Promise.all([
                 supabase
                     .from('inventory_balances')
-                    .select('*')
-                    .order('vendor', { ascending: true })
-                    .order('item_name', { ascending: true }),
+                    .select('*'),
 
                 supabase
                     .from('inventory_items')
-                    .select('*')
-                    .order('vendor', { ascending: true })
-                    .order('color', { ascending: true }),
+                    .select('*'),
+
+                supabase
+                    .from('vendor_catalog')
+                    .select('vendor, item_name, size, notes, match_warning'),
             ]);
 
-            setAppendRows((appendResult.data as AppendBalanceRow[]) || []);
+            const catalogData = (catalogResult.data as CatalogRow[]) || [];
+
+            // 🔥 build lookup map
+            const map: Record<string, CatalogRow> = {};
+            for (const row of catalogData) {
+                const key = `${row.vendor}|${row.item_name}|${row.size}`;
+                map[key] = row;
+            }
+
+            // 🔥 merge annotations into append rows
+            const enrichedAppend = ((appendResult.data as AppendBalanceRow[]) || []).map(row => {
+                const key = `${row.vendor}|${row.item_name}|${row.size}`;
+                const catalogMatch = map[key];
+
+                return {
+                    ...row,
+                    notes: catalogMatch?.notes || undefined,
+                    match_warning: catalogMatch?.match_warning || undefined,
+                };
+            });
+
+            setCatalogMap(map);
+            setAppendRows(enrichedAppend);
             setCurrentRows((currentResult.data as CurrentInventoryRow[]) || []);
             setLoading(false);
         }
 
-        loadInventoryViews();
+        loadData();
     }, []);
 
+    // 🔍 FILTERING
     const filteredAppendRows = useMemo(() => {
         const q = search.toLowerCase();
         return appendRows.filter((row) =>
-            `${row.vendor} ${row.item_name} ${row.size} ${row.unit}`
+            `${row.vendor} ${row.item_name} ${row.size}`
                 .toLowerCase()
                 .includes(q)
         );
@@ -75,7 +111,7 @@ export default function InventoryPage() {
     const filteredCurrentRows = useMemo(() => {
         const q = search.toLowerCase();
         return currentRows.filter((row) =>
-            `${row.vendor} ${row.category} ${row.color} ${row.size} ${row.location}`
+            `${row.vendor} ${row.category} ${row.color} ${row.size}`
                 .toLowerCase()
                 .includes(q)
         );
@@ -90,7 +126,7 @@ export default function InventoryPage() {
                     <div>
                         <h1 className="text-3xl font-semibold text-[#f7f0d0]">Inventory</h1>
                         <p className="text-sm text-neutral-400">
-                            Track material using append-only transactions + derived balances.
+                            Source materials with real-time risk signals.
                         </p>
                     </div>
 
@@ -107,58 +143,27 @@ export default function InventoryPage() {
                     <div className="inline-flex rounded-full border border-neutral-800 bg-neutral-950 p-1">
                         <button
                             onClick={() => setViewMode('append')}
-                            className={`rounded-full px-4 py-2 text-sm ${viewMode === 'append'
+                            className={`rounded-full px-4 py-2 text-sm ${
+                                viewMode === 'append'
                                     ? 'bg-[#c8a43a] text-black'
                                     : 'text-neutral-300'
-                                }`}
+                            }`}
                         >
                             Append View
                         </button>
 
                         <button
                             onClick={() => setViewMode('current')}
-                            className={`rounded-full px-4 py-2 text-sm ${viewMode === 'current'
+                            className={`rounded-full px-4 py-2 text-sm ${
+                                viewMode === 'current'
                                     ? 'bg-[#c8a43a] text-black'
                                     : 'text-neutral-300'
-                                }`}
+                            }`}
                         >
                             Current Inventory
                         </button>
                     </div>
                 </div>
-
-                {/* GUIDED MODE - CONTEXTUAL */}
-                {guidedMode && viewMode === 'append' && (
-                    <div className="rounded border border-yellow-700 bg-yellow-950/30 p-4 text-sm">
-                        <strong className="text-[#f7f0d0]">Append View (Source of Truth)</strong>
-                        <p className="text-sm text-neutral-400">
-                            This view is computed from transactions (append-only log).
-                            <br /><br />
-                            ⚠️ This is a working model — automatic syncing to the current inventory table is not implemented yet.
-                            <br /><br />
-                            For now, this is used to validate the new workflow before replacing the existing system.
-                        </p>
-                        <ul className="mt-2 list-disc pl-5 text-neutral-400 space-y-1">
-                            <li>Every change = a new transaction (add, remove, adjust)</li>
-                            <li>No overwriting values → prevents mistakes + preserves history</li>
-                            <li>This is the “real” inventory state</li>
-                        </ul>
-                    </div>
-                )}
-
-                {guidedMode && viewMode === 'current' && (
-                    <div className="rounded border border-blue-700 bg-blue-950/30 p-4 text-sm">
-                        <strong className="text-[#f7f0d0]">Current Inventory (Legacy Table)</strong>
-                        <p className="mt-2 text-neutral-300">
-                            This is the existing manual inventory table.
-                        </p>
-                        <ul className="mt-2 list-disc pl-5 text-neutral-400 space-y-1">
-                            <li>Values can be directly edited</li>
-                            <li>Does NOT track history</li>
-                            <li>Used today, but more error-prone</li>
-                        </ul>
-                    </div>
-                )}
 
                 {/* SEARCH */}
                 <input
@@ -184,11 +189,37 @@ export default function InventoryPage() {
                             </thead>
                             <tbody>
                                 {filteredAppendRows.map((row, i) => (
-                                    <tr key={i} className="border-b border-neutral-900">
+                                    <tr
+                                        key={i}
+                                        className={`border-b border-neutral-900 ${
+                                            row.match_warning ? 'bg-red-950/20' : ''
+                                        }`}
+                                    >
                                         <td className="py-2">{row.vendor}</td>
-                                        <td className="py-2">{row.item_name}</td>
+
+                                        <td className="py-2">
+                                            <div className="flex flex-col">
+                                                <span>{row.item_name}</span>
+
+                                                {row.match_warning && (
+                                                    <span className="text-xs text-red-400">
+                                                        ⚠ {row.match_warning}
+                                                    </span>
+                                                )}
+
+                                                {row.notes && (
+                                                    <span className="text-xs text-yellow-400">
+                                                        📝 annotated
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+
                                         <td className="py-2">{row.size}</td>
-                                        <td className="py-2 text-green-400">{row.qty_on_hand}</td>
+
+                                        <td className="py-2 text-green-400">
+                                            {row.qty_on_hand}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

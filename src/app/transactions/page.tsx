@@ -11,8 +11,22 @@ type CatalogRow = {
   unit: string;
 };
 
+const PAGE_SIZE = 1000;
+
+function normalize(value: string) {
+  return value.trim().toLowerCase();
+}
+
+function uniqueSorted(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean))).sort((a, b) =>
+    a.localeCompare(b)
+  );
+}
+
 export default function TransactionsPage() {
   const [catalogRows, setCatalogRows] = useState<CatalogRow[]>([]);
+  const [isLoadingCatalog, setIsLoadingCatalog] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   const [txType, setTxType] = useState('intake');
   const [vendor, setVendor] = useState('');
@@ -28,60 +42,154 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     async function loadCatalog() {
-      const { data, error } = await supabase
-        .from('vendor_catalog')
-        .select('id, vendor, item_name, size, unit')
-        .order('vendor', { ascending: true })
-        .order('item_name', { ascending: true });
+      setIsLoadingCatalog(true);
+      setLoadError('');
 
-      if (error) {
-        console.error('Failed to load transaction options:', error);
-        return;
+      const allRows: CatalogRow[] = [];
+      let from = 0;
+      let keepGoing = true;
+
+      while (keepGoing) {
+        const to = from + PAGE_SIZE - 1;
+
+        const { data, error } = await supabase
+          .from('vendor_catalog')
+          .select('id, vendor, item_name, size, unit')
+          .order('vendor', { ascending: true })
+          .order('item_name', { ascending: true })
+          .order('size', { ascending: true })
+          .range(from, to);
+
+        if (error) {
+          console.error('Failed to load transaction options:', error);
+          setLoadError(error.message);
+          setIsLoadingCatalog(false);
+          return;
+        }
+
+        const cleaned: CatalogRow[] = (data || []).map((row) => ({
+          id: row.id,
+          vendor: row.vendor || '',
+          item_name: row.item_name || '',
+          size: row.size || '',
+          unit: row.unit || '',
+        }));
+
+        allRows.push(...cleaned);
+
+        if (!data || data.length < PAGE_SIZE) {
+          keepGoing = false;
+        } else {
+          from += PAGE_SIZE;
+        }
       }
 
-      setCatalogRows(data || []);
+      setCatalogRows(allRows);
+      setIsLoadingCatalog(false);
     }
 
     loadCatalog();
   }, []);
 
-  const vendors = useMemo(
-    () => Array.from(new Set(catalogRows.map((r) => r.vendor))).sort(),
-    [catalogRows]
-  );
+  const vendors = useMemo(() => {
+    return uniqueSorted(catalogRows.map((r) => r.vendor));
+  }, [catalogRows]);
 
-  const vendorItems = useMemo(() => {
-    return Array.from(
-      new Set(
-        catalogRows
-          .filter((r) => r.vendor === vendor)
-          .map((r) => r.item_name)
-      )
-    ).sort();
+  const vendorFilteredRows = useMemo(() => {
+    if (!vendor.trim()) return catalogRows;
+    const v = normalize(vendor);
+    return catalogRows.filter((r) => normalize(r.vendor) === v);
   }, [catalogRows, vendor]);
 
-  const itemSizes = useMemo(() => {
-    return Array.from(
-      new Set(
-        catalogRows
-          .filter((r) => r.vendor === vendor && r.item_name === item)
-          .map((r) => r.size)
-          .filter(Boolean)
-      )
-    ).sort();
-  }, [catalogRows, vendor, item]);
+  const itemSuggestions = useMemo(() => {
+    const q = normalize(item);
+    const items = uniqueSorted(vendorFilteredRows.map((r) => r.item_name));
+
+    if (!q) return items.slice(0, 100);
+
+    return items.filter((name) => normalize(name).includes(q)).slice(0, 100);
+  }, [vendorFilteredRows, item]);
+
+  const sizeSuggestions = useMemo(() => {
+    const itemNorm = normalize(item);
+
+    const baseRows = vendorFilteredRows.filter((r) => {
+      if (!itemNorm) return true;
+      return normalize(r.item_name) === itemNorm;
+    });
+
+    const sizes = uniqueSorted(baseRows.map((r) => r.size));
+    const q = normalize(size);
+
+    if (!q) return sizes.slice(0, 100);
+
+    return sizes.filter((value) => normalize(value).includes(q)).slice(0, 100);
+  }, [vendorFilteredRows, item, size]);
+
+  const exactVendorMatch = useMemo(() => {
+    if (!vendor.trim()) return '';
+    const v = normalize(vendor);
+    return vendors.find((name) => normalize(name) === v) || '';
+  }, [vendors, vendor]);
+
+  const exactItemMatches = useMemo(() => {
+    const itemNorm = normalize(item);
+    if (!itemNorm) return [];
+
+    return vendorFilteredRows.filter((r) => normalize(r.item_name) === itemNorm);
+  }, [vendorFilteredRows, item]);
+
+  const exactSizeMatch = useMemo(() => {
+    const sizeNorm = normalize(size);
+    if (!sizeNorm) return null;
+
+    return exactItemMatches.find((r) => normalize(r.size) === sizeNorm) || null;
+  }, [exactItemMatches, size]);
 
   useEffect(() => {
-    const match = catalogRows.find(
-      (r) => r.vendor === vendor && r.item_name === item && r.size === size
-    );
-    setUnit(match?.unit || '');
-  }, [catalogRows, vendor, item, size]);
+    if (!vendor.trim()) return;
+    if (exactVendorMatch && exactVendorMatch !== vendor) {
+      setVendor(exactVendorMatch);
+    }
+  }, [exactVendorMatch, vendor]);
+
+  useEffect(() => {
+    if (!item.trim()) {
+      if (!size.trim()) {
+        setUnit('');
+      }
+      return;
+    }
+
+    if (exactItemMatches.length === 1) {
+      const only = exactItemMatches[0];
+
+      if (!vendor && only.vendor) {
+        setVendor(only.vendor);
+      }
+
+      if (!size && only.size) {
+        setSize(only.size);
+      }
+
+      if (only.unit) {
+        setUnit(only.unit);
+      }
+      return;
+    }
+
+    if (exactSizeMatch?.unit) {
+      setUnit(exactSizeMatch.unit);
+      return;
+    }
+
+    setUnit('');
+  }, [exactItemMatches, exactSizeMatch, item, size, vendor]);
 
   async function handleSubmitTransaction() {
     setSubmitMessage('');
 
-    if (!vendor || !item || !quantity) {
+    if (!vendor.trim() || !item.trim() || !quantity.trim()) {
       setSubmitMessage('Vendor, item, and quantity are required.');
       return;
     }
@@ -96,13 +204,13 @@ export default function TransactionsPage() {
 
     const { error } = await supabase.from('inventory_transactions').insert({
       transaction_type: txType,
-      vendor,
-      item_name: item,
-      size: size || null,
-      unit: unit || null,
+      vendor: vendor.trim(),
+      item_name: item.trim(),
+      size: size.trim() || null,
+      unit: unit.trim() || null,
       quantity: parsedQty,
-      location: location || null,
-      notes: notes || null,
+      location: location.trim() || null,
+      notes: notes.trim() || null,
     });
 
     if (error) {
@@ -113,10 +221,20 @@ export default function TransactionsPage() {
     }
 
     setSubmitMessage('Transaction submitted.');
+    handleReset();
+    setSubmitMessage('Transaction submitted.');
+    setIsSubmitting(false);
+  }
+
+  function handleReset() {
+    setTxType('intake');
+    setVendor('');
+    setItem('');
+    setSize('');
+    setUnit('');
     setQuantity('');
     setLocation('');
     setNotes('');
-    setIsSubmitting(false);
   }
 
   return (
@@ -127,7 +245,16 @@ export default function TransactionsPage() {
           <p className="mt-2 text-sm text-neutral-400">
             Log intake, outtake, or adjustments here.
           </p>
+          <p className="mt-1 text-xs text-neutral-500">
+            Loaded {catalogRows.length} catalog rows and {vendors.length} vendors.
+          </p>
         </div>
+
+        {loadError && (
+          <div className="rounded border border-red-800 bg-red-950/40 p-3 text-sm text-red-300">
+            Failed to load transaction options: {loadError}
+          </div>
+        )}
 
         <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
           <div className="grid gap-4 md:grid-cols-2">
@@ -158,6 +285,7 @@ export default function TransactionsPage() {
                   setSubmitMessage('');
                 }}
                 className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
+                disabled={isLoadingCatalog}
               >
                 <option value="">Select vendor</option>
                 {vendors.map((v) => (
@@ -180,11 +308,16 @@ export default function TransactionsPage() {
                 }}
                 list="item-options"
                 className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
-                placeholder="Start typing item name"
+                placeholder={
+                  vendor
+                    ? 'Start typing item name for selected vendor'
+                    : 'Select a vendor, then start typing item name'
+                }
+                disabled={isLoadingCatalog || !vendor}
               />
               <datalist id="item-options">
-                {vendorItems.map((i) => (
-                  <option key={i} value={i} />
+                {itemSuggestions.map((name) => (
+                  <option key={name} value={name} />
                 ))}
               </datalist>
             </div>
@@ -200,10 +333,11 @@ export default function TransactionsPage() {
                 list="size-options"
                 className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
                 placeholder="Start typing size"
+                disabled={isLoadingCatalog || !vendor || !item}
               />
               <datalist id="size-options">
-                {itemSizes.map((s) => (
-                  <option key={s} value={s} />
+                {sizeSuggestions.map((value) => (
+                  <option key={value} value={value} />
                 ))}
               </datalist>
             </div>
@@ -218,6 +352,7 @@ export default function TransactionsPage() {
                 }}
                 className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
                 placeholder="e.g. 20"
+                inputMode="decimal"
               />
             </div>
 
@@ -265,7 +400,7 @@ export default function TransactionsPage() {
           <div className="mt-4 flex gap-3">
             <button
               onClick={handleSubmitTransaction}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoadingCatalog}
               className="rounded bg-yellow-600 px-4 py-2 text-black hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Transaction'}
@@ -273,9 +408,7 @@ export default function TransactionsPage() {
 
             <button
               onClick={() => {
-                setQuantity('');
-                setLocation('');
-                setNotes('');
+                handleReset();
                 setSubmitMessage('');
               }}
               className="rounded border border-neutral-700 bg-neutral-900 px-4 py-2 text-white hover:bg-neutral-800"
