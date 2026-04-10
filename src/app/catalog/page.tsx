@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 type CatalogRow = {
@@ -15,40 +15,71 @@ type CatalogRow = {
   notes: string;
   match_warning: string;
   appearance_notes: string;
+  annotated_by: string;
   price: string | number;
   price_basis: string;
+  updated_at?: string;
 };
 
-const INITIAL_BROWSE_LIMIT = 250;
+function hasAnnotation(row: Partial<CatalogRow>) {
+  return Boolean(
+    row.notes?.trim() ||
+      row.match_warning?.trim() ||
+      row.appearance_notes?.trim()
+  );
+}
 
-function sortCatalogRows(rows: CatalogRow[]) {
-  return [...rows].sort((a, b) => {
-    const itemCompare = (a.item_name || '').localeCompare(b.item_name || '');
-    if (itemCompare !== 0) return itemCompare;
-
-    const vendorCompare = (a.vendor || '').localeCompare(b.vendor || '');
-    if (vendorCompare !== 0) return vendorCompare;
-
-    return (a.size || '').localeCompare(b.size || '');
-  });
+function formatAnnotationSummary(row: CatalogRow) {
+  if (row.match_warning?.trim()) return row.match_warning.trim();
+  if (row.notes?.trim()) return row.notes.trim();
+  if (row.appearance_notes?.trim()) return row.appearance_notes.trim();
+  return 'Annotated entry';
 }
 
 export default function CatalogPage() {
   const [catalogRows, setCatalogRows] = useState<CatalogRow[]>([]);
+  const [recentAnnotations, setRecentAnnotations] = useState<CatalogRow[]>([]);
+
   const [search, setSearch] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selected, setSelected] = useState<CatalogRow | null>(null);
 
   const [notes, setNotes] = useState('');
   const [matchWarning, setMatchWarning] = useState('');
   const [appearanceNotes, setAppearanceNotes] = useState('');
+  const [annotatedBy, setAnnotatedBy] = useState('');
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
     async function loadCatalog() {
-      const { data, error } = await supabase.from('vendor_catalog').select('*');
+      setLoadError('');
+
+      let query = supabase
+        .from('vendor_catalog')
+        .select('*')
+        .order('vendor', { ascending: true })
+        .order('item_name', { ascending: true })
+        .limit(100);
+
+      if (debouncedSearch) {
+        const term = debouncedSearch.toLowerCase();
+        query = query.or(
+          `item_name.ilike.%${term}%,vendor.ilike.%${term}%,size.ilike.%${term}%,unit.ilike.%${term}%,category.ilike.%${term}%,material_class.ilike.%${term}%`
+        );
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Failed to load catalog:', error);
@@ -56,77 +87,62 @@ export default function CatalogPage() {
         return;
       }
 
-      const cleaned: CatalogRow[] = (data || []).map((row) => ({
-        id: row.id,
-        vendor: row.vendor || '',
-        item_name: row.item_name || '',
-        size: row.size || '',
-        category: row.category || '',
-        material_class: row.material_class || '',
-        unit: row.unit || '',
-        source_file: row.source_file || '',
-        notes: row.notes || '',
-        match_warning: row.match_warning || '',
-        appearance_notes: row.appearance_notes || '',
-        price: row.price || '',
-        price_basis: row.price_basis || '',
-      }));
-
-      setCatalogRows(cleaned);
-      if (cleaned.length > 0) {
-        setSelectedId(sortCatalogRows(cleaned)[0].id);
-      }
+      setCatalogRows((data as CatalogRow[]) || []);
     }
 
     loadCatalog();
-  }, []);
-
-  const sortedRows = useMemo(() => sortCatalogRows(catalogRows), [catalogRows]);
-
-  const filteredRows = useMemo(() => {
-    const normalized = search.trim().toLowerCase();
-
-    if (!normalized) {
-      return sortedRows.slice(0, INITIAL_BROWSE_LIMIT);
-    }
-
-    return sortedRows.filter((row) => {
-      return (
-        (row.item_name || '').toLowerCase().includes(normalized) ||
-        (row.vendor || '').toLowerCase().includes(normalized) ||
-        (row.size || '').toLowerCase().includes(normalized) ||
-        (row.unit || '').toLowerCase().includes(normalized) ||
-        (row.category || '').toLowerCase().includes(normalized) ||
-        (row.material_class || '').toLowerCase().includes(normalized)
-      );
-    });
-  }, [search, sortedRows]);
-
-  const selected =
-    filteredRows.find((row) => row.id === selectedId) ||
-    sortedRows.find((row) => row.id === selectedId) ||
-    null;
+  }, [debouncedSearch]);
 
   useEffect(() => {
-    if (filteredRows.length === 0) {
+    async function loadRecentAnnotations() {
+      const { data, error } = await supabase
+        .from('vendor_catalog')
+        .select('*')
+        .order('updated_at', { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.error('Failed to load recent annotations:', error);
+        return;
+      }
+
+      const recent = ((data as CatalogRow[]) || [])
+        .filter((row) => hasAnnotation(row))
+        .slice(0, 8);
+
+      setRecentAnnotations(recent);
+    }
+
+    loadRecentAnnotations();
+  }, []);
+
+  function selectRow(row: CatalogRow) {
+    setSelected(row);
+    setNotes(row.notes || '');
+    setMatchWarning(row.match_warning || '');
+    setAppearanceNotes(row.appearance_notes || '');
+    setAnnotatedBy(row.annotated_by || '');
+    setSaveMessage('');
+  }
+
+  async function refreshRecentAnnotations() {
+    const { data, error } = await supabase
+      .from('vendor_catalog')
+      .select('*')
+      .order('updated_at', { ascending: false })
+      .limit(50);
+
+    if (error) {
+      console.error('Failed to refresh recent annotations:', error);
       return;
     }
 
-    const stillVisible = filteredRows.some((row) => row.id === selectedId);
+    const recent = ((data as CatalogRow[]) || [])
+      .filter((row) => hasAnnotation(row))
+      .slice(0, 8);
 
-    if (!selectedId || !stillVisible) {
-      setSelectedId(filteredRows[0].id);
-    }
-  }, [filteredRows, selectedId]);
-
-  useEffect(() => {
-    if (!selected) return;
-
-    setNotes(selected.notes || '');
-    setMatchWarning(selected.match_warning || '');
-    setAppearanceNotes(selected.appearance_notes || '');
-    setSaveMessage('');
-  }, [selectedId, selected]);
+    setRecentAnnotations(recent);
+  }
 
   async function handleSaveAnnotation() {
     if (!selected) return;
@@ -140,6 +156,7 @@ export default function CatalogPage() {
         notes,
         match_warning: matchWarning,
         appearance_notes: appearanceNotes,
+        annotated_by: annotatedBy.trim() || null,
       })
       .eq('id', selected.id);
 
@@ -150,238 +167,241 @@ export default function CatalogPage() {
       return;
     }
 
+    const updatedRow: CatalogRow = {
+      ...selected,
+      notes,
+      match_warning: matchWarning,
+      appearance_notes: appearanceNotes,
+      annotated_by: annotatedBy.trim(),
+      updated_at: new Date().toISOString(),
+    };
+
+    setSelected(updatedRow);
     setCatalogRows((prev) =>
-      prev.map((row) =>
-        row.id === selected.id
-          ? {
-              ...row,
-              notes,
-              match_warning: matchWarning,
-              appearance_notes: appearanceNotes,
-            }
-          : row
-      )
+      prev.map((row) => (row.id === selected.id ? updatedRow : row))
     );
+
+    await refreshRecentAnnotations();
 
     setSaveMessage('Annotation saved.');
     setIsSaving(false);
   }
 
-  const resultSummary =
-    search.trim() === ''
-      ? `Showing first ${Math.min(INITIAL_BROWSE_LIMIT, sortedRows.length)} of ${sortedRows.length} alphabetically`
-      : `${filteredRows.length} matching rows`;
-
   return (
-    <div className="min-h-[calc(100vh-73px)] bg-black p-6 text-white">
+    <div className="min-h-[calc(100vh-73px)] bg-black px-6 py-8 text-white">
       <div className="mx-auto max-w-7xl space-y-6">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-[#bda86a]">
+          <h1 className="text-3xl font-semibold tracking-tight text-[#f7f0d0]">
             Catalog
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold text-[#f7f0d0]">
-            Material Lookup
           </h1>
           <p className="mt-2 max-w-3xl text-sm text-neutral-400">
-            Browse vendor material records, review known differences, and save
-            guidance before sourcing, substitution, or production use.
+            Search vendor materials, review details, and save mismatch annotations.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-5">
-          <div className="text-sm font-medium text-white">What this page is for</div>
-          <div className="mt-3 grid gap-3 md:grid-cols-3">
-            <div className="rounded-xl border border-neutral-800 bg-black/40 p-4">
-              <div className="font-medium text-[#f7f0d0]">Browse</div>
-              <p className="mt-2 text-sm text-neutral-400">
-                View the catalog alphabetically before entering a search.
-              </p>
-            </div>
-            <div className="rounded-xl border border-neutral-800 bg-black/40 p-4">
-              <div className="font-medium text-[#f7f0d0]">Compare</div>
-              <p className="mt-2 text-sm text-neutral-400">
-                Check whether similar names actually represent safe or equivalent
-                material choices.
-              </p>
-            </div>
-            <div className="rounded-xl border border-neutral-800 bg-black/40 p-4">
-              <div className="font-medium text-[#f7f0d0]">Document</div>
-              <p className="mt-2 text-sm text-neutral-400">
-                Save notes, match warnings, and appearance-specific guidance on
-                the record itself.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div>
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+          <label
+            htmlFor="catalog-search"
+            className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-neutral-500"
+          >
+            Search
+          </label>
           <input
-            className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a]"
-            placeholder="Browse alphabetically or search by item, vendor, size, unit, category, or class"
+            id="catalog-search"
+            className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+            placeholder="Search material, vendor, size, unit, or category"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
         {loadError && (
-          <div className="rounded border border-red-800 bg-red-950/40 p-3 text-sm text-red-300">
+          <div className="rounded-xl border border-red-800 bg-red-950/40 p-3 text-sm text-red-300">
             Failed to load catalog: {loadError}
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="text-lg font-semibold text-[#f7f0d0]">Results</div>
-              <div className="text-xs text-neutral-500">{resultSummary}</div>
-            </div>
-
-            {filteredRows.length === 0 ? (
-              <div className="text-sm text-neutral-500">No matching materials found.</div>
-            ) : (
-              <div className="max-h-[720px] overflow-y-auto pr-1 pb-4">
-                <div className="space-y-2">
-                  {filteredRows.map((row) => {
-                    const hasAnnotation =
-                      Boolean(row.notes) ||
-                      Boolean(row.match_warning) ||
-                      Boolean(row.appearance_notes);
-
-                    return (
-                      <button
-                        key={row.id}
-                        onClick={() => setSelectedId(row.id)}
-                        className={`w-full rounded-xl border p-4 text-left transition ${
-                          selectedId === row.id
-                            ? 'border-[#c8a43a] bg-[#1a1610]'
-                            : 'border-neutral-800 bg-black/40 hover:border-neutral-700 hover:bg-neutral-900'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <div className="font-medium text-white">{row.item_name}</div>
-                            <div className="mt-1 text-sm text-neutral-400">
-                              {row.vendor || '—'} • {row.size || '—'} • {row.unit || '—'}
-                            </div>
-                          </div>
-
-                          {hasAnnotation && (
-                            <div className="rounded-full border border-yellow-900 bg-yellow-950/40 px-2.5 py-1 text-xs text-yellow-300">
-                              Annotated
-                            </div>
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-5">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <section className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
             <div className="mb-4 flex items-center justify-between">
-              <div className="text-lg font-semibold text-[#f7f0d0]">Record Details</div>
-              {selected && (
-                <div className="rounded-full border border-neutral-800 bg-black/40 px-3 py-1 text-xs text-neutral-400">
-                  {selected.vendor || '—'}
-                </div>
+              <h2 className="text-lg font-semibold text-white">Results</h2>
+              {search.trim() !== '' && (
+                <span className="text-xs text-neutral-500">
+                  {catalogRows.length} shown
+                </span>
               )}
             </div>
 
+            {search.trim() === '' ? (
+              <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-950/60 p-6 text-sm text-neutral-500">
+                Start typing to search the catalog.
+              </div>
+            ) : catalogRows.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-950/60 p-6 text-sm text-neutral-500">
+                No matching materials found.
+              </div>
+            ) : (
+              <div className="max-h-[560px] space-y-2 overflow-y-auto pr-1">
+                {catalogRows.map((row) => {
+                  const isSelected = selected?.id === row.id;
+                  const annotated = hasAnnotation(row);
+
+                  return (
+                    <button
+                      key={row.id}
+                      type="button"
+                      onClick={() => selectRow(row)}
+                      className={`w-full rounded-xl border px-4 py-3 text-left transition ${
+                        isSelected
+                          ? 'border-[#c8a43a] bg-neutral-900 shadow-[inset_0_0_0_1px_rgba(200,164,58,0.35)]'
+                          : 'border-neutral-800 bg-neutral-950 hover:border-neutral-700 hover:bg-neutral-900'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="truncate font-medium text-white">
+                            {row.item_name}
+                          </div>
+                          <div className="mt-1 text-sm text-neutral-400">
+                            {row.vendor} • {row.size || '—'} • {row.unit || '—'}
+                          </div>
+                        </div>
+
+                        {annotated && (
+                          <span className="shrink-0 rounded-full border border-yellow-700/60 bg-yellow-950/40 px-2 py-1 text-[11px] font-medium text-yellow-300">
+                            Annotated
+                          </span>
+                        )}
+                      </div>
+
+                      {row.match_warning?.trim() && (
+                        <div className="mt-2 text-xs text-red-400">
+                          {row.match_warning}
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+            <h2 className="mb-4 text-lg font-semibold text-white">
+              Details & Annotation
+            </h2>
+
             {selected ? (
-              <div className="space-y-5">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border border-neutral-800 bg-black/40 p-4">
-                    <div className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                      Vendor
+                    </div>
+                    <div>{selected.vendor}</div>
+                  </div>
+
+                  <div>
+                    <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
                       Item
                     </div>
-                    <div className="mt-2 font-medium text-white">
-                      {selected.item_name}
-                    </div>
+                    <div>{selected.item_name}</div>
                   </div>
 
-                  <div className="rounded-xl border border-neutral-800 bg-black/40 p-4">
-                    <div className="text-xs uppercase tracking-[0.2em] text-neutral-500">
-                      Size / Unit
+                  <div>
+                    <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                      Size
                     </div>
-                    <div className="mt-2 font-medium text-white">
-                      {selected.size || '—'} • {selected.unit || '—'}
-                    </div>
+                    <div>{selected.size || '—'}</div>
                   </div>
 
-                  <div className="rounded-xl border border-neutral-800 bg-black/40 p-4">
-                    <div className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                  <div>
+                    <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                      Unit
+                    </div>
+                    <div>{selected.unit || '—'}</div>
+                  </div>
+
+                  <div>
+                    <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
                       Category
                     </div>
-                    <div className="mt-2 font-medium text-white">
-                      {selected.category || '—'}
-                    </div>
+                    <div>{selected.category || '—'}</div>
                   </div>
 
-                  <div className="rounded-xl border border-neutral-800 bg-black/40 p-4">
-                    <div className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                  <div>
+                    <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
                       Material Class
                     </div>
-                    <div className="mt-2 font-medium text-white">
-                      {selected.material_class || '—'}
-                    </div>
+                    <div>{selected.material_class || '—'}</div>
                   </div>
 
-                  <div className="rounded-xl border border-neutral-800 bg-black/40 p-4">
-                    <div className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                  <div>
+                    <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
                       Price
                     </div>
-                    <div className="mt-2 font-medium text-white">
-                      {selected.price || '—'}
-                    </div>
+                    <div>{selected.price || '—'}</div>
                   </div>
 
-                  <div className="rounded-xl border border-neutral-800 bg-black/40 p-4">
-                    <div className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                  <div>
+                    <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
                       Price Basis
                     </div>
-                    <div className="mt-2 font-medium text-white">
-                      {selected.price_basis || '—'}
-                    </div>
+                    <div>{selected.price_basis || '—'}</div>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm text-neutral-400">Notes</label>
-                    <textarea
-                      className="mt-2 w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a]"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      rows={4}
-                    />
-                  </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-neutral-300">
+                    Annotated By
+                  </label>
+                  <input
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                    value={annotatedBy}
+                    onChange={(e) => setAnnotatedBy(e.target.value)}
+                    placeholder="Name"
+                  />
+                </div>
 
-                  <div>
-                    <label className="text-sm text-neutral-400">Match Warning</label>
-                    <textarea
-                      className="mt-2 w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a]"
-                      value={matchWarning}
-                      onChange={(e) => setMatchWarning(e.target.value)}
-                      rows={3}
-                    />
-                  </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-neutral-300">
+                    Notes
+                  </label>
+                  <textarea
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    rows={4}
+                  />
+                </div>
 
-                  <div>
-                    <label className="text-sm text-neutral-400">Appearance Notes</label>
-                    <textarea
-                      className="mt-2 w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a]"
-                      value={appearanceNotes}
-                      onChange={(e) => setAppearanceNotes(e.target.value)}
-                      rows={3}
-                    />
-                  </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-neutral-300">
+                    Match Warning
+                  </label>
+                  <textarea
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                    value={matchWarning}
+                    onChange={(e) => setMatchWarning(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-neutral-300">
+                    Appearance Notes
+                  </label>
+                  <textarea
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                    value={appearanceNotes}
+                    onChange={(e) => setAppearanceNotes(e.target.value)}
+                    rows={3}
+                  />
                 </div>
 
                 <div className="flex items-center gap-3">
                   <button
-                    className="rounded-xl bg-yellow-600 px-4 py-2 text-black transition hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-xl bg-[#c8a43a] px-4 py-2.5 font-medium text-black transition hover:bg-[#d6b24a] disabled:cursor-not-allowed disabled:opacity-60"
                     onClick={handleSaveAnnotation}
                     disabled={isSaving}
                   >
@@ -394,12 +414,62 @@ export default function CatalogPage() {
                 </div>
               </div>
             ) : (
-              <div className="text-sm text-neutral-500">
-                Select a material from the list to inspect its record and edit notes.
+              <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-950/60 p-6 text-sm text-neutral-500">
+                Select a material to view details.
               </div>
             )}
-          </div>
+          </section>
         </div>
+
+        <section className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-neutral-300">
+              Recent Annotations
+            </h2>
+            <span className="text-xs text-neutral-500">
+              Latest catalog notes and warnings
+            </span>
+          </div>
+
+          {recentAnnotations.length === 0 ? (
+            <div className="text-sm text-neutral-500">No annotated entries yet.</div>
+          ) : (
+            <div className="divide-y divide-neutral-800">
+              {recentAnnotations.slice(0, 8).map((row) => (
+                <button
+                  key={row.id}
+                  type="button"
+                  onClick={() => selectRow(row)}
+                  className="flex w-full items-start justify-between gap-4 py-3 text-left transition hover:bg-neutral-900/50"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm font-medium text-white">
+                        {row.item_name}
+                      </div>
+                      <span className="rounded-full border border-yellow-700/60 bg-yellow-950/40 px-2 py-1 text-[11px] font-medium text-yellow-300">
+                        Annotated
+                      </span>
+                    </div>
+                    <div className="mt-1 text-xs text-neutral-500">
+                      {row.vendor} • {row.size || '—'}
+                      {row.annotated_by?.trim() ? ` • ${row.annotated_by}` : ''}
+                    </div>
+                    <div className="mt-1 truncate text-xs text-neutral-400">
+                      {formatAnnotationSummary(row)}
+                    </div>
+                  </div>
+
+                  {row.match_warning?.trim() && (
+                    <span className="shrink-0 rounded-full border border-red-800/70 bg-red-950/40 px-2 py-1 text-[11px] text-red-300">
+                      Warning
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
