@@ -4,251 +4,427 @@ import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 type AppendBalanceRow = {
-    vendor: string;
-    item_name: string;
-    size: string;
-    unit: string;
-    qty_on_hand: number;
-    last_transaction_at: string | null;
-
-    // 🔥 injected from catalog
-    notes?: string;
-    match_warning?: string;
+  vendor: string;
+  item_name: string;
+  size: string;
+  unit: string;
+  qty_on_hand: number;
+  last_transaction_at: string | null;
+  notes?: string;
+  match_warning?: string;
+  appearance_notes?: string;
+  annotated_by?: string;
 };
 
 type CurrentInventoryRow = {
-    id: string;
-    category: string | null;
-    color: string | null;
-    size: string | null;
-    quantity: number | null;
-    vendor: string | null;
-    location: string | null;
-    pallet_number: string | null;
-    match_confidence: number | string | null;
+  id: string;
+  category: string | null;
+  color: string | null;
+  size: string | null;
+  quantity: number | null;
+  vendor: string | null;
+  location: string | null;
+  pallet_number: string | null;
+  match_confidence: number | string | null;
 };
 
-type CatalogRow = {
-    vendor: string;
-    item_name: string;
-    size: string;
-    notes: string | null;
-    match_warning: string | null;
+type CatalogAnnotationRow = {
+  id?: string;
+  vendor: string;
+  item_name: string;
+  size: string;
+  notes: string | null;
+  match_warning: string | null;
+  appearance_notes?: string | null;
+  annotated_by?: string | null;
+  updated_at?: string | null;
 };
 
 type ViewMode = 'append' | 'current';
 
+function normalizeKey(
+  vendor: string | null,
+  itemName: string | null,
+  size: string | null
+) {
+  return `${vendor || ''}|${itemName || ''}|${size || ''}`;
+}
+
+function hasAnnotation(row: Partial<CatalogAnnotationRow>) {
+  return Boolean(
+    row.notes?.trim() ||
+      row.match_warning?.trim() ||
+      row.appearance_notes?.trim()
+  );
+}
+
+function annotationSummary(row: Partial<CatalogAnnotationRow>) {
+  if (row.match_warning?.trim()) return row.match_warning.trim();
+  if (row.notes?.trim()) return row.notes.trim();
+  if (row.appearance_notes?.trim()) return row.appearance_notes.trim();
+  return 'Annotated entry';
+}
+
 export default function InventoryPage() {
-    const [viewMode, setViewMode] = useState<ViewMode>('append');
-    const [guidedMode, setGuidedMode] = useState(true);
+  const [viewMode, setViewMode] = useState<ViewMode>('append');
+  const [guidedMode, setGuidedMode] = useState(true);
 
-    const [appendRows, setAppendRows] = useState<AppendBalanceRow[]>([]);
-    const [currentRows, setCurrentRows] = useState<CurrentInventoryRow[]>([]);
-    const [catalogMap, setCatalogMap] = useState<Record<string, CatalogRow>>({});
+  const [appendRows, setAppendRows] = useState<AppendBalanceRow[]>([]);
+  const [currentRows, setCurrentRows] = useState<CurrentInventoryRow[]>([]);
+  const [recentAnnotations, setRecentAnnotations] = useState<CatalogAnnotationRow[]>([]);
 
-    const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [search, setSearch] = useState('');
 
-    // 🔥 LOAD EVERYTHING
-    useEffect(() => {
-        async function loadData() {
-            setLoading(true);
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      setLoadError('');
 
-            const [appendResult, currentResult, catalogResult] = await Promise.all([
-                supabase
-                    .from('inventory_balances')
-                    .select('*'),
+      const [appendResult, currentResult, catalogResult] = await Promise.all([
+        supabase
+          .from('inventory_balances')
+          .select('*')
+          .order('vendor', { ascending: true })
+          .order('item_name', { ascending: true }),
 
-                supabase
-                    .from('inventory_items')
-                    .select('*'),
+        supabase
+          .from('inventory_items')
+          .select('*')
+          .order('vendor', { ascending: true })
+          .order('color', { ascending: true }),
 
-                supabase
-                    .from('vendor_catalog')
-                    .select('vendor, item_name, size, notes, match_warning'),
-            ]);
+        supabase
+          .from('vendor_catalog')
+          .select(
+            'id, vendor, item_name, size, notes, match_warning, appearance_notes, annotated_by, updated_at'
+          )
+          .order('updated_at', { ascending: false })
+          .limit(100),
+      ]);
 
-            const catalogData = (catalogResult.data as CatalogRow[]) || [];
+      if (appendResult.error || currentResult.error || catalogResult.error) {
+        const firstError =
+          appendResult.error || currentResult.error || catalogResult.error;
+        console.error('Failed to load inventory data:', firstError);
+        setLoadError(firstError?.message || 'Failed to load inventory data.');
+        setLoading(false);
+        return;
+      }
 
-            // 🔥 build lookup map
-            const map: Record<string, CatalogRow> = {};
-            for (const row of catalogData) {
-                const key = `${row.vendor}|${row.item_name}|${row.size}`;
-                map[key] = row;
-            }
+      const catalogData = ((catalogResult.data as CatalogAnnotationRow[]) || []).filter(
+        (row) => hasAnnotation(row)
+      );
 
-            // 🔥 merge annotations into append rows
-            const enrichedAppend = ((appendResult.data as AppendBalanceRow[]) || []).map(row => {
-                const key = `${row.vendor}|${row.item_name}|${row.size}`;
-                const catalogMatch = map[key];
-
-                return {
-                    ...row,
-                    notes: catalogMatch?.notes || undefined,
-                    match_warning: catalogMatch?.match_warning || undefined,
-                };
-            });
-
-            setCatalogMap(map);
-            setAppendRows(enrichedAppend);
-            setCurrentRows((currentResult.data as CurrentInventoryRow[]) || []);
-            setLoading(false);
+      const catalogMap: Record<string, CatalogAnnotationRow> = {};
+      for (const row of catalogData) {
+        const key = normalizeKey(row.vendor, row.item_name, row.size);
+        if (!catalogMap[key]) {
+          catalogMap[key] = row;
         }
+      }
 
-        loadData();
-    }, []);
+      const enrichedAppendRows = ((appendResult.data as AppendBalanceRow[]) || []).map(
+        (row) => {
+          const match = catalogMap[normalizeKey(row.vendor, row.item_name, row.size)];
 
-    // 🔍 FILTERING
-    const filteredAppendRows = useMemo(() => {
-        const q = search.toLowerCase();
-        return appendRows.filter((row) =>
-            `${row.vendor} ${row.item_name} ${row.size}`
-                .toLowerCase()
-                .includes(q)
-        );
-    }, [appendRows, search]);
+          return {
+            ...row,
+            notes: match?.notes || undefined,
+            match_warning: match?.match_warning || undefined,
+            appearance_notes: match?.appearance_notes || undefined,
+            annotated_by: match?.annotated_by || undefined,
+          };
+        }
+      );
 
-    const filteredCurrentRows = useMemo(() => {
-        const q = search.toLowerCase();
-        return currentRows.filter((row) =>
-            `${row.vendor} ${row.category} ${row.color} ${row.size}`
-                .toLowerCase()
-                .includes(q)
-        );
-    }, [currentRows, search]);
+      setAppendRows(enrichedAppendRows);
+      setCurrentRows((currentResult.data as CurrentInventoryRow[]) || []);
+      setRecentAnnotations(catalogData.slice(0, 6));
+      setLoading(false);
+    }
 
-    return (
-        <div className="min-h-[calc(100vh-73px)] bg-black p-6 text-white">
-            <div className="mx-auto max-w-7xl space-y-6">
+    loadData();
+  }, []);
 
-                {/* HEADER */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-semibold text-[#f7f0d0]">Inventory</h1>
-                        <p className="text-sm text-neutral-400">
-                            Source materials with real-time risk signals.
-                        </p>
-                    </div>
-
-                    <button
-                        onClick={() => setGuidedMode(!guidedMode)}
-                        className="rounded border border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-900"
-                    >
-                        {guidedMode ? 'Hide Help' : 'Guided Mode'}
-                    </button>
-                </div>
-
-                {/* VIEW TOGGLE */}
-                <div className="flex items-center gap-3">
-                    <div className="inline-flex rounded-full border border-neutral-800 bg-neutral-950 p-1">
-                        <button
-                            onClick={() => setViewMode('append')}
-                            className={`rounded-full px-4 py-2 text-sm ${
-                                viewMode === 'append'
-                                    ? 'bg-[#c8a43a] text-black'
-                                    : 'text-neutral-300'
-                            }`}
-                        >
-                            Append View
-                        </button>
-
-                        <button
-                            onClick={() => setViewMode('current')}
-                            className={`rounded-full px-4 py-2 text-sm ${
-                                viewMode === 'current'
-                                    ? 'bg-[#c8a43a] text-black'
-                                    : 'text-neutral-300'
-                            }`}
-                        >
-                            Current Inventory
-                        </button>
-                    </div>
-                </div>
-
-                {/* SEARCH */}
-                <input
-                    className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
-                    placeholder="Search inventory..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-
-                {/* TABLE */}
-                <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
-                    {loading ? (
-                        <div>Loading...</div>
-                    ) : viewMode === 'append' ? (
-                        <table className="w-full text-sm">
-                            <thead className="text-neutral-400 border-b border-neutral-800">
-                                <tr>
-                                    <th className="py-2 text-left">Vendor</th>
-                                    <th className="py-2 text-left">Item</th>
-                                    <th className="py-2 text-left">Size</th>
-                                    <th className="py-2 text-left">Qty</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredAppendRows.map((row, i) => (
-                                    <tr
-                                        key={i}
-                                        className={`border-b border-neutral-900 ${
-                                            row.match_warning ? 'bg-red-950/20' : ''
-                                        }`}
-                                    >
-                                        <td className="py-2">{row.vendor}</td>
-
-                                        <td className="py-2">
-                                            <div className="flex flex-col">
-                                                <span>{row.item_name}</span>
-
-                                                {row.match_warning && (
-                                                    <span className="text-xs text-red-400">
-                                                        ⚠ {row.match_warning}
-                                                    </span>
-                                                )}
-
-                                                {row.notes && (
-                                                    <span className="text-xs text-yellow-400">
-                                                        📝 annotated
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </td>
-
-                                        <td className="py-2">{row.size}</td>
-
-                                        <td className="py-2 text-green-400">
-                                            {row.qty_on_hand}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <table className="w-full text-sm">
-                            <thead className="text-neutral-400 border-b border-neutral-800">
-                                <tr>
-                                    <th className="py-2 text-left">Vendor</th>
-                                    <th className="py-2 text-left">Color</th>
-                                    <th className="py-2 text-left">Size</th>
-                                    <th className="py-2 text-left">Qty</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredCurrentRows.map((row) => (
-                                    <tr key={row.id} className="border-b border-neutral-900">
-                                        <td className="py-2">{row.vendor}</td>
-                                        <td className="py-2">{row.color}</td>
-                                        <td className="py-2">{row.size}</td>
-                                        <td className="py-2">{row.quantity}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
-
-            </div>
-        </div>
+  const filteredAppendRows = useMemo(() => {
+    const q = search.toLowerCase();
+    return appendRows.filter((row) =>
+      `${row.vendor} ${row.item_name} ${row.size} ${row.unit} ${row.notes || ''} ${
+        row.match_warning || ''
+      } ${row.annotated_by || ''}`
+        .toLowerCase()
+        .includes(q)
     );
+  }, [appendRows, search]);
+
+  const filteredCurrentRows = useMemo(() => {
+    const q = search.toLowerCase();
+    return currentRows.filter((row) =>
+      `${row.vendor || ''} ${row.category || ''} ${row.color || ''} ${row.size || ''} ${row.location || ''}`
+        .toLowerCase()
+        .includes(q)
+    );
+  }, [currentRows, search]);
+
+  return (
+    <div className="min-h-[calc(100vh-73px)] bg-black px-6 py-8 text-white">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight text-[#f7f0d0]">
+              Inventory
+            </h1>
+            <p className="mt-2 max-w-3xl text-sm text-neutral-400">
+              Source materials with quantity visibility and annotation signals.
+            </p>
+          </div>
+
+          <button
+            onClick={() => setGuidedMode((prev) => !prev)}
+            className={`rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
+              guidedMode
+                ? 'border-[#c8a43a] bg-[#c8a43a] text-black hover:bg-[#d6b24a]'
+                : 'border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-600 hover:bg-neutral-900'
+            }`}
+          >
+            {guidedMode ? 'Hide Guidance' : 'Show Guidance'}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="inline-flex rounded-full border border-neutral-800 bg-neutral-950 p-1">
+            <button
+              onClick={() => setViewMode('append')}
+              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                viewMode === 'append'
+                  ? 'bg-[#c8a43a] text-black'
+                  : 'text-neutral-300 hover:bg-neutral-900'
+              }`}
+            >
+              Append View
+            </button>
+
+            <button
+              onClick={() => setViewMode('current')}
+              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                viewMode === 'current'
+                  ? 'bg-[#c8a43a] text-black'
+                  : 'text-neutral-300 hover:bg-neutral-900'
+              }`}
+            >
+              Current Inventory
+            </button>
+          </div>
+        </div>
+
+        {guidedMode && viewMode === 'append' && (
+          <div className="rounded-2xl border border-yellow-800/60 bg-yellow-950/20 p-4">
+            <div className="text-sm font-semibold text-[#f7f0d0]">
+              Append View Guidance
+            </div>
+            <p className="mt-2 text-sm text-neutral-300">
+              This view is the transaction-derived inventory balance. Use it as the
+              preferred sourcing view because it preserves history and surfaces
+              warnings from the catalog.
+            </p>
+          </div>
+        )}
+
+        {guidedMode && viewMode === 'current' && (
+          <div className="rounded-2xl border border-blue-800/60 bg-blue-950/20 p-4">
+            <div className="text-sm font-semibold text-[#f7f0d0]">
+              Current Inventory Guidance
+            </div>
+            <p className="mt-2 text-sm text-neutral-300">
+              This is the legacy table. It is still useful for comparison, but it
+              does not preserve the same transaction history and annotation context
+              as the append-based flow.
+            </p>
+          </div>
+        )}
+
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+          <label
+            htmlFor="inventory-search"
+            className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-neutral-500"
+          >
+            Search
+          </label>
+          <input
+            id="inventory-search"
+            className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+            placeholder="Search inventory, vendor, item, size, or notes"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        {loadError && (
+          <div className="rounded-xl border border-red-800 bg-red-950/40 p-3 text-sm text-red-300">
+            {loadError}
+          </div>
+        )}
+
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+          {loading ? (
+            <div className="text-sm text-neutral-400">Loading...</div>
+          ) : viewMode === 'append' ? (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] text-sm">
+                <thead className="border-b border-neutral-800 text-neutral-400">
+                  <tr>
+                    <th className="py-3 text-left font-medium">Vendor</th>
+                    <th className="py-3 text-left font-medium">Item</th>
+                    <th className="py-3 text-left font-medium">Size</th>
+                    <th className="py-3 text-left font-medium">Unit</th>
+                    <th className="py-3 text-left font-medium">Qty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAppendRows.map((row, index) => {
+                    const annotated = Boolean(
+                      row.notes?.trim() ||
+                        row.match_warning?.trim() ||
+                        row.appearance_notes?.trim()
+                    );
+
+                    return (
+                      <tr
+                        key={`${row.vendor}-${row.item_name}-${row.size}-${index}`}
+                        className={`border-b border-neutral-900 ${
+                          row.match_warning?.trim() ? 'bg-red-950/10' : ''
+                        }`}
+                      >
+                        <td className="py-3 align-top">{row.vendor}</td>
+                        <td className="py-3 align-top">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <div className="font-medium text-white">{row.item_name}</div>
+                              {annotated && (
+                                <span className="rounded-full border border-yellow-700/60 bg-yellow-950/40 px-2 py-1 text-[11px] font-medium text-yellow-300">
+                                  Annotated
+                                </span>
+                              )}
+                            </div>
+
+                            {row.match_warning?.trim() && (
+                              <div className="mt-1 text-xs text-red-400">
+                                {row.match_warning}
+                              </div>
+                            )}
+
+                            {row.annotated_by?.trim() && (
+                              <div className="mt-1 text-xs text-neutral-500">
+                                By {row.annotated_by}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-3 align-top">{row.size}</td>
+                        <td className="py-3 align-top">{row.unit}</td>
+                        <td className="py-3 align-top font-medium text-green-400">
+                          {row.qty_on_hand}
+                        </td>
+                      </tr>
+                    );
+                  })}
+
+                  {filteredAppendRows.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-sm text-neutral-500">
+                        No matching inventory rows found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] text-sm">
+                <thead className="border-b border-neutral-800 text-neutral-400">
+                  <tr>
+                    <th className="py-3 text-left font-medium">Vendor</th>
+                    <th className="py-3 text-left font-medium">Color</th>
+                    <th className="py-3 text-left font-medium">Size</th>
+                    <th className="py-3 text-left font-medium">Location</th>
+                    <th className="py-3 text-left font-medium">Qty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCurrentRows.map((row) => (
+                    <tr key={row.id} className="border-b border-neutral-900">
+                      <td className="py-3">{row.vendor}</td>
+                      <td className="py-3">{row.color}</td>
+                      <td className="py-3">{row.size}</td>
+                      <td className="py-3">{row.location || '—'}</td>
+                      <td className="py-3">{row.quantity}</td>
+                    </tr>
+                  ))}
+
+                  {filteredCurrentRows.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-sm text-neutral-500">
+                        No matching legacy inventory rows found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <section className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-neutral-300">
+              Recent Annotations
+            </h2>
+            <span className="text-xs text-neutral-500">
+              Recent catalog notes that may affect sourcing
+            </span>
+          </div>
+
+          {recentAnnotations.length === 0 ? (
+            <div className="text-sm text-neutral-500">No recent annotations found.</div>
+          ) : (
+            <div className="divide-y divide-neutral-800">
+              {recentAnnotations.map((row, index) => (
+                <div
+                  key={`${row.vendor}-${row.item_name}-${row.size}-${index}`}
+                  className="flex items-start justify-between gap-4 py-3"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm font-medium text-white">
+                        {row.item_name}
+                      </div>
+                      <span className="rounded-full border border-yellow-700/60 bg-yellow-950/40 px-2 py-1 text-[11px] font-medium text-yellow-300">
+                        Annotated
+                      </span>
+                    </div>
+                    <div className="mt-1 text-xs text-neutral-500">
+                      {row.vendor} • {row.size || '—'}
+                      {row.annotated_by?.trim() ? ` • ${row.annotated_by}` : ''}
+                    </div>
+                    <div className="mt-1 truncate text-xs text-neutral-400">
+                      {annotationSummary(row)}
+                    </div>
+                  </div>
+
+                  {row.match_warning?.trim() && (
+                    <span className="shrink-0 rounded-full border border-red-800/70 bg-red-950/40 px-2 py-1 text-[11px] text-red-300">
+                      Warning
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  );
 }

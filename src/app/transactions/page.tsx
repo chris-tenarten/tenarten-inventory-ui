@@ -220,7 +220,6 @@ export default function TransactionsPage() {
       return;
     }
 
-    setSubmitMessage('Transaction submitted.');
     handleReset();
     setSubmitMessage('Transaction submitted.');
     setIsSubmitting(false);
@@ -238,10 +237,12 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-73px)] bg-black p-6 text-white">
+    <div className="min-h-[calc(100vh-73px)] bg-black px-6 py-8 text-white">
       <div className="mx-auto max-w-4xl space-y-6">
         <div>
-          <h1 className="text-3xl font-semibold text-[#f7f0d0]">Transactions</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-[#f7f0d0]">
+            Transactions
+          </h1>
           <p className="mt-2 text-sm text-neutral-400">
             Log intake, outtake, or adjustments here.
           </p>
@@ -251,7 +252,7 @@ export default function TransactionsPage() {
         </div>
 
         {loadError && (
-          <div className="rounded border border-red-800 bg-red-950/40 p-3 text-sm text-red-300">
+          <div className="rounded-xl border border-red-800 bg-red-950/40 p-3 text-sm text-red-300">
             Failed to load transaction options: {loadError}
           </div>
         )}
@@ -259,13 +260,13 @@ export default function TransactionsPage() {
         <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm text-neutral-400">
+              <label className="mb-2 block text-sm font-medium text-neutral-300">
                 Transaction Type
               </label>
               <select
                 value={txType}
                 onChange={(e) => setTxType(e.target.value)}
-                className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
               >
                 <option value="intake">Intake</option>
                 <option value="outtake">Outtake</option>
@@ -274,7 +275,9 @@ export default function TransactionsPage() {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm text-neutral-400">Vendor</label>
+              <label className="mb-2 block text-sm font-medium text-neutral-300">
+                Vendor
+              </label>
               <select
                 value={vendor}
                 onChange={(e) => {
@@ -284,7 +287,7 @@ export default function TransactionsPage() {
                   setUnit('');
                   setSubmitMessage('');
                 }}
-                className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 disabled={isLoadingCatalog}
               >
                 <option value="">Select vendor</option>
@@ -297,7 +300,9 @@ export default function TransactionsPage() {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm text-neutral-400">Item Name</label>
+              <label className="mb-2 block text-sm font-medium text-neutral-300">
+                Item Name
+              </label>
               <input
                 value={item}
                 onChange={(e) => {
@@ -307,7 +312,7 @@ export default function TransactionsPage() {
                   setSubmitMessage('');
                 }}
                 list="item-options"
-                className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 placeholder={
                   vendor
                     ? 'Start typing item name for selected vendor'
@@ -323,7 +328,9 @@ export default function TransactionsPage() {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm text-neutral-400">Size</label>
+              <label className="mb-2 block text-sm font-medium text-neutral-300">
+                Size
+              </label>
               <input
                 value={size}
                 onChange={(e) => {
@@ -331,7 +338,7 @@ export default function TransactionsPage() {
                   setSubmitMessage('');
                 }}
                 list="size-options"
-                className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 placeholder="Start typing size"
                 disabled={isLoadingCatalog || !vendor || !item}
               />
@@ -343,54 +350,62 @@ export default function TransactionsPage() {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm text-neutral-400">Quantity</label>
+              <label className="mb-2 block text-sm font-medium text-neutral-300">
+                Quantity
+              </label>
               <input
                 value={quantity}
                 onChange={(e) => {
                   setQuantity(e.target.value);
                   setSubmitMessage('');
                 }}
-                className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 placeholder="e.g. 20"
                 inputMode="decimal"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm text-neutral-400">Unit</label>
+              <label className="mb-2 block text-sm font-medium text-neutral-300">
+                Unit
+              </label>
               <input
                 value={unit}
                 onChange={(e) => {
                   setUnit(e.target.value);
                   setSubmitMessage('');
                 }}
-                className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 placeholder="lb / bag / pallet"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="mb-2 block text-sm text-neutral-400">Location</label>
+              <label className="mb-2 block text-sm font-medium text-neutral-300">
+                Location
+              </label>
               <input
                 value={location}
                 onChange={(e) => {
                   setLocation(e.target.value);
                   setSubmitMessage('');
                 }}
-                className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 placeholder="Warehouse A"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="mb-2 block text-sm text-neutral-400">Notes</label>
+              <label className="mb-2 block text-sm font-medium text-neutral-300">
+                Notes
+              </label>
               <textarea
                 value={notes}
                 onChange={(e) => {
                   setNotes(e.target.value);
                   setSubmitMessage('');
                 }}
-                className="w-full rounded border border-neutral-700 bg-neutral-900 p-3"
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 rows={4}
                 placeholder="Optional context, lot note, pallet note, or appearance note"
               />
@@ -401,7 +416,7 @@ export default function TransactionsPage() {
             <button
               onClick={handleSubmitTransaction}
               disabled={isSubmitting || isLoadingCatalog}
-              className="rounded bg-yellow-600 px-4 py-2 text-black hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-[#c8a43a] px-4 py-2.5 font-medium text-black transition hover:bg-[#d6b24a] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Transaction'}
             </button>
@@ -411,7 +426,7 @@ export default function TransactionsPage() {
                 handleReset();
                 setSubmitMessage('');
               }}
-              className="rounded border border-neutral-700 bg-neutral-900 px-4 py-2 text-white hover:bg-neutral-800"
+              className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 font-medium text-white transition hover:border-neutral-600 hover:bg-neutral-900"
             >
               Reset
             </button>
