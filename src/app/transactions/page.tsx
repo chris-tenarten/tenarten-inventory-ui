@@ -3,13 +3,28 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
-type CatalogRow = {
+type StandardCatalogRow = {
   id: string;
   vendor: string;
   item_name: string;
   size: string;
   unit: string;
 };
+
+type SpecialtyCatalogRow = {
+  id: string;
+  vendor_name: string;
+  item_name: string;
+  size?: string | null;
+  packaging?: string | null;
+  price_unit?: string | null;
+  product_line?: string | null;
+  component_type?: string | null;
+  material_type?: string | null;
+  quote_required?: boolean | null;
+};
+
+type TransactionSourceMode = 'standard' | 'specialty';
 
 const PAGE_SIZE = 1000;
 
@@ -24,11 +39,14 @@ function uniqueSorted(values: string[]) {
 }
 
 export default function TransactionsPage() {
-  const [catalogRows, setCatalogRows] = useState<CatalogRow[]>([]);
+  const [standardCatalogRows, setStandardCatalogRows] = useState<StandardCatalogRow[]>([]);
+  const [specialtyCatalogRows, setSpecialtyCatalogRows] = useState<SpecialtyCatalogRow[]>([]);
   const [isLoadingCatalog, setIsLoadingCatalog] = useState(true);
   const [loadError, setLoadError] = useState('');
 
+  const [sourceMode, setSourceMode] = useState<TransactionSourceMode>('standard');
   const [txType, setTxType] = useState('intake');
+
   const [vendor, setVendor] = useState('');
   const [item, setItem] = useState('');
   const [size, setSize] = useState('');
@@ -37,20 +55,23 @@ export default function TransactionsPage() {
   const [location, setLocation] = useState('');
   const [notes, setNotes] = useState('');
 
+  const [mixNumber, setMixNumber] = useState('');
+  const [customMixLabel, setCustomMixLabel] = useState('');
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
 
   useEffect(() => {
-    async function loadCatalog() {
+    async function loadCatalogs() {
       setIsLoadingCatalog(true);
       setLoadError('');
 
-      const allRows: CatalogRow[] = [];
-      let from = 0;
-      let keepGoing = true;
+      const allStandardRows: StandardCatalogRow[] = [];
+      let standardFrom = 0;
+      let keepLoadingStandard = true;
 
-      while (keepGoing) {
-        const to = from + PAGE_SIZE - 1;
+      while (keepLoadingStandard) {
+        const to = standardFrom + PAGE_SIZE - 1;
 
         const { data, error } = await supabase
           .from('vendor_catalog')
@@ -58,16 +79,16 @@ export default function TransactionsPage() {
           .order('vendor', { ascending: true })
           .order('item_name', { ascending: true })
           .order('size', { ascending: true })
-          .range(from, to);
+          .range(standardFrom, to);
 
         if (error) {
-          console.error('Failed to load transaction options:', error);
+          console.error('Failed to load standard transaction options:', error);
           setLoadError(error.message);
           setIsLoadingCatalog(false);
           return;
         }
 
-        const cleaned: CatalogRow[] = (data || []).map((row) => ({
+        const cleaned: StandardCatalogRow[] = (data || []).map((row) => ({
           id: row.id,
           vendor: row.vendor || '',
           item_name: row.item_name || '',
@@ -75,56 +96,161 @@ export default function TransactionsPage() {
           unit: row.unit || '',
         }));
 
-        allRows.push(...cleaned);
+        allStandardRows.push(...cleaned);
 
         if (!data || data.length < PAGE_SIZE) {
-          keepGoing = false;
+          keepLoadingStandard = false;
         } else {
-          from += PAGE_SIZE;
+          standardFrom += PAGE_SIZE;
         }
       }
 
-      setCatalogRows(allRows);
+      const allSpecialtyRows: SpecialtyCatalogRow[] = [];
+      let specialtyFrom = 0;
+      let keepLoadingSpecialty = true;
+
+      while (keepLoadingSpecialty) {
+        const to = specialtyFrom + PAGE_SIZE - 1;
+
+        const { data, error } = await supabase
+          .from('vendor_catalog_v2')
+          .select(
+            'id, vendor_name, item_name, size, packaging, price_unit, product_line, component_type, material_type, quote_required'
+          )
+          .order('vendor_name', { ascending: true })
+          .order('item_name', { ascending: true })
+          .order('size', { ascending: true })
+          .range(specialtyFrom, to);
+
+        if (error) {
+          console.error('Failed to load specialty transaction options:', error);
+          setLoadError(error.message);
+          setIsLoadingCatalog(false);
+          return;
+        }
+
+        const cleaned: SpecialtyCatalogRow[] = (data || []).map((row) => ({
+          id: row.id,
+          vendor_name: row.vendor_name || '',
+          item_name: row.item_name || '',
+          size: row.size || '',
+          packaging: row.packaging || '',
+          price_unit: row.price_unit || '',
+          product_line: row.product_line || '',
+          component_type: row.component_type || '',
+          material_type: row.material_type || '',
+          quote_required: row.quote_required ?? false,
+        }));
+
+        allSpecialtyRows.push(...cleaned);
+
+        if (!data || data.length < PAGE_SIZE) {
+          keepLoadingSpecialty = false;
+        } else {
+          specialtyFrom += PAGE_SIZE;
+        }
+      }
+
+      setStandardCatalogRows(allStandardRows);
+      setSpecialtyCatalogRows(allSpecialtyRows);
       setIsLoadingCatalog(false);
     }
 
-    loadCatalog();
+    loadCatalogs();
   }, []);
 
-  const vendors = useMemo(() => {
-    return uniqueSorted(catalogRows.map((r) => r.vendor));
-  }, [catalogRows]);
+  function handleReset(keepSourceMode = true) {
+    const preservedSourceMode = sourceMode;
+    setTxType('intake');
+    setVendor('');
+    setItem('');
+    setSize('');
+    setUnit('');
+    setQuantity('');
+    setLocation('');
+    setNotes('');
+    setMixNumber('');
+    setCustomMixLabel('');
+    if (!keepSourceMode) {
+      setSourceMode('standard');
+    } else {
+      setSourceMode(preservedSourceMode);
+    }
+  }
 
-  const vendorFilteredRows = useMemo(() => {
-    if (!vendor.trim()) return catalogRows;
+  useEffect(() => {
+    handleReset(true);
+    setSubmitMessage('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sourceMode]);
+
+  const standardVendors = useMemo(() => {
+    return uniqueSorted(standardCatalogRows.map((r) => r.vendor));
+  }, [standardCatalogRows]);
+
+  const specialtyVendors = useMemo(() => {
+    return uniqueSorted(specialtyCatalogRows.map((r) => r.vendor_name));
+  }, [specialtyCatalogRows]);
+
+  const vendors = sourceMode === 'standard' ? standardVendors : specialtyVendors;
+
+  const standardVendorFilteredRows = useMemo(() => {
+    if (!vendor.trim()) return standardCatalogRows;
     const v = normalize(vendor);
-    return catalogRows.filter((r) => normalize(r.vendor) === v);
-  }, [catalogRows, vendor]);
+    return standardCatalogRows.filter((r) => normalize(r.vendor) === v);
+  }, [standardCatalogRows, vendor]);
+
+  const specialtyVendorFilteredRows = useMemo(() => {
+    if (!vendor.trim()) return specialtyCatalogRows;
+    const v = normalize(vendor);
+    return specialtyCatalogRows.filter((r) => normalize(r.vendor_name) === v);
+  }, [specialtyCatalogRows, vendor]);
 
   const itemSuggestions = useMemo(() => {
+    if (sourceMode === 'standard') {
+      const q = normalize(item);
+      const items = uniqueSorted(standardVendorFilteredRows.map((r) => r.item_name));
+
+      if (!q) return items.slice(0, 100);
+      return items.filter((name) => normalize(name).includes(q)).slice(0, 100);
+    }
+
     const q = normalize(item);
-    const items = uniqueSorted(vendorFilteredRows.map((r) => r.item_name));
+    const items = uniqueSorted(specialtyVendorFilteredRows.map((r) => r.item_name));
 
     if (!q) return items.slice(0, 100);
-
     return items.filter((name) => normalize(name).includes(q)).slice(0, 100);
-  }, [vendorFilteredRows, item]);
+  }, [sourceMode, standardVendorFilteredRows, specialtyVendorFilteredRows, item]);
 
   const sizeSuggestions = useMemo(() => {
+    if (sourceMode === 'standard') {
+      const itemNorm = normalize(item);
+
+      const baseRows = standardVendorFilteredRows.filter((r) => {
+        if (!itemNorm) return true;
+        return normalize(r.item_name) === itemNorm;
+      });
+
+      const sizes = uniqueSorted(baseRows.map((r) => r.size));
+      const q = normalize(size);
+
+      if (!q) return sizes.slice(0, 100);
+      return sizes.filter((value) => normalize(value).includes(q)).slice(0, 100);
+    }
+
     const itemNorm = normalize(item);
 
-    const baseRows = vendorFilteredRows.filter((r) => {
+    const baseRows = specialtyVendorFilteredRows.filter((r) => {
       if (!itemNorm) return true;
       return normalize(r.item_name) === itemNorm;
     });
 
-    const sizes = uniqueSorted(baseRows.map((r) => r.size));
+    const sizes = uniqueSorted(baseRows.map((r) => r.size || ''));
     const q = normalize(size);
 
     if (!q) return sizes.slice(0, 100);
-
     return sizes.filter((value) => normalize(value).includes(q)).slice(0, 100);
-  }, [vendorFilteredRows, item, size]);
+  }, [sourceMode, standardVendorFilteredRows, specialtyVendorFilteredRows, item, size]);
 
   const exactVendorMatch = useMemo(() => {
     if (!vendor.trim()) return '';
@@ -132,19 +258,39 @@ export default function TransactionsPage() {
     return vendors.find((name) => normalize(name) === v) || '';
   }, [vendors, vendor]);
 
-  const exactItemMatches = useMemo(() => {
+  const exactStandardItemMatches = useMemo(() => {
     const itemNorm = normalize(item);
     if (!itemNorm) return [];
 
-    return vendorFilteredRows.filter((r) => normalize(r.item_name) === itemNorm);
-  }, [vendorFilteredRows, item]);
+    return standardVendorFilteredRows.filter((r) => normalize(r.item_name) === itemNorm);
+  }, [standardVendorFilteredRows, item]);
 
-  const exactSizeMatch = useMemo(() => {
+  const exactSpecialtyItemMatches = useMemo(() => {
+    const itemNorm = normalize(item);
+    if (!itemNorm) return [];
+
+    return specialtyVendorFilteredRows.filter((r) => normalize(r.item_name) === itemNorm);
+  }, [specialtyVendorFilteredRows, item]);
+
+  const exactStandardSizeMatch = useMemo(() => {
     const sizeNorm = normalize(size);
     if (!sizeNorm) return null;
 
-    return exactItemMatches.find((r) => normalize(r.size) === sizeNorm) || null;
-  }, [exactItemMatches, size]);
+    return exactStandardItemMatches.find((r) => normalize(r.size) === sizeNorm) || null;
+  }, [exactStandardItemMatches, size]);
+
+  const exactSpecialtySizeMatch = useMemo(() => {
+    const sizeNorm = normalize(size);
+    if (!sizeNorm) return null;
+
+    return (
+      exactSpecialtyItemMatches.find((r) => normalize(r.size || '') === sizeNorm) || null
+    );
+  }, [exactSpecialtyItemMatches, size]);
+
+  const selectedSpecialtyContext = useMemo(() => {
+    return exactSpecialtySizeMatch || (exactSpecialtyItemMatches.length === 1 ? exactSpecialtyItemMatches[0] : null);
+  }, [exactSpecialtySizeMatch, exactSpecialtyItemMatches]);
 
   useEffect(() => {
     if (!vendor.trim()) return;
@@ -154,6 +300,36 @@ export default function TransactionsPage() {
   }, [exactVendorMatch, vendor]);
 
   useEffect(() => {
+    if (sourceMode === 'standard') {
+      if (!item.trim()) {
+        if (!size.trim()) {
+          setUnit('');
+        }
+        return;
+      }
+
+      if (exactStandardItemMatches.length === 1) {
+        const only = exactStandardItemMatches[0];
+
+        if (!size && only.size) {
+          setSize(only.size);
+        }
+
+        if (only.unit) {
+          setUnit(only.unit);
+        }
+        return;
+      }
+
+      if (exactStandardSizeMatch?.unit) {
+        setUnit(exactStandardSizeMatch.unit);
+        return;
+      }
+
+      setUnit('');
+      return;
+    }
+
     if (!item.trim()) {
       if (!size.trim()) {
         setUnit('');
@@ -161,36 +337,48 @@ export default function TransactionsPage() {
       return;
     }
 
-    if (exactItemMatches.length === 1) {
-      const only = exactItemMatches[0];
-
-      if (!vendor && only.vendor) {
-        setVendor(only.vendor);
-      }
+    if (exactSpecialtyItemMatches.length === 1) {
+      const only = exactSpecialtyItemMatches[0];
 
       if (!size && only.size) {
-        setSize(only.size);
+        setSize(only.size || '');
       }
 
-      if (only.unit) {
-        setUnit(only.unit);
+      const resolvedUnit = only.packaging || only.price_unit || '';
+      if (resolvedUnit) {
+        setUnit(resolvedUnit);
       }
       return;
     }
 
-    if (exactSizeMatch?.unit) {
-      setUnit(exactSizeMatch.unit);
+    if (exactSpecialtySizeMatch) {
+      const resolvedUnit =
+        exactSpecialtySizeMatch.packaging || exactSpecialtySizeMatch.price_unit || '';
+      setUnit(resolvedUnit);
       return;
     }
 
     setUnit('');
-  }, [exactItemMatches, exactSizeMatch, item, size, vendor]);
+  }, [
+    sourceMode,
+    item,
+    size,
+    exactStandardItemMatches,
+    exactStandardSizeMatch,
+    exactSpecialtyItemMatches,
+    exactSpecialtySizeMatch,
+  ]);
 
   async function handleSubmitTransaction() {
     setSubmitMessage('');
 
     if (!vendor.trim() || !item.trim() || !quantity.trim()) {
       setSubmitMessage('Vendor, item, and quantity are required.');
+      return;
+    }
+
+    if (sourceMode === 'specialty' && !mixNumber.trim()) {
+      setSubmitMessage('Mix number is required for specialty/custom transactions.');
       return;
     }
 
@@ -202,38 +390,71 @@ export default function TransactionsPage() {
 
     setIsSubmitting(true);
 
+    if (sourceMode === 'standard') {
+      const matchedRow = exactStandardSizeMatch || (exactStandardItemMatches.length === 1 ? exactStandardItemMatches[0] : null);
+
+      const { error } = await supabase.from('inventory_transactions').insert({
+        transaction_type: txType,
+        vendor: vendor.trim(),
+        item_name: item.trim(),
+        size: size.trim() || null,
+        unit: unit.trim() || null,
+        quantity: parsedQty,
+        location: location.trim() || null,
+        notes: notes.trim() || null,
+        catalog_source: 'standard',
+        catalog_row_id: matchedRow?.id || null,
+        mix_number: null,
+        custom_mix_label: null,
+        specialty_vendor_name: null,
+        specialty_product_line: null,
+        specialty_component_type: null,
+      });
+
+      if (error) {
+        console.error('Failed to submit transaction:', error);
+        setSubmitMessage(`Failed to submit: ${error.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      handleReset(true);
+      setSubmitMessage('Transaction submitted.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const matchedSpecialtyRow = selectedSpecialtyContext;
+    const effectiveItemName = customMixLabel.trim() || item.trim();
+
     const { error } = await supabase.from('inventory_transactions').insert({
       transaction_type: txType,
       vendor: vendor.trim(),
-      item_name: item.trim(),
+      item_name: effectiveItemName,
       size: size.trim() || null,
       unit: unit.trim() || null,
       quantity: parsedQty,
       location: location.trim() || null,
       notes: notes.trim() || null,
+      catalog_source: 'specialty',
+      catalog_row_id: matchedSpecialtyRow?.id || null,
+      mix_number: mixNumber.trim(),
+      custom_mix_label: customMixLabel.trim() || null,
+      specialty_vendor_name: vendor.trim(),
+      specialty_product_line: matchedSpecialtyRow?.product_line || null,
+      specialty_component_type: matchedSpecialtyRow?.component_type || null,
     });
 
     if (error) {
-      console.error('Failed to submit transaction:', error);
+      console.error('Failed to submit specialty transaction:', error);
       setSubmitMessage(`Failed to submit: ${error.message}`);
       setIsSubmitting(false);
       return;
     }
 
-    handleReset();
-    setSubmitMessage('Transaction submitted.');
+    handleReset(true);
+    setSubmitMessage('Specialty transaction submitted.');
     setIsSubmitting(false);
-  }
-
-  function handleReset() {
-    setTxType('intake');
-    setVendor('');
-    setItem('');
-    setSize('');
-    setUnit('');
-    setQuantity('');
-    setLocation('');
-    setNotes('');
   }
 
   return (
@@ -247,7 +468,7 @@ export default function TransactionsPage() {
             Log intake, outtake, or adjustments here.
           </p>
           <p className="mt-1 text-xs text-neutral-500">
-            Loaded {catalogRows.length} catalog rows and {vendors.length} vendors.
+            Loaded {standardCatalogRows.length} standard rows, {specialtyCatalogRows.length} specialty rows, and {vendors.length} vendors in the current mode.
           </p>
         </div>
 
@@ -258,6 +479,92 @@ export default function TransactionsPage() {
         )}
 
         <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <div className="inline-flex rounded-full border border-neutral-800 bg-black p-1">
+              <button
+                type="button"
+                onClick={() => setSourceMode('standard')}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  sourceMode === 'standard'
+                    ? 'bg-[#c8a43a] text-black'
+                    : 'text-neutral-300 hover:bg-neutral-900'
+                }`}
+              >
+                Standard Material
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSourceMode('specialty')}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  sourceMode === 'specialty'
+                    ? 'bg-[#c8a43a] text-black'
+                    : 'text-neutral-300 hover:bg-neutral-900'
+                }`}
+              >
+                Specialty / Custom Mix
+              </button>
+            </div>
+
+            <div className="text-xs text-neutral-500">
+              {sourceMode === 'standard'
+                ? 'Use the operational catalog for normal inventory intake, outtake, and adjustments.'
+                : 'Use specialty mode for system vendors, quote-required materials, and custom mixes tied to a mix number.'}
+            </div>
+          </div>
+
+          {sourceMode === 'specialty' && (
+            <div className="mb-6 rounded-2xl border border-blue-800/50 bg-blue-950/20 p-4">
+              <div className="text-sm font-semibold text-[#f7f0d0]">
+                Specialty / Custom Mix Guidance
+              </div>
+              <p className="mt-2 text-sm text-neutral-300">
+                Use this mode for specialty vendors and custom-to-Tenarten materials.
+                A mix number is required so these items can be identified consistently
+                later, even when the received material is vendor-specific or custom-labeled.
+              </p>
+            </div>
+          )}
+
+          {sourceMode === 'specialty' && selectedSpecialtyContext && (
+            <div className="mb-6 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4">
+              <div className="mb-3 text-sm font-semibold text-white">
+                Selected Specialty Context
+              </div>
+              <div className="grid gap-4 md:grid-cols-2 text-sm">
+                <div>
+                  <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                    Product Line
+                  </div>
+                  <div>{selectedSpecialtyContext.product_line || '—'}</div>
+                </div>
+
+                <div>
+                  <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                    Component Type
+                  </div>
+                  <div>{selectedSpecialtyContext.component_type || '—'}</div>
+                </div>
+
+                <div>
+                  <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                    Material Type
+                  </div>
+                  <div>{selectedSpecialtyContext.material_type || '—'}</div>
+                </div>
+
+                <div>
+                  <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                    Quote Status
+                  </div>
+                  <div>
+                    {selectedSpecialtyContext.quote_required ? 'Quote Required' : 'Standard pricing available'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm font-medium text-neutral-300">
@@ -285,6 +592,8 @@ export default function TransactionsPage() {
                   setItem('');
                   setSize('');
                   setUnit('');
+                  setMixNumber('');
+                  setCustomMixLabel('');
                   setSubmitMessage('');
                 }}
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
@@ -376,9 +685,45 @@ export default function TransactionsPage() {
                   setSubmitMessage('');
                 }}
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
-                placeholder="lb / bag / pallet"
+                placeholder={
+                  sourceMode === 'standard' ? 'lb / bag / pallet' : 'pail / system / bag / custom unit'
+                }
               />
             </div>
+
+            {sourceMode === 'specialty' && (
+              <>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-neutral-300">
+                    Mix Number
+                  </label>
+                  <input
+                    value={mixNumber}
+                    onChange={(e) => {
+                      setMixNumber(e.target.value);
+                      setSubmitMessage('');
+                    }}
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                    placeholder="e.g. MIX-117"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-neutral-300">
+                    Custom Mix Label
+                  </label>
+                  <input
+                    value={customMixLabel}
+                    onChange={(e) => {
+                      setCustomMixLabel(e.target.value);
+                      setSubmitMessage('');
+                    }}
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                    placeholder="Optional internal label"
+                  />
+                </div>
+              </>
+            )}
 
             <div className="md:col-span-2">
               <label className="mb-2 block text-sm font-medium text-neutral-300">
@@ -407,7 +752,11 @@ export default function TransactionsPage() {
                 }}
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 rows={4}
-                placeholder="Optional context, lot note, pallet note, or appearance note"
+                placeholder={
+                  sourceMode === 'standard'
+                    ? 'Optional context, lot note, pallet note, or appearance note'
+                    : 'Optional vendor, batch, or mix-specific context'
+                }
               />
             </div>
           </div>
@@ -423,7 +772,7 @@ export default function TransactionsPage() {
 
             <button
               onClick={() => {
-                handleReset();
+                handleReset(true);
                 setSubmitMessage('');
               }}
               className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 font-medium text-white transition hover:border-neutral-600 hover:bg-neutral-900"

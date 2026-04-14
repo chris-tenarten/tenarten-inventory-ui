@@ -21,6 +21,26 @@ type CatalogRow = {
   updated_at?: string;
 };
 
+type CatalogRowV2 = {
+  id: string;
+  vendor_name: string;
+  item_name: string;
+  size?: string | null;
+  category?: string | null;
+  subcategory?: string | null;
+  product_line?: string | null;
+  component_type?: string | null;
+  material_type?: string | null;
+  packaging?: string | null;
+  price?: string | number | null;
+  price_unit?: string | null;
+  quote_required?: boolean | null;
+  notes?: string | null;
+  source_url?: string | null;
+};
+
+type CatalogMode = 'standard' | 'specialty';
+
 const PAGE_SIZE = 100;
 const RECENT_ANNOTATIONS_LIMIT = 5;
 
@@ -88,10 +108,7 @@ function getSourcePdfUrl(row: Pick<CatalogRow, 'vendor' | 'source_file'>) {
   const sourceText = normalizeSourceValue(row.source_file);
   const vendorText = normalizeSourceValue(row.vendor);
 
-  if (
-    sourceText.includes('arim') ||
-    vendorText.includes('arim')
-  ) {
+  if (sourceText.includes('arim') || vendorText.includes('arim')) {
     return SOURCE_PDF_MAP.arim;
   }
 
@@ -143,10 +160,45 @@ function getSourcePdfUrl(row: Pick<CatalogRow, 'vendor' | 'source_file'>) {
   return null;
 }
 
+function mapV2ToCatalogRow(row: CatalogRowV2): CatalogRow {
+  const resolvedPrice =
+    row.quote_required
+      ? 'Quote Required'
+      : row.price !== null &&
+          row.price !== undefined &&
+          String(row.price).trim() !== ''
+        ? `${row.price}${row.price_unit ? ` ${row.price_unit}` : ''}`
+        : '';
+
+  return {
+    id: row.id,
+    vendor: row.vendor_name || '',
+    item_name: row.item_name || '',
+    size: row.size || '',
+    category: row.product_line || row.category || '',
+    material_class: row.material_type || row.subcategory || '',
+    unit: row.packaging || row.price_unit || '',
+    source_file: row.source_url || '',
+    notes: row.notes || '',
+    match_warning: '',
+    appearance_notes: '',
+    annotated_by: '',
+    price: resolvedPrice,
+    price_basis: [
+      row.component_type,
+      row.subcategory,
+      row.quote_required ? 'Quote Required' : '',
+    ]
+      .filter(Boolean)
+      .join(' • '),
+  };
+}
+
 export default function CatalogPage() {
   const [catalogRows, setCatalogRows] = useState<CatalogRow[]>([]);
   const [recentAnnotations, setRecentAnnotations] = useState<CatalogRow[]>([]);
 
+  const [mode, setMode] = useState<CatalogMode>('standard');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -180,7 +232,16 @@ export default function CatalogPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearch]);
+  }, [debouncedSearch, mode]);
+
+  useEffect(() => {
+    setSelected(null);
+    setNotes('');
+    setMatchWarning('');
+    setAppearanceNotes('');
+    setAnnotatedBy('');
+    setSaveMessage('');
+  }, [mode]);
 
   useEffect(() => {
     async function loadCatalog() {
@@ -196,28 +257,51 @@ export default function CatalogPage() {
       const to = from + PAGE_SIZE - 1;
       const term = debouncedSearch.toLowerCase();
 
+      if (mode === 'standard') {
+        const { data, error, count } = await supabase
+          .from('vendor_catalog')
+          .select('*', { count: 'exact' })
+          .or(
+            `item_name.ilike.%${term}%,vendor.ilike.%${term}%,size.ilike.%${term}%,unit.ilike.%${term}%,category.ilike.%${term}%,material_class.ilike.%${term}%`
+          )
+          .order('vendor', { ascending: true })
+          .order('item_name', { ascending: true })
+          .range(from, to);
+
+        if (error) {
+          console.error('Failed to load catalog:', error);
+          setLoadError(error.message);
+          return;
+        }
+
+        setCatalogRows((data as CatalogRow[]) || []);
+        setTotalCount(count || 0);
+        return;
+      }
+
       const { data, error, count } = await supabase
-        .from('vendor_catalog')
+        .from('vendor_catalog_v2')
         .select('*', { count: 'exact' })
         .or(
-          `item_name.ilike.%${term}%,vendor.ilike.%${term}%,size.ilike.%${term}%,unit.ilike.%${term}%,category.ilike.%${term}%,material_class.ilike.%${term}%`
+          `item_name.ilike.%${term}%,vendor_name.ilike.%${term}%,size.ilike.%${term}%,category.ilike.%${term}%,subcategory.ilike.%${term}%,product_line.ilike.%${term}%,component_type.ilike.%${term}%,material_type.ilike.%${term}%,packaging.ilike.%${term}%`
         )
-        .order('vendor', { ascending: true })
+        .order('vendor_name', { ascending: true })
         .order('item_name', { ascending: true })
         .range(from, to);
 
       if (error) {
-        console.error('Failed to load catalog:', error);
+        console.error('Failed to load specialty catalog:', error);
         setLoadError(error.message);
         return;
       }
 
-      setCatalogRows((data as CatalogRow[]) || []);
+      const mappedRows = ((data as CatalogRowV2[]) || []).map(mapV2ToCatalogRow);
+      setCatalogRows(mappedRows);
       setTotalCount(count || 0);
     }
 
     loadCatalog();
-  }, [debouncedSearch, currentPage]);
+  }, [debouncedSearch, currentPage, mode]);
 
   useEffect(() => {
     async function loadRecentAnnotations() {
@@ -244,10 +328,19 @@ export default function CatalogPage() {
 
   function selectRow(row: CatalogRow) {
     setSelected(row);
-    setNotes(row.notes || '');
-    setMatchWarning(row.match_warning || '');
-    setAppearanceNotes(row.appearance_notes || '');
-    setAnnotatedBy(row.annotated_by || '');
+
+    if (mode === 'standard') {
+      setNotes(row.notes || '');
+      setMatchWarning(row.match_warning || '');
+      setAppearanceNotes(row.appearance_notes || '');
+      setAnnotatedBy(row.annotated_by || '');
+    } else {
+      setNotes(row.notes || '');
+      setMatchWarning('');
+      setAppearanceNotes('');
+      setAnnotatedBy('');
+    }
+
     setSaveMessage('');
   }
 
@@ -271,7 +364,7 @@ export default function CatalogPage() {
   }
 
   async function handleSaveAnnotation() {
-    if (!selected) return;
+    if (!selected || mode !== 'standard') return;
 
     setIsSaving(true);
     setSaveMessage('');
@@ -316,7 +409,7 @@ export default function CatalogPage() {
   }
 
   async function handleDeleteAnnotation() {
-    if (!selected) return;
+    if (!selected || mode !== 'standard') return;
 
     const confirmed = window.confirm(
       `Delete all annotation fields for "${selected.item_name}"?`
@@ -381,6 +474,20 @@ export default function CatalogPage() {
       ? Math.min(currentPage * PAGE_SIZE, totalCount)
       : 0;
 
+  const specialtyIsQuoteRequired =
+    mode === 'specialty' &&
+    selected &&
+    typeof selected.price === 'string' &&
+    selected.price.toLowerCase().includes('quote');
+
+  const specialtyMetaParts =
+    mode === 'specialty' && selected?.price_basis
+      ? selected.price_basis.split(' • ').filter(Boolean)
+      : [];
+
+  const specialtyComponentType = specialtyMetaParts[0] || '';
+  const specialtySubcategory = specialtyMetaParts[1] || '';
+
   return (
     <div className="min-h-[calc(100vh-73px)] bg-black px-6 py-8 text-white">
       <div className="mx-auto max-w-7xl space-y-6">
@@ -394,6 +501,40 @@ export default function CatalogPage() {
         </div>
 
         <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <div className="inline-flex rounded-full border border-neutral-800 bg-black p-1">
+              <button
+                type="button"
+                onClick={() => setMode('standard')}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  mode === 'standard'
+                    ? 'bg-[#c8a43a] text-black'
+                    : 'text-neutral-300 hover:bg-neutral-900'
+                }`}
+              >
+                Standard Materials
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMode('specialty')}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  mode === 'specialty'
+                    ? 'bg-[#c8a43a] text-black'
+                    : 'text-neutral-300 hover:bg-neutral-900'
+                }`}
+              >
+                System / Specialty
+              </button>
+            </div>
+
+            <div className="text-xs text-neutral-500">
+              {mode === 'standard'
+                ? 'Operational catalog for transactions, inventory matching, and annotations.'
+                : 'Supplemental catalog for specialty vendors, systems, and quote-required materials.'}
+            </div>
+          </div>
+
           <label
             htmlFor="catalog-search"
             className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-neutral-500"
@@ -403,7 +544,11 @@ export default function CatalogPage() {
           <input
             id="catalog-search"
             className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
-            placeholder="Search material, vendor, size, unit, or category"
+            placeholder={
+              mode === 'standard'
+                ? 'Search material, vendor, size, unit, or category'
+                : 'Search specialty vendor, product line, component type, or material type'
+            }
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -448,8 +593,12 @@ export default function CatalogPage() {
                 <div className="max-h-[560px] space-y-2 overflow-y-auto pr-1">
                   {catalogRows.map((row) => {
                     const isSelected = selected?.id === row.id;
-                    const annotated = hasAnnotation(row);
+                    const annotated = mode === 'standard' && hasAnnotation(row);
                     const pdfUrl = getSourcePdfUrl(row);
+                    const isQuoteRequired =
+                      mode === 'specialty' &&
+                      typeof row.price === 'string' &&
+                      row.price.toLowerCase().includes('quote');
 
                     return (
                       <div
@@ -481,16 +630,30 @@ export default function CatalogPage() {
                                 )}
                               </div>
 
-                              {annotated && (
-                                <span className="shrink-0 rounded-full border border-yellow-700/60 bg-yellow-950/40 px-2 py-1 text-[11px] font-medium text-yellow-300">
-                                  Annotated
-                                </span>
-                              )}
+                              <div className="flex shrink-0 items-center gap-2">
+                                {annotated && (
+                                  <span className="rounded-full border border-yellow-700/60 bg-yellow-950/40 px-2 py-1 text-[11px] font-medium text-yellow-300">
+                                    Annotated
+                                  </span>
+                                )}
+
+                                {isQuoteRequired && (
+                                  <span className="rounded-full border border-blue-700/60 bg-blue-950/40 px-2 py-1 text-[11px] font-medium text-blue-300">
+                                    Quote Required
+                                  </span>
+                                )}
+                              </div>
                             </div>
 
-                            {row.match_warning?.trim() && (
+                            {mode === 'standard' && row.match_warning?.trim() && (
                               <div className="mt-2 text-xs text-red-400">
                                 {row.match_warning}
+                              </div>
+                            )}
+
+                            {mode === 'specialty' && row.price_basis?.trim() && (
+                              <div className="mt-2 text-xs text-neutral-400">
+                                {row.price_basis}
                               </div>
                             )}
                           </button>
@@ -576,7 +739,7 @@ export default function CatalogPage() {
           <section className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
             <div className="mb-4 flex items-start justify-between gap-3">
               <h2 className="text-lg font-semibold text-white">
-                Details & Annotation
+                {mode === 'standard' ? 'Details & Annotation' : 'Details'}
               </h2>
 
               {selected && getSourcePdfUrl(selected) && (
@@ -652,7 +815,7 @@ export default function CatalogPage() {
 
                   <div className="col-span-2">
                     <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
-                      Source File
+                      {mode === 'standard' ? 'Source File' : 'Source'}
                     </div>
                     <div className="break-all text-neutral-300">
                       {selected.source_file || '—'}
@@ -660,75 +823,171 @@ export default function CatalogPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-neutral-300">
-                    Annotated By
-                  </label>
-                  <input
-                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
-                    value={annotatedBy}
-                    onChange={(e) => setAnnotatedBy(e.target.value)}
-                    placeholder="Name"
-                  />
-                </div>
+                {mode === 'standard' ? (
+                  <>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-neutral-300">
+                        Annotated By
+                      </label>
+                      <input
+                        className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                        value={annotatedBy}
+                        onChange={(e) => setAnnotatedBy(e.target.value)}
+                        placeholder="Name"
+                      />
+                    </div>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-neutral-300">
-                    Notes
-                  </label>
-                  <textarea
-                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    rows={4}
-                  />
-                </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-neutral-300">
+                        Notes
+                      </label>
+                      <textarea
+                        className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        rows={4}
+                      />
+                    </div>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-neutral-300">
-                    Match Warning
-                  </label>
-                  <textarea
-                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
-                    value={matchWarning}
-                    onChange={(e) => setMatchWarning(e.target.value)}
-                    rows={3}
-                  />
-                </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-neutral-300">
+                        Match Warning
+                      </label>
+                      <textarea
+                        className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                        value={matchWarning}
+                        onChange={(e) => setMatchWarning(e.target.value)}
+                        rows={3}
+                      />
+                    </div>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-neutral-300">
-                    Appearance Notes
-                  </label>
-                  <textarea
-                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
-                    value={appearanceNotes}
-                    onChange={(e) => setAppearanceNotes(e.target.value)}
-                    rows={3}
-                  />
-                </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-neutral-300">
+                        Appearance Notes
+                      </label>
+                      <textarea
+                        className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                        value={appearanceNotes}
+                        onChange={(e) => setAppearanceNotes(e.target.value)}
+                        rows={3}
+                      />
+                    </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    className="rounded-xl bg-[#c8a43a] px-4 py-2.5 font-medium text-black transition hover:bg-[#d6b24a] disabled:cursor-not-allowed disabled:opacity-60"
-                    onClick={handleSaveAnnotation}
-                    disabled={isSaving || isDeleting}
-                  >
-                    {isSaving ? 'Saving...' : 'Save Annotation'}
-                  </button>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        className="rounded-xl bg-[#c8a43a] px-4 py-2.5 font-medium text-black transition hover:bg-[#d6b24a] disabled:cursor-not-allowed disabled:opacity-60"
+                        onClick={handleSaveAnnotation}
+                        disabled={isSaving || isDeleting}
+                      >
+                        {isSaving ? 'Saving...' : 'Save Annotation'}
+                      </button>
 
-                  <button
-                    className="rounded-xl border border-red-800 bg-red-950/40 px-4 py-2.5 font-medium text-red-200 transition hover:bg-red-950/60 disabled:cursor-not-allowed disabled:opacity-60"
-                    onClick={handleDeleteAnnotation}
-                    disabled={isSaving || isDeleting || !hasAnnotation(selected)}
-                  >
-                    {isDeleting ? 'Deleting...' : 'Delete Annotation'}
-                  </button>
+                      <button
+                        className="rounded-xl border border-red-800 bg-red-950/40 px-4 py-2.5 font-medium text-red-200 transition hover:bg-red-950/60 disabled:cursor-not-allowed disabled:opacity-60"
+                        onClick={handleDeleteAnnotation}
+                        disabled={isSaving || isDeleting || !hasAnnotation(selected)}
+                      >
+                        {isDeleting ? 'Deleting...' : 'Delete Annotation'}
+                      </button>
 
-                  {saveMessage && (
-                    <div className="text-sm text-neutral-300">{saveMessage}</div>
-                  )}
-                </div>
+                      {saveMessage && (
+                        <div className="text-sm text-neutral-300">{saveMessage}</div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="rounded-xl border border-blue-800/50 bg-blue-950/20 p-4">
+                      <div className="text-sm font-medium text-blue-200">
+                        Specialty catalog entry
+                      </div>
+                      <div className="mt-2 text-sm text-neutral-300">
+                        These records are supplemental vendor/system materials. They
+                        are currently read-only in Catalog and are not part of the
+                        standard annotation workflow.
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                          Product Line
+                        </div>
+                        <div>{selected.category || '—'}</div>
+                      </div>
+
+                      <div>
+                        <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                          Material Type
+                        </div>
+                        <div>{selected.material_class || '—'}</div>
+                      </div>
+
+                      <div>
+                        <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                          Component / System Role
+                        </div>
+                        <div>{specialtyComponentType || '—'}</div>
+                      </div>
+
+                      <div>
+                        <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                          Subcategory
+                        </div>
+                        <div>{specialtySubcategory || '—'}</div>
+                      </div>
+
+                      <div>
+                        <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                          Packaging
+                        </div>
+                        <div>{selected.unit || '—'}</div>
+                      </div>
+
+                      <div>
+                        <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                          Quote Status
+                        </div>
+                        <div>
+                          {specialtyIsQuoteRequired ? (
+                            <span className="rounded-full border border-blue-700/60 bg-blue-950/40 px-2 py-1 text-[11px] font-medium text-blue-300">
+                              Quote Required
+                            </span>
+                          ) : (
+                            'Standard pricing available'
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4">
+                      <div className="mb-2 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                        Pricing
+                      </div>
+                      <div className="text-sm text-white">
+                        {specialtyIsQuoteRequired ? (
+                          <span className="font-medium text-blue-300">
+                            Quote Required
+                          </span>
+                        ) : (
+                          formatPrice(selected.price)
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-neutral-300">
+                        Reference Notes
+                      </label>
+                      <textarea
+                        className="w-full rounded-xl border border-neutral-800 bg-neutral-900/70 p-3 text-neutral-300 outline-none"
+                        value={notes}
+                        readOnly
+                        rows={4}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-950/60 p-6 text-sm text-neutral-500">
@@ -762,7 +1021,10 @@ export default function CatalogPage() {
                   >
                     <button
                       type="button"
-                      onClick={() => selectRow(row)}
+                      onClick={() => {
+                        setMode('standard');
+                        selectRow(row);
+                      }}
                       className="min-w-0 flex-1 text-left transition hover:bg-neutral-900/50"
                     >
                       <div className="flex items-center gap-2">
