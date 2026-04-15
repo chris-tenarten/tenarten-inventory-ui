@@ -212,6 +212,7 @@ export default function TransactionsPage() {
       const items = uniqueSorted(standardVendorFilteredRows.map((r) => r.item_name));
 
       if (!q) return items.slice(0, 100);
+
       return items.filter((name) => normalize(name).includes(q)).slice(0, 100);
     }
 
@@ -219,6 +220,7 @@ export default function TransactionsPage() {
     const items = uniqueSorted(specialtyVendorFilteredRows.map((r) => r.item_name));
 
     if (!q) return items.slice(0, 100);
+
     return items.filter((name) => normalize(name).includes(q)).slice(0, 100);
   }, [sourceMode, standardVendorFilteredRows, specialtyVendorFilteredRows, item]);
 
@@ -235,6 +237,7 @@ export default function TransactionsPage() {
       const q = normalize(size);
 
       if (!q) return sizes.slice(0, 100);
+
       return sizes.filter((value) => normalize(value).includes(q)).slice(0, 100);
     }
 
@@ -249,6 +252,7 @@ export default function TransactionsPage() {
     const q = normalize(size);
 
     if (!q) return sizes.slice(0, 100);
+
     return sizes.filter((value) => normalize(value).includes(q)).slice(0, 100);
   }, [sourceMode, standardVendorFilteredRows, specialtyVendorFilteredRows, item, size]);
 
@@ -291,6 +295,30 @@ export default function TransactionsPage() {
   const selectedSpecialtyContext = useMemo(() => {
     return exactSpecialtySizeMatch || (exactSpecialtyItemMatches.length === 1 ? exactSpecialtyItemMatches[0] : null);
   }, [exactSpecialtySizeMatch, exactSpecialtyItemMatches]);
+
+  const resolvedSpecialtyIdentity = useMemo(() => {
+    if (!selectedSpecialtyContext) return null;
+
+    return {
+      header: `${selectedSpecialtyContext.vendor_name} • ${selectedSpecialtyContext.item_name}`,
+      subheader: [
+        selectedSpecialtyContext.product_line,
+        selectedSpecialtyContext.component_type,
+        selectedSpecialtyContext.material_type,
+      ]
+        .filter(Boolean)
+        .join(' • '),
+      quoteLabel: selectedSpecialtyContext.quote_required ? 'Quote Required' : '',
+    };
+  }, [selectedSpecialtyContext]);
+
+  const resolvedMixIdentity = useMemo(() => {
+    if (!mixNumber.trim()) return '';
+    if (customMixLabel.trim()) {
+      return `Mix ${mixNumber.trim()} — ${customMixLabel.trim()}`;
+    }
+    return `Mix ${mixNumber.trim()}`;
+  }, [mixNumber, customMixLabel]);
 
   useEffect(() => {
     if (!vendor.trim()) return;
@@ -391,7 +419,9 @@ export default function TransactionsPage() {
     setIsSubmitting(true);
 
     if (sourceMode === 'standard') {
-      const matchedRow = exactStandardSizeMatch || (exactStandardItemMatches.length === 1 ? exactStandardItemMatches[0] : null);
+      const matchedRow =
+        exactStandardSizeMatch ||
+        (exactStandardItemMatches.length === 1 ? exactStandardItemMatches[0] : null);
 
       const { error } = await supabase.from('inventory_transactions').insert({
         transaction_type: txType,
@@ -531,7 +561,38 @@ export default function TransactionsPage() {
               <div className="mb-3 text-sm font-semibold text-white">
                 Selected Specialty Context
               </div>
-              <div className="grid gap-4 md:grid-cols-2 text-sm">
+
+              {resolvedSpecialtyIdentity && (
+                <div className="rounded-xl border border-neutral-800 bg-black/30 p-4">
+                  <div className="text-sm font-semibold text-[#f7f0d0]">
+                    Resolved Material Identity
+                  </div>
+
+                  <div className="mt-2 text-sm font-medium text-white">
+                    {resolvedSpecialtyIdentity.header}
+                  </div>
+
+                  {resolvedSpecialtyIdentity.subheader && (
+                    <div className="mt-1 text-xs text-neutral-400">
+                      {resolvedSpecialtyIdentity.subheader}
+                    </div>
+                  )}
+
+                  {resolvedSpecialtyIdentity.quoteLabel && (
+                    <div className="mt-2 inline-flex rounded-full border border-blue-700/60 bg-blue-950/40 px-2 py-1 text-[11px] font-medium text-blue-300">
+                      {resolvedSpecialtyIdentity.quoteLabel}
+                    </div>
+                  )}
+
+                  {resolvedMixIdentity && (
+                    <div className="mt-3 text-sm font-medium text-[#c8a43a]">
+                      {resolvedMixIdentity}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm">
                 <div>
                   <div className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
                     Product Line
@@ -558,7 +619,9 @@ export default function TransactionsPage() {
                     Quote Status
                   </div>
                   <div>
-                    {selectedSpecialtyContext.quote_required ? 'Quote Required' : 'Standard pricing available'}
+                    {selectedSpecialtyContext.quote_required
+                      ? 'Quote Required'
+                      : 'Standard pricing available'}
                   </div>
                 </div>
               </div>
@@ -686,7 +749,9 @@ export default function TransactionsPage() {
                 }}
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 placeholder={
-                  sourceMode === 'standard' ? 'lb / bag / pallet' : 'pail / system / bag / custom unit'
+                  sourceMode === 'standard'
+                    ? 'lb / bag / pallet'
+                    : 'pail / system / bag / custom unit'
                 }
               />
             </div>
