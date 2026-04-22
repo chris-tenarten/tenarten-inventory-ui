@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 type AppendBalanceRow = {
@@ -40,6 +41,7 @@ type CatalogAnnotationRow = {
   updated_at?: string | null;
 };
 
+
 type ViewMode = 'append' | 'current';
 
 function normalizeKey(
@@ -65,7 +67,10 @@ function annotationSummary(row: Partial<CatalogAnnotationRow>) {
   return 'Annotated entry';
 }
 
+
+
 export default function InventoryPage() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<ViewMode>('append');
   const [guidedMode, setGuidedMode] = useState(true);
 
@@ -76,6 +81,7 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [search, setSearch] = useState('');
+
 
   useEffect(() => {
     async function loadData() {
@@ -147,6 +153,7 @@ export default function InventoryPage() {
 
     loadData();
   }, []);
+
 
   const filteredAppendRows = useMemo(() => {
     const q = search.toLowerCase();
@@ -272,7 +279,7 @@ export default function InventoryPage() {
             <div className="text-sm text-neutral-400">Loading...</div>
           ) : viewMode === 'append' ? (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-sm">
+              <table className="w-full min-w-[900px] text-sm">
                 <thead className="border-b border-neutral-800 text-neutral-400">
                   <tr>
                     <th className="py-3 text-left font-medium">Vendor</th>
@@ -280,6 +287,7 @@ export default function InventoryPage() {
                     <th className="py-3 text-left font-medium">Size</th>
                     <th className="py-3 text-left font-medium">Unit</th>
                     <th className="py-3 text-left font-medium">Qty</th>
+                    <th className="py-3 text-left font-medium">Entry</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -327,13 +335,29 @@ export default function InventoryPage() {
                         <td className="py-3 align-top font-medium text-green-400">
                           {row.qty_on_hand}
                         </td>
+                        <td className="py-3 align-top">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const params = new URLSearchParams({
+                                vendor: row.vendor,
+                                item_name: row.item_name,
+                                size: row.size || '',
+                              });
+                              router.push(`/transactions?${params.toString()}`);
+                            }}
+                            className="rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-1.5 text-xs font-medium text-neutral-200 transition hover:border-[#c8a43a] hover:text-white"
+                          >
+                            Edit Entries
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}
 
                   {filteredAppendRows.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="py-8 text-center text-sm text-neutral-500">
+                      <td colSpan={6} className="py-8 text-center text-sm text-neutral-500">
                         No matching inventory rows found.
                       </td>
                     </tr>
