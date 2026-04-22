@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 type StandardCatalogRow = {
   id: string;
@@ -25,7 +25,7 @@ type SpecialtyCatalogRow = {
   quote_required?: boolean | null;
 };
 
-type TransactionSourceMode = 'standard' | 'specialty';
+type TransactionSourceMode = "standard" | "specialty";
 
 type InventoryHistoryRow = {
   id: string;
@@ -54,8 +54,16 @@ type StandardLineItem = {
   quantity: string;
 };
 
+type InventoryItemRow = {
+  id: string;
+  vendor: string | null;
+  color: string | null;
+  size: string | null;
+  quantity: number | null;
+};
+
 const PAGE_SIZE = 1000;
-const PRESET_SIZE_OPTIONS = ['#3-5', '#4', '#5-7'];
+const PRESET_SIZE_OPTIONS = ["#3-5", "#4", "#5-7"];
 
 function normalize(value: string) {
   return value.trim().toLowerCase();
@@ -63,12 +71,12 @@ function normalize(value: string) {
 
 function uniqueSorted(values: string[]) {
   return Array.from(new Set(values.filter(Boolean))).sort((a, b) =>
-    a.localeCompare(b)
+    a.localeCompare(b),
   );
 }
 
 function formatDateTime(value: string | null) {
-  if (!value) return '—';
+  if (!value) return "—";
 
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return value;
@@ -77,31 +85,71 @@ function formatDateTime(value: string | null) {
 }
 
 function getHistoryDisplayVendor(row: InventoryHistoryRow) {
-  if (row.catalog_source === 'specialty') {
-    return row.specialty_vendor_name || row.vendor || '—';
+  if (row.catalog_source === "specialty") {
+    return row.specialty_vendor_name || row.vendor || "—";
   }
 
-  return row.vendor || row.specialty_vendor_name || '—';
+  return row.vendor || row.specialty_vendor_name || "—";
+}
+
+function getInventoryKeyVendor(row: InventoryHistoryRow) {
+  if (row.catalog_source === "specialty") {
+    return row.specialty_vendor_name?.trim() || row.vendor?.trim() || "";
+  }
+
+  return row.vendor?.trim() || row.specialty_vendor_name?.trim() || "";
+}
+
+function getSignedQuantity(
+  transactionType: string | null,
+  quantity: number | null | undefined,
+) {
+  const qty = Number(quantity ?? 0);
+
+  if (!Number.isFinite(qty)) return 0;
+
+  if (transactionType === "outtake") {
+    return -Math.abs(qty);
+  }
+
+  return Math.abs(qty);
 }
 
 function makeStandardLine(): StandardLineItem {
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
-    item_name: '',
-    size: '',
-    unit: '',
-    quantity: '',
+    item_name: "",
+    size: "",
+    unit: "",
+    quantity: "",
   };
+}
+
+function detectHistoryMode(rows: InventoryHistoryRow[]) {
+  const modes = Array.from(
+    new Set(
+      rows
+        .map((entry) => entry.catalog_source)
+        .filter(
+          (mode): mode is TransactionSourceMode =>
+            mode === "standard" || mode === "specialty",
+        ),
+    ),
+  );
+
+  if (modes.length === 1) return modes[0];
+  if (modes.length > 1) return "mixed";
+  return null;
 }
 
 export default function TransactionsPage() {
   const searchParams = useSearchParams();
 
-  const inventoryVendorParam = searchParams.get('vendor')?.trim() || '';
-  const inventoryItemParam = searchParams.get('item_name')?.trim() || '';
-  const inventorySizeParam = searchParams.get('size')?.trim() || '';
+  const inventoryVendorParam = searchParams.get("vendor")?.trim() || "";
+  const inventoryItemParam = searchParams.get("item_name")?.trim() || "";
+  const inventorySizeParam = searchParams.get("size")?.trim() || "";
   const hasInventoryContext = Boolean(
-    inventoryVendorParam || inventoryItemParam || inventorySizeParam
+    inventoryVendorParam || inventoryItemParam || inventorySizeParam,
   );
 
   const [standardCatalogRows, setStandardCatalogRows] = useState<
@@ -111,48 +159,245 @@ export default function TransactionsPage() {
     SpecialtyCatalogRow[]
   >([]);
   const [isLoadingCatalog, setIsLoadingCatalog] = useState(true);
-  const [loadError, setLoadError] = useState('');
+  const [loadError, setLoadError] = useState("");
 
   const [sourceMode, setSourceMode] =
-    useState<TransactionSourceMode>('standard');
-  const [txType, setTxType] = useState('intake');
+    useState<TransactionSourceMode>("standard");
+  const [txType, setTxType] = useState("intake");
 
-  const [vendor, setVendor] = useState('');
-  const [location, setLocation] = useState('');
-  const [notes, setNotes] = useState('');
+  const [vendor, setVendor] = useState("");
+  const [location, setLocation] = useState("");
+  const [notes, setNotes] = useState("");
 
   const [standardLines, setStandardLines] = useState<StandardLineItem[]>([
     makeStandardLine(),
   ]);
 
-  const [specialtyItem, setSpecialtyItem] = useState('');
-  const [specialtySize, setSpecialtySize] = useState('');
-  const [specialtyUnit, setSpecialtyUnit] = useState('');
-  const [specialtyQuantity, setSpecialtyQuantity] = useState('');
-  const [mixNumber, setMixNumber] = useState('');
-  const [customMixLabel, setCustomMixLabel] = useState('');
+  const [specialtyItem, setSpecialtyItem] = useState("");
+  const [specialtySize, setSpecialtySize] = useState("");
+  const [specialtyUnit, setSpecialtyUnit] = useState("");
+  const [specialtyQuantity, setSpecialtyQuantity] = useState("");
+  const [mixNumber, setMixNumber] = useState("");
+  const [customMixLabel, setCustomMixLabel] = useState("");
 
   const [inventoryHistoryRows, setInventoryHistoryRows] = useState<
     InventoryHistoryRow[]
   >([]);
   const [isLoadingInventoryHistory, setIsLoadingInventoryHistory] =
     useState(false);
-  const [inventoryHistoryError, setInventoryHistoryError] = useState('');
+  const [inventoryHistoryError, setInventoryHistoryError] = useState("");
   const [detectedInventoryMode, setDetectedInventoryMode] = useState<
-    TransactionSourceMode | 'mixed' | null
+    TransactionSourceMode | "mixed" | null
   >(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState('');
+  const [submitMessage, setSubmitMessage] = useState("");
 
   const [editingTransactionId, setEditingTransactionId] = useState<
     string | null
   >(null);
+  const [editingOriginalEntry, setEditingOriginalEntry] =
+    useState<InventoryHistoryRow | null>(null);
+
+  const [pendingDeleteEntry, setPendingDeleteEntry] =
+    useState<InventoryHistoryRow | null>(null);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [isDeletingEntry, setIsDeletingEntry] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState("");
+
+  const loadInventoryHistory = useCallback(async () => {
+    if (!hasInventoryContext) {
+      setInventoryHistoryRows([]);
+      setInventoryHistoryError("");
+      setDetectedInventoryMode(null);
+      setIsLoadingInventoryHistory(false);
+      return;
+    }
+
+    setIsLoadingInventoryHistory(true);
+    setInventoryHistoryError("");
+
+    const standardQuery = supabase
+      .from("inventory_transactions")
+      .select(
+        "id, created_at, transaction_type, vendor, specialty_vendor_name, item_name, size, unit, quantity, location, notes, catalog_source, mix_number, custom_mix_label, specialty_product_line, specialty_component_type",
+      )
+      .eq("item_name", inventoryItemParam)
+      .eq("size", inventorySizeParam)
+      .eq("vendor", inventoryVendorParam)
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    const specialtyQuery = supabase
+      .from("inventory_transactions")
+      .select(
+        "id, created_at, transaction_type, vendor, specialty_vendor_name, item_name, size, unit, quantity, location, notes, catalog_source, mix_number, custom_mix_label, specialty_product_line, specialty_component_type",
+      )
+      .eq("item_name", inventoryItemParam)
+      .eq("size", inventorySizeParam)
+      .eq("specialty_vendor_name", inventoryVendorParam)
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    const [standardResult, specialtyResult] = await Promise.all([
+      standardQuery,
+      specialtyQuery,
+    ]);
+
+    if (standardResult.error || specialtyResult.error) {
+      const firstError = standardResult.error || specialtyResult.error;
+      console.error("Failed to load matching transaction history:", firstError);
+      setInventoryHistoryError(
+        firstError?.message || "Failed to load matching transaction history.",
+      );
+      setInventoryHistoryRows([]);
+      setDetectedInventoryMode(null);
+      setIsLoadingInventoryHistory(false);
+      return;
+    }
+
+    const combined = [
+      ...((standardResult.data as InventoryHistoryRow[]) || []),
+      ...((specialtyResult.data as InventoryHistoryRow[]) || []),
+    ];
+
+    const deduped = new Map<string, InventoryHistoryRow>();
+    for (const entry of combined) {
+      if (!deduped.has(entry.id)) {
+        deduped.set(entry.id, entry);
+      }
+    }
+
+    const sorted = Array.from(deduped.values()).sort((a, b) => {
+      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return bTime - aTime;
+    });
+
+    setInventoryHistoryRows(sorted);
+
+    const resolvedMode = detectHistoryMode(sorted);
+
+    if (resolvedMode === "standard" || resolvedMode === "specialty") {
+      setDetectedInventoryMode(resolvedMode);
+      setSourceMode(resolvedMode);
+    } else {
+      setDetectedInventoryMode(resolvedMode);
+    }
+
+    setIsLoadingInventoryHistory(false);
+  }, [
+    hasInventoryContext,
+    inventoryVendorParam,
+    inventoryItemParam,
+    inventorySizeParam,
+  ]);
+
+  const reconcileInventoryItem = useCallback(
+    async (targetVendor: string, targetItemName: string, targetSize: string) => {
+      const vendorValue = targetVendor.trim();
+      const itemValue = targetItemName.trim();
+      const sizeValue = targetSize.trim();
+
+      if (!vendorValue || !itemValue) return;
+
+      const standardQuery = supabase
+        .from("inventory_transactions")
+        .select(
+          "id, transaction_type, vendor, specialty_vendor_name, item_name, size, quantity, catalog_source",
+        )
+        .eq("item_name", itemValue)
+        .eq("size", sizeValue)
+        .eq("vendor", vendorValue);
+
+      const specialtyQuery = supabase
+        .from("inventory_transactions")
+        .select(
+          "id, transaction_type, vendor, specialty_vendor_name, item_name, size, quantity, catalog_source",
+        )
+        .eq("item_name", itemValue)
+        .eq("size", sizeValue)
+        .eq("specialty_vendor_name", vendorValue);
+
+      const [standardResult, specialtyResult] = await Promise.all([
+        standardQuery,
+        specialtyQuery,
+      ]);
+
+      if (standardResult.error || specialtyResult.error) {
+        const firstError = standardResult.error || specialtyResult.error;
+        console.error("Failed to reconcile inventory item:", firstError);
+        return;
+      }
+
+      const combined = [
+        ...((standardResult.data as InventoryHistoryRow[]) || []),
+        ...((specialtyResult.data as InventoryHistoryRow[]) || []),
+      ];
+
+      const deduped = new Map<string, InventoryHistoryRow>();
+      for (const row of combined) {
+        if (!deduped.has(row.id)) {
+          deduped.set(row.id, row);
+        }
+      }
+
+      const netQuantity = Array.from(deduped.values()).reduce((sum, row) => {
+        return sum + getSignedQuantity(row.transaction_type, row.quantity);
+      }, 0);
+
+      const { data: existingRow, error: existingError } = await supabase
+        .from("inventory_items")
+        .select("id, vendor, color, size, quantity")
+        .eq("vendor", vendorValue)
+        .eq("color", itemValue)
+        .eq("size", sizeValue)
+        .maybeSingle<InventoryItemRow>();
+
+      if (existingError) {
+        console.error("Failed to look up inventory item:", existingError);
+        return;
+      }
+
+      if (existingRow) {
+        const { error: updateError } = await supabase
+          .from("inventory_items")
+          .update({
+            quantity: Math.max(0, netQuantity),
+          })
+          .eq("id", existingRow.id);
+
+        if (updateError) {
+          console.error("Failed to update inventory item:", updateError);
+        }
+
+        return;
+      }
+
+      if (netQuantity <= 0) {
+        return;
+      }
+
+      const { error: insertError } = await supabase
+        .from("inventory_items")
+        .insert({
+          vendor: vendorValue,
+          color: itemValue,
+          size: sizeValue,
+          quantity: netQuantity,
+        });
+
+      if (insertError) {
+        console.error("Failed to create inventory item:", insertError);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     async function loadCatalogs() {
       setIsLoadingCatalog(true);
-      setLoadError('');
+      setLoadError("");
 
       const allStandardRows: StandardCatalogRow[] = [];
       let standardFrom = 0;
@@ -162,15 +407,15 @@ export default function TransactionsPage() {
         const to = standardFrom + PAGE_SIZE - 1;
 
         const { data, error } = await supabase
-          .from('vendor_catalog')
-          .select('id, vendor, item_name, size, unit')
-          .order('vendor', { ascending: true })
-          .order('item_name', { ascending: true })
-          .order('size', { ascending: true })
+          .from("vendor_catalog")
+          .select("id, vendor, item_name, size, unit")
+          .order("vendor", { ascending: true })
+          .order("item_name", { ascending: true })
+          .order("size", { ascending: true })
           .range(standardFrom, to);
 
         if (error) {
-          console.error('Failed to load standard transaction options:', error);
+          console.error("Failed to load standard transaction options:", error);
           setLoadError(error.message);
           setIsLoadingCatalog(false);
           return;
@@ -178,10 +423,10 @@ export default function TransactionsPage() {
 
         const cleaned: StandardCatalogRow[] = (data || []).map((row) => ({
           id: row.id,
-          vendor: row.vendor || '',
-          item_name: row.item_name || '',
-          size: row.size || '',
-          unit: row.unit || '',
+          vendor: row.vendor || "",
+          item_name: row.item_name || "",
+          size: row.size || "",
+          unit: row.unit || "",
         }));
 
         allStandardRows.push(...cleaned);
@@ -201,17 +446,17 @@ export default function TransactionsPage() {
         const to = specialtyFrom + PAGE_SIZE - 1;
 
         const { data, error } = await supabase
-          .from('vendor_catalog_v2')
+          .from("vendor_catalog_v2")
           .select(
-            'id, vendor_name, item_name, size, packaging, price_unit, product_line, component_type, material_type, quote_required'
+            "id, vendor_name, item_name, size, packaging, price_unit, product_line, component_type, material_type, quote_required",
           )
-          .order('vendor_name', { ascending: true })
-          .order('item_name', { ascending: true })
-          .order('size', { ascending: true })
+          .order("vendor_name", { ascending: true })
+          .order("item_name", { ascending: true })
+          .order("size", { ascending: true })
           .range(specialtyFrom, to);
 
         if (error) {
-          console.error('Failed to load specialty transaction options:', error);
+          console.error("Failed to load specialty transaction options:", error);
           setLoadError(error.message);
           setIsLoadingCatalog(false);
           return;
@@ -219,14 +464,14 @@ export default function TransactionsPage() {
 
         const cleaned: SpecialtyCatalogRow[] = (data || []).map((row) => ({
           id: row.id,
-          vendor_name: row.vendor_name || '',
-          item_name: row.item_name || '',
-          size: row.size || '',
-          packaging: row.packaging || '',
-          price_unit: row.price_unit || '',
-          product_line: row.product_line || '',
-          component_type: row.component_type || '',
-          material_type: row.material_type || '',
+          vendor_name: row.vendor_name || "",
+          item_name: row.item_name || "",
+          size: row.size || "",
+          packaging: row.packaging || "",
+          price_unit: row.price_unit || "",
+          product_line: row.product_line || "",
+          component_type: row.component_type || "",
+          material_type: row.material_type || "",
           quote_required: row.quote_required ?? false,
         }));
 
@@ -249,21 +494,22 @@ export default function TransactionsPage() {
 
   const standardVendors = useMemo(
     () => uniqueSorted(standardCatalogRows.map((r) => r.vendor)),
-    [standardCatalogRows]
+    [standardCatalogRows],
   );
 
   const specialtyVendors = useMemo(
     () => uniqueSorted(specialtyCatalogRows.map((r) => r.vendor_name)),
-    [specialtyCatalogRows]
+    [specialtyCatalogRows],
   );
 
-  const vendors = sourceMode === 'standard' ? standardVendors : specialtyVendors;
+  const vendors =
+    sourceMode === "standard" ? standardVendors : specialtyVendors;
 
   const standardVendorFilteredRows = useMemo(() => {
     if (!vendor.trim()) return standardCatalogRows;
     const vendorNorm = normalize(vendor);
     return standardCatalogRows.filter(
-      (row) => normalize(row.vendor) === vendorNorm
+      (row) => normalize(row.vendor) === vendorNorm,
     );
   }, [standardCatalogRows, vendor]);
 
@@ -271,13 +517,13 @@ export default function TransactionsPage() {
     if (!vendor.trim()) return specialtyCatalogRows;
     const vendorNorm = normalize(vendor);
     return specialtyCatalogRows.filter(
-      (row) => normalize(row.vendor_name) === vendorNorm
+      (row) => normalize(row.vendor_name) === vendorNorm,
     );
   }, [specialtyCatalogRows, vendor]);
 
   const specialtyItemSuggestions = useMemo(() => {
     const items = uniqueSorted(
-      specialtyVendorFilteredRows.map((row) => row.item_name)
+      specialtyVendorFilteredRows.map((row) => row.item_name),
     );
     const q = normalize(specialtyItem);
 
@@ -291,7 +537,7 @@ export default function TransactionsPage() {
     if (!itemNorm) return [];
 
     return specialtyVendorFilteredRows.filter(
-      (row) => normalize(row.item_name) === itemNorm
+      (row) => normalize(row.item_name) === itemNorm,
     );
   }, [specialtyVendorFilteredRows, specialtyItem]);
 
@@ -303,15 +549,15 @@ export default function TransactionsPage() {
     }
 
     const baseRows = specialtyVendorFilteredRows.filter(
-      (row) => normalize(row.item_name) === itemNorm
+      (row) => normalize(row.item_name) === itemNorm,
     );
 
     const catalogSizes = baseRows
-      .map((row) => (row.size || '').trim())
+      .map((row) => (row.size || "").trim())
       .filter(Boolean);
 
     const sizes = uniqueSorted(
-      catalogSizes.length > 0 ? catalogSizes : PRESET_SIZE_OPTIONS
+      catalogSizes.length > 0 ? catalogSizes : PRESET_SIZE_OPTIONS,
     );
 
     const q = normalize(specialtySize);
@@ -331,7 +577,7 @@ export default function TransactionsPage() {
       specialtyVendorFilteredRows.find(
         (row) =>
           normalize(row.item_name) === itemNorm &&
-          normalize(row.size || '') === sizeNorm
+          normalize(row.size || "") === sizeNorm,
       ) || null
     );
   }, [specialtyVendorFilteredRows, specialtyItem, specialtySize, vendor]);
@@ -343,7 +589,7 @@ export default function TransactionsPage() {
   }, [exactSpecialtySizeMatch, specialtyItemMatches]);
 
   const resolvedMixIdentity = useMemo(() => {
-    if (!mixNumber.trim()) return '';
+    if (!mixNumber.trim()) return "";
     if (customMixLabel.trim()) {
       return `Mix ${mixNumber.trim()} — ${customMixLabel.trim()}`;
     }
@@ -351,162 +597,64 @@ export default function TransactionsPage() {
   }, [mixNumber, customMixLabel]);
 
   function resetFormForMode(mode: TransactionSourceMode) {
-    setLocation('');
-    setNotes('');
-    setSubmitMessage('');
+    setLocation("");
+    setNotes("");
+    setSubmitMessage("");
     setEditingTransactionId(null);
+    setEditingOriginalEntry(null);
 
-    if (mode === 'standard') {
+    if (mode === "standard") {
       setStandardLines([
         {
           ...makeStandardLine(),
           item_name:
-            hasInventoryContext && detectedInventoryMode === 'standard'
+            hasInventoryContext && detectedInventoryMode === "standard"
               ? inventoryItemParam
-              : '',
+              : "",
           size:
-            hasInventoryContext && detectedInventoryMode === 'standard'
+            hasInventoryContext && detectedInventoryMode === "standard"
               ? inventorySizeParam
-              : '',
-          unit: '',
-          quantity: '',
+              : "",
+          unit: "",
+          quantity: "",
         },
       ]);
-      setSpecialtyItem('');
-      setSpecialtySize('');
-      setSpecialtyUnit('');
-      setSpecialtyQuantity('');
-      setMixNumber('');
-      setCustomMixLabel('');
+      setSpecialtyItem("");
+      setSpecialtySize("");
+      setSpecialtyUnit("");
+      setSpecialtyQuantity("");
+      setMixNumber("");
+      setCustomMixLabel("");
     } else {
       setSpecialtyItem(
-        hasInventoryContext && detectedInventoryMode === 'specialty'
+        hasInventoryContext && detectedInventoryMode === "specialty"
           ? inventoryItemParam
-          : ''
+          : "",
       );
       setSpecialtySize(
-        hasInventoryContext && detectedInventoryMode === 'specialty'
+        hasInventoryContext && detectedInventoryMode === "specialty"
           ? inventorySizeParam
-          : ''
+          : "",
       );
-      setSpecialtyUnit('');
-      setSpecialtyQuantity('');
-      setMixNumber('');
-      setCustomMixLabel('');
+      setSpecialtyUnit("");
+      setSpecialtyQuantity("");
+      setMixNumber("");
+      setCustomMixLabel("");
       setStandardLines([makeStandardLine()]);
     }
   }
 
   useEffect(() => {
-    if (!hasInventoryContext) {
-      setInventoryHistoryRows([]);
-      setInventoryHistoryError('');
-      setDetectedInventoryMode(null);
-      setIsLoadingInventoryHistory(false);
-      return;
-    }
-
-    async function loadInventoryHistory() {
-      setIsLoadingInventoryHistory(true);
-      setInventoryHistoryError('');
-
-      const standardQuery = supabase
-        .from('inventory_transactions')
-        .select(
-          'id, created_at, transaction_type, vendor, specialty_vendor_name, item_name, size, unit, quantity, location, notes, catalog_source, mix_number, custom_mix_label, specialty_product_line, specialty_component_type'
-        )
-        .eq('item_name', inventoryItemParam)
-        .eq('size', inventorySizeParam)
-        .eq('vendor', inventoryVendorParam)
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      const specialtyQuery = supabase
-        .from('inventory_transactions')
-        .select(
-          'id, created_at, transaction_type, vendor, specialty_vendor_name, item_name, size, unit, quantity, location, notes, catalog_source, mix_number, custom_mix_label, specialty_product_line, specialty_component_type'
-        )
-        .eq('item_name', inventoryItemParam)
-        .eq('size', inventorySizeParam)
-        .eq('specialty_vendor_name', inventoryVendorParam)
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      const [standardResult, specialtyResult] = await Promise.all([
-        standardQuery,
-        specialtyQuery,
-      ]);
-
-      if (standardResult.error || specialtyResult.error) {
-        const firstError = standardResult.error || specialtyResult.error;
-        console.error('Failed to load matching transaction history:', firstError);
-        setInventoryHistoryError(
-          firstError?.message || 'Failed to load matching transaction history.'
-        );
-        setInventoryHistoryRows([]);
-        setDetectedInventoryMode(null);
-        setIsLoadingInventoryHistory(false);
-        return;
-      }
-
-      const combined = [
-        ...((standardResult.data as InventoryHistoryRow[]) || []),
-        ...((specialtyResult.data as InventoryHistoryRow[]) || []),
-      ];
-
-      const deduped = new Map<string, InventoryHistoryRow>();
-      for (const entry of combined) {
-        if (!deduped.has(entry.id)) {
-          deduped.set(entry.id, entry);
-        }
-      }
-
-      const sorted = Array.from(deduped.values()).sort((a, b) => {
-        const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
-        const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
-        return bTime - aTime;
-      });
-
-      setInventoryHistoryRows(sorted);
-
-      const modes = Array.from(
-        new Set(
-          sorted
-            .map((entry) => entry.catalog_source)
-            .filter(
-              (mode): mode is TransactionSourceMode =>
-                mode === 'standard' || mode === 'specialty'
-            )
-        )
-      );
-
-      if (modes.length === 1) {
-        setDetectedInventoryMode(modes[0]);
-        setSourceMode(modes[0]);
-      } else if (modes.length > 1) {
-        setDetectedInventoryMode('mixed');
-      } else {
-        setDetectedInventoryMode(null);
-      }
-
-      setIsLoadingInventoryHistory(false);
-    }
-
     loadInventoryHistory();
-  }, [
-    hasInventoryContext,
-    inventoryVendorParam,
-    inventoryItemParam,
-    inventorySizeParam,
-  ]);
+  }, [loadInventoryHistory]);
 
   useEffect(() => {
     if (!hasInventoryContext) return;
 
     setVendor(inventoryVendorParam);
-    setSubmitMessage('');
+    setSubmitMessage("");
 
-    if (sourceMode === 'standard') {
+    if (sourceMode === "standard") {
       setStandardLines((prev) => {
         const first = prev[0] || makeStandardLine();
         return [
@@ -514,8 +662,8 @@ export default function TransactionsPage() {
             ...first,
             item_name: inventoryItemParam,
             size: inventorySizeParam,
-            unit: '',
-            quantity: '',
+            unit: "",
+            quantity: "",
           },
           ...prev.slice(1),
         ];
@@ -523,7 +671,7 @@ export default function TransactionsPage() {
     } else {
       setSpecialtyItem(inventoryItemParam);
       setSpecialtySize(inventorySizeParam);
-      setSpecialtyQuantity('');
+      setSpecialtyQuantity("");
     }
   }, [
     hasInventoryContext,
@@ -534,11 +682,11 @@ export default function TransactionsPage() {
   ]);
 
   useEffect(() => {
-    if (sourceMode !== 'specialty') return;
+    if (sourceMode !== "specialty") return;
 
     if (!specialtyItem.trim()) {
       if (!specialtySize.trim()) {
-        setSpecialtyUnit('');
+        setSpecialtyUnit("");
       }
       return;
     }
@@ -547,10 +695,10 @@ export default function TransactionsPage() {
       const only = specialtyItemMatches[0];
 
       if (!specialtySize && only.size) {
-        setSpecialtySize(only.size || '');
+        setSpecialtySize(only.size || "");
       }
 
-      const resolvedUnit = only.packaging || only.price_unit || '';
+      const resolvedUnit = only.packaging || only.price_unit || "";
       if (resolvedUnit) {
         setSpecialtyUnit(resolvedUnit);
       }
@@ -559,12 +707,14 @@ export default function TransactionsPage() {
 
     if (exactSpecialtySizeMatch) {
       const resolvedUnit =
-        exactSpecialtySizeMatch.packaging || exactSpecialtySizeMatch.price_unit || '';
+        exactSpecialtySizeMatch.packaging ||
+        exactSpecialtySizeMatch.price_unit ||
+        "";
       setSpecialtyUnit(resolvedUnit);
       return;
     }
 
-    setSpecialtyUnit('');
+    setSpecialtyUnit("");
   }, [
     sourceMode,
     specialtyItem,
@@ -575,18 +725,22 @@ export default function TransactionsPage() {
 
   function updateStandardLine(
     lineId: string,
-    field: keyof Omit<StandardLineItem, 'id'>,
-    value: string
+    field: keyof Omit<StandardLineItem, "id">,
+    value: string,
   ) {
     setStandardLines((prev) =>
       prev.map((line) =>
-        line.id === lineId ? { ...line, [field]: value } : line
-      )
+        line.id === lineId ? { ...line, [field]: value } : line,
+      ),
     );
-    setSubmitMessage('');
+    setSubmitMessage("");
   }
 
-  function hydrateStandardLine(lineId: string, itemName: string, sizeValue: string) {
+  function hydrateStandardLine(
+    lineId: string,
+    itemName: string,
+    sizeValue: string,
+  ) {
     const itemNorm = normalize(itemName);
     const sizeNorm = normalize(sizeValue);
 
@@ -597,15 +751,15 @@ export default function TransactionsPage() {
     const match = standardVendorFilteredRows.find(
       (row) =>
         normalize(row.item_name) === itemNorm &&
-        normalize(row.size) === sizeNorm
+        normalize(row.size) === sizeNorm,
     );
 
     if (!match?.unit) return;
 
     setStandardLines((prev) =>
       prev.map((line) =>
-        line.id === lineId ? { ...line, unit: match.unit } : line
-      )
+        line.id === lineId ? { ...line, unit: match.unit } : line,
+      ),
     );
   }
 
@@ -620,7 +774,7 @@ export default function TransactionsPage() {
           {
             ...source,
             id: makeStandardLine().id,
-            quantity: '',
+            quantity: "",
           },
         ]);
         return;
@@ -639,111 +793,114 @@ export default function TransactionsPage() {
       }
       return prev.filter((line) => line.id !== lineId);
     });
-    setSubmitMessage('');
+    setSubmitMessage("");
   }
 
   function loadEntryIntoEdit(entry: InventoryHistoryRow) {
     const mode: TransactionSourceMode =
-      entry.catalog_source === 'specialty' ? 'specialty' : 'standard';
+      entry.catalog_source === "specialty" ? "specialty" : "standard";
 
     setEditingTransactionId(entry.id);
+    setEditingOriginalEntry(entry);
     setSourceMode(mode);
-    setTxType(entry.transaction_type || 'intake');
+    setTxType(entry.transaction_type || "intake");
     setVendor(
-      mode === 'specialty'
-        ? entry.specialty_vendor_name || entry.vendor || ''
-        : entry.vendor || entry.specialty_vendor_name || ''
+      mode === "specialty"
+        ? entry.specialty_vendor_name || entry.vendor || ""
+        : entry.vendor || entry.specialty_vendor_name || "",
     );
-    setLocation(entry.location || '');
-    setNotes(entry.notes || '');
-    setSubmitMessage('');
+    setLocation(entry.location || "");
+    setNotes(entry.notes || "");
+    setSubmitMessage("");
 
-    if (mode === 'standard') {
+    if (mode === "standard") {
       setStandardLines([
         {
           id: makeStandardLine().id,
-          item_name: entry.item_name || '',
-          size: entry.size || '',
-          unit: entry.unit || '',
+          item_name: entry.item_name || "",
+          size: entry.size || "",
+          unit: entry.unit || "",
           quantity:
             entry.quantity === null || entry.quantity === undefined
-              ? ''
+              ? ""
               : String(entry.quantity),
         },
       ]);
-      setSpecialtyItem('');
-      setSpecialtySize('');
-      setSpecialtyUnit('');
-      setSpecialtyQuantity('');
-      setMixNumber('');
-      setCustomMixLabel('');
+      setSpecialtyItem("");
+      setSpecialtySize("");
+      setSpecialtyUnit("");
+      setSpecialtyQuantity("");
+      setMixNumber("");
+      setCustomMixLabel("");
     } else {
-      setSpecialtyItem(entry.item_name || '');
-      setSpecialtySize(entry.size || '');
-      setSpecialtyUnit(entry.unit || '');
+      setSpecialtyItem(entry.item_name || "");
+      setSpecialtySize(entry.size || "");
+      setSpecialtyUnit(entry.unit || "");
       setSpecialtyQuantity(
         entry.quantity === null || entry.quantity === undefined
-          ? ''
-          : String(entry.quantity)
+          ? ""
+          : String(entry.quantity),
       );
-      setMixNumber(entry.mix_number || '');
-      setCustomMixLabel(entry.custom_mix_label || '');
+      setMixNumber(entry.mix_number || "");
+      setCustomMixLabel(entry.custom_mix_label || "");
       setStandardLines([makeStandardLine()]);
     }
   }
 
   function cancelEditMode() {
     setEditingTransactionId(null);
-    setSubmitMessage('');
+    setEditingOriginalEntry(null);
+    setSubmitMessage("");
     resetFormForMode(sourceMode);
   }
 
   function resetForm() {
-    setVendor(hasInventoryContext ? inventoryVendorParam : '');
-    setLocation('');
-    setNotes('');
-    setSubmitMessage('');
+    setVendor(hasInventoryContext ? inventoryVendorParam : "");
+    setLocation("");
+    setNotes("");
+    setSubmitMessage("");
     setEditingTransactionId(null);
+    setEditingOriginalEntry(null);
 
-    if (sourceMode === 'standard') {
+    if (sourceMode === "standard") {
       setStandardLines([
         {
           ...makeStandardLine(),
           item_name:
             hasInventoryContext &&
-            (detectedInventoryMode === 'standard' ||
-              detectedInventoryMode === 'mixed')
+            (detectedInventoryMode === "standard" ||
+              detectedInventoryMode === "mixed")
               ? inventoryItemParam
-              : '',
+              : "",
           size:
             hasInventoryContext &&
-            (detectedInventoryMode === 'standard' ||
-              detectedInventoryMode === 'mixed')
+            (detectedInventoryMode === "standard" ||
+              detectedInventoryMode === "mixed")
               ? inventorySizeParam
-              : '',
-          unit: '',
-          quantity: '',
+              : "",
+          unit: "",
+          quantity: "",
         },
       ]);
     } else {
       setSpecialtyItem(
         hasInventoryContext &&
-          (detectedInventoryMode === 'specialty' ||
-            detectedInventoryMode === 'mixed')
+          (detectedInventoryMode === "specialty" ||
+            detectedInventoryMode === "mixed")
           ? inventoryItemParam
-          : ''
+          : "",
       );
       setSpecialtySize(
         hasInventoryContext &&
-          (detectedInventoryMode === 'specialty' ||
-            detectedInventoryMode === 'mixed')
+          (detectedInventoryMode === "specialty" ||
+            detectedInventoryMode === "mixed")
           ? inventorySizeParam
-          : ''
+          : "",
       );
-      setSpecialtyUnit('');
-      setSpecialtyQuantity('');
-      setMixNumber('');
-      setCustomMixLabel('');
+      setSpecialtyUnit("");
+      setSpecialtyQuantity("");
+      setMixNumber("");
+      setCustomMixLabel("");
     }
   }
 
@@ -751,20 +908,20 @@ export default function TransactionsPage() {
     const line = standardLines[0];
 
     if (!vendor.trim() || !line?.item_name.trim() || !line?.quantity.trim()) {
-      setSubmitMessage('Vendor, item, and quantity are required.');
+      setSubmitMessage("Vendor, item, and quantity are required.");
       return;
     }
 
     const parsedQty = Number(line.quantity);
     if (Number.isNaN(parsedQty) || parsedQty <= 0) {
-      setSubmitMessage('Quantity must be a positive number.');
+      setSubmitMessage("Quantity must be a positive number.");
       return;
     }
 
     const matchedRow = standardVendorFilteredRows.find(
       (row) =>
         normalize(row.item_name) === normalize(line.item_name) &&
-        normalize(row.size) === normalize(line.size)
+        normalize(row.size) === normalize(line.size),
     );
 
     const payload = {
@@ -776,7 +933,7 @@ export default function TransactionsPage() {
       quantity: parsedQty,
       location: location.trim() || null,
       notes: notes.trim() || null,
-      catalog_source: 'standard',
+      catalog_source: "standard",
       catalog_row_id: matchedRow?.id || null,
       mix_number: null,
       custom_mix_label: null,
@@ -786,34 +943,51 @@ export default function TransactionsPage() {
     };
 
     const { error } = await supabase
-      .from('inventory_transactions')
+      .from("inventory_transactions")
       .update(payload)
-      .eq('id', editingTransactionId);
+      .eq("id", editingTransactionId);
 
     if (error) {
-      console.error('Failed to update transaction:', error);
+      console.error("Failed to update transaction:", error);
       setSubmitMessage(`Failed to save: ${error.message}`);
       return;
     }
 
+    if (editingOriginalEntry) {
+      await reconcileInventoryItem(
+        getInventoryKeyVendor(editingOriginalEntry),
+        editingOriginalEntry.item_name || "",
+        editingOriginalEntry.size || "",
+      );
+    }
+
+    await reconcileInventoryItem(
+      vendor.trim(),
+      line.item_name.trim(),
+      line.size.trim(),
+    );
+
+    await loadInventoryHistory();
     cancelEditMode();
-    setSubmitMessage('Changes saved.');
+    setSubmitMessage("Changes saved.");
   }
 
   async function saveSpecialtyEdit() {
     if (!vendor.trim() || !specialtyItem.trim() || !specialtyQuantity.trim()) {
-      setSubmitMessage('Vendor, item, and quantity are required.');
+      setSubmitMessage("Vendor, item, and quantity are required.");
       return;
     }
 
     if (!mixNumber.trim()) {
-      setSubmitMessage('Mix number is required for specialty/custom transactions.');
+      setSubmitMessage(
+        "Mix number is required for specialty/custom transactions.",
+      );
       return;
     }
 
     const parsedQty = Number(specialtyQuantity);
     if (Number.isNaN(parsedQty) || parsedQty <= 0) {
-      setSubmitMessage('Quantity must be a positive number.');
+      setSubmitMessage("Quantity must be a positive number.");
       return;
     }
 
@@ -828,33 +1002,49 @@ export default function TransactionsPage() {
       quantity: parsedQty,
       location: location.trim() || null,
       notes: notes.trim() || null,
-      catalog_source: 'specialty',
+      catalog_source: "specialty",
       catalog_row_id: selectedSpecialtyContext?.id || null,
       mix_number: mixNumber.trim(),
       custom_mix_label: customMixLabel.trim() || null,
       specialty_vendor_name: vendor.trim(),
       specialty_product_line: selectedSpecialtyContext?.product_line || null,
-      specialty_component_type: selectedSpecialtyContext?.component_type || null,
+      specialty_component_type:
+        selectedSpecialtyContext?.component_type || null,
     };
 
     const { error } = await supabase
-      .from('inventory_transactions')
+      .from("inventory_transactions")
       .update(payload)
-      .eq('id', editingTransactionId);
+      .eq("id", editingTransactionId);
 
     if (error) {
-      console.error('Failed to update specialty transaction:', error);
+      console.error("Failed to update specialty transaction:", error);
       setSubmitMessage(`Failed to save: ${error.message}`);
       return;
     }
 
+    if (editingOriginalEntry) {
+      await reconcileInventoryItem(
+        getInventoryKeyVendor(editingOriginalEntry),
+        editingOriginalEntry.item_name || "",
+        editingOriginalEntry.size || "",
+      );
+    }
+
+    await reconcileInventoryItem(
+      vendor.trim(),
+      effectiveItemName,
+      specialtySize.trim(),
+    );
+
+    await loadInventoryHistory();
     cancelEditMode();
-    setSubmitMessage('Changes saved.');
+    setSubmitMessage("Changes saved.");
   }
 
   async function submitStandardBulk() {
     if (!vendor.trim()) {
-      setSubmitMessage('Vendor is required.');
+      setSubmitMessage("Vendor is required.");
       return;
     }
 
@@ -867,26 +1057,25 @@ export default function TransactionsPage() {
         quantity: line.quantity.trim(),
       }))
       .filter(
-        (line) =>
-          line.item_name || line.size || line.unit || line.quantity
+        (line) => line.item_name || line.size || line.unit || line.quantity,
       );
 
     if (cleanedLines.length === 0) {
-      setSubmitMessage('Add at least one line item.');
+      setSubmitMessage("Add at least one line item.");
       return;
     }
 
     for (const line of cleanedLines) {
       if (!line.item_name || !line.quantity) {
         setSubmitMessage(
-          'Each populated line needs at least an item and quantity.'
+          "Each populated line needs at least an item and quantity.",
         );
         return;
       }
 
       const parsedQty = Number(line.quantity);
       if (Number.isNaN(parsedQty) || parsedQty <= 0) {
-        setSubmitMessage('Each line quantity must be a positive number.');
+        setSubmitMessage("Each line quantity must be a positive number.");
         return;
       }
     }
@@ -897,7 +1086,7 @@ export default function TransactionsPage() {
       const matchedRow = standardVendorFilteredRows.find(
         (row) =>
           normalize(row.item_name) === normalize(line.item_name) &&
-          normalize(row.size) === normalize(line.size)
+          normalize(row.size) === normalize(line.size),
       );
 
       return {
@@ -909,7 +1098,7 @@ export default function TransactionsPage() {
         quantity: parsedQty,
         location: location.trim() || null,
         notes: notes.trim() || null,
-        catalog_source: 'standard',
+        catalog_source: "standard",
         catalog_row_id: matchedRow?.id || null,
         mix_number: null,
         custom_mix_label: null,
@@ -920,37 +1109,53 @@ export default function TransactionsPage() {
     });
 
     const { error } = await supabase
-      .from('inventory_transactions')
+      .from("inventory_transactions")
       .insert(payload);
 
     if (error) {
-      console.error('Failed to submit bulk standard transaction:', error);
+      console.error("Failed to submit bulk standard transaction:", error);
       setSubmitMessage(`Failed to submit: ${error.message}`);
       return;
     }
 
+    const uniqueKeys = Array.from(
+      new Set(
+        payload.map((line) =>
+          `${vendor.trim()}||${line.item_name}||${line.size || ""}`,
+        ),
+      ),
+    );
+
+    for (const key of uniqueKeys) {
+      const [targetVendor, targetItem, targetSize] = key.split("||");
+      await reconcileInventoryItem(targetVendor, targetItem, targetSize);
+    }
+
+    await loadInventoryHistory();
     resetForm();
     setSubmitMessage(
       payload.length === 1
-        ? 'Transaction recorded.'
-        : `${payload.length} transactions recorded.`
+        ? "Transaction recorded and inventory updated."
+        : `${payload.length} transactions recorded and inventory updated.`,
     );
   }
 
   async function submitSpecialtySingle() {
     if (!vendor.trim() || !specialtyItem.trim() || !specialtyQuantity.trim()) {
-      setSubmitMessage('Vendor, item, and quantity are required.');
+      setSubmitMessage("Vendor, item, and quantity are required.");
       return;
     }
 
     if (!mixNumber.trim()) {
-      setSubmitMessage('Mix number is required for specialty/custom transactions.');
+      setSubmitMessage(
+        "Mix number is required for specialty/custom transactions.",
+      );
       return;
     }
 
     const parsedQty = Number(specialtyQuantity);
     if (Number.isNaN(parsedQty) || parsedQty <= 0) {
-      setSubmitMessage('Quantity must be a positive number.');
+      setSubmitMessage("Quantity must be a positive number.");
       return;
     }
 
@@ -965,36 +1170,105 @@ export default function TransactionsPage() {
       quantity: parsedQty,
       location: location.trim() || null,
       notes: notes.trim() || null,
-      catalog_source: 'specialty',
+      catalog_source: "specialty",
       catalog_row_id: selectedSpecialtyContext?.id || null,
       mix_number: mixNumber.trim(),
       custom_mix_label: customMixLabel.trim() || null,
       specialty_vendor_name: vendor.trim(),
       specialty_product_line: selectedSpecialtyContext?.product_line || null,
-      specialty_component_type: selectedSpecialtyContext?.component_type || null,
+      specialty_component_type:
+        selectedSpecialtyContext?.component_type || null,
     };
 
     const { error } = await supabase
-      .from('inventory_transactions')
+      .from("inventory_transactions")
       .insert(payload);
 
     if (error) {
-      console.error('Failed to submit specialty transaction:', error);
+      console.error("Failed to submit specialty transaction:", error);
       setSubmitMessage(`Failed to submit: ${error.message}`);
       return;
     }
 
+    await reconcileInventoryItem(
+      vendor.trim(),
+      effectiveItemName,
+      specialtySize.trim(),
+    );
+
+    await loadInventoryHistory();
     resetForm();
-    setSubmitMessage('Transaction recorded.');
+    setSubmitMessage("Transaction recorded and inventory updated.");
+  }
+
+  async function handleDeleteEntry() {
+    if (!pendingDeleteEntry) {
+      setDeleteMessage("No transaction selected for deletion.");
+      return;
+    }
+
+    setDeleteMessage("");
+    setIsDeletingEntry(true);
+
+    try {
+      const response = await fetch("/api/delete-transaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: deletePassword,
+          transactionId: pendingDeleteEntry.id,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setDeleteMessage(result.error || "Delete failed.");
+        return;
+      }
+
+      await reconcileInventoryItem(
+        getInventoryKeyVendor(pendingDeleteEntry),
+        pendingDeleteEntry.item_name || "",
+        pendingDeleteEntry.size || "",
+      );
+
+      const remainingRows = inventoryHistoryRows.filter(
+        (entry) => entry.id !== pendingDeleteEntry.id,
+      );
+      const resolvedMode = detectHistoryMode(remainingRows);
+
+      setInventoryHistoryRows(remainingRows);
+      setDetectedInventoryMode(resolvedMode);
+
+      if (resolvedMode === "standard" || resolvedMode === "specialty") {
+        setSourceMode(resolvedMode);
+      }
+
+      if (editingTransactionId === pendingDeleteEntry.id) {
+        cancelEditMode();
+      }
+
+      setPendingDeleteEntry(null);
+      setDeletePassword("");
+      setSubmitMessage("Transaction deleted and inventory updated.");
+    } catch (error) {
+      console.error("Failed to delete transaction:", error);
+      setDeleteMessage("Delete failed.");
+    } finally {
+      setIsDeletingEntry(false);
+    }
   }
 
   async function handleSubmitTransaction() {
-    setSubmitMessage('');
+    setSubmitMessage("");
     setIsSubmitting(true);
 
     try {
       if (editingTransactionId) {
-        if (sourceMode === 'standard') {
+        if (sourceMode === "standard") {
           await saveStandardEdit();
         } else {
           await saveSpecialtyEdit();
@@ -1002,7 +1276,7 @@ export default function TransactionsPage() {
         return;
       }
 
-      if (sourceMode === 'standard') {
+      if (sourceMode === "standard") {
         await submitStandardBulk();
       } else {
         await submitSpecialtySingle();
@@ -1023,8 +1297,8 @@ export default function TransactionsPage() {
             Log intake, outtake, or adjustments here.
           </p>
           <p className="mt-1 text-xs text-neutral-500">
-            Loaded {standardCatalogRows.length} standard rows,{' '}
-            {specialtyCatalogRows.length} specialty rows, and {vendors.length}{' '}
+            Loaded {standardCatalogRows.length} standard rows,{" "}
+            {specialtyCatalogRows.length} specialty rows, and {vendors.length}{" "}
             vendors in the current mode.
           </p>
         </div>
@@ -1041,45 +1315,47 @@ export default function TransactionsPage() {
               Opened from Inventory
             </div>
             <p className="mt-2 text-sm text-neutral-300">
-              This page was opened from Append View for {inventoryVendorParam || '—'} •{' '}
-              {inventoryItemParam || '—'} • {inventorySizeParam || '—'}.
+              This page was opened from Append View for{" "}
+              {inventoryVendorParam || "—"} • {inventoryItemParam || "—"} •{" "}
+              {inventorySizeParam || "—"}.
             </p>
           </div>
         )}
 
-        {hasInventoryContext && detectedInventoryMode === 'standard' && (
+        {hasInventoryContext && detectedInventoryMode === "standard" && (
           <div className="rounded-2xl border border-green-800/50 bg-green-950/20 p-4">
             <div className="text-sm font-semibold text-[#f7f0d0]">
               Mode Auto-Detected: Standard
             </div>
             <p className="mt-2 text-sm text-neutral-300">
-              All matching transactions for this inventory row are standard entries,
-              so the page switched to Standard Material automatically.
+              All matching transactions for this inventory row are standard
+              entries, so the page switched to Standard Material automatically.
             </p>
           </div>
         )}
 
-        {hasInventoryContext && detectedInventoryMode === 'specialty' && (
+        {hasInventoryContext && detectedInventoryMode === "specialty" && (
           <div className="rounded-2xl border border-blue-800/50 bg-blue-950/20 p-4">
             <div className="text-sm font-semibold text-[#f7f0d0]">
               Mode Auto-Detected: Specialty
             </div>
             <p className="mt-2 text-sm text-neutral-300">
               All matching transactions for this inventory row are specialty
-              entries, so the page switched to Specialty / Custom Mix automatically.
+              entries, so the page switched to Specialty / Custom Mix
+              automatically.
             </p>
           </div>
         )}
 
-        {hasInventoryContext && detectedInventoryMode === 'mixed' && (
+        {hasInventoryContext && detectedInventoryMode === "mixed" && (
           <div className="rounded-2xl border border-yellow-800/50 bg-yellow-950/20 p-4">
             <div className="text-sm font-semibold text-[#f7f0d0]">
               Mixed History Detected
             </div>
             <p className="mt-2 text-sm text-neutral-300">
               Matching transactions include both standard and specialty entries.
-              Review the matching rows below and choose the exact one you want to
-              edit, or switch modes and record a new transaction.
+              Review the matching rows below and choose the exact one you want
+              to edit, or switch modes and record a new transaction.
             </p>
           </div>
         )}
@@ -1091,7 +1367,10 @@ export default function TransactionsPage() {
                 Matching Transactions
               </h2>
               <p className="mt-1 text-xs text-neutral-500">
-                Click <span className="font-semibold text-neutral-300">Edit Entry</span>{' '}
+                Click{" "}
+                <span className="font-semibold text-neutral-300">
+                  Edit Entry
+                </span>{" "}
                 to load the exact historical row into the form below.
               </p>
             </div>
@@ -1119,7 +1398,7 @@ export default function TransactionsPage() {
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="rounded-full border border-neutral-700 bg-neutral-900 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-neutral-300">
-                            {entry.transaction_type || 'Transaction'}
+                            {entry.transaction_type || "Transaction"}
                           </span>
 
                           {entry.catalog_source && (
@@ -1137,48 +1416,54 @@ export default function TransactionsPage() {
 
                         <div className="mt-3 grid gap-2 text-sm text-neutral-300 sm:grid-cols-2">
                           <div>
-                            <span className="text-neutral-500">Vendor:</span>{' '}
+                            <span className="text-neutral-500">Vendor:</span>{" "}
                             {getHistoryDisplayVendor(entry)}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Item:</span>{' '}
-                            {entry.item_name || '—'}
+                            <span className="text-neutral-500">Item:</span>{" "}
+                            {entry.item_name || "—"}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Size:</span>{' '}
-                            {entry.size || '—'}
+                            <span className="text-neutral-500">Size:</span>{" "}
+                            {entry.size || "—"}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Unit:</span>{' '}
-                            {entry.unit || '—'}
+                            <span className="text-neutral-500">Unit:</span>{" "}
+                            {entry.unit || "—"}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Quantity:</span>{' '}
-                            {entry.quantity ?? '—'}
+                            <span className="text-neutral-500">Quantity:</span>{" "}
+                            {entry.quantity ?? "—"}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Created:</span>{' '}
+                            <span className="text-neutral-500">Created:</span>{" "}
                             {formatDateTime(entry.created_at)}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Location:</span>{' '}
-                            {entry.location || '—'}
+                            <span className="text-neutral-500">Location:</span>{" "}
+                            {entry.location || "—"}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Mix #:</span>{' '}
-                            {entry.mix_number || '—'}
+                            <span className="text-neutral-500">Mix #:</span>{" "}
+                            {entry.mix_number || "—"}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Custom Mix Label:</span>{' '}
-                            {entry.custom_mix_label || '—'}
+                            <span className="text-neutral-500">
+                              Custom Mix Label:
+                            </span>{" "}
+                            {entry.custom_mix_label || "—"}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Product Line:</span>{' '}
-                            {entry.specialty_product_line || '—'}
+                            <span className="text-neutral-500">
+                              Product Line:
+                            </span>{" "}
+                            {entry.specialty_product_line || "—"}
                           </div>
                           <div>
-                            <span className="text-neutral-500">Component Type:</span>{' '}
-                            {entry.specialty_component_type || '—'}
+                            <span className="text-neutral-500">
+                              Component Type:
+                            </span>{" "}
+                            {entry.specialty_component_type || "—"}
                           </div>
                         </div>
 
@@ -1187,19 +1472,33 @@ export default function TransactionsPage() {
                             Notes
                           </div>
                           <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 px-3 py-2 text-sm text-neutral-300">
-                            {entry.notes?.trim() || '—'}
+                            {entry.notes?.trim() || "—"}
                           </div>
                         </div>
                       </div>
 
                       <div className="shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => loadEntryIntoEdit(entry)}
-                          className="rounded-xl border border-[#c8a43a]/50 bg-[#c8a43a]/10 px-3 py-2 text-sm font-medium text-[#f0d98a] transition hover:bg-[#c8a43a]/20"
-                        >
-                          Edit Entry
-                        </button>
+                        <div className="flex flex-wrap justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => loadEntryIntoEdit(entry)}
+                            className="rounded-xl border border-[#c8a43a]/50 bg-[#c8a43a]/10 px-3 py-2 text-sm font-medium text-[#f0d98a] transition hover:bg-[#c8a43a]/20"
+                          >
+                            Edit Entry
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDeleteMessage("");
+                              setDeletePassword("");
+                              setPendingDeleteEntry(entry);
+                            }}
+                            className="rounded-xl border border-red-800/70 bg-red-950/30 px-3 py-2 text-sm font-medium text-red-300 transition hover:bg-red-950/50"
+                          >
+                            Delete Entry
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1209,20 +1508,96 @@ export default function TransactionsPage() {
           </div>
         )}
 
+        {pendingDeleteEntry && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+            <div className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-950 p-6 shadow-2xl">
+              <h2 className="text-lg font-semibold text-[#f7f0d0]">
+                Delete Transaction Entry
+              </h2>
+              <p className="mt-2 text-sm text-neutral-300">
+                This permanently removes the selected historical transaction and
+                will change Append View balances.
+              </p>
+
+              <div className="mt-4 rounded-xl border border-neutral-800 bg-neutral-900/60 p-3 text-sm text-neutral-300">
+                <div>
+                  <span className="text-neutral-500">Vendor:</span>{" "}
+                  {getHistoryDisplayVendor(pendingDeleteEntry)}
+                </div>
+                <div>
+                  <span className="text-neutral-500">Item:</span>{" "}
+                  {pendingDeleteEntry.item_name || "—"}
+                </div>
+                <div>
+                  <span className="text-neutral-500">Size:</span>{" "}
+                  {pendingDeleteEntry.size || "—"}
+                </div>
+                <div>
+                  <span className="text-neutral-500">Quantity:</span>{" "}
+                  {pendingDeleteEntry.quantity ?? "—"}
+                </div>
+              </div>
+
+              <label
+                htmlFor="delete-entry-password"
+                className="mt-4 block text-xs font-medium uppercase tracking-[0.14em] text-neutral-500"
+              >
+                Admin Password
+              </label>
+              <input
+                id="delete-entry-password"
+                type="password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                className="mt-2 w-full rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
+                placeholder="Enter admin password"
+              />
+
+              {deleteMessage && (
+                <div className="mt-3 text-sm text-red-300">{deleteMessage}</div>
+              )}
+
+              <div className="mt-6 flex flex-wrap justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isDeletingEntry) return;
+                    setPendingDeleteEntry(null);
+                    setDeletePassword("");
+                    setDeleteMessage("");
+                  }}
+                  className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm font-medium text-white transition hover:border-neutral-600 hover:bg-neutral-900"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteEntry}
+                  disabled={isDeletingEntry}
+                  className="rounded-xl border border-red-800/70 bg-red-950/40 px-4 py-2.5 text-sm font-medium text-red-200 transition hover:bg-red-950/60 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isDeletingEntry ? "Deleting..." : "Delete Entry"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
           <div className="mb-6 flex flex-wrap items-center gap-3">
             <div className="inline-flex rounded-full border border-neutral-800 bg-black p-1">
               <button
                 type="button"
                 onClick={() => {
-                  setSourceMode('standard');
-                  setSubmitMessage('');
+                  setSourceMode("standard");
+                  setSubmitMessage("");
                   setEditingTransactionId(null);
+                  setEditingOriginalEntry(null);
                 }}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  sourceMode === 'standard'
-                    ? 'bg-[#c8a43a] text-black'
-                    : 'text-neutral-300 hover:bg-neutral-900'
+                  sourceMode === "standard"
+                    ? "bg-[#c8a43a] text-black"
+                    : "text-neutral-300 hover:bg-neutral-900"
                 }`}
               >
                 Standard Material
@@ -1231,14 +1606,15 @@ export default function TransactionsPage() {
               <button
                 type="button"
                 onClick={() => {
-                  setSourceMode('specialty');
-                  setSubmitMessage('');
+                  setSourceMode("specialty");
+                  setSubmitMessage("");
                   setEditingTransactionId(null);
+                  setEditingOriginalEntry(null);
                 }}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  sourceMode === 'specialty'
-                    ? 'bg-[#c8a43a] text-black'
-                    : 'text-neutral-300 hover:bg-neutral-900'
+                  sourceMode === "specialty"
+                    ? "bg-[#c8a43a] text-black"
+                    : "text-neutral-300 hover:bg-neutral-900"
                 }`}
               >
                 Specialty / Custom Mix
@@ -1247,10 +1623,10 @@ export default function TransactionsPage() {
 
             <div className="text-xs text-neutral-500">
               {editingTransactionId
-                ? 'Edit mode is active.'
-                : sourceMode === 'standard'
-                ? 'Standard mode supports bulk entry by default.'
-                : 'Specialty mode remains single-entry for now.'}
+                ? "Edit mode is active."
+                : sourceMode === "standard"
+                  ? "Standard mode supports bulk entry by default."
+                  : "Specialty mode remains single-entry for now."}
             </div>
           </div>
 
@@ -1260,8 +1636,8 @@ export default function TransactionsPage() {
                 Editing Existing Transaction
               </div>
               <p className="mt-2 text-sm text-neutral-300">
-                The form below is editing a real historical row. Saving will update
-                that exact transaction in the database.
+                The form below is editing a real historical row. Saving will
+                update that exact transaction in the database.
               </p>
               <div className="mt-3">
                 <button
@@ -1275,15 +1651,15 @@ export default function TransactionsPage() {
             </div>
           )}
 
-          {sourceMode === 'specialty' && (
+          {sourceMode === "specialty" && (
             <div className="mb-6 rounded-2xl border border-blue-800/50 bg-blue-950/20 p-4">
               <div className="text-sm font-semibold text-[#f7f0d0]">
                 Specialty / Custom Mix Guidance
               </div>
               <p className="mt-2 text-sm text-neutral-300">
                 Use this mode for specialty vendors and custom-to-Tenarten
-                materials. A mix number is required so these items can be identified
-                consistently later.
+                materials. A mix number is required so these items can be
+                identified consistently later.
               </p>
             </div>
           )}
@@ -1297,7 +1673,7 @@ export default function TransactionsPage() {
                 value={txType}
                 onChange={(e) => {
                   setTxType(e.target.value);
-                  setSubmitMessage('');
+                  setSubmitMessage("");
                 }}
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
               >
@@ -1315,14 +1691,14 @@ export default function TransactionsPage() {
                 value={vendor}
                 onChange={(e) => {
                   setVendor(e.target.value);
-                  setSubmitMessage('');
+                  setSubmitMessage("");
                   if (!editingTransactionId) {
-                    if (sourceMode === 'standard') {
+                    if (sourceMode === "standard") {
                       setStandardLines((prev) =>
-                        prev.map((line) => ({ ...line, unit: '' }))
+                        prev.map((line) => ({ ...line, unit: "" })),
                       );
                     } else {
-                      setSpecialtyUnit('');
+                      setSpecialtyUnit("");
                     }
                   }
                 }}
@@ -1346,7 +1722,7 @@ export default function TransactionsPage() {
                 value={location}
                 onChange={(e) => {
                   setLocation(e.target.value);
-                  setSubmitMessage('');
+                  setSubmitMessage("");
                 }}
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 placeholder="Warehouse A"
@@ -1361,7 +1737,7 @@ export default function TransactionsPage() {
                 value={notes}
                 onChange={(e) => {
                   setNotes(e.target.value);
-                  setSubmitMessage('');
+                  setSubmitMessage("");
                 }}
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                 rows={4}
@@ -1370,7 +1746,7 @@ export default function TransactionsPage() {
             </div>
           </div>
 
-          {sourceMode === 'standard' ? (
+          {sourceMode === "standard" ? (
             <div className="mt-6 space-y-4">
               <div className="flex items-center justify-between gap-4">
                 <div>
@@ -1379,8 +1755,8 @@ export default function TransactionsPage() {
                   </h2>
                   <p className="mt-1 text-xs text-neutral-500">
                     {editingTransactionId
-                      ? 'Edit mode updates one selected row at a time.'
-                      : 'Bulk by default. Add one or many rows for the same vendor/order.'}
+                      ? "Edit mode updates one selected row at a time."
+                      : "Bulk by default. Add one or many rows for the same vendor/order."}
                   </p>
                 </div>
 
@@ -1399,7 +1775,7 @@ export default function TransactionsPage() {
                 {standardLines.map((line, index) => {
                   const itemSuggestions = vendor.trim()
                     ? uniqueSorted(
-                        standardVendorFilteredRows.map((row) => row.item_name)
+                        standardVendorFilteredRows.map((row) => row.item_name),
                       ).slice(0, 200)
                     : [];
 
@@ -1411,7 +1787,7 @@ export default function TransactionsPage() {
                     }
 
                     const matchingRows = standardVendorFilteredRows.filter(
-                      (row) => normalize(row.item_name) === itemNorm
+                      (row) => normalize(row.item_name) === itemNorm,
                     );
 
                     return uniqueSorted([
@@ -1427,7 +1803,9 @@ export default function TransactionsPage() {
                     >
                       <div className="mb-4 flex items-center justify-between gap-3">
                         <div className="text-sm font-semibold text-[#f7f0d0]">
-                          {editingTransactionId ? 'Editing Line' : `Line ${index + 1}`}
+                          {editingTransactionId
+                            ? "Editing Line"
+                            : `Line ${index + 1}`}
                         </div>
 
                         {!editingTransactionId && (
@@ -1459,15 +1837,19 @@ export default function TransactionsPage() {
                           <input
                             value={line.item_name}
                             onChange={(e) => {
-                              updateStandardLine(line.id, 'item_name', e.target.value);
-                              updateStandardLine(line.id, 'unit', '');
+                              updateStandardLine(
+                                line.id,
+                                "item_name",
+                                e.target.value,
+                              );
+                              updateStandardLine(line.id, "unit", "");
                             }}
                             list={`standard-item-suggestions-${line.id}`}
                             className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                             placeholder={
                               vendor.trim()
-                                ? 'Start typing item name'
-                                : 'Select vendor first'
+                                ? "Start typing item name"
+                                : "Select vendor first"
                             }
                             disabled={!vendor.trim()}
                           />
@@ -1486,15 +1868,15 @@ export default function TransactionsPage() {
                             value={line.size}
                             onChange={(e) => {
                               const next = e.target.value;
-                              updateStandardLine(line.id, 'size', next);
+                              updateStandardLine(line.id, "size", next);
                               hydrateStandardLine(line.id, line.item_name, next);
                             }}
                             list={`standard-size-suggestions-${line.id}`}
                             className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                             placeholder={
                               line.item_name.trim()
-                                ? 'Select or enter size'
-                                : 'Select item first'
+                                ? "Select or enter size"
+                                : "Select item first"
                             }
                             disabled={!vendor.trim() || !line.item_name.trim()}
                           />
@@ -1512,7 +1894,11 @@ export default function TransactionsPage() {
                           <input
                             value={line.quantity}
                             onChange={(e) =>
-                              updateStandardLine(line.id, 'quantity', e.target.value)
+                              updateStandardLine(
+                                line.id,
+                                "quantity",
+                                e.target.value,
+                              )
                             }
                             className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                             placeholder="e.g. 20"
@@ -1527,7 +1913,7 @@ export default function TransactionsPage() {
                           <input
                             value={line.unit}
                             onChange={(e) =>
-                              updateStandardLine(line.id, 'unit', e.target.value)
+                              updateStandardLine(line.id, "unit", e.target.value)
                             }
                             className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                             placeholder="lb / bag / pallet"
@@ -1549,12 +1935,14 @@ export default function TransactionsPage() {
                   value={specialtyItem}
                   onChange={(e) => {
                     setSpecialtyItem(e.target.value);
-                    setSubmitMessage('');
+                    setSubmitMessage("");
                   }}
                   list="specialty-item-suggestions"
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                   placeholder={
-                    vendor.trim() ? 'Start typing item name' : 'Select vendor first'
+                    vendor.trim()
+                      ? "Start typing item name"
+                      : "Select vendor first"
                   }
                   disabled={!vendor.trim()}
                 />
@@ -1573,12 +1961,14 @@ export default function TransactionsPage() {
                   value={specialtySize}
                   onChange={(e) => {
                     setSpecialtySize(e.target.value);
-                    setSubmitMessage('');
+                    setSubmitMessage("");
                   }}
                   list="specialty-size-suggestions"
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                   placeholder={
-                    specialtyItem.trim() ? 'Select or enter size' : 'Select item first'
+                    specialtyItem.trim()
+                      ? "Select or enter size"
+                      : "Select item first"
                   }
                   disabled={!vendor.trim() || !specialtyItem.trim()}
                 />
@@ -1597,7 +1987,7 @@ export default function TransactionsPage() {
                   value={specialtyQuantity}
                   onChange={(e) => {
                     setSpecialtyQuantity(e.target.value);
-                    setSubmitMessage('');
+                    setSubmitMessage("");
                   }}
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                   placeholder="e.g. 20"
@@ -1613,7 +2003,7 @@ export default function TransactionsPage() {
                   value={specialtyUnit}
                   onChange={(e) => {
                     setSpecialtyUnit(e.target.value);
-                    setSubmitMessage('');
+                    setSubmitMessage("");
                   }}
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                   placeholder="pail / system / bag / custom unit"
@@ -1628,7 +2018,7 @@ export default function TransactionsPage() {
                   value={mixNumber}
                   onChange={(e) => {
                     setMixNumber(e.target.value);
-                    setSubmitMessage('');
+                    setSubmitMessage("");
                   }}
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                   placeholder="e.g. MIX-117"
@@ -1643,7 +2033,7 @@ export default function TransactionsPage() {
                   value={customMixLabel}
                   onChange={(e) => {
                     setCustomMixLabel(e.target.value);
-                    setSubmitMessage('');
+                    setSubmitMessage("");
                   }}
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-900 p-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
                   placeholder="Optional internal label"
@@ -1657,7 +2047,7 @@ export default function TransactionsPage() {
                   </div>
 
                   <div className="mt-2 text-sm font-medium text-[#f7f0d0]">
-                    {selectedSpecialtyContext.vendor_name} •{' '}
+                    {selectedSpecialtyContext.vendor_name} •{" "}
                     {selectedSpecialtyContext.item_name}
                   </div>
 
@@ -1668,7 +2058,7 @@ export default function TransactionsPage() {
                       selectedSpecialtyContext.material_type,
                     ]
                       .filter(Boolean)
-                      .join(' • ') || '—'}
+                      .join(" • ") || "—"}
                   </div>
 
                   {resolvedMixIdentity && (
@@ -1689,35 +2079,35 @@ export default function TransactionsPage() {
             >
               {isSubmitting
                 ? editingTransactionId
-                  ? 'Saving...'
-                  : 'Recording...'
+                  ? "Saving..."
+                  : "Recording..."
                 : editingTransactionId
-                ? 'Save Changes'
-                : sourceMode === 'standard'
-                ? `Record ${Math.max(
-                    1,
-                    standardLines.filter(
-                      (line) =>
-                        line.item_name.trim() ||
-                        line.size.trim() ||
-                        line.unit.trim() ||
-                        line.quantity.trim()
-                    ).length
-                  )} Transaction${
-                    Math.max(
-                      1,
-                      standardLines.filter(
-                        (line) =>
-                          line.item_name.trim() ||
-                          line.size.trim() ||
-                          line.unit.trim() ||
-                          line.quantity.trim()
-                      ).length
-                    ) === 1
-                      ? ''
-                      : 's'
-                  }`
-                : 'Record Transaction'}
+                  ? "Save Changes"
+                  : sourceMode === "standard"
+                    ? `Record ${Math.max(
+                        1,
+                        standardLines.filter(
+                          (line) =>
+                            line.item_name.trim() ||
+                            line.size.trim() ||
+                            line.unit.trim() ||
+                            line.quantity.trim(),
+                        ).length,
+                      )} Transaction${
+                        Math.max(
+                          1,
+                          standardLines.filter(
+                            (line) =>
+                              line.item_name.trim() ||
+                              line.size.trim() ||
+                              line.unit.trim() ||
+                              line.quantity.trim(),
+                          ).length,
+                        ) === 1
+                          ? ""
+                          : "s"
+                      }`
+                    : "Record Transaction"}
             </button>
 
             <button
