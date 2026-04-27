@@ -199,11 +199,7 @@ export default function TransactionsPage() {
   const [editingOriginalEntry, setEditingOriginalEntry] =
     useState<InventoryHistoryRow | null>(null);
 
-  const [pendingDeleteEntry, setPendingDeleteEntry] =
-    useState<InventoryHistoryRow | null>(null);
-  const [deletePassword, setDeletePassword] = useState("");
   const [isDeletingEntry, setIsDeletingEntry] = useState(false);
-  const [deleteMessage, setDeleteMessage] = useState("");
 
   const loadInventoryHistory = useCallback(async () => {
     if (!hasInventoryContext) {
@@ -1201,42 +1197,38 @@ export default function TransactionsPage() {
     setSubmitMessage("Transaction recorded and inventory updated.");
   }
 
-  async function handleDeleteEntry() {
-    if (!pendingDeleteEntry) {
-      setDeleteMessage("No transaction selected for deletion.");
+  async function handleDeleteEntry(entry: InventoryHistoryRow) {
+    const confirmed = window.confirm(
+      `Delete this transaction?\n\nVendor: ${getHistoryDisplayVendor(entry)}\nItem: ${entry.item_name || "—"}\nSize: ${entry.size || "—"}\nQuantity: ${entry.quantity ?? "—"}\n\nThis will change Append View balances.`
+    );
+
+    if (!confirmed) {
       return;
     }
 
-    setDeleteMessage("");
     setIsDeletingEntry(true);
+    setSubmitMessage("");
 
     try {
-      const response = await fetch("/api/delete-transaction", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          password: deletePassword,
-          transactionId: pendingDeleteEntry.id,
-        }),
-      });
+      const { error } = await supabase
+        .from("inventory_transactions")
+        .delete()
+        .eq("id", entry.id);
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        setDeleteMessage(result.error || "Delete failed.");
+      if (error) {
+        console.error("Failed to delete transaction:", error);
+        setSubmitMessage(error.message || "Delete failed.");
         return;
       }
 
       await reconcileInventoryItem(
-        getInventoryKeyVendor(pendingDeleteEntry),
-        pendingDeleteEntry.item_name || "",
-        pendingDeleteEntry.size || "",
+        getInventoryKeyVendor(entry),
+        entry.item_name || "",
+        entry.size || "",
       );
 
       const remainingRows = inventoryHistoryRows.filter(
-        (entry) => entry.id !== pendingDeleteEntry.id,
+        (historyEntry) => historyEntry.id !== entry.id,
       );
       const resolvedMode = detectHistoryMode(remainingRows);
 
@@ -1247,16 +1239,14 @@ export default function TransactionsPage() {
         setSourceMode(resolvedMode);
       }
 
-      if (editingTransactionId === pendingDeleteEntry.id) {
+      if (editingTransactionId === entry.id) {
         cancelEditMode();
       }
 
-      setPendingDeleteEntry(null);
-      setDeletePassword("");
       setSubmitMessage("Transaction deleted and inventory updated.");
     } catch (error) {
       console.error("Failed to delete transaction:", error);
-      setDeleteMessage("Delete failed.");
+      setSubmitMessage("Delete failed.");
     } finally {
       setIsDeletingEntry(false);
     }
@@ -1489,14 +1479,11 @@ export default function TransactionsPage() {
 
                           <button
                             type="button"
-                            onClick={() => {
-                              setDeleteMessage("");
-                              setDeletePassword("");
-                              setPendingDeleteEntry(entry);
-                            }}
-                            className="rounded-xl border border-red-800/70 bg-red-950/30 px-3 py-2 text-sm font-medium text-red-300 transition hover:bg-red-950/50"
+                            onClick={() => handleDeleteEntry(entry)}
+                            disabled={isDeletingEntry}
+                            className="rounded-xl border border-red-800/70 bg-red-950/30 px-3 py-2 text-sm font-medium text-red-300 transition hover:bg-red-950/50 disabled:cursor-not-allowed disabled:opacity-60"
                           >
-                            Delete Entry
+                            {isDeletingEntry ? "Deleting..." : "Delete Entry"}
                           </button>
                         </div>
                       </div>
@@ -1505,81 +1492,6 @@ export default function TransactionsPage() {
                 ))}
               </div>
             )}
-          </div>
-        )}
-
-        {pendingDeleteEntry && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-            <div className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-950 p-6 shadow-2xl">
-              <h2 className="text-lg font-semibold text-[#f7f0d0]">
-                Delete Transaction Entry
-              </h2>
-              <p className="mt-2 text-sm text-neutral-300">
-                This permanently removes the selected historical transaction and
-                will change Append View balances.
-              </p>
-
-              <div className="mt-4 rounded-xl border border-neutral-800 bg-neutral-900/60 p-3 text-sm text-neutral-300">
-                <div>
-                  <span className="text-neutral-500">Vendor:</span>{" "}
-                  {getHistoryDisplayVendor(pendingDeleteEntry)}
-                </div>
-                <div>
-                  <span className="text-neutral-500">Item:</span>{" "}
-                  {pendingDeleteEntry.item_name || "—"}
-                </div>
-                <div>
-                  <span className="text-neutral-500">Size:</span>{" "}
-                  {pendingDeleteEntry.size || "—"}
-                </div>
-                <div>
-                  <span className="text-neutral-500">Quantity:</span>{" "}
-                  {pendingDeleteEntry.quantity ?? "—"}
-                </div>
-              </div>
-
-              <label
-                htmlFor="delete-entry-password"
-                className="mt-4 block text-xs font-medium uppercase tracking-[0.14em] text-neutral-500"
-              >
-                Admin Password
-              </label>
-              <input
-                id="delete-entry-password"
-                type="password"
-                value={deletePassword}
-                onChange={(e) => setDeletePassword(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
-                placeholder="Enter admin password"
-              />
-
-              {deleteMessage && (
-                <div className="mt-3 text-sm text-red-300">{deleteMessage}</div>
-              )}
-
-              <div className="mt-6 flex flex-wrap justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isDeletingEntry) return;
-                    setPendingDeleteEntry(null);
-                    setDeletePassword("");
-                    setDeleteMessage("");
-                  }}
-                  className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm font-medium text-white transition hover:border-neutral-600 hover:bg-neutral-900"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDeleteEntry}
-                  disabled={isDeletingEntry}
-                  className="rounded-xl border border-red-800/70 bg-red-950/40 px-4 py-2.5 text-sm font-medium text-red-200 transition hover:bg-red-950/60 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isDeletingEntry ? "Deleting..." : "Delete Entry"}
-                </button>
-              </div>
-            </div>
           </div>
         )}
 

@@ -174,8 +174,6 @@ export default function InventoryPage() {
     null
   );
 
-  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
-  const [syncPassword, setSyncPassword] = useState('');
   const [syncMessage, setSyncMessage] = useState('');
   const [isSyncing, setIsSyncing] = useState(false);
 
@@ -310,38 +308,221 @@ export default function InventoryPage() {
   }, [currentRows, search]);
 
   async function handleSyncToCurrentInventory() {
+    const confirmed = window.confirm(
+      'Sync unsynced transactions to Current Inventory?\n\nThis will apply new intake/outtake/adjustment transactions to inventory_items without deleting existing inventory rows.'
+    );
+
+    if (!confirmed) return;
+
     setSyncMessage('');
     setIsSyncing(true);
 
     try {
-      const response = await fetch('/api/sync-current-inventory', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          password: syncPassword,
-        }),
-      });
+      const { data: transactionRows, error: transactionError } = await supabase
+        .from('inventory_transactions')
+        .select(
+          'id, transaction_type, vendor, specialty_vendor_name, item_name, size, quantity, catalog_source, synced_to_inventory_at'
+        )
+        .is('synced_to_inventory_at', null)
+        .order('created_at', { ascending: true });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        setSyncMessage(result?.error || 'Sync failed.');
+      if (transactionError) {
+        console.error('Failed to load unsynced transactions:', transactionError);
+        setSyncMessage(transactionError.message || 'Failed to load unsynced transactions.');
         return;
       }
 
-      const summary = result?.summary;
-      const summaryText = summary
-        ? `Current Inventory synced successfully. Added ${summary.added}, updated ${summary.updated}, removed ${summary.removed}.`
-        : 'Current Inventory synced successfully.';
+      const unsyncedTransactions = (transactionRows || []) as Array<{
+        id: string;
+        transaction_type: string | null;
+        vendor: string | null;
+        specialty_vendor_name: string | null;
+        item_name: string | null;
+        size: string | null;
+        quantity: number | null;
+        catalog_source: string | null;
+        synced_to_inventory_at: string | null;
+      }>;
 
-      setSyncMessage(summaryText);
-      setSyncPassword('');
-      setIsSyncModalOpen(false);
+      if (unsyncedTransactions.length === 0) {
+        setSyncMessage('No unsynced transactions found. Current Inventory was left unchanged.');
+        await loadData();
+        return;
+      }
+
+      const deltaMap = new Map<
+        string,
+        {
+          vendor: string;
+          color: string;
+          size: string | null;
+          delta: number;
+          transactionIds: string[];
+        }
+      >();
+
+      const makeInventoryKey = (
+        vendorValue: string,
+        colorValue: string,
+        sizeValue: string | null
+      ) => `${vendorValue}|${colorValue}|${sizeValue || ''}`;
+
+      for (const tx of unsyncedTransactions) {
+        const resolvedVendor =
+          tx.catalog_source === 'specialty'
+            ? tx.specialty_vendor_name?.trim() || tx.vendor?.trim() || ''
+            : tx.vendor?.trim() || tx.specialty_vendor_name?.trim() || '';
+
+        const resolvedColor = tx.item_name?.trim() || '';
+        const resolvedSize = tx.size?.trim() || null;
+        const quantity = Math.abs(Number(tx.quantity || 0));
+
+        if (!resolvedVendor || !resolvedColor || !quantity) continue;
+
+        let signedDelta = quantity;
+
+        if (tx.transaction_type === 'outtake') {
+          signedDelta = -quantity;
+        }
+
+        if (tx.transaction_type === 'adjustment') {
+          signedDelta = quantity;
+        }
+
+        const key = makeInventoryKey(resolvedVendor, resolvedColor, resolvedSize);
+        const existing = deltaMap.get(key);
+
+        if (existing) {
+          existing.delta += signedDelta;
+          existing.transactionIds.push(tx.id);
+        } else {
+          deltaMap.set(key, {
+            vendor: resolvedVendor,
+            color: resolvedColor,
+            size: resolvedSize,
+            delta: signedDelta,
+            transactionIds: [tx.id],
+          });
+        }
+      }
+
+      if (deltaMap.size === 0) {
+        setSyncMessage('No syncable transaction rows found. Current Inventory was left unchanged.');
+        await loadData();
+        return;
+      }
+
+      const { data: currentRows, error: currentError } = await supabase
+        .from('inventory_items')
+        .select('id, vendor, color, size, quantity');
+
+      if (currentError) {
+        console.error('Failed to load Current Inventory:', currentError);
+        setSyncMessage(currentError.message || 'Failed to load Current Inventory.');
+        return;
+      }
+
+      const currentMap = new Map<
+        string,
+        {
+          id: string;
+          quantity: number;
+        }
+      >();
+
+      for (const row of (currentRows || []) as Array<{
+        id: string;
+        vendor: string | null;
+        color: string | null;
+        size: string | null;
+        quantity: number | null;
+      }>) {
+        currentMap.set(
+          makeInventoryKey(row.vendor || '', row.color || '', row.size || null),
+          {
+            id: row.id,
+            quantity: Number(row.quantity || 0),
+          }
+        );
+      }
+
+      let added = 0;
+      let updated = 0;
+      const syncedTransactionIds: string[] = [];
+
+      for (const [, deltaRow] of deltaMap.entries()) {
+        const key = makeInventoryKey(deltaRow.vendor, deltaRow.color, deltaRow.size);
+        const existing = currentMap.get(key);
+
+        if (existing) {
+          const nextQuantity = Math.max(0, existing.quantity + deltaRow.delta);
+
+          const { error: updateError } = await supabase
+            .from('inventory_items')
+            .update({ quantity: nextQuantity })
+            .eq('id', existing.id);
+
+          if (updateError) {
+            console.error('Failed to update inventory row:', updateError);
+            setSyncMessage(updateError.message || 'Failed to update inventory row.');
+            return;
+          }
+
+          updated += 1;
+        } else {
+          const startingQuantity = Math.max(0, deltaRow.delta);
+
+          if (startingQuantity > 0) {
+            const { error: insertError } = await supabase.from('inventory_items').insert({
+              vendor: deltaRow.vendor,
+              color: deltaRow.color,
+              size: deltaRow.size,
+              quantity: startingQuantity,
+              location: null,
+              pallet_number: null,
+              earmarked_for_job: false,
+              earmarked_job: null,
+              earmark_notes: null,
+            });
+
+            if (insertError) {
+              console.error('Failed to insert inventory row:', insertError);
+              setSyncMessage(insertError.message || 'Failed to insert inventory row.');
+              return;
+            }
+
+            added += 1;
+          }
+        }
+
+        syncedTransactionIds.push(...deltaRow.transactionIds);
+      }
+
+      if (syncedTransactionIds.length > 0) {
+        const { error: markSyncedError } = await supabase
+          .from('inventory_transactions')
+          .update({ synced_to_inventory_at: new Date().toISOString() })
+          .in('id', syncedTransactionIds);
+
+        if (markSyncedError) {
+          console.error('Failed to mark transactions as synced:', markSyncedError);
+          setSyncMessage(
+            markSyncedError.message ||
+              'Inventory updated, but failed to mark transactions as synced. Do not sync again until this is fixed.'
+          );
+          return;
+        }
+      }
+
+      setSyncMessage(
+        `Sync complete. Applied ${syncedTransactionIds.length} transaction${
+          syncedTransactionIds.length === 1 ? '' : 's'
+        }. Added ${added}, updated ${updated}. Existing inventory rows were preserved.`
+      );
+
       await loadData();
     } catch (error) {
-      console.error('Failed to sync current inventory:', error);
+      console.error('Sync failed:', error);
       setSyncMessage('Sync failed.');
     } finally {
       setIsSyncing(false);
@@ -437,14 +618,11 @@ export default function InventoryPage() {
             {viewMode === 'append' && (
               <button
                 type="button"
-                onClick={() => {
-                  setSyncMessage('');
-                  setSyncPassword('');
-                  setIsSyncModalOpen(true);
-                }}
-                className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm font-medium text-neutral-200 transition hover:border-[#c8a43a] hover:bg-neutral-900 hover:text-white"
+                onClick={handleSyncToCurrentInventory}
+                disabled={isSyncing}
+                className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm font-medium text-neutral-200 transition hover:border-[#c8a43a] hover:bg-neutral-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Sync to Current Inventory
+                {isSyncing ? 'Syncing...' : 'Sync to Current Inventory'}
               </button>
             )}
 
@@ -531,7 +709,7 @@ export default function InventoryPage() {
           </div>
         )}
 
-        {viewMode === 'append' && syncMessage && !isSyncModalOpen && (
+        {viewMode === 'append' && syncMessage && (
           <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-sm text-neutral-300">
             {syncMessage}
           </div>
@@ -839,66 +1017,6 @@ export default function InventoryPage() {
           )}
         </section>
       </div>
-
-      {isSyncModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-          <div className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-950 p-5 shadow-2xl">
-            <h2 className="text-lg font-semibold text-[#f7f0d0]">
-              Sync to Current Inventory
-            </h2>
-            <p className="mt-2 text-sm text-neutral-400">
-              This will refresh the Current Inventory table from the Append View balance.
-              Enter the admin password to continue.
-            </p>
-
-            <div className="mt-4">
-              <label
-                htmlFor="sync-password"
-                className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-neutral-500"
-              >
-                Admin Password
-              </label>
-              <input
-                id="sync-password"
-                type="password"
-                value={syncPassword}
-                onChange={(e) => setSyncPassword(e.target.value)}
-                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
-                placeholder="Enter password"
-              />
-            </div>
-
-            {syncMessage && (
-              <div className="mt-3 rounded-xl border border-neutral-800 bg-black/40 p-3 text-sm text-neutral-300">
-                {syncMessage}
-              </div>
-            )}
-
-            <div className="mt-5 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSyncModalOpen(false);
-                  setSyncPassword('');
-                  setSyncMessage('');
-                }}
-                className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm font-medium text-neutral-200 transition hover:border-neutral-600 hover:bg-neutral-900"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="button"
-                onClick={handleSyncToCurrentInventory}
-                disabled={isSyncing || !syncPassword.trim()}
-                className="rounded-xl border border-[#c8a43a] bg-[#c8a43a] px-4 py-2.5 text-sm font-medium text-black transition hover:bg-[#d6b24a] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isSyncing ? 'Syncing...' : 'Confirm Sync'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {pendingEarmarkRow && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
