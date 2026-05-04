@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 type AppendBalanceRow = {
   vendor: string;
@@ -53,7 +53,7 @@ type InventorySyncStateRow = {
   last_synced_at?: string | null;
 };
 
-type AppendSyncStatus = 'needs_sync' | 'synced' | 'changed';
+type AppendSyncStatus = "needs_sync" | "synced" | "changed";
 
 type AppendDisplayRow = AppendBalanceRow & {
   sync_status: AppendSyncStatus;
@@ -61,21 +61,21 @@ type AppendDisplayRow = AppendBalanceRow & {
   last_synced_at?: string | null;
 };
 
-type ViewMode = 'append' | 'current';
+type ViewMode = "append" | "current";
 
 function normalizeKey(
   vendor: string | null,
   itemName: string | null,
-  size: string | null
+  size: string | null,
 ) {
-  return `${vendor || ''}|${itemName || ''}|${size || ''}`;
+  return `${vendor || ""}|${itemName || ""}|${size || ""}`;
 }
 
 function hasAnnotation(row: Partial<CatalogAnnotationRow>) {
   return Boolean(
     row.notes?.trim() ||
-      row.match_warning?.trim() ||
-      row.appearance_notes?.trim()
+    row.match_warning?.trim() ||
+    row.appearance_notes?.trim(),
   );
 }
 
@@ -83,16 +83,16 @@ function annotationSummary(row: Partial<CatalogAnnotationRow>) {
   if (row.match_warning?.trim()) return row.match_warning.trim();
   if (row.notes?.trim()) return row.notes.trim();
   if (row.appearance_notes?.trim()) return row.appearance_notes.trim();
-  return 'Annotated entry';
+  return "Annotated entry";
 }
 
 function annotationKey(row: Partial<CatalogAnnotationRow>, index: number) {
-  return `${row.vendor || ''}|${row.item_name || ''}|${row.size || ''}|${index}`;
+  return `${row.vendor || ""}|${row.item_name || ""}|${row.size || ""}|${index}`;
 }
 
 function getSyncStatus(
   row: AppendBalanceRow,
-  syncMap: Record<string, InventorySyncStateRow>
+  syncMap: Record<string, InventorySyncStateRow>,
 ): {
   sync_status: AppendSyncStatus;
   last_synced_qty?: number;
@@ -103,7 +103,7 @@ function getSyncStatus(
 
   if (!syncRow) {
     return {
-      sync_status: 'needs_sync',
+      sync_status: "needs_sync",
     };
   }
 
@@ -112,25 +112,21 @@ function getSyncStatus(
 
   if (currentQty !== syncedQty) {
     return {
-      sync_status: 'changed',
+      sync_status: "changed",
       last_synced_qty: syncedQty,
       last_synced_at: syncRow.last_synced_at ?? null,
     };
   }
 
   return {
-    sync_status: 'synced',
+    sync_status: "synced",
     last_synced_qty: syncedQty,
     last_synced_at: syncRow.last_synced_at ?? null,
   };
 }
 
-function SyncStatusBadge({
-  status,
-}: {
-  status: AppendSyncStatus;
-}) {
-  if (status === 'needs_sync') {
+function SyncStatusBadge({ status }: { status: AppendSyncStatus }) {
+  if (status === "needs_sync") {
     return (
       <span className="rounded-full border border-amber-700/60 bg-amber-950/40 px-2 py-1 text-[11px] font-medium text-amber-300">
         Needs Sync
@@ -138,7 +134,7 @@ function SyncStatusBadge({
     );
   }
 
-  if (status === 'changed') {
+  if (status === "changed") {
     return (
       <span className="rounded-full border border-blue-700/60 bg-blue-950/40 px-2 py-1 text-[11px] font-medium text-blue-300">
         Changed
@@ -156,63 +152,65 @@ function SyncStatusBadge({
 export default function InventoryPage() {
   const router = useRouter();
 
-  const [viewMode, setViewMode] = useState<ViewMode>('append');
+  const [viewMode, setViewMode] = useState<ViewMode>("append");
   const [guidedMode, setGuidedMode] = useState(true);
   const [showSyncedRows, setShowSyncedRows] = useState(false);
 
   const [appendRows, setAppendRows] = useState<AppendDisplayRow[]>([]);
   const [currentRows, setCurrentRows] = useState<CurrentInventoryRow[]>([]);
-  const [recentAnnotations, setRecentAnnotations] = useState<CatalogAnnotationRow[]>(
-    []
-  );
+  const [recentAnnotations, setRecentAnnotations] = useState<
+    CatalogAnnotationRow[]
+  >([]);
 
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState('');
-  const [search, setSearch] = useState('');
+  const [loadError, setLoadError] = useState("");
+  const [search, setSearch] = useState("");
 
-  const [expandedAnnotationKey, setExpandedAnnotationKey] = useState<string | null>(
-    null
-  );
+  const [expandedAnnotationKey, setExpandedAnnotationKey] = useState<
+    string | null
+  >(null);
 
-  const [syncMessage, setSyncMessage] = useState('');
+  const [syncMessage, setSyncMessage] = useState("");
   const [isSyncing, setIsSyncing] = useState(false);
 
   const [pendingEarmarkRow, setPendingEarmarkRow] =
     useState<CurrentInventoryRow | null>(null);
-  const [earmarkJob, setEarmarkJob] = useState('');
-  const [earmarkNotes, setEarmarkNotes] = useState('');
+  const [earmarkJob, setEarmarkJob] = useState("");
+  const [earmarkNotes, setEarmarkNotes] = useState("");
   const [isSavingEarmark, setIsSavingEarmark] = useState(false);
-  const [earmarkMessage, setEarmarkMessage] = useState('');
+  const [earmarkMessage, setEarmarkMessage] = useState("");
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    setLoadError('');
+    setLoadError("");
 
     const [appendResult, currentResult, catalogResult, syncStateResult] =
       await Promise.all([
         supabase
-          .from('inventory_balances')
-          .select('*')
-          .order('vendor', { ascending: true })
-          .order('item_name', { ascending: true }),
+          .from("inventory_balances")
+          .select("*")
+          .order("vendor", { ascending: true })
+          .order("item_name", { ascending: true }),
 
         supabase
-          .from('inventory_items')
-          .select('*')
-          .order('vendor', { ascending: true })
-          .order('color', { ascending: true }),
+          .from("inventory_items")
+          .select("*")
+          .order("vendor", { ascending: true })
+          .order("color", { ascending: true }),
 
         supabase
-          .from('vendor_catalog')
+          .from("vendor_catalog")
           .select(
-            'id, vendor, item_name, size, notes, match_warning, appearance_notes, annotated_by, updated_at'
+            "id, vendor, item_name, size, notes, match_warning, appearance_notes, annotated_by, updated_at",
           )
-          .order('updated_at', { ascending: false })
+          .order("updated_at", { ascending: false })
           .limit(100),
 
         supabase
-          .from('inventory_sync_state')
-          .select('id, vendor, item_name, size, last_synced_qty, last_synced_at'),
+          .from("inventory_sync_state")
+          .select(
+            "id, vendor, item_name, size, last_synced_qty, last_synced_at",
+          ),
       ]);
 
     if (
@@ -227,15 +225,15 @@ export default function InventoryPage() {
         catalogResult.error ||
         syncStateResult.error;
 
-      console.error('Failed to load inventory data:', firstError);
-      setLoadError(firstError?.message || 'Failed to load inventory data.');
+      console.error("Failed to load inventory data:", firstError);
+      setLoadError(firstError?.message || "Failed to load inventory data.");
       setLoading(false);
       return;
     }
 
-    const catalogData = ((catalogResult.data as CatalogAnnotationRow[]) || []).filter(
-      (row) => hasAnnotation(row)
-    );
+    const catalogData = (
+      (catalogResult.data as CatalogAnnotationRow[]) || []
+    ).filter((row) => hasAnnotation(row));
 
     const catalogMap: Record<string, CatalogAnnotationRow> = {};
     for (const row of catalogData) {
@@ -252,23 +250,24 @@ export default function InventoryPage() {
       syncMap[key] = row;
     }
 
-    const enrichedAppendRows = ((appendResult.data as AppendBalanceRow[]) || []).map(
-      (row) => {
-        const match = catalogMap[normalizeKey(row.vendor, row.item_name, row.size)];
-        const syncInfo = getSyncStatus(row, syncMap);
+    const enrichedAppendRows = (
+      (appendResult.data as AppendBalanceRow[]) || []
+    ).map((row) => {
+      const match =
+        catalogMap[normalizeKey(row.vendor, row.item_name, row.size)];
+      const syncInfo = getSyncStatus(row, syncMap);
 
-        return {
-          ...row,
-          notes: match?.notes || undefined,
-          match_warning: match?.match_warning || undefined,
-          appearance_notes: match?.appearance_notes || undefined,
-          annotated_by: match?.annotated_by || undefined,
-          sync_status: syncInfo.sync_status,
-          last_synced_qty: syncInfo.last_synced_qty,
-          last_synced_at: syncInfo.last_synced_at,
-        };
-      }
-    );
+      return {
+        ...row,
+        notes: match?.notes || undefined,
+        match_warning: match?.match_warning || undefined,
+        appearance_notes: match?.appearance_notes || undefined,
+        annotated_by: match?.annotated_by || undefined,
+        sync_status: syncInfo.sync_status,
+        last_synced_qty: syncInfo.last_synced_qty,
+        last_synced_at: syncInfo.last_synced_at,
+      };
+    });
 
     setAppendRows(enrichedAppendRows);
     setCurrentRows((currentResult.data as CurrentInventoryRow[]) || []);
@@ -284,13 +283,13 @@ export default function InventoryPage() {
     const q = search.toLowerCase();
 
     return appendRows.filter((row) => {
-      if (!showSyncedRows && row.sync_status === 'synced') {
+      if (!showSyncedRows && row.sync_status === "synced") {
         return false;
       }
 
-      return `${row.vendor} ${row.item_name} ${row.size} ${row.unit} ${row.notes || ''} ${
-        row.match_warning || ''
-      } ${row.annotated_by || ''} ${row.sync_status}`
+      return `${row.vendor} ${row.item_name} ${row.size} ${row.unit} ${row.notes || ""} ${
+        row.match_warning || ""
+      } ${row.annotated_by || ""} ${row.sync_status}`
         .toLowerCase()
         .includes(q);
     });
@@ -299,36 +298,41 @@ export default function InventoryPage() {
   const filteredCurrentRows = useMemo(() => {
     const q = search.toLowerCase();
     return currentRows.filter((row) =>
-      `${row.vendor || ''} ${row.category || ''} ${row.color || ''} ${
-        row.size || ''
-      } ${row.location || ''} ${row.earmarked_job || ''} ${row.earmark_notes || ''}`
+      `${row.vendor || ""} ${row.category || ""} ${row.color || ""} ${
+        row.size || ""
+      } ${row.location || ""} ${row.earmarked_job || ""} ${row.earmark_notes || ""}`
         .toLowerCase()
-        .includes(q)
+        .includes(q),
     );
   }, [currentRows, search]);
 
   async function handleSyncToCurrentInventory() {
     const confirmed = window.confirm(
-      'Sync unsynced transactions to Current Inventory?\n\nThis will apply new intake/outtake/adjustment transactions to inventory_items without deleting existing inventory rows.'
+      "Sync unsynced transactions to Current Inventory?\n\nThis will apply new intake/outtake/adjustment transactions to inventory_items without deleting existing inventory rows.",
     );
 
     if (!confirmed) return;
 
-    setSyncMessage('');
+    setSyncMessage("");
     setIsSyncing(true);
 
     try {
       const { data: transactionRows, error: transactionError } = await supabase
-        .from('inventory_transactions')
+        .from("inventory_transactions")
         .select(
-          'id, transaction_type, vendor, specialty_vendor_name, item_name, size, quantity, catalog_source, synced_to_inventory_at'
+          "id, transaction_type, vendor, specialty_vendor_name, item_name, size, quantity, catalog_source, synced_to_inventory_at",
         )
-        .is('synced_to_inventory_at', null)
-        .order('created_at', { ascending: true });
+        .is("synced_to_inventory_at", null)
+        .order("created_at", { ascending: true });
 
       if (transactionError) {
-        console.error('Failed to load unsynced transactions:', transactionError);
-        setSyncMessage(transactionError.message || 'Failed to load unsynced transactions.');
+        console.error(
+          "Failed to load unsynced transactions:",
+          transactionError,
+        );
+        setSyncMessage(
+          transactionError.message || "Failed to load unsynced transactions.",
+        );
         return;
       }
 
@@ -345,7 +349,9 @@ export default function InventoryPage() {
       }>;
 
       if (unsyncedTransactions.length === 0) {
-        setSyncMessage('No unsynced transactions found. Current Inventory was left unchanged.');
+        setSyncMessage(
+          "No unsynced transactions found. Current Inventory was left unchanged.",
+        );
         await loadData();
         return;
       }
@@ -364,16 +370,16 @@ export default function InventoryPage() {
       const makeInventoryKey = (
         vendorValue: string,
         colorValue: string,
-        sizeValue: string | null
-      ) => `${vendorValue}|${colorValue}|${sizeValue || ''}`;
+        sizeValue: string | null,
+      ) => `${vendorValue}|${colorValue}|${sizeValue || ""}`;
 
       for (const tx of unsyncedTransactions) {
         const resolvedVendor =
-          tx.catalog_source === 'specialty'
-            ? tx.specialty_vendor_name?.trim() || tx.vendor?.trim() || ''
-            : tx.vendor?.trim() || tx.specialty_vendor_name?.trim() || '';
+          tx.catalog_source === "specialty"
+            ? tx.specialty_vendor_name?.trim() || tx.vendor?.trim() || ""
+            : tx.vendor?.trim() || tx.specialty_vendor_name?.trim() || "";
 
-        const resolvedColor = tx.item_name?.trim() || '';
+        const resolvedColor = tx.item_name?.trim() || "";
         const resolvedSize = tx.size?.trim() || null;
         const quantity = Math.abs(Number(tx.quantity || 0));
 
@@ -381,15 +387,19 @@ export default function InventoryPage() {
 
         let signedDelta = quantity;
 
-        if (tx.transaction_type === 'outtake') {
+        if (tx.transaction_type === "outtake") {
           signedDelta = -quantity;
         }
 
-        if (tx.transaction_type === 'adjustment') {
+        if (tx.transaction_type === "adjustment") {
           signedDelta = quantity;
         }
 
-        const key = makeInventoryKey(resolvedVendor, resolvedColor, resolvedSize);
+        const key = makeInventoryKey(
+          resolvedVendor,
+          resolvedColor,
+          resolvedSize,
+        );
         const existing = deltaMap.get(key);
 
         if (existing) {
@@ -407,18 +417,22 @@ export default function InventoryPage() {
       }
 
       if (deltaMap.size === 0) {
-        setSyncMessage('No syncable transaction rows found. Current Inventory was left unchanged.');
+        setSyncMessage(
+          "No syncable transaction rows found. Current Inventory was left unchanged.",
+        );
         await loadData();
         return;
       }
 
       const { data: currentRows, error: currentError } = await supabase
-        .from('inventory_items')
-        .select('id, vendor, color, size, quantity');
+        .from("inventory_items")
+        .select("id, vendor, color, size, quantity");
 
       if (currentError) {
-        console.error('Failed to load Current Inventory:', currentError);
-        setSyncMessage(currentError.message || 'Failed to load Current Inventory.');
+        console.error("Failed to load Current Inventory:", currentError);
+        setSyncMessage(
+          currentError.message || "Failed to load Current Inventory.",
+        );
         return;
       }
 
@@ -438,11 +452,11 @@ export default function InventoryPage() {
         quantity: number | null;
       }>) {
         currentMap.set(
-          makeInventoryKey(row.vendor || '', row.color || '', row.size || null),
+          makeInventoryKey(row.vendor || "", row.color || "", row.size || null),
           {
             id: row.id,
             quantity: Number(row.quantity || 0),
-          }
+          },
         );
       }
 
@@ -451,20 +465,26 @@ export default function InventoryPage() {
       const syncedTransactionIds: string[] = [];
 
       for (const [, deltaRow] of deltaMap.entries()) {
-        const key = makeInventoryKey(deltaRow.vendor, deltaRow.color, deltaRow.size);
+        const key = makeInventoryKey(
+          deltaRow.vendor,
+          deltaRow.color,
+          deltaRow.size,
+        );
         const existing = currentMap.get(key);
 
         if (existing) {
           const nextQuantity = Math.max(0, existing.quantity + deltaRow.delta);
 
           const { error: updateError } = await supabase
-            .from('inventory_items')
+            .from("inventory_items")
             .update({ quantity: nextQuantity })
-            .eq('id', existing.id);
+            .eq("id", existing.id);
 
           if (updateError) {
-            console.error('Failed to update inventory row:', updateError);
-            setSyncMessage(updateError.message || 'Failed to update inventory row.');
+            console.error("Failed to update inventory row:", updateError);
+            setSyncMessage(
+              updateError.message || "Failed to update inventory row.",
+            );
             return;
           }
 
@@ -473,21 +493,25 @@ export default function InventoryPage() {
           const startingQuantity = Math.max(0, deltaRow.delta);
 
           if (startingQuantity > 0) {
-            const { error: insertError } = await supabase.from('inventory_items').insert({
-              vendor: deltaRow.vendor,
-              color: deltaRow.color,
-              size: deltaRow.size,
-              quantity: startingQuantity,
-              location: null,
-              pallet_number: null,
-              earmarked_for_job: false,
-              earmarked_job: null,
-              earmark_notes: null,
-            });
+            const { error: insertError } = await supabase
+              .from("inventory_items")
+              .insert({
+                vendor: deltaRow.vendor,
+                color: deltaRow.color,
+                size: deltaRow.size,
+                quantity: startingQuantity,
+                location: null,
+                pallet_number: null,
+                earmarked_for_job: false,
+                earmarked_job: null,
+                earmark_notes: null,
+              });
 
             if (insertError) {
-              console.error('Failed to insert inventory row:', insertError);
-              setSyncMessage(insertError.message || 'Failed to insert inventory row.');
+              console.error("Failed to insert inventory row:", insertError);
+              setSyncMessage(
+                insertError.message || "Failed to insert inventory row.",
+              );
               return;
             }
 
@@ -500,15 +524,18 @@ export default function InventoryPage() {
 
       if (syncedTransactionIds.length > 0) {
         const { error: markSyncedError } = await supabase
-          .from('inventory_transactions')
+          .from("inventory_transactions")
           .update({ synced_to_inventory_at: new Date().toISOString() })
-          .in('id', syncedTransactionIds);
+          .in("id", syncedTransactionIds);
 
         if (markSyncedError) {
-          console.error('Failed to mark transactions as synced:', markSyncedError);
+          console.error(
+            "Failed to mark transactions as synced:",
+            markSyncedError,
+          );
           setSyncMessage(
             markSyncedError.message ||
-              'Inventory updated, but failed to mark transactions as synced. Do not sync again until this is fixed.'
+              "Inventory updated, but failed to mark transactions as synced. Do not sync again until this is fixed.",
           );
           return;
         }
@@ -516,89 +543,256 @@ export default function InventoryPage() {
 
       setSyncMessage(
         `Sync complete. Applied ${syncedTransactionIds.length} transaction${
-          syncedTransactionIds.length === 1 ? '' : 's'
-        }. Added ${added}, updated ${updated}. Existing inventory rows were preserved.`
+          syncedTransactionIds.length === 1 ? "" : "s"
+        }. Added ${added}, updated ${updated}. Existing inventory rows were preserved.`,
       );
 
       await loadData();
     } catch (error) {
-      console.error('Sync failed:', error);
-      setSyncMessage('Sync failed.');
+      console.error("Sync failed:", error);
+      setSyncMessage("Sync failed.");
     } finally {
       setIsSyncing(false);
     }
   }
 
+
+  async function findInventoryRowForEarmark(row: CurrentInventoryRow) {
+    const rowId = row.id === null || row.id === undefined ? '' : String(row.id).trim();
+
+    if (rowId) {
+      const byId = await supabase
+        .from("inventory_items")
+        .select("id, vendor, color, size, quantity, earmarked_for_job, earmarked_job, earmark_notes")
+        .eq("id", rowId)
+        .maybeSingle<CurrentInventoryRow>();
+
+      if (byId.error) {
+        throw byId.error;
+      }
+
+      if (byId.data) {
+        return byId.data;
+      }
+    }
+
+    const vendorValue = (row.vendor || "").trim();
+    const colorValue = (row.color || "").trim();
+    const sizeValue = (row.size || "").trim();
+
+    let query = supabase
+      .from("inventory_items")
+      .select("id, vendor, color, size, quantity, earmarked_for_job, earmarked_job, earmark_notes")
+      .eq("vendor", vendorValue)
+      .eq("color", colorValue)
+      .limit(1);
+
+    if (sizeValue) {
+      query = query.eq("size", sizeValue);
+    } else {
+      query = query.is("size", null);
+    }
+
+    const byMaterialKey = await query.maybeSingle<CurrentInventoryRow>();
+
+    if (byMaterialKey.error) {
+      throw byMaterialKey.error;
+    }
+
+    return byMaterialKey.data;
+  }
+
   function openEarmarkModal(row: CurrentInventoryRow) {
     setPendingEarmarkRow(row);
-    setEarmarkJob(row.earmarked_job || '');
-    setEarmarkNotes(row.earmark_notes || '');
-    setEarmarkMessage('');
+    setEarmarkJob(row.earmarked_job || "");
+    setEarmarkNotes(row.earmark_notes || "");
+    setEarmarkMessage("");
   }
 
   async function handleSaveEarmark() {
     if (!pendingEarmarkRow) return;
 
-    if (!earmarkJob.trim()) {
-      setEarmarkMessage('Job name is required to earmark inventory.');
+    const job = earmarkJob.trim();
+    const notes = earmarkNotes.trim();
+
+    if (!job) {
+      setEarmarkMessage("Job name is required to earmark inventory.");
       return;
     }
 
     setIsSavingEarmark(true);
-    setEarmarkMessage('');
+    setEarmarkMessage("");
 
-    const { error } = await supabase
-      .from('inventory_items')
-      .update({
-        earmarked_for_job: true,
-        earmarked_job: earmarkJob.trim(),
-        earmark_notes: earmarkNotes.trim() || null,
-      })
-      .eq('id', pendingEarmarkRow.id);
+    const payload = {
+      earmarked_for_job: true,
+      earmarked_job: job,
+      earmark_notes: notes || null,
+    };
 
-    if (error) {
-      console.error('Failed to save earmark:', error);
-      setEarmarkMessage(`Failed to save earmark: ${error.message}`);
+    try {
+      const targetRow = await findInventoryRowForEarmark(pendingEarmarkRow);
+
+      if (!targetRow?.id) {
+        setEarmarkMessage(
+          `Could not find this inventory row in inventory_items. Row shown: ${pendingEarmarkRow.vendor || "—"} / ${pendingEarmarkRow.color || "—"} / ${pendingEarmarkRow.size || "—"}.`
+        );
+        return;
+      }
+
+      const { error } = await supabase
+        .from("inventory_items")
+        .update(payload)
+        .eq("id", targetRow.id);
+
+      if (error) {
+        console.error("Failed to save earmark:", error);
+        setEarmarkMessage(error.message || "Failed to save earmark.");
+        return;
+      }
+
+      const verify = await supabase
+        .from("inventory_items")
+        .select("id, earmarked_for_job, earmarked_job, earmark_notes")
+        .eq("id", targetRow.id)
+        .maybeSingle<{
+          id: string;
+          earmarked_for_job: boolean | null;
+          earmarked_job: string | null;
+          earmark_notes: string | null;
+        }>();
+
+      if (verify.error) {
+        console.error("Failed to verify saved earmark:", verify.error);
+        setEarmarkMessage(
+          verify.error.message || "Earmark may have saved, but verification failed."
+        );
+        return;
+      }
+
+      if (
+        !verify.data?.earmarked_for_job ||
+        verify.data.earmarked_job !== job ||
+        (verify.data.earmark_notes || "") !== (notes || "")
+      ) {
+        setEarmarkMessage(
+          "Save did not persist after verification. Refresh the page and try again."
+        );
+        return;
+      }
+
+      setCurrentRows((prev) =>
+        prev.map((row) =>
+          String(row.id) === String(targetRow.id)
+            ? {
+                ...row,
+                earmarked_for_job: true,
+                earmarked_job: job,
+                earmark_notes: notes || null,
+              }
+            : row,
+        ),
+      );
+
+      setPendingEarmarkRow(null);
+      setEarmarkJob("");
+      setEarmarkNotes("");
+      setEarmarkMessage("");
+      await loadData();
+    } catch (error) {
+      console.error("Unexpected earmark save error:", error);
+      setEarmarkMessage("Failed to save earmark.");
+    } finally {
       setIsSavingEarmark(false);
-      return;
     }
-
-    setPendingEarmarkRow(null);
-    setEarmarkJob('');
-    setEarmarkNotes('');
-    setEarmarkMessage('');
-    setIsSavingEarmark(false);
-    await loadData();
   }
 
   async function handleClearEarmark() {
     if (!pendingEarmarkRow) return;
 
     setIsSavingEarmark(true);
-    setEarmarkMessage('');
+    setEarmarkMessage("");
 
-    const { error } = await supabase
-      .from('inventory_items')
-      .update({
-        earmarked_for_job: false,
-        earmarked_job: null,
-        earmark_notes: null,
-      })
-      .eq('id', pendingEarmarkRow.id);
+    const payload = {
+      earmarked_for_job: false,
+      earmarked_job: null,
+      earmark_notes: null,
+    };
 
-    if (error) {
-      console.error('Failed to clear earmark:', error);
-      setEarmarkMessage(`Failed to clear earmark: ${error.message}`);
+    try {
+      const targetRow = await findInventoryRowForEarmark(pendingEarmarkRow);
+
+      if (!targetRow?.id) {
+        setEarmarkMessage(
+          `Could not find this inventory row in inventory_items. Row shown: ${pendingEarmarkRow.vendor || "—"} / ${pendingEarmarkRow.color || "—"} / ${pendingEarmarkRow.size || "—"}.`
+        );
+        return;
+      }
+
+      const { error } = await supabase
+        .from("inventory_items")
+        .update(payload)
+        .eq("id", targetRow.id);
+
+      if (error) {
+        console.error("Failed to clear earmark:", error);
+        setEarmarkMessage(error.message || "Failed to clear earmark.");
+        return;
+      }
+
+      const verify = await supabase
+        .from("inventory_items")
+        .select("id, earmarked_for_job, earmarked_job, earmark_notes")
+        .eq("id", targetRow.id)
+        .maybeSingle<{
+          id: string;
+          earmarked_for_job: boolean | null;
+          earmarked_job: string | null;
+          earmark_notes: string | null;
+        }>();
+
+      if (verify.error) {
+        console.error("Failed to verify cleared earmark:", verify.error);
+        setEarmarkMessage(
+          verify.error.message || "Earmark may have cleared, but verification failed."
+        );
+        return;
+      }
+
+      if (
+        verify.data?.earmarked_for_job ||
+        verify.data?.earmarked_job ||
+        verify.data?.earmark_notes
+      ) {
+        setEarmarkMessage(
+          "Clear did not persist after verification. Refresh the page and try again."
+        );
+        return;
+      }
+
+      setCurrentRows((prev) =>
+        prev.map((row) =>
+          String(row.id) === String(targetRow.id)
+            ? {
+                ...row,
+                earmarked_for_job: false,
+                earmarked_job: null,
+                earmark_notes: null,
+              }
+            : row,
+        ),
+      );
+
+      setPendingEarmarkRow(null);
+      setEarmarkJob("");
+      setEarmarkNotes("");
+      setEarmarkMessage("");
+      await loadData();
+    } catch (error) {
+      console.error("Unexpected earmark clear error:", error);
+      setEarmarkMessage("Failed to clear earmark.");
+    } finally {
       setIsSavingEarmark(false);
-      return;
     }
-
-    setPendingEarmarkRow(null);
-    setEarmarkJob('');
-    setEarmarkNotes('');
-    setEarmarkMessage('');
-    setIsSavingEarmark(false);
-    await loadData();
   }
 
   return (
@@ -615,14 +809,14 @@ export default function InventoryPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {viewMode === 'append' && (
+            {viewMode === "append" && (
               <button
                 type="button"
                 onClick={handleSyncToCurrentInventory}
                 disabled={isSyncing}
                 className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm font-medium text-neutral-200 transition hover:border-[#c8a43a] hover:bg-neutral-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSyncing ? 'Syncing...' : 'Sync to Current Inventory'}
+                {isSyncing ? "Syncing..." : "Sync to Current Inventory"}
               </button>
             )}
 
@@ -630,11 +824,11 @@ export default function InventoryPage() {
               onClick={() => setGuidedMode((prev) => !prev)}
               className={`rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
                 guidedMode
-                  ? 'border-[#c8a43a] bg-[#c8a43a] text-black hover:bg-[#d6b24a]'
-                  : 'border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-600 hover:bg-neutral-900'
+                  ? "border-[#c8a43a] bg-[#c8a43a] text-black hover:bg-[#d6b24a]"
+                  : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-600 hover:bg-neutral-900"
               }`}
             >
-              {guidedMode ? 'Hide Guidance' : 'Show Guidance'}
+              {guidedMode ? "Hide Guidance" : "Show Guidance"}
             </button>
           </div>
         </div>
@@ -642,74 +836,74 @@ export default function InventoryPage() {
         <div className="flex items-center gap-3">
           <div className="inline-flex rounded-full border border-neutral-800 bg-neutral-950 p-1">
             <button
-              onClick={() => setViewMode('append')}
+              onClick={() => setViewMode("append")}
               className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                viewMode === 'append'
-                  ? 'bg-[#c8a43a] text-black'
-                  : 'text-neutral-300 hover:bg-neutral-900'
+                viewMode === "append"
+                  ? "bg-[#c8a43a] text-black"
+                  : "text-neutral-300 hover:bg-neutral-900"
               }`}
             >
               Append View
             </button>
 
             <button
-              onClick={() => setViewMode('current')}
+              onClick={() => setViewMode("current")}
               className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                viewMode === 'current'
-                  ? 'bg-[#c8a43a] text-black'
-                  : 'text-neutral-300 hover:bg-neutral-900'
+                viewMode === "current"
+                  ? "bg-[#c8a43a] text-black"
+                  : "text-neutral-300 hover:bg-neutral-900"
               }`}
             >
               Current Inventory
             </button>
           </div>
 
-          {viewMode === 'append' && (
+          {viewMode === "append" && (
             <button
               type="button"
               onClick={() => setShowSyncedRows((prev) => !prev)}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                 showSyncedRows
-                  ? 'border-neutral-700 bg-neutral-900 text-white'
-                  : 'border-neutral-800 bg-neutral-950 text-neutral-400 hover:bg-neutral-900'
+                  ? "border-neutral-700 bg-neutral-900 text-white"
+                  : "border-neutral-800 bg-neutral-950 text-neutral-400 hover:bg-neutral-900"
               }`}
             >
-              {showSyncedRows ? 'Hide Synced' : 'Show Synced'}
+              {showSyncedRows ? "Hide Synced" : "Show Synced"}
             </button>
           )}
         </div>
 
-        {guidedMode && viewMode === 'append' && (
+        {guidedMode && viewMode === "append" && (
           <div className="rounded-2xl border border-yellow-800/60 bg-yellow-950/20 p-4">
             <div className="text-sm font-semibold text-[#f7f0d0]">
               Append View Guidance
             </div>
             <p className="mt-2 text-sm text-neutral-300">
-              This view is the transaction-derived inventory balance. Use it as the
-              preferred sourcing view because it preserves history and surfaces
-              warnings from the catalog.
+              This view is the transaction-derived inventory balance. Use it as
+              the preferred sourcing view because it preserves history and
+              surfaces warnings from the catalog.
             </p>
             <p className="mt-2 text-xs text-neutral-400">
-              Default view shows items that still need attention. Synced rows can be
-              revealed with the toggle above.
+              Default view shows items that still need attention. Synced rows
+              can be revealed with the toggle above.
             </p>
           </div>
         )}
 
-        {guidedMode && viewMode === 'current' && (
+        {guidedMode && viewMode === "current" && (
           <div className="rounded-2xl border border-blue-800/60 bg-blue-950/20 p-4">
             <div className="text-sm font-semibold text-[#f7f0d0]">
               Current Inventory Guidance
             </div>
             <p className="mt-2 text-sm text-neutral-300">
-              This is the operational inventory table used for stock visibility and
-              job reservation. Use earmarks here to reserve material for a specific
-              job or release it back into the general pool.
+              This is the operational inventory table used for stock visibility
+              and job reservation. Use earmarks here to reserve material for a
+              specific job or release it back into the general pool.
             </p>
           </div>
         )}
 
-        {viewMode === 'append' && syncMessage && (
+        {viewMode === "append" && syncMessage && (
           <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-sm text-neutral-300">
             {syncMessage}
           </div>
@@ -740,7 +934,7 @@ export default function InventoryPage() {
         <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
           {loading ? (
             <div className="text-sm text-neutral-400">Loading...</div>
-          ) : viewMode === 'append' ? (
+          ) : viewMode === "append" ? (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[980px] table-fixed text-sm">
                 <thead className="border-b border-neutral-800 text-neutral-400">
@@ -751,22 +945,24 @@ export default function InventoryPage() {
                     <th className="py-3 text-left font-medium">Unit</th>
                     <th className="py-3 text-left font-medium">Qty</th>
                     <th className="py-3 text-left font-medium">Sync</th>
-                    <th className="w-[140px] py-3 text-left font-medium">Entry</th>
+                    <th className="w-[140px] py-3 text-left font-medium">
+                      Entry
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredAppendRows.map((row, index) => {
                     const annotated = Boolean(
                       row.notes?.trim() ||
-                        row.match_warning?.trim() ||
-                        row.appearance_notes?.trim()
+                      row.match_warning?.trim() ||
+                      row.appearance_notes?.trim(),
                     );
 
                     return (
                       <tr
                         key={`${row.vendor}-${row.item_name}-${row.size}-${index}`}
                         className={`border-b border-neutral-900 ${
-                          row.match_warning?.trim() ? 'bg-red-950/10' : ''
+                          row.match_warning?.trim() ? "bg-red-950/10" : ""
                         }`}
                       >
                         <td className="py-3 align-top">{row.vendor}</td>
@@ -774,7 +970,9 @@ export default function InventoryPage() {
                         <td className="py-3 align-top">
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
-                              <div className="font-medium text-white">{row.item_name}</div>
+                              <div className="font-medium text-white">
+                                {row.item_name}
+                              </div>
                               {annotated && (
                                 <span className="rounded-full border border-yellow-700/60 bg-yellow-950/40 px-2 py-1 text-[11px] font-medium text-yellow-300">
                                   Annotated
@@ -805,8 +1003,8 @@ export default function InventoryPage() {
                         <td className="py-3 align-top">
                           <div className="flex flex-col items-start gap-1">
                             <SyncStatusBadge status={row.sync_status} />
-                            {row.sync_status === 'changed' &&
-                              typeof row.last_synced_qty !== 'undefined' && (
+                            {row.sync_status === "changed" &&
+                              typeof row.last_synced_qty !== "undefined" && (
                                 <span className="text-[11px] text-neutral-500">
                                   Was {row.last_synced_qty}
                                 </span>
@@ -822,9 +1020,11 @@ export default function InventoryPage() {
                                 const params = new URLSearchParams({
                                   vendor: row.vendor,
                                   item_name: row.item_name,
-                                  size: row.size || '',
+                                  size: row.size || "",
                                 });
-                                router.push(`/transactions?${params.toString()}`);
+                                router.push(
+                                  `/transactions?${params.toString()}`,
+                                );
                               }}
                               className="inline-flex min-h-[32px] items-center justify-center rounded-md border border-neutral-700 bg-neutral-900 px-3 text-xs font-medium leading-none text-neutral-200 whitespace-nowrap transition hover:border-[#c8a43a] hover:text-white"
                             >
@@ -838,7 +1038,10 @@ export default function InventoryPage() {
 
                   {filteredAppendRows.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-sm text-neutral-500">
+                      <td
+                        colSpan={7}
+                        className="py-8 text-center text-sm text-neutral-500"
+                      >
                         No matching inventory rows found.
                       </td>
                     </tr>
@@ -857,7 +1060,9 @@ export default function InventoryPage() {
                     <th className="py-3 text-left font-medium">Location</th>
                     <th className="py-3 text-left font-medium">Qty</th>
                     <th className="py-3 text-left font-medium">Reservation</th>
-                    <th className="w-[160px] py-3 text-left font-medium">Action</th>
+                    <th className="w-[160px] py-3 text-left font-medium">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -866,7 +1071,7 @@ export default function InventoryPage() {
                       <td className="py-3 align-top">{row.vendor}</td>
                       <td className="py-3 align-top">{row.color}</td>
                       <td className="py-3 align-top">{row.size}</td>
-                      <td className="py-3 align-top">{row.location || '—'}</td>
+                      <td className="py-3 align-top">{row.location || "—"}</td>
                       <td className="py-3 align-top">{row.quantity}</td>
                       <td className="py-3 align-top">
                         {row.earmarked_for_job ? (
@@ -875,7 +1080,7 @@ export default function InventoryPage() {
                               Earmarked
                             </span>
                             <div className="text-xs text-neutral-300">
-                              {row.earmarked_job || 'Unnamed job'}
+                              {row.earmarked_job || "Unnamed job"}
                             </div>
                             {row.earmark_notes?.trim() && (
                               <div className="text-xs text-neutral-500">
@@ -884,7 +1089,9 @@ export default function InventoryPage() {
                             )}
                           </div>
                         ) : (
-                          <span className="text-sm text-neutral-500">General pool</span>
+                          <span className="text-sm text-neutral-500">
+                            General pool
+                          </span>
                         )}
                       </td>
                       <td className="w-[160px] py-3 align-middle">
@@ -893,7 +1100,7 @@ export default function InventoryPage() {
                           onClick={() => openEarmarkModal(row)}
                           className="inline-flex min-h-[32px] items-center justify-center rounded-md border border-neutral-700 bg-neutral-900 px-3 text-xs font-medium leading-none text-neutral-200 whitespace-nowrap transition hover:border-[#c8a43a] hover:text-white"
                         >
-                          {row.earmarked_for_job ? 'Edit Earmark' : 'Earmark'}
+                          {row.earmarked_for_job ? "Edit Earmark" : "Earmark"}
                         </button>
                       </td>
                     </tr>
@@ -901,7 +1108,10 @@ export default function InventoryPage() {
 
                   {filteredCurrentRows.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-sm text-neutral-500">
+                      <td
+                        colSpan={7}
+                        className="py-8 text-center text-sm text-neutral-500"
+                      >
                         No matching legacy inventory rows found.
                       </td>
                     </tr>
@@ -923,7 +1133,9 @@ export default function InventoryPage() {
           </div>
 
           {recentAnnotations.length === 0 ? (
-            <div className="text-sm text-neutral-500">No recent annotations found.</div>
+            <div className="text-sm text-neutral-500">
+              No recent annotations found.
+            </div>
           ) : (
             <div className="divide-y divide-neutral-800">
               {recentAnnotations.map((row, index) => {
@@ -935,7 +1147,9 @@ export default function InventoryPage() {
                     key={key}
                     type="button"
                     onClick={() =>
-                      setExpandedAnnotationKey((prev) => (prev === key ? null : key))
+                      setExpandedAnnotationKey((prev) =>
+                        prev === key ? null : key,
+                      )
                     }
                     className="block w-full py-3 text-left transition hover:bg-neutral-900/50"
                   >
@@ -951,8 +1165,10 @@ export default function InventoryPage() {
                         </div>
 
                         <div className="mt-1 text-xs text-neutral-500">
-                          {row.vendor} • {row.size || '—'}
-                          {row.annotated_by?.trim() ? ` • ${row.annotated_by}` : ''}
+                          {row.vendor} • {row.size || "—"}
+                          {row.annotated_by?.trim()
+                            ? ` • ${row.annotated_by}`
+                            : ""}
                         </div>
 
                         {!isExpanded && (
@@ -1006,7 +1222,7 @@ export default function InventoryPage() {
                           </span>
                         )}
                         <span className="text-[11px] uppercase tracking-[0.14em] text-neutral-500">
-                          {isExpanded ? 'Hide' : 'Expand'}
+                          {isExpanded ? "Hide" : "Expand"}
                         </span>
                       </div>
                     </div>
@@ -1022,30 +1238,32 @@ export default function InventoryPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
           <div className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-950 p-5 shadow-2xl">
             <h2 className="text-lg font-semibold text-[#f7f0d0]">
-              {pendingEarmarkRow.earmarked_for_job ? 'Edit Earmark' : 'Earmark Inventory'}
+              {pendingEarmarkRow.earmarked_for_job
+                ? "Edit Earmark"
+                : "Earmark Inventory"}
             </h2>
 
             <p className="mt-2 text-sm text-neutral-400">
-              Reserve this inventory row for a specific job, or clear the earmark to
-              return it to the general inventory pool.
+              Reserve this inventory row for a specific job, or clear the
+              earmark to return it to the general inventory pool.
             </p>
 
             <div className="mt-4 rounded-xl border border-neutral-800 bg-neutral-900/60 p-3 text-sm text-neutral-300">
               <div>
-                <span className="text-neutral-500">Vendor:</span>{' '}
-                {pendingEarmarkRow.vendor || '—'}
+                <span className="text-neutral-500">Vendor:</span>{" "}
+                {pendingEarmarkRow.vendor || "—"}
               </div>
               <div>
-                <span className="text-neutral-500">Color:</span>{' '}
-                {pendingEarmarkRow.color || '—'}
+                <span className="text-neutral-500">Color:</span>{" "}
+                {pendingEarmarkRow.color || "—"}
               </div>
               <div>
-                <span className="text-neutral-500">Size:</span>{' '}
-                {pendingEarmarkRow.size || '—'}
+                <span className="text-neutral-500">Size:</span>{" "}
+                {pendingEarmarkRow.size || "—"}
               </div>
               <div>
-                <span className="text-neutral-500">Quantity:</span>{' '}
-                {pendingEarmarkRow.quantity ?? '—'}
+                <span className="text-neutral-500">Quantity:</span>{" "}
+                {pendingEarmarkRow.quantity ?? "—"}
               </div>
             </div>
 
@@ -1106,9 +1324,9 @@ export default function InventoryPage() {
                 onClick={() => {
                   if (isSavingEarmark) return;
                   setPendingEarmarkRow(null);
-                  setEarmarkJob('');
-                  setEarmarkNotes('');
-                  setEarmarkMessage('');
+                  setEarmarkJob("");
+                  setEarmarkNotes("");
+                  setEarmarkMessage("");
                 }}
                 className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm font-medium text-neutral-200 transition hover:border-neutral-600 hover:bg-neutral-900"
               >
@@ -1121,7 +1339,7 @@ export default function InventoryPage() {
                 disabled={isSavingEarmark}
                 className="rounded-xl border border-[#c8a43a] bg-[#c8a43a] px-4 py-2.5 text-sm font-medium text-black transition hover:bg-[#d6b24a] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSavingEarmark ? 'Saving...' : 'Save Earmark'}
+                {isSavingEarmark ? "Saving..." : "Save Earmark"}
               </button>
             </div>
           </div>
