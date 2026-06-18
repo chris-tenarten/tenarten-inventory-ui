@@ -2,17 +2,64 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const navItems = [
-  { href: '/', label: 'Dashboard' },
-  { href: '/catalog', label: 'Catalog' },
-  { href: '/inventory', label: 'Inventory' },
-  { href: '/transactions', label: 'Transactions' },
+  { href: '/inventory', label: 'Inventory', icon: BoxIcon },
+  { href: '/transactions', label: 'Add Inventory', icon: PlusIcon },
+  { href: '/activity', label: 'Activity Log', icon: ClockIcon },
+  { href: '/catalog', label: 'Catalog', icon: BookIcon },
 ];
 
 const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
 const ACCESS_PASSWORD = 'tenarten123';
+
+function BoxIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M21 16V8l-9-5-9 5v8l9 5 9-5Z" />
+      <path d="M3.3 7.8 12 13l8.7-5.2" />
+      <path d="M12 22V13" />
+    </svg>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8v8M8 12h8" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v6l4 2" />
+    </svg>
+  );
+}
+
+function BookIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" />
+      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 8H20" />
+    </svg>
+  );
+}
+
+function LogoutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M10 17 15 12l-5-5" />
+      <path d="M15 12H3" />
+      <path d="M21 3v18" />
+    </svg>
+  );
+}
 
 export default function ClientLayoutShell({
   children,
@@ -32,10 +79,6 @@ export default function ClientLayoutShell({
     setIsReady(true);
   }, []);
 
-  const accessLabel = useMemo(() => {
-    return isUnlocked ? 'Internal Access Enabled' : 'Internal Access';
-  }, [isUnlocked]);
-
   function handleUnlock() {
     if (passwordInput === ACCESS_PASSWORD) {
       window.localStorage.setItem(ACCESS_STORAGE_KEY, 'granted');
@@ -51,6 +94,7 @@ export default function ClientLayoutShell({
 
   function handleLogout() {
     window.localStorage.removeItem(ACCESS_STORAGE_KEY);
+    window.localStorage.removeItem('tenarten_admin_access');
     setIsUnlocked(false);
     setShowAccessModal(false);
     setPasswordInput('');
@@ -59,66 +103,71 @@ export default function ClientLayoutShell({
 
   return (
     <>
-      <header className="border-b border-neutral-800 bg-black/95 px-6 py-4">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+      <header className="border-b border-[#c8a43a]/40 bg-black px-6 py-4 shadow-[0_12px_30px_rgba(0,0,0,0.45)]">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-6">
+          <Link href="/inventory" className="flex items-center gap-4">
             <img
               src="/logo.png"
               alt="Tenarten logo"
-              className="h-10 object-contain"
+              className="h-14 object-contain"
             />
+
             <div>
-              <div className="text-lg font-semibold tracking-tight text-white">
-                Tenarten Inventory UI
+              <div className="text-xl font-semibold tracking-tight text-white">
+                Tenarten Inventory
               </div>
-              <div className="text-xs text-neutral-400">
-                Material control and catalog workflow
+              <div className="text-sm text-neutral-400">
+                Stock control and activity tracking
               </div>
             </div>
-          </div>
+          </Link>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setShowAccessModal(true)}
-              className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
-                isUnlocked
-                  ? 'border-[#c8a43a] bg-[#c8a43a] text-black hover:bg-[#d6b24a]'
-                  : 'border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-600 hover:bg-neutral-900'
-              }`}
-            >
-              {accessLabel}
-            </button>
-
+          <div className="flex flex-wrap items-center gap-4">
             {isUnlocked && (
+              <nav className="flex flex-wrap items-center gap-3 text-sm">
+                {navItems.map((item) => {
+                  const isActive = pathname === item.href;
+                  const Icon = item.icon;
+                  const isPrimary = item.href === '/transactions';
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`inline-flex items-center gap-2 rounded-xl border px-4 py-3 font-semibold transition ${
+                        isActive
+                          ? 'border-[#c8a43a] bg-[#c8a43a]/15 text-[#f7f0d0] shadow-[0_0_18px_rgba(200,164,58,0.18)]'
+                          : isPrimary
+                            ? 'border-[#c8a43a]/70 bg-[#c8a43a]/10 text-[#f0d98a] hover:bg-[#c8a43a]/20 hover:text-[#f7f0d0]'
+                            : 'border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-500 hover:bg-neutral-900 hover:text-white'
+                      }`}
+                    >
+                      <Icon />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            )}
+
+            {isUnlocked ? (
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm font-medium text-neutral-200 transition hover:border-neutral-600 hover:bg-neutral-900"
+                className="inline-flex items-center gap-2 rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-3 text-sm font-semibold text-neutral-200 transition hover:border-neutral-500 hover:bg-neutral-900 hover:text-white"
               >
+                <LogoutIcon />
                 Logout
               </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowAccessModal(true)}
+                className="rounded-xl border border-[#c8a43a]/70 bg-[#c8a43a]/10 px-4 py-3 text-sm font-semibold text-[#f0d98a] transition hover:bg-[#c8a43a]/20"
+              >
+                Internal Access
+              </button>
             )}
-
-            <nav className="flex items-center gap-2 text-sm">
-              {navItems.map((item) => {
-                const isActive = pathname === item.href;
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`rounded-xl border px-3 py-2 font-medium transition ${
-                      isActive
-                        ? 'border-[#c8a43a] bg-neutral-950 text-white'
-                        : 'border-transparent text-neutral-300 hover:border-neutral-700 hover:bg-neutral-900 hover:text-white'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
           </div>
         </div>
       </header>
@@ -127,7 +176,7 @@ export default function ClientLayoutShell({
         {isReady && isUnlocked ? (
           children
         ) : (
-          <div className="min-h-[calc(100vh-73px)] bg-black px-6 py-12">
+          <div className="min-h-[calc(100vh-89px)] bg-black px-6 py-12">
             <div className="mx-auto max-w-3xl rounded-2xl border border-neutral-800 bg-neutral-950 p-8">
               <div className="text-sm font-semibold uppercase tracking-[0.14em] text-[#c8a43a]">
                 Internal Access
@@ -136,7 +185,6 @@ export default function ClientLayoutShell({
                 Protected internal tool
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-400">
-                This UI is currently behind a lightweight internal-access gate.
                 Use the Internal Access button in the header to enter the shared
                 password and continue.
               </p>
@@ -154,10 +202,6 @@ export default function ClientLayoutShell({
             <h2 className="mt-2 text-2xl font-semibold text-white">
               Enter password
             </h2>
-            <p className="mt-2 text-sm text-neutral-400">
-              This is a lightweight access gate for internal review. It is not a
-              production auth system.
-            </p>
 
             <div className="mt-5">
               <label
