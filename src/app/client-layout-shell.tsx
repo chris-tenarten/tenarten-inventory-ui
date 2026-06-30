@@ -73,7 +73,12 @@ export default function ClientLayoutShell({ children }: { children: ReactNode })
 
   useEffect(() => {
     function handleScroll() {
-      setHasScrolled(window.scrollY > 18);
+      const scrollY = window.scrollY;
+
+      setHasScrolled((current) => {
+        if (current) return scrollY > 4;
+        return scrollY > 36;
+      });
     }
 
     handleScroll();
