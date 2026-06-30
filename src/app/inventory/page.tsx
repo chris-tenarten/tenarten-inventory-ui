@@ -205,13 +205,6 @@ export default function InventoryPage() {
     return rows.find((row) => String(row.id) === selectedRowId) || null;
   }, [rows, selectedRowId]);
 
-  const totalQuantity = useMemo(() => {
-    return filteredRows.reduce((sum, row) => {
-      const qty = Number(row.quantity || 0);
-      return Number.isFinite(qty) ? sum + qty : sum;
-    }, 0);
-  }, [filteredRows]);
-
   function getSelectedRow() {
     return selectedRow;
   }
@@ -505,37 +498,9 @@ export default function InventoryPage() {
   return (
     <main className="min-h-[calc(100vh-69px)] bg-[#eef1f4] px-2 py-2 text-slate-950 sm:px-4 sm:py-4">
       <section className="mx-auto max-w-[1500px] border border-slate-400 bg-white shadow-[0_1px_0_rgba(15,23,42,0.08)]">
-        <div className="border-b border-slate-400 bg-gradient-to-b from-[#f4f6f8] to-[#dfe5ec]">
-          <div className="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-4">
+        <div className="border-b border-slate-400 bg-[#f6f7f9] p-3 sm:p-4">
+          <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-600">
-                Tenarten Material Control
-              </div>
-              <h1 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-slate-950 sm:text-2xl">
-                Inventory
-              </h1>
-            </div>
-
-            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
-              <button
-                type="button"
-                onClick={loadData}
-                className="border border-slate-400 bg-white px-3 py-2 text-center text-xs font-black uppercase tracking-[0.1em] text-slate-700 transition hover:border-slate-700 hover:bg-slate-100"
-              >
-                Refresh
-              </button>
-
-              <Link
-                href="/transactions"
-                className="border border-slate-900 bg-slate-800 px-4 py-2 text-center text-sm font-black text-white transition hover:bg-slate-950"
-              >
-                + Record Stock
-              </Link>
-            </div>
-          </div>
-
-          <div className="grid border-t border-slate-300 bg-[#f6f7f9] lg:grid-cols-[1fr_auto]">
-            <div className="border-b border-slate-300 p-3 lg:border-b-0 lg:border-r">
               <label htmlFor="inventory-search" className={labelClass}>
                 Search current stock
               </label>
@@ -549,25 +514,21 @@ export default function InventoryPage() {
               />
             </div>
 
-            <div className="grid grid-cols-3 divide-x divide-slate-300 border-t border-slate-300 bg-white text-center lg:min-w-[360px] lg:border-t-0">
-              <div className="px-4 py-3">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Visible</div>
-                <div className="mt-1 text-base font-semibold tabular-nums text-slate-950 sm:text-xl">
-                  {filteredRows.length.toLocaleString()}
-                </div>
-              </div>
-              <div className="px-4 py-3">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Total</div>
-                <div className="mt-1 text-base font-semibold tabular-nums text-slate-950 sm:text-xl">
-                  {rows.length.toLocaleString()}
-                </div>
-              </div>
-              <div className="px-4 py-3">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Qty Sum</div>
-                <div className="mt-1 text-base font-semibold tabular-nums text-slate-950 sm:text-xl">
-                  {formatQuantity(totalQuantity)}
-                </div>
-              </div>
+            <div className="grid grid-cols-2 gap-2 lg:w-[260px]">
+              <button
+                type="button"
+                onClick={loadData}
+                className="border border-slate-400 bg-white px-3 py-2.5 text-center text-xs font-black uppercase tracking-[0.1em] text-slate-700 transition hover:border-slate-700 hover:bg-slate-100"
+              >
+                Refresh
+              </button>
+
+              <Link
+                href="/transactions"
+                className="border border-slate-900 bg-slate-800 px-4 py-2.5 text-center text-sm font-black text-white transition hover:bg-slate-950"
+              >
+                + Record Stock
+              </Link>
             </div>
           </div>
         </div>
@@ -623,7 +584,7 @@ export default function InventoryPage() {
                             ) : (
                               <span className="text-xs font-bold text-slate-500">General stock</span>
                             )}
-                            <span className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-800">{isSelected ? 'Close' : 'Open'}</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-800">{isSelected ? 'Close' : 'Details'}</span>
                           </div>
                         </button>
 
@@ -758,7 +719,7 @@ export default function InventoryPage() {
                     <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Pallet</th>
                     <th className="border-r border-slate-400 px-3 py-2 text-right font-black">Qty</th>
                     <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Status</th>
-                    <th className="w-[80px] px-3 py-2 text-left font-black">Open</th>
+                    <th className="w-[80px] px-3 py-2 text-left font-black">Details</th>
                   </tr>
                 </thead>
 
@@ -819,7 +780,7 @@ export default function InventoryPage() {
 
                           <td className="w-[80px] px-3 py-2 align-top">
                             <span className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-800">
-                              {isSelected ? 'Close' : 'Open'}
+                              {isSelected ? 'Close' : 'Details'}
                             </span>
                           </td>
                         </tr>

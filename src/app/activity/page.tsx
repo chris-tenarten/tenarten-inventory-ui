@@ -185,31 +185,8 @@ export default function ActivityPage() {
   return (
     <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-6 sm:py-6">
       <div className="border border-slate-400 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.08)]">
-        <div className="flex flex-col items-stretch gap-4 border-b sm:flex-row sm:items-start sm:justify-between border-slate-300 bg-gradient-to-b from-[#f8fafc] to-[#e8edf3] px-4 py-4">
-          <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">
-              Inventory Audit Trail
-            </p>
-            <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-              Activity
-            </h1>
-            <p className="mt-2 max-w-3xl text-sm font-medium text-slate-600">
-              Transaction history is read-only by design. Corrections should be recorded as new adjustment entries, not silent edits to old rows.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={loadRows}
-            disabled={loading}
-            className="w-full border border-slate-500 bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-slate-900 transition hover:border-slate-900 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-          >
-            {loading ? 'Refreshing' : 'Refresh'}
-          </button>
-        </div>
-
-        <div className="grid border-b border-slate-300 lg:grid-cols-[1fr_auto]">
-          <div className="border-b border-slate-300 bg-[#f6f7f9] p-4 lg:border-b-0 lg:border-r">
+        <div className="grid border-b border-slate-300 bg-[#f6f7f9] lg:grid-cols-[1fr_auto_auto] lg:items-end">
+          <div className="border-b border-slate-300 p-4 lg:border-b-0 lg:border-r">
             <label
               htmlFor="activity-search"
               className="mb-1 block text-[10px] font-black uppercase tracking-[0.16em] text-slate-700"
@@ -225,7 +202,7 @@ export default function ActivityPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 divide-x divide-y divide-slate-300 bg-white sm:grid-cols-4 sm:divide-y-0 lg:min-w-[520px]">
+          <div className="grid grid-cols-2 divide-x divide-y divide-slate-300 bg-white sm:grid-cols-4 sm:divide-y-0 lg:min-w-[520px] lg:border-r">
             {(['all', 'intake', 'outtake', 'adjustment'] as TransactionTypeFilter[]).map((filter) => (
               <button
                 key={filter}
@@ -241,20 +218,16 @@ export default function ActivityPage() {
               </button>
             ))}
           </div>
-        </div>
 
-        <div className="grid border-b border-slate-300 bg-white sm:grid-cols-3">
-          <div className="border-b border-slate-300 px-4 py-3 sm:border-b-0 sm:border-r">
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Visible</div>
-            <div className="mt-1 text-2xl font-black text-slate-950">{filteredRows.length}</div>
-          </div>
-          <div className="border-b border-slate-300 px-4 py-3 sm:border-b-0 sm:border-r">
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Loaded</div>
-            <div className="mt-1 text-2xl font-black text-slate-950">{rows.length}</div>
-          </div>
-          <div className="px-4 py-3">
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Mode</div>
-            <div className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-slate-800">Audit Only</div>
+          <div className="p-3 lg:p-4">
+            <button
+              type="button"
+              onClick={loadRows}
+              disabled={loading}
+              className="w-full border border-slate-500 bg-white px-5 py-2.5 text-sm font-black uppercase tracking-[0.08em] text-slate-900 transition hover:border-slate-900 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 lg:w-auto"
+            >
+              {loading ? 'Refreshing' : 'Refresh'}
+            </button>
           </div>
         </div>
 

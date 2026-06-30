@@ -452,43 +452,6 @@ export default function CatalogPage() {
   return (
     <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-6 sm:py-5 lg:px-8">
       <div className="mx-auto max-w-[1600px] space-y-4">
-        <div className="flex flex-col gap-3 border-b border-slate-400/70 pb-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-              Vendor Reference
-            </div>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Catalog</h1>
-            <p className="mt-1 text-sm text-slate-600">
-              Search materials, inspect vendor data, and keep mismatch notes without changing inventory counts.
-            </p>
-          </div>
-
-          <div className="grid w-full grid-cols-2 border border-slate-400 bg-slate-200 p-0.5 shadow-sm sm:inline-flex sm:w-fit">
-            <button
-              type="button"
-              onClick={() => setMode('standard')}
-              className={`px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
-                mode === 'standard'
-                  ? 'bg-slate-800 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-white hover:text-slate-950'
-              }`}
-            >
-              Standard Materials
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode('specialty')}
-              className={`border-l border-slate-400 px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
-                mode === 'specialty'
-                  ? 'bg-slate-800 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-white hover:text-slate-950'
-              }`}
-            >
-              System / Specialty
-            </button>
-          </div>
-        </div>
-
         <section className="border border-slate-400 bg-white shadow-sm">
           <div className="border-b border-slate-300 bg-[#f6f7f9] px-4 py-3">
             <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
@@ -515,15 +478,29 @@ export default function CatalogPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 border border-slate-300 bg-white text-sm lg:min-w-[260px]">
-                <div className="border-r border-slate-300 px-3 py-2">
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Visible</div>
-                  <div className="font-semibold text-slate-950">{catalogRows.length}</div>
-                </div>
-                <div className="px-3 py-2">
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Total</div>
-                  <div className="font-semibold text-slate-950">{totalCount}</div>
-                </div>
+              <div className="grid w-full grid-cols-2 border border-slate-400 bg-slate-200 p-0.5 shadow-sm sm:inline-flex sm:w-fit">
+                <button
+                  type="button"
+                  onClick={() => setMode('standard')}
+                  className={`px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
+                    mode === 'standard'
+                      ? 'bg-slate-800 text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-700 hover:bg-white hover:text-slate-950'
+                  }`}
+                >
+                  Standard Materials
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('specialty')}
+                  className={`border-l border-slate-400 px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
+                    mode === 'specialty'
+                      ? 'bg-slate-800 text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-700 hover:bg-white hover:text-slate-950'
+                  }`}
+                >
+                  System / Specialty
+                </button>
               </div>
             </div>
           </div>

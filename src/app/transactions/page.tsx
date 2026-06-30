@@ -508,37 +508,6 @@ export default function TransactionsPage() {
   return (
     <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-5 sm:py-5">
       <div className="mx-auto max-w-6xl border border-slate-400 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.08)]">
-        <div className="flex flex-col gap-4 border-b border-slate-300 bg-gradient-to-b from-[#f7f9fb] to-[#e6ebf1] px-4 py-4 sm:px-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-600">Material Receiving Terminal</p>
-            <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">Record Stock</h1>
-            <p className="mt-1 max-w-3xl text-sm text-slate-600">
-              Record intake, outtake, or count corrections. Every saved movement updates Inventory immediately and writes to Activity.
-            </p>
-          </div>
-
-          <div className="grid w-full grid-cols-3 border border-slate-400 bg-white text-center text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600 sm:w-auto sm:text-xs sm:tracking-[0.16em]">
-            <div className="border-r border-slate-300 px-2 py-2 sm:px-4">
-              Mode
-              <div className="mt-1 text-sm normal-case tracking-normal text-slate-950 sm:text-base">
-                {action === 'add' ? 'Intake' : action === 'remove' ? 'Outtake' : 'Count'}
-              </div>
-            </div>
-            <div className="border-r border-slate-300 px-2 py-2 sm:px-4">
-              Catalog
-              <div className="mt-1 text-sm normal-case tracking-normal text-slate-950 sm:text-base">
-                {isLoadingCatalog ? 'Loading' : catalogRows.length.toLocaleString()}
-              </div>
-            </div>
-            <div className="px-4 py-2">
-              Operator
-              <div className="mt-1 max-w-[90px] truncate text-sm normal-case tracking-normal text-slate-950 sm:max-w-[130px] sm:text-base">
-                {enteredBy.trim() || '—'}
-              </div>
-            </div>
-          </div>
-        </div>
-
         {loadError && (
           <div className="border-b border-red-300 bg-red-50 px-5 py-3 text-sm font-semibold text-red-800">
             Failed to load material suggestions: {loadError}

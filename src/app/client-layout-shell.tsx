@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
 const navItems = [
-  { href: '/inventory', label: 'Inventory', icon: BoxIcon },
+  { href: '/inventory', label: 'Inventory', icon: HomeIcon },
   { href: '/activity', label: 'Activity', icon: ClockIcon },
   { href: '/catalog', label: 'Catalog', icon: BookIcon },
 ];
@@ -13,12 +14,11 @@ const navItems = [
 const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
 const ACCESS_PASSWORD = 'tenarten123';
 
-function BoxIcon() {
+function HomeIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 16V8l-9-5-9 5v8l9 5 9-5Z" />
-      <path d="M3.3 7.8 12 13l8.7-5.2" />
-      <path d="M12 22V13" />
+      <path d="m3 10 9-7 9 7" />
+      <path d="M5 9.5V21h5v-6h4v6h5V9.5" />
     </svg>
   );
 }
@@ -53,11 +53,11 @@ function LogoutIcon() {
 
 function navClass(isActive: boolean) {
   return isActive
-    ? 'border-slate-900 bg-slate-900 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]'
-    : 'border-slate-400 bg-gradient-to-b from-white to-slate-100 text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] hover:border-slate-700 hover:bg-slate-200';
+    ? 'bg-slate-900 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]'
+    : 'text-slate-700 hover:bg-white/70 hover:text-slate-950';
 }
 
-export default function ClientLayoutShell({ children }: { children: React.ReactNode }) {
+export default function ClientLayoutShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -106,46 +106,56 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-slate-500 bg-[#e7ecf2]/95 shadow-[0_1px_0_rgba(255,255,255,0.85)] backdrop-blur transition-all duration-200">
+      <header className="sticky top-0 z-40 border-b border-slate-400/80 bg-[#e7ecf2]/95 shadow-[0_1px_0_rgba(255,255,255,0.9)] backdrop-blur transition-all duration-200">
         <div
           className={`mx-auto flex max-w-[1500px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
-            hasScrolled ? 'gap-2 py-1.5 sm:py-2' : 'gap-3 py-3'
+            hasScrolled ? 'gap-1.5 py-1.5 sm:gap-2 sm:py-2' : 'gap-2 py-2.5 sm:gap-3 sm:py-3'
           }`}
         >
-          <Link href="/inventory" className="group flex w-full items-center gap-3 lg:w-auto">
-            <div
-              className={`flex shrink-0 items-center justify-center border border-slate-400 bg-gradient-to-b from-white to-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.95)] transition-all duration-200 group-hover:border-slate-700 ${
-                hasScrolled ? 'h-7 w-7 sm:h-8 sm:w-8' : 'h-9 w-9 sm:h-10 sm:w-10'
-              }`}
-            >
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <Link href="/inventory" className="group flex min-w-0 items-center gap-2.5" aria-label="Go to inventory">
               <img
                 src="/logo.png"
                 alt="Tenarten logo"
-                className={`object-contain transition-all duration-200 ${hasScrolled ? 'h-4 sm:h-5' : 'h-5 sm:h-6'}`}
+                className={`shrink-0 object-contain transition-all duration-200 ${hasScrolled ? 'h-9 w-auto' : 'h-11 w-auto sm:h-12'}`}
               />
-            </div>
 
-            <div className="leading-none">
-              <div
-                className={`font-bold tracking-tight text-slate-950 transition-all duration-200 ${
-                  hasScrolled ? 'text-[12px] sm:text-[13px]' : 'text-[14px] sm:text-[15px]'
-                }`}
-              >
-                Tenarten Inventory
+              <div className="min-w-0 leading-none">
+                <div
+                  className={`truncate font-bold tracking-tight text-slate-950 transition-all duration-200 group-hover:text-slate-700 ${
+                    hasScrolled ? 'text-[14px] sm:text-[15px]' : 'text-[16px] sm:text-[17px]'
+                  }`}
+                >
+                  Tenarten Inventory
+                </div>
+                <div
+                  className={`mt-1 overflow-hidden font-bold uppercase tracking-[0.16em] text-slate-600 transition-all duration-200 sm:tracking-[0.18em] ${
+                    hasScrolled ? 'max-h-0 opacity-0 lg:max-h-5 lg:text-[9px] lg:opacity-100' : 'max-h-5 text-[9px] opacity-100 sm:text-[10px]'
+                  }`}
+                >
+                  Operations Control
+                </div>
               </div>
-              <div
-                className={`mt-1 overflow-hidden font-bold uppercase tracking-[0.16em] text-slate-600 transition-all duration-200 sm:tracking-[0.18em] ${
-                  hasScrolled ? 'max-h-0 opacity-0 lg:max-h-5 lg:text-[9px] lg:opacity-100' : 'max-h-5 text-[9px] opacity-100 sm:text-[10px]'
-                }`}
-              >
-                Operations Control
-              </div>
-            </div>
-          </Link>
+            </Link>
 
-          <div className="flex w-full flex-col gap-2 lg:w-auto lg:flex-row lg:items-center lg:gap-3">
             {isUnlocked && (
-              <nav className="grid w-full grid-cols-3 gap-1.5 text-sm lg:flex lg:w-auto lg:flex-wrap lg:items-center" aria-label="Primary navigation">
+              <button
+                type="button"
+                onClick={handleLogout}
+                title="Logout"
+                aria-label="Logout"
+                className={`inline-flex h-9 w-9 shrink-0 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 sm:hidden ${
+                  hasScrolled ? 'hidden' : ''
+                }`}
+              >
+                <LogoutIcon />
+              </button>
+            )}
+          </div>
+
+          <div className="flex w-full items-center gap-2 lg:w-auto lg:justify-end">
+            {isUnlocked && (
+              <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto lg:flex-none" aria-label="Primary navigation">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = pathname === item.href;
@@ -154,7 +164,9 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`inline-flex items-center justify-center gap-1.5 border px-2 text-[11px] font-bold uppercase tracking-[0.06em] transition-all duration-200 sm:gap-2 sm:px-4 sm:text-[13px] sm:tracking-[0.08em] ${hasScrolled ? 'h-8 sm:h-9' : 'h-10'} ${navClass(isActive)}`}
+                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
+                        isActive,
+                      )}`}
                     >
                       <Icon />
                       {item.label}
@@ -168,16 +180,21 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
               <button
                 type="button"
                 onClick={handleLogout}
-                className={`w-full items-center justify-center gap-2 border border-slate-400 bg-gradient-to-b from-white to-slate-100 px-4 text-[13px] font-bold uppercase tracking-[0.08em] text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] transition-all duration-200 hover:border-red-700 hover:bg-red-50 hover:text-red-700 lg:w-auto ${hasScrolled ? 'hidden h-8 sm:inline-flex sm:h-9' : 'inline-flex h-10'}`}
+                title="Logout"
+                aria-label="Logout"
+                className={`hidden h-10 w-10 shrink-0 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 sm:inline-flex ${
+                  hasScrolled ? 'sm:h-9 sm:w-9' : ''
+                }`}
               >
                 <LogoutIcon />
-                Logout
               </button>
             ) : (
               <button
                 type="button"
                 onClick={() => setShowAccessModal(true)}
-                className={`w-full border border-slate-950 bg-slate-900 px-4 text-[13px] font-bold uppercase tracking-[0.08em] text-white transition-all duration-200 hover:bg-slate-950 lg:w-auto ${hasScrolled ? 'h-8 sm:h-9' : 'h-10'}`}
+                className={`ml-auto border border-slate-950 bg-slate-900 px-4 text-[12px] font-bold uppercase tracking-[0.08em] text-white transition-all duration-200 hover:bg-slate-950 ${
+                  hasScrolled ? 'h-8 sm:h-9' : 'h-10'
+                }`}
               >
                 Internal Access
               </button>
@@ -193,9 +210,7 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
           <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-5 py-10">
             <div className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
               <div className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-6 py-8 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center border border-slate-400 bg-gradient-to-b from-white to-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.95)]">
-                  <img src="/logo.png" alt="Tenarten logo" className="h-10 object-contain" />
-                </div>
+                <img src="/logo.png" alt="Tenarten logo" className="mx-auto h-28 w-auto object-contain sm:h-32" />
                 <h1 className="mt-5 text-3xl font-bold tracking-tight text-slate-950">Tenarten Inventory</h1>
                 <div className="mt-2 text-[11px] font-bold uppercase tracking-[0.22em] text-slate-600">
                   Operations Control
