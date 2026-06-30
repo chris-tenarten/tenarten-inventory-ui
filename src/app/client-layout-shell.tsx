@@ -64,10 +64,22 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
   const [showAccessModal, setShowAccessModal] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [accessError, setAccessError] = useState('');
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
     setIsUnlocked(window.localStorage.getItem(ACCESS_STORAGE_KEY) === 'granted');
     setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    function handleScroll() {
+      setHasScrolled(window.scrollY > 18);
+    }
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   function handleUnlock() {
@@ -94,26 +106,46 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-slate-500 bg-[#e7ecf2] shadow-[0_1px_0_rgba(255,255,255,0.85)]">
-        <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-4 px-5 py-3">
-          <Link href="/inventory" className="group flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center border border-slate-400 bg-gradient-to-b from-white to-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.95)] transition group-hover:border-slate-700">
-              <img src="/logo.png" alt="Tenarten logo" className="h-6 object-contain" />
+      <header className="sticky top-0 z-40 border-b border-slate-500 bg-[#e7ecf2]/95 shadow-[0_1px_0_rgba(255,255,255,0.85)] backdrop-blur transition-all duration-200">
+        <div
+          className={`mx-auto flex max-w-[1500px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
+            hasScrolled ? 'gap-2 py-1.5 sm:py-2' : 'gap-3 py-3'
+          }`}
+        >
+          <Link href="/inventory" className="group flex w-full items-center gap-3 lg:w-auto">
+            <div
+              className={`flex shrink-0 items-center justify-center border border-slate-400 bg-gradient-to-b from-white to-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.95)] transition-all duration-200 group-hover:border-slate-700 ${
+                hasScrolled ? 'h-7 w-7 sm:h-8 sm:w-8' : 'h-9 w-9 sm:h-10 sm:w-10'
+              }`}
+            >
+              <img
+                src="/logo.png"
+                alt="Tenarten logo"
+                className={`object-contain transition-all duration-200 ${hasScrolled ? 'h-4 sm:h-5' : 'h-5 sm:h-6'}`}
+              />
             </div>
 
             <div className="leading-none">
-              <div className="text-[15px] font-bold tracking-tight text-slate-950">
+              <div
+                className={`font-bold tracking-tight text-slate-950 transition-all duration-200 ${
+                  hasScrolled ? 'text-[12px] sm:text-[13px]' : 'text-[14px] sm:text-[15px]'
+                }`}
+              >
                 Tenarten Inventory
               </div>
-              <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600">
+              <div
+                className={`mt-1 overflow-hidden font-bold uppercase tracking-[0.16em] text-slate-600 transition-all duration-200 sm:tracking-[0.18em] ${
+                  hasScrolled ? 'max-h-0 opacity-0 lg:max-h-5 lg:text-[9px] lg:opacity-100' : 'max-h-5 text-[9px] opacity-100 sm:text-[10px]'
+                }`}
+              >
                 Operations Control
               </div>
             </div>
           </Link>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex w-full flex-col gap-2 lg:w-auto lg:flex-row lg:items-center lg:gap-3">
             {isUnlocked && (
-              <nav className="flex flex-wrap items-center gap-1.5 text-sm" aria-label="Primary navigation">
+              <nav className="grid w-full grid-cols-3 gap-1.5 text-sm lg:flex lg:w-auto lg:flex-wrap lg:items-center" aria-label="Primary navigation">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = pathname === item.href;
@@ -122,7 +154,7 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`inline-flex h-10 items-center gap-2 border px-4 text-[13px] font-bold uppercase tracking-[0.08em] transition ${navClass(isActive)}`}
+                      className={`inline-flex items-center justify-center gap-1.5 border px-2 text-[11px] font-bold uppercase tracking-[0.06em] transition-all duration-200 sm:gap-2 sm:px-4 sm:text-[13px] sm:tracking-[0.08em] ${hasScrolled ? 'h-8 sm:h-9' : 'h-10'} ${navClass(isActive)}`}
                     >
                       <Icon />
                       {item.label}
@@ -136,7 +168,7 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
               <button
                 type="button"
                 onClick={handleLogout}
-                className="inline-flex h-10 items-center gap-2 border border-slate-400 bg-gradient-to-b from-white to-slate-100 px-4 text-[13px] font-bold uppercase tracking-[0.08em] text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] transition hover:border-red-700 hover:bg-red-50 hover:text-red-700"
+                className={`w-full items-center justify-center gap-2 border border-slate-400 bg-gradient-to-b from-white to-slate-100 px-4 text-[13px] font-bold uppercase tracking-[0.08em] text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] transition-all duration-200 hover:border-red-700 hover:bg-red-50 hover:text-red-700 lg:w-auto ${hasScrolled ? 'hidden h-8 sm:inline-flex sm:h-9' : 'inline-flex h-10'}`}
               >
                 <LogoutIcon />
                 Logout
@@ -145,7 +177,7 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
               <button
                 type="button"
                 onClick={() => setShowAccessModal(true)}
-                className="h-10 border border-slate-950 bg-slate-900 px-4 text-[13px] font-bold uppercase tracking-[0.08em] text-white transition hover:bg-slate-950"
+                className={`w-full border border-slate-950 bg-slate-900 px-4 text-[13px] font-bold uppercase tracking-[0.08em] text-white transition-all duration-200 hover:bg-slate-950 lg:w-auto ${hasScrolled ? 'h-8 sm:h-9' : 'h-10'}`}
               >
                 Internal Access
               </button>
@@ -158,17 +190,51 @@ export default function ClientLayoutShell({ children }: { children: React.ReactN
         {isReady && isUnlocked ? (
           children
         ) : (
-          <div className="px-5 py-10">
-            <div className="mx-auto max-w-3xl border border-slate-400 bg-white p-8 shadow-sm">
-              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600">
-                Internal Access
+          <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-5 py-10">
+            <div className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
+              <div className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-6 py-8 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center border border-slate-400 bg-gradient-to-b from-white to-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.95)]">
+                  <img src="/logo.png" alt="Tenarten logo" className="h-10 object-contain" />
+                </div>
+                <h1 className="mt-5 text-3xl font-bold tracking-tight text-slate-950">Tenarten Inventory</h1>
+                <div className="mt-2 text-[11px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                  Operations Control
+                </div>
               </div>
-              <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
-                Protected operations tool
-              </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-700">
-                Use the Internal Access button in the header to enter the shared password and continue.
-              </p>
+
+              <div className="px-6 py-6">
+                <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600">
+                  Internal Access
+                </div>
+
+                <label htmlFor="inline-access-password" className="mt-4 block text-sm font-bold text-slate-800">
+                  Password
+                </label>
+                <input
+                  id="inline-access-password"
+                  type="password"
+                  value={passwordInput}
+                  onChange={(e) => {
+                    setPasswordInput(e.target.value);
+                    setAccessError('');
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleUnlock();
+                  }}
+                  className="mt-2 h-12 w-full border border-slate-500 bg-white px-3 text-slate-950 outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+                  autoFocus
+                />
+
+                {accessError && <div className="mt-3 text-sm font-semibold text-red-700">{accessError}</div>}
+
+                <button
+                  type="button"
+                  onClick={handleUnlock}
+                  className="mt-5 h-12 w-full border border-slate-950 bg-slate-900 px-4 text-sm font-bold uppercase tracking-[0.1em] text-white transition hover:bg-slate-950"
+                >
+                  Unlock Workspace
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -183,14 +183,14 @@ export default function ActivityPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-6 py-6 text-slate-950">
+    <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-6 sm:py-6">
       <div className="border border-slate-400 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.08)]">
-        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-300 bg-gradient-to-b from-[#f8fafc] to-[#e8edf3] px-4 py-4">
+        <div className="flex flex-col items-stretch gap-4 border-b sm:flex-row sm:items-start sm:justify-between border-slate-300 bg-gradient-to-b from-[#f8fafc] to-[#e8edf3] px-4 py-4">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">
               Inventory Audit Trail
             </p>
-            <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950">
+            <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
               Activity
             </h1>
             <p className="mt-2 max-w-3xl text-sm font-medium text-slate-600">
@@ -202,7 +202,7 @@ export default function ActivityPage() {
             type="button"
             onClick={loadRows}
             disabled={loading}
-            className="border border-slate-500 bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-slate-900 transition hover:border-slate-900 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full border border-slate-500 bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-slate-900 transition hover:border-slate-900 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             {loading ? 'Refreshing' : 'Refresh'}
           </button>
@@ -225,13 +225,13 @@ export default function ActivityPage() {
             />
           </div>
 
-          <div className="grid grid-cols-4 divide-x divide-slate-300 bg-white lg:min-w-[520px]">
+          <div className="grid grid-cols-2 divide-x divide-y divide-slate-300 bg-white sm:grid-cols-4 sm:divide-y-0 lg:min-w-[520px]">
             {(['all', 'intake', 'outtake', 'adjustment'] as TransactionTypeFilter[]).map((filter) => (
               <button
                 key={filter}
                 type="button"
                 onClick={() => setTypeFilter(filter)}
-                className={`px-4 py-4 text-center text-xs font-black uppercase tracking-[0.12em] transition ${
+                className={`px-3 py-3 text-center text-[11px] font-black uppercase tracking-[0.1em] sm:px-4 sm:py-4 sm:text-xs sm:tracking-[0.12em] transition ${
                   typeFilter === filter
                     ? 'bg-slate-900 text-white'
                     : 'bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-950'
@@ -264,7 +264,7 @@ export default function ActivityPage() {
           </div>
         )}
 
-        <div className="overflow-x-auto">
+        <div>
           {loading ? (
             <div className="px-4 py-8 text-sm font-semibold text-slate-600">Loading activity...</div>
           ) : filteredRows.length === 0 ? (
@@ -272,7 +272,9 @@ export default function ActivityPage() {
               No matching activity found.
             </div>
           ) : (
-            <table className="w-full min-w-[1080px] border-collapse text-sm">
+            <>
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full min-w-[1080px] border-collapse text-sm">
               <thead>
                 <tr className="border-b border-slate-400 bg-[#dbe2ea] text-[11px] uppercase tracking-[0.14em] text-slate-800">
                   <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Date</th>
@@ -390,7 +392,69 @@ export default function ActivityPage() {
                   );
                 })}
               </tbody>
-            </table>
+                </table>
+              </div>
+
+              <div className="divide-y divide-slate-300 md:hidden">
+                {filteredRows.map((row) => {
+                  const isExpanded = expandedRowId === row.id;
+
+                  return (
+                    <div key={row.id} className={isExpanded ? 'bg-slate-50' : 'bg-white'}>
+                      <button
+                        type="button"
+                        onClick={() => toggleRow(row.id)}
+                        className="w-full px-4 py-4 text-left"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className={`inline-flex border px-2 py-1 text-[10px] font-black uppercase tracking-[0.1em] ${typeBadgeClass(row.transaction_type)}`}>
+                                {formatTransactionType(row.transaction_type)}
+                              </span>
+                              <span className="text-xs font-bold text-slate-500">{formatDateTime(row.created_at)}</span>
+                            </div>
+                            <div className="mt-2 truncate text-base font-black text-slate-950">{row.item_name || '—'}</div>
+                            <div className="mt-1 text-sm font-semibold text-slate-700">
+                              {getDisplayVendor(row)} • {row.size || '—'} • {row.location || '—'}
+                            </div>
+                            {row.is_earmarked && (
+                              <div className="mt-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
+                                Reserved: {row.earmarked_job_name || 'Job'}
+                              </div>
+                            )}
+                          </div>
+                          <div className="shrink-0 text-right">
+                            <div className={`text-xl font-black tabular-nums ${getQuantityClass(row)}`}>{getSignedQuantity(row)}</div>
+                            <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">{row.unit || '—'}</div>
+                          </div>
+                        </div>
+                        <div className="mt-3 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700">
+                          {isExpanded ? 'Close Details' : 'Open Details'}
+                        </div>
+                      </button>
+
+                      {isExpanded && (
+                        <div className="border-t border-slate-300 bg-[#f6f7f9] px-4 py-4">
+                          <div className="border border-slate-300 bg-white">
+                            <div className="border-b border-slate-300 bg-[#e8edf3] px-3 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700">Transaction Notes</div>
+                            <div className="min-h-[72px] whitespace-pre-wrap px-3 py-3 text-sm leading-6 text-slate-700">{row.notes?.trim() || 'No notes recorded.'}</div>
+                          </div>
+                          <div className="mt-3 border border-slate-300 bg-white px-3 py-3 text-sm text-slate-700">
+                            <div><span className="font-black text-slate-950">Reserved:</span> {row.is_earmarked ? 'Yes' : 'No'}</div>
+                            <div className="mt-2"><span className="font-black text-slate-950">Job:</span> {row.earmarked_job_name || '—'}</div>
+                            <div className="mt-2"><span className="font-black text-slate-950">Notes:</span> {row.earmark_notes || '—'}</div>
+                          </div>
+                          <div className="mt-3 border border-slate-300 bg-slate-50 px-3 py-3 text-sm text-slate-700">
+                            <span className="font-black text-slate-950">Correction policy:</span> Create a new correction or exact-count adjustment instead of editing old activity.
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
       </div>

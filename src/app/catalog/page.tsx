@@ -450,7 +450,7 @@ export default function CatalogPage() {
     selected.price.toLowerCase().includes('quote');
 
   return (
-    <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-4 py-5 text-slate-950 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-6 sm:py-5 lg:px-8">
       <div className="mx-auto max-w-[1600px] space-y-4">
         <div className="flex flex-col gap-3 border-b border-slate-400/70 pb-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -463,11 +463,11 @@ export default function CatalogPage() {
             </p>
           </div>
 
-          <div className="inline-flex w-fit border border-slate-400 bg-slate-200 p-0.5 shadow-sm">
+          <div className="grid w-full grid-cols-2 border border-slate-400 bg-slate-200 p-0.5 shadow-sm sm:inline-flex sm:w-fit">
             <button
               type="button"
               onClick={() => setMode('standard')}
-              className={`px-4 py-2 text-sm font-semibold transition ${
+              className={`px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
                 mode === 'standard'
                   ? 'bg-slate-800 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-700 hover:bg-white hover:text-slate-950'
@@ -478,7 +478,7 @@ export default function CatalogPage() {
             <button
               type="button"
               onClick={() => setMode('specialty')}
-              className={`border-l border-slate-400 px-4 py-2 text-sm font-semibold transition ${
+              className={`border-l border-slate-400 px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
                 mode === 'specialty'
                   ? 'bg-slate-800 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-700 hover:bg-white hover:text-slate-950'
@@ -534,8 +534,8 @@ export default function CatalogPage() {
             </div>
           )}
 
-          <div className="grid min-h-[660px] lg:grid-cols-[minmax(0,1fr)_440px]">
-            <div className="border-r border-slate-300">
+          <div className="grid min-h-[520px] lg:min-h-[660px] lg:grid-cols-[minmax(0,1fr)_440px]">
+            <div className="border-b border-slate-300 lg:border-b-0 lg:border-r">
               <div className="flex items-center justify-between border-b border-slate-300 bg-slate-100 px-4 py-2 text-xs text-slate-600">
                 <span>
                   {debouncedSearch && totalCount > 0
@@ -555,7 +555,7 @@ export default function CatalogPage() {
                 </div>
               ) : (
                 <>
-                  <div className="max-h-[610px] overflow-auto">
+                  <div className="hidden max-h-[610px] overflow-auto md:block">
                     <table className="min-w-full border-collapse text-left text-sm">
                       <thead className="sticky top-0 z-10 bg-[#dfe4ea] text-[10px] uppercase tracking-[0.14em] text-slate-600">
                         <tr className="border-b border-slate-400">
@@ -616,6 +616,47 @@ export default function CatalogPage() {
                         })}
                       </tbody>
                     </table>
+                  </div>
+
+                  <div className="divide-y divide-slate-300 md:hidden">
+                    {catalogRows.map((row) => {
+                      const isSelected = selected?.id === row.id;
+                      const annotated = mode === 'standard' && hasAnnotation(row);
+                      const quoteRequired =
+                        mode === 'specialty' &&
+                        typeof row.price === 'string' &&
+                        row.price.toLowerCase().includes('quote');
+
+                      return (
+                        <button
+                          key={row.id}
+                          type="button"
+                          onClick={() => selectRow(row)}
+                          className={`w-full px-4 py-4 text-left transition ${
+                            isSelected ? 'bg-slate-800 text-white' : 'bg-white text-slate-800 hover:bg-slate-100'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <div className="truncate text-base font-black">{row.item_name || '—'}</div>
+                              <div className={isSelected ? 'mt-1 text-sm font-semibold text-slate-200' : 'mt-1 text-sm font-semibold text-slate-600'}>
+                                {row.vendor || '—'}
+                              </div>
+                            </div>
+                            {(annotated || quoteRequired) && (
+                              <span className={isSelected ? 'shrink-0 border border-white/40 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white' : 'shrink-0 border border-slate-300 bg-slate-50 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-slate-700'}>
+                                {annotated ? 'Note' : 'Quote'}
+                              </span>
+                            )}
+                          </div>
+                          <div className={isSelected ? 'mt-3 grid grid-cols-3 gap-2 text-xs font-semibold text-slate-200' : 'mt-3 grid grid-cols-3 gap-2 text-xs font-semibold text-slate-600'}>
+                            <div><span className="block uppercase tracking-[0.12em] opacity-70">Size</span>{row.size || '—'}</div>
+                            <div><span className="block uppercase tracking-[0.12em] opacity-70">Unit</span>{row.unit || '—'}</div>
+                            <div><span className="block uppercase tracking-[0.12em] opacity-70">Class</span>{row.material_class || '—'}</div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {totalPages > 1 && (
@@ -693,20 +734,20 @@ export default function CatalogPage() {
               </div>
 
               {selected ? (
-                <div className="max-h-[770px] overflow-y-auto px-4 py-3">
+                <div className="max-h-none overflow-y-auto px-4 py-3 lg:max-h-[770px]">
                   <div className="border border-slate-300 bg-slate-50 px-3 py-2">
                     <div className="text-lg font-semibold leading-tight text-slate-950">{selected.item_name}</div>
                     <div className="mt-1 text-sm font-medium text-slate-600">{selected.vendor}</div>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-2 gap-x-4 border border-slate-300 bg-white px-3 py-1">
+                  <div className="mt-3 grid grid-cols-1 gap-x-4 border border-slate-300 bg-white px-3 py-1 sm:grid-cols-2">
                     <DetailField label="Size" value={selected.size} />
                     <DetailField label="Unit" value={selected.unit} />
                     <DetailField label="Category" value={selected.category} />
                     <DetailField label="Class" value={selected.material_class} />
                     <DetailField label="Price" value={formatPrice(selected.price)} />
                     <DetailField label="Basis" value={selected.price_basis} />
-                    <div className="col-span-2">
+                    <div className="sm:col-span-2">
                       <DetailField label={mode === 'standard' ? 'Source File' : 'Source'} value={selected.source_file} />
                     </div>
                   </div>
@@ -764,10 +805,10 @@ export default function CatalogPage() {
                         />
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-2 border-t border-slate-300 pt-3">
+                      <div className="grid gap-2 border-t border-slate-300 pt-3 sm:flex sm:flex-wrap sm:items-center">
                         <button
                           type="button"
-                          className="bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="w-full bg-slate-800 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:py-2.5"
                           onClick={handleSaveAnnotation}
                           disabled={isSaving || isDeleting}
                         >
@@ -775,7 +816,7 @@ export default function CatalogPage() {
                         </button>
                         <button
                           type="button"
-                          className="border border-red-300 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-800 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="w-full border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-2.5"
                           onClick={handleDeleteAnnotation}
                           disabled={isSaving || isDeleting || !hasAnnotation(selected)}
                         >
@@ -819,7 +860,7 @@ export default function CatalogPage() {
         </section>
 
         <section className="border border-slate-400 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-300 bg-[#f6f7f9] px-4 py-3">
+          <div className="flex flex-col items-start gap-1 border-b border-slate-300 bg-[#f6f7f9] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-700">Recent Annotations</h2>
             <span className="text-xs font-medium text-slate-500">Latest catalog notes and warnings</span>
           </div>

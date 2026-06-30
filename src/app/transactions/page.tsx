@@ -506,9 +506,9 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-5 py-5 text-slate-950">
+    <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-5 sm:py-5">
       <div className="mx-auto max-w-6xl border border-slate-400 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.08)]">
-        <div className="flex flex-col gap-4 border-b border-slate-300 bg-gradient-to-b from-[#f7f9fb] to-[#e6ebf1] px-5 py-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-4 border-b border-slate-300 bg-gradient-to-b from-[#f7f9fb] to-[#e6ebf1] px-4 py-4 sm:px-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-600">Material Receiving Terminal</p>
             <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">Record Stock</h1>
@@ -517,22 +517,22 @@ export default function TransactionsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 border border-slate-400 bg-white text-center text-xs font-bold uppercase tracking-[0.16em] text-slate-600">
-            <div className="border-r border-slate-300 px-4 py-2">
+          <div className="grid w-full grid-cols-3 border border-slate-400 bg-white text-center text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600 sm:w-auto sm:text-xs sm:tracking-[0.16em]">
+            <div className="border-r border-slate-300 px-2 py-2 sm:px-4">
               Mode
-              <div className="mt-1 text-base normal-case tracking-normal text-slate-950">
+              <div className="mt-1 text-sm normal-case tracking-normal text-slate-950 sm:text-base">
                 {action === 'add' ? 'Intake' : action === 'remove' ? 'Outtake' : 'Count'}
               </div>
             </div>
-            <div className="border-r border-slate-300 px-4 py-2">
+            <div className="border-r border-slate-300 px-2 py-2 sm:px-4">
               Catalog
-              <div className="mt-1 text-base normal-case tracking-normal text-slate-950">
+              <div className="mt-1 text-sm normal-case tracking-normal text-slate-950 sm:text-base">
                 {isLoadingCatalog ? 'Loading' : catalogRows.length.toLocaleString()}
               </div>
             </div>
             <div className="px-4 py-2">
               Operator
-              <div className="mt-1 max-w-[130px] truncate text-base normal-case tracking-normal text-slate-950">
+              <div className="mt-1 max-w-[90px] truncate text-sm normal-case tracking-normal text-slate-950 sm:max-w-[130px] sm:text-base">
                 {enteredBy.trim() || '—'}
               </div>
             </div>
@@ -554,7 +554,7 @@ export default function TransactionsPage() {
           </div>
         )}
 
-        <div className="border-b border-slate-300 bg-[#f6f7f9] px-5 py-4">
+        <div className="border-b border-slate-300 bg-[#f6f7f9] px-4 py-4 sm:px-5">
           <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Action</div>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             <button
@@ -563,7 +563,7 @@ export default function TransactionsPage() {
                 setAction('add');
                 setSubmitMessage('');
               }}
-              className={`border px-4 py-3 text-left text-sm font-bold uppercase tracking-[0.12em] transition ${
+              className={`min-h-[76px] border px-4 py-3 text-left text-sm font-bold uppercase tracking-[0.12em] transition ${
                 action === 'add'
                   ? 'border-slate-950 bg-slate-900 text-white'
                   : 'border-slate-400 bg-white text-slate-800 hover:border-slate-900 hover:bg-slate-100'
@@ -579,7 +579,7 @@ export default function TransactionsPage() {
                 setAction('remove');
                 setSubmitMessage('');
               }}
-              className={`border px-4 py-3 text-left text-sm font-bold uppercase tracking-[0.12em] transition ${
+              className={`min-h-[76px] border px-4 py-3 text-left text-sm font-bold uppercase tracking-[0.12em] transition ${
                 action === 'remove'
                   ? 'border-slate-950 bg-slate-900 text-white'
                   : 'border-slate-400 bg-white text-slate-800 hover:border-slate-900 hover:bg-slate-100'
@@ -596,7 +596,7 @@ export default function TransactionsPage() {
                   setAction('audit');
                   setSubmitMessage('');
                 }}
-                className={`border px-4 py-3 text-left text-sm font-bold uppercase tracking-[0.12em] transition ${
+                className={`min-h-[76px] border px-4 py-3 text-left text-sm font-bold uppercase tracking-[0.12em] transition ${
                   action === 'audit'
                     ? 'border-slate-950 bg-slate-900 text-white'
                     : 'border-slate-400 bg-white text-slate-800 hover:border-slate-900 hover:bg-slate-100'
@@ -615,8 +615,8 @@ export default function TransactionsPage() {
               Material
             </div>
 
-            <div className="grid gap-px bg-slate-300 md:grid-cols-2">
-              <div className="bg-white p-4">
+            <div className="grid gap-px bg-slate-300 sm:grid-cols-2">
+              <div className="bg-white p-3 sm:p-4">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Vendor</label>
                 <input
                   value={vendor}
@@ -633,7 +633,7 @@ export default function TransactionsPage() {
                 </datalist>
               </div>
 
-              <div className="bg-white p-4">
+              <div className="bg-white p-3 sm:p-4">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Material</label>
                 <input
                   value={material}
@@ -649,7 +649,7 @@ export default function TransactionsPage() {
                 </datalist>
               </div>
 
-              <div className="bg-white p-4">
+              <div className="bg-white p-3 sm:p-4">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Size</label>
                 <input
                   value={size}
@@ -665,7 +665,7 @@ export default function TransactionsPage() {
                 </datalist>
               </div>
 
-              <div className="bg-white p-4">
+              <div className="bg-white p-3 sm:p-4">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Category</label>
                 <select
                   value={category}
@@ -686,8 +686,8 @@ export default function TransactionsPage() {
               Movement
             </div>
 
-            <div className="grid gap-px bg-slate-300 md:grid-cols-2">
-              <div className="bg-white p-4">
+            <div className="grid gap-px bg-slate-300 sm:grid-cols-2">
+              <div className="bg-white p-3 sm:p-4">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Quantity</label>
                 <input
                   value={quantity}
@@ -698,7 +698,7 @@ export default function TransactionsPage() {
                 />
               </div>
 
-              <div className="bg-white p-4">
+              <div className="bg-white p-3 sm:p-4">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Unit</label>
                 <input
                   value={unit}
@@ -714,7 +714,7 @@ export default function TransactionsPage() {
                 </datalist>
               </div>
 
-              <div className="bg-white p-4">
+              <div className="bg-white p-3 sm:p-4">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Location</label>
                 <input
                   value={location}
@@ -724,7 +724,7 @@ export default function TransactionsPage() {
                 />
               </div>
 
-              <div className="bg-white p-4">
+              <div className="bg-white p-3 sm:p-4">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Pallet</label>
                 <input
                   value={palletNumber}
@@ -734,7 +734,7 @@ export default function TransactionsPage() {
                 />
               </div>
 
-              <div className="bg-white p-4">
+              <div className="bg-white p-3 sm:p-4">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Your Name</label>
                 <input
                   value={enteredBy}
@@ -744,7 +744,7 @@ export default function TransactionsPage() {
                 />
               </div>
 
-              <div className="bg-white p-4 md:col-span-2">
+              <div className="bg-white p-3 sm:p-4 md:col-span-2">
                 <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Note</label>
                 <textarea
                   value={note}
@@ -815,7 +815,7 @@ export default function TransactionsPage() {
           </aside>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-slate-300 bg-[#f6f7f9] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sticky bottom-0 z-20 border-t border-slate-300 bg-[#f6f7f9]/95 px-4 py-3 backdrop-blur sm:static sm:px-5 sm:py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm text-slate-700">
             {submitMessage ? (
               <span className="font-semibold text-slate-950">{submitMessage}</span>
@@ -824,11 +824,11 @@ export default function TransactionsPage() {
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
             <button
               type="button"
               onClick={resetForm}
-              className="border border-slate-400 bg-white px-4 py-2.5 text-sm font-bold uppercase tracking-[0.12em] text-slate-800 transition hover:border-slate-900 hover:bg-slate-100"
+              className="w-full border border-slate-400 bg-white px-4 py-3 text-sm font-bold uppercase tracking-[0.12em] text-slate-800 transition hover:border-slate-900 hover:bg-slate-100 sm:w-auto sm:py-2.5"
             >
               Reset
             </button>
@@ -837,7 +837,7 @@ export default function TransactionsPage() {
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || isLoadingCatalog}
-              className="border border-slate-950 bg-slate-900 px-5 py-2.5 text-sm font-bold uppercase tracking-[0.12em] text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full border border-slate-950 bg-slate-900 px-5 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:py-2.5"
             >
               {isSubmitting
                 ? 'Saving...'

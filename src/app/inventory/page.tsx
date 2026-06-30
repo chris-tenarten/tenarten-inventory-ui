@@ -503,31 +503,31 @@ export default function InventoryPage() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-69px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-4 sm:py-4">
+    <main className="min-h-[calc(100vh-69px)] bg-[#eef1f4] px-2 py-2 text-slate-950 sm:px-4 sm:py-4">
       <section className="mx-auto max-w-[1500px] border border-slate-400 bg-white shadow-[0_1px_0_rgba(15,23,42,0.08)]">
         <div className="border-b border-slate-400 bg-gradient-to-b from-[#f4f6f8] to-[#dfe5ec]">
-          <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+          <div className="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-4">
             <div>
               <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-600">
                 Tenarten Material Control
               </div>
-              <h1 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+              <h1 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-slate-950 sm:text-2xl">
                 Inventory
               </h1>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
               <button
                 type="button"
                 onClick={loadData}
-                className="border border-slate-400 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.1em] text-slate-700 transition hover:border-slate-700 hover:bg-slate-100"
+                className="border border-slate-400 bg-white px-3 py-2 text-center text-xs font-black uppercase tracking-[0.1em] text-slate-700 transition hover:border-slate-700 hover:bg-slate-100"
               >
                 Refresh
               </button>
 
               <Link
                 href="/transactions"
-                className="border border-slate-900 bg-slate-800 px-4 py-2 text-sm font-black text-white transition hover:bg-slate-950"
+                className="border border-slate-900 bg-slate-800 px-4 py-2 text-center text-sm font-black text-white transition hover:bg-slate-950"
               >
                 + Record Stock
               </Link>
@@ -549,22 +549,22 @@ export default function InventoryPage() {
               />
             </div>
 
-            <div className="grid min-w-[360px] grid-cols-3 divide-x divide-slate-300 border-slate-300 bg-white text-center">
+            <div className="grid grid-cols-3 divide-x divide-slate-300 border-t border-slate-300 bg-white text-center lg:min-w-[360px] lg:border-t-0">
               <div className="px-4 py-3">
                 <div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Visible</div>
-                <div className="mt-1 text-xl font-semibold tabular-nums text-slate-950">
+                <div className="mt-1 text-base font-semibold tabular-nums text-slate-950 sm:text-xl">
                   {filteredRows.length.toLocaleString()}
                 </div>
               </div>
               <div className="px-4 py-3">
                 <div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Total</div>
-                <div className="mt-1 text-xl font-semibold tabular-nums text-slate-950">
+                <div className="mt-1 text-base font-semibold tabular-nums text-slate-950 sm:text-xl">
                   {rows.length.toLocaleString()}
                 </div>
               </div>
               <div className="px-4 py-3">
                 <div className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Qty Sum</div>
-                <div className="mt-1 text-xl font-semibold tabular-nums text-slate-950">
+                <div className="mt-1 text-base font-semibold tabular-nums text-slate-950 sm:text-xl">
                   {formatQuantity(totalQuantity)}
                 </div>
               </div>
@@ -582,7 +582,171 @@ export default function InventoryPage() {
           {loading ? (
             <div className="py-12 text-center text-sm font-semibold text-slate-500">Loading inventory...</div>
           ) : (
-            <div className="overflow-x-auto">
+            <>
+              <div className="md:hidden">
+                <div className="divide-y divide-slate-300">
+                  {filteredRows.map((row) => {
+                    const isSelected = selectedRowId === String(row.id);
+                    const status = rowStatus(row);
+
+                    return (
+                      <article key={row.id} className={`bg-white ${isSelected ? 'ring-1 ring-inset ring-slate-500' : ''}`}>
+                        <button
+                          type="button"
+                          onClick={() => openRow(row)}
+                          className="block w-full px-3 py-3 text-left transition hover:bg-slate-50"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
+                                {row.vendor || 'Unknown vendor'} {row.size ? `· ${row.size}` : ''}
+                              </div>
+                              <div className="mt-1 truncate text-base font-black leading-5 text-slate-950">
+                                {row.color || '—'}
+                              </div>
+                              <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] font-bold text-slate-600">
+                                <span className="border border-slate-300 bg-slate-50 px-2 py-1">{row.category || 'No category'}</span>
+                                <span className="border border-slate-300 bg-slate-50 px-2 py-1">{row.location || 'No location'}</span>
+                                {row.pallet_number && <span className="border border-slate-300 bg-slate-50 px-2 py-1">Pallet {row.pallet_number}</span>}
+                              </div>
+                            </div>
+
+                            <div className="shrink-0 text-right">
+                              <div className="text-2xl font-black tabular-nums text-slate-950">{formatQuantity(row.quantity)}</div>
+                              <div className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{row.unit || 'Units'}</div>
+                            </div>
+                          </div>
+
+                          <div className="mt-3 flex items-center justify-between border-t border-slate-200 pt-2">
+                            {status === 'Reserved' ? (
+                              <span className="truncate text-xs font-black text-slate-950">Reserved: {row.earmarked_job || 'Unnamed job'}</span>
+                            ) : (
+                              <span className="text-xs font-bold text-slate-500">General stock</span>
+                            )}
+                            <span className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-800">{isSelected ? 'Close' : 'Open'}</span>
+                          </div>
+                        </button>
+
+                        {isSelected && (
+                          <div className="border-t border-slate-400 bg-[#eef1f4] p-3">
+                            <div className="grid grid-cols-2 border border-slate-400 bg-white text-sm">
+                              <div className="border-r border-slate-300 px-3 py-2">
+                                <div className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Current Qty</div>
+                                <div className="mt-1 font-black tabular-nums text-slate-950">{formatQuantity(row.quantity)} {row.unit || ''}</div>
+                              </div>
+                              <div className="px-3 py-2">
+                                <div className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Updated</div>
+                                <div className="mt-1 text-xs font-semibold text-slate-700">{formatDateTime(row.updated_at)}</div>
+                              </div>
+                            </div>
+
+                            <div className="mt-3 grid gap-3">
+                              <div>
+                                <label className={labelClass}>Location</label>
+                                <input value={editLocation} onChange={(event) => setEditLocation(event.target.value)} className={fieldClass} placeholder="e.g. Denton / Backstock" />
+                              </div>
+
+                              <div>
+                                <label className={labelClass}>Pallet #</label>
+                                <input value={editPalletNumber} onChange={(event) => setEditPalletNumber(event.target.value)} className={fieldClass} placeholder="e.g. P-014" />
+                              </div>
+
+                              <div>
+                                <label className={labelClass}>Your Name</label>
+                                <input value={editEnteredBy} onChange={(event) => setEditEnteredBy(event.target.value)} className={fieldClass} placeholder="e.g. Chris" />
+                              </div>
+
+                              <label className="flex w-full cursor-pointer items-center gap-3 border border-slate-400 bg-white px-3 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50">
+                                <input type="checkbox" checked={editReserved} onChange={(event) => setEditReserved(event.target.checked)} className="h-4 w-4 accent-slate-800" />
+                                Reserved for job
+                              </label>
+
+                              {editReserved && (
+                                <>
+                                  <div>
+                                    <label className={labelClass}>Job Name</label>
+                                    <input value={editEarmarkJob} onChange={(event) => setEditEarmarkJob(event.target.value)} className={fieldClass} placeholder="e.g. Bank of America Lobby" />
+                                  </div>
+
+                                  <div>
+                                    <label className={labelClass}>Reservation Note</label>
+                                    <input value={editEarmarkNotes} onChange={(event) => setEditEarmarkNotes(event.target.value)} className={fieldClass} placeholder="Optional note to append" />
+                                  </div>
+                                </>
+                              )}
+
+                              <div>
+                                <label className={labelClass}>Add Note</label>
+                                <textarea value={editNote} onChange={(event) => setEditNote(event.target.value)} rows={3} className={fieldClass} placeholder="Append a timestamped note" />
+                              </div>
+                            </div>
+
+                            {row.notes?.trim() && (
+                              <div className="mt-3 border border-slate-300 bg-white p-3">
+                                <div className={labelClass}>Existing Notes</div>
+                                <div className="whitespace-pre-wrap text-sm leading-6 text-slate-700">{row.notes}</div>
+                              </div>
+                            )}
+
+                            {detailsMessage && <div className="mt-3 border border-slate-300 bg-white p-3 text-sm font-semibold text-slate-700">{detailsMessage}</div>}
+
+                            <div className="mt-3 grid grid-cols-2 gap-2">
+                              <button type="button" onClick={handleSaveDetails} disabled={isSavingDetails || isDeletingMaterial} className="border border-slate-900 bg-slate-800 px-3 py-2 text-sm font-black text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60">
+                                {isSavingDetails ? 'Saving...' : 'Save'}
+                              </button>
+                              <button type="button" onClick={() => openRow(row)} disabled={isDeletingMaterial} className="border border-slate-400 bg-white px-3 py-2 text-sm font-black text-slate-800 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60">
+                                Cancel
+                              </button>
+                            </div>
+
+                            <div className="mt-4 border border-slate-400 bg-white p-3">
+                              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">Stock Movement</div>
+                              <div className="mt-3 grid gap-3">
+                                <div>
+                                  <label className={labelClass}>Movement Type</label>
+                                  <div className="grid grid-cols-2 border border-slate-400 bg-white p-1">
+                                    {(['add', 'remove'] as AdjustmentType[]).map((type) => (
+                                      <button key={type} type="button" onClick={() => setAdjustmentType(type)} className={`px-3 py-2 text-xs font-black transition ${adjustmentType === type ? 'bg-slate-800 text-white' : 'text-slate-800 hover:bg-slate-100'}`}>
+                                        {adjustmentLabel(type)}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label className={labelClass}>Quantity</label>
+                                  <input value={adjustmentQty} onChange={(event) => setAdjustmentQty(event.target.value)} inputMode="decimal" className={fieldClass} placeholder="e.g. 5" />
+                                </div>
+
+                                <div>
+                                  <label className={labelClass}>Reason / Note</label>
+                                  <textarea value={adjustmentReason} onChange={(event) => setAdjustmentReason(event.target.value)} rows={3} className={fieldClass} placeholder="e.g. Used for Job 25-017" />
+                                </div>
+                              </div>
+
+                              {adjustmentMessage && <div className="mt-3 border border-slate-300 bg-white p-3 text-sm font-semibold text-slate-700">{adjustmentMessage}</div>}
+
+                              <button type="button" onClick={handleApplyAdjustment} disabled={isApplyingAdjustment} className="mt-3 w-full border border-slate-900 bg-slate-800 px-4 py-2.5 text-sm font-black text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60">
+                                {isApplyingAdjustment ? 'Applying...' : adjustmentType === 'add' ? 'Record Intake' : adjustmentType === 'remove' ? 'Record Outtake' : 'Set Exact Count'}
+                              </button>
+                            </div>
+
+                            <button type="button" onClick={() => handleDeleteMaterial(row)} disabled={isDeletingMaterial || isSavingDetails || isApplyingAdjustment} className="mt-3 w-full border border-red-400 bg-red-50 px-4 py-2 text-sm font-black text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60">
+                              {isDeletingMaterial ? 'Deleting...' : 'Delete Material'}
+                            </button>
+                          </div>
+                        )}
+                      </article>
+                    );
+                  })}
+
+                  {filteredRows.length === 0 && (
+                    <div className="py-12 text-center text-sm font-semibold text-slate-500">No matching inventory rows found.</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="hidden overflow-x-auto md:block">
               <table className="w-full min-w-[1180px] border-collapse text-sm">
                 <thead className="border-b border-slate-500 bg-[#cfd6df] text-[10px] uppercase tracking-[0.12em] text-slate-700">
                   <tr>
@@ -920,6 +1084,7 @@ export default function InventoryPage() {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </div>
       </section>
