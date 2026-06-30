@@ -121,6 +121,11 @@ export default function InventoryPage() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [editVendor, setEditVendor] = useState('');
+  const [editMaterial, setEditMaterial] = useState('');
+  const [editSize, setEditSize] = useState('');
+  const [editCategory, setEditCategory] = useState('');
+  const [editUnit, setEditUnit] = useState('');
   const [editLocation, setEditLocation] = useState('');
   const [editPalletNumber, setEditPalletNumber] = useState('');
   const [editEnteredBy, setEditEnteredBy] = useState('');
@@ -220,6 +225,11 @@ export default function InventoryPage() {
     }
 
     setSelectedRowId(rowId);
+    setEditVendor(row.vendor || '');
+    setEditMaterial(row.color || '');
+    setEditSize(row.size || '');
+    setEditCategory(row.category || '');
+    setEditUnit(row.unit || '');
     setEditLocation(row.location || '');
     setEditPalletNumber(row.pallet_number || '');
     setEditNote('');
@@ -241,9 +251,31 @@ export default function InventoryPage() {
     const note = editNote.trim();
     const earmarkNotes = editEarmarkNotes.trim();
     const earmarkJob = editEarmarkJob.trim();
+    const nextVendor = editVendor.trim();
+    const nextMaterial = editMaterial.trim();
+    const nextSize = editSize.trim();
+    const nextCategory = editCategory.trim();
+    const nextUnit = editUnit.trim();
+
+    const identityChanged =
+      nextVendor !== (row.vendor || '') ||
+      nextMaterial !== (row.color || '') ||
+      nextSize !== (row.size || '') ||
+      nextCategory !== (row.category || '') ||
+      nextUnit !== (row.unit || '');
+
+    if (identityChanged && !enteredBy) {
+      setDetailsMessage('Your name is required when correcting material information.');
+      return;
+    }
 
     if ((note || earmarkNotes) && !enteredBy) {
       setDetailsMessage('Your name is required when adding a note.');
+      return;
+    }
+
+    if (!nextMaterial) {
+      setDetailsMessage('Material name is required.');
       return;
     }
 
@@ -259,9 +291,29 @@ export default function InventoryPage() {
     setIsSavingDetails(true);
     setDetailsMessage('');
 
-    const nextNotes = note
-      ? appendNote(row.notes, formatNamedNote(enteredBy, note))
-      : row.notes || null;
+    const identityCorrectionNote = identityChanged
+      ? formatNamedNote(
+          enteredBy,
+          [
+            'Material information corrected.',
+            `Vendor: ${row.vendor || '—'} → ${nextVendor || '—'}`,
+            `Material: ${row.color || '—'} → ${nextMaterial || '—'}`,
+            `Size: ${row.size || '—'} → ${nextSize || '—'}`,
+            `Category: ${row.category || '—'} → ${nextCategory || '—'}`,
+            `Unit: ${row.unit || '—'} → ${nextUnit || '—'}`,
+          ].join('\n'),
+        )
+      : '';
+
+    let nextNotes = row.notes || null;
+
+    if (identityCorrectionNote) {
+      nextNotes = appendNote(nextNotes, identityCorrectionNote);
+    }
+
+    if (note) {
+      nextNotes = appendNote(nextNotes, formatNamedNote(enteredBy, note));
+    }
 
     const nextEarmarkNotes = editReserved
       ? earmarkNotes
@@ -270,6 +322,11 @@ export default function InventoryPage() {
       : null;
 
     const payload = {
+      vendor: nextVendor || null,
+      color: nextMaterial,
+      size: nextSize || null,
+      category: nextCategory || null,
+      unit: nextUnit || null,
       location: editLocation.trim() || null,
       pallet_number: editPalletNumber.trim() || null,
       notes: nextNotes,
@@ -300,7 +357,7 @@ export default function InventoryPage() {
     );
 
     setEditNote('');
-    setDetailsMessage('Changes saved.');
+    setDetailsMessage(identityChanged ? 'Material information corrected.' : 'Changes saved.');
     setIsSavingDetails(false);
   }
 
@@ -602,6 +659,34 @@ export default function InventoryPage() {
                             </div>
 
                             <div className="mt-3 grid gap-3">
+                              <div className="border border-slate-300 bg-white p-3">
+                                <div className="mb-3 text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">Material Info</div>
+                                <div className="grid gap-3">
+                                  <div>
+                                    <label className={labelClass}>Vendor</label>
+                                    <input value={editVendor} onChange={(event) => setEditVendor(event.target.value)} className={fieldClass} placeholder="e.g. Arim / KCI" />
+                                  </div>
+                                  <div>
+                                    <label className={labelClass}>Material</label>
+                                    <input value={editMaterial} onChange={(event) => setEditMaterial(event.target.value)} className={fieldClass} placeholder="e.g. Blanco Mexicano" />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div>
+                                      <label className={labelClass}>Size</label>
+                                      <input value={editSize} onChange={(event) => setEditSize(event.target.value)} className={fieldClass} placeholder="e.g. #1" />
+                                    </div>
+                                    <div>
+                                      <label className={labelClass}>Unit</label>
+                                      <input value={editUnit} onChange={(event) => setEditUnit(event.target.value)} className={fieldClass} placeholder="e.g. Bags" />
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className={labelClass}>Category</label>
+                                    <input value={editCategory} onChange={(event) => setEditCategory(event.target.value)} className={fieldClass} placeholder="e.g. glass / marble / filler" />
+                                  </div>
+                                </div>
+                              </div>
+
                               <div>
                                 <label className={labelClass}>Location</label>
                                 <input value={editLocation} onChange={(event) => setEditLocation(event.target.value)} className={fieldClass} placeholder="e.g. Denton / Backstock" />
@@ -816,6 +901,56 @@ export default function InventoryPage() {
                                     </div>
 
                                     <div className="grid gap-3 md:grid-cols-2">
+                                      <div>
+                                        <label className={labelClass}>Vendor</label>
+                                        <input
+                                          value={editVendor}
+                                          onChange={(event) => setEditVendor(event.target.value)}
+                                          className={fieldClass}
+                                          placeholder="e.g. Arim / KCI / TM"
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className={labelClass}>Material</label>
+                                        <input
+                                          value={editMaterial}
+                                          onChange={(event) => setEditMaterial(event.target.value)}
+                                          className={fieldClass}
+                                          placeholder="e.g. Blanco Mexicano"
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className={labelClass}>Size</label>
+                                        <input
+                                          value={editSize}
+                                          onChange={(event) => setEditSize(event.target.value)}
+                                          className={fieldClass}
+                                          placeholder="e.g. #1 / #3-5"
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className={labelClass}>Category</label>
+                                        <input
+                                          value={editCategory}
+                                          onChange={(event) => setEditCategory(event.target.value)}
+                                          className={fieldClass}
+                                          placeholder="e.g. glass / marble / filler"
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className={labelClass}>Unit</label>
+                                        <input
+                                          value={editUnit}
+                                          onChange={(event) => setEditUnit(event.target.value)}
+                                          className={fieldClass}
+                                          placeholder="e.g. Bags"
+                                        />
+                                      </div>
+
                                       <div>
                                         <label className={labelClass}>Location</label>
                                         <input
