@@ -3,7 +3,6 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const adminPassword = process.env.ADMIN_ACTION_PASSWORD;
 
 export async function POST(request: Request) {
   try {
@@ -14,21 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!adminPassword) {
-      return NextResponse.json(
-        { error: "ADMIN_ACTION_PASSWORD is not configured." },
-        { status: 500 },
-      );
-    }
-
-    const { password, transactionId } = await request.json();
-
-    if (!password || password !== adminPassword) {
-      return NextResponse.json(
-        { error: "Invalid admin password." },
-        { status: 401 },
-      );
-    }
+    const { transactionId } = await request.json();
 
     if (!transactionId || typeof transactionId !== "string") {
       return NextResponse.json(

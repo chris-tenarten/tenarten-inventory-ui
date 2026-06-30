@@ -1,7 +1,9 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+
+type TransactionTypeFilter = 'all' | 'intake' | 'outtake' | 'adjustment';
 
 type TransactionRow = {
   id: string;
@@ -22,87 +24,125 @@ type TransactionRow = {
   synced_to_inventory_at: string | null;
 };
 
-type ActivityStatus = "needs_validation" | "confirmed";
+const fieldClass =
+  'w-full border border-slate-400 bg-white px-3 py-2 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900';
 
 function formatDateTime(value: string | null) {
-  if (!value) return "—";
+  if (!value) return '—';
+
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return value;
-  return parsed.toLocaleString();
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  return parsed.toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
 }
 
 function formatTransactionType(value: string | null) {
-  if (value === "intake") return "Intake";
-  if (value === "outtake") return "Outtake";
-  if (value === "adjustment") return "Adjustment";
-  return value || "Transaction";
+  if (value === 'intake') return 'Intake';
+  if (value === 'outtake') return 'Outtake';
+  if (value === 'adjustment') return 'Adjustment';
+
+  return value || 'Transaction';
 }
 
 function getDisplayVendor(row: TransactionRow) {
-  if (row.catalog_source === "specialty") {
-    return row.specialty_vendor_name?.trim() || row.vendor?.trim() || "—";
+  if (row.catalog_source === 'specialty') {
+    return row.specialty_vendor_name?.trim() || row.vendor?.trim() || '—';
   }
 
-  return row.vendor?.trim() || row.specialty_vendor_name?.trim() || "—";
+  return row.vendor?.trim() || row.specialty_vendor_name?.trim() || '—';
+}
+
+function formatQuantity(value: number | string | null) {
+  if (value === null || typeof value === 'undefined') return '—';
+
+  const parsed = Number(value);
+
+  if (!Number.isFinite(parsed)) {
+    return String(value);
+  }
+
+  return parsed.toLocaleString(undefined, { maximumFractionDigits: 3 });
 }
 
 function getSignedQuantity(row: TransactionRow) {
   const quantity = Number(row.quantity || 0);
-  if (!Number.isFinite(quantity)) return "—";
 
-  if (row.transaction_type === "outtake") {
-    return `-${Math.abs(quantity)}`;
+  if (!Number.isFinite(quantity)) {
+    return '—';
   }
 
-  return String(quantity);
+  if (row.transaction_type === 'outtake') {
+    return `-${formatQuantity(Math.abs(quantity))}`;
+  }
+
+  if (row.transaction_type === 'adjustment') {
+    return quantity < 0
+      ? `-${formatQuantity(Math.abs(quantity))}`
+      : `+${formatQuantity(Math.abs(quantity))}`;
+  }
+
+  return `+${formatQuantity(Math.abs(quantity))}`;
 }
 
-function getActivityStatus(row: TransactionRow): ActivityStatus {
-  if (row.transaction_type === "intake" && !row.synced_to_inventory_at) {
-    return "needs_validation";
+function getQuantityClass(row: TransactionRow) {
+  if (row.transaction_type === 'outtake') {
+    return 'text-red-700';
   }
 
-  return "confirmed";
+  if (row.transaction_type === 'adjustment') {
+    return 'text-slate-800';
+  }
+
+  return 'text-emerald-700';
 }
 
-function StatusBadge({ status }: { status: ActivityStatus }) {
-  if (status === "needs_validation") {
-    return (
-      <span className="inline-flex rounded-full border border-amber-700/60 bg-amber-950/40 px-2.5 py-1 text-[11px] font-medium text-amber-300">
-        Needs Validation
-      </span>
-    );
-  }
+function typeBadgeClass(type: string | null) {
+  if (type === 'intake') return 'border-emerald-700 bg-emerald-50 text-emerald-800';
+  if (type === 'outtake') return 'border-red-700 bg-red-50 text-red-800';
+  if (type === 'adjustment') return 'border-slate-500 bg-slate-100 text-slate-900';
 
-  return (
-    <span className="inline-flex rounded-full border border-emerald-700/60 bg-emerald-950/40 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
-      Confirmed
-    </span>
-  );
+  return 'border-slate-400 bg-white text-slate-700';
+}
+
+function filterLabel(filter: TransactionTypeFilter) {
+  if (filter === 'all') return 'All';
+  if (filter === 'intake') return 'Intake';
+  if (filter === 'outtake') return 'Outtake';
+  return 'Adjustment';
 }
 
 export default function ActivityPage() {
   const [rows, setRows] = useState<TransactionRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState("");
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | ActivityStatus>("all");
+  const [loadError, setLoadError] = useState('');
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState<TransactionTypeFilter>('all');
+  const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
 
   const loadRows = useCallback(async () => {
     setLoading(true);
-    setLoadError("");
+    setLoadError('');
 
     const { data, error } = await supabase
-      .from("inventory_transactions")
+      .from('inventory_transactions')
       .select(
-        "id, created_at, transaction_type, vendor, specialty_vendor_name, item_name, size, unit, quantity, location, notes, catalog_source, is_earmarked, earmarked_job_name, earmark_notes, synced_to_inventory_at",
+        'id, created_at, transaction_type, vendor, specialty_vendor_name, item_name, size, unit, quantity, location, notes, catalog_source, is_earmarked, earmarked_job_name, earmark_notes, synced_to_inventory_at',
       )
-      .order("created_at", { ascending: false })
-      .limit(300);
+      .order('created_at', { ascending: false })
+      .limit(500);
 
     if (error) {
-      console.error("Failed to load activity log:", error);
-      setLoadError(error.message || "Failed to load activity log.");
+      console.error('Failed to load activity:', error);
+      setLoadError(error.message || 'Failed to load activity.');
       setRows([]);
       setLoading(false);
       return;
@@ -120,44 +160,41 @@ export default function ActivityPage() {
     const q = search.trim().toLowerCase();
 
     return rows.filter((row) => {
-      const status = getActivityStatus(row);
-
-      if (statusFilter !== "all" && status !== statusFilter) {
+      if (typeFilter !== 'all' && row.transaction_type !== typeFilter) {
         return false;
       }
 
       if (!q) return true;
 
       return `${formatTransactionType(row.transaction_type)} ${getDisplayVendor(row)} ${
-        row.item_name || ""
-      } ${row.size || ""} ${row.unit || ""} ${row.location || ""} ${
-        row.notes || ""
-      } ${row.earmarked_job_name || ""} ${row.earmark_notes || ""} ${status}`
+        row.item_name || ''
+      } ${row.size || ''} ${row.unit || ''} ${row.quantity || ''} ${
+        row.location || ''
+      } ${row.notes || ''} ${row.earmarked_job_name || ''} ${
+        row.earmark_notes || ''
+      }`
         .toLowerCase()
         .includes(q);
     });
-  }, [rows, search, statusFilter]);
+  }, [rows, search, typeFilter]);
 
-  const pendingCount = useMemo(
-    () => rows.filter((row) => getActivityStatus(row) === "needs_validation").length,
-    [rows],
-  );
-
-  const confirmedCount = useMemo(
-    () => rows.filter((row) => getActivityStatus(row) === "confirmed").length,
-    [rows],
-  );
+  function toggleRow(rowId: string) {
+    setExpandedRowId((current) => (current === rowId ? null : rowId));
+  }
 
   return (
-    <div className="min-h-[calc(100vh-73px)] bg-black px-6 py-8 text-white">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-6 py-6 text-slate-950">
+      <div className="border border-slate-400 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.08)]">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-300 bg-gradient-to-b from-[#f8fafc] to-[#e8edf3] px-4 py-4">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-[#f7f0d0]">
-              Activity Log
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-600">
+              Inventory Audit Trail
+            </p>
+            <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950">
+              Activity
             </h1>
-            <p className="mt-2 max-w-3xl text-sm text-neutral-400">
-              Review recent inventory entries and see whether each entry has been confirmed.
+            <p className="mt-2 max-w-3xl text-sm font-medium text-slate-600">
+              Transaction history is read-only by design. Corrections should be recorded as new adjustment entries, not silent edits to old rows.
             </p>
           </div>
 
@@ -165,179 +202,195 @@ export default function ActivityPage() {
             type="button"
             onClick={loadRows}
             disabled={loading}
-            className="rounded-xl border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm font-medium text-neutral-200 transition hover:border-[#c8a43a] hover:bg-neutral-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+            className="border border-slate-500 bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-slate-900 transition hover:border-slate-900 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Refreshing..." : "Refresh"}
+            {loading ? 'Refreshing' : 'Refresh'}
           </button>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
-            <div className="text-xs uppercase tracking-[0.14em] text-neutral-500">
-              Total Entries
-            </div>
-            <div className="mt-2 text-2xl font-semibold text-[#f7f0d0]">
-              {rows.length}
-            </div>
+        <div className="grid border-b border-slate-300 lg:grid-cols-[1fr_auto]">
+          <div className="border-b border-slate-300 bg-[#f6f7f9] p-4 lg:border-b-0 lg:border-r">
+            <label
+              htmlFor="activity-search"
+              className="mb-1 block text-[10px] font-black uppercase tracking-[0.16em] text-slate-700"
+            >
+              Search Activity
+            </label>
+            <input
+              id="activity-search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              className={fieldClass}
+              placeholder="Vendor, material, size, quantity, location, notes, or job"
+            />
           </div>
 
-          <div className="rounded-2xl border border-amber-800/60 bg-amber-950/20 p-4">
-            <div className="text-xs uppercase tracking-[0.14em] text-amber-300">
-              Needs Validation
-            </div>
-            <div className="mt-2 text-2xl font-semibold text-amber-200">
-              {pendingCount}
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-emerald-800/60 bg-emerald-950/20 p-4">
-            <div className="text-xs uppercase tracking-[0.14em] text-emerald-300">
-              Confirmed
-            </div>
-            <div className="mt-2 text-2xl font-semibold text-emerald-200">
-              {confirmedCount}
-            </div>
+          <div className="grid grid-cols-4 divide-x divide-slate-300 bg-white lg:min-w-[520px]">
+            {(['all', 'intake', 'outtake', 'adjustment'] as TransactionTypeFilter[]).map((filter) => (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setTypeFilter(filter)}
+                className={`px-4 py-4 text-center text-xs font-black uppercase tracking-[0.12em] transition ${
+                  typeFilter === filter
+                    ? 'bg-slate-900 text-white'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-950'
+                }`}
+              >
+                {filterLabel(filter)}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
-          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-            <div>
-              <label
-                htmlFor="activity-search"
-                className="mb-2 block text-xs font-medium uppercase tracking-[0.14em] text-neutral-500"
-              >
-                Search
-              </label>
-              <input
-                id="activity-search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3 text-white outline-none transition focus:border-[#c8a43a] focus:ring-1 focus:ring-[#c8a43a]"
-                placeholder="Search vendor, material, size, notes, job, or status"
-              />
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setStatusFilter("all")}
-                className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
-                  statusFilter === "all"
-                    ? "border-[#c8a43a] bg-[#c8a43a] text-black"
-                    : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-600 hover:bg-neutral-900"
-                }`}
-              >
-                All
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter("needs_validation")}
-                className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
-                  statusFilter === "needs_validation"
-                    ? "border-amber-600 bg-amber-950/60 text-amber-200"
-                    : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-amber-700 hover:bg-neutral-900"
-                }`}
-              >
-                Needs Validation
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter("confirmed")}
-                className={`rounded-xl border px-3 py-2 text-sm font-medium transition ${
-                  statusFilter === "confirmed"
-                    ? "border-emerald-600 bg-emerald-950/60 text-emerald-200"
-                    : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-emerald-700 hover:bg-neutral-900"
-                }`}
-              >
-                Confirmed
-              </button>
-            </div>
+        <div className="grid border-b border-slate-300 bg-white sm:grid-cols-3">
+          <div className="border-b border-slate-300 px-4 py-3 sm:border-b-0 sm:border-r">
+            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Visible</div>
+            <div className="mt-1 text-2xl font-black text-slate-950">{filteredRows.length}</div>
+          </div>
+          <div className="border-b border-slate-300 px-4 py-3 sm:border-b-0 sm:border-r">
+            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Loaded</div>
+            <div className="mt-1 text-2xl font-black text-slate-950">{rows.length}</div>
+          </div>
+          <div className="px-4 py-3">
+            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Mode</div>
+            <div className="mt-1 text-sm font-black uppercase tracking-[0.12em] text-slate-800">Audit Only</div>
           </div>
         </div>
 
         {loadError && (
-          <div className="rounded-xl border border-red-800 bg-red-950/40 p-3 text-sm text-red-300">
+          <div className="border-b border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">
             {loadError}
           </div>
         )}
 
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
+        <div className="overflow-x-auto">
           {loading ? (
-            <div className="text-sm text-neutral-400">Loading activity...</div>
+            <div className="px-4 py-8 text-sm font-semibold text-slate-600">Loading activity...</div>
           ) : filteredRows.length === 0 ? (
-            <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6 text-center text-sm text-neutral-400">
+            <div className="px-4 py-10 text-center text-sm font-semibold text-slate-500">
               No matching activity found.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[1000px] text-sm">
-                <thead className="border-b border-neutral-800 text-neutral-400">
-                  <tr>
-                    <th className="py-3 text-left font-medium">Date</th>
-                    <th className="py-3 text-left font-medium">Type</th>
-                    <th className="py-3 text-left font-medium">Vendor</th>
-                    <th className="py-3 text-left font-medium">Material</th>
-                    <th className="py-3 text-left font-medium">Size</th>
-                    <th className="py-3 text-left font-medium">Qty</th>
-                    <th className="py-3 text-left font-medium">Unit</th>
-                    <th className="py-3 text-left font-medium">Location</th>
-                    <th className="py-3 text-left font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredRows.map((row) => {
-                    const status = getActivityStatus(row);
+            <table className="w-full min-w-[1080px] border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-slate-400 bg-[#dbe2ea] text-[11px] uppercase tracking-[0.14em] text-slate-800">
+                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Date</th>
+                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Type</th>
+                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Vendor</th>
+                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Material</th>
+                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Size</th>
+                  <th className="border-r border-slate-400 px-3 py-2 text-right font-black">Qty</th>
+                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Unit</th>
+                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Location</th>
+                  <th className="px-3 py-2 text-left font-black">Open</th>
+                </tr>
+              </thead>
 
-                    return (
-                      <tr key={row.id} className="border-b border-neutral-900">
-                        <td className="py-3 pr-4 align-top text-neutral-300">
+              <tbody>
+                {filteredRows.map((row) => {
+                  const isExpanded = expandedRowId === row.id;
+
+                  return (
+                    <Fragment key={row.id}>
+                      <tr
+                        onClick={() => toggleRow(row.id)}
+                        className={`cursor-pointer border-b border-slate-300 transition hover:bg-slate-50 ${
+                          isExpanded ? 'bg-slate-100' : 'bg-white'
+                        }`}
+                      >
+                        <td className="whitespace-nowrap border-r border-slate-200 px-3 py-3 align-top font-medium text-slate-700">
                           {formatDateTime(row.created_at)}
                         </td>
-                        <td className="py-3 pr-4 align-top">
-                          <span className="rounded-full border border-neutral-700 bg-neutral-900 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-neutral-300">
+
+                        <td className="whitespace-nowrap border-r border-slate-200 px-3 py-3 align-top">
+                          <span className={`inline-flex border px-2 py-1 text-[11px] font-black uppercase tracking-[0.1em] ${typeBadgeClass(row.transaction_type)}`}>
                             {formatTransactionType(row.transaction_type)}
                           </span>
                         </td>
-                        <td className="py-3 pr-4 align-top text-neutral-300">
+
+                        <td className="border-r border-slate-200 px-3 py-3 align-top font-semibold text-slate-800">
                           {getDisplayVendor(row)}
                         </td>
-                        <td className="py-3 pr-4 align-top">
-                          <div className="font-medium text-white">
-                            {row.item_name || "—"}
-                          </div>
-                          {row.notes?.trim() && (
-                            <div className="mt-1 max-w-xs whitespace-pre-wrap text-xs text-neutral-500">
-                              {row.notes}
-                            </div>
-                          )}
+
+                        <td className="border-r border-slate-200 px-3 py-3 align-top">
+                          <div className="font-black text-slate-950">{row.item_name || '—'}</div>
                           {row.is_earmarked && (
-                            <div className="mt-2 rounded-lg border border-purple-800/60 bg-purple-950/30 px-2 py-1 text-xs text-purple-200">
-                              Reserved for {row.earmarked_job_name || "job"}
+                            <div className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
+                              Reserved: {row.earmarked_job_name || 'Job'}
                             </div>
                           )}
                         </td>
-                        <td className="py-3 pr-4 align-top text-neutral-300">
-                          {row.size || "—"}
+
+                        <td className="border-r border-slate-200 px-3 py-3 align-top font-medium text-slate-700">
+                          {row.size || '—'}
                         </td>
-                        <td className="py-3 pr-4 align-top font-medium text-[#f7f0d0]">
+
+                        <td className={`border-r border-slate-200 px-3 py-3 text-right align-top text-base font-black tabular-nums ${getQuantityClass(row)}`}>
                           {getSignedQuantity(row)}
                         </td>
-                        <td className="py-3 pr-4 align-top text-neutral-300">
-                          {row.unit || "—"}
+
+                        <td className="border-r border-slate-200 px-3 py-3 align-top font-medium text-slate-700">
+                          {row.unit || '—'}
                         </td>
-                        <td className="py-3 pr-4 align-top text-neutral-300">
-                          {row.location || "—"}
+
+                        <td className="border-r border-slate-200 px-3 py-3 align-top font-medium text-slate-700">
+                          {row.location || '—'}
                         </td>
-                        <td className="py-3 pr-4 align-top">
-                          <StatusBadge status={status} />
+
+                        <td className="px-3 py-3 align-top">
+                          <span className="text-xs font-black uppercase tracking-[0.12em] text-slate-900">
+                            {isExpanded ? 'Close' : 'Open'}
+                          </span>
                         </td>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+
+                      {isExpanded && (
+                        <tr className="border-b border-slate-400 bg-[#f6f7f9]">
+                          <td colSpan={9} className="px-4 py-4">
+                            <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+                              <div className="border border-slate-300 bg-white">
+                                <div className="border-b border-slate-300 bg-[#e8edf3] px-3 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700">
+                                  Transaction Notes
+                                </div>
+                                <div className="min-h-[84px] whitespace-pre-wrap px-3 py-3 text-sm leading-6 text-slate-700">
+                                  {row.notes?.trim() || 'No notes recorded.'}
+                                </div>
+                              </div>
+
+                              <div className="border border-slate-300 bg-white">
+                                <div className="border-b border-slate-300 bg-[#e8edf3] px-3 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700">
+                                  Reservation
+                                </div>
+                                <div className="space-y-2 px-3 py-3 text-sm text-slate-700">
+                                  <div>
+                                    <span className="font-black text-slate-950">Reserved:</span>{' '}
+                                    {row.is_earmarked ? 'Yes' : 'No'}
+                                  </div>
+                                  <div>
+                                    <span className="font-black text-slate-950">Job:</span>{' '}
+                                    {row.earmarked_job_name || '—'}
+                                  </div>
+                                  <div>
+                                    <span className="font-black text-slate-950">Notes:</span>{' '}
+                                    {row.earmark_notes || '—'}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="mt-4 border border-slate-300 bg-slate-50 px-3 py-3 text-sm text-slate-700">
+                              <span className="font-black text-slate-950">Correction policy:</span>{' '}
+                              Do not directly edit transaction history. If this row is wrong, create a new correction or exact-count adjustment so the audit trail remains honest.
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
           )}
         </div>
       </div>
