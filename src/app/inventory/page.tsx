@@ -189,8 +189,11 @@ function createStockLine(seed?: Partial<StockLine>): StockLine {
 }
 
 function lineMatchesRow(line: StockLine, row: InventoryRow) {
+  const lineVendor = normalizeKeyPart(line.vendor);
+  const rowVendor = normalizeKeyPart(row.vendor);
+
   return (
-    normalizeKeyPart(row.vendor) === normalizeKeyPart(line.vendor) &&
+    (!lineVendor || !rowVendor || rowVendor === lineVendor) &&
     normalizeKeyPart(row.color) === normalizeKeyPart(line.material) &&
     normalizeKeyPart(row.size) === normalizeKeyPart(line.size) &&
     normalizeKeyPart(row.unit || 'Bags') === normalizeKeyPart(line.unit || 'Bags') &&
@@ -258,6 +261,20 @@ function groupSearchText(group: InventoryGroup) {
     .concat([group.totalQuantity, group.lots.length > 1 ? `${group.lots.length} lots` : 'single lot'])
     .map(normalizeSearch)
     .join(' ');
+}
+
+
+function uniqueSorted(values: Array<string | null | undefined>) {
+  return Array.from(new Set(values.map((value) => String(value || '').trim()).filter(Boolean))).sort((a, b) =>
+    a.localeCompare(b),
+  );
+}
+
+function stockLineStatusClass(tone: 'neutral' | 'good' | 'warning' | 'bad') {
+  if (tone === 'good') return 'border-emerald-300 bg-emerald-50 text-emerald-800';
+  if (tone === 'warning') return 'border-amber-300 bg-amber-50 text-amber-800';
+  if (tone === 'bad') return 'border-red-300 bg-red-50 text-red-700';
+  return 'border-slate-300 bg-white text-slate-600';
 }
 
 export default function InventoryPage() {
@@ -344,6 +361,10 @@ export default function InventoryPage() {
   }, [selectedGroupKey, isRecordStockOpen]);
 
   const inventoryGroups = useMemo(() => buildInventoryGroups(rows), [rows]);
+
+  const materialOptions = useMemo(() => uniqueSorted(rows.map((row) => row.color)), [rows]);
+  const sizeOptions = useMemo(() => uniqueSorted(rows.map((row) => row.size)), [rows]);
+  const vendorOptions = useMemo(() => uniqueSorted(rows.map((row) => row.vendor)), [rows]);
 
   const filteredGroups = useMemo(() => {
     const q = normalizeSearch(search.trim());
@@ -558,21 +579,169 @@ export default function InventoryPage() {
     }
   }
 
+  function getMaterialCandidatesForLine(line: StockLine) {
+    const material = normalizeKeyPart(line.material);
+    const vendor = normalizeKeyPart(line.vendor);
+
+    if (!material) return [];
+
+    const exactMaterial = rows.filter((row) => {
+      const materialMatches = normalizeKeyPart(row.color) === material;
+      const vendorMatches = !vendor || !normalizeKeyPart(row.vendor) || normalizeKeyPart(row.vendor) === vendor;
+      return materialMatches && vendorMatches;
+    });
+
+    if (exactMaterial.length > 0) return exactMaterial;
+
+    return rows.filter((row) => {
+      const rowMaterial = normalizeKeyPart(row.color);
+      const vendorMatches = !vendor || !normalizeKeyPart(row.vendor) || normalizeKeyPart(row.vendor) === vendor;
+      return material.length >= 3 && rowMaterial.includes(material) && vendorMatches;
+    });
+  }
+
+  function getMatchingLotsForLine(line: StockLine) {
+    const unit = line.unit.trim() || 'Bags';
+    const location = line.location.trim() || 'Denton';
+    return rows
+      .filter((row) => lineMatchesRow({ ...line, unit, location }, row))
+      .sort((a, b) => getNumericQuantity(b.quantity) - getNumericQuantity(a.quantity));
+  }
+
+  function findInventoryMatchForLine(line: StockLine) {
+    const material = normalizeKeyPart(line.material);
+    const size = normalizeKeyPart(line.size);
+
+    if (!material) return null;
+
+    const matchingLots = getMatchingLotsForLine(line);
+    if (matchingLots.length > 0) return matchingLots[0];
+
+    const candidates = getMaterialCandidatesForLine(line);
+    if (size) {
+      const matchingSize = candidates.find((row) => normalizeKeyPart(row.size) === size);
+      if (matchingSize) return matchingSize;
+    }
+
+    return candidates[0] || null;
+  }
+
+  function hydrateStockLine(line: StockLine) {
+    const match = findInventoryMatchForLine(line);
+
+    if (!match) return line;
+
+    const exactMaterialCandidates = rows.filter((row) => normalizeKeyPart(row.color) === normalizeKeyPart(match.color));
+    const candidateSizes = uniqueSorted(exactMaterialCandidates.map((row) => row.size));
+
+    return {
+      ...line,
+      material: line.material || match.color || '',
+      size: line.size || (candidateSizes.length === 1 ? candidateSizes[0] : ''),
+      vendor: line.vendor || match.vendor || '',
+      category: line.category || match.category || '',
+      unit: line.unit || match.unit || 'Bags',
+      location: line.location || match.location || 'Denton',
+    };
+  }
+
+  function autofillStockLine(lineId: string) {
+    setStockLines((prev) => prev.map((line) => (line.id === lineId ? hydrateStockLine(line) : line)));
+  }
+
   function updateStockLine(lineId: string, field: keyof StockLine, value: string) {
     setStockLines((prev) => prev.map((line) => (line.id === lineId ? { ...line, [field]: value } : line)));
   }
 
+  function getStockLineStatus(line: StockLine, movementType: 'intake' | 'outtake') {
+    const material = line.material.trim();
+    const size = line.size.trim();
+    const qty = Number(line.quantity);
+    const candidates = getMaterialCandidatesForLine(line);
+    const matchingLots = getMatchingLotsForLine(line);
+    const totalAvailable = matchingLots.reduce((sum, lot) => sum + getNumericQuantity(lot.quantity), 0);
+    const exactMaterialCandidates = rows.filter((row) => normalizeKeyPart(row.color) === normalizeKeyPart(material));
+    const candidateSizes = uniqueSorted(exactMaterialCandidates.map((row) => row.size));
+
+    if (!material) {
+      return {
+        tone: 'neutral' as const,
+        title: 'Enter a material name.',
+        detail: 'Existing inventory will be checked as you type.',
+      };
+    }
+
+    if (movementType === 'intake') {
+      if (matchingLots.length > 0) {
+        return {
+          tone: 'good' as const,
+          title: `Existing lot found: ${formatQuantity(totalAvailable)} ${line.unit || matchingLots[0].unit || 'Bags'} on hand.`,
+          detail: 'This intake will add to the largest matching lot.',
+        };
+      }
+
+      if (candidates.length > 0) {
+        return {
+          tone: 'warning' as const,
+          title: 'Existing material found, but not this exact lot.',
+          detail: 'This intake will create a new lot for the entered size, unit, or location.',
+        };
+      }
+
+      return {
+        tone: 'neutral' as const,
+        title: 'New material will be created.',
+        detail: 'No matching inventory item was found with the current material name.',
+      };
+    }
+
+    if (!size && candidateSizes.length > 1) {
+      return {
+        tone: 'warning' as const,
+        title: 'Choose a size before outtaking.',
+        detail: `This material has multiple sizes: ${candidateSizes.join(', ')}.`,
+      };
+    }
+
+    if (matchingLots.length === 0) {
+      const closest = candidates[0]?.color;
+      return {
+        tone: 'bad' as const,
+        title: 'No matching stock found.',
+        detail: closest ? `Closest material match: ${closest}. Check size, unit, or location.` : 'This material is not currently in inventory.',
+      };
+    }
+
+    if (!Number.isFinite(qty) || qty <= 0) {
+      return {
+        tone: 'good' as const,
+        title: `${formatQuantity(totalAvailable)} ${line.unit || matchingLots[0].unit || 'Bags'} available.`,
+        detail: `${matchingLots.length} matching lot${matchingLots.length === 1 ? '' : 's'} found. Enter a quantity to validate the outtake.`,
+      };
+    }
+
+    if (qty > totalAvailable) {
+      return {
+        tone: 'bad' as const,
+        title: `Only ${formatQuantity(totalAvailable)} ${line.unit || matchingLots[0].unit || 'Bags'} available.`,
+        detail: `Requested outtake is short by ${formatQuantity(qty - totalAvailable)} ${line.unit || matchingLots[0].unit || 'Bags'}.`,
+      };
+    }
+
+    return {
+      tone: 'good' as const,
+      title: `${formatQuantity(totalAvailable)} ${line.unit || matchingLots[0].unit || 'Bags'} available.`,
+      detail: `This outtake can be filled from ${matchingLots.length} matching lot${matchingLots.length === 1 ? '' : 's'}.`,
+    };
+  }
+
   function addStockLine() {
-    const row = getSelectedRow();
     setStockLines((prev) => [
       ...prev,
       createStockLine({
-        vendor: row?.vendor || prev.at(-1)?.vendor || '',
-        material: row?.color || prev.at(-1)?.material || '',
-        size: row?.size || prev.at(-1)?.size || '',
-        category: row?.category || prev.at(-1)?.category || '',
-        unit: row?.unit || prev.at(-1)?.unit || 'Bags',
-        location: row?.location || prev.at(-1)?.location || 'Denton',
+        vendor: prev.at(-1)?.vendor || '',
+        unit: prev.at(-1)?.unit || 'Bags',
+        location: prev.at(-1)?.location || 'Denton',
       }),
     ]);
   }
@@ -590,12 +759,10 @@ export default function InventoryPage() {
     const location = line.location.trim() || 'Denton';
     const category = line.category.trim();
 
-    if (!vendor || !material) throw new Error('Vendor and material are required for every line.');
+    if (!material) throw new Error('Material is required for every line.');
     if (!Number.isFinite(qty) || qty <= 0) throw new Error(`Invalid quantity for ${material} ${size || ''}.`);
 
-    const matchingLots = rows
-      .filter((row) => lineMatchesRow({ ...line, unit, location }, row))
-      .sort((a, b) => getNumericQuantity(b.quantity) - getNumericQuantity(a.quantity));
+    const matchingLots = getMatchingLotsForLine({ ...line, unit, location });
 
     if (movementType === 'intake') {
       const targetLot = matchingLots[0];
@@ -620,7 +787,7 @@ export default function InventoryPage() {
         const { data, error } = await supabase
           .from('inventory_items')
           .insert({
-            vendor,
+            vendor: vendor || null,
             color: material,
             size: size || null,
             category: category || null,
@@ -683,7 +850,7 @@ export default function InventoryPage() {
 
     const { error: txError } = await supabase.from('inventory_transactions').insert({
       transaction_type: movementType,
-      vendor,
+      vendor: vendor || null,
       item_name: material,
       size: size || null,
       unit,
@@ -718,7 +885,7 @@ export default function InventoryPage() {
     }
 
     const activeLines = stockLines.filter((line) =>
-      [line.vendor, line.material, line.size, line.quantity].some((value) => value.trim()),
+      [line.material, line.size, line.quantity].some((value) => value.trim()),
     );
 
     if (activeLines.length === 0) {
@@ -786,8 +953,8 @@ export default function InventoryPage() {
     const vendor = row.vendor?.trim() || '';
     const itemName = row.color?.trim() || '';
 
-    if (!vendor || !itemName) {
-      setAdjustmentMessage('Vendor and material are required for adjustments.');
+    if (!itemName) {
+      setAdjustmentMessage('Material is required for adjustments.');
       return;
     }
 
@@ -859,7 +1026,7 @@ export default function InventoryPage() {
 
       const { error: txError } = await supabase.from('inventory_transactions').insert({
         transaction_type: transactionType,
-        vendor,
+        vendor: vendor || null,
         item_name: itemName,
         size: row.size || null,
         unit: row.unit || null,
@@ -1333,6 +1500,22 @@ export default function InventoryPage() {
           </div>
 
           <div className="max-h-[calc(100vh-7.5rem)] overflow-y-auto bg-[#eef1f4] p-3 sm:p-4">
+            <datalist id="inventory-material-options">
+              {materialOptions.map((material) => (
+                <option key={material} value={material} />
+              ))}
+            </datalist>
+            <datalist id="inventory-size-options">
+              {sizeOptions.map((size) => (
+                <option key={size} value={size} />
+              ))}
+            </datalist>
+            <datalist id="inventory-vendor-options">
+              {vendorOptions.map((vendor) => (
+                <option key={vendor} value={vendor} />
+              ))}
+            </datalist>
+
             <div className="grid gap-4 lg:grid-cols-[260px_1fr]">
               <aside className="border border-slate-400 bg-white p-4">
                 <div className="grid gap-4">
@@ -1368,7 +1551,7 @@ export default function InventoryPage() {
                     <div className="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-600">
                       How this works
                     </div>
-                    Intake will add to an existing matching lot when possible, or create a new lot. Outtake will pull from matching lots until the line quantity is satisfied.
+                    Intake will add to an existing matching lot when possible, or create a new lot. Outtake will pull from matching lots until the line quantity is satisfied. Vendor is optional when matching existing inventory.
                   </div>
 
                   {bulkMovementMessage && (
@@ -1411,7 +1594,10 @@ export default function InventoryPage() {
                 </div>
 
                 <div className="space-y-3">
-                  {stockLines.map((line, index) => (
+                  {stockLines.map((line, index) => {
+                    const status = getStockLineStatus(line, recordMovementType);
+
+                    return (
                     <div key={line.id} className="border border-slate-300 bg-[#f8fafc] p-3">
                       <div className="mb-3 flex items-center justify-between gap-3">
                         <div className="text-xs font-black uppercase tracking-[0.12em] text-slate-600">Line {index + 1}</div>
@@ -1428,15 +1614,15 @@ export default function InventoryPage() {
                       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                         <div>
                           <label className={labelClass}>Vendor</label>
-                          <input value={line.vendor} onChange={(event) => updateStockLine(line.id, 'vendor', event.target.value)} className={fieldClass} />
+                          <input value={line.vendor} onChange={(event) => updateStockLine(line.id, 'vendor', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-vendor-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Material</label>
-                          <input value={line.material} onChange={(event) => updateStockLine(line.id, 'material', event.target.value)} className={fieldClass} />
+                          <input value={line.material} onChange={(event) => updateStockLine(line.id, 'material', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-material-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Size</label>
-                          <input value={line.size} onChange={(event) => updateStockLine(line.id, 'size', event.target.value)} className={fieldClass} />
+                          <input value={line.size} onChange={(event) => updateStockLine(line.id, 'size', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-size-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Quantity</label>
@@ -1463,8 +1649,14 @@ export default function InventoryPage() {
                           <input value={line.note} onChange={(event) => updateStockLine(line.id, 'note', event.target.value)} className={fieldClass} placeholder="Optional" />
                         </div>
                       </div>
+
+                      <div className={`mt-3 border px-3 py-2 text-xs font-semibold leading-5 ${stockLineStatusClass(status.tone)}`}>
+                        <div className="font-black">{status.title}</div>
+                        <div className="mt-0.5 opacity-90">{status.detail}</div>
+                      </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="mt-4 flex flex-wrap justify-between gap-2 border-t border-slate-300 pt-4">
