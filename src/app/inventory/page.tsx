@@ -45,12 +45,62 @@ type StockLine = {
   location: string;
   palletNumber: string;
   note: string;
+  reservedForJob: boolean;
+  earmarkJob: string;
+  earmarkNotes: string;
+  excludeFromOrderReservation: boolean;
+};
+
+type PendingReceival = {
+  id: string;
+  vendor: string | null;
+  material_name: string;
+  size: string | null;
+  category: string | null;
+  quantity_expected: number | string;
+  quantity_received: number | string | null;
+  unit: string | null;
+  location: string | null;
+  pallet_number: string | null;
+  status: 'pending' | 'partially_received' | 'received' | 'cancelled' | string;
+  ordered_by: string | null;
+  order_date: string | null;
+  received_by: string | null;
+  eta: string | null;
+  notes: string | null;
+  created_at: string | null;
+  received_at: string | null;
+  is_earmarked: boolean | null;
+  earmarked_job_name: string | null;
+  earmark_notes: string | null;
+};
+
+type PendingReceivalForm = {
+  vendor: string;
+  material: string;
+  size: string;
+  category: string;
+  quantity: string;
+  unit: string;
+  location: string;
+  palletNumber: string;
+  orderedBy: string;
+  orderDate: string;
+  eta: string;
+  note: string;
+  reserveOrderForJob: boolean;
+  orderEarmarkJob: string;
+  orderEarmarkNotes: string;
 };
 
 type StockMovementMode = 'single' | 'multiple';
 
 const LAST_ENTERED_BY_KEY = 'tenarten_last_entered_by';
 const ADMIN_STORAGE_KEY = 'tenarten_admin_access';
+const PENDING_RECEIVAL_ACCESS_KEY = 'tenarten_pending_receival_access';
+const PENDING_RECEIVAL_PASSWORD = 'tenarten123';
+const PEOPLE_OPTIONS = ['Gio', 'Anthony'];
+const DEFAULT_LOCATION_OPTIONS = ['Denton', 'Carrollton'];
 
 const fieldClass =
   'w-full border border-slate-400 bg-white px-3 py-2 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900';
@@ -100,6 +150,20 @@ function normalizeKeyPart(value: unknown) {
 function getNumericQuantity(value: number | string | null) {
   const parsed = Number(value || 0);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+
+function getSupabaseErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === 'object' && error && 'message' in error) {
+    const message = String((error as { message?: unknown }).message || '').trim();
+    if (message) return message;
+  }
+  if (typeof error === 'object' && error && 'details' in error) {
+    const details = String((error as { details?: unknown }).details || '').trim();
+    if (details) return details;
+  }
+  return fallback;
 }
 
 function formatQuantity(value: number | string | null) {
@@ -185,7 +249,44 @@ function createStockLine(seed?: Partial<StockLine>): StockLine {
     location: seed?.location || 'Denton',
     palletNumber: seed?.palletNumber || '',
     note: seed?.note || '',
+    reservedForJob: seed?.reservedForJob || false,
+    earmarkJob: seed?.earmarkJob || '',
+    earmarkNotes: seed?.earmarkNotes || '',
+    excludeFromOrderReservation: seed?.excludeFromOrderReservation || false,
   };
+}
+
+function getTodayDateInputValue() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function createPendingReceivalForm(seed?: Partial<PendingReceivalForm>): PendingReceivalForm {
+  return {
+    vendor: seed?.vendor || '',
+    material: seed?.material || '',
+    size: seed?.size || '',
+    category: seed?.category || '',
+    quantity: seed?.quantity || '',
+    unit: seed?.unit || 'Bags',
+    location: seed?.location || 'Denton',
+    palletNumber: seed?.palletNumber || '',
+    orderedBy: seed?.orderedBy || '',
+    orderDate: seed?.orderDate || getTodayDateInputValue(),
+    eta: seed?.eta || '',
+    note: seed?.note || '',
+    reserveOrderForJob: seed?.reserveOrderForJob || false,
+    orderEarmarkJob: seed?.orderEarmarkJob || '',
+    orderEarmarkNotes: seed?.orderEarmarkNotes || '',
+  };
+}
+
+function formatDateOnly(value?: string | null) {
+  if (!value) return '—';
+
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return '—';
+
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function lineMatchesRow(line: StockLine, row: InventoryRow) {
@@ -202,8 +303,13 @@ function lineMatchesRow(line: StockLine, row: InventoryRow) {
 }
 
 function rowStatus(row: InventoryRow) {
-  if (row.earmarked_for_job) return 'Reserved';
+  if (row.earmarked_for_job) return row.earmarked_job || 'Reserved';
   return 'General';
+}
+
+function groupReservedLabel(group: InventoryGroup) {
+  const reservedLot = group.lots.find((lot) => Boolean(lot.earmarked_for_job));
+  return reservedLot?.earmarked_job || 'Reserved';
 }
 
 function groupKey(row: InventoryRow) {
@@ -270,6 +376,18 @@ function uniqueSorted(values: Array<string | null | undefined>) {
   );
 }
 
+
+function formatMaterialOption(row: InventoryRow) {
+  const material = String(row.color || '').trim();
+  const size = String(row.size || '').trim();
+  if (!material) return '';
+  return [material, size].filter(Boolean).join(' ');
+}
+
+function getLineDisplayMaterial(line: StockLine) {
+  return [line.material.trim(), line.size.trim()].filter(Boolean).join(' ');
+}
+
 function stockLineStatusClass(tone: 'neutral' | 'good' | 'warning' | 'bad') {
   if (tone === 'good') return 'border-emerald-300 bg-emerald-50 text-emerald-800';
   if (tone === 'warning') return 'border-amber-300 bg-amber-50 text-amber-800';
@@ -314,6 +432,23 @@ export default function InventoryPage() {
   const [isRecordStockOpen, setIsRecordStockOpen] = useState(false);
   const [recordMovementType, setRecordMovementType] = useState<'intake' | 'outtake'>('intake');
 
+  const [pendingReceivals, setPendingReceivals] = useState<PendingReceival[]>([]);
+  const [pendingReceivalsLoading, setPendingReceivalsLoading] = useState(true);
+  const [pendingReceivalsError, setPendingReceivalsError] = useState('');
+  const [pendingReceivalUnlocked, setPendingReceivalUnlocked] = useState(false);
+  const [isPendingReceivalFormOpen, setIsPendingReceivalFormOpen] = useState(false);
+  const [pendingReceivalForm, setPendingReceivalForm] = useState<PendingReceivalForm>(createPendingReceivalForm());
+  const [pendingReceivalLines, setPendingReceivalLines] = useState<StockLine[]>([createStockLine()]);
+  const [pendingReceivalMessage, setPendingReceivalMessage] = useState('');
+  const [pendingReceivalPasswordInput, setPendingReceivalPasswordInput] = useState('');
+  const [isSavingPendingReceival, setIsSavingPendingReceival] = useState(false);
+  const [receivingPendingId, setReceivingPendingId] = useState<string | null>(null);
+  const [cancellingPendingId, setCancellingPendingId] = useState<string | null>(null);
+  const [clearingReceivedPending, setClearingReceivedPending] = useState(false);
+  const [receivePendingTargetId, setReceivePendingTargetId] = useState<string | null>(null);
+  const [receivePendingByInput, setReceivePendingByInput] = useState('');
+  const [receivePendingMessage, setReceivePendingMessage] = useState('');
+
   const loadData = useCallback(async () => {
     setLoading(true);
     setLoadError('');
@@ -338,19 +473,45 @@ export default function InventoryPage() {
     setLoading(false);
   }, []);
 
+  const loadPendingReceivals = useCallback(async () => {
+    setPendingReceivalsLoading(true);
+    setPendingReceivalsError('');
+
+    const { data, error } = await supabase
+      .from('pending_receivals')
+      .select(
+        'id, vendor, material_name, size, category, quantity_expected, quantity_received, unit, location, pallet_number, status, ordered_by, received_by, eta, notes, created_at, received_at, is_earmarked, earmarked_job_name, earmark_notes',
+      )
+      .in('status', ['pending', 'partially_received', 'received'])
+      .order('eta', { ascending: true, nullsFirst: false })
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Failed to load pending receivals:', error);
+      setPendingReceivalsError(error.message || 'Failed to load pending receivals.');
+      setPendingReceivalsLoading(false);
+      return;
+    }
+
+    setPendingReceivals((data as PendingReceival[]) || []);
+    setPendingReceivalsLoading(false);
+  }, []);
+
   useEffect(() => {
     loadData();
-  }, [loadData]);
+    loadPendingReceivals();
+  }, [loadData, loadPendingReceivals]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     setEditEnteredBy(window.localStorage.getItem(LAST_ENTERED_BY_KEY) || '');
     setIsAdmin(window.localStorage.getItem(ADMIN_STORAGE_KEY) === 'granted');
+    setPendingReceivalUnlocked(window.localStorage.getItem(PENDING_RECEIVAL_ACCESS_KEY) === 'granted');
   }, []);
 
   useEffect(() => {
-    if ((!selectedGroupKey && !isRecordStockOpen) || typeof document === 'undefined') return;
+    if ((!selectedGroupKey && !isRecordStockOpen && !isPendingReceivalFormOpen) || typeof document === 'undefined') return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -358,13 +519,17 @@ export default function InventoryPage() {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [selectedGroupKey, isRecordStockOpen]);
+  }, [selectedGroupKey, isRecordStockOpen, isPendingReceivalFormOpen]);
 
   const inventoryGroups = useMemo(() => buildInventoryGroups(rows), [rows]);
 
-  const materialOptions = useMemo(() => uniqueSorted(rows.map((row) => row.color)), [rows]);
-  const sizeOptions = useMemo(() => uniqueSorted(rows.map((row) => row.size)), [rows]);
-  const vendorOptions = useMemo(() => uniqueSorted(rows.map((row) => row.vendor)), [rows]);
+  const materialOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.color), ...pendingReceivals.map((row) => row.material_name)]), [rows, pendingReceivals]);
+  const materialSelectionOptions = useMemo(() => uniqueSorted([...rows.map(formatMaterialOption), ...pendingReceivals.map((row) => [row.material_name, row.size].filter(Boolean).join(' '))]), [rows, pendingReceivals]);
+  const sizeOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.size), ...pendingReceivals.map((row) => row.size)]), [rows, pendingReceivals]);
+  const vendorOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.vendor), ...pendingReceivals.map((row) => row.vendor)]), [rows, pendingReceivals]);
+  const categoryOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.category), ...pendingReceivals.map((row) => row.category)]), [rows, pendingReceivals]);
+  const unitOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.unit), ...pendingReceivals.map((row) => row.unit), 'Bags', 'Pails', 'Buckets', 'Boxes']), [rows, pendingReceivals]);
+  const locationOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.location), ...pendingReceivals.map((row) => row.location), ...DEFAULT_LOCATION_OPTIONS]), [rows, pendingReceivals]);
 
   const filteredGroups = useMemo(() => {
     const q = normalizeSearch(search.trim());
@@ -764,6 +929,58 @@ export default function InventoryPage() {
 
     const matchingLots = getMatchingLotsForLine({ ...line, unit, location });
 
+    if (movementType === 'outtake') {
+      let remaining = qty;
+
+      for (const lot of matchingLots) {
+        if (remaining <= 0) break;
+        const currentQty = getNumericQuantity(lot.quantity);
+        if (currentQty <= 0) continue;
+        remaining -= Math.min(currentQty, remaining);
+      }
+
+      if (remaining > 0) {
+        throw new Error(`Not enough stock for ${vendor} / ${material} / ${size || 'no size'}.`);
+      }
+    }
+
+    const txNote = buildTransactionNote({
+      enteredBy,
+      reason: line.note.trim() || (movementType === 'intake' ? 'Multi-line stock intake.' : 'Multi-line stock outtake.'),
+      location,
+      palletNumber: line.palletNumber,
+      category,
+    });
+
+    const { error: txError } = await supabase.from('inventory_transactions').insert({
+      transaction_type: movementType,
+      vendor: vendor || null,
+      item_name: material,
+      size: size || null,
+      unit,
+      quantity: qty,
+      location,
+      notes: txNote,
+      catalog_source: 'standard',
+      catalog_row_id: null,
+      mix_number: null,
+      custom_mix_label: null,
+      specialty_vendor_name: null,
+      specialty_product_line: null,
+      specialty_component_type: null,
+      is_earmarked: false,
+      earmarked_job_name: null,
+      earmarked_job_id: null,
+      earmarked_at: null,
+      earmark_released_at: null,
+      earmark_notes: null,
+      synced_to_inventory_at: nowIso,
+    });
+
+    if (txError) {
+      throw new Error(getSupabaseErrorMessage(txError, 'Failed to record inventory transaction. Inventory was not changed.'));
+    }
+
     if (movementType === 'intake') {
       const targetLot = matchingLots[0];
 
@@ -807,73 +1024,36 @@ export default function InventoryPage() {
         if (error) throw error;
         if (data) setRows((prev) => [...prev, data as InventoryRow]);
       }
-    } else {
-      let remaining = qty;
-      const updates: { row: InventoryRow; nextQty: number }[] = [];
 
-      for (const lot of matchingLots) {
-        if (remaining <= 0) break;
-        const currentQty = getNumericQuantity(lot.quantity);
-        if (currentQty <= 0) continue;
-        const taken = Math.min(currentQty, remaining);
-        updates.push({ row: lot, nextQty: currentQty - taken });
-        remaining -= taken;
-      }
-
-      if (remaining > 0) {
-        throw new Error(`Not enough stock for ${vendor} / ${material} / ${size || 'no size'}.`);
-      }
-
-      for (const update of updates) {
-        const { error } = await supabase
-          .from('inventory_items')
-          .update({ quantity: update.nextQty, updated_at: nowIso })
-          .eq('id', update.row.id);
-        if (error) throw error;
-      }
-
-      setRows((prev) =>
-        prev.map((row) => {
-          const update = updates.find((item) => String(item.row.id) === String(row.id));
-          return update ? { ...row, quantity: update.nextQty, updated_at: nowIso } : row;
-        }),
-      );
+      return;
     }
 
-    const txNote = buildTransactionNote({
-      enteredBy,
-      reason: line.note.trim() || (movementType === 'intake' ? 'Multi-line stock intake.' : 'Multi-line stock outtake.'),
-      location,
-      palletNumber: line.palletNumber,
-      category,
-    });
+    let remaining = qty;
+    const updates: { row: InventoryRow; nextQty: number }[] = [];
 
-    const { error: txError } = await supabase.from('inventory_transactions').insert({
-      transaction_type: movementType,
-      vendor: vendor || null,
-      item_name: material,
-      size: size || null,
-      unit,
-      quantity: qty,
-      location,
-      notes: txNote,
-      catalog_source: 'standard',
-      catalog_row_id: null,
-      mix_number: null,
-      custom_mix_label: null,
-      specialty_vendor_name: null,
-      specialty_product_line: null,
-      specialty_component_type: null,
-      is_earmarked: false,
-      earmarked_job_name: null,
-      earmarked_job_id: null,
-      earmarked_at: null,
-      earmark_released_at: null,
-      earmark_notes: null,
-      synced_to_inventory_at: nowIso,
-    });
+    for (const lot of matchingLots) {
+      if (remaining <= 0) break;
+      const currentQty = getNumericQuantity(lot.quantity);
+      if (currentQty <= 0) continue;
+      const taken = Math.min(currentQty, remaining);
+      updates.push({ row: lot, nextQty: currentQty - taken });
+      remaining -= taken;
+    }
 
-    if (txError) throw txError;
+    for (const update of updates) {
+      const { error } = await supabase
+        .from('inventory_items')
+        .update({ quantity: update.nextQty, updated_at: nowIso })
+        .eq('id', update.row.id);
+      if (error) throw error;
+    }
+
+    setRows((prev) =>
+      prev.map((row) => {
+        const update = updates.find((item) => String(item.row.id) === String(row.id));
+        return update ? { ...row, quantity: update.nextQty, updated_at: nowIso } : row;
+      }),
+    );
   }
 
   async function handleApplyBulkMovement() {
@@ -989,27 +1169,6 @@ export default function InventoryPage() {
     setAdjustmentMessage('');
 
     try {
-      const { error: updateError } = await supabase
-        .from('inventory_items')
-        .update({
-          quantity: nextQty,
-          updated_at: nowIso,
-          ...(adjustmentType === 'set_exact'
-            ? {
-                last_counted_at: nowIso,
-                last_counted_by: enteredBy,
-              }
-            : {}),
-        })
-        .eq('id', row.id);
-
-      if (updateError) {
-        console.error('Failed to update quantity:', updateError);
-        setAdjustmentMessage(updateError.message || 'Failed to update quantity.');
-        setIsApplyingAdjustment(false);
-        return;
-      }
-
       const txNote = buildTransactionNote({
         enteredBy,
         reason:
@@ -1051,7 +1210,28 @@ export default function InventoryPage() {
 
       if (txError) {
         console.error('Failed to record transaction:', txError);
-        setAdjustmentMessage(txError.message || 'Quantity changed, but failed to record transaction.');
+        setAdjustmentMessage(getSupabaseErrorMessage(txError, 'Failed to record transaction. Inventory was not changed.'));
+        setIsApplyingAdjustment(false);
+        return;
+      }
+
+      const { error: updateError } = await supabase
+        .from('inventory_items')
+        .update({
+          quantity: nextQty,
+          updated_at: nowIso,
+          ...(adjustmentType === 'set_exact'
+            ? {
+                last_counted_at: nowIso,
+                last_counted_by: enteredBy,
+              }
+            : {}),
+        })
+        .eq('id', row.id);
+
+      if (updateError) {
+        console.error('Failed to update quantity:', updateError);
+        setAdjustmentMessage(getSupabaseErrorMessage(updateError, 'Transaction was recorded, but inventory update failed.'));
         setIsApplyingAdjustment(false);
         return;
       }
@@ -1119,6 +1299,790 @@ export default function InventoryPage() {
     setDetailsMessage('');
     setAdjustmentMessage('');
     setIsDeletingMaterial(false);
+  }
+
+  function openPendingReceivalForm() {
+    if (!pendingReceivalUnlocked) {
+      setPendingReceivalPasswordInput('');
+      setPendingReceivalMessage('Enter the pending receival password to add expected material.');
+    } else {
+      setPendingReceivalMessage('');
+    }
+
+    setPendingReceivalForm(createPendingReceivalForm());
+    setPendingReceivalLines([createStockLine()]);
+    setIsPendingReceivalFormOpen(true);
+  }
+
+  function closePendingReceivalForm() {
+    setIsPendingReceivalFormOpen(false);
+    setPendingReceivalMessage('');
+    setPendingReceivalPasswordInput('');
+    setIsSavingPendingReceival(false);
+  }
+
+  function unlockPendingReceivalForm() {
+    if (pendingReceivalPasswordInput === PENDING_RECEIVAL_PASSWORD) {
+      window.localStorage.setItem(PENDING_RECEIVAL_ACCESS_KEY, 'granted');
+      setPendingReceivalUnlocked(true);
+      setPendingReceivalPasswordInput('');
+      setPendingReceivalMessage('Unlocked.');
+      return;
+    }
+
+    setPendingReceivalMessage('Incorrect pending receival password.');
+  }
+
+  function updatePendingReceivalForm(field: keyof PendingReceivalForm, value: string | boolean) {
+    setPendingReceivalForm((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function updatePendingReceivalLine(lineId: string, field: keyof StockLine, value: string | boolean) {
+    setPendingReceivalLines((prev) => prev.map((line) => (line.id === lineId ? { ...line, [field]: value } : line)));
+  }
+
+  function hydratePendingReceivalLine(line: StockLine) {
+    const typed = getLineDisplayMaterial(line);
+    const exactDisplayMatch = rows.find((row) => normalizeKeyPart(formatMaterialOption(row)) === normalizeKeyPart(typed));
+    const materialOnlyMatch = rows.find((row) => normalizeKeyPart(row.color) === normalizeKeyPart(line.material));
+    const match = exactDisplayMatch || materialOnlyMatch || findInventoryMatchForLine(line);
+
+    if (!match) return line;
+
+    return {
+      ...line,
+      material: match.color || line.material,
+      size: match.size || line.size,
+      vendor: line.vendor || match.vendor || '',
+      category: line.category || match.category || '',
+      unit: line.unit || match.unit || 'Bags',
+      location: line.location || match.location || 'Denton',
+    };
+  }
+
+  function autofillPendingReceivalLine(lineId: string) {
+    setPendingReceivalLines((prev) => prev.map((line) => (line.id === lineId ? hydratePendingReceivalLine(line) : line)));
+  }
+
+  function addPendingReceivalLine() {
+    const previousLine = pendingReceivalLines.at(-1);
+    const nextLine = createStockLine({
+      vendor: previousLine?.vendor || '',
+      unit: previousLine?.unit || 'Bags',
+      location: previousLine?.location || 'Denton',
+      excludeFromOrderReservation: previousLine?.excludeFromOrderReservation || false,
+    });
+
+    setPendingReceivalLines((prev) => [...prev, nextLine]);
+  }
+
+  function removePendingReceivalLine(lineId: string) {
+    setPendingReceivalLines((prev) => (prev.length <= 1 ? prev : prev.filter((line) => line.id !== lineId)));
+  }
+
+  async function handleCreatePendingReceival() {
+    if (!pendingReceivalUnlocked) {
+      setPendingReceivalMessage('Unlock pending receivals before creating expected material lines.');
+      return;
+    }
+
+    const vendor = pendingReceivalForm.vendor.trim();
+    const orderedBy = pendingReceivalForm.orderedBy.trim();
+    const orderDate = pendingReceivalForm.orderDate.trim();
+
+    if (!vendor) {
+      setPendingReceivalMessage('Vendor is required.');
+      return;
+    }
+
+    if (!orderedBy) {
+      setPendingReceivalMessage('Ordered by is required.');
+      return;
+    }
+
+    if (!orderDate) {
+      setPendingReceivalMessage('Order date is required.');
+      return;
+    }
+
+    const cleanedLines = pendingReceivalLines.map((line, index) => {
+      const quantity = Number(line.quantity);
+      const material = line.material.trim();
+
+      return {
+        line,
+        index,
+        quantity,
+        material,
+      };
+    });
+
+    const populatedLines = cleanedLines.filter(({ line, material }) => {
+      return Boolean(material || line.vendor.trim() || line.size.trim() || line.quantity.trim());
+    });
+
+    if (populatedLines.length === 0) {
+      setPendingReceivalMessage('Add at least one material line.');
+      return;
+    }
+
+    const invalidLine = populatedLines.find(({ quantity, material }) => !material || !Number.isFinite(quantity) || quantity <= 0);
+
+    if (invalidLine) {
+      setPendingReceivalMessage(`Line ${invalidLine.index + 1} needs a material and a positive expected quantity.`);
+      return;
+    }
+
+    if (pendingReceivalForm.reserveOrderForJob && !pendingReceivalForm.orderEarmarkJob.trim()) {
+      setPendingReceivalMessage('Job name is required when reserving the order.');
+      return;
+    }
+
+    if (orderedBy && typeof window !== 'undefined') {
+      window.localStorage.setItem(LAST_ENTERED_BY_KEY, orderedBy);
+      setEditEnteredBy(orderedBy);
+    }
+
+    setIsSavingPendingReceival(true);
+    setPendingReceivalMessage('');
+
+    const rowsToInsert = populatedLines.map(({ line, quantity, material }) => {
+      const isReserved = Boolean(pendingReceivalForm.reserveOrderForJob && !line.excludeFromOrderReservation);
+      const earmarkJob = pendingReceivalForm.orderEarmarkJob.trim();
+      const earmarkNotes = pendingReceivalForm.orderEarmarkNotes.trim();
+
+      return {
+        vendor: line.vendor.trim() || vendor,
+        material_name: material,
+        size: line.size.trim() || null,
+        category: line.category.trim() || null,
+        quantity_expected: quantity,
+        quantity_received: 0,
+        unit: line.unit.trim() || 'Bags',
+        location: line.location.trim() || 'Denton',
+        pallet_number: line.palletNumber.trim() || null,
+        status: 'pending',
+        ordered_by: orderedBy,
+        order_date: orderDate,
+        received_by: null,
+        eta: pendingReceivalForm.eta || null,
+        notes: [line.note.trim(), pendingReceivalForm.note.trim()].filter(Boolean).join('\n\n')
+          ? formatNamedNote(orderedBy, [line.note.trim(), pendingReceivalForm.note.trim()].filter(Boolean).join('\n\n'))
+          : null,
+        received_at: null,
+        is_earmarked: isReserved,
+        earmarked_job_name: isReserved ? earmarkJob : null,
+        earmark_notes: isReserved && earmarkNotes ? earmarkNotes : null,
+      };
+    });
+
+    for (let rowIndex = 0; rowIndex < rowsToInsert.length; rowIndex += 1) {
+      const { error } = await supabase.from('pending_receivals').insert(rowsToInsert[rowIndex]);
+
+      if (error) {
+        console.error(`Failed to create pending receival line ${rowIndex + 1}:`, error);
+        setPendingReceivalMessage(
+          `Line ${rowIndex + 1} failed: ${getSupabaseErrorMessage(error, 'Failed to create pending receival.')}`
+        );
+        setIsSavingPendingReceival(false);
+        return;
+      }
+    }
+
+    setPendingReceivalMessage(`${rowsToInsert.length} pending receival line${rowsToInsert.length === 1 ? '' : 's'} added.`);
+    setPendingReceivalForm(createPendingReceivalForm({ vendor }));
+    setPendingReceivalLines([createStockLine()]);
+    setIsSavingPendingReceival(false);
+    await loadPendingReceivals();
+  }
+
+  function openReceivePendingDialog(receival: PendingReceival) {
+    setReceivePendingTargetId(receival.id);
+    setReceivePendingByInput(editEnteredBy && editEnteredBy !== 'chris_test' ? editEnteredBy : '');
+    setReceivePendingMessage('');
+    setPendingReceivalsError('');
+  }
+
+  function closeReceivePendingDialog() {
+    setReceivePendingTargetId(null);
+    setReceivePendingByInput('');
+    setReceivePendingMessage('');
+  }
+
+  async function confirmReceivePendingReceival() {
+    const receival = pendingReceivals.find((item) => item.id === receivePendingTargetId);
+
+    if (!receival) {
+      setReceivePendingMessage('Pending receival no longer exists.');
+      return;
+    }
+
+    const receivedBy = receivePendingByInput.trim();
+
+    if (!receivedBy) {
+      setReceivePendingMessage('Received by is required.');
+      return;
+    }
+
+    await handleReceivePendingReceival(receival, receivedBy);
+  }
+
+  async function handleReceivePendingReceival(receival: PendingReceival, receivedBy: string) {
+    const expectedQty = getNumericQuantity(receival.quantity_expected);
+    const receivedQty = getNumericQuantity(receival.quantity_received);
+    const remainingQty = expectedQty - receivedQty;
+
+    if (remainingQty <= 0) return;
+
+    if (receivedBy && typeof window !== 'undefined') {
+      window.localStorage.setItem(LAST_ENTERED_BY_KEY, receivedBy);
+      setEditEnteredBy(receivedBy);
+    }
+
+    setReceivingPendingId(receival.id);
+    setPendingReceivalsError('');
+
+    try {
+      const { error } = await supabase.rpc('receive_pending_receival', {
+        p_receival_id: receival.id,
+        p_received_by: receivedBy,
+      });
+
+      if (error) {
+        throw new Error(getSupabaseErrorMessage(error, 'Failed to receive pending material.'));
+      }
+
+      await Promise.all([loadData(), loadPendingReceivals()]);
+      closeReceivePendingDialog();
+    } catch (error) {
+      const message = getSupabaseErrorMessage(
+        error,
+        'Failed to receive pending material. Run the pending receival safety SQL migration, then try again.',
+      );
+      setPendingReceivalsError(message);
+    } finally {
+      setReceivingPendingId(null);
+    }
+  }
+
+  async function handleCancelPendingReceival(receival: PendingReceival) {
+    const confirmed = window.confirm(
+      `Cancel this pending receival?\n\n${receival.vendor || '—'} / ${receival.material_name} / ${receival.size || '—'}\nExpected: ${formatQuantity(receival.quantity_expected)} ${receival.unit || ''}\n\nThis will not affect inventory.`,
+    );
+
+    if (!confirmed) return;
+
+    setCancellingPendingId(receival.id);
+    setPendingReceivalsError('');
+
+    const { error } = await supabase
+      .from('pending_receivals')
+      .update({ status: 'cancelled' })
+      .eq('id', receival.id);
+
+    if (error) {
+      setPendingReceivalsError(error.message || 'Failed to cancel pending receival.');
+      setCancellingPendingId(null);
+      return;
+    }
+
+    setPendingReceivals((prev) => prev.filter((item) => item.id !== receival.id));
+    setCancellingPendingId(null);
+  }
+
+  async function handleClearReceivedPendingReceivals() {
+    const receivedIds = pendingReceivals.filter((item) => item.status === 'received').map((item) => item.id);
+
+    if (receivedIds.length === 0) return;
+
+    setClearingReceivedPending(true);
+    setPendingReceivalsError('');
+
+    const { error } = await supabase
+      .from('pending_receivals')
+      .update({ status: 'cleared' })
+      .in('id', receivedIds);
+
+    if (error) {
+      setPendingReceivalsError(error.message || 'Failed to clear received pending receivals.');
+      setClearingReceivedPending(false);
+      return;
+    }
+
+    setPendingReceivals((prev) => prev.filter((item) => item.status !== 'received'));
+    setClearingReceivedPending(false);
+  }
+
+  function renderPendingReceivalsQueue() {
+    return (
+      <section className="mx-auto mb-4 max-w-[1500px] overflow-hidden border border-slate-500 bg-[#d8dde3] shadow-[0_2px_0_rgba(15,23,42,0.12)]">
+        <style>{`
+          @keyframes pending-receivals-ticker {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+          }
+        `}</style>
+
+        <div className="overflow-hidden border-b border-slate-700 bg-slate-950">
+          <div
+            className="flex w-max whitespace-nowrap py-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-100"
+            style={{ animation: 'pending-receivals-ticker 26s linear infinite' }}
+          >
+            {Array.from({ length: 12 }).map((_, index) => (
+              <span key={index} className="mx-4 shrink-0">
+                PENDING RECEIVALS •
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-500 bg-[#c8ced6] px-3 py-3 sm:px-4">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-700">Expected Material Queue</div>
+            <p className="mt-1 text-xs font-semibold text-slate-700">Office logs placed orders here. Shop receives them into stock only after material physically arrives.</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {pendingReceivals.some((item) => item.status === 'received') && (
+              <button
+                type="button"
+                onClick={handleClearReceivedPendingReceivals}
+                disabled={clearingReceivedPending}
+                className="border border-emerald-700 bg-emerald-50 px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-emerald-900 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {clearingReceivedPending ? 'Clearing...' : 'Clear Received Items'}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={openPendingReceivalForm}
+              className="border border-slate-950 bg-slate-900 px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-white transition hover:bg-slate-950"
+            >
+              + Pending Receival
+            </button>
+          </div>
+        </div>
+
+        {pendingReceivalsError && (
+          <div className="border-b border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+            {pendingReceivalsError}
+          </div>
+        )}
+
+        <div className="bg-[#d8dde3] p-2">
+          {pendingReceivalsLoading ? (
+            <div className="border border-slate-400 bg-[#e5e9ee] px-4 py-5 text-sm font-semibold text-slate-600">Loading pending receivals...</div>
+          ) : pendingReceivals.length === 0 ? (
+            <div className="border border-slate-400 bg-[#e5e9ee] px-4 py-5 text-sm font-semibold text-slate-600">No pending receivals.</div>
+          ) : (
+            <div className="overflow-x-auto border border-slate-500 bg-[#e1e5ea]">
+              <table className="w-full border-collapse text-left text-sm">
+                <thead className="bg-[#b9c1cb] text-[10px] font-black uppercase tracking-[0.12em] text-slate-800">
+                  <tr className="border-b border-slate-500">
+                    <th className="px-3 py-2">Vendor</th>
+                    <th className="px-3 py-2">Material</th>
+                    <th className="px-3 py-2">Size</th>
+                    <th className="px-3 py-2 text-right">Expected</th>
+                    <th className="px-3 py-2">Order Date</th>
+                    <th className="px-3 py-2">ETA</th>
+                    <th className="px-3 py-2">Ordered By</th>
+                    <th className="px-3 py-2 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-400">
+                  {pendingReceivals.map((receival) => {
+                    const isReceived = receival.status === 'received';
+                    const isReserved = Boolean(receival.is_earmarked);
+                    const rowClass = isReceived
+                      ? 'bg-emerald-50/80 hover:bg-emerald-100/70'
+                      : 'bg-red-50/70 hover:bg-red-100/60';
+
+                    return (
+                      <tr key={receival.id} className={rowClass}>
+                        <td className="px-3 py-2 font-semibold text-slate-800">{receival.vendor || '—'}</td>
+                        <td className="px-3 py-2 font-black text-slate-950">
+                          <div>{receival.material_name}</div>
+                          {isReserved && (
+                            <div className="mt-1 inline-flex border border-slate-700 bg-slate-800 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-white">
+                              {receival.earmarked_job_name || 'Reserved'}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-3 py-2 font-semibold text-slate-800">{receival.size || '—'}</td>
+                        <td className="px-3 py-2 text-right font-black tabular-nums text-slate-950">
+                          {formatQuantity(receival.quantity_expected)} {receival.unit || ''}
+                        </td>
+                        <td className="px-3 py-2 text-slate-700">{formatDateOnly(receival.order_date || receival.created_at)}</td>
+                        <td className="px-3 py-2 text-slate-700">{formatDateOnly(receival.eta)}</td>
+                        <td className="px-3 py-2 text-slate-700">
+                          {isReceived ? receival.received_by || 'Received' : receival.ordered_by || '—'}
+                          {isReceived && <div className="text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">Received</div>}
+                        </td>
+                        <td className="px-3 py-2">
+                          <div className="flex justify-end gap-2">
+                            {isReceived ? (
+                              <span className="border border-emerald-700 bg-emerald-100 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-emerald-900">
+                                Received
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => openReceivePendingDialog(receival)}
+                                disabled={receivingPendingId === receival.id || cancellingPendingId === receival.id}
+                                className="border border-slate-950 bg-slate-800 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {receivingPendingId === receival.id ? 'Receiving...' : 'Receive'}
+                              </button>
+                            )}
+                            {!isReceived && (
+                              <button
+                                type="button"
+                                onClick={() => handleCancelPendingReceival(receival)}
+                                disabled={receivingPendingId === receival.id || cancellingPendingId === receival.id}
+                                className="border border-slate-500 bg-[#f6f7f9] px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-slate-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {cancellingPendingId === receival.id ? 'Cancelling...' : 'Cancel'}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  function renderPendingReceivalFormDialog() {
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/35 px-2 py-3 backdrop-blur-[2px] sm:px-4 sm:py-6"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Pending receival"
+        onClick={closePendingReceivalForm}
+      >
+        <div
+          className="max-h-[calc(100vh-1.5rem)] w-full max-w-[900px] overflow-hidden border border-slate-500 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.28)] sm:max-h-[calc(100vh-3rem)]"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-400 bg-[#dfe4ea] px-3 py-3 sm:px-4">
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">Pending Receival</div>
+              <h2 className="mt-1 text-lg font-black text-slate-950">Add Expected Material</h2>
+            </div>
+            <button
+              type="button"
+              onClick={closePendingReceivalForm}
+              className="border border-slate-500 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-800 transition hover:border-slate-900 hover:bg-slate-100 active:translate-y-px"
+            >
+              Close
+            </button>
+          </div>
+
+          <div className="max-h-[calc(100vh-7.5rem)] overflow-y-auto bg-[#eef1f4] p-3 sm:p-4">
+            {!pendingReceivalUnlocked ? (
+              <div className="border border-slate-400 bg-white p-4">
+                <label className={labelClass}>Pending Receival Password</label>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <input
+                    value={pendingReceivalPasswordInput}
+                    onChange={(event) => setPendingReceivalPasswordInput(event.target.value)}
+                    type="password"
+                    className={fieldClass}
+                    placeholder="Enter password"
+                  />
+                  <button
+                    type="button"
+                    onClick={unlockPendingReceivalForm}
+                    className="border border-slate-900 bg-slate-800 px-5 py-2 text-sm font-black uppercase tracking-[0.08em] text-white transition hover:bg-slate-950"
+                  >
+                    Unlock
+                  </button>
+                </div>
+                <p className="mt-3 text-xs font-semibold leading-5 text-slate-500">This is only a temporary client-side gate. It is not real security.</p>
+              </div>
+            ) : (
+              <div className="border border-slate-400 bg-white p-4">
+                <datalist id="pending-inventory-material-options">
+                  {materialSelectionOptions.map((material) => (
+                    <option key={material} value={material} />
+                  ))}
+                </datalist>
+                <datalist id="pending-inventory-size-options">
+                  {sizeOptions.map((size) => (
+                    <option key={size} value={size} />
+                  ))}
+                </datalist>
+                <datalist id="pending-inventory-vendor-options">
+                  {vendorOptions.map((vendor) => (
+                    <option key={vendor} value={vendor} />
+                  ))}
+                </datalist>
+                <datalist id="pending-inventory-category-options">
+                  {categoryOptions.map((category) => (
+                    <option key={category} value={category} />
+                  ))}
+                </datalist>
+                <datalist id="pending-inventory-unit-options">
+                  {unitOptions.map((unit) => (
+                    <option key={unit} value={unit} />
+                  ))}
+                </datalist>
+                <datalist id="pending-inventory-location-options">
+                  {locationOptions.map((location) => (
+                    <option key={location} value={location} />
+                  ))}
+                </datalist>
+                <datalist id="pending-people-options">
+                  {PEOPLE_OPTIONS.map((name) => (
+                    <option key={name} value={name} />
+                  ))}
+                </datalist>
+
+                <div className="mb-4 grid gap-3 md:grid-cols-4">
+                  <div>
+                    <label className={labelClass}>Vendor *</label>
+                    <input value={pendingReceivalForm.vendor} onChange={(event) => updatePendingReceivalForm('vendor', event.target.value)} list="pending-inventory-vendor-options" className={fieldClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Ordered By *</label>
+                    <input value={pendingReceivalForm.orderedBy} onChange={(event) => updatePendingReceivalForm('orderedBy', event.target.value)} list="pending-people-options" className={fieldClass} placeholder="Enter your name" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Order Date *</label>
+                    <input value={pendingReceivalForm.orderDate} onChange={(event) => updatePendingReceivalForm('orderDate', event.target.value)} type="date" className={fieldClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>ETA</label>
+                    <input value={pendingReceivalForm.eta} onChange={(event) => updatePendingReceivalForm('eta', event.target.value)} type="date" className={fieldClass} />
+                  </div>
+                  <div className="md:col-span-4">
+                    <label className={labelClass}>Order Note</label>
+                    <input value={pendingReceivalForm.note} onChange={(event) => updatePendingReceivalForm('note', event.target.value)} className={fieldClass} placeholder="PO, vendor note, etc." />
+                  </div>
+                </div>
+
+                <div className={`mb-4 border p-3 ${pendingReceivalForm.reserveOrderForJob ? 'border-sky-300 bg-sky-50' : 'border-slate-300 bg-[#f8fafc]'}`}>
+                  <label className="flex cursor-pointer items-center gap-3 text-sm font-bold text-slate-800">
+                    <input
+                      type="checkbox"
+                      checked={pendingReceivalForm.reserveOrderForJob}
+                      onChange={(event) => updatePendingReceivalForm('reserveOrderForJob', event.target.checked)}
+                      className="h-4 w-4 accent-slate-800"
+                    />
+                    Reserve entire order for job
+                  </label>
+                  {pendingReceivalForm.reserveOrderForJob && (
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <div>
+                        <label className={labelClass}>Job Name *</label>
+                        <input value={pendingReceivalForm.orderEarmarkJob} onChange={(event) => updatePendingReceivalForm('orderEarmarkJob', event.target.value)} className={fieldClass} placeholder="e.g. Belmont Park VIP Desk" />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Reservation Note</label>
+                        <input value={pendingReceivalForm.orderEarmarkNotes} onChange={(event) => updatePendingReceivalForm('orderEarmarkNotes', event.target.value)} className={fieldClass} placeholder="Optional reservation note" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-y border-slate-300 bg-[#f3f5f7] px-3 py-2">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">Order Lines</div>
+                    <p className="mt-1 text-xs font-semibold text-slate-500">Add every material on the same placed order. Each line uses the order vendor unless a vendor override is entered.</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-3">
+                  {pendingReceivalLines.map((line, index) => (
+                    <div key={line.id} className="border border-slate-300 bg-[#f8fafc] p-3">
+                      <div className="mb-3 flex items-center justify-between gap-2">
+                        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">Line {index + 1}</div>
+                        {pendingReceivalLines.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removePendingReceivalLine(line.id)}
+                            className="border border-slate-300 bg-white px-2 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-slate-600 transition hover:border-red-400 hover:text-red-700"
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                      <div className="grid gap-3 md:grid-cols-4">
+                        <div>
+                          <label className={labelClass}>Vendor Override</label>
+                          <input placeholder={pendingReceivalForm.vendor || 'Uses order vendor'} value={line.vendor} onChange={(event) => updatePendingReceivalLine(line.id, 'vendor', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-vendor-options" className={fieldClass} />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Material</label>
+                          <input value={line.material} onChange={(event) => updatePendingReceivalLine(line.id, 'material', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-material-options" className={fieldClass} />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Size</label>
+                          <input value={line.size} onChange={(event) => updatePendingReceivalLine(line.id, 'size', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-size-options" className={fieldClass} />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Quantity Expected</label>
+                          <input value={line.quantity} onChange={(event) => updatePendingReceivalLine(line.id, 'quantity', event.target.value)} inputMode="decimal" className={fieldClass} />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Unit</label>
+                          <input value={line.unit} onChange={(event) => updatePendingReceivalLine(line.id, 'unit', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-unit-options" className={fieldClass} />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Location</label>
+                          <input value={line.location} onChange={(event) => updatePendingReceivalLine(line.id, 'location', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-location-options" className={fieldClass} />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Category</label>
+                          <input value={line.category} onChange={(event) => updatePendingReceivalLine(line.id, 'category', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-category-options" className={fieldClass} />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Pallet #</label>
+                          <input value={line.palletNumber} onChange={(event) => updatePendingReceivalLine(line.id, 'palletNumber', event.target.value)} className={fieldClass} />
+                        </div>
+                        <div className="md:col-span-4">
+                          <label className={labelClass}>Line Note</label>
+                          <input value={line.note} onChange={(event) => updatePendingReceivalLine(line.id, 'note', event.target.value)} className={fieldClass} placeholder="Optional note for this material" />
+                        </div>
+                        {pendingReceivalForm.reserveOrderForJob && (
+                          <div className="md:col-span-4 border border-slate-300 bg-white p-3">
+                            <label className="flex cursor-pointer items-center gap-3 text-sm font-bold text-slate-800">
+                              <input
+                                type="checkbox"
+                                checked={line.excludeFromOrderReservation}
+                                onChange={(event) => updatePendingReceivalLine(line.id, 'excludeFromOrderReservation', event.target.checked)}
+                                className="h-4 w-4 accent-slate-800"
+                              />
+                              Exclude this line from reservation
+                            </label>
+                            <p className="mt-2 text-xs font-semibold text-slate-500">
+                              {line.excludeFromOrderReservation
+                                ? 'This material will go into general stock when received.'
+                                : `This material will be reserved for ${pendingReceivalForm.orderEarmarkJob || 'the selected job'} when received.`}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 border-t border-slate-300 pt-4">
+                  <button
+                    type="button"
+                    onClick={addPendingReceivalLine}
+                    className="w-full border border-slate-500 bg-white px-4 py-2.5 text-sm font-black uppercase tracking-[0.08em] text-slate-800 transition hover:border-slate-800 hover:bg-slate-100"
+                  >
+                    + Add Another Material
+                  </button>
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-slate-300 pt-4">
+                  <p className="text-xs font-semibold leading-5 text-slate-500">This records expected material only. It will not touch inventory until someone clicks Receive.</p>
+                  <button
+                    type="button"
+                    onClick={handleCreatePendingReceival}
+                    disabled={isSavingPendingReceival}
+                    className="border border-slate-900 bg-slate-800 px-5 py-2.5 text-sm font-black text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isSavingPendingReceival ? 'Saving...' : 'Add Pending Receivals'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {pendingReceivalMessage && (
+              <div className="mt-3 border border-slate-300 bg-white p-3 text-sm font-semibold text-slate-700">
+                {pendingReceivalMessage}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function renderReceivePendingDialog() {
+    const receival = pendingReceivals.find((item) => item.id === receivePendingTargetId);
+
+    if (!receival) return null;
+
+    const expectedQty = getNumericQuantity(receival.quantity_expected);
+    const receivedQty = getNumericQuantity(receival.quantity_received);
+    const remainingQty = expectedQty - receivedQty;
+
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/35 px-2 py-3 backdrop-blur-[2px] sm:px-4 sm:py-6"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Receive pending receival"
+        onClick={closeReceivePendingDialog}
+      >
+        <div
+          className="w-full max-w-[560px] overflow-hidden border border-slate-500 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.28)]"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="border-b border-slate-500 bg-[#c8ced6] px-4 py-3">
+            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-700">Receive Pending Material</div>
+            <h2 className="mt-1 text-lg font-black text-slate-950">{receival.material_name}</h2>
+            <p className="mt-1 text-xs font-semibold text-slate-600">
+              {receival.vendor || '—'} / {receival.size || '—'} / {formatQuantity(remainingQty)} {receival.unit || 'Bags'} remaining
+            </p>
+          </div>
+
+          <div className="bg-[#eef1f4] p-4">
+            <datalist id="pending-people-options">
+              {PEOPLE_OPTIONS.map((name) => (
+                <option key={name} value={name} />
+              ))}
+            </datalist>
+
+            <div className="grid gap-3">
+              <div>
+                <label className={labelClass}>Received By</label>
+                <input
+                  value={receivePendingByInput}
+                  onChange={(event) => setReceivePendingByInput(event.target.value)}
+                  list="pending-people-options"
+                  className={fieldClass}
+                  placeholder="Name"
+                />
+              </div>
+            </div>
+
+            {receivePendingMessage && (
+              <div className="mt-3 border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-700">{receivePendingMessage}</div>
+            )}
+
+            <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-slate-300 pt-4">
+              <button
+                type="button"
+                onClick={closeReceivePendingDialog}
+                className="border border-slate-400 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-slate-700 transition hover:bg-slate-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmReceivePendingReceival}
+                disabled={receivingPendingId === receival.id}
+                className="border border-slate-950 bg-slate-900 px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {receivingPendingId === receival.id ? 'Receiving...' : 'Confirm Receive'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   function renderLotSelector(group: InventoryGroup) {
@@ -1515,6 +2479,21 @@ export default function InventoryPage() {
                 <option key={vendor} value={vendor} />
               ))}
             </datalist>
+            <datalist id="inventory-category-options">
+              {categoryOptions.map((category) => (
+                <option key={category} value={category} />
+              ))}
+            </datalist>
+            <datalist id="inventory-unit-options">
+              {unitOptions.map((unit) => (
+                <option key={unit} value={unit} />
+              ))}
+            </datalist>
+            <datalist id="inventory-location-options">
+              {locationOptions.map((location) => (
+                <option key={location} value={location} />
+              ))}
+            </datalist>
 
             <div className="grid gap-4 lg:grid-cols-[260px_1fr]">
               <aside className="border border-slate-400 bg-white p-4">
@@ -1691,6 +2670,8 @@ export default function InventoryPage() {
 
   return (
     <main className="min-h-[calc(100vh-69px)] bg-[#eef1f4] px-2 py-2 text-slate-950 sm:px-4 sm:py-4">
+      {renderPendingReceivalsQueue()}
+
       <section className="mx-auto max-w-[1500px] border border-slate-400 bg-white shadow-[0_1px_0_rgba(15,23,42,0.08)]">
         <div className="border-b border-slate-400 bg-[#f6f7f9] p-3 sm:p-4">
           <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
@@ -1711,7 +2692,10 @@ export default function InventoryPage() {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch lg:justify-end">
               <button
                 type="button"
-                onClick={loadData}
+                onClick={() => {
+                  loadData();
+                  loadPendingReceivals();
+                }}
                 className="inline-flex min-h-11 items-center justify-center gap-2 border border-slate-400 bg-white px-4 py-2.5 text-[12px] font-black uppercase tracking-[0.11em] text-slate-700 transition hover:border-slate-700 hover:bg-slate-100 active:translate-y-px"
               >
                 <RefreshIcon className="h-4 w-4" />
@@ -1746,7 +2730,7 @@ export default function InventoryPage() {
                   {filteredGroups.map((group) => {
                     const row = group.primary;
                     const isSelected = selectedGroupKey === group.key;
-                    const status = group.isReserved ? 'Reserved' : 'General';
+                    const status = group.isReserved ? groupReservedLabel(group) : 'General';
 
                     return (
                       <article key={group.key} className={`bg-white ${isSelected ? 'ring-2 ring-inset ring-slate-800' : ''}`}>
@@ -1777,8 +2761,8 @@ export default function InventoryPage() {
                           </div>
 
                           <div className="mt-3 flex items-center justify-between border-t border-slate-200 pt-2">
-                            {status === 'Reserved' ? (
-                              <span className="truncate text-xs font-black text-slate-950">Reserved stock in group</span>
+                            {group.isReserved ? (
+                              <span className="truncate text-xs font-black text-slate-950">{status}</span>
                             ) : (
                               <span className="text-xs font-bold text-slate-500">General stock</span>
                             )}
@@ -1818,7 +2802,7 @@ export default function InventoryPage() {
                     {filteredGroups.map((group) => {
                       const row = group.primary;
                       const isSelected = selectedGroupKey === group.key;
-                      const status = group.isReserved ? 'Reserved' : 'General';
+                      const status = group.isReserved ? groupReservedLabel(group) : 'General';
 
                       return (
                         <Fragment key={group.key}>
@@ -1842,7 +2826,7 @@ export default function InventoryPage() {
                             <td className="px-3 py-2">
                               <span
                                 className={`inline-flex border px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
-                                  status === 'Reserved'
+                                  group.isReserved
                                     ? 'border-slate-700 bg-slate-800 text-white'
                                     : 'border-slate-300 bg-slate-50 text-slate-600'
                                 }`}
@@ -1884,6 +2868,8 @@ export default function InventoryPage() {
 
       {selectedGroup && renderDetailsDialog(selectedGroup)}
       {isRecordStockOpen && renderRecordStockDialog()}
+      {isPendingReceivalFormOpen && renderPendingReceivalFormDialog()}
+      {receivePendingTargetId && renderReceivePendingDialog()}
     </main>
   );
 }
