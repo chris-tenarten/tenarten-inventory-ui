@@ -1705,7 +1705,7 @@ export default function InventoryPage() {
           >
             {Array.from({ length: 12 }).map((_, index) => (
               <span key={index} className="mx-4 shrink-0">
-                PENDING RECEIVALS •
+                • PENDING RECEIVALS •
               </span>
             ))}
           </div>
