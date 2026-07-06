@@ -416,6 +416,7 @@ export default function InventoryPage() {
   const [editReserved, setEditReserved] = useState(false);
   const [editEarmarkJob, setEditEarmarkJob] = useState('');
   const [editEarmarkNotes, setEditEarmarkNotes] = useState('');
+  const [editReserveQuantity, setEditReserveQuantity] = useState('');
   const [isSavingDetails, setIsSavingDetails] = useState(false);
   const [detailsMessage, setDetailsMessage] = useState('');
 
@@ -568,6 +569,7 @@ export default function InventoryPage() {
     setEditReserved(Boolean(row.earmarked_for_job));
     setEditEarmarkJob(row.earmarked_job || '');
     setEditEarmarkNotes(row.earmark_notes || '');
+    setEditReserveQuantity(row.earmarked_for_job ? String(row.quantity || '') : '');
     setAdjustmentType('remove');
     setAdjustmentQty('');
     setAdjustmentReason('');
@@ -634,6 +636,8 @@ export default function InventoryPage() {
     const nextSize = editSize.trim();
     const nextCategory = editCategory.trim();
     const nextUnit = editUnit.trim();
+    const currentQty = Number(row.quantity || 0);
+    const reserveQty = Number(editReserveQuantity || currentQty);
 
     const identityChanged =
       nextVendor !== (row.vendor || '') ||
@@ -642,13 +646,15 @@ export default function InventoryPage() {
       nextCategory !== (row.category || '') ||
       nextUnit !== (row.unit || '');
 
+    const isNewReservationSplit = editReserved && !row.earmarked_for_job;
+
     if (identityChanged && !enteredBy) {
       setDetailsMessage('Your name is required when correcting material information.');
       return;
     }
 
-    if ((note || earmarkNotes) && !enteredBy) {
-      setDetailsMessage('Your name is required when adding a note.');
+    if ((note || earmarkNotes || isNewReservationSplit) && !enteredBy) {
+      setDetailsMessage('Your name is required when adding a note or reserving stock.');
       return;
     }
 
@@ -660,6 +666,20 @@ export default function InventoryPage() {
     if (editReserved && !earmarkJob) {
       setDetailsMessage('Job name is required when material is reserved.');
       return;
+    }
+
+    if (isNewReservationSplit) {
+      if (!Number.isFinite(reserveQty) || reserveQty <= 0) {
+        setDetailsMessage('Reservation quantity must be a positive number.');
+        return;
+      }
+
+      if (reserveQty > currentQty) {
+        setDetailsMessage(
+          `Cannot reserve ${formatQuantity(reserveQty)} ${row.unit || ''}. Selected lot only has ${formatQuantity(currentQty)} ${row.unit || ''}.`,
+        );
+        return;
+      }
     }
 
     if (enteredBy && typeof window !== 'undefined') {
@@ -699,7 +719,7 @@ export default function InventoryPage() {
         : row.earmark_notes || null
       : null;
 
-    const payload = {
+    const basePayload = {
       vendor: nextVendor || null,
       color: nextMaterial,
       size: nextSize || null,
@@ -708,39 +728,94 @@ export default function InventoryPage() {
       location: editLocation.trim() || null,
       pallet_number: editPalletNumber.trim() || null,
       notes: nextNotes,
-      earmarked_for_job: editReserved,
-      earmarked_job: editReserved ? earmarkJob : null,
-      earmark_notes: nextEarmarkNotes,
       updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase.from('inventory_items').update(payload).eq('id', row.id);
+    try {
+      if (isNewReservationSplit && reserveQty < currentQty) {
+        const remainingQty = currentQty - reserveQty;
 
-    if (error) {
+        const { error: updateOriginalError } = await supabase
+          .from('inventory_items')
+          .update({
+            ...basePayload,
+            quantity: remainingQty,
+            earmarked_for_job: false,
+            earmarked_job: null,
+            earmark_notes: null,
+          })
+          .eq('id', row.id);
+
+        if (updateOriginalError) {
+          throw updateOriginalError;
+        }
+
+        const reservationNotes = appendNote(
+          null,
+          formatNamedNote(
+            enteredBy,
+            [
+              `Reserved ${formatQuantity(reserveQty)} ${nextUnit || row.unit || ''} for ${earmarkJob}.`,
+              earmarkNotes ? `Note: ${earmarkNotes}` : '',
+            ]
+              .filter(Boolean)
+              .join('\n'),
+          ),
+        );
+
+        const { error: insertReservedError } = await supabase.from('inventory_items').insert({
+          ...basePayload,
+          quantity: reserveQty,
+          notes: nextNotes,
+          earmarked_for_job: true,
+          earmarked_job: earmarkJob,
+          earmark_notes: reservationNotes,
+          last_counted_at: row.last_counted_at || null,
+          last_counted_by: row.last_counted_by || null,
+        });
+
+        if (insertReservedError) {
+          throw insertReservedError;
+        }
+
+        setEditNote('');
+        setDetailsMessage(`Reserved ${formatQuantity(reserveQty)} ${nextUnit || row.unit || ''} for ${earmarkJob}. Remaining stock stayed general.`);
+        await loadData();
+        setIsSavingDetails(false);
+        return;
+      }
+
+      const payload = {
+        ...basePayload,
+        earmarked_for_job: editReserved,
+        earmarked_job: editReserved ? earmarkJob : null,
+        earmark_notes: nextEarmarkNotes,
+      };
+
+      const { error } = await supabase.from('inventory_items').update(payload).eq('id', row.id);
+
+      if (error) {
+        throw error;
+      }
+
+      setRows((prev) =>
+        prev.map((current) =>
+          String(current.id) === String(row.id)
+            ? {
+                ...current,
+                ...payload,
+              }
+            : current,
+        ),
+      );
+
+      setEditNote('');
+      setDetailsMessage(identityChanged ? 'Material information corrected.' : 'Changes saved.');
+    } catch (error) {
       console.error('Failed to save inventory details:', error);
-      setDetailsMessage(error.message || 'Failed to save inventory details.');
+      setDetailsMessage(getSupabaseErrorMessage(error, 'Failed to save inventory details.'));
+    } finally {
       setIsSavingDetails(false);
-      return;
-    }
-
-    setRows((prev) =>
-      prev.map((current) =>
-        String(current.id) === String(row.id)
-          ? {
-              ...current,
-              ...payload,
-            }
-          : current,
-      ),
-    );
-
-    setEditNote('');
-    setDetailsMessage(identityChanged ? 'Material information corrected.' : 'Changes saved.');
-    setIsSavingDetails(false);
-
-    if (identityChanged) {
-      setSelectedGroupKey(null);
-      setSelectedLotId(null);
     }
   }
 
@@ -2227,6 +2302,22 @@ export default function InventoryPage() {
                         <label className={labelClass}>Job Name</label>
                         <input value={editEarmarkJob} onChange={(event) => setEditEarmarkJob(event.target.value)} className={fieldClass} placeholder="e.g. Bank of America Lobby" />
                       </div>
+
+                      {!row.earmarked_for_job && (
+                        <div>
+                          <label className={labelClass}>Reservation Quantity</label>
+                          <input
+                            value={editReserveQuantity}
+                            onChange={(event) => setEditReserveQuantity(event.target.value)}
+                            className={fieldClass}
+                            placeholder={`Max ${formatQuantity(Number(row.quantity || 0))} ${row.unit || ''}`}
+                            inputMode="decimal"
+                          />
+                          <p className="mt-1 text-[11px] font-medium text-slate-500">
+                            Reserving less than the selected lot creates a separate reserved lot and leaves the remaining stock general.
+                          </p>
+                        </div>
+                      )}
 
                       <div>
                         <label className={labelClass}>Reservation Note</label>
