@@ -647,14 +647,15 @@ export default function InventoryPage() {
       nextUnit !== (row.unit || '');
 
     const isNewReservationSplit = editReserved && !row.earmarked_for_job;
+    const isReservationRelease = Boolean(row.earmarked_for_job) && !editReserved;
 
     if (identityChanged && !enteredBy) {
       setDetailsMessage('Your name is required when correcting material information.');
       return;
     }
 
-    if ((note || earmarkNotes || isNewReservationSplit) && !enteredBy) {
-      setDetailsMessage('Your name is required when adding a note or reserving stock.');
+    if ((note || earmarkNotes || isNewReservationSplit || isReservationRelease) && !enteredBy) {
+      setDetailsMessage('Your name is required when adding a note, reserving stock, or releasing a reservation.');
       return;
     }
 
@@ -732,6 +733,81 @@ export default function InventoryPage() {
     };
 
     try {
+      if (isReservationRelease) {
+        const releaseNote = formatNamedNote(
+          enteredBy,
+          `Released reservation${row.earmarked_job ? ` for ${row.earmarked_job}` : ''}.`,
+        );
+
+        const releasedNotes = appendNote(nextNotes, releaseNote);
+
+        const compatibleGeneralLot = rows.find((candidate) => {
+          if (String(candidate.id) === String(row.id)) return false;
+          if (candidate.earmarked_for_job) return false;
+
+          return (
+            normalizeKeyPart(candidate.vendor) === normalizeKeyPart(nextVendor) &&
+            normalizeKeyPart(candidate.color) === normalizeKeyPart(nextMaterial) &&
+            normalizeKeyPart(candidate.size) === normalizeKeyPart(nextSize) &&
+            normalizeKeyPart(candidate.category) === normalizeKeyPart(nextCategory) &&
+            normalizeKeyPart(candidate.unit) === normalizeKeyPart(nextUnit) &&
+            normalizeKeyPart(candidate.location) === normalizeKeyPart(editLocation.trim()) &&
+            normalizeKeyPart(candidate.pallet_number) === normalizeKeyPart(editPalletNumber.trim())
+          );
+        });
+
+        if (compatibleGeneralLot) {
+          const mergedNotes = appendNote(compatibleGeneralLot.notes, releaseNote);
+
+          const { error: mergeError } = await supabase
+            .from('inventory_items')
+            .update({
+              quantity: Number(compatibleGeneralLot.quantity || 0) + currentQty,
+              notes: mergedNotes,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', compatibleGeneralLot.id);
+
+          if (mergeError) {
+            throw mergeError;
+          }
+
+          const { error: deleteReleasedLotError } = await supabase.from('inventory_items').delete().eq('id', row.id);
+
+          if (deleteReleasedLotError) {
+            throw deleteReleasedLotError;
+          }
+
+          setEditNote('');
+          setDetailsMessage('Reservation released and merged back into general stock.');
+          await loadData();
+          setIsSavingDetails(false);
+          return;
+        }
+
+        const { error: releaseError } = await supabase
+          .from('inventory_items')
+          .update({
+            ...basePayload,
+            quantity: currentQty,
+            notes: releasedNotes,
+            earmarked_for_job: false,
+            earmarked_job: null,
+            earmark_notes: null,
+          })
+          .eq('id', row.id);
+
+        if (releaseError) {
+          throw releaseError;
+        }
+
+        setEditNote('');
+        setDetailsMessage('Reservation released. No compatible general-stock lot was found, so this lot was kept separate.');
+        await loadData();
+        setIsSavingDetails(false);
+        return;
+      }
+
       if (isNewReservationSplit && reserveQty < currentQty) {
         const remainingQty = currentQty - reserveQty;
 
