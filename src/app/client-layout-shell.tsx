@@ -5,12 +5,15 @@ import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
-const navItems = [
-  { href: '/', label: 'Dashboard', icon: ProductionIcon },
-  { href: '/manpower-reporting', label: 'Manpower', icon: LaborIcon },
-  { href: '/inventory', label: 'Inventory', icon: HomeIcon },
-  { href: '/activity', label: 'Activity', icon: ClockIcon },
+const primaryNavItems = [
+  { href: '/', label: 'Dashboard', icon: HomeIcon },
+  { href: '/manpower-reporting', label: 'Production Reporting', icon: LaborIcon },
+  { href: '/inventory', label: 'Inventory', icon: PackageIcon },
   { href: '/catalog', label: 'Catalog', icon: BookIcon },
+];
+
+const utilityNavItems = [
+  { href: '/activity', label: 'Activity', icon: ClockIcon },
 ];
 
 function LaborIcon() {
@@ -27,7 +30,7 @@ function LaborIcon() {
 const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
 const ACCESS_PASSWORD = 'tenarten123';
 
-function ProductionIcon() {
+function PackageIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -36,11 +39,9 @@ function ProductionIcon() {
       stroke="currentColor"
       strokeWidth="2"
     >
-      <path d="M4 19V9" />
-      <path d="M10 19V5" />
-      <path d="M16 19v-7" />
-      <path d="M22 19V3" />
-      <path d="M2 19h22" />
+      <path d="m3 7 9-4 9 4-9 4-9-4Z" />
+      <path d="M3 7v10l9 4 9-4V7" />
+      <path d="M12 11v10" />
     </svg>
   );
 }
@@ -256,7 +257,7 @@ export default function ClientLayoutShell({
                 className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto lg:flex-none"
                 aria-label="Primary navigation"
               >
-                {navItems.map((item) => {
+                {primaryNavItems.map((item) => {
                   const Icon = item.icon;
 
                   const isActive =
@@ -277,6 +278,16 @@ export default function ClientLayoutShell({
                       {item.label}
                     </Link>
                   );
+                })}
+              </nav>
+            )}
+
+            {isUnlocked && (
+              <nav className="flex shrink-0 items-center border-l border-slate-400 pl-2" aria-label="Utility navigation">
+                {utilityNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  return <Link key={item.href} href={item.href} title={item.label} aria-label={item.label} className={`inline-flex h-9 items-center gap-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.06em] transition sm:h-10 sm:px-3 ${navClass(isActive)}`}><Icon /><span className="hidden xl:inline">{item.label}</span></Link>;
                 })}
               </nav>
             )}

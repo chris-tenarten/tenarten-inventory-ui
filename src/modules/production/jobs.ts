@@ -274,3 +274,14 @@ export async function deleteJobAttachment(
 
   if (rowError) throw rowError;
 }
+
+export async function loadProductionJob(jobId: string): Promise<ProductionJob | null> {
+  const { data, error } = await supabase
+    .from('jobs')
+    .select(JOB_COLUMNS)
+    .eq('id', jobId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data as unknown as ProductionJob | null;
+}

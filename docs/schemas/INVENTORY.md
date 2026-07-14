@@ -25,6 +25,20 @@ Known entities include:
 - locations
 - notes
 
+## Production-job reservations
+
+Pending Receivals and Inventory balances support three reservation states:
+
+- linked to the canonical `jobs` row through `production_job_id`
+- reserved under an unlinked `temporary_job_label`
+- unrestricted
+
+The two reservation identity fields are mutually exclusive. `earmark_notes` remains the reservation-notes field. Existing `is_earmarked`, `earmarked_job_name`, `earmarked_for_job`, and `earmarked_job` values remain available for transitional display compatibility; they are not the canonical identity.
+
+Receiving a Pending Receival copies its canonical ID or temporary label and its reservation notes into Inventory and transaction history. Inventory aggregation includes reservation identity, preventing stock owned by different jobs from being silently combined.
+
+Canonical badges display the current Production job number/name and can focus that job in the Production Pipeline. Temporary reservations are explicitly displayed as unlinked.
+
 ## Important distinction
 
 The Activity page remains the inventory audit trail.

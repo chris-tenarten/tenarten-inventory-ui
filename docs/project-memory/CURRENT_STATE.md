@@ -13,14 +13,13 @@ Primary title:
 Primary navigation:
 
 - Dashboard
-- Manpower
+- Production Reporting
 - Inventory
-- Activity
 - Catalog
 
 The previous Transactions page still exists at `src/app/transactions/page.tsx`, but it is not included in primary navigation.
 
-The Activity page is an inventory audit trail, not a general production activity feed.
+The Activity page remains the inventory audit trail and is accessible from utility navigation rather than primary navigation.
 
 ## Manpower Reporting
 
@@ -94,6 +93,8 @@ User-facing terminology:
 
 ## Production data
 
+`public.jobs` is the canonical operational job entity. Inventory and Pending Receivals now use its UUID internally for linked reservations while displaying current business-facing job numbers and names.
+
 The `jobs` table is expected to include fields similar to:
 
 - id
@@ -125,6 +126,26 @@ The `jobs` table is expected to include fields similar to:
 - updated_at
 
 Contract value is intentionally excluded from the current shop-facing production UI until access control exists.
+
+## Inventory reservations
+
+The checked-in forward migration `supabase/migrations/20260714_005_inventory_production_job_reservations.sql` establishes canonical Production-job reservations across Pending Receivals, Inventory balances, and Inventory transaction history.
+
+Migration `supabase/migrations/20260714_006_harden_inventory_reservation_receipts.sql` is the forward-only live-environment reconciliation for the final reservation checks and receipt RPC behavior. Environments that applied an earlier revision of migration 005 must also apply migration 006.
+
+Current behavior:
+
+- each Pending Receival material row can be unrestricted, linked to a Production job, or assigned an unlinked temporary label
+- the Pending Receivals queue opens collapsed and retains an actionable incoming-shipment count in its accessible header
+- linked and temporary identities are mutually exclusive
+- exact unique job-number matches are backfilled; ambiguous or name-only legacy values remain temporary
+- receipt propagation retains reservation identity and notes without reselection
+- Inventory aggregation treats reservation identity as part of the balance identity
+- linked Inventory badges use current job data and focus the corresponding Production Pipeline job
+- inactive linked jobs remain visible and retainable in Edit mode
+- legacy earmark text fields remain for transitional compatibility
+
+The AL Statehouse Pending Receivals queue and related document imports remain deferred and have not been populated by this pass.
 
 ## Attachments
 

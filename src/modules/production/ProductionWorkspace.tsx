@@ -17,6 +17,7 @@ import ProductionTable from './components/ProductionTable';
 import {
   createProductionJob,
   loadJobAttachmentCounts,
+  loadProductionJob,
   loadProductionJobs,
   updateProductionJob,
 } from './jobs';
@@ -27,6 +28,7 @@ import type {
   ProductionJob,
   ProductionStatus,
 } from './types';
+import { PRODUCTION_JOB_FOCUS_STORAGE_KEY } from './job-options';
 
 type ProductionView = 'table' | 'gantt';
 type ScheduleFilter = 'scheduled' | 'unscheduled';
@@ -64,6 +66,7 @@ export default function ProductionWorkspace() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [search, setSearch] = useState('');
+  const [focusedJobId, setFocusedJobId] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<ProductionView>('table');
   const [scheduleFilters, setScheduleFilters] = useState<Set<ScheduleFilter>>(
     () => new Set(),
@@ -79,13 +82,24 @@ export default function ProductionWorkspace() {
     setLoadError('');
 
     try {
-      const [loadedJobs, loadedCounts] = await Promise.all([
+      const focusedJobId = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+      window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+      const [loadedJobs, loadedCounts, focusedJob] = await Promise.all([
         loadProductionJobs(),
         loadJobAttachmentCounts(),
+        focusedJobId ? loadProductionJob(focusedJobId) : Promise.resolve(null),
       ]);
 
-      setJobs(sortJobs(loadedJobs));
+      const jobsWithFocused = focusedJob && !loadedJobs.some((job) => job.id === focusedJob.id)
+        ? [...loadedJobs, focusedJob]
+        : loadedJobs;
+      setJobs(sortJobs(jobsWithFocused));
       setAttachmentCounts(loadedCounts);
+      if (focusedJob) {
+        setFocusedJobId(focusedJob.id);
+        setSearch(focusedJob.job_number || focusedJob.name);
+        setActiveView('table');
+      }
     } catch (error) {
       console.error(error);
       setLoadError(
@@ -119,6 +133,7 @@ export default function ProductionWorkspace() {
     const normalizedSearch = search.trim().toLowerCase();
 
     return jobs.filter((job) => {
+      if (focusedJobId && job.id !== focusedJobId) return false;
       if (statusFilters.size > 0 && !statusFilters.has(job.production_status)) {
         return false;
       }
@@ -144,7 +159,7 @@ export default function ProductionWorkspace() {
         .filter(Boolean)
         .some((value) => value!.toLowerCase().includes(normalizedSearch));
     });
-  }, [jobs, scheduleFilters, search, statusFilters]);
+  }, [focusedJobId, jobs, scheduleFilters, search, statusFilters]);
 
   async function handleCreateJob(input: NewProductionJob) {
     const created = await createProductionJob(input);
@@ -264,7 +279,7 @@ export default function ProductionWorkspace() {
           <input
             type="search"
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => { setFocusedJobId(null); setSearch(event.target.value); }}
             placeholder="Search jobs..."
             className="h-9 min-w-0 flex-1 border border-slate-400 bg-white px-3 text-sm outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
           />

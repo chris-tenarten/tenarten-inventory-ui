@@ -43,6 +43,18 @@ Operational records should share consistent relational dimensions where applicab
 
 These values are stored internally and are not shown to end users.
 
+## Inventory reservation identity
+
+`jobs.id` is the canonical operational identity for Inventory reservations. Pending Receival rows, Inventory balances, and Inventory transaction history may carry either:
+
+- a canonical `production_job_id`, or
+- an unlinked `temporary_job_label`, or
+- neither for unrestricted stock.
+
+The canonical and temporary identities are mutually exclusive. Business-facing labels come from the current linked `jobs.job_number` and `jobs.name`; UUIDs remain internal. Legacy earmark text columns are retained as display snapshots and compatibility fields during the transition.
+
+Reservation identity is part of an Inventory balance's identity. Otherwise matching material must not be aggregated across unrestricted stock, different Production jobs, or different temporary labels.
+
 ## Reference data
 
 Reference tables should generally use stable IDs and support activation and ordering.
