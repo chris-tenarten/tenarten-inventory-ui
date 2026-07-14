@@ -35,6 +35,10 @@ It should preserve the Excel-style density and ordering while adding:
 - contextual Add / Remove Workers
 - contextual Add / Remove Processes
 
+The current MVP presents individual labor rows inside persistent, user-named reporting groups. Reporting groups are organizational entry batches and are independent of both Production jobs and temporary job labels. Groups with a leading calendar date appear newest-first; undated groups follow dated groups and use creation time as their fallback order. Groups are collapsed by default. New labor rows are added directly within an expanded group, while existing rows remain editable in place.
+
+An unlisted work label remains separate from the Production queue and does not create a job. Its nullable job relationship allows a later reconciliation workflow.
+
 ## Batch entry
 
 The UI should support multiple report dates in one working session.
@@ -73,7 +77,10 @@ At minimum:
 
 ## Reference data
 
-Workers and processes are stable database records.
+Workers and processes are stable database records. Their display names and sort order can be maintained without changing their IDs, and records are deactivated/reactivated rather than deleted so historical entries remain readable.
+
+Production-job selection and temporary-label entry use the same compact work-identity control. The two identities remain mutually exclusive, and a temporary label can later be replaced by a linked Production job.
+Changing a saved temporary identity is cancelable: leaving the chooser or pressing Escape restores the saved temporary label until a replacement is explicitly selected.
 
 Users see names only.
 
@@ -86,6 +93,8 @@ Selected process → process_step_id
 ```
 
 ## Process ordering
+
+The MVP uses module-scoped `manpower_workers` and `manpower_tasks` reference tables. These can be generalized into shared operational reference tables when Material Usage and Daily Production are implemented and their shared vocabulary is confirmed.
 
 Visible numeric process prefixes are not required solely for sorting.
 

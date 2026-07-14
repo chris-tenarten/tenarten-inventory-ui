@@ -82,6 +82,8 @@ The three operational reports remain separate user-facing workflows.
 
 ### Manpower
 
+The implemented MVP uses `manpower_workers` and `manpower_tasks` as reference tables around direct `manpower_entries`. Each entry belongs to an organizational `manpower_reporting_groups` record and relates to either a canonical Job or a temporary work label. The report-header structure below remains a possible future boundary if submission workflows require it.
+
 ```text
 manpower_reports
 └── manpower_entries

@@ -61,6 +61,48 @@ They share stable relational dimensions to support long-term analytics.
 
 ## Manpower
 
+The implemented MVP uses a direct labor-entry structure inside lightweight persistent reporting groups rather than requiring formal submission headers.
+
+`manpower_reporting_groups` persist Marcos' organizational entry groups independently of work identity. `manpower_entries.reporting_group_id` assigns a row to one of these groups, while `job_id` or `unlisted_work_label` continues to describe the work itself.
+
+### manpower_workers
+
+- id
+- display_name
+- sort_order
+- is_active
+- created_at
+- updated_at
+
+### manpower_tasks
+
+- id
+- display_name
+- sort_order
+- is_active
+- created_at
+- updated_at
+
+### manpower_entries
+
+- id
+- work_date
+- reporting_group_id
+- worker_id
+- task_id
+- job_id, mutually exclusive with unlisted work label
+- unlisted_work_label, mutually exclusive with job
+- am_hours
+- pm_hours
+- notes
+- entered_by
+- created_at
+- updated_at
+
+Total hours are derived from AM plus PM hours and are not stored.
+
+The earlier parent/header model below remains a possible future reporting boundary if submission or approval workflows require it.
+
 ### manpower_reports
 
 Conceptual fields:
