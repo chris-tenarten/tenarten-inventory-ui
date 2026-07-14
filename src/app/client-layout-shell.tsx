@@ -7,10 +7,22 @@ import { useEffect, useState } from 'react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: ProductionIcon },
+  { href: '/manpower-reporting', label: 'Manpower', icon: LaborIcon },
   { href: '/inventory', label: 'Inventory', icon: HomeIcon },
   { href: '/activity', label: 'Activity', icon: ClockIcon },
   { href: '/catalog', label: 'Catalog', icon: BookIcon },
 ];
+
+function LaborIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M19 8v6" />
+      <path d="M22 11h-6" />
+    </svg>
+  );
+}
 
 const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
 const ACCESS_PASSWORD = 'tenarten123';
