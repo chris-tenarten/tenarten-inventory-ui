@@ -17,7 +17,7 @@ Primary navigation:
 - Activity
 - Catalog
 
-The previous Transactions page no longer exists.
+The previous Transactions page still exists at `src/app/transactions/page.tsx`, but it is not included in primary navigation.
 
 The Activity page is an inventory audit trail, not a general production activity feed.
 
@@ -111,7 +111,7 @@ Known objects:
 - `public.job_attachments`
 - private bucket: `job-attachments`
 
-The migration may not yet be represented correctly in the local repository. The migration should be checked into source control if absent.
+The job attachment migration is checked into the repository at `supabase/migrations/20260713_003_job_attachments.sql`.
 
 Current attachment UX supports multiple file selection. A future enhancement should add a clearer drag-and-drop staging area for uploading a complete job packet.
 

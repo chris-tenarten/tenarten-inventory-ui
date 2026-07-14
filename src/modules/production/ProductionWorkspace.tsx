@@ -207,7 +207,7 @@ export default function ProductionWorkspace() {
           <div>
             <h2 className="text-xl font-bold tracking-tight text-slate-950">Production Pipeline</h2>
             <p className="mt-1 text-sm text-slate-600">
-              Use the table to manage the production queue and the Gantt to plan scheduled work.
+              Use the table to manage the production queue and the Timeline to plan scheduled work.
             </p>
           </div>
 
