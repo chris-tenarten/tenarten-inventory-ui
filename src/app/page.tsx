@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import ProductionWorkspace from '../modules/production/ProductionWorkspace';
 
 export default function HomePage() {
-  redirect('/inventory');
+  return <ProductionWorkspace />;
 }
