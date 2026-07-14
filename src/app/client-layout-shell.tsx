@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
 const navItems = [
+  { href: '/', label: 'Dashboard', icon: ProductionIcon },
   { href: '/inventory', label: 'Inventory', icon: HomeIcon },
   { href: '/activity', label: 'Activity', icon: ClockIcon },
   { href: '/catalog', label: 'Catalog', icon: BookIcon },
@@ -14,9 +15,33 @@ const navItems = [
 const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
 const ACCESS_PASSWORD = 'tenarten123';
 
+function ProductionIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M4 19V9" />
+      <path d="M10 19V5" />
+      <path d="M16 19v-7" />
+      <path d="M22 19V3" />
+      <path d="M2 19h22" />
+    </svg>
+  );
+}
+
 function HomeIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="m3 10 9-7 9 7" />
       <path d="M5 9.5V21h5v-6h4v6h5V9.5" />
     </svg>
@@ -25,7 +50,13 @@ function HomeIcon() {
 
 function ClockIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <circle cx="12" cy="12" r="9" />
       <path d="M12 7v6l4 2" />
     </svg>
@@ -34,7 +65,13 @@ function ClockIcon() {
 
 function BookIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" />
       <path d="M4 5.5A2.5 2.5 0 0 1 6.5 8H20" />
     </svg>
@@ -43,7 +80,13 @@ function BookIcon() {
 
 function LogoutIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M10 17 15 12l-5-5" />
       <path d="M15 12H3" />
       <path d="M21 3v18" />
@@ -57,8 +100,13 @@ function navClass(isActive: boolean) {
     : 'text-slate-700 hover:bg-white/70 hover:text-slate-950';
 }
 
-export default function ClientLayoutShell({ children }: { children: ReactNode }) {
+export default function ClientLayoutShell({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const pathname = usePathname();
+
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [showAccessModal, setShowAccessModal] = useState(false);
@@ -67,7 +115,10 @@ export default function ClientLayoutShell({ children }: { children: ReactNode })
   const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
-    setIsUnlocked(window.localStorage.getItem(ACCESS_STORAGE_KEY) === 'granted');
+    setIsUnlocked(
+      window.localStorage.getItem(ACCESS_STORAGE_KEY) === 'granted',
+    );
+
     setIsReady(true);
   }, []);
 
@@ -76,24 +127,37 @@ export default function ClientLayoutShell({ children }: { children: ReactNode })
       const scrollY = window.scrollY;
 
       setHasScrolled((current) => {
-        if (current) return scrollY > 4;
+        if (current) {
+          return scrollY > 4;
+        }
+
         return scrollY > 36;
       });
     }
 
     handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   function handleUnlock() {
     if (passwordInput === ACCESS_PASSWORD) {
-      window.localStorage.setItem(ACCESS_STORAGE_KEY, 'granted');
+      window.localStorage.setItem(
+        ACCESS_STORAGE_KEY,
+        'granted',
+      );
+
       setIsUnlocked(true);
       setShowAccessModal(false);
       setPasswordInput('');
       setAccessError('');
+
       return;
     }
 
@@ -103,6 +167,7 @@ export default function ClientLayoutShell({ children }: { children: ReactNode })
   function handleLogout() {
     window.localStorage.removeItem(ACCESS_STORAGE_KEY);
     window.localStorage.removeItem('tenarten_admin_access');
+
     setIsUnlocked(false);
     setShowAccessModal(false);
     setPasswordInput('');
@@ -114,28 +179,43 @@ export default function ClientLayoutShell({ children }: { children: ReactNode })
       <header className="sticky top-0 z-40 border-b border-slate-400/80 bg-[#e7ecf2]/95 shadow-[0_1px_0_rgba(255,255,255,0.9)] backdrop-blur transition-all duration-200">
         <div
           className={`mx-auto flex max-w-[1500px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
-            hasScrolled ? 'gap-1.5 py-1.5 sm:gap-2 sm:py-2' : 'gap-2 py-2.5 sm:gap-3 sm:py-3'
+            hasScrolled
+              ? 'gap-1.5 py-1.5 sm:gap-2 sm:py-2'
+              : 'gap-2 py-2.5 sm:gap-3 sm:py-3'
           }`}
         >
           <div className="flex min-w-0 items-center justify-between gap-3">
-            <Link href="/inventory" className="group flex min-w-0 items-center gap-2.5" aria-label="Go to inventory">
+            <Link
+              href="/"
+              className="group flex min-w-0 items-center gap-2.5"
+              aria-label="Go to dashboard"
+            >
               <img
                 src="/logo.png"
                 alt="Tenarten logo"
-                className={`shrink-0 object-contain transition-all duration-200 ${hasScrolled ? 'h-9 w-auto' : 'h-11 w-auto sm:h-12'}`}
+                className={`shrink-0 object-contain transition-all duration-200 ${
+                  hasScrolled
+                    ? 'h-9 w-auto'
+                    : 'h-11 w-auto sm:h-12'
+                }`}
               />
 
               <div className="min-w-0 leading-none">
                 <div
                   className={`truncate font-bold tracking-tight text-slate-950 transition-all duration-200 group-hover:text-slate-700 ${
-                    hasScrolled ? 'text-[14px] sm:text-[15px]' : 'text-[16px] sm:text-[17px]'
+                    hasScrolled
+                      ? 'text-[14px] sm:text-[15px]'
+                      : 'text-[16px] sm:text-[17px]'
                   }`}
                 >
-                  Tenarten Inventory
+                  TenOps
                 </div>
+
                 <div
                   className={`mt-1 overflow-hidden font-bold uppercase tracking-[0.16em] text-slate-600 transition-all duration-200 sm:tracking-[0.18em] ${
-                    hasScrolled ? 'max-h-0 opacity-0 lg:max-h-5 lg:text-[9px] lg:opacity-100' : 'max-h-5 text-[9px] opacity-100 sm:text-[10px]'
+                    hasScrolled
+                      ? 'max-h-0 opacity-0 lg:max-h-5 lg:text-[9px] lg:opacity-100'
+                      : 'max-h-5 text-[9px] opacity-100 sm:text-[10px]'
                   }`}
                 >
                   Operations Control
@@ -160,10 +240,18 @@ export default function ClientLayoutShell({ children }: { children: ReactNode })
 
           <div className="flex w-full items-center gap-2 lg:w-auto lg:justify-end">
             {isUnlocked && (
-              <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto lg:flex-none" aria-label="Primary navigation">
+              <nav
+                className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto lg:flex-none"
+                aria-label="Primary navigation"
+              >
                 {navItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = pathname === item.href;
+
+                  const isActive =
+                    item.href === '/'
+                      ? pathname === '/' || pathname === '/production'
+                      : pathname === item.href ||
+                        pathname.startsWith(`${item.href}/`);
 
                   return (
                     <Link
@@ -215,8 +303,16 @@ export default function ClientLayoutShell({ children }: { children: ReactNode })
           <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-5 py-10">
             <div className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
               <div className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-6 py-8 text-center">
-                <img src="/logo.png" alt="Tenarten logo" className="mx-auto h-28 w-auto object-contain sm:h-32" />
-                <h1 className="mt-5 text-3xl font-bold tracking-tight text-slate-950">Tenarten Inventory</h1>
+                <img
+                  src="/logo.png"
+                  alt="Tenarten logo"
+                  className="mx-auto h-28 w-auto object-contain sm:h-32"
+                />
+
+                <h1 className="mt-5 text-3xl font-bold tracking-tight text-slate-950">
+                  TenOps
+                </h1>
+
                 <div className="mt-2 text-[11px] font-bold uppercase tracking-[0.22em] text-slate-600">
                   Operations Control
                 </div>
@@ -227,25 +323,35 @@ export default function ClientLayoutShell({ children }: { children: ReactNode })
                   Internal Access
                 </div>
 
-                <label htmlFor="inline-access-password" className="mt-4 block text-sm font-bold text-slate-800">
+                <label
+                  htmlFor="inline-access-password"
+                  className="mt-4 block text-sm font-bold text-slate-800"
+                >
                   Password
                 </label>
+
                 <input
                   id="inline-access-password"
                   type="password"
                   value={passwordInput}
-                  onChange={(e) => {
-                    setPasswordInput(e.target.value);
+                  onChange={(event) => {
+                    setPasswordInput(event.target.value);
                     setAccessError('');
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleUnlock();
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      handleUnlock();
+                    }
                   }}
                   className="mt-2 h-12 w-full border border-slate-500 bg-white px-3 text-slate-950 outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
                   autoFocus
                 />
 
-                {accessError && <div className="mt-3 text-sm font-semibold text-red-700">{accessError}</div>}
+                {accessError && (
+                  <div className="mt-3 text-sm font-semibold text-red-700">
+                    {accessError}
+                  </div>
+                )}
 
                 <button
                   type="button"
@@ -266,29 +372,42 @@ export default function ClientLayoutShell({ children }: { children: ReactNode })
             <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600">
               Internal Access
             </div>
-            <h2 className="mt-2 text-2xl font-bold text-slate-950">Enter password</h2>
+
+            <h2 className="mt-2 text-2xl font-bold text-slate-950">
+              Enter password
+            </h2>
 
             <div className="mt-5">
-              <label htmlFor="access-password" className="mb-2 block text-sm font-bold text-slate-800">
+              <label
+                htmlFor="access-password"
+                className="mb-2 block text-sm font-bold text-slate-800"
+              >
                 Password
               </label>
+
               <input
                 id="access-password"
                 type="password"
                 value={passwordInput}
-                onChange={(e) => {
-                  setPasswordInput(e.target.value);
+                onChange={(event) => {
+                  setPasswordInput(event.target.value);
                   setAccessError('');
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleUnlock();
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    handleUnlock();
+                  }
                 }}
                 className="h-11 w-full border border-slate-500 bg-white px-3 text-slate-950 outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
                 autoFocus
               />
             </div>
 
-            {accessError && <div className="mt-3 text-sm font-semibold text-red-700">{accessError}</div>}
+            {accessError && (
+              <div className="mt-3 text-sm font-semibold text-red-700">
+                {accessError}
+              </div>
+            )}
 
             <div className="mt-6 flex items-center gap-3">
               <button
