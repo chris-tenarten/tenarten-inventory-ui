@@ -15,11 +15,15 @@ Primary navigation:
 - Dashboard
 - Production Reporting
 - Inventory
+
+Supporting tools:
+
 - Catalog
+- Inventory Activity
 
 The previous Transactions page still exists at `src/app/transactions/page.tsx`, but it is not included in primary navigation.
 
-The Activity page remains the inventory audit trail and is accessible from utility navigation rather than primary navigation.
+The Inventory Activity page remains the inventory transaction history at `/activity` and is accessible with Catalog under supporting tools rather than primary navigation.
 
 ## Manpower Reporting
 
@@ -67,6 +71,10 @@ Implemented or substantially implemented:
 - project name as the only required field
 - optional scheduling
 - scheduled duration bars
+- direct Timeline moving and edge resizing in whole calendar days, including keyboard one-day adjustments
+- live current/proposed schedule previews with inclusive scheduled calendar days and derived labor-hours per scheduled day
+- a compact shared-style Timeline legend covering production statuses, selective On Hold/Shipped striping, requested delivery, today, and labor-label meaning
+- one-job-at-a-time staged Timeline schedule changes with a last-saved ghost bar, explicit Save/Discard controls, shared proposed dates in Table view, and accidental-loss protection
 - delivery-only milestones
 - visible unscheduled jobs
 - compact queue summary
@@ -126,6 +134,14 @@ The `jobs` table is expected to include fields similar to:
 - updated_at
 
 Contract value is intentionally excluded from the current shop-facing production UI until access control exists.
+
+Timeline schedule geometry and labor intensity both use inclusive calendar days, including weekends. Estimated labor is divided by every scheduled calendar day as an interim model because Tenarten may work weekends; inclusion does not imply that weekend work is always planned. A configurable shop calendar or job-specific planned production days remain future work. Missing, zero, and invalid `estimated_man_hours` values are presented as `No labor estimate`. Capacity planning, dependency scheduling, resource leveling, and automated optimization remain deferred.
+
+Timeline moves, edge resizes, keyboard adjustments, and planned-date edits for the staged job remain local until the user explicitly saves. The proposed status bar stays interactive while a neutral dashed ghost shows the last persisted position. Save updates the canonical job and clears the comparison; Discard restores the persisted baseline without a database write. A pending change survives Table/Timeline view switches and filtering, and browser/page navigation is protected. The current deliberate scope allows one staged job at a time; multi-job planning and batch save remain future possibilities.
+
+Staged Production schedule saves require a client-side approval dialog with a recorded Changed by name, the configured approval password, and an optional reason. The temporary internal-MVP password is supplied through `NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD`; its value is not stored in source or documentation. A successful password entry starts a fixed two-minute, same-tab `sessionStorage` approval window; every save still opens the dialog, requires attribution, and needs explicit confirmation. Only the name and expiration timestamp are stored—never the password. This is inspectable client-side friction, not authentication or real security.
+
+Each confirmed schedule save writes the job dates and then a dedicated `production_schedule_changed` row to the existing `job_activity` table, including source, old/new planned dates, entered name, and optional note. These two client calls are non-atomic. If the date update succeeds but audit insertion fails, the pending state is retained and the UI requires an audit-only retry without repeating the date update. Server-side authorization, authenticated identity, and a transactional RPC remain required future work. Gating additional critical fields is deferred.
 
 ## Inventory reservations
 
@@ -190,6 +206,14 @@ Those dates are not authoritative and should be corrected later.
 - real RBAC
 - operational-reporting modules
 - historical Monday import scripts
+
+## Production Pipeline views
+
+Production uses three synchronized views: Overview (the default), Table, and Timeline. The current view is remembered only for the browser-tab session. Overview provides the compact operational scan with shared status badges and attachment counts; Table retains denser inline editing and compact headers, with existing attachment counts shown beside the sticky Project name so they remain discoverable without horizontal scrolling; Timeline retains staged drag/resize planning and separates jobs without dates into a Not Scheduled setup list. The View label is separate from the segmented view buttons.
+
+Selecting a job in any view opens a shared inspector with editable planning fields, read-only job context, attachments, and recent `job_activity` history. Existing attachment storage/list/upload/open/removal helpers are reused; count changes update Overview and Table immediately. Planned-date changes from the inspector use the existing staged Save/Discard, temporary approval, and audit path. A shared readiness helper identifies Planning Complete, Planning Needed, and Not Scheduled jobs without changing their Production statuses. Planning completeness is independent of material readiness and Production status.
+
+Existing-job planned dates have one guarded commit path. Missing or blank approval configuration fails closed at Save and again immediately before the jobs write. Stored approval timestamps are strictly validated and cannot bypass missing current configuration; even a valid two-minute window still presents the approval dialog and requires explicit confirmation. Cloudflare requires the approval environment variable followed by a new deployment—`.env.local` affects only local builds.
 
 ## Known development conventions
 

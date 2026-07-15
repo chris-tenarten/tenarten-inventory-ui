@@ -2,9 +2,10 @@
 
 import { FileText, Paperclip } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import type { KeyboardEvent, RefObject } from 'react';
+import type { KeyboardEvent, ReactNode, RefObject } from 'react';
 
 import type { ProductionJobUpdate } from '../jobs';
+import type { StagedSchedule } from '../ProductionWorkspace';
 import type {
   MaterialStatus,
   NewProductionJob,
@@ -22,6 +23,10 @@ type Props = {
   ) => Promise<ProductionJob>;
   onOpenAttachments: (job: ProductionJob) => void;
   onOpenForms: (job: ProductionJob) => void;
+  stagedSchedule: StagedSchedule | null;
+  onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
+  selectedJobId: string | null;
+  onSelectJob: (job: ProductionJob) => void;
 };
 
 type EditableRow = {
@@ -64,11 +69,11 @@ const materialStatuses: Array<{ value: MaterialStatus; label: string }> = [
 ];
 
 const headerClass =
-  'whitespace-nowrap border-b border-r border-slate-400 bg-slate-100 px-2 py-3 text-left text-[10px] font-bold uppercase tracking-[0.1em] text-slate-600';
+  'whitespace-nowrap border-b border-r border-slate-400 bg-slate-100 px-1.5 py-2 text-center text-[9px] font-bold uppercase tracking-[0.08em] text-slate-600 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600';
 const cellClass = 'border-b border-r border-slate-300 bg-white p-0 align-top';
 const inputClass =
-  'h-11 w-full min-w-0 border-0 bg-transparent px-2 text-sm text-slate-800 outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600';
-const selectClass = `${inputClass} pr-7`;
+  'h-8 w-full min-w-0 border-0 bg-transparent px-1.5 text-xs text-slate-800 outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600 [&[type=date]]:text-center [&[type=number]]:text-right';
+const selectClass = `${inputClass} pr-6 text-center`;
 
 function blankRow(): EditableRow {
   return {
@@ -289,6 +294,10 @@ export default function ProductionTable({
   onUpdateJob,
   onOpenAttachments,
   onOpenForms,
+  stagedSchedule,
+  onStageSchedule,
+  selectedJobId,
+  onSelectJob,
 }: Props) {
   const [rows, setRows] = useState<Record<string, EditableRow>>({});
   const [states, setStates] = useState<Record<string, SaveState>>({});
@@ -353,6 +362,22 @@ export default function ProductionTable({
       return;
     }
 
+    if (field === 'plannedStart' || field === 'plannedEnd') {
+      if (stagedSchedule && stagedSchedule.jobId !== job.id) {
+        setStates((current) => ({ ...current, [job.id]: 'error' }));
+        setErrors((current) => ({ ...current, [job.id]: 'Save or discard the existing staged schedule before changing another job.' }));
+        return;
+      }
+      if (!row.plannedStart || !row.plannedEnd) {
+        setStates((current) => ({ ...current, [job.id]: 'error' }));
+        setErrors((current) => ({ ...current, [job.id]: 'Both planned dates are required for a staged schedule change.' }));
+        return;
+      }
+      onStageSchedule(job, row.plannedStart, row.plannedEnd);
+      setStates((current) => ({ ...current, [job.id]: 'dirty' }));
+      return;
+    }
+
     const activeFields = savingFieldsRef.current[job.id] ?? new Set();
     if (activeFields.has(field)) return;
     activeFields.add(field);
@@ -410,26 +435,29 @@ export default function ProductionTable({
     onChange: <K extends EditableField>(field: K, value: EditableRow[K]) => void,
     onBlur?: (field: EditableField) => void,
     nameRef?: RefObject<HTMLInputElement | null>,
+    scheduleState?: 'staged' | 'locked',
+    projectAttachmentIndicator?: ReactNode,
   ) {
     const blur = (field: EditableField) => () => onBlur?.(field);
 
     return (
       <>
-        <td className={`${cellClass} sticky left-0 z-20 min-w-[125px]`}>
+        <td className={`${cellClass} sticky left-0 z-20 min-w-[105px]`}>
           <input value={row.jobNumber} onChange={(e) => onChange('jobNumber', e.target.value)} onBlur={blur('jobNumber')} onKeyDown={blurOnEnter} placeholder="Job #" className={`${inputClass} bg-white`} />
         </td>
-        <td className={`${cellClass} sticky left-[125px] z-20 min-w-[245px]`}>
+        <td className={`${cellClass} sticky left-[105px] z-20 min-w-[215px]`}>
           <div className="relative bg-white">
-            <input ref={nameRef} value={row.name} onChange={(e) => onChange('name', e.target.value)} onBlur={blur('name')} onKeyDown={blurOnEnter} placeholder="Project name *" className={`${inputClass} bg-white pr-16 font-semibold text-slate-950`} />
+            <input ref={nameRef} value={row.name} title={row.name} onChange={(e) => onChange('name', e.target.value)} onBlur={blur('name')} onKeyDown={blurOnEnter} placeholder="Project name *" className={`${inputClass} bg-white pr-16 font-semibold text-slate-950`} />
+            {projectAttachmentIndicator}
           </div>
         </td>
-        <td className={`${cellClass} min-w-[190px]`}><input value={row.customer} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[190px]`}><input value={row.customer} title={row.customer} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>
         <td className={`${cellClass} min-w-[130px]`}><input value={row.estimateNumber} onChange={(e) => onChange('estimateNumber', e.target.value)} onBlur={blur('estimateNumber')} onKeyDown={blurOnEnter} placeholder="Estimate #" className={inputClass} /></td>
         <td className={`${cellClass} min-w-[140px]`}><input value={row.workOrderNumber} onChange={(e) => onChange('workOrderNumber', e.target.value)} onBlur={blur('workOrderNumber')} onKeyDown={blurOnEnter} placeholder="Work order #" className={inputClass} /></td>
         <td className={`${cellClass} min-w-[150px]`}><input type="date" value={row.depositDate} onChange={(e) => onChange('depositDate', e.target.value)} onBlur={blur('depositDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
         <td className={`${cellClass} min-w-[160px]`}><input type="date" value={row.requestedDeliveryDate} onChange={(e) => onChange('requestedDeliveryDate', e.target.value)} onBlur={blur('requestedDeliveryDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[145px]`}><input type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[145px]`}><input type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[145px]`}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned start date, unsaved' : undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={`${inputClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-14 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-1 text-[8px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>
+        <td className={`${cellClass} min-w-[145px]`}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned finish date, unsaved' : undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={`${inputClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-14 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-1 text-[8px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>
         <td className={`${cellClass} min-w-[120px]`}><input type="number" min="0" step="0.25" value={row.estimatedManHours} onChange={(e) => onChange('estimatedManHours', e.target.value)} onBlur={blur('estimatedManHours')} onKeyDown={blurOnEnter} placeholder="Hours" className={inputClass} /></td>
         <td className={`${cellClass} min-w-[140px]`}><input type="number" min="0" step="1" value={row.estimatedCalendarDays} onChange={(e) => onChange('estimatedCalendarDays', e.target.value)} onBlur={blur('estimatedCalendarDays')} onKeyDown={blurOnEnter} placeholder="Days" className={inputClass} /></td>
         <td className={`${cellClass} min-w-[135px]`}><input value={row.colorPlateNumber} onChange={(e) => onChange('colorPlateNumber', e.target.value)} onBlur={blur('colorPlateNumber')} onKeyDown={blurOnEnter} placeholder="Color plate #" className={inputClass} /></td>
@@ -446,7 +474,7 @@ export default function ProductionTable({
           </select>
         </td>
         <td className={`${cellClass} min-w-[280px]`}>
-          <textarea value={row.remarks} onChange={(e) => onChange('remarks', e.target.value)} onBlur={blur('remarks')} placeholder="Remarks" rows={1} className="min-h-11 w-full resize-y border-0 bg-transparent px-2 py-2.5 text-sm outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600" />
+          <textarea value={row.remarks} title={row.remarks} onChange={(e) => onChange('remarks', e.target.value)} onBlur={blur('remarks')} placeholder="Remarks" rows={1} className="min-h-8 w-full resize-y border-0 bg-transparent px-1.5 py-1.5 text-xs outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600" />
         </td>
       </>
     );
@@ -458,24 +486,23 @@ export default function ProductionTable({
         <table className="min-w-max border-separate border-spacing-0">
           <thead className="sticky top-0 z-30">
             <tr>
-              <th className={`${headerClass} sticky left-0 z-40 min-w-[125px]`}>Job #</th>
-              <th className={`${headerClass} sticky left-[125px] z-40 min-w-[245px]`}>Project</th>
+              <th className={`${headerClass} sticky left-0 z-40 min-w-[105px]`}>Job #</th>
+              <th className={`${headerClass} sticky left-[105px] z-40 min-w-[215px]`}>Project</th>
               <th className={headerClass}>Customer</th>
-              <th className={headerClass}>Estimate #</th>
-              <th className={headerClass}>Work Order #</th>
-              <th className={headerClass}>Deposit Received</th>
-              <th className={headerClass}>Requested Delivery</th>
-              <th className={headerClass}>Planned Start</th>
-              <th className={headerClass}>Planned Finish</th>
-              <th className={headerClass}>Est. Man Hours</th>
-              <th className={headerClass}>Est. Calendar Days</th>
-              <th className={headerClass}>Color Plate #</th>
-              <th className={headerClass}>Sample Submitted</th>
-              <th className={headerClass}>Approval Date</th>
-              <th className={headerClass}>Material Status</th>
-              <th className={headerClass}>Production Status</th>
+              <th className={headerClass}>Estimate</th>
+              <th tabIndex={0} title="Work Order Number" className={headerClass}>WO #</th>
+              <th tabIndex={0} title="Deposit Received" className={headerClass}>Deposit</th>
+              <th tabIndex={0} title="Requested Delivery Date" className={headerClass}>Delivery</th>
+              <th tabIndex={0} title="Planned Production Start" className={headerClass}>Start</th>
+              <th tabIndex={0} title="Planned Production Finish" className={headerClass}>Finish</th>
+              <th tabIndex={0} title="Estimated Labor Hours" className={headerClass}>Labor</th>
+              <th tabIndex={0} title="Estimated Calendar Days" className={headerClass}>Days</th>
+              <th tabIndex={0} title="Color Plate Number" className={headerClass}>Color Plate</th>
+              <th tabIndex={0} title="Sample Submitted Date" className={headerClass}>Sample</th>
+              <th className={headerClass}>Approval</th>
+              <th tabIndex={0} title="Material Readiness Status" className={headerClass}>Material</th>
+              <th tabIndex={0} title="Production Status" className={headerClass}>Status</th>
               <th className={headerClass}>Remarks</th>
-              <th className={`${headerClass} min-w-[120px]`}>Files</th>
               <th className={`${headerClass} min-w-[115px]`}>Forms</th>
             </tr>
           </thead>
@@ -487,18 +514,43 @@ export default function ProductionTable({
               const count = attachmentCounts[job.id] ?? 0;
 
               return (
-                <tr key={job.id} className="odd:bg-white even:bg-slate-50/40 hover:bg-blue-50/30">
+                <tr
+                  key={job.id}
+                  tabIndex={0}
+                  aria-selected={selectedJobId === job.id}
+                  onClick={(event) => {
+                    if (!(event.target as HTMLElement).closest('input, select, textarea, button, a')) onSelectJob(job);
+                  }}
+                  onKeyDown={(event) => {
+                    if ((event.key === 'Enter' || event.key === ' ') && event.target === event.currentTarget) {
+                      event.preventDefault();
+                      onSelectJob(job);
+                    }
+                  }}
+                  className={`odd:bg-white even:bg-slate-50/40 hover:bg-blue-50/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 ${selectedJobId === job.id ? 'bg-blue-50/70 ring-2 ring-inset ring-blue-600' : ''}`}
+                >
                   {renderCells(
                     row,
                     (field, value) => changeRow(job, field, value),
                     (field) => void saveField(job, field),
+                    undefined,
+                    stagedSchedule?.jobId === job.id ? 'staged' : stagedSchedule ? 'locked' : undefined,
+                    count > 0 ? (
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onOpenAttachments(job);
+                        }}
+                        aria-label={`View ${count} attached ${count === 1 ? 'file' : 'files'} for ${job.name}`}
+                        title="View attached files"
+                        className="absolute right-1 top-1/2 inline-flex h-6 -translate-y-1/2 items-center gap-1 border border-slate-300 bg-slate-50 px-1.5 text-[10px] font-bold text-slate-600 hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
+                      >
+                        <Paperclip className="h-3.5 w-3.5" aria-hidden="true" />
+                        {count}
+                      </button>
+                    ) : undefined,
                   )}
-                  <td className={`${cellClass} min-w-[120px] px-2 py-1.5`}>
-                    <button type="button" onClick={() => onOpenAttachments(job)} className="inline-flex h-8 w-full items-center justify-center gap-1.5 border border-slate-400 bg-white px-2 text-[10px] font-bold uppercase tracking-[0.06em] text-slate-700 hover:bg-slate-100">
-                      <Paperclip className="h-3.5 w-3.5" />
-                      {count > 0 ? `${count} Files` : 'Add Files'}
-                    </button>
-                  </td>
                   <td className={`${cellClass} min-w-[115px] px-2 py-1.5`}>
                     <button type="button" onClick={() => onOpenForms(job)} className="inline-flex h-8 w-full items-center justify-center gap-1.5 border border-slate-400 bg-white px-2 text-[10px] font-bold uppercase tracking-[0.06em] text-slate-700 hover:bg-slate-100">
                       <FileText className="h-3.5 w-3.5" />
@@ -514,9 +566,6 @@ export default function ProductionTable({
             {isAdding && (
               <tr className="bg-blue-50/40">
                 {renderCells(draft, changeDraft, undefined, draftNameRef)}
-                <td className={`${cellClass} min-w-[120px] px-2 py-1.5`}>
-                  <button type="button" disabled className="inline-flex h-8 w-full items-center justify-center gap-1.5 border border-slate-300 bg-slate-100 px-2 text-[10px] font-bold uppercase tracking-[0.06em] text-slate-400"><Paperclip className="h-3.5 w-3.5" /> Save First</button>
-                </td>
                 <td className={`${cellClass} min-w-[115px] px-2 py-1.5`}>
                   <button type="button" disabled className="inline-flex h-8 w-full items-center justify-center gap-1.5 border border-slate-300 bg-slate-100 px-2 text-[10px] font-bold uppercase tracking-[0.06em] text-slate-400"><FileText className="h-3.5 w-3.5" /> Save First</button>
                 </td>
