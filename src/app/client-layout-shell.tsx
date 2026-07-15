@@ -9,11 +9,11 @@ const primaryNavItems = [
   { href: '/', label: 'Dashboard', icon: HomeIcon },
   { href: '/manpower-reporting', label: 'Production Reporting', icon: LaborIcon },
   { href: '/inventory', label: 'Inventory', icon: PackageIcon },
-  { href: '/catalog', label: 'Catalog', icon: BookIcon },
 ];
 
 const utilityNavItems = [
-  { href: '/activity', label: 'Activity', icon: ClockIcon },
+  { href: '/catalog', label: 'Catalog', icon: BookIcon },
+  { href: '/activity', label: 'Inventory Activity', icon: ClockIcon },
 ];
 
 function LaborIcon() {
@@ -191,7 +191,7 @@ export default function ClientLayoutShell({
     <>
       <header className="sticky top-0 z-40 border-b border-slate-400/80 bg-[#e7ecf2]/95 shadow-[0_1px_0_rgba(255,255,255,0.9)] backdrop-blur transition-all duration-200">
         <div
-          className={`mx-auto flex max-w-[1500px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
+          className={`mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
             hasScrolled
               ? 'gap-1.5 py-1.5 sm:gap-2 sm:py-2'
               : 'gap-2 py-2.5 sm:gap-3 sm:py-3'
@@ -283,11 +283,11 @@ export default function ClientLayoutShell({
             )}
 
             {isUnlocked && (
-              <nav className="flex shrink-0 items-center border-l border-slate-400 pl-2" aria-label="Utility navigation">
+              <nav className="flex shrink-0 items-center border-l border-slate-400 pl-2" aria-label="Supporting tools">
                 {utilityNavItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                  return <Link key={item.href} href={item.href} title={item.label} aria-label={item.label} className={`inline-flex h-9 items-center gap-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.06em] transition sm:h-10 sm:px-3 ${navClass(isActive)}`}><Icon /><span className="hidden xl:inline">{item.label}</span></Link>;
+                  return <Link key={item.href} href={item.href} title={item.label} aria-label={item.label} className={`inline-flex h-9 items-center gap-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.06em] transition sm:h-10 sm:px-3 ${navClass(isActive)}`}><Icon /><span className="hidden 2xl:inline">{item.label}</span></Link>;
                 })}
               </nav>
             )}
