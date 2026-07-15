@@ -185,13 +185,14 @@ export default function ActivityPage() {
   return (
     <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-6 sm:py-6">
       <div className="border border-slate-400 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.08)]">
-        <div className="grid border-b border-slate-300 bg-[#f6f7f9] lg:grid-cols-[1fr_auto_auto] lg:items-end">
-          <div className="border-b border-slate-300 p-4 lg:border-b-0 lg:border-r">
+        <div className="border-b border-slate-300 bg-white px-4 py-3"><h1 className="text-xl font-black tracking-tight text-slate-950">Inventory Activity</h1><p className="mt-1 text-xs text-slate-600">Inventory receipts, usage, transfers, and adjustments.</p></div>
+        <div className="border-b border-slate-300 bg-[#f6f7f9] p-4">
+          <div>
             <label
               htmlFor="activity-search"
               className="mb-1 block text-[10px] font-black uppercase tracking-[0.16em] text-slate-700"
             >
-              Search Activity
+              Search Inventory Activity
             </label>
             <input
               id="activity-search"
@@ -202,29 +203,30 @@ export default function ActivityPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 divide-x divide-y divide-slate-300 bg-white sm:grid-cols-4 sm:divide-y-0 lg:min-w-[520px] lg:border-r">
-            {(['all', 'intake', 'outtake', 'adjustment'] as TransactionTypeFilter[]).map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => setTypeFilter(filter)}
-                className={`px-3 py-3 text-center text-[11px] font-black uppercase tracking-[0.1em] sm:px-4 sm:py-4 sm:text-xs sm:tracking-[0.12em] transition ${
-                  typeFilter === filter
-                    ? 'bg-slate-900 text-white'
-                    : 'bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-950'
-                }`}
-              >
-                {filterLabel(filter)}
-              </button>
-            ))}
-          </div>
-
-          <div className="p-3 lg:p-4">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span id="activity-filter-label" className="shrink-0 text-sm font-bold text-slate-700">Show</span>
+            <div role="group" aria-labelledby="activity-filter-label" className="inline-flex h-9 items-stretch border border-slate-400 bg-white">
+              {(['all', 'intake', 'outtake', 'adjustment'] as TransactionTypeFilter[]).map((filter) => (
+                <button
+                  key={filter}
+                  type="button"
+                  aria-pressed={typeFilter === filter}
+                  onClick={() => setTypeFilter(filter)}
+                  className={`h-full border-l border-slate-300 px-3 text-center text-[10px] font-bold uppercase tracking-[0.09em] transition first:border-l-0 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
+                    typeFilter === filter
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-950'
+                  }`}
+                >
+                  {filterLabel(filter)}
+                </button>
+              ))}
+            </div>
             <button
               type="button"
               onClick={loadRows}
               disabled={loading}
-              className="w-full border border-slate-500 bg-white px-5 py-2.5 text-sm font-black uppercase tracking-[0.08em] text-slate-900 transition hover:border-slate-900 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 lg:w-auto"
+              className="ml-auto h-9 border border-slate-500 bg-white px-4 text-[10px] font-bold uppercase tracking-[0.07em] text-slate-900 transition hover:border-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? 'Refreshing' : 'Refresh'}
             </button>

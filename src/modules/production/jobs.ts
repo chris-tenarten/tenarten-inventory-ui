@@ -87,6 +87,9 @@ export async function loadProductionJobs(): Promise<ProductionJob[]> {
 export async function createProductionJob(
   input: NewProductionJob,
 ): Promise<ProductionJob> {
+  if (input.planned_start || input.planned_end) {
+    throw new Error('Initial planned dates must use the guarded Production schedule workflow.');
+  }
   const { data, error } = await supabase
     .from('jobs')
     .insert({
@@ -130,6 +133,9 @@ export async function updateProductionJob(
   jobId: string,
   changes: ProductionJobUpdate,
 ): Promise<ProductionJob> {
+  if ('planned_start' in changes || 'planned_end' in changes) {
+    throw new Error('Planned dates must use the guarded Production schedule workflow.');
+  }
   const { data, error } = await supabase
     .from('jobs')
     .update(changes)
@@ -153,6 +159,63 @@ export async function updateProductionJob(
   }
 
   return updatedJob;
+}
+
+export async function updateProductionJobSchedule(
+  jobId: string,
+  plannedStart: string,
+  plannedEnd: string,
+): Promise<ProductionJob> {
+  const { data, error } = await supabase
+    .from('jobs')
+    .update({ planned_start: plannedStart, planned_end: plannedEnd })
+    .eq('id', jobId)
+    .select(JOB_COLUMNS)
+    .single();
+
+  if (error) throw error;
+  return data as unknown as ProductionJob;
+}
+
+export async function recordProductionScheduleAudit(input: {
+  jobId: string;
+  jobName: string;
+  changedByName: string;
+  changeNote: string | null;
+  oldStart: string | null;
+  oldEnd: string | null;
+  newStart: string;
+  newEnd: string;
+}): Promise<void> {
+  const { error } = await supabase.from('job_activity').insert({
+    job_id: input.jobId,
+    event_type: 'production_schedule_changed',
+    summary: `Production schedule changed: ${input.jobName}`,
+    actor_name: input.changedByName,
+    metadata: {
+      change_source: 'production_timeline',
+      change_note: input.changeNote,
+      changed_fields: ['planned_start', 'planned_end'],
+      old_values: {
+        planned_start: input.oldStart,
+        planned_end: input.oldEnd,
+      },
+      new_values: {
+        planned_start: input.newStart,
+        planned_end: input.newEnd,
+      },
+    },
+  });
+
+  if (error) throw error;
+}
+
+export type ProductionJobActivity = { id: string; event_type: string; summary: string; actor_name: string | null; metadata: Record<string, unknown>; occurred_at: string };
+
+export async function loadProductionJobActivity(jobId: string): Promise<ProductionJobActivity[]> {
+  const { data, error } = await supabase.from('job_activity').select('id,event_type,summary,actor_name,metadata,occurred_at').eq('job_id', jobId).order('occurred_at', { ascending: false }).limit(20);
+  if (error) throw error;
+  return (data ?? []) as ProductionJobActivity[];
 }
 
 export async function loadJobAttachmentCounts(): Promise<
