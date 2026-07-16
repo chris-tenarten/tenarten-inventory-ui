@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronRight, Info, Pencil, Plus, RotateCw, Settings2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Info, Pencil, Plus, RotateCw, Search, Settings2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import {
@@ -520,6 +520,7 @@ export default function ManpowerWorkspace() {
   const [workers, setWorkers] = useState<ManpowerReference[]>([]);
   const [tasks, setTasks] = useState<ManpowerReference[]>([]);
   const [draft, setDraft] = useState<Draft>(blankDraft);
+  const [search, setSearch] = useState('');
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -645,6 +646,7 @@ export default function ManpowerWorkspace() {
     } catch (caught) { setError(caughtMessage(caught, 'Unable to rename reporting group.')); throw caught; }
   }
 
+  const normalizedSearch = search.trim().toLocaleLowerCase();
   const groups = useMemo(() => {
     const grouped = new Map<string, { key: string; label: string; group: ManpowerReportingGroup | null; entries: ManpowerEntry[] }>();
     for (const group of reportingGroups) {
@@ -656,7 +658,7 @@ export default function ManpowerWorkspace() {
       const group = grouped.get(key) ?? { key, label, group: entry.reporting_group, entries: [] };
       group.entries.push(entry); grouped.set(key, group);
     }
-    return [...grouped.values()].sort((a, b) => {
+    const sortedGroups = [...grouped.values()].sort((a, b) => {
       if (a.group && b.group) {
         const aDate = groupReportingDate(a.group);
         const bDate = groupReportingDate(b.group);
@@ -673,7 +675,24 @@ export default function ManpowerWorkspace() {
       if (!a.group && b.group) return 1;
       return a.label.localeCompare(b.label);
     });
-  }, [entries, reportingGroups]);
+    if (!normalizedSearch) return sortedGroups;
+    return sortedGroups
+      .map((group) => ({
+        ...group,
+        entries: group.entries.filter((entry) => [
+          group.label,
+          entry.work_date,
+          entry.worker.display_name,
+          entry.task.display_name,
+          entry.job?.name,
+          entry.job?.job_number,
+          entry.unlisted_work_label,
+          entry.notes,
+          entry.entered_by,
+        ].some((value) => value?.toLocaleLowerCase().includes(normalizedSearch))),
+      }))
+      .filter((group) => group.entries.length > 0);
+  }, [entries, normalizedSearch, reportingGroups]);
 
   function startAddingToGroup(groupId: string, groupEntries: ManpowerEntry[]) {
     const identities = new Map<string, Pick<Draft, 'jobChoice' | 'unlistedLabel'>>();
@@ -768,12 +787,17 @@ export default function ManpowerWorkspace() {
       {error && <div className="mt-4 border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">{error}</div>}
 
       <div className="mt-5 space-y-3">
-        <div className="flex min-h-9 items-center gap-2">
+        <div className="flex min-h-9 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           {!showNewGroup ? <button type="button" onClick={() => setShowNewGroup(true)} className="inline-flex h-9 items-center gap-1.5 border border-slate-500 bg-white px-3 text-xs font-bold uppercase tracking-wide text-slate-800 hover:bg-slate-100"><Plus className="h-4 w-4" /> New Group</button> : <div className="flex items-center gap-1 border border-slate-400 bg-white p-1"><input ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder="Reporting group name" className="h-8 w-72 px-2 text-sm outline-none" /><button type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim()} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? 'Creating…' : 'Create'}</button><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">Cancel</button></div>}
+          <label className="relative block w-full sm:max-w-sm">
+            <span className="sr-only">Search manpower</span>
+            <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search manpower…" className={`${inputClass} pl-9`} />
+          </label>
         </div>
         <div className="flex items-center gap-1.5 text-xs text-slate-600"><span className="shrink-0 rounded bg-amber-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-amber-800">Temporary</span><span>means this labor entry is not yet linked to a Production job. Link it when the job is added to the Production queue.</span><button type="button" aria-label="About temporary labor entries" title="Temporary means this labor entry is not yet linked to a Production job. Link it when the job is added to the Production queue." className="inline-flex h-5 w-5 shrink-0 items-center justify-center text-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-700"><Info className="h-3.5 w-3.5" /></button></div>
-        {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">No reporting groups yet. Create the first group to begin.</div> : groups.map((group) => {
-          const isCollapsed = collapsed.has(group.key);
+        {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{normalizedSearch ? 'No manpower entries match your search.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
+          const isCollapsed = normalizedSearch ? false : collapsed.has(group.key);
           const am = group.entries.reduce((sum, entry) => sum + Number(entry.am_hours), 0);
           const pm = group.entries.reduce((sum, entry) => sum + Number(entry.pm_hours), 0);
           const groupIds = group.entries.map((entry) => entry.id);

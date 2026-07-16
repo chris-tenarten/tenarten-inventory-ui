@@ -6,7 +6,7 @@ import type { KeyboardEvent, ReactNode, RefObject } from 'react';
 
 import type { ProductionJobUpdate } from '../jobs';
 import { materialStatusLabel, materialStatusOptions } from '../material-status';
-import type { StagedSchedule } from '../ProductionWorkspace';
+import type { StagedSchedules } from '../schedule-staging';
 import type {
   MaterialStatus,
   NewProductionJob,
@@ -25,7 +25,7 @@ type Props = {
   ) => Promise<ProductionJob>;
   onOpenAttachments: (job: ProductionJob) => void;
   onOpenForms: (job: ProductionJob) => void;
-  stagedSchedule: StagedSchedule | null;
+  stagedSchedules: StagedSchedules;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   selectedJobId: string | null;
   onSelectJob: (job: ProductionJob, focus?: string) => void;
@@ -309,7 +309,7 @@ export default function ProductionTable({
   onUpdateJob,
   onOpenAttachments,
   onOpenForms,
-  stagedSchedule,
+  stagedSchedules,
   onStageSchedule,
   selectedJobId,
   onSelectJob,
@@ -379,11 +379,6 @@ export default function ProductionTable({
     }
 
     if (field === 'plannedStart' || field === 'plannedEnd') {
-      if (stagedSchedule && stagedSchedule.jobId !== job.id) {
-        setStates((current) => ({ ...current, [job.id]: 'error' }));
-        setErrors((current) => ({ ...current, [job.id]: 'Save or discard the existing staged schedule before changing another job.' }));
-        return;
-      }
       if (!row.plannedStart || !row.plannedEnd) {
         setStates((current) => ({ ...current, [job.id]: 'error' }));
         setErrors((current) => ({ ...current, [job.id]: 'Both planned dates are required for a staged schedule change.' }));
@@ -564,7 +559,7 @@ export default function ProductionTable({
                     (field, value) => changeRow(job, field, value),
                     (field) => void saveField(job, field),
                     undefined,
-                    stagedSchedule?.jobId === job.id ? 'staged' : stagedSchedule ? 'locked' : undefined,
+                    stagedSchedules[job.id] ? 'staged' : undefined,
                     count > 0 ? <button
                         type="button"
                         onClick={(event) => {

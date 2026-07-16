@@ -20,9 +20,8 @@ import {
   loadJobAttachmentCounts,
   loadProductionJob,
   loadProductionJobs,
-  recordProductionScheduleAudit,
+  saveProductionScheduleBatch,
   updateProductionJob,
-  updateProductionJobSchedule,
 } from './jobs';
 
 import type { ProductionJobUpdate } from './jobs';
@@ -35,17 +34,11 @@ import { PRODUCTION_JOB_FOCUS_STORAGE_KEY } from './job-options';
 import { inclusiveCalendarDays, laborIntensity } from './schedule';
 import { getJobReadiness } from './readiness';
 import { productionApprovalDecision, PRODUCTION_APPROVAL_WINDOW_MS } from './approval';
+import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, reconcileBatch, stageSchedule as updateStagedSchedule, type StagedSchedules } from './schedule-staging';
+import type { ProductionScheduleBatchConflictDetail } from './schedule-batch-contract';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
 type ScheduleFilter = 'scheduled' | 'unscheduled';
-export type StagedSchedule = {
-  jobId: string;
-  persistedStart: string | null;
-  persistedEnd: string | null;
-  proposedStart: string;
-  proposedEnd: string;
-};
-
 const statusOptions: Array<{ value: ProductionStatus; label: string }> = [
   { value: 'not_started', label: 'Not Started' },
   { value: 'on_deck', label: 'On Deck' },
@@ -98,7 +91,7 @@ export default function ProductionWorkspace() {
     () => new Set(),
   );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [stagedSchedule, setStagedSchedule] = useState<StagedSchedule | null>(null);
+  const [stagedSchedules, setStagedSchedules] = useState<StagedSchedules>({});
   const [scheduleSaveState, setScheduleSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [scheduleMessage, setScheduleMessage] = useState('');
   const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
@@ -113,7 +106,9 @@ export default function ProductionWorkspace() {
     return decision.state === 'active' ? decision.expiration : null;
   });
   const [approvalNow, setApprovalNow] = useState(() => Date.now());
-  const [auditRetry, setAuditRetry] = useState<{ updatedJob: ProductionJob; changedByName: string; changeNote: string | null } | null>(null);
+  const [batchId, setBatchId] = useState<string | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [conflicts, setConflicts] = useState<ProductionScheduleBatchConflictDetail['conflicts']>([]);
   const filterRef = useRef<HTMLDivElement | null>(null);
   const scheduleSaveRef = useRef(false);
   const scheduleActionsRef = useRef<HTMLDivElement | null>(null);
@@ -207,19 +202,21 @@ export default function ProductionWorkspace() {
   const approvalSecondsRemaining = approvalActive && approvalExpiresAt
     ? Math.max(0, Math.ceil((approvalExpiresAt - approvalNow) / 1000))
     : 0;
+  const firstStaged = Object.values(stagedSchedules)[0];
+  const stagedSchedule = useMemo(() => firstStaged ? { jobId: firstStaged.job_id, persistedStart: firstStaged.original_planned_start, persistedEnd: firstStaged.original_planned_end, proposedStart: firstStaged.proposed_planned_start!, proposedEnd: firstStaged.proposed_planned_end! } : null, [firstStaged]);
 
   useEffect(() => {
-    if (!stagedSchedule) return;
+    if (!hasUnsavedSchedules(stagedSchedules)) return;
     const handleBeforeUnload = (event: BeforeUnloadEvent) => event.preventDefault();
     const handleDocumentClick = (event: MouseEvent) => {
       const link = (event.target as Element | null)?.closest('a[href]');
       if (!link || link.getAttribute('href')?.startsWith('#')) return;
-      if (!window.confirm('Discard the unsaved Production schedule change and leave this page?')) {
+      if (!window.confirm('Leave with unsaved Production schedule changes?')) {
         event.preventDefault();
         event.stopPropagation();
         return;
       }
-      setStagedSchedule(null);
+      setStagedSchedules({});
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     document.addEventListener('click', handleDocumentClick, true);
@@ -227,30 +224,24 @@ export default function ProductionWorkspace() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('click', handleDocumentClick, true);
     };
-  }, [stagedSchedule]);
+  }, [stagedSchedules]);
 
-  const stageSchedule = useCallback((job: ProductionJob, start: string, end: string) => {
+  const stageSchedule = useCallback((job: ProductionJob, start: string, end: string, source: 'production_timeline' | 'production_table' | 'production_inspector' = 'production_timeline') => {
     setScheduleMessage('');
     setScheduleSaveState('idle');
-    setStagedSchedule((current) => {
-      if (current && current.jobId !== job.id) {
-        window.setTimeout(() => setScheduleMessage(`Save or discard the pending schedule change for ${jobs.find((item) => item.id === current.jobId)?.name ?? 'the current job'} before adjusting another job.`), 0);
-        return current;
-      }
-      const persistedStart = current?.persistedStart ?? job.planned_start;
-      const persistedEnd = current?.persistedEnd ?? job.planned_end;
-      if (start === persistedStart && end === persistedEnd) return null;
-      return { jobId: job.id, persistedStart, persistedEnd, proposedStart: start, proposedEnd: end };
-    });
-  }, [jobs]);
+    setBatchId(null);
+    setConflicts([]);
+    setStagedSchedules((current) => updateStagedSchedule(current, job, start, end, source));
+  }, []);
 
   const discardStagedSchedule = useCallback(() => {
-    if (auditRetry) return;
-    setStagedSchedule(null);
+    setStagedSchedules({});
+    setBatchId(null);
+    setConflicts([]);
     setScheduleSaveState('idle');
     setScheduleMessage('Schedule change discarded.');
     requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
-  }, [auditRetry]);
+  }, []);
 
   const openApprovalDialog = useCallback(() => {
     const decision = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
@@ -264,96 +255,27 @@ export default function ProductionWorkspace() {
   }, []);
 
   const saveStagedSchedule = useCallback(async (audit: { changedByName: string; changeNote: string | null }) => {
-    if (!stagedSchedule || scheduleSaveRef.current) return;
+    if (!hasUnsavedSchedules(stagedSchedules) || scheduleSaveRef.current) return;
     scheduleSaveRef.current = true;
-    setScheduleSaveState('saving');
-    setScheduleMessage('');
+    setScheduleSaveState('saving'); setScheduleMessage('');
+    const activeBatchId = batchId ?? crypto.randomUUID();
+    if (!batchId) setBatchId(activeBatchId);
     try {
       const approval = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
-      if (approval.clearStoredExpiration) window.sessionStorage.removeItem(APPROVAL_EXPIRES_KEY);
-      if (approval.state !== 'active') {
-        setApprovalExpiresAt(null);
-        setScheduleSaveState('error');
-        setScheduleMessage(approval.state === 'missing_configuration'
-          ? 'Production approval is not configured. Save is unavailable.'
-          : 'Production approval expired. Confirm the schedule change again.');
-        return;
-      }
-      const updated = await updateProductionJobSchedule(
-        stagedSchedule.jobId,
-        stagedSchedule.proposedStart,
-        stagedSchedule.proposedEnd,
-      );
-      try {
-        await recordProductionScheduleAudit({
-          jobId: stagedSchedule.jobId,
-          jobName: updated.name,
-          changedByName: audit.changedByName,
-          changeNote: audit.changeNote,
-          oldStart: stagedSchedule.persistedStart,
-          oldEnd: stagedSchedule.persistedEnd,
-          newStart: stagedSchedule.proposedStart,
-          newEnd: stagedSchedule.proposedEnd,
-        });
-      } catch (auditError) {
-        const details = auditError as { message?: string; details?: string; hint?: string; code?: string };
-        console.error('Production schedule audit insert failed', { jobId: stagedSchedule.jobId, message: details.message, details: details.details, hint: details.hint, code: details.code });
-        setAuditRetry({ updatedJob: updated, ...audit });
-        setScheduleSaveState('error');
-        setScheduleMessage('The schedule dates were saved, but the required audit record failed. Retry audit recording; do not repeat the date update.');
-        return;
-      }
-      setJobs((current) => sortJobs(current.map((job) => job.id === updated.id ? updated : job)));
-      setStagedSchedule(null);
-      setScheduleSaveState('saved');
-      setScheduleMessage('Schedule change saved and audit recorded.');
+      if (approval.state !== 'active') throw new Error('Production approval expired. Confirm the batch again.');
+      const result = await saveProductionScheduleBatch(batchRpcArgs(stagedSchedules, jobs, audit.changedByName, audit.changeNote, activeBatchId));
+      setJobs((current) => sortJobs(reconcileBatch(current, result.updated_jobs)));
+      setStagedSchedules({}); setBatchId(null); setConflicts([]);
+      setScheduleSaveState('saved'); setScheduleMessage(`${result.updated_count} production schedules saved`);
       requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
     } catch (error) {
-      const details = error as { message?: string; details?: string; hint?: string; code?: string };
-      console.error('Production schedule save failed', {
-        jobId: stagedSchedule.jobId,
-        message: details.message,
-        details: details.details,
-        hint: details.hint,
-        code: details.code,
-      });
-      setScheduleSaveState('error');
-      setScheduleMessage(details.message || 'Unable to save the proposed schedule. Retry or discard it.');
-    } finally {
-      scheduleSaveRef.current = false;
-    }
-  }, [stagedSchedule]);
-
-  const retryScheduleAudit = useCallback(async () => {
-    if (!stagedSchedule || !auditRetry || scheduleSaveRef.current) return;
-    scheduleSaveRef.current = true;
-    setScheduleSaveState('saving');
-    setScheduleMessage('');
-    try {
-      await recordProductionScheduleAudit({
-        jobId: stagedSchedule.jobId,
-        jobName: auditRetry.updatedJob.name,
-        changedByName: auditRetry.changedByName,
-        changeNote: auditRetry.changeNote,
-        oldStart: stagedSchedule.persistedStart,
-        oldEnd: stagedSchedule.persistedEnd,
-        newStart: stagedSchedule.proposedStart,
-        newEnd: stagedSchedule.proposedEnd,
-      });
-      setJobs((current) => sortJobs(current.map((job) => job.id === auditRetry.updatedJob.id ? auditRetry.updatedJob : job)));
-      setAuditRetry(null);
-      setStagedSchedule(null);
-      setScheduleSaveState('saved');
-      setScheduleMessage('Schedule change saved and audit recorded.');
-    } catch (error) {
-      const details = error as { message?: string; details?: string; hint?: string; code?: string };
-      console.error('Production schedule audit retry failed', { jobId: stagedSchedule.jobId, message: details.message, details: details.details, hint: details.hint, code: details.code });
-      setScheduleSaveState('error');
-      setScheduleMessage('The schedule is saved, but audit recording still failed. Retry audit recording.');
-    } finally {
-      scheduleSaveRef.current = false;
-    }
-  }, [auditRetry, stagedSchedule]);
+      const details = error as { message?: string; details?: string };
+      if (details.message === 'production_schedule_conflict' && details.details) {
+        try { setConflicts((JSON.parse(details.details) as ProductionScheduleBatchConflictDetail).conflicts); } catch { /* retain generic error */ }
+      }
+      setScheduleSaveState('error'); setScheduleMessage(details.message || 'Atomic schedule batch could not be saved. Retry with the same batch.');
+    } finally { scheduleSaveRef.current = false; }
+  }, [batchId, jobs, stagedSchedules]);
 
   const confirmApprovedSave = useCallback(() => {
     if (!stagedSchedule || scheduleSaveRef.current) return;
@@ -426,10 +348,10 @@ export default function ProductionWorkspace() {
   }, [focusedJobId, jobs, scheduleFilters, search, statusFilters]);
 
   const displayedJobs = useMemo(() => filteredJobs.map((job) => (
-    stagedSchedule?.jobId === job.id
-      ? { ...job, planned_start: stagedSchedule.proposedStart, planned_end: stagedSchedule.proposedEnd }
+    stagedSchedules[job.id]
+      ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
       : job
-  )), [filteredJobs, stagedSchedule]);
+  )), [filteredJobs, stagedSchedules]);
   const stagedJob = stagedSchedule ? jobs.find((job) => job.id === stagedSchedule.jobId) ?? null : null;
   const selectedJob = selectedJobId ? jobs.find(job=>job.id===selectedJobId)??null : null;
   const planningCount = jobs.filter(job=>getJobReadiness(job).state!=='ready').length;
@@ -524,7 +446,7 @@ export default function ProductionWorkspace() {
   ).length;
 
   return (
-    <div className={`mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7 ${stagedSchedule ? 'pb-36' : ''}`}>
+    <div className={`mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7 ${hasUnsavedSchedules(stagedSchedules) ? 'pb-36' : ''}`}>
       <div>
         <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
           TenOps
@@ -698,13 +620,15 @@ export default function ProductionWorkspace() {
           return (
             <div ref={scheduleActionsRef} data-pending-schedule-actions="true" tabIndex={-1} role="status" aria-live="polite" className="fixed bottom-3 left-3 right-3 z-[90] mx-auto flex max-w-5xl flex-col gap-3 border border-amber-600 bg-amber-50 px-4 py-3 shadow-2xl lg:flex-row lg:items-center lg:justify-between">
               <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Schedule change pending — {stagedJob?.job_number || stagedJob?.name || 'Production job'}</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Production planning pending</div>
+                <div className="mt-1 text-sm font-bold text-slate-950">{Object.keys(stagedSchedules).length} {Object.keys(stagedSchedules).length === 1 ? 'job has' : 'jobs have'} proposed schedule changes{conflicts.length ? ` · ${conflicts.length} conflicts` : ''}</div>
                 <div className="mt-1 text-sm font-bold text-slate-950">{hadSchedule ? `${stagedSchedule.persistedStart} – ${stagedSchedule.persistedEnd}` : 'Not scheduled'} → {stagedSchedule.proposedStart} – {stagedSchedule.proposedEnd}</div>
                 <div className="mt-1 text-xs text-slate-600">{hadSchedule ? `${inclusiveCalendarDays(stagedSchedule.persistedStart!, stagedSchedule.persistedEnd!)} days · ${hours(before!.hoursPerScheduledDay)}` : 'No saved production window'} → {inclusiveCalendarDays(stagedSchedule.proposedStart, stagedSchedule.proposedEnd)} days · {hours(after.hoursPerScheduledDay)}</div>
               </div>
               <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={discardStagedSchedule} disabled={scheduleSaveState === 'saving' || Boolean(auditRetry)} title={auditRetry ? 'Audit recording must succeed before this completed date update can be cleared.' : undefined} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase tracking-[0.07em] text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-50">Discard</button>
-                {auditRetry ? <button type="button" onClick={() => void retryScheduleAudit()} disabled={scheduleSaveState === 'saving'} className="h-9 border border-red-900 bg-red-800 px-4 text-xs font-bold uppercase tracking-[0.07em] text-white hover:bg-red-900 focus-visible:ring-2 focus-visible:ring-red-600 disabled:opacity-50">{scheduleSaveState === 'saving' ? 'Recording…' : 'Retry audit'}</button> : <button type="button" onClick={openApprovalDialog} disabled={scheduleSaveState === 'saving'} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase tracking-[0.07em] text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">Save change</button>}
+                <button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button>
+                <button type="button" onClick={discardStagedSchedule} disabled={scheduleSaveState === 'saving'} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button>
+                <button type="button" onClick={openApprovalDialog} disabled={scheduleSaveState === 'saving'} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white">Save all changes</button>
               </div>
             </div>
           );
@@ -716,29 +640,30 @@ export default function ProductionWorkspace() {
             <div className="flex min-h-72 items-center justify-center border border-slate-400 bg-white text-sm font-semibold text-slate-600">Loading active jobs…</div>
           ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} onSelectJob={selectJob}/> : activeView === 'spreadsheet' ? (
             <ProductionTable
-              key={stagedSchedule ? `${stagedSchedule.jobId}:${stagedSchedule.proposedStart}:${stagedSchedule.proposedEnd}` : 'persisted'}
               jobs={displayedJobs}
               attachmentCounts={attachmentCounts}
               onCreateJob={handleCreateJob}
               onUpdateJob={handleUpdateJob}
               onOpenAttachments={(job) => selectJob(job, 'attachments')}
               onOpenForms={setSelectedFormsJob}
-              stagedSchedule={stagedSchedule}
-              onStageSchedule={stageSchedule}
+              stagedSchedules={stagedSchedules}
+              onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_table')}
               selectedJobId={selectedJobId}
               onSelectJob={selectJob}
             />
           ) : (
-            <ProductionGantt jobs={filteredJobs} stagedSchedule={stagedSchedule} onStageSchedule={stageSchedule} onSelectJob={selectJob} />
+            <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} />
           )}
         </div>
       </div>
+
+      {reviewOpen && <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/55 p-4"><div role="dialog" aria-modal="true" aria-labelledby="schedule-review-title" className="max-h-[80vh] w-full max-w-2xl overflow-y-auto border border-slate-500 bg-white p-5 shadow-2xl"><div className="flex items-center justify-between"><h2 id="schedule-review-title" className="text-xl font-bold">Review proposed schedules</h2><button type="button" onClick={() => setReviewOpen(false)} className="h-9 border px-3 font-bold">Close</button></div><div className="mt-4 divide-y border">{orderedStagedSchedules(stagedSchedules, jobs).map((proposal) => { const job = jobs.find((item) => item.id === proposal.job_id); return <div key={proposal.job_id} className="p-3"><div className="font-bold">{job?.name}{job?.job_number ? ` · ${job.job_number}` : ''}</div><div className="mt-1 text-sm">{proposal.original_planned_start && proposal.original_planned_end ? `${proposal.original_planned_start} – ${proposal.original_planned_end}` : 'Not scheduled'} → {proposal.proposed_planned_start} – {proposal.proposed_planned_end}</div><div className="mt-1 text-xs text-slate-600">{proposal.changed_fields.map((field) => field === 'planned_start' ? 'Planned start' : 'Planned finish').join(', ')}</div><button type="button" onClick={() => setStagedSchedules((current) => { const next = { ...current }; delete next[proposal.job_id]; return next; })} className="mt-2 text-xs font-bold text-red-700 underline">Revert this job</button></div>; })}</div></div></div>}
 
       {approvalDialogOpen && stagedSchedule && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/55 px-4 py-8 backdrop-blur-sm">
           <div ref={approvalDialogRef} role="dialog" aria-modal="true" aria-labelledby="schedule-approval-title" className="max-h-full w-full max-w-xl overflow-y-auto border border-slate-500 bg-white p-5 shadow-2xl sm:p-6">
             <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Production schedule approval</div>
-            <h2 id="schedule-approval-title" className="mt-1 text-xl font-bold text-slate-950">Confirm schedule change</h2>
+            <h2 id="schedule-approval-title" className="mt-1 text-xl font-bold text-slate-950">Confirm {Object.keys(stagedSchedules).length} schedule changes</h2>
             <div className="mt-4 border border-slate-300 bg-slate-50 p-3 text-sm">
               <div className="font-bold text-slate-950">{stagedJob?.job_number ? `${stagedJob.job_number} — ` : ''}{stagedJob?.name || 'Production job'}</div>
               <div className="mt-2 font-semibold text-slate-800">{stagedSchedule.persistedStart && stagedSchedule.persistedEnd ? `${stagedSchedule.persistedStart} – ${stagedSchedule.persistedEnd}` : 'Not scheduled'} → {stagedSchedule.proposedStart} – {stagedSchedule.proposedEnd}</div>
@@ -758,7 +683,7 @@ export default function ProductionWorkspace() {
         </div>
       )}
 
-      {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedule?.jobId===selectedJob.id?{...selectedJob,planned_start:stagedSchedule.proposedStart,planned_end:stagedSchedule.proposedEnd}:selectedJob} onClose={closeInspector} onUpdateJob={handleUpdateJob} onStageSchedule={stageSchedule} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
+      {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedules[selectedJob.id]?{...selectedJob,planned_start:stagedSchedules[selectedJob.id].proposed_planned_start,planned_end:stagedSchedules[selectedJob.id].proposed_planned_end}:selectedJob} onClose={closeInspector} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
 
       <JobFormsPanel
         job={selectedFormsJob}

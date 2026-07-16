@@ -3,7 +3,7 @@ import './globals.css';
 import ClientLayoutShell from './client-layout-shell';
 
 export const metadata: Metadata = {
-  title: 'Tenarten Inventory UI',
+  title: 'Tenarten Operations',
   description: 'Tenarten inventory and material management',
 };
 

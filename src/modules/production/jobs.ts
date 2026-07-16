@@ -7,6 +7,7 @@ import type {
   ProductionJob,
 } from './types';
 import { productionValuesEqual } from './update-normalization';
+import type { ProductionScheduleBatchRpcArgs, ProductionScheduleBatchSuccess } from './schedule-batch-contract';
 
 const JOB_COLUMNS = [
   'id',
@@ -170,53 +171,10 @@ export async function updateProductionJob(
   return updatedJob;
 }
 
-export async function updateProductionJobSchedule(
-  jobId: string,
-  plannedStart: string,
-  plannedEnd: string,
-): Promise<ProductionJob> {
-  const { data, error } = await supabase
-    .from('jobs')
-    .update({ planned_start: plannedStart, planned_end: plannedEnd })
-    .eq('id', jobId)
-    .select(JOB_COLUMNS)
-    .single();
-
+export async function saveProductionScheduleBatch(args: ProductionScheduleBatchRpcArgs): Promise<ProductionScheduleBatchSuccess> {
+  const { data, error } = await supabase.rpc('save_production_schedule_batch', args);
   if (error) throw error;
-  return data as unknown as ProductionJob;
-}
-
-export async function recordProductionScheduleAudit(input: {
-  jobId: string;
-  jobName: string;
-  changedByName: string;
-  changeNote: string | null;
-  oldStart: string | null;
-  oldEnd: string | null;
-  newStart: string;
-  newEnd: string;
-}): Promise<void> {
-  const { error } = await supabase.from('job_activity').insert({
-    job_id: input.jobId,
-    event_type: 'production_schedule_changed',
-    summary: `Production schedule changed: ${input.jobName}`,
-    actor_name: input.changedByName,
-    metadata: {
-      change_source: 'production_timeline',
-      change_note: input.changeNote,
-      changed_fields: ['planned_start', 'planned_end'],
-      old_values: {
-        planned_start: input.oldStart,
-        planned_end: input.oldEnd,
-      },
-      new_values: {
-        planned_start: input.newStart,
-        planned_end: input.newEnd,
-      },
-    },
-  });
-
-  if (error) throw error;
+  return data as ProductionScheduleBatchSuccess;
 }
 
 export type ProductionJobActivity = { id: string; event_type: string; summary: string; actor_name: string | null; metadata: Record<string, unknown>; occurred_at: string };
