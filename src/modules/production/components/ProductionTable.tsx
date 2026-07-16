@@ -1,10 +1,11 @@
 'use client';
 
-import { FileText, Paperclip } from 'lucide-react';
+import { FileText, Paperclip, Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode, RefObject } from 'react';
 
 import type { ProductionJobUpdate } from '../jobs';
+import { materialStatusLabel, materialStatusOptions } from '../material-status';
 import type { StagedSchedule } from '../ProductionWorkspace';
 import type {
   MaterialStatus,
@@ -27,7 +28,7 @@ type Props = {
   stagedSchedule: StagedSchedule | null;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   selectedJobId: string | null;
-  onSelectJob: (job: ProductionJob) => void;
+  onSelectJob: (job: ProductionJob, focus?: string) => void;
 };
 
 type EditableRow = {
@@ -52,6 +53,27 @@ type EditableRow = {
 
 type SaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'error';
 type EditableField = keyof EditableRow;
+type SaveFeedback = { field: string; oldValue: string; newValue: string };
+
+const fieldLabels: Record<EditableField, string> = {
+  name: 'Project', customer: 'Customer', jobNumber: 'Job number', estimateNumber: 'Estimate number',
+  workOrderNumber: 'Work order', depositDate: 'Deposit date', requestedDeliveryDate: 'Requested delivery',
+  plannedStart: 'Planned start', plannedEnd: 'Planned finish', estimatedManHours: 'Labor estimate',
+  estimatedCalendarDays: 'Calendar days', colorPlateNumber: 'Color plate', sampleSubmittedDate: 'Sample submitted',
+  approvalDate: 'Approval date', materialStatus: 'Material status', productionStatus: 'Production status', remarks: 'Remarks',
+};
+
+function feedbackValue(field: EditableField, value: unknown) {
+  if (value === null || value === undefined || value === '') return 'Blank';
+  if (field === 'materialStatus') return materialStatusLabel(value);
+  if (field === 'productionStatus') return productionStatuses.find((status) => status.value === value)?.label ?? String(value);
+  if (['depositDate', 'requestedDeliveryDate', 'plannedStart', 'plannedEnd', 'sampleSubmittedDate', 'approvalDate'].includes(field)) {
+    const date = new Date(`${String(value)}T00:00:00`);
+    return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  if (field === 'estimatedManHours') return `${value} hours`;
+  return String(value);
+}
 
 const productionStatuses: Array<{ value: ProductionStatus; label: string }> = [
   { value: 'not_started', label: 'Not Started' },
@@ -61,12 +83,6 @@ const productionStatuses: Array<{ value: ProductionStatus; label: string }> = [
   { value: 'shipped', label: 'Shipped' },
   { value: 'complete', label: 'Complete' },
   { value: 'cancelled', label: 'Cancelled' },
-];
-
-const materialStatuses: Array<{ value: MaterialStatus; label: string }> = [
-  { value: 'unknown', label: 'Unknown' },
-  { value: 'not_ready', label: 'Not Ready' },
-  { value: 'ready', label: 'Ready' },
 ];
 
 const headerClass =
@@ -301,6 +317,7 @@ export default function ProductionTable({
   const [rows, setRows] = useState<Record<string, EditableRow>>({});
   const [states, setStates] = useState<Record<string, SaveState>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [feedback, setFeedback] = useState<Record<string, SaveFeedback | undefined>>({});
   const [isAdding, setIsAdding] = useState(false);
   const [draft, setDraft] = useState<EditableRow>(blankRow);
   const [draftState, setDraftState] = useState<SaveState>('idle');
@@ -312,7 +329,7 @@ export default function ProductionTable({
     setRows((current) => {
       const next = { ...current };
       for (const job of jobs) {
-        if (states[job.id] !== 'dirty' && states[job.id] !== 'saving') {
+        if (states[job.id] !== 'dirty' && states[job.id] !== 'saving' && states[job.id] !== 'error') {
           next[job.id] = toRow(job);
         }
       }
@@ -400,6 +417,8 @@ export default function ProductionTable({
 
     setStates((current) => ({ ...current, [job.id]: 'saving' }));
     setErrors((current) => ({ ...current, [job.id]: '' }));
+    const saveFeedback = { field: fieldLabels[field], oldValue: feedbackValue(field, job[changedField]), newValue: feedbackValue(field, normalizedValue) };
+    setFeedback((current) => ({ ...current, [job.id]: saveFeedback }));
 
     try {
       const updated = await onUpdateJob(job.id, changes);
@@ -411,6 +430,7 @@ export default function ProductionTable({
             ? { ...current, [job.id]: 'idle' }
             : current,
         );
+        setFeedback((current) => current[job.id] === saveFeedback ? { ...current, [job.id]: undefined } : current);
       }, 1500);
     } catch (error) {
       setStates((current) => ({ ...current, [job.id]: 'error' }));
@@ -452,18 +472,22 @@ export default function ProductionTable({
     nameRef?: RefObject<HTMLInputElement | null>,
     scheduleState?: 'staged' | 'locked',
     projectAttachmentIndicator?: ReactNode,
+    historyAction?: ReactNode,
   ) {
     const blur = (field: EditableField) => () => onBlur?.(field);
 
     return (
       <>
-        <td className={`${cellClass} sticky left-0 z-20 min-w-[90px]`}>
+        <td className={`${cellClass} sticky left-0 z-30 h-7 min-w-[34px] w-[34px] bg-slate-50 text-center group-hover:bg-blue-50`}>
+          {historyAction}
+        </td>
+        <td className={`${cellClass} sticky left-[34px] z-20 min-w-[90px]`}>
           <input value={row.jobNumber} onChange={(e) => onChange('jobNumber', e.target.value)} onBlur={blur('jobNumber')} onKeyDown={blurOnEnter} placeholder="Job #" className={`${inputClass} bg-white`} />
         </td>
-        <td className={`${cellClass} sticky left-[90px] z-20 min-w-[200px]`}>
+        <td className={`${cellClass} sticky left-[124px] z-20 min-w-[200px]`}>
           <div className="relative bg-white">
             <input ref={nameRef} value={row.name} title={row.name} onChange={(e) => onChange('name', e.target.value)} onBlur={blur('name')} onKeyDown={blurOnEnter} placeholder="Project name *" className={`${inputClass} bg-white pr-16 font-semibold text-slate-950`} />
-            {projectAttachmentIndicator}
+            {projectAttachmentIndicator && <div className="absolute right-1 top-1/2 z-10 -translate-y-1/2">{projectAttachmentIndicator}</div>}
           </div>
         </td>
         <td className={`${cellClass} min-w-[160px]`}><input value={row.customer} title={row.customer} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>
@@ -480,7 +504,7 @@ export default function ProductionTable({
         <td className={`${cellClass} min-w-[125px]`}><input type="date" value={row.approvalDate} onChange={(e) => onChange('approvalDate', e.target.value)} onBlur={blur('approvalDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
         <td className={`${cellClass} min-w-[105px]`}>
           <select value={row.materialStatus} onChange={(e) => onChange('materialStatus', e.target.value as MaterialStatus)} onBlur={blur('materialStatus')} onKeyDown={blurOnEnter} className={selectClass}>
-            {materialStatuses.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            {materialStatusOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </td>
         <td className={`${cellClass} min-w-[120px]`}>
@@ -501,8 +525,9 @@ export default function ProductionTable({
         <table className="min-w-max border-separate border-spacing-0">
           <thead className="sticky top-0 z-30">
             <tr>
-              <th className={`${headerClass} sticky left-0 z-40 min-w-[90px]`}>Job #</th>
-              <th className={`${headerClass} sticky left-[90px] z-40 min-w-[200px]`}>Project</th>
+              <th title="Inspect job actions" aria-label="Inspect job actions" className={`${headerClass} sticky left-0 z-50 min-w-[34px] w-[34px] px-0`}><Search className="mx-auto h-3.5 w-3.5" aria-hidden="true" /></th>
+              <th className={`${headerClass} sticky left-[34px] z-40 min-w-[90px]`}>Job #</th>
+              <th className={`${headerClass} sticky left-[124px] z-40 min-w-[200px]`}>Project</th>
               <th className={headerClass}>Customer</th>
               <th className={headerClass}>Estimate</th>
               <th tabIndex={0} title="Work Order Number" className={headerClass}>WO #</th>
@@ -531,18 +556,8 @@ export default function ProductionTable({
               return (
                 <tr
                   key={job.id}
-                  tabIndex={0}
                   aria-selected={selectedJobId === job.id}
-                  onClick={(event) => {
-                    if (!(event.target as HTMLElement).closest('input, select, textarea, button, a')) onSelectJob(job);
-                  }}
-                  onKeyDown={(event) => {
-                    if ((event.key === 'Enter' || event.key === ' ') && event.target === event.currentTarget) {
-                      event.preventDefault();
-                      onSelectJob(job);
-                    }
-                  }}
-                  className={`odd:bg-white even:bg-slate-50/40 hover:bg-blue-50/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700 ${selectedJobId === job.id ? 'bg-blue-50/70 ring-2 ring-inset ring-blue-600' : ''}`}
+                  className={`group relative h-7 odd:bg-white even:bg-slate-50/40 hover:bg-blue-50/30 ${selectedJobId === job.id ? 'bg-blue-50/70 ring-2 ring-inset ring-blue-600' : ''}`}
                 >
                   {renderCells(
                     row,
@@ -550,8 +565,7 @@ export default function ProductionTable({
                     (field) => void saveField(job, field),
                     undefined,
                     stagedSchedule?.jobId === job.id ? 'staged' : stagedSchedule ? 'locked' : undefined,
-                    count > 0 ? (
-                      <button
+                    count > 0 ? <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -559,20 +573,25 @@ export default function ProductionTable({
                         }}
                         aria-label={`View ${count} attached ${count === 1 ? 'file' : 'files'} for ${job.name}`}
                         title="View attached files"
-                        className="absolute right-1 top-1/2 inline-flex h-6 -translate-y-1/2 items-center gap-1 border border-slate-300 bg-slate-50 px-1.5 text-[10px] font-bold text-slate-600 hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
+                        className="inline-flex h-6 items-center gap-1 border border-slate-300 bg-slate-50 px-1.5 text-[10px] font-bold text-slate-600 hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
                       >
                         <Paperclip className="h-3.5 w-3.5" aria-hidden="true" />
                         {count}
-                      </button>
-                    ) : undefined,
+                      </button> : undefined,
+                    <div className="relative flex h-7 items-center justify-center">
+                      <button type="button" onClick={(event) => { event.stopPropagation(); onSelectJob(job); }} aria-label="Inspect job" title={`Inspect ${job.job_number ? `${job.job_number} — ` : ''}${job.name}`} className={`inline-flex h-6 w-6 items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 group-hover:text-slate-700 ${selectedJobId === job.id ? 'text-blue-700' : ''}`}><Search className="h-3.5 w-3.5" aria-hidden="true" /></button>
+                      {(state === 'saving' || state === 'saved' || state === 'error') && (() => {
+                        const transition = feedback[job.id] ? `${feedback[job.id]!.field}: ${feedback[job.id]!.oldValue} → ${feedback[job.id]!.newValue}` : '';
+                        const message = state === 'saving' ? `Saving…${transition ? ` · ${transition}` : ''}` : state === 'saved' ? `Saved · ${transition}` : `Could not save${transition ? ` · ${transition}` : ''}${errors[job.id] ? ` · ${errors[job.id]}` : ''}`;
+                        return <div role="status" aria-live="polite" aria-label={message} title={message} className={`pointer-events-none absolute left-[38px] top-full z-[60] h-7 w-80 truncate border px-2 text-left text-[10px] font-bold leading-7 shadow-md ${state === 'error' ? 'border-red-400 bg-red-50 text-red-800' : state === 'saved' ? 'border-emerald-400 bg-emerald-50 text-emerald-800' : 'border-blue-400 bg-blue-50 text-blue-800'}`}>{message}</div>;
+                      })()}
+                    </div>,
                   )}
                   <td className={`${cellClass} min-w-[88px] p-0.5`}>
                     <button type="button" onClick={() => onOpenForms(job)} className="inline-flex h-7 w-full items-center justify-center gap-1 border border-slate-400 bg-white px-1 text-[9px] font-bold uppercase tracking-[0.05em] text-slate-700 hover:bg-slate-100">
                       <FileText className="h-3.5 w-3.5" />
                       Forms
                     </button>
-                    <div className="text-center leading-none"><StateLabel state={state} /></div>
-                    {errors[job.id] && <div className="mt-1 max-w-[180px] text-xs font-semibold leading-4 text-red-700">{errors[job.id]}</div>}
                   </td>
                 </tr>
               );
@@ -580,7 +599,7 @@ export default function ProductionTable({
 
             {isAdding && (
               <tr className="bg-blue-50/40">
-                {renderCells(draft, changeDraft, undefined, draftNameRef)}
+                {renderCells(draft, changeDraft, undefined, draftNameRef, undefined, undefined, <span className="block h-7 w-[34px]" />)}
                 <td className={`${cellClass} min-w-[88px] p-0.5`}>
                   <button type="button" disabled className="inline-flex h-7 w-full items-center justify-center gap-1 border border-slate-300 bg-slate-100 px-1 text-[9px] font-bold uppercase tracking-[0.05em] text-slate-400"><FileText className="h-3.5 w-3.5" /> Save First</button>
                 </td>

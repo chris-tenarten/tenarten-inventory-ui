@@ -7,7 +7,7 @@ export type ProductionStatus =
   | 'complete'
   | 'cancelled';
 
-export type MaterialStatus = 'unknown' | 'not_ready' | 'ready';
+export type MaterialStatus = 'unknown' | 'not_ready' | 'ordered' | 'ready';
 export type JobPriority = 'low' | 'normal' | 'high' | 'urgent';
 
 export type JobDocumentType =

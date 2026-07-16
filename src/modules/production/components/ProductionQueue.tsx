@@ -2,6 +2,7 @@
 
 import { Paperclip } from 'lucide-react';
 import { getJobReadiness } from '../readiness';
+import { materialStatusBadgeClass, materialStatusLabel } from '../material-status';
 import type { ProductionJob } from '../types';
 import ProductionStatusBadge from './ProductionStatusBadge';
 
@@ -24,7 +25,7 @@ export default function ProductionQueue({ jobs, selectedJobId, attachmentCounts,
         <span className="pointer-events-none relative z-10"><ProductionStatusBadge status={job.production_status}/></span>
         <span className="pointer-events-none relative z-10 text-xs text-slate-700">{job.planned_start && job.planned_end ? `${job.planned_start} – ${job.planned_end}` : 'Dates not set'}</span>
         <span className="pointer-events-none relative z-10 text-xs text-slate-700">{job.requested_delivery_date ? `Delivery ${job.requested_delivery_date}` : 'Delivery not set'}</span>
-        <span className="pointer-events-none relative z-10 text-xs font-semibold uppercase text-slate-600">Material: {job.material_status.replaceAll('_', ' ')}</span>
+        <span className="pointer-events-none relative z-10 text-xs font-semibold uppercase text-slate-600">Material: <span className={`inline-flex px-1.5 py-0.5 ${materialStatusBadgeClass(job.material_status)}`}>{materialStatusLabel(job.material_status)}</span></span>
         <span className={`pointer-events-none relative z-10 text-xs font-bold ${readiness.state === 'ready' ? 'text-green-700' : 'text-amber-800'}`} title={readiness.guidance}>{readiness.label}<span className="block font-normal text-slate-500">{job.estimated_man_hours === null ? 'Add labor estimate' : `${job.estimated_man_hours} labor hours`}</span></span>
       </div>;
     })}
