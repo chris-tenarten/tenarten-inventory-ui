@@ -255,15 +255,8 @@ export default function ProductionWorkspace() {
   const openApprovalDialog = useCallback(() => {
     const decision = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
     if (decision.clearStoredExpiration) window.sessionStorage.removeItem(APPROVAL_EXPIRES_KEY);
-    if (decision.state === 'missing_configuration') {
-      setApprovalExpiresAt(null);
-      setScheduleSaveState('error');
-      setScheduleMessage('Production approval is not configured. Save is unavailable.');
-      requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
-      return;
-    }
     setApprovalExpiresAt(decision.state === 'active' ? decision.expiration : null);
-    setApprovalError('');
+    setApprovalError(decision.state === 'missing_configuration' ? 'Production approval is not configured. Save is unavailable.' : '');
     setApprovalPassword('');
     setChangeNote('');
     setApprovalNow(Date.now());
@@ -474,7 +467,7 @@ export default function ProductionWorkspace() {
     ))));
 
     try {
-      const updated = await updateProductionJob(jobId, changes);
+      const updated = await updateProductionJob(original, changes);
       setJobs((current) =>
         sortJobs(current.map((job) => (job.id === jobId ? updated : job))),
       );
@@ -531,7 +524,7 @@ export default function ProductionWorkspace() {
   ).length;
 
   return (
-    <div className="mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7">
+    <div className={`mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7 ${stagedSchedule ? 'pb-36' : ''}`}>
       <div>
         <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
           TenOps
@@ -696,15 +689,16 @@ export default function ProductionWorkspace() {
         )}
         <div className="mt-3 flex flex-wrap gap-3 text-xs text-slate-600"><span className="font-bold text-amber-800">{planningCount} jobs are Planning Needed or Not Scheduled</span><button type="button" onClick={()=>setScheduleFilters(new Set(['unscheduled']))} className="font-bold underline focus-visible:ring-2 focus-visible:ring-slate-700">{notScheduledCount} jobs are Not Scheduled</button></div>
 
-        {(stagedSchedule && stagedJob) && (() => {
+        {stagedSchedule && (() => {
           const hadSchedule = Boolean(stagedSchedule.persistedStart && stagedSchedule.persistedEnd);
-          const before = hadSchedule ? laborIntensity(stagedJob.estimated_man_hours, stagedSchedule.persistedStart!, stagedSchedule.persistedEnd!) : null;
-          const after = laborIntensity(stagedJob.estimated_man_hours, stagedSchedule.proposedStart, stagedSchedule.proposedEnd);
+          const estimatedHours = stagedJob?.estimated_man_hours ?? null;
+          const before = hadSchedule ? laborIntensity(estimatedHours, stagedSchedule.persistedStart!, stagedSchedule.persistedEnd!) : null;
+          const after = laborIntensity(estimatedHours, stagedSchedule.proposedStart, stagedSchedule.proposedEnd);
           const hours = (value: number | null) => value === null ? 'No labor estimate' : `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value)} h/day`;
           return (
-            <div ref={scheduleActionsRef} tabIndex={-1} role="status" aria-live="polite" className="mt-4 flex flex-col gap-3 border border-amber-500 bg-amber-50 px-4 py-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+            <div ref={scheduleActionsRef} data-pending-schedule-actions="true" tabIndex={-1} role="status" aria-live="polite" className="fixed bottom-3 left-3 right-3 z-[90] mx-auto flex max-w-5xl flex-col gap-3 border border-amber-600 bg-amber-50 px-4 py-3 shadow-2xl lg:flex-row lg:items-center lg:justify-between">
               <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Schedule change pending — {stagedJob.job_number || stagedJob.name}</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Schedule change pending — {stagedJob?.job_number || stagedJob?.name || 'Production job'}</div>
                 <div className="mt-1 text-sm font-bold text-slate-950">{hadSchedule ? `${stagedSchedule.persistedStart} – ${stagedSchedule.persistedEnd}` : 'Not scheduled'} → {stagedSchedule.proposedStart} – {stagedSchedule.proposedEnd}</div>
                 <div className="mt-1 text-xs text-slate-600">{hadSchedule ? `${inclusiveCalendarDays(stagedSchedule.persistedStart!, stagedSchedule.persistedEnd!)} days · ${hours(before!.hoursPerScheduledDay)}` : 'No saved production window'} → {inclusiveCalendarDays(stagedSchedule.proposedStart, stagedSchedule.proposedEnd)} days · {hours(after.hoursPerScheduledDay)}</div>
               </div>
@@ -740,16 +734,16 @@ export default function ProductionWorkspace() {
         </div>
       </div>
 
-      {approvalDialogOpen && stagedSchedule && stagedJob && (
+      {approvalDialogOpen && stagedSchedule && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/55 px-4 py-8 backdrop-blur-sm">
           <div ref={approvalDialogRef} role="dialog" aria-modal="true" aria-labelledby="schedule-approval-title" className="max-h-full w-full max-w-xl overflow-y-auto border border-slate-500 bg-white p-5 shadow-2xl sm:p-6">
             <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Production schedule approval</div>
             <h2 id="schedule-approval-title" className="mt-1 text-xl font-bold text-slate-950">Confirm schedule change</h2>
             <div className="mt-4 border border-slate-300 bg-slate-50 p-3 text-sm">
-              <div className="font-bold text-slate-950">{stagedJob.job_number ? `${stagedJob.job_number} — ` : ''}{stagedJob.name}</div>
+              <div className="font-bold text-slate-950">{stagedJob?.job_number ? `${stagedJob.job_number} — ` : ''}{stagedJob?.name || 'Production job'}</div>
               <div className="mt-2 font-semibold text-slate-800">{stagedSchedule.persistedStart && stagedSchedule.persistedEnd ? `${stagedSchedule.persistedStart} – ${stagedSchedule.persistedEnd}` : 'Not scheduled'} → {stagedSchedule.proposedStart} – {stagedSchedule.proposedEnd}</div>
               <div className="mt-1 text-xs text-slate-600">{stagedSchedule.persistedStart && stagedSchedule.persistedEnd ? `${inclusiveCalendarDays(stagedSchedule.persistedStart, stagedSchedule.persistedEnd)} days → ` : ''}{inclusiveCalendarDays(stagedSchedule.proposedStart, stagedSchedule.proposedEnd)} days</div>
-              {(() => { if (!stagedSchedule.persistedStart || !stagedSchedule.persistedEnd) return null; const before = laborIntensity(stagedJob.estimated_man_hours, stagedSchedule.persistedStart, stagedSchedule.persistedEnd); const after = laborIntensity(stagedJob.estimated_man_hours, stagedSchedule.proposedStart, stagedSchedule.proposedEnd); return before.hoursPerScheduledDay !== null && after.hoursPerScheduledDay !== null ? <div className="mt-1 text-xs text-slate-600">{before.hoursPerScheduledDay.toFixed(1)} h/day → {after.hoursPerScheduledDay.toFixed(1)} h/day</div> : null; })()}
+              {(() => { if (!stagedSchedule.persistedStart || !stagedSchedule.persistedEnd) return null; const estimatedHours = stagedJob?.estimated_man_hours ?? null; const before = laborIntensity(estimatedHours, stagedSchedule.persistedStart, stagedSchedule.persistedEnd); const after = laborIntensity(estimatedHours, stagedSchedule.proposedStart, stagedSchedule.proposedEnd); return before.hoursPerScheduledDay !== null && after.hoursPerScheduledDay !== null ? <div className="mt-1 text-xs text-slate-600">{before.hoursPerScheduledDay.toFixed(1)} h/day → {after.hoursPerScheduledDay.toFixed(1)} h/day</div> : null; })()}
             </div>
             {approvalActive ? <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border border-blue-300 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-900"><span>Temporary approval active for {Math.floor(approvalSecondsRemaining / 60)}:{String(approvalSecondsRemaining % 60).padStart(2, '0')}. Explicit confirmation is still required.</span><button type="button" onClick={() => { window.sessionStorage.removeItem(APPROVAL_EXPIRES_KEY); setApprovalExpiresAt(null); setApprovalNow(Date.now()); }} className="text-xs font-bold uppercase underline focus-visible:ring-2 focus-visible:ring-blue-700">Lock approval</button></div> : approvalExpiresAt ? <div className="mt-4 border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700">Approval window expired. Enter the approval password to continue.</div> : null}
             <label htmlFor="production-changed-by" className="mt-4 block text-sm font-bold text-slate-800">Changed by <span className="font-normal text-slate-500">— Recorded name for this change</span></label>
