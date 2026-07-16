@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent } from 'react';
 
-import type { StagedSchedule } from '../ProductionWorkspace';
+import type { StagedSchedules } from '../schedule-staging';
 import {
   addCalendarDays,
   differenceInCalendarDays,
@@ -17,7 +17,7 @@ import { productionStatusVisuals, productionStatusVisualByValue } from '../statu
 
 type ProductionGanttProps = {
   jobs: ProductionJob[];
-  stagedSchedule: StagedSchedule | null;
+  stagedSchedules: StagedSchedules;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   onSelectJob: (job: ProductionJob, focus?: string) => void;
 };
@@ -138,12 +138,12 @@ function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom) {
   return { start: earliest, days };
 }
 
-export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule, onSelectJob }: ProductionGanttProps) {
+export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule, onSelectJob }: ProductionGanttProps) {
   const [interaction, setInteraction] = useState<ScheduleInteraction | null>(null);
   const [zoom, setZoom] = useState<TimelineZoom>('weeks');
-  const displayJobs = useMemo(() => jobs.map((job) => stagedSchedule?.jobId === job.id
-    ? { ...job, planned_start: stagedSchedule.proposedStart, planned_end: stagedSchedule.proposedEnd }
-    : job), [jobs, stagedSchedule]);
+  const displayJobs = useMemo(() => jobs.map((job) => stagedSchedules[job.id]
+    ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
+    : job), [jobs, stagedSchedules]);
   const timeline = useMemo(() => createTimeline(displayJobs, zoom), [displayJobs, zoom]);
   const zoomOption = ZOOM_OPTIONS.find((option) => option.value === zoom) ?? ZOOM_OPTIONS[1];
   const dayWidth = zoomOption.dayWidth;
@@ -201,10 +201,10 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
   }, [interaction, jobs, onSelectJob, onStageSchedule]);
 
   function startInteraction(event: ReactPointerEvent, job: ProductionJob, mode: InteractionMode) {
-    const proposed = stagedSchedule?.jobId === job.id ? stagedSchedule : null;
-    const start = proposed?.proposedStart ?? job.planned_start;
-    const end = proposed?.proposedEnd ?? job.planned_end;
-    if (!start || !end || (stagedSchedule && stagedSchedule.jobId !== job.id)) return;
+    const proposed = stagedSchedules[job.id];
+    const start = proposed?.proposed_planned_start ?? job.planned_start;
+    const end = proposed?.proposed_planned_end ?? job.planned_end;
+    if (!start || !end) return;
     event.preventDefault();
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -225,10 +225,10 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
   }
 
   function handleScheduleKey(event: KeyboardEvent<HTMLButtonElement>, job: ProductionJob, mode: InteractionMode) {
-    const proposed = stagedSchedule?.jobId === job.id ? stagedSchedule : null;
-    const baselineStart = proposed?.proposedStart ?? job.planned_start;
-    const baselineEnd = proposed?.proposedEnd ?? job.planned_end;
-    if (!baselineStart || !baselineEnd || (stagedSchedule && stagedSchedule.jobId !== job.id)) return;
+    const proposed = stagedSchedules[job.id];
+    const baselineStart = proposed?.proposed_planned_start ?? job.planned_start;
+    const baselineEnd = proposed?.proposed_planned_end ?? job.planned_end;
+    if (!baselineStart || !baselineEnd) return;
     if ((event.key === 'Enter' || event.key === ' ') && mode === 'move') {
       event.preventDefault();
       onSelectJob(job);
@@ -355,7 +355,8 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
               ? differenceInCalendarDays(parseScheduleDate(job.requested_delivery_date!), start)
               : 0;
             const intensity = displayStart && displayEnd ? laborIntensity(job.estimated_man_hours, displayStart, displayEnd) : null;
-            const isStaged = stagedSchedule?.jobId === job.id;
+            const stagedSchedule = stagedSchedules[job.id];
+            const isStaged = Boolean(stagedSchedule);
             const statusVisual = productionStatusVisualByValue[job.production_status];
 
             return (
@@ -383,13 +384,13 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                   </div>
                   {todayIndex >= 0 && <div className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-blue-600" style={{ left: todayIndex * dayWidth + dayWidth / 2 }} />}
 
-                  {isStaged && stagedSchedule?.persistedStart && stagedSchedule.persistedEnd && (
+                  {isStaged && stagedSchedule?.original_planned_start && stagedSchedule.original_planned_end && (
                     <div
-                      aria-label={`Last saved schedule for ${job.name}: ${stagedSchedule.persistedStart} through ${stagedSchedule.persistedEnd}`}
+                      aria-label={`Last saved schedule for ${job.name}: ${stagedSchedule.original_planned_start} through ${stagedSchedule.original_planned_end}`}
                       className="pointer-events-none absolute top-1/2 z-[2] h-9 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/35"
                       style={{
-                        left: differenceInCalendarDays(parseScheduleDate(stagedSchedule.persistedStart), start) * dayWidth + 3,
-                        width: Math.max(18, inclusiveCalendarDays(stagedSchedule.persistedStart, stagedSchedule.persistedEnd) * dayWidth - 6),
+                        left: differenceInCalendarDays(parseScheduleDate(stagedSchedule.original_planned_start), start) * dayWidth + 3,
+                        width: Math.max(18, inclusiveCalendarDays(stagedSchedule.original_planned_start, stagedSchedule.original_planned_end) * dayWidth - 6),
                       }}
                     >
                       <span className="sr-only">Ghost bar showing the last saved schedule.</span>
@@ -405,7 +406,6 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                       <button
                         type="button"
                         aria-label={`Resize ${job.name} start date. Use left and right arrow keys for one-day adjustments.`}
-                        disabled={Boolean(stagedSchedule && stagedSchedule.jobId !== job.id)}
                         onPointerDown={(event) => startInteraction(event, job, 'resize-start')}
                         onKeyDown={(event) => handleScheduleKey(event, job, 'resize-start')}
                         onDragStart={(event) => event.preventDefault()}
@@ -417,7 +417,6 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                       <button
                         type="button"
                         aria-label={`Move ${job.name}. Use left and right arrow keys for one-day adjustments.`}
-                        disabled={Boolean(stagedSchedule && stagedSchedule.jobId !== job.id)}
                         onPointerDown={(event) => startInteraction(event, job, 'move')}
                         onKeyDown={(event) => handleScheduleKey(event, job, 'move')}
                         onDragStart={(event) => event.preventDefault()}
@@ -433,7 +432,6 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                       <button
                         type="button"
                         aria-label={`Resize ${job.name} finish date. Use left and right arrow keys for one-day adjustments.`}
-                        disabled={Boolean(stagedSchedule && stagedSchedule.jobId !== job.id)}
                         onPointerDown={(event) => startInteraction(event, job, 'resize-end')}
                         onKeyDown={(event) => handleScheduleKey(event, job, 'resize-end')}
                         onDragStart={(event) => event.preventDefault()}
