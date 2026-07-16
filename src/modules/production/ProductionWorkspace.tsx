@@ -9,7 +9,6 @@ import {
   useState,
 } from 'react';
 
-import JobFormsPanel from './components/JobFormsPanel';
 import ProductionGantt from './components/ProductionGantt';
 import ProductionJobInspector from './components/ProductionJobInspector';
 import ProductionQueue from './components/ProductionQueue';
@@ -71,7 +70,6 @@ function sortJobs(jobs: ProductionJob[]) {
 export default function ProductionWorkspace() {
   const [jobs, setJobs] = useState<ProductionJob[]>([]);
   const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
-  const [selectedFormsJob, setSelectedFormsJob] = useState<ProductionJob | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [search, setSearch] = useState('');
@@ -448,21 +446,10 @@ export default function ProductionWorkspace() {
   return (
     <div className={`mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7 ${hasUnsavedSchedules(stagedSchedules) ? 'pb-36' : ''}`}>
       <div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
-          TenOps
-        </div>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">
-          Tenarten Operations Control
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-slate-600">
-          Live production visibility from operational handoff through manufacturing and completion.
-        </p>
-      </div>
-
-      <div className="mt-6">
-        <div className="mb-3 flex flex-col gap-3 border-b border-slate-300 pb-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-slate-950">Production Pipeline</h2>
+            <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Production reporting</div>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Production Pipeline</h1>
             <p className="mt-1 text-sm text-slate-600">
               Use the table to manage the production queue and the Timeline to plan scheduled work.
             </p>
@@ -492,15 +479,15 @@ export default function ProductionWorkspace() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 border border-slate-400 bg-slate-100 p-3 lg:flex-row lg:items-center">
-          <div className="flex shrink-0 flex-wrap items-center gap-2"><span id="production-view-label" className="text-sm font-bold text-slate-700">View</span><div role="group" aria-labelledby="production-view-label" className="flex items-center border border-slate-400 bg-white p-1">
+        <div className="flex flex-col gap-3 rounded-sm border border-slate-200 bg-white p-2.5 shadow-sm lg:flex-row lg:items-center">
+          <div className="flex shrink-0 flex-wrap items-center gap-2"><span id="production-view-label" className="text-xs font-bold uppercase tracking-[0.08em] text-slate-600">View</span><div role="group" aria-labelledby="production-view-label" className="flex items-center rounded-sm border border-slate-300 bg-slate-50 p-1">
             <button
               type="button"
               onClick={() => setActiveView('queue')}
               className={`h-8 px-4 text-[10px] font-bold uppercase tracking-[0.09em] ${
                 activeView === 'queue'
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-white text-slate-600 hover:bg-slate-100'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-white'
               }`}
             >
               Overview
@@ -510,13 +497,13 @@ export default function ProductionWorkspace() {
               onClick={() => setActiveView('spreadsheet')}
               className={`h-8 px-4 text-[10px] font-bold uppercase tracking-[0.09em] ${
                 activeView === 'spreadsheet'
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-white text-slate-600 hover:bg-slate-100'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-white'
               }`}
             >
               Table
             </button>
-            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-8 px-4 text-[10px] font-bold uppercase tracking-[0.09em] focus-visible:ring-2 focus-visible:ring-blue-600 ${activeView==='timeline'?'bg-slate-900 text-white':'bg-white text-slate-600 hover:bg-slate-100'}`}>Timeline</button>
+            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-8 rounded-sm px-4 text-[10px] font-bold uppercase tracking-[0.09em] focus-visible:ring-2 focus-visible:ring-blue-600 ${activeView==='timeline'?'bg-slate-900 text-white shadow-sm':'text-slate-600 hover:bg-white'}`}>Timeline</button>
           </div>
           </div>
 
@@ -525,7 +512,7 @@ export default function ProductionWorkspace() {
             value={search}
             onChange={(event) => { setFocusedJobId(null); setSearch(event.target.value); }}
             placeholder="Search jobs..."
-            className="h-9 min-w-0 flex-1 border border-slate-400 bg-white px-3 text-sm outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
+            className="h-9 min-w-0 flex-1 rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
           />
 
           <div ref={filterRef} className="relative shrink-0">
@@ -609,7 +596,7 @@ export default function ProductionWorkspace() {
             {loadError}
           </div>
         )}
-        <div className="mt-3 flex flex-wrap gap-3 text-xs text-slate-600"><span className="font-bold text-amber-800">{planningCount} jobs are Planning Needed or Not Scheduled</span><button type="button" onClick={()=>setScheduleFilters(new Set(['unscheduled']))} className="font-bold underline focus-visible:ring-2 focus-visible:ring-slate-700">{notScheduledCount} jobs are Not Scheduled</button></div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-l-2 border-amber-500 bg-amber-50/70 px-3 py-2 text-xs text-slate-600"><span className="font-bold text-amber-900">{planningCount} jobs are Planning Needed or Not Scheduled</span><button type="button" onClick={()=>setScheduleFilters(new Set(['unscheduled']))} className="font-semibold underline decoration-slate-400 underline-offset-2 focus-visible:ring-2 focus-visible:ring-slate-700">{notScheduledCount} jobs are Not Scheduled</button></div>
 
         {stagedSchedule && (() => {
           const hadSchedule = Boolean(stagedSchedule.persistedStart && stagedSchedule.persistedEnd);
@@ -645,7 +632,6 @@ export default function ProductionWorkspace() {
               onCreateJob={handleCreateJob}
               onUpdateJob={handleUpdateJob}
               onOpenAttachments={(job) => selectJob(job, 'attachments')}
-              onOpenForms={setSelectedFormsJob}
               stagedSchedules={stagedSchedules}
               onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_table')}
               selectedJobId={selectedJobId}
@@ -685,10 +671,6 @@ export default function ProductionWorkspace() {
 
       {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedules[selectedJob.id]?{...selectedJob,planned_start:stagedSchedules[selectedJob.id].proposed_planned_start,planned_end:stagedSchedules[selectedJob.id].proposed_planned_end}:selectedJob} onClose={closeInspector} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
 
-      <JobFormsPanel
-        job={selectedFormsJob}
-        onClose={() => setSelectedFormsJob(null)}
-      />
 
     </div>
   );

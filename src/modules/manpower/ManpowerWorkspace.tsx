@@ -38,8 +38,8 @@ type Draft = {
 };
 
 const UNLISTED = '__unlisted__';
-const inputClass = 'h-9 w-full min-w-0 border border-slate-400 bg-white px-2 text-sm outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700';
-const headerClass = 'border-b border-r border-slate-400 bg-slate-200 px-2 py-2 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700';
+const inputClass = 'h-9 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-2 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100';
+const headerClass = 'border-b border-r border-slate-200 bg-slate-100 px-2 py-2 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600';
 
 function today() {
   const now = new Date();
@@ -165,8 +165,8 @@ function ReportingGroupName({ group, onRename }: {
     finally { setSaving(false); }
   }
   function cancel() { setName(group.display_name); setEditing(false); }
-  if (!editing) return <div className="flex min-w-0 flex-1 items-center gap-2"><span className="truncate text-base font-bold text-white">{group.display_name}</span><button type="button" onClick={() => setEditing(true)} aria-label="Edit group name" title="Edit group name" className="inline-flex h-7 w-7 shrink-0 items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white"><Pencil className="h-3.5 w-3.5" /></button></div>;
-  return <div className="flex min-w-0 flex-1 items-center gap-1"><input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void save(); } if (event.key === 'Escape') cancel(); }} aria-label="Reporting group name" className="h-8 min-w-0 flex-1 border border-slate-500 bg-slate-800 px-2 text-base font-bold text-white outline-none focus:border-blue-300 focus:ring-1 focus:ring-blue-300" disabled={saving} /><button type="button" onClick={() => void save()} disabled={saving || !name.trim()} className="h-8 bg-blue-600 px-2 text-xs font-bold text-white disabled:opacity-50">Save</button><button type="button" onClick={cancel} disabled={saving} className="h-8 px-2 text-xs font-bold text-slate-300">Cancel</button></div>;
+  if (!editing) return <div className="flex min-w-0 flex-1 items-center gap-2"><span className="truncate text-sm font-bold text-slate-950">{group.display_name}</span><button type="button" onClick={() => setEditing(true)} aria-label="Edit group name" title="Edit group name" className="inline-flex h-7 w-7 shrink-0 items-center justify-center text-slate-500 hover:bg-white hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600"><Pencil className="h-3.5 w-3.5" /></button></div>;
+  return <div className="flex min-w-0 flex-1 items-center gap-1"><input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void save(); } if (event.key === 'Escape') cancel(); }} aria-label="Reporting group name" placeholder="Reporting group name" className="h-8 min-w-0 flex-1 rounded-sm border border-blue-500 bg-white px-2 text-sm font-bold text-slate-950 caret-slate-950 outline-none selection:bg-blue-200 focus:ring-2 focus:ring-blue-200" disabled={saving} /><button type="button" onClick={() => void save()} disabled={saving || !name.trim()} className="h-8 rounded-sm bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</button><button type="button" onClick={cancel} disabled={saving} className="h-8 rounded-sm px-2 text-xs font-bold text-slate-600 hover:bg-white">Cancel</button></div>;
 }
 
 function ReferenceSelect({
@@ -769,7 +769,7 @@ export default function ManpowerWorkspace() {
 
   return (
     <div className="mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7">
-      <div className="flex flex-col gap-3 border-b border-slate-400 pb-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div><div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Operations Reporting</div><h1 className="mt-1 text-3xl font-bold tracking-tight">Manpower Reporting</h1><p className="mt-2 text-sm text-slate-600">Record shop labor by job, worker, task, and work date.</p></div>
         <div className="flex gap-2">
           <button type="button" onClick={toggleReferencePanel} className="inline-flex h-9 items-center gap-2 border border-slate-400 bg-white px-3 text-xs font-bold uppercase tracking-wide"><Settings2 className="h-4 w-4" /> Workers & Tasks</button>
@@ -805,18 +805,18 @@ export default function ManpowerWorkspace() {
           const allSelected = groupIds.length > 0 && selectedGroupIds.length === groupIds.length;
           const someSelected = selectedGroupIds.length > 0 && !allSelected;
           return (
-            <section key={group.key} className={`border bg-white ${selectedGroupIds.length > 0 ? 'border-blue-600' : 'border-slate-400'}`}>
-              <div className="flex items-center gap-3 bg-slate-900 px-3 py-3.5 text-white shadow-[inset_0_-1px_0_rgba(255,255,255,0.12)]">
+            <section key={group.key} className={`overflow-hidden rounded-sm border bg-white ${selectedGroupIds.length > 0 ? 'border-blue-600' : 'border-slate-200'}`}>
+              <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800">
                 <SelectionCheckbox checked={allSelected} indeterminate={someSelected} label={`Select all entries in ${group.label}`} onChange={(checked) => setGroupSelected(groupIds, checked)} />
                 <button type="button" onClick={() => setCollapsed((current) => { const next = new Set(current); if (next.has(group.key)) next.delete(group.key); else next.add(group.key); return next; })} className="shrink-0" aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${group.label}`}>
                   {isCollapsed ? <ChevronRight className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
                 </button>
-                {group.group ? <ReportingGroupName group={group.group} onRename={(name) => renameGroup(group.group!, name)} /> : <span className="min-w-0 flex-1 truncate text-base font-bold text-white">{group.label}</span>}
-                <span className="shrink-0 rounded bg-slate-700 px-2 py-1 text-xs font-bold text-white">{group.entries.length} {group.entries.length === 1 ? 'entry' : 'entries'}</span>
+                {group.group ? <ReportingGroupName group={group.group} onRename={(name) => renameGroup(group.group!, name)} /> : <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-950">{group.label}</span>}
+                <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold text-slate-700">{group.entries.length} {group.entries.length === 1 ? 'entry' : 'entries'}</span>
                 {isCollapsed && selectedGroupIds.length > 0 && <span className="shrink-0 rounded bg-blue-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">{selectedGroupIds.length} selected</span>}
-                <span className="shrink-0 rounded bg-slate-800 px-2 py-1 text-xs font-bold tabular-nums text-slate-200">AM {am.toFixed(1)} hrs</span>
-                <span className="shrink-0 rounded bg-slate-800 px-2 py-1 text-xs font-bold tabular-nums text-slate-200">PM {pm.toFixed(1)} hrs</span>
-                <span className="shrink-0 rounded bg-blue-600 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">TOTAL {(am + pm).toFixed(1)} hrs</span>
+                <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">AM {am.toFixed(1)} hrs</span>
+                <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">PM {pm.toFixed(1)} hrs</span>
+                <span className="shrink-0 rounded-sm bg-slate-900 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">TOTAL {(am + pm).toFixed(1)} hrs</span>
               </div>
               {selectedGroupIds.length > 0 && <BulkActionBar selectedCount={selectedGroupIds.length} jobs={jobs} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
               {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1300px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Production Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{group.entries.map((entry) => <EditableEntryRow key={entry.id} entry={entry} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} />)}{addingToGroupId === group.key && group.group && <tr className="border-t-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}</tbody><tfoot><tr><td colSpan={9} className="border-t border-slate-300 bg-slate-50 p-1">{group.group && addingToGroupId !== group.key && <button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries)} className="inline-flex h-8 items-center gap-1.5 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 hover:bg-blue-50"><Plus className="h-4 w-4" /> Add labor entry</button>}</td></tr></tfoot></table></div>}

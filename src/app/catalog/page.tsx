@@ -452,8 +452,13 @@ export default function CatalogPage() {
   return (
     <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-6 sm:py-5 lg:px-8">
       <div className="mx-auto max-w-[1600px] space-y-4">
-        <section className="border border-slate-400 bg-white shadow-sm">
-          <div className="border-b border-slate-300 bg-[#f6f7f9] px-4 py-3">
+        <div className="border-b border-slate-200 pb-4">
+          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Reference data</div>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Catalog</h1>
+          <p className="mt-1 text-sm text-slate-600">Search standard materials and specialty systems used across operations.</p>
+        </div>
+        <section className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-200 bg-white px-4 py-3">
             <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
               <div>
                 <label
@@ -464,7 +469,7 @@ export default function CatalogPage() {
                 </label>
                 <input
                   id="catalog-search"
-                  className="h-11 w-full border border-slate-400 bg-white px-3 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+                  className="h-9 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
                   placeholder={
                     mode === 'standard'
                       ? 'Search material, vendor, size, unit, category, or class'
@@ -478,14 +483,14 @@ export default function CatalogPage() {
                 />
               </div>
 
-              <div className="grid w-full grid-cols-2 border border-slate-400 bg-slate-200 p-0.5 shadow-sm sm:inline-flex sm:w-fit">
+              <div className="grid w-full grid-cols-2 rounded-sm border border-slate-300 bg-slate-50 p-1 sm:inline-flex sm:w-fit">
                 <button
                   type="button"
                   onClick={() => setMode('standard')}
                   className={`px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
                     mode === 'standard'
                       ? 'bg-slate-800 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-700 hover:bg-white hover:text-slate-950'
+                      : 'text-slate-600 hover:bg-white hover:text-slate-950'
                   }`}
                 >
                   Standard Materials
@@ -496,7 +501,7 @@ export default function CatalogPage() {
                   className={`border-l border-slate-400 px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
                     mode === 'specialty'
                       ? 'bg-slate-800 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-700 hover:bg-white hover:text-slate-950'
+                      : 'text-slate-600 hover:bg-white hover:text-slate-950'
                   }`}
                 >
                   System / Specialty
@@ -534,8 +539,8 @@ export default function CatalogPage() {
                 <>
                   <div className="hidden max-h-[610px] overflow-auto md:block">
                     <table className="min-w-full border-collapse text-left text-sm">
-                      <thead className="sticky top-0 z-10 bg-[#dfe4ea] text-[10px] uppercase tracking-[0.14em] text-slate-600">
-                        <tr className="border-b border-slate-400">
+                      <thead className="sticky top-0 z-10 bg-slate-100 text-[10px] uppercase tracking-[0.14em] text-slate-600">
+                        <tr className="border-b border-slate-300">
                           <th className="w-[22%] px-3 py-2 font-semibold">Vendor</th>
                           <th className="w-[30%] px-3 py-2 font-semibold">Material</th>
                           <th className="w-[13%] px-3 py-2 font-semibold">Size</th>

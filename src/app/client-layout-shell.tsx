@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 const primaryNavItems = [
   { href: '/', label: 'Dashboard', icon: HomeIcon },
-  { href: '/manpower-reporting', label: 'Production Reporting', icon: LaborIcon },
+  { href: '/manpower-reporting', label: 'Reporting', icon: LaborIcon },
   { href: '/inventory', label: 'Inventory', icon: PackageIcon },
 ];
 
@@ -109,8 +109,8 @@ function LogoutIcon() {
 
 function navClass(isActive: boolean) {
   return isActive
-    ? 'bg-slate-900 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]'
-    : 'text-slate-700 hover:bg-white/70 hover:text-slate-950';
+    ? 'font-semibold text-slate-950 shadow-[inset_0_-3px_0_#172554]'
+    : 'text-slate-600 hover:bg-slate-200/40 hover:text-slate-950';
 }
 
 export default function ClientLayoutShell({
@@ -189,7 +189,7 @@ export default function ClientLayoutShell({
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-slate-400/80 bg-[#e7ecf2]/95 shadow-[0_1px_0_rgba(255,255,255,0.9)] backdrop-blur transition-all duration-200">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
         <div
           className={`mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
             hasScrolled
@@ -283,7 +283,7 @@ export default function ClientLayoutShell({
             )}
 
             {isUnlocked && (
-              <nav className="flex shrink-0 items-center border-l border-slate-400 pl-2" aria-label="Supporting tools">
+              <nav className="flex shrink-0 items-center border-l border-slate-300 pl-2" aria-label="Supporting tools">
                 {utilityNavItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
