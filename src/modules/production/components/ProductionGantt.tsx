@@ -275,12 +275,12 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     : null;
 
   return (
-    <div className="overflow-hidden border border-slate-400 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.07)]">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-slate-300 bg-slate-50 px-4 py-2 text-[10px] font-semibold text-slate-700">
+    <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-slate-200 bg-white px-4 py-2.5 text-[10px] font-semibold text-slate-700">
         <span id="timeline-zoom-label" className="font-bold uppercase tracking-[0.12em] text-slate-500">Zoom</span>
-        <div role="group" aria-labelledby="timeline-zoom-label" className="inline-flex h-8 items-stretch border border-slate-400 bg-white">
+        <div role="group" aria-labelledby="timeline-zoom-label" className="inline-flex h-8 items-stretch rounded-sm border border-slate-300 bg-slate-50 p-0.5">
           {ZOOM_OPTIONS.map((option) => (
-            <button key={option.value} type="button" aria-pressed={zoom === option.value} disabled={Boolean(interaction)} onClick={() => setZoom(option.value)} className={`h-full border-l border-slate-300 px-3 text-[9px] font-bold uppercase tracking-[0.08em] first:border-l-0 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 ${zoom === option.value ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}>{option.label}</button>
+            <button key={option.value} type="button" aria-pressed={zoom === option.value} disabled={Boolean(interaction)} onClick={() => setZoom(option.value)} className={`h-full rounded-sm px-3 text-[9px] font-bold uppercase tracking-[0.08em] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 ${zoom === option.value ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{option.label}</button>
           ))}
         </div>
         <span className="h-5 w-px bg-slate-300" aria-hidden="true" />
@@ -309,8 +309,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
       </div>
       <div className="overflow-x-auto">
         <div style={{ minWidth: LABEL_WIDTH + timelineWidth }}>
-          <div className="sticky top-0 z-20 flex border-b border-slate-400 bg-slate-100">
-            <div className="sticky left-0 z-30 flex shrink-0 items-end border-r border-slate-400 bg-slate-100 px-4 pb-3 pt-9" style={{ width: LABEL_WIDTH }}>
+          <div className="sticky top-0 z-20 flex border-b border-slate-200 bg-slate-100/90">
+            <div className="sticky left-0 z-30 flex shrink-0 items-end border-r border-slate-300 bg-slate-100 px-4 pb-3 pt-9" style={{ width: LABEL_WIDTH }}>
               <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600">Project / Schedule</div>
             </div>
             <div className="relative shrink-0" style={{ width: timelineWidth }}>

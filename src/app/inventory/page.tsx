@@ -115,7 +115,7 @@ const PEOPLE_OPTIONS = ['Gio', 'Anthony'];
 const DEFAULT_LOCATION_OPTIONS = ['Denton', 'Carrollton'];
 
 const fieldClass =
-  'w-full border border-slate-400 bg-white px-3 py-2 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900';
+  'h-9 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-700 focus:ring-2 focus:ring-blue-100';
 
 const labelClass = 'mb-1 block text-[10px] font-black uppercase tracking-[0.14em] text-slate-600';
 
@@ -2039,7 +2039,7 @@ export default function InventoryPage() {
         : 'No incoming shipments awaiting receipt.';
 
     return (
-      <section className="mx-auto mb-4 max-w-[1500px] overflow-hidden border border-slate-500 bg-[#d8dde3] shadow-[0_2px_0_rgba(15,23,42,0.12)]">
+      <section className="mx-auto mb-4 max-w-[1500px] overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
         <style>{`
           @keyframes pending-receivals-ticker {
             from { transform: translateX(0); }
@@ -2065,7 +2065,7 @@ export default function InventoryPage() {
           aria-expanded={pendingReceivalsExpanded}
           aria-controls="pending-receivals-content"
           onClick={() => setPendingReceivalsExpanded((expanded) => !expanded)}
-          className="group flex w-full items-center gap-3 border-b border-slate-500 bg-[#c8ced6] px-3 py-3 text-left transition hover:bg-[#bcc4ce] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-sky-700 sm:px-4"
+          className="group flex w-full items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-3 text-left transition hover:bg-slate-200/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-700 sm:px-4"
         >
           <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-5 w-5 shrink-0 text-slate-800 transition-transform duration-300 ${pendingReceivalsExpanded ? 'rotate-90' : ''}`}>
             <path d="M7 4.5 12.5 10 7 15.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -2090,7 +2090,7 @@ export default function InventoryPage() {
           className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${pendingReceivalsExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
         >
           <div className="min-h-0 overflow-hidden">
-            <div className="flex flex-wrap items-center justify-end gap-2 border-b border-slate-500 bg-[#c8ced6] px-3 py-3 sm:px-4">
+            <div className="flex flex-wrap items-center justify-end gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2.5 sm:px-4">
             {pendingReceivals.some((item) => item.status === 'received') && (
               <button
                 type="button"
@@ -2116,16 +2116,16 @@ export default function InventoryPage() {
           </div>
         )}
 
-        <div className="bg-[#d8dde3] p-2">
+        <div className="bg-slate-50 p-2">
           {pendingReceivalsLoading ? (
             <div className="border border-slate-400 bg-[#e5e9ee] px-4 py-5 text-sm font-semibold text-slate-600">Loading pending receivals...</div>
           ) : pendingReceivals.length === 0 ? (
             <div className="border border-slate-400 bg-[#e5e9ee] px-4 py-5 text-sm font-semibold text-slate-600">No pending receivals.</div>
           ) : (
-            <div className="overflow-x-auto border border-slate-500 bg-[#e1e5ea]">
+            <div className="overflow-x-auto border border-slate-200 bg-white">
               <table className="w-full border-collapse text-left text-sm">
-                <thead className="bg-[#b9c1cb] text-[10px] font-black uppercase tracking-[0.12em] text-slate-800">
-                  <tr className="border-b border-slate-500">
+                <thead className="bg-slate-100 text-[10px] font-black uppercase tracking-[0.12em] text-slate-700">
+                  <tr className="border-b border-slate-300">
                     <th className="px-3 py-2">Vendor</th>
                     <th className="px-3 py-2">Material</th>
                     <th className="px-3 py-2">Size</th>
@@ -2136,7 +2136,7 @@ export default function InventoryPage() {
                     <th className="px-3 py-2 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-400">
+                <tbody className="divide-y divide-slate-200">
                   {pendingReceivals.map((receival) => {
                     const isReceived = receival.status === 'received';
                     const isReserved = Boolean(receival.production_job_id || receival.temporary_job_label || receival.is_earmarked);
@@ -3160,11 +3160,16 @@ export default function InventoryPage() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-69px)] bg-[#eef1f4] px-2 py-2 text-slate-950 sm:px-4 sm:py-4">
+    <main className="min-h-[calc(100vh-69px)] bg-[#eef1f4] px-2 py-2 text-slate-950 sm:px-4 sm:py-5">
+      <div className="mx-auto mb-4 max-w-[1500px] border-b border-slate-200 pb-4">
+        <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Warehouse operations</div>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Inventory</h1>
+        <p className="mt-1 text-sm text-slate-600">Review current stock, incoming material, locations, and reservations.</p>
+      </div>
       {renderPendingReceivalsQueue()}
 
-      <section className="mx-auto max-w-[1500px] border border-slate-400 bg-white shadow-[0_1px_0_rgba(15,23,42,0.08)]">
-        <div className="border-b border-slate-400 bg-[#f6f7f9] p-3 sm:p-4">
+      <section className="mx-auto max-w-[1500px] overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 bg-white p-3 sm:p-4">
           <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               <label htmlFor="inventory-search" className={labelClass}>
@@ -3279,8 +3284,8 @@ export default function InventoryPage() {
 
               <div className="hidden md:block">
                 <table className="w-full border-collapse text-left text-sm">
-                  <thead className="bg-[#dfe4ea] text-[10px] font-black uppercase tracking-[0.12em] text-slate-700">
-                    <tr className="border-b border-slate-400">
+                  <thead className="bg-slate-100 text-[10px] font-black uppercase tracking-[0.12em] text-slate-700">
+                    <tr className="border-b border-slate-300">
                       <th className="px-3 py-2">Vendor</th>
                       <th className="px-3 py-2">Material</th>
                       <th className="px-3 py-2">Size</th>

@@ -28,8 +28,8 @@ type Props = {
   initialFocus?: string;
 };
 
-const sectionTitle = 'border-b border-slate-300 pb-2 text-sm font-bold uppercase tracking-wide';
-const fieldClass = 'mt-1 h-9 w-full border border-slate-400 px-2 text-sm outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950';
+const sectionTitle = 'border-b border-slate-200 pb-2 text-xs font-bold uppercase tracking-[0.1em] text-slate-700';
+const fieldClass = 'mt-1 h-9 w-full rounded-sm border border-slate-300 bg-white px-2 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100';
 
 function readableDate(value: unknown) {
   if (typeof value !== 'string' || !value) return 'Not scheduled';
@@ -234,11 +234,11 @@ export default function ProductionJobInspector({ job, onClose, onUpdateJob, onSt
   ];
 
   return <div className="fixed inset-0 z-[80] bg-slate-950/30" onMouseDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
-    <aside ref={panel} role="dialog" aria-modal="true" aria-labelledby="job-inspector-title" onMouseDown={(event) => event.stopPropagation()} className="ml-auto h-full w-full max-w-xl overflow-y-auto border-l border-slate-500 bg-white p-5 shadow-2xl">
+    <aside ref={panel} role="dialog" aria-modal="true" aria-labelledby="job-inspector-title" onMouseDown={(event) => event.stopPropagation()} className="ml-auto h-full w-full max-w-xl overflow-y-auto border-l border-slate-200 bg-white p-5 shadow-2xl">
       <div className="flex items-start justify-between gap-3"><div><div className="text-xs font-bold text-slate-500">{job.job_number || 'Job number not recorded'}</div><h2 id="job-inspector-title" className="text-2xl font-bold text-slate-950">{job.name}</h2><div className="mt-2"><ProductionStatusBadge status={job.production_status}/></div><div className={`mt-2 inline-flex px-2 py-1 text-xs font-bold ${readiness.state === 'ready' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-900'}`}>{readiness.label} — {readiness.guidance}</div></div><button ref={closeRef} type="button" onClick={requestClose} className="h-9 border border-slate-400 px-3 font-bold hover:bg-slate-100">Close</button></div>
 
-      <div role="tablist" aria-label="Job inspector sections" className="mt-5 grid grid-cols-3 border border-slate-400">
-        {tabs.map((tab) => <button key={tab.id} type="button" role="tab" aria-selected={activeSection === tab.id} aria-controls={`inspector-${tab.id}`} id={`inspector-tab-${tab.id}`} onClick={() => selectSection(tab.id)} className={`min-h-10 border-r border-slate-400 px-2 py-2 text-xs font-bold last:border-r-0 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${activeSection === tab.id ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 hover:bg-slate-100'}`}>{tab.label}</button>)}
+    <div role="tablist" aria-label="Job inspector sections" className="mt-5 grid grid-cols-3 rounded-sm border border-slate-300 bg-slate-50 p-1">
+      {tabs.map((tab) => <button key={tab.id} type="button" role="tab" aria-selected={activeSection === tab.id} aria-controls={`inspector-${tab.id}`} id={`inspector-tab-${tab.id}`} onClick={() => selectSection(tab.id)} className={`min-h-9 rounded-sm px-2 py-2 text-xs font-bold focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${activeSection === tab.id ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white hover:text-slate-950'}`}>{tab.label}</button>)}
       </div>
 
       <div role="tabpanel" id={`inspector-${activeSection}`} aria-labelledby={`inspector-tab-${activeSection}`}>

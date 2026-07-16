@@ -25,7 +25,7 @@ type TransactionRow = {
 };
 
 const fieldClass =
-  'w-full border border-slate-400 bg-white px-3 py-2 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900';
+  'h-9 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-700 focus:ring-2 focus:ring-blue-100';
 
 function formatDateTime(value: string | null) {
   if (!value) return '—';
@@ -184,9 +184,9 @@ export default function ActivityPage() {
 
   return (
     <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-6 sm:py-6">
-      <div className="border border-slate-400 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.08)]">
-        <div className="border-b border-slate-300 bg-white px-4 py-3"><h1 className="text-xl font-black tracking-tight text-slate-950">Inventory Activity</h1><p className="mt-1 text-xs text-slate-600">Inventory receipts, usage, transfers, and adjustments.</p></div>
-        <div className="border-b border-slate-300 bg-[#f6f7f9] p-4">
+      <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 bg-white px-4 py-4"><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Operational ledger</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Inventory Activity</h1><p className="mt-1 text-sm text-slate-600">Inventory receipts, usage, transfers, and adjustments.</p></div>
+        <div className="border-b border-slate-200 bg-white p-4">
           <div>
             <label
               htmlFor="activity-search"
@@ -205,17 +205,17 @@ export default function ActivityPage() {
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <span id="activity-filter-label" className="shrink-0 text-sm font-bold text-slate-700">Show</span>
-            <div role="group" aria-labelledby="activity-filter-label" className="inline-flex h-9 items-stretch border border-slate-400 bg-white">
+            <div role="group" aria-labelledby="activity-filter-label" className="inline-flex h-9 items-stretch rounded-sm border border-slate-300 bg-slate-50 p-0.5">
               {(['all', 'intake', 'outtake', 'adjustment'] as TransactionTypeFilter[]).map((filter) => (
                 <button
                   key={filter}
                   type="button"
                   aria-pressed={typeFilter === filter}
                   onClick={() => setTypeFilter(filter)}
-                  className={`h-full border-l border-slate-300 px-3 text-center text-[10px] font-bold uppercase tracking-[0.09em] transition first:border-l-0 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
+                  className={`h-full rounded-sm px-3 text-center text-[10px] font-bold uppercase tracking-[0.09em] transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
                     typeFilter === filter
                       ? 'bg-slate-900 text-white'
-                      : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-950'
+                      : 'text-slate-600 hover:bg-white hover:text-slate-950'
                   }`}
                 >
                   {filterLabel(filter)}
@@ -251,15 +251,15 @@ export default function ActivityPage() {
               <div className="hidden overflow-x-auto md:block">
                 <table className="w-full min-w-[1080px] border-collapse text-sm">
               <thead>
-                <tr className="border-b border-slate-400 bg-[#dbe2ea] text-[11px] uppercase tracking-[0.14em] text-slate-800">
-                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Date</th>
-                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Type</th>
-                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Vendor</th>
-                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Material</th>
-                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Size</th>
-                  <th className="border-r border-slate-400 px-3 py-2 text-right font-black">Qty</th>
-                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Unit</th>
-                  <th className="border-r border-slate-400 px-3 py-2 text-left font-black">Location</th>
+                <tr className="border-b border-slate-300 bg-slate-100 text-[10px] uppercase tracking-[0.12em] text-slate-700">
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Date</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Type</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Vendor</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Material</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Size</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-right font-black">Qty</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Unit</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Location</th>
                   <th className="px-3 py-2 text-left font-black">Open</th>
                 </tr>
               </thead>
