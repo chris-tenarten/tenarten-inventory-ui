@@ -12,6 +12,7 @@ import type {
   ProductionJob,
   ProductionStatus,
 } from '../types';
+import { productionValuesEqual } from '../update-normalization';
 
 type Props = {
   jobs: ProductionJob[];
@@ -69,10 +70,10 @@ const materialStatuses: Array<{ value: MaterialStatus; label: string }> = [
 ];
 
 const headerClass =
-  'whitespace-nowrap border-b border-r border-slate-400 bg-slate-100 px-1.5 py-2 text-center text-[9px] font-bold uppercase tracking-[0.08em] text-slate-600 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600';
+  'whitespace-nowrap border-b border-r border-slate-400 bg-slate-100 px-1 py-1.5 text-center text-[8px] font-bold uppercase tracking-[0.07em] text-slate-600 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600';
 const cellClass = 'border-b border-r border-slate-300 bg-white p-0 align-top';
 const inputClass =
-  'h-8 w-full min-w-0 border-0 bg-transparent px-1.5 text-xs text-slate-800 outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600 [&[type=date]]:text-center [&[type=number]]:text-right';
+  'h-7 w-full min-w-0 truncate border-0 bg-transparent px-1 text-[11px] text-slate-800 outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600 [&[type=date]]:text-center [&[type=number]]:text-right';
 const selectClass = `${inputClass} pr-6 text-center`;
 
 function blankRow(): EditableRow {
@@ -174,8 +175,10 @@ function validateDraft(row: EditableRow) {
   return '';
 }
 
+type NonScheduleEditableField = Exclude<EditableField, 'plannedStart' | 'plannedEnd'>;
+
 function fieldUpdate(
-  field: EditableField,
+  field: NonScheduleEditableField,
   row: EditableRow,
 ): ProductionJobUpdate {
   switch (field) {
@@ -193,10 +196,6 @@ function fieldUpdate(
       return { deposit_date: row.depositDate || null };
     case 'requestedDeliveryDate':
       return { requested_delivery_date: row.requestedDeliveryDate || null };
-    case 'plannedStart':
-      return { planned_start: row.plannedStart || null };
-    case 'plannedEnd':
-      return { planned_end: row.plannedEnd || null };
     case 'estimatedManHours':
       return { estimated_man_hours: optionalNumber(row.estimatedManHours) };
     case 'estimatedCalendarDays':
@@ -256,7 +255,7 @@ function validateField(field: EditableField, row: EditableRow) {
 
 function StateLabel({ state }: { state: SaveState }) {
   const labels: Partial<Record<SaveState, string>> = {
-    dirty: 'Unsaved',
+    dirty: 'Editing',
     saving: 'Saving…',
     saved: 'Saved',
     error: 'Could not save',
@@ -378,6 +377,22 @@ export default function ProductionTable({
       return;
     }
 
+    const changes = fieldUpdate(field, row);
+    const [changedField, normalizedValue] = Object.entries(changes)[0] as [keyof ProductionJob, unknown];
+    if (productionValuesEqual(changedField, job[changedField], normalizedValue)) {
+      setRows((current) => ({ ...current, [job.id]: toRow(job) }));
+      setStates((current) => ({ ...current, [job.id]: 'idle' }));
+      return;
+    }
+    if (changedField === 'estimated_man_hours' && job.estimated_man_hours !== null && normalizedValue === null) {
+      const confirmed = window.confirm('Clear labor estimate?\n\nThis removes the current estimate. You can enter a new one later.');
+      if (!confirmed) {
+        setRows((current) => ({ ...current, [job.id]: toRow(job) }));
+        setStates((current) => ({ ...current, [job.id]: 'idle' }));
+        return;
+      }
+    }
+
     const activeFields = savingFieldsRef.current[job.id] ?? new Set();
     if (activeFields.has(field)) return;
     activeFields.add(field);
@@ -387,7 +402,7 @@ export default function ProductionTable({
     setErrors((current) => ({ ...current, [job.id]: '' }));
 
     try {
-      const updated = await onUpdateJob(job.id, fieldUpdate(field, row));
+      const updated = await onUpdateJob(job.id, changes);
       setRows((current) => ({ ...current, [job.id]: toRow(updated) }));
       setStates((current) => ({ ...current, [job.id]: 'saved' }));
       window.setTimeout(() => {
@@ -442,39 +457,39 @@ export default function ProductionTable({
 
     return (
       <>
-        <td className={`${cellClass} sticky left-0 z-20 min-w-[105px]`}>
+        <td className={`${cellClass} sticky left-0 z-20 min-w-[90px]`}>
           <input value={row.jobNumber} onChange={(e) => onChange('jobNumber', e.target.value)} onBlur={blur('jobNumber')} onKeyDown={blurOnEnter} placeholder="Job #" className={`${inputClass} bg-white`} />
         </td>
-        <td className={`${cellClass} sticky left-[105px] z-20 min-w-[215px]`}>
+        <td className={`${cellClass} sticky left-[90px] z-20 min-w-[200px]`}>
           <div className="relative bg-white">
             <input ref={nameRef} value={row.name} title={row.name} onChange={(e) => onChange('name', e.target.value)} onBlur={blur('name')} onKeyDown={blurOnEnter} placeholder="Project name *" className={`${inputClass} bg-white pr-16 font-semibold text-slate-950`} />
             {projectAttachmentIndicator}
           </div>
         </td>
-        <td className={`${cellClass} min-w-[190px]`}><input value={row.customer} title={row.customer} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[130px]`}><input value={row.estimateNumber} onChange={(e) => onChange('estimateNumber', e.target.value)} onBlur={blur('estimateNumber')} onKeyDown={blurOnEnter} placeholder="Estimate #" className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[140px]`}><input value={row.workOrderNumber} onChange={(e) => onChange('workOrderNumber', e.target.value)} onBlur={blur('workOrderNumber')} onKeyDown={blurOnEnter} placeholder="Work order #" className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[150px]`}><input type="date" value={row.depositDate} onChange={(e) => onChange('depositDate', e.target.value)} onBlur={blur('depositDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[160px]`}><input type="date" value={row.requestedDeliveryDate} onChange={(e) => onChange('requestedDeliveryDate', e.target.value)} onBlur={blur('requestedDeliveryDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[145px]`}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned start date, unsaved' : undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={`${inputClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-14 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-1 text-[8px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>
-        <td className={`${cellClass} min-w-[145px]`}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned finish date, unsaved' : undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={`${inputClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-14 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-1 text-[8px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>
-        <td className={`${cellClass} min-w-[120px]`}><input type="number" min="0" step="0.25" value={row.estimatedManHours} onChange={(e) => onChange('estimatedManHours', e.target.value)} onBlur={blur('estimatedManHours')} onKeyDown={blurOnEnter} placeholder="Hours" className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[140px]`}><input type="number" min="0" step="1" value={row.estimatedCalendarDays} onChange={(e) => onChange('estimatedCalendarDays', e.target.value)} onBlur={blur('estimatedCalendarDays')} onKeyDown={blurOnEnter} placeholder="Days" className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[135px]`}><input value={row.colorPlateNumber} onChange={(e) => onChange('colorPlateNumber', e.target.value)} onBlur={blur('colorPlateNumber')} onKeyDown={blurOnEnter} placeholder="Color plate #" className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[150px]`}><input type="date" value={row.sampleSubmittedDate} onChange={(e) => onChange('sampleSubmittedDate', e.target.value)} onBlur={blur('sampleSubmittedDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[145px]`}><input type="date" value={row.approvalDate} onChange={(e) => onChange('approvalDate', e.target.value)} onBlur={blur('approvalDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
-        <td className={`${cellClass} min-w-[140px]`}>
+        <td className={`${cellClass} min-w-[160px]`}><input value={row.customer} title={row.customer} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[90px]`}><input value={row.estimateNumber} title={row.estimateNumber} onChange={(e) => onChange('estimateNumber', e.target.value)} onBlur={blur('estimateNumber')} onKeyDown={blurOnEnter} placeholder="Estimate #" className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[90px]`}><input value={row.workOrderNumber} title={row.workOrderNumber} onChange={(e) => onChange('workOrderNumber', e.target.value)} onBlur={blur('workOrderNumber')} onKeyDown={blurOnEnter} placeholder="Work order #" className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[125px]`}><input type="date" value={row.depositDate} onChange={(e) => onChange('depositDate', e.target.value)} onBlur={blur('depositDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[125px]`}><input type="date" value={row.requestedDeliveryDate} onChange={(e) => onChange('requestedDeliveryDate', e.target.value)} onBlur={blur('requestedDeliveryDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[125px]`}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned start date, unsaved' : undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={`${inputClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-12 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-1 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>
+        <td className={`${cellClass} min-w-[125px]`}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned finish date, unsaved' : undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={`${inputClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-12 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-1 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>
+        <td className={`${cellClass} min-w-[75px]`}><input type="number" min="0" step="0.25" value={row.estimatedManHours} onChange={(e) => onChange('estimatedManHours', e.target.value)} onBlur={blur('estimatedManHours')} onKeyDown={blurOnEnter} placeholder="Hours" className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[65px]`}><input type="number" min="0" step="1" value={row.estimatedCalendarDays} onChange={(e) => onChange('estimatedCalendarDays', e.target.value)} onBlur={blur('estimatedCalendarDays')} onKeyDown={blurOnEnter} placeholder="Days" className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[100px]`}><input value={row.colorPlateNumber} title={row.colorPlateNumber} onChange={(e) => onChange('colorPlateNumber', e.target.value)} onBlur={blur('colorPlateNumber')} onKeyDown={blurOnEnter} placeholder="Color plate #" className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[125px]`}><input type="date" value={row.sampleSubmittedDate} onChange={(e) => onChange('sampleSubmittedDate', e.target.value)} onBlur={blur('sampleSubmittedDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[125px]`}><input type="date" value={row.approvalDate} onChange={(e) => onChange('approvalDate', e.target.value)} onBlur={blur('approvalDate')} onKeyDown={blurOnEnter} className={inputClass} /></td>
+        <td className={`${cellClass} min-w-[105px]`}>
           <select value={row.materialStatus} onChange={(e) => onChange('materialStatus', e.target.value as MaterialStatus)} onBlur={blur('materialStatus')} onKeyDown={blurOnEnter} className={selectClass}>
             {materialStatuses.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </td>
-        <td className={`${cellClass} min-w-[155px]`}>
+        <td className={`${cellClass} min-w-[120px]`}>
           <select value={row.productionStatus} onChange={(e) => onChange('productionStatus', e.target.value as ProductionStatus)} onBlur={blur('productionStatus')} onKeyDown={blurOnEnter} className={selectClass}>
             {productionStatuses.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </td>
-        <td className={`${cellClass} min-w-[280px]`}>
-          <textarea value={row.remarks} title={row.remarks} onChange={(e) => onChange('remarks', e.target.value)} onBlur={blur('remarks')} placeholder="Remarks" rows={1} className="min-h-8 w-full resize-y border-0 bg-transparent px-1.5 py-1.5 text-xs outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600" />
+        <td className={`${cellClass} min-w-[200px]`}>
+          <textarea value={row.remarks} title={row.remarks} onChange={(e) => onChange('remarks', e.target.value)} onBlur={blur('remarks')} placeholder="Remarks" rows={1} className="min-h-7 w-full resize-y border-0 bg-transparent px-1 py-1 text-[11px] outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600" />
         </td>
       </>
     );
@@ -486,8 +501,8 @@ export default function ProductionTable({
         <table className="min-w-max border-separate border-spacing-0">
           <thead className="sticky top-0 z-30">
             <tr>
-              <th className={`${headerClass} sticky left-0 z-40 min-w-[105px]`}>Job #</th>
-              <th className={`${headerClass} sticky left-[105px] z-40 min-w-[215px]`}>Project</th>
+              <th className={`${headerClass} sticky left-0 z-40 min-w-[90px]`}>Job #</th>
+              <th className={`${headerClass} sticky left-[90px] z-40 min-w-[200px]`}>Project</th>
               <th className={headerClass}>Customer</th>
               <th className={headerClass}>Estimate</th>
               <th tabIndex={0} title="Work Order Number" className={headerClass}>WO #</th>
@@ -503,7 +518,7 @@ export default function ProductionTable({
               <th tabIndex={0} title="Material Readiness Status" className={headerClass}>Material</th>
               <th tabIndex={0} title="Production Status" className={headerClass}>Status</th>
               <th className={headerClass}>Remarks</th>
-              <th className={`${headerClass} min-w-[115px]`}>Forms</th>
+              <th className={`${headerClass} min-w-[88px]`}>Forms</th>
             </tr>
           </thead>
 
@@ -551,12 +566,12 @@ export default function ProductionTable({
                       </button>
                     ) : undefined,
                   )}
-                  <td className={`${cellClass} min-w-[115px] px-2 py-1.5`}>
-                    <button type="button" onClick={() => onOpenForms(job)} className="inline-flex h-8 w-full items-center justify-center gap-1.5 border border-slate-400 bg-white px-2 text-[10px] font-bold uppercase tracking-[0.06em] text-slate-700 hover:bg-slate-100">
+                  <td className={`${cellClass} min-w-[88px] p-0.5`}>
+                    <button type="button" onClick={() => onOpenForms(job)} className="inline-flex h-7 w-full items-center justify-center gap-1 border border-slate-400 bg-white px-1 text-[9px] font-bold uppercase tracking-[0.05em] text-slate-700 hover:bg-slate-100">
                       <FileText className="h-3.5 w-3.5" />
                       Forms
                     </button>
-                    <div className="mt-1 min-h-3 text-center"><StateLabel state={state} /></div>
+                    <div className="text-center leading-none"><StateLabel state={state} /></div>
                     {errors[job.id] && <div className="mt-1 max-w-[180px] text-xs font-semibold leading-4 text-red-700">{errors[job.id]}</div>}
                   </td>
                 </tr>
@@ -566,8 +581,8 @@ export default function ProductionTable({
             {isAdding && (
               <tr className="bg-blue-50/40">
                 {renderCells(draft, changeDraft, undefined, draftNameRef)}
-                <td className={`${cellClass} min-w-[115px] px-2 py-1.5`}>
-                  <button type="button" disabled className="inline-flex h-8 w-full items-center justify-center gap-1.5 border border-slate-300 bg-slate-100 px-2 text-[10px] font-bold uppercase tracking-[0.06em] text-slate-400"><FileText className="h-3.5 w-3.5" /> Save First</button>
+                <td className={`${cellClass} min-w-[88px] p-0.5`}>
+                  <button type="button" disabled className="inline-flex h-7 w-full items-center justify-center gap-1 border border-slate-300 bg-slate-100 px-1 text-[9px] font-bold uppercase tracking-[0.05em] text-slate-400"><FileText className="h-3.5 w-3.5" /> Save First</button>
                 </td>
               </tr>
             )}

@@ -33,6 +33,7 @@ type TimelineDay = {
 };
 
 type InteractionMode = 'move' | 'resize-start' | 'resize-end';
+type TimelineZoom = 'days' | 'weeks' | 'months' | 'year';
 
 type ScheduleInteraction = {
   jobId: string;
@@ -46,13 +47,17 @@ type ScheduleInteraction = {
   previewStart: string;
   previewEnd: string;
   hasMoved: boolean;
+  dayWidth: number;
 };
 
-const DAY_WIDTH = 42;
 const LABEL_WIDTH = 320;
-const MINIMUM_TIMELINE_DAYS = 42;
-const TIMELINE_PADDING_DAYS = 7;
 const DRAG_THRESHOLD_PX = 4;
+const ZOOM_OPTIONS: Array<{ value: TimelineZoom; label: string; dayWidth: number; minimumDays: number; paddingDays: number }> = [
+  { value: 'days', label: 'Days', dayWidth: 64, minimumDays: 21, paddingDays: 3 },
+  { value: 'weeks', label: 'Weeks', dayWidth: 42, minimumDays: 42, paddingDays: 7 },
+  { value: 'months', label: 'Months', dayWidth: 20, minimumDays: 180, paddingDays: 30 },
+  { value: 'year', label: 'Year', dayWidth: 10, minimumDays: 365, paddingDays: 45 },
+];
 
 
 function startOfLocalDay(date: Date) {
@@ -80,7 +85,7 @@ function intensityLabel(job: ProductionJob, start: string, end: string) {
 }
 
 function proposedDates(interaction: ScheduleInteraction, clientX: number) {
-  const deltaDays = Math.round((clientX - interaction.originClientX) / DAY_WIDTH);
+  const deltaDays = Math.round((clientX - interaction.originClientX) / interaction.dayWidth);
 
   if (interaction.mode === 'move') {
     return {
@@ -98,7 +103,8 @@ function proposedDates(interaction: ScheduleInteraction, clientX: number) {
   return { start: interaction.originalStart, end: candidate < interaction.originalStart ? interaction.originalStart : candidate };
 }
 
-function createTimeline(jobs: ProductionJob[]) {
+function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom) {
+  const zoomOption = ZOOM_OPTIONS.find((option) => option.value === zoom) ?? ZOOM_OPTIONS[1];
   const today = startOfLocalDay(new Date());
   const timelineDates = jobs.flatMap((job) => [job.planned_start, job.planned_end, job.requested_delivery_date]
     .filter((value): value is string => Boolean(value))
@@ -109,9 +115,9 @@ function createTimeline(jobs: ProductionJob[]) {
   const latestJobDate = timelineDates.length > 0
     ? new Date(Math.max(...timelineDates.map((date) => date.getTime())))
     : addCalendarDays(today, 28);
-  const earliest = addCalendarDays(earliestJobDate < today ? earliestJobDate : today, -TIMELINE_PADDING_DAYS);
-  const minimumEnd = addCalendarDays(earliest, MINIMUM_TIMELINE_DAYS - 1);
-  const paddedLatest = addCalendarDays(latestJobDate > today ? latestJobDate : today, TIMELINE_PADDING_DAYS);
+  const earliest = addCalendarDays(earliestJobDate < today ? earliestJobDate : today, -zoomOption.paddingDays);
+  const minimumEnd = addCalendarDays(earliest, zoomOption.minimumDays - 1);
+  const paddedLatest = addCalendarDays(latestJobDate > today ? latestJobDate : today, zoomOption.paddingDays);
   const latest = paddedLatest > minimumEnd ? paddedLatest : minimumEnd;
   const totalDays = differenceInCalendarDays(latest, earliest) + 1;
   const days: TimelineDay[] = [];
@@ -134,10 +140,13 @@ function createTimeline(jobs: ProductionJob[]) {
 
 export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule, onSelectJob }: ProductionGanttProps) {
   const [interaction, setInteraction] = useState<ScheduleInteraction | null>(null);
+  const [zoom, setZoom] = useState<TimelineZoom>('weeks');
   const displayJobs = useMemo(() => jobs.map((job) => stagedSchedule?.jobId === job.id
     ? { ...job, planned_start: stagedSchedule.proposedStart, planned_end: stagedSchedule.proposedEnd }
     : job), [jobs, stagedSchedule]);
-  const timeline = useMemo(() => createTimeline(displayJobs), [displayJobs]);
+  const timeline = useMemo(() => createTimeline(displayJobs, zoom), [displayJobs, zoom]);
+  const zoomOption = ZOOM_OPTIONS.find((option) => option.value === zoom) ?? ZOOM_OPTIONS[1];
+  const dayWidth = zoomOption.dayWidth;
 
   useEffect(() => {
     if (!interaction) return;
@@ -211,6 +220,7 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
       previewStart: start,
       previewEnd: end,
       hasMoved: false,
+      dayWidth,
     });
   }
 
@@ -254,7 +264,7 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
   }
 
   const { start, days } = timeline;
-  const timelineWidth = days.length * DAY_WIDTH;
+  const timelineWidth = days.length * dayWidth;
   const todayIndex = days.findIndex((day) => day.isToday);
   const activeJob = interaction ? jobs.find((job) => job.id === interaction.jobId) : null;
   const currentIntensity = activeJob && interaction
@@ -266,7 +276,15 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
 
   return (
     <div className="overflow-hidden border border-slate-400 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.07)]">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-slate-300 bg-slate-50 px-4 py-2 text-[10px] font-semibold text-slate-700" aria-label="Timeline legend">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-slate-300 bg-slate-50 px-4 py-2 text-[10px] font-semibold text-slate-700">
+        <span id="timeline-zoom-label" className="font-bold uppercase tracking-[0.12em] text-slate-500">Zoom</span>
+        <div role="group" aria-labelledby="timeline-zoom-label" className="inline-flex h-8 items-stretch border border-slate-400 bg-white">
+          {ZOOM_OPTIONS.map((option) => (
+            <button key={option.value} type="button" aria-pressed={zoom === option.value} disabled={Boolean(interaction)} onClick={() => setZoom(option.value)} className={`h-full border-l border-slate-300 px-3 text-[9px] font-bold uppercase tracking-[0.08em] first:border-l-0 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 ${zoom === option.value ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}>{option.label}</button>
+          ))}
+        </div>
+        <span className="h-5 w-px bg-slate-300" aria-hidden="true" />
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Timeline legend">
         <span className="font-bold uppercase tracking-[0.12em] text-slate-500">Legend</span>
         {productionStatusVisuals.map((visual) => (
           <span key={visual.value} className="inline-flex items-center gap-1.5 whitespace-nowrap">
@@ -287,6 +305,7 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
           Today
         </span>
         <span className="whitespace-nowrap text-slate-500">h/day = estimated labor ÷ scheduled calendar days</span>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <div style={{ minWidth: LABEL_WIDTH + timelineWidth }}>
@@ -300,7 +319,7 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                   const previousDay = index > 0 ? days[index - 1] : null;
                   const showMonth = index === 0 || previousDay?.date.getMonth() !== day.date.getMonth();
                   return (
-                    <div key={`month-${day.key}`} className="shrink-0" style={{ width: DAY_WIDTH }}>
+                    <div key={`month-${day.key}`} className="shrink-0" style={{ width: dayWidth }}>
                       {showMonth && <div className="whitespace-nowrap px-2 pt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">{day.monthLabel}</div>}
                     </div>
                   );
@@ -308,9 +327,10 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
               </div>
               <div className="flex h-10">
                 {days.map((day) => (
-                  <div key={day.key} className={`flex shrink-0 flex-col items-center justify-center border-r border-slate-200 text-[10px] ${day.isToday ? 'bg-blue-100 font-bold text-blue-900' : day.isWeekend ? 'bg-slate-200/70 text-slate-500' : 'text-slate-600'}`} style={{ width: DAY_WIDTH }}>
-                    <span>{day.weekday}</span>
-                    <span className="text-xs font-bold">{day.dayNumber}</span>
+                  <div key={day.key} title={day.date.toLocaleDateString()} className={`flex shrink-0 flex-col items-center justify-center border-r border-slate-200 text-[10px] ${day.isToday ? 'bg-blue-100 font-bold text-blue-900' : day.isWeekend ? 'bg-slate-200/70 text-slate-500' : 'text-slate-600'}`} style={{ width: dayWidth }}>
+                    {(zoom === 'days' || zoom === 'weeks') && <span>{day.weekday}</span>}
+                    {(zoom === 'days' || zoom === 'weeks' || (zoom === 'months' && (day.date.getDay() === 1 || day.dayNumber === 1))) && <span className="text-xs font-bold">{day.dayNumber}</span>}
+                    {zoom === 'year' && day.dayNumber === 1 && <span className="text-[8px] font-bold uppercase">{day.date.toLocaleDateString(undefined, { month: 'narrow' })}</span>}
                   </div>
                 ))}
               </div>
@@ -329,6 +349,8 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
             const duration = hasSchedule && displayStart && displayEnd
               ? inclusiveCalendarDays(displayStart, displayEnd)
               : 0;
+            const barWidth = Math.max(18, duration * dayWidth - 6);
+            const handleWidth = Math.min(12, Math.max(5, barWidth / 3));
             const deliveryOffset = hasDeliveryMilestone
               ? differenceInCalendarDays(parseScheduleDate(job.requested_delivery_date!), start)
               : 0;
@@ -357,17 +379,17 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
 
                 <div className="relative shrink-0" style={{ width: timelineWidth }}>
                   <div className="absolute inset-0 flex">
-                    {days.map((day) => <div key={`${job.id}-${day.key}`} className={`h-full shrink-0 border-r border-slate-200 ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: DAY_WIDTH }} />)}
+                    {days.map((day) => <div key={`${job.id}-${day.key}`} className={`h-full shrink-0 border-r border-slate-200 ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: dayWidth }} />)}
                   </div>
-                  {todayIndex >= 0 && <div className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-blue-600" style={{ left: todayIndex * DAY_WIDTH + DAY_WIDTH / 2 }} />}
+                  {todayIndex >= 0 && <div className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-blue-600" style={{ left: todayIndex * dayWidth + dayWidth / 2 }} />}
 
                   {isStaged && stagedSchedule?.persistedStart && stagedSchedule.persistedEnd && (
                     <div
                       aria-label={`Last saved schedule for ${job.name}: ${stagedSchedule.persistedStart} through ${stagedSchedule.persistedEnd}`}
                       className="pointer-events-none absolute top-1/2 z-[2] h-9 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/35"
                       style={{
-                        left: differenceInCalendarDays(parseScheduleDate(stagedSchedule.persistedStart), start) * DAY_WIDTH + 3,
-                        width: Math.max(DAY_WIDTH - 6, inclusiveCalendarDays(stagedSchedule.persistedStart, stagedSchedule.persistedEnd) * DAY_WIDTH - 6),
+                        left: differenceInCalendarDays(parseScheduleDate(stagedSchedule.persistedStart), start) * dayWidth + 3,
+                        width: Math.max(18, inclusiveCalendarDays(stagedSchedule.persistedStart, stagedSchedule.persistedEnd) * dayWidth - 6),
                       }}
                     >
                       <span className="sr-only">Ghost bar showing the last saved schedule.</span>
@@ -377,7 +399,7 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                   {hasSchedule && displayStart && displayEnd && (
                     <div
                       className={`absolute top-1/2 z-[3] h-9 -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${statusVisual.className} ${activeInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isStaged ? 'ring-2 ring-amber-300 ring-offset-1' : ''}`}
-                      style={{ left: startOffset * DAY_WIDTH + 3, width: Math.max(DAY_WIDTH - 6, duration * DAY_WIDTH - 6), backgroundImage: statusVisual.pattern }}
+                      style={{ left: startOffset * dayWidth + 3, width: barWidth, backgroundImage: statusVisual.pattern }}
                       title={`${job.name}: ${statusVisual.label}; ${displayStart} through ${displayEnd}; ${intensityLabel(job, displayStart, displayEnd)}`}
                     >
                       <button
@@ -388,7 +410,7 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                         onKeyDown={(event) => handleScheduleKey(event, job, 'resize-start')}
                         onDragStart={(event) => event.preventDefault()}
                         className="group/handle absolute inset-y-0 left-0 z-20 border-r border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
-                        style={{ width: 12, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}
+                        style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}
                       >
                         <span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" />
                       </button>
@@ -400,7 +422,7 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                         onKeyDown={(event) => handleScheduleKey(event, job, 'move')}
                         onDragStart={(event) => event.preventDefault()}
                         className="absolute inset-y-0 z-10 flex min-w-0 items-center gap-2 overflow-hidden px-1.5 text-left text-[10px] font-bold uppercase tracking-[0.05em] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
-                        style={{ left: 12, right: 12, cursor: activeInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: 'none' }}
+                        style={{ left: handleWidth, right: handleWidth, cursor: activeInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: 'none' }}
                       >
                         {duration >= 2 && <span className="pointer-events-none truncate">{job.name}</span>}
                         {isStaged && duration >= 3 && <span className="pointer-events-none shrink-0 bg-amber-100/95 px-1 text-[8px] text-amber-950">Unsaved</span>}
@@ -416,7 +438,7 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                         onKeyDown={(event) => handleScheduleKey(event, job, 'resize-end')}
                         onDragStart={(event) => event.preventDefault()}
                         className="group/handle absolute inset-y-0 right-0 z-20 border-l border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
-                        style={{ width: 12, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}
+                        style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}
                       >
                         <span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" />
                       </button>
@@ -424,7 +446,7 @@ export default function ProductionGantt({ jobs, stagedSchedule, onStageSchedule,
                   )}
 
                   {hasDeliveryMilestone && (
-                    <div className="absolute top-1/2 z-[3] -translate-x-1/2 -translate-y-1/2" style={{ left: deliveryOffset * DAY_WIDTH + DAY_WIDTH / 2 }} title={`Requested delivery: ${job.requested_delivery_date}`}>
+                    <div className="absolute top-1/2 z-[3] -translate-x-1/2 -translate-y-1/2" style={{ left: deliveryOffset * dayWidth + dayWidth / 2 }} title={`Requested delivery: ${job.requested_delivery_date}`}>
                       <div className="h-5 w-5 rotate-45 border-2 border-violet-800 bg-violet-200 shadow-sm" />
                       <div className="absolute left-5 top-1/2 w-40 -translate-y-1/2 pl-2 text-[10px] font-bold uppercase tracking-[0.05em] text-violet-900">Delivery</div>
                     </div>
