@@ -6,6 +6,7 @@ import type {
   NewProductionJob,
   ProductionJob,
 } from './types';
+import { productionValuesEqual } from './update-normalization';
 
 const JOB_COLUMNS = [
   'id',
@@ -64,8 +65,6 @@ export type ProductionJobUpdate = Partial<
     | 'estimated_man_hours'
     | 'estimated_calendar_days'
     | 'requested_delivery_date'
-    | 'planned_start'
-    | 'planned_end'
     | 'production_status'
     | 'material_status'
     | 'remarks'
@@ -130,16 +129,21 @@ export async function createProductionJob(
 }
 
 export async function updateProductionJob(
-  jobId: string,
+  currentJob: ProductionJob,
   changes: ProductionJobUpdate,
 ): Promise<ProductionJob> {
-  if ('planned_start' in changes || 'planned_end' in changes) {
-    throw new Error('Planned dates must use the guarded Production schedule workflow.');
-  }
+  const effectiveChanges = Object.fromEntries(
+    Object.entries(changes).filter(([field, value]) => (
+      !productionValuesEqual(field as keyof ProductionJob, currentJob[field as keyof ProductionJob], value)
+    )),
+  ) as ProductionJobUpdate;
+  const changedFields = Object.keys(effectiveChanges) as Array<keyof ProductionJobUpdate>;
+  if (changedFields.length === 0) return currentJob;
+
   const { data, error } = await supabase
     .from('jobs')
-    .update(changes)
-    .eq('id', jobId)
+    .update(effectiveChanges)
+    .eq('id', currentJob.id)
     .select(JOB_COLUMNS)
     .single();
 
@@ -148,10 +152,15 @@ export async function updateProductionJob(
   const updatedJob = data as unknown as ProductionJob;
 
   const { error: activityError } = await supabase.from('job_activity').insert({
-    job_id: jobId,
+    job_id: currentJob.id,
     event_type: 'job_updated',
     summary: `Job updated: ${updatedJob.name}`,
-    metadata: { changed_fields: Object.keys(changes), changes },
+    metadata: {
+      changed_fields: changedFields,
+      changes: effectiveChanges,
+      old_values: Object.fromEntries(changedFields.map((field) => [field, currentJob[field]])),
+      new_values: Object.fromEntries(changedFields.map((field) => [field, updatedJob[field]])),
+    },
   });
 
   if (activityError) {
