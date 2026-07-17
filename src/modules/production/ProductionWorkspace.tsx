@@ -10,6 +10,7 @@ import {
 } from 'react';
 
 import ProductionGantt from './components/ProductionGantt';
+import PlanningIssuesPanel from './components/PlanningIssuesPanel';
 import ProductionJobInspector from './components/ProductionJobInspector';
 import ProductionQueue from './components/ProductionQueue';
 import ProductionTable from './components/ProductionTable';
@@ -89,6 +90,7 @@ export default function ProductionWorkspace() {
     () => new Set(),
   );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [planningIssuesOpen, setPlanningIssuesOpen] = useState(false);
   const [stagedSchedules, setStagedSchedules] = useState<StagedSchedules>({});
   const [scheduleSaveState, setScheduleSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [scheduleMessage, setScheduleMessage] = useState('');
@@ -352,8 +354,18 @@ export default function ProductionWorkspace() {
   )), [filteredJobs, stagedSchedules]);
   const stagedJob = stagedSchedule ? jobs.find((job) => job.id === stagedSchedule.jobId) ?? null : null;
   const selectedJob = selectedJobId ? jobs.find(job=>job.id===selectedJobId)??null : null;
-  const planningCount = jobs.filter(job=>getJobReadiness(job).state!=='ready').length;
-  const notScheduledCount = jobs.filter(job=>getJobReadiness(job).state==='not_scheduled').length;
+  const planningIssueSummary = useMemo(() => {
+    const activeJobs = jobs.filter((job) => !['complete', 'cancelled'].includes(job.production_status));
+    const issueFields = activeJobs.map((job) => getJobReadiness(stagedSchedules[job.id]
+      ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
+      : job).missingFields).filter((fields) => fields.length > 0);
+    return {
+      total: issueFields.length,
+      labor: issueFields.filter((fields) => fields.includes('estimated_man_hours')).length,
+      customer: issueFields.filter((fields) => fields.includes('customer')).length,
+      schedule: issueFields.filter((fields) => fields.includes('planned_start') || fields.includes('planned_end')).length,
+    };
+  }, [jobs, stagedSchedules]);
   const selectJob = (job:ProductionJob, focus?:string) => {
     if (document.activeElement instanceof HTMLElement) inspectorOpenerRef.current = document.activeElement;
     setSelectedJobId(job.id);
@@ -515,6 +527,10 @@ export default function ProductionWorkspace() {
             className="h-9 min-w-0 flex-1 rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
           />
 
+          {activeView === 'spreadsheet' && (
+            <div id="production-table-columns-toolbar-slot" className="relative shrink-0" />
+          )}
+
           <div ref={filterRef} className="relative shrink-0">
             <button
               type="button"
@@ -596,7 +612,7 @@ export default function ProductionWorkspace() {
             {loadError}
           </div>
         )}
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-l-2 border-amber-500 bg-amber-50/70 px-3 py-2 text-xs text-slate-600"><span className="font-bold text-amber-900">{planningCount} jobs are Planning Needed or Not Scheduled</span><button type="button" onClick={()=>setScheduleFilters(new Set(['unscheduled']))} className="font-semibold underline decoration-slate-400 underline-offset-2 focus-visible:ring-2 focus-visible:ring-slate-700">{notScheduledCount} jobs are Not Scheduled</button></div>
+        {planningIssueSummary.total > 0 && <div className="mt-3 flex min-h-10 flex-wrap items-center gap-x-4 gap-y-2 border-l-2 border-amber-500 bg-amber-50/70 px-3 py-2 text-xs text-slate-600"><span className="font-bold text-amber-900">{planningIssueSummary.total} {planningIssueSummary.total === 1 ? 'job needs' : 'jobs need'} planning attention</span><span className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-semibold text-slate-600">{planningIssueSummary.labor > 0 && <span>{planningIssueSummary.labor} missing labor</span>}{planningIssueSummary.customer > 0 && <span>{planningIssueSummary.customer} missing customer</span>}{planningIssueSummary.schedule > 0 && <span>{planningIssueSummary.schedule} missing schedule dates</span>}</span><button type="button" onClick={() => setPlanningIssuesOpen(true)} className="h-7 border border-amber-300 bg-white px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] text-amber-900 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-700">Review issues</button></div>}
 
         {stagedSchedule && (() => {
           const hadSchedule = Boolean(stagedSchedule.persistedStart && stagedSchedule.persistedEnd);
@@ -670,6 +686,7 @@ export default function ProductionWorkspace() {
       )}
 
       {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedules[selectedJob.id]?{...selectedJob,planned_start:stagedSchedules[selectedJob.id].proposed_planned_start,planned_end:stagedSchedules[selectedJob.id].proposed_planned_end}:selectedJob} onClose={closeInspector} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
+      {planningIssuesOpen && <PlanningIssuesPanel jobs={jobs} stagedSchedules={stagedSchedules} onClose={() => setPlanningIssuesOpen(false)} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onOpenInspector={selectJob} />}
 
 
     </div>

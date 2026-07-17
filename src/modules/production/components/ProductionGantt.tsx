@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { ChevronLeft, ChevronRight, LocateFixed, Maximize2, Minus, Plus } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent } from 'react';
 
 import type { StagedSchedules } from '../schedule-staging';
@@ -14,6 +15,18 @@ import {
 } from '../schedule';
 import type { ProductionJob } from '../types';
 import { productionStatusVisuals, productionStatusVisualByValue } from '../status-visuals';
+import {
+  clampTimelineDayWidth,
+  defaultTimelinePreferences,
+  fitTimelineDayWidth,
+  parseTimelinePreferences,
+  RAIL_WIDTH_MAX,
+  RAIL_WIDTH_MIN,
+  TIMELINE_PREFERENCES_KEY,
+  TIMELINE_ZOOM_OPTIONS,
+  timelineZoomOption,
+} from '../timeline-preferences';
+import type { TimelinePreferences, TimelineZoom } from '../timeline-preferences';
 
 type ProductionGanttProps = {
   jobs: ProductionJob[];
@@ -33,7 +46,6 @@ type TimelineDay = {
 };
 
 type InteractionMode = 'move' | 'resize-start' | 'resize-end';
-type TimelineZoom = 'days' | 'weeks' | 'months' | 'year';
 
 type ScheduleInteraction = {
   jobId: string;
@@ -50,14 +62,19 @@ type ScheduleInteraction = {
   dayWidth: number;
 };
 
-const LABEL_WIDTH = 320;
 const DRAG_THRESHOLD_PX = 4;
-const ZOOM_OPTIONS: Array<{ value: TimelineZoom; label: string; dayWidth: number; minimumDays: number; paddingDays: number }> = [
-  { value: 'days', label: 'Days', dayWidth: 64, minimumDays: 21, paddingDays: 3 },
-  { value: 'weeks', label: 'Weeks', dayWidth: 42, minimumDays: 42, paddingDays: 7 },
-  { value: 'months', label: 'Months', dayWidth: 20, minimumDays: 180, paddingDays: 30 },
-  { value: 'year', label: 'Year', dayWidth: 10, minimumDays: 365, paddingDays: 45 },
-];
+const FIT_PADDING_DAYS = 2;
+const PAN_BUTTON_SPEED = 520;
+
+type TimelineScrollMetrics = {
+  scrollLeft: number;
+  maxScrollLeft: number;
+  viewportWidth: number;
+  scrollWidth: number;
+};
+
+type CanvasPan = { pointerId: number; startX: number; startScrollLeft: number };
+type NavigatorDrag = { pointerId: number; startX: number; startScrollLeft: number };
 
 
 function startOfLocalDay(date: Date) {
@@ -104,7 +121,7 @@ function proposedDates(interaction: ScheduleInteraction, clientX: number) {
 }
 
 function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom) {
-  const zoomOption = ZOOM_OPTIONS.find((option) => option.value === zoom) ?? ZOOM_OPTIONS[1];
+  const zoomOption = timelineZoomOption(zoom);
   const today = startOfLocalDay(new Date());
   const timelineDates = jobs.flatMap((job) => [job.planned_start, job.planned_end, job.requested_delivery_date]
     .filter((value): value is string => Boolean(value))
@@ -140,13 +157,89 @@ function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom) {
 
 export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule, onSelectJob }: ProductionGanttProps) {
   const [interaction, setInteraction] = useState<ScheduleInteraction | null>(null);
-  const [zoom, setZoom] = useState<TimelineZoom>('weeks');
+  const [preferences, setPreferences] = useState<TimelinePreferences>(defaultTimelinePreferences);
+  const [preferencesLoaded, setPreferencesLoaded] = useState(false);
+  const [scrollMetrics, setScrollMetrics] = useState<TimelineScrollMetrics>({ scrollLeft: 0, maxScrollLeft: 0, viewportWidth: 0, scrollWidth: 0 });
+  const [canvasPan, setCanvasPan] = useState<CanvasPan | null>(null);
+  const [navigatorDrag, setNavigatorDrag] = useState<NavigatorDrag | null>(null);
+  const [spacePressed, setSpacePressed] = useState(false);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const navigatorTrackRef = useRef<HTMLDivElement | null>(null);
+  const panFrameRef = useRef<number | null>(null);
+  const panDirectionRef = useRef(0);
+  const lastPanTimeRef = useRef(0);
+  const timelinePointerInsideRef = useRef(false);
+  const railResizeRef = useRef<{ pointerId: number; startX: number; startWidth: number } | null>(null);
+  const zoom = preferences.zoom;
+  const railWidth = preferences.railWidth;
   const displayJobs = useMemo(() => jobs.map((job) => stagedSchedules[job.id]
     ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
     : job), [jobs, stagedSchedules]);
   const timeline = useMemo(() => createTimeline(displayJobs, zoom), [displayJobs, zoom]);
-  const zoomOption = ZOOM_OPTIONS.find((option) => option.value === zoom) ?? ZOOM_OPTIONS[1];
-  const dayWidth = zoomOption.dayWidth;
+  const zoomOption = timelineZoomOption(zoom);
+  const dayWidth = preferences.dayWidths[zoom];
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setPreferences(parseTimelinePreferences(window.localStorage.getItem(TIMELINE_PREFERENCES_KEY)));
+      setPreferencesLoaded(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (!preferencesLoaded) return;
+    window.localStorage.setItem(TIMELINE_PREFERENCES_KEY, JSON.stringify(preferences));
+  }, [preferences, preferencesLoaded]);
+
+  const updateScrollMetrics = useCallback(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+    const maxScrollLeft = Math.max(0, element.scrollWidth - element.clientWidth);
+    setScrollMetrics({
+      scrollLeft: Math.min(element.scrollLeft, maxScrollLeft),
+      maxScrollLeft,
+      viewportWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth,
+    });
+  }, []);
+
+  useEffect(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+    updateScrollMetrics();
+    const observer = new ResizeObserver(updateScrollMetrics);
+    observer.observe(element);
+    if (element.firstElementChild) observer.observe(element.firstElementChild);
+    window.addEventListener('resize', updateScrollMetrics);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateScrollMetrics);
+    };
+  }, [dayWidth, railWidth, timeline.days.length, updateScrollMetrics]);
+
+  useEffect(() => {
+    function handleKeyDown(event: globalThis.KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      if (target?.matches('input, select, textarea, [contenteditable="true"]')) return;
+      if (event.code === 'Space' && !event.ctrlKey && !event.metaKey && !event.altKey && timelinePointerInsideRef.current) {
+        event.preventDefault();
+        setSpacePressed(true);
+      }
+    }
+    function handleKeyUp(event: globalThis.KeyboardEvent) {
+      if (event.code === 'Space') setSpacePressed(false);
+    }
+    function handleBlur() { setSpacePressed(false); }
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', handleBlur);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', handleBlur);
+    };
+  }, []);
 
   useEffect(() => {
     if (!interaction) return;
@@ -252,6 +345,159 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     if (start !== baselineStart || end !== baselineEnd) onStageSchedule(job, start, end);
   }
 
+  function updateDayWidth(nextWidth: number) {
+    const element = scrollRef.current;
+    const calendarViewport = Math.max(1, (element?.clientWidth ?? 0) - railWidth);
+    const centeredDay = element ? (element.scrollLeft + calendarViewport / 2) / dayWidth : 0;
+    const width = clampTimelineDayWidth(zoom, nextWidth);
+    setPreferences((current) => ({ ...current, dayWidths: { ...current.dayWidths, [zoom]: width } }));
+    requestAnimationFrame(() => {
+      if (!scrollRef.current) return;
+      scrollRef.current.scrollLeft = Math.max(0, centeredDay * width - calendarViewport / 2);
+      updateScrollMetrics();
+    });
+  }
+
+  function changeZoom(nextZoom: TimelineZoom) {
+    if (interaction) return;
+    setPreferences((current) => ({ ...current, zoom: nextZoom }));
+    requestAnimationFrame(updateScrollMetrics);
+  }
+
+  function fitTimeline() {
+    const element = scrollRef.current;
+    if (!element) return;
+    const relevantDates = displayJobs.flatMap((job) => [job.planned_start, job.planned_end, job.requested_delivery_date]
+      .filter((value): value is string => Boolean(value))
+      .map(parseScheduleDate));
+    if (relevantDates.length === 0) return;
+    const earliest = new Date(Math.min(...relevantDates.map((date) => date.getTime())));
+    const latest = new Date(Math.max(...relevantDates.map((date) => date.getTime())));
+    const rangeDays = differenceInCalendarDays(latest, earliest) + 1;
+    const calendarViewport = Math.max(1, element.clientWidth - railWidth);
+    const width = fitTimelineDayWidth(zoom, rangeDays, calendarViewport, FIT_PADDING_DAYS);
+    setPreferences((current) => ({ ...current, dayWidths: { ...current.dayWidths, [zoom]: width } }));
+    requestAnimationFrame(() => {
+      if (!scrollRef.current) return;
+      const earliestOffset = differenceInCalendarDays(earliest, timeline.start);
+      scrollRef.current.scrollLeft = Math.max(0, (earliestOffset - FIT_PADDING_DAYS) * width);
+      updateScrollMetrics();
+    });
+  }
+
+  function goToToday() {
+    const element = scrollRef.current;
+    const index = timeline.days.findIndex((day) => day.isToday);
+    if (!element || index < 0) return;
+    const calendarViewport = Math.max(1, element.clientWidth - railWidth);
+    element.scrollTo({ left: Math.max(0, index * dayWidth + dayWidth / 2 - calendarViewport / 2), behavior: 'smooth' });
+  }
+
+  function startRailResize(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    railResizeRef.current = { pointerId: event.pointerId, startX: event.clientX, startWidth: railWidth };
+  }
+
+  function moveRailResize(event: ReactPointerEvent<HTMLButtonElement>) {
+    const resize = railResizeRef.current;
+    if (!resize || resize.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    const width = Math.min(RAIL_WIDTH_MAX, Math.max(RAIL_WIDTH_MIN, Math.round(resize.startWidth + event.clientX - resize.startX)));
+    setPreferences((current) => ({ ...current, railWidth: width }));
+  }
+
+  function finishRailResize(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    railResizeRef.current = null;
+    updateScrollMetrics();
+  }
+
+  function isInteractivePanTarget(target: EventTarget | null) {
+    return target instanceof Element && Boolean(target.closest('button, input, select, textarea, a, [contenteditable="true"], [data-timeline-interactive="true"]'));
+  }
+
+  function startCanvasPan(event: ReactPointerEvent<HTMLDivElement>) {
+    const shouldPan = event.button === 1 || (event.button === 0 && spacePressed);
+    if (!shouldPan || isInteractivePanTarget(event.target)) return;
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setCanvasPan({ pointerId: event.pointerId, startX: event.clientX, startScrollLeft: event.currentTarget.scrollLeft });
+  }
+
+  function moveCanvasPan(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!canvasPan || canvasPan.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    event.currentTarget.scrollLeft = canvasPan.startScrollLeft - (event.clientX - canvasPan.startX);
+  }
+
+  function finishCanvasPan(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!canvasPan || canvasPan.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    setCanvasPan(null);
+    updateScrollMetrics();
+  }
+
+  function startNavigatorDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (event.button !== 0 || !scrollRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setNavigatorDrag({ pointerId: event.pointerId, startX: event.clientX, startScrollLeft: scrollRef.current.scrollLeft });
+  }
+
+  function moveNavigatorDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (!navigatorDrag || navigatorDrag.pointerId !== event.pointerId || !scrollRef.current || !navigatorTrackRef.current) return;
+    event.preventDefault();
+    const trackWidth = navigatorTrackRef.current.clientWidth;
+    const calendarViewport = Math.max(1, scrollMetrics.viewportWidth - railWidth);
+    const thumbWidth = Math.max(28, Math.min(trackWidth, trackWidth * calendarViewport / Math.max(calendarViewport, timelineWidth)));
+    const travel = Math.max(1, trackWidth - thumbWidth);
+    scrollRef.current.scrollLeft = navigatorDrag.startScrollLeft + (event.clientX - navigatorDrag.startX) / travel * scrollMetrics.maxScrollLeft;
+  }
+
+  function finishNavigatorDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (!navigatorDrag || navigatorDrag.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    setNavigatorDrag(null);
+    updateScrollMetrics();
+  }
+
+  function clickNavigatorTrack(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!scrollRef.current || !navigatorTrackRef.current || event.target !== event.currentTarget) return;
+    const rect = navigatorTrackRef.current.getBoundingClientRect();
+    const fraction = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+    scrollRef.current.scrollTo({ left: fraction * scrollMetrics.maxScrollLeft, behavior: 'smooth' });
+  }
+
+  const stopContinuousPan = useCallback(() => {
+    panDirectionRef.current = 0;
+    lastPanTimeRef.current = 0;
+    if (panFrameRef.current !== null) cancelAnimationFrame(panFrameRef.current);
+    panFrameRef.current = null;
+  }, []);
+
+  function startContinuousPan(direction: -1 | 1) {
+    stopContinuousPan();
+    panDirectionRef.current = direction;
+    if (scrollRef.current) scrollRef.current.scrollLeft += direction * 28;
+    function step(time: number) {
+      const element = scrollRef.current;
+      if (!element || panDirectionRef.current === 0) {
+        stopContinuousPan();
+        return;
+      }
+      if (lastPanTimeRef.current > 0) element.scrollLeft += panDirectionRef.current * PAN_BUTTON_SPEED * (time - lastPanTimeRef.current) / 1000;
+      lastPanTimeRef.current = time;
+      panFrameRef.current = requestAnimationFrame(step);
+    }
+    panFrameRef.current = requestAnimationFrame(step);
+  }
+
+  useEffect(() => stopContinuousPan, [stopContinuousPan]);
+
   if (jobs.length === 0) {
     return (
       <div className="flex min-h-64 items-center justify-center border border-slate-400 bg-white px-6 py-12 text-center shadow-[0_8px_24px_rgba(15,23,42,0.07)]">
@@ -265,6 +511,13 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   const { start, days } = timeline;
   const timelineWidth = days.length * dayWidth;
+  const calendarViewportWidth = Math.max(1, scrollMetrics.viewportWidth - railWidth);
+  const navigatorTrackWidth = Math.max(1, calendarViewportWidth - 84);
+  const navigatorThumbWidth = Math.max(28, Math.min(navigatorTrackWidth, navigatorTrackWidth * calendarViewportWidth / Math.max(calendarViewportWidth, timelineWidth)));
+  const navigatorThumbLeft = scrollMetrics.maxScrollLeft > 0
+    ? scrollMetrics.scrollLeft / scrollMetrics.maxScrollLeft * Math.max(0, navigatorTrackWidth - navigatorThumbWidth)
+    : 0;
+  const hasHorizontalOverflow = scrollMetrics.maxScrollLeft > 1;
   const todayIndex = days.findIndex((day) => day.isToday);
   const activeJob = interaction ? jobs.find((job) => job.id === interaction.jobId) : null;
   const currentIntensity = activeJob && interaction
@@ -276,14 +529,19 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   return (
     <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-slate-200 bg-white px-4 py-2.5 text-[10px] font-semibold text-slate-700">
+      <div className="z-40 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-700 shadow-sm">
         <span id="timeline-zoom-label" className="font-bold uppercase tracking-[0.12em] text-slate-500">Zoom</span>
+        <div className="inline-flex h-8 overflow-hidden rounded-sm border border-slate-300 bg-white">
+          <button type="button" aria-label="Zoom Timeline out" title="Zoom out" disabled={Boolean(interaction) || dayWidth <= zoomOption.minDayWidth} onClick={() => updateDayWidth(dayWidth - zoomOption.step)} className="inline-flex h-full w-8 items-center justify-center border-r border-slate-300 text-slate-700 hover:bg-slate-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:opacity-40"><Minus className="h-3.5 w-3.5" aria-hidden="true" /></button>
+          <button type="button" aria-label="Zoom Timeline in" title="Zoom in" disabled={Boolean(interaction) || dayWidth >= zoomOption.maxDayWidth} onClick={() => updateDayWidth(dayWidth + zoomOption.step)} className="inline-flex h-full w-8 items-center justify-center text-slate-700 hover:bg-slate-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:opacity-40"><Plus className="h-3.5 w-3.5" aria-hidden="true" /></button>
+        </div>
         <div role="group" aria-labelledby="timeline-zoom-label" className="inline-flex h-8 items-stretch rounded-sm border border-slate-300 bg-slate-50 p-0.5">
-          {ZOOM_OPTIONS.map((option) => (
-            <button key={option.value} type="button" aria-pressed={zoom === option.value} disabled={Boolean(interaction)} onClick={() => setZoom(option.value)} className={`h-full rounded-sm px-3 text-[9px] font-bold uppercase tracking-[0.08em] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 ${zoom === option.value ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{option.label}</button>
+          {TIMELINE_ZOOM_OPTIONS.map((option) => (
+            <button key={option.value} type="button" aria-pressed={zoom === option.value} disabled={Boolean(interaction)} onClick={() => changeZoom(option.value)} className={`h-full rounded-sm px-3 text-[9px] font-bold uppercase tracking-[0.08em] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 ${zoom === option.value ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{option.label}</button>
           ))}
         </div>
-        <span className="h-5 w-px bg-slate-300" aria-hidden="true" />
+        <button type="button" onClick={fitTimeline} disabled={Boolean(interaction)} className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-slate-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />Fit</button>
+        <button type="button" onClick={goToToday} disabled={Boolean(interaction)} className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-blue-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40"><LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Today</button>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Timeline legend">
         <span className="font-bold uppercase tracking-[0.12em] text-slate-500">Legend</span>
         {productionStatusVisuals.map((visual) => (
@@ -307,11 +565,39 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
         <span className="whitespace-nowrap text-slate-500">h/day = estimated labor ÷ scheduled calendar days</span>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <div style={{ minWidth: LABEL_WIDTH + timelineWidth }}>
+      <div
+        ref={scrollRef}
+        onScroll={updateScrollMetrics}
+        onWheel={(event) => {
+          if (!event.shiftKey || event.ctrlKey || event.metaKey) return;
+          event.preventDefault();
+          event.currentTarget.scrollLeft += event.deltaY || event.deltaX;
+        }}
+        onPointerDown={startCanvasPan}
+        onPointerMove={moveCanvasPan}
+        onPointerUp={finishCanvasPan}
+        onPointerCancel={finishCanvasPan}
+        onLostPointerCapture={finishCanvasPan}
+        onPointerEnter={() => { timelinePointerInsideRef.current = true; }}
+        onPointerLeave={() => { timelinePointerInsideRef.current = false; if (!canvasPan) setSpacePressed(false); }}
+        className={`relative max-h-[72vh] overflow-auto ${canvasPan ? 'cursor-grabbing select-none' : spacePressed ? 'cursor-grab' : ''}`}
+      >
+        <div style={{ minWidth: railWidth + timelineWidth }}>
           <div className="sticky top-0 z-20 flex border-b border-slate-200 bg-slate-100/90">
-            <div className="sticky left-0 z-30 flex shrink-0 items-end border-r border-slate-300 bg-slate-100 px-4 pb-3 pt-9" style={{ width: LABEL_WIDTH }}>
+            <div className="sticky left-0 z-30 flex shrink-0 items-end border-r border-slate-300 bg-slate-100 px-4 pb-3 pt-9" style={{ width: railWidth }}>
               <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600">Project / Schedule</div>
+              <button
+                type="button"
+                aria-label="Resize Timeline project rail"
+                title="Drag to resize project rail"
+                onPointerDown={startRailResize}
+                onPointerMove={moveRailResize}
+                onPointerUp={finishRailResize}
+                onPointerCancel={finishRailResize}
+                onLostPointerCapture={finishRailResize}
+                onDoubleClick={() => setPreferences((current) => ({ ...current, railWidth: defaultTimelinePreferences.railWidth }))}
+                className="absolute inset-y-0 right-0 z-40 w-2 translate-x-1/2 cursor-col-resize touch-none bg-transparent outline-none after:absolute after:inset-y-2 after:left-1/2 after:w-px after:-translate-x-1/2 after:bg-slate-400/0 hover:after:bg-blue-600 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 focus-visible:after:bg-blue-600"
+              />
             </div>
             <div className="relative shrink-0" style={{ width: timelineWidth }}>
               <div className="flex h-8 border-b border-slate-300">
@@ -360,15 +646,15 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             const statusVisual = productionStatusVisualByValue[job.production_status];
 
             return (
-              <div key={job.id} className="flex min-h-[74px] border-b border-slate-300 last:border-b-0">
-                <div className="sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-400 bg-white px-4 py-3" style={{ width: LABEL_WIDTH }}>
+              <div key={job.id} className="flex min-h-[63px] border-b border-slate-300 last:border-b-0">
+                <div className="sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-400 bg-white px-4 py-2" style={{ width: railWidth }}>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <div className="truncate text-sm font-bold text-slate-950">{job.name}</div>
+                      <div title={job.name} className="truncate text-[13px] font-bold text-slate-950">{job.name}</div>
                       {isStaged && <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.08em] text-amber-700">Proposed</span>}
                     </div>
-                    <div className="mt-1 truncate text-xs text-slate-600">{[job.job_number, job.customer].filter(Boolean).join(' • ') || 'Identifiers not assigned'}</div>
-                    <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500">
+                    <div className="mt-0.5 truncate text-[11px] text-slate-600">{[job.job_number, job.customer].filter(Boolean).join(' • ') || 'Identifiers not assigned'}</div>
+                    <div className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-500">
                       {hasSchedule && displayStart && displayEnd
                         ? `${formatShortDate(displayStart)} – ${formatShortDate(displayEnd)} · ${intensityLabel(job, displayStart, displayEnd)}`
                         : job.requested_delivery_date
@@ -387,7 +673,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                   {isStaged && stagedSchedule?.original_planned_start && stagedSchedule.original_planned_end && (
                     <div
                       aria-label={`Last saved schedule for ${job.name}: ${stagedSchedule.original_planned_start} through ${stagedSchedule.original_planned_end}`}
-                      className="pointer-events-none absolute top-1/2 z-[2] h-9 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/35"
+                      className="pointer-events-none absolute top-1/2 z-[2] h-8 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/35"
                       style={{
                         left: differenceInCalendarDays(parseScheduleDate(stagedSchedule.original_planned_start), start) * dayWidth + 3,
                         width: Math.max(18, inclusiveCalendarDays(stagedSchedule.original_planned_start, stagedSchedule.original_planned_end) * dayWidth - 6),
@@ -399,7 +685,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
                   {hasSchedule && displayStart && displayEnd && (
                     <div
-                      className={`absolute top-1/2 z-[3] h-9 -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${statusVisual.className} ${activeInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isStaged ? 'ring-2 ring-amber-300 ring-offset-1' : ''}`}
+                      data-timeline-interactive="true"
+                      className={`absolute top-1/2 z-[3] h-8 -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${statusVisual.className} ${activeInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isStaged ? 'ring-2 ring-amber-300 ring-offset-1' : ''}`}
                       style={{ left: startOffset * dayWidth + 3, width: barWidth, backgroundImage: statusVisual.pattern }}
                       title={`${job.name}: ${statusVisual.label}; ${displayStart} through ${displayEnd}; ${intensityLabel(job, displayStart, displayEnd)}`}
                     >
@@ -455,6 +742,51 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             );
           })}
         </div>
+        {hasHorizontalOverflow && (
+          <div
+            aria-label="Timeline horizontal navigator"
+            className="sticky bottom-0 left-0 z-30 flex h-9 border-t border-slate-300 bg-slate-100/95 shadow-[0_-2px_6px_rgba(15,23,42,0.08)] backdrop-blur"
+            style={{ width: scrollMetrics.viewportWidth }}
+            data-timeline-interactive="true"
+          >
+            <div className="flex shrink-0 items-center border-r border-slate-300 px-3 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-500" style={{ width: railWidth }}>Timeline navigation</div>
+            <div className="flex min-w-0 flex-1 items-center gap-1.5 px-2">
+              <button
+                type="button"
+                aria-label="Pan Timeline left"
+                onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); startContinuousPan(-1); }}
+                onPointerUp={(event) => { if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); stopContinuousPan(); }}
+                onPointerCancel={stopContinuousPan}
+                onLostPointerCapture={stopContinuousPan}
+                onClick={(event) => { if (event.detail === 0 && scrollRef.current) scrollRef.current.scrollBy({ left: -80, behavior: 'smooth' }); }}
+                className="inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-sm border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600"
+              ><ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" /></button>
+              <div ref={navigatorTrackRef} onPointerDown={clickNavigatorTrack} className="relative h-3 min-w-0 flex-1 cursor-pointer rounded-full bg-slate-300/80">
+                <button
+                  type="button"
+                  aria-label="Drag to navigate Timeline horizontally"
+                  onPointerDown={startNavigatorDrag}
+                  onPointerMove={moveNavigatorDrag}
+                  onPointerUp={finishNavigatorDrag}
+                  onPointerCancel={finishNavigatorDrag}
+                  onLostPointerCapture={finishNavigatorDrag}
+                  className={`absolute top-0 h-3 touch-none rounded-full border border-slate-600 bg-slate-600 outline-none hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-blue-600 ${navigatorDrag ? 'cursor-grabbing' : 'cursor-grab'}`}
+                  style={{ left: navigatorThumbLeft, width: navigatorThumbWidth }}
+                />
+              </div>
+              <button
+                type="button"
+                aria-label="Pan Timeline right"
+                onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); startContinuousPan(1); }}
+                onPointerUp={(event) => { if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); stopContinuousPan(); }}
+                onPointerCancel={stopContinuousPan}
+                onLostPointerCapture={stopContinuousPan}
+                onClick={(event) => { if (event.detail === 0 && scrollRef.current) scrollRef.current.scrollBy({ left: 80, behavior: 'smooth' }); }}
+                className="inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-sm border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600"
+              ><ChevronRight className="h-3.5 w-3.5" aria-hidden="true" /></button>
+            </div>
+          </div>
+        )}
       </div>
 
       {displayJobs.some((job) => !job.planned_start || !job.planned_end) && (
