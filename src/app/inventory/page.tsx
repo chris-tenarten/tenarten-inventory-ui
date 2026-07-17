@@ -2096,7 +2096,7 @@ export default function InventoryPage() {
                 type="button"
                 onClick={handleClearReceivedPendingReceivals}
                 disabled={clearingReceivedPending}
-                className="border border-emerald-700 bg-emerald-50 px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-emerald-900 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-8 border border-emerald-600 bg-emerald-50 px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-emerald-900 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {clearingReceivedPending ? 'Clearing...' : 'Clear Received Items'}
               </button>
@@ -2104,7 +2104,7 @@ export default function InventoryPage() {
             <button
               type="button"
               onClick={openPendingReceivalForm}
-              className="border border-slate-950 bg-slate-900 px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-white transition hover:bg-slate-950"
+              className="h-8 border border-slate-900 bg-slate-900 px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
             >
               + Pending Receival
             </button>
@@ -2118,9 +2118,9 @@ export default function InventoryPage() {
 
         <div className="bg-slate-50 p-2">
           {pendingReceivalsLoading ? (
-            <div className="border border-slate-400 bg-[#e5e9ee] px-4 py-5 text-sm font-semibold text-slate-600">Loading pending receivals...</div>
+            <div className="border border-slate-200 bg-white px-4 py-5 text-sm font-semibold text-slate-600">Loading pending receivals...</div>
           ) : pendingReceivals.length === 0 ? (
-            <div className="border border-slate-400 bg-[#e5e9ee] px-4 py-5 text-sm font-semibold text-slate-600">No pending receivals.</div>
+            <div className="border border-slate-200 bg-white px-4 py-5 text-sm font-semibold text-slate-600">No pending receivals.</div>
           ) : (
             <div className="overflow-x-auto border border-slate-200 bg-white">
               <table className="w-full border-collapse text-left text-sm">
@@ -3192,7 +3192,7 @@ export default function InventoryPage() {
                   loadData();
                   loadPendingReceivals();
                 }}
-                className="inline-flex min-h-11 items-center justify-center gap-2 border border-slate-400 bg-white px-4 py-2.5 text-[12px] font-black uppercase tracking-[0.11em] text-slate-700 transition hover:border-slate-700 hover:bg-slate-100 active:translate-y-px"
+                className="inline-flex h-9 items-center justify-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
               >
                 <RefreshIcon className="h-4 w-4" />
                 <span>Refresh</span>
@@ -3201,7 +3201,7 @@ export default function InventoryPage() {
               <button
                 type="button"
                 onClick={openRecordStockDialog}
-                className="inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap border border-slate-900 bg-slate-800 px-5 py-2.5 text-[13px] font-black uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 active:translate-y-px"
+                className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap border border-slate-900 bg-slate-900 px-4 text-[10px] font-bold uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
               >
                 <PlusIcon className="h-4 w-4" />
                 <span>Record Stock</span>
