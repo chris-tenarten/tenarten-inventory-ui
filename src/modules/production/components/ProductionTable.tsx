@@ -1,9 +1,9 @@
 'use client';
 
-import { Paperclip, Search } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { ChevronsLeftRight, Paperclip, Search, Settings2 } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { KeyboardEvent, ReactNode, RefObject } from 'react';
+import type { KeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode, RefObject } from 'react';
 
 import type { ProductionJobUpdate } from '../jobs';
 import { materialStatusLabel, materialStatusOptions } from '../material-status';
@@ -100,15 +100,66 @@ const selectClass = `${inputClass} pr-6 text-center`;
 const dateInputClass = `${inputClass} relative cursor-pointer px-1 text-center [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-1 [&::-webkit-calendar-picker-indicator]:m-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer`;
 const populatedDateClass = '[&::-webkit-calendar-picker-indicator]:opacity-0 hover:[&::-webkit-calendar-picker-indicator]:opacity-60 focus:[&::-webkit-calendar-picker-indicator]:opacity-60';
 const emptyDateClass = 'text-transparent [&::-webkit-datetime-edit]:text-transparent [&::-webkit-calendar-picker-indicator]:opacity-50 focus:text-slate-800 focus:[&::-webkit-datetime-edit]:text-slate-800';
+const TABLE_LAYOUT_STORAGE_KEY = 'tenops.productionTableLayout.v1';
+
 const tableColumns = [
-  ['inspector', 28], ['jobNumber', 74], ['project', 150], ['customer', 120],
-  ['estimate', 108], ['workOrder', 112], ['deposit', 96], ['delivery', 96],
-  ['start', 96], ['finish', 96], ['labor', 68], ['days', 60], ['colorPlate', 96],
-  ['sample', 96], ['approval', 96], ['material', 96], ['status', 108], ['remarks', 150],
+  { id: 'inspector', label: 'Inspector', defaultWidth: 28, minWidth: 28, maxWidth: 28, hideable: false, resizable: false },
+  { id: 'jobNumber', label: 'Job #', defaultWidth: 74, minWidth: 60, maxWidth: 160, hideable: false, resizable: true },
+  { id: 'project', label: 'Project', defaultWidth: 150, minWidth: 110, maxWidth: 360, hideable: false, resizable: true },
+  { id: 'customer', label: 'Customer', defaultWidth: 120, minWidth: 90, maxWidth: 300, hideable: true, resizable: true },
+  { id: 'estimate', label: 'Estimate', defaultWidth: 108, minWidth: 80, maxWidth: 220, hideable: true, resizable: true },
+  { id: 'workOrder', label: 'Work Order', defaultWidth: 112, minWidth: 86, maxWidth: 280, hideable: true, resizable: true },
+  { id: 'deposit', label: 'Deposit', defaultWidth: 96, minWidth: 88, maxWidth: 160, hideable: true, resizable: true },
+  { id: 'delivery', label: 'Delivery', defaultWidth: 96, minWidth: 88, maxWidth: 160, hideable: true, resizable: true },
+  { id: 'start', label: 'Planned Start', defaultWidth: 96, minWidth: 88, maxWidth: 160, hideable: true, resizable: true },
+  { id: 'finish', label: 'Planned Finish', defaultWidth: 96, minWidth: 88, maxWidth: 160, hideable: true, resizable: true },
+  { id: 'labor', label: 'Labor', defaultWidth: 68, minWidth: 56, maxWidth: 120, hideable: true, resizable: true },
+  { id: 'days', label: 'Calendar Days', defaultWidth: 60, minWidth: 56, maxWidth: 120, hideable: true, resizable: true },
+  { id: 'colorPlate', label: 'Color Plate', defaultWidth: 96, minWidth: 78, maxWidth: 220, hideable: true, resizable: true },
+  { id: 'sample', label: 'Sample', defaultWidth: 96, minWidth: 88, maxWidth: 160, hideable: true, resizable: true },
+  { id: 'approval', label: 'Approval', defaultWidth: 96, minWidth: 88, maxWidth: 160, hideable: true, resizable: true },
+  { id: 'material', label: 'Material Status', defaultWidth: 96, minWidth: 90, maxWidth: 200, hideable: true, resizable: true },
+  { id: 'status', label: 'Production Status', defaultWidth: 108, minWidth: 96, maxWidth: 220, hideable: true, resizable: true },
+  { id: 'remarks', label: 'Remarks', defaultWidth: 150, minWidth: 110, maxWidth: 420, hideable: true, resizable: true },
 ] as const;
-const tableWidth = tableColumns.reduce((total, [, width]) => total + width, 0);
-const jobNumberStickyLeft = tableColumns[0][1];
-const projectStickyLeft = jobNumberStickyLeft + tableColumns[1][1];
+
+type TableColumn = (typeof tableColumns)[number];
+type TableColumnId = TableColumn['id'];
+type TableLayout = {
+  widths: Partial<Record<TableColumnId, number>>;
+  hidden: TableColumnId[];
+};
+
+const tableColumnById = Object.fromEntries(tableColumns.map((column) => [column.id, column])) as Record<TableColumnId, TableColumn>;
+const defaultTableLayout: TableLayout = { widths: {}, hidden: [] };
+
+function clampColumnWidth(column: TableColumn, width: number) {
+  return Math.min(column.maxWidth, Math.max(column.minWidth, Math.round(width)));
+}
+
+function parseStoredTableLayout(value: string | null): TableLayout {
+  if (!value) return defaultTableLayout;
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return defaultTableLayout;
+    const candidate = parsed as { widths?: unknown; hidden?: unknown };
+    const widths: TableLayout['widths'] = {};
+    if (candidate.widths && typeof candidate.widths === 'object' && !Array.isArray(candidate.widths)) {
+      for (const [id, width] of Object.entries(candidate.widths)) {
+        if (!(id in tableColumnById) || typeof width !== 'number' || !Number.isFinite(width)) continue;
+        const column = tableColumnById[id as TableColumnId];
+        if (!column.resizable) continue;
+        widths[column.id] = clampColumnWidth(column, width);
+      }
+    }
+    const hidden = Array.isArray(candidate.hidden)
+      ? candidate.hidden.filter((id): id is TableColumnId => typeof id === 'string' && id in tableColumnById && tableColumnById[id as TableColumnId].hideable)
+      : [];
+    return { widths, hidden: [...new Set(hidden)] };
+  } catch {
+    return defaultTableLayout;
+  }
+}
 
 function blankRow(): EditableRow {
   return {
@@ -343,13 +394,59 @@ export default function ProductionTable({
   const [remarksPosition, setRemarksPosition] = useState({ left: 12, top: 12, width: 420 });
   const [remarksSaving, setRemarksSaving] = useState(false);
   const [remarksError, setRemarksError] = useState('');
+  const [tableLayout, setTableLayout] = useState<TableLayout>(defaultTableLayout);
+  const [layoutLoaded, setLayoutLoaded] = useState(false);
+  const [columnsOpen, setColumnsOpen] = useState(false);
+  const [columnsToolbarTarget, setColumnsToolbarTarget] = useState<HTMLElement | null>(null);
+  const [layoutMessage, setLayoutMessage] = useState('');
+  const [resizingColumn, setResizingColumn] = useState<TableColumnId | null>(null);
   const draftNameRef = useRef<HTMLInputElement | null>(null);
   const remarksPanelRef = useRef<HTMLDivElement | null>(null);
   const remarksTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const columnsPanelRef = useRef<HTMLDivElement | null>(null);
+  const resizeRef = useRef<{ id: TableColumnId; startX: number; startWidth: number } | null>(null);
   const savingFieldsRef = useRef<Record<string, Set<EditableField>>>({});
 
   const remarksDirty = Boolean(remarksEditor && remarksEditor.draft !== remarksEditor.canonical);
   const remarksAnchor = remarksEditor?.anchor ?? null;
+  const hiddenColumns = useMemo(() => new Set(tableLayout.hidden), [tableLayout.hidden]);
+  const effectiveWidths = useMemo(() => Object.fromEntries(tableColumns.map((column) => [
+    column.id,
+    clampColumnWidth(column, tableLayout.widths[column.id] ?? column.defaultWidth),
+  ])) as Record<TableColumnId, number>, [tableLayout.widths]);
+  const visibleColumns = useMemo(() => tableColumns.filter((column) => !hiddenColumns.has(column.id)), [hiddenColumns]);
+  const tableWidth = useMemo(() => visibleColumns.reduce((total, column) => total + effectiveWidths[column.id], 0), [effectiveWidths, visibleColumns]);
+  const jobNumberStickyLeft = effectiveWidths.inspector;
+  const projectStickyLeft = effectiveWidths.inspector + effectiveWidths.jobNumber;
+  const layoutCustomized = tableLayout.hidden.length > 0 || tableColumns.some((column) => (
+    column.resizable && effectiveWidths[column.id] !== column.defaultWidth
+  ));
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setTableLayout(parseStoredTableLayout(window.localStorage.getItem(TABLE_LAYOUT_STORAGE_KEY)));
+      setLayoutLoaded(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (!layoutLoaded) return;
+    window.localStorage.setItem(TABLE_LAYOUT_STORAGE_KEY, JSON.stringify(tableLayout));
+  }, [layoutLoaded, tableLayout]);
+
+  useEffect(() => {
+    setColumnsToolbarTarget(document.getElementById('production-table-columns-toolbar-slot'));
+  }, []);
+
+  useEffect(() => {
+    if (!columnsOpen) return;
+    function handleOutsidePointer(event: PointerEvent) {
+      if (!columnsPanelRef.current?.contains(event.target as Node)) setColumnsOpen(false);
+    }
+    document.addEventListener('pointerdown', handleOutsidePointer, true);
+    return () => document.removeEventListener('pointerdown', handleOutsidePointer, true);
+  }, [columnsOpen]);
 
   useEffect(() => {
     setRows((current) => {
@@ -594,6 +691,121 @@ export default function ProductionTable({
     }
   }
 
+  function setColumnWidth(id: TableColumnId, width: number) {
+    const column = tableColumnById[id];
+    if (!column.resizable) return;
+    const nextWidth = clampColumnWidth(column, width);
+    setTableLayout((current) => ({
+      ...current,
+      widths: {
+        ...current.widths,
+        [id]: nextWidth === column.defaultWidth ? undefined : nextWidth,
+      },
+    }));
+  }
+
+  function startColumnResize(id: TableColumnId, event: ReactPointerEvent<HTMLButtonElement>) {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    resizeRef.current = { id, startX: event.clientX, startWidth: effectiveWidths[id] };
+    setResizingColumn(id);
+  }
+
+  function moveColumnResize(event: ReactPointerEvent<HTMLButtonElement>) {
+    const resize = resizeRef.current;
+    if (!resize || !event.currentTarget.hasPointerCapture(event.pointerId)) return;
+    event.preventDefault();
+    setColumnWidth(resize.id, resize.startWidth + event.clientX - resize.startX);
+  }
+
+  function finishColumnResize(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    resizeRef.current = null;
+    setResizingColumn(null);
+  }
+
+  function setColumnVisible(id: TableColumnId, visible: boolean) {
+    const column = tableColumnById[id];
+    if (!column.hideable) return;
+    setLayoutMessage('');
+    if (!visible && id === 'remarks' && remarksEditor) {
+      if (remarksDirty || remarksSaving) {
+        setLayoutMessage('Save or cancel the open Remarks edit before hiding Remarks.');
+        return;
+      }
+      setRemarksEditor(null);
+      setRemarksError('');
+    }
+    setTableLayout((current) => ({
+      ...current,
+      hidden: visible
+        ? current.hidden.filter((columnId) => columnId !== id)
+        : [...new Set([...current.hidden, id])],
+    }));
+  }
+
+  function showAllColumns() {
+    setLayoutMessage('');
+    setTableLayout((current) => ({ ...current, hidden: [] }));
+  }
+
+  function resetTableLayout() {
+    if (remarksDirty || remarksSaving) {
+      setLayoutMessage('Save or cancel the open Remarks edit before resetting the layout.');
+      return;
+    }
+    setRemarksEditor(null);
+    setRemarksError('');
+    setLayoutMessage('');
+    setTableLayout(defaultTableLayout);
+  }
+
+  function renderResizeHandle(column: TableColumn) {
+    if (!column.resizable) return null;
+    return (
+      <button
+        type="button"
+        aria-label={`Resize ${column.label} column`}
+        title={`Drag to resize ${column.label}. Double-click to reset.`}
+        onPointerDown={(event) => startColumnResize(column.id, event)}
+        onPointerMove={moveColumnResize}
+        onPointerUp={finishColumnResize}
+        onPointerCancel={finishColumnResize}
+        onLostPointerCapture={finishColumnResize}
+        onDoubleClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          setColumnWidth(column.id, column.defaultWidth);
+        }}
+        onKeyDown={(event) => {
+          if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+          event.preventDefault();
+          const direction = event.key === 'ArrowLeft' ? -1 : 1;
+          setColumnWidth(column.id, effectiveWidths[column.id] + direction * (event.shiftKey ? 16 : 4));
+        }}
+        className={`group/resize absolute -right-1.5 top-0 z-[60] flex h-full w-3 cursor-col-resize touch-none select-none items-center justify-center border-0 bg-transparent p-0 outline-none after:absolute after:bottom-0.5 after:left-1/2 after:top-0.5 after:w-px after:-translate-x-1/2 after:bg-slate-400/0 after:transition-colors group-hover/column:after:bg-slate-500 hover:after:bg-blue-600 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 focus-visible:after:bg-blue-600 ${resizingColumn === column.id ? 'after:!bg-blue-700' : ''}`}
+      >
+        <ChevronsLeftRight aria-hidden="true" className={`relative z-10 h-3 w-3 rounded-sm bg-slate-100 text-slate-600 opacity-0 transition-opacity group-hover/column:opacity-100 group-focus-visible/resize:opacity-100 group-hover/resize:text-blue-700 ${resizingColumn === column.id ? '!bg-blue-50 !text-blue-700 !opacity-100' : ''}`} />
+      </button>
+    );
+  }
+
+  function renderHeader(column: TableColumn, content: ReactNode, className = '', title?: string) {
+    if (hiddenColumns.has(column.id)) return null;
+    return (
+      <th
+        title={title}
+        className={`${headerClass} group/column relative select-none ${className}`}
+        style={column.id === 'jobNumber' ? { left: jobNumberStickyLeft } : column.id === 'project' ? { left: projectStickyLeft } : undefined}
+      >
+        {content}
+        {renderResizeHandle(column)}
+      </th>
+    );
+  }
+
   function renderCells(
     row: EditableRow,
     onChange: <K extends EditableField>(field: K, value: EditableRow[K]) => void,
@@ -620,63 +832,122 @@ export default function ProductionTable({
             {projectAttachmentIndicator && <div className="absolute right-1 top-1/2 z-10 -translate-y-1/2">{projectAttachmentIndicator}</div>}
           </div>
         </td>
-        <td className={`${cellClass} w-[120px] min-w-[120px] max-w-[120px]`}><input value={row.customer} title={row.customer || undefined} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>
-        <td className={`${cellClass} w-[108px] min-w-[108px] max-w-[108px]`}><input value={row.estimateNumber} title={row.estimateNumber || undefined} onChange={(e) => onChange('estimateNumber', e.target.value)} onBlur={blur('estimateNumber')} onKeyDown={blurOnEnter} placeholder="Estimate #" className={inputClass} /></td>
-        <td className={`${cellClass} w-[112px] min-w-[112px] max-w-[112px]`}><input value={row.workOrderNumber} title={row.workOrderNumber || undefined} onChange={(e) => onChange('workOrderNumber', e.target.value)} onBlur={blur('workOrderNumber')} onKeyDown={blurOnEnter} placeholder="Work order #" className={inputClass} /></td>
-        <td className={`${cellClass} w-[96px] min-w-[96px] max-w-[96px]`}><input aria-label="Deposit date" title={row.depositDate || undefined} type="date" value={row.depositDate} onChange={(e) => onChange('depositDate', e.target.value)} onBlur={blur('depositDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.depositDate ? populatedDateClass : emptyDateClass}`} /></td>
-        <td className={`${cellClass} w-[96px] min-w-[96px] max-w-[96px]`}><input aria-label="Requested delivery date" title={row.requestedDeliveryDate || undefined} type="date" value={row.requestedDeliveryDate} onChange={(e) => onChange('requestedDeliveryDate', e.target.value)} onBlur={blur('requestedDeliveryDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.requestedDeliveryDate ? populatedDateClass : emptyDateClass}`} /></td>
-        <td className={`${cellClass} w-[96px] min-w-[96px] max-w-[96px]`}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned start date, unsaved' : 'Planned start date'} title={row.plannedStart || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedStart ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>
-        <td className={`${cellClass} w-[96px] min-w-[96px] max-w-[96px]`}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned finish date, unsaved' : 'Planned finish date'} title={row.plannedEnd || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedEnd ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>
-        <td className={`${cellClass} w-[68px] min-w-[68px] max-w-[68px]`}><input type="number" min="0" step="0.25" value={row.estimatedManHours} onChange={(e) => onChange('estimatedManHours', e.target.value)} onBlur={blur('estimatedManHours')} onKeyDown={blurOnEnter} placeholder="Hours" className={inputClass} /></td>
-        <td className={`${cellClass} w-[60px] min-w-[60px] max-w-[60px]`}><input type="number" min="0" step="1" value={row.estimatedCalendarDays} onChange={(e) => onChange('estimatedCalendarDays', e.target.value)} onBlur={blur('estimatedCalendarDays')} onKeyDown={blurOnEnter} placeholder="Days" className={inputClass} /></td>
-        <td className={`${cellClass} w-[96px] min-w-[96px] max-w-[96px]`}><input value={row.colorPlateNumber} title={row.colorPlateNumber || undefined} onChange={(e) => onChange('colorPlateNumber', e.target.value)} onBlur={blur('colorPlateNumber')} onKeyDown={blurOnEnter} placeholder="Color plate #" className={inputClass} /></td>
-        <td className={`${cellClass} w-[96px] min-w-[96px] max-w-[96px]`}><input aria-label="Sample submitted date" title={row.sampleSubmittedDate || undefined} type="date" value={row.sampleSubmittedDate} onChange={(e) => onChange('sampleSubmittedDate', e.target.value)} onBlur={blur('sampleSubmittedDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.sampleSubmittedDate ? populatedDateClass : emptyDateClass}`} /></td>
-        <td className={`${cellClass} w-[96px] min-w-[96px] max-w-[96px]`}><input aria-label="Approval date" title={row.approvalDate || undefined} type="date" value={row.approvalDate} onChange={(e) => onChange('approvalDate', e.target.value)} onBlur={blur('approvalDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.approvalDate ? populatedDateClass : emptyDateClass}`} /></td>
-        <td className={`${cellClass} w-[96px] min-w-[96px] max-w-[96px]`}>
+        {!hiddenColumns.has('customer') && <td className={cellClass}><input value={row.customer} title={row.customer || undefined} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>}
+        {!hiddenColumns.has('estimate') && <td className={cellClass}><input value={row.estimateNumber} title={row.estimateNumber || undefined} onChange={(e) => onChange('estimateNumber', e.target.value)} onBlur={blur('estimateNumber')} onKeyDown={blurOnEnter} placeholder="Estimate #" className={inputClass} /></td>}
+        {!hiddenColumns.has('workOrder') && <td className={cellClass}><input value={row.workOrderNumber} title={row.workOrderNumber || undefined} onChange={(e) => onChange('workOrderNumber', e.target.value)} onBlur={blur('workOrderNumber')} onKeyDown={blurOnEnter} placeholder="Work order #" className={inputClass} /></td>}
+        {!hiddenColumns.has('deposit') && <td className={cellClass}><input aria-label="Deposit date" title={row.depositDate || undefined} type="date" value={row.depositDate} onChange={(e) => onChange('depositDate', e.target.value)} onBlur={blur('depositDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.depositDate ? populatedDateClass : emptyDateClass}`} /></td>}
+        {!hiddenColumns.has('delivery') && <td className={cellClass}><input aria-label="Requested delivery date" title={row.requestedDeliveryDate || undefined} type="date" value={row.requestedDeliveryDate} onChange={(e) => onChange('requestedDeliveryDate', e.target.value)} onBlur={blur('requestedDeliveryDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.requestedDeliveryDate ? populatedDateClass : emptyDateClass}`} /></td>}
+        {!hiddenColumns.has('start') && <td className={cellClass}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned start date, unsaved' : 'Planned start date'} title={row.plannedStart || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedStart ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
+        {!hiddenColumns.has('finish') && <td className={cellClass}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned finish date, unsaved' : 'Planned finish date'} title={row.plannedEnd || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedEnd ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
+        {!hiddenColumns.has('labor') && <td className={cellClass}><input type="number" min="0" step="0.25" value={row.estimatedManHours} onChange={(e) => onChange('estimatedManHours', e.target.value)} onBlur={blur('estimatedManHours')} onKeyDown={blurOnEnter} placeholder="Hours" className={inputClass} /></td>}
+        {!hiddenColumns.has('days') && <td className={cellClass}><input type="number" min="0" step="1" value={row.estimatedCalendarDays} onChange={(e) => onChange('estimatedCalendarDays', e.target.value)} onBlur={blur('estimatedCalendarDays')} onKeyDown={blurOnEnter} placeholder="Days" className={inputClass} /></td>}
+        {!hiddenColumns.has('colorPlate') && <td className={cellClass}><input value={row.colorPlateNumber} title={row.colorPlateNumber || undefined} onChange={(e) => onChange('colorPlateNumber', e.target.value)} onBlur={blur('colorPlateNumber')} onKeyDown={blurOnEnter} placeholder="Color plate #" className={inputClass} /></td>}
+        {!hiddenColumns.has('sample') && <td className={cellClass}><input aria-label="Sample submitted date" title={row.sampleSubmittedDate || undefined} type="date" value={row.sampleSubmittedDate} onChange={(e) => onChange('sampleSubmittedDate', e.target.value)} onBlur={blur('sampleSubmittedDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.sampleSubmittedDate ? populatedDateClass : emptyDateClass}`} /></td>}
+        {!hiddenColumns.has('approval') && <td className={cellClass}><input aria-label="Approval date" title={row.approvalDate || undefined} type="date" value={row.approvalDate} onChange={(e) => onChange('approvalDate', e.target.value)} onBlur={blur('approvalDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.approvalDate ? populatedDateClass : emptyDateClass}`} /></td>}
+        {!hiddenColumns.has('material') && <td className={cellClass}>
           <select value={row.materialStatus} onChange={(e) => onChange('materialStatus', e.target.value as MaterialStatus)} onBlur={blur('materialStatus')} onKeyDown={blurOnEnter} className={selectClass}>
             {materialStatusOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
-        </td>
-        <td className={`${cellClass} w-[108px] min-w-[108px] max-w-[108px]`}>
+        </td>}
+        {!hiddenColumns.has('status') && <td className={cellClass}>
           <select value={row.productionStatus} onChange={(e) => onChange('productionStatus', e.target.value as ProductionStatus)} onBlur={blur('productionStatus')} onKeyDown={blurOnEnter} className={selectClass}>
             {productionStatuses.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
-        </td>
-        <td className={`${cellClass} w-[150px] min-w-[150px] max-w-[150px]`}>
+        </td>}
+        {!hiddenColumns.has('remarks') && <td className={cellClass}>
           {remarksControl ?? <textarea value={row.remarks} title={row.remarks || undefined} onChange={(e) => onChange('remarks', e.target.value)} onBlur={blur('remarks')} placeholder="Remarks" rows={1} wrap="off" className="h-6 w-full min-w-0 resize-none overflow-hidden whitespace-nowrap border-0 bg-transparent px-0.5 py-0 text-[10px] leading-6 outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600" />}
-        </td>
+        </td>}
       </>
     );
   }
 
   return (
     <>
-    <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+      {columnsToolbarTarget && createPortal(
+        <div ref={columnsPanelRef} className="relative">
+          <button
+            type="button"
+            id="production-table-columns-control"
+            aria-label={`Configure table columns${layoutCustomized ? ', customized layout active' : ''}`}
+            title="Configure table columns"
+            aria-haspopup="dialog"
+            aria-expanded={columnsOpen}
+            aria-controls="production-table-columns-popover"
+            onClick={() => {
+              setLayoutMessage('');
+              setColumnsOpen((current) => !current);
+            }}
+            className={`inline-flex h-9 items-center gap-1.5 rounded-sm border px-3 text-[10px] font-bold uppercase tracking-[0.08em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${layoutCustomized ? 'border-blue-300 bg-blue-50 text-blue-800' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-100'}`}
+          >
+            <Settings2 className="h-3.5 w-3.5" aria-hidden="true" />
+            Columns
+            {layoutCustomized && <span className="h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden="true" />}
+          </button>
+          {columnsOpen && (
+            <div
+              role="dialog"
+              id="production-table-columns-popover"
+              aria-label="Production Table columns"
+              aria-labelledby="production-table-columns-control"
+              onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                  event.preventDefault();
+                  setColumnsOpen(false);
+                }
+              }}
+              className="absolute right-0 top-full z-[90] mt-1 flex max-h-[min(75vh,32rem)] w-72 flex-col overflow-hidden rounded-sm border border-slate-300 bg-white shadow-xl"
+            >
+              <div className="min-h-0 flex-1 overflow-y-auto p-2 pr-1">
+                {tableColumns.map((column) => (
+                  <label key={column.id} className={`flex min-h-8 items-center gap-2 rounded-sm px-2 text-xs ${column.hideable ? 'cursor-pointer text-slate-700 hover:bg-slate-50' : 'cursor-not-allowed text-slate-400'}`}>
+                    <input
+                      type="checkbox"
+                      checked={!hiddenColumns.has(column.id)}
+                      disabled={!column.hideable}
+                      onChange={(event) => setColumnVisible(column.id, event.target.checked)}
+                      className="h-4 w-4 rounded-sm border-slate-300 text-blue-700 focus:ring-blue-600"
+                    />
+                    <span className="flex-1">{column.label}</span>
+                    {!column.hideable && <span className="text-[9px] font-bold uppercase tracking-wide">Required</span>}
+                  </label>
+                ))}
+              </div>
+              {layoutMessage && <div role="alert" className="mx-2 mb-2 shrink-0 border-l-2 border-amber-500 bg-amber-50 px-2 py-1.5 text-[10px] font-semibold leading-4 text-amber-900">{layoutMessage}</div>}
+              <div className="grid h-11 shrink-0 grid-cols-2 items-center gap-2 border-t border-slate-200 bg-white px-2">
+                <button type="button" onClick={showAllColumns} className="h-7 w-full whitespace-nowrap rounded-sm px-2 text-[10px] font-bold uppercase tracking-wide text-blue-800 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-600">Show all</button>
+                <button type="button" onClick={resetTableLayout} className="h-7 w-full whitespace-nowrap rounded-sm border border-slate-300 bg-white px-2 text-[10px] font-bold uppercase tracking-wide text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600">Reset layout</button>
+              </div>
+            </div>
+          )}
+        </div>,
+        columnsToolbarTarget,
+      )}
+    <div className={`overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm ${resizingColumn ? 'cursor-col-resize select-none' : ''}`}>
       <div className="max-h-[68vh] overflow-auto">
         <table className="table-fixed border-separate border-spacing-0" style={{ width: tableWidth }}>
           <colgroup>
-            {tableColumns.map(([name, width]) => <col key={name} style={{ width }} />)}
+            {visibleColumns.map((column) => <col key={column.id} style={{ width: effectiveWidths[column.id] }} />)}
           </colgroup>
           <thead className="sticky top-0 z-30">
             <tr>
-              <th title="Inspect job actions" aria-label="Inspect job actions" className={`${headerClass} sticky left-0 z-50 px-0`}><Search className="mx-auto h-3 w-3" aria-hidden="true" /></th>
-              <th className={`${headerClass} sticky z-40`} style={{ left: jobNumberStickyLeft }}>Job #</th>
-              <th className={`${headerClass} sticky z-40`} style={{ left: projectStickyLeft }}>Project</th>
-              <th className={headerClass}>Customer</th>
-              <th className={headerClass}>Estimate</th>
-              <th tabIndex={0} title="Work Order Number" className={headerClass}>WO #</th>
-              <th tabIndex={0} title="Deposit Received" className={headerClass}>Deposit</th>
-              <th tabIndex={0} title="Requested Delivery Date" className={headerClass}>Delivery</th>
-              <th tabIndex={0} title="Planned Production Start" className={headerClass}>Start</th>
-              <th tabIndex={0} title="Planned Production Finish" className={headerClass}>Finish</th>
-              <th tabIndex={0} title="Estimated Labor Hours" className={headerClass}>Labor</th>
-              <th tabIndex={0} title="Estimated Calendar Days" className={headerClass}>Days</th>
-              <th tabIndex={0} title="Color Plate Number" className={headerClass}>Color Plate</th>
-              <th tabIndex={0} title="Sample Submitted Date" className={headerClass}>Sample</th>
-              <th className={headerClass}>Approval</th>
-              <th tabIndex={0} title="Material Readiness Status" className={headerClass}>Material</th>
-              <th tabIndex={0} title="Production Status" className={headerClass}>Status</th>
-              <th className={headerClass}>Remarks</th>
+              {renderHeader(tableColumnById.inspector, <Search className="mx-auto h-3 w-3" aria-hidden="true" />, 'sticky left-0 z-50 px-0', 'Inspect job actions')}
+              {renderHeader(tableColumnById.jobNumber, 'Job #', 'sticky z-40')}
+              {renderHeader(tableColumnById.project, 'Project', 'sticky z-40')}
+              {renderHeader(tableColumnById.customer, 'Customer')}
+              {renderHeader(tableColumnById.estimate, 'Estimate')}
+              {renderHeader(tableColumnById.workOrder, 'WO #', '', 'Work Order Number')}
+              {renderHeader(tableColumnById.deposit, 'Deposit', '', 'Deposit Received')}
+              {renderHeader(tableColumnById.delivery, 'Delivery', '', 'Requested Delivery Date')}
+              {renderHeader(tableColumnById.start, 'Start', '', 'Planned Production Start')}
+              {renderHeader(tableColumnById.finish, 'Finish', '', 'Planned Production Finish')}
+              {renderHeader(tableColumnById.labor, 'Labor', '', 'Estimated Labor Hours')}
+              {renderHeader(tableColumnById.days, 'Days', '', 'Estimated Calendar Days')}
+              {renderHeader(tableColumnById.colorPlate, 'Color Plate', '', 'Color Plate Number')}
+              {renderHeader(tableColumnById.sample, 'Sample', '', 'Sample Submitted Date')}
+              {renderHeader(tableColumnById.approval, 'Approval')}
+              {renderHeader(tableColumnById.material, 'Material', '', 'Material Readiness Status')}
+              {renderHeader(tableColumnById.status, 'Status', '', 'Production Status')}
+              {renderHeader(tableColumnById.remarks, 'Remarks')}
             </tr>
           </thead>
 
