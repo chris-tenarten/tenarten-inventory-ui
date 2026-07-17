@@ -483,11 +483,11 @@ export default function CatalogPage() {
                 />
               </div>
 
-              <div className="grid w-full grid-cols-2 rounded-sm border border-slate-300 bg-slate-50 p-1 sm:inline-flex sm:w-fit">
+              <div className="grid h-9 w-full grid-cols-2 divide-x divide-slate-300 overflow-hidden rounded-sm border border-slate-300 bg-slate-50 sm:inline-flex sm:w-fit">
                 <button
                   type="button"
                   onClick={() => setMode('standard')}
-                  className={`px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
+                  className={`h-full px-3 text-[10px] font-bold uppercase tracking-[0.07em] transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
                     mode === 'standard'
                       ? 'bg-slate-800 text-white shadow-sm'
                       : 'text-slate-600 hover:bg-white hover:text-slate-950'
@@ -498,7 +498,7 @@ export default function CatalogPage() {
                 <button
                   type="button"
                   onClick={() => setMode('specialty')}
-                  className={`border-l border-slate-400 px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
+                  className={`h-full px-3 text-[10px] font-bold uppercase tracking-[0.07em] transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
                     mode === 'specialty'
                       ? 'bg-slate-800 text-white shadow-sm'
                       : 'text-slate-600 hover:bg-white hover:text-slate-950'
@@ -841,7 +841,7 @@ export default function CatalogPage() {
           </div>
         </section>
 
-        <section className="border border-slate-400 bg-white shadow-sm">
+        <section className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
           <div className="flex flex-col items-start gap-1 border-b border-slate-300 bg-[#f6f7f9] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-700">Recent Annotations</h2>
             <span className="text-xs font-medium text-slate-500">Latest catalog notes and warnings</span>

@@ -183,10 +183,11 @@ export default function ActivityPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-6 sm:py-6">
-      <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 bg-white px-4 py-4"><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Operational ledger</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Inventory Activity</h1><p className="mt-1 text-sm text-slate-600">Inventory receipts, usage, transfers, and adjustments.</p></div>
-        <div className="border-b border-slate-200 bg-white p-4">
+    <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-5 text-slate-950 sm:px-5 sm:py-7">
+      <div className="mx-auto w-full max-w-[1800px]">
+        <div className="mb-4 border-b border-slate-200 pb-4"><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Operational ledger</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Inventory Activity</h1><p className="mt-1 text-sm text-slate-600">Inventory receipts, usage, transfers, and adjustments.</p></div>
+        <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 bg-white p-3 sm:p-4">
           <div>
             <label
               htmlFor="activity-search"
@@ -205,14 +206,14 @@ export default function ActivityPage() {
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <span id="activity-filter-label" className="shrink-0 text-sm font-bold text-slate-700">Show</span>
-            <div role="group" aria-labelledby="activity-filter-label" className="inline-flex h-9 items-stretch rounded-sm border border-slate-300 bg-slate-50 p-0.5">
+            <div role="group" aria-labelledby="activity-filter-label" className="inline-flex h-9 items-stretch divide-x divide-slate-300 overflow-hidden rounded-sm border border-slate-300 bg-slate-50">
               {(['all', 'intake', 'outtake', 'adjustment'] as TransactionTypeFilter[]).map((filter) => (
                 <button
                   key={filter}
                   type="button"
                   aria-pressed={typeFilter === filter}
                   onClick={() => setTypeFilter(filter)}
-                  className={`h-full rounded-sm px-3 text-center text-[10px] font-bold uppercase tracking-[0.09em] transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
+                  className={`h-full px-3 text-center text-[10px] font-bold uppercase tracking-[0.09em] transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
                     typeFilter === filter
                       ? 'bg-slate-900 text-white'
                       : 'text-slate-600 hover:bg-white hover:text-slate-950'
@@ -226,7 +227,7 @@ export default function ActivityPage() {
               type="button"
               onClick={loadRows}
               disabled={loading}
-              className="ml-auto h-9 border border-slate-500 bg-white px-4 text-[10px] font-bold uppercase tracking-[0.07em] text-slate-900 transition hover:border-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="ml-auto h-9 border border-slate-300 bg-white px-4 text-[10px] font-bold uppercase tracking-[0.07em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? 'Refreshing' : 'Refresh'}
             </button>
@@ -276,21 +277,21 @@ export default function ActivityPage() {
                           isExpanded ? 'bg-slate-100' : 'bg-white'
                         }`}
                       >
-                        <td className="whitespace-nowrap border-r border-slate-200 px-3 py-3 align-top font-medium text-slate-700">
+                        <td className="whitespace-nowrap border-r border-slate-200 px-3 py-2 align-top font-medium text-slate-700">
                           {formatDateTime(row.created_at)}
                         </td>
 
-                        <td className="whitespace-nowrap border-r border-slate-200 px-3 py-3 align-top">
+                        <td className="whitespace-nowrap border-r border-slate-200 px-3 py-2 align-top">
                           <span className={`inline-flex border px-2 py-1 text-[11px] font-black uppercase tracking-[0.1em] ${typeBadgeClass(row.transaction_type)}`}>
                             {formatTransactionType(row.transaction_type)}
                           </span>
                         </td>
 
-                        <td className="border-r border-slate-200 px-3 py-3 align-top font-semibold text-slate-800">
+                        <td className="border-r border-slate-200 px-3 py-2 align-top font-semibold text-slate-800">
                           {getDisplayVendor(row)}
                         </td>
 
-                        <td className="border-r border-slate-200 px-3 py-3 align-top">
+                        <td className="border-r border-slate-200 px-3 py-2 align-top">
                           <div className="font-black text-slate-950">{row.item_name || '—'}</div>
                           {row.is_earmarked && (
                             <div className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
@@ -299,23 +300,23 @@ export default function ActivityPage() {
                           )}
                         </td>
 
-                        <td className="border-r border-slate-200 px-3 py-3 align-top font-medium text-slate-700">
+                        <td className="border-r border-slate-200 px-3 py-2 align-top font-medium text-slate-700">
                           {row.size || '—'}
                         </td>
 
-                        <td className={`border-r border-slate-200 px-3 py-3 text-right align-top text-base font-black tabular-nums ${getQuantityClass(row)}`}>
+                        <td className={`border-r border-slate-200 px-3 py-2 text-right align-top text-sm font-bold tabular-nums ${getQuantityClass(row)}`}>
                           {getSignedQuantity(row)}
                         </td>
 
-                        <td className="border-r border-slate-200 px-3 py-3 align-top font-medium text-slate-700">
+                        <td className="border-r border-slate-200 px-3 py-2 align-top font-medium text-slate-700">
                           {row.unit || '—'}
                         </td>
 
-                        <td className="border-r border-slate-200 px-3 py-3 align-top font-medium text-slate-700">
+                        <td className="border-r border-slate-200 px-3 py-2 align-top font-medium text-slate-700">
                           {row.location || '—'}
                         </td>
 
-                        <td className="px-3 py-3 align-top">
+                        <td className="px-3 py-2 align-top">
                           <span className="text-xs font-black uppercase tracking-[0.12em] text-slate-900">
                             {isExpanded ? 'Close' : 'Open'}
                           </span>
@@ -431,6 +432,7 @@ export default function ActivityPage() {
               </div>
             </>
           )}
+        </div>
         </div>
       </div>
     </div>
