@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronsLeftRight, Paperclip, Search, Settings2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronsLeftRight, Paperclip, Search, Settings2, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode, RefObject } from 'react';
@@ -125,6 +125,8 @@ const tableColumns = [
 
 type TableColumn = (typeof tableColumns)[number];
 type TableColumnId = TableColumn['id'];
+type SortableTableColumnId = Exclude<TableColumnId, 'inspector'>;
+type TableSort = { column: SortableTableColumnId; direction: 'ascending' | 'descending' };
 type TableLayout = {
   widths: Partial<Record<TableColumnId, number>>;
   hidden: TableColumnId[];
@@ -132,6 +134,44 @@ type TableLayout = {
 
 const tableColumnById = Object.fromEntries(tableColumns.map((column) => [column.id, column])) as Record<TableColumnId, TableColumn>;
 const defaultTableLayout: TableLayout = { widths: {}, hidden: [] };
+const tableSortCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+const materialSortOrder = new Map(materialStatusOptions.map((option, index) => [option.value, index]));
+const productionSortOrder = new Map(productionStatuses.map((option, index) => [option.value, index]));
+
+function tableSortValue(job: ProductionJob, column: SortableTableColumnId): string | number | null {
+  switch (column) {
+    case 'jobNumber': return job.job_number;
+    case 'project': return job.name;
+    case 'customer': return job.customer;
+    case 'estimate': return job.estimate_number;
+    case 'workOrder': return job.work_order_number;
+    case 'deposit': return job.deposit_date;
+    case 'delivery': return job.requested_delivery_date;
+    case 'start': return job.planned_start;
+    case 'finish': return job.planned_end;
+    case 'labor': return job.estimated_man_hours;
+    case 'days': return job.estimated_calendar_days;
+    case 'colorPlate': return job.color_plate_number;
+    case 'sample': return job.sample_submitted_date;
+    case 'approval': return job.approval_date;
+    case 'material': return materialSortOrder.get(job.material_status) ?? null;
+    case 'status': return productionSortOrder.get(job.production_status) ?? null;
+    case 'remarks': return job.remarks;
+  }
+}
+
+function compareTableSortValues(first: string | number | null, second: string | number | null, direction: TableSort['direction']) {
+  const firstBlank = first === null || first === '';
+  const secondBlank = second === null || second === '';
+  if (firstBlank || secondBlank) {
+    if (firstBlank && secondBlank) return 0;
+    return firstBlank ? 1 : -1;
+  }
+  const comparison = typeof first === 'number' && typeof second === 'number'
+    ? first - second
+    : tableSortCollator.compare(String(first), String(second));
+  return direction === 'ascending' ? comparison : -comparison;
+}
 
 function clampColumnWidth(column: TableColumn, width: number) {
   return Math.min(column.maxWidth, Math.max(column.minWidth, Math.round(width)));
@@ -400,6 +440,7 @@ export default function ProductionTable({
   const [columnsToolbarTarget, setColumnsToolbarTarget] = useState<HTMLElement | null>(null);
   const [layoutMessage, setLayoutMessage] = useState('');
   const [resizingColumn, setResizingColumn] = useState<TableColumnId | null>(null);
+  const [tableSort, setTableSort] = useState<TableSort | null>(null);
   const draftNameRef = useRef<HTMLInputElement | null>(null);
   const remarksPanelRef = useRef<HTMLDivElement | null>(null);
   const remarksTextareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -416,6 +457,18 @@ export default function ProductionTable({
   ])) as Record<TableColumnId, number>, [tableLayout.widths]);
   const visibleColumns = useMemo(() => tableColumns.filter((column) => !hiddenColumns.has(column.id)), [hiddenColumns]);
   const tableWidth = useMemo(() => visibleColumns.reduce((total, column) => total + effectiveWidths[column.id], 0), [effectiveWidths, visibleColumns]);
+  const sortedJobs = useMemo(() => {
+    if (!tableSort) return jobs;
+    const originalOrder = new Map(jobs.map((job, index) => [job.id, index]));
+    return [...jobs].sort((first, second) => {
+      const comparison = compareTableSortValues(
+        tableSortValue(first, tableSort.column),
+        tableSortValue(second, tableSort.column),
+        tableSort.direction,
+      );
+      return comparison || (originalOrder.get(first.id) ?? 0) - (originalOrder.get(second.id) ?? 0);
+    });
+  }, [jobs, tableSort]);
   const jobNumberStickyLeft = effectiveWidths.inspector;
   const projectStickyLeft = effectiveWidths.inspector + effectiveWidths.jobNumber;
   useEffect(() => {
@@ -788,15 +841,35 @@ export default function ProductionTable({
     );
   }
 
+  function toggleTableSort(column: SortableTableColumnId) {
+    setTableSort((current) => current?.column === column
+      ? { column, direction: current.direction === 'ascending' ? 'descending' : 'ascending' }
+      : { column, direction: 'ascending' });
+  }
+
   function renderHeader(column: TableColumn, content: ReactNode, className = '', title?: string) {
     if (hiddenColumns.has(column.id)) return null;
+    const sortable = column.id !== 'inspector';
+    const activeSort = sortable && tableSort?.column === column.id ? tableSort : null;
     return (
       <th
-        title={title}
-        className={`${headerClass} group/column relative select-none ${className}`}
+        title={[title, sortable ? `Double-click to sort by ${column.label}. Press Enter when focused for keyboard sorting.` : null].filter(Boolean).join(' ')}
+        tabIndex={sortable ? 0 : undefined}
+        aria-sort={activeSort?.direction ?? (sortable ? 'none' : undefined)}
+        onDoubleClick={sortable ? () => toggleTableSort(column.id as SortableTableColumnId) : undefined}
+        onKeyDown={sortable ? (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          toggleTableSort(column.id as SortableTableColumnId);
+        } : undefined}
+        className={`${headerClass} group/column relative select-none ${sortable ? 'cursor-default' : ''} ${activeSort ? '!bg-blue-100 !text-blue-900' : ''} ${className}`}
         style={column.id === 'jobNumber' ? { left: jobNumberStickyLeft } : column.id === 'project' ? { left: projectStickyLeft } : undefined}
       >
-        {content}
+        <span className="inline-flex items-center justify-center gap-1">
+          {content}
+          {activeSort?.direction === 'ascending' && <ArrowUp className="h-3 w-3 text-blue-700" aria-hidden="true" />}
+          {activeSort?.direction === 'descending' && <ArrowDown className="h-3 w-3 text-blue-700" aria-hidden="true" />}
+        </span>
         {renderResizeHandle(column)}
       </th>
     );
@@ -828,7 +901,7 @@ export default function ProductionTable({
             {projectAttachmentIndicator && <div className="absolute right-1 top-1/2 z-10 -translate-y-1/2">{projectAttachmentIndicator}</div>}
           </div>
         </td>
-        {!hiddenColumns.has('customer') && <td className={cellClass}><input value={row.customer} title={row.customer || undefined} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>}
+        {!hiddenColumns.has('customer') && <td className={cellClass}><input list="production-customer-suggestions" autoComplete="off" value={row.customer} title={row.customer || undefined} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>}
         {!hiddenColumns.has('estimate') && <td className={cellClass}><input value={row.estimateNumber} title={row.estimateNumber || undefined} onChange={(e) => onChange('estimateNumber', e.target.value)} onBlur={blur('estimateNumber')} onKeyDown={blurOnEnter} placeholder="Estimate #" className={inputClass} /></td>}
         {!hiddenColumns.has('workOrder') && <td className={cellClass}><input value={row.workOrderNumber} title={row.workOrderNumber || undefined} onChange={(e) => onChange('workOrderNumber', e.target.value)} onBlur={blur('workOrderNumber')} onKeyDown={blurOnEnter} placeholder="Work order #" className={inputClass} /></td>}
         {!hiddenColumns.has('deposit') && <td className={cellClass}><input aria-label="Deposit date" title={row.depositDate || undefined} type="date" value={row.depositDate} onChange={(e) => onChange('depositDate', e.target.value)} onBlur={blur('depositDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.depositDate ? populatedDateClass : emptyDateClass}`} /></td>}
@@ -860,7 +933,20 @@ export default function ProductionTable({
   return (
     <>
       {columnsToolbarTarget && createPortal(
-        <div ref={columnsPanelRef} className="relative">
+        <div ref={columnsPanelRef} className="relative flex items-center gap-2">
+          {tableSort && (
+            <button
+              type="button"
+              onClick={() => setTableSort(null)}
+              aria-label={`Clear ${tableColumnById[tableSort.column].label} ${tableSort.direction} sort`}
+              title="Clear table sort and restore the default planned-start order"
+              className="inline-flex h-9 max-w-48 items-center gap-1.5 rounded-sm border border-blue-300 bg-blue-50 px-2.5 text-[10px] font-bold uppercase tracking-[0.05em] text-blue-900 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            >
+              {tableSort.direction === 'ascending' ? <ArrowUp className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> : <ArrowDown className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+              <span className="truncate">{tableColumnById[tableSort.column].label}</span>
+              <X className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            </button>
+          )}
           <button
             type="button"
             id="production-table-columns-control"
@@ -947,7 +1033,7 @@ export default function ProductionTable({
           </thead>
 
           <tbody>
-            {jobs.map((job) => {
+            {sortedJobs.map((job) => {
               const row = rows[job.id] ?? toRow(job);
               const state = states[job.id] ?? 'idle';
               const count = attachmentCounts[job.id] ?? 0;

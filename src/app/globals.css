@@ -63,3 +63,37 @@ input::placeholder,
 textarea::placeholder {
   color: #64748b;
 }
+
+.timeline-density-slider {
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: #cbd5e1;
+}
+
+.timeline-density-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid #94a3b8;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.15);
+}
+
+.timeline-density-slider:active::-webkit-slider-thumb {
+  background: #f1f5f9;
+}
+
+.timeline-density-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 1px solid #94a3b8;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.15);
+}
+
+.timeline-density-slider:active::-moz-range-thumb {
+  background: #f1f5f9;
+}

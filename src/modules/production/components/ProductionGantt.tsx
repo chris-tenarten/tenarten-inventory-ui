@@ -23,6 +23,7 @@ import {
   RAIL_WIDTH_MAX,
   RAIL_WIDTH_MIN,
   TIMELINE_PREFERENCES_KEY,
+  TIMELINE_ROW_DENSITY_OPTIONS,
   TIMELINE_ZOOM_OPTIONS,
   timelineZoomOption,
 } from '../timeline-preferences';
@@ -163,6 +164,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const [canvasPan, setCanvasPan] = useState<CanvasPan | null>(null);
   const [navigatorDrag, setNavigatorDrag] = useState<NavigatorDrag | null>(null);
   const [spacePressed, setSpacePressed] = useState(false);
+  const ganttRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const navigatorTrackRef = useRef<HTMLDivElement | null>(null);
   const panFrameRef = useRef<number | null>(null);
@@ -172,6 +174,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const railResizeRef = useRef<{ pointerId: number; startX: number; startWidth: number } | null>(null);
   const zoom = preferences.zoom;
   const railWidth = preferences.railWidth;
+  const rowDensityIndex = Math.max(0, TIMELINE_ROW_DENSITY_OPTIONS.findIndex((option) => option.value === preferences.rowDensity));
+  const rowDensityOption = TIMELINE_ROW_DENSITY_OPTIONS[rowDensityIndex];
   const displayJobs = useMemo(() => jobs.map((job) => stagedSchedules[job.id]
     ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
     : job), [jobs, stagedSchedules]);
@@ -382,6 +386,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
       const earliestOffset = differenceInCalendarDays(earliest, timeline.start);
       scrollRef.current.scrollLeft = Math.max(0, (earliestOffset - FIT_PADDING_DAYS) * width);
       updateScrollMetrics();
+      ganttRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
 
@@ -528,7 +533,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     : null;
 
   return (
-    <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+    <div ref={ganttRef} className="scroll-mt-20 overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
       <div className="z-40 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-700 shadow-sm">
         <span id="timeline-zoom-label" className="font-bold uppercase tracking-[0.12em] text-slate-500">Zoom</span>
         <div className="inline-flex h-8 overflow-hidden rounded-sm border border-slate-300 bg-white">
@@ -542,6 +547,23 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
         </div>
         <button type="button" onClick={fitTimeline} disabled={Boolean(interaction)} className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-slate-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />Fit</button>
         <button type="button" onClick={goToToday} disabled={Boolean(interaction)} className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-blue-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40"><LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Today</button>
+        <label className="inline-flex h-8 items-center gap-2 px-1 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-500" title={`Timeline rows: ${rowDensityOption.label}`}>
+          <span>Rows</span>
+          <input
+            type="range"
+            min="0"
+            max={TIMELINE_ROW_DENSITY_OPTIONS.length - 1}
+            step="1"
+            value={rowDensityIndex}
+            aria-label="Timeline row density"
+            aria-valuetext={rowDensityOption.label}
+            onChange={(event) => {
+              const option = TIMELINE_ROW_DENSITY_OPTIONS[Number(event.currentTarget.value)];
+              if (option) setPreferences((current) => ({ ...current, rowDensity: option.value }));
+            }}
+            className="timeline-density-slider w-16 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          />
+        </label>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Timeline legend">
         <span className="font-bold uppercase tracking-[0.12em] text-slate-500">Legend</span>
         {productionStatusVisuals.map((visual) => (
@@ -605,7 +627,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                   const previousDay = index > 0 ? days[index - 1] : null;
                   const showMonth = index === 0 || previousDay?.date.getMonth() !== day.date.getMonth();
                   return (
-                    <div key={`month-${day.key}`} className="shrink-0" style={{ width: dayWidth }}>
+                    <div key={`month-${day.key}`} className={`shrink-0 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''}`} style={{ width: dayWidth }}>
                       {showMonth && <div className="whitespace-nowrap px-2 pt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">{day.monthLabel}</div>}
                     </div>
                   );
@@ -613,7 +635,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
               </div>
               <div className="flex h-10">
                 {days.map((day) => (
-                  <div key={day.key} title={day.date.toLocaleDateString()} className={`flex shrink-0 flex-col items-center justify-center border-r border-slate-200 text-[10px] ${day.isToday ? 'bg-blue-100 font-bold text-blue-900' : day.isWeekend ? 'bg-slate-200/70 text-slate-500' : 'text-slate-600'}`} style={{ width: dayWidth }}>
+                  <div key={day.key} title={day.date.toLocaleDateString()} className={`flex shrink-0 flex-col items-center justify-center border-r border-slate-200 text-[10px] ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isToday ? 'bg-blue-100 font-bold text-blue-900' : day.isWeekend ? 'bg-slate-200/70 text-slate-500' : 'text-slate-600'}`} style={{ width: dayWidth }}>
                     {(zoom === 'days' || zoom === 'weeks') && <span>{day.weekday}</span>}
                     {(zoom === 'days' || zoom === 'weeks' || (zoom === 'months' && (day.date.getDay() === 1 || day.dayNumber === 1))) && <span className="text-xs font-bold">{day.dayNumber}</span>}
                     {zoom === 'year' && day.dayNumber === 1 && <span className="text-[8px] font-bold uppercase">{day.date.toLocaleDateString(undefined, { month: 'narrow' })}</span>}
@@ -646,27 +668,29 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             const statusVisual = productionStatusVisualByValue[job.production_status];
 
             return (
-              <div key={job.id} className="flex min-h-[63px] border-b border-slate-300 last:border-b-0">
-                <div className="sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-400 bg-white px-4 py-2" style={{ width: railWidth }}>
+              <div key={job.id} className="flex border-b border-slate-300 last:border-b-0" style={{ minHeight: rowDensityOption.height }}>
+                <div className={`sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-400 bg-white ${preferences.rowDensity === 'compact' ? 'px-3 py-1' : preferences.rowDensity === 'comfortable' ? 'px-4 py-3' : 'px-4 py-2'}`} style={{ width: railWidth }}>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <div title={job.name} className="truncate text-[13px] font-bold text-slate-950">{job.name}</div>
+                      <div title={job.name} className={`truncate font-bold text-slate-950 ${preferences.rowDensity === 'compact' ? 'text-xs' : 'text-[13px]'}`}>{job.name}</div>
                       {isStaged && <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.08em] text-amber-700">Proposed</span>}
                     </div>
-                    <div className="mt-0.5 truncate text-[11px] text-slate-600">{[job.job_number, job.customer].filter(Boolean).join(' • ') || 'Identifiers not assigned'}</div>
-                    <div className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-500">
-                      {hasSchedule && displayStart && displayEnd
-                        ? `${formatShortDate(displayStart)} – ${formatShortDate(displayEnd)} · ${intensityLabel(job, displayStart, displayEnd)}`
-                        : job.requested_delivery_date
-                          ? `Delivery requested ${formatShortDate(job.requested_delivery_date)}`
-                          : 'Schedule not set'}
-                    </div>
+                    <div className={`truncate text-slate-600 ${preferences.rowDensity === 'compact' ? 'text-[10px]' : 'mt-0.5 text-[11px]'}`}>{[job.job_number, job.customer].filter(Boolean).join(' • ') || 'Identifiers not assigned'}</div>
+                    {preferences.rowDensity !== 'compact' && (
+                      <div className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-500">
+                        {hasSchedule && displayStart && displayEnd
+                          ? `${formatShortDate(displayStart)} – ${formatShortDate(displayEnd)}`
+                          : job.requested_delivery_date
+                            ? `Delivery requested ${formatShortDate(job.requested_delivery_date)}`
+                            : 'Schedule not set'}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <div className="relative shrink-0" style={{ width: timelineWidth }}>
                   <div className="absolute inset-0 flex">
-                    {days.map((day) => <div key={`${job.id}-${day.key}`} className={`h-full shrink-0 border-r border-slate-200 ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: dayWidth }} />)}
+                    {days.map((day) => <div key={`${job.id}-${day.key}`} className={`h-full shrink-0 border-r border-slate-200 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: dayWidth }} />)}
                   </div>
                   {todayIndex >= 0 && <div className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-blue-600" style={{ left: todayIndex * dayWidth + dayWidth / 2 }} />}
 

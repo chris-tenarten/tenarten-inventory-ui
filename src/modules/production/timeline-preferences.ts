@@ -1,14 +1,26 @@
 export type TimelineZoom = 'days' | 'weeks' | 'months' | 'year';
+export type TimelineRowDensity = 'compact' | 'standard' | 'comfortable';
 
 export type TimelinePreferences = {
   zoom: TimelineZoom;
   dayWidths: Record<TimelineZoom, number>;
   railWidth: number;
+  rowDensity: TimelineRowDensity;
 };
 
 export const TIMELINE_PREFERENCES_KEY = 'tenops.productionTimelinePreferences.v1';
 export const RAIL_WIDTH_MIN = 220;
 export const RAIL_WIDTH_MAX = 440;
+
+export const TIMELINE_ROW_DENSITY_OPTIONS: Array<{
+  value: TimelineRowDensity;
+  label: string;
+  height: number;
+}> = [
+  { value: 'compact', label: 'Compact', height: 44 },
+  { value: 'standard', label: 'Standard', height: 63 },
+  { value: 'comfortable', label: 'Comfortable', height: 76 },
+];
 
 export const TIMELINE_ZOOM_OPTIONS: Array<{
   value: TimelineZoom;
@@ -32,6 +44,7 @@ export const defaultTimelinePreferences: TimelinePreferences = {
   zoom: 'weeks',
   dayWidths: Object.fromEntries(TIMELINE_ZOOM_OPTIONS.map((option) => [option.value, option.defaultDayWidth])) as Record<TimelineZoom, number>,
   railWidth: 320,
+  rowDensity: 'standard',
 };
 
 export function timelineZoomOption(zoom: TimelineZoom) {
@@ -59,7 +72,10 @@ export function normalizeTimelinePreferences(value: unknown): TimelinePreference
   const railWidth = typeof candidate.railWidth === 'number' && Number.isFinite(candidate.railWidth)
     ? Math.min(RAIL_WIDTH_MAX, Math.max(RAIL_WIDTH_MIN, Math.round(candidate.railWidth)))
     : defaultTimelinePreferences.railWidth;
-  return { zoom, dayWidths, railWidth };
+  const rowDensity = TIMELINE_ROW_DENSITY_OPTIONS.some((option) => option.value === candidate.rowDensity)
+    ? candidate.rowDensity as TimelineRowDensity
+    : defaultTimelinePreferences.rowDensity;
+  return { zoom, dayWidths, railWidth, rowDensity };
 }
 
 export function parseTimelinePreferences(value: string | null) {
