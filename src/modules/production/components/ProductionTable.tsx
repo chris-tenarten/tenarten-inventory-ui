@@ -418,10 +418,6 @@ export default function ProductionTable({
   const tableWidth = useMemo(() => visibleColumns.reduce((total, column) => total + effectiveWidths[column.id], 0), [effectiveWidths, visibleColumns]);
   const jobNumberStickyLeft = effectiveWidths.inspector;
   const projectStickyLeft = effectiveWidths.inspector + effectiveWidths.jobNumber;
-  const layoutCustomized = tableLayout.hidden.length > 0 || tableColumns.some((column) => (
-    column.resizable && effectiveWidths[column.id] !== column.defaultWidth
-  ));
-
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       setTableLayout(parseStoredTableLayout(window.localStorage.getItem(TABLE_LAYOUT_STORAGE_KEY)));
@@ -868,7 +864,7 @@ export default function ProductionTable({
           <button
             type="button"
             id="production-table-columns-control"
-            aria-label={`Configure table columns${layoutCustomized ? ', customized layout active' : ''}`}
+            aria-label="Configure table columns"
             title="Configure table columns"
             aria-haspopup="dialog"
             aria-expanded={columnsOpen}
@@ -877,11 +873,10 @@ export default function ProductionTable({
               setLayoutMessage('');
               setColumnsOpen((current) => !current);
             }}
-            className={`inline-flex h-9 items-center gap-1.5 rounded-sm border px-3 text-[10px] font-bold uppercase tracking-[0.08em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${layoutCustomized ? 'border-blue-300 bg-blue-50 text-blue-800' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-100'}`}
+            className="inline-flex h-9 items-center gap-1.5 rounded-sm border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
           >
             <Settings2 className="h-3.5 w-3.5" aria-hidden="true" />
             Columns
-            {layoutCustomized && <span className="h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden="true" />}
           </button>
           {columnsOpen && (
             <div
@@ -913,9 +908,9 @@ export default function ProductionTable({
                 ))}
               </div>
               {layoutMessage && <div role="alert" className="mx-2 mb-2 shrink-0 border-l-2 border-amber-500 bg-amber-50 px-2 py-1.5 text-[10px] font-semibold leading-4 text-amber-900">{layoutMessage}</div>}
-              <div className="grid h-11 shrink-0 grid-cols-2 items-center gap-2 border-t border-slate-200 bg-white px-2">
-                <button type="button" onClick={showAllColumns} className="h-7 w-full whitespace-nowrap rounded-sm px-2 text-[10px] font-bold uppercase tracking-wide text-blue-800 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-600">Show all</button>
-                <button type="button" onClick={resetTableLayout} className="h-7 w-full whitespace-nowrap rounded-sm border border-slate-300 bg-white px-2 text-[10px] font-bold uppercase tracking-wide text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600">Reset layout</button>
+              <div className="flex h-11 shrink-0 items-center gap-2 border-t border-slate-200 bg-white px-2">
+                <button type="button" onClick={showAllColumns} className="h-7 min-w-0 flex-1 whitespace-nowrap rounded-sm px-2 text-[10px] font-bold uppercase tracking-wide text-blue-800 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-600">Show all</button>
+                <button type="button" onClick={resetTableLayout} className="h-7 shrink-0 whitespace-nowrap rounded-sm border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.04em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600">Reset layout</button>
               </div>
             </div>
           )}
