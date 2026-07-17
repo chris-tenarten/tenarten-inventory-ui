@@ -74,7 +74,13 @@ type TimelineScrollMetrics = {
   scrollWidth: number;
 };
 
-type CanvasPan = { pointerId: number; startX: number; startScrollLeft: number };
+type CanvasPan = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  startScrollLeft: number;
+  startScrollTop: number;
+};
 type NavigatorDrag = { pointerId: number; startX: number; startScrollLeft: number };
 
 
@@ -424,18 +430,29 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     return target instanceof Element && Boolean(target.closest('button, input, select, textarea, a, [contenteditable="true"], [data-timeline-interactive="true"]'));
   }
 
+  function isTimelinePanCanvas(target: EventTarget | null) {
+    return target instanceof Element && Boolean(target.closest('[data-timeline-pan-canvas="true"]'));
+  }
+
   function startCanvasPan(event: ReactPointerEvent<HTMLDivElement>) {
-    const shouldPan = event.button === 1 || (event.button === 0 && spacePressed);
+    const shouldPan = event.button === 1 || (event.button === 0 && (spacePressed || isTimelinePanCanvas(event.target)));
     if (!shouldPan || isInteractivePanTarget(event.target)) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
-    setCanvasPan({ pointerId: event.pointerId, startX: event.clientX, startScrollLeft: event.currentTarget.scrollLeft });
+    setCanvasPan({
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startScrollLeft: event.currentTarget.scrollLeft,
+      startScrollTop: event.currentTarget.scrollTop,
+    });
   }
 
   function moveCanvasPan(event: ReactPointerEvent<HTMLDivElement>) {
     if (!canvasPan || canvasPan.pointerId !== event.pointerId) return;
     event.preventDefault();
     event.currentTarget.scrollLeft = canvasPan.startScrollLeft - (event.clientX - canvasPan.startX);
+    event.currentTarget.scrollTop = canvasPan.startScrollTop - (event.clientY - canvasPan.startY);
   }
 
   function finishCanvasPan(event: ReactPointerEvent<HTMLDivElement>) {
@@ -688,7 +705,11 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                   </div>
                 </div>
 
-                <div className="relative shrink-0" style={{ width: timelineWidth }}>
+                <div
+                  data-timeline-pan-canvas="true"
+                  className={`relative shrink-0 ${canvasPan ? 'cursor-grabbing' : 'cursor-move'}`}
+                  style={{ width: timelineWidth }}
+                >
                   <div className="absolute inset-0 flex">
                     {days.map((day) => <div key={`${job.id}-${day.key}`} className={`h-full shrink-0 border-r border-slate-200 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: dayWidth }} />)}
                   </div>

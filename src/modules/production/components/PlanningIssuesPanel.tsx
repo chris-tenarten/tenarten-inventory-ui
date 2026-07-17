@@ -186,7 +186,6 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
                   </div>
                 </div>
                 <span className="shrink-0 bg-amber-100 px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-amber-900">{readiness.label}</span>
-                <button type="button" onClick={() => expand(job)} className="h-8 shrink-0 border border-slate-300 bg-white px-2.5 text-[10px] font-bold uppercase text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-700">{expanded ? 'Close' : 'Fix'}</button>
                 <button type="button" onClick={() => onOpenInspector(job, missing.includes('planned_start') || missing.includes('planned_end') ? 'planned-dates' : missing.includes('estimated_man_hours') ? 'labor' : undefined)} className="h-8 shrink-0 border border-slate-300 bg-white px-2.5 text-[10px] font-bold uppercase text-blue-800 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-700">Open Inspector</button>
               </div>
               {expanded && <div id={`planning-issue-${job.id}`} className="border-t border-slate-200 bg-slate-50 p-3">
