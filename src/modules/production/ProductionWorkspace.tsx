@@ -354,17 +354,11 @@ export default function ProductionWorkspace() {
   )), [filteredJobs, stagedSchedules]);
   const stagedJob = stagedSchedule ? jobs.find((job) => job.id === stagedSchedule.jobId) ?? null : null;
   const selectedJob = selectedJobId ? jobs.find(job=>job.id===selectedJobId)??null : null;
-  const planningIssueSummary = useMemo(() => {
+  const planningIssueCount = useMemo(() => {
     const activeJobs = jobs.filter((job) => !['complete', 'cancelled'].includes(job.production_status));
-    const issueFields = activeJobs.map((job) => getJobReadiness(stagedSchedules[job.id]
+    return activeJobs.filter((job) => getJobReadiness(stagedSchedules[job.id]
       ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
-      : job).missingFields).filter((fields) => fields.length > 0);
-    return {
-      total: issueFields.length,
-      labor: issueFields.filter((fields) => fields.includes('estimated_man_hours')).length,
-      customer: issueFields.filter((fields) => fields.includes('customer')).length,
-      schedule: issueFields.filter((fields) => fields.includes('planned_start') || fields.includes('planned_end')).length,
-    };
+      : job).missingFields.length > 0).length;
   }, [jobs, stagedSchedules]);
   const selectJob = (job:ProductionJob, focus?:string) => {
     if (document.activeElement instanceof HTMLElement) inspectorOpenerRef.current = document.activeElement;
@@ -454,9 +448,17 @@ export default function ProductionWorkspace() {
       !['complete', 'cancelled'].includes(job.production_status) &&
       !isScheduled(job),
   ).length;
+  const customerSuggestions = [...new Map(jobs
+    .map((job) => job.customer?.trim())
+    .filter((customer): customer is string => Boolean(customer))
+    .map((customer) => [customer.toLocaleLowerCase(), customer])).values()]
+    .sort((first, second) => first.localeCompare(second, undefined, { sensitivity: 'base' }));
 
   return (
     <div className={`mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7 ${hasUnsavedSchedules(stagedSchedules) ? 'pb-36' : ''}`}>
+      <datalist id="production-customer-suggestions">
+        {customerSuggestions.map((customer) => <option key={customer} value={customer} />)}
+      </datalist>
       <div>
         <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -612,7 +614,7 @@ export default function ProductionWorkspace() {
             {loadError}
           </div>
         )}
-        {planningIssueSummary.total > 0 && <div className="mt-3 flex min-h-10 flex-wrap items-center gap-x-4 gap-y-2 border-l-2 border-amber-500 bg-amber-50/70 px-3 py-2 text-xs text-slate-600"><span className="font-bold text-amber-900">{planningIssueSummary.total} {planningIssueSummary.total === 1 ? 'job needs' : 'jobs need'} planning attention</span><span className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-semibold text-slate-600">{planningIssueSummary.labor > 0 && <span>{planningIssueSummary.labor} missing labor</span>}{planningIssueSummary.customer > 0 && <span>{planningIssueSummary.customer} missing customer</span>}{planningIssueSummary.schedule > 0 && <span>{planningIssueSummary.schedule} missing schedule dates</span>}</span><button type="button" onClick={() => setPlanningIssuesOpen(true)} className="h-7 border border-amber-300 bg-white px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] text-amber-900 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-700">Review issues</button></div>}
+        {planningIssueCount > 0 && <div className="mt-3 flex min-h-10 flex-wrap items-center gap-x-4 gap-y-2 border-l-2 border-amber-500 bg-amber-50/70 px-3 py-2 text-xs text-slate-600"><span className="font-bold text-amber-900">{planningIssueCount} {planningIssueCount === 1 ? 'job needs' : 'jobs need'} planning attention</span><button type="button" onClick={() => setPlanningIssuesOpen(true)} className="h-7 border border-amber-300 bg-white px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] text-amber-900 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-700">Review issues</button></div>}
 
         {stagedSchedule && (() => {
           const hadSchedule = Boolean(stagedSchedule.persistedStart && stagedSchedule.persistedEnd);

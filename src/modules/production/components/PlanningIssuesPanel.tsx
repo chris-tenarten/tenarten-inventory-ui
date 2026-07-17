@@ -4,12 +4,11 @@ import { ChevronDown, ChevronRight, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ProductionJobUpdate } from '../jobs';
-import { getJobReadiness, planningIssueLabels, type PlanningIssueField } from '../readiness';
+import { getJobReadiness, planningIssueLabels } from '../readiness';
 import type { StagedSchedules } from '../schedule-staging';
 import type { ProductionJob } from '../types';
 import { productionValuesEqual } from '../update-normalization';
 
-type IssueFilter = 'all' | 'schedule' | 'labor' | 'details';
 type OrdinaryDraft = { job_number: string; customer: string; requested_delivery_date: string; estimated_man_hours: string };
 type ScheduleDraft = { start: string; end: string };
 
@@ -38,15 +37,7 @@ function effectiveJob(job: ProductionJob, stagedSchedules: StagedSchedules) {
   return staged ? { ...job, planned_start: staged.proposed_planned_start, planned_end: staged.proposed_planned_end } : job;
 }
 
-function matchesFilter(fields: PlanningIssueField[], filter: IssueFilter) {
-  if (filter === 'all') return true;
-  if (filter === 'schedule') return fields.includes('planned_start') || fields.includes('planned_end');
-  if (filter === 'labor') return fields.includes('estimated_man_hours');
-  return fields.some((field) => field === 'job_number' || field === 'customer' || field === 'requested_delivery_date');
-}
-
 export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, onUpdateJob, onStageSchedule, onOpenInspector }: Props) {
-  const [filter, setFilter] = useState<IssueFilter>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [drafts, setDrafts] = useState<Record<string, OrdinaryDraft>>({});
   const [scheduleDrafts, setScheduleDrafts] = useState<Record<string, ScheduleDraft>>({});
@@ -61,7 +52,6 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
     const effective = effectiveJob(job, stagedSchedules);
     return { job, effective, readiness: getJobReadiness(effective) };
   }).filter((row) => row.readiness.state !== 'ready'), [activeJobs, stagedSchedules]);
-  const filteredRows = useMemo(() => issueRows.filter((row) => matchesFilter(row.readiness.missingFields, filter)), [filter, issueRows]);
 
   const dirtyOrdinaryIds = useMemo(() => Object.entries(drafts).filter(([jobId, draft]) => {
     const job = jobs.find((candidate) => candidate.id === jobId);
@@ -169,25 +159,15 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
     setMessages((current) => ({ ...current, [job.id]: 'Schedule changes staged for review.' }));
   }
 
-  const filters: Array<{ value: IssueFilter; label: string }> = [
-    { value: 'all', label: `All ${issueRows.length}` },
-    { value: 'schedule', label: 'Missing schedule' },
-    { value: 'labor', label: 'Missing labor' },
-    { value: 'details', label: 'Missing details' },
-  ];
-
   return <div className="fixed inset-0 z-[70] bg-slate-950/30" onMouseDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
     <aside ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="planning-issues-title" onMouseDown={(event) => event.stopPropagation()} className="ml-auto flex h-full w-full max-w-2xl flex-col border-l border-slate-300 bg-slate-50 shadow-2xl">
       <header className="flex items-start justify-between gap-4 border-b border-slate-300 bg-white px-5 py-4">
         <div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-700">Production planning</div><h2 id="planning-issues-title" className="mt-1 text-xl font-bold text-slate-950">Planning Issues</h2><p className="mt-1 text-sm text-slate-600">Resolve missing details and stage schedule dates without leaving the Production workspace.</p></div>
         <button ref={closeRef} type="button" onClick={requestClose} aria-label="Close Planning Issues" className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700"><X className="h-4 w-4" aria-hidden="true" /></button>
       </header>
-      <div className="flex flex-wrap gap-1 border-b border-slate-200 bg-white px-5 py-3" role="group" aria-label="Filter planning issues">
-        {filters.map((option) => <button key={option.value} type="button" aria-pressed={filter === option.value} onClick={() => setFilter(option.value)} className={`h-8 border px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] focus-visible:ring-2 focus-visible:ring-blue-700 ${filter === option.value ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'}`}>{option.label}</button>)}
-      </div>
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
         <div className="space-y-2">
-          {filteredRows.map(({ job, readiness }) => {
+          {issueRows.map(({ job, readiness }) => {
             const expanded = expandedId === job.id;
             const draft = drafts[job.id] ?? ordinaryDraft(job);
             const scheduleDraft = scheduleDrafts[job.id] ?? { start: job.planned_start ?? '', end: job.planned_end ?? '' };
@@ -195,9 +175,16 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
             const ordinaryDirty = dirtyOrdinaryIds.includes(job.id);
             const scheduleDirty = dirtyScheduleIds.includes(job.id);
             return <section key={job.id} className="border border-slate-300 bg-white">
-              <div className="flex items-center gap-3 p-3">
+              <div className="flex items-start gap-3 p-3">
                 <button type="button" onClick={() => expand(job)} aria-expanded={expanded} aria-controls={`planning-issue-${job.id}`} className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700">{expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}<span className="sr-only">{expanded ? 'Collapse' : 'Fix'} {job.name}</span></button>
-                <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-x-2"><span className="truncate text-sm font-bold text-slate-950">{job.name}</span><span className="text-xs font-semibold text-slate-500">{job.job_number || 'Job number missing'}</span></div><div className="mt-0.5 truncate text-xs text-slate-600">{job.customer || 'Customer missing'} · Missing: {missing.map((field) => planningIssueLabels[field]).join(', ')}</div></div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-x-2"><span className="truncate text-sm font-bold text-slate-950">{job.name}</span><span className="text-xs font-semibold text-slate-500">{job.job_number || 'Job number missing'}</span></div>
+                  <div className="mt-0.5 truncate text-xs text-slate-600">{job.customer || 'Customer missing'}</div>
+                  <div className="mt-1 flex flex-wrap items-center gap-1" aria-label={`Missing planning fields for ${job.name}`}>
+                    <span className="mr-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-800">Missing</span>
+                    {missing.map((field) => <span key={field} className="border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[9px] font-semibold text-amber-900">{planningIssueLabels[field]}</span>)}
+                  </div>
+                </div>
                 <span className="shrink-0 bg-amber-100 px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-amber-900">{readiness.label}</span>
                 <button type="button" onClick={() => expand(job)} className="h-8 shrink-0 border border-slate-300 bg-white px-2.5 text-[10px] font-bold uppercase text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-700">{expanded ? 'Close' : 'Fix'}</button>
                 <button type="button" onClick={() => onOpenInspector(job, missing.includes('planned_start') || missing.includes('planned_end') ? 'planned-dates' : missing.includes('estimated_man_hours') ? 'labor' : undefined)} className="h-8 shrink-0 border border-slate-300 bg-white px-2.5 text-[10px] font-bold uppercase text-blue-800 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-700">Open Inspector</button>
@@ -207,7 +194,7 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
                 {messages[job.id] && <div role="status" className="mb-3 border-l-2 border-emerald-500 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">{messages[job.id]}</div>}
                 <div className="grid gap-3 sm:grid-cols-2">
                   {missing.includes('job_number') && <label className="text-xs font-bold text-slate-700">Job number<input value={draft.job_number} onChange={(event) => updateDraft(job, 'job_number', event.target.value)} className={fieldClass} /></label>}
-                  {missing.includes('customer') && <label className="text-xs font-bold text-slate-700">Customer<input value={draft.customer} onChange={(event) => updateDraft(job, 'customer', event.target.value)} className={fieldClass} /></label>}
+                  {missing.includes('customer') && <label className="text-xs font-bold text-slate-700">Customer<input list="production-customer-suggestions" autoComplete="off" value={draft.customer} onChange={(event) => updateDraft(job, 'customer', event.target.value)} className={fieldClass} /></label>}
                   {missing.includes('requested_delivery_date') && <label className="text-xs font-bold text-slate-700">Requested delivery<input type="date" value={draft.requested_delivery_date} onChange={(event) => updateDraft(job, 'requested_delivery_date', event.target.value)} className={fieldClass} /></label>}
                   {missing.includes('estimated_man_hours') && <label className="text-xs font-bold text-slate-700">Labor estimate<input type="number" min="0" step="0.25" value={draft.estimated_man_hours} onChange={(event) => updateDraft(job, 'estimated_man_hours', event.target.value)} className={fieldClass} /></label>}
                   {missing.includes('planned_start') && <label className="text-xs font-bold text-slate-700">Planned start<input type="date" value={scheduleDraft.start} onChange={(event) => updateSchedule(job, 'start', event.target.value)} onBlur={() => stageDates(job)} className={fieldClass} /></label>}
@@ -218,7 +205,7 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
               </div>}
             </section>;
           })}
-          {filteredRows.length === 0 && <div className="border border-slate-200 bg-white px-4 py-10 text-center text-sm text-slate-600">No jobs match this issue filter.</div>}
+          {issueRows.length === 0 && <div className="border border-slate-200 bg-white px-4 py-10 text-center text-sm text-slate-600">No jobs currently need planning attention.</div>}
         </div>
       </div>
       {dirtyCount > 0 && <div className="border-t border-amber-300 bg-amber-50 px-5 py-3 text-xs font-bold text-amber-900">{dirtyCount} {dirtyCount === 1 ? 'job has' : 'jobs have'} unsaved planning drafts.</div>}

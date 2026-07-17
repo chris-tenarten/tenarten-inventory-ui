@@ -25,6 +25,8 @@ assert.equal(normalized.dayWidths.months, 18, 'Valid mode scale must survive nor
 assert.equal(normalized.dayWidths.year, defaultTimelinePreferences.dayWidths.year, 'Invalid scale must use its default.');
 
 assert.equal(normalizeTimelinePreferences({ railWidth: -1 }).railWidth, RAIL_WIDTH_MIN, 'Rail width must clamp to the minimum.');
+assert.equal(normalizeTimelinePreferences({ rowDensity: 'compact' }).rowDensity, 'compact', 'Valid row density must survive normalization.');
+assert.equal(normalizeTimelinePreferences({ rowDensity: 'tiny' }).rowDensity, 'standard', 'Unknown row density must use the default.');
 assert.equal(fitTimelineDayWidth('weeks', 20, 1000, 2), 42, 'Fit should produce a bounded integer day width.');
 assert.equal(fitTimelineDayWidth('year', 1000, 500, 2), 4, 'Fit should clamp very large ranges to the mode minimum.');
 assert.equal(fitTimelineDayWidth('days', 0, 500, 2), 64, 'Fit without a meaningful range should use the mode default.');
