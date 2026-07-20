@@ -53,3 +53,111 @@
   - process bottlenecks
   - rework and variance analysis
 - Consistent units and reference IDs are required for meaningful long-term reporting.
+
+---
+
+# UX Observations
+
+## Inventory
+
+### Pending Receivals material autocomplete
+
+**Observation**
+
+The material autocomplete currently appears to search existing inventory records rather than canonical material definitions.
+
+As a result, materials that already exist in inventory are presented with a size already appended, for example:
+
+- Toros Black #2
+- Arabian Black #1
+
+The user is then still required to choose a Size separately.
+
+This creates unnecessary confusion because the selected value appears to already include the size.
+
+**Desired behavior**
+
+Material and Size should remain independent concepts.
+
+Workflow should become:
+
+1. Select Material.
+2. Select Size.
+
+The Material selector should display only the material identity.
+
+Example:
+
+- Toros Black
+- Arabian Black
+- B70 IT Black
+
+The Size selector should then present only the available sizes for that material.
+
+This preserves the underlying data model and avoids exposing inventory-specific records during expected-material entry.
+
+---
+
+### Text cursor appears on whitespace
+
+**Observation**
+
+Clicking empty areas of various application pages displays a blinking text cursor despite there being no editable field.
+
+This suggests to users that they can begin typing when no input actually exists.
+
+**Desired behavior**
+
+The text caret should only appear inside editable controls.
+
+Clicking whitespace should simply clear focus.
+
+---
+
+### Pending Receivals modal can accidentally discard work
+
+**Observation**
+
+When selecting or highlighting text inside the Pending Receivals modal, dragging beyond the modal boundary causes the dialog to dismiss.
+
+This immediately clears the entire Pending Receivals form.
+
+This is especially problematic because the form often contains multiple manually entered order lines.
+
+**Desired behavior**
+
+The dialog should prioritize preserving user-entered data.
+
+Outside-click dismissal should not occur while:
+
+- selecting text
+- dragging
+- interacting with dropdowns
+
+Longer term, Pending Receivals should likely avoid outside-click dismissal entirely.
+
+Preferred close actions:
+
+- Close button
+- Escape key
+- Explicit confirmation if unsaved changes exist
+
+Preventing accidental data loss is more important than matching common modal behavior.
+
+---
+
+# Product Learning
+
+Operational data-entry workflows should always favor preserving user input over minimizing clicks.
+
+Whenever a workflow can reasonably contain multiple manually entered records, accidental dismissal should be treated as a data-loss event and prevented wherever practical.
+
+## Operational Workflows
+
+Existing operational workflows should be preserved whenever they are efficient, even if they originated from software limitations.
+
+Marcos' Monday Manpower board is an example of a workflow that evolved around Monday's constraints but has become familiar and highly efficient for daily use.
+
+TenOps should preserve successful user workflows while replacing only the underlying technical limitations.
+
+Users should feel that TenOps is a natural evolution of how they already work rather than an entirely new system that requires retraining.

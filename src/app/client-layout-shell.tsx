@@ -7,8 +7,20 @@ import { useEffect, useState } from 'react';
 
 const primaryNavItems = [
   { href: '/', label: 'Dashboard', icon: HomeIcon },
-  { href: '/manpower-reporting', label: 'Reporting', icon: LaborIcon },
   { href: '/inventory', label: 'Inventory', icon: PackageIcon },
+];
+
+const reportingNavItems = [
+  {
+    href: '/manpower-reporting',
+    label: 'Manpower Reporting',
+    description: 'Record daily labor and task assignments',
+  },
+  {
+    href: '/material-usage',
+    label: 'Material Usage',
+    description: 'Record materials consumed by production',
+  },
 ];
 
 const utilityNavItems = [
@@ -16,9 +28,18 @@ const utilityNavItems = [
   { href: '/activity', label: 'Inventory Activity', icon: ClockIcon },
 ];
 
+const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
+const ACCESS_PASSWORD = 'tenarten123';
+
 function LaborIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
       <circle cx="9" cy="7" r="4" />
       <path d="M19 8v6" />
@@ -27,8 +48,19 @@ function LaborIcon() {
   );
 }
 
-const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
-const ACCESS_PASSWORD = 'tenarten123';
+function ChevronDownIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-3.5 w-3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
 
 function PackageIcon() {
   return (
@@ -113,6 +145,12 @@ function navClass(isActive: boolean) {
     : 'text-slate-600 hover:bg-slate-200/40 hover:text-slate-950';
 }
 
+function dropdownItemClass(isActive: boolean) {
+  return isActive
+    ? 'bg-slate-100 text-slate-950'
+    : 'text-slate-700 hover:bg-slate-50 hover:text-slate-950';
+}
+
 export default function ClientLayoutShell({
   children,
 }: {
@@ -126,6 +164,12 @@ export default function ClientLayoutShell({
   const [passwordInput, setPasswordInput] = useState('');
   const [accessError, setAccessError] = useState('');
   const [hasScrolled, setHasScrolled] = useState(false);
+
+  const reportingIsActive = reportingNavItems.some(
+    (item) =>
+      pathname === item.href ||
+      pathname.startsWith(`${item.href}/`),
+  );
 
   useEffect(() => {
     setIsUnlocked(
@@ -254,7 +298,7 @@ export default function ClientLayoutShell({
           <div className="flex w-full items-center gap-2 lg:w-auto lg:justify-end">
             {isUnlocked && (
               <nav
-                className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto lg:flex-none"
+                className="flex min-w-0 flex-1 items-center gap-1 overflow-visible lg:flex-none"
                 aria-label="Primary navigation"
               >
                 {primaryNavItems.map((item) => {
@@ -262,7 +306,8 @@ export default function ClientLayoutShell({
 
                   const isActive =
                     item.href === '/'
-                      ? pathname === '/' || pathname === '/production'
+                      ? pathname === '/' ||
+                        pathname === '/production'
                       : pathname === item.href ||
                         pathname.startsWith(`${item.href}/`);
 
@@ -270,7 +315,7 @@ export default function ClientLayoutShell({
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
+                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
                         isActive,
                       )}`}
                     >
@@ -279,15 +324,92 @@ export default function ClientLayoutShell({
                     </Link>
                   );
                 })}
+
+                <div className="group relative shrink-0">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    aria-haspopup="menu"
+                    aria-label="Reporting"
+                    className={`inline-flex h-9 shrink-0 cursor-default items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] outline-none transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
+                      reportingIsActive,
+                    )}`}
+                  >
+                    <LaborIcon />
+
+                    <span>Reporting</span>
+
+                    <span className="transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180">
+                      <ChevronDownIcon />
+                    </span>
+                  </div>
+
+                  <div className="invisible absolute left-0 top-full z-50 min-w-[280px] pt-1 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div className="border border-slate-300 bg-white py-1 shadow-[0_12px_30px_rgba(15,23,42,0.18)]">
+                      <div className="border-b border-slate-200 px-4 py-2">
+                        <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                          Operational Reporting
+                        </div>
+                      </div>
+
+                      {reportingNavItems.map((item) => {
+                        const isActive =
+                          pathname === item.href ||
+                          pathname.startsWith(`${item.href}/`);
+
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`block px-4 py-3 transition ${dropdownItemClass(
+                              isActive,
+                            )}`}
+                          >
+                            <div className="text-sm font-bold">
+                              {item.label}
+                            </div>
+
+                            <div className="mt-0.5 text-xs font-medium text-slate-500">
+                              {item.description}
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
               </nav>
             )}
 
             {isUnlocked && (
-              <nav className="flex shrink-0 items-center border-l border-slate-300 pl-2" aria-label="Supporting tools">
+              <nav
+                className="flex shrink-0 items-center border-l border-slate-300 pl-2"
+                aria-label="Supporting tools"
+              >
                 {utilityNavItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                  return <Link key={item.href} href={item.href} title={item.label} aria-label={item.label} className={`inline-flex h-9 items-center gap-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.06em] transition sm:h-10 sm:px-3 ${navClass(isActive)}`}><Icon /><span className="hidden 2xl:inline">{item.label}</span></Link>;
+
+                  const isActive =
+                    pathname === item.href ||
+                    pathname.startsWith(`${item.href}/`);
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      title={item.label}
+                      aria-label={item.label}
+                      className={`inline-flex h-9 items-center gap-1.5 px-2 text-[10px] font-bold uppercase leading-none tracking-[0.06em] transition sm:h-10 sm:px-3 ${navClass(
+                        isActive,
+                      )}`}
+                    >
+                      <Icon />
+
+                      <span className="hidden 2xl:inline">
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
                 })}
               </nav>
             )}
