@@ -4,6 +4,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { supabase } from '@/lib/supabase';
 import {
   formatProductionJobOption,
+  formatProductionJobOptionWithStatus,
   loadProductionJobOptions,
   openProductionJob,
 } from '@/modules/production/job-options';
@@ -2386,7 +2387,7 @@ export default function InventoryPage() {
                                 <select value={line.productionJobId} onChange={(event) => updatePendingReceivalLine(line.id, 'productionJobId', event.target.value)} className={fieldClass} disabled={productionJobsLoading}>
                                   <option value="">{productionJobsLoading ? 'Loading Production jobs…' : 'Select a Production job'}</option>
                                   {availableProductionJobs(line).map((job) => (
-                                    <option key={job.id} value={job.id}>{formatProductionJobOption(job)}{job.archived_at || ['complete', 'cancelled'].includes(job.production_status) ? ' (Inactive)' : ''}</option>
+                                    <option key={job.id} value={job.id}>{formatProductionJobOptionWithStatus(job)}</option>
                                   ))}
                                 </select>
                                 {productionJobsError && <p className="mt-1 text-xs font-semibold text-red-700">{productionJobsError}</p>}
@@ -2669,9 +2670,9 @@ export default function InventoryPage() {
                           <select value={editProductionJobId} onChange={(event) => setEditProductionJobId(event.target.value)} className={fieldClass}>
                             <option value="">Select a Production job</option>
                             {row.production_job && !productionJobs.some((job) => job.id === row.production_job!.id) && (
-                              <option value={row.production_job.id}>{formatProductionJobOption(row.production_job)} (Inactive)</option>
+                              <option value={row.production_job.id}>{formatProductionJobOptionWithStatus(row.production_job)}</option>
                             )}
-                            {productionJobs.map((job) => <option key={job.id} value={job.id}>{formatProductionJobOption(job)}</option>)}
+                            {productionJobs.map((job) => <option key={job.id} value={job.id}>{formatProductionJobOptionWithStatus(job)}</option>)}
                           </select>
                         </div>
                       ) : (

@@ -253,3 +253,15 @@ Existing-job planned dates have one guarded commit path. Missing or blank approv
 - Inventory and Inventory Activity now share the newer operational page hierarchy used by Dashboard and reporting: restrained eyebrow labels, clear page titles, rounded slate panel surfaces, compact controls, and lighter table headers.
 - Current-stock search, refresh, Record Stock, activity search, activity filters, transaction badges, responsive stock cards, and desktop tables use a consistent type scale and emphasis without changing their behavior.
 - Pending Receivals uses the Material Usage section language rather than the legacy ticker and dark alert band. Reservations, Record Stock, inventory detail dialogs, and activity expansion panels retain their existing workflows and protections; this pass changes presentation only.
+
+## Production Pipeline integration
+
+- Overview and Table share a persisted Status, Deadline, or Labor sort preference; Timeline retains its existing schedule ordering and interactions.
+- Production derives Current Hours from Manpower entries and whether linked Material Usage exists from report records. These values are never copied into `jobs`, and Material Use reporting remains distinct from Production Material Status.
+- Production deep-links to removable job filters in Manpower Reporting and Material Usage. A job without linked Material Usage opens a new report with the Production job preselected.
+- Material Usage history uses report search as its primary discovery control. Its filter dialog supports canonical Production Status, Archived lifecycle, and Unlinked reports; focused history and new-report preselection use distinct URL parameters.
+- Manpower reporting groups own their effective Job identity. Before linking, one editable Job name is inherited by every row; after linking, the canonical Production Job is shown read-only while the prior name remains preserved internally for automatic restoration on unlink.
+- Job-filtered Manpower deep links omit unrelated and empty reporting groups; search operates within that filtered set and a dedicated filtered empty state is shown when no linked groups exist.
+- Reporting selectors include every non-archived Production Job regardless of workflow status so historical Shipped/Complete/Cancelled work can still be linked; archived jobs remain opt-in where supported.
+- Complete, Shipped, and Cancelled jobs can be soft-archived through the Inspector. Normal Production loads and shared Job selectors exclude archived jobs; Production can explicitly include them for review.
+- Archived jobs exposed through Include Archived can be restored from the Job Inspector; restoration returns them to normal Production views and canonical linking selectors while recording a Job activity event.

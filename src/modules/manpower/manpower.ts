@@ -12,7 +12,7 @@ const ENTRY_COLUMNS = `
   am_hours, pm_hours, notes, entered_by, created_at, updated_at,
   worker:manpower_workers!worker_id(id, display_name),
   task:manpower_tasks!task_id(id, display_name),
-  job:jobs(id, name, job_number),
+  job:jobs(id, name, job_number, production_status, archived_at),
   reporting_group:manpower_reporting_groups(id, display_name, created_at, updated_at)
 `;
 
@@ -29,9 +29,8 @@ export async function loadManpowerEntries(): Promise<ManpowerEntry[]> {
 export async function loadManpowerJobs(): Promise<ManpowerJob[]> {
   const { data, error } = await supabase
     .from('jobs')
-    .select('id,name,job_number')
+    .select('id,name,job_number,production_status,archived_at')
     .is('archived_at', null)
-    .not('production_status', 'in', '(complete,cancelled)')
     .order('name');
   if (error) throw error;
   return (data ?? []) as ManpowerJob[];

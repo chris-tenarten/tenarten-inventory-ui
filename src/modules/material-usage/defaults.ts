@@ -1,4 +1,5 @@
 import { MaterialUsageLine, MaterialUsageReport } from "./types";
+import { localDateKey } from "./daily-status";
 
 export function createDefaultMaterialLines(): MaterialUsageLine[] {
   return [
@@ -64,7 +65,7 @@ export function createBlankMaterialUsageReport(): MaterialUsageReport {
     jobId: null,
     unlistedJobName: "",
 
-    reportDate: new Date().toISOString().slice(0, 10),
+    reportDate: localDateKey(),
 
     workOrder: "",
 

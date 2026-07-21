@@ -16,6 +16,7 @@ import {
   type ProductionJobOption,
 } from '../production/job-options';
 import { JobTag } from '../production/components/JobTag';
+import ProductionStatusBadge from '../production/components/ProductionStatusBadge';
 
 import {
   deleteMaterialUsageReport,
@@ -520,7 +521,7 @@ export function MaterialUsageEditor({
                       event.preventDefault();
                       selectTemporaryLabel();
                     }
-                  }} autoComplete="off" placeholder="Search Production jobs or type a temporary label" className="w-full rounded-md border border-slate-300 py-2 pl-9 pr-9 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+                  }} autoComplete="off" placeholder="Search Production jobs or type a job name" className="w-full rounded-md border border-slate-300 py-2 pl-9 pr-9 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
                   <button type="button" onClick={() => setJobMenuOpen((current) => !current)} aria-label="Open job options" className="absolute right-0 top-0 flex h-full w-9 items-center justify-center text-slate-500 hover:text-slate-900"><ChevronDownIcon /></button>
                 </div>
                 {jobSearch ? <button type="button" onClick={clearJobSelection} className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-600 hover:bg-slate-50">Clear</button> : null}
@@ -528,7 +529,7 @@ export function MaterialUsageEditor({
 
               {jobMenuOpen ? (
                 <div className="absolute left-0 right-0 z-30 mt-1 overflow-hidden rounded-md border border-slate-300 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.18)]">
-                  <div className="border-b border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Production Queue</div>
+                  <div className="border-b border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Production Pipeline</div>
                   <div className="max-h-72 overflow-y-auto">
                     {filteredJobs.length > 0 ? filteredJobs.map((job) => {
                       const selected = report.jobId === job.id;
@@ -536,7 +537,7 @@ export function MaterialUsageEditor({
                         <button type="button" key={job.id} onClick={() => selectProductionJob(job)} className={`flex w-full items-start gap-3 border-b border-slate-100 px-3 py-2.5 text-left last:border-b-0 ${selected ? 'bg-slate-100' : 'hover:bg-slate-50'}`}>
                           <span className="mt-0.5 shrink-0 text-slate-400"><LinkIcon /></span>
                           <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-semibold text-slate-900">{formatProductionJobOption(job)}</span>
+                            <span className="flex items-center justify-between gap-2"><span className="min-w-0 truncate text-sm font-semibold text-slate-900">{formatProductionJobOption(job)}</span><ProductionStatusBadge status={job.production_status as import('../production/types').ProductionStatus} /></span>
                             {job.customer ? <span className="mt-0.5 block truncate text-xs text-slate-500">{job.customer}</span> : null}
                           </span>
                         </button>
@@ -548,7 +549,7 @@ export function MaterialUsageEditor({
                       <button type="button" onClick={selectTemporaryLabel} className="flex w-full items-start gap-3 rounded px-3 py-2.5 text-left text-slate-700 hover:bg-white hover:text-slate-950">
                         <span className="mt-0.5 shrink-0 text-slate-500"><TemporaryIcon /></span>
                         <span className="min-w-0">
-                          <span className="block text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Use temporary job label</span>
+                          <span className="block text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Use job name</span>
                           <span className="mt-0.5 block truncate text-sm font-semibold">{temporaryLabel}</span>
                         </span>
                       </button>
@@ -564,6 +565,7 @@ export function MaterialUsageEditor({
                     onClick={() => openProductionJob(report.jobId!)}
                     title={`Open Job ${report.jobNumberSnapshot?.trim() || 'details'} in Production`}
                   />
+                  {jobs.find((job) => job.id === report.jobId) ? <ProductionStatusBadge status={jobs.find((job) => job.id === report.jobId)!.production_status as import('../production/types').ProductionStatus} /> : null}
                   {report.id ? (
                     <button type="button" onClick={() => void checkProductionDefaults()} className="text-xs font-medium text-slate-500 underline decoration-slate-300 underline-offset-2 hover:text-slate-900">
                       View Job Details

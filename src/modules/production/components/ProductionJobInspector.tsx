@@ -23,6 +23,8 @@ type Props = {
   job: ProductionJob;
   onClose: () => void;
   onUpdateJob: (id: string, changes: ProductionJobUpdate) => Promise<ProductionJob>;
+  onArchive: (job: ProductionJob) => Promise<void>;
+  onRestore: (job: ProductionJob) => Promise<void>;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   onAttachmentsChanged: (jobId: string, count: number) => void;
   initialFocus?: string;
@@ -90,7 +92,7 @@ function activityDescription(change: ProductionJobActivity) {
   return { action: change.summary || 'Updated this production job' };
 }
 
-export default function ProductionJobInspector({ job, onClose, onUpdateJob, onStageSchedule, onAttachmentsChanged, initialFocus }: Props) {
+export default function ProductionJobInspector({ job, onClose, onUpdateJob, onArchive, onRestore, onStageSchedule, onAttachmentsChanged, initialFocus }: Props) {
   const [activeSection, setActiveSection] = useState<InspectorSection>(initialFocus === 'attachments' ? 'files' : initialFocus === 'recent-changes' ? 'recent-changes' : 'details');
   const [activity, setActivity] = useState<ProductionJobActivity[]>([]);
   const [activityError, setActivityError] = useState('');
@@ -255,6 +257,8 @@ export default function ProductionJobInspector({ job, onClose, onUpdateJob, onSt
             <label className="text-xs font-bold">Material status<select value={draft.material_status} onChange={(event) => { setDraft((current) => ({ ...current, material_status: event.target.value as MaterialStatus })); setSaveMessage(''); }} className={fieldClass}>{materialStatusOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
           </div></section>
           <section className="mt-5"><h3 className={sectionTitle}>Job Details</h3><dl className="mt-3 grid grid-cols-[130px_1fr] gap-2 text-sm"><dt className="font-bold">Customer</dt><dd>{job.customer || 'Not recorded'}</dd><dt className="font-bold">Estimate</dt><dd>{job.estimate_number || 'Not recorded'}</dd><dt className="font-bold">Work order</dt><dd>{job.work_order_number || 'Not recorded'}</dd><dt className="font-bold">Contract value</dt><dd>{job.contract_value === null ? 'Not recorded' : job.contract_value}</dd><dt className="font-bold">Resin / Chip PO</dt><dd>{[job.resin_po, job.chip_po].filter(Boolean).join(' / ') || 'Not recorded'}</dd><dt className="font-bold">Remarks</dt><dd className="whitespace-pre-wrap">{job.remarks || 'None'}</dd></dl></section>
+          {['complete', 'shipped', 'cancelled'].includes(job.production_status) && !job.archived_at ? <section className="mt-5 border-t border-slate-200 pt-4"><button type="button" aria-label={`Archive ${job.name}`} disabled={saving} onClick={async () => { if (!window.confirm('Archive this job? It will be removed from active Production views, but its activity, manpower, attachments, material usage, and history will be preserved.')) return; setSaving(true); setSaveError(''); try { await onArchive(job); } catch (error) { setSaveError(error instanceof Error ? error.message : 'Unable to archive job.'); setSaving(false); } }} className="h-9 rounded-sm border border-red-400 bg-white px-3 text-sm font-bold text-red-700 transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 disabled:opacity-50">Archive Job</button></section> : null}
+          {job.archived_at ? <section className="mt-5 border-t border-slate-200 pt-4"><button type="button" disabled={saving} onClick={async () => { if (!window.confirm('Restore this job to normal Production views and linking selectors?')) return; setSaving(true); setSaveError(''); try { await onRestore(job); } catch (error) { setSaveError(error instanceof Error ? error.message : 'Unable to restore job.'); setSaving(false); } }} className="text-sm font-bold text-blue-700 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">Restore job</button></section> : null}
           {dirtyCount > 0 && <div className="sticky bottom-0 mt-5 flex items-center justify-between gap-3 border border-amber-500 bg-amber-50 p-3 shadow-lg"><span className="text-sm font-bold text-amber-900">{dirtyCount} unsaved {dirtyCount === 1 ? 'field' : 'fields'}</span><div className="flex gap-2"><button type="button" onClick={discardDraft} disabled={saving} className="h-9 border border-slate-500 bg-white px-3 text-xs font-bold uppercase">Discard</button><button type="button" onClick={() => void saveDraft()} disabled={saving} className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white disabled:opacity-50">{saving ? 'Saving…' : 'Save changes'}</button></div></div>}
         </>}
 

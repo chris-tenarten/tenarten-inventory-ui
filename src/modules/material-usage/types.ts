@@ -44,6 +44,8 @@ export interface MaterialUsageReportSummary {
 
   jobNumber: string | null;
   jobName: string | null;
+  unlistedJobName: string;
+  notes: string;
 
   workOrder: string;
   terrazzoType: string;

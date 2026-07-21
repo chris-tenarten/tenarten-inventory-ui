@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode, RefObject } from 'react';
 
-import type { ProductionJobUpdate } from '../jobs';
+import type { ProductionIntegrationSummary, ProductionJobUpdate } from '../jobs';
 import { materialStatusLabel, materialStatusOptions } from '../material-status';
 import type { StagedSchedules } from '../schedule-staging';
 import type {
@@ -16,9 +16,12 @@ import type {
 } from '../types';
 import { productionValuesEqual } from '../update-normalization';
 
+const formatHours = (value: number) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value);
+
 type Props = {
   jobs: ProductionJob[];
   attachmentCounts: Record<string, number>;
+  integrationSummaries: Record<string, ProductionIntegrationSummary>;
   onCreateJob: (input: NewProductionJob) => Promise<ProductionJob>;
   onUpdateJob: (
     jobId: string,
@@ -414,6 +417,7 @@ function blurOnEnter(event: KeyboardEvent<HTMLInputElement | HTMLSelectElement>)
 export default function ProductionTable({
   jobs,
   attachmentCounts,
+  integrationSummaries,
   onCreateJob,
   onUpdateJob,
   onOpenAttachments,
@@ -1037,6 +1041,8 @@ export default function ProductionTable({
               const row = rows[job.id] ?? toRow(job);
               const state = states[job.id] ?? 'idle';
               const count = attachmentCounts[job.id] ?? 0;
+              const integration = integrationSummaries[job.id] ?? { actualHours: 0, laborEntryCount: 0, materialReportDates: [] };
+              const hasMaterialUse = integration.materialReportDates.length > 0;
 
               return (
                 <tr
@@ -1050,7 +1056,8 @@ export default function ProductionTable({
                     (field) => void saveField(job, field),
                     undefined,
                     stagedSchedules[job.id] ? 'staged' : undefined,
-                    count > 0 ? <button
+                    <div className="flex items-center gap-1">
+                      {count > 0 ? <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -1062,7 +1069,32 @@ export default function ProductionTable({
                       >
                         <Paperclip className="h-3.5 w-3.5" aria-hidden="true" />
                         {count}
-                      </button> : undefined,
+                      </button> : null}
+                      {job.estimated_man_hours !== null ? <span className="h-6 px-1 text-[9px] leading-6 text-slate-600"><strong className="text-slate-900">{formatHours(job.estimated_man_hours)}h</strong> Estimated</span> : <span className="h-6 px-1 text-[9px] font-semibold leading-6 text-slate-900">No Labor Estimate</span>}
+                      {integration.laborEntryCount > 0 ? <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          window.location.href = `/manpower-reporting?job=${job.id}`;
+                        }}
+                        title="Open job labor"
+                        aria-label={`Open manpower reporting for ${job.name}`}
+                        className="h-6 cursor-pointer border border-blue-200 bg-blue-50 px-1 text-[9px] font-bold text-blue-900 shadow-sm transition hover:bg-blue-100 hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                      >
+                        {formatHours(integration.actualHours)}h Current
+                      </button> : <span className="h-6 px-1 text-[9px] font-semibold leading-6 text-slate-900">No Labor Reports</span>}
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          window.location.href = hasMaterialUse ? `/material-usage?historyJob=${job.id}` : `/material-usage?newJob=${job.id}`;
+                        }}
+                        aria-label={`${hasMaterialUse ? 'Open' : 'Create'} material usage for ${job.name}`}
+                        className={`h-6 cursor-pointer rounded-sm border px-1 text-[9px] font-bold shadow-sm transition hover:-translate-y-px hover:shadow focus-visible:outline-none focus-visible:ring-2 ${hasMaterialUse ? 'border-emerald-200 bg-emerald-100 text-emerald-800 hover:border-emerald-300 hover:bg-emerald-200 focus-visible:ring-emerald-700' : 'border-amber-200 bg-amber-100 text-amber-900 hover:border-amber-300 hover:bg-amber-200 focus-visible:ring-amber-700'}`}
+                      >
+                        {hasMaterialUse ? 'Material Use' : 'No Material Use Linked'}
+                      </button>
+                    </div>,
                     <div className="relative flex h-6 items-center justify-center">
                       <button type="button" onClick={(event) => { event.stopPropagation(); onSelectJob(job); }} aria-label="Inspect job" title={`Inspect ${job.job_number ? `${job.job_number} — ` : ''}${job.name}`} className={`inline-flex h-6 w-6 items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 group-hover:text-slate-700 ${selectedJobId === job.id ? 'text-blue-700' : ''}`}><Search className="h-3.5 w-3.5" aria-hidden="true" /></button>
                       {(state === 'saving' || state === 'saved' || state === 'error') && (() => {
@@ -1118,7 +1150,7 @@ export default function ProductionTable({
       {jobs.length === 0 && !isAdding && (
         <div className="flex min-h-40 items-center justify-center border-t border-slate-300 px-6 py-8 text-center">
           <div>
-            <div className="text-lg font-bold text-slate-900">Production queue is empty</div>
+            <div className="text-lg font-bold text-slate-900">Production Pipeline is empty</div>
             <div className="mt-2 text-sm text-slate-600">Use Add Job at the bottom of the table to create the first active job.</div>
           </div>
         </div>
