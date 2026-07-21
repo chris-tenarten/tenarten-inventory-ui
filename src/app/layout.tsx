@@ -3,8 +3,16 @@ import './globals.css';
 import ClientLayoutShell from './client-layout-shell';
 
 export const metadata: Metadata = {
-  title: 'Tenarten Operations',
+  title: {
+    default: 'TenOps Cloud — Dashboard',
+    template: 'TenOps Cloud — %s',
+  },
   description: 'Tenarten inventory and material management',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({
