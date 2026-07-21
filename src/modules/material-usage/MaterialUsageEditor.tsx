@@ -171,6 +171,10 @@ export function MaterialUsageEditor({
     : '';
 
   useEffect(() => {
+    setJobSearch(currentJobDisplay);
+  }, [currentJobDisplay]);
+
+  useEffect(() => {
     let active = true;
 
     async function loadReferenceData() {
