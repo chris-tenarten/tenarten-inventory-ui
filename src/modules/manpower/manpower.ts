@@ -205,3 +205,18 @@ export async function updateManpowerEntries(
     { updated: [], failures: [] },
   );
 }
+
+export async function updateManpowerGroupIdentity(
+  ids: string[],
+  identity: Pick<ManpowerEntryInput, 'job_id' | 'unlisted_work_label'>,
+): Promise<ManpowerEntry[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from('manpower_entries')
+    .update(identity)
+    .in('id', ids)
+    .select(ENTRY_COLUMNS);
+  if (error) throw error;
+  if ((data?.length ?? 0) !== ids.length) throw new Error('The manpower group identity update was not confirmed for every entry.');
+  return (data ?? []) as unknown as ManpowerEntry[];
+}

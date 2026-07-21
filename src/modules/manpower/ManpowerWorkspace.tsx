@@ -17,6 +17,7 @@ import {
   loadManpowerReferences,
   loadManpowerReportingGroups,
   updateManpowerEntries,
+  updateManpowerGroupIdentity,
   updateManpowerEntry,
   updateManpowerReference,
   updateManpowerReportingGroup,
@@ -791,20 +792,30 @@ export default function ManpowerWorkspace() {
     return { updated: result.updated.length, failed: result.failures.length };
   }
 
-  async function linkReportingGroup(groupKey: string, groupEntries: ManpowerEntry[], jobId: string) {
+  async function applyGroupIdentity(groupKey: string, groupEntries: ManpowerEntry[], changes: Pick<ManpowerEntryInput, 'job_id' | 'unlisted_work_label'>) {
     setLinkingGroupId(groupKey);
-    await applyBulkUpdate(groupEntries.map((entry) => entry.id), {
-      job_id: jobId || null,
-    });
-    setLinkingGroupId(null);
+    setError('');
+    try {
+      const updated = await updateManpowerGroupIdentity(groupEntries.map((entry) => entry.id), changes);
+      const updates = new Map(updated.map((entry) => [entry.id, entry]));
+      setEntries((items) => items.map((entry) => updates.get(entry.id) ?? entry));
+    } catch (caught) {
+      setError(caught instanceof Error ? `Unable to change this manpower group's Job: ${caught.message}` : "Unable to change this manpower group's Job.");
+    } finally {
+      setLinkingGroupId(null);
+    }
+  }
+
+  async function linkReportingGroup(groupKey: string, groupEntries: ManpowerEntry[], jobId: string, previousJobName: string) {
+    await applyGroupIdentity(groupKey, groupEntries, jobId
+      ? { job_id: jobId, unlisted_work_label: null }
+      : { job_id: null, unlisted_work_label: previousJobName });
   }
 
   async function renameUnlinkedGroup(groupKey: string, groupEntries: ManpowerEntry[], jobName: string) {
     const normalized = jobName.trim();
     if (!normalized) return;
-    setLinkingGroupId(groupKey);
-    await applyBulkUpdate(groupEntries.map((entry) => entry.id), { job_id: null, unlisted_work_label: normalized });
-    setLinkingGroupId(null);
+    await applyGroupIdentity(groupKey, groupEntries, { job_id: null, unlisted_work_label: normalized });
   }
 
   async function deleteSelectedEntries(ids: string[]) {
@@ -880,7 +891,7 @@ export default function ManpowerWorkspace() {
               </div>
               {!isCollapsed && <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                 <span className="flex-1">{groupJob ? 'This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.' : 'This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.'}</span>
-                <ProductionJobLinkSelector groupLabel={group.label} jobs={jobs} value={groupJobId} disabled={linkingGroupId === group.key} onChange={(jobId) => void linkReportingGroup(group.key, group.entries, jobId)} />
+                <ProductionJobLinkSelector groupLabel={group.label} jobs={jobs} value={groupJobId} disabled={linkingGroupId === group.key} onChange={(jobId) => void linkReportingGroup(group.key, group.entries, jobId, previousJobName)} />
               </div>}
               {selectedGroupIds.length > 0 && <BulkActionBar selectedCount={selectedGroupIds.length} jobs={jobs} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
               {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1300px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={jobCell} />)}{addingToGroupId === group.key && group.group && <tr className="border-t-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly jobControl={jobCell} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}</tbody><tfoot><tr><td colSpan={9} className="border-t border-slate-300 bg-slate-50 p-1">{group.group && addingToGroupId !== group.key && <button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries)} className="inline-flex h-8 items-center gap-1.5 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 hover:bg-blue-50"><Plus className="h-4 w-4" /> Add labor entry</button>}</td></tr></tfoot></table></div>}
