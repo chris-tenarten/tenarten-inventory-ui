@@ -331,7 +331,7 @@ export default function ClientLayoutShell({
                       )}`}
                     >
                       <Icon />
-                      {item.label}
+                      <span className={item.href === '/' ? 'hidden sm:inline' : ''}>{item.label}</span>
                     </Link>
                   );
                 })}
@@ -348,7 +348,7 @@ export default function ClientLayoutShell({
                   >
                     <LaborIcon />
 
-                    <span>Reporting</span>
+                    <span className="hidden sm:inline">Reporting</span>
 
                     <span className="transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180">
                       <ChevronDownIcon />
@@ -404,7 +404,7 @@ export default function ClientLayoutShell({
                       )}`}
                     >
                       <Icon />
-                      {inventoryNavItem.label}
+                      <span className="hidden sm:inline">{inventoryNavItem.label}</span>
                     </Link>
                   );
                 })()}
