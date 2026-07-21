@@ -1,6 +1,6 @@
 'use client';
 
-import { ListFilter, RotateCw } from 'lucide-react';
+import { Camera, ListFilter, RotateCw } from 'lucide-react';
 import {
   useCallback,
   useEffect,
@@ -14,6 +14,7 @@ import PlanningIssuesPanel from './components/PlanningIssuesPanel';
 import ProductionJobInspector from './components/ProductionJobInspector';
 import ProductionQueue from './components/ProductionQueue';
 import ProductionTable from './components/ProductionTable';
+import MonthlySnapshot from './components/MonthlySnapshot';
 
 import {
   createProductionJob,
@@ -43,6 +44,7 @@ import { arrangeProductionJobs, PRODUCTION_ARRANGEMENT_KEY, type ProductionArran
 import type { ProductionIntegrationSummary } from './jobs';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
+type DashboardMode = 'pipeline' | 'snapshot';
 type ScheduleFilter = 'scheduled' | 'unscheduled';
 const statusOptions: Array<{ value: ProductionStatus; label: string }> = [
   { value: 'not_started', label: 'Not Started' },
@@ -74,6 +76,7 @@ function sortJobs(jobs: ProductionJob[]) {
 }
 
 export default function ProductionWorkspace() {
+  const [dashboardMode, setDashboardModeState] = useState<DashboardMode>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('view') === 'snapshot' ? 'snapshot' : 'pipeline');
   const [jobs, setJobs] = useState<ProductionJob[]>([]);
   const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
   const [integrationSummaries, setIntegrationSummaries] = useState<Record<string, ProductionIntegrationSummary>>({});
@@ -124,6 +127,19 @@ export default function ProductionWorkspace() {
   const approvalDialogRef = useRef<HTMLDivElement | null>(null);
   const approvalInitialRef = useRef<HTMLInputElement | null>(null);
   const inspectorOpenerRef = useRef<HTMLElement | null>(null);
+
+  const setDashboardMode = useCallback((mode: DashboardMode, history: 'push' | 'replace' = 'push') => {
+    setDashboardModeState(mode);
+    const url = new URL(window.location.href);
+    if (mode === 'snapshot') url.searchParams.set('view', 'snapshot'); else url.searchParams.delete('view');
+    window.history[history === 'push' ? 'pushState' : 'replaceState'](null, '', `${url.pathname}${url.search}${url.hash}`);
+  }, []);
+
+  useEffect(() => {
+    const syncMode = () => setDashboardModeState(new URLSearchParams(window.location.search).get('view') === 'snapshot' ? 'snapshot' : 'pipeline');
+    window.addEventListener('popstate', syncMode);
+    return () => window.removeEventListener('popstate', syncMode);
+  }, []);
 
   const loadJobs = useCallback(async () => {
     setIsLoading(true);
@@ -469,7 +485,14 @@ export default function ProductionWorkspace() {
       <datalist id="production-customer-suggestions">
         {customerSuggestions.map((customer) => <option key={customer} value={customer} />)}
       </datalist>
-      <div>
+      <div className="mb-4 flex flex-wrap items-center gap-2" aria-label="Dashboard mode">
+        <span className="mr-1 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Dashboard</span>
+        <div className="inline-flex rounded-sm border border-slate-300 bg-slate-50 p-1">
+          <button type="button" aria-pressed={dashboardMode === 'pipeline'} onClick={() => setDashboardMode('pipeline')} className={`h-8 px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${dashboardMode === 'pipeline' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>Production Pipeline</button>
+          <button type="button" aria-pressed={dashboardMode === 'snapshot'} onClick={() => setDashboardMode('snapshot')} className={`inline-flex h-8 items-center gap-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${dashboardMode === 'snapshot' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}><Camera className="h-3.5 w-3.5" aria-hidden="true" />Monthly Snapshot</button>
+        </div>
+      </div>
+      {dashboardMode === 'snapshot' ? <MonthlySnapshot /> : <div>
         <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Production reporting</div>
@@ -673,7 +696,7 @@ export default function ProductionWorkspace() {
             <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} />
           )}
         </div>
-      </div>
+      </div>}
 
       {reviewOpen && <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/55 p-4"><div role="dialog" aria-modal="true" aria-labelledby="schedule-review-title" className="max-h-[80vh] w-full max-w-2xl overflow-y-auto border border-slate-500 bg-white p-5 shadow-2xl"><div className="flex items-center justify-between"><h2 id="schedule-review-title" className="text-xl font-bold">Review proposed schedules</h2><button type="button" onClick={() => setReviewOpen(false)} className="h-9 border px-3 font-bold">Close</button></div><div className="mt-4 divide-y border">{orderedStagedSchedules(stagedSchedules, jobs).map((proposal) => { const job = jobs.find((item) => item.id === proposal.job_id); return <div key={proposal.job_id} className="p-3"><div className="font-bold">{job?.name}{job?.job_number ? ` · ${job.job_number}` : ''}</div><div className="mt-1 text-sm">{proposal.original_planned_start && proposal.original_planned_end ? `${proposal.original_planned_start} – ${proposal.original_planned_end}` : 'Not scheduled'} → {proposal.proposed_planned_start} – {proposal.proposed_planned_end}</div><div className="mt-1 text-xs text-slate-600">{proposal.changed_fields.map((field) => field === 'planned_start' ? 'Planned start' : 'Planned finish').join(', ')}</div><button type="button" onClick={() => setStagedSchedules((current) => { const next = { ...current }; delete next[proposal.job_id]; return next; })} className="mt-2 text-xs font-bold text-red-700 underline">Revert this job</button></div>; })}</div></div></div>}
 

@@ -265,3 +265,10 @@ Existing-job planned dates have one guarded commit path. Missing or blank approv
 - Reporting selectors include every non-archived Production Job regardless of workflow status so historical Shipped/Complete/Cancelled work can still be linked; archived jobs remain opt-in where supported.
 - Complete, Shipped, and Cancelled jobs can be soft-archived through the Inspector. Normal Production loads and shared Job selectors exclude archived jobs; Production can explicitly include them for review.
 - Archived jobs exposed through Include Archived can be restored from the Job Inspector; restoration returns them to normal Production views and canonical linking selectors while recording a Job activity event.
+
+## Dashboard Monthly Snapshot
+
+- Dashboard has two URL-aware modes on the existing `/` route: Production Pipeline remains the default, while `?view=snapshot` opens a read-only Last 30 Days leadership summary. Browser Back/Forward synchronizes the mode.
+- Snapshot metrics are derived from canonical sources without snapshot records: Production transitions use `job_activity.occurred_at`, Manpower uses `work_date`, Material Usage uses `report_date`, Inventory uses transaction `created_at`, and completed receivals use `received_at`.
+- Current exception lists use the canonical current job state. Historical Started, Completed, Shipped, and late-delivery counts require trustworthy Production status activity and are not inferred from a job's current status.
+- Ready to Archive reuses the existing manual `archived_at` workflow for non-archived Shipped, Complete, and Cancelled jobs. Archive remains independent of Production Status and preserves historical module relationships.

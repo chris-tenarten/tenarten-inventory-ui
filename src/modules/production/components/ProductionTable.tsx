@@ -103,7 +103,7 @@ const selectClass = `${inputClass} pr-6 text-center`;
 const dateInputClass = `${inputClass} relative cursor-pointer px-1 text-center [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-1 [&::-webkit-calendar-picker-indicator]:m-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer`;
 const populatedDateClass = '[&::-webkit-calendar-picker-indicator]:opacity-0 hover:[&::-webkit-calendar-picker-indicator]:opacity-60 focus:[&::-webkit-calendar-picker-indicator]:opacity-60';
 const emptyDateClass = 'text-transparent [&::-webkit-datetime-edit]:text-transparent [&::-webkit-calendar-picker-indicator]:opacity-50 focus:text-slate-800 focus:[&::-webkit-datetime-edit]:text-slate-800';
-const TABLE_LAYOUT_STORAGE_KEY = 'tenops.productionTableLayout.v1';
+const TABLE_LAYOUT_STORAGE_KEY = 'tenops.productionTableLayout.v2';
 
 const tableColumns = [
   { id: 'inspector', label: 'Inspector', defaultWidth: 28, minWidth: 28, maxWidth: 28, hideable: false, resizable: false },
@@ -121,6 +121,7 @@ const tableColumns = [
   { id: 'colorPlate', label: 'Color Plate', defaultWidth: 96, minWidth: 78, maxWidth: 220, hideable: true, resizable: true },
   { id: 'sample', label: 'Sample', defaultWidth: 96, minWidth: 88, maxWidth: 160, hideable: true, resizable: true },
   { id: 'approval', label: 'Approval', defaultWidth: 96, minWidth: 88, maxWidth: 160, hideable: true, resizable: true },
+  { id: 'operations', label: 'Operations', defaultWidth: 230, minWidth: 180, maxWidth: 360, hideable: true, resizable: true },
   { id: 'material', label: 'Material Status', defaultWidth: 96, minWidth: 90, maxWidth: 200, hideable: true, resizable: true },
   { id: 'status', label: 'Production Status', defaultWidth: 108, minWidth: 96, maxWidth: 220, hideable: true, resizable: true },
   { id: 'remarks', label: 'Remarks', defaultWidth: 150, minWidth: 110, maxWidth: 420, hideable: true, resizable: true },
@@ -128,7 +129,7 @@ const tableColumns = [
 
 type TableColumn = (typeof tableColumns)[number];
 type TableColumnId = TableColumn['id'];
-type SortableTableColumnId = Exclude<TableColumnId, 'inspector'>;
+type SortableTableColumnId = Exclude<TableColumnId, 'inspector' | 'operations'>;
 type TableSort = { column: SortableTableColumnId; direction: 'ascending' | 'descending' };
 type TableLayout = {
   widths: Partial<Record<TableColumnId, number>>;
@@ -136,7 +137,7 @@ type TableLayout = {
 };
 
 const tableColumnById = Object.fromEntries(tableColumns.map((column) => [column.id, column])) as Record<TableColumnId, TableColumn>;
-const defaultTableLayout: TableLayout = { widths: {}, hidden: [] };
+const defaultTableLayout: TableLayout = { widths: {}, hidden: ['operations'] };
 const tableSortCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 const materialSortOrder = new Map(materialStatusOptions.map((option, index) => [option.value, index]));
 const productionSortOrder = new Map(productionStatuses.map((option, index) => [option.value, index]));
@@ -853,7 +854,7 @@ export default function ProductionTable({
 
   function renderHeader(column: TableColumn, content: ReactNode, className = '', title?: string) {
     if (hiddenColumns.has(column.id)) return null;
-    const sortable = column.id !== 'inspector';
+    const sortable = column.id !== 'inspector' && column.id !== 'operations';
     const activeSort = sortable && tableSort?.column === column.id ? tableSort : null;
     return (
       <th
@@ -886,6 +887,7 @@ export default function ProductionTable({
     nameRef?: RefObject<HTMLInputElement | null>,
     scheduleState?: 'staged' | 'locked',
     projectAttachmentIndicator?: ReactNode,
+    operationsControl?: ReactNode,
     historyAction?: ReactNode,
     remarksControl?: ReactNode,
   ) {
@@ -917,6 +919,7 @@ export default function ProductionTable({
         {!hiddenColumns.has('colorPlate') && <td className={cellClass}><input value={row.colorPlateNumber} title={row.colorPlateNumber || undefined} onChange={(e) => onChange('colorPlateNumber', e.target.value)} onBlur={blur('colorPlateNumber')} onKeyDown={blurOnEnter} placeholder="Color plate #" className={inputClass} /></td>}
         {!hiddenColumns.has('sample') && <td className={cellClass}><input aria-label="Sample submitted date" title={row.sampleSubmittedDate || undefined} type="date" value={row.sampleSubmittedDate} onChange={(e) => onChange('sampleSubmittedDate', e.target.value)} onBlur={blur('sampleSubmittedDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.sampleSubmittedDate ? populatedDateClass : emptyDateClass}`} /></td>}
         {!hiddenColumns.has('approval') && <td className={cellClass}><input aria-label="Approval date" title={row.approvalDate || undefined} type="date" value={row.approvalDate} onChange={(e) => onChange('approvalDate', e.target.value)} onBlur={blur('approvalDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.approvalDate ? populatedDateClass : emptyDateClass}`} /></td>}
+        {!hiddenColumns.has('operations') && <td className={`${cellClass} px-1`}>{operationsControl}</td>}
         {!hiddenColumns.has('material') && <td className={cellClass}>
           <select value={row.materialStatus} onChange={(e) => onChange('materialStatus', e.target.value as MaterialStatus)} onBlur={blur('materialStatus')} onKeyDown={blurOnEnter} className={selectClass}>
             {materialStatusOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -1030,6 +1033,7 @@ export default function ProductionTable({
               {renderHeader(tableColumnById.colorPlate, 'Color Plate', '', 'Color Plate Number')}
               {renderHeader(tableColumnById.sample, 'Sample', '', 'Sample Submitted Date')}
               {renderHeader(tableColumnById.approval, 'Approval')}
+              {renderHeader(tableColumnById.operations, 'Operations', '', 'Labor and Material Usage reporting')}
               {renderHeader(tableColumnById.material, 'Material', '', 'Material Readiness Status')}
               {renderHeader(tableColumnById.status, 'Status', '', 'Production Status')}
               {renderHeader(tableColumnById.remarks, 'Remarks')}
@@ -1056,8 +1060,7 @@ export default function ProductionTable({
                     (field) => void saveField(job, field),
                     undefined,
                     stagedSchedules[job.id] ? 'staged' : undefined,
-                    <div className="flex items-center gap-1">
-                      {count > 0 ? <button
+                    count > 0 ? <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -1069,7 +1072,8 @@ export default function ProductionTable({
                       >
                         <Paperclip className="h-3.5 w-3.5" aria-hidden="true" />
                         {count}
-                      </button> : null}
+                      </button> : null,
+                    <div className="flex h-6 min-w-0 items-center gap-1 overflow-hidden whitespace-nowrap">
                       {job.estimated_man_hours !== null ? <span className="h-6 px-1 text-[9px] leading-6 text-slate-600"><strong className="text-slate-900">{formatHours(job.estimated_man_hours)}h</strong> Estimated</span> : <span className="h-6 px-1 text-[9px] font-semibold leading-6 text-slate-900">No Labor Estimate</span>}
                       {integration.laborEntryCount > 0 ? <button
                         type="button"
@@ -1121,7 +1125,7 @@ export default function ProductionTable({
 
             {isAdding && (
               <tr className="bg-blue-50/40">
-                {renderCells(draft, changeDraft, undefined, draftNameRef, undefined, undefined, <span className="block h-6 w-[28px]" />)}
+                {renderCells(draft, changeDraft, undefined, draftNameRef, undefined, undefined, undefined, <span className="block h-6 w-[28px]" />)}
               </tr>
             )}
           </tbody>
