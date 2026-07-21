@@ -90,6 +90,18 @@ export function MaterialUsageWorkspace() {
   }, [refreshHistory]);
 
   useEffect(() => {
+    if (historyLoading) return;
+    const params = new URLSearchParams(window.location.search);
+    const jobId = params.get("openReportJob");
+    if (!jobId) return;
+    const latestReport = reports.find((report) => report.jobId === jobId);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("openReportJob");
+    window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+    if (latestReport) void openReport(latestReport.id);
+  }, [historyLoading, openReport, reports]);
+
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const jobId = params.get("newJob");
     if (!jobId) return;
