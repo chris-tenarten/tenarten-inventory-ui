@@ -231,4 +231,25 @@ Existing-job planned dates have one guarded commit path. Missing or blank approv
 - `npm run build` completes successfully with Next.js 16.
 - The production normalization, Timeline preference, schedule staging, and planning-readiness verification scripts pass.
 - The superseded `LoginGate` and unused `AddJobDialog` components were removed after confirming that neither had an application reference.
-- Material Usage currently references `material_usage_reports`, `material_usage_lines`, `save_material_usage_report()`, and `delete_material_usage_report()` without a corresponding committed migration; schema reconciliation remains required before treating a fresh migration replay as complete.
+- Material Usage schema reconciliation is checked in as `supabase/migrations/20260720_001_material_usage_reporting.sql`, with rollback-safe verification SQL under `supabase/inspection`. It defines the report/line tables, canonical-or-temporary work identity, snapshots, RLS reads, and atomic save/delete RPCs used by the client. The migration has not yet been recorded as applied to the live Supabase project.
+
+## Shared Production Job foundation
+
+- Production owns the lightweight `ProductionJobReference` and selectable `ProductionJobOption` types, active Job loading, selector/reference label rules, and Production-focus navigation.
+- Material Usage consumes the Production-owned option loader and types rather than defining a local Job option and querying `jobs` directly.
+- Material Usage selection remains a plain autocomplete. Production owns the shared `JobTag` presentation used by Production, Inventory, and Material Usage; tags display the canonical Job name with Job-number fallback and preserve each surface's existing navigation behavior. Unlinked Material Usage reports use subdued informational text instead of a status badge.
+- Inventory already consumes the Production option boundary. Manpower retains a local lightweight Job type and selectable-Job query and is a later migration candidate; this bounded pass does not change it.
+
+## Material Usage Canonical Job Defaults
+
+- Selecting or reassigning a canonical Job copies distinct Job Number and Work Order Number snapshots from Production.
+- New reports default a blank Chip Blend Color Plate # from Production. Conflicting nonblank values require Keep Material Usage, Use Production, or cancellation before reassignment.
+- Every Chip Blend row shares one editable Color Plate #. Non-Chip Blend rows display Not applicable and are normalized to no persisted plate by both client and RPC.
+- Existing reports do not synchronize in the background. `Check Production Defaults` performs an explicit Color Plate-only comparison without refreshing historical Job Number or Work Order snapshots.
+- Canceling a Color Plate conflict during reassignment leaves the prior Job association and all report values intact. Material Usage never writes these values back to Production.
+
+## Inventory interface consistency
+
+- Inventory and Inventory Activity now share the newer operational page hierarchy used by Dashboard and reporting: restrained eyebrow labels, clear page titles, rounded slate panel surfaces, compact controls, and lighter table headers.
+- Current-stock search, refresh, Record Stock, activity search, activity filters, transaction badges, responsive stock cards, and desktop tables use a consistent type scale and emphasis without changing their behavior.
+- Pending Receivals uses the Material Usage section language rather than the legacy ticker and dark alert band. Reservations, Record Stock, inventory detail dialogs, and activity expansion panels retain their existing workflows and protections; this pass changes presentation only.

@@ -8,12 +8,18 @@ import {
   useState,
 } from 'react';
 
-import { openProductionJob } from '../production/job-options';
+import {
+  formatProductionJobOption,
+  loadProductionJobOption,
+  loadProductionJobOptions,
+  openProductionJob,
+  type ProductionJobOption,
+} from '../production/job-options';
+import { JobTag } from '../production/components/JobTag';
 
 import {
   deleteMaterialUsageReport,
   getMaterialUsageSuggestions,
-  getProductionJobOptions,
   saveMaterialUsageReport,
 } from './actions';
 
@@ -21,8 +27,14 @@ import {
   type MaterialUsageLine,
   type MaterialUsageReport,
   type MaterialUsageSuggestions,
-  type ProductionJobOption,
 } from './types';
+import {
+  applySharedChipBlendColorPlate,
+  applyCanonicalJobSelection,
+  getSharedChipBlendColorPlate,
+  isChipBlendMaterialType,
+  resolveColorPlateDecision,
+} from './canonical-job-defaults';
 
 interface Props {
   loading: boolean;
@@ -37,7 +49,6 @@ const EMPTY_SUGGESTIONS: MaterialUsageSuggestions = {
   manufacturers: [],
   materialNames: [],
   units: [],
-  plates: [],
 };
 
 function createEmptyLine(): MaterialUsageLine {
@@ -58,9 +69,10 @@ function serializeReport(report: MaterialUsageReport): string {
 
 function getJobDisplayValue(report: MaterialUsageReport): string {
   if (report.jobId) {
-    return [report.jobNumberSnapshot, report.jobNameSnapshot]
-      .filter(Boolean)
-      .join(' — ');
+    return formatProductionJobOption({
+      job_number: report.jobNumberSnapshot ?? null,
+      name: report.jobNameSnapshot ?? null,
+    });
   }
 
   return report.unlistedJobName;
@@ -128,6 +140,12 @@ export function MaterialUsageEditor({
   const [deleting, setDeleting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pendingJobSelection, setPendingJobSelection] = useState<{
+    mode: 'reassignment' | 'comparison';
+    job: ProductionJobOption;
+    reportColorPlate: string;
+    productionColorPlate: string;
+  } | null>(null);
 
   const currentSnapshot = useMemo(() => serializeReport(report), [report]);
   const isDirty = currentSnapshot !== initialSnapshotRef.current;
@@ -138,7 +156,7 @@ export function MaterialUsageEditor({
 
     return jobs
       .filter((job) =>
-        [job.jobNumber, job.name, job.customer]
+        [job.job_number, job.name, job.customer]
           .join(' ')
           .toLowerCase()
           .includes(normalizedJobSearch),
@@ -146,7 +164,10 @@ export function MaterialUsageEditor({
       .slice(0, 15);
   }, [jobs, normalizedJobSearch]);
 
-  const temporaryLabel = !report.jobId && jobSearch.trim() ? jobSearch.trim() : '';
+  const currentJobDisplay = getJobDisplayValue(report).trim();
+  const temporaryLabel = jobSearch.trim() && jobSearch.trim() !== currentJobDisplay
+    ? jobSearch.trim()
+    : '';
 
   useEffect(() => {
     let active = true;
@@ -154,7 +175,7 @@ export function MaterialUsageEditor({
     async function loadReferenceData() {
       try {
         const [jobOptions, usageSuggestions] = await Promise.all([
-          getProductionJobOptions(),
+          loadProductionJobOptions({ orderBy: 'schedule' }),
           getMaterialUsageSuggestions(),
         ]);
 
@@ -207,6 +228,22 @@ export function MaterialUsageEditor({
     });
   }
 
+  function updateMaterialType(index: number, materialType: string) {
+    const sharedColorPlate = getSharedChipBlendColorPlate(report.lines);
+    updateLine(index, {
+      materialType,
+      ...(isChipBlendMaterialType(materialType)
+        ? { plate: sharedColorPlate }
+        : {}),
+    });
+  }
+
+  function finalizeMaterialType(index: number, materialType: string) {
+    if (!isChipBlendMaterialType(materialType) && report.lines[index].plate) {
+      updateLine(index, { plate: '' });
+    }
+  }
+
   function addLine() {
     updateReport({ lines: [...report.lines, createEmptyLine()] });
   }
@@ -228,23 +265,143 @@ export function MaterialUsageEditor({
     const value = event.target.value;
     setJobSearch(value);
     setJobMenuOpen(true);
-    updateReport({
-      jobId: null,
-      jobNumberSnapshot: null,
-      jobNameSnapshot: null,
-      unlistedJobName: '',
-    });
+  }
+
+  function commitProductionJobSelection(
+    job: ProductionJobOption,
+    colorPlate: string,
+  ) {
+    setJobSearch(formatProductionJobOption(job));
+    setJobMenuOpen(false);
+    setPendingJobSelection(null);
+    onChange(applyCanonicalJobSelection(report, job, colorPlate));
+    setMessage(null);
+    setError(null);
   }
 
   function selectProductionJob(job: ProductionJobOption) {
-    setJobSearch([job.jobNumber, job.name].filter(Boolean).join(' — '));
-    setJobMenuOpen(false);
+    if (report.jobId === job.id) {
+      setJobSearch(formatProductionJobOption(job));
+      setJobMenuOpen(false);
+      return;
+    }
+
+    const reportColorPlate = getSharedChipBlendColorPlate(report.lines);
+    const productionColorPlate = job.color_plate_number?.trim() ?? '';
+    const decision = resolveColorPlateDecision(
+      reportColorPlate,
+      productionColorPlate,
+    );
+
+    if (decision === 'conflict') {
+      setJobMenuOpen(false);
+      setPendingJobSelection({
+        mode: 'reassignment',
+        job,
+        reportColorPlate,
+        productionColorPlate,
+      });
+      return;
+    }
+
+    commitProductionJobSelection(
+      job,
+      decision === 'use_production'
+        ? productionColorPlate
+        : reportColorPlate,
+    );
+  }
+
+  function cancelPendingJobSelection() {
+    const wasReassignment = pendingJobSelection?.mode === 'reassignment';
+    setPendingJobSelection(null);
+    if (wasReassignment) setJobSearch(getJobDisplayValue(report));
+  }
+
+  async function checkProductionDefaults() {
+    if (!report.jobId) return;
+
+    try {
+      setError(null);
+      const job = await loadProductionJobOption(report.jobId);
+
+      if (!job) {
+        setError('The linked Production job could not be loaded.');
+        return;
+      }
+
+      const reportColorPlate = getSharedChipBlendColorPlate(report.lines);
+      const productionColorPlate = job.color_plate_number?.trim() ?? '';
+      const decision = resolveColorPlateDecision(
+        reportColorPlate,
+        productionColorPlate,
+      );
+
+      if (decision === 'use_production') {
+        updateReport({
+          lines: applySharedChipBlendColorPlate(
+            report.lines,
+            productionColorPlate,
+          ),
+        });
+        setMessage('Color Plate # copied from Production.');
+        return;
+      }
+
+      if (decision === 'keep_report') {
+        setMessage(productionColorPlate
+          ? 'Material Usage and Production Color Plate # values match.'
+          : 'Production does not currently have a Color Plate #; Material Usage was unchanged.');
+        return;
+      }
+
+      setPendingJobSelection({
+        mode: 'comparison',
+        job,
+        reportColorPlate,
+        productionColorPlate,
+      });
+    } catch (caughtError) {
+      setError(caughtError instanceof Error
+        ? caughtError.message
+        : 'Unable to compare Production defaults.');
+    }
+  }
+
+  function keepPendingMaterialUsageColorPlate() {
+    if (!pendingJobSelection) return;
+
+    if (pendingJobSelection.mode === 'reassignment') {
+      commitProductionJobSelection(
+        pendingJobSelection.job,
+        pendingJobSelection.reportColorPlate,
+      );
+      return;
+    }
+
+    setPendingJobSelection(null);
+    setMessage('Material Usage Color Plate # kept.');
+  }
+
+  function usePendingProductionColorPlate() {
+    if (!pendingJobSelection) return;
+
+    if (pendingJobSelection.mode === 'reassignment') {
+      commitProductionJobSelection(
+        pendingJobSelection.job,
+        pendingJobSelection.productionColorPlate,
+      );
+      return;
+    }
+
+    setPendingJobSelection(null);
     updateReport({
-      jobId: job.id,
-      jobNumberSnapshot: job.jobNumber || null,
-      jobNameSnapshot: job.name || null,
-      unlistedJobName: '',
+      lines: applySharedChipBlendColorPlate(
+        report.lines,
+        pendingJobSelection.productionColorPlate,
+      ),
     });
+    setMessage('Production Color Plate # applied to Material Usage.');
   }
 
   function selectTemporaryLabel() {
@@ -379,7 +536,7 @@ export function MaterialUsageEditor({
                         <button type="button" key={job.id} onClick={() => selectProductionJob(job)} className={`flex w-full items-start gap-3 border-b border-slate-100 px-3 py-2.5 text-left last:border-b-0 ${selected ? 'bg-slate-100' : 'hover:bg-slate-50'}`}>
                           <span className="mt-0.5 shrink-0 text-slate-400"><LinkIcon /></span>
                           <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-semibold text-slate-900">{job.jobNumber ? `${job.jobNumber} — ` : ''}{job.name || 'Untitled Production Job'}</span>
+                            <span className="block truncate text-sm font-semibold text-slate-900">{formatProductionJobOption(job)}</span>
                             {job.customer ? <span className="mt-0.5 block truncate text-xs text-slate-500">{job.customer}</span> : null}
                           </span>
                         </button>
@@ -401,17 +558,22 @@ export function MaterialUsageEditor({
               ) : null}
 
               {report.jobId ? (
-                <button
-                  type="button"
-                  onClick={() => openProductionJob(report.jobId!)}
-                  className="mt-1 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-200"
-                >
-                  Production
-                </button>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <JobTag
+                    label={report.jobNameSnapshot?.trim() || report.jobNumberSnapshot?.trim() || 'Production Job'}
+                    onClick={() => openProductionJob(report.jobId!)}
+                    title={`Open Job ${report.jobNumberSnapshot?.trim() || 'details'} in Production`}
+                  />
+                  {report.id ? (
+                    <button type="button" onClick={() => void checkProductionDefaults()} className="text-xs font-medium text-slate-500 underline decoration-slate-300 underline-offset-2 hover:text-slate-900">
+                      View Job Details
+                    </button>
+                  ) : null}
+                </div>
               ) : report.unlistedJobName ? (
-                <span className="mt-1 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
-                  Temporary
-                </span>
+                <p className="mt-1.5 text-xs text-slate-500">
+                  <span aria-hidden="true">ⓘ </span>This report has not been linked to a Production Job yet.
+                </p>
               ) : (
                 <p className="mt-1 text-xs text-slate-500">
                   Select a Production job, or type a label and confirm the temporary option.
@@ -425,7 +587,7 @@ export function MaterialUsageEditor({
             </div>
 
             <div>
-              <label htmlFor="material-usage-work-order" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">Work Order</label>
+              <label htmlFor="material-usage-work-order" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">Work Order #</label>
               <input id="material-usage-work-order" value={report.workOrder} onChange={(event) => updateReport({ workOrder: event.target.value })} placeholder="Work Order #" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
 
@@ -458,7 +620,10 @@ export function MaterialUsageEditor({
                   <th className="min-w-52 border-b border-slate-200 px-2 py-2">Material</th>
                   <th className="w-28 border-b border-slate-200 px-2 py-2">Quantity</th>
                   <th className="w-32 border-b border-slate-200 px-2 py-2">Unit</th>
-                  <th className="w-32 border-b border-slate-200 px-2 py-2">Plate</th>
+                  <th className="w-40 border-b border-slate-200 px-2 py-2">
+                    <span className="block">Color Plate #</span>
+                    <span className="mt-0.5 block text-[9px] font-semibold normal-case tracking-normal text-slate-400">Chip Blend only</span>
+                  </th>
                   <th className="min-w-56 border-b border-slate-200 px-2 py-2">Notes</th>
                   <th className="sticky right-0 z-10 w-24 min-w-24 border-b border-l border-slate-200 bg-slate-50 px-2 py-2 text-right">Action</th>
                 </tr>
@@ -468,12 +633,31 @@ export function MaterialUsageEditor({
                 {report.lines.map((line, index) => (
                   <tr key={line.id ?? `material-line-${index}`} className="border-b border-slate-100 last:border-b-0">
                     <td className="px-3 py-2 text-center text-xs text-slate-400">{index + 1}</td>
-                    <td className="px-2 py-2"><input value={line.materialType} onChange={(event) => updateLine(index, { materialType: event.target.value })} list="material-type-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
+                    <td className="px-2 py-2"><input value={line.materialType} onChange={(event) => updateMaterialType(index, event.target.value)} onBlur={(event) => finalizeMaterialType(index, event.target.value)} list="material-type-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="px-2 py-2"><input value={line.manufacturer} onChange={(event) => updateLine(index, { manufacturer: event.target.value })} list="manufacturer-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="px-2 py-2"><input value={line.materialName} onChange={(event) => updateLine(index, { materialName: event.target.value })} list="material-name-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="px-2 py-2"><input type="number" min="0" step="0.001" value={line.quantity ?? ''} onChange={(event) => updateLine(index, { quantity: event.target.value === '' ? null : Number(event.target.value) })} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="px-2 py-2"><input value={line.unit} onChange={(event) => updateLine(index, { unit: event.target.value })} list="unit-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
-                    <td className="px-2 py-2"><input value={line.plate} onChange={(event) => updateLine(index, { plate: event.target.value })} placeholder="Chip blend plate #" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
+                    <td className="px-2 py-2">
+                      {isChipBlendMaterialType(line.materialType) ? (
+                        <input
+                          value={line.plate}
+                          onChange={(event) => updateReport({
+                            lines: applySharedChipBlendColorPlate(
+                              report.lines,
+                              event.target.value,
+                            ),
+                          })}
+                          placeholder="Color Plate #"
+                          aria-label={`Color Plate # for material line ${index + 1}`}
+                          className="w-full rounded border border-blue-200 bg-blue-50/60 px-2 py-1.5 text-sm outline-none placeholder:text-blue-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
+                        />
+                      ) : (
+                        <span className="flex h-[34px] items-center justify-center rounded border border-dashed border-slate-200 bg-slate-50 px-2 text-[10px] font-medium text-slate-400" title="Color Plate # applies only to Chip Blend">
+                          Not applicable
+                        </span>
+                      )}
+                    </td>
                     <td className="px-2 py-2"><input value={line.notes} onChange={(event) => updateLine(index, { notes: event.target.value })} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="sticky right-0 z-10 border-l border-slate-200 bg-white px-2 py-2 text-right">
                       <button type="button" onClick={() => removeLine(index)} className="inline-flex h-8 items-center justify-center rounded border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-600 shadow-sm hover:border-red-200 hover:bg-red-50 hover:text-red-700">Remove</button>
@@ -494,6 +678,36 @@ export function MaterialUsageEditor({
       <datalist id="manufacturer-suggestions">{suggestions.manufacturers.map((value) => <option key={value} value={value} />)}</datalist>
       <datalist id="material-name-suggestions">{suggestions.materialNames.map((value) => <option key={value} value={value} />)}</datalist>
       <datalist id="unit-suggestions">{suggestions.units.map((value) => <option key={value} value={value} />)}</datalist>
+
+      {pendingJobSelection ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 px-4" role="presentation">
+          <section className="w-full max-w-lg rounded-lg border border-slate-300 bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="material-usage-color-plate-conflict-title">
+            <div className="border-b border-slate-200 px-5 py-4">
+              <h2 id="material-usage-color-plate-conflict-title" className="text-base font-semibold text-slate-950">Color Plate # conflict</h2>
+              <p className="mt-1 text-sm text-slate-600">
+                {pendingJobSelection.mode === 'reassignment'
+                  ? `${formatProductionJobOption(pendingJobSelection.job)} uses a different Color Plate # than this report. Choose a value before changing the Job.`
+                  : `${formatProductionJobOption(pendingJobSelection.job)} currently uses a different Color Plate # than this historical report.`}
+              </p>
+            </div>
+            <div className="grid gap-3 px-5 py-4 sm:grid-cols-2">
+              <div className="rounded border border-slate-200 bg-slate-50 p-3">
+                <div className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Material Usage</div>
+                <div className="mt-1 text-sm font-semibold text-slate-900">{pendingJobSelection.reportColorPlate}</div>
+              </div>
+              <div className="rounded border border-blue-200 bg-blue-50 p-3">
+                <div className="text-[10px] font-bold uppercase tracking-wide text-blue-600">Production</div>
+                <div className="mt-1 text-sm font-semibold text-blue-950">{pendingJobSelection.productionColorPlate}</div>
+              </div>
+            </div>
+            <div className="flex flex-wrap justify-end gap-2 border-t border-slate-200 px-5 py-4">
+              <button type="button" onClick={cancelPendingJobSelection} className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">{pendingJobSelection.mode === 'reassignment' ? 'Cancel Job Change' : 'Cancel'}</button>
+              <button type="button" onClick={keepPendingMaterialUsageColorPlate} className="rounded border border-slate-400 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50">Keep Material Usage</button>
+              <button type="button" onClick={usePendingProductionColorPlate} className="rounded bg-blue-700 px-3 py-2 text-sm font-medium text-white hover:bg-blue-800">Use Production</button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }

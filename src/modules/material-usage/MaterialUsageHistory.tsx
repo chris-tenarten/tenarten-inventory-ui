@@ -1,6 +1,8 @@
 "use client";
 
 import { openProductionJob } from "../production/job-options";
+import { getProductionJobReferenceLabel } from "../production/job-reference";
+import { JobTag } from "../production/components/JobTag";
 
 import { MaterialUsageReportSummary } from "./types";
 
@@ -76,10 +78,13 @@ export function MaterialUsageHistory({
         ) : null}
 
         {reports.map((report) => {
-          const title =
-            report.jobName ||
-            report.jobNumber ||
-            "Unlisted Job";
+          const jobReferenceLabel = getProductionJobReferenceLabel({
+            name: report.jobName,
+            job_number: report.jobNumber,
+          });
+          const title = report.jobId
+            ? jobReferenceLabel
+            : report.jobName || report.jobNumber || "Unlisted Job";
 
           return (
             <div
@@ -112,25 +117,21 @@ export function MaterialUsageHistory({
                       event.stopPropagation();
 
                       const shouldOpen = window.confirm(
-                        "View this job's details in the Production Queue?",
+                        `Open ${jobReferenceLabel} in the Production Queue?`,
                       );
 
                       if (shouldOpen) {
                         openProductionJob(report.jobId!);
                       }
                     }}
-                    className="m-0 inline-flex w-[100px] shrink-0 appearance-none items-center justify-center border-0 bg-transparent p-0 leading-none"
+                    className="m-0 inline-flex max-w-[140px] shrink-0 appearance-none items-center justify-center border-0 bg-transparent p-0 leading-none"
                     title="Open Production job"
                   >
-                    <span className="inline-flex w-full items-center justify-center rounded bg-blue-100 px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-[0.08em] text-blue-700 transition hover:bg-blue-200">
-                      <span className="truncate">
-                        {report.jobName || report.jobNumber || "Production Job"}
-                      </span>
-                    </span>
+                    <JobTag label={report.jobName || report.jobNumber || "Production Job"} className="w-full justify-center" />
                   </button>
                 ) : (
-                  <span className="inline-flex w-[100px] shrink-0 items-center justify-center rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-[0.08em] text-amber-700">
-                    LINK REQUIRED
+                  <span className="inline-flex max-w-[140px] shrink-0 items-center text-right text-[10px] font-medium leading-tight text-slate-500">
+                    Not linked to Production
                   </span>
                 )}
               </div>

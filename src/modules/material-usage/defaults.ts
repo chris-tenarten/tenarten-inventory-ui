@@ -32,7 +32,7 @@ export function createDefaultMaterialLines(): MaterialUsageLine[] {
     {
       materialType: "Chip Blend",
       manufacturer: "",
-      materialName: "",
+      materialName: "Chip Blend A",
       quantity: null,
       unit: "",
       plate: "",
@@ -41,7 +41,7 @@ export function createDefaultMaterialLines(): MaterialUsageLine[] {
     {
       materialType: "Chip Blend",
       manufacturer: "",
-      materialName: "",
+      materialName: "Chip Blend B",
       quantity: null,
       unit: "",
       plate: "",

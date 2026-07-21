@@ -105,8 +105,15 @@ manpower_reports
 
 ```text
 material_usage_reports
-└── material_usage_entries
+├── job_id → jobs.id, or an unlisted_job_name
+└── material_usage_lines
 ```
+
+Material Usage is implemented as a job-centered report header with ordered
+consumption lines. Canonical Production identity is stored in `job_id`;
+temporary work uses `unlisted_job_name`, and the two identities are mutually
+exclusive. Job number and name snapshots preserve the display identity used
+when the report was last saved without replacing the canonical relationship.
 
 ### Daily Production
 

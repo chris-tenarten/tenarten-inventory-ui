@@ -159,3 +159,23 @@ Improve:
 - auditability
 - attachments
 - relational analytics
+
+## 10. Production Job References
+
+`src/modules/production/job-reference.ts` owns the lightweight canonical Job
+reference shape and pure label rules. Existing linked references prefer the Job
+name and fall back to Job number. Selector labels may show both values because
+selection benefits from additional recognition context.
+
+`src/modules/production/job-options.ts` owns loading active/selectable Jobs and
+opening the canonical Production context. Feature modules consume that boundary
+instead of issuing their own selectable-Job queries.
+
+Keep three UI responsibilities distinct:
+
+- selectors create or change a Job association
+- references and badges display an existing association
+- launch actions navigate to and focus the canonical Production Job
+
+Temporary labels remain feature-supported unresolved work identity. They are
+not canonical Job references and must not receive linked-Job presentation.

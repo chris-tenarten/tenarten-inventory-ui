@@ -195,7 +195,7 @@ export default function ActivityPage() {
           <div>
             <label
               htmlFor="activity-search"
-              className="mb-1 block text-[10px] font-black uppercase tracking-[0.16em] text-slate-700"
+              className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500"
             >
               Search Inventory Activity
             </label>
@@ -209,7 +209,7 @@ export default function ActivityPage() {
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span id="activity-filter-label" className="shrink-0 text-sm font-bold text-slate-700">Show</span>
+            <span id="activity-filter-label" className="shrink-0 text-sm font-semibold text-slate-700">Show</span>
             <div role="group" aria-labelledby="activity-filter-label" className="inline-flex h-9 items-stretch divide-x divide-slate-300 overflow-hidden rounded-sm border border-slate-300 bg-slate-50">
               {(['all', 'intake', 'outtake', 'adjustment'] as TransactionTypeFilter[]).map((filter) => (
                 <button
@@ -217,7 +217,7 @@ export default function ActivityPage() {
                   type="button"
                   aria-pressed={typeFilter === filter}
                   onClick={() => setTypeFilter(filter)}
-                  className={`h-full px-3 text-center text-[10px] font-bold uppercase tracking-[0.09em] transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
+                  className={`h-full px-3 text-center text-xs font-semibold transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
                     typeFilter === filter
                       ? 'bg-slate-900 text-white'
                       : 'text-slate-600 hover:bg-white hover:text-slate-950'
@@ -231,7 +231,7 @@ export default function ActivityPage() {
               type="button"
               onClick={loadRows}
               disabled={loading}
-              className="ml-auto h-9 border border-slate-300 bg-white px-4 text-[10px] font-bold uppercase tracking-[0.07em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="ml-auto h-9 rounded-sm border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? 'Refreshing' : 'Refresh'}
             </button>
@@ -256,16 +256,16 @@ export default function ActivityPage() {
               <div className="hidden overflow-x-auto md:block">
                 <table className="w-full min-w-[1080px] border-collapse text-sm">
               <thead>
-                <tr className="border-b border-slate-300 bg-slate-100 text-[10px] uppercase tracking-[0.12em] text-slate-700">
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Date</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Type</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Vendor</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Material</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Size</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-right font-black">Qty</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Unit</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-black">Location</th>
-                  <th className="px-3 py-2 text-left font-black">Open</th>
+                <tr className="border-b border-slate-200 bg-slate-50 text-[10px] uppercase tracking-[0.12em] text-slate-600">
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Date</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Type</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Vendor</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Material</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Size</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-right font-semibold">Qty</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Unit</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Location</th>
+                  <th className="px-3 py-2 text-left font-semibold">Open</th>
                 </tr>
               </thead>
 
@@ -286,7 +286,7 @@ export default function ActivityPage() {
                         </td>
 
                         <td className="whitespace-nowrap border-r border-slate-200 px-3 py-2 align-top">
-                          <span className={`inline-flex border px-2 py-1 text-[11px] font-black uppercase tracking-[0.1em] ${typeBadgeClass(row.transaction_type)}`}>
+                          <span className={`inline-flex rounded-sm border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${typeBadgeClass(row.transaction_type)}`}>
                             {formatTransactionType(row.transaction_type)}
                           </span>
                         </td>
@@ -296,7 +296,7 @@ export default function ActivityPage() {
                         </td>
 
                         <td className="border-r border-slate-200 px-3 py-2 align-top">
-                          <div className="font-black text-slate-950">{row.item_name || '—'}</div>
+                          <div className="font-semibold text-slate-950">{row.item_name || '—'}</div>
                           {row.is_earmarked && (
                             <div className="mt-1 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
                               Reserved: {row.earmarked_job_name || 'Job'}
@@ -389,12 +389,12 @@ export default function ActivityPage() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className={`inline-flex border px-2 py-1 text-[10px] font-black uppercase tracking-[0.1em] ${typeBadgeClass(row.transaction_type)}`}>
+                              <span className={`inline-flex rounded-sm border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${typeBadgeClass(row.transaction_type)}`}>
                                 {formatTransactionType(row.transaction_type)}
                               </span>
                               <span className="text-xs font-bold text-slate-500">{formatDateTime(row.created_at)}</span>
                             </div>
-                            <div className="mt-2 truncate text-base font-black text-slate-950">{row.item_name || '—'}</div>
+                            <div className="mt-2 truncate text-base font-semibold text-slate-950">{row.item_name || '—'}</div>
                             <div className="mt-1 text-sm font-semibold text-slate-700">
                               {getDisplayVendor(row)} • {row.size || '—'} • {row.location || '—'}
                             </div>
@@ -405,7 +405,7 @@ export default function ActivityPage() {
                             )}
                           </div>
                           <div className="shrink-0 text-right">
-                            <div className={`text-xl font-black tabular-nums ${getQuantityClass(row)}`}>{getSignedQuantity(row)}</div>
+                            <div className={`text-xl font-bold tabular-nums ${getQuantityClass(row)}`}>{getSignedQuantity(row)}</div>
                             <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">{row.unit || '—'}</div>
                           </div>
                         </div>

@@ -54,6 +54,13 @@
   - rework and variance analysis
 - Consistent units and reference IDs are required for meaningful long-term reporting.
 
+## Shared Job behavior
+
+- Canonical Job identity and current presentation data come from Production; snapshots on operational reports preserve historical display context but do not replace `jobs.id`.
+- Job selection and linked Job reference display are separate responsibilities: selectors benefit from number-plus-name context, while existing references prefer the recognizable Job name with a number fallback.
+- Shared domain primitives should be adopted one proven consumer at a time rather than triggering a repository-wide refactor.
+- Canonical operational values should be copied into historical reports at meaningful workflow boundaries, such as initial Job association or explicit reassignment, rather than continuously synchronized.
+
 ---
 
 # UX Observations

@@ -51,19 +51,11 @@ export interface MaterialUsageReportSummary {
   updatedAt: string;
 }
 
-export interface ProductionJobOption {
-  id: string;
-  jobNumber: string;
-  name: string;
-  customer: string;
-}
-
 export interface MaterialUsageSuggestions {
   materialTypes: string[];
   manufacturers: string[];
   materialNames: string[];
   units: string[];
-  plates: string[];
 }
 
 export const MATERIAL_TYPES = [
