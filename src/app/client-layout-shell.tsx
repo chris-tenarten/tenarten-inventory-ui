@@ -1,14 +1,20 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
 const primaryNavItems = [
   { href: '/', label: 'Dashboard', icon: HomeIcon },
-  { href: '/inventory', label: 'Inventory', icon: PackageIcon },
 ];
+
+const inventoryNavItem = {
+  href: '/inventory',
+  label: 'Inventory',
+  icon: PackageIcon,
+};
 
 const reportingNavItems = [
   {
@@ -172,11 +178,14 @@ export default function ClientLayoutShell({
   );
 
   useEffect(() => {
-    setIsUnlocked(
-      window.localStorage.getItem(ACCESS_STORAGE_KEY) === 'granted',
-    );
+    const timeout = window.setTimeout(() => {
+      setIsUnlocked(
+        window.localStorage.getItem(ACCESS_STORAGE_KEY) === 'granted',
+      );
+      setIsReady(true);
+    }, 0);
 
-    setIsReady(true);
+    return () => window.clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
@@ -247,9 +256,11 @@ export default function ClientLayoutShell({
               className="group flex min-w-0 items-center gap-2.5"
               aria-label="Go to dashboard"
             >
-              <img
+              <Image
                 src="/logo.png"
                 alt="Tenarten logo"
+                width={256}
+                height={256}
                 className={`shrink-0 object-contain transition-all duration-200 ${
                   hasScrolled
                     ? 'h-9 w-auto'
@@ -378,6 +389,25 @@ export default function ClientLayoutShell({
                     </div>
                   </div>
                 </div>
+
+                {(() => {
+                  const Icon = inventoryNavItem.icon;
+                  const isActive =
+                    pathname === inventoryNavItem.href ||
+                    pathname.startsWith(`${inventoryNavItem.href}/`);
+
+                  return (
+                    <Link
+                      href={inventoryNavItem.href}
+                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
+                        isActive,
+                      )}`}
+                    >
+                      <Icon />
+                      {inventoryNavItem.label}
+                    </Link>
+                  );
+                })()}
               </nav>
             )}
 
@@ -448,9 +478,11 @@ export default function ClientLayoutShell({
           <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-5 py-10">
             <div className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
               <div className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-6 py-8 text-center">
-                <img
+                <Image
                   src="/logo.png"
                   alt="Tenarten logo"
+                  width={256}
+                  height={256}
                   className="mx-auto h-28 w-auto object-contain sm:h-32"
                 />
 

@@ -219,22 +219,23 @@ export default function CatalogPage() {
   );
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search.trim()), 250);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+      setCurrentPage(1);
+    }, 250);
     return () => clearTimeout(timer);
   }, [search]);
 
-  useEffect(() => {
+  function changeMode(nextMode: CatalogMode) {
+    setMode(nextMode);
     setCurrentPage(1);
-  }, [debouncedSearch, mode]);
-
-  useEffect(() => {
     setSelected(null);
     setNotes('');
     setMatchWarning('');
     setAppearanceNotes('');
     setAnnotatedBy('');
     setSaveMessage('');
-  }, [mode]);
+  }
 
   useEffect(() => {
     async function loadCatalog() {
@@ -486,7 +487,7 @@ export default function CatalogPage() {
               <div className="grid h-9 w-full grid-cols-2 divide-x divide-slate-300 overflow-hidden rounded-sm border border-slate-300 bg-slate-50 sm:inline-flex sm:w-fit">
                 <button
                   type="button"
-                  onClick={() => setMode('standard')}
+                  onClick={() => changeMode('standard')}
                   className={`h-full px-3 text-[10px] font-bold uppercase tracking-[0.07em] transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
                     mode === 'standard'
                       ? 'bg-slate-800 text-white shadow-sm'
@@ -497,7 +498,7 @@ export default function CatalogPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMode('specialty')}
+                  onClick={() => changeMode('specialty')}
                   className={`h-full px-3 text-[10px] font-bold uppercase tracking-[0.07em] transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
                     mode === 'specialty'
                       ? 'bg-slate-800 text-white shadow-sm'
@@ -858,7 +859,7 @@ export default function CatalogPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setMode('standard');
+                        changeMode('standard');
                         selectRow(row);
                       }}
                       className="min-w-0 text-left"

@@ -224,3 +224,11 @@ Existing-job planned dates have one guarded commit path. Missing or blank approv
 - inspect actual file contents when an import resolves to `undefined`
 - do not assume alias imports are configured
 - UI components should call shared production data helpers instead of importing Supabase directly where practical
+
+## Development health
+
+- `npm run lint` passes with the current ESLint configuration.
+- `npm run build` completes successfully with Next.js 16.
+- The production normalization, Timeline preference, schedule staging, and planning-readiness verification scripts pass.
+- The superseded `LoginGate` and unused `AddJobDialog` components were removed after confirming that neither had an application reference.
+- Material Usage currently references `material_usage_reports`, `material_usage_lines`, `save_material_usage_report()`, and `delete_material_usage_report()` without a corresponding committed migration; schema reconciliation remains required before treating a fresh migration replay as complete.

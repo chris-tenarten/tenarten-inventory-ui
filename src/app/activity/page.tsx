@@ -153,7 +153,11 @@ export default function ActivityPage() {
   }, []);
 
   useEffect(() => {
-    loadRows();
+    const timeout = window.setTimeout(() => {
+      void loadRows();
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
   }, [loadRows]);
 
   const filteredRows = useMemo(() => {

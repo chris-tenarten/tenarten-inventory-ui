@@ -1,5 +1,7 @@
 "use client";
 
+import { openProductionJob } from "../production/job-options";
+
 import { MaterialUsageReportSummary } from "./types";
 
 interface Props {
@@ -75,15 +77,22 @@ export function MaterialUsageHistory({
 
         {reports.map((report) => {
           const title =
-            report.jobNumber ||
             report.jobName ||
+            report.jobNumber ||
             "Unlisted Job";
 
           return (
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               key={report.id}
               onClick={() => onSelect(report.id)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onSelect(report.id);
+                }
+              }}
               className={[
                 "w-full border-b border-slate-100 px-4 py-3 text-left transition-colors",
                 selectedId === report.id
@@ -91,31 +100,51 @@ export function MaterialUsageHistory({
                   : "bg-white hover:bg-slate-50",
               ].join(" ")}
             >
-              <div className="truncate text-sm font-medium text-slate-900">
-                {title}
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0 flex-1 truncate text-sm font-medium text-slate-900">
+                  {title}
+                </div>
+
+                {report.jobId ? (
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+
+                      const shouldOpen = window.confirm(
+                        "View this job's details in the Production Queue?",
+                      );
+
+                      if (shouldOpen) {
+                        openProductionJob(report.jobId!);
+                      }
+                    }}
+                    className="m-0 inline-flex w-[100px] shrink-0 appearance-none items-center justify-center border-0 bg-transparent p-0 leading-none"
+                    title="Open Production job"
+                  >
+                    <span className="inline-flex w-full items-center justify-center rounded bg-blue-100 px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-[0.08em] text-blue-700 transition hover:bg-blue-200">
+                      <span className="truncate">
+                        {report.jobName || report.jobNumber || "Production Job"}
+                      </span>
+                    </span>
+                  </button>
+                ) : (
+                  <span className="inline-flex w-[100px] shrink-0 items-center justify-center rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-[0.08em] text-amber-700">
+                    LINK REQUIRED
+                  </span>
+                )}
               </div>
 
-              {report.jobNumber &&
-              report.jobName ? (
-                <div className="mt-0.5 truncate text-xs text-slate-600">
-                  {report.jobName}
-                </div>
-              ) : null}
-
               <div className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-500">
-                <span>
-                  {formatReportDate(
-                    report.reportDate
-                  )}
-                </span>
+                <span>{formatReportDate(report.reportDate)}</span>
 
                 {report.workOrder ? (
-                  <span className="truncate">
+                  <span className="min-w-0 truncate">
                     WO {report.workOrder}
                   </span>
                 ) : null}
               </div>
-            </button>
+            </div>
           );
         })}
       </div>

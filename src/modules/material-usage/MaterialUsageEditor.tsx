@@ -8,6 +8,8 @@ import {
   useState,
 } from 'react';
 
+import { openProductionJob } from '../production/job-options';
+
 import {
   deleteMaterialUsageReport,
   getMaterialUsageSuggestions,
@@ -398,9 +400,23 @@ export function MaterialUsageEditor({
                 </div>
               ) : null}
 
-              <p className="mt-1 text-xs text-slate-500">
-                {report.jobId ? 'Linked to the canonical Production job.' : report.unlistedJobName ? `Temporary label: ${report.unlistedJobName}` : 'Select a Production job, or type a label and confirm the temporary option.'}
-              </p>
+              {report.jobId ? (
+                <button
+                  type="button"
+                  onClick={() => openProductionJob(report.jobId!)}
+                  className="mt-1 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-200"
+                >
+                  Production
+                </button>
+              ) : report.unlistedJobName ? (
+                <span className="mt-1 inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                  Temporary
+                </span>
+              ) : (
+                <p className="mt-1 text-xs text-slate-500">
+                  Select a Production job, or type a label and confirm the temporary option.
+                </p>
+              )}
             </div>
 
             <div>
@@ -410,7 +426,7 @@ export function MaterialUsageEditor({
 
             <div>
               <label htmlFor="material-usage-work-order" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">Work Order</label>
-              <input id="material-usage-work-order" value={report.workOrder} onChange={(event) => updateReport({ workOrder: event.target.value })} placeholder="Optional" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              <input id="material-usage-work-order" value={report.workOrder} onChange={(event) => updateReport({ workOrder: event.target.value })} placeholder="Work Order #" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
 
             <div className="md:col-span-2">
@@ -457,7 +473,7 @@ export function MaterialUsageEditor({
                     <td className="px-2 py-2"><input value={line.materialName} onChange={(event) => updateLine(index, { materialName: event.target.value })} list="material-name-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="px-2 py-2"><input type="number" min="0" step="0.001" value={line.quantity ?? ''} onChange={(event) => updateLine(index, { quantity: event.target.value === '' ? null : Number(event.target.value) })} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="px-2 py-2"><input value={line.unit} onChange={(event) => updateLine(index, { unit: event.target.value })} list="unit-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
-                    <td className="px-2 py-2"><input value={line.plate} onChange={(event) => updateLine(index, { plate: event.target.value })} list="plate-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
+                    <td className="px-2 py-2"><input value={line.plate} onChange={(event) => updateLine(index, { plate: event.target.value })} placeholder="Chip blend plate #" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="px-2 py-2"><input value={line.notes} onChange={(event) => updateLine(index, { notes: event.target.value })} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="sticky right-0 z-10 border-l border-slate-200 bg-white px-2 py-2 text-right">
                       <button type="button" onClick={() => removeLine(index)} className="inline-flex h-8 items-center justify-center rounded border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-600 shadow-sm hover:border-red-200 hover:bg-red-50 hover:text-red-700">Remove</button>
@@ -478,7 +494,6 @@ export function MaterialUsageEditor({
       <datalist id="manufacturer-suggestions">{suggestions.manufacturers.map((value) => <option key={value} value={value} />)}</datalist>
       <datalist id="material-name-suggestions">{suggestions.materialNames.map((value) => <option key={value} value={value} />)}</datalist>
       <datalist id="unit-suggestions">{suggestions.units.map((value) => <option key={value} value={value} />)}</datalist>
-      <datalist id="plate-suggestions">{suggestions.plates.map((value) => <option key={value} value={value} />)}</datalist>
     </main>
   );
 }
