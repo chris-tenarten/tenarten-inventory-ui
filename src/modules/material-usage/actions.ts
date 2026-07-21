@@ -4,7 +4,6 @@ import {
   MaterialUsageReport,
   MaterialUsageReportSummary,
   MaterialUsageSuggestions,
-  ProductionJobOption,
 } from './types';
 
 function cleanDistinctValues(
@@ -128,6 +127,8 @@ export async function saveMaterialUsageReport(
       p_report: {
         id: report.id ?? null,
         job_id: report.jobId,
+        job_number_snapshot: report.jobNumberSnapshot ?? null,
+        job_name_snapshot: report.jobNameSnapshot ?? null,
         unlisted_job_name:
           report.unlistedJobName.trim(),
         report_date: report.reportDate,
@@ -143,7 +144,10 @@ export async function saveMaterialUsageReport(
         material_name: line.materialName.trim(),
         quantity: line.quantity,
         unit: line.unit.trim(),
-        plate: line.plate.trim(),
+        plate:
+          line.materialType.trim().toLocaleLowerCase() === 'chip blend'
+            ? line.plate.trim()
+            : '',
         notes: line.notes.trim(),
       })),
 
@@ -181,43 +185,6 @@ export async function deleteMaterialUsageReport(
   }
 }
 
-export async function getProductionJobOptions(): Promise<
-  ProductionJobOption[]
-> {
-  const { data, error } = await supabase
-    .from('jobs')
-    .select(`
-      id,
-      job_number,
-      name,
-      customer,
-      production_status,
-      planned_start
-    `)
-    .order('planned_start', {
-      ascending: true,
-      nullsFirst: false,
-    })
-    .order('name', { ascending: true });
-
-  if (error) {
-    throw error;
-  }
-
-  return (data ?? [])
-    .filter(
-      (job) =>
-        job.production_status !== 'complete' &&
-        job.production_status !== 'cancelled',
-    )
-    .map((job) => ({
-      id: job.id,
-      jobNumber: job.job_number ?? '',
-      name: job.name ?? '',
-      customer: job.customer ?? '',
-    }));
-}
-
 export async function getMaterialUsageSuggestions(): Promise<
   MaterialUsageSuggestions
 > {
@@ -227,8 +194,7 @@ export async function getMaterialUsageSuggestions(): Promise<
       material_type,
       manufacturer,
       material_name,
-      unit,
-      plate
+      unit
     `);
 
   if (error) {
@@ -252,10 +218,6 @@ export async function getMaterialUsageSuggestions(): Promise<
 
     units: cleanDistinctValues(
       rows.map((row) => row.unit),
-    ),
-
-    plates: cleanDistinctValues(
-      rows.map((row) => row.plate),
     ),
   };
 }

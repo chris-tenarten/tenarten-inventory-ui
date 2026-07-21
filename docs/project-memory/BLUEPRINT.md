@@ -179,3 +179,15 @@ If not, reconsider whether the design preserves the existing mental model.
 - Avoid extraction-based update bundles.
 - Treat the current repository as implementation truth.
 - Update Project Memory only when the change affects identity, workflow, structure, or current reality.
+
+## Shared Job boundary
+
+Production owns lightweight Job identity, selector loading, label resolution,
+and navigation into the canonical Production context. Job-aware modules should
+adopt these primitives incrementally instead of defining parallel Job option
+models and `jobs` queries.
+
+Job selection, linked-reference presentation, and Production navigation remain
+separate responsibilities. They may share types and low-level helpers, but
+should not be combined into one configurable component or generalized beyond
+Jobs before a real non-Job work requirement exists.

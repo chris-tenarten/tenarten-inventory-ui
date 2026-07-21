@@ -3,6 +3,7 @@
 import { FileText, Quote, Send } from 'lucide-react';
 
 import type { ProductionJob } from '../types';
+import { JobTag } from './JobTag';
 
 type Props = {
   job: ProductionJob | null;
@@ -60,6 +61,8 @@ export default function JobFormsPanel({ job, onClose }: Props) {
             >
               {job.name}
             </h2>
+
+            <div className="mt-2"><JobTag label={job.name} /></div>
 
             <p className="mt-1 text-sm text-slate-600">
               Preview of forms that will eventually generate from this job record.

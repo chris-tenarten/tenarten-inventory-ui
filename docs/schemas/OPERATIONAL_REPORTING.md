@@ -137,36 +137,51 @@ Conceptual fields:
 
 ### material_usage_reports
 
-Conceptual fields:
+Implemented fields:
 
 - id
-- job_id
-- work_date
-- terrazzo_system
+- job_id, mutually exclusive with unlisted job name
+- unlisted_job_name, mutually exclusive with job
+- job_number_snapshot, historical Job Number copied at canonical association
+- job_name_snapshot
+- report_date
+- work_order, historical Work Order Number snapshot; never a Job Number fallback
+- terrazzo_type
 - notes
-- status
-- entered_by
+- created_by
+- updated_by
 - created_at
 - updated_at
 
-### material_usage_entries
+### material_usage_lines
 
-Conceptual fields:
+Implemented fields:
 
 - id
 - report_id
-- material_id, nullable for unmatched/custom entries
-- material_name_snapshot
+- sort_order
 - material_type
-- manufacturer_snapshot
-- plate_number
+- manufacturer
+- material_name
 - quantity
-- unit_id
-- unit_name_snapshot
-- process_step_id, optional
+- unit
+- plate, displayed as Color Plate #, retained for historical compatibility, and used only for Chip Blend
 - notes
 - created_at
 - updated_at
+
+`save_material_usage_report(jsonb, jsonb, text)` is the atomic create/update
+path. It validates work identity and report date, establishes canonical Job
+snapshots for new associations, preserves snapshots for unchanged associations,
+and replaces the report's ordered lines in one transaction. It rejects
+conflicting Chip Blend plate values, applies one shared Color Plate # to every
+Chip Blend line, and removes plate values from every other material type.
+
+`delete_material_usage_report(uuid, text)` deletes a report; its lines cascade.
+
+The current internal MVP grants report and line reads to anonymous and
+authenticated roles. Writes occur through the two guarded RPCs. This remains
+an interim access model pending real authentication and role-based RLS.
 
 ## Daily production
 

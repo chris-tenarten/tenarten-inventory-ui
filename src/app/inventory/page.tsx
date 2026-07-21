@@ -8,6 +8,7 @@ import {
   openProductionJob,
 } from '@/modules/production/job-options';
 import type { ProductionJobOption } from '@/modules/production/job-options';
+import { JobTag } from '@/modules/production/components/JobTag';
 
 type ReservationMode = 'none' | 'canonical' | 'temporary';
 
@@ -115,9 +116,9 @@ const PEOPLE_OPTIONS = ['Gio', 'Anthony'];
 const DEFAULT_LOCATION_OPTIONS = ['Denton', 'Carrollton'];
 
 const fieldClass =
-  'h-9 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-700 focus:ring-2 focus:ring-blue-100';
+  'h-9 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200';
 
-const labelClass = 'mb-1 block text-[10px] font-black uppercase tracking-[0.14em] text-slate-600';
+const labelClass = 'mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600';
 
 function RefreshIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -2039,46 +2040,26 @@ export default function InventoryPage() {
         : 'No incoming shipments awaiting receipt.';
 
     return (
-      <section className="mx-auto mb-4 max-w-[1500px] overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
-        <style>{`
-          @keyframes pending-receivals-ticker {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-          }
-        `}</style>
-
-        <div className={`overflow-hidden border-b border-slate-700 transition-colors duration-300 ${!pendingReceivalsExpanded && awaitingReceiptCount > 0 ? 'bg-red-800' : 'bg-slate-950'}`}>
-          <div
-            className="flex w-max whitespace-nowrap py-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-100"
-            style={{ animation: 'pending-receivals-ticker 26s linear infinite' }}
-          >
-            {Array.from({ length: 12 }).map((_, index) => (
-              <span key={index} className="mx-4 shrink-0">
-                • PENDING RECEIVALS •
-              </span>
-            ))}
-          </div>
-        </div>
-
+      <section className="mx-auto mb-4 max-w-[1500px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         <button
           type="button"
           aria-expanded={pendingReceivalsExpanded}
           aria-controls="pending-receivals-content"
           onClick={() => setPendingReceivalsExpanded((expanded) => !expanded)}
-          className="group flex w-full items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-3 text-left transition hover:bg-slate-200/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-700 sm:px-4"
+          className="group flex w-full items-center gap-3 border-b border-slate-200 bg-white px-5 py-3 text-left transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-700"
         >
           <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-5 w-5 shrink-0 text-slate-800 transition-transform duration-300 ${pendingReceivalsExpanded ? 'rotate-90' : ''}`}>
             <path d="M7 4.5 12.5 10 7 15.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-black uppercase tracking-[0.08em] text-slate-950 sm:text-base">
+            <div className="text-sm font-semibold text-slate-900">
               Pending Receivals{!pendingReceivalsLoading ? ` (${awaitingReceiptCount})` : ''}
             </div>
-            <p className="mt-0.5 text-xs font-semibold text-slate-700">
+            <p className="mt-0.5 text-xs text-slate-500">
               {pendingReceivalsExpanded ? 'Office orders awaiting physical receipt into Inventory.' : collapsedSummary}
             </p>
           </div>
-          <span className="hidden text-[10px] font-black uppercase tracking-[0.14em] text-slate-600 sm:block">
+          <span className="hidden text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500 sm:block">
             {pendingReceivalsExpanded ? 'Collapse' : 'Expand to review'}
           </span>
         </button>
@@ -2090,13 +2071,13 @@ export default function InventoryPage() {
           className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${pendingReceivalsExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
         >
           <div className="min-h-0 overflow-hidden">
-            <div className="flex flex-wrap items-center justify-end gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2.5 sm:px-4">
+            <div className="flex flex-wrap items-center justify-end gap-2 border-b border-slate-200 bg-white px-5 py-3">
             {pendingReceivals.some((item) => item.status === 'received') && (
               <button
                 type="button"
                 onClick={handleClearReceivedPendingReceivals}
                 disabled={clearingReceivedPending}
-                className="h-8 border border-emerald-600 bg-emerald-50 px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-emerald-900 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-8 rounded-md border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {clearingReceivedPending ? 'Clearing...' : 'Clear Received Items'}
               </button>
@@ -2104,7 +2085,7 @@ export default function InventoryPage() {
             <button
               type="button"
               onClick={openPendingReceivalForm}
-              className="h-8 border border-slate-900 bg-slate-900 px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+              className="h-8 rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
             >
               + Pending Receival
             </button>
@@ -2116,16 +2097,16 @@ export default function InventoryPage() {
           </div>
         )}
 
-        <div className="bg-slate-50 p-2">
+        <div className="bg-white">
           {pendingReceivalsLoading ? (
             <div className="border border-slate-200 bg-white px-4 py-5 text-sm font-semibold text-slate-600">Loading pending receivals...</div>
           ) : pendingReceivals.length === 0 ? (
             <div className="border border-slate-200 bg-white px-4 py-5 text-sm font-semibold text-slate-600">No pending receivals.</div>
           ) : (
-            <div className="overflow-x-auto border border-slate-200 bg-white">
+            <div className="overflow-x-auto bg-white">
               <table className="w-full border-collapse text-left text-sm">
-                <thead className="bg-slate-100 text-[10px] font-black uppercase tracking-[0.12em] text-slate-700">
-                  <tr className="border-b border-slate-300">
+                <thead className="bg-slate-50 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600">
+                  <tr className="border-b border-slate-200">
                     <th className="px-3 py-2">Vendor</th>
                     <th className="px-3 py-2">Material</th>
                     <th className="px-3 py-2">Size</th>
@@ -2141,19 +2122,17 @@ export default function InventoryPage() {
                     const isReceived = receival.status === 'received';
                     const isReserved = Boolean(receival.production_job_id || receival.temporary_job_label || receival.is_earmarked);
                     const rowClass = isReceived
-                      ? 'bg-emerald-50/80 hover:bg-emerald-100/70'
-                      : 'bg-red-50/70 hover:bg-red-100/60';
+                      ? 'bg-emerald-50/40 hover:bg-emerald-50/70'
+                      : 'bg-white hover:bg-slate-50';
 
                     return (
                       <tr key={receival.id} className={rowClass}>
                         <td className="px-3 py-2 font-semibold text-slate-800">{receival.vendor || '—'}</td>
-                        <td className="px-3 py-2 font-black text-slate-950">
+                        <td className="px-3 py-2 font-semibold text-slate-950">
                           <div>{receival.material_name}</div>
                           {isReserved && (
                             receival.production_job_id && receival.production_job ? (
-                              <button type="button" onClick={() => openProductionJob(receival.production_job_id!)} className="mt-1 inline-flex border border-blue-700 bg-blue-700 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-white hover:bg-blue-800">
-                                {formatProductionJobOption(receival.production_job)}
-                              </button>
+                              <JobTag label={receival.production_job.name || receival.production_job.job_number || 'Production Job'} onClick={() => openProductionJob(receival.production_job_id!)} className="mt-1" />
                             ) : (
                               <div className="mt-1 inline-flex border border-amber-500 bg-amber-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-amber-900">
                                 Temporary: {receival.temporary_job_label || receival.earmarked_job_name || 'Unlinked reservation'}
@@ -2162,7 +2141,7 @@ export default function InventoryPage() {
                           )}
                         </td>
                         <td className="px-3 py-2 font-semibold text-slate-800">{receival.size || '—'}</td>
-                        <td className="px-3 py-2 text-right font-black tabular-nums text-slate-950">
+                        <td className="px-3 py-2 text-right font-bold tabular-nums text-slate-950">
                           {formatQuantity(receival.quantity_expected)} {receival.unit || ''}
                         </td>
                         <td className="px-3 py-2 text-slate-700">{formatDateOnly(receival.order_date || receival.created_at)}</td>
@@ -2182,7 +2161,7 @@ export default function InventoryPage() {
                                 type="button"
                                 onClick={() => openReceivePendingDialog(receival)}
                                 disabled={receivingPendingId === receival.id || cancellingPendingId === receival.id}
-                                className="border border-slate-950 bg-slate-800 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
                               >
                                 {receivingPendingId === receival.id ? 'Receiving...' : 'Receive'}
                               </button>
@@ -2192,7 +2171,7 @@ export default function InventoryPage() {
                                 type="button"
                                 onClick={() => openEditPendingReceivalForm(receival)}
                                 disabled={receivingPendingId === receival.id || cancellingPendingId === receival.id}
-                                className="border border-blue-600 bg-blue-50 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-blue-800 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
                               >
                                 Edit
                               </button>
@@ -2202,7 +2181,7 @@ export default function InventoryPage() {
                                 type="button"
                                 onClick={() => handleCancelPendingReceival(receival)}
                                 disabled={receivingPendingId === receival.id || cancellingPendingId === receival.id}
-                                className="border border-slate-500 bg-[#f6f7f9] px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-slate-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
                               >
                                 {cancellingPendingId === receival.id ? 'Cancelling...' : 'Cancel'}
                               </button>
@@ -2232,13 +2211,13 @@ export default function InventoryPage() {
         aria-label="Pending receival"
       >
         <div
-          className="max-h-[calc(100vh-1.5rem)] w-full max-w-[900px] overflow-hidden border border-slate-500 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.28)] sm:max-h-[calc(100vh-3rem)]"
+          className="max-h-[calc(100vh-1.5rem)] w-full max-w-[900px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl sm:max-h-[calc(100vh-3rem)]"
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-400 bg-[#dfe4ea] px-3 py-3 sm:px-4">
+          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 bg-white px-5 py-4">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">Pending Receival</div>
-              <h2 className="mt-1 text-lg font-black text-slate-950">{editingPendingReceivalId ? 'Edit Expected Material' : 'Add Expected Material'}</h2>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Pending Receival</div>
+              <h2 className="mt-1 text-lg font-semibold text-slate-950">{editingPendingReceivalId ? 'Edit Expected Material' : 'Add Expected Material'}</h2>
             </div>
             <button
               type="button"
@@ -2486,12 +2465,12 @@ export default function InventoryPage() {
         onClick={closeReceivePendingDialog}
       >
         <div
-          className="w-full max-w-[560px] overflow-hidden border border-slate-500 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.28)]"
+          className="w-full max-w-[560px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl"
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="border-b border-slate-500 bg-[#c8ced6] px-4 py-3">
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-700">Receive Pending Material</div>
-            <h2 className="mt-1 text-lg font-black text-slate-950">{receival.material_name}</h2>
+          <div className="border-b border-slate-200 bg-white px-5 py-4">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Receive Pending Material</div>
+            <h2 className="mt-1 text-lg font-semibold text-slate-950">{receival.material_name}</h2>
             <p className="mt-1 text-xs font-semibold text-slate-600">
               {receival.vendor || '—'} / {receival.size || '—'} / {formatQuantity(remainingQty)} {receival.unit || 'Bags'} remaining
             </p>
@@ -2887,13 +2866,13 @@ export default function InventoryPage() {
         }}
       >
         <div
-          className="max-h-[calc(100vh-1.5rem)] w-full max-w-[1380px] overflow-hidden border border-slate-500 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.28)] sm:max-h-[calc(100vh-3rem)]"
+          className="max-h-[calc(100vh-1.5rem)] w-full max-w-[1380px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl sm:max-h-[calc(100vh-3rem)]"
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-400 bg-[#dfe4ea] px-3 py-3 sm:px-4">
+          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 bg-white px-5 py-4">
             <div className="min-w-0">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">Inventory Details</div>
-              <div className="mt-1 truncate text-lg font-black text-slate-950">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Inventory Details</div>
+              <div className="mt-1 truncate text-lg font-semibold text-slate-950">
                 {group.primary.vendor || '—'} / {group.primary.color || '—'} / {group.primary.size || '—'}
               </div>
               <div className="mt-1 text-xs font-semibold text-slate-600">
@@ -2933,13 +2912,13 @@ export default function InventoryPage() {
         onClick={closeRecordStockDialog}
       >
         <div
-          className="max-h-[calc(100vh-1.5rem)] w-full max-w-[1180px] overflow-hidden border border-slate-500 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.28)] sm:max-h-[calc(100vh-3rem)]"
+          className="max-h-[calc(100vh-1.5rem)] w-full max-w-[1180px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl sm:max-h-[calc(100vh-3rem)]"
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-400 bg-[#dfe4ea] px-3 py-3 sm:px-4">
+          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 bg-white px-5 py-4">
             <div className="min-w-0">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">Record Stock</div>
-              <div className="mt-1 text-lg font-black text-slate-950">Multi-line stock movement</div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Record Stock</div>
+              <div className="mt-1 text-lg font-semibold text-slate-950">Multi-line stock movement</div>
               <p className="mt-1 max-w-2xl text-xs font-semibold leading-5 text-slate-600">
                 Add one or more material lines. Each line updates inventory immediately and creates its own activity transaction.
               </p>
@@ -3160,7 +3139,7 @@ export default function InventoryPage() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-69px)] bg-[#eef1f4] px-2 py-2 text-slate-950 sm:px-4 sm:py-5">
+    <main className="min-h-[calc(100vh-69px)] bg-[#eef1f4] px-3 py-5 text-slate-950 sm:px-5 sm:py-7">
       <div className="mx-auto mb-4 max-w-[1500px] border-b border-slate-200 pb-4">
         <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Warehouse operations</div>
         <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Inventory</h1>
@@ -3168,7 +3147,7 @@ export default function InventoryPage() {
       </div>
       {renderPendingReceivalsQueue()}
 
-      <section className="mx-auto max-w-[1500px] overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+      <section className="mx-auto max-w-[1500px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 bg-white p-3 sm:p-4">
           <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
@@ -3192,7 +3171,7 @@ export default function InventoryPage() {
                   loadData();
                   loadPendingReceivals();
                 }}
-                className="inline-flex h-9 items-center justify-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
               >
                 <RefreshIcon className="h-4 w-4" />
                 <span>Refresh</span>
@@ -3201,7 +3180,7 @@ export default function InventoryPage() {
               <button
                 type="button"
                 onClick={openRecordStockDialog}
-                className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap border border-slate-900 bg-slate-900 px-4 text-[10px] font-bold uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
               >
                 <PlusIcon className="h-4 w-4" />
                 <span>Record Stock</span>
@@ -3230,17 +3209,24 @@ export default function InventoryPage() {
 
                     return (
                       <article key={group.key} className={`bg-white ${isSelected ? 'ring-2 ring-inset ring-slate-800' : ''}`}>
-                        <button
-                          type="button"
+                        <div
+                          role="button"
+                          tabIndex={0}
                           onClick={() => openGroup(group)}
-                          className="block w-full cursor-pointer px-3 py-3 text-left transition hover:bg-slate-100 active:bg-slate-200"
+                          onKeyDown={(event) => {
+                            if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
+                              event.preventDefault();
+                              openGroup(group);
+                            }
+                          }}
+                          className="block w-full cursor-pointer px-3 py-3 text-left transition hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0 flex-1">
-                              <div className="truncate text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
+                              <div className="truncate text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500">
                                 {row.vendor || 'Unknown vendor'} {row.size ? `· ${row.size}` : ''}
                               </div>
-                              <div className="mt-1 truncate text-base font-black leading-5 text-slate-950">
+                              <div className="mt-1 truncate text-base font-semibold leading-5 text-slate-950">
                                 {row.color || '—'}
                               </div>
                               <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] font-bold text-slate-600">
@@ -3251,7 +3237,7 @@ export default function InventoryPage() {
                             </div>
 
                             <div className="shrink-0 text-right">
-                              <div className="text-2xl font-black tabular-nums text-slate-950">{formatQuantity(group.totalQuantity)}</div>
+                              <div className="text-2xl font-bold tabular-nums text-slate-950">{formatQuantity(group.totalQuantity)}</div>
                               <div className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{group.unit || 'Units'}</div>
                             </div>
                           </div>
@@ -3259,7 +3245,7 @@ export default function InventoryPage() {
                           <div className="mt-3 flex items-center justify-between border-t border-slate-200 pt-2">
                             {group.isReserved ? (
                               row.production_job_id ? (
-                                <button type="button" onClick={(event) => { event.stopPropagation(); openProductionJob(row.production_job_id!); }} className="truncate border border-blue-700 bg-blue-50 px-2 py-1 text-left text-xs font-black text-blue-900 hover:bg-blue-100">{status}</button>
+                                <JobTag label={row.production_job?.name || row.production_job?.job_number || status} onClick={(event) => { event.stopPropagation(); openProductionJob(row.production_job_id!); }} />
                               ) : <span className="truncate border border-amber-500 bg-amber-50 px-2 py-1 text-xs font-black text-amber-900">{status}</span>
                             ) : (
                               <span className="text-xs font-bold text-slate-500">General stock</span>
@@ -3269,7 +3255,7 @@ export default function InventoryPage() {
                               <ChevronRightIcon className="h-3 w-3" />
                             </span>
                           </div>
-                        </button>
+                        </div>
                       </article>
                     );
                   })}
@@ -3284,7 +3270,7 @@ export default function InventoryPage() {
 
               <div className="hidden md:block">
                 <table className="w-full border-collapse text-left text-sm">
-                  <thead className="bg-slate-100 text-[10px] font-black uppercase tracking-[0.12em] text-slate-700">
+                  <thead className="bg-slate-50 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600">
                     <tr className="border-b border-slate-300">
                       <th className="px-3 py-2">Vendor</th>
                       <th className="px-3 py-2">Material</th>
@@ -3309,11 +3295,11 @@ export default function InventoryPage() {
                             className={`${isSelected ? 'bg-slate-100' : 'bg-white'} group cursor-pointer transition hover:bg-slate-100 hover:shadow-[inset_3px_0_0_#0f172a]`}
                           >
                             <td className="px-3 py-2 font-semibold text-slate-800">{row.vendor || '—'}</td>
-                            <td className="px-3 py-2 font-black text-slate-950">{row.color || '—'}</td>
+                            <td className="px-3 py-2 font-semibold text-slate-950">{row.color || '—'}</td>
                             <td className="px-3 py-2 font-semibold text-slate-800">{row.size || '—'}</td>
                             <td className="px-3 py-2 text-slate-700">{row.category || '—'}</td>
                             <td className="px-3 py-2 text-slate-700">{row.location || '—'}</td>
-                            <td className="px-3 py-2 text-right font-black tabular-nums text-slate-950">
+                            <td className="px-3 py-2 text-right font-bold tabular-nums text-slate-950">
                               {formatQuantity(group.totalQuantity)} {group.unit || ''}
                               {group.lots.length > 1 && (
                                 <div className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">
@@ -3323,7 +3309,7 @@ export default function InventoryPage() {
                             </td>
                             <td className="px-3 py-2">
                               {group.isReserved && row.production_job_id ? (
-                                <button type="button" onClick={(event) => { event.stopPropagation(); openProductionJob(row.production_job_id!); }} className="inline-flex border border-blue-700 bg-blue-700 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white hover:bg-blue-800">{status}</button>
+                                <JobTag label={row.production_job?.name || row.production_job?.job_number || status} onClick={(event) => { event.stopPropagation(); openProductionJob(row.production_job_id!); }} />
                               ) : (
                                 <span className={`inline-flex border px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${group.isReserved ? 'border-amber-500 bg-amber-50 text-amber-900' : 'border-slate-300 bg-slate-50 text-slate-600'}`}>{status}</span>
                               )}
