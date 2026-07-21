@@ -12,6 +12,8 @@ import type { ProductionJobOption } from '@/modules/production/job-options';
 import { JobTag } from '@/modules/production/components/JobTag';
 
 type ReservationMode = 'none' | 'canonical' | 'temporary';
+type BulkReservationMode = 'unchanged' | ReservationMode;
+type BulkNotesMode = 'unchanged' | 'replace' | 'clear';
 
 type InventoryRow = {
   id: string | number;
@@ -437,6 +439,7 @@ export default function InventoryPage() {
   const [editProductionJobId, setEditProductionJobId] = useState('');
   const [editTemporaryJobLabel, setEditTemporaryJobLabel] = useState('');
   const [editReserveQuantity, setEditReserveQuantity] = useState('');
+  const [editReserveEntireLot, setEditReserveEntireLot] = useState(false);
   const [isSavingDetails, setIsSavingDetails] = useState(false);
   const [detailsMessage, setDetailsMessage] = useState('');
 
@@ -451,6 +454,12 @@ export default function InventoryPage() {
   const [isDeletingMaterial, setIsDeletingMaterial] = useState(false);
   const [isRecordStockOpen, setIsRecordStockOpen] = useState(false);
   const [recordMovementType, setRecordMovementType] = useState<'intake' | 'outtake'>('intake');
+  const [selectedReservedLotIds, setSelectedReservedLotIds] = useState<Set<string>>(new Set());
+  const [bulkReleaseBy, setBulkReleaseBy] = useState('');
+  const [bulkReleaseNote, setBulkReleaseNote] = useState('');
+  const [bulkReleaseMessage, setBulkReleaseMessage] = useState('');
+  const [isBulkReleasingReservations, setIsBulkReleasingReservations] = useState(false);
+  const reservedSelectAllRef = useRef<HTMLInputElement>(null);
 
   const [pendingReceivals, setPendingReceivals] = useState<PendingReceival[]>([]);
   const [pendingReceivalsLoading, setPendingReceivalsLoading] = useState(true);
@@ -464,6 +473,16 @@ export default function InventoryPage() {
   const [pendingReceivalPasswordInput, setPendingReceivalPasswordInput] = useState('');
   const [isSavingPendingReceival, setIsSavingPendingReceival] = useState(false);
   const [editingPendingReceivalId, setEditingPendingReceivalId] = useState<string | null>(null);
+  const [selectedPendingReceivalIds, setSelectedPendingReceivalIds] = useState<Set<string>>(new Set());
+  const [bulkPendingReservationMode, setBulkPendingReservationMode] = useState<BulkReservationMode>('unchanged');
+  const [bulkPendingProductionJobId, setBulkPendingProductionJobId] = useState('');
+  const [bulkPendingTemporaryJobLabel, setBulkPendingTemporaryJobLabel] = useState('');
+  const [bulkPendingReservationNotes, setBulkPendingReservationNotes] = useState('');
+  const [bulkPendingNotesMode, setBulkPendingNotesMode] = useState<BulkNotesMode>('unchanged');
+  const [bulkPendingNotes, setBulkPendingNotes] = useState('');
+  const [isApplyingPendingBulkEdit, setIsApplyingPendingBulkEdit] = useState(false);
+  const [pendingBulkEditMessage, setPendingBulkEditMessage] = useState('');
+  const pendingSelectAllRef = useRef<HTMLInputElement>(null);
   const pendingReceivalBaselineRef = useRef('');
   const [receivingPendingId, setReceivingPendingId] = useState<string | null>(null);
   const [cancellingPendingId, setCancellingPendingId] = useState<string | null>(null);
@@ -471,6 +490,10 @@ export default function InventoryPage() {
   const [receivePendingTargetId, setReceivePendingTargetId] = useState<string | null>(null);
   const [receivePendingByInput, setReceivePendingByInput] = useState('');
   const [receivePendingMessage, setReceivePendingMessage] = useState('');
+  const [isBulkReceivePendingOpen, setIsBulkReceivePendingOpen] = useState(false);
+  const [bulkReceivePendingByInput, setBulkReceivePendingByInput] = useState('');
+  const [bulkReceivePendingMessage, setBulkReceivePendingMessage] = useState('');
+  const [isBulkReceivingPending, setIsBulkReceivingPending] = useState(false);
   const [productionJobs, setProductionJobs] = useState<ProductionJobOption[]>([]);
   const [productionJobsLoading, setProductionJobsLoading] = useState(true);
   const [productionJobsError, setProductionJobsError] = useState('');
@@ -563,6 +586,25 @@ export default function InventoryPage() {
   const unitOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.unit), ...pendingReceivals.map((row) => row.unit), 'Bags', 'Pails', 'Buckets', 'Boxes']), [rows, pendingReceivals]);
   const locationOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.location), ...pendingReceivals.map((row) => row.location), ...DEFAULT_LOCATION_OPTIONS]), [rows, pendingReceivals]);
   const pendingReceivalHasUnsavedChanges = isPendingReceivalFormOpen && pendingReceivalUnlocked && pendingReceivalDraftSignature(pendingReceivalForm, pendingReceivalLines) !== pendingReceivalBaselineRef.current;
+  const editablePendingReceivalIds = useMemo(() => pendingReceivals
+    .filter((item) => item.status === 'pending' || item.status === 'partially_received')
+    .map((item) => item.id), [pendingReceivals]);
+  const selectedEditablePendingCount = editablePendingReceivalIds.filter((id) => selectedPendingReceivalIds.has(id)).length;
+  const allEditablePendingSelected = editablePendingReceivalIds.length > 0 && selectedEditablePendingCount === editablePendingReceivalIds.length;
+
+  useEffect(() => {
+    setSelectedPendingReceivalIds((current) => {
+      const editableIds = new Set(editablePendingReceivalIds);
+      const next = new Set([...current].filter((id) => editableIds.has(id)));
+      return next.size === current.size ? current : next;
+    });
+  }, [editablePendingReceivalIds]);
+
+  useEffect(() => {
+    if (pendingSelectAllRef.current) {
+      pendingSelectAllRef.current.indeterminate = selectedEditablePendingCount > 0 && !allEditablePendingSelected;
+    }
+  }, [allEditablePendingSelected, selectedEditablePendingCount]);
 
   useEffect(() => {
     if (!pendingReceivalHasUnsavedChanges) return;
@@ -605,6 +647,24 @@ export default function InventoryPage() {
     return inventoryGroups.filter((group) => groupSearchText(group).includes(q));
   }, [inventoryGroups, search]);
 
+  const visibleReservedLotIds = useMemo(() => filteredGroups.flatMap((group) => group.lots
+    .filter((lot) => Boolean(lot.production_job_id || lot.temporary_job_label || lot.earmarked_for_job))
+    .map((lot) => String(lot.id))), [filteredGroups]);
+  const selectedVisibleReservedCount = visibleReservedLotIds.filter((id) => selectedReservedLotIds.has(id)).length;
+  const allVisibleReservedSelected = visibleReservedLotIds.length > 0 && selectedVisibleReservedCount === visibleReservedLotIds.length;
+
+  useEffect(() => {
+    const existingIds = new Set(rows.filter((row) => row.production_job_id || row.temporary_job_label || row.earmarked_for_job).map((row) => String(row.id)));
+    setSelectedReservedLotIds((current) => {
+      const next = new Set([...current].filter((id) => existingIds.has(id)));
+      return next.size === current.size ? current : next;
+    });
+  }, [rows]);
+
+  useEffect(() => {
+    if (reservedSelectAllRef.current) reservedSelectAllRef.current.indeterminate = selectedVisibleReservedCount > 0 && !allVisibleReservedSelected;
+  }, [allVisibleReservedSelected, selectedVisibleReservedCount]);
+
   const selectedGroup = useMemo(() => {
     if (!selectedGroupKey) return null;
     return inventoryGroups.find((group) => group.key === selectedGroupKey) || null;
@@ -636,6 +696,7 @@ export default function InventoryPage() {
     setEditProductionJobId(row.production_job_id || '');
     setEditTemporaryJobLabel(row.temporary_job_label || (!row.production_job_id ? row.earmarked_job || '' : ''));
     setEditReserveQuantity(row.earmarked_for_job ? String(row.quantity || '') : '');
+    setEditReserveEntireLot(false);
     setAdjustmentType('remove');
     setAdjustmentQty('');
     setAdjustmentReason('');
@@ -669,6 +730,52 @@ export default function InventoryPage() {
 
   function selectLot(row: InventoryRow) {
     populateEditFields(row);
+  }
+
+  function toggleReservedLots(ids: string[]) {
+    setSelectedReservedLotIds((current) => {
+      const next = new Set(current);
+      const allSelected = ids.every((id) => next.has(id));
+      ids.forEach((id) => allSelected ? next.delete(id) : next.add(id));
+      return next;
+    });
+    setBulkReleaseMessage('');
+    if (!bulkReleaseBy && editEnteredBy && editEnteredBy !== 'chris_test') setBulkReleaseBy(editEnteredBy);
+  }
+
+  function toggleAllVisibleReservedLots() {
+    setSelectedReservedLotIds((current) => {
+      const next = new Set(current);
+      visibleReservedLotIds.forEach((id) => allVisibleReservedSelected ? next.delete(id) : next.add(id));
+      return next;
+    });
+    setBulkReleaseMessage('');
+  }
+
+  async function handleBulkReleaseReservations() {
+    const actor = bulkReleaseBy.trim();
+    const ids = rows.filter((row) => selectedReservedLotIds.has(String(row.id))
+      && Boolean(row.production_job_id || row.temporary_job_label || row.earmarked_for_job)).map((row) => Number(row.id));
+    if (!actor) { setBulkReleaseMessage('Your name is required.'); return; }
+    if (ids.length === 0) { setBulkReleaseMessage('Select at least one reserved lot.'); return; }
+    if (!window.confirm(`Return ${ids.length} reserved lot${ids.length === 1 ? '' : 's'} to general stock? Compatible lots will be merged automatically.`)) return;
+    setIsBulkReleasingReservations(true);
+    setBulkReleaseMessage('');
+    const { error } = await supabase.rpc('release_inventory_reservations_bulk', {
+      p_item_ids: ids, p_actor: actor, p_note: bulkReleaseNote.trim() || null,
+    });
+    if (error) {
+      setBulkReleaseMessage(getSupabaseErrorMessage(error, 'Unable to return the selected reservations to general stock.'));
+      setIsBulkReleasingReservations(false);
+      return;
+    }
+    if (typeof window !== 'undefined') window.localStorage.setItem(LAST_ENTERED_BY_KEY, actor);
+    setEditEnteredBy(actor);
+    setSelectedReservedLotIds(new Set());
+    setBulkReleaseNote('');
+    setBulkReleaseMessage(`${ids.length} reserved lot${ids.length === 1 ? '' : 's'} returned to general stock.`);
+    await loadData();
+    setIsBulkReleasingReservations(false);
   }
 
   function openRecordStockDialog() {
@@ -714,7 +821,7 @@ export default function InventoryPage() {
     const nextCategory = editCategory.trim();
     const nextUnit = editUnit.trim();
     const currentQty = Number(row.quantity || 0);
-    const reserveQty = Number(editReserveQuantity || currentQty);
+    const reserveQty = editReserveEntireLot ? currentQty : Number(editReserveQuantity);
 
     const identityChanged =
       nextVendor !== (row.vendor || '') ||
@@ -723,8 +830,9 @@ export default function InventoryPage() {
       nextCategory !== (row.category || '') ||
       nextUnit !== (row.unit || '');
 
-    const isNewReservationSplit = reservationEnabled && !row.earmarked_for_job;
-    const isReservationRelease = Boolean(row.earmarked_for_job) && !reservationEnabled;
+    const rowIsReserved = Boolean(row.production_job_id || row.temporary_job_label || row.earmarked_for_job);
+    const isNewReservationSplit = reservationEnabled && !rowIsReserved;
+    const isReservationRelease = rowIsReserved && !reservationEnabled;
 
     if (identityChanged && !enteredBy) {
       setDetailsMessage('Your name is required when correcting material information.');
@@ -821,134 +929,29 @@ export default function InventoryPage() {
 
     try {
       if (isReservationRelease) {
-        const releaseNote = formatNamedNote(
-          enteredBy,
-          `Released reservation${row.earmarked_job ? ` for ${row.earmarked_job}` : ''}.`,
-        );
-
-        const releasedNotes = appendNote(nextNotes, releaseNote);
-
-        const compatibleGeneralLot = rows.find((candidate) => {
-          if (String(candidate.id) === String(row.id)) return false;
-          if (candidate.earmarked_for_job || candidate.production_job_id || candidate.temporary_job_label) return false;
-
-          return (
-            normalizeKeyPart(candidate.vendor) === normalizeKeyPart(nextVendor) &&
-            normalizeKeyPart(candidate.color) === normalizeKeyPart(nextMaterial) &&
-            normalizeKeyPart(candidate.size) === normalizeKeyPart(nextSize) &&
-            normalizeKeyPart(candidate.category) === normalizeKeyPart(nextCategory) &&
-            normalizeKeyPart(candidate.unit) === normalizeKeyPart(nextUnit) &&
-            normalizeKeyPart(candidate.location) === normalizeKeyPart(editLocation.trim()) &&
-            normalizeKeyPart(candidate.pallet_number) === normalizeKeyPart(editPalletNumber.trim())
-          );
+        if (identityChanged) throw new Error('Save material detail corrections before returning a reservation to general stock.');
+        const { error: releaseError } = await supabase.rpc('release_inventory_reservation', {
+          p_item_id: Number(row.id), p_actor: enteredBy, p_note: note || null,
         });
-
-        if (compatibleGeneralLot) {
-          const mergedNotes = appendNote(compatibleGeneralLot.notes, releaseNote);
-
-          const { error: mergeError } = await supabase
-            .from('inventory_items')
-            .update({
-              quantity: Number(compatibleGeneralLot.quantity || 0) + currentQty,
-              notes: mergedNotes,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', compatibleGeneralLot.id);
-
-          if (mergeError) {
-            throw mergeError;
-          }
-
-          const { error: deleteReleasedLotError } = await supabase.from('inventory_items').delete().eq('id', row.id);
-
-          if (deleteReleasedLotError) {
-            throw deleteReleasedLotError;
-          }
-
-          setEditNote('');
-          setDetailsMessage('Reservation released and merged back into general stock.');
-          await loadData();
-          setIsSavingDetails(false);
-          return;
-        }
-
-        const { error: releaseError } = await supabase
-          .from('inventory_items')
-          .update({
-            ...basePayload,
-            quantity: currentQty,
-            notes: releasedNotes,
-            earmarked_for_job: false,
-            earmarked_job: null,
-            earmark_notes: null,
-            production_job_id: null,
-            temporary_job_label: null,
-          })
-          .eq('id', row.id);
-
-        if (releaseError) {
-          throw releaseError;
-        }
-
+        if (releaseError) throw releaseError;
         setEditNote('');
-        setDetailsMessage('Reservation released. No compatible general-stock lot was found, so this lot was kept separate.');
+        setDetailsMessage('Reservation returned to general stock and merged with a compatible lot when available.');
         await loadData();
         setIsSavingDetails(false);
         return;
       }
 
-      if (isNewReservationSplit && reserveQty < currentQty) {
-        const remainingQty = currentQty - reserveQty;
-
-        const { error: updateOriginalError } = await supabase
-          .from('inventory_items')
-          .update({
-            ...basePayload,
-            quantity: remainingQty,
-            earmarked_for_job: false,
-            earmarked_job: null,
-            earmark_notes: null,
-            production_job_id: null,
-            temporary_job_label: null,
-          })
-          .eq('id', row.id);
-
-        if (updateOriginalError) {
-          throw updateOriginalError;
-        }
-
-        const reservationNotes = appendNote(
-          null,
-          formatNamedNote(
-            enteredBy,
-            [
-              `Reserved ${formatQuantity(reserveQty)} ${nextUnit || row.unit || ''} for ${earmarkJob}.`,
-              earmarkNotes ? `Note: ${earmarkNotes}` : '',
-            ]
-              .filter(Boolean)
-              .join('\n'),
-          ),
-        );
-
-        const { error: insertReservedError } = await supabase.from('inventory_items').insert({
-          ...basePayload,
-          quantity: reserveQty,
-          notes: nextNotes,
-          earmarked_for_job: true,
-          earmarked_job: earmarkJob,
-          earmark_notes: reservationNotes,
-          production_job_id: productionJobId,
-          temporary_job_label: temporaryJobLabel,
-          last_counted_at: row.last_counted_at || null,
-          last_counted_by: row.last_counted_by || null,
+      if (isNewReservationSplit) {
+        if (identityChanged) throw new Error('Save material detail corrections before creating a reservation.');
+        const { error: reserveError } = await supabase.rpc('reserve_inventory_quantity', {
+          p_item_id: Number(row.id), p_quantity: reserveQty, p_production_job_id: productionJobId,
+          p_temporary_job_label: temporaryJobLabel, p_actor: enteredBy, p_note: earmarkNotes || note || null,
         });
-
-        if (insertReservedError) {
-          throw insertReservedError;
-        }
-
+        if (reserveError) throw reserveError;
         setEditNote('');
-        setDetailsMessage(`Reserved ${formatQuantity(reserveQty)} ${nextUnit || row.unit || ''} for ${earmarkJob}. Remaining stock stayed general.`);
+        setEditReserveQuantity('');
+        setEditReserveEntireLot(false);
+        setDetailsMessage(`Reserved ${formatQuantity(reserveQty)} ${nextUnit || row.unit || ''} for ${earmarkJob}.`);
         await loadData();
         setIsSavingDetails(false);
         return;
@@ -1962,14 +1965,7 @@ export default function InventoryPage() {
     setPendingReceivalsError('');
 
     try {
-      const { error } = await supabase.rpc('receive_pending_receival_with_reservation', {
-        p_receival_id: receival.id,
-        p_received_by: receivedBy,
-      });
-
-      if (error) {
-        throw new Error(getSupabaseErrorMessage(error, 'Failed to receive pending material.'));
-      }
+      await receivePendingReceival(receival.id, receivedBy);
 
       await Promise.all([loadData(), loadPendingReceivals()]);
       closeReceivePendingDialog();
@@ -1981,6 +1977,65 @@ export default function InventoryPage() {
       setPendingReceivalsError(message);
     } finally {
       setReceivingPendingId(null);
+    }
+  }
+
+  async function receivePendingReceival(receivalId: string, receivedBy: string) {
+    const { error } = await supabase.rpc('receive_pending_receival_with_reservation', {
+      p_receival_id: receivalId,
+      p_received_by: receivedBy,
+    });
+
+    if (error) throw new Error(getSupabaseErrorMessage(error, 'Failed to receive pending material.'));
+  }
+
+  function openBulkReceivePendingDialog() {
+    setBulkReceivePendingByInput(editEnteredBy && editEnteredBy !== 'chris_test' ? editEnteredBy : '');
+    setBulkReceivePendingMessage('');
+    setIsBulkReceivePendingOpen(true);
+  }
+
+  function closeBulkReceivePendingDialog() {
+    if (isBulkReceivingPending) return;
+    setIsBulkReceivePendingOpen(false);
+    setBulkReceivePendingByInput('');
+    setBulkReceivePendingMessage('');
+  }
+
+  async function confirmBulkReceivePendingReceivals() {
+    const receivedBy = bulkReceivePendingByInput.trim();
+    const selected = pendingReceivals.filter((item) => selectedPendingReceivalIds.has(item.id)
+      && (item.status === 'pending' || item.status === 'partially_received'));
+
+    if (!receivedBy) {
+      setBulkReceivePendingMessage('Received by is required.');
+      return;
+    }
+    if (selected.length === 0) {
+      setBulkReceivePendingMessage('No selected receivals are still awaiting receipt.');
+      return;
+    }
+
+    setIsBulkReceivingPending(true);
+    setBulkReceivePendingMessage('');
+    let completed = 0;
+    try {
+      for (const receival of selected) {
+        await receivePendingReceival(receival.id, receivedBy);
+        completed += 1;
+      }
+      if (typeof window !== 'undefined') window.localStorage.setItem(LAST_ENTERED_BY_KEY, receivedBy);
+      setEditEnteredBy(receivedBy);
+      setSelectedPendingReceivalIds(new Set());
+      setIsBulkReceivePendingOpen(false);
+      setBulkReceivePendingByInput('');
+      await Promise.all([loadData(), loadPendingReceivals()]);
+    } catch (error) {
+      const message = getSupabaseErrorMessage(error, 'Failed to receive selected pending material.');
+      setBulkReceivePendingMessage(`${completed > 0 ? `${completed} of ${selected.length} received. ` : ''}${message}`);
+      await Promise.all([loadData(), loadPendingReceivals()]);
+    } finally {
+      setIsBulkReceivingPending(false);
     }
   }
 
@@ -2030,6 +2085,110 @@ export default function InventoryPage() {
 
     setPendingReceivals((prev) => prev.filter((item) => item.status !== 'received'));
     setClearingReceivedPending(false);
+  }
+
+  function togglePendingReceivalSelection(id: string) {
+    setSelectedPendingReceivalIds((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+    setPendingBulkEditMessage('');
+  }
+
+  function toggleAllEditablePendingReceivals() {
+    setSelectedPendingReceivalIds((current) => {
+      const next = new Set(current);
+      if (allEditablePendingSelected) editablePendingReceivalIds.forEach((id) => next.delete(id));
+      else editablePendingReceivalIds.forEach((id) => next.add(id));
+      return next;
+    });
+    setPendingBulkEditMessage('');
+  }
+
+  function resetPendingBulkEditor(clearSelection = false) {
+    setBulkPendingReservationMode('unchanged');
+    setBulkPendingProductionJobId('');
+    setBulkPendingTemporaryJobLabel('');
+    setBulkPendingReservationNotes('');
+    setBulkPendingNotesMode('unchanged');
+    setBulkPendingNotes('');
+    if (clearSelection) setSelectedPendingReceivalIds(new Set());
+  }
+
+  async function handleApplyPendingBulkEdit() {
+    if (!pendingReceivalUnlocked) {
+      setPendingBulkEditMessage('Unlock Pending Receivals through Add or Edit before applying bulk changes.');
+      return;
+    }
+
+    const ids = editablePendingReceivalIds.filter((id) => selectedPendingReceivalIds.has(id));
+    if (ids.length === 0) {
+      setPendingBulkEditMessage('Select at least one editable pending receival.');
+      return;
+    }
+
+    if (bulkPendingReservationMode === 'canonical' && !bulkPendingProductionJobId) {
+      setPendingBulkEditMessage('Choose a Production job for the selected reservations.');
+      return;
+    }
+    if (bulkPendingReservationMode === 'temporary' && !bulkPendingTemporaryJobLabel.trim()) {
+      setPendingBulkEditMessage('Enter a temporary reservation label.');
+      return;
+    }
+    if (bulkPendingNotesMode === 'replace' && !bulkPendingNotes.trim()) {
+      setPendingBulkEditMessage('Enter notes to replace the current notes, or choose Clear notes.');
+      return;
+    }
+    if (bulkPendingReservationMode === 'unchanged' && bulkPendingNotesMode === 'unchanged') {
+      setPendingBulkEditMessage('Choose a reservation or notes change to apply.');
+      return;
+    }
+
+    const updateRow: Record<string, string | boolean | null> = {};
+    if (bulkPendingReservationMode !== 'unchanged') {
+      const selectedJob = productionJobs.find((job) => job.id === bulkPendingProductionJobId);
+      const productionJobId = bulkPendingReservationMode === 'canonical' ? bulkPendingProductionJobId : null;
+      const temporaryJobLabel = bulkPendingReservationMode === 'temporary' ? bulkPendingTemporaryJobLabel.trim() : null;
+      const isReserved = bulkPendingReservationMode !== 'none';
+      updateRow.production_job_id = productionJobId;
+      updateRow.temporary_job_label = temporaryJobLabel;
+      updateRow.is_earmarked = isReserved;
+      updateRow.earmarked_job_name = bulkPendingReservationMode === 'canonical' && selectedJob
+        ? formatProductionJobOption(selectedJob)
+        : temporaryJobLabel;
+      updateRow.earmark_notes = isReserved ? bulkPendingReservationNotes.trim() || null : null;
+    }
+    if (bulkPendingNotesMode !== 'unchanged') {
+      updateRow.notes = bulkPendingNotesMode === 'clear' ? null : bulkPendingNotes.trim();
+    }
+
+    setIsApplyingPendingBulkEdit(true);
+    setPendingBulkEditMessage('');
+    const { data, error } = await supabase
+      .from('pending_receivals')
+      .update(updateRow)
+      .in('id', ids)
+      .in('status', ['pending', 'partially_received'])
+      .select('id');
+
+    if (error) {
+      setPendingBulkEditMessage(getSupabaseErrorMessage(error, 'Failed to update selected pending receivals.'));
+      setIsApplyingPendingBulkEdit(false);
+      return;
+    }
+    if ((data || []).length !== ids.length) {
+      setPendingBulkEditMessage('Some selected receivals changed or are no longer editable. The queue has been refreshed; review the selection and try again.');
+      setIsApplyingPendingBulkEdit(false);
+      await loadPendingReceivals();
+      return;
+    }
+
+    setPendingBulkEditMessage(`${ids.length} pending receival${ids.length === 1 ? '' : 's'} updated.`);
+    setIsApplyingPendingBulkEdit(false);
+    resetPendingBulkEditor();
+    await loadPendingReceivals();
   }
 
   function renderPendingReceivalsQueue() {
@@ -2092,6 +2251,58 @@ export default function InventoryPage() {
             </button>
           </div>
 
+        {selectedEditablePendingCount > 0 && (
+          <div className="border-b border-slate-200 bg-slate-50 px-4 py-3">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div className="text-sm font-semibold text-slate-900">Bulk edit {selectedEditablePendingCount} selected</div>
+                <div className="text-xs text-slate-500">Only fields chosen below will be changed.</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={openBulkReceivePendingDialog} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending} className="h-8 rounded-md bg-slate-900 px-3 text-xs font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">Receive selected</button>
+                <button type="button" onClick={() => resetPendingBulkEditor(true)} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending} className="text-xs font-medium text-slate-600 underline-offset-2 hover:underline disabled:opacity-60">Clear selection</button>
+              </div>
+            </div>
+            <div className="grid gap-3 lg:grid-cols-[1fr_1fr_auto]">
+              <div className="rounded-md border border-slate-200 bg-white p-3">
+                <label className={labelClass}>Reservation</label>
+                <select value={bulkPendingReservationMode} onChange={(event) => {
+                  const mode = event.target.value as BulkReservationMode;
+                  setBulkPendingReservationMode(mode);
+                  if (mode !== 'canonical') setBulkPendingProductionJobId('');
+                  if (mode !== 'temporary') setBulkPendingTemporaryJobLabel('');
+                }} className={fieldClass}>
+                  <option value="unchanged">Leave unchanged</option>
+                  <option value="canonical">Reserve for Production job</option>
+                  <option value="temporary">Reserve with temporary label</option>
+                  <option value="none">Remove reservation</option>
+                </select>
+                {bulkPendingReservationMode === 'canonical' && (
+                  <select value={bulkPendingProductionJobId} onChange={(event) => setBulkPendingProductionJobId(event.target.value)} className={`${fieldClass} mt-2`}>
+                    <option value="">Select Production job...</option>
+                    {productionJobs.map((job) => <option key={job.id} value={job.id}>{formatProductionJobOptionWithStatus(job)}</option>)}
+                  </select>
+                )}
+                {bulkPendingReservationMode === 'temporary' && <input value={bulkPendingTemporaryJobLabel} onChange={(event) => setBulkPendingTemporaryJobLabel(event.target.value)} className={`${fieldClass} mt-2`} placeholder="Temporary job label" />}
+                {(bulkPendingReservationMode === 'canonical' || bulkPendingReservationMode === 'temporary') && <input value={bulkPendingReservationNotes} onChange={(event) => setBulkPendingReservationNotes(event.target.value)} className={`${fieldClass} mt-2`} placeholder="Reservation notes (optional)" />}
+              </div>
+              <div className="rounded-md border border-slate-200 bg-white p-3">
+                <label className={labelClass}>General Notes</label>
+                <select value={bulkPendingNotesMode} onChange={(event) => setBulkPendingNotesMode(event.target.value as BulkNotesMode)} className={fieldClass}>
+                  <option value="unchanged">Leave unchanged</option>
+                  <option value="replace">Replace notes</option>
+                  <option value="clear">Clear notes</option>
+                </select>
+                {bulkPendingNotesMode === 'replace' && <textarea value={bulkPendingNotes} onChange={(event) => setBulkPendingNotes(event.target.value)} rows={2} className="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" placeholder="Notes for every selected receival" />}
+              </div>
+              <div className="flex items-end">
+                <button type="button" onClick={handleApplyPendingBulkEdit} disabled={isApplyingPendingBulkEdit} className="h-9 rounded-md bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{isApplyingPendingBulkEdit ? 'Applying...' : 'Apply changes'}</button>
+              </div>
+            </div>
+            {pendingBulkEditMessage && <div className="mt-2 text-xs font-medium text-slate-700" role="status">{pendingBulkEditMessage}</div>}
+          </div>
+        )}
+
         {pendingReceivalsError && (
           <div className="border-b border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
             {pendingReceivalsError}
@@ -2108,6 +2319,17 @@ export default function InventoryPage() {
               <table className="w-full border-collapse text-left text-sm">
                 <thead className="bg-slate-50 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600">
                   <tr className="border-b border-slate-200">
+                    <th className="w-10 px-3 py-2 text-center">
+                      <input
+                        ref={pendingSelectAllRef}
+                        type="checkbox"
+                        aria-label="Select all editable pending receivals"
+                        checked={allEditablePendingSelected}
+                        disabled={editablePendingReceivalIds.length === 0 || isApplyingPendingBulkEdit}
+                        onChange={toggleAllEditablePendingReceivals}
+                        className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600"
+                      />
+                    </th>
                     <th className="px-3 py-2">Vendor</th>
                     <th className="px-3 py-2">Material</th>
                     <th className="px-3 py-2">Size</th>
@@ -2128,6 +2350,18 @@ export default function InventoryPage() {
 
                     return (
                       <tr key={receival.id} className={rowClass}>
+                        <td className="px-3 py-2 text-center">
+                          {!isReceived && (
+                            <input
+                              type="checkbox"
+                              aria-label={`Select ${receival.material_name}`}
+                              checked={selectedPendingReceivalIds.has(receival.id)}
+                              disabled={isApplyingPendingBulkEdit}
+                              onChange={() => togglePendingReceivalSelection(receival.id)}
+                              className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600"
+                            />
+                          )}
+                        </td>
                         <td className="px-3 py-2 font-semibold text-slate-800">{receival.vendor || '—'}</td>
                         <td className="px-3 py-2 font-semibold text-slate-950">
                           <div>{receival.material_name}</div>
@@ -2524,6 +2758,36 @@ export default function InventoryPage() {
     );
   }
 
+  function renderBulkReceivePendingDialog() {
+    const selected = pendingReceivals.filter((item) => selectedPendingReceivalIds.has(item.id)
+      && (item.status === 'pending' || item.status === 'partially_received'));
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/35 px-2 py-3 backdrop-blur-[2px] sm:px-4 sm:py-6" role="dialog" aria-modal="true" aria-label="Receive selected pending receivals" onClick={closeBulkReceivePendingDialog}>
+        <div className="w-full max-w-[560px] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div className="border-b border-slate-200 bg-white px-5 py-4">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Bulk Receive Pending Material</div>
+            <h2 className="mt-1 text-lg font-semibold text-slate-950">Receive {selected.length} selected receival{selected.length === 1 ? '' : 's'}</h2>
+            <p className="mt-1 text-xs font-semibold text-slate-600">This will receive the full remaining quantity for every selected item.</p>
+          </div>
+          <div className="bg-[#eef1f4] p-4">
+            <datalist id="pending-people-options">
+              {PEOPLE_OPTIONS.map((name) => <option key={name} value={name} />)}
+            </datalist>
+            <label className={labelClass}>Received By</label>
+            <input value={bulkReceivePendingByInput} onChange={(event) => setBulkReceivePendingByInput(event.target.value)} list="pending-people-options" className={fieldClass} placeholder="Name" disabled={isBulkReceivingPending} />
+            <p className="mt-2 text-xs text-slate-500">Each receival uses the existing receipt transaction and carries its reservation into Inventory.</p>
+            {bulkReceivePendingMessage && <div className="mt-3 border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-700" role="alert">{bulkReceivePendingMessage}</div>}
+            <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-slate-300 pt-4">
+              <button type="button" onClick={closeBulkReceivePendingDialog} disabled={isBulkReceivingPending} className="border border-slate-400 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-slate-700 transition hover:bg-slate-100 disabled:opacity-60">Cancel</button>
+              <button type="button" onClick={confirmBulkReceivePendingReceivals} disabled={isBulkReceivingPending || selected.length === 0} className="border border-slate-950 bg-slate-900 px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60">{isBulkReceivingPending ? 'Receiving...' : 'Confirm Receive'}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function renderLotSelector(group: InventoryGroup) {
     if (group.lots.length <= 1) return null;
 
@@ -2683,18 +2947,23 @@ export default function InventoryPage() {
                         </div>
                       )}
 
-                      {!row.earmarked_for_job && (
+                      {!Boolean(row.production_job_id || row.temporary_job_label || row.earmarked_for_job) && (
                         <div>
                           <label className={labelClass}>Reservation Quantity</label>
                           <input
                             value={editReserveQuantity}
                             onChange={(event) => setEditReserveQuantity(event.target.value)}
                             className={fieldClass}
-                            placeholder={`Max ${formatQuantity(Number(row.quantity || 0))} ${row.unit || ''}`}
+                            placeholder={`Enter quantity (max ${formatQuantity(Number(row.quantity || 0))})`}
                             inputMode="decimal"
+                            disabled={editReserveEntireLot}
                           />
+                          <label className="mt-2 flex items-center gap-2 text-xs font-medium text-slate-700">
+                            <input type="checkbox" checked={editReserveEntireLot} onChange={(event) => { setEditReserveEntireLot(event.target.checked); if (event.target.checked) setEditReserveQuantity(''); }} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" />
+                            Reserve the entire selected lot ({formatQuantity(Number(row.quantity || 0))} {row.unit || ''})
+                          </label>
                           <p className="mt-1 text-[11px] font-medium text-slate-500">
-                            Reserving less than the selected lot creates a separate reserved lot and leaves the remaining stock general.
+                            Entering less than the selected lot creates a separate reserved lot. Empty quantities are not accepted.
                           </p>
                         </div>
                       )}
@@ -3190,6 +3459,22 @@ export default function InventoryPage() {
           </div>
         </div>
 
+        {selectedReservedLotIds.size > 0 && (
+          <div className="border-b border-slate-200 bg-slate-50 px-4 py-3">
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="min-w-[190px] flex-1">
+                <div className="text-sm font-semibold text-slate-900">Return {selectedReservedLotIds.size} reserved lot{selectedReservedLotIds.size === 1 ? '' : 's'} to general stock</div>
+                <div className="text-xs text-slate-500">Matching vendor, material, size, category, unit, location, and pallet lots merge automatically.</div>
+              </div>
+              <div className="w-full sm:w-44"><label className={labelClass}>Your Name</label><input value={bulkReleaseBy} onChange={(event) => setBulkReleaseBy(event.target.value)} className={fieldClass} placeholder="Name" /></div>
+              <div className="w-full sm:w-64"><label className={labelClass}>Return Note</label><input value={bulkReleaseNote} onChange={(event) => setBulkReleaseNote(event.target.value)} className={fieldClass} placeholder="Optional reason" /></div>
+              <button type="button" onClick={handleBulkReleaseReservations} disabled={isBulkReleasingReservations} className="h-9 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60">{isBulkReleasingReservations ? 'Returning...' : 'Return to General Stock'}</button>
+              <button type="button" onClick={() => setSelectedReservedLotIds(new Set())} disabled={isBulkReleasingReservations} className="h-9 px-2 text-xs font-medium text-slate-600 underline-offset-2 hover:underline disabled:opacity-60">Clear</button>
+            </div>
+            {bulkReleaseMessage && <div className="mt-2 text-xs font-medium text-slate-700" role="status">{bulkReleaseMessage}</div>}
+          </div>
+        )}
+
         {loadError && (
           <div className="border-b border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
             {loadError}
@@ -3244,6 +3529,7 @@ export default function InventoryPage() {
                           </div>
 
                           <div className="mt-3 flex items-center justify-between border-t border-slate-200 pt-2">
+                            {group.isReserved && <label onClick={(event) => event.stopPropagation()} className="mr-2 inline-flex items-center gap-1.5 text-xs font-medium text-slate-600"><input type="checkbox" checked={group.lots.filter((lot) => lot.production_job_id || lot.temporary_job_label || lot.earmarked_for_job).every((lot) => selectedReservedLotIds.has(String(lot.id)))} onChange={() => toggleReservedLots(group.lots.filter((lot) => lot.production_job_id || lot.temporary_job_label || lot.earmarked_for_job).map((lot) => String(lot.id)))} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" />Select</label>}
                             {group.isReserved ? (
                               row.production_job_id ? (
                                 <JobTag label={row.production_job?.name || row.production_job?.job_number || status} onClick={(event) => { event.stopPropagation(); openProductionJob(row.production_job_id!); }} />
@@ -3273,6 +3559,7 @@ export default function InventoryPage() {
                 <table className="w-full border-collapse text-left text-sm">
                   <thead className="bg-slate-50 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600">
                     <tr className="border-b border-slate-300">
+                      <th className="w-10 px-3 py-2 text-center"><input ref={reservedSelectAllRef} type="checkbox" aria-label="Select all visible reserved lots" checked={allVisibleReservedSelected} disabled={visibleReservedLotIds.length === 0 || isBulkReleasingReservations} onChange={toggleAllVisibleReservedLots} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" /></th>
                       <th className="px-3 py-2">Vendor</th>
                       <th className="px-3 py-2">Material</th>
                       <th className="px-3 py-2">Size</th>
@@ -3288,6 +3575,7 @@ export default function InventoryPage() {
                       const row = group.primary;
                       const isSelected = selectedGroupKey === group.key;
                       const status = group.isReserved ? groupReservedLabel(group) : 'General';
+                      const groupReservedIds = group.lots.filter((lot) => lot.production_job_id || lot.temporary_job_label || lot.earmarked_for_job).map((lot) => String(lot.id));
 
                       return (
                         <Fragment key={group.key}>
@@ -3295,6 +3583,7 @@ export default function InventoryPage() {
                             onClick={() => openGroup(group)}
                             className={`${isSelected ? 'bg-slate-100' : 'bg-white'} group cursor-pointer transition hover:bg-slate-100 hover:shadow-[inset_3px_0_0_#0f172a]`}
                           >
+                            <td className="px-3 py-2 text-center" onClick={(event) => event.stopPropagation()}>{groupReservedIds.length > 0 && <input type="checkbox" aria-label={`Select reserved lots for ${row.color || 'inventory group'}`} checked={groupReservedIds.every((id) => selectedReservedLotIds.has(id))} onChange={() => toggleReservedLots(groupReservedIds)} disabled={isBulkReleasingReservations} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" />}</td>
                             <td className="px-3 py-2 font-semibold text-slate-800">{row.vendor || '—'}</td>
                             <td className="px-3 py-2 font-semibold text-slate-950">{row.color || '—'}</td>
                             <td className="px-3 py-2 font-semibold text-slate-800">{row.size || '—'}</td>
@@ -3334,7 +3623,7 @@ export default function InventoryPage() {
 
                     {filteredGroups.length === 0 && (
                       <tr>
-                        <td colSpan={8} className="py-12 text-center text-sm font-semibold text-slate-500">
+                        <td colSpan={9} className="py-12 text-center text-sm font-semibold text-slate-500">
                           No matching inventory rows found.
                         </td>
                       </tr>
@@ -3351,6 +3640,7 @@ export default function InventoryPage() {
       {isRecordStockOpen && renderRecordStockDialog()}
       {isPendingReceivalFormOpen && renderPendingReceivalFormDialog()}
       {receivePendingTargetId && renderReceivePendingDialog()}
+      {isBulkReceivePendingOpen && renderBulkReceivePendingDialog()}
     </main>
   );
 }
