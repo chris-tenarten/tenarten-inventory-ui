@@ -11,6 +11,8 @@ export type ManpowerJob = {
   id: string;
   name: string;
   job_number: string | null;
+  production_status: import('../production/types').ProductionStatus;
+  archived_at: string | null;
 };
 
 export type ManpowerReportingGroup = {

@@ -11,6 +11,8 @@ import { createBlankMaterialUsageReport } from "./defaults";
 
 import { MaterialUsageEditor } from "./MaterialUsageEditor";
 import { MaterialUsageHistory } from "./MaterialUsageHistory";
+import { loadProductionJobOption } from "../production/job-options";
+import { applyCanonicalJobSelection } from "./canonical-job-defaults";
 
 import {
   MaterialUsageReport,
@@ -86,6 +88,24 @@ export function MaterialUsageWorkspace() {
   useEffect(() => {
     void refreshHistory();
   }, [refreshHistory]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const jobId = params.get("newJob");
+    if (!jobId) return;
+    let active = true;
+    void loadProductionJobOption(jobId).then((job) => {
+      if (!active || !job) return;
+      setSelectedId(null);
+      setSelectedReport((current) => applyCanonicalJobSelection(current, job, job.color_plate_number ?? ""));
+      const url = new URL(window.location.href);
+      url.searchParams.delete("newJob");
+      window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+    }).catch((caughtError) => {
+      if (active) setError(caughtError instanceof Error ? caughtError.message : "Unable to prepare the material report.");
+    });
+    return () => { active = false; };
+  }, []);
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden bg-slate-50">

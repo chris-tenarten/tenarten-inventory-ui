@@ -3,6 +3,8 @@ import {
   formatProductionJobSelectorLabel,
   type ProductionJobReference,
 } from './job-reference';
+import { productionStatusVisualByValue } from './status-visuals';
+import type { ProductionStatus } from './types';
 
 export type ProductionJobOption = ProductionJobReference & {
   customer: string | null;
@@ -19,14 +21,19 @@ export function formatProductionJobOption(job: Pick<ProductionJobOption, 'name' 
   return formatProductionJobSelectorLabel(job);
 }
 
+export function formatProductionJobOptionWithStatus(job: Pick<ProductionJobOption, 'name' | 'job_number' | 'production_status' | 'archived_at'>) {
+  const status = productionStatusVisualByValue[job.production_status as ProductionStatus]?.label ?? job.production_status;
+  return `${formatProductionJobOption(job)} — ${status}${job.archived_at ? ' — Archived' : ''}`;
+}
+
 export async function loadProductionJobOptions(options?: {
   orderBy?: 'identity' | 'schedule';
+  includeArchived?: boolean;
 }): Promise<ProductionJobOption[]> {
   let query = supabase
     .from('jobs')
-    .select('id,name,job_number,customer,work_order_number,color_plate_number,production_status,archived_at,planned_start')
-    .is('archived_at', null)
-    .not('production_status', 'in', '(complete,cancelled)');
+    .select('id,name,job_number,customer,work_order_number,color_plate_number,production_status,archived_at,planned_start');
+  if (!options?.includeArchived) query = query.is('archived_at', null);
 
   query = options?.orderBy === 'schedule'
     ? query

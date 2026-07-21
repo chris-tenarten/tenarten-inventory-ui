@@ -72,16 +72,49 @@ export type ProductionJobUpdate = Partial<
   >
 >;
 
-export async function loadProductionJobs(): Promise<ProductionJob[]> {
-  const { data, error } = await supabase
+export async function loadProductionJobs(includeArchived = false): Promise<ProductionJob[]> {
+  let query = supabase
     .from('jobs')
     .select(JOB_COLUMNS)
-    .is('archived_at', null)
     .order('planned_start', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false });
+  if (!includeArchived) query = query.is('archived_at', null);
+  const { data, error } = await query;
 
   if (error) throw error;
   return (data ?? []) as unknown as ProductionJob[];
+}
+
+export type ProductionIntegrationSummary = { actualHours: number; laborEntryCount: number; materialReportDates: string[] };
+export async function loadProductionIntegrationSummaries(): Promise<Record<string, ProductionIntegrationSummary>> {
+  const [labor, materials] = await Promise.all([
+    supabase.from('manpower_entries').select('job_id,am_hours,pm_hours').not('job_id', 'is', null),
+    supabase.from('material_usage_reports').select('job_id,report_date').not('job_id', 'is', null),
+  ]);
+  if (labor.error) throw labor.error;
+  if (materials.error) throw materials.error;
+  const summaries: Record<string, ProductionIntegrationSummary> = {};
+  for (const row of labor.data ?? []) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].actualHours += Number(row.am_hours ?? 0) + Number(row.pm_hours ?? 0); summaries[id].laborEntryCount += 1; }
+  for (const row of materials.data ?? []) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].materialReportDates.push(String(row.report_date)); }
+  return summaries;
+}
+
+export async function archiveProductionJob(job: ProductionJob): Promise<ProductionJob> {
+  if (!['complete', 'shipped', 'cancelled'].includes(job.production_status)) throw new Error('Only Complete, Shipped, or Cancelled jobs can be archived.');
+  const archivedAt = new Date().toISOString();
+  const { data, error } = await supabase.from('jobs').update({ archived_at: archivedAt }).eq('id', job.id).is('archived_at', null).select(JOB_COLUMNS).single();
+  if (error) throw error;
+  await supabase.from('job_activity').insert({ job_id: job.id, event_type: 'job_archived', summary: `Job archived: ${job.name}`, metadata: { archived_at: archivedAt } });
+  return data as unknown as ProductionJob;
+}
+
+export async function restoreProductionJob(job: ProductionJob): Promise<ProductionJob> {
+  if (!job.archived_at) throw new Error('Only archived jobs can be restored.');
+  const { data, error } = await supabase.from('jobs').update({ archived_at: null }).eq('id', job.id).not('archived_at', 'is', null).select(JOB_COLUMNS).single();
+  if (error) throw error;
+  const { error: activityError } = await supabase.from('job_activity').insert({ job_id: job.id, event_type: 'job_restored', summary: `Job restored: ${job.name}`, metadata: { previous_archived_at: job.archived_at } });
+  if (activityError) console.error('Job restored, but activity logging failed:', activityError);
+  return data as unknown as ProductionJob;
 }
 
 export async function createProductionJob(

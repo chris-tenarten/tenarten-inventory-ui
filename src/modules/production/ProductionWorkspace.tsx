@@ -17,7 +17,10 @@ import ProductionTable from './components/ProductionTable';
 
 import {
   createProductionJob,
+  archiveProductionJob,
+  restoreProductionJob,
   loadJobAttachmentCounts,
+  loadProductionIntegrationSummaries,
   loadProductionJob,
   loadProductionJobs,
   saveProductionScheduleBatch,
@@ -36,6 +39,8 @@ import { getJobReadiness } from './readiness';
 import { productionApprovalDecision, PRODUCTION_APPROVAL_WINDOW_MS } from './approval';
 import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, reconcileBatch, stageSchedule as updateStagedSchedule, type StagedSchedules } from './schedule-staging';
 import type { ProductionScheduleBatchConflictDetail } from './schedule-batch-contract';
+import { arrangeProductionJobs, PRODUCTION_ARRANGEMENT_KEY, type ProductionArrangement } from './arrangement';
+import type { ProductionIntegrationSummary } from './jobs';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
 type ScheduleFilter = 'scheduled' | 'unscheduled';
@@ -71,6 +76,9 @@ function sortJobs(jobs: ProductionJob[]) {
 export default function ProductionWorkspace() {
   const [jobs, setJobs] = useState<ProductionJob[]>([]);
   const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
+  const [integrationSummaries, setIntegrationSummaries] = useState<Record<string, ProductionIntegrationSummary>>({});
+  const [includeArchived, setIncludeArchived] = useState(false);
+  const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => typeof window === 'undefined' ? 'stage' : (window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY) as ProductionArrangement) || 'stage');
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [search, setSearch] = useState('');
@@ -124,12 +132,13 @@ export default function ProductionWorkspace() {
     try {
       const focusedJobId = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
       window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
-      const [loadedJobs, loadedCounts, focusedJob] = await Promise.all([
-        loadProductionJobs(),
+      const [loadedJobs, loadedCounts, summaries, focusedJob] = await Promise.all([
+        loadProductionJobs(includeArchived),
         loadJobAttachmentCounts().catch((error) => {
           console.error('Unable to load Production attachment counts', error);
           return {};
         }),
+        loadProductionIntegrationSummaries().catch((error) => { console.error('Unable to load Production integration summaries', error); return {}; }),
         focusedJobId ? loadProductionJob(focusedJobId) : Promise.resolve(null),
       ]);
 
@@ -138,6 +147,7 @@ export default function ProductionWorkspace() {
         : loadedJobs;
       setJobs(sortJobs(jobsWithFocused));
       setAttachmentCounts(loadedCounts);
+      setIntegrationSummaries(summaries);
       if (focusedJob) {
         setFocusedJobId(focusedJob.id);
         setSearch(focusedJob.job_number || focusedJob.name);
@@ -152,7 +162,7 @@ export default function ProductionWorkspace() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [includeArchived]);
 
   useEffect(() => {
     void loadJobs();
@@ -347,11 +357,11 @@ export default function ProductionWorkspace() {
     });
   }, [focusedJobId, jobs, scheduleFilters, search, statusFilters]);
 
-  const displayedJobs = useMemo(() => filteredJobs.map((job) => (
+  const displayedJobs = useMemo(() => arrangeProductionJobs(filteredJobs.map((job) => (
     stagedSchedules[job.id]
       ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
       : job
-  )), [filteredJobs, stagedSchedules]);
+  )), arrangement), [arrangement, filteredJobs, stagedSchedules]);
   const stagedJob = stagedSchedule ? jobs.find((job) => job.id === stagedSchedule.jobId) ?? null : null;
   const selectedJob = selectedJobId ? jobs.find(job=>job.id===selectedJobId)??null : null;
   const planningIssueCount = useMemo(() => {
@@ -465,13 +475,13 @@ export default function ProductionWorkspace() {
             <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Production reporting</div>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Production Pipeline</h1>
             <p className="mt-1 text-sm text-slate-600">
-              Use the table to manage the production queue and the Timeline to plan scheduled work.
+              Use the table to manage the Production Pipeline and the Timeline to plan scheduled work.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
             <div>
-              <span className="font-bold uppercase tracking-[0.08em] text-slate-500">Jobs in Queue</span>
+              <span className="font-bold uppercase tracking-[0.08em] text-slate-500">Active Jobs</span>
               <span className="ml-2 text-base font-bold text-slate-950">{jobsInQueue}</span>
             </div>
             <button
@@ -529,6 +539,8 @@ export default function ProductionWorkspace() {
             className="h-9 min-w-0 flex-1 rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
           />
 
+          {activeView !== 'timeline' && <div className="flex shrink-0 items-center gap-2"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">Sort</span><div className="inline-flex h-9 overflow-hidden rounded-sm border border-slate-300">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`border-r border-slate-300 px-3 text-[10px] font-bold uppercase last:border-r-0 ${arrangement === value ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{value === 'stage' ? 'Status' : value}</button>)}</div></div>}
+
           {activeView === 'spreadsheet' && (
             <div id="production-table-columns-toolbar-slot" className="relative shrink-0" />
           )}
@@ -581,6 +593,7 @@ export default function ProductionWorkspace() {
                     </label>
                   ))}
                 </div>
+                <label className="mt-4 flex items-center gap-2 border-t border-slate-200 pt-4 text-sm text-slate-700"><input type="checkbox" checked={includeArchived} onChange={(event) => setIncludeArchived(event.target.checked)} />Include Archived</label>
 
                 <button
                   type="button"
@@ -643,10 +656,11 @@ export default function ProductionWorkspace() {
         <div className="mt-4">
           {isLoading ? (
             <div className="flex min-h-72 items-center justify-center border border-slate-400 bg-white text-sm font-semibold text-slate-600">Loading active jobs…</div>
-          ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} onSelectJob={selectJob}/> : activeView === 'spreadsheet' ? (
+          ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} integrationSummaries={integrationSummaries} onSelectJob={selectJob}/> : activeView === 'spreadsheet' ? (
             <ProductionTable
               jobs={displayedJobs}
               attachmentCounts={attachmentCounts}
+              integrationSummaries={integrationSummaries}
               onCreateJob={handleCreateJob}
               onUpdateJob={handleUpdateJob}
               onOpenAttachments={(job) => selectJob(job, 'attachments')}
@@ -687,7 +701,7 @@ export default function ProductionWorkspace() {
         </div>
       )}
 
-      {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedules[selectedJob.id]?{...selectedJob,planned_start:stagedSchedules[selectedJob.id].proposed_planned_start,planned_end:stagedSchedules[selectedJob.id].proposed_planned_end}:selectedJob} onClose={closeInspector} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
+      {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedules[selectedJob.id]?{...selectedJob,planned_start:stagedSchedules[selectedJob.id].proposed_planned_start,planned_end:stagedSchedules[selectedJob.id].proposed_planned_end}:selectedJob} onClose={closeInspector} onUpdateJob={handleUpdateJob} onArchive={async (job) => { const archived = await archiveProductionJob(job); setJobs((current) => includeArchived ? current.map((item) => item.id === job.id ? archived : item) : current.filter((item) => item.id !== job.id)); closeInspector(); }} onRestore={async (job) => { const restored = await restoreProductionJob(job); setJobs((current) => current.map((item) => item.id === job.id ? restored : item)); closeInspector(); }} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
       {planningIssuesOpen && <PlanningIssuesPanel jobs={jobs} stagedSchedules={stagedSchedules} onClose={() => setPlanningIssuesOpen(false)} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onOpenInspector={selectJob} />}
 
 

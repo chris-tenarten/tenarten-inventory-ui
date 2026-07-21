@@ -1,8 +1,12 @@
 'use client';
 
-import { ChevronDown, ChevronRight, Info, Pencil, Plus, RotateCw, Search, Settings2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Pencil, Plus, RotateCw, Search, Settings2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { JobTag } from '../production/components/JobTag';
+import ProductionStatusBadge from '../production/components/ProductionStatusBadge';
+import { openProductionJob } from '../production/job-options';
+import { productionStatusVisualByValue } from '../production/status-visuals';
 import {
   createManpowerEntry,
   createManpowerReference,
@@ -83,7 +87,7 @@ function toInput(draft: Draft): ManpowerEntryInput {
 }
 
 function validate(draft: Draft) {
-  if (!draft.reportingGroupId || !draft.workDate || !draft.workerId || !draft.taskId || !draft.jobChoice) return 'Reporting group, date, worker, task, and Production job or temporary label are required.';
+  if (!draft.reportingGroupId || !draft.workDate || !draft.workerId || !draft.taskId || !draft.jobChoice) return 'Reporting group, date, worker, task, and job are required.';
   if (draft.jobChoice === UNLISTED && !draft.unlistedLabel.trim()) return 'Enter the unlisted job or work label.';
   const am = Number(draft.amHours || 0);
   const pm = Number(draft.pmHours || 0);
@@ -92,8 +96,28 @@ function validate(draft: Draft) {
   return '';
 }
 
-function jobLabel(job: ManpowerJob) {
+function jobLabel(job: Pick<ManpowerJob, 'name' | 'job_number'>) {
   return job.job_number ? `${job.job_number} — ${job.name}` : job.name;
+}
+
+function jobOptionLabel(job: ManpowerJob) {
+  return `${jobLabel(job)} — ${productionStatusVisualByValue[job.production_status].label}`;
+}
+
+function ProductionJobLinkSelector({ groupLabel, jobs, value, disabled, onChange }: { groupLabel: string; jobs: ManpowerJob[]; value: string; disabled: boolean; onChange(value: string): void }) {
+  const [open, setOpen] = useState(false);
+  const selectedJob = jobs.find((job) => job.id === value);
+
+  return <div className="relative min-w-72" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false); }}>
+    <button type="button" aria-label={`Production job for ${groupLabel}`} aria-haspopup="listbox" aria-expanded={open} disabled={disabled} onClick={() => setOpen((current) => !current)} className="flex h-9 w-full items-center justify-between gap-3 rounded-sm border border-slate-300 bg-white px-2 text-left text-xs text-slate-800 outline-none transition hover:border-slate-500 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-wait disabled:opacity-60">
+      <span className="min-w-0 truncate font-medium">{selectedJob ? jobLabel(selectedJob) : 'Not Linked to Production'}</span>
+      <span className="flex shrink-0 items-center gap-2">{selectedJob ? <ProductionStatusBadge status={selectedJob.production_status} /> : null}<ChevronDown className={`h-3.5 w-3.5 transition ${open ? 'rotate-180' : ''}`} aria-hidden="true" /></span>
+    </button>
+    {open ? <div role="listbox" aria-label={`Production jobs for ${groupLabel}`} className="absolute right-0 top-10 z-50 max-h-80 w-[28rem] overflow-y-auto rounded-sm border border-slate-300 bg-white p-1 shadow-xl">
+      <button type="button" role="option" aria-selected={!value} onClick={() => { setOpen(false); onChange(''); }} className={`flex min-h-9 w-full items-center px-2 text-left text-xs font-medium hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none ${!value ? 'bg-blue-50 text-blue-900' : 'text-slate-700'}`}>Not Linked to Production</button>
+      {jobs.map((job) => <button key={job.id} type="button" role="option" aria-selected={job.id === value} onClick={() => { setOpen(false); onChange(job.id); }} className={`flex min-h-10 w-full items-center justify-between gap-3 px-2 text-left hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none ${job.id === value ? 'bg-blue-50' : ''}`}><span className="min-w-0 truncate text-xs font-semibold text-slate-900">{jobLabel(job)}</span><ProductionStatusBadge status={job.production_status} /></button>)}
+    </div> : null}
+  </div>;
 }
 
 function groupReportingDate(group: ManpowerReportingGroup): number | null {
@@ -165,8 +189,8 @@ function ReportingGroupName({ group, onRename }: {
     finally { setSaving(false); }
   }
   function cancel() { setName(group.display_name); setEditing(false); }
-  if (!editing) return <div className="flex min-w-0 flex-1 items-center gap-2"><span className="truncate text-sm font-bold text-slate-950">{group.display_name}</span><button type="button" onClick={() => setEditing(true)} aria-label="Edit group name" title="Edit group name" className="inline-flex h-7 w-7 shrink-0 items-center justify-center text-slate-500 hover:bg-white hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600"><Pencil className="h-3.5 w-3.5" /></button></div>;
-  return <div className="flex min-w-0 flex-1 items-center gap-1"><input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void save(); } if (event.key === 'Escape') cancel(); }} aria-label="Reporting group name" placeholder="Reporting group name" className="h-8 min-w-0 flex-1 rounded-sm border border-blue-500 bg-white px-2 text-sm font-bold text-slate-950 caret-slate-950 outline-none selection:bg-blue-200 focus:ring-2 focus:ring-blue-200" disabled={saving} /><button type="button" onClick={() => void save()} disabled={saving || !name.trim()} className="h-8 rounded-sm bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</button><button type="button" onClick={cancel} disabled={saving} className="h-8 rounded-sm px-2 text-xs font-bold text-slate-600 hover:bg-white">Cancel</button></div>;
+  if (!editing) return <div className="flex min-w-0 items-center gap-2"><span className="max-w-72 truncate text-sm font-bold text-slate-950">{group.display_name}</span><button type="button" onClick={() => setEditing(true)} aria-label="Edit group name" title="Edit group name" className="inline-flex h-7 w-7 shrink-0 items-center justify-center text-slate-500 hover:bg-white hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600"><Pencil className="h-3.5 w-3.5" /></button></div>;
+  return <div className="flex min-w-0 items-center gap-1"><input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void save(); } if (event.key === 'Escape') cancel(); }} aria-label="Reporting group name" placeholder="Reporting group name" className="h-8 w-64 min-w-0 rounded-sm border border-blue-500 bg-white px-2 text-sm font-bold text-slate-950 caret-slate-950 outline-none selection:bg-blue-200 focus:ring-2 focus:ring-blue-200" disabled={saving} /><button type="button" onClick={() => void save()} disabled={saving || !name.trim()} className="h-8 rounded-sm bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</button><button type="button" onClick={cancel} disabled={saving} className="h-8 rounded-sm px-2 text-xs font-bold text-slate-600 hover:bg-white">Cancel</button></div>;
 }
 
 function ReferenceSelect({
@@ -303,24 +327,24 @@ function WorkIdentityControl({ value, temporaryLabel, jobs, onChange, compact = 
     : inputClass;
   const hasSavedTemporary = value === UNLISTED && Boolean(savedTemporaryLabel) && temporaryLabel === savedTemporaryLabel;
   if (hasSavedTemporary && !changingSavedTemporary) {
-    return <div className="flex min-w-[260px] items-center gap-1"><span title="Temporary means this labor entry is not yet linked to a Production job. Link it when the job is added to the Production queue." className="shrink-0 rounded bg-amber-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-amber-800">Temporary</span><span className="min-w-0 flex-1 truncate text-sm text-slate-900">{temporaryLabel}</span><button type="button" onClick={() => setChangingSavedTemporary(true)} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-blue-700">Change</button></div>;
+    return <div className="flex min-w-[260px] items-center gap-1"><span title="Preserved label from an imported or unlinked labor entry." className="shrink-0 rounded bg-slate-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-slate-600">Imported Label</span><span className="min-w-0 flex-1 truncate text-sm text-slate-900">{temporaryLabel}</span></div>;
   }
   if (changingSavedTemporary) {
-    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setChangingSavedTemporary(false); }}><select autoFocus defaultValue="" onChange={(event) => { const next = event.target.value; if (!next) return; setChangingSavedTemporary(false); onChange(next, next === UNLISTED ? '' : temporaryLabel); }} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); setChangingSavedTemporary(false); } }} className={`${controlClass} min-w-0 flex-1`}><option value="">Choose Production job</option><option value={UNLISTED}>+ Replace temporary job label</option>{jobs.map((job) => <option key={job.id} value={job.id}>{jobLabel(job)}</option>)}</select><button type="button" onClick={() => setChangingSavedTemporary(false)} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-slate-700">Back</button></div>;
+    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setChangingSavedTemporary(false); }}><select autoFocus defaultValue="" onChange={(event) => { const next = event.target.value; if (!next) return; setChangingSavedTemporary(false); onChange(next, next === UNLISTED ? '' : temporaryLabel); }} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); setChangingSavedTemporary(false); } }} className={`${controlClass} min-w-0 flex-1`}><option value="">Choose Production job</option><option value={UNLISTED}>+ Replace imported label</option>{jobs.map((job) => <option key={job.id} value={job.id}>{jobOptionLabel(job)}</option>)}</select><button type="button" onClick={() => setChangingSavedTemporary(false)} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-slate-700">Back</button></div>;
   }
   if (value === UNLISTED) {
     const cancelTemporaryEdit = () => onChange(savedTemporaryLabel ? UNLISTED : '', savedTemporaryLabel ?? '');
-    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (savedTemporaryLabel && !event.currentTarget.contains(event.relatedTarget as Node | null)) { event.stopPropagation(); cancelTemporaryEdit(); } }}><span title="Temporary means this labor entry is not yet linked to a Production job. Link it when the job is added to the Production queue." className="shrink-0 rounded bg-amber-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-amber-800">Temporary</span><input autoFocus value={temporaryLabel} onChange={(event) => onChange(UNLISTED, event.target.value)} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); cancelTemporaryEdit(); } }} placeholder="Enter temporary job label" className={`${controlClass} border-amber-400 bg-amber-50`} /><button type="button" onClick={cancelTemporaryEdit} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-blue-700">Back</button></div>;
+    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (savedTemporaryLabel && !event.currentTarget.contains(event.relatedTarget as Node | null)) { event.stopPropagation(); cancelTemporaryEdit(); } }}><span className="shrink-0 rounded bg-slate-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-slate-600">Imported Label</span><input autoFocus value={temporaryLabel} onChange={(event) => onChange(UNLISTED, event.target.value)} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); cancelTemporaryEdit(); } }} placeholder="Enter imported or unlinked label" className={`${controlClass} bg-slate-50`} /><button type="button" onClick={cancelTemporaryEdit} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-blue-700">Back</button></div>;
   }
   return <select value={value} onChange={(event) => onChange(event.target.value, '')} className={`${controlClass} min-w-[260px]`}>
     <option value="">Production Job</option>
     <option value={UNLISTED}>+ Add temporary job label</option>
-    {jobs.map((job) => <option key={job.id} value={job.id}>{jobLabel(job)}</option>)}
+    {jobs.map((job) => <option key={job.id} value={job.id}>{jobOptionLabel(job)}</option>)}
   </select>;
 }
 
 function EntryFields({
-  draft, setDraft, jobs, workers, tasks, addWorker, addTask, actions, savedTemporaryLabel,
+  draft, setDraft, jobs, workers, tasks, addWorker, addTask, actions, savedTemporaryLabel, jobReadOnly = false, jobControl,
 }: {
   draft: Draft;
   setDraft: (next: Draft) => void;
@@ -331,6 +355,8 @@ function EntryFields({
   addTask: (name: string) => Promise<ManpowerReference>;
   actions?: ReactNode;
   savedTemporaryLabel?: string | null;
+  jobReadOnly?: boolean;
+  jobControl?: ReactNode;
 }) {
   const set = (field: keyof Draft, value: string) => setDraft({ ...draft, [field]: value });
   const total = Number(draft.amHours || 0) + Number(draft.pmHours || 0);
@@ -340,7 +366,7 @@ function EntryFields({
       <td className="border-r border-slate-300 p-1"><ReferenceSelect value={draft.workerId} options={workers} noun="worker" onChange={(value) => set('workerId', value)} onAdd={addWorker} /></td>
       <td className="border-r border-slate-300 p-1"><ReferenceSelect value={draft.taskId} options={tasks} noun="task" onChange={(value) => set('taskId', value)} onAdd={addTask} /></td>
       <td className="border-r border-slate-300 p-1">
-        <WorkIdentityControl value={draft.jobChoice} temporaryLabel={draft.unlistedLabel} savedTemporaryLabel={savedTemporaryLabel} jobs={jobs} onChange={(jobChoice, unlistedLabel) => setDraft({ ...draft, jobChoice, unlistedLabel })} />
+        {jobControl ?? (jobReadOnly ? <div className="min-w-[220px] px-2 text-xs text-slate-600">{draft.jobChoice && draft.jobChoice !== UNLISTED ? jobLabel(jobs.find((job) => job.id === draft.jobChoice) ?? { name: 'Linked Production job', job_number: null }) : draft.unlistedLabel || 'Unlinked'}</div> : <WorkIdentityControl value={draft.jobChoice} temporaryLabel={draft.unlistedLabel} savedTemporaryLabel={savedTemporaryLabel} jobs={jobs} onChange={(jobChoice, unlistedLabel) => setDraft({ ...draft, jobChoice, unlistedLabel })} />)}
       </td>
       <td className="border-r border-slate-300 p-1"><input type="number" min="0" max="24" step="0.25" value={draft.amHours} onChange={(e) => set('amHours', e.target.value)} className={inputClass} /></td>
       <td className="border-r border-slate-300 p-1"><input type="number" min="0" max="24" step="0.25" value={draft.pmHours} onChange={(e) => set('pmHours', e.target.value)} className={inputClass} /></td>
@@ -350,7 +376,7 @@ function EntryFields({
   );
 }
 
-function EditableEntryRow({ entry, jobs, workers, tasks, addWorker, addTask, onSaved, selected, onSelected }: {
+function EditableEntryRow({ entry, jobs, workers, tasks, addWorker, addTask, onSaved, selected, onSelected, jobControl }: {
   entry: ManpowerEntry;
   jobs: ManpowerJob[];
   workers: ManpowerReference[];
@@ -360,6 +386,7 @@ function EditableEntryRow({ entry, jobs, workers, tasks, addWorker, addTask, onS
   onSaved: (entry: ManpowerEntry) => void;
   selected: boolean;
   onSelected: (selected: boolean) => void;
+  jobControl?: ReactNode;
 }) {
   const [draft, setDraft] = useState(() => entryDraft(entry));
   const [state, setState] = useState<'idle' | 'dirty' | 'saving' | 'saved' | 'error'>('idle');
@@ -398,7 +425,7 @@ function EditableEntryRow({ entry, jobs, workers, tasks, addWorker, addTask, onS
       if (!event.currentTarget.contains(event.relatedTarget as Node | null)) void save();
     }}>
       <td className="border-r border-slate-300 px-3 pt-3 text-center"><SelectionCheckbox checked={selected} label={`Select ${entry.worker.display_name} entry on ${entry.work_date}`} onChange={onSelected} /></td>
-      <EntryFields draft={draft} setDraft={change} jobs={jobs} workers={workers} tasks={tasks} addWorker={addWorker} addTask={addTask} savedTemporaryLabel={entry.unlisted_work_label} actions={<span className="shrink-0 text-center text-[10px] font-bold uppercase tracking-wide">
+      <EntryFields draft={draft} setDraft={change} jobs={jobs} workers={workers} tasks={tasks} addWorker={addWorker} addTask={addTask} savedTemporaryLabel={entry.unlisted_work_label} jobReadOnly jobControl={jobControl} actions={<span className="shrink-0 text-center text-[10px] font-bold uppercase tracking-wide">
         {state === 'dirty' && <button type="button" onClick={() => void save()} className="text-blue-700">Save</button>}
         {state === 'saving' && <span className="text-slate-500">Saving…</span>}
         {state === 'saved' && <span className="text-emerald-700">Saved</span>}
@@ -520,6 +547,7 @@ export default function ManpowerWorkspace() {
   const [tasks, setTasks] = useState<ManpowerReference[]>([]);
   const [draft, setDraft] = useState<Draft>(blankDraft);
   const [search, setSearch] = useState('');
+  const [linkedJobId, setLinkedJobId] = useState<string | null>(() => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('job'));
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -532,6 +560,7 @@ export default function ManpowerWorkspace() {
   const [creatingGroup, setCreatingGroup] = useState(false);
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [addingToGroupId, setAddingToGroupId] = useState<string | null>(null);
+  const [linkingGroupId, setLinkingGroupId] = useState<string | null>(null);
   const collapseInitialized = useRef(false);
   const newGroupInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -561,6 +590,12 @@ export default function ManpowerWorkspace() {
   }, []);
 
   useEffect(() => { void load(); }, [load]);
+
+  useEffect(() => {
+    const syncJobFilter = () => setLinkedJobId(new URLSearchParams(window.location.search).get('job'));
+    window.addEventListener('popstate', syncJobFilter);
+    return () => window.removeEventListener('popstate', syncJobFilter);
+  }, []);
 
   const setReferenceEditing = useCallback((kind: 'worker' | 'task', editing: boolean) => {
     setReferenceEditors((current) => {
@@ -652,6 +687,7 @@ export default function ManpowerWorkspace() {
       grouped.set(group.id, { key: group.id, label: group.display_name, group, entries: [] });
     }
     for (const entry of entries) {
+      if (linkedJobId && entry.job_id !== linkedJobId) continue;
       const key = entry.reporting_group_id ?? '__ungrouped__';
       const label = entry.reporting_group?.display_name ?? 'Ungrouped entries';
       const group = grouped.get(key) ?? { key, label, group: entry.reporting_group, entries: [] };
@@ -674,8 +710,9 @@ export default function ManpowerWorkspace() {
       if (!a.group && b.group) return 1;
       return a.label.localeCompare(b.label);
     });
-    if (!normalizedSearch) return sortedGroups;
-    return sortedGroups
+    const nonEmptyGroups = sortedGroups.filter((group) => group.entries.length > 0);
+    if (!normalizedSearch) return nonEmptyGroups;
+    return nonEmptyGroups
       .map((group) => ({
         ...group,
         entries: group.entries.filter((entry) => [
@@ -691,7 +728,7 @@ export default function ManpowerWorkspace() {
         ].some((value) => value?.toLocaleLowerCase().includes(normalizedSearch))),
       }))
       .filter((group) => group.entries.length > 0);
-  }, [entries, normalizedSearch, reportingGroups]);
+  }, [entries, linkedJobId, normalizedSearch, reportingGroups]);
 
   function startAddingToGroup(groupId: string, groupEntries: ManpowerEntry[]) {
     const identities = new Map<string, Pick<Draft, 'jobChoice' | 'unlistedLabel'>>();
@@ -754,6 +791,22 @@ export default function ManpowerWorkspace() {
     return { updated: result.updated.length, failed: result.failures.length };
   }
 
+  async function linkReportingGroup(groupKey: string, groupEntries: ManpowerEntry[], jobId: string) {
+    setLinkingGroupId(groupKey);
+    await applyBulkUpdate(groupEntries.map((entry) => entry.id), {
+      job_id: jobId || null,
+    });
+    setLinkingGroupId(null);
+  }
+
+  async function renameUnlinkedGroup(groupKey: string, groupEntries: ManpowerEntry[], jobName: string) {
+    const normalized = jobName.trim();
+    if (!normalized) return;
+    setLinkingGroupId(groupKey);
+    await applyBulkUpdate(groupEntries.map((entry) => entry.id), { job_id: null, unlisted_work_label: normalized });
+    setLinkingGroupId(null);
+  }
+
   async function deleteSelectedEntries(ids: string[]) {
     setError('');
     const result = await deleteManpowerEntries(ids);
@@ -794,8 +847,8 @@ export default function ManpowerWorkspace() {
             <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search manpower…" className={`${inputClass} pl-9`} />
           </label>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-slate-600"><span className="shrink-0 rounded bg-amber-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-amber-800">Temporary</span><span>means this labor entry is not yet linked to a Production job. Link it when the job is added to the Production queue.</span><button type="button" aria-label="About temporary labor entries" title="Temporary means this labor entry is not yet linked to a Production job. Link it when the job is added to the Production queue." className="inline-flex h-5 w-5 shrink-0 items-center justify-center text-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-700"><Info className="h-3.5 w-3.5" /></button></div>
-        {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{normalizedSearch ? 'No manpower entries match your search.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
+        {linkedJobId ? <div className="flex items-center gap-2 text-xs"><span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 font-semibold text-blue-800">Job: {jobs.find((job) => job.id === linkedJobId)?.name ?? 'Selected Production job'}</span><button type="button" onClick={() => { const url = new URL(window.location.href); url.searchParams.delete('job'); window.history.pushState(null, '', `${url.pathname}${url.search}`); setLinkedJobId(null); }} className="font-semibold text-slate-500 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">Clear job filter</button></div> : null}
+        {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{linkedJobId ? 'No manpower reporting groups are linked to this Production job.' : normalizedSearch ? 'No manpower entries match your search.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
           const isCollapsed = normalizedSearch ? false : collapsed.has(group.key);
           const am = group.entries.reduce((sum, entry) => sum + Number(entry.am_hours), 0);
           const pm = group.entries.reduce((sum, entry) => sum + Number(entry.pm_hours), 0);
@@ -803,6 +856,12 @@ export default function ManpowerWorkspace() {
           const selectedGroupIds = groupIds.filter((id) => selectedIds.has(id));
           const allSelected = groupIds.length > 0 && selectedGroupIds.length === groupIds.length;
           const someSelected = selectedGroupIds.length > 0 && !allSelected;
+          const linkedJobIds = [...new Set(group.entries.map((entry) => entry.job_id).filter((id): id is string => Boolean(id)))];
+          const groupJobId = linkedJobIds.length === 1 && group.entries.every((entry) => entry.job_id === linkedJobIds[0]) ? linkedJobIds[0] : '';
+          const groupJob = jobs.find((job) => job.id === groupJobId);
+          const previousJobName = group.entries.find((entry) => entry.unlisted_work_label?.trim())?.unlisted_work_label?.trim() || group.label;
+          const effectiveJobLabel = groupJob ? jobLabel(groupJob) : previousJobName;
+          const jobCell = groupJob ? <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{effectiveJobLabel}</div> : <input key={`${group.key}:${previousJobName}`} defaultValue={previousJobName} aria-label={`Job name for ${group.label}`} onBlur={(event) => { if (event.target.value.trim() !== previousJobName) void renameUnlinkedGroup(group.key, group.entries, event.target.value); }} className="h-8 min-w-[220px] w-full border border-slate-300 bg-white px-2 text-xs outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-200" />;
           return (
             <section key={group.key} className={`overflow-hidden rounded-sm border bg-white ${selectedGroupIds.length > 0 ? 'border-blue-600' : 'border-slate-200'}`}>
               <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800">
@@ -810,15 +869,21 @@ export default function ManpowerWorkspace() {
                 <button type="button" onClick={() => setCollapsed((current) => { const next = new Set(current); if (next.has(group.key)) next.delete(group.key); else next.add(group.key); return next; })} className="shrink-0" aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${group.label}`}>
                   {isCollapsed ? <ChevronRight className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
                 </button>
-                {group.group ? <ReportingGroupName group={group.group} onRename={(name) => renameGroup(group.group!, name)} /> : <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-950">{group.label}</span>}
+                {group.group ? <ReportingGroupName group={group.group} onRename={(name) => renameGroup(group.group!, name)} /> : <span className="min-w-0 truncate text-sm font-bold text-slate-950">{group.label}</span>}
+                {groupJob ? <JobTag label={jobLabel(groupJob)} onClick={() => openProductionJob(groupJob.id)} title={`Open ${jobLabel(groupJob)} in Production`} className="max-w-[140px] shrink-0" /> : <span className="shrink-0 rounded-sm bg-slate-200 px-2 py-1 text-[10px] font-bold text-slate-700">Unlinked</span>}
+                <span className="min-w-0 flex-1" />
                 <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold text-slate-700">{group.entries.length} {group.entries.length === 1 ? 'entry' : 'entries'}</span>
                 {isCollapsed && selectedGroupIds.length > 0 && <span className="shrink-0 rounded bg-blue-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">{selectedGroupIds.length} selected</span>}
                 <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">AM {am.toFixed(1)} hrs</span>
                 <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">PM {pm.toFixed(1)} hrs</span>
                 <span className="shrink-0 rounded-sm bg-slate-900 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">TOTAL {(am + pm).toFixed(1)} hrs</span>
               </div>
+              {!isCollapsed && <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                <span className="flex-1">{groupJob ? 'This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.' : 'This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.'}</span>
+                <ProductionJobLinkSelector groupLabel={group.label} jobs={jobs} value={groupJobId} disabled={linkingGroupId === group.key} onChange={(jobId) => void linkReportingGroup(group.key, group.entries, jobId)} />
+              </div>}
               {selectedGroupIds.length > 0 && <BulkActionBar selectedCount={selectedGroupIds.length} jobs={jobs} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
-              {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1300px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Production Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} />)}{addingToGroupId === group.key && group.group && <tr className="border-t-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}</tbody><tfoot><tr><td colSpan={9} className="border-t border-slate-300 bg-slate-50 p-1">{group.group && addingToGroupId !== group.key && <button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries)} className="inline-flex h-8 items-center gap-1.5 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 hover:bg-blue-50"><Plus className="h-4 w-4" /> Add labor entry</button>}</td></tr></tfoot></table></div>}
+              {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1300px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={jobCell} />)}{addingToGroupId === group.key && group.group && <tr className="border-t-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly jobControl={jobCell} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}</tbody><tfoot><tr><td colSpan={9} className="border-t border-slate-300 bg-slate-50 p-1">{group.group && addingToGroupId !== group.key && <button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries)} className="inline-flex h-8 items-center gap-1.5 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 hover:bg-blue-50"><Plus className="h-4 w-4" /> Add labor entry</button>}</td></tr></tfoot></table></div>}
             </section>
           );
         })}

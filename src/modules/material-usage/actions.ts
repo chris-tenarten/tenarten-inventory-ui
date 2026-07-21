@@ -31,7 +31,9 @@ export async function getMaterialUsageReports(): Promise<
       updated_at,
       job_id,
       job_number_snapshot,
-      job_name_snapshot
+      job_name_snapshot,
+      unlisted_job_name,
+      notes
     `)
     .order('report_date', { ascending: false })
     .order('updated_at', { ascending: false });
@@ -46,6 +48,8 @@ export async function getMaterialUsageReports(): Promise<
     jobId: row.job_id,
     jobNumber: row.job_number_snapshot,
     jobName: row.job_name_snapshot,
+    unlistedJobName: row.unlisted_job_name ?? '',
+    notes: row.notes ?? '',
     workOrder: row.work_order ?? '',
     terrazzoType: row.terrazzo_type ?? '',
     updatedAt: row.updated_at,
