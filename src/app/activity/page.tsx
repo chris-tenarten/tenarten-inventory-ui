@@ -22,6 +22,9 @@ type TransactionRow = {
   earmarked_job_name: string | null;
   earmark_notes: string | null;
   synced_to_inventory_at: string | null;
+  reversal_of_transaction_id: string | null;
+  reversed_at: string | null;
+  reversed_by: string | null;
 };
 
 const fieldClass =
@@ -135,7 +138,7 @@ export default function ActivityPage() {
     const { data, error } = await supabase
       .from('inventory_transactions')
       .select(
-        'id, created_at, transaction_type, vendor, specialty_vendor_name, item_name, size, unit, quantity, location, notes, catalog_source, is_earmarked, earmarked_job_name, earmark_notes, synced_to_inventory_at',
+        'id, created_at, transaction_type, vendor, specialty_vendor_name, item_name, size, unit, quantity, location, notes, catalog_source, is_earmarked, earmarked_job_name, earmark_notes, synced_to_inventory_at, reversal_of_transaction_id, reversed_at, reversed_by',
       )
       .order('created_at', { ascending: false })
       .limit(500);
@@ -289,6 +292,9 @@ export default function ActivityPage() {
                           <span className={`inline-flex rounded-sm border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${typeBadgeClass(row.transaction_type)}`}>
                             {formatTransactionType(row.transaction_type)}
                           </span>
+                          {row.reversed_at && (
+                            <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-red-700">Reversed</div>
+                          )}
                         </td>
 
                         <td className="border-r border-slate-200 px-3 py-2 align-top font-semibold text-slate-800">
