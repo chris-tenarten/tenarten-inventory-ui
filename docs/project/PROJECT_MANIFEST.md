@@ -233,6 +233,10 @@ This is the authoritative Pending Receival receipt path used by Inventory. It pr
 
 Migration `20260714_006_harden_inventory_reservation_receipts.sql` reconciles environments that received an earlier migration 005 revision. Do not replace this RPC without inspecting the live definition, grants, constraints, and every call site.
 
+### `undo_pending_receival_receipt(uuid, text, text)`
+
+Migration `20260722_001_pending_receival_undo.sql` links future receipts to their exact Inventory lot and intake transaction. Undo is transactional and audit-preserving: it marks the intake as reversed, writes a compensating adjustment, restores the queue row, and refuses to proceed after subsequent lot activity. Receipts created before this lineage exists require manual reconciliation.
+
 ### Legacy receipt function
 
 The database historically contained `receive_pending_receival`, whose original live definition was not initially checked in. New code uses the reservation-aware RPC. Treat untracked live functions as schema drift requiring inspection and forward reconciliation.
@@ -263,6 +267,8 @@ Current migration order:
 9. `20260714_006_harden_inventory_reservation_receipts.sql`
 10. `20260716_001_add_ordered_material_status.sql`
 11. `20260716_002_atomic_production_schedule_batch.sql`
+12. `20260721_001_atomic_inventory_reservations.sql`
+13. `20260722_001_pending_receival_undo.sql`
 
 Current project records state that reservation, Ordered Material Status, and atomic scheduling migrations were manually applied and verified in the intended Supabase project. Inspect any target environment before assuming the same state.
 

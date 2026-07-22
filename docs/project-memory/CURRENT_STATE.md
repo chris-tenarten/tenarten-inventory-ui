@@ -149,6 +149,8 @@ The checked-in forward migration `supabase/migrations/20260714_005_inventory_pro
 
 Migration `supabase/migrations/20260714_006_harden_inventory_reservation_receipts.sql` is the forward-only live-environment reconciliation for the final reservation checks and receipt RPC behavior. Environments that applied an earlier revision of migration 005 must also apply migration 006.
 
+Migration `supabase/migrations/20260722_001_pending_receival_undo.sql` adds forward receipt lineage and the transactional `undo_pending_receival_receipt` boundary. It is checked in but must not be described as live until it has been applied and verified in the intended Supabase project.
+
 Current behavior:
 
 - each Pending Receival material row can be unrestricted, linked to a Production job, or assigned an unlinked temporary label
@@ -156,12 +158,12 @@ Current behavior:
 - linked and temporary identities are mutually exclusive
 - exact unique job-number matches are backfilled; ambiguous or name-only legacy values remain temporary
 - receipt propagation retains reservation identity and notes without reselection
+- newly received rows retain their exact Inventory lot and intake-transaction lineage
+- Undo Receive restores an untouched receipt to Pending, reverses its Inventory quantity atomically, and records rather than deletes the original activity; stock changed after receipt is rejected for manual reconciliation
 - Inventory aggregation treats reservation identity as part of the balance identity
 - linked Inventory badges use current job data and focus the corresponding Production Pipeline job
 - inactive linked jobs remain visible and retainable in Edit mode
 - legacy earmark text fields remain for transitional compatibility
-
-The AL Statehouse Pending Receivals queue and related document imports remain deferred and have not been populated by this pass.
 
 ## Attachments
 
