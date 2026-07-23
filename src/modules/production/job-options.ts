@@ -13,6 +13,7 @@ export type ProductionJobOption = ProductionJobReference & {
   production_status: string;
   archived_at: string | null;
   planned_start: string | null;
+  requested_delivery_date: string | null;
 };
 
 export const PRODUCTION_JOB_FOCUS_STORAGE_KEY = 'tenops_focus_production_job_id';
@@ -32,7 +33,7 @@ export async function loadProductionJobOptions(options?: {
 }): Promise<ProductionJobOption[]> {
   let query = supabase
     .from('jobs')
-    .select('id,name,job_number,customer,work_order_number,color_plate_number,production_status,archived_at,planned_start');
+    .select('id,name,job_number,customer,work_order_number,color_plate_number,production_status,archived_at,planned_start,requested_delivery_date');
   if (!options?.includeArchived) query = query.is('archived_at', null);
 
   query = options?.orderBy === 'schedule'
@@ -52,7 +53,7 @@ export async function loadProductionJobOptions(options?: {
 export async function loadProductionJobOption(jobId: string): Promise<ProductionJobOption | null> {
   const { data, error } = await supabase
     .from('jobs')
-    .select('id,name,job_number,customer,work_order_number,color_plate_number,production_status,archived_at,planned_start')
+    .select('id,name,job_number,customer,work_order_number,color_plate_number,production_status,archived_at,planned_start,requested_delivery_date')
     .eq('id', jobId)
     .maybeSingle();
 

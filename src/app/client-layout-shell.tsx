@@ -3,23 +3,17 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
 const primaryNavItems = [
   { href: '/', label: 'Dashboard', icon: HomeIcon },
 ];
 
-const inventoryNavItem = {
-  href: '/inventory',
-  label: 'Inventory',
-  icon: PackageIcon,
-};
-
 const reportingNavItems = [
   {
     href: '/manpower-reporting',
-    label: 'Manpower Reporting',
+    label: 'Manpower',
     description: 'Record daily labor and task assignments',
   },
   {
@@ -27,11 +21,23 @@ const reportingNavItems = [
     label: 'Material Usage',
     description: 'Record materials consumed by production',
   },
+  {
+    href: '',
+    label: 'Daily Production',
+    description: 'Future daily production reporting',
+    disabled: true,
+  },
 ];
 
-const utilityNavItems = [
-  { href: '/catalog', label: 'Catalog', icon: BookIcon },
-  { href: '/activity', label: 'Inventory Activity', icon: ClockIcon },
+const inventoryNavItems = [
+  { href: '/inventory', label: 'Current Inventory', description: 'Review stock, lots, locations, and reservations' },
+  { href: '/inventory?section=pending-receivals#pending-receivals', matchPath: '__pending-receivals__', label: 'Pending Receivals', description: 'Review material awaiting physical receipt' },
+  { href: '/activity', label: 'Activity', description: 'Review Inventory transaction history' },
+];
+
+const purchasingNavItems = [
+  { href: '/purchasing', label: 'Purchase Orders', description: 'Create and manage purchasing drafts' },
+  { href: '/catalog', label: 'Catalog', description: 'Maintain Inventory and purchasing references' },
 ];
 
 const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
@@ -84,6 +90,8 @@ function PackageIcon() {
   );
 }
 
+function CartIcon() { return <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 4h2l2 11h10l2-7H6"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg>; }
+
 function HomeIcon() {
   return (
     <svg
@@ -99,32 +107,11 @@ function HomeIcon() {
   );
 }
 
-function ClockIcon() {
+function SettingsIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v6l4 2" />
-    </svg>
-  );
-}
-
-function BookIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" />
-      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 8H20" />
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z" />
     </svg>
   );
 }
@@ -157,6 +144,70 @@ function dropdownItemClass(isActive: boolean) {
     : 'text-slate-700 hover:bg-slate-50 hover:text-slate-950';
 }
 
+type DomainNavItem = {
+  href: string;
+  label: string;
+  description: string;
+  matchPath?: string;
+  disabled?: boolean;
+};
+
+function DomainNav({
+  pathname,
+  label,
+  href,
+  icon: Icon,
+  items,
+}: {
+  pathname: string;
+  label: string;
+  href: string;
+  icon: ComponentType;
+  items: DomainNavItem[];
+}) {
+  const isActive = items.some((item) => {
+    const path = item.matchPath || item.href;
+    return path && (pathname === path || pathname.startsWith(`${path}/`));
+  });
+  return (
+    <div className="group relative shrink-0">
+      <Link
+        href={href}
+        aria-haspopup="menu"
+        className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] outline-none transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(isActive)}`}
+      >
+        <Icon />
+        <span className="hidden sm:inline">{label}</span>
+        <span className="transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180">
+          <ChevronDownIcon />
+        </span>
+      </Link>
+      <div className="invisible absolute left-0 top-full z-50 min-w-[280px] pt-1 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+        <div className="border border-slate-300 bg-white py-1 shadow-[0_12px_30px_rgba(15,23,42,0.18)]">
+          <div className="border-b border-slate-200 px-4 py-2">
+            <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{label}</div>
+          </div>
+          {items.map((item) => {
+            const path = item.matchPath || item.href;
+            const itemActive = Boolean(path) && (pathname === path || pathname.startsWith(`${path}/`));
+            return item.disabled ? (
+              <div key={item.label} aria-disabled="true" className="px-4 py-3 text-slate-400">
+                <div className="text-sm font-bold">{item.label}</div>
+                <div className="mt-0.5 text-xs font-medium">{item.description}</div>
+              </div>
+            ) : (
+              <Link key={item.href} href={item.href} className={`block px-4 py-3 transition ${dropdownItemClass(itemActive)}`}>
+                <div className="text-sm font-bold">{item.label}</div>
+                <div className="mt-0.5 text-xs font-medium text-slate-500">{item.description}</div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ClientLayoutShell({
   children,
 }: {
@@ -170,12 +221,6 @@ export default function ClientLayoutShell({
   const [passwordInput, setPasswordInput] = useState('');
   const [accessError, setAccessError] = useState('');
   const [hasScrolled, setHasScrolled] = useState(false);
-
-  const reportingIsActive = reportingNavItems.some(
-    (item) =>
-      pathname === item.href ||
-      pathname.startsWith(`${item.href}/`),
-  );
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -336,111 +381,16 @@ export default function ClientLayoutShell({
                   );
                 })}
 
-                <div className="group relative shrink-0">
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    aria-haspopup="menu"
-                    aria-label="Reporting"
-                    className={`inline-flex h-9 shrink-0 cursor-default items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] outline-none transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
-                      reportingIsActive,
-                    )}`}
-                  >
-                    <LaborIcon />
-
-                    <span className="hidden sm:inline">Reporting</span>
-
-                    <span className="transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180">
-                      <ChevronDownIcon />
-                    </span>
-                  </div>
-
-                  <div className="invisible absolute left-0 top-full z-50 min-w-[280px] pt-1 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                    <div className="border border-slate-300 bg-white py-1 shadow-[0_12px_30px_rgba(15,23,42,0.18)]">
-                      <div className="border-b border-slate-200 px-4 py-2">
-                        <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
-                          Operational Reporting
-                        </div>
-                      </div>
-
-                      {reportingNavItems.map((item) => {
-                        const isActive =
-                          pathname === item.href ||
-                          pathname.startsWith(`${item.href}/`);
-
-                        return (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className={`block px-4 py-3 transition ${dropdownItemClass(
-                              isActive,
-                            )}`}
-                          >
-                            <div className="text-sm font-bold">
-                              {item.label}
-                            </div>
-
-                            <div className="mt-0.5 text-xs font-medium text-slate-500">
-                              {item.description}
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {(() => {
-                  const Icon = inventoryNavItem.icon;
-                  const isActive =
-                    pathname === inventoryNavItem.href ||
-                    pathname.startsWith(`${inventoryNavItem.href}/`);
-
-                  return (
-                    <Link
-                      href={inventoryNavItem.href}
-                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
-                        isActive,
-                      )}`}
-                    >
-                      <Icon />
-                      <span className="hidden sm:inline">{inventoryNavItem.label}</span>
-                    </Link>
-                  );
-                })()}
-              </nav>
-            )}
-
-            {isUnlocked && (
-              <nav
-                className="flex shrink-0 items-center border-l border-slate-300 pl-2"
-                aria-label="Supporting tools"
-              >
-                {utilityNavItems.map((item) => {
-                  const Icon = item.icon;
-
-                  const isActive =
-                    pathname === item.href ||
-                    pathname.startsWith(`${item.href}/`);
-
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      title={item.label}
-                      aria-label={item.label}
-                      className={`inline-flex h-9 items-center gap-1.5 px-2 text-[10px] font-bold uppercase leading-none tracking-[0.06em] transition sm:h-10 sm:px-3 ${navClass(
-                        isActive,
-                      )}`}
-                    >
-                      <Icon />
-
-                      <span className="hidden 2xl:inline">
-                        {item.label}
-                      </span>
-                    </Link>
-                  );
-                })}
+                <DomainNav pathname={pathname} label="Reporting" href="/manpower-reporting" icon={LaborIcon} items={reportingNavItems} />
+                <DomainNav pathname={pathname} label="Inventory" href="/inventory" icon={PackageIcon} items={inventoryNavItems} />
+                <DomainNav pathname={pathname} label="Purchasing" href="/purchasing" icon={CartIcon} items={purchasingNavItems} />
+                <Link
+                  href="/settings"
+                  className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(pathname === '/settings' || pathname.startsWith('/settings/'))}`}
+                >
+                  <SettingsIcon />
+                  <span className="hidden xl:inline">Settings</span>
+                </Link>
               </nav>
             )}
 

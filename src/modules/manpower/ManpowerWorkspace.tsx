@@ -371,7 +371,7 @@ function EntryFields({
       </td>
       <td className="border-r border-slate-300 p-1"><input type="number" min="0" max="24" step="0.25" value={draft.amHours} onChange={(e) => set('amHours', e.target.value)} className={inputClass} /></td>
       <td className="border-r border-slate-300 p-1"><input type="number" min="0" max="24" step="0.25" value={draft.pmHours} onChange={(e) => set('pmHours', e.target.value)} className={inputClass} /></td>
-      <td className="border-r border-slate-300 bg-slate-50 px-3 text-right text-sm font-bold tabular-nums">{Number.isFinite(total) ? total.toFixed(2) : '—'}</td>
+      <td className="border-r border-slate-300 bg-slate-50 px-2 text-center align-middle text-sm font-bold tabular-nums">{Number.isFinite(total) ? total.toFixed(2) : '—'}</td>
       <td className="p-1"><div className="flex min-w-[220px] items-center gap-2"><input value={draft.notes} onChange={(e) => set('notes', e.target.value)} placeholder="Notes" className={inputClass} />{actions}</div></td>
     </>
   );

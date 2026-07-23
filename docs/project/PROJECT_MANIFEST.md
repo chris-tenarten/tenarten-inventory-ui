@@ -5,6 +5,8 @@ TenOps models operations, not software. The application should evolve around how
 > **Canonical project constitution**
 > Read this document before planning, reviewing, or implementing TenOps work. Then inspect the current repository and relevant live schema. This document defines durable product intent and engineering direction; source code and migrations define implemented behavior.
 
+Implementation passes also follow [`ENGINEERING_EXECUTION_STANDARD.md`](./ENGINEERING_EXECUTION_STANDARD.md) for autonomous execution, validation, browser testing, migration discipline, and completion reporting.
+
 ## 1. Purpose and authority
 
 TenOps—Tenarten Operations Control—is Tenarten's internal operations platform for managing work from operational handoff through production, inventory, labor reporting, completion, and eventually shipping and performance analysis.
@@ -122,7 +124,7 @@ Total hours derive from AM plus PM and are not stored. Client-side search covers
 
 Job attachments are private storage objects with relational metadata. Users can upload multiple files, open and remove them, and access them through the shared Inspector. Attachment counts remain visible near job identity.
 
-Forms currently demonstrate Quote and Letter of Transmittal placeholders. No document-generation, template, or persistence engine exists yet.
+Purchase Orders are the first structured Form. Draft preview renders current editor state, while issued Purchase Orders own an immutable snapshot and a separately retryable permanent PDF generated only from that snapshot. Quote and Letter of Transmittal remain placeholders.
 
 ### Future operational reporting
 
@@ -152,6 +154,7 @@ The application uses client-heavy workspaces. Shared domain helpers should isola
 - `/production` — compatibility route to Production
 - `/manpower-reporting` — Manpower Reporting; navigation label: Production Reporting
 - `/inventory` — Inventory and Pending Receivals
+- `/purchasing` — structured chip and aggregate Purchase Order drafts
 - `/catalog` — supporting Catalog tool
 - `/activity` — supporting Inventory Activity tool
 - `/transactions` — legacy route outside primary navigation
@@ -269,6 +272,22 @@ Current migration order:
 11. `20260716_002_atomic_production_schedule_batch.sql`
 12. `20260721_001_atomic_inventory_reservations.sql`
 13. `20260722_001_pending_receival_undo.sql`
+14. `20260722_002_purchasing_phase1.sql`
+15. `20260722_003_purchasing_phase1_1_simplification.sql`
+16. `20260722_004_purchasing_optional_charges.sql`
+17. `20260722_005_purchasing_vendor_configuration.sql`
+18. `20260722_006_purchasing_reference_data.sql`
+19. `20260722_007_remove_vendor_import_notes.sql`
+20. `20260722_008_vendor_catalog_bulk_pricing.sql`
+21. `20260723_001_purchase_order_issuance.sql`
+22. `20260723_002_vendor_catalog_truckload_pricing.sql`
+23. `20260723_003_purchase_order_issuance_column_resolution.sql`
+24. `20260723_004_purchase_order_pdf_documents.sql`
+25. `20260723_005_purchase_order_pdf_v2.sql`
+26. `20260723_006_purchase_order_number_allocation.sql`
+27. `20260723_007_arim_catalog_skus.sql`
+28. `20260723_008_purchase_order_pending_receivals.sql`
+29. `20260723_009_purchase_order_pdf_snapshot_pgcrypto_path.sql`
 
 Current project records state that reservation, Ordered Material Status, and atomic scheduling migrations were manually applied and verified in the intended Supabase project. Inspect any target environment before assuming the same state.
 

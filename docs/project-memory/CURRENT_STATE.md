@@ -165,6 +165,32 @@ Current behavior:
 - inactive linked jobs remain visible and retainable in Edit mode
 - legacy earmark text fields remain for transitional compatibility
 
+## Purchasing Phase 1
+
+Purchasing now has a checked-in chip/aggregate draft foundation under `/purchasing`. Migration `20260722_002_purchasing_phase1.sql` was reported applied by the user. Structured Purchase Orders are the source of truth. The schema separates shared PO/line identity from chip-specific material, size, packaging, moisture, order quantity, price, and Production-job fields.
+
+Phase 1.1 migration `20260722_003_purchasing_phase1_1_simplification.sql` was reported applied by the user. It adds the PO-level Production Job and document snapshots and removes the line requested-date override. It temporarily removed optional charge fields before the historical PO form was declared authoritative; the forward Forms Foundation migration below restores them without rewriting applied history. Catalog prices are operator-applied references only; changing material preserves manual price. Historical-price queries read issued PO lines only.
+
+Forms Foundation migration `20260722_004_purchasing_optional_charges.sql` is checked in, and its columns were verified in live Supabase on July 22, 2026. It restores the vendor-facing optional Discount %, calculated Discount Amount, Tax %, calculated Tax Amount, Freight, and Total fields visible on the historical Tenarten PO. Temporary approved calculations apply discount to Subtotal, tax to the discounted subtotal, then add freight. Browser PO preview maps current editor state through one print model into one canonical letter-size Tenarten template with a DRAFT watermark. The same renderer is reserved for future PDF output.
+
+Migration `20260722_005_purchasing_vendor_configuration.sql` adds structured Vendor profile fields, multiple Vendor Contacts, canonical Vendor links for maintained specialty catalog items, manual draft-number persistence, transactional saved-draft deletion, and guarded Vendor/Catalog maintenance RPCs. Selecting a Vendor ranks matching catalog entries but no longer excludes other catalog results.
+
+Forward migration `20260722_006_purchasing_reference_data.sql` was reported applied by the user. It seeds known chip Vendors from current Tenarten references, including the known Klein and T&M contacts, without inventing missing contact details. Blank Vendor catalog prices remain blank because historical PO prices can vary by quantity and are not authoritative current catalog prices. Migration `20260722_007_remove_vendor_import_notes.sql` is checked in but not applied; it removes migration-provenance text from the user-visible Vendor and Contact Notes fields without removing or changing the configured records.
+
+A shared `DocumentViewer` now presents rendered Forms and signed Production attachments. It previews PDF, PNG, JPEG, and WebP, retains open/download and safe unsupported-file fallback, and does not own form-specific layout. Production attachments use an embedded viewer directly below the selected list row, with optional full-screen viewing, without changing upload, deletion, storage, or inspector navigation.
+
+Purchase Order issuance and permanent PDF generation are implemented in the current development work. Issuance captures an immutable hash-backed snapshot and remains independent from the retryable PDF pipeline. One private Storage artifact is generated per issuance exclusively from that snapshot, with visible Pending/Generating/Generated/Failed state and original-file download. Draft previews use the same normalized renderer without creating issuance, document, or Storage records. Classic and TenOps templates share bounded original-form geometry while retaining distinct restrained color treatments; template name/version are immutable at issuance.
+
+Forward migrations `20260723_006_purchase_order_number_allocation.sql` and `20260723_007_arim_catalog_skus.sql` were verified against live Supabase on July 23, 2026. The first allocates immutable `####-###` numbers on first successful Draft save through private concurrency-safe sequence rows, using a linked Job's final four digits or stock prefix `9999`. The second adds ARIM-published marble/granite product codes to matching legacy catalog rows and carries them through line, issuance, preview, and PDF snapshots. Existing Purchase Orders are not renumbered.
+
+Forward migration `20260723_008_purchase_order_pending_receivals.sql` was reported applied by the user and its live columns, unique index, and RPC were verified on July 23, 2026. An issued PO with a generated permanent PDF can explicitly project selected eligible immutable snapshot lines into Pending Receivals. Durable issuance/line provenance, a partial unique index, and one atomic RPC protect retries and concurrent creation. Category, quantity, unit, ETA, location, material, and size are reviewed before creation; ETA defaults blank rather than assuming the PO or Job requested date is an arrival date.
+
+Live validation discovered that migration `20260723_005_purchase_order_pdf_v2.sql` recreated `capture_purchase_order_pdf_snapshot_fields()` without the `extensions` schema in its function search path. New issuance consequently failed when the trigger called pgcrypto `digest(bytea,text)`. Forward migration `20260723_009_purchase_order_pdf_snapshot_pgcrypto_path.sql` corrects only that function configuration; it was applied and behaviorally verified against live Supabase on July 23, 2026.
+
+The July 23 comprehensive Purchasing validation then completed successfully against explicit `TEST-VALIDATION-*` fixtures: both document templates issued and generated permanent PDFs, retry/idempotency checks passed, 26 immutable PO lines projected to unique Pending Receivals, and two canonical Job-linked receivals were received into exclusive reserved lots. The generated test POs, issuances, documents, Storage objects, receivals, transactions, and exclusive lots were subsequently removed using an exact-ID guarded cleanup. No `test%` Purchase Orders or PO-created test receivals remained afterward.
+
+Revisions, Project Files attachment, full receiving-against-PO reconciliation, partial receipt tracking by PO line, readiness automation, email, Vendor Invoices, and non-chip POs remain unimplemented.
+
 ## Attachments
 
 The attachment schema and private storage bucket have already been applied in Supabase.

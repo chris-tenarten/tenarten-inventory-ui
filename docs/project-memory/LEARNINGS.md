@@ -168,3 +168,13 @@ Marcos' Monday Manpower board is an example of a workflow that evolved around Mo
 TenOps should preserve successful user workflows while replacing only the underlying technical limitations.
 
 Users should feel that TenOps is a natural evolution of how they already work rather than an entirely new system that requires retraining.
+
+## Operational Independence
+
+A completed feature should not require the software developer for routine operational maintenance. One of TenOps' core goals is increasing the organization's operational independence.
+
+When a feature reaches its intended scope, the people performing that work should be able to maintain routine operational data without code changes or database edits. This includes Vendors, Vendor Contacts, Vendor Catalog Items, Vendor Pricing, Workers, Tasks, and other reusable configuration.
+
+If normal business operations require asking the developer, the feature is incomplete. Developers should build systems, not become part of the system.
+
+Favor safe user-managed configuration while preserving validation, permissions, historical records, and auditability.
