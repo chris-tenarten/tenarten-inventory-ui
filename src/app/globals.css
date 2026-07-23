@@ -3,6 +3,18 @@
 :root {
   --background: #eef1f4;
   --foreground: #020617;
+  --tenops-root-font-size: 16px;
+  --tenops-density: 1;
+}
+
+html[data-display-size="compact"] {
+  --tenops-root-font-size: 14px;
+  --tenops-density: 0.875;
+}
+
+html[data-display-size="large"] {
+  --tenops-root-font-size: 18px;
+  --tenops-density: 1.125;
 }
 
 @theme inline {
@@ -19,6 +31,7 @@
 html {
   min-height: 100%;
   background: var(--background);
+  font-size: var(--tenops-root-font-size);
 }
 
 body {
@@ -100,6 +113,7 @@ textarea::placeholder {
 
 @media print {
   @page { size: letter portrait; margin: 0; }
+  html { font-size: 16px !important; }
   body * { visibility: hidden !important; }
   .document-print-root, .document-print-root * { visibility: visible !important; }
   .document-print-root { position: absolute; inset: 0; width: 8.5in !important; transform: none !important; }

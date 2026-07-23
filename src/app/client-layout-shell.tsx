@@ -5,6 +5,12 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
+import {
+  applyDisplaySize,
+  DISPLAY_SIZE_STORAGE_KEY,
+  isDisplaySize,
+  readDisplaySize,
+} from '@/lib/display-size';
 
 const primaryNavItems = [
   { href: '/', label: 'Dashboard', icon: HomeIcon },
@@ -165,24 +171,47 @@ function DomainNav({
   icon: ComponentType;
   items: DomainNavItem[];
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [dismissedWhileHovered, setDismissedWhileHovered] = useState(false);
   const isActive = items.some((item) => {
     const path = item.matchPath || item.href;
     return path && (pathname === path || pathname.startsWith(`${path}/`));
   });
   return (
-    <div className="group relative shrink-0">
+    <div
+      className="relative shrink-0"
+      onMouseEnter={() => {
+        if (!dismissedWhileHovered) setIsOpen(true);
+      }}
+      onMouseLeave={() => {
+        setIsOpen(false);
+        setDismissedWhileHovered(false);
+      }}
+      onFocus={() => {
+        if (!dismissedWhileHovered) setIsOpen(true);
+      }}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false);
+      }}
+    >
       <Link
         href={href}
         aria-haspopup="menu"
+        aria-expanded={isOpen}
+        onClick={(event) => {
+          setDismissedWhileHovered(true);
+          setIsOpen(false);
+          event.currentTarget.blur();
+        }}
         className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] outline-none transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(isActive)}`}
       >
         <Icon />
         <span className="hidden sm:inline">{label}</span>
-        <span className="transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180">
+        <span className={`transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`}>
           <ChevronDownIcon />
         </span>
       </Link>
-      <div className="invisible absolute left-0 top-full z-50 min-w-[280px] pt-1 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+      <div className={`absolute left-0 top-full z-50 min-w-[280px] pt-1 transition-all duration-150 ${isOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
         <div className="border border-slate-300 bg-white py-1 shadow-[0_12px_30px_rgba(15,23,42,0.18)]">
           <div className="border-b border-slate-200 px-4 py-2">
             <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{label}</div>
@@ -196,7 +225,16 @@ function DomainNav({
                 <div className="mt-0.5 text-xs font-medium">{item.description}</div>
               </div>
             ) : (
-              <Link key={item.href} href={item.href} className={`block px-4 py-3 transition ${dropdownItemClass(itemActive)}`}>
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={(event) => {
+                  setDismissedWhileHovered(true);
+                  setIsOpen(false);
+                  event.currentTarget.blur();
+                }}
+                className={`block px-4 py-3 transition ${dropdownItemClass(itemActive)}`}
+              >
                 <div className="text-sm font-bold">{item.label}</div>
                 <div className="mt-0.5 text-xs font-medium text-slate-500">{item.description}</div>
               </Link>
@@ -221,6 +259,18 @@ export default function ClientLayoutShell({
   const [passwordInput, setPasswordInput] = useState('');
   const [accessError, setAccessError] = useState('');
   const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    applyDisplaySize(readDisplaySize());
+
+    function syncDisplaySize(event: StorageEvent) {
+      if (event.key !== DISPLAY_SIZE_STORAGE_KEY) return;
+      applyDisplaySize(isDisplaySize(event.newValue) ? event.newValue : 'default');
+    }
+
+    window.addEventListener('storage', syncDisplaySize);
+    return () => window.removeEventListener('storage', syncDisplaySize);
+  }, []);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
