@@ -1,0 +1,69 @@
+import { expect, test } from "@playwright/test";
+
+test("domain navigation preserves direct defaults, sibling access, and Dashboard views", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  await expect(page.getByRole("button", { name: "Overview" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Table" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Timeline" })).toBeVisible();
+
+  const inventory = page.getByRole("link", { name: "Inventory", exact: true });
+  await expect(inventory).toHaveAttribute("href", "/inventory");
+  await inventory.hover();
+  await expect(
+    page.getByRole("link", { name: /Current Inventory/ }),
+  ).toHaveAttribute("href", "/inventory");
+  await expect(
+    page.getByRole("link", { name: /Pending Receivals/ }),
+  ).toHaveAttribute(
+    "href",
+    "/inventory?section=pending-receivals#pending-receivals",
+  );
+  await expect(page.getByRole("link", { name: /^Activity/ })).toHaveAttribute(
+    "href",
+    "/activity",
+  );
+
+  await page.getByRole("link", { name: /Pending Receivals/ }).click();
+  await expect(page).toHaveURL(/\/inventory\?section=pending-receivals#pending-receivals$/);
+  await expect(
+    page.getByRole("button", { name: /Pending Receivals/ }),
+  ).toHaveAttribute("aria-expanded", "true");
+
+  const purchasing = page.getByRole("link", {
+    name: "Purchasing",
+    exact: true,
+  });
+  await expect(purchasing).toHaveAttribute("href", "/purchasing");
+  await purchasing.hover();
+  await expect(
+    page.getByRole("link", { name: /Purchase Orders/ }),
+  ).toHaveAttribute("href", "/purchasing");
+  await expect(page.getByRole("link", { name: /^Catalog/ })).toHaveAttribute(
+    "href",
+    "/catalog",
+  );
+
+  const reporting = page.getByRole("link", {
+    name: "Reporting",
+    exact: true,
+  });
+  await expect(reporting).toHaveAttribute("href", "/manpower-reporting");
+  await reporting.hover();
+  await expect(page.getByRole("link", { name: /^Manpower/ })).toHaveAttribute(
+    "href",
+    "/manpower-reporting",
+  );
+  await expect(
+    page.getByRole("link", { name: /^Material Usage/ }),
+  ).toHaveAttribute("href", "/material-usage");
+  await expect(
+    page.locator('[aria-disabled="true"]').filter({ hasText: "Daily Production" }),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole("link", { name: "Settings", exact: true }),
+  ).toHaveAttribute("href", "/settings");
+});

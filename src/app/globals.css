@@ -97,3 +97,10 @@ textarea::placeholder {
 .timeline-density-slider:active::-moz-range-thumb {
   background: #f1f5f9;
 }
+
+@media print {
+  @page { size: letter portrait; margin: 0; }
+  body * { visibility: hidden !important; }
+  .document-print-root, .document-print-root * { visibility: visible !important; }
+  .document-print-root { position: absolute; inset: 0; width: 8.5in !important; transform: none !important; }
+}

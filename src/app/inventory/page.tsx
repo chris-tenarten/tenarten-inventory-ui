@@ -487,6 +487,20 @@ export default function InventoryPage() {
   const [pendingBulkEditMessage, setPendingBulkEditMessage] = useState('');
   const pendingSelectAllRef = useRef<HTMLInputElement>(null);
   const pendingReceivalBaselineRef = useRef('');
+
+  useEffect(() => {
+    const openLinkedPendingReceivals = () => {
+      if (window.location.hash === '#pending-receivals') {
+        setPendingReceivalsExpanded(true);
+      }
+    };
+    const timer = window.setTimeout(openLinkedPendingReceivals, 0);
+    window.addEventListener('hashchange', openLinkedPendingReceivals);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('hashchange', openLinkedPendingReceivals);
+    };
+  }, []);
   const [receivingPendingId, setReceivingPendingId] = useState<string | null>(null);
   const [cancellingPendingId, setCancellingPendingId] = useState<string | null>(null);
   const [clearingReceivedPending, setClearingReceivedPending] = useState(false);
@@ -2265,7 +2279,7 @@ export default function InventoryPage() {
         <button
           type="button"
           aria-expanded={pendingReceivalsExpanded}
-          aria-controls="pending-receivals-content"
+          aria-controls="pending-receivals"
           onClick={() => setPendingReceivalsExpanded((expanded) => !expanded)}
           className="group flex w-full items-center gap-3 border-b border-slate-200 bg-white px-5 py-3 text-left transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-700"
         >
@@ -2286,7 +2300,7 @@ export default function InventoryPage() {
         </button>
 
         <div
-          id="pending-receivals-content"
+          id="pending-receivals"
           aria-hidden={!pendingReceivalsExpanded}
           inert={!pendingReceivalsExpanded}
           className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${pendingReceivalsExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
