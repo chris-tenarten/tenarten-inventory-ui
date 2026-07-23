@@ -867,6 +867,10 @@ export function PurchaseOrderEditor({
     pendingReceivalProjection?.lines.filter(line => line.alreadyCreated).length ?? 0;
   const pendingReceivalRemainingCount =
     pendingReceivalProjection?.lines.filter(line => line.eligible && !line.alreadyCreated).length ?? 0;
+  const provisionalPoPrefix = draft.productionJobId
+    ? `${draft.jobNumberSnapshot.replace(/\D/g, "").slice(-4)}-`
+    : "9999-";
+  const displayedPoNumber = draft.poNumber || provisionalPoPrefix;
   return (
     <div className="fixed inset-0 z-[90] overflow-y-auto bg-slate-950/40 p-2">
       <div className="mx-auto min-h-full max-w-[1500px] bg-[#eef1f4] shadow-2xl">
@@ -879,11 +883,8 @@ export function PurchaseOrderEditor({
               {draft.id ? "Edit Purchase Order" : "New Purchase Order"}
             </h2>
             <div className="mt-1 text-sm text-slate-600">
-              {draft.poNumber ? (
-                <b>{draft.poNumber}</b>
-              ) : (
-                "Purchase Order number not assigned"
-              )}
+              <b>{displayedPoNumber}</b>
+              {!draft.poNumber && <span className="ml-2">Final suffix assigned on first save</span>}
             </div>
           </div>
           <div className="flex gap-2">
@@ -931,12 +932,12 @@ export function PurchaseOrderEditor({
                   className={field}
                 >
                   <option value="tenops">TenOps</option>
-                  <option value="classic">Classic</option>
+                  <option value="classic">Legacy (Classic)</option>
                 </select>
               </label>
               <div className="self-end pb-2 text-sm text-slate-600">
                 {draft.documentTemplate === "classic"
-                  ? "Classic — Based on the original company Purchase Order."
+                  ? "Legacy (Classic) — Based on the original company Purchase Order."
                   : "TenOps — Current streamlined TenOps layout."}
               </div>
             </section>
@@ -977,10 +978,9 @@ export function PurchaseOrderEditor({
               <div>
                 <label className={label}>Purchase Order Number</label>
                 <input
-                  value={draft.poNumber}
+                  value={displayedPoNumber}
                   readOnly
                   className={`${field} bg-slate-50`}
-                  placeholder="Assigned when saved"
                 />
               </div>
               <div>

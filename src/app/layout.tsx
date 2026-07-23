@@ -21,7 +21,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-display-size="default" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var s=localStorage.getItem('tenops_display_size');if(s==='compact'||s==='large'||s==='default'){document.documentElement.dataset.displaySize=s}}catch(e){}",
+          }}
+        />
+      </head>
       <body>
         <ClientLayoutShell>{children}</ClientLayoutShell>
       </body>

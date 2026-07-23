@@ -26,6 +26,16 @@ test("domain navigation preserves direct defaults, sibling access, and Dashboard
     "/activity",
   );
 
+  await inventory.click();
+  await expect(page).toHaveURL(/\/inventory$/);
+  await expect(inventory).toHaveAttribute("aria-expanded", "false");
+  await expect(
+    page.getByRole("link", { name: /Current Inventory/ }),
+  ).not.toBeVisible();
+
+  await page.getByRole("link", { name: "Dashboard", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await inventory.hover();
   await page.getByRole("link", { name: /Pending Receivals/ }).click();
   await expect(page).toHaveURL(/\/inventory\?section=pending-receivals#pending-receivals$/);
   await expect(
@@ -66,4 +76,33 @@ test("domain navigation preserves direct defaults, sibling access, and Dashboard
   await expect(
     page.getByRole("link", { name: "Settings", exact: true }),
   ).toHaveAttribute("href", "/settings");
+});
+
+test("display size applies immediately and persists across navigation and reload", async ({
+  page,
+}) => {
+  await page.goto("/settings");
+
+  await page.getByRole("radio", { name: /Large/ }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-display-size", "large");
+  await expect
+    .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).fontSize))
+    .toBe("18px");
+  await expect
+    .poll(() =>
+      page.evaluate(() => window.localStorage.getItem("tenops_display_size")),
+    )
+    .toBe("large");
+
+  await page.goto("/inventory");
+  await expect(page.locator("html")).toHaveAttribute("data-display-size", "large");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-display-size", "large");
+
+  await page.goto("/settings");
+  await page.getByRole("radio", { name: /Compact/ }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-display-size", "compact");
+  await expect
+    .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).fontSize))
+    .toBe("14px");
 });
