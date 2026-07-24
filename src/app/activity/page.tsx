@@ -2,6 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useLanguage } from '@/lib/language';
 
 type TransactionTypeFilter = 'all' | 'intake' | 'outtake' | 'adjustment';
 
@@ -124,6 +125,7 @@ function filterLabel(filter: TransactionTypeFilter) {
 }
 
 export default function ActivityPage() {
+  const { language, tr } = useLanguage();
   const [rows, setRows] = useState<TransactionRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -192,7 +194,7 @@ export default function ActivityPage() {
   return (
     <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-5 text-slate-950 sm:px-5 sm:py-7">
       <div className="mx-auto w-full max-w-[1800px]">
-        <div className="mb-4 border-b border-slate-200 pb-4"><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Operational ledger</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Inventory Activity</h1><p className="mt-1 text-sm text-slate-600">Inventory receipts, usage, transfers, and adjustments.</p></div>
+        <div className="mb-4 border-b border-slate-200 pb-4"><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Operational ledger', 'Registro operativo')}</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Inventory Activity', 'Movimientos de inventario')}</h1><p className="mt-1 text-sm text-slate-600">{tr('Inventory receipts, usage, transfers, and adjustments.', 'Entradas, consumos, transferencias y ajustes de inventario.')}</p></div>
         <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 bg-white p-3 sm:p-4">
           <div>
@@ -200,19 +202,19 @@ export default function ActivityPage() {
               htmlFor="activity-search"
               className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500"
             >
-              Search Inventory Activity
+              {tr('Search Inventory Activity', 'Buscar movimientos de inventario')}
             </label>
             <input
               id="activity-search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               className={fieldClass}
-              placeholder="Vendor, material, size, quantity, location, notes, or job"
+              placeholder={tr('Vendor, material, size, quantity, location, notes, or job', 'Proveedor, material, tamaño, cantidad, ubicación, notas o trabajo')}
             />
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span id="activity-filter-label" className="shrink-0 text-sm font-semibold text-slate-700">Show</span>
+            <span id="activity-filter-label" className="shrink-0 text-sm font-semibold text-slate-700">{tr('Show', 'Mostrar')}</span>
             <div role="group" aria-labelledby="activity-filter-label" className="inline-flex h-9 items-stretch divide-x divide-slate-300 overflow-hidden rounded-sm border border-slate-300 bg-slate-50">
               {(['all', 'intake', 'outtake', 'adjustment'] as TransactionTypeFilter[]).map((filter) => (
                 <button
@@ -226,7 +228,9 @@ export default function ActivityPage() {
                       : 'text-slate-600 hover:bg-white hover:text-slate-950'
                   }`}
                 >
-                  {filterLabel(filter)}
+                  {language === 'es'
+                    ? ({ all: 'Todos', intake: 'Entrada', outtake: 'Salida', adjustment: 'Ajuste' } as const)[filter]
+                    : filterLabel(filter)}
                 </button>
               ))}
             </div>
@@ -236,7 +240,7 @@ export default function ActivityPage() {
               disabled={loading}
               className="ml-auto h-9 rounded-sm border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? 'Refreshing' : 'Refresh'}
+              {loading ? tr('Refreshing', 'Actualizando') : tr('Refresh', 'Actualizar')}
             </button>
           </div>
         </div>
@@ -249,10 +253,10 @@ export default function ActivityPage() {
 
         <div>
           {loading ? (
-            <div className="px-4 py-8 text-sm font-semibold text-slate-600">Loading activity...</div>
+            <div className="px-4 py-8 text-sm font-semibold text-slate-600">{tr('Loading activity...', 'Cargando movimientos...')}</div>
           ) : filteredRows.length === 0 ? (
             <div className="px-4 py-10 text-center text-sm font-semibold text-slate-500">
-              No matching activity found.
+              {tr('No matching activity found.', 'No se encontraron movimientos.')}
             </div>
           ) : (
             <>
@@ -260,15 +264,15 @@ export default function ActivityPage() {
                 <table className="w-full min-w-[1080px] border-collapse text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-[10px] uppercase tracking-[0.12em] text-slate-600">
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Date</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Type</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Vendor</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Material</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Size</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-right font-semibold">Qty</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Unit</th>
-                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">Location</th>
-                  <th className="px-3 py-2 text-left font-semibold">Open</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">{tr('Date', 'Fecha')}</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">{tr('Type', 'Tipo')}</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">{tr('Vendor', 'Proveedor')}</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">{tr('Material', 'Material')}</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">{tr('Size', 'Tamaño')}</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-right font-semibold">{tr('Qty', 'Cant.')}</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">{tr('Unit', 'Unidad')}</th>
+                  <th className="border-r border-slate-200 px-3 py-2 text-left font-semibold">{tr('Location', 'Ubicación')}</th>
+                  <th className="px-3 py-2 text-left font-semibold">{tr('Open', 'Abrir')}</th>
                 </tr>
               </thead>
 
@@ -293,7 +297,7 @@ export default function ActivityPage() {
                             {formatTransactionType(row.transaction_type)}
                           </span>
                           {row.reversed_at && (
-                            <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-red-700">Reversed</div>
+                            <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-red-700">{tr('Reversed', 'Revertido')}</div>
                           )}
                         </td>
 
@@ -339,7 +343,7 @@ export default function ActivityPage() {
                             <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
                               <div className="border border-slate-300 bg-white">
                                 <div className="border-b border-slate-300 bg-[#e8edf3] px-3 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700">
-                                  Transaction Notes
+                                  {tr('Transaction Notes', 'Notas del movimiento')}
                                 </div>
                                 <div className="min-h-[84px] whitespace-pre-wrap px-3 py-3 text-sm leading-6 text-slate-700">
                                   {row.notes?.trim() || 'No notes recorded.'}
@@ -416,14 +420,14 @@ export default function ActivityPage() {
                           </div>
                         </div>
                         <div className="mt-3 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700">
-                          {isExpanded ? 'Close Details' : 'Open Details'}
+                          {isExpanded ? tr('Close Details', 'Cerrar detalles') : tr('Open Details', 'Abrir detalles')}
                         </div>
                       </button>
 
                       {isExpanded && (
                         <div className="border-t border-slate-300 bg-[#f6f7f9] px-4 py-4">
                           <div className="border border-slate-300 bg-white">
-                            <div className="border-b border-slate-300 bg-[#e8edf3] px-3 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700">Transaction Notes</div>
+                            <div className="border-b border-slate-300 bg-[#e8edf3] px-3 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700">{tr('Transaction Notes', 'Notas del movimiento')}</div>
                             <div className="min-h-[72px] whitespace-pre-wrap px-3 py-3 text-sm leading-6 text-slate-700">{row.notes?.trim() || 'No notes recorded.'}</div>
                           </div>
                           <div className="mt-3 border border-slate-300 bg-white px-3 py-3 text-sm text-slate-700">

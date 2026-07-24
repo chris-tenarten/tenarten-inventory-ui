@@ -17,6 +17,7 @@ import {
 } from '../production/job-options';
 import { JobTag } from '../production/components/JobTag';
 import ProductionStatusBadge from '../production/components/ProductionStatusBadge';
+import { useLanguage } from '@/lib/language';
 
 import {
   deleteMaterialUsageReport,
@@ -131,6 +132,7 @@ export function MaterialUsageEditor({
   onSaved,
   onDeleted,
 }: Props) {
+  const { tr } = useLanguage();
   const initialSnapshotRef = useRef(serializeReport(report));
   const jobSelectorRef = useRef<HTMLDivElement | null>(null);
   const [jobSearch, setJobSearch] = useState(getJobDisplayValue(report));
@@ -491,7 +493,7 @@ export function MaterialUsageEditor({
         <header className="mb-5 flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-semibold text-slate-900">{report.id ? 'Material Usage Report' : 'New Material Usage Report'}</h2>
+              <h2 className="text-xl font-semibold text-slate-900">{report.id ? tr('Material Usage Report','Reporte de uso de materiales') : tr('New Material Usage Report','Nuevo reporte de uso de materiales')}</h2>
               {isDirty ? <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Unsaved</span> : null}
             </div>
             <p className="mt-1 text-sm text-slate-500">Record materials used for a job or production activity.</p>
@@ -504,7 +506,7 @@ export function MaterialUsageEditor({
               </button>
             ) : null}
             <button type="button" onClick={() => void handleSave()} disabled={saving || deleting} className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
-              {saving ? 'Saving...' : 'Save Report'}
+              {saving ? tr('Saving...','Guardando...') : tr('Save Report','Guardar reporte')}
             </button>
           </div>
         </header>
@@ -515,7 +517,7 @@ export function MaterialUsageEditor({
         <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
           <div className="grid grid-cols-1 gap-4 border-b border-slate-200 p-5 md:grid-cols-2 lg:grid-cols-4">
             <div ref={jobSelectorRef} className="relative md:col-span-2">
-              <label htmlFor="material-usage-job" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">Job</label>
+              <label htmlFor="material-usage-job" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">{tr('Job','Trabajo')}</label>
               <div className="relative flex gap-2">
                 <div className="relative min-w-0 flex-1">
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><SearchIcon /></span>
@@ -525,7 +527,7 @@ export function MaterialUsageEditor({
                       event.preventDefault();
                       selectTemporaryLabel();
                     }
-                  }} autoComplete="off" placeholder="Search Production jobs or type a job name" className="w-full rounded-md border border-slate-300 py-2 pl-9 pr-9 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+                  }} autoComplete="off" placeholder={tr('Search Production jobs or type a job name','Buscar trabajos de Producción o escribir un nombre de trabajo')} className="w-full rounded-md border border-slate-300 py-2 pl-9 pr-9 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
                   <button type="button" onClick={() => setJobMenuOpen((current) => !current)} aria-label="Open job options" className="absolute right-0 top-0 flex h-full w-9 items-center justify-center text-slate-500 hover:text-slate-900"><ChevronDownIcon /></button>
                 </div>
                 {jobSearch ? <button type="button" onClick={clearJobSelection} className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-600 hover:bg-slate-50">Clear</button> : null}
@@ -588,32 +590,32 @@ export function MaterialUsageEditor({
             </div>
 
             <div>
-              <label htmlFor="material-usage-date" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">Date</label>
+              <label htmlFor="material-usage-date" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">{tr('Date','Fecha')}</label>
               <input id="material-usage-date" type="date" value={report.reportDate} onChange={(event) => updateReport({ reportDate: event.target.value })} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
 
             <div>
-              <label htmlFor="material-usage-work-order" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">Work Order #</label>
-              <input id="material-usage-work-order" value={report.workOrder} onChange={(event) => updateReport({ workOrder: event.target.value })} placeholder="Work Order #" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              <label htmlFor="material-usage-work-order" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">{tr('Work Order #','Orden de trabajo #')}</label>
+              <input id="material-usage-work-order" value={report.workOrder} onChange={(event) => updateReport({ workOrder: event.target.value })} placeholder={tr('Work Order #','Orden de trabajo #')} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
 
             <div className="md:col-span-2">
-              <label htmlFor="material-usage-terrazzo-type" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">Terrazzo Type</label>
-              <input id="material-usage-terrazzo-type" value={report.terrazzoType} onChange={(event) => updateReport({ terrazzoType: event.target.value })} placeholder="For example: epoxy, precast, cementitious" className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              <label htmlFor="material-usage-terrazzo-type" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">{tr('Terrazzo Type','Tipo de terrazo')}</label>
+              <input id="material-usage-terrazzo-type" value={report.terrazzoType} onChange={(event) => updateReport({ terrazzoType: event.target.value })} placeholder={tr('For example: epoxy, precast, cementitious','Por ejemplo: epóxico, prefabricado, cementicio')} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
 
             <div className="md:col-span-2">
-              <label htmlFor="material-usage-notes" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">Report Notes</label>
-              <textarea id="material-usage-notes" value={report.notes} onChange={(event) => updateReport({ notes: event.target.value })} rows={3} placeholder="Optional report-level notes" className="w-full resize-y rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              <label htmlFor="material-usage-notes" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">{tr('Report Notes','Notas del reporte')}</label>
+              <textarea id="material-usage-notes" value={report.notes} onChange={(event) => updateReport({ notes: event.target.value })} rows={3} placeholder={tr('Optional report-level notes','Notas generales opcionales del reporte')} className="w-full resize-y rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
           </div>
 
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3">
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">Materials</h3>
-              <p className="mt-0.5 text-xs text-slate-500">Blank lines are ignored when the report is saved.</p>
+              <h3 className="text-sm font-semibold text-slate-900">{tr('Materials','Materiales')}</h3>
+              <p className="mt-0.5 text-xs text-slate-500">{tr('Blank lines are ignored when the report is saved.','Los renglones vacíos se omiten al guardar el reporte.')}</p>
             </div>
-            <button type="button" onClick={addLine} className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">Add Line</button>
+            <button type="button" onClick={addLine} className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">{tr('Add Line','Agregar renglón')}</button>
           </div>
 
           <div className="overflow-x-auto">
@@ -621,17 +623,17 @@ export function MaterialUsageEditor({
               <thead>
                 <tr className="bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
                   <th className="w-12 border-b border-slate-200 px-3 py-2 text-center">#</th>
-                  <th className="min-w-36 border-b border-slate-200 px-2 py-2">Type</th>
-                  <th className="min-w-40 border-b border-slate-200 px-2 py-2">Manufacturer</th>
-                  <th className="min-w-52 border-b border-slate-200 px-2 py-2">Material</th>
-                  <th className="w-28 border-b border-slate-200 px-2 py-2">Quantity</th>
-                  <th className="w-32 border-b border-slate-200 px-2 py-2">Unit</th>
+                  <th className="min-w-36 border-b border-slate-200 px-2 py-2">{tr('Type','Tipo')}</th>
+                  <th className="min-w-40 border-b border-slate-200 px-2 py-2">{tr('Manufacturer','Fabricante')}</th>
+                  <th className="min-w-52 border-b border-slate-200 px-2 py-2">{tr('Material','Material')}</th>
+                  <th className="w-28 border-b border-slate-200 px-2 py-2">{tr('Quantity','Cantidad')}</th>
+                  <th className="w-32 border-b border-slate-200 px-2 py-2">{tr('Unit','Unidad')}</th>
                   <th className="w-40 border-b border-slate-200 px-2 py-2">
-                    <span className="block">Color Plate #</span>
-                    <span className="mt-0.5 block text-[9px] font-semibold normal-case tracking-normal text-slate-400">Chip Blend only</span>
+                    <span className="block">{tr('Color Plate #','Placa de color #')}</span>
+                    <span className="mt-0.5 block text-[9px] font-semibold normal-case tracking-normal text-slate-400">{tr('Chip Blend only','Solo para mezcla de chips')}</span>
                   </th>
-                  <th className="min-w-56 border-b border-slate-200 px-2 py-2">Notes</th>
-                  <th className="sticky right-0 z-10 w-24 min-w-24 border-b border-l border-slate-200 bg-slate-50 px-2 py-2 text-right">Action</th>
+                  <th className="min-w-56 border-b border-slate-200 px-2 py-2">{tr('Notes','Notas')}</th>
+                  <th className="sticky right-0 z-10 w-24 min-w-24 border-b border-l border-slate-200 bg-slate-50 px-2 py-2 text-right">{tr('Action','Acción')}</th>
                 </tr>
               </thead>
 
@@ -675,7 +677,7 @@ export function MaterialUsageEditor({
           </div>
 
           <div className="flex justify-end border-t border-slate-200 px-5 py-4">
-            <button type="button" onClick={() => void handleSave()} disabled={saving || deleting} className="rounded-md bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">{saving ? 'Saving...' : 'Save Report'}</button>
+            <button type="button" onClick={() => void handleSave()} disabled={saving || deleting} className="rounded-md bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">{saving ? tr('Saving...','Guardando...') : tr('Save Report','Guardar reporte')}</button>
           </div>
         </section>
       </div>

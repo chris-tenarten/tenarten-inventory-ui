@@ -33,6 +33,18 @@ export async function deletePurchaseOrderDraft(id: string, actor: string): Promi
   if (error) throw error;
 }
 
+export async function purgeTestPurchaseOrder(id: string, poNumber: string, confirmation: string): Promise<void> {
+  const { data, error } = await supabase.functions.invoke('generate-purchase-order-pdf', {
+    body: { action:'purge-test-purchase-order', purchaseOrderId:id, poNumber, confirmation },
+  });
+  if (error) await throwPdfFunctionError(error);
+  if (data?.error) throw new Error(String(data.error));
+  if (data?.status !== 'deleted') throw new Error('The test Purchase Order was not deleted.');
+  if (data?.storageCleanupComplete === false) {
+    throw new Error('The Purchase Order was deleted, but one or more test PDF files require Storage cleanup.');
+  }
+}
+
 export async function issuePurchaseOrder(id: string, actor: string, expectedUpdatedAt: string): Promise<PurchaseOrderIssuanceResult> {
   const { data, error } = await supabase.rpc('issue_purchase_order', {
     p_purchase_order_id: id,

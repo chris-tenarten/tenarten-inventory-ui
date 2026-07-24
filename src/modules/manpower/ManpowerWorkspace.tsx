@@ -3,6 +3,7 @@
 import { ChevronDown, ChevronRight, Pencil, Plus, RotateCw, Search, Settings2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { useLanguage } from '@/lib/language';
 import { JobTag } from '../production/components/JobTag';
 import ProductionStatusBadge from '../production/components/ProductionStatusBadge';
 import { openProductionJob } from '../production/job-options';
@@ -541,6 +542,7 @@ function BulkActionBar({
 }
 
 export default function ManpowerWorkspace() {
+  const { tr } = useLanguage();
   const [entries, setEntries] = useState<ManpowerEntry[]>([]);
   const [jobs, setJobs] = useState<ManpowerJob[]>([]);
   const [reportingGroups, setReportingGroups] = useState<ManpowerReportingGroup[]>([]);
@@ -833,10 +835,10 @@ export default function ManpowerWorkspace() {
   return (
     <div className="mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7">
       <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
-        <div><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Operations Reporting</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Manpower Reporting</h1><p className="mt-1 text-sm text-slate-600">Record shop labor by job, worker, task, and work date.</p></div>
+        <div><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Operations Reporting','Reportes de operaciones')}</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Manpower Reporting','Reporte de mano de obra')}</h1><p className="mt-1 text-sm text-slate-600">{tr('Record shop labor by job, worker, task, and work date.','Registre las horas del taller por trabajo, empleado, tarea y fecha de trabajo.')}</p></div>
         <div className="flex gap-2">
-          <button type="button" onClick={toggleReferencePanel} className="inline-flex h-9 items-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"><Settings2 className="h-4 w-4" /> Workers & Tasks</button>
-          <button type="button" onClick={() => void load()} disabled={loading} className="inline-flex h-9 items-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"><RotateCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh</button>
+          <button type="button" onClick={toggleReferencePanel} className="inline-flex h-9 items-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"><Settings2 className="h-4 w-4" /> {tr('Workers & Tasks','Empleados y tareas')}</button>
+          <button type="button" onClick={() => void load()} disabled={loading} className="inline-flex h-9 items-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"><RotateCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> {tr('Refresh','Actualizar')}</button>
         </div>
       </div>
 
@@ -851,11 +853,11 @@ export default function ManpowerWorkspace() {
 
       <div className="mt-5 space-y-3">
         <div className="flex min-h-9 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          {!showNewGroup ? <button type="button" onClick={() => setShowNewGroup(true)} className="inline-flex h-9 items-center gap-1.5 border border-slate-500 bg-white px-3 text-xs font-bold uppercase tracking-wide text-slate-800 hover:bg-slate-100"><Plus className="h-4 w-4" /> New Group</button> : <div className="flex items-center gap-1 border border-slate-400 bg-white p-1"><input ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder="Reporting group name" className="h-8 w-72 px-2 text-sm outline-none" /><button type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim()} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? 'Creating…' : 'Create'}</button><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">Cancel</button></div>}
+          {!showNewGroup ? <button type="button" onClick={() => setShowNewGroup(true)} className="inline-flex h-9 items-center gap-1.5 border border-slate-500 bg-white px-3 text-xs font-bold uppercase tracking-wide text-slate-800 hover:bg-slate-100"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</button> : <div className="flex items-center gap-1 border border-slate-400 bg-white p-1"><input ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 px-2 text-sm outline-none" /><button type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim()} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</button><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
           <label className="relative block w-full sm:max-w-sm">
-            <span className="sr-only">Search manpower</span>
+            <span className="sr-only">{tr('Search manpower','Buscar registros de mano de obra')}</span>
             <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-            <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search manpower…" className={`${inputClass} pl-9`} />
+            <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr('Search manpower…','Buscar mano de obra…')} className={`${inputClass} pl-9`} />
           </label>
         </div>
         {linkedJobId ? <div className="flex items-center gap-2 text-xs"><span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 font-semibold text-blue-800">Job: {jobs.find((job) => job.id === linkedJobId)?.name ?? 'Selected Production job'}</span><button type="button" onClick={() => { const url = new URL(window.location.href); url.searchParams.delete('job'); window.history.pushState(null, '', `${url.pathname}${url.search}`); setLinkedJobId(null); }} className="font-semibold text-slate-500 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">Clear job filter</button></div> : null}
@@ -889,9 +891,9 @@ export default function ManpowerWorkspace() {
                 <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">PM {pm.toFixed(1)} hrs</span>
                 <span className="shrink-0 rounded-sm bg-slate-900 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">TOTAL {(am + pm).toFixed(1)} hrs</span>
               </div>
-              {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> Add New Line</button></div>}
+              {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</button></div>}
               {!isCollapsed && <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                <span className="flex-1">{groupJob ? 'This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.' : 'This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.'}</span>
+                <span className="flex-1">{groupJob ? tr('This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.','Este grupo de mano de obra está vinculado al trabajo de Producción. Las horas registradas aquí se incluyen en las horas registradas del flujo de producción.') : tr('This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.','Este grupo de mano de obra no está vinculado a un trabajo de Producción. Las horas registradas aquí no aparecerán en Producción hasta que se vincule un trabajo.')}</span>
                 <ProductionJobLinkSelector groupLabel={group.label} jobs={jobs} value={groupJobId} disabled={linkingGroupId === group.key} onChange={(jobId) => void linkReportingGroup(group.key, group.entries, jobId, previousJobName)} />
               </div>}
               {selectedGroupIds.length > 0 && <BulkActionBar selectedCount={selectedGroupIds.length} jobs={jobs} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}

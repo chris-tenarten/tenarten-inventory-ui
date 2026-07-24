@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useLanguage } from '@/lib/language';
 
 type CatalogRow = {
   id: string;
@@ -191,6 +192,7 @@ function DetailField({ label, value }: { label: string; value: string | number |
 }
 
 export default function CatalogPage() {
+  const { tr } = useLanguage();
   const [catalogRows, setCatalogRows] = useState<CatalogRow[]>([]);
   const [recentAnnotations, setRecentAnnotations] = useState<CatalogRow[]>([]);
 
@@ -454,9 +456,9 @@ export default function CatalogPage() {
     <div className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-3 text-slate-950 sm:px-6 sm:py-5 lg:px-8">
       <div className="mx-auto max-w-[1600px] space-y-4">
         <div className="border-b border-slate-200 pb-4">
-          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Reference data</div>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Catalog</h1>
-          <p className="mt-1 text-sm text-slate-600">Search standard materials and specialty systems used across operations.</p>
+          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Reference data', 'Datos de referencia')}</div>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Catalog', 'Catálogo')}</h1>
+          <p className="mt-1 text-sm text-slate-600">{tr('Search standard materials and specialty systems used across operations.', 'Busque materiales estándar y sistemas especializados utilizados en las operaciones.')}</p>
         </div>
         <section className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-200 bg-white px-4 py-3">
@@ -466,15 +468,15 @@ export default function CatalogPage() {
                   htmlFor="catalog-search"
                   className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500"
                 >
-                  Search Catalog
+                  {tr('Search Catalog', 'Buscar en el catálogo')}
                 </label>
                 <input
                   id="catalog-search"
                   className="h-9 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm font-medium text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
                   placeholder={
                     mode === 'standard'
-                      ? 'Search material, vendor, size, unit, category, or class'
-                      : 'Search specialty vendor, product line, component, or material type'
+                      ? tr('Search material, vendor, size, unit, category, or class', 'Buscar material, proveedor, tamaño, unidad, categoría o clase')
+                      : tr('Search specialty vendor, product line, component, or material type', 'Buscar proveedor especializado, línea de producto, componente o tipo de material')
                   }
                   value={search}
                   onChange={(e) => {
@@ -494,7 +496,7 @@ export default function CatalogPage() {
                       : 'text-slate-600 hover:bg-white hover:text-slate-950'
                   }`}
                 >
-                  Standard Materials
+                  {tr('Standard Materials', 'Materiales estándar')}
                 </button>
                 <button
                   type="button"
@@ -505,7 +507,7 @@ export default function CatalogPage() {
                       : 'text-slate-600 hover:bg-white hover:text-slate-950'
                   }`}
                 >
-                  System / Specialty
+                  {tr('System / Specialty', 'Sistemas / Especialidades')}
                 </button>
               </div>
             </div>
@@ -513,7 +515,7 @@ export default function CatalogPage() {
 
           {loadError && (
             <div className="border-b border-red-300 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
-              Failed to load catalog: {loadError}
+              {tr('Failed to load catalog', 'No se pudo cargar el catálogo')}: {loadError}
             </div>
           )}
 
@@ -522,19 +524,19 @@ export default function CatalogPage() {
               <div className="flex items-center justify-between border-b border-slate-300 bg-slate-100 px-4 py-2 text-xs text-slate-600">
                 <span>
                   {debouncedSearch && totalCount > 0
-                    ? `Showing ${showingFrom}-${showingTo} of ${totalCount}`
-                    : 'Search to load vendor catalog rows'}
+                    ? `${tr('Showing', 'Mostrando')} ${showingFrom}-${showingTo} ${tr('of', 'de')} ${totalCount}`
+                    : tr('Search to load vendor catalog rows', 'Busque para cargar artículos del catálogo')}
                 </span>
-                <span>{debouncedSearch ? `Page ${currentPage} of ${totalPages}` : mode === 'standard' ? 'Standard catalog' : 'Specialty catalog'}</span>
+                <span>{debouncedSearch ? `${tr('Page', 'Página')} ${currentPage} ${tr('of', 'de')} ${totalPages}` : mode === 'standard' ? tr('Standard catalog', 'Catálogo estándar') : tr('Specialty catalog', 'Catálogo especializado')}</span>
               </div>
 
               {search.trim() === '' ? (
                 <div className="m-4 border border-dashed border-slate-400 bg-slate-50 p-8 text-sm text-slate-600">
-                  Start typing to search the catalog. Results load on demand so the page stays fast while entering data.
+                  {tr('Start typing to search the catalog. Results load on demand so the page stays fast while entering data.', 'Empiece a escribir para buscar en el catálogo. Los resultados se cargan según sea necesario para mantener rápida la captura de datos.')}
                 </div>
               ) : catalogRows.length === 0 ? (
                 <div className="m-4 border border-dashed border-slate-400 bg-slate-50 p-8 text-sm text-slate-600">
-                  No matching materials found.
+                  {tr('No matching materials found.', 'No se encontraron materiales.')}
                 </div>
               ) : (
                 <>
@@ -542,12 +544,12 @@ export default function CatalogPage() {
                     <table className="min-w-full border-collapse text-left text-sm">
                       <thead className="sticky top-0 z-10 bg-slate-100 text-[10px] uppercase tracking-[0.14em] text-slate-600">
                         <tr className="border-b border-slate-300">
-                          <th className="w-[22%] px-3 py-2 font-semibold">Vendor</th>
-                          <th className="w-[30%] px-3 py-2 font-semibold">Material</th>
-                          <th className="w-[13%] px-3 py-2 font-semibold">Size</th>
-                          <th className="w-[13%] px-3 py-2 font-semibold">Unit</th>
-                          <th className="w-[14%] px-3 py-2 font-semibold">Class</th>
-                          <th className="w-[8%] px-3 py-2 text-right font-semibold">Status</th>
+                          <th className="w-[22%] px-3 py-2 font-semibold">{tr('Vendor', 'Proveedor')}</th>
+                          <th className="w-[30%] px-3 py-2 font-semibold">{tr('Material', 'Material')}</th>
+                          <th className="w-[13%] px-3 py-2 font-semibold">{tr('Size', 'Tamaño')}</th>
+                          <th className="w-[13%] px-3 py-2 font-semibold">{tr('Unit', 'Unidad')}</th>
+                          <th className="w-[14%] px-3 py-2 font-semibold">{tr('Class', 'Clase')}</th>
+                          <th className="w-[8%] px-3 py-2 text-right font-semibold">{tr('Status', 'Estado')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200 bg-white">
@@ -584,11 +586,11 @@ export default function CatalogPage() {
                               <td className="px-3 py-2 text-right align-top">
                                 {annotated ? (
                                   <span className={isSelected ? 'font-semibold text-white' : 'font-semibold text-amber-700'}>
-                                    Note
+                                    {tr('Note', 'Nota')}
                                   </span>
                                 ) : quoteRequired ? (
                                   <span className={isSelected ? 'font-semibold text-white' : 'font-semibold text-slate-700'}>
-                                    Quote
+                                    {tr('Quote', 'Cotizar')}
                                   </span>
                                 ) : (
                                   <span className={isSelected ? 'text-slate-300' : 'text-slate-400'}>—</span>

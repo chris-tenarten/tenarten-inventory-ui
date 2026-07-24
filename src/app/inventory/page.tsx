@@ -10,6 +10,7 @@ import {
 } from '@/modules/production/job-options';
 import type { ProductionJobOption } from '@/modules/production/job-options';
 import { JobTag } from '@/modules/production/components/JobTag';
+import { useLanguage } from '@/lib/language';
 
 type ReservationMode = 'none' | 'canonical' | 'temporary';
 type BulkReservationMode = 'unchanged' | ReservationMode;
@@ -420,6 +421,7 @@ function stockLineStatusClass(tone: 'neutral' | 'good' | 'warning' | 'bad') {
 }
 
 export default function InventoryPage() {
+  const { tr } = useLanguage();
   const [rows, setRows] = useState<InventoryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -2288,14 +2290,14 @@ export default function InventoryPage() {
           </svg>
           <div className="min-w-0 flex-1">
             <div className="text-sm font-semibold text-slate-900">
-              Pending Receivals{!pendingReceivalsLoading ? ` (${awaitingReceiptCount})` : ''}
+              {tr('Pending Receivals', 'Recepciones pendientes')}{!pendingReceivalsLoading ? ` (${awaitingReceiptCount})` : ''}
             </div>
             <p className="mt-0.5 text-xs text-slate-500">
-              {pendingReceivalsExpanded ? 'Office orders awaiting physical receipt into Inventory.' : collapsedSummary}
+              {pendingReceivalsExpanded ? tr('Office orders awaiting physical receipt into Inventory.', 'Órdenes de oficina pendientes de recepción física en inventario.') : collapsedSummary}
             </p>
           </div>
           <span className="hidden text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500 sm:block">
-            {pendingReceivalsExpanded ? 'Collapse' : 'Expand to review'}
+            {pendingReceivalsExpanded ? tr('Collapse', 'Contraer') : tr('Expand to review', 'Expandir para revisar')}
           </span>
         </button>
 
@@ -2314,7 +2316,7 @@ export default function InventoryPage() {
                 disabled={clearingReceivedPending}
                 className="h-8 rounded-md border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {clearingReceivedPending ? 'Clearing...' : 'Clear Received Items'}
+                {clearingReceivedPending ? tr('Clearing...', 'Limpiando...') : tr('Clear Received Items', 'Ocultar artículos recibidos')}
               </button>
             )}
             <button
@@ -2322,7 +2324,7 @@ export default function InventoryPage() {
               onClick={openPendingReceivalForm}
               className="h-8 rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
             >
-              + Pending Receival
+              + {tr('Pending Receival', 'Recepción pendiente')}
             </button>
           </div>
 
@@ -2330,27 +2332,27 @@ export default function InventoryPage() {
           <div className="border-b border-slate-200 bg-slate-50 px-4 py-3">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <div>
-                <div className="text-sm font-semibold text-slate-900">Bulk edit {selectedEditablePendingCount} selected</div>
-                <div className="text-xs text-slate-500">Only fields chosen below will be changed.</div>
+                <div className="text-sm font-semibold text-slate-900">{tr('Bulk edit', 'Edición masiva')}: {selectedEditablePendingCount} {tr('selected', 'seleccionadas')}</div>
+                <div className="text-xs text-slate-500">{tr('Only fields chosen below will be changed.', 'Solo se modificarán los campos seleccionados a continuación.')}</div>
               </div>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={openBulkReceivePendingDialog} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending} className="h-8 rounded-md bg-slate-900 px-3 text-xs font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">Receive selected</button>
-                <button type="button" onClick={() => resetPendingBulkEditor(true)} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending} className="text-xs font-medium text-slate-600 underline-offset-2 hover:underline disabled:opacity-60">Clear selection</button>
+                <button type="button" onClick={openBulkReceivePendingDialog} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending} className="h-8 rounded-md bg-slate-900 px-3 text-xs font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{tr('Receive selected', 'Recibir seleccionadas')}</button>
+                <button type="button" onClick={() => resetPendingBulkEditor(true)} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending} className="text-xs font-medium text-slate-600 underline-offset-2 hover:underline disabled:opacity-60">{tr('Clear selection', 'Limpiar selección')}</button>
               </div>
             </div>
             <div className="grid gap-3 lg:grid-cols-[1fr_1fr_auto]">
               <div className="rounded-md border border-slate-200 bg-white p-3">
-                <label className={labelClass}>Reservation</label>
+                <label className={labelClass}>{tr('Reservation', 'Reserva')}</label>
                 <select value={bulkPendingReservationMode} onChange={(event) => {
                   const mode = event.target.value as BulkReservationMode;
                   setBulkPendingReservationMode(mode);
                   if (mode !== 'canonical') setBulkPendingProductionJobId('');
                   if (mode !== 'temporary') setBulkPendingTemporaryJobLabel('');
                 }} className={fieldClass}>
-                  <option value="unchanged">Leave unchanged</option>
-                  <option value="canonical">Reserve for Production job</option>
-                  <option value="temporary">Reserve with temporary label</option>
-                  <option value="none">Remove reservation</option>
+                  <option value="unchanged">{tr('Leave unchanged', 'Sin cambios')}</option>
+                  <option value="canonical">{tr('Reserve for Production job', 'Reservar para un trabajo de Producción')}</option>
+                  <option value="temporary">{tr('Reserve with temporary label', 'Reservar con etiqueta temporal')}</option>
+                  <option value="none">{tr('Remove reservation', 'Quitar reserva')}</option>
                 </select>
                 {bulkPendingReservationMode === 'canonical' && (
                   <select value={bulkPendingProductionJobId} onChange={(event) => setBulkPendingProductionJobId(event.target.value)} className={`${fieldClass} mt-2`}>
@@ -2362,16 +2364,16 @@ export default function InventoryPage() {
                 {(bulkPendingReservationMode === 'canonical' || bulkPendingReservationMode === 'temporary') && <input value={bulkPendingReservationNotes} onChange={(event) => setBulkPendingReservationNotes(event.target.value)} className={`${fieldClass} mt-2`} placeholder="Reservation notes (optional)" />}
               </div>
               <div className="rounded-md border border-slate-200 bg-white p-3">
-                <label className={labelClass}>General Notes</label>
+                <label className={labelClass}>{tr('General Notes', 'Notas generales')}</label>
                 <select value={bulkPendingNotesMode} onChange={(event) => setBulkPendingNotesMode(event.target.value as BulkNotesMode)} className={fieldClass}>
-                  <option value="unchanged">Leave unchanged</option>
-                  <option value="replace">Replace notes</option>
-                  <option value="clear">Clear notes</option>
+                  <option value="unchanged">{tr('Leave unchanged', 'Sin cambios')}</option>
+                  <option value="replace">{tr('Replace notes', 'Reemplazar notas')}</option>
+                  <option value="clear">{tr('Clear notes', 'Borrar notas')}</option>
                 </select>
                 {bulkPendingNotesMode === 'replace' && <textarea value={bulkPendingNotes} onChange={(event) => setBulkPendingNotes(event.target.value)} rows={2} className="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" placeholder="Notes for every selected receival" />}
               </div>
               <div className="flex items-end">
-                <button type="button" onClick={handleApplyPendingBulkEdit} disabled={isApplyingPendingBulkEdit} className="h-9 rounded-md bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{isApplyingPendingBulkEdit ? 'Applying...' : 'Apply changes'}</button>
+                <button type="button" onClick={handleApplyPendingBulkEdit} disabled={isApplyingPendingBulkEdit} className="h-9 rounded-md bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{isApplyingPendingBulkEdit ? tr('Applying...', 'Aplicando...') : tr('Apply changes', 'Aplicar cambios')}</button>
               </div>
             </div>
             {pendingBulkEditMessage && <div className="mt-2 text-xs font-medium text-slate-700" role="status">{pendingBulkEditMessage}</div>}
@@ -2386,9 +2388,9 @@ export default function InventoryPage() {
 
         <div className="bg-white">
           {pendingReceivalsLoading ? (
-            <div className="border border-slate-200 bg-white px-4 py-5 text-sm font-semibold text-slate-600">Loading pending receivals...</div>
+            <div className="border border-slate-200 bg-white px-4 py-5 text-sm font-semibold text-slate-600">{tr('Loading pending receivals...', 'Cargando recepciones pendientes...')}</div>
           ) : pendingReceivals.length === 0 ? (
-            <div className="border border-slate-200 bg-white px-4 py-5 text-sm font-semibold text-slate-600">No pending receivals.</div>
+            <div className="border border-slate-200 bg-white px-4 py-5 text-sm font-semibold text-slate-600">{tr('No pending receivals.', 'No hay recepciones pendientes.')}</div>
           ) : (
             <div className="overflow-x-auto bg-white">
               <table className="w-full border-collapse text-left text-sm">
@@ -2405,14 +2407,14 @@ export default function InventoryPage() {
                         className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600"
                       />
                     </th>
-                    <th className="px-3 py-2">Vendor</th>
-                    <th className="px-3 py-2">Material</th>
-                    <th className="px-3 py-2">Size</th>
-                    <th className="px-3 py-2 text-right">Expected</th>
-                    <th className="px-3 py-2">Order Date</th>
-                    <th className="px-3 py-2">ETA</th>
-                    <th className="px-3 py-2">Ordered By</th>
-                    <th className="px-3 py-2 text-right">Actions</th>
+                    <th className="px-3 py-2">{tr('Vendor', 'Proveedor')}</th>
+                    <th className="px-3 py-2">{tr('Material', 'Material')}</th>
+                    <th className="px-3 py-2">{tr('Size', 'Tamaño')}</th>
+                    <th className="px-3 py-2 text-right">{tr('Expected', 'Esperado')}</th>
+                    <th className="px-3 py-2">{tr('Order Date', 'Fecha de orden')}</th>
+                    <th className="px-3 py-2">{tr('ETA', 'Fecha estimada')}</th>
+                    <th className="px-3 py-2">{tr('Ordered By', 'Solicitado por')}</th>
+                    <th className="px-3 py-2 text-right">{tr('Actions', 'Acciones')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -3540,8 +3542,8 @@ export default function InventoryPage() {
     <main className="min-h-[calc(100vh-69px)] bg-[#eef1f4] px-3 py-5 text-slate-950 sm:px-5 sm:py-7">
       <div className="mx-auto mb-4 max-w-[1500px] border-b border-slate-200 pb-4">
         <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Warehouse operations</div>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Inventory</h1>
-        <p className="mt-1 text-sm text-slate-600">Review current stock, incoming material, locations, and reservations.</p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Inventory', 'Inventario')}</h1>
+        <p className="mt-1 text-sm text-slate-600">{tr('Review current stock, incoming material, locations, and reservations.', 'Revise existencias actuales, material entrante, ubicaciones y reservas.')}</p>
       </div>
       {renderPendingReceivalsQueue()}
 
@@ -3663,7 +3665,7 @@ export default function InventoryPage() {
                                 <JobTag label={row.production_job?.name || row.production_job?.job_number || status} onClick={(event) => { event.stopPropagation(); openProductionJob(row.production_job_id!); }} />
                               ) : <span className="truncate border border-amber-500 bg-amber-50 px-2 py-1 text-xs font-black text-amber-900">{status}</span>
                             ) : (
-                              <span className="text-xs font-bold text-slate-500">General stock</span>
+                              <span className="text-xs font-bold text-slate-500">{tr('General stock', 'Existencia general')}</span>
                             )}
                             <span className="inline-flex items-center gap-1 border border-slate-500 bg-white px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-slate-900">
                               View
@@ -3688,13 +3690,13 @@ export default function InventoryPage() {
                   <thead className="bg-slate-50 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600">
                     <tr className="border-b border-slate-300">
                       <th className="w-10 px-3 py-2 text-center"><input ref={reservedSelectAllRef} type="checkbox" aria-label="Select all visible reserved lots" checked={allVisibleReservedSelected} disabled={visibleReservedLotIds.length === 0 || isBulkReleasingReservations} onChange={toggleAllVisibleReservedLots} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" /></th>
-                      <th className="px-3 py-2">Vendor</th>
-                      <th className="px-3 py-2">Material</th>
-                      <th className="px-3 py-2">Size</th>
-                      <th className="px-3 py-2">Category</th>
-                      <th className="px-3 py-2">Location</th>
-                      <th className="px-3 py-2 text-right">Qty</th>
-                      <th className="px-3 py-2">Status</th>
+                      <th className="px-3 py-2">{tr('Vendor', 'Proveedor')}</th>
+                      <th className="px-3 py-2">{tr('Material', 'Material')}</th>
+                      <th className="px-3 py-2">{tr('Size', 'Tamaño')}</th>
+                      <th className="px-3 py-2">{tr('Category', 'Categoría')}</th>
+                      <th className="px-3 py-2">{tr('Location', 'Ubicación')}</th>
+                      <th className="px-3 py-2 text-right">{tr('Qty', 'Cant.')}</th>
+                      <th className="px-3 py-2">{tr('Status', 'Estado')}</th>
                       <th className="w-10 px-3 py-2 text-right" aria-label="Open details"></th>
                     </tr>
                   </thead>

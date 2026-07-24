@@ -1,5 +1,28 @@
 @import "tailwindcss";
 
+/*
+ * The Manpower entry grid is intentionally kept as a single dense operational
+ * table. Its header labels are localized here until that legacy row renderer is
+ * decomposed; data cells and saved values are never translated.
+ */
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th {
+  font-size: 0;
+}
+
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th::after {
+  font-size: 10px;
+}
+
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(1)::after { content: "Seleccionar"; }
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(2)::after { content: "Fecha de trabajo"; }
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(3)::after { content: "Empleado"; }
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(4)::after { content: "Tarea"; }
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(5)::after { content: "Trabajo"; }
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(6)::after { content: "Horas A.M."; }
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(7)::after { content: "Horas P.M."; }
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(8)::after { content: "Total"; }
+html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(9)::after { content: "Notas"; }
+
 :root {
   --background: #eef1f4;
   --foreground: #020617;
