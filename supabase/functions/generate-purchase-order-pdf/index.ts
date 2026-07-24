@@ -235,6 +235,9 @@ Deno.serve(async (request) => {
     action?: string;
     issuanceId?: string;
     actor?: string;
+    purchaseOrderId?: string;
+    poNumber?: string;
+    confirmation?: string;
     orderSnapshot?: Record<string, unknown>;
     linesSnapshot?: Array<Record<string, unknown>>;
   };
@@ -270,6 +273,28 @@ Deno.serve(async (request) => {
       const message = caught instanceof Error ? caught.message : "Draft PDF preview failed.";
       return json({ error: message }, 500);
     }
+  }
+
+  if (body.action === "purge-test-purchase-order") {
+    const orderId = String(body.purchaseOrderId ?? "");
+    const poNumber = String(body.poNumber ?? "");
+    const confirmation = String(body.confirmation ?? "");
+    if (!orderId || !poNumber) return json({ error: "Purchase Order identity is required." }, 400);
+    const { data: paths, error: purgeError } = await service.rpc("purge_test_purchase_order", {
+      p_purchase_order_id: orderId,
+      p_expected_po_number: poNumber,
+      p_confirmation: confirmation,
+    });
+    if (purgeError) return json({ error: purgeError.message }, 409);
+    const cleanupFailures: string[] = [];
+    for (const path of paths ?? []) {
+      if (!path.storage_bucket || !path.storage_path) continue;
+      const { error: storageError } = await service.storage
+        .from(path.storage_bucket)
+        .remove([path.storage_path]);
+      if (storageError) cleanupFailures.push(path.storage_path);
+    }
+    return json({ status: "deleted", storageCleanupComplete: cleanupFailures.length === 0, cleanupFailures });
   }
 
   if (!body.issuanceId) return json({ error: "An issuance ID is required." }, 400);

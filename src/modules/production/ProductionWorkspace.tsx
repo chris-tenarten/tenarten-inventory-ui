@@ -42,6 +42,7 @@ import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, reconcileBat
 import type { ProductionScheduleBatchConflictDetail } from './schedule-batch-contract';
 import { arrangeProductionJobs, PRODUCTION_ARRANGEMENT_KEY, type ProductionArrangement } from './arrangement';
 import type { ProductionIntegrationSummary } from './jobs';
+import { useLanguage } from '@/lib/language';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
 type DashboardMode = 'pipeline' | 'snapshot';
@@ -76,6 +77,7 @@ function sortJobs(jobs: ProductionJob[]) {
 }
 
 export default function ProductionWorkspace() {
+  const { language, tr } = useLanguage();
   const [dashboardMode, setDashboardModeState] = useState<DashboardMode>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('view') === 'snapshot' ? 'snapshot' : 'pipeline');
   const [jobs, setJobs] = useState<ProductionJob[]>([]);
   const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
@@ -485,26 +487,26 @@ export default function ProductionWorkspace() {
       <datalist id="production-customer-suggestions">
         {customerSuggestions.map((customer) => <option key={customer} value={customer} />)}
       </datalist>
-      <div className="mb-4 flex flex-wrap items-center gap-2" aria-label="Dashboard mode">
-        <span className="mr-1 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Dashboard</span>
+      <div className="mb-4 flex flex-wrap items-center gap-2" aria-label={tr('Dashboard mode', 'Modo del panel')}>
+        <span className="mr-1 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">{tr('Dashboard', 'Panel')}</span>
         <div className="inline-flex rounded-sm border border-slate-300 bg-slate-50 p-1">
-          <button type="button" aria-pressed={dashboardMode === 'pipeline'} onClick={() => setDashboardMode('pipeline')} className={`h-8 px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${dashboardMode === 'pipeline' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>Production Pipeline</button>
-          <button type="button" aria-pressed={dashboardMode === 'snapshot'} onClick={() => setDashboardMode('snapshot')} className={`inline-flex h-8 items-center gap-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${dashboardMode === 'snapshot' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}><Camera className="h-3.5 w-3.5" aria-hidden="true" />Monthly Snapshot</button>
+          <button type="button" aria-pressed={dashboardMode === 'pipeline'} onClick={() => setDashboardMode('pipeline')} className={`h-8 px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${dashboardMode === 'pipeline' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{tr('Production Pipeline', 'Flujo de producción')}</button>
+          <button type="button" aria-pressed={dashboardMode === 'snapshot'} onClick={() => setDashboardMode('snapshot')} className={`inline-flex h-8 items-center gap-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${dashboardMode === 'snapshot' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}><Camera className="h-3.5 w-3.5" aria-hidden="true" />{tr('Monthly Snapshot', 'Resumen mensual')}</button>
         </div>
       </div>
       {dashboardMode === 'snapshot' ? <MonthlySnapshot /> : <div>
         <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Production reporting</div>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Production Pipeline</h1>
+            <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Production reporting', 'Control de producción')}</div>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Production Pipeline', 'Flujo de producción')}</h1>
             <p className="mt-1 text-sm text-slate-600">
-              Use the table to manage the Production Pipeline and the Timeline to plan scheduled work.
+              {tr('Use the table to manage the Production Pipeline and the Timeline to plan scheduled work.', 'Use la tabla para administrar el flujo de producción y el cronograma para planificar el trabajo programado.')}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
             <div>
-              <span className="font-bold uppercase tracking-[0.08em] text-slate-500">Active Jobs</span>
+              <span className="font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Active Jobs', 'Trabajos activos')}</span>
               <span className="ml-2 text-base font-bold text-slate-950">{jobsInQueue}</span>
             </div>
             <button
@@ -515,19 +517,19 @@ export default function ProductionWorkspace() {
               }}
               className="text-left transition hover:text-amber-800"
             >
-              <span className="font-bold uppercase tracking-[0.08em] text-slate-500">Unscheduled</span>
+              <span className="font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Unscheduled', 'Sin programar')}</span>
               <span className="ml-2 text-base font-bold text-slate-950">
                 {unscheduledCount} / {jobsInQueue}
               </span>
             </button>
             <div className="font-semibold text-slate-500">
-              Showing {filteredJobs.length}
+              {tr('Showing', 'Mostrando')} {filteredJobs.length}
             </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-3 rounded-sm border border-slate-200 bg-white p-2.5 shadow-sm lg:flex-row lg:items-center">
-          <div className="flex shrink-0 flex-wrap items-center gap-2"><span id="production-view-label" className="text-xs font-bold uppercase tracking-[0.08em] text-slate-600">View</span><div role="group" aria-labelledby="production-view-label" className="flex items-center rounded-sm border border-slate-300 bg-slate-50 p-1">
+          <div className="flex shrink-0 flex-wrap items-center gap-2"><span id="production-view-label" className="text-xs font-bold uppercase tracking-[0.08em] text-slate-600">{tr('View', 'Vista')}</span><div role="group" aria-labelledby="production-view-label" className="flex items-center rounded-sm border border-slate-300 bg-slate-50 p-1">
             <button
               type="button"
               onClick={() => setActiveView('queue')}
@@ -537,7 +539,7 @@ export default function ProductionWorkspace() {
                   : 'text-slate-600 hover:bg-white'
               }`}
             >
-              Overview
+              {tr('Overview', 'Resumen')}
             </button>
             <button
               type="button"
@@ -548,9 +550,9 @@ export default function ProductionWorkspace() {
                   : 'text-slate-600 hover:bg-white'
               }`}
             >
-              Table
+              {tr('Table', 'Tabla')}
             </button>
-            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-8 rounded-sm px-4 text-[10px] font-bold uppercase tracking-[0.09em] focus-visible:ring-2 focus-visible:ring-blue-600 ${activeView==='timeline'?'bg-slate-900 text-white shadow-sm':'text-slate-600 hover:bg-white'}`}>Timeline</button>
+            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-8 rounded-sm px-4 text-[10px] font-bold uppercase tracking-[0.09em] focus-visible:ring-2 focus-visible:ring-blue-600 ${activeView==='timeline'?'bg-slate-900 text-white shadow-sm':'text-slate-600 hover:bg-white'}`}>{tr('Timeline', 'Cronograma')}</button>
           </div>
           </div>
 
@@ -558,11 +560,11 @@ export default function ProductionWorkspace() {
             type="search"
             value={search}
             onChange={(event) => { setFocusedJobId(null); setSearch(event.target.value); }}
-            placeholder="Search jobs..."
+            placeholder={tr('Search jobs...', 'Buscar trabajos...')}
             className="h-9 min-w-0 flex-1 rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
           />
 
-          {activeView !== 'timeline' && <div className="flex shrink-0 items-center gap-2"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">Sort</span><div className="inline-flex h-9 overflow-hidden rounded-sm border border-slate-300">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`border-r border-slate-300 px-3 text-[10px] font-bold uppercase last:border-r-0 ${arrangement === value ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{value === 'stage' ? 'Status' : value}</button>)}</div></div>}
+          {activeView !== 'timeline' && <div className="flex shrink-0 items-center gap-2"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Sort', 'Ordenar')}</span><div className="inline-flex h-9 overflow-hidden rounded-sm border border-slate-300">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`border-r border-slate-300 px-3 text-[10px] font-bold uppercase last:border-r-0 ${arrangement === value ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
 
           {activeView === 'spreadsheet' && (
             <div id="production-table-columns-toolbar-slot" className="relative shrink-0" />
@@ -579,7 +581,7 @@ export default function ProductionWorkspace() {
               }`}
             >
               <ListFilter className="h-4 w-4" />
-              Filters
+              {tr('Filters', 'Filtros')}
               {activeFilterCount > 0 && (
                 <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-700 px-1 text-[10px] text-white">
                   {activeFilterCount}
@@ -589,7 +591,7 @@ export default function ProductionWorkspace() {
 
             {isFilterOpen && (
               <div className="absolute right-0 top-11 z-40 w-72 border border-slate-400 bg-white p-4 shadow-xl">
-                <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Schedule</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{tr('Schedule', 'Programación')}</div>
                 <div className="mt-2 space-y-2">
                   {(['scheduled', 'unscheduled'] as ScheduleFilter[]).map((value) => (
                     <label key={value} className="flex items-center gap-2 text-sm text-slate-700">
@@ -598,12 +600,12 @@ export default function ProductionWorkspace() {
                         checked={scheduleFilters.has(value)}
                         onChange={() => toggleScheduleFilter(value)}
                       />
-                      {value === 'scheduled' ? 'Scheduled' : 'Unscheduled'}
+                      {value === 'scheduled' ? tr('Scheduled', 'Programado') : tr('Unscheduled', 'Sin programar')}
                     </label>
                   ))}
                 </div>
 
-                <div className="mt-4 border-t border-slate-300 pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Production Status</div>
+                <div className="mt-4 border-t border-slate-300 pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{tr('Production Status', 'Estado de producción')}</div>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   {statusOptions.map((option) => (
                     <label key={option.value} className="flex items-center gap-2 text-sm text-slate-700">
@@ -612,11 +614,11 @@ export default function ProductionWorkspace() {
                         checked={statusFilters.has(option.value)}
                         onChange={() => toggleStatusFilter(option.value)}
                       />
-                      {option.label}
+                      {language === 'es' ? ({ not_started: 'No iniciado', on_deck: 'Próximo', in_production: 'En producción', on_hold: 'En pausa', shipped: 'Enviado', complete: 'Terminado', cancelled: 'Cancelado' } as Record<ProductionStatus, string>)[option.value] : option.label}
                     </label>
                   ))}
                 </div>
-                <label className="mt-4 flex items-center gap-2 border-t border-slate-200 pt-4 text-sm text-slate-700"><input type="checkbox" checked={includeArchived} onChange={(event) => setIncludeArchived(event.target.checked)} />Include Archived</label>
+                <label className="mt-4 flex items-center gap-2 border-t border-slate-200 pt-4 text-sm text-slate-700"><input type="checkbox" checked={includeArchived} onChange={(event) => setIncludeArchived(event.target.checked)} />{tr('Include Archived', 'Incluir archivados')}</label>
 
                 <button
                   type="button"
@@ -627,7 +629,7 @@ export default function ProductionWorkspace() {
                   disabled={activeFilterCount === 0}
                   className="mt-4 h-9 w-full border border-slate-300 bg-slate-100 text-[10px] font-bold uppercase tracking-[0.07em] text-slate-700 disabled:opacity-40"
                 >
-                  Clear Filters
+                  {tr('Clear Filters', 'Limpiar filtros')}
                 </button>
               </div>
             )}
@@ -637,8 +639,8 @@ export default function ProductionWorkspace() {
             type="button"
             onClick={() => void loadJobs()}
             disabled={isLoading}
-            title="Refresh jobs"
-            aria-label="Refresh jobs"
+            title={tr('Refresh jobs', 'Actualizar trabajos')}
+            aria-label={tr('Refresh jobs', 'Actualizar trabajos')}
             className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-slate-400 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
             <RotateCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -650,7 +652,7 @@ export default function ProductionWorkspace() {
             {loadError}
           </div>
         )}
-        {planningIssueCount > 0 && <div className="mt-3 flex min-h-10 flex-wrap items-center gap-x-4 gap-y-2 border-l-2 border-amber-500 bg-amber-50/70 px-3 py-2 text-xs text-slate-600"><span className="font-bold text-amber-900">{planningIssueCount} {planningIssueCount === 1 ? 'job needs' : 'jobs need'} planning attention</span><button type="button" onClick={() => setPlanningIssuesOpen(true)} className="h-7 border border-amber-300 bg-white px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] text-amber-900 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-700">Review issues</button></div>}
+        {planningIssueCount > 0 && <div className="mt-3 flex min-h-10 flex-wrap items-center gap-x-4 gap-y-2 border-l-2 border-amber-500 bg-amber-50/70 px-3 py-2 text-xs text-slate-600"><span className="font-bold text-amber-900">{language === 'es' ? `${planningIssueCount} ${planningIssueCount === 1 ? 'trabajo requiere' : 'trabajos requieren'} atención de planificación` : `${planningIssueCount} ${planningIssueCount === 1 ? 'job needs' : 'jobs need'} planning attention`}</span><button type="button" onClick={() => setPlanningIssuesOpen(true)} className="h-7 border border-amber-300 bg-white px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] text-amber-900 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-700">{tr('Review issues', 'Revisar pendientes')}</button></div>}
 
         {stagedSchedule && (() => {
           const hadSchedule = Boolean(stagedSchedule.persistedStart && stagedSchedule.persistedEnd);

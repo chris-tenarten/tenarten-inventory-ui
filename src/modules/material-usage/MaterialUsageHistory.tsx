@@ -10,6 +10,7 @@ import type { ProductionStatus } from "../production/types";
 import { MaterialUsageReportSummary } from "./types";
 import { localDateKey } from "./daily-status";
 import { useEffect, useMemo, useState } from "react";
+import { useLanguage } from "@/lib/language";
 
 interface Props {
   reports: MaterialUsageReportSummary[];
@@ -41,6 +42,7 @@ export function MaterialUsageHistory({
   onSelect,
   onNew,
 }: Props) {
+  const { language, tr } = useLanguage();
   const [search, setSearch] = useState("");
   const [jobId, setJobId] = useState(() => typeof window === "undefined" ? "" : new URLSearchParams(window.location.search).get("historyJob") ?? "");
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -77,11 +79,11 @@ export function MaterialUsageHistory({
       <div className="border-b border-slate-200 p-4">
         <div className="mb-3">
           <h1 className="text-base font-semibold text-slate-900">
-            Material Usage
+            {tr("Material Usage","Uso de materiales")}
           </h1>
 
           <p className="mt-0.5 text-xs text-slate-500">
-            Daily material-use reports
+            {tr("Daily material-use reports","Reportes diarios de materiales utilizados")}
           </p>
         </div>
 
@@ -90,11 +92,11 @@ export function MaterialUsageHistory({
           onClick={onNew}
           className="w-full rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
         >
-          New Material Report
+          {tr("New Material Report","Nuevo reporte de materiales")}
         </button>
         <div className="mt-3 space-y-2">
-          <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search reports…" className="h-9 w-full rounded-md border border-slate-300 px-3 text-sm" />
-          <div className="relative"><button type="button" onClick={() => setFiltersOpen((current) => !current)} className={`h-9 w-full rounded-md border px-3 text-xs font-semibold ${activeFilterCount ? 'border-blue-600 bg-blue-50 text-blue-800' : 'border-slate-300 bg-white text-slate-700'}`}>Filters{activeFilterCount ? ` (${activeFilterCount})` : ''}</button>{filtersOpen ? <div className="absolute right-0 top-10 z-30 w-64 rounded-md border border-slate-300 bg-white p-3 text-xs shadow-xl"><div className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Production Status</div><div className="mt-2 space-y-2">{productionStatusVisuals.map((visual) => <label key={visual.value} className="flex items-center justify-between gap-2 text-slate-700"><span className="flex items-center gap-2"><input type="checkbox" checked={statusFilters.has(visual.value)} onChange={() => setStatusFilters((current) => { const next = new Set(current); if (next.has(visual.value)) next.delete(visual.value); else next.add(visual.value); return next; })} /><span className="sr-only">{visual.label}</span></span><ProductionStatusBadge status={visual.value} /></label>)}</div><div className="mt-3 space-y-2 border-t border-slate-200 pt-3"><label className="flex items-center gap-2 text-slate-700"><input type="checkbox" checked={archived} onChange={(event) => setArchived(event.target.checked)} />Archived</label><label className="flex items-center gap-2 text-slate-700"><input type="checkbox" checked={unlinked} onChange={(event) => setUnlinked(event.target.checked)} />Unlinked</label></div>{activeFilterCount ? <button type="button" onClick={() => { setStatusFilters(new Set()); setArchived(false); setUnlinked(false); }} className="mt-3 w-full border-t border-slate-200 pt-2 font-semibold text-blue-700">Clear filters</button> : null}</div> : null}</div>
+          <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr("Search reports…","Buscar reportes…")} className="h-9 w-full rounded-md border border-slate-300 px-3 text-sm" />
+          <div className="relative"><button type="button" onClick={() => setFiltersOpen((current) => !current)} className={`h-9 w-full rounded-md border px-3 text-xs font-semibold ${activeFilterCount ? 'border-blue-600 bg-blue-50 text-blue-800' : 'border-slate-300 bg-white text-slate-700'}`}>{tr("Filters","Filtros")}{activeFilterCount ? ` (${activeFilterCount})` : ''}</button>{filtersOpen ? <div className="absolute right-0 top-10 z-30 w-64 rounded-md border border-slate-300 bg-white p-3 text-xs shadow-xl"><div className="text-[10px] font-bold uppercase tracking-wide text-slate-500">{tr("Production Status","Estado de producción")}</div><div className="mt-2 space-y-2">{productionStatusVisuals.map((visual) => <label key={visual.value} className="flex items-center justify-between gap-2 text-slate-700"><span className="flex items-center gap-2"><input type="checkbox" checked={statusFilters.has(visual.value)} onChange={() => setStatusFilters((current) => { const next = new Set(current); if (next.has(visual.value)) next.delete(visual.value); else next.add(visual.value); return next; })} /><span className="sr-only">{visual.label}</span></span><ProductionStatusBadge status={visual.value} /></label>)}</div><div className="mt-3 space-y-2 border-t border-slate-200 pt-3"><label className="flex items-center gap-2 text-slate-700"><input type="checkbox" checked={archived} onChange={(event) => setArchived(event.target.checked)} />{tr("Archived","Archivados")}</label><label className="flex items-center gap-2 text-slate-700"><input type="checkbox" checked={unlinked} onChange={(event) => setUnlinked(event.target.checked)} />{tr("Unlinked","Sin vincular")}</label></div>{activeFilterCount ? <button type="button" onClick={() => { setStatusFilters(new Set()); setArchived(false); setUnlinked(false); }} className="mt-3 w-full border-t border-slate-200 pt-2 font-semibold text-blue-700">{tr("Clear filters","Borrar filtros")}</button> : null}</div> : null}</div>
           {jobId ? <div className="flex items-center justify-between rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-800"><span className="truncate">Job: {jobs.find((job) => job.id === jobId)?.name ?? reports.find((report) => report.jobId === jobId)?.jobName ?? 'Production Job'}</span><button type="button" aria-label="Clear job filter" onClick={() => { const url = new URL(window.location.href); url.searchParams.delete('historyJob'); window.history.pushState(null, '', `${url.pathname}${url.search}`); setJobId(""); }} className="ml-2 font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">×</button></div> : null}
         </div>
       </div>
@@ -102,18 +104,18 @@ export function MaterialUsageHistory({
       <div className="min-h-0 flex-1 overflow-y-auto">
         {loading ? (
           <div className="px-4 py-5 text-sm text-slate-500">
-            Loading reports...
+              {tr("Loading reports...","Cargando reportes...")}
           </div>
         ) : null}
 
         {!loading && visibleReports.length === 0 ? (
           <div className="px-4 py-8 text-center">
             <p className="text-sm font-medium text-slate-700">
-              No material reports yet
+              {tr("No material reports yet","Aún no hay reportes de materiales")}
             </p>
 
             <p className="mt-1 text-xs text-slate-500">
-              Create the first report to begin tracking usage.
+              {tr("Create the first report to begin tracking usage.","Cree el primer reporte para comenzar a registrar el uso de materiales.")}
             </p>
           </div>
         ) : null}
@@ -172,15 +174,15 @@ export function MaterialUsageHistory({
                   </button>
                 ) : (
                   <span className="inline-flex max-w-[140px] shrink-0 items-center text-right text-[10px] font-medium leading-tight text-slate-500">
-                    Not linked to Production
+                    {tr("Not linked to Production","Sin vincular a Producción")}
                   </span>
                 )}
               </div>
 
               <div className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-500">
-                <span>{formatReportDate(report.reportDate)}</span>
+                <span>{language === "es" ? new Date(`${report.reportDate}T00:00:00`).toLocaleDateString("es-MX", { month:"short", day:"numeric", year:"numeric" }) : formatReportDate(report.reportDate)}</span>
 
-                {report.reportDate === today ? <span className="bg-emerald-100 px-1.5 py-0.5 font-semibold text-emerald-800">Reported Today</span> : null}
+                {report.reportDate === today ? <span className="bg-emerald-100 px-1.5 py-0.5 font-semibold text-emerald-800">{tr("Reported Today","Reportado hoy")}</span> : null}
 
                 {report.workOrder ? (
                   <span className="min-w-0 truncate">

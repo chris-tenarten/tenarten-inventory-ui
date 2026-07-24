@@ -30,6 +30,7 @@ import {
   generatePurchaseOrderPdf,
   getPurchaseOrderPdfPreviewUrl,
   issuePurchaseOrder,
+  purgeTestPurchaseOrder,
   savePurchaseOrderDraft,
 } from "./mutations";
 import { getHistoricalPriceSuggestions } from "./pricing";
@@ -44,6 +45,7 @@ import type {
   PurchasingCatalogSuggestion,
   VendorOption,
 } from "./types";
+import { useLanguage } from "@/lib/language";
 import { validatePurchaseOrderDraft } from "./validation";
 
 const field = "mt-1 h-10 w-full border border-slate-300 bg-white px-3 text-sm";
@@ -68,6 +70,7 @@ function LineEditor({
   onRemove(): void;
   onDuplicate(): void;
 }) {
+  const { tr } = useLanguage();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PurchasingCatalogSuggestion[]>([]);
   const [searching, setSearching] = useState(false);
@@ -194,37 +197,37 @@ function LineEditor({
   return (
     <section className="rounded-sm border border-slate-300 bg-white">
       <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 py-2">
-        <div className="text-xs font-bold uppercase">Chip Line {index + 1}</div>
+        <div className="text-xs font-bold uppercase">{tr('Chip Line', 'Partida de chip')} {index + 1}</div>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={onDuplicate}
             className="text-xs font-bold text-blue-700"
           >
-            Duplicate
+            {tr('Duplicate', 'Duplicar')}
           </button>
           <button
             type="button"
             onClick={onRemove}
             className="text-xs font-bold text-red-700"
           >
-            Remove
+            {tr('Remove', 'Quitar')}
           </button>
         </div>
       </div>
       <div className="m-3 border border-blue-200 bg-blue-50/60 p-3">
-        <label className={label}>Search Catalog</label>
+        <label className={label}>{tr('Search Catalog', 'Buscar en el catálogo')}</label>
         <div className="relative mt-1">
           <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="h-9 w-full border border-slate-300 bg-white pl-9 pr-3 text-sm"
-            placeholder="Search by material, SKU, vendor, or size..."
+            placeholder={tr('Search by material, SKU, vendor, or size...', 'Buscar por material, SKU, proveedor o tamaño...')}
           />
         </div>
         <p className="mt-1 text-xs text-slate-500">
-          Search to populate this line from the catalog.
+          {tr('Search to populate this line from the catalog.', 'Busque para completar esta partida desde el catálogo.')}
         </p>
         {searching && <div className="mt-2 text-xs">Searching…</div>}
         {searchError && (
@@ -282,7 +285,7 @@ function LineEditor({
       )}
       <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className={label}>
-          Material
+          {tr('Material', 'Material')}
           <input
             value={details.materialNameSnapshot}
             onChange={(e) => set("materialNameSnapshot", e.target.value)}
@@ -290,7 +293,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Vendor SKU
+          {tr('Vendor SKU', 'SKU del proveedor')}
           <input
             value={details.vendorSkuSnapshot}
             onChange={(e) => set("vendorSkuSnapshot", e.target.value)}
@@ -298,7 +301,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Chip Size
+          {tr('Chip Size', 'Tamaño de chip')}
           <input
             value={details.chipSize}
             onChange={(e) => set("chipSize", e.target.value)}
@@ -306,20 +309,20 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Moisture
+          {tr('Moisture', 'Condición de humedad')}
           <select
             value={details.moistureCondition}
             onChange={(e) => set("moistureCondition", e.target.value)}
             className={field}
           >
-            <option value="">Not specified</option>
-            <option value="dry">Dry</option>
-            <option value="damp">Damp</option>
-            <option value="wet">Wet</option>
+            <option value="">{tr('Not specified', 'Sin especificar')}</option>
+            <option value="dry">{tr('Dry', 'Seco')}</option>
+            <option value="damp">{tr('Damp', 'Húmedo')}</option>
+            <option value="wet">{tr('Wet', 'Mojado')}</option>
           </select>
         </label>
         <label className={label}>
-          Amount Per Container
+          {tr('Amount Per Container', 'Contenido por envase')}
           <input
             inputMode="decimal"
             value={details.packageQuantity}
@@ -328,7 +331,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Measure
+          {tr('Measure', 'Medida')}
           <input
             value={details.packageMeasure}
             onChange={(e) => set("packageMeasure", e.target.value)}
@@ -336,7 +339,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Container Type
+          {tr('Container Type', 'Tipo de envase')}
           <input
             value={details.containerType}
             onChange={(e) => set("containerType", e.target.value)}
@@ -344,7 +347,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Quantity Ordered
+          {tr('Quantity Ordered', 'Cantidad solicitada')}
           <input
             inputMode="decimal"
             value={details.quantityOrdered}
@@ -353,7 +356,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Order Unit
+          {tr('Order Unit', 'Unidad de compra')}
           <input
             value={details.orderUnit}
             onChange={(e) => set("orderUnit", e.target.value)}
@@ -361,7 +364,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Unit Price
+          {tr('Unit Price', 'Precio unitario')}
           <input
             inputMode="decimal"
             value={details.unitPrice}
@@ -370,7 +373,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Price Basis
+          {tr('Price Basis', 'Base del precio')}
           <input
             value={details.priceBasis}
             onChange={(e) => set("priceBasis", e.target.value)}
@@ -378,7 +381,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          Line Total
+          {tr('Line Total', 'Total de partida')}
           <input
             readOnly
             value={total === null ? "—" : `$${centsToMoney(total)}`}
@@ -386,7 +389,7 @@ function LineEditor({
           />
         </label>
         <label className={`${label} sm:col-span-2`}>
-          Line Notes
+          {tr('Line Notes', 'Notas de la partida')}
           <input
             value={details.notes}
             onChange={(e) => set("notes", e.target.value)}
@@ -496,6 +499,7 @@ export function PurchaseOrderEditor({
   onDeleted(id: string): void;
   onIssued(id: string): void;
 }) {
+  const { tr } = useLanguage();
   const [draft, setDraft] = useState(initial);
   const [jobs, setJobs] = useState<ProductionJobOption[]>([]);
   const [vendors, setVendors] = useState<VendorOption[]>([]);
@@ -698,6 +702,23 @@ export function PurchaseOrderEditor({
       setDeleting(false);
     }
   };
+  const purgeIssuedTest = async () => {
+    if (!draft.id || !draft.poNumber) return;
+    const required = `DELETE ${draft.poNumber}`;
+    const confirmation = window.prompt(
+      `Permanently delete issued test PO ${draft.poNumber}?\n\nThis also removes its cancelled Pending Receivals and generated PDF. Received material or active receivals will block deletion.\n\nType ${required} to continue.`,
+    );
+    if (confirmation !== required) return;
+    setDeleting(true);
+    setErrors([]);
+    try {
+      await purgeTestPurchaseOrder(draft.id, draft.poNumber, confirmation);
+      onDeleted(draft.id);
+    } catch (error) {
+      setErrors([error instanceof Error ? error.message : "Unable to delete issued test Purchase Order."]);
+      setDeleting(false);
+    }
+  };
   const generatePdf = async (issuanceId = draft.issuanceId) => {
     if (!issuanceId || pdfLoading) return false;
     setPdfLoading(true);
@@ -880,11 +901,11 @@ export function PurchaseOrderEditor({
               Chip Purchase Order · {readOnly ? "Issued" : "Draft"}
             </div>
             <h2 className="text-xl font-bold">
-              {draft.id ? "Edit Purchase Order" : "New Purchase Order"}
+              {draft.id ? tr("Edit Purchase Order", "Editar orden de compra") : tr("New Purchase Order", "Nueva orden de compra")}
             </h2>
             <div className="mt-1 text-sm text-slate-600">
               <b>{displayedPoNumber}</b>
-              {!draft.poNumber && <span className="ml-2">Final suffix assigned on first save</span>}
+              {!draft.poNumber && <span className="ml-2">{tr('Final suffix assigned on first save', 'El sufijo final se asigna al guardar por primera vez')}</span>}
             </div>
           </div>
           <div className="flex gap-2">
@@ -894,14 +915,14 @@ export function PurchaseOrderEditor({
               disabled={pdfLoading || (readOnly && pdfDocument?.status !== "generated")}
               className="h-9 border border-blue-700 bg-white px-3 text-sm font-bold text-blue-800"
             >
-              {readOnly ? "View Issued PDF" : "Preview Draft PDF"}
+              {readOnly ? tr("View Issued PDF", "Ver PDF emitido") : tr("Preview Draft PDF", "Vista previa del borrador")}
             </button>
             <button
               type="button"
               onClick={requestClose}
               className="h-9 border border-slate-400 bg-white px-3 text-sm font-bold"
             >
-              Close
+              {tr('Close', 'Cerrar')}
             </button>
           </div>
         </header>
@@ -925,7 +946,7 @@ export function PurchaseOrderEditor({
             <fieldset disabled={readOnly} className="space-y-3 disabled:opacity-80">
             <section className="grid gap-3 rounded-sm border border-slate-300 bg-white p-3 md:grid-cols-[260px_1fr]">
               <label className={label}>
-                Document Template
+                {tr('Document Template', 'Plantilla del documento')}
                 <select
                   value={draft.documentTemplate || "tenops"}
                   onChange={(event) => setHeader("documentTemplate", event.target.value as PurchaseOrderDraft["documentTemplate"])}
@@ -944,14 +965,14 @@ export function PurchaseOrderEditor({
             <section className="grid gap-3 rounded-sm border border-slate-300 bg-white p-3 md:grid-cols-4">
               <div className="md:col-span-2">
                 <label className={label}>
-                  Job Reference / Link Production Job
+                  {tr('Job Reference / Link Production Job', 'Referencia / Vincular trabajo de Producción')}
                 </label>
                 <select
                   value={draft.productionJobId}
                   onChange={(e) => selectHeaderJob(e.target.value)}
                   className={field}
                 >
-                  <option value="">General / multiple jobs</option>
+                  <option value="">{tr('General / multiple jobs', 'General / varios trabajos')}</option>
                   {jobs.map((job) => (
                     <option key={job.id} value={job.id}>
                       {formatProductionJobOptionWithStatus(job)}
@@ -967,16 +988,16 @@ export function PurchaseOrderEditor({
                 )}
               </div>
               <div>
-                <label className={label}>Job Number</label>
+                <label className={label}>{tr('Job Number', 'Número de trabajo')}</label>
                 <input
                   value={draft.jobNumberSnapshot}
                   readOnly
                   className={`${field} bg-slate-50`}
-                  placeholder="From linked job"
+                  placeholder={tr('From linked job', 'Del trabajo vinculado')}
                 />
               </div>
               <div>
-                <label className={label}>Purchase Order Number</label>
+                <label className={label}>{tr('Purchase Order Number', 'Número de orden de compra')}</label>
                 <input
                   value={displayedPoNumber}
                   readOnly
@@ -984,7 +1005,7 @@ export function PurchaseOrderEditor({
                 />
               </div>
               <div>
-                <label className={label}>Vendor</label>
+                <label className={label}>{tr('Vendor', 'Proveedor')}</label>
                 <input
                   list="po-vendor-options"
                   value={draft.vendorNameSnapshot}
@@ -998,7 +1019,7 @@ export function PurchaseOrderEditor({
                 </datalist>
               </div>
               <div>
-                <label className={label}>PO Date</label>
+                <label className={label}>{tr('PO Date', 'Fecha de OC')}</label>
                 <input
                   type="date"
                   value={draft.orderDate}
@@ -1007,7 +1028,7 @@ export function PurchaseOrderEditor({
                 />
               </div>
               <div>
-                <label className={label}>Date Requested</label>
+                <label className={label}>{tr('Date Requested', 'Fecha solicitada')}</label>
                 <input
                   type="date"
                   value={draft.requestedDate}
@@ -1016,7 +1037,7 @@ export function PurchaseOrderEditor({
                 />
               </div>
               <div>
-                <label className={label}>PO Originated By</label>
+                <label className={label}>{tr('PO Originated By', 'OC originada por')}</label>
                 <input
                   value={draft.createdBy}
                   onChange={(e) => setHeader("createdBy", e.target.value)}
@@ -1024,7 +1045,7 @@ export function PurchaseOrderEditor({
                 />
               </div>
               <div className="md:col-span-2">
-                <label className={label}>Vendor Address</label>
+                <label className={label}>{tr('Vendor Address', 'Dirección del proveedor')}</label>
                 <textarea
                   value={draft.vendorAddressSnapshot}
                   onChange={(e) =>
@@ -1035,7 +1056,7 @@ export function PurchaseOrderEditor({
                 />
               </div>
               <div className="md:col-span-2">
-                <label className={label}>Vendor Contact</label>
+                <label className={label}>{tr('Vendor Contact', 'Contacto del proveedor')}</label>
                 {draft.vendorId && !draft.vendorContactSnapshot.trim() && (
                   <select
                     defaultValue=""
@@ -1064,7 +1085,7 @@ export function PurchaseOrderEditor({
                 />
               </div>
               <div className="md:col-span-2">
-                <label className={label}>Ship To</label>
+                <label className={label}>{tr('Ship To', 'Enviar a')}</label>
                 <textarea
                   value={draft.shipToSnapshot}
                   onChange={(e) => setHeader("shipToSnapshot", e.target.value)}
@@ -1073,7 +1094,7 @@ export function PurchaseOrderEditor({
                 />
               </div>
               <div>
-                <label className={label}>Payment Terms</label>
+                <label className={label}>{tr('Payment Terms', 'Condiciones de pago')}</label>
                 <input
                   value={draft.paymentTermsSnapshot}
                   onChange={(e) =>
@@ -1083,7 +1104,7 @@ export function PurchaseOrderEditor({
                 />
               </div>
               <div>
-                <label className={label}>Authorized By</label>
+                <label className={label}>{tr('Authorized By', 'Autorizado por')}</label>
                 <textarea
                   value={draft.authorizedBySnapshot}
                   onChange={(e) =>
@@ -1143,30 +1164,30 @@ export function PurchaseOrderEditor({
               }
               className="h-9 border border-slate-400 bg-white px-4 text-sm font-bold"
             >
-              + Add Chip Line
+              + {tr('Add Chip Line', 'Agregar partida de chip')}
             </button>
             </fieldset>
           </main>
           <aside className="space-y-3">
             {readOnly && (
               <section className="border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900">
-                <div className="font-bold">Issued Purchase Order</div>
+                <div className="font-bold">{tr('Issued Purchase Order', 'Orden de compra emitida')}</div>
                 <div className="mt-1">Issued by {draft.issuedBy || "recorded actor"}{draft.issuedAt ? ` on ${new Date(draft.issuedAt).toLocaleString()}` : ""}</div>
                 {draft.snapshotHash && <div className="mt-2 break-all font-mono text-[10px] text-emerald-800">Snapshot {draft.snapshotHash}</div>}
               </section>
             )}
             <fieldset disabled={readOnly} className="space-y-3 disabled:opacity-80">
             <section className="rounded-sm border border-slate-300 bg-white p-3">
-              <h3 className="text-sm font-bold">Purchase Order Summary</h3>
+              <h3 className="text-sm font-bold">{tr('Purchase Order Summary', 'Resumen de la orden de compra')}</h3>
               <dl className="mt-3 space-y-2 border-t border-slate-200 pt-3 text-sm">
                 <div className="flex justify-between">
-                  <dt>Subtotal</dt>
+                  <dt>{tr('Subtotal', 'Subtotal')}</dt>
                   <dd className="font-bold">
                     ${centsToMoney(totals.subtotal)}
                   </dd>
                 </div>
                 <label className={label}>
-                  Discount %
+                  {tr('Discount %', 'Descuento %')}
                   <input
                     value={draft.discountPercent}
                     onChange={(e) =>
@@ -1176,7 +1197,7 @@ export function PurchaseOrderEditor({
                   />
                 </label>
                 <label className={label}>
-                  Sales Tax %
+                  {tr('Sales Tax %', 'Impuesto %')}
                   <input
                     value={draft.taxPercent}
                     onChange={(e) => setHeader("taxPercent", e.target.value)}
@@ -1184,7 +1205,7 @@ export function PurchaseOrderEditor({
                   />
                 </label>
                 <label className={label}>
-                  Freight
+                  {tr('Freight', 'Flete')}
                   <input
                     value={draft.freight}
                     onChange={(e) => setHeader("freight", e.target.value)}
@@ -1192,7 +1213,7 @@ export function PurchaseOrderEditor({
                   />
                 </label>
                 <div className="flex justify-between border-t border-slate-300 pt-3 text-base font-bold">
-                  <dt>Total</dt>
+                  <dt>{tr('Total', 'Total')}</dt>
                   <dd>
                     {totals.total === null
                       ? "Invalid"
@@ -1203,7 +1224,7 @@ export function PurchaseOrderEditor({
             </section>
             <section className="rounded-sm border border-slate-300 bg-white p-3">
               <label className={label}>
-                Additional Notes &amp; Special Conditions
+                {tr('Additional Notes & Special Conditions', 'Notas adicionales y condiciones especiales')}
                 <textarea
                   value={draft.commercialNotes}
                   onChange={(e) => setHeader("commercialNotes", e.target.value)}
@@ -1228,7 +1249,7 @@ export function PurchaseOrderEditor({
               disabled={saving || deleting || issuing}
               className="h-11 w-full bg-slate-900 px-4 text-sm font-bold text-white disabled:opacity-50"
             >
-              {saving ? "Saving Draft…" : "Save Draft"}
+              {saving ? tr("Saving Draft…", "Guardando borrador…") : tr("Save Draft", "Guardar borrador")}
             </button>}
             {draft.id && !readOnly && (
               <button
@@ -1237,7 +1258,7 @@ export function PurchaseOrderEditor({
                 disabled={saving || deleting || issuing}
                 className="h-10 w-full border border-red-400 bg-white px-4 text-sm font-bold text-red-700 disabled:opacity-50"
               >
-                {deleting ? "Deleting Draft…" : "Delete Saved Draft"}
+                {deleting ? tr("Deleting Draft…", "Eliminando borrador…") : tr("Delete Saved Draft", "Eliminar borrador guardado")}
               </button>
             )}
             {draft.id && !readOnly && (
@@ -1248,7 +1269,7 @@ export function PurchaseOrderEditor({
                 className="h-11 w-full border border-blue-800 bg-blue-700 px-4 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
                 title={dirty ? "Save your latest changes before issuing." : undefined}
               >
-                {issuing ? "Issuing Purchase Order…" : "Issue Purchase Order"}
+                {issuing ? tr("Issuing Purchase Order…", "Emitiendo orden de compra…") : tr("Issue Purchase Order", "Emitir orden de compra")}
               </button>
             )}
             {readOnly && (
@@ -1256,7 +1277,7 @@ export function PurchaseOrderEditor({
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-slate-600" />
                   <div className="text-xs font-bold uppercase tracking-[0.08em] text-slate-700">
-                    Permanent PDF
+                    {tr('Permanent PDF', 'PDF permanente')}
                   </div>
                   <span className={`ml-auto border px-2 py-1 text-[10px] font-bold uppercase ${
                     pdfDocument?.status === "generated"
@@ -1333,6 +1354,16 @@ export function PurchaseOrderEditor({
                   )}
                 </div>
               </section>
+            )}
+            {readOnly && draft.id && (
+              <button
+                type="button"
+                onClick={() => void purgeIssuedTest()}
+                disabled={deleting}
+                className="h-10 w-full border border-red-500 bg-white px-4 text-sm font-bold text-red-700 disabled:opacity-50"
+              >
+                {deleting ? "Deleting Test PO…" : "Delete Issued Test PO"}
+              </button>
             )}
             <p className="text-xs text-slate-500">
               {readOnly

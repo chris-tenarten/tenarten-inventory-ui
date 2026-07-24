@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import ClientLayoutShell from './client-layout-shell';
+import { LanguageProvider } from '@/lib/language';
 
 export const metadata: Metadata = {
   title: {
@@ -26,12 +27,14 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var s=localStorage.getItem('tenops_display_size');if(s==='compact'||s==='large'||s==='default'){document.documentElement.dataset.displaySize=s}}catch(e){}",
+              "try{var s=localStorage.getItem('tenops_display_size');if(s==='compact'||s==='large'||s==='default'){document.documentElement.dataset.displaySize=s}var l=localStorage.getItem('tenops_language');if(l==='en'||l==='es'){document.documentElement.lang=l}}catch(e){}",
           }}
         />
       </head>
       <body>
-        <ClientLayoutShell>{children}</ClientLayoutShell>
+        <LanguageProvider>
+          <ClientLayoutShell>{children}</ClientLayoutShell>
+        </LanguageProvider>
       </body>
     </html>
   );

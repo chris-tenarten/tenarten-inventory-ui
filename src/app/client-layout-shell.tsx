@@ -11,39 +11,40 @@ import {
   isDisplaySize,
   readDisplaySize,
 } from '@/lib/display-size';
+import { type TranslationKey, useLanguage } from '@/lib/language';
 
 const primaryNavItems = [
-  { href: '/', label: 'Dashboard', icon: HomeIcon },
+  { href: '/', labelKey: 'nav.dashboard' as TranslationKey, icon: HomeIcon },
 ];
 
 const reportingNavItems = [
   {
     href: '/manpower-reporting',
-    label: 'Manpower',
-    description: 'Record daily labor and task assignments',
+    labelKey: 'nav.manpower' as TranslationKey,
+    descriptionKey: 'nav.manpowerDescription' as TranslationKey,
   },
   {
     href: '/material-usage',
-    label: 'Material Usage',
-    description: 'Record materials consumed by production',
+    labelKey: 'nav.materialUsage' as TranslationKey,
+    descriptionKey: 'nav.materialUsageDescription' as TranslationKey,
   },
   {
     href: '',
-    label: 'Daily Production',
-    description: 'Future daily production reporting',
+    labelKey: 'nav.dailyProduction' as TranslationKey,
+    descriptionKey: 'nav.dailyProductionDescription' as TranslationKey,
     disabled: true,
   },
 ];
 
 const inventoryNavItems = [
-  { href: '/inventory', label: 'Current Inventory', description: 'Review stock, lots, locations, and reservations' },
-  { href: '/inventory?section=pending-receivals#pending-receivals', matchPath: '__pending-receivals__', label: 'Pending Receivals', description: 'Review material awaiting physical receipt' },
-  { href: '/activity', label: 'Activity', description: 'Review Inventory transaction history' },
+  { href: '/inventory', labelKey: 'nav.currentInventory' as TranslationKey, descriptionKey: 'nav.currentInventoryDescription' as TranslationKey },
+  { href: '/inventory?section=pending-receivals#pending-receivals', matchPath: '__pending-receivals__', labelKey: 'nav.pendingReceivals' as TranslationKey, descriptionKey: 'nav.pendingReceivalsDescription' as TranslationKey },
+  { href: '/activity', labelKey: 'nav.activity' as TranslationKey, descriptionKey: 'nav.activityDescription' as TranslationKey },
 ];
 
 const purchasingNavItems = [
-  { href: '/purchasing', label: 'Purchase Orders', description: 'Create and manage purchasing drafts' },
-  { href: '/catalog', label: 'Catalog', description: 'Maintain Inventory and purchasing references' },
+  { href: '/purchasing', labelKey: 'nav.purchaseOrders' as TranslationKey, descriptionKey: 'nav.purchaseOrdersDescription' as TranslationKey },
+  { href: '/catalog', labelKey: 'nav.catalog' as TranslationKey, descriptionKey: 'nav.catalogDescription' as TranslationKey },
 ];
 
 const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
@@ -152,25 +153,27 @@ function dropdownItemClass(isActive: boolean) {
 
 type DomainNavItem = {
   href: string;
-  label: string;
-  description: string;
+  labelKey: TranslationKey;
+  descriptionKey: TranslationKey;
   matchPath?: string;
   disabled?: boolean;
 };
 
 function DomainNav({
   pathname,
-  label,
+  labelKey,
   href,
   icon: Icon,
   items,
 }: {
   pathname: string;
-  label: string;
+  labelKey: TranslationKey;
   href: string;
   icon: ComponentType;
   items: DomainNavItem[];
 }) {
+  const { t } = useLanguage();
+  const label = t(labelKey);
   const [isOpen, setIsOpen] = useState(false);
   const [dismissedWhileHovered, setDismissedWhileHovered] = useState(false);
   const isActive = items.some((item) => {
@@ -220,9 +223,9 @@ function DomainNav({
             const path = item.matchPath || item.href;
             const itemActive = Boolean(path) && (pathname === path || pathname.startsWith(`${path}/`));
             return item.disabled ? (
-              <div key={item.label} aria-disabled="true" className="px-4 py-3 text-slate-400">
-                <div className="text-sm font-bold">{item.label}</div>
-                <div className="mt-0.5 text-xs font-medium">{item.description}</div>
+              <div key={item.labelKey} aria-disabled="true" className="px-4 py-3 text-slate-400">
+                <div className="text-sm font-bold">{t(item.labelKey)}</div>
+                <div className="mt-0.5 text-xs font-medium">{t(item.descriptionKey)}</div>
               </div>
             ) : (
               <Link
@@ -235,8 +238,8 @@ function DomainNav({
                 }}
                 className={`block px-4 py-3 transition ${dropdownItemClass(itemActive)}`}
               >
-                <div className="text-sm font-bold">{item.label}</div>
-                <div className="mt-0.5 text-xs font-medium text-slate-500">{item.description}</div>
+                <div className="text-sm font-bold">{t(item.labelKey)}</div>
+                <div className="mt-0.5 text-xs font-medium text-slate-500">{t(item.descriptionKey)}</div>
               </Link>
             );
           })}
@@ -252,6 +255,7 @@ export default function ClientLayoutShell({
   children: ReactNode;
 }) {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -322,7 +326,7 @@ export default function ClientLayoutShell({
       return;
     }
 
-    setAccessError('Incorrect password.');
+    setAccessError(t('shell.incorrectPassword'));
   }
 
   function handleLogout() {
@@ -349,7 +353,7 @@ export default function ClientLayoutShell({
             <Link
               href="/"
               className="group flex min-w-0 items-center gap-2.5"
-              aria-label="Go to dashboard"
+              aria-label={t('shell.goToDashboard')}
             >
               <Image
                 src="/logo.png"
@@ -381,7 +385,7 @@ export default function ClientLayoutShell({
                       : 'max-h-5 text-[9px] opacity-100 sm:text-[10px]'
                   }`}
                 >
-                  Operations Control
+                  {t('shell.operationsControl')}
                 </div>
               </div>
             </Link>
@@ -390,8 +394,8 @@ export default function ClientLayoutShell({
               <button
                 type="button"
                 onClick={handleLogout}
-                title="Logout"
-                aria-label="Logout"
+                title={t('shell.logout')}
+                aria-label={t('shell.logout')}
                 className={`inline-flex h-9 w-9 shrink-0 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 sm:hidden ${
                   hasScrolled ? 'hidden' : ''
                 }`}
@@ -426,20 +430,20 @@ export default function ClientLayoutShell({
                       )}`}
                     >
                       <Icon />
-                      <span className={item.href === '/' ? 'hidden sm:inline' : ''}>{item.label}</span>
+                      <span className={item.href === '/' ? 'hidden sm:inline' : ''}>{t(item.labelKey)}</span>
                     </Link>
                   );
                 })}
 
-                <DomainNav pathname={pathname} label="Reporting" href="/manpower-reporting" icon={LaborIcon} items={reportingNavItems} />
-                <DomainNav pathname={pathname} label="Inventory" href="/inventory" icon={PackageIcon} items={inventoryNavItems} />
-                <DomainNav pathname={pathname} label="Purchasing" href="/purchasing" icon={CartIcon} items={purchasingNavItems} />
+                <DomainNav pathname={pathname} labelKey="nav.reporting" href="/manpower-reporting" icon={LaborIcon} items={reportingNavItems} />
+                <DomainNav pathname={pathname} labelKey="nav.inventory" href="/inventory" icon={PackageIcon} items={inventoryNavItems} />
+                <DomainNav pathname={pathname} labelKey="nav.purchasing" href="/purchasing" icon={CartIcon} items={purchasingNavItems} />
                 <Link
                   href="/settings"
                   className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(pathname === '/settings' || pathname.startsWith('/settings/'))}`}
                 >
                   <SettingsIcon />
-                  <span className="hidden xl:inline">Settings</span>
+                  <span className="hidden xl:inline">{t('nav.settings')}</span>
                 </Link>
               </nav>
             )}
@@ -448,8 +452,8 @@ export default function ClientLayoutShell({
               <button
                 type="button"
                 onClick={handleLogout}
-                title="Logout"
-                aria-label="Logout"
+                title={t('shell.logout')}
+                aria-label={t('shell.logout')}
                 className={`hidden h-10 w-10 shrink-0 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 sm:inline-flex ${
                   hasScrolled ? 'sm:h-9 sm:w-9' : ''
                 }`}
@@ -464,7 +468,7 @@ export default function ClientLayoutShell({
                   hasScrolled ? 'h-8 sm:h-9' : 'h-10'
                 }`}
               >
-                Internal Access
+                {t('shell.internalAccess')}
               </button>
             )}
           </div>
@@ -491,20 +495,20 @@ export default function ClientLayoutShell({
                 </h1>
 
                 <div className="mt-2 text-[11px] font-bold uppercase tracking-[0.22em] text-slate-600">
-                  Operations Control
+                  {t('shell.operationsControl')}
                 </div>
               </div>
 
               <div className="px-6 py-6">
                 <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600">
-                  Internal Access
+                  {t('shell.internalAccess')}
                 </div>
 
                 <label
                   htmlFor="inline-access-password"
                   className="mt-4 block text-sm font-bold text-slate-800"
                 >
-                  Password
+                  {t('shell.password')}
                 </label>
 
                 <input
@@ -535,7 +539,7 @@ export default function ClientLayoutShell({
                   onClick={handleUnlock}
                   className="mt-5 h-12 w-full border border-slate-950 bg-slate-900 px-4 text-sm font-bold uppercase tracking-[0.1em] text-white transition hover:bg-slate-950"
                 >
-                  Unlock Workspace
+                  {t('shell.unlockWorkspace')}
                 </button>
               </div>
             </div>
@@ -547,11 +551,11 @@ export default function ClientLayoutShell({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-6 backdrop-blur-sm">
           <div className="w-full max-w-md border border-slate-500 bg-white p-6 shadow-xl">
             <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600">
-              Internal Access
+              {t('shell.internalAccess')}
             </div>
 
             <h2 className="mt-2 text-2xl font-bold text-slate-950">
-              Enter password
+              {t('shell.enterPassword')}
             </h2>
 
             <div className="mt-5">
@@ -559,7 +563,7 @@ export default function ClientLayoutShell({
                 htmlFor="access-password"
                 className="mb-2 block text-sm font-bold text-slate-800"
               >
-                Password
+                {t('shell.password')}
               </label>
 
               <input
@@ -592,7 +596,7 @@ export default function ClientLayoutShell({
                 onClick={handleUnlock}
                 className="h-10 border border-slate-950 bg-slate-900 px-4 text-sm font-bold text-white transition hover:bg-slate-950"
               >
-                Unlock
+                {t('shell.unlock')}
               </button>
 
               <button
@@ -604,7 +608,7 @@ export default function ClientLayoutShell({
                 }}
                 className="h-10 border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 transition hover:bg-slate-100"
               >
-                Cancel
+                {t('shell.cancel')}
               </button>
             </div>
           </div>
