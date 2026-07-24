@@ -45,3 +45,38 @@ test('Add New Line stays directly below the group header and opens before existi
   await expect(page.getByRole('button', { name: 'Add Entry' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
 });
+
+test('New Group opens the inline creator and keeps a newly created empty group visible', async ({ page }) => {
+  let reportingGroups = [group];
+  await page.route('**/rest/v1/**', async route => {
+    const request = route.request();
+    const table = new URL(request.url()).pathname.split('/').at(-1);
+    if (table === 'manpower_reporting_groups' && request.method() === 'POST') {
+      const created = {
+        id: '10000000-0000-4000-8000-000000000002',
+        display_name: 'July 24 Shop Labor',
+        created_at: now,
+        updated_at: now,
+      };
+      reportingGroups = [created, ...reportingGroups];
+      await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(created) });
+      return;
+    }
+    const rows = table === 'manpower_entries' ? [entry] : table === 'manpower_reporting_groups' ? reportingGroups : table === 'manpower_workers' ? [worker] : table === 'manpower_tasks' ? [task] : [];
+    await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'content-range': `0-${Math.max(0, rows.length - 1)}/${rows.length}` }, body: JSON.stringify(rows) });
+  });
+  await page.goto('/manpower-reporting');
+  if (await page.getByRole('textbox', { name: 'Password' }).isVisible()) {
+    await page.getByRole('textbox', { name: 'Password' }).fill('tenarten123');
+    await page.getByRole('button', { name: 'Unlock Workspace' }).click();
+  }
+
+  await page.getByRole('button', { name: 'New Group' }).click();
+  const groupName = page.getByPlaceholder('Reporting group name');
+  await expect(groupName).toBeVisible();
+  await groupName.fill('July 24 Shop Labor');
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
+
+  await expect(page.getByText('July 24 Shop Labor', { exact: true })).toBeVisible();
+  await expect(page.getByText('New', { exact: true })).toBeVisible();
+});

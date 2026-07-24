@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, FileText, RefreshCw, Search } from "lucide-react";
+import { Download, FileText, RefreshCw, Search, Settings2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import { JobTag } from "@/modules/production/components/JobTag";
@@ -12,6 +12,7 @@ import {
 } from "@/modules/production/job-options";
 import CatalogItemEditor from "./CatalogItemEditor";
 import PendingReceivalsReviewDialog from "./PendingReceivalsReviewDialog";
+import VendorManager from "./VendorManager";
 import {
   calculatePurchaseOrderTotals,
   centsToMoney,
@@ -517,6 +518,7 @@ export function PurchaseOrderEditor({
   const [pendingReceivalReviewOpen, setPendingReceivalReviewOpen] = useState(false);
   const [pendingReceivalLoading, setPendingReceivalLoading] = useState(false);
   const [pendingReceivalSaving, setPendingReceivalSaving] = useState(false);
+  const [vendorManagerOpen, setVendorManagerOpen] = useState(false);
   const original = useRef(JSON.stringify(initial));
   const issuanceInFlight = useRef(false);
   const dirty = JSON.stringify(draft) !== original.current;
@@ -641,6 +643,24 @@ export function PurchaseOrderEditor({
           .filter(Boolean)
           .join(" · "),
       );
+  };
+  const refreshVendorOptions = async () => {
+    try {
+      setVendors(await loadVendors());
+      setMessage(tr(
+        "Vendor and contact options updated.",
+        "Se actualizaron los proveedores y contactos.",
+      ));
+    } catch (error) {
+      setErrors([
+        error instanceof Error
+          ? error.message
+          : tr(
+              "Unable to refresh Vendor and contact options.",
+              "No se pudieron actualizar los proveedores y contactos.",
+            ),
+      ]);
+    }
   };
   const requestClose = () => {
     if (dirty && !window.confirm("Discard unsaved Purchase Order changes?"))
@@ -1005,8 +1025,11 @@ export function PurchaseOrderEditor({
                 />
               </div>
               <div>
-                <label className={label}>{tr('Vendor', 'Proveedor')}</label>
+                <label className={label} htmlFor="purchase-order-vendor">
+                  {tr('Vendor', 'Proveedor')}
+                </label>
                 <input
+                  id="purchase-order-vendor"
                   list="po-vendor-options"
                   value={draft.vendorNameSnapshot}
                   onChange={(e) => selectVendor(e.target.value)}
@@ -1017,6 +1040,14 @@ export function PurchaseOrderEditor({
                     <option key={v.id} value={v.name} />
                   ))}
                 </datalist>
+                <button
+                  type="button"
+                  onClick={() => setVendorManagerOpen(true)}
+                  className="mt-2 inline-flex h-8 w-full items-center justify-center gap-2 border border-blue-300 bg-blue-50 px-3 text-xs font-bold text-blue-800 transition hover:border-blue-500 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                >
+                  <Settings2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  {tr("Manage Vendors & Contacts", "Administrar proveedores y contactos")}
+                </button>
               </div>
               <div>
                 <label className={label}>{tr('PO Date', 'Fecha de OC')}</label>
@@ -1393,6 +1424,12 @@ export function PurchaseOrderEditor({
           saving={pendingReceivalSaving}
           onClose={() => setPendingReceivalReviewOpen(false)}
           onCreate={createPendingReceivals}
+        />
+      )}
+      {vendorManagerOpen && (
+        <VendorManager
+          onClose={() => setVendorManagerOpen(false)}
+          onChanged={() => void refreshVendorOptions()}
         />
       )}
     </div>
