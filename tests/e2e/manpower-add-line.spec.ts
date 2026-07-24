@@ -62,6 +62,12 @@ test('New Group opens the inline creator and keeps a newly created empty group v
       await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(created) });
       return;
     }
+    if (table === 'delete_empty_manpower_reporting_group' && request.method() === 'POST') {
+      const payload = request.postDataJSON() as { p_group_id: string };
+      reportingGroups = reportingGroups.filter((item) => item.id !== payload.p_group_id);
+      await route.fulfill({ status: 204, body: '' });
+      return;
+    }
     const rows = table === 'manpower_entries' ? [entry] : table === 'manpower_reporting_groups' ? reportingGroups : table === 'manpower_workers' ? [worker] : table === 'manpower_tasks' ? [task] : [];
     await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'content-range': `0-${Math.max(0, rows.length - 1)}/${rows.length}` }, body: JSON.stringify(rows) });
   });
@@ -79,4 +85,11 @@ test('New Group opens the inline creator and keeps a newly created empty group v
 
   await expect(page.getByText('July 24 Shop Labor', { exact: true })).toBeVisible();
   await expect(page.getByText('New', { exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Select empty group July 24 Shop Labor' }).check();
+  await expect(page.getByText('Empty group selected', { exact: true })).toBeVisible();
+  page.once('dialog', dialog => dialog.accept());
+  await page.getByRole('button', { name: 'Delete Empty Group' }).click();
+  await expect(page.getByText('July 24 Shop Labor', { exact: true })).toHaveCount(0);
 });
