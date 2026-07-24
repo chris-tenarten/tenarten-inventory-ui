@@ -13,6 +13,7 @@ import {
   createManpowerReference,
   createManpowerReportingGroup,
   deleteManpowerEntries,
+  deleteEmptyManpowerReportingGroup,
   loadManpowerEntries,
   loadManpowerJobs,
   loadManpowerReferences,
@@ -559,6 +560,7 @@ export default function ManpowerWorkspace() {
   const [referenceEditors, setReferenceEditors] = useState<Set<'worker' | 'task'>>(() => new Set());
   const [referencePanelMessage, setReferencePanelMessage] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [selectedEmptyGroupIds, setSelectedEmptyGroupIds] = useState<Set<string>>(() => new Set());
   const [newGroupName, setNewGroupName] = useState('');
   const [creatingGroup, setCreatingGroup] = useState(false);
   const [showNewGroup, setShowNewGroup] = useState(false);
@@ -831,6 +833,23 @@ export default function ManpowerWorkspace() {
     return { deleted: result.deletedIds.length, failed: result.failures.length };
   }
 
+  async function deleteSelectedEmptyGroup(group: ManpowerReportingGroup) {
+    if (!window.confirm(`Delete empty reporting group "${group.display_name}"?`)) return;
+    setError('');
+    try {
+      await deleteEmptyManpowerReportingGroup(group.id);
+      setReportingGroups((groups) => groups.filter((item) => item.id !== group.id));
+      setSelectedEmptyGroupIds((current) => {
+        const next = new Set(current);
+        next.delete(group.id);
+        return next;
+      });
+      if (addingToGroupId === group.id) setAddingToGroupId(null);
+    } catch (caught) {
+      setError(caughtMessage(caught, 'Unable to delete the empty reporting group. It may now contain labor entries.'));
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7">
       <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
@@ -865,6 +884,7 @@ export default function ManpowerWorkspace() {
           const am = group.entries.reduce((sum, entry) => sum + Number(entry.am_hours), 0);
           const pm = group.entries.reduce((sum, entry) => sum + Number(entry.pm_hours), 0);
           const groupIds = group.entries.map((entry) => entry.id);
+          const emptyGroupSelected = group.entries.length === 0 && selectedEmptyGroupIds.has(group.key);
           const selectedGroupIds = groupIds.filter((id) => selectedIds.has(id));
           const allSelected = groupIds.length > 0 && selectedGroupIds.length === groupIds.length;
           const someSelected = selectedGroupIds.length > 0 && !allSelected;
@@ -875,9 +895,25 @@ export default function ManpowerWorkspace() {
           const effectiveJobLabel = groupJob ? jobLabel(groupJob) : previousJobName;
           const jobCell = groupJob ? <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{effectiveJobLabel}</div> : <input key={`${group.key}:${previousJobName}`} defaultValue={previousJobName} aria-label={`Job name for ${group.label}`} onBlur={(event) => { if (event.target.value.trim() !== previousJobName) void renameUnlinkedGroup(group.key, group.entries, event.target.value); }} className="h-8 min-w-[220px] w-full border border-slate-300 bg-white px-2 text-xs outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-200" />;
           return (
-            <section key={group.key} className={`overflow-hidden rounded-sm border bg-white ${selectedGroupIds.length > 0 ? 'border-blue-600' : 'border-slate-200'}`}>
+            <section key={group.key} className={`overflow-hidden rounded-sm border bg-white ${selectedGroupIds.length > 0 || emptyGroupSelected ? 'border-blue-600' : 'border-slate-200'}`}>
               <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800">
-                <SelectionCheckbox checked={allSelected} indeterminate={someSelected} label={`Select all entries in ${group.label}`} onChange={(checked) => setGroupSelected(groupIds, checked)} />
+                <SelectionCheckbox
+                  checked={emptyGroupSelected || allSelected}
+                  indeterminate={someSelected}
+                  label={group.entries.length === 0 ? `Select empty group ${group.label}` : `Select all entries in ${group.label}`}
+                  onChange={(checked) => {
+                    if (group.entries.length > 0) {
+                      setGroupSelected(groupIds, checked);
+                      return;
+                    }
+                    setSelectedEmptyGroupIds((current) => {
+                      const next = new Set(current);
+                      if (checked) next.add(group.key);
+                      else next.delete(group.key);
+                      return next;
+                    });
+                  }}
+                />
                 <button type="button" onClick={() => setCollapsed((current) => { const next = new Set(current); if (next.has(group.key)) next.delete(group.key); else next.add(group.key); return next; })} className="shrink-0" aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${group.label}`}>
                   {isCollapsed ? <ChevronRight className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
                 </button>
@@ -896,6 +932,7 @@ export default function ManpowerWorkspace() {
                 <ProductionJobLinkSelector groupLabel={group.label} jobs={jobs} value={groupJobId} disabled={linkingGroupId === group.key} onChange={(jobId) => void linkReportingGroup(group.key, group.entries, jobId, previousJobName)} />
               </div>}
               {selectedGroupIds.length > 0 && <BulkActionBar selectedCount={selectedGroupIds.length} jobs={jobs} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
+              {emptyGroupSelected && group.group && <div className="flex items-center justify-between border-b border-blue-200 bg-blue-50 px-3 py-2 text-xs"><span className="font-semibold text-blue-900">Empty group selected</span><div className="flex items-center gap-3"><button type="button" onClick={() => setSelectedEmptyGroupIds((current) => { const next = new Set(current); next.delete(group.key); return next; })} className="font-bold text-slate-600 hover:underline">Clear selection</button><button type="button" onClick={() => void deleteSelectedEmptyGroup(group.group!)} className="h-8 border border-red-500 bg-white px-3 font-bold text-red-700 hover:bg-red-50">Delete Empty Group</button></div></div>}
               {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1300px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{addingToGroupId === group.key && group.group && <tr className="border-b-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly jobControl={jobCell} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={jobCell} />)}</tbody></table></div>}
             </section>
           );

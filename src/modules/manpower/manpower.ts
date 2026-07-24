@@ -71,6 +71,13 @@ export async function updateManpowerReportingGroup(
   return data as ManpowerReportingGroup;
 }
 
+export async function deleteEmptyManpowerReportingGroup(id: string): Promise<void> {
+  const { error } = await supabase.rpc('delete_empty_manpower_reporting_group', {
+    p_group_id: id,
+  });
+  if (error) throw error;
+}
+
 export async function loadManpowerReferences(
   table: 'manpower_workers' | 'manpower_tasks',
 ): Promise<ManpowerReference[]> {
