@@ -713,9 +713,8 @@ export default function ManpowerWorkspace() {
       if (!a.group && b.group) return 1;
       return a.label.localeCompare(b.label);
     });
-    const nonEmptyGroups = sortedGroups.filter((group) => group.entries.length > 0);
-    if (!normalizedSearch) return nonEmptyGroups;
-    return nonEmptyGroups
+    if (!normalizedSearch) return sortedGroups;
+    return sortedGroups
       .map((group) => ({
         ...group,
         entries: group.entries.filter((entry) => [
