@@ -668,7 +668,12 @@ export default function ManpowerWorkspace() {
       const created = await createManpowerReportingGroup(newGroupName);
       setReportingGroups((groups) => [created, ...groups]);
       setCollapsed((current) => { const next = new Set(current); next.delete(created.id); return next; });
-      setDraft({ ...blankDraft(), reportingGroupId: created.id });
+      setDraft({
+        ...blankDraft(),
+        reportingGroupId: created.id,
+        jobChoice: UNLISTED,
+        unlistedLabel: created.display_name,
+      });
       setAddingToGroupId(created.id);
       setNewGroupName('');
       setShowNewGroup(false);
@@ -734,7 +739,7 @@ export default function ManpowerWorkspace() {
       .filter((group) => group.entries.length > 0);
   }, [entries, linkedJobId, normalizedSearch, reportingGroups]);
 
-  function startAddingToGroup(groupId: string, groupEntries: ManpowerEntry[]) {
+  function startAddingToGroup(groupId: string, groupEntries: ManpowerEntry[], groupLabel: string) {
     const identities = new Map<string, Pick<Draft, 'jobChoice' | 'unlistedLabel'>>();
     for (const entry of groupEntries) {
       const key = entry.job_id ? `job:${entry.job_id}` : `temporary:${entry.unlisted_work_label}`;
@@ -747,8 +752,8 @@ export default function ManpowerWorkspace() {
     setDraft({
       ...blankDraft(),
       reportingGroupId: groupId,
-      jobChoice: identity?.jobChoice ?? '',
-      unlistedLabel: identity?.unlistedLabel ?? '',
+      jobChoice: identity?.jobChoice ?? (groupEntries.length === 0 ? UNLISTED : ''),
+      unlistedLabel: identity?.unlistedLabel ?? (groupEntries.length === 0 ? groupLabel : ''),
     });
     setAddingToGroupId(groupId);
   }
@@ -926,7 +931,7 @@ export default function ManpowerWorkspace() {
                 <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">PM {pm.toFixed(1)} hrs</span>
                 <span className="shrink-0 rounded-sm bg-slate-900 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">TOTAL {(am + pm).toFixed(1)} hrs</span>
               </div>
-              {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</button></div>}
+              {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries, group.label)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</button></div>}
               {!isCollapsed && <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                 <span className="flex-1">{groupJob ? tr('This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.','Este grupo de mano de obra está vinculado al trabajo de Producción. Las horas registradas aquí se incluyen en las horas registradas del flujo de producción.') : tr('This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.','Este grupo de mano de obra no está vinculado a un trabajo de Producción. Las horas registradas aquí no aparecerán en Producción hasta que se vincule un trabajo.')}</span>
                 <ProductionJobLinkSelector groupLabel={group.label} jobs={jobs} value={groupJobId} disabled={linkingGroupId === group.key} onChange={(jobId) => void linkReportingGroup(group.key, group.entries, jobId, previousJobName)} />

@@ -48,6 +48,8 @@ test('Add New Line stays directly below the group header and opens before existi
 
 test('New Group opens the inline creator and keeps a newly created empty group visible', async ({ page }) => {
   let reportingGroups = [group];
+  let createdEntryPayload: Record<string, unknown> | null = null;
+  let createdLaborEntry: Record<string, unknown> | null = null;
   await page.route('**/rest/v1/**', async route => {
     const request = route.request();
     const table = new URL(request.url()).pathname.split('/').at(-1);
@@ -60,6 +62,29 @@ test('New Group opens the inline creator and keeps a newly created empty group v
       };
       reportingGroups = [created, ...reportingGroups];
       await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(created) });
+      return;
+    }
+    if (table === 'manpower_entries' && request.method() === 'POST') {
+      createdEntryPayload = request.postDataJSON() as Record<string, unknown>;
+      createdLaborEntry = {
+        ...entry,
+        id: '40000000-0000-4000-8000-000000000002',
+        reporting_group_id: createdEntryPayload.reporting_group_id,
+        work_date: createdEntryPayload.work_date,
+        worker_id: createdEntryPayload.worker_id,
+        task_id: createdEntryPayload.task_id,
+        job_id: createdEntryPayload.job_id,
+        unlisted_work_label: createdEntryPayload.unlisted_work_label,
+        am_hours: createdEntryPayload.am_hours,
+        pm_hours: createdEntryPayload.pm_hours,
+        notes: createdEntryPayload.notes,
+        reporting_group: reportingGroups[0],
+      };
+      await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(createdLaborEntry) });
+      return;
+    }
+    if (table === 'manpower_entries' && request.method() === 'DELETE') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(createdLaborEntry ? [createdLaborEntry] : []) });
       return;
     }
     if (table === 'delete_empty_manpower_reporting_group' && request.method() === 'POST') {
@@ -86,7 +111,23 @@ test('New Group opens the inline creator and keeps a newly created empty group v
   await expect(page.getByText('July 24 Shop Labor', { exact: true })).toBeVisible();
   await expect(page.getByText('New', { exact: true })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  const newEntryRow = page.getByRole('row', { name: /New .* Add Entry Cancel/ });
+  await newEntryRow.getByRole('combobox').nth(0).selectOption(worker.id);
+  await newEntryRow.getByRole('combobox').nth(1).selectOption(task.id);
+  await page.getByRole('button', { name: 'Add Entry' }).click();
+  await expect.poll(() => createdEntryPayload).not.toBeNull();
+  expect(createdEntryPayload).toMatchObject({
+    reporting_group_id: '10000000-0000-4000-8000-000000000002',
+    worker_id: worker.id,
+    task_id: task.id,
+    job_id: null,
+    unlisted_work_label: 'July 24 Shop Labor',
+  });
+
+  const newGroup = page.getByText('July 24 Shop Labor', { exact: true }).locator('xpath=ancestor::section');
+  await newGroup.getByRole('checkbox', { name: 'Select Existing Worker entry on 2026-07-24' }).check();
+  await page.once('dialog', dialog => dialog.accept());
+  await newGroup.getByRole('button', { name: 'Delete Selected' }).click();
   await page.getByRole('checkbox', { name: 'Select empty group July 24 Shop Labor' }).check();
   await expect(page.getByText('Empty group selected', { exact: true })).toBeVisible();
   page.once('dialog', dialog => dialog.accept());
