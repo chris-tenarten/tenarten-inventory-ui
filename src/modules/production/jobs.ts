@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import type {
   JobAttachment,
   JobDocumentType,
+  JobUpdate,
   NewProductionJob,
   ProductionJob,
 } from './types';
@@ -48,6 +49,18 @@ const ATTACHMENT_COLUMNS = [
   'size_bytes',
   'document_type',
   'uploaded_by',
+  'job_update_id',
+  'created_at',
+].join(',');
+
+const JOB_UPDATE_COLUMNS = [
+  'id',
+  'job_id',
+  'author_name',
+  'body',
+  'requires_follow_up',
+  'resolved_at',
+  'resolved_by_name',
   'created_at',
 ].join(',');
 
@@ -218,6 +231,62 @@ export async function loadProductionJobActivity(jobId: string): Promise<Producti
   return (data ?? []) as ProductionJobActivity[];
 }
 
+export async function loadJobUpdates(jobId: string): Promise<JobUpdate[]> {
+  const { data, error } = await supabase
+    .from('job_updates')
+    .select(JOB_UPDATE_COLUMNS)
+    .eq('job_id', jobId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return (data ?? []) as unknown as JobUpdate[];
+}
+
+export async function createJobUpdate(
+  jobId: string,
+  authorName: string,
+  body: string,
+  requiresFollowUp: boolean,
+): Promise<JobUpdate> {
+  const author = authorName.trim();
+  const updateBody = body.trim();
+  if (!author) throw new Error('Your name is required.');
+  if (!updateBody) throw new Error('Enter an update before posting.');
+
+  const { data, error } = await supabase
+    .from('job_updates')
+    .insert({
+      job_id: jobId,
+      author_name: author,
+      body: updateBody,
+      requires_follow_up: requiresFollowUp,
+    })
+    .select(JOB_UPDATE_COLUMNS)
+    .single();
+
+  if (error) throw error;
+  return data as unknown as JobUpdate;
+}
+
+export async function resolveJobUpdate(
+  update: JobUpdate,
+  resolverName: string,
+): Promise<JobUpdate> {
+  const resolver = resolverName.trim();
+  if (!resolver) throw new Error('Resolver name is required.');
+  if (!update.requires_follow_up) {
+    throw new Error('Only follow-up updates can be resolved.');
+  }
+
+  const { data, error } = await supabase.rpc('resolve_job_update', {
+    p_update_id: update.id,
+    p_resolved_by_name: resolver,
+  });
+
+  if (error) throw error;
+  return data as unknown as JobUpdate;
+}
+
 export async function loadJobAttachmentCounts(): Promise<
   Record<string, number>
 > {
@@ -252,6 +321,8 @@ export async function uploadJobAttachments(
   jobId: string,
   files: File[],
   documentType: JobDocumentType,
+  jobUpdateId: string | null = null,
+  uploadedBy: string | null = null,
 ): Promise<JobAttachment[]> {
   const uploaded: JobAttachment[] = [];
 
@@ -279,6 +350,8 @@ export async function uploadJobAttachments(
         mime_type: file.type || null,
         size_bytes: file.size,
         document_type: documentType,
+        job_update_id: jobUpdateId,
+        uploaded_by: uploadedBy?.trim() || null,
       })
       .select(ATTACHMENT_COLUMNS)
       .single();
