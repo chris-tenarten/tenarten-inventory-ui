@@ -21,6 +21,7 @@ import {
   archiveProductionJob,
   restoreProductionJob,
   loadJobAttachmentCounts,
+  loadJobUpdateSummaries,
   loadProductionIntegrationSummaries,
   loadProductionJob,
   loadProductionJobs,
@@ -28,7 +29,7 @@ import {
   updateProductionJob,
 } from './jobs';
 
-import type { ProductionJobUpdate } from './jobs';
+import type { JobUpdateSummary, ProductionJobUpdate } from './jobs';
 import type {
   NewProductionJob,
   ProductionJob,
@@ -81,6 +82,7 @@ export default function ProductionWorkspace() {
   const [dashboardMode, setDashboardModeState] = useState<DashboardMode>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('view') === 'snapshot' ? 'snapshot' : 'pipeline');
   const [jobs, setJobs] = useState<ProductionJob[]>([]);
   const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
+  const [jobUpdateSummaries, setJobUpdateSummaries] = useState<Record<string, JobUpdateSummary>>({});
   const [integrationSummaries, setIntegrationSummaries] = useState<Record<string, ProductionIntegrationSummary>>({});
   const [includeArchived, setIncludeArchived] = useState(false);
   const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => typeof window === 'undefined' ? 'stage' : (window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY) as ProductionArrangement) || 'stage');
@@ -150,13 +152,17 @@ export default function ProductionWorkspace() {
     try {
       const focusedJobId = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
       window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
-      const [loadedJobs, loadedCounts, summaries, focusedJob] = await Promise.all([
+      const [loadedJobs, loadedCounts, summaries, updateSummaries, focusedJob] = await Promise.all([
         loadProductionJobs(includeArchived),
         loadJobAttachmentCounts().catch((error) => {
           console.error('Unable to load Production attachment counts', error);
           return {};
         }),
         loadProductionIntegrationSummaries().catch((error) => { console.error('Unable to load Production integration summaries', error); return {}; }),
+        loadJobUpdateSummaries().catch((error) => {
+          console.error('Unable to load Production Job Update summaries', error);
+          return {};
+        }),
         focusedJobId ? loadProductionJob(focusedJobId) : Promise.resolve(null),
       ]);
 
@@ -166,6 +172,7 @@ export default function ProductionWorkspace() {
       setJobs(sortJobs(jobsWithFocused));
       setAttachmentCounts(loadedCounts);
       setIntegrationSummaries(summaries);
+      setJobUpdateSummaries(updateSummaries);
       if (focusedJob) {
         setFocusedJobId(focusedJob.id);
         setSearch(focusedJob.job_number || focusedJob.name);
@@ -681,7 +688,7 @@ export default function ProductionWorkspace() {
         <div className="mt-4">
           {isLoading ? (
             <div className="flex min-h-72 items-center justify-center border border-slate-400 bg-white text-sm font-semibold text-slate-600">Loading active jobs…</div>
-          ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} integrationSummaries={integrationSummaries} onSelectJob={selectJob}/> : activeView === 'spreadsheet' ? (
+          ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} integrationSummaries={integrationSummaries} jobUpdateSummaries={jobUpdateSummaries} onSelectJob={selectJob}/> : activeView === 'spreadsheet' ? (
             <ProductionTable
               jobs={displayedJobs}
               attachmentCounts={attachmentCounts}

@@ -79,5 +79,17 @@ export type JobAttachment = {
   size_bytes: number | null;
   document_type: JobDocumentType;
   uploaded_by: string | null;
+  job_update_id: string | null;
+  created_at: string;
+};
+
+export type JobUpdate = {
+  id: string;
+  job_id: string;
+  author_name: string;
+  body: string;
+  requires_follow_up: boolean;
+  resolved_at: string | null;
+  resolved_by_name: string | null;
   created_at: string;
 };

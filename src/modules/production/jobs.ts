@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import type {
   JobAttachment,
   JobDocumentType,
+  JobUpdate,
   NewProductionJob,
   ProductionJob,
 } from './types';
@@ -48,6 +49,18 @@ const ATTACHMENT_COLUMNS = [
   'size_bytes',
   'document_type',
   'uploaded_by',
+  'job_update_id',
+  'created_at',
+].join(',');
+
+const JOB_UPDATE_COLUMNS = [
+  'id',
+  'job_id',
+  'author_name',
+  'body',
+  'requires_follow_up',
+  'resolved_at',
+  'resolved_by_name',
   'created_at',
 ].join(',');
 
@@ -86,6 +99,39 @@ export async function loadProductionJobs(includeArchived = false): Promise<Produ
 }
 
 export type ProductionIntegrationSummary = { actualHours: number; laborEntryCount: number; materialReportDates: string[] };
+export type JobUpdateSummary = {
+  total: number;
+  openFollowUpCount: number;
+  latestCreatedAt: string | null;
+};
+
+export async function loadJobUpdateSummaries(): Promise<Record<string, JobUpdateSummary>> {
+  const { data, error } = await supabase
+    .from('job_updates')
+    .select('job_id,created_at,requires_follow_up,resolved_at');
+  if (error) throw error;
+
+  const summaries: Record<string, JobUpdateSummary> = {};
+  for (const row of data ?? []) {
+    const jobId = String(row.job_id);
+    const summary = summaries[jobId] ?? {
+      total: 0,
+      openFollowUpCount: 0,
+      latestCreatedAt: null,
+    };
+    summary.total += 1;
+    if (row.requires_follow_up && !row.resolved_at) {
+      summary.openFollowUpCount += 1;
+    }
+    const createdAt = String(row.created_at);
+    if (!summary.latestCreatedAt || createdAt > summary.latestCreatedAt) {
+      summary.latestCreatedAt = createdAt;
+    }
+    summaries[jobId] = summary;
+  }
+  return summaries;
+}
+
 export async function loadProductionIntegrationSummaries(): Promise<Record<string, ProductionIntegrationSummary>> {
   const [labor, materials] = await Promise.all([
     supabase.from('manpower_entries').select('job_id,am_hours,pm_hours').not('job_id', 'is', null),
@@ -218,6 +264,62 @@ export async function loadProductionJobActivity(jobId: string): Promise<Producti
   return (data ?? []) as ProductionJobActivity[];
 }
 
+export async function loadJobUpdates(jobId: string): Promise<JobUpdate[]> {
+  const { data, error } = await supabase
+    .from('job_updates')
+    .select(JOB_UPDATE_COLUMNS)
+    .eq('job_id', jobId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return (data ?? []) as unknown as JobUpdate[];
+}
+
+export async function createJobUpdate(
+  jobId: string,
+  authorName: string,
+  body: string,
+  requiresFollowUp: boolean,
+): Promise<JobUpdate> {
+  const author = authorName.trim();
+  const updateBody = body.trim();
+  if (!author) throw new Error('Your name is required.');
+  if (!updateBody) throw new Error('Enter an update before posting.');
+
+  const { data, error } = await supabase
+    .from('job_updates')
+    .insert({
+      job_id: jobId,
+      author_name: author,
+      body: updateBody,
+      requires_follow_up: requiresFollowUp,
+    })
+    .select(JOB_UPDATE_COLUMNS)
+    .single();
+
+  if (error) throw error;
+  return data as unknown as JobUpdate;
+}
+
+export async function resolveJobUpdate(
+  update: JobUpdate,
+  resolverName: string,
+): Promise<JobUpdate> {
+  const resolver = resolverName.trim();
+  if (!resolver) throw new Error('Resolver name is required.');
+  if (!update.requires_follow_up) {
+    throw new Error('Only follow-up updates can be resolved.');
+  }
+
+  const { data, error } = await supabase.rpc('resolve_job_update', {
+    p_update_id: update.id,
+    p_resolved_by_name: resolver,
+  });
+
+  if (error) throw error;
+  return data as unknown as JobUpdate;
+}
+
 export async function loadJobAttachmentCounts(): Promise<
   Record<string, number>
 > {
@@ -252,6 +354,8 @@ export async function uploadJobAttachments(
   jobId: string,
   files: File[],
   documentType: JobDocumentType,
+  jobUpdateId: string | null = null,
+  uploadedBy: string | null = null,
 ): Promise<JobAttachment[]> {
   const uploaded: JobAttachment[] = [];
 
@@ -279,6 +383,8 @@ export async function uploadJobAttachments(
         mime_type: file.type || null,
         size_bytes: file.size,
         document_type: documentType,
+        job_update_id: jobUpdateId,
+        uploaded_by: uploadedBy?.trim() || null,
       })
       .select(ATTACHMENT_COLUMNS)
       .single();

@@ -25,9 +25,10 @@ import type {
   ProductionJob,
   ProductionStatus,
 } from "../types";
+import JobUpdatesPanel from "./JobUpdatesPanel";
 import ProductionStatusBadge from "./ProductionStatusBadge";
 
-type InspectorSection = "details" | "files" | "recent-changes";
+type InspectorSection = "details" | "updates" | "files" | "recent-changes";
 
 type Props = {
   job: ProductionJob;
@@ -175,9 +176,11 @@ export default function ProductionJobInspector({
   const [activeSection, setActiveSection] = useState<InspectorSection>(
     initialFocus === "attachments"
       ? "files"
-      : initialFocus === "recent-changes"
-        ? "recent-changes"
-        : "details",
+      : initialFocus === "job-updates"
+        ? "updates"
+        : initialFocus === "recent-changes"
+          ? "recent-changes"
+          : "details",
   );
   const [activity, setActivity] = useState<ProductionJobActivity[]>([]);
   const [activityError, setActivityError] = useState("");
@@ -207,6 +210,7 @@ export default function ProductionJobInspector({
     url: string;
   } | null>(null);
   const [attachmentFullscreen, setAttachmentFullscreen] = useState(false);
+  const [focusedUpdateId, setFocusedUpdateId] = useState<string | null>(null);
   const [scheduleDraft, setScheduleDraft] = useState(() => ({
     start: job.planned_start || "",
     end: job.planned_end || "",
@@ -471,6 +475,7 @@ export default function ProductionJobInspector({
 
   const tabs: Array<{ id: InspectorSection; label: string }> = [
     { id: "details", label: "Details" },
+    { id: "updates", label: "Job Updates" },
     {
       id: "files",
       label: `Files${attachments.length ? ` (${attachments.length})` : ""}`,
@@ -534,7 +539,7 @@ export default function ProductionJobInspector({
         <div
           role="tablist"
           aria-label="Job inspector sections"
-          className="mt-5 grid grid-cols-3 rounded-sm border border-slate-300 bg-slate-50 p-1"
+          className="mt-5 grid grid-cols-4 rounded-sm border border-slate-300 bg-slate-50 p-1"
         >
           {tabs.map((tab) => (
             <button
@@ -932,6 +937,25 @@ export default function ProductionJobInspector({
                               </div>
                             </div>
                           </button>
+                          {attachment.job_update_id && (
+                            <div className="flex shrink-0 flex-col items-end gap-1">
+                              <span className="bg-blue-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-blue-800">
+                                From update
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFocusedUpdateId(
+                                    attachment.job_update_id,
+                                  );
+                                  setActiveSection("updates");
+                                }}
+                                className="text-[10px] font-bold text-blue-800 underline underline-offset-2"
+                              >
+                                View update
+                              </button>
+                            </div>
+                          )}
                           <button
                             type="button"
                             disabled={deletingId === attachment.id}
@@ -987,6 +1011,22 @@ export default function ProductionJobInspector({
                 )}
               </div>
             </section>
+          )}
+
+          {activeSection === "updates" && (
+            <JobUpdatesPanel
+              job={job}
+              attachments={attachments}
+              focusedUpdateId={focusedUpdateId}
+              onAttachmentsChanged={(nextAttachments) => {
+                setAttachments(nextAttachments);
+                onAttachmentsChanged(job.id, nextAttachments.length);
+              }}
+              onOpenAttachment={(attachment) => {
+                setActiveSection("files");
+                void openAttachment(attachment);
+              }}
+            />
           )}
 
           {activeSection === "recent-changes" && (
