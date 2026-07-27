@@ -39,8 +39,8 @@ import { PRODUCTION_JOB_FOCUS_STORAGE_KEY } from './job-options';
 import { inclusiveCalendarDays, laborIntensity } from './schedule';
 import { getJobReadiness } from './readiness';
 import { productionApprovalDecision, PRODUCTION_APPROVAL_WINDOW_MS } from './approval';
-import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, reconcileBatch, stageSchedule as updateStagedSchedule, type StagedSchedules } from './schedule-staging';
-import type { ProductionScheduleBatchConflictDetail } from './schedule-batch-contract';
+import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, rebaseStagedScheduleVersion, reconcileBatch, stageSchedule as updateStagedSchedule, type StagedSchedules } from './schedule-staging';
+import { describeProductionScheduleSaveError, type ProductionScheduleBatchConflictDetail } from './schedule-batch-contract';
 import { arrangeProductionJobs, PRODUCTION_ARRANGEMENT_KEY, type ProductionArrangement } from './arrangement';
 import type { ProductionIntegrationSummary } from './jobs';
 import { useLanguage } from '@/lib/language';
@@ -304,11 +304,11 @@ export default function ProductionWorkspace() {
       setScheduleSaveState('saved'); setScheduleMessage(`${result.updated_count} production schedules saved`);
       requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
     } catch (error) {
-      const details = error as { message?: string; details?: string };
-      if (details.message === 'production_schedule_conflict' && details.details) {
-        try { setConflicts((JSON.parse(details.details) as ProductionScheduleBatchConflictDetail).conflicts); } catch { /* retain generic error */ }
-      }
-      setScheduleSaveState('error'); setScheduleMessage(details.message || 'Atomic schedule batch could not be saved. Retry with the same batch.');
+      const feedback = describeProductionScheduleSaveError(error);
+      setConflicts(feedback.conflicts);
+      setScheduleSaveState('error');
+      setScheduleMessage(feedback.message);
+      requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
     } finally { scheduleSaveRef.current = false; }
   }, [batchId, jobs, stagedSchedules]);
 
@@ -431,6 +431,9 @@ export default function ProductionWorkspace() {
       const updated = await updateProductionJob(original, changes);
       setJobs((current) =>
         sortJobs(current.map((job) => (job.id === jobId ? updated : job))),
+      );
+      setStagedSchedules((current) =>
+        rebaseStagedScheduleVersion(current, updated),
       );
       return updated;
     } catch (error) {

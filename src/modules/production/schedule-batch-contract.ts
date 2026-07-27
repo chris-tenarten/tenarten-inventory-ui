@@ -65,3 +65,83 @@ export type ProductionScheduleBatchRpcError = {
   details: string;
   hint: string | null;
 };
+
+export type ProductionScheduleErrorFeedback = {
+  message: string;
+  conflicts: ProductionScheduleBatchConflictDetail['conflicts'];
+};
+
+export function describeProductionScheduleSaveError(
+  error: unknown,
+): ProductionScheduleErrorFeedback {
+  const candidate = error as { message?: string; details?: string };
+
+  if (
+    candidate.message === 'production_schedule_conflict'
+    && candidate.details
+  ) {
+    try {
+      const detail = JSON.parse(
+        candidate.details,
+      ) as ProductionScheduleBatchConflictDetail;
+      const conflicts = Array.isArray(detail.conflicts)
+        ? detail.conflicts
+        : [];
+      const jobLabels = conflicts
+        .slice(0, 2)
+        .map((conflict) => conflict.job_number?.trim() || conflict.name)
+        .filter(Boolean);
+      const remaining = Math.max(0, conflicts.length - jobLabels.length);
+      const subject = jobLabels.length
+        ? `${jobLabels.join(', ')}${remaining ? ` and ${remaining} more` : ''}`
+        : 'One or more jobs';
+      return {
+        conflicts,
+        message: `${subject} changed after you began editing. The Production schedule was not saved, but your proposed dates are still available. Review the latest saved dates and try again.`,
+      };
+    } catch {
+      // Fall through to the safe conflict explanation.
+    }
+
+    return {
+      conflicts: [],
+      message:
+        'The Production schedule changed after you began editing. It was not saved, but your proposed dates are still available. Refresh the job details and try again.',
+    };
+  }
+
+  if (
+    (
+      candidate.message === 'production_schedule_validation'
+      || candidate.message === 'production_schedule_batch_reused'
+    )
+    && candidate.details
+  ) {
+    try {
+      const detail = JSON.parse(
+        candidate.details,
+      ) as ProductionScheduleBatchValidationDetail;
+      if (detail.message?.trim()) {
+        return {
+          conflicts: [],
+          message: `The Production schedule was not saved: ${detail.message}`,
+        };
+      }
+    } catch {
+      // Use the safe fallback below.
+    }
+  }
+
+  if (
+    typeof candidate.message === 'string'
+    && candidate.message.startsWith('Production approval')
+  ) {
+    return { conflicts: [], message: candidate.message };
+  }
+
+  return {
+    conflicts: [],
+    message:
+      'The Production schedule could not be saved. Your proposed dates are still available. Check your connection and try again.',
+  };
+}

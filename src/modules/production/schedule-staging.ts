@@ -33,4 +33,25 @@ export function reconcileBatch(jobs: ProductionJob[], updated: ProductionJob[]) 
   return jobs.map((job) => byId.get(job.id) ?? job);
 }
 
+export function rebaseStagedScheduleVersion(
+  staged: StagedSchedules,
+  updatedJob: ProductionJob,
+): StagedSchedules {
+  const proposal = staged[updatedJob.id];
+  if (!proposal) return staged;
+
+  const scheduleBaselineIsUnchanged =
+    updatedJob.planned_start === proposal.original_planned_start
+    && updatedJob.planned_end === proposal.original_planned_end;
+  if (!scheduleBaselineIsUnchanged) return staged;
+
+  return {
+    ...staged,
+    [updatedJob.id]: {
+      ...proposal,
+      original_updated_at: updatedJob.updated_at,
+    },
+  };
+}
+
 export function hasUnsavedSchedules(staged: StagedSchedules) { return Object.keys(staged).length > 0; }

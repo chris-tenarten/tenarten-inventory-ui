@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, reconcileBatch, stageSchedule } from '../src/modules/production/schedule-staging.ts';
+import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, rebaseStagedScheduleVersion, reconcileBatch, stageSchedule } from '../src/modules/production/schedule-staging.ts';
+import { describeProductionScheduleSaveError } from '../src/modules/production/schedule-batch-contract.ts';
 
 const job = (id, start, end) => ({ id, name: id, job_number: id, planned_start: start, planned_end: end, updated_at: `2026-07-16T00:00:0${id}.000Z` });
 const jobs = [job('a', '2026-07-01', '2026-07-02'), job('b', '2026-07-03', '2026-07-04')];
@@ -20,11 +21,56 @@ staged = stageSchedule(staged, jobs[1], jobs[1].planned_start, jobs[1].planned_e
 assert.deepEqual(Object.keys(staged), ['a']);
 assert.equal(hasUnsavedSchedules(staged), true);
 assert.equal(reconcileBatch(jobs, [{ ...jobs[0], name: 'updated' }])[0].name, 'updated');
+const rebased = rebaseStagedScheduleVersion(staged, {
+  ...jobs[0],
+  requested_delivery_date: '2026-07-20',
+  updated_at: '2026-07-16T01:00:00.000Z',
+});
+assert.equal(rebased.a.original_updated_at, '2026-07-16T01:00:00.000Z');
+assert.equal(rebased.a.original_planned_start, jobs[0].planned_start);
+assert.equal(rebased.a.original_planned_end, jobs[0].planned_end);
+const concurrentSchedule = rebaseStagedScheduleVersion(staged, {
+  ...jobs[0],
+  planned_end: '2026-07-10',
+  updated_at: '2026-07-16T02:00:00.000Z',
+});
+assert.equal(concurrentSchedule.a.original_updated_at, staged.a.original_updated_at);
+const conflictFeedback = describeProductionScheduleSaveError({
+  message: 'production_schedule_conflict',
+  details: JSON.stringify({
+    code: 'production_schedule_conflict',
+    conflicts: [{
+      job_id: 'a',
+      job_number: '1234',
+      name: 'McCullough',
+      expected: {},
+      current: {},
+      proposed: {},
+    }],
+  }),
+});
+assert.match(conflictFeedback.message, /1234 changed after you began editing/);
+assert.match(conflictFeedback.message, /proposed dates are still available/);
+assert.equal(conflictFeedback.conflicts.length, 1);
+assert.match(describeProductionScheduleSaveError({
+  message: 'production_schedule_validation',
+  details: JSON.stringify({
+    code: 'production_schedule_validation',
+    message: 'proposed dates must form a valid range',
+  }),
+}).message, /proposed dates must form a valid range/);
+assert.equal(
+  describeProductionScheduleSaveError(
+    new Error('Production approval expired. Confirm the batch again.'),
+  ).message,
+  'Production approval expired. Confirm the batch again.',
+);
 const workspaceSource = readFileSync(new URL('../src/modules/production/ProductionWorkspace.tsx', import.meta.url), 'utf8');
 const jobsSource = readFileSync(new URL('../src/modules/production/jobs.ts', import.meta.url), 'utf8');
 assert.equal(workspaceSource.includes('saveProductionScheduleBatch('), true);
 assert.equal(workspaceSource.includes('updateProductionJobSchedule'), false);
 assert.equal(workspaceSource.includes('recordProductionScheduleAudit'), false);
+assert.equal(workspaceSource.includes('rebaseStagedScheduleVersion(current, updated)'), true);
 assert.equal(jobsSource.includes("supabase.rpc('save_production_schedule_batch'"), true);
 assert.equal(jobsSource.includes('updateProductionJobSchedule'), false);
 assert.equal(jobsSource.includes('recordProductionScheduleAudit'), false);
