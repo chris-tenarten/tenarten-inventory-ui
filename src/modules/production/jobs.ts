@@ -99,6 +99,39 @@ export async function loadProductionJobs(includeArchived = false): Promise<Produ
 }
 
 export type ProductionIntegrationSummary = { actualHours: number; laborEntryCount: number; materialReportDates: string[] };
+export type JobUpdateSummary = {
+  total: number;
+  openFollowUpCount: number;
+  latestCreatedAt: string | null;
+};
+
+export async function loadJobUpdateSummaries(): Promise<Record<string, JobUpdateSummary>> {
+  const { data, error } = await supabase
+    .from('job_updates')
+    .select('job_id,created_at,requires_follow_up,resolved_at');
+  if (error) throw error;
+
+  const summaries: Record<string, JobUpdateSummary> = {};
+  for (const row of data ?? []) {
+    const jobId = String(row.job_id);
+    const summary = summaries[jobId] ?? {
+      total: 0,
+      openFollowUpCount: 0,
+      latestCreatedAt: null,
+    };
+    summary.total += 1;
+    if (row.requires_follow_up && !row.resolved_at) {
+      summary.openFollowUpCount += 1;
+    }
+    const createdAt = String(row.created_at);
+    if (!summary.latestCreatedAt || createdAt > summary.latestCreatedAt) {
+      summary.latestCreatedAt = createdAt;
+    }
+    summaries[jobId] = summary;
+  }
+  return summaries;
+}
+
 export async function loadProductionIntegrationSummaries(): Promise<Record<string, ProductionIntegrationSummary>> {
   const [labor, materials] = await Promise.all([
     supabase.from('manpower_entries').select('job_id,am_hours,pm_hours').not('job_id', 'is', null),
