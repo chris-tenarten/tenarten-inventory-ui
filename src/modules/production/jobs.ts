@@ -50,6 +50,7 @@ const ATTACHMENT_COLUMNS = [
   'document_type',
   'uploaded_by',
   'job_update_id',
+  'job_update_attachment_role',
   'created_at',
 ].join(',');
 
@@ -61,6 +62,7 @@ const JOB_UPDATE_COLUMNS = [
   'requires_follow_up',
   'resolved_at',
   'resolved_by_name',
+  'resolution_message',
   'created_at',
 ].join(',');
 
@@ -304,6 +306,7 @@ export async function createJobUpdate(
 export async function resolveJobUpdate(
   update: JobUpdate,
   resolverName: string,
+  resolutionMessage: string,
 ): Promise<JobUpdate> {
   const resolver = resolverName.trim();
   if (!resolver) throw new Error('Resolver name is required.');
@@ -314,6 +317,7 @@ export async function resolveJobUpdate(
   const { data, error } = await supabase.rpc('resolve_job_update', {
     p_update_id: update.id,
     p_resolved_by_name: resolver,
+    p_resolution_message: resolutionMessage.trim() || null,
   });
 
   if (error) throw error;
@@ -356,6 +360,8 @@ export async function uploadJobAttachments(
   documentType: JobDocumentType,
   jobUpdateId: string | null = null,
   uploadedBy: string | null = null,
+  jobUpdateAttachmentRole: 'update' | 'resolution' | null =
+    jobUpdateId ? 'update' : null,
 ): Promise<JobAttachment[]> {
   const uploaded: JobAttachment[] = [];
 
@@ -384,6 +390,7 @@ export async function uploadJobAttachments(
         size_bytes: file.size,
         document_type: documentType,
         job_update_id: jobUpdateId,
+        job_update_attachment_role: jobUpdateAttachmentRole,
         uploaded_by: uploadedBy?.trim() || null,
       })
       .select(ATTACHMENT_COLUMNS)

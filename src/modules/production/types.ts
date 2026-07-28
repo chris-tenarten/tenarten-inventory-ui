@@ -80,6 +80,7 @@ export type JobAttachment = {
   document_type: JobDocumentType;
   uploaded_by: string | null;
   job_update_id: string | null;
+  job_update_attachment_role: "update" | "resolution" | null;
   created_at: string;
 };
 
@@ -91,5 +92,6 @@ export type JobUpdate = {
   requires_follow_up: boolean;
   resolved_at: string | null;
   resolved_by_name: string | null;
+  resolution_message: string | null;
   created_at: string;
 };

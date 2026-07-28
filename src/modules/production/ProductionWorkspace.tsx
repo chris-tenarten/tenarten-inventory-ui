@@ -405,6 +405,12 @@ export default function ProductionWorkspace() {
     setInspectorFocus(undefined);
     requestAnimationFrame(() => inspectorOpenerRef.current?.focus());
   };
+  const handleJobUpdateSummaryChanged = useCallback(
+    (jobId: string, summary: JobUpdateSummary) => {
+      setJobUpdateSummaries((current) => ({ ...current, [jobId]: summary }));
+    },
+    [],
+  );
 
   async function handleCreateJob(input: NewProductionJob) {
     const proposedStart = input.planned_start;
@@ -736,7 +742,7 @@ export default function ProductionWorkspace() {
         </div>
       )}
 
-      {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedules[selectedJob.id]?{...selectedJob,planned_start:stagedSchedules[selectedJob.id].proposed_planned_start,planned_end:stagedSchedules[selectedJob.id].proposed_planned_end}:selectedJob} onClose={closeInspector} onUpdateJob={handleUpdateJob} onArchive={async (job) => { const archived = await archiveProductionJob(job); setJobs((current) => includeArchived ? current.map((item) => item.id === job.id ? archived : item) : current.filter((item) => item.id !== job.id)); closeInspector(); }} onRestore={async (job) => { const restored = await restoreProductionJob(job); setJobs((current) => current.map((item) => item.id === job.id ? restored : item)); closeInspector(); }} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
+      {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedules[selectedJob.id]?{...selectedJob,planned_start:stagedSchedules[selectedJob.id].proposed_planned_start,planned_end:stagedSchedules[selectedJob.id].proposed_planned_end}:selectedJob} jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null }} onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged} onClose={closeInspector} onUpdateJob={handleUpdateJob} onArchive={async (job) => { const archived = await archiveProductionJob(job); setJobs((current) => includeArchived ? current.map((item) => item.id === job.id ? archived : item) : current.filter((item) => item.id !== job.id)); closeInspector(); }} onRestore={async (job) => { const restored = await restoreProductionJob(job); setJobs((current) => current.map((item) => item.id === job.id ? restored : item)); closeInspector(); }} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
       {planningIssuesOpen && <PlanningIssuesPanel jobs={jobs} stagedSchedules={stagedSchedules} onClose={() => setPlanningIssuesOpen(false)} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onOpenInspector={selectJob} />}
 
 

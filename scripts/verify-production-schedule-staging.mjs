@@ -29,6 +29,10 @@ const rebased = rebaseStagedScheduleVersion(staged, {
 assert.equal(rebased.a.original_updated_at, '2026-07-16T01:00:00.000Z');
 assert.equal(rebased.a.original_planned_start, jobs[0].planned_start);
 assert.equal(rebased.a.original_planned_end, jobs[0].planned_end);
+assert.equal(rebased.a.proposed_planned_start, staged.a.proposed_planned_start);
+assert.equal(rebased.a.proposed_planned_end, staged.a.proposed_planned_end);
+assert.deepEqual(rebased.a.changed_fields, staged.a.changed_fields);
+assert.equal(hasUnsavedSchedules(rebased), true);
 const concurrentSchedule = rebaseStagedScheduleVersion(staged, {
   ...jobs[0],
   planned_end: '2026-07-10',
@@ -66,11 +70,16 @@ assert.equal(
   'Production approval expired. Confirm the batch again.',
 );
 const workspaceSource = readFileSync(new URL('../src/modules/production/ProductionWorkspace.tsx', import.meta.url), 'utf8');
+const inspectorSource = readFileSync(new URL('../src/modules/production/components/ProductionJobInspector.tsx', import.meta.url), 'utf8');
 const jobsSource = readFileSync(new URL('../src/modules/production/jobs.ts', import.meta.url), 'utf8');
 assert.equal(workspaceSource.includes('saveProductionScheduleBatch('), true);
 assert.equal(workspaceSource.includes('updateProductionJobSchedule'), false);
 assert.equal(workspaceSource.includes('recordProductionScheduleAudit'), false);
 assert.equal(workspaceSource.includes('rebaseStagedScheduleVersion(current, updated)'), true);
+assert.equal(workspaceSource.includes('scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])}'), true);
+assert.equal(inspectorSource.includes('planned_start: job.planned_start'), false);
+assert.equal(inspectorSource.includes('planned_end: job.planned_end'), false);
+assert.equal(inspectorSource.includes('Planned dates remain staged for Save All.'), true);
 assert.equal(jobsSource.includes("supabase.rpc('save_production_schedule_batch'"), true);
 assert.equal(jobsSource.includes('updateProductionJobSchedule'), false);
 assert.equal(jobsSource.includes('recordProductionScheduleAudit'), false);

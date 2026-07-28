@@ -10,7 +10,11 @@ import {
   loadProductionJobActivity,
   uploadJobAttachments,
 } from "../jobs";
-import type { ProductionJobActivity, ProductionJobUpdate } from "../jobs";
+import type {
+  JobUpdateSummary,
+  ProductionJobActivity,
+  ProductionJobUpdate,
+} from "../jobs";
 import { materialStatusLabel, materialStatusOptions } from "../material-status";
 import { getJobReadiness } from "../readiness";
 import { productionStatusVisuals } from "../status-visuals";
@@ -40,6 +44,12 @@ type Props = {
   onArchive: (job: ProductionJob) => Promise<void>;
   onRestore: (job: ProductionJob) => Promise<void>;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
+  scheduleIsStaged: boolean;
+  jobUpdateSummary: JobUpdateSummary;
+  onJobUpdateSummaryChanged: (
+    jobId: string,
+    summary: JobUpdateSummary,
+  ) => void;
   onAttachmentsChanged: (jobId: string, count: number) => void;
   initialFocus?: string;
 };
@@ -170,6 +180,9 @@ export default function ProductionJobInspector({
   onArchive,
   onRestore,
   onStageSchedule,
+  scheduleIsStaged,
+  jobUpdateSummary,
+  onJobUpdateSummaryChanged,
   onAttachmentsChanged,
   initialFocus,
 }: Props) {
@@ -211,6 +224,9 @@ export default function ProductionJobInspector({
   } | null>(null);
   const [attachmentFullscreen, setAttachmentFullscreen] = useState(false);
   const [focusedUpdateId, setFocusedUpdateId] = useState<string | null>(null);
+  const [jobUpdateCount, setJobUpdateCount] = useState(
+    jobUpdateSummary.total,
+  );
   const [scheduleDraft, setScheduleDraft] = useState(() => ({
     start: job.planned_start || "",
     end: job.planned_end || "",
@@ -219,6 +235,13 @@ export default function ProductionJobInspector({
   const closeRef = useRef<HTMLButtonElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const attachmentRequest = useRef(0);
+  const handleJobUpdateSummaryChanged = useCallback(
+    (summary: JobUpdateSummary) => {
+      setJobUpdateCount(summary.total);
+      onJobUpdateSummaryChanged(job.id, summary);
+    },
+    [job.id, onJobUpdateSummaryChanged],
+  );
 
   useEffect(() => {
     let live = true;
@@ -394,7 +417,11 @@ export default function ProductionJobInspector({
     setSaveMessage("");
     try {
       await onUpdateJob(job.id, changedDraft);
-      setSaveMessage("Changes saved");
+      setSaveMessage(
+        scheduleIsStaged
+          ? "Job details saved. Planned dates remain staged for Save All."
+          : "Job details saved",
+      );
     } catch (error) {
       setSaveError(
         error instanceof Error ? error.message : "Unable to save changes.",
@@ -475,7 +502,7 @@ export default function ProductionJobInspector({
 
   const tabs: Array<{ id: InspectorSection; label: string }> = [
     { id: "details", label: "Details" },
-    { id: "updates", label: "Job Updates" },
+    { id: "updates", label: `Job Updates (${jobUpdateCount})` },
     {
       id: "files",
       label: `Files${attachments.length ? ` (${attachments.length})` : ""}`,
@@ -615,6 +642,12 @@ export default function ProductionJobInspector({
                       className={fieldClass}
                     />
                   </label>
+                  {scheduleIsStaged && (
+                    <div className="sm:col-span-2 border-l-2 border-amber-500 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-900">
+                      Planned dates are staged and will remain pending until
+                      Save All succeeds or the schedule change is reverted.
+                    </div>
+                  )}
                   <label className="text-xs font-bold">
                     Requested delivery
                     <input
@@ -940,7 +973,10 @@ export default function ProductionJobInspector({
                           {attachment.job_update_id && (
                             <div className="flex shrink-0 flex-col items-end gap-1">
                               <span className="bg-blue-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-blue-800">
-                                From update
+                                {attachment.job_update_attachment_role ===
+                                "resolution"
+                                  ? "From resolution"
+                                  : "From update"}
                               </span>
                               <button
                                 type="button"
@@ -1018,6 +1054,7 @@ export default function ProductionJobInspector({
               job={job}
               attachments={attachments}
               focusedUpdateId={focusedUpdateId}
+              onSummaryChanged={handleJobUpdateSummaryChanged}
               onAttachmentsChanged={(nextAttachments) => {
                 setAttachments(nextAttachments);
                 onAttachmentsChanged(job.id, nextAttachments.length);
