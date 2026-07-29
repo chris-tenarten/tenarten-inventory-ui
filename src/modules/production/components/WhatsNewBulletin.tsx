@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronDown, Megaphone } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, Megaphone, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type Announcement = {
   title: string;
@@ -38,8 +38,31 @@ const statusStyles: Record<Announcement["status"], string> = {
   UPDATED: "border-slate-300 bg-slate-100 text-slate-700",
 };
 
+const dismissalKey = "tenops.production.whats-new.dismissed.v1";
+
 export default function WhatsNewBulletin() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [storageReady, setStorageReady] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    try {
+      setDismissed(window.sessionStorage.getItem(dismissalKey) === "true");
+    } catch {
+      setDismissed(false);
+    } finally {
+      setStorageReady(true);
+    }
+  }, []);
+
+  function dismiss() {
+    try {
+      window.sessionStorage.setItem(dismissalKey, "true");
+    } catch {}
+    setDismissed(true);
+  }
+
+  if (!storageReady || dismissed) return null;
 
   return (
     <section
@@ -48,7 +71,7 @@ export default function WhatsNewBulletin() {
     >
       <header className="flex items-center gap-2.5 border-b border-slate-200 bg-white/70 px-4 py-2.5">
         <Megaphone className="h-4 w-4 shrink-0 text-amber-700" aria-hidden="true" />
-        <div>
+        <div className="min-w-0 flex-1">
           <h2 id="whats-new-title" className="text-sm font-bold text-slate-950">
             What&apos;s New
           </h2>
@@ -56,6 +79,15 @@ export default function WhatsNewBulletin() {
             Recent updates
           </p>
         </div>
+        <button
+          type="button"
+          onClick={dismiss}
+          aria-label="Dismiss What’s New announcements"
+          title="Dismiss announcements"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm text-slate-500 hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
+        >
+          <X className="h-4 w-4" aria-hidden="true" />
+        </button>
       </header>
 
       <div className="divide-y divide-slate-200/80">
