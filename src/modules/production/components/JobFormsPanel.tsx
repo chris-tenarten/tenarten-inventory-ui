@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, Quote, Send } from 'lucide-react';
+import { FileText, Quote } from 'lucide-react';
 
 import type { ProductionJob } from '../types';
 import { JobTag } from './JobTag';
@@ -22,12 +22,6 @@ const placeholderForms: PlaceholderForm[] = [
     description:
       'Will generate from the job record and prepopulate available project, customer, estimate, and scope information.',
     icon: Quote,
-  },
-  {
-    title: 'Letter of Transmittal',
-    description:
-      'Will generate from the job record and prepopulate available project, customer, job, delivery, and attachment information.',
-    icon: Send,
   },
 ];
 

@@ -15,6 +15,7 @@ import ProductionJobInspector from './components/ProductionJobInspector';
 import ProductionQueue from './components/ProductionQueue';
 import ProductionTable from './components/ProductionTable';
 import MonthlySnapshot from './components/MonthlySnapshot';
+import WhatsNewBulletin from './components/WhatsNewBulletin';
 
 import {
   createProductionJob,
@@ -511,36 +512,42 @@ export default function ProductionWorkspace() {
         </div>
       </div>
       {dashboardMode === 'snapshot' ? <MonthlySnapshot /> : <div>
-        <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Production reporting', 'Control de producción')}</div>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Production Pipeline', 'Flujo de producción')}</h1>
-            <p className="mt-1 text-sm text-slate-600">
-              {tr('Use the table to manage the Production Pipeline and the Timeline to plan scheduled work.', 'Use la tabla para administrar el flujo de producción y el cronograma para planificar el trabajo programado.')}
-            </p>
+        <div className="mb-4 border-b border-slate-200 pb-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Production reporting', 'Control de producción')}</div>
+              <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Production Pipeline', 'Flujo de producción')}</h1>
+              <p className="mt-1 text-sm text-slate-600">
+                {tr('Use the table to manage the Production Pipeline and the Timeline to plan scheduled work.', 'Use la tabla para administrar el flujo de producción y el cronograma para planificar el trabajo programado.')}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:justify-end">
+              <div>
+                <span className="font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Active Jobs', 'Trabajos activos')}</span>
+                <span className="ml-2 text-base font-bold text-slate-950">{jobsInQueue}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setScheduleFilters(new Set(['unscheduled']));
+                  setActiveView('timeline');
+                }}
+                className="text-left transition hover:text-amber-800"
+              >
+                <span className="font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Unscheduled', 'Sin programar')}</span>
+                <span className="ml-2 text-base font-bold text-slate-950">
+                  {unscheduledCount} / {jobsInQueue}
+                </span>
+              </button>
+              <div className="font-semibold text-slate-500">
+                {tr('Showing', 'Mostrando')} {filteredJobs.length}
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
-            <div>
-              <span className="font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Active Jobs', 'Trabajos activos')}</span>
-              <span className="ml-2 text-base font-bold text-slate-950">{jobsInQueue}</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setScheduleFilters(new Set(['unscheduled']));
-                setActiveView('timeline');
-              }}
-              className="text-left transition hover:text-amber-800"
-            >
-              <span className="font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Unscheduled', 'Sin programar')}</span>
-              <span className="ml-2 text-base font-bold text-slate-950">
-                {unscheduledCount} / {jobsInQueue}
-              </span>
-            </button>
-            <div className="font-semibold text-slate-500">
-              {tr('Showing', 'Mostrando')} {filteredJobs.length}
-            </div>
+          <div className="mt-4">
+            <WhatsNewBulletin />
           </div>
         </div>
 
@@ -702,6 +709,7 @@ export default function ProductionWorkspace() {
               jobs={displayedJobs}
               attachmentCounts={attachmentCounts}
               integrationSummaries={integrationSummaries}
+              jobUpdateSummaries={jobUpdateSummaries}
               onCreateJob={handleCreateJob}
               onUpdateJob={handleUpdateJob}
               onOpenAttachments={(job) => selectJob(job, 'attachments')}

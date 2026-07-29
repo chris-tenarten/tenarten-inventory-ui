@@ -1,8 +1,9 @@
 "use client";
 
-import { ClipboardList, File, History, Trash2, Upload } from "lucide-react";
+import { ClipboardList, File, History, Send, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
+import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
 import {
   createJobAttachmentDownloadUrl,
   deleteJobAttachment,
@@ -90,6 +91,9 @@ const activityFieldLabels: Record<string, string> = {
   planned_start: "Planned start",
   planned_end: "Planned finish",
 };
+
+const jobTransmittalsEnabled =
+  process.env.NEXT_PUBLIC_ENABLE_JOB_TRANSMITTALS === "true";
 
 function readableActivityValue(
   field: string,
@@ -223,6 +227,7 @@ export default function ProductionJobInspector({
     url: string;
   } | null>(null);
   const [attachmentFullscreen, setAttachmentFullscreen] = useState(false);
+  const [transmittalOpen, setTransmittalOpen] = useState(false);
   const [focusedUpdateId, setFocusedUpdateId] = useState<string | null>(null);
   const [jobUpdateCount, setJobUpdateCount] = useState(
     jobUpdateSummary.total,
@@ -345,7 +350,7 @@ export default function ProductionJobInspector({
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
-      if (attachmentFullscreen) return;
+      if (attachmentFullscreen || transmittalOpen) return;
       if (event.key === "Escape") requestClose();
       if (event.key !== "Tab" || !panel.current) return;
       const focusable = [
@@ -367,7 +372,7 @@ export default function ProductionJobInspector({
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [attachmentFullscreen, requestClose]);
+  }, [attachmentFullscreen, requestClose, transmittalOpen]);
 
   useEffect(() => {
     if (!dirtyCount) return;
@@ -591,6 +596,33 @@ export default function ProductionJobInspector({
         >
           {activeSection === "details" && (
             <>
+              <section className="mt-5">
+                <h3 className={sectionTitle}>Documents</h3>
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                  {jobTransmittalsEnabled && (
+                    <button
+                      type="button"
+                      onClick={() => setTransmittalOpen(true)}
+                      className="inline-flex min-h-9 items-center justify-center gap-2 whitespace-nowrap border border-blue-800 bg-blue-50 px-3 text-sm font-bold text-blue-900 hover:bg-blue-100"
+                    >
+                      <Send className="h-5 w-5 shrink-0" />
+                      Letter of Transmittal
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.location.assign(
+                        `/purchasing?jobId=${encodeURIComponent(job.id)}`,
+                      );
+                    }}
+                    className="inline-flex min-h-9 items-center justify-center gap-2 whitespace-nowrap border border-blue-800 bg-blue-50 px-3 text-sm font-bold text-blue-900 hover:bg-blue-100"
+                  >
+                    <ClipboardList className="h-5 w-5 shrink-0" />
+                    Create Purchase Order
+                  </button>
+                </div>
+              </section>
               {saveError && (
                 <div
                   role="alert"
@@ -741,23 +773,7 @@ export default function ProductionJobInspector({
                 </div>
               </section>
               <section className="mt-5">
-                <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-2">
-                  <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-slate-700">
-                    Job Details
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      window.location.assign(
-                        `/purchasing?jobId=${encodeURIComponent(job.id)}`,
-                      );
-                    }}
-                    className="inline-flex min-h-9 items-center justify-center gap-2 whitespace-nowrap border border-blue-800 bg-blue-50 px-3 text-sm font-bold text-blue-900 hover:bg-blue-100"
-                  >
-                    <ClipboardList className="h-5 w-5 shrink-0" />
-                    Create Purchase Order
-                  </button>
-                </div>
+                <h3 className={sectionTitle}>Job Details</h3>
                 <dl className="mt-3 grid grid-cols-[130px_1fr] gap-2 text-sm">
                   <dt className="font-bold">Customer</dt>
                   <dd>{job.customer || "Not recorded"}</dd>
@@ -1153,6 +1169,13 @@ export default function ProductionJobInspector({
             const target = attachments[attachmentPreviewIndex + 1];
             if (target) void openAttachment(target);
           }}
+        />
+      )}
+      {jobTransmittalsEnabled && transmittalOpen && (
+        <JobTransmittalPanel
+          key={job.id}
+          job={job}
+          onClose={() => setTransmittalOpen(false)}
         />
       )}
     </div>

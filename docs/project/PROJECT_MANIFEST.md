@@ -124,7 +124,7 @@ Total hours derive from AM plus PM and are not stored. Client-side search covers
 
 Job attachments are private storage objects with relational metadata. Users can upload multiple files, open and remove them, and access them through the shared Inspector. Attachment counts remain visible near job identity.
 
-Purchase Orders are the first structured Form. Draft preview renders current editor state, while issued Purchase Orders own an immutable snapshot and a separately retryable permanent PDF generated only from that snapshot. Quote and Letter of Transmittal remain placeholders.
+Purchase Orders are the first structured Form. Draft preview renders current editor state, while issued Purchase Orders own an immutable snapshot and a separately retryable permanent PDF generated only from that snapshot. Letter of Transmittal is a job-scoped Production form with unsaved PDF preview, immutable history, and separately retryable private PDF generation. For controlled internal testing it uses validated anonymous business RPCs, sanitized history, private internals, and a disabled-by-default rollout flag; authenticated identity and RBAC remain deferred. Quote remains a placeholder.
 
 ### Future operational reporting
 
@@ -479,6 +479,10 @@ Roadmap order may respond to operational need, but current direction is:
 - Client-side access and approval are not secure.
 - Anonymous mutation policies are too permissive.
 - Actor attribution is user-entered rather than authenticated.
+- Letter of Transmittal controlled testing uses narrowly scoped anonymous RPCs,
+  private canonical/internal tables, sanitized history, exact-origin CORS, and
+  a disabled-by-default rollout flag. This remains an internal MVP boundary,
+  not caller authentication; Supabase Auth and RBAC are deferred.
 
 ### Application structure
 

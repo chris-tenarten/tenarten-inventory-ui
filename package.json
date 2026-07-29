@@ -12,6 +12,7 @@
     "test:e2e:server": "node tests/support/static-server.mjs",
     "verify:purchasing-pdf": "node scripts/verify-purchasing-pdf.mjs",
     "verify:purchasing-numbering": "node scripts/verify-purchasing-numbering.mjs",
+    "verify:job-transmittals": "node scripts/verify-job-transmittals.mjs",
     "verify:purchasing-arim-skus": "node scripts/verify-purchasing-arim-skus.mjs",
     "verify:purchasing-pending-receivals": "node scripts/verify-purchasing-pending-receivals.mjs"
   },

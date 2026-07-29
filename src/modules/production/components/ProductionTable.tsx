@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode, RefObject } from 'react';
 
-import type { ProductionIntegrationSummary, ProductionJobUpdate } from '../jobs';
+import type { JobUpdateSummary, ProductionIntegrationSummary, ProductionJobUpdate } from '../jobs';
 import { materialStatusLabel, materialStatusOptions } from '../material-status';
 import type { StagedSchedules } from '../schedule-staging';
 import type {
@@ -15,6 +15,7 @@ import type {
   ProductionStatus,
 } from '../types';
 import { productionValuesEqual } from '../update-normalization';
+import JobUpdatesIndicator from './JobUpdatesIndicator';
 
 const formatHours = (value: number) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value);
 
@@ -22,6 +23,7 @@ type Props = {
   jobs: ProductionJob[];
   attachmentCounts: Record<string, number>;
   integrationSummaries: Record<string, ProductionIntegrationSummary>;
+  jobUpdateSummaries: Record<string, JobUpdateSummary>;
   onCreateJob: (input: NewProductionJob) => Promise<ProductionJob>;
   onUpdateJob: (
     jobId: string,
@@ -419,6 +421,7 @@ export default function ProductionTable({
   jobs,
   attachmentCounts,
   integrationSummaries,
+  jobUpdateSummaries,
   onCreateJob,
   onUpdateJob,
   onOpenAttachments,
@@ -903,7 +906,7 @@ export default function ProductionTable({
         </td>
         <td className={`${cellClass} sticky z-20`} style={{ left: projectStickyLeft }}>
           <div className="relative bg-white">
-            <input ref={nameRef} value={row.name} title={row.name} onChange={(e) => onChange('name', e.target.value)} onBlur={blur('name')} onKeyDown={blurOnEnter} placeholder="Project name *" className={`${inputClass} bg-white pr-16 font-semibold text-slate-950`} />
+            <input ref={nameRef} value={row.name} title={row.name} onChange={(e) => onChange('name', e.target.value)} onBlur={blur('name')} onKeyDown={blurOnEnter} placeholder="Project name *" className={`${inputClass} bg-white pr-24 font-semibold text-slate-950`} />
             {projectAttachmentIndicator && <div className="absolute right-1 top-1/2 z-10 -translate-y-1/2">{projectAttachmentIndicator}</div>}
           </div>
         </td>
@@ -1045,6 +1048,7 @@ export default function ProductionTable({
               const row = rows[job.id] ?? toRow(job);
               const state = states[job.id] ?? 'idle';
               const count = attachmentCounts[job.id] ?? 0;
+              const updateSummary = jobUpdateSummaries[job.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null };
               const integration = integrationSummaries[job.id] ?? { actualHours: 0, laborEntryCount: 0, materialReportDates: [] };
               const hasMaterialUse = integration.materialReportDates.length > 0;
 
@@ -1060,7 +1064,7 @@ export default function ProductionTable({
                     (field) => void saveField(job, field),
                     undefined,
                     stagedSchedules[job.id] ? 'staged' : undefined,
-                    count > 0 ? <button
+                    <div className="flex items-center gap-1">{count > 0 && <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -1072,7 +1076,7 @@ export default function ProductionTable({
                       >
                         <Paperclip className="h-3.5 w-3.5" aria-hidden="true" />
                         {count}
-                      </button> : null,
+                      </button>}<JobUpdatesIndicator job={job} summary={updateSummary} onOpen={() => onSelectJob(job, 'job-updates')} /></div>,
                     <div className="flex h-6 min-w-0 items-center gap-1 overflow-hidden whitespace-nowrap">
                       {job.estimated_man_hours !== null ? <span className="h-6 px-1 text-[9px] leading-6 text-slate-600"><strong className="text-slate-900">{formatHours(job.estimated_man_hours)}h</strong> Estimated</span> : <span className="h-6 px-1 text-[9px] font-semibold leading-6 text-slate-900">No Labor Estimate</span>}
                       {integration.laborEntryCount > 0 ? <button
