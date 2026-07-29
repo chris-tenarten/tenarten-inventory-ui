@@ -92,9 +92,6 @@ const activityFieldLabels: Record<string, string> = {
   planned_end: "Planned finish",
 };
 
-const jobTransmittalsEnabled =
-  process.env.NEXT_PUBLIC_ENABLE_JOB_TRANSMITTALS === "true";
-
 function readableActivityValue(
   field: string,
   value: unknown,
@@ -599,16 +596,14 @@ export default function ProductionJobInspector({
               <section className="mt-5">
                 <h3 className={sectionTitle}>Documents</h3>
                 <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                  {jobTransmittalsEnabled && (
-                    <button
-                      type="button"
-                      onClick={() => setTransmittalOpen(true)}
-                      className="inline-flex min-h-9 items-center justify-center gap-2 whitespace-nowrap border border-blue-800 bg-blue-50 px-3 text-sm font-bold text-blue-900 hover:bg-blue-100"
-                    >
-                      <Send className="h-5 w-5 shrink-0" />
-                      Letter of Transmittal
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setTransmittalOpen(true)}
+                    className="inline-flex min-h-9 items-center justify-center gap-2 whitespace-nowrap border border-blue-800 bg-blue-50 px-3 text-sm font-bold text-blue-900 hover:bg-blue-100"
+                  >
+                    <Send className="h-5 w-5 shrink-0" />
+                    Letter of Transmittal
+                  </button>
                   <button
                     type="button"
                     onClick={() => {
@@ -1171,7 +1166,7 @@ export default function ProductionJobInspector({
           }}
         />
       )}
-      {jobTransmittalsEnabled && transmittalOpen && (
+      {transmittalOpen && (
         <JobTransmittalPanel
           key={job.id}
           job={job}

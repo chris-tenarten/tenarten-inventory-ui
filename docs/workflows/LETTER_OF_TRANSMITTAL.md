@@ -87,12 +87,10 @@ server, and returns only a short-lived signed URL. Requests without an
 `Origin` header are rejected, including command-line tooling unless it supplies
 an explicitly allowed origin.
 
-## Rollout flag
+## Production availability
 
-`NEXT_PUBLIC_ENABLE_JOB_TRANSMITTALS` is disabled unless its value is exactly
-`true`. When disabled, the Production Inspector shows no launch control. Set
-it to `true` in a local or preview deployment for controlled testing. This
-client-visible flag controls rollout only; it is not a security boundary.
+Letter of Transmittal is a standard Production capability. The Production
+Inspector always presents its launch control in the Documents section.
 
 ## Generation claims and recovery
 
@@ -117,6 +115,5 @@ snapshot.
 6. Configure `TENOPS_ALLOWED_ORIGINS` with exact local and deployed TenOps
    origins; retain the existing logo secret.
 7. Deploy the Edge Function.
-8. Set `NEXT_PUBLIC_ENABLE_JOB_TRANSMITTALS=true` only in the controlled test
-   environment, deploy the app, and perform controlled workflow and PO
+8. Deploy the app and perform Letter of Transmittal workflow and Purchase Order
    regression testing.

@@ -57,9 +57,8 @@ and storage identity from persisted state. These controls reduce exposure but
 do not authenticate callers. This model is appropriate only for controlled
 internal testing and must not be publicly exposed. Supabase Auth and RBAC will
 later replace anonymous RPC grants and establish user-level authorization.
-The launch control is disabled by default through
-`NEXT_PUBLIC_ENABLE_JOB_TRANSMITTALS`; the flag is rollout control, not a
-security boundary.
+Letter of Transmittal is a standard Production capability exposed from the
+Production Inspector Documents section.
 
 Purchase Orders and Transmittals share a durable document-number registry.
 Their existing domain tables remain separate, but both allocation paths reserve

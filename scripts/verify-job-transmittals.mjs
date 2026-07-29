@@ -129,7 +129,8 @@ assert.match(edge, /allowBlankTransmittalNumber: draft/);
 assert.doesNotMatch(panel, /auth\.getSession|authenticated/);
 assert.match(queries, /rpc\("list_job_transmittals"/);
 assert.doesNotMatch(queries, /\.from\("job_transmittals"\)/);
-assert.match(inspector, /NEXT_PUBLIC_ENABLE_JOB_TRANSMITTALS/);
+assert.match(inspector, /onClick=\{\(\) => setTransmittalOpen\(true\)\}/);
+assert.match(inspector, /\{transmittalOpen && \(/);
 
 const items = Array.from({ length: FIRST_PAGE_ROWS + 3 }, (_, index) => ({
   line_number: index + 1,

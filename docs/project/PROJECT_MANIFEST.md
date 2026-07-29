@@ -479,10 +479,10 @@ Roadmap order may respond to operational need, but current direction is:
 - Client-side access and approval are not secure.
 - Anonymous mutation policies are too permissive.
 - Actor attribution is user-entered rather than authenticated.
-- Letter of Transmittal controlled testing uses narrowly scoped anonymous RPCs,
-  private canonical/internal tables, sanitized history, exact-origin CORS, and
-  a disabled-by-default rollout flag. This remains an internal MVP boundary,
-  not caller authentication; Supabase Auth and RBAC are deferred.
+- Letter of Transmittal uses narrowly scoped anonymous RPCs, private
+  canonical/internal tables, sanitized history, and exact-origin CORS. This
+  remains an internal MVP boundary, not caller authentication; Supabase Auth
+  and RBAC are deferred.
 
 ### Application structure
 
