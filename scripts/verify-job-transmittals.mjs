@@ -6,11 +6,15 @@ import {
 } from "../supabase/functions/_shared/job-transmittal-pdf-model.mjs";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
-const [migration, hardening, privilegeRepair, allocatorRepair, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector] = await Promise.all([
+const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, sharedNumberingVerification, defaults, validation, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector] = await Promise.all([
   read("../supabase/migrations/20260728_001_job_transmittals.sql"),
   read("../supabase/migrations/20260728_002_job_transmittal_hardening.sql"),
   read("../supabase/migrations/20260728_003_job_document_reservation_privileges.sql"),
   read("../supabase/migrations/20260728_004_purchase_order_allocator_privileges.sql"),
+  read("../supabase/migrations/20260729_001_shared_document_numbering_suffix_one.sql"),
+  read("../supabase/inspection/20260729_001_shared_document_numbering_suffix_one_verification.sql"),
+  read("../src/modules/transmittals/defaults.ts"),
+  read("../src/modules/transmittals/validation.ts"),
   read("../supabase/inspection/20260728_001_job_transmittal_hardening_preflight.sql"),
   read("../supabase/inspection/20260728_003_job_document_reservation_privilege_inspection.sql"),
   read("../supabase/inspection/20260728_004_purchase_order_allocator_privilege_inspection.sql"),
@@ -81,6 +85,26 @@ assert.match(allocatorRepair, /from public, anon, authenticated, service_role/);
 assert.match(allocatorInspection, /security_definer/);
 assert.match(allocatorInspection, /service_role_can_execute/);
 assert.match(allocatorInspection, /dependent_function/);
+assert.match(sharedNumbering, /p_requested_number, 1/);
+assert.doesNotMatch(sharedNumbering, /p_requested_number, 2/);
+assert.match(sharedNumbering, /coalesce\(\([\s\S]*sequence\.last_value[\s\S]*\), 0\)/);
+assert.match(sharedNumbering, /select max\(number\.suffix\)/);
+assert.match(sharedNumbering, /grant execute on function public\.issue_job_transmittal\(uuid,text,jsonb,text\)[\s\S]*to anon, authenticated, service_role/);
+assert.match(sharedNumbering, /grant execute on function public\.preview_next_job_document_number\(uuid\)[\s\S]*to anon, authenticated, service_role/);
+assert.match(sharedNumberingVerification, /VERIFY_PO_TRANSMITTAL_PO_SEQUENCE/);
+assert.match(sharedNumberingVerification, /VERIFY_TRANSMITTAL_TRANSMITTAL_PO_SEQUENCE/);
+assert.match(sharedNumberingVerification, /rollback;/);
+assert.match(defaults, /submittal: "Color Plate"/);
+assert.match(defaults, /quantity: "1"/);
+assert.match(defaults, /date: job\.sample_submitted_date \?\? ""/);
+assert.match(defaults, /number: colorPlateNumber/);
+assert.match(defaults, /typeSamples: Boolean\(colorPlateNumber\)/);
+assert.match(defaults, /name: "Anthony"/);
+assert.match(defaults, /phone: "469-491-7002"/);
+assert.match(defaults, /email: "sales@tenartenterrazzo\.com"/);
+assert.doesNotMatch(panel, />Company<input/);
+assert.match(panel, />Job name<input/);
+assert.match(validation, /0319-001/);
 for (const requirement of [
   /VERIFY_FUNCTION_MISSING/,
   /VERIFY_PUBLIC_FUNCTION_EXECUTE/,
@@ -115,7 +139,9 @@ assert.match(edge, /fail_job_transmittal_pdf_generation/);
 assert.match(edge, /TENOPS_ALLOWED_ORIGINS/);
 assert.doesNotMatch(edge, /Access-Control-Allow-Origin": "\*"/);
 assert.match(panel, /Discard this unsaved Letter of Transmittal/);
-assert.match(panel, /Likely next number/);
+assert.match(panel, /Checked against existing Purchase Orders and Transmittals/);
+assert.match(panel, /numberOverride \? displayedNumber : null/);
+assert.match(mutations, /requestedNumber: string \| null/);
 assert.match(panel, /record\.documentStatus !== "generated"/);
 assert.doesNotMatch(panel, /previewDraft\(\)[\s\S]{0,120}errors\.length/);
 assert.match(panel, /useState\(true\)/);

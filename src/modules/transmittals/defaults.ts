@@ -16,7 +16,25 @@ export const createTransmittalItem = (): TransmittalItem => ({
   description: "",
 });
 
+const ANTHONY_SENDER = {
+  name: "Anthony",
+  phone: "469-491-7002",
+  email: "sales@tenartenterrazzo.com",
+};
+
 export function createJobTransmittalDraft(job: ProductionJob): JobTransmittalDraft {
+  const colorPlateNumber = job.color_plate_number?.trim() ?? "";
+  const items = colorPlateNumber
+    ? [{
+        id: crypto.randomUUID(),
+        submittal: "Color Plate",
+        quantity: "1",
+        date: job.sample_submitted_date ?? "",
+        number: colorPlateNumber,
+        description: job.name,
+      }]
+    : [createTransmittalItem()];
+
   return {
     jobId: job.id,
     jobNumber: job.job_number ?? "",
@@ -39,10 +57,10 @@ export function createJobTransmittalDraft(job: ProductionJob): JobTransmittalDra
     deliveryVia: "",
     typeShopDrawing: false,
     typeLetter: false,
-    typeSamples: false,
+    typeSamples: Boolean(colorPlateNumber),
     typeOther: false,
     typeOtherLabel: "",
-    items: [createTransmittalItem()],
+    items,
     purposeApproval: false,
     purposeUse: false,
     purposeRecord: false,
@@ -50,9 +68,8 @@ export function createJobTransmittalDraft(job: ProductionJob): JobTransmittalDra
     purposeReview: false,
     reviewBy: "",
     comments: "",
-    senderName: "",
-    senderPhone: "",
-    senderEmail: "",
+    senderName: ANTHONY_SENDER.name,
+    senderPhone: ANTHONY_SENDER.phone,
+    senderEmail: ANTHONY_SENDER.email,
   };
 }
-

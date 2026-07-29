@@ -27,7 +27,7 @@ export function validateJobTransmittal(draft: JobTransmittalDraft): string[] {
     }
   }
   if (draft.transmittalNumber.trim() && !/^[A-Za-z0-9]+-\d{3}$/.test(draft.transmittalNumber.trim())) {
-    errors.push("Use a Transmittal Number such as 0319-002.");
+    errors.push("Use a Transmittal Number such as 0319-001.");
   }
   if (draft.recipient.company.length > 200 || draft.recipient.attention.length > 200 || draft.cc.length > 400) {
     errors.push("Recipient and CC fields are too long for the issued document.");

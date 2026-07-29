@@ -28,8 +28,8 @@ const saveMutation = mutations.slice(
   mutations.indexOf('export async function deletePurchaseOrderDraft'),
 );
 assert.doesNotMatch(saveMutation, /po_number:draft\.poNumber/);
-assert.match(editor, /placeholder="Assigned when saved"/);
-assert.match(editor, /value=\{draft\.poNumber\}[\s\S]{0,80}readOnly/);
+assert.match(editor, /const displayedPoNumber = draft\.poNumber \|\| provisionalPoPrefix/);
+assert.match(editor, /Final suffix assigned on first save/);
 assert.match(issuance, /'po_number', trim\(selected_order\.po_number\)/);
 
 console.log('Purchasing automatic number allocation checks passed.');

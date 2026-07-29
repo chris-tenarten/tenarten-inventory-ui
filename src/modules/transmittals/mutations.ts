@@ -82,10 +82,13 @@ export async function previewJobTransmittal(draft: JobTransmittalDraft): Promise
   throw new Error("The transmittal preview returned an invalid document.");
 }
 
-export async function issueJobTransmittal(draft: JobTransmittalDraft): Promise<{ id: string; number: string }> {
+export async function issueJobTransmittal(
+  draft: JobTransmittalDraft,
+  requestedNumber: string | null = draft.transmittalNumber.trim() || null,
+): Promise<{ id: string; number: string }> {
   const { data, error } = await supabase.rpc("issue_job_transmittal", {
     p_job_id: draft.jobId,
-    p_requested_number: draft.transmittalNumber.trim() || null,
+    p_requested_number: requestedNumber,
     p_snapshot: buildTransmittalSnapshot(draft),
     p_actor: draft.senderName.trim(),
   });

@@ -34,9 +34,12 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
   const [busy, setBusy] = useState<"preview" | "issue" | string>("");
   const [error, setError] = useState("");
   const [preview, setPreview] = useState<{ url: string; filename: string } | null>(null);
-  const [senderChoice, setSenderChoice] = useState("Other");
+  const [senderChoice, setSenderChoice] = useState(
+    names.includes(initialDraftRef.current.senderName) ? initialDraftRef.current.senderName : "Other",
+  );
   const [historyMode, setHistoryMode] = useState(false);
   const [provisionalNumber, setProvisionalNumber] = useState("");
+  const [numberOverride, setNumberOverride] = useState(false);
   const [issuedRecord, setIssuedRecord] = useState<{id:string;number:string}|null>(null);
   const [showEarlyAccessBanner, setShowEarlyAccessBanner] = useState(true);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -116,8 +119,12 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
   async function previewDraft() {
     setBusy("preview"); setError("");
     try {
-      const blob = await previewJobTransmittal(draft);
-      setPreview({ url: URL.createObjectURL(blob), filename: `${draft.transmittalNumber.trim() || "Provisional-Transmittal"}.pdf` });
+      const displayedNumber = draft.transmittalNumber.trim() || provisionalNumber;
+      const blob = await previewJobTransmittal({
+        ...draft,
+        transmittalNumber: displayedNumber,
+      });
+      setPreview({ url: URL.createObjectURL(blob), filename: `${displayedNumber || "Provisional-Transmittal"}.pdf` });
     } catch (previewError) {
       setError(previewError instanceof Error ? previewError.message : "Unable to preview the transmittal.");
     } finally { setBusy(""); }
@@ -130,7 +137,11 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
     setBusy("issue"); setError("");
     try {
       rememberSender();
-      const issued = await issueJobTransmittal(draft);
+      const displayedNumber = draft.transmittalNumber.trim() || provisionalNumber;
+      const issued = await issueJobTransmittal(
+        { ...draft, transmittalNumber: displayedNumber },
+        numberOverride ? displayedNumber : null,
+      );
       setIssuedRecord(issued);
       await generateJobTransmittalPdf(issued.id);
       await downloadJobTransmittalPdf(issued.id, `${issued.number}.pdf`);
@@ -140,6 +151,10 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
         senderPhone: draft.senderPhone,
         senderEmail: draft.senderEmail,
       });
+      setNumberOverride(false);
+      void loadProvisionalTransmittalNumber(job.id)
+        .then(setProvisionalNumber)
+        .catch(() => {});
       await reload();
       setHistoryMode(true);
     } catch (issueError) {
@@ -225,12 +240,12 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
               </article>)}
           </div> : <div className="space-y-5">
             <section className="border border-slate-300 bg-white p-4"><h3 className={section}>Document details</h3>
-              <div className="mt-3 grid gap-3 sm:grid-cols-3"><label className={label}>Date<input type="date" value={draft.documentDate} onChange={(e)=>patch("documentDate",e.target.value)} className={field}/></label>
-                <label className={label}>Job #<input value={draft.jobNumber} readOnly className={`${field} bg-slate-100`}/></label>
-                <label className={label}>Transmittal # <span className="font-normal text-slate-500">(optional override)</span><input value={draft.transmittalNumber} onChange={(e)=>patch("transmittalNumber",e.target.value)} placeholder={provisionalNumber ? `${provisionalNumber} provisional` : "Allocated when generated"} className={field}/>{provisionalNumber && !draft.transmittalNumber && <span className="mt-1 block text-[11px] font-normal text-slate-500">Likely next number: {provisionalNumber}. It is not reserved.</span>}</label></div></section>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={label}>Date<input type="date" value={draft.documentDate} onChange={(e)=>patch("documentDate",e.target.value)} className={field}/></label>
+                <label className={label}>Transmittal # <span className="font-normal text-slate-500">(optional override)</span><input value={draft.transmittalNumber || provisionalNumber} onChange={(e)=>{setNumberOverride(Boolean(e.target.value.trim()));patch("transmittalNumber",e.target.value);}} placeholder="Allocated when generated" className={field}/>{provisionalNumber && !numberOverride && <span className="mt-1 block text-[11px] font-normal text-slate-500">Checked against existing Purchase Orders and Transmittals. Rechecked when generated.</span>}</label>
+                <label className={label}>Job #<input value={draft.jobNumber} onChange={(e)=>patch("jobNumber",e.target.value)} className={field}/></label>
+                <label className={label}>Job name<input value={draft.jobName} onChange={(e)=>patch("jobName",e.target.value)} className={field}/></label></div></section>
             <section className="border border-slate-300 bg-white p-4"><h3 className={section}>Recipient</h3>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={label}>Company<input value={draft.recipient.company} onChange={(e)=>patch("recipient",{...draft.recipient,company:e.target.value})} className={field}/></label>
-                <label className={label}>Attention<input value={draft.recipient.attention} onChange={(e)=>patch("recipient",{...draft.recipient,attention:e.target.value})} className={field}/></label>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={`${label} sm:col-span-2`}>Attention<input value={draft.recipient.attention} onChange={(e)=>patch("recipient",{...draft.recipient,attention:e.target.value})} className={field}/></label>
                 <label className={`${label} sm:col-span-2`}>Address line 1<input value={draft.recipient.addressLine1} onChange={(e)=>patch("recipient",{...draft.recipient,addressLine1:e.target.value})} className={field}/></label>
                 <label className={`${label} sm:col-span-2`}>Address line 2<input value={draft.recipient.addressLine2} onChange={(e)=>patch("recipient",{...draft.recipient,addressLine2:e.target.value})} className={field}/></label>
                 <label className={label}>Office phone<input value={draft.recipient.officePhone} onChange={(e)=>patch("recipient",{...draft.recipient,officePhone:e.target.value})} className={field}/></label>

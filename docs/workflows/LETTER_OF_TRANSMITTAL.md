@@ -31,7 +31,9 @@ The panel contains:
 ## Numbering
 
 Automatic numbers are `<last four job-number digits>-<three-digit suffix>`.
-Allocation begins at `002` when no conflicting document exists. It checks:
+Allocation begins at `001` when no conflicting document exists. Purchase Orders
+and Letters of Transmittal consume the same per-job sequence in issuance order.
+It checks:
 
 - persisted Purchase Order numbers using the same prefix;
 - persisted Letter of Transmittal numbers.
