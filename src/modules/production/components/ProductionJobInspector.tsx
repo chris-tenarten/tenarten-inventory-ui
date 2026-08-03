@@ -4,6 +4,9 @@ import { ClipboardList, File, History, Send, Trash2, Upload } from "lucide-react
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
+import PlanningPanel from "@/modules/planning/PlanningPanel";
+import type { PlanningPhase } from "@/modules/planning/types";
+import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
 import {
   createJobAttachmentDownloadUrl,
   deleteJobAttachment,
@@ -33,7 +36,8 @@ import type {
 import JobUpdatesPanel from "./JobUpdatesPanel";
 import ProductionStatusBadge from "./ProductionStatusBadge";
 
-type InspectorSection = "details" | "updates" | "files" | "recent-changes";
+type InspectorSection = "details" | "planning" | "updates" | "files" | "recent-changes";
+const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 
 type Props = {
   job: ProductionJob;
@@ -52,6 +56,7 @@ type Props = {
     summary: JobUpdateSummary,
   ) => void;
   onAttachmentsChanged: (jobId: string, count: number) => void;
+  onPlanningPhasesChanged?: (jobId: string, phases: PlanningPhase[]) => void;
   initialFocus?: string;
 };
 
@@ -185,11 +190,14 @@ export default function ProductionJobInspector({
   jobUpdateSummary,
   onJobUpdateSummaryChanged,
   onAttachmentsChanged,
+  onPlanningPhasesChanged,
   initialFocus,
 }: Props) {
   const [activeSection, setActiveSection] = useState<InspectorSection>(
     initialFocus === "attachments"
       ? "files"
+      : initialFocus?.startsWith("planning") && planningEnabled
+        ? "planning"
       : initialFocus === "job-updates"
         ? "updates"
         : initialFocus === "recent-changes"
@@ -226,6 +234,7 @@ export default function ProductionJobInspector({
   const [attachmentFullscreen, setAttachmentFullscreen] = useState(false);
   const [transmittalOpen, setTransmittalOpen] = useState(false);
   const [focusedUpdateId, setFocusedUpdateId] = useState<string | null>(null);
+  const [planningEditorOpen, setPlanningEditorOpen] = useState(false);
   const [jobUpdateCount, setJobUpdateCount] = useState(
     jobUpdateSummary.total,
   );
@@ -287,6 +296,7 @@ export default function ProductionJobInspector({
         if (live) setAttachmentsLoading(false);
       });
     requestAnimationFrame(() => {
+      if (initialFocus?.startsWith("planning")) return;
       const target =
         initialFocus && initialFocus !== "attachments"
           ? panel.current?.querySelector<HTMLElement>(
@@ -347,7 +357,7 @@ export default function ProductionJobInspector({
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
-      if (attachmentFullscreen || transmittalOpen) return;
+      if (attachmentFullscreen || transmittalOpen || planningEditorOpen) return;
       if (event.key === "Escape") requestClose();
       if (event.key !== "Tab" || !panel.current) return;
       const focusable = [
@@ -369,7 +379,7 @@ export default function ProductionJobInspector({
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [attachmentFullscreen, requestClose, transmittalOpen]);
+  }, [attachmentFullscreen, requestClose, transmittalOpen, planningEditorOpen]);
 
   useEffect(() => {
     if (!dirtyCount) return;
@@ -504,6 +514,7 @@ export default function ProductionJobInspector({
 
   const tabs: Array<{ id: InspectorSection; label: string }> = [
     { id: "details", label: "Details" },
+    ...(planningEnabled ? [{ id: "planning" as const, label: "Planning" }] : []),
     { id: "updates", label: `Job Updates (${jobUpdateCount})` },
     {
       id: "files",
@@ -568,7 +579,7 @@ export default function ProductionJobInspector({
         <div
           role="tablist"
           aria-label="Job inspector sections"
-          className="mt-5 grid grid-cols-4 rounded-sm border border-slate-300 bg-slate-50 p-1"
+          className={`mt-5 grid rounded-sm border border-slate-300 bg-slate-50 p-1 ${planningEnabled ? "grid-cols-5" : "grid-cols-4"}`}
         >
           {tabs.map((tab) => (
             <button
@@ -793,6 +804,7 @@ export default function ProductionJobInspector({
                   </dd>
                 </dl>
               </section>
+              {/* Archive eligibility: ['complete', 'shipped', 'cancelled'] */}
               {["complete", "shipped", "cancelled"].includes(
                 job.production_status,
               ) && !job.archived_at ? (
@@ -1075,6 +1087,12 @@ export default function ProductionJobInspector({
                 void openAttachment(attachment);
               }}
             />
+          )}
+
+          {activeSection === "planning" && planningEnabled && (
+            <section className="mt-5">
+              <PlanningPanel job={job} compact initialPhaseId={initialFocus?.startsWith("planning:") ? initialFocus.slice("planning:".length) : undefined} onPhasesChanged={onPlanningPhasesChanged} onEditorOpenChanged={setPlanningEditorOpen} />
+            </section>
           )}
 
           {activeSection === "recent-changes" && (

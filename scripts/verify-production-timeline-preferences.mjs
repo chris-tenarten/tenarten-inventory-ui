@@ -7,6 +7,7 @@ import {
   parseTimelinePreferences,
   RAIL_WIDTH_MAX,
   RAIL_WIDTH_MIN,
+  timelineIntervalFocusScrollLeft,
 } from '../src/modules/production/timeline-preferences.ts';
 
 assert.deepEqual(parseTimelinePreferences('{broken'), defaultTimelinePreferences, 'Malformed storage must use defaults.');
@@ -30,5 +31,9 @@ assert.equal(normalizeTimelinePreferences({ rowDensity: 'tiny' }).rowDensity, 's
 assert.equal(fitTimelineDayWidth('weeks', 20, 1000, 2), 42, 'Fit should produce a bounded integer day width.');
 assert.equal(fitTimelineDayWidth('year', 1000, 500, 2), 4, 'Fit should clamp very large ranges to the mode minimum.');
 assert.equal(fitTimelineDayWidth('days', 0, 500, 2), 64, 'Fit without a meaningful range should use the mode default.');
+assert.equal(timelineIntervalFocusScrollLeft({ intervalLeft: 140, intervalRight: 240, scrollLeft: 100, viewportWidth: 300, maxScrollLeft: 1000, comfortablePadding: 30 }), null, 'A comfortably visible interval should not scroll.');
+assert.equal(timelineIntervalFocusScrollLeft({ intervalLeft: 600, intervalRight: 700, scrollLeft: 100, viewportWidth: 300, maxScrollLeft: 1000, comfortablePadding: 30 }), 500, 'An offscreen interval should center in the current viewport.');
+assert.equal(timelineIntervalFocusScrollLeft({ intervalLeft: 200, intervalRight: 800, scrollLeft: 0, viewportWidth: 300, maxScrollLeft: 1000, comfortablePadding: 30 }), 350, 'An interval wider than the viewport should center on its midpoint.');
+assert.equal(timelineIntervalFocusScrollLeft({ intervalLeft: 10, intervalRight: 30, scrollLeft: 100, viewportWidth: 300, maxScrollLeft: 1000, comfortablePadding: 30 }), 0, 'Focus should clamp to the Timeline start.');
 
 console.log('Production Timeline preference checks passed.');

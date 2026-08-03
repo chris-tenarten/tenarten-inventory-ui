@@ -35,6 +35,8 @@ TenOps should provide a connected operational history for each job without requi
 
 Success is operational clarity and adoption, not feature count. A workflow succeeds when the intended user can recognize the next action without software training.
 
+Production is operational reality. Planning, Inventory, Material Usage, Job Updates, Files, Reporting, purchasing, forms, and scheduling are connected perspectives on the canonical Production job—not competing applications or duplicate sources of truth.
+
 ## 3. Product philosophy
 
 ### Preserve workflows, not software limitations
@@ -65,6 +67,10 @@ A job may enter Production before every identifier, material detail, or schedule
 ### Architecture is stable; feature order is fluid
 
 Implementation order may respond to operational urgency, user enthusiasm, an adoption opportunity, or newly discovered pain. Opportunistic sequencing is acceptable when module boundaries and data integrity remain coherent.
+
+### Reveal reality and reduce cognitive load
+
+TenOps should expose blockers, dependencies, capacity, waste, and incomplete operational handoffs without creating administrative work for its own sake. Prefer contextual actions, sensible defaults, progressive disclosure, and stable mental models. Build process and infrastructure before optimization. The interface should feel like reliable industrial equipment: predictable, purposeful, and mechanically understandable rather than decorative or magical.
 
 ## 4. Users and operating contexts
 
@@ -159,7 +165,7 @@ The application uses client-heavy workspaces. Shared domain helpers should isola
 - `/activity` — supporting Inventory Activity tool
 - `/transactions` — legacy route outside primary navigation
 
-Primary navigation is Dashboard, Production Reporting, and Inventory. Catalog and Inventory Activity are supporting tools.
+Primary navigation is Dashboard, Production Reporting, and Inventory. Planning is job-scoped and does not add a top-level route or navigation item. Catalog and Inventory Activity are supporting tools.
 
 ### Production module
 
@@ -172,6 +178,8 @@ Production has synchronized views:
 - **Timeline:** Days, Weeks (default), Months, and Year modes with staged drag, resize, and keyboard adjustment.
 
 The shared Inspector provides details, editable planning fields, attachments, and Recent Changes. Planned dates remain separate from ordinary drafts and always use batch staging.
+
+Planning is an optional job-scoped Inspector layer linked to canonical Production jobs. Production remains authoritative for identity and schedule. A job may have at most four coordination Phases—Overlay and Planning Only count—while unlimited Pause intervals remain operational Timeline interruptions outside that cap. Phases contain Items; Pause does not create new Items. Only Overlay and Pause annotate the Timeline, and Items never become Timeline lanes. Phase Library definitions own curated default Overlay colors and are copied into independent job Phases without a live behavioral link. See [`PLANNING.md`](../workflows/PLANNING.md).
 
 Production status values are `not_started`, `on_deck`, `in_production`, `on_hold`, `shipped`, `complete`, and `cancelled`. Shared visual definitions keep bars, badges, and legends consistent.
 

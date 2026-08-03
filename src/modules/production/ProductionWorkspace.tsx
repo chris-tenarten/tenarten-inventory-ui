@@ -36,7 +36,7 @@ import type {
   ProductionJob,
   ProductionStatus,
 } from './types';
-import { PRODUCTION_JOB_FOCUS_STORAGE_KEY } from './job-options';
+import { PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY, PRODUCTION_JOB_FOCUS_STORAGE_KEY } from './job-options';
 import { inclusiveCalendarDays, laborIntensity } from './schedule';
 import { getJobReadiness } from './readiness';
 import { productionApprovalDecision, PRODUCTION_APPROVAL_WINDOW_MS } from './approval';
@@ -45,6 +45,9 @@ import { describeProductionScheduleSaveError, type ProductionScheduleBatchConfli
 import { arrangeProductionJobs, PRODUCTION_ARRANGEMENT_KEY, type ProductionArrangement } from './arrangement';
 import type { ProductionIntegrationSummary } from './jobs';
 import { useLanguage } from '@/lib/language';
+import { loadPlanningPhases } from '@/modules/planning/data';
+import type { PlanningPhase } from '@/modules/planning/types';
+import { isPlanningEnabled } from '@/modules/planning/timeline-model.mjs';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
 type DashboardMode = 'pipeline' | 'snapshot';
@@ -62,6 +65,7 @@ const statusOptions: Array<{ value: ProductionStatus; label: string }> = [
 const APPROVAL_PASSWORD = process.env.NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD?.trim();
 const APPROVAL_EXPIRES_KEY = 'tenops.productionApprovalExpiresAt';
 const CHANGED_BY_KEY = 'tenops.productionChangedByName';
+const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 
 function isScheduled(job: ProductionJob) {
   return Boolean(job.planned_start && job.planned_end);
@@ -85,6 +89,7 @@ export default function ProductionWorkspace() {
   const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
   const [jobUpdateSummaries, setJobUpdateSummaries] = useState<Record<string, JobUpdateSummary>>({});
   const [integrationSummaries, setIntegrationSummaries] = useState<Record<string, ProductionIntegrationSummary>>({});
+  const [planningPhases, setPlanningPhases] = useState<PlanningPhase[]>([]);
   const [includeArchived, setIncludeArchived] = useState(false);
   const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => typeof window === 'undefined' ? 'stage' : (window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY) as ProductionArrangement) || 'stage');
   const [isLoading, setIsLoading] = useState(true);
@@ -152,7 +157,9 @@ export default function ProductionWorkspace() {
 
     try {
       const focusedJobId = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+      const focusedSection = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY) ?? undefined;
       window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+      window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY);
       const [loadedJobs, loadedCounts, summaries, updateSummaries, focusedJob] = await Promise.all([
         loadProductionJobs(includeArchived),
         loadJobAttachmentCounts().catch((error) => {
@@ -170,14 +177,17 @@ export default function ProductionWorkspace() {
       const jobsWithFocused = focusedJob && !loadedJobs.some((job) => job.id === focusedJob.id)
         ? [...loadedJobs, focusedJob]
         : loadedJobs;
+      const loadedPlanningPhases = planningEnabled ? await loadPlanningPhases(jobsWithFocused.map((job) => job.id)) : [];
       setJobs(sortJobs(jobsWithFocused));
       setAttachmentCounts(loadedCounts);
       setIntegrationSummaries(summaries);
       setJobUpdateSummaries(updateSummaries);
+      setPlanningPhases(loadedPlanningPhases);
       if (focusedJob) {
         setFocusedJobId(focusedJob.id);
         setSearch(focusedJob.job_number || focusedJob.name);
         setSelectedJobId(focusedJob.id);
+        setInspectorFocus(focusedSection);
         setActiveView('queue');
       }
     } catch (error) {
@@ -412,6 +422,9 @@ export default function ProductionWorkspace() {
     },
     [],
   );
+  const handlePlanningPhasesChanged = useCallback((jobId: string, nextPhases: PlanningPhase[]) => {
+    setPlanningPhases((current) => [...current.filter((phase) => phase.job_id !== jobId), ...nextPhases]);
+  }, []);
 
   async function handleCreateJob(input: NewProductionJob) {
     const proposedStart = input.planned_start;
@@ -719,7 +732,7 @@ export default function ProductionWorkspace() {
               onSelectJob={selectJob}
             />
           ) : (
-            <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} />
+            <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} planningPhases={planningPhases} planningEnabled={planningEnabled} onSelectPlanningPhase={(job, phase) => selectJob(job, `planning:${phase.id}`)} />
           )}
         </div>
       </div>}
@@ -750,7 +763,21 @@ export default function ProductionWorkspace() {
         </div>
       )}
 
-      {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedules[selectedJob.id]?{...selectedJob,planned_start:stagedSchedules[selectedJob.id].proposed_planned_start,planned_end:stagedSchedules[selectedJob.id].proposed_planned_end}:selectedJob} jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null }} onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged} onClose={closeInspector} onUpdateJob={handleUpdateJob} onArchive={async (job) => { const archived = await archiveProductionJob(job); setJobs((current) => includeArchived ? current.map((item) => item.id === job.id ? archived : item) : current.filter((item) => item.id !== job.id)); closeInspector(); }} onRestore={async (job) => { const restored = await restoreProductionJob(job); setJobs((current) => current.map((item) => item.id === job.id ? restored : item)); closeInspector(); }} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
+      {selectedJob && <ProductionJobInspector
+        key={selectedJob.id}
+        job={stagedSchedules[selectedJob.id] ? { ...selectedJob, planned_start: stagedSchedules[selectedJob.id].proposed_planned_start, planned_end: stagedSchedules[selectedJob.id].proposed_planned_end } : selectedJob}
+        jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null }}
+        onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged}
+        onClose={closeInspector}
+        onUpdateJob={handleUpdateJob}
+        onArchive={async (job) => { const archived = await archiveProductionJob(job); setJobs((current) => includeArchived ? current.map((item) => item.id === job.id ? archived : item) : current.filter((item) => item.id !== job.id)); closeInspector(); }}
+        onRestore={async (job) => { const restored = await restoreProductionJob(job); setJobs((current) => current.map((item) => item.id === job.id ? restored : item)); closeInspector(); }}
+        onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')}
+        scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])}
+        onAttachmentsChanged={(jobId, count) => setAttachmentCounts((current) => ({ ...current, [jobId]: count }))}
+        onPlanningPhasesChanged={handlePlanningPhasesChanged}
+        initialFocus={inspectorFocus}
+      />}
       {planningIssuesOpen && <PlanningIssuesPanel jobs={jobs} stagedSchedules={stagedSchedules} onClose={() => setPlanningIssuesOpen(false)} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onOpenInspector={selectJob} />}
 
 
