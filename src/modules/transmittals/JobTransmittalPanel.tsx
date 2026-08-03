@@ -193,9 +193,6 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
           <div><div className="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">Production · Forms</div>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-bold text-slate-950">Letter of Transmittal</h2>
-              <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">
-                Early Access
-              </span>
             </div>
             <p className="mt-1 text-sm text-slate-600">{job.job_number || "No job number"} · {job.name}</p></div>
           <button ref={closeRef} type="button" onClick={requestClose} className="flex h-9 w-9 items-center justify-center border border-slate-300 bg-white" aria-label="Close"><X className="h-5 w-5"/></button>
@@ -243,11 +240,12 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
               <div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={label}>Date<input type="date" value={draft.documentDate} onChange={(e)=>patch("documentDate",e.target.value)} className={field}/></label>
                 <label className={label}>Transmittal # <span className="font-normal text-slate-500">(optional override)</span><input value={draft.transmittalNumber || provisionalNumber} onChange={(e)=>{setNumberOverride(Boolean(e.target.value.trim()));patch("transmittalNumber",e.target.value);}} placeholder="Allocated when generated" className={field}/>{provisionalNumber && !numberOverride && <span className="mt-1 block text-[11px] font-normal text-slate-500">Checked against existing Purchase Orders and Transmittals. Rechecked when generated.</span>}</label>
                 <label className={label}>Job #<input value={draft.jobNumber} onChange={(e)=>patch("jobNumber",e.target.value)} className={field}/></label>
-                <label className={label}>Job name<input value={draft.jobName} onChange={(e)=>patch("jobName",e.target.value)} className={field}/></label></div></section>
+                <label className={label}>Job name<input value={draft.jobName} onChange={(e)=>patch("jobName",e.target.value)} className={field}/></label>
+                <label className={`${label} sm:col-span-2`}>Customer Name<input value={draft.customer} onChange={(e)=>patch("customer",e.target.value)} className={field}/><span className="mt-1 block text-[10px] font-normal text-slate-500">Populated from the Production job for this document only. Editing it does not change the job.</span></label></div></section>
             <section className="border border-slate-300 bg-white p-4"><h3 className={section}>Recipient</h3>
               <div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={`${label} sm:col-span-2`}>Attention<input value={draft.recipient.attention} onChange={(e)=>patch("recipient",{...draft.recipient,attention:e.target.value})} className={field}/></label>
-                <label className={`${label} sm:col-span-2`}>Address line 1<input value={draft.recipient.addressLine1} onChange={(e)=>patch("recipient",{...draft.recipient,addressLine1:e.target.value})} className={field}/></label>
-                <label className={`${label} sm:col-span-2`}>Address line 2<input value={draft.recipient.addressLine2} onChange={(e)=>patch("recipient",{...draft.recipient,addressLine2:e.target.value})} className={field}/></label>
+                <label className={`${label} sm:col-span-2`}>Address<textarea value={draft.recipient.addressLine1} onChange={(e)=>patch("recipient",{...draft.recipient,addressLine1:e.target.value})} rows={3} className={area}/></label>
+                <label className={`${label} sm:col-span-2`}>Address line 2 <span className="font-normal text-slate-500">(optional)</span><textarea value={draft.recipient.addressLine2} onChange={(e)=>patch("recipient",{...draft.recipient,addressLine2:e.target.value})} rows={2} className={area}/></label>
                 <label className={label}>Office phone<input value={draft.recipient.officePhone} onChange={(e)=>patch("recipient",{...draft.recipient,officePhone:e.target.value})} className={field}/></label>
                 <label className={label}>Mobile phone<input value={draft.recipient.mobilePhone} onChange={(e)=>patch("recipient",{...draft.recipient,mobilePhone:e.target.value})} className={field}/></label>
                 <label className={label}>Email<input type="email" value={draft.recipient.email} onChange={(e)=>patch("recipient",{...draft.recipient,email:e.target.value})} className={field}/></label>

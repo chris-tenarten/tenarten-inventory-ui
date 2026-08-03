@@ -6,12 +6,13 @@ import {
 } from "../supabase/functions/_shared/job-transmittal-pdf-model.mjs";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
-const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, sharedNumberingVerification, defaults, validation, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector] = await Promise.all([
+const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, editableCustomer, sharedNumberingVerification, defaults, validation, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector] = await Promise.all([
   read("../supabase/migrations/20260728_001_job_transmittals.sql"),
   read("../supabase/migrations/20260728_002_job_transmittal_hardening.sql"),
   read("../supabase/migrations/20260728_003_job_document_reservation_privileges.sql"),
   read("../supabase/migrations/20260728_004_purchase_order_allocator_privileges.sql"),
   read("../supabase/migrations/20260729_001_shared_document_numbering_suffix_one.sql"),
+  read("../supabase/migrations/20260803_002_job_transmittal_editable_customer.sql"),
   read("../supabase/inspection/20260729_001_shared_document_numbering_suffix_one_verification.sql"),
   read("../src/modules/transmittals/defaults.ts"),
   read("../src/modules/transmittals/validation.ts"),
@@ -103,8 +104,13 @@ assert.match(defaults, /name: "Anthony"/);
 assert.match(defaults, /phone: "469-491-7002"/);
 assert.match(defaults, /email: "sales@tenartenterrazzo\.com"/);
 assert.doesNotMatch(panel, />Company<input/);
+assert.match(panel, />Customer Name<input/);
+assert.match(panel, /value=\{draft\.customer\}/);
+assert.match(panel, /Editing it does not change the job/);
+assert.match(panel, />Address<textarea/);
 assert.match(panel, />Job name<input/);
 assert.match(validation, /0319-001/);
+assert.match(validation, /Address fields must be 200 characters or fewer/);
 for (const requirement of [
   /VERIFY_FUNCTION_MISSING/,
   /VERIFY_PUBLIC_FUNCTION_EXECUTE/,
@@ -142,6 +148,13 @@ assert.match(panel, /Discard this unsaved Letter of Transmittal/);
 assert.match(panel, /Checked against existing Purchase Orders and Transmittals/);
 assert.match(panel, /numberOverride \? displayedNumber : null/);
 assert.match(mutations, /requestedNumber: string \| null/);
+assert.match(mutations, /customer: draft\.customer\.trim\(\)/);
+assert.match(editableCustomer, /display_customer := trim\(coalesce\(p_snapshot->>'customer', ''\)\)/);
+assert.match(editableCustomer, /jsonb_typeof\(p_snapshot->'customer'\) is distinct from 'string'/);
+assert.match(editableCustomer, /'customer', display_customer/);
+assert.doesNotMatch(editableCustomer, /'customer', selected_job\.customer/);
+assert.match(editableCustomer, /p_requested_number, 1/);
+assert.match(editableCustomer, /grant execute on function public\.issue_job_transmittal/);
 assert.match(panel, /record\.documentStatus !== "generated"/);
 assert.doesNotMatch(panel, /previewDraft\(\)[\s\S]{0,120}errors\.length/);
 assert.match(panel, /useState\(true\)/);
@@ -152,6 +165,7 @@ assert.doesNotMatch(panel, /EARLY ACCESS|rotate-\[28deg\]|opacity-\[0\.07\]/);
 assert.doesNotMatch(edge, /EARLY ACCESS/);
 assert.match(edge, /allowEmptyItems: draft/);
 assert.match(edge, /allowBlankTransmittalNumber: draft/);
+assert.match(edge, /snapshot\.recipient\.address_line_1\.length > 200/);
 assert.doesNotMatch(panel, /auth\.getSession|authenticated/);
 assert.match(queries, /rpc\("list_job_transmittals"/);
 assert.doesNotMatch(queries, /\.from\("job_transmittals"\)/);
@@ -172,11 +186,15 @@ const model = buildJobTransmittalPdfModel({
   job_id: "job-id",
   job_number: "26-0417",
   job_name: "Verification Job",
-  recipient: { company: "Example Recipient" },
+  customer: "Editable Customer",
+  recipient: { company: "Example Recipient", address_line_1: "Line One\nLine Two", address_line_2: "Line Three" },
   items,
   sender: { name: "Chris" },
 });
 assert.equal(model.transmittalNumber, "0417-002");
+assert.equal(model.job.customer, "Editable Customer");
+assert.equal(model.recipient.addressLine1, "Line One\nLine Two");
+assert.equal(model.recipient.addressLine2, "Line Three");
 assert.equal(model.pages.length, 2);
 assert.equal(model.pages[0].length, FIRST_PAGE_ROWS);
 assert.equal(model.pages[1].length, 3);

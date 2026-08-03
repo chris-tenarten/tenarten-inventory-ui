@@ -41,9 +41,15 @@ const validDraftSnapshot = (snapshot: Record<string, unknown>) => {
     || typeof snapshot.document_date !== "string"
     || (snapshot.document_date !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(snapshot.document_date))
     || !isObject(snapshot.recipient)
+    || typeof snapshot.recipient.address_line_1 !== "string"
+    || snapshot.recipient.address_line_1.length > 200
+    || typeof snapshot.recipient.address_line_2 !== "string"
+    || snapshot.recipient.address_line_2.length > 200
     || !isObject(snapshot.sender)
     || typeof snapshot.sender.name !== "string"
     || snapshot.sender.name.length > 120
+    || typeof snapshot.customer !== "string"
+    || snapshot.customer.length > 200
     || !Array.isArray(snapshot.items)
     || snapshot.items.length > 100
     || typeof snapshot.comments !== "string"
@@ -162,16 +168,17 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
 
     if (pageIndex === 0) {
       band("RECIPIENT", 669); page.drawRectangle({ x:306, y:669, width:274, height:17, color:pale, borderColor:navy, borderWidth:.65 }); t("PROJECT INFORMATION", 315,674,7.5,bold,navy);
-      rect(32, 588, 274, 81); rect(306, 588, 274, 81);
+      rect(32, 574, 274, 95); rect(306, 574, 274, 95);
       t("To", 42, 653, 6.5, bold, muted); wrapped(model.recipient.company,84,653,210,7.5,2,bold);
-      t("Address", 42, 638, 6.5, bold, muted); wrapped([model.recipient.addressLine1,model.recipient.addressLine2].filter(Boolean).join("\n"),84,638,210,7,2);
-      t("Attn", 42, 610, 6.5, bold, muted); wrapped(model.recipient.attention,84,610,210,7,2);
-      t("Contact", 42, 596, 6.5, bold, muted); wrapped([model.recipient.officePhone,model.recipient.mobilePhone,model.recipient.email].filter(Boolean).join(" | "),84,596,210,6.4,2);
+      t("Address", 42, 638, 6.5, bold, muted); wrapped([model.recipient.addressLine1,model.recipient.addressLine2].filter(Boolean).join("\n"),84,638,210,7,3);
+      t("Attn", 42, 605, 6.5, bold, muted); wrapped(model.recipient.attention,84,605,210,7,1);
+      t("Contact", 42, 590, 6.5, bold, muted); wrapped([model.recipient.officePhone,model.recipient.mobilePhone,model.recipient.email].filter(Boolean).join(" | "),84,590,210,6.4,1);
       t("Date", 316, 653, 6.5, bold, muted); t(model.documentDate, 400, 653, 7.5);
       t("Re / Project", 316, 638, 6.5, bold, muted); wrapped(model.job.name,400,638,170,7.2,2);
-      t("Job #", 316, 623, 6.5, bold, muted); t(model.job.number, 400, 623, 7.5);
-      t("Transmittal #", 316, 608, 6.5, bold, muted); t(model.transmittalNumber, 400, 608, 8, bold);
-      t("CC", 316, 593, 6.5, bold, muted); wrapped(model.cc,400,593,170,6.8,2);
+      t("Customer", 316, 623, 6.5, bold, muted); wrapped(model.job.customer,400,623,170,7.2,1);
+      t("Job #", 316, 608, 6.5, bold, muted); t(model.job.number, 400, 608, 7.5);
+      t("Transmittal #", 316, 593, 6.5, bold, muted); t(model.transmittalNumber, 400, 593, 8, bold);
+      t("CC", 316, 578, 6.5, bold, muted); wrapped(model.cc,400,578,170,6.8,1);
       band("TRANSMITTED ITEMS", 561, true); rect(32, 508, 548, 53);
       t("Delivery", 42, 542, 7, bold); checkbox(model.delivery.attached,"Attached",105,538); checkbox(model.delivery.separateCover,`Under Separate Cover Via ${model.delivery.via}`,200,538);
       t("Item type", 42, 519, 7, bold); checkbox(model.types.shopDrawing,"Shop Drawing",105,515); checkbox(model.types.letter,"Letter",210,515); checkbox(model.types.samples,"Samples",280,515); checkbox(model.types.other,`Other ${model.types.otherLabel}`,365,515);
