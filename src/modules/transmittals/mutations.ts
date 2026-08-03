@@ -65,7 +65,7 @@ export function buildTransmittalSnapshot(draft: JobTransmittalDraft, forPreview 
     job_id: draft.jobId,
     job_number: draft.jobNumber,
     job_name: draft.jobName,
-    customer: draft.customer,
+    customer: draft.customer.trim(),
     transmittal_number: draft.transmittalNumber.trim() || (forPreview ? "" : "PROVISIONAL"),
     template_version: 1,
     document_version: "job-transmittal-pdf-v1",

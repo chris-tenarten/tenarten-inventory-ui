@@ -32,6 +32,10 @@ export function validateJobTransmittal(draft: JobTransmittalDraft): string[] {
   if (draft.recipient.company.length > 200 || draft.recipient.attention.length > 200 || draft.cc.length > 400) {
     errors.push("Recipient and CC fields are too long for the issued document.");
   }
+  if (draft.customer.length > 200) errors.push("Customer Name must be 200 characters or fewer.");
+  if (draft.recipient.addressLine1.length > 200 || draft.recipient.addressLine2.length > 200) {
+    errors.push("Address fields must be 200 characters or fewer.");
+  }
   if (draft.comments.length > 30000) errors.push("Comments must be 30,000 characters or fewer.");
   return errors;
 }

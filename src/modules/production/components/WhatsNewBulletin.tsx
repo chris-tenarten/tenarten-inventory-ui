@@ -14,11 +14,11 @@ type Announcement = {
 const announcements: Announcement[] = [
   {
     title: "Letter of Transmittal",
-    status: "EARLY ACCESS",
+    status: "UPDATED",
     description:
-      "Create and generate Letters of Transmittal directly from Production jobs.",
+      "Customer Name is now editable for each document and preserved in issued document history.",
     howTo:
-      "Open a Production job and select Letter of Transmittal. Use Preview PDF at any time while completing the form to review the document. When all required information has been entered, select Generate & Download to issue the final document.",
+      "Recipient address fields now support multiline formatting, and line breaks are preserved in Preview and generated PDFs.",
     available: "Available now",
   },
   {

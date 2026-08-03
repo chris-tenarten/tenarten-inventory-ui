@@ -14,8 +14,13 @@ The panel contains:
 
 ## Lifecycle
 
-1. The composer prepopulates job number, project name, customer, and current
-   local date.
+1. The composer prepopulates job number, project name, editable Customer Name,
+   and current local date. Customer Name is initialized from `jobs.customer`
+   for each newly opened editor but remains a document-only value; editing it
+   never writes back to the Production job. The current editor is job-scoped,
+   so switching jobs closes it and the next editor initializes from that job.
+   Recipient Address accepts intentional line breaks and preserves them in
+   preview and the immutable issued snapshot.
 2. Preview renders the current unsaved values through
    `generate-job-transmittal-pdf`. It does not persist history, allocate a
    number, or upload a permanent file.
@@ -27,6 +32,18 @@ The panel contains:
 6. The browser downloads the PDF from a short-lived signed URL.
 7. If rendering or upload fails, the history record remains immutable with a
    failed document status and can retry the same snapshot and number.
+
+## Controlled test cleanup
+
+The August 3 pre-release audit identified Anthony's single July 29 controlled
+test issuance for Heights Career Tech. The issued record
+`64e117e8-e3f2-47d7-877d-50133a590bc4` and its exact private PDF were removed.
+The canonical Production job `09402df6-6bd8-4e94-953e-fe7006a95491` was not
+changed. Document number `0530-001` remains reserved in the shared registry as
+an intentional sequence gap; it was not renumbered or reused. Verification
+found no PO or activity record tied to the cleanup and no remaining Transmittal
+for that job. Valid Transmittals and unrelated Storage objects remained outside
+the exact-ID cleanup scope.
 
 ## Numbering
 
@@ -119,3 +136,9 @@ snapshot.
 7. Deploy the Edge Function.
 8. Deploy the app and perform Letter of Transmittal workflow and Purchase Order
    regression testing.
+
+Before the editable Customer Name release, apply and verify the pending
+forward migration `20260803_002_job_transmittal_editable_customer.sql`, then
+deploy the updated `generate-job-transmittal-pdf` Edge Function before the
+frontend. The migration preserves canonical `jobs.id`, existing issued
+snapshots, shared numbering, and the existing anonymous MVP RPC boundary.
