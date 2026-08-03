@@ -14,7 +14,9 @@
     "verify:purchasing-numbering": "node scripts/verify-purchasing-numbering.mjs",
     "verify:job-transmittals": "node scripts/verify-job-transmittals.mjs",
     "verify:purchasing-arim-skus": "node scripts/verify-purchasing-arim-skus.mjs",
-    "verify:purchasing-pending-receivals": "node scripts/verify-purchasing-pending-receivals.mjs"
+    "verify:purchasing-pending-receivals": "node scripts/verify-purchasing-pending-receivals.mjs",
+    "verify:planning": "node scripts/verify-planning.mjs",
+    "verify:early-access": "node scripts/verify-early-access.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",

@@ -53,6 +53,10 @@ Production Pipeline now presents three synchronized views over the same canonica
 - Table preserves dense inline editing, compact centered headers, and sticky Job/Project columns for bulk review. Existing attachment counts appear beside the Project name and open the inspector at Attachments; a separate Files column is unnecessary.
 - Timeline supports direct schedule planning and includes a separate Not Scheduled section whose Complete setup action opens the shared inspector at planned dates.
 
+When `NEXT_PUBLIC_ENABLE_PLANNING=true`, Planning appears as the second job Inspector tab. It does not add a top-level application or navigation route. With the flag absent or not exactly `true`, Production renders and loads exactly as before.
+
+`NEXT_PUBLIC_EARLY_ACCESS=true` enables the visual Early Access deployment badge and the Planning entry in the Dashboard **What’s New** bulletin. It is an exact-string, presentation-only flag: it does not enable Planning or alter application behavior. Planning remains independently controlled by `NEXT_PUBLIC_ENABLE_PLANNING=true`.
+
 The selected view is remembered for the current browser-tab session. Selecting a job in any view opens the same keyboard-accessible job inspector. Planning fields remain editable there, while job details, attachments, and the newest `job_activity` entries provide context. Attachment indicators in Overview and Table open the inspector directly at Attachments; upload/removal updates the shared count map without a job reload. Schedule fields always feed the staged approval/audit workflow; the inspector does not bypass it.
 
 Planning completeness is derived in one shared helper. Jobs without both planned dates are Not Scheduled. Scheduled jobs missing a job number, requested delivery, labor estimate, or customer are Planning Needed; otherwise they are Planning Complete. This guidance is independent of material readiness and Production status and does not indicate that a job can begin or has no blockers.
@@ -89,6 +93,8 @@ Cloudflare must define `NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD` and redeploy t
 Labor intensity is derived rather than stored. Timeline ranges and their labor denominator both use inclusive calendar days: estimated labor hours divided by every scheduled calendar day. This interim model keeps scheduling honest about possible weekend work without implying that every included weekend is necessarily planned production time. A future shop calendar or job-specific planned-production-day model should replace it. Holiday calendars, workforce capacity, resource leveling, dependency scheduling, and automatic schedule optimization are deferred. Missing, zero, or invalid labor estimates are shown as `No labor estimate` rather than as zero labor.
 
 The compact Timeline legend uses the same shared visual definitions as the bars. Most statuses use solid fills; `On Hold` uses a stronger diagonal stripe treatment while `Shipped` uses a softer, differently angled stripe to distinguish it from `Complete`. The legend also identifies requested-delivery diamonds, the today marker, and the compact `h/day` labor label.
+
+Enabled Phases annotate rather than own the Timeline. Canonical Production dates continue to define the initial range and ordinary Fit behavior. Overlay Phases render as compact category bands, while Pause uses a noninteractive amber interruption pattern so the Production move region and resize handles remain available. Planning-only and out-of-range Phases do not stretch the canvas. At most three relevant Phases appear in a collapsed row before a `+N` control expands one lane per Phase. Phase bars are read-only and open the exact Phase in the Inspector. Items remain in the Inspector and drive the explicitly labeled Planning progress strip for included Phases. The sticky rail's Layers shortcut opens Planning for the job. See [`PLANNING.md`](./PLANNING.md).
 
 ## Terminology
 
