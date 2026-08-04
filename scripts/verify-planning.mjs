@@ -9,7 +9,7 @@ import {
 } from "../src/modules/planning/timeline-model.mjs";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const [migration, refinement, progressMigration, progressVerification, schedulingMigration, schedulingVerification, scheduling, schedulingModel, data, panel, itemEditor, editor, library, workspace, gantt, inspector, shell, settings, visuals, demo] = await Promise.all([
+const [migration, refinement, progressMigration, progressVerification, schedulingMigration, schedulingVerification, scheduling, schedulingModel, data, panel, creationDialog, itemEditor, editor, library, workspace, gantt, inspector, shell, settings, visuals, demo] = await Promise.all([
   read("supabase/migrations/20260731_003_planning_phases_items.sql"),
   read("supabase/migrations/20260803_001_planning_library_colors_and_phase_cap.sql"),
   read("supabase/migrations/20260804_001_planning_execution_progress.sql"),
@@ -20,6 +20,7 @@ const [migration, refinement, progressMigration, progressVerification, schedulin
   read("src/modules/planning/schedule-model.mjs"),
   read("src/modules/planning/data.ts"),
   read("src/modules/planning/PlanningPanel.tsx"),
+  read("src/modules/planning/PhaseCreationDialog.tsx"),
   read("src/modules/planning/PlanningItemEditor.tsx"),
   read("src/modules/planning/PlanningPhaseEditor.tsx"),
   read("src/modules/planning/PhaseLibraryManager.tsx"),
@@ -72,9 +73,15 @@ assert.match(data, /entry\.default_timeline_behavior !== "pause" && item\.librar
 assert.match(data, /\.neq\("timeline_behavior", "pause"\)/);
 assert.match(data, /timeline_color: entry\.default_timeline_behavior === "overlay" \? entry\.default_timeline_color : null/);
 assert.match(data, /library_phase_id: entry\.id/);
+assert.match(data, /selectedLibraryItemIds\?: readonly string\[\]/);
+assert.match(data, /selectedItemIds\.has\(item\.id\)/);
+assert.match(data, /default_shift_with_production\?: boolean/);
+assert.match(data, /shift_with_production: shiftWithProduction/);
 assert.match(panel, /Items/);
-assert.match(panel, /Planning Progress/);
+assert.match(panel, /Execution Progress/);
 assert.match(panel, /Planning Coverage/);
+assert.match(panel, /Weighted completion of all modeled Planning Items for this job\./);
+assert.doesNotMatch(panel, /Planning Progress/);
 assert.match(panel, /phaseProgress\.completedHours/);
 assert.match(panel, /onItemsChanged/);
 assert.match(itemEditor, /Estimated hours/);
@@ -82,7 +89,8 @@ assert.match(itemEditor, /estimatedHours <= 0/);
 assert.match(itemEditor, /embedded \? editor/);
 assert.match(itemEditor, /Back to \$\{backLabel\}/);
 assert.match(editor, /calculatePhaseProgress\(items\)/);
-assert.match(editor, /Planning Progress/);
+assert.match(editor, /Execution Progress/);
+assert.doesNotMatch(editor, /Planning Progress/);
 assert.match(editor, /planned hrs/);
 assert.match(editor, /Items complete/);
 assert.match(editor, /Item Overview/);
@@ -92,6 +100,22 @@ assert.match(editor, /<PlanningItemEditor embedded/);
 assert.match(panel, /items=\{phaseEditor \? items\.filter/);
 assert.match(panel, /onSaveItem=/);
 assert.match(panel, /onDeleteItem=/);
+assert.match(panel, /leftPhase\.start_date\.localeCompare\(rightPhase\.start_date\)/);
+assert.match(panel, /leftPhase\.end_date\.localeCompare\(rightPhase\.end_date\)/);
+assert.match(panel, /left\.created_at\.localeCompare\(right\.created_at\)/);
+assert.match(panel, /openPhaseCreation\(value, event\.currentTarget\)/);
+assert.match(panel, /<PhaseCreationDialog/);
+assert.match(creationDialog, /Select All/);
+assert.match(creationDialog, /Deselect All/);
+assert.match(creationDialog, /Template name/);
+assert.match(creationDialog, /Estimated Hours/);
+assert.match(creationDialog, /Item Count/);
+assert.match(creationDialog, /Select at least one Item to create this Phase\./);
+assert.match(creationDialog, /entry\.default_timeline_behavior === "overlay"/);
+assert.match(creationDialog, /selectedItems\.reduce/);
+assert.match(creationDialog, /disabled=\{busy \|\| selectionInvalid\}/);
+assert.match(inspector, /mt-2\.5 flex overflow-x-auto border-b/);
+assert.match(inspector, /min-h-8 min-w-max flex-1 whitespace-nowrap border-b-2 px-2 py-1/);
 assert.match(panel, /Phase Library/);
 assert.match(library, /Nothing is added to a Production job automatically/);
 assert.match(library, /Save the Phase definition before adding reusable Items/);
@@ -104,6 +128,8 @@ assert.match(gantt, /data-planning-progress-fill/);
 assert.match(gantt, /data-planning-progress-boundary/);
 assert.match(gantt, /data-planning-execution-metric/);
 assert.match(gantt, /PhaseExecutionLabels title=\{phase\.title\} percent=\{phaseProgress\.percent\}/);
+assert.match(gantt, /barWidth < 48/);
+assert.match(gantt, /barWidth >= 112/);
 assert.doesNotMatch(gantt, /PhaseExecutionLabels[^\n]*completedItems/);
 assert.doesNotMatch(gantt, /data-planning-phase-title className="[^"]*bg-/);
 assert.doesNotMatch(gantt, /data-planning-execution-metric[^>]*bg-/);

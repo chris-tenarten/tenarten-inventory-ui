@@ -155,12 +155,15 @@ export async function copyLibraryPhaseToJob(
   entry: PhaseLibraryEntry,
   libraryItems: PhaseLibraryItem[],
   productionStart: string | null,
+  selectedLibraryItemIds?: readonly string[],
 ) {
   if (entry.default_timeline_behavior !== "planning_only" && !productionStart) {
     throw new Error("Set the Production planned start before adding this dated Phase Library definition.");
   }
   const duration = entry.suggested_duration_days ?? 1;
   const startDate = entry.default_timeline_behavior === "planning_only" ? null : productionStart;
+  const shiftWithProduction = (entry as PhaseLibraryEntry & { default_shift_with_production?: boolean }).default_shift_with_production
+    ?? entry.default_timeline_behavior !== "pause";
   const phase = await createPlanningPhase({
     job_id: jobId,
     title: entry.name,
@@ -176,11 +179,13 @@ export async function copyLibraryPhaseToJob(
     library_phase_id: entry.id,
     blocked_by_phase_id: null,
     created_by: null,
+    ...({ shift_with_production: shiftWithProduction } as { shift_with_production: boolean }),
   });
 
   try {
     const copiedItems: PlanningItem[] = [];
-    for (const template of libraryItems.filter((item) => entry.default_timeline_behavior !== "pause" && item.library_phase_id === entry.id)) {
+    const selectedItemIds = selectedLibraryItemIds ? new Set(selectedLibraryItemIds) : null;
+    for (const template of libraryItems.filter((item) => entry.default_timeline_behavior !== "pause" && item.library_phase_id === entry.id && (!selectedItemIds || selectedItemIds.has(item.id)))) {
       copiedItems.push(
         await createPlanningItem({
           phase_id: phase.id,

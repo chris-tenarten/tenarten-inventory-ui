@@ -554,7 +554,7 @@ export default function ProductionJobInspector({
         aria-modal="true"
         aria-labelledby="job-inspector-title"
         onMouseDown={(event) => event.stopPropagation()}
-        className="ml-auto h-full w-full max-w-xl overflow-y-auto border-l border-slate-200 bg-white p-5 shadow-2xl"
+        className="ml-auto h-full w-full max-w-xl overflow-y-auto border-l border-slate-200 bg-white p-4 shadow-2xl"
       >
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -567,11 +567,11 @@ export default function ProductionJobInspector({
             >
               {job.name}
             </h2>
-            <div className="mt-2">
+            <div className="mt-1.5">
               <ProductionStatusBadge status={job.production_status} />
             </div>
             <div
-              className={`mt-2 inline-flex px-2 py-1 text-xs font-bold ${readiness.state === "ready" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}
+              className={`mt-1.5 inline-flex px-2 py-0.5 text-xs font-bold ${readiness.state === "ready" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}
             >
               {readiness.label} — {readiness.guidance}
             </div>
@@ -580,7 +580,7 @@ export default function ProductionJobInspector({
             ref={closeRef}
             type="button"
             onClick={requestClose}
-            className="h-9 shrink-0 border border-slate-400 px-3 font-bold hover:bg-slate-100"
+            className="h-8 shrink-0 border border-slate-400 px-3 text-sm font-bold hover:bg-slate-100"
           >
             Close
           </button>
@@ -589,7 +589,7 @@ export default function ProductionJobInspector({
         <div
           role="tablist"
           aria-label="Job inspector sections"
-          className={`mt-5 grid rounded-sm border border-slate-300 bg-slate-50 p-1 ${planningEnabled ? "grid-cols-5" : "grid-cols-4"}`}
+          className="mt-2.5 flex overflow-x-auto border-b border-slate-300"
         >
           {tabs.map((tab) => (
             <button
@@ -600,7 +600,7 @@ export default function ProductionJobInspector({
               aria-controls={`inspector-${tab.id}`}
               id={`inspector-tab-${tab.id}`}
               onClick={() => selectSection(tab.id)}
-              className={`min-h-9 rounded-sm px-2 py-2 text-xs font-bold focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${activeSection === tab.id ? "bg-slate-900 text-white shadow-sm" : "text-slate-600 hover:bg-white hover:text-slate-950"}`}
+              className={`min-h-8 min-w-max flex-1 whitespace-nowrap border-b-2 px-2 py-1 text-[11px] font-bold focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${activeSection === tab.id ? "border-slate-900 bg-slate-100/70 text-slate-950" : "border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-950"}`}
             >
               {tab.label}
             </button>
@@ -1100,7 +1100,7 @@ export default function ProductionJobInspector({
           )}
 
           {activeSection === "planning" && planningEnabled && (
-            <section className="mt-5">
+            <section className="mt-3">
               <PlanningPanel key={(planningPhases ?? []).filter((phase) => phase.job_id === job.id).map((phase) => `${phase.id}:${phase.updated_at}`).join("|")} job={job} compact initialPhaseId={initialFocus?.startsWith("planning:") ? initialFocus.slice("planning:".length) : undefined} onPhasesChanged={onPlanningPhasesChanged} onItemsChanged={onPlanningItemsChanged} onEditorOpenChanged={setPlanningEditorOpen} stagedSchedules={stagedPlanningSchedules} planningIssues={planningIssues.filter((issue) => issue.phase_ids.some((phaseId) => (planningPhases ?? []).some((phase) => phase.id === phaseId && phase.job_id === job.id)))} />
             </section>
           )}

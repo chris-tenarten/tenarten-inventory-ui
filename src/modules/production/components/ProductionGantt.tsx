@@ -107,51 +107,33 @@ type ExecutionLabelMode = 'hidden' | 'title' | 'percent';
 function PhaseExecutionLabels({ title, percent }: { title: string; percent: number }) {
   const titleRef = useRef<HTMLSpanElement>(null);
   const metricRef = useRef<HTMLSpanElement>(null);
-  const percentMeasureRef = useRef<HTMLSpanElement>(null);
   const [mode, setMode] = useState<ExecutionLabelMode>('hidden');
 
   useLayoutEffect(() => {
     const metric = metricRef.current;
     const titleElement = titleRef.current;
     const container = metric?.parentElement;
-    if (!metric || !container || !titleElement || !percentMeasureRef.current) return;
+    const phaseBar = container?.parentElement;
+    if (!metric || !container || !titleElement || !phaseBar) return;
     const update = () => {
-      const warning = container.parentElement?.querySelector<HTMLElement>('[data-planning-warning-popover]');
-      const stagedBadge = container.querySelector<HTMLElement>('[data-planning-staged-badge]');
-      const reservedWidth = (warning?.getBoundingClientRect().width ?? 0) + (stagedBadge?.getBoundingClientRect().width ?? 0);
-      const reservedGaps = (warning ? 4 : 0) + (stagedBadge ? 4 : 0);
-      const availableWidth = container.clientWidth - 12 - reservedWidth - reservedGaps;
-      const titleWidth = titleElement.scrollWidth;
-      const gap = 4;
-      const percentWidth = percentMeasureRef.current!.getBoundingClientRect().width;
-      const phaseBar = container.parentElement;
-      const boundaryInContent = percent > 0 && percent < 100 && phaseBar
-        ? phaseBar.clientWidth * (percent / 100) - container.offsetLeft + 3
-        : 0;
-      const metricRegionStart = Math.max(titleWidth + gap, boundaryInContent);
-      const metricRegionWidth = availableWidth - metricRegionStart;
-      const nextMode: ExecutionLabelMode = availableWidth < 24
+      const barWidth = phaseBar.getBoundingClientRect().width;
+      const nextMode: ExecutionLabelMode = barWidth < 48
         ? 'hidden'
-        : metricRegionWidth >= percentWidth
+        : barWidth >= 112
           ? 'percent'
           : 'title';
       setMode((current) => current === nextMode ? current : nextMode);
     };
     const observer = new ResizeObserver(update);
+    observer.observe(phaseBar);
     observer.observe(container);
-    observer.observe(titleElement);
-    const warning = container.parentElement?.querySelector<HTMLElement>('[data-planning-warning-popover]');
-    const stagedBadge = container.querySelector<HTMLElement>('[data-planning-staged-badge]');
-    if (warning) observer.observe(warning);
-    if (stagedBadge) observer.observe(stagedBadge);
     update();
     return () => observer.disconnect();
-  }, [percent, title]);
+  }, []);
 
   return <>
     <span ref={titleRef} data-planning-phase-title className={`${mode === 'hidden' ? 'hidden' : 'block'} min-w-0 truncate px-1 text-white`} style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{title}</span>
     <span ref={metricRef} data-planning-execution-metric data-mode={mode} className={`${mode === 'percent' ? 'ml-auto inline-flex' : 'hidden'} shrink-0 px-1 tabular-nums text-[8px] text-white`} style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{percent}%</span>
-    <span ref={percentMeasureRef} aria-hidden="true" className="pointer-events-none fixed invisible whitespace-nowrap px-1 tabular-nums text-[8px]">{percent}%</span>
   </>;
 }
 
