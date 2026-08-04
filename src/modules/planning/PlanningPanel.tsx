@@ -20,6 +20,8 @@ import { calculatePhaseProgress, calculatePlanningProgress } from "./progress.mj
 import { overlayVisualForPhase, PLANNING_PAUSE_HATCH } from "./phase-visuals";
 import PlanningItemEditor from "./PlanningItemEditor";
 import PlanningPhaseEditor from "./PlanningPhaseEditor";
+import { planningPhaseWithStagedDates, type StagedPlanningSchedules } from "./schedule-staging";
+import type { PlanningScheduleIssue } from "./schedule-model.mjs";
 import { countsTowardPlanningPhaseLimit, MAX_PLANNING_PHASES, planningStatuses, statusLabels } from "./types";
 import type {
   PhaseLibraryEntry,
@@ -37,6 +39,8 @@ type Props = {
   initialPhaseId?: string;
   onPhasesChanged?: (jobId: string, phases: PlanningPhase[]) => void;
   onEditorOpenChanged?: (open: boolean) => void;
+  stagedSchedules?: StagedPlanningSchedules;
+  planningIssues?: PlanningScheduleIssue[];
 };
 
 type ItemEditorState = { phaseId: string; item: PlanningItem | null };
@@ -53,7 +57,7 @@ function timelineBehaviorLabel(phase: PlanningPhase) {
   return phase.timeline_behavior === "pause" ? "Pause" : "Overlay";
 }
 
-export default function PlanningPanel({ job, compact = false, initialPhaseId, onPhasesChanged, onEditorOpenChanged }: Props) {
+export default function PlanningPanel({ job, compact = false, initialPhaseId, onPhasesChanged, onEditorOpenChanged, stagedSchedules = {}, planningIssues = [] }: Props) {
   const [phases, setPhases] = useState<PlanningPhase[]>([]);
   const [items, setItems] = useState<PlanningItem[]>([]);
   const [library, setLibrary] = useState<PhaseLibraryEntry[]>([]);
@@ -223,12 +227,15 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
       ) : (
         <div className="mt-4 space-y-2">
           {visiblePhases.map((phase) => {
+            const displayedPhase = planningPhaseWithStagedDates(phase, stagedSchedules);
             const phaseItems = items.filter((item) => item.phase_id === phase.id);
             const phaseProgress = calculatePhaseProgress(phaseItems);
             const isExpanded = expanded.has(phase.id);
-            const dateLabel = phaseDateLabel(phase);
+            const dateLabel = phaseDateLabel(displayedPhase);
+            const isScheduleStaged = Boolean(stagedSchedules[phase.id]);
             const prerequisite = phases.find((candidate) => candidate.id === phase.blocked_by_phase_id);
             const isBlocked = Boolean(prerequisite && prerequisite.status !== "done");
+            const scheduleIssues = planningIssues.filter((issue) => issue.successor_id === phase.id);
             return (
               <section key={phase.id} className="border border-slate-300 bg-white">
                 <div className="flex items-center gap-2 p-3">
@@ -237,10 +244,11 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
                     <div className="flex items-center gap-2 font-bold text-slate-950">
                       {phase.timeline_behavior === "overlay" ? <span aria-label={`${phase.title} Overlay color: ${overlayVisualForPhase(phases, phase.id).name}`} title={`Overlay color: ${overlayVisualForPhase(phases, phase.id).name}`} className={`h-3 w-5 shrink-0 border ${overlayVisualForPhase(phases, phase.id).swatchClassName}`} /> : phase.timeline_behavior === "pause" ? <span aria-label={`${phase.title}: Pause hatch`} title="Pause: black-and-white diagonal hatch" className="h-3 w-5 shrink-0 border border-slate-950 bg-white" style={{ backgroundImage: PLANNING_PAUSE_HATCH }} /> : <span aria-label={`${phase.title}: Planning only`} title="Planning only: no Timeline bar" className="h-3 w-5 shrink-0 border border-dashed border-slate-400 bg-slate-50" />}
                       <span className="truncate">{phase.title}</span>
-                      {isBlocked && <span title={`Blocked by ${prerequisite!.title}`} className="inline-flex shrink-0 items-center gap-1 border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-900"><AlertTriangle className="h-3 w-3" aria-hidden="true" />Blocked</span>}
+                      {isBlocked && <span title={`Waiting for ${prerequisite!.title}`} className="inline-flex shrink-0 items-center border border-slate-300 bg-slate-50 px-1.5 py-0.5 text-[10px] font-bold text-slate-600">Waiting</span>}
                     </div>
-                    <div className="mt-0.5 text-xs text-slate-500">{[statusLabels[phase.status], timelineBehaviorLabel(phase), dateLabel ?? "Undated", phaseItems.length ? `${phaseProgress.complete} of ${phaseProgress.total} items complete` : null].filter(Boolean).join(" · ")}</div>
-                    {prerequisite && <div className={`mt-0.5 text-[10px] font-semibold ${isBlocked ? "text-amber-800" : "text-slate-500"}`}>{isBlocked ? "Blocked by" : "Depends on"}: {prerequisite.title}</div>}
+                    <div className="mt-0.5 text-xs text-slate-500">{[statusLabels[phase.status], timelineBehaviorLabel(phase), dateLabel ?? "Undated", isScheduleStaged ? "Unsaved schedule" : null, phaseItems.length ? `${phaseProgress.complete} of ${phaseProgress.total} items complete` : null].filter(Boolean).join(" · ")}</div>
+                    {prerequisite && <div className="mt-0.5 text-[10px] font-semibold text-slate-500"><span>{isBlocked ? "Waiting for" : "Depends on"}: {prerequisite.title}</span></div>}
+                    {scheduleIssues.map((issue) => <div key={issue.id} className={`mt-1 flex items-start gap-1 text-[10px] font-semibold ${issue.severity === "error" ? "text-red-700" : "text-orange-700"}`}><AlertTriangle className="mt-px h-3 w-3 shrink-0" aria-hidden="true" /><span>{issue.inspector_message ?? issue.message}</span></div>)}
                   </button>
                   {phase.timeline_behavior !== "pause" && <button type="button" onClick={(event) => openItem(phase.id, null, event.currentTarget)} className="h-8 border border-slate-300 px-2 text-xs font-bold text-slate-700 focus-visible:ring-2 focus-visible:ring-blue-600">Add Item</button>}
                 </div>

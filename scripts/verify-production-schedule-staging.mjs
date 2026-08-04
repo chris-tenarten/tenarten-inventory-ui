@@ -56,6 +56,12 @@ const conflictFeedback = describeProductionScheduleSaveError({
 assert.match(conflictFeedback.message, /1234 changed after you began editing/);
 assert.match(conflictFeedback.message, /proposed dates are still available/);
 assert.equal(conflictFeedback.conflicts.length, 1);
+const planningConflictFeedback = describeProductionScheduleSaveError({
+  message: 'production_planning_schedule_conflict',
+  details: JSON.stringify({ code: 'production_planning_schedule_conflict', conflicts: [{ title: 'Shop Drawings' }] }),
+});
+assert.match(planningConflictFeedback.message, /Shop Drawings changed after you began editing/);
+assert.match(planningConflictFeedback.message, /Nothing was saved/);
 assert.match(describeProductionScheduleSaveError({
   message: 'production_schedule_validation',
   details: JSON.stringify({
@@ -72,7 +78,7 @@ assert.equal(
 const workspaceSource = readFileSync(new URL('../src/modules/production/ProductionWorkspace.tsx', import.meta.url), 'utf8');
 const inspectorSource = readFileSync(new URL('../src/modules/production/components/ProductionJobInspector.tsx', import.meta.url), 'utf8');
 const jobsSource = readFileSync(new URL('../src/modules/production/jobs.ts', import.meta.url), 'utf8');
-assert.equal(workspaceSource.includes('saveProductionScheduleBatch('), true);
+assert.equal(workspaceSource.includes('saveProductionPlanningScheduleBatch('), true);
 assert.equal(workspaceSource.includes('updateProductionJobSchedule'), false);
 assert.equal(workspaceSource.includes('recordProductionScheduleAudit'), false);
 assert.equal(workspaceSource.includes('rebaseStagedScheduleVersion(current, updated)'), true);
@@ -81,6 +87,7 @@ assert.equal(inspectorSource.includes('planned_start: job.planned_start'), false
 assert.equal(inspectorSource.includes('planned_end: job.planned_end'), false);
 assert.equal(inspectorSource.includes('Planned dates remain staged for Save All.'), true);
 assert.equal(jobsSource.includes("supabase.rpc('save_production_schedule_batch'"), true);
+assert.equal(jobsSource.includes("supabase.rpc('save_production_planning_schedule_batch'"), true);
 assert.equal(jobsSource.includes('updateProductionJobSchedule'), false);
 assert.equal(jobsSource.includes('recordProductionScheduleAudit'), false);
 console.log('Production schedule staging checks passed.');

@@ -5,7 +5,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
 import PlanningPanel from "@/modules/planning/PlanningPanel";
+import type { StagedPlanningSchedules } from "@/modules/planning/schedule-staging";
 import type { PlanningPhase } from "@/modules/planning/types";
+import type { PlanningScheduleIssue } from "@/modules/planning/schedule-model.mjs";
 import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
 import {
   createJobAttachmentDownloadUrl,
@@ -57,6 +59,9 @@ type Props = {
   ) => void;
   onAttachmentsChanged: (jobId: string, count: number) => void;
   onPlanningPhasesChanged?: (jobId: string, phases: PlanningPhase[]) => void;
+  stagedPlanningSchedules?: StagedPlanningSchedules;
+  planningPhases?: PlanningPhase[];
+  planningIssues?: PlanningScheduleIssue[];
   initialFocus?: string;
 };
 
@@ -191,6 +196,9 @@ export default function ProductionJobInspector({
   onJobUpdateSummaryChanged,
   onAttachmentsChanged,
   onPlanningPhasesChanged,
+  stagedPlanningSchedules,
+  planningPhases,
+  planningIssues = [],
   initialFocus,
 }: Props) {
   const [activeSection, setActiveSection] = useState<InspectorSection>(
@@ -1091,7 +1099,7 @@ export default function ProductionJobInspector({
 
           {activeSection === "planning" && planningEnabled && (
             <section className="mt-5">
-              <PlanningPanel job={job} compact initialPhaseId={initialFocus?.startsWith("planning:") ? initialFocus.slice("planning:".length) : undefined} onPhasesChanged={onPlanningPhasesChanged} onEditorOpenChanged={setPlanningEditorOpen} />
+              <PlanningPanel key={(planningPhases ?? []).filter((phase) => phase.job_id === job.id).map((phase) => `${phase.id}:${phase.updated_at}`).join("|")} job={job} compact initialPhaseId={initialFocus?.startsWith("planning:") ? initialFocus.slice("planning:".length) : undefined} onPhasesChanged={onPlanningPhasesChanged} onEditorOpenChanged={setPlanningEditorOpen} stagedSchedules={stagedPlanningSchedules} planningIssues={planningIssues.filter((issue) => issue.phase_ids.some((phaseId) => (planningPhases ?? []).some((phase) => phase.id === phaseId && phase.job_id === job.id)))} />
             </section>
           )}
 

@@ -9,9 +9,13 @@ import {
 } from "../src/modules/planning/timeline-model.mjs";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const [migration, refinement, data, panel, editor, library, workspace, gantt, inspector, shell, settings, visuals, demo] = await Promise.all([
+const [migration, refinement, schedulingMigration, schedulingVerification, scheduling, schedulingModel, data, panel, editor, library, workspace, gantt, inspector, shell, settings, visuals, demo] = await Promise.all([
   read("supabase/migrations/20260731_003_planning_phases_items.sql"),
   read("supabase/migrations/20260803_001_planning_library_colors_and_phase_cap.sql"),
+  read("supabase/migrations/20260803_003_atomic_production_planning_schedule.sql"),
+  read("supabase/inspection/20260803_003_atomic_production_planning_schedule_verification.sql"),
+  read("src/modules/planning/schedule-staging.ts"),
+  read("src/modules/planning/schedule-model.mjs"),
   read("src/modules/planning/data.ts"),
   read("src/modules/planning/PlanningPanel.tsx"),
   read("src/modules/planning/PlanningPhaseEditor.tsx"),
@@ -77,15 +81,27 @@ assert.match(gantt, /inCanvasPhases\.map/);
 assert.doesNotMatch(gantt, /collapsedPhases\.hidden|additional Phase/);
 assert.match(gantt, /planning-arrow-/);
 assert.match(gantt, /pointer-events-none absolute left-0/);
-assert.equal((gantt.match(/planningIntervalGeometry\(/g) ?? []).length, 5);
+assert.equal((gantt.match(/planningIntervalGeometry\(/g) ?? []).length, 6);
 assert.match(gantt, /const blockerX = blockerGeometry\.right/);
 assert.match(gantt, /const blockedX = blockedGeometry\.left/);
-assert.match(gantt, /const destinationApproachX = blockedX - 10/);
-assert.match(gantt, /H \$\{destinationApproachX\} V \$\{blockedY\} H \$\{blockedX\}/);
+assert.match(gantt, /const destinationNodeSize = 6/);
+assert.match(gantt, /const destinationNodeX = blockedX - destinationNodeSize \/ 2/);
+assert.match(gantt, /const destinationApproachX = destinationNodeX - 10/);
+assert.match(gantt, /H \$\{destinationApproachX\} V \$\{blockedY\} H \$\{destinationNodeX\}/);
+assert.match(gantt, /<rect x=\{destinationNodeX\} y=\{blockedY - destinationNodeSize \/ 2\} width=\{destinationNodeSize\} height=\{destinationNodeSize\} fill=\{connectorColor\} \/>/);
+assert.doesNotMatch(gantt, /IncomingDependencyIcon/);
+assert.doesNotMatch(panel, /IncomingDependencyIcon/);
 assert.match(gantt, /refX="8"/);
 assert.match(gantt, /markerUnits="userSpaceOnUse"/);
-assert.match(gantt, /z-\[4\] overflow-visible/);
-assert.match(gantt, /AlertTriangle/);
+assert.match(gantt, /issueIsOpen \? 'z-40' : 'z-\[4\]'/);
+assert.match(gantt, /const issueAnchorX = Math\.round\(\(sourceExitX \+ destinationApproachX\) \/ 2\)/);
+assert.match(gantt, /x=\{issueAnchorX - 7\} y=\{routingY - 7\} width=\{issueIsOpen \? 304 : 14\} height=\{issueIsOpen \? 148 : 14\}/);
+assert.match(gantt, /data-planning-warning-popover className="relative h-3\.5 w-3\.5"/);
+assert.match(gantt, /absolute inset-0 flex items-center justify-center rounded-full/);
+assert.match(gantt, /AlertTriangle className="h-2\.5 w-2\.5 shrink-0"/);
+assert.match(gantt, /issue\.kind !== 'dependency_overlap' && issue\.kind !== 'circular_dependency'/);
+assert.match(gantt, /preferences\.rowDensity === 'compact' \? 'text-\[6px\]' : 'text-\[6\.5px\]'/);
+assert.doesNotMatch(gantt, /Blocked by:/);
 assert.doesNotMatch(gantt, /sr-only">Planning overlay:[\s\S]{0,200}card\.blocked_by_phase_id/);
 assert.match(gantt, /onSelectJob\(job,\s*'planning'\)/);
 assert.match(gantt, /focusJobProductionInterval\(job\)/);
@@ -106,7 +122,8 @@ assert.match(panel, /MAX_PLANNING_PHASES/);
 assert.match(panel, /countsTowardPlanningPhaseLimit/);
 assert.match(panel, /Pause intervals do not count toward this limit/);
 assert.match(panel, /phase\.timeline_behavior !== "pause"/);
-assert.match(panel, /Blocked by/);
+assert.match(panel, /Waiting for/);
+assert.doesNotMatch(panel, /Blocked by/);
 assert.doesNotMatch(panel, /Category<select|categoryFilter/);
 assert.doesNotMatch(library, /Default category|Include in Planning progress by default/);
 assert.match(library, /Default Timeline Color/);
@@ -134,5 +151,34 @@ assert.match(refinement, /add column library_phase_id/);
 assert.match(refinement, /enforce_planning_phase_limit/);
 assert.match(refinement, /old\.timeline_behavior = 'pause'/);
 assert.match(refinement, /phase\.timeline_behavior <> 'pause'/);
+assert.doesNotMatch(schedulingMigration, /shift_with_production/);
+assert.match(schedulingMigration, /save_production_planning_schedule_batch/);
+assert.match(schedulingMigration, /security definer/);
+assert.match(schedulingMigration, /set search_path = public, pg_temp/);
+assert.match(schedulingMigration, /revoke all on function public\.save_production_planning_schedule_batch/);
+assert.match(schedulingVerification, /VERIFY_MIXED_ATOMIC_SAVE/);
+assert.match(schedulingVerification, /VERIFY_STALE_PHASE_CONFLICT/);
+assert.match(schedulingVerification, /VERIFY_STALE_PRODUCTION_CONFLICT/);
+assert.match(schedulingVerification, /VERIFY_PRODUCTION_CONFLICT_PARTIAL_WRITE/);
+assert.match(schedulingVerification, /rollback;/);
+assert.match(schedulingModel, /translatedPlanningIntervals/);
+assert.match(schedulingModel, /circular_dependency/);
+assert.match(schedulingModel, /dependency_overlap/);
+assert.match(scheduling, /productionStartDelta/);
+assert.match(scheduling, /adjustPlanningInterval/);
+assert.match(scheduling, /translateJobPlanningSchedules/);
+assert.match(gantt, /startPhaseInteraction/);
+assert.match(gantt, /phase\.timeline_behavior === 'planning_only'/);
+assert.match(gantt, /handlePhaseScheduleKey/);
+assert.match(gantt, /resize-start/);
+assert.match(gantt, /resize-end/);
+assert.match(gantt, /stagedPlanningSchedules/);
+assert.match(gantt, /phaseInteraction\.previewStart/);
+assert.doesNotMatch(workspace, /Apply proposed Planning shifts|Keep Planning dates unchanged/);
+assert.match(workspace, /SchedulingFeedbackPanel/);
+assert.match(workspace, /schedulingErrors\.length > 0/);
+assert.match(workspace, /saveProductionPlanningScheduleBatch/);
+assert.match(inspector, /stagedPlanningSchedules/);
+assert.match(panel, /Unsaved schedule/);
 
 console.log("Planning verifier passed.");
