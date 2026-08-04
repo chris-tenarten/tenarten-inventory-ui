@@ -16,7 +16,6 @@ import ProductionQueue from './components/ProductionQueue';
 import ProductionTable from './components/ProductionTable';
 import ScheduleReviewDialog from './components/ScheduleReviewDialog';
 import MonthlySnapshot from './components/MonthlySnapshot';
-import WhatsNewBulletin from './components/WhatsNewBulletin';
 
 import {
   createProductionJob,
@@ -632,9 +631,6 @@ export default function ProductionWorkspace() {
             </div>
           </div>
 
-          <div className="mt-4">
-            <WhatsNewBulletin />
-          </div>
         </div>
 
         <div className="flex flex-col gap-3 rounded-sm border border-slate-200 bg-white p-2.5 shadow-sm lg:flex-row lg:items-center">
