@@ -10,6 +10,10 @@ import {
   saveDisplaySize,
 } from "@/lib/display-size";
 import { type TranslationKey, useLanguage } from "@/lib/language";
+import PhaseLibraryManager from "@/modules/planning/PhaseLibraryManager";
+import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
+
+const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 
 const settings = [
   {
@@ -172,6 +176,7 @@ export default function SettingsPage() {
           </Link>
         ))}
       </div>
+      {planningEnabled && <PhaseLibraryManager />}
     </div>
   );
 }

@@ -258,6 +258,12 @@ export async function saveProductionScheduleBatch(args: ProductionScheduleBatchR
   return data as ProductionScheduleBatchSuccess;
 }
 
+export async function saveProductionPlanningScheduleBatch(args: import('./schedule-batch-contract').MixedScheduleBatchRpcArgs): Promise<import('./schedule-batch-contract').MixedScheduleBatchSuccess> {
+  const { data, error } = await supabase.rpc('save_production_planning_schedule_batch', args);
+  if (error) throw error;
+  return data as import('./schedule-batch-contract').MixedScheduleBatchSuccess;
+}
+
 export type ProductionJobActivity = { id: string; event_type: string; summary: string; actor_name: string | null; metadata: Record<string, unknown>; occurred_at: string };
 
 export async function loadProductionJobActivity(jobId: string): Promise<ProductionJobActivity[]> {

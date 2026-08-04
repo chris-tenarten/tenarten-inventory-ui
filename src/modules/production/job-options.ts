@@ -17,6 +17,7 @@ export type ProductionJobOption = ProductionJobReference & {
 };
 
 export const PRODUCTION_JOB_FOCUS_STORAGE_KEY = 'tenops_focus_production_job_id';
+export const PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY = 'tenops_focus_production_job_section';
 
 export function formatProductionJobOption(job: Pick<ProductionJobOption, 'name' | 'job_number'>) {
   return formatProductionJobSelectorLabel(job);
@@ -61,7 +62,9 @@ export async function loadProductionJobOption(jobId: string): Promise<Production
   return data as ProductionJobOption | null;
 }
 
-export function openProductionJob(jobId: string) {
+export function openProductionJob(jobId: string, focus?: string) {
   window.sessionStorage.setItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY, jobId);
+  if (focus) window.sessionStorage.setItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY, focus);
+  else window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY);
   window.location.assign('/');
 }

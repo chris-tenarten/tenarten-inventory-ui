@@ -12,6 +12,8 @@ import {
   readDisplaySize,
 } from '@/lib/display-size';
 import { type TranslationKey, useLanguage } from '@/lib/language';
+import { EARLY_ACCESS_ENABLED } from '@/lib/early-access.mjs';
+import EarlyAccessBadge from '@/components/EarlyAccessBadge';
 
 const primaryNavItems = [
   { href: '/', labelKey: 'nav.dashboard' as TranslationKey, icon: HomeIcon },
@@ -367,26 +369,29 @@ export default function ClientLayoutShell({
                 }`}
               />
 
-              <div className="min-w-0 leading-none">
-                <div
-                  className={`truncate font-bold tracking-tight text-slate-950 transition-all duration-200 group-hover:text-slate-700 ${
-                    hasScrolled
-                      ? 'text-[14px] sm:text-[15px]'
-                      : 'text-[16px] sm:text-[17px]'
-                  }`}
-                >
-                  TenOps
-                </div>
+              <div className="flex min-w-0 items-center gap-2">
+                <div className="min-w-0 leading-none">
+                  <div
+                    className={`truncate font-bold tracking-tight text-slate-950 transition-all duration-200 group-hover:text-slate-700 ${
+                      hasScrolled
+                        ? 'text-[14px] sm:text-[15px]'
+                        : 'text-[16px] sm:text-[17px]'
+                    }`}
+                  >
+                    TenOps
+                  </div>
 
-                <div
-                  className={`mt-1 overflow-hidden font-bold uppercase tracking-[0.16em] text-slate-600 transition-all duration-200 sm:tracking-[0.18em] ${
-                    hasScrolled
-                      ? 'max-h-0 opacity-0 lg:max-h-5 lg:text-[9px] lg:opacity-100'
-                      : 'max-h-5 text-[9px] opacity-100 sm:text-[10px]'
-                  }`}
-                >
-                  {t('shell.operationsControl')}
+                  <div
+                    className={`mt-1 overflow-hidden font-bold uppercase tracking-[0.16em] text-slate-600 transition-all duration-200 sm:tracking-[0.18em] ${
+                      hasScrolled
+                        ? 'max-h-0 opacity-0 lg:max-h-5 lg:text-[9px] lg:opacity-100'
+                        : 'max-h-5 text-[9px] opacity-100 sm:text-[10px]'
+                    }`}
+                  >
+                    {t('shell.operationsControl')}
+                  </div>
                 </div>
+                {EARLY_ACCESS_ENABLED && <EarlyAccessBadge title="TenOps Early Access environment" />}
               </div>
             </Link>
 
@@ -490,9 +495,12 @@ export default function ClientLayoutShell({
                   className="mx-auto h-28 w-auto object-contain sm:h-32"
                 />
 
-                <h1 className="mt-5 text-3xl font-bold tracking-tight text-slate-950">
-                  TenOps
-                </h1>
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+                  <h1 className="text-3xl font-bold tracking-tight text-slate-950">
+                    TenOps
+                  </h1>
+                  {EARLY_ACCESS_ENABLED && <EarlyAccessBadge title="TenOps Early Access environment" />}
+                </div>
 
                 <div className="mt-2 text-[11px] font-bold uppercase tracking-[0.22em] text-slate-600">
                   {t('shell.operationsControl')}

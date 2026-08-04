@@ -1,7 +1,7 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, LocateFixed, Maximize2, Minus, Plus } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AlertTriangle, ChevronDown, ChevronLeft, ChevronRight, ChevronRight as DisclosureRight, CircleX, Layers, LocateFixed, Maximize2, Minus, Plus } from 'lucide-react';
+import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent } from 'react';
 
 import type { StagedSchedules } from '../schedule-staging';
@@ -25,15 +25,31 @@ import {
   TIMELINE_PREFERENCES_KEY,
   TIMELINE_ROW_DENSITY_OPTIONS,
   TIMELINE_ZOOM_OPTIONS,
+  timelineIntervalFocusScrollLeft,
   timelineZoomOption,
 } from '../timeline-preferences';
 import type { TimelinePreferences, TimelineZoom } from '../timeline-preferences';
+import type { PlanningItem, PlanningPhase } from '@/modules/planning/types';
+import { calculatePhaseProgress } from '@/modules/planning/progress.mjs';
+import { adjustPlanningInterval, planningPhaseWithStagedDates, type StagedPlanningSchedules } from '@/modules/planning/schedule-staging';
+import { dependentPlanningPhaseIds, evaluatePlanningSchedule, planningCascadeDelta, planningDependencyGraphIsAcyclic, type PlanningScheduleIssue } from '@/modules/planning/schedule-model.mjs';
+import { overlayVisualForPhase, PLANNING_PAUSE_HATCH } from '@/modules/planning/phase-visuals';
+import { mergePauseRanges, planningIntervalGeometry, rangesIntersect, selectCollapsedTimelinePhases } from '@/modules/planning/timeline-model.mjs';
 
 type ProductionGanttProps = {
   jobs: ProductionJob[];
   stagedSchedules: StagedSchedules;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   onSelectJob: (job: ProductionJob, focus?: string) => void;
+  planningPhases?: PlanningPhase[];
+  planningItems?: PlanningItem[];
+  stagedPlanningSchedules?: StagedPlanningSchedules;
+  onStagePlanningSchedules?: (changes: Array<{ phase: PlanningPhase; start: string; end: string }>) => void;
+  planningEnabled?: boolean;
+  onSelectPlanningPhase?: (job: ProductionJob, card: PlanningPhase) => void;
+  planningIssues?: PlanningScheduleIssue[];
+  onPreviewPlanningIssuesChange?: (issues: PlanningScheduleIssue[] | null) => void;
+  onDependencyIssueFocus?: (issueId: string | null) => void;
 };
 
 type TimelineDay = {
@@ -62,11 +78,14 @@ type ScheduleInteraction = {
   hasMoved: boolean;
   dayWidth: number;
 };
+type PhaseScheduleInteraction = Omit<ScheduleInteraction, 'jobId'> & {
+  phaseId: string;
+  cascadeOriginals: Record<string, { start: string; end: string }>;
+};
 
 const DRAG_THRESHOLD_PX = 4;
 const FIT_PADDING_DAYS = 2;
 const PAN_BUTTON_SPEED = 520;
-
 type TimelineScrollMetrics = {
   scrollLeft: number;
   maxScrollLeft: number;
@@ -82,6 +101,41 @@ type CanvasPan = {
   startScrollTop: number;
 };
 type NavigatorDrag = { pointerId: number; startX: number; startScrollLeft: number };
+
+type ExecutionLabelMode = 'hidden' | 'title' | 'percent';
+
+function PhaseExecutionLabels({ title, percent }: { title: string; percent: number }) {
+  const titleRef = useRef<HTMLSpanElement>(null);
+  const metricRef = useRef<HTMLSpanElement>(null);
+  const [mode, setMode] = useState<ExecutionLabelMode>('hidden');
+
+  useLayoutEffect(() => {
+    const metric = metricRef.current;
+    const titleElement = titleRef.current;
+    const container = metric?.parentElement;
+    const phaseBar = container?.parentElement;
+    if (!metric || !container || !titleElement || !phaseBar) return;
+    const update = () => {
+      const barWidth = phaseBar.getBoundingClientRect().width;
+      const nextMode: ExecutionLabelMode = barWidth < 48
+        ? 'hidden'
+        : barWidth >= 112
+          ? 'percent'
+          : 'title';
+      setMode((current) => current === nextMode ? current : nextMode);
+    };
+    const observer = new ResizeObserver(update);
+    observer.observe(phaseBar);
+    observer.observe(container);
+    update();
+    return () => observer.disconnect();
+  }, []);
+
+  return <>
+    <span ref={titleRef} data-planning-phase-title className={`${mode === 'hidden' ? 'hidden' : 'block'} min-w-0 truncate px-1 text-white`} style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{title}</span>
+    <span ref={metricRef} data-planning-execution-metric data-mode={mode} className={`${mode === 'percent' ? 'ml-auto inline-flex' : 'hidden'} shrink-0 px-1 tabular-nums text-[8px] text-white`} style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{percent}%</span>
+  </>;
+}
 
 
 function startOfLocalDay(date: Date) {
@@ -108,23 +162,9 @@ function intensityLabel(job: ProductionJob, start: string, end: string) {
   return `${formatHours(intensity.hoursPerScheduledDay)} labor-hours per scheduled day`;
 }
 
-function proposedDates(interaction: ScheduleInteraction, clientX: number) {
+function proposedDates(interaction: Pick<ScheduleInteraction, 'mode' | 'originClientX' | 'dayWidth' | 'originalStart' | 'originalEnd'>, clientX: number) {
   const deltaDays = Math.round((clientX - interaction.originClientX) / interaction.dayWidth);
-
-  if (interaction.mode === 'move') {
-    return {
-      start: formatScheduleDate(addCalendarDays(interaction.originalStart, deltaDays)),
-      end: formatScheduleDate(addCalendarDays(interaction.originalEnd, deltaDays)),
-    };
-  }
-
-  if (interaction.mode === 'resize-start') {
-    const candidate = formatScheduleDate(addCalendarDays(interaction.originalStart, deltaDays));
-    return { start: candidate > interaction.originalEnd ? interaction.originalEnd : candidate, end: interaction.originalEnd };
-  }
-
-  const candidate = formatScheduleDate(addCalendarDays(interaction.originalEnd, deltaDays));
-  return { start: interaction.originalStart, end: candidate < interaction.originalStart ? interaction.originalStart : candidate };
+  return adjustPlanningInterval(interaction.originalStart, interaction.originalEnd, deltaDays, interaction.mode);
 }
 
 function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom) {
@@ -162,14 +202,19 @@ function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom) {
   return { start: earliest, days };
 }
 
-export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule, onSelectJob }: ProductionGanttProps) {
+export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule, onSelectJob, planningPhases = [], planningItems = [], stagedPlanningSchedules = {}, onStagePlanningSchedules, planningEnabled = false, onSelectPlanningPhase, planningIssues = [], onPreviewPlanningIssuesChange, onDependencyIssueFocus }: ProductionGanttProps) {
   const [interaction, setInteraction] = useState<ScheduleInteraction | null>(null);
+  const [phaseInteraction, setPhaseInteraction] = useState<PhaseScheduleInteraction | null>(null);
   const [preferences, setPreferences] = useState<TimelinePreferences>(defaultTimelinePreferences);
   const [preferencesLoaded, setPreferencesLoaded] = useState(false);
   const [scrollMetrics, setScrollMetrics] = useState<TimelineScrollMetrics>({ scrollLeft: 0, maxScrollLeft: 0, viewportWidth: 0, scrollWidth: 0 });
   const [canvasPan, setCanvasPan] = useState<CanvasPan | null>(null);
   const [navigatorDrag, setNavigatorDrag] = useState<NavigatorDrag | null>(null);
   const [spacePressed, setSpacePressed] = useState(false);
+  const [expandedJobs, setExpandedJobs] = useState<Set<string>>(() => new Set());
+  const [hoveredPlanningPhaseId, setHoveredPlanningPhaseId] = useState<string | null>(null);
+  const [selectedDependencyIssueId, setSelectedDependencyIssueId] = useState<string | null>(null);
+  const [selectedPhaseWarningId, setSelectedPhaseWarningId] = useState<string | null>(null);
   const ganttRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const navigatorTrackRef = useRef<HTMLDivElement | null>(null);
@@ -178,6 +223,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const lastPanTimeRef = useRef(0);
   const timelinePointerInsideRef = useRef(false);
   const railResizeRef = useRef<{ pointerId: number; startX: number; startWidth: number } | null>(null);
+  const phaseElementRefs = useRef(new Map<string, HTMLDivElement>());
   const zoom = preferences.zoom;
   const railWidth = preferences.railWidth;
   const rowDensityIndex = Math.max(0, TIMELINE_ROW_DENSITY_OPTIONS.findIndex((option) => option.value === preferences.rowDensity));
@@ -188,6 +234,56 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const timeline = useMemo(() => createTimeline(displayJobs, zoom), [displayJobs, zoom]);
   const zoomOption = timelineZoomOption(zoom);
   const dayWidth = preferences.dayWidths[zoom];
+  const effectivePlanningPhases = useMemo(() => {
+    const staged = planningPhases.map((phase) => planningPhaseWithStagedDates(phase, stagedPlanningSchedules));
+    if (!phaseInteraction) return staged;
+    const delta = planningCascadeDelta(phaseInteraction.originalStart, phaseInteraction.originalEnd, phaseInteraction.previewStart, phaseInteraction.previewEnd, phaseInteraction.mode);
+    return staged.map((phase) => {
+      if (phase.id === phaseInteraction.phaseId) return { ...phase, start_date: phaseInteraction.previewStart, end_date: phaseInteraction.previewEnd };
+      const original = phaseInteraction.cascadeOriginals[phase.id];
+      if (!original || delta === 0) return phase;
+      const shifted = adjustPlanningInterval(original.start, original.end, delta, 'move');
+      return { ...phase, start_date: shifted.start, end_date: shifted.end };
+    });
+  }, [phaseInteraction, planningPhases, stagedPlanningSchedules]);
+  const livePlanningIssues = useMemo(() => evaluatePlanningSchedule(effectivePlanningPhases, displayJobs), [displayJobs, effectivePlanningPhases]);
+  const visiblePlanningIssues = phaseInteraction ? livePlanningIssues : planningIssues;
+  const phasesByJob = useMemo(() => {
+    const grouped = new Map<string, PlanningPhase[]>();
+    effectivePlanningPhases.forEach((card) => {
+      const current = grouped.get(card.job_id) ?? [];
+      current.push(card);
+      grouped.set(card.job_id, current);
+    });
+    return grouped;
+  }, [effectivePlanningPhases]);
+
+  useEffect(() => {
+    onPreviewPlanningIssuesChange?.(phaseInteraction ? livePlanningIssues : null);
+  }, [livePlanningIssues, onPreviewPlanningIssuesChange, phaseInteraction]);
+
+  useEffect(() => {
+    if (!selectedDependencyIssueId && !selectedPhaseWarningId) return;
+    function closePopover(event: globalThis.PointerEvent) {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('[data-planning-warning-popover]')) return;
+      setSelectedDependencyIssueId(null);
+      setSelectedPhaseWarningId(null);
+      onDependencyIssueFocus?.(null);
+    }
+    function closeOnEscape(event: globalThis.KeyboardEvent) {
+      if (event.key !== 'Escape') return;
+      setSelectedDependencyIssueId(null);
+      setSelectedPhaseWarningId(null);
+      onDependencyIssueFocus?.(null);
+    }
+    document.addEventListener('pointerdown', closePopover);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closePopover);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [onDependencyIssueFocus, selectedDependencyIssueId, selectedPhaseWarningId]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -303,6 +399,48 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     };
   }, [interaction, jobs, onSelectJob, onStageSchedule]);
 
+  useEffect(() => {
+    if (!phaseInteraction) return;
+    const activeInteraction = phaseInteraction;
+    function handlePointerMove(event: PointerEvent) {
+      if (event.pointerId !== activeInteraction.pointerId) return;
+      setPhaseInteraction((current) => {
+        if (!current || current.pointerId !== event.pointerId) return current;
+        const hasMoved = current.hasMoved || Math.abs(event.clientX - current.originClientX) >= DRAG_THRESHOLD_PX;
+        if (!hasMoved) return { ...current, pointerX: event.clientX, pointerY: event.clientY };
+        const dates = proposedDates(current, event.clientX);
+        return { ...current, pointerX: event.clientX, pointerY: event.clientY, previewStart: dates.start, previewEnd: dates.end, hasMoved: true };
+      });
+    }
+    function finishPointer(event: PointerEvent, cancelled: boolean) {
+      if (event.pointerId !== activeInteraction.pointerId) return;
+      const hasMoved = activeInteraction.hasMoved || Math.abs(event.clientX - activeInteraction.originClientX) >= DRAG_THRESHOLD_PX;
+      const dates = hasMoved ? proposedDates(activeInteraction, event.clientX) : null;
+      setPhaseInteraction(null);
+      const persistedPhase = planningPhases.find((phase) => phase.id === activeInteraction.phaseId);
+      if (!cancelled && dates && persistedPhase && onStagePlanningSchedules && (dates.start !== activeInteraction.originalStart || dates.end !== activeInteraction.originalEnd)) {
+        const delta = planningCascadeDelta(activeInteraction.originalStart, activeInteraction.originalEnd, dates.start, dates.end, activeInteraction.mode);
+        const changes = [{ phase: persistedPhase, start: dates.start, end: dates.end }];
+        Object.entries(activeInteraction.cascadeOriginals).forEach(([phaseId, original]) => {
+          const dependent = planningPhases.find((phase) => phase.id === phaseId);
+          if (!dependent || delta === 0) return;
+          const shifted = adjustPlanningInterval(original.start, original.end, delta, 'move');
+          changes.push({ phase: dependent, start: shifted.start, end: shifted.end });
+        });
+        onStagePlanningSchedules(changes);
+      } else if (!cancelled && !hasMoved && activeInteraction.mode === 'move' && persistedPhase) {
+        const job = jobs.find((candidate) => candidate.id === persistedPhase.job_id);
+        if (job) onSelectPlanningPhase?.(job, persistedPhase);
+      }
+    }
+    const pointerUp = (event: PointerEvent) => finishPointer(event, false);
+    const pointerCancel = (event: PointerEvent) => finishPointer(event, true);
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', pointerUp);
+    window.addEventListener('pointercancel', pointerCancel);
+    return () => { window.removeEventListener('pointermove', handlePointerMove); window.removeEventListener('pointerup', pointerUp); window.removeEventListener('pointercancel', pointerCancel); };
+  }, [jobs, onSelectPlanningPhase, onStagePlanningSchedules, phaseInteraction, planningPhases]);
+
   function startInteraction(event: ReactPointerEvent, job: ProductionJob, mode: InteractionMode) {
     const proposed = stagedSchedules[job.id];
     const start = proposed?.proposed_planned_start ?? job.planned_start;
@@ -324,6 +462,64 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
       previewEnd: end,
       hasMoved: false,
       dayWidth,
+    });
+  }
+
+  function startPhaseInteraction(event: ReactPointerEvent, phase: PlanningPhase, mode: InteractionMode) {
+    if (!phase.start_date || !phase.end_date || phase.timeline_behavior === 'planning_only') return;
+    event.preventDefault(); event.stopPropagation(); event.currentTarget.setPointerCapture(event.pointerId);
+    const jobPhases = effectivePlanningPhases.filter((candidate) => candidate.job_id === phase.job_id);
+    const canCascade = mode !== 'resize-start' && planningDependencyGraphIsAcyclic(jobPhases, phase.id);
+    const cascadeIds = canCascade ? dependentPlanningPhaseIds(jobPhases, phase.id) : [];
+    const cascadeOriginals = Object.fromEntries(jobPhases
+      .filter((candidate) => cascadeIds.includes(candidate.id) && candidate.start_date && candidate.end_date)
+      .map((candidate) => [candidate.id, { start: candidate.start_date!, end: candidate.end_date! }]));
+    setPhaseInteraction({ phaseId: phase.id, pointerId: event.pointerId, mode, originClientX: event.clientX, pointerX: event.clientX, pointerY: event.clientY, originalStart: phase.start_date, originalEnd: phase.end_date, previewStart: phase.start_date, previewEnd: phase.end_date, hasMoved: false, dayWidth, cascadeOriginals });
+  }
+
+  function handlePhaseScheduleKey(event: KeyboardEvent<HTMLButtonElement>, phase: PlanningPhase, mode: InteractionMode) {
+    if (!phase.start_date || !phase.end_date) return;
+    if ((event.key === 'Enter' || event.key === ' ') && mode === 'move') {
+      event.preventDefault();
+      const job = jobs.find((candidate) => candidate.id === phase.job_id);
+      if (job) onSelectPlanningPhase?.(job, planningPhases.find((candidate) => candidate.id === phase.id) ?? phase);
+      return;
+    }
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    const delta = event.key === 'ArrowLeft' ? -1 : 1;
+    const { start, end } = adjustPlanningInterval(phase.start_date, phase.end_date, delta, mode);
+    const persisted = planningPhases.find((candidate) => candidate.id === phase.id);
+    if (!persisted || !onStagePlanningSchedules) return;
+    const jobPhases = effectivePlanningPhases.filter((candidate) => candidate.job_id === phase.job_id);
+    const canCascade = mode !== 'resize-start' && planningDependencyGraphIsAcyclic(jobPhases, phase.id);
+    const cascadeIds = canCascade ? dependentPlanningPhaseIds(jobPhases, phase.id) : [];
+    const cascadeDelta = planningCascadeDelta(phase.start_date, phase.end_date, start, end, mode);
+    const changes = [{ phase: persisted, start, end }];
+    jobPhases.filter((candidate) => cascadeIds.includes(candidate.id) && candidate.start_date && candidate.end_date).forEach((candidate) => {
+      const dependent = planningPhases.find((original) => original.id === candidate.id);
+      if (!dependent || cascadeDelta === 0) return;
+      const shifted = adjustPlanningInterval(candidate.start_date!, candidate.end_date!, cascadeDelta, 'move');
+      changes.push({ phase: dependent, start: shifted.start, end: shifted.end });
+    });
+    onStagePlanningSchedules(changes);
+  }
+
+  function focusDependencyIssue(issue: PlanningScheduleIssue) {
+    setSelectedDependencyIssueId(issue.id);
+    setSelectedPhaseWarningId(null);
+    onDependencyIssueFocus?.(issue.id);
+    requestAnimationFrame(() => {
+      issue.phase_ids.forEach((phaseId) => phaseElementRefs.current.get(phaseId)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' }));
+    });
+  }
+
+  function focusPhaseWarnings(phaseId: string, issues: PlanningScheduleIssue[]) {
+    setSelectedPhaseWarningId(phaseId);
+    setSelectedDependencyIssueId(issues[0]?.id ?? null);
+    onDependencyIssueFocus?.(issues[0]?.id ?? null);
+    requestAnimationFrame(() => {
+      new Set(issues.flatMap((issue) => issue.phase_ids)).forEach((relatedId) => phaseElementRefs.current.get(relatedId)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' }));
     });
   }
 
@@ -402,6 +598,32 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     if (!element || index < 0) return;
     const calendarViewport = Math.max(1, element.clientWidth - railWidth);
     element.scrollTo({ left: Math.max(0, index * dayWidth + dayWidth / 2 - calendarViewport / 2), behavior: 'smooth' });
+  }
+
+  function focusJobProductionInterval(job: ProductionJob) {
+    const displayedJob = displayJobs.find((candidate) => candidate.id === job.id);
+    if (!displayedJob?.planned_start || !displayedJob.planned_end) return;
+    const focusWhenMeasured = (remainingAttempts: number) => {
+      const element = scrollRef.current;
+      if (!element) return;
+      const calendarViewport = element.clientWidth - railWidth;
+      if (calendarViewport <= 0) {
+        if (remainingAttempts > 0) requestAnimationFrame(() => focusWhenMeasured(remainingAttempts - 1));
+        return;
+      }
+      const intervalLeft = differenceInCalendarDays(parseScheduleDate(displayedJob.planned_start!), timeline.start) * dayWidth + 3;
+      const intervalWidth = Math.max(18, inclusiveCalendarDays(displayedJob.planned_start!, displayedJob.planned_end!) * dayWidth - 6);
+      const target = timelineIntervalFocusScrollLeft({
+        intervalLeft,
+        intervalRight: intervalLeft + intervalWidth,
+        scrollLeft: element.scrollLeft,
+        viewportWidth: calendarViewport,
+        maxScrollLeft: Math.max(0, element.scrollWidth - element.clientWidth),
+        comfortablePadding: Math.min(48, calendarViewport * 0.1),
+      });
+      if (target !== null) element.scrollTo({ left: target, behavior: 'smooth' });
+    };
+    requestAnimationFrame(() => focusWhenMeasured(2));
   }
 
   function startRailResize(event: ReactPointerEvent<HTMLButtonElement>) {
@@ -541,6 +763,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     : 0;
   const hasHorizontalOverflow = scrollMetrics.maxScrollLeft > 1;
   const todayIndex = days.findIndex((day) => day.isToday);
+  const canvasStartKey = formatScheduleDate(start);
+  const canvasEndKey = days.at(-1)?.key ?? canvasStartKey;
   const activeJob = interaction ? jobs.find((job) => job.id === interaction.jobId) : null;
   const currentIntensity = activeJob && interaction
     ? laborIntensity(activeJob.estimated_man_hours, interaction.originalStart, interaction.originalEnd)
@@ -548,6 +772,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const proposedIntensity = activeJob && interaction
     ? laborIntensity(activeJob.estimated_man_hours, interaction.previewStart, interaction.previewEnd)
     : null;
+  const expandableJobIds = displayJobs.filter((job) => (phasesByJob.get(job.id) ?? []).some((card) => card.timeline_behavior !== 'planning_only' && card.start_date && card.end_date)).map((job) => job.id);
+  const allExpandableJobsExpanded = expandableJobIds.length > 0 && expandableJobIds.every((jobId) => expandedJobs.has(jobId));
 
   return (
     <div ref={ganttRef} className="scroll-mt-16 overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
@@ -564,6 +790,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
         </div>
         <button type="button" onClick={fitTimeline} disabled={Boolean(interaction)} className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-slate-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />Fit</button>
         <button type="button" onClick={goToToday} disabled={Boolean(interaction)} className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-blue-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40"><LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Today</button>
+        {expandableJobIds.length > 0 && <button type="button" onClick={() => setExpandedJobs(allExpandableJobsExpanded ? new Set() : new Set(expandableJobIds))} className="h-8 rounded-sm border border-slate-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600">{allExpandableJobsExpanded ? 'Collapse all' : 'Expand all'}</button>}
         <label className="inline-flex h-8 items-center gap-2 px-1 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-500" title={`Timeline rows: ${rowDensityOption.label}`}>
           <span>Rows</span>
           <input
@@ -683,11 +910,43 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             const stagedSchedule = stagedSchedules[job.id];
             const isStaged = Boolean(stagedSchedule);
             const statusVisual = productionStatusVisualByValue[job.production_status];
+            const jobPhases = phasesByJob.get(job.id) ?? [];
+            const timelinePhases = jobPhases.filter((card) => card.timeline_behavior !== 'planning_only' && card.start_date && card.end_date)
+              .sort((first, second) => first.start_date!.localeCompare(second.start_date!) || first.id.localeCompare(second.id));
+            const collapsedPhases = selectCollapsedTimelinePhases(timelinePhases, { canvasStart: canvasStartKey, canvasEnd: canvasEndKey, productionStart: displayStart, productionEnd: displayEnd });
+            const visibleOverlays = collapsedPhases.visible.filter((card) => card.timeline_behavior === 'overlay');
+            const visiblePauses = collapsedPhases.visible.filter((card) => card.timeline_behavior === 'pause');
+            const mergedPauses = mergePauseRanges(visiblePauses);
+            const inCanvasPhases = timelinePhases.filter((card) => rangesIntersect(card.start_date, card.end_date, canvasStartKey, canvasEndKey));
+            const outOfRangeCount = timelinePhases.length - inCanvasPhases.length;
+            const isExpanded = expandedJobs.has(job.id);
+            const laneHeight = Math.max(32, rowDensityOption.height - 12);
+            const dependencyPairs = inCanvasPhases.flatMap((blocked) => {
+              const blocker = inCanvasPhases.find((candidate) => candidate.id === blocked.blocked_by_phase_id);
+              return blocker ? [{ blocker, blocked }] : [];
+            });
+            const selectedIssue = visiblePlanningIssues.find((issue) => issue.id === selectedDependencyIssueId);
+            const selectedPhaseIssues = selectedPhaseWarningId ? visiblePlanningIssues.filter((issue) => issue.phase_ids.includes(selectedPhaseWarningId)) : [];
+            const highlightedPhaseIds = new Set([
+              ...(hoveredPlanningPhaseId ? dependencyPairs.flatMap(({ blocker, blocked }) => blocker.id === hoveredPlanningPhaseId || blocked.id === hoveredPlanningPhaseId ? [blocker.id, blocked.id] : []) : []),
+              ...(selectedIssue?.phase_ids ?? []),
+              ...selectedPhaseIssues.flatMap((issue) => issue.phase_ids),
+            ]);
+            const phaseTitle = (card: PlanningPhase) => [
+              card.title,
+              card.status.replaceAll('_', ' '),
+              card.owner ? `Owner: ${card.owner}` : null,
+              `${card.start_date} through ${card.end_date}`,
+              card.timeline_behavior === 'pause' ? 'Pause' : 'Overlay',
+              card.blocked_by_phase_id ? `Depends on: ${jobPhases.find((candidate) => candidate.id === card.blocked_by_phase_id)?.title ?? 'Unavailable Phase'}` : null,
+              card.blocked_by_phase_id && jobPhases.find((candidate) => candidate.id === card.blocked_by_phase_id)?.status !== 'done' ? `Waiting for: ${jobPhases.find((candidate) => candidate.id === card.blocked_by_phase_id)?.title ?? 'Unavailable Phase'}` : null,
+            ].filter(Boolean).join(' · ');
 
             return (
-              <div key={job.id} className="flex border-b border-slate-300 last:border-b-0" style={{ minHeight: rowDensityOption.height }}>
-                <div className={`sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-400 bg-white ${preferences.rowDensity === 'compact' ? 'px-3 py-1' : preferences.rowDensity === 'comfortable' ? 'px-4 py-3' : 'px-4 py-2'}`} style={{ width: railWidth }}>
-                  <div className="min-w-0 flex-1">
+              <Fragment key={job.id}>
+              <div className="flex border-b border-slate-300 last:border-b-0" style={{ minHeight: rowDensityOption.height }}>
+                <div className={`relative sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-400 bg-white ${preferences.rowDensity === 'compact' ? 'px-3 py-1' : preferences.rowDensity === 'comfortable' ? 'px-4 py-3' : 'px-4 py-2'}`} style={{ width: railWidth }}>
+                  <div className="min-w-0 flex-1 pr-16">
                     <div className="flex items-center gap-2">
                       <div title={job.name} className={`truncate font-bold text-slate-950 ${preferences.rowDensity === 'compact' ? 'text-xs' : 'text-[13px]'}`}>{job.name}</div>
                       {isStaged && <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.08em] text-amber-700">Proposed</span>}
@@ -702,7 +961,12 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                             : 'Schedule not set'}
                       </div>
                     )}
+                    {outOfRangeCount > 0 && <div className="text-[8px] font-semibold text-slate-500" title="These dated Phases remain available in the Inspector but do not expand the Production Timeline.">{outOfRangeCount} Phase{outOfRangeCount === 1 ? '' : 's'} outside Timeline</div>}
                   </div>
+                  {planningEnabled && <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
+                    {inCanvasPhases.length > 0 && <button type="button" aria-expanded={isExpanded} aria-label={`${isExpanded ? 'Hide' : 'Show'} Planning lanes for ${job.name}`} title={isExpanded ? 'Hide Planning lanes' : 'Show Planning lanes'} onClick={() => setExpandedJobs((current) => { const next = new Set(current); if (next.has(job.id)) next.delete(job.id); else next.add(job.id); return next; })} className={`inline-flex h-7 w-7 items-center justify-center border focus-visible:ring-2 focus-visible:ring-blue-600 ${isExpanded ? 'border-blue-400 bg-blue-50 text-blue-800' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'}`}>{isExpanded ? <ChevronDown className="h-4 w-4" aria-hidden="true" /> : <DisclosureRight className="h-4 w-4" aria-hidden="true" />}</button>}
+                    <button type="button" onClick={() => { onSelectJob(job,'planning'); focusJobProductionInterval(job); }} className={`relative inline-flex h-7 w-7 items-center justify-center border bg-white focus-visible:ring-2 focus-visible:ring-blue-600 ${jobPhases.length ? 'border-blue-300 text-blue-800 hover:bg-blue-50' : 'border-slate-300 text-slate-400 hover:bg-slate-50'}`} aria-label={jobPhases.length ? `Open Planning for ${job.name} — ${jobPhases.length} Phase${jobPhases.length === 1 ? '' : 's'}` : `No Planning Phases for ${job.name}`} title={jobPhases.length ? `Open Planning — ${jobPhases.length} Phase${jobPhases.length === 1 ? '' : 's'}` : 'No Planning Phases'}><Layers className="h-4 w-4" aria-hidden="true" />{jobPhases.length > 0 && <span className="absolute -right-1 -top-1 min-w-4 rounded-full bg-blue-800 px-1 text-center text-[8px] font-bold leading-4 text-white tabular-nums">{jobPhases.length}</span>}</button>
+                  </div>}
                 </div>
 
                 <div
@@ -775,6 +1039,16 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                     </div>
                   )}
 
+                  {hasSchedule && mergedPauses.map((pauseRange) => {
+                    const pauseGeometry = planningIntervalGeometry(pauseRange.start, pauseRange.end, formatScheduleDate(start), dayWidth);
+                    const intersectsProduction = rangesIntersect(pauseRange.start, pauseRange.end, displayStart, displayEnd);
+                    return <div key={pauseRange.phases.map((phase) => phase.id).join('-')} aria-label={pauseRange.phases.map(phaseTitle).join('; ')} title={pauseRange.phases.map(phaseTitle).join('; ')} className={`pointer-events-none absolute bg-white ${intersectsProduction ? 'top-1/2 z-[5] h-8 -translate-y-1/2 border-x border-slate-950' : 'top-[calc(50%-13px)] z-[4] h-1.5 border border-slate-950'}`} style={{ left: pauseGeometry.left, width: pauseGeometry.width, backgroundImage: PLANNING_PAUSE_HATCH }} />;
+                  })}
+                  {hasSchedule && visibleOverlays.map((card, index) => {
+                    const cardGeometry = planningIntervalGeometry(card.start_date!, card.end_date!, formatScheduleDate(start), dayWidth);
+                    const visual = overlayVisualForPhase(jobPhases, card.id);
+                    return <button key={card.id} type="button" data-timeline-interactive="true" onClick={(event) => { event.stopPropagation(); onSelectPlanningPhase?.(job, card); }} title={phaseTitle(card)} aria-label={`Open Phase ${card.title}`} className={`absolute z-[5] h-1.5 border outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${visual.className}`} style={{ left: cardGeometry.left, width: cardGeometry.width, top: `calc(50% - ${13 - index * 7}px)` }}><span className="sr-only">Planning overlay: {card.title}</span></button>;
+                  })}
                   {hasDeliveryMilestone && (
                     <div className="absolute top-1/2 z-[3] -translate-x-1/2 -translate-y-1/2" style={{ left: deliveryOffset * dayWidth + dayWidth / 2 }} title={`Requested delivery: ${job.requested_delivery_date}`}>
                       <div className="h-5 w-5 rotate-45 border-2 border-violet-800 bg-violet-200 shadow-sm" />
@@ -784,6 +1058,66 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                   {!hasSchedule && !hasDeliveryMilestone && <div className="absolute left-4 top-1/2 z-[2] -translate-y-1/2"><span className="inline-flex border border-dashed border-slate-400 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600">Schedule not set</span></div>}
                 </div>
               </div>
+              {isExpanded && inCanvasPhases.map((phase, phaseIndex) => (
+                <div key={`${job.id}-${phase.id}`} className="flex border-b border-slate-200 bg-slate-50/50" style={{ minHeight: laneHeight }}>
+                  <div className="sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-300 bg-slate-50 pl-10 pr-3 text-[10px] font-bold text-slate-700" style={{ width: railWidth }}><span className="truncate">{phase.title}</span></div>
+                  <div data-timeline-pan-canvas="true" className="relative shrink-0 cursor-move" style={{ width: timelineWidth }}>
+                    <div className="absolute inset-0 flex">{days.map((day) => <div key={`${job.id}-${phase.id}-${day.key}`} className={`h-full shrink-0 border-r border-slate-200 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: dayWidth }} />)}</div>
+                    {todayIndex >= 0 && <div className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-blue-600" style={{ left: todayIndex * dayWidth + dayWidth / 2 }} />}
+                    {dependencyPairs.filter(({ blocked }) => blocked.id === phase.id).map(({ blocker, blocked }) => {
+                      const blockerIndex = inCanvasPhases.findIndex((candidate) => candidate.id === blocker.id);
+                      const blockerGeometry = planningIntervalGeometry(blocker.start_date!, blocker.end_date!, formatScheduleDate(start), dayWidth);
+                      const blockedGeometry = planningIntervalGeometry(blocked.start_date!, blocked.end_date!, formatScheduleDate(start), dayWidth);
+                      const blockerX = blockerGeometry.right;
+                      const blockedX = blockedGeometry.left;
+                      const rowDistance = Math.abs(phaseIndex - blockerIndex);
+                      const blockerAbove = blockerIndex < phaseIndex;
+                      const svgTop = blockerAbove ? -rowDistance * laneHeight : 0;
+                      const svgHeight = rowDistance * laneHeight + laneHeight;
+                      const blockerY = blockerAbove ? laneHeight / 2 : rowDistance * laneHeight + laneHeight / 2;
+                      const blockedY = blockerAbove ? rowDistance * laneHeight + laneHeight / 2 : laneHeight / 2;
+                      const sourceExitX = blockerX + 10;
+                      const destinationNodeSize = 6;
+                      const destinationNodeX = blockedX - destinationNodeSize / 2;
+                      const destinationApproachX = destinationNodeX - 10;
+                      const routingY = Math.round((blockerY + blockedY) / 2);
+                      const highlighted = highlightedPhaseIds.has(blocker.id) && highlightedPhaseIds.has(blocked.id);
+                      const issue = visiblePlanningIssues.find((candidate) => candidate.predecessor_id === blocker.id && candidate.successor_id === blocked.id);
+                      const connectorColor = issue?.severity === 'error' ? '#dc2626' : issue?.severity === 'warning' ? '#d97706' : highlighted ? '#475569' : '#94a3b8';
+                      const markerId = `planning-arrow-${job.id}-${blocker.id}-${blocked.id}`;
+                      const path = `M ${blockerX} ${blockerY} H ${sourceExitX} V ${routingY} H ${destinationApproachX} V ${blockedY} H ${destinationNodeX}`;
+                      const issueIsOpen = issue?.id === selectedDependencyIssueId && !selectedPhaseWarningId;
+                      const issueAnchorX = Math.round((sourceExitX + destinationApproachX) / 2);
+                      const issueDialogLeft = issueAnchorX + 280 > timelineWidth ? -260 : 16;
+                      return <svg key={`${blocker.id}-${blocked.id}`} aria-hidden={issue ? undefined : true} className={`pointer-events-none absolute left-0 overflow-visible ${issueIsOpen ? 'z-40' : 'z-[4]'}`} width={timelineWidth} height={svgHeight} style={{ top: svgTop }}><defs><marker id={markerId} viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" overflow="visible"><path d="M0,0 L8,4 L0,8 Z" fill={connectorColor} /></marker></defs><path d={path} fill="none" stroke={connectorColor} strokeWidth={highlighted || issue ? 2.5 : 1.5} markerEnd={`url(#${markerId})`} /><rect x={destinationNodeX} y={blockedY - destinationNodeSize / 2} width={destinationNodeSize} height={destinationNodeSize} fill={connectorColor} />{issue && <><path d={path} fill="none" stroke="transparent" strokeWidth="12" pointerEvents="stroke" className="cursor-pointer" onClick={(event) => { event.stopPropagation(); focusDependencyIssue(issue); }} /><foreignObject x={issueAnchorX - 7} y={routingY - 7} width={issueIsOpen ? 304 : 14} height={issueIsOpen ? 148 : 14} className="pointer-events-auto overflow-visible"><div data-planning-warning-popover className="relative h-3.5 w-3.5"><button type="button" title={issue.message} aria-expanded={issueIsOpen} aria-label={`${issue.severity === 'error' ? 'Scheduling error' : 'Scheduling warning'}: ${issue.message}`} onClick={(event) => { event.stopPropagation(); focusDependencyIssue(issue); }} className={`absolute inset-0 flex items-center justify-center rounded-full bg-white p-0 leading-none shadow-sm focus-visible:ring-2 focus-visible:ring-blue-700 ${issue.severity === 'error' ? 'text-red-600' : 'text-orange-600'}`}>{issue.severity === 'error' ? <CircleX className="h-2.5 w-2.5 shrink-0" /> : <AlertTriangle className="h-2.5 w-2.5 shrink-0" />}</button>{issueIsOpen && <div role="dialog" aria-label={issue.severity === 'error' ? 'Dependency error details' : 'Dependency warning details'} className={`absolute top-0 z-50 w-64 border bg-white p-3 text-left text-xs shadow-xl ${issue.severity === 'error' ? 'border-red-300' : 'border-orange-300'}`} style={{ left: issueDialogLeft }}><div className={`flex items-center gap-1.5 font-bold ${issue.severity === 'error' ? 'text-red-800' : 'text-orange-800'}`}>{issue.severity === 'error' ? <CircleX className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}{issue.severity === 'error' ? 'Dependency Error' : 'Dependency Warning'}</div><p className="mt-2 leading-5 text-slate-800">{issue.message}</p><p className="mt-1 text-slate-600">Dependency remains intact. {issue.severity === 'error' ? 'Resolve before saving.' : 'Review before saving.'}</p></div>}</div></foreignObject></>}</svg>;
+                    })}
+                    {(() => {
+                      const geometry = planningIntervalGeometry(phase.start_date!, phase.end_date!, formatScheduleDate(start), dayWidth);
+                      const isHighlighted = highlightedPhaseIds.has(phase.id);
+                      const isStagedPhase = Boolean(stagedPlanningSchedules[phase.id]);
+                      const stagedPhase = stagedPlanningSchedules[phase.id];
+                      const phaseIssues = visiblePlanningIssues.filter((issue) => issue.phase_ids.includes(phase.id) && issue.kind !== 'dependency_overlap' && issue.kind !== 'circular_dependency');
+                      const phaseSeverity = phaseIssues.some((issue) => issue.severity === 'error') ? 'error' : phaseIssues.some((issue) => issue.severity === 'warning') ? 'warning' : null;
+                      const phaseIssuePopoverOpen = selectedPhaseWarningId === phase.id;
+                      const visual = phase.timeline_behavior === 'overlay' ? overlayVisualForPhase(jobPhases, phase.id) : null;
+                      const phaseProgress = calculatePhaseProgress(planningItems.filter((item) => item.phase_id === phase.id));
+                      const barClass = phase.timeline_behavior === 'pause' ? 'border-slate-950 bg-white text-slate-950' : visual!.className;
+                      const activePhaseInteraction = phaseInteraction?.phaseId === phase.id ? phaseInteraction : null;
+                      const handleWidth = Math.max(6, Math.min(10, Math.floor(geometry.width / 3)));
+                      const savedGeometry = stagedPhase ? planningIntervalGeometry(stagedPhase.original_start_date, stagedPhase.original_end_date, formatScheduleDate(start), dayWidth) : null;
+                      return <>{savedGeometry && <div aria-label={`Last saved schedule for ${phase.title}`} className="pointer-events-none absolute top-1/2 z-[2] h-6 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/25" style={{ left: savedGeometry.left, width: savedGeometry.width }} />}<div ref={(element) => { if (element) phaseElementRefs.current.set(phase.id, element); else phaseElementRefs.current.delete(phase.id); }} className={`absolute top-1/2 h-6 overflow-visible -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${phaseIssuePopoverOpen ? 'z-50' : 'z-[3]'} ${activePhaseInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isHighlighted ? 'ring-2 ring-slate-500 ring-offset-1' : ''} ${isStagedPhase ? 'ring-2 ring-amber-300 ring-offset-1' : ''} ${phaseSeverity === 'error' ? 'outline outline-2 outline-red-600 outline-offset-1' : phaseSeverity === 'warning' ? 'outline outline-2 outline-orange-500 outline-offset-1' : ''} ${barClass}`} style={{ left: geometry.left, width: geometry.width, backgroundImage: phase.timeline_behavior === 'pause' ? PLANNING_PAUSE_HATCH : undefined }}>
+                        {visual && phaseProgress.percent > 0 && <div aria-hidden="true" data-planning-progress-fill className={`pointer-events-none absolute inset-y-0 left-0 z-[1] ${visual.progressClassName}`} style={{ width: `${phaseProgress.percent}%` }} />}
+                        {visual && phaseProgress.percent > 0 && phaseProgress.percent < 100 && <div aria-hidden="true" data-planning-progress-boundary className="pointer-events-none absolute inset-y-0 z-[9] w-0.5 -translate-x-0.5 bg-slate-950/80" style={{ left: `${phaseProgress.percent}%` }} />}
+                        <button type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} start date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-start')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-start')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 left-0 z-20 border-r border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></button>
+                        <button type="button" data-timeline-interactive="true" onPointerDown={(event) => startPhaseInteraction(event, phase, 'move')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'move')} onMouseEnter={() => setHoveredPlanningPhaseId(phase.id)} onMouseLeave={() => setHoveredPlanningPhaseId(null)} onFocus={() => setHoveredPlanningPhaseId(phase.id)} onBlur={() => setHoveredPlanningPhaseId(null)} onDragStart={(event) => event.preventDefault()} title={phaseTitle(phase)} aria-label={`Move ${phase.title}. Use left and right arrow keys for one-day adjustments.`} className={`absolute inset-y-0 z-10 flex min-w-0 items-center gap-1 overflow-hidden px-1.5 text-left font-bold outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white ${preferences.rowDensity === 'compact' ? 'text-[6px]' : 'text-[6.5px]'}`} style={{ left: handleWidth, right: handleWidth, cursor: activePhaseInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: 'none' }}>{visual && phaseProgress.totalItems > 0 ? <PhaseExecutionLabels title={phase.title} percent={phaseProgress.percent} /> : <span data-planning-phase-title className="min-w-0 truncate px-1 text-white" style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{phase.title}</span>}{isStagedPhase && geometry.width >= 140 && <span data-planning-staged-badge className="shrink-0 bg-amber-100/95 px-1 text-[8px] uppercase text-amber-950">Unsaved</span>}</button>
+                        <button type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} finish date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-end')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-end')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 right-0 z-20 border-l border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></button>
+                        {phaseIssues.length > 0 && <div data-planning-warning-popover className="absolute top-1/2 z-40 -translate-y-1/2" style={{ left: handleWidth + 2 }}><button type="button" data-timeline-interactive="true" aria-expanded={phaseIssuePopoverOpen} aria-label={`${phaseSeverity === 'error' ? 'Scheduling errors' : 'Scheduling warnings'} for ${phase.title}`} title={phaseIssues.map((issue) => issue.message).join('\n')} onClick={(event) => { event.stopPropagation(); focusPhaseWarnings(phase.id, phaseIssues); }} className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/95 shadow-sm focus-visible:ring-2 focus-visible:ring-blue-700 ${phaseSeverity === 'error' ? 'text-red-600' : 'text-orange-600'}`}>{phaseSeverity === 'error' ? <CircleX className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}</button>{phaseIssuePopoverOpen && <div role="dialog" aria-label={`Scheduling feedback for ${phase.title}`} className={`absolute left-6 top-0 z-50 w-72 border bg-white p-3 text-left text-xs shadow-xl ${phaseSeverity === 'error' ? 'border-red-300' : 'border-orange-300'}`}><div className={`flex items-center gap-1.5 font-bold ${phaseSeverity === 'error' ? 'text-red-800' : 'text-orange-800'}`}>{phaseSeverity === 'error' ? <CircleX className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}{phaseSeverity === 'error' ? 'Scheduling Feedback' : 'Scheduling Warnings'}</div><ul className="mt-2 space-y-2 text-slate-800">{phaseIssues.map((issue) => <li key={issue.id} className="border-t border-slate-200 pt-2 first:border-t-0 first:pt-0">{issue.message}</li>)}</ul><p className="mt-2 text-slate-600">{phaseSeverity === 'error' ? 'Resolve errors before saving.' : 'Review before saving.'}</p></div>}</div>}
+                      </div></>;
+                    })()}
+                  </div>
+                </div>
+              ))}
+              </Fragment>
             );
           })}
         </div>
@@ -875,6 +1209,12 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
           <div className="mt-2 border-t border-slate-700 pt-2 text-slate-400">
             Estimated labor: {proposedIntensity?.estimatedHours === null ? 'Not provided' : `${formatHours(proposedIntensity?.estimatedHours ?? 0)} hours`}
           </div>
+        </div>
+      )}
+      {phaseInteraction?.hasMoved && (
+        <div role="status" aria-live="polite" className="pointer-events-none fixed z-[100] w-72 border border-slate-700 bg-slate-950 p-3 text-xs text-white shadow-2xl" style={{ left: Math.max(12, Math.min(phaseInteraction.pointerX + 14, typeof window === 'undefined' ? phaseInteraction.pointerX + 14 : window.innerWidth - 304)), top: Math.max(12, phaseInteraction.pointerY - 148) }}>
+          <div className="font-bold uppercase tracking-[0.1em] text-slate-300">{phaseInteraction.mode === 'move' ? 'Move Planning Phase' : phaseInteraction.mode === 'resize-start' ? 'Adjust Phase start' : 'Adjust Phase finish'}</div>
+          <div className="mt-2 grid grid-cols-[58px_1fr] gap-x-2 gap-y-1"><span className="text-slate-400">Current</span><span>{formatShortDate(phaseInteraction.originalStart)} – {formatShortDate(phaseInteraction.originalEnd)}</span><span /><span className="text-slate-400">{scheduledDaysLabel(inclusiveCalendarDays(phaseInteraction.originalStart, phaseInteraction.originalEnd))}</span><span className="text-slate-400">Proposed</span><span>{formatShortDate(phaseInteraction.previewStart)} – {formatShortDate(phaseInteraction.previewEnd)}</span><span /><span className="font-semibold text-white">{scheduledDaysLabel(inclusiveCalendarDays(phaseInteraction.previewStart, phaseInteraction.previewEnd))}</span></div>
         </div>
       )}
     </div>

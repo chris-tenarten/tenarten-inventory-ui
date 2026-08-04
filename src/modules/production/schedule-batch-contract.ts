@@ -1,4 +1,6 @@
 import type { ProductionJob } from './types';
+import type { PlanningPhase } from '@/modules/planning/types';
+import type { StagedPlanningSchedule } from '@/modules/planning/schedule-staging';
 
 export type ProductionScheduleBatchProposal = {
   job_id: string;
@@ -35,6 +37,22 @@ export type ProductionScheduleBatchSuccess = {
   updated_count: number;
   ignored_no_op_count: number;
   updated_jobs: ProductionScheduleBatchUpdatedJob[];
+};
+
+export type MixedScheduleBatchRpcArgs = {
+  p_job_proposals: ProductionScheduleBatchProposal[];
+  p_phase_proposals: Array<Omit<StagedPlanningSchedule, 'changed_fields' | 'job_id'>>;
+  p_changed_by: string;
+  p_change_note: string | null;
+  p_batch_id: string;
+};
+
+export type MixedScheduleBatchSuccess = {
+  batch_id: string;
+  replayed: boolean;
+  updated_count: number;
+  updated_jobs: ProductionScheduleBatchUpdatedJob[];
+  updated_phases: PlanningPhase[];
 };
 
 export type ProductionScheduleBatchConflictDetail = {
@@ -76,6 +94,21 @@ export function describeProductionScheduleSaveError(
 ): ProductionScheduleErrorFeedback {
   const candidate = error as { message?: string; details?: string };
 
+  if (candidate.message === 'production_planning_schedule_conflict' && candidate.details) {
+    try {
+      const detail = JSON.parse(candidate.details) as { conflicts?: Array<{ title?: string }> };
+      const labels = (detail.conflicts ?? []).slice(0, 2).map((conflict) => conflict.title?.trim()).filter(Boolean);
+      const remaining = Math.max(0, (detail.conflicts?.length ?? 0) - labels.length);
+      const subject = labels.length ? `${labels.join(', ')}${remaining ? ` and ${remaining} more` : ''}` : 'A Planning Phase';
+      return {
+        conflicts: [],
+        message: `${subject} changed after you began editing. Nothing was saved, but your proposed dates are still available. Review the latest saved dates and try again.`,
+      };
+    } catch {
+      // Use the shared safe conflict explanation below.
+    }
+  }
+
   if (
     candidate.message === 'production_schedule_conflict'
     && candidate.details
@@ -106,13 +139,15 @@ export function describeProductionScheduleSaveError(
     return {
       conflicts: [],
       message:
-        'The Production schedule changed after you began editing. It was not saved, but your proposed dates are still available. Refresh the job details and try again.',
+        'A Production job or Planning Phase changed after you began editing. Nothing was saved, but your proposed dates are still available. Review the latest saved dates and try again.',
     };
   }
 
   if (
     (
       candidate.message === 'production_schedule_validation'
+      || candidate.message === 'production_planning_schedule_validation'
+      || candidate.message === 'production_planning_schedule_batch_reused'
       || candidate.message === 'production_schedule_batch_reused'
     )
     && candidate.details

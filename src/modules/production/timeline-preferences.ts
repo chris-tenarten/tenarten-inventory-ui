@@ -93,3 +93,20 @@ export function fitTimelineDayWidth(zoom: TimelineZoom, rangeDays: number, calen
   }
   return clampTimelineDayWidth(zoom, calendarViewportWidth / Math.max(1, rangeDays + paddingDays * 2));
 }
+
+export function timelineIntervalFocusScrollLeft(options: {
+  intervalLeft: number;
+  intervalRight: number;
+  scrollLeft: number;
+  viewportWidth: number;
+  maxScrollLeft: number;
+  comfortablePadding: number;
+}) {
+  const { intervalLeft, intervalRight, scrollLeft, viewportWidth, maxScrollLeft, comfortablePadding } = options;
+  if (viewportWidth <= 0 || intervalRight < intervalLeft) return null;
+  const padding = Math.min(Math.max(0, comfortablePadding), viewportWidth / 2);
+  const comfortablyVisible = intervalLeft >= scrollLeft + padding && intervalRight <= scrollLeft + viewportWidth - padding;
+  if (comfortablyVisible) return null;
+  const target = Math.min(maxScrollLeft, Math.max(0, (intervalLeft + intervalRight) / 2 - viewportWidth / 2));
+  return Math.abs(target - scrollLeft) < 1 ? null : target;
+}

@@ -4,6 +4,11 @@ import { ClipboardList, File, History, Send, Trash2, Upload } from "lucide-react
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
+import PlanningPanel from "@/modules/planning/PlanningPanel";
+import type { StagedPlanningSchedules } from "@/modules/planning/schedule-staging";
+import type { PlanningItem, PlanningPhase } from "@/modules/planning/types";
+import type { PlanningScheduleIssue } from "@/modules/planning/schedule-model.mjs";
+import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
 import {
   createJobAttachmentDownloadUrl,
   deleteJobAttachment,
@@ -33,7 +38,8 @@ import type {
 import JobUpdatesPanel from "./JobUpdatesPanel";
 import ProductionStatusBadge from "./ProductionStatusBadge";
 
-type InspectorSection = "details" | "updates" | "files" | "recent-changes";
+type InspectorSection = "details" | "planning" | "updates" | "files" | "recent-changes";
+const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 
 type Props = {
   job: ProductionJob;
@@ -52,6 +58,11 @@ type Props = {
     summary: JobUpdateSummary,
   ) => void;
   onAttachmentsChanged: (jobId: string, count: number) => void;
+  onPlanningPhasesChanged?: (jobId: string, phases: PlanningPhase[]) => void;
+  onPlanningItemsChanged?: (jobId: string, items: PlanningItem[]) => void;
+  stagedPlanningSchedules?: StagedPlanningSchedules;
+  planningPhases?: PlanningPhase[];
+  planningIssues?: PlanningScheduleIssue[];
   initialFocus?: string;
 };
 
@@ -185,11 +196,18 @@ export default function ProductionJobInspector({
   jobUpdateSummary,
   onJobUpdateSummaryChanged,
   onAttachmentsChanged,
+  onPlanningPhasesChanged,
+  onPlanningItemsChanged,
+  stagedPlanningSchedules,
+  planningPhases,
+  planningIssues = [],
   initialFocus,
 }: Props) {
   const [activeSection, setActiveSection] = useState<InspectorSection>(
     initialFocus === "attachments"
       ? "files"
+      : initialFocus?.startsWith("planning") && planningEnabled
+        ? "planning"
       : initialFocus === "job-updates"
         ? "updates"
         : initialFocus === "recent-changes"
@@ -226,6 +244,7 @@ export default function ProductionJobInspector({
   const [attachmentFullscreen, setAttachmentFullscreen] = useState(false);
   const [transmittalOpen, setTransmittalOpen] = useState(false);
   const [focusedUpdateId, setFocusedUpdateId] = useState<string | null>(null);
+  const [planningEditorOpen, setPlanningEditorOpen] = useState(false);
   const [jobUpdateCount, setJobUpdateCount] = useState(
     jobUpdateSummary.total,
   );
@@ -287,6 +306,7 @@ export default function ProductionJobInspector({
         if (live) setAttachmentsLoading(false);
       });
     requestAnimationFrame(() => {
+      if (initialFocus?.startsWith("planning")) return;
       const target =
         initialFocus && initialFocus !== "attachments"
           ? panel.current?.querySelector<HTMLElement>(
@@ -347,7 +367,7 @@ export default function ProductionJobInspector({
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
-      if (attachmentFullscreen || transmittalOpen) return;
+      if (attachmentFullscreen || transmittalOpen || planningEditorOpen) return;
       if (event.key === "Escape") requestClose();
       if (event.key !== "Tab" || !panel.current) return;
       const focusable = [
@@ -369,7 +389,7 @@ export default function ProductionJobInspector({
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [attachmentFullscreen, requestClose, transmittalOpen]);
+  }, [attachmentFullscreen, requestClose, transmittalOpen, planningEditorOpen]);
 
   useEffect(() => {
     if (!dirtyCount) return;
@@ -504,6 +524,7 @@ export default function ProductionJobInspector({
 
   const tabs: Array<{ id: InspectorSection; label: string }> = [
     { id: "details", label: "Details" },
+    ...(planningEnabled ? [{ id: "planning" as const, label: "Planning" }] : []),
     { id: "updates", label: `Job Updates (${jobUpdateCount})` },
     {
       id: "files",
@@ -533,7 +554,7 @@ export default function ProductionJobInspector({
         aria-modal="true"
         aria-labelledby="job-inspector-title"
         onMouseDown={(event) => event.stopPropagation()}
-        className="ml-auto h-full w-full max-w-xl overflow-y-auto border-l border-slate-200 bg-white p-5 shadow-2xl"
+        className="ml-auto h-full w-full max-w-xl overflow-y-auto border-l border-slate-200 bg-white p-4 shadow-2xl"
       >
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -546,11 +567,11 @@ export default function ProductionJobInspector({
             >
               {job.name}
             </h2>
-            <div className="mt-2">
+            <div className="mt-1.5">
               <ProductionStatusBadge status={job.production_status} />
             </div>
             <div
-              className={`mt-2 inline-flex px-2 py-1 text-xs font-bold ${readiness.state === "ready" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}
+              className={`mt-1.5 inline-flex px-2 py-0.5 text-xs font-bold ${readiness.state === "ready" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}
             >
               {readiness.label} — {readiness.guidance}
             </div>
@@ -559,7 +580,7 @@ export default function ProductionJobInspector({
             ref={closeRef}
             type="button"
             onClick={requestClose}
-            className="h-9 shrink-0 border border-slate-400 px-3 font-bold hover:bg-slate-100"
+            className="h-8 shrink-0 border border-slate-400 px-3 text-sm font-bold hover:bg-slate-100"
           >
             Close
           </button>
@@ -568,7 +589,7 @@ export default function ProductionJobInspector({
         <div
           role="tablist"
           aria-label="Job inspector sections"
-          className="mt-5 grid grid-cols-4 rounded-sm border border-slate-300 bg-slate-50 p-1"
+          className="mt-2.5 flex overflow-x-auto border-b border-slate-300"
         >
           {tabs.map((tab) => (
             <button
@@ -579,7 +600,7 @@ export default function ProductionJobInspector({
               aria-controls={`inspector-${tab.id}`}
               id={`inspector-tab-${tab.id}`}
               onClick={() => selectSection(tab.id)}
-              className={`min-h-9 rounded-sm px-2 py-2 text-xs font-bold focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${activeSection === tab.id ? "bg-slate-900 text-white shadow-sm" : "text-slate-600 hover:bg-white hover:text-slate-950"}`}
+              className={`min-h-8 min-w-max flex-1 whitespace-nowrap border-b-2 px-2 py-1 text-[11px] font-bold focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${activeSection === tab.id ? "border-slate-900 bg-slate-100/70 text-slate-950" : "border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-950"}`}
             >
               {tab.label}
             </button>
@@ -793,6 +814,7 @@ export default function ProductionJobInspector({
                   </dd>
                 </dl>
               </section>
+              {/* Archive eligibility: ['complete', 'shipped', 'cancelled'] */}
               {["complete", "shipped", "cancelled"].includes(
                 job.production_status,
               ) && !job.archived_at ? (
@@ -1075,6 +1097,12 @@ export default function ProductionJobInspector({
                 void openAttachment(attachment);
               }}
             />
+          )}
+
+          {activeSection === "planning" && planningEnabled && (
+            <section className="mt-3">
+              <PlanningPanel key={(planningPhases ?? []).filter((phase) => phase.job_id === job.id).map((phase) => `${phase.id}:${phase.updated_at}`).join("|")} job={job} compact initialPhaseId={initialFocus?.startsWith("planning:") ? initialFocus.slice("planning:".length) : undefined} onPhasesChanged={onPlanningPhasesChanged} onItemsChanged={onPlanningItemsChanged} onEditorOpenChanged={setPlanningEditorOpen} stagedSchedules={stagedPlanningSchedules} planningIssues={planningIssues.filter((issue) => issue.phase_ids.some((phaseId) => (planningPhases ?? []).some((phase) => phase.id === phaseId && phase.job_id === job.id)))} />
+            </section>
           )}
 
           {activeSection === "recent-changes" && (

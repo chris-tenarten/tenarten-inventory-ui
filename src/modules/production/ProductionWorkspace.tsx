@@ -14,8 +14,8 @@ import PlanningIssuesPanel from './components/PlanningIssuesPanel';
 import ProductionJobInspector from './components/ProductionJobInspector';
 import ProductionQueue from './components/ProductionQueue';
 import ProductionTable from './components/ProductionTable';
+import ScheduleReviewDialog from './components/ScheduleReviewDialog';
 import MonthlySnapshot from './components/MonthlySnapshot';
-import WhatsNewBulletin from './components/WhatsNewBulletin';
 
 import {
   createProductionJob,
@@ -26,7 +26,7 @@ import {
   loadProductionIntegrationSummaries,
   loadProductionJob,
   loadProductionJobs,
-  saveProductionScheduleBatch,
+  saveProductionPlanningScheduleBatch,
   updateProductionJob,
 } from './jobs';
 
@@ -36,15 +36,21 @@ import type {
   ProductionJob,
   ProductionStatus,
 } from './types';
-import { PRODUCTION_JOB_FOCUS_STORAGE_KEY } from './job-options';
+import { PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY, PRODUCTION_JOB_FOCUS_STORAGE_KEY } from './job-options';
 import { inclusiveCalendarDays, laborIntensity } from './schedule';
 import { getJobReadiness } from './readiness';
 import { productionApprovalDecision, PRODUCTION_APPROVAL_WINDOW_MS } from './approval';
-import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, rebaseStagedScheduleVersion, reconcileBatch, stageSchedule as updateStagedSchedule, type StagedSchedules } from './schedule-staging';
+import { batchRpcArgs, hasUnsavedSchedules, rebaseStagedScheduleVersion, reconcileBatch, stageSchedule as updateStagedSchedule, type StagedSchedules } from './schedule-staging';
 import { describeProductionScheduleSaveError, type ProductionScheduleBatchConflictDetail } from './schedule-batch-contract';
 import { arrangeProductionJobs, PRODUCTION_ARRANGEMENT_KEY, type ProductionArrangement } from './arrangement';
+import { hasUnsavedPlanningSchedules, planningPhaseWithStagedDates, productionStartDelta, rebaseStagedPlanningVersion, schedulingIssues, stagePlanningSchedule as updateStagedPlanningSchedule, translateJobPlanningSchedules, type StagedPlanningSchedules } from '@/modules/planning/schedule-staging';
+import type { PlanningScheduleIssue } from '@/modules/planning/schedule-model.mjs';
+import SchedulingFeedbackPanel from '@/modules/planning/SchedulingFeedbackPanel';
 import type { ProductionIntegrationSummary } from './jobs';
 import { useLanguage } from '@/lib/language';
+import { loadPlanningItems, loadPlanningPhases } from '@/modules/planning/data';
+import type { PlanningItem, PlanningPhase } from '@/modules/planning/types';
+import { isPlanningEnabled } from '@/modules/planning/timeline-model.mjs';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
 type DashboardMode = 'pipeline' | 'snapshot';
@@ -62,6 +68,7 @@ const statusOptions: Array<{ value: ProductionStatus; label: string }> = [
 const APPROVAL_PASSWORD = process.env.NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD?.trim();
 const APPROVAL_EXPIRES_KEY = 'tenops.productionApprovalExpiresAt';
 const CHANGED_BY_KEY = 'tenops.productionChangedByName';
+const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 
 function isScheduled(job: ProductionJob) {
   return Boolean(job.planned_start && job.planned_end);
@@ -85,6 +92,9 @@ export default function ProductionWorkspace() {
   const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
   const [jobUpdateSummaries, setJobUpdateSummaries] = useState<Record<string, JobUpdateSummary>>({});
   const [integrationSummaries, setIntegrationSummaries] = useState<Record<string, ProductionIntegrationSummary>>({});
+  const [planningPhases, setPlanningPhases] = useState<PlanningPhase[]>([]);
+  const [planningItems, setPlanningItems] = useState<PlanningItem[]>([]);
+  const planningPhasesRef = useRef<PlanningPhase[]>([]);
   const [includeArchived, setIncludeArchived] = useState(false);
   const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => typeof window === 'undefined' ? 'stage' : (window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY) as ProductionArrangement) || 'stage');
   const [isLoading, setIsLoading] = useState(true);
@@ -108,6 +118,7 @@ export default function ProductionWorkspace() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [planningIssuesOpen, setPlanningIssuesOpen] = useState(false);
   const [stagedSchedules, setStagedSchedules] = useState<StagedSchedules>({});
+  const [stagedPlanningSchedules, setStagedPlanningSchedules] = useState<StagedPlanningSchedules>({});
   const [scheduleSaveState, setScheduleSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [scheduleMessage, setScheduleMessage] = useState('');
   const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
@@ -124,6 +135,8 @@ export default function ProductionWorkspace() {
   const [approvalNow, setApprovalNow] = useState(() => Date.now());
   const [batchId, setBatchId] = useState<string | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [previewPlanningIssues, setPreviewPlanningIssues] = useState<PlanningScheduleIssue[] | null>(null);
+  const [focusedPlanningIssueId, setFocusedPlanningIssueId] = useState<string | null>(null);
   const [conflicts, setConflicts] = useState<ProductionScheduleBatchConflictDetail['conflicts']>([]);
   const filterRef = useRef<HTMLDivElement | null>(null);
   const scheduleSaveRef = useRef(false);
@@ -152,7 +165,9 @@ export default function ProductionWorkspace() {
 
     try {
       const focusedJobId = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+      const focusedSection = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY) ?? undefined;
       window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+      window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY);
       const [loadedJobs, loadedCounts, summaries, updateSummaries, focusedJob] = await Promise.all([
         loadProductionJobs(includeArchived),
         loadJobAttachmentCounts().catch((error) => {
@@ -170,14 +185,19 @@ export default function ProductionWorkspace() {
       const jobsWithFocused = focusedJob && !loadedJobs.some((job) => job.id === focusedJob.id)
         ? [...loadedJobs, focusedJob]
         : loadedJobs;
+      const loadedPlanningPhases = planningEnabled ? await loadPlanningPhases(jobsWithFocused.map((job) => job.id)) : [];
+      const loadedPlanningItems = planningEnabled ? await loadPlanningItems(loadedPlanningPhases.map((phase) => phase.id)) : [];
       setJobs(sortJobs(jobsWithFocused));
       setAttachmentCounts(loadedCounts);
       setIntegrationSummaries(summaries);
       setJobUpdateSummaries(updateSummaries);
+      setPlanningPhases(loadedPlanningPhases);
+      setPlanningItems(loadedPlanningItems);
       if (focusedJob) {
         setFocusedJobId(focusedJob.id);
         setSearch(focusedJob.job_number || focusedJob.name);
         setSelectedJobId(focusedJob.id);
+        setInspectorFocus(focusedSection);
         setActiveView('queue');
       }
     } catch (error) {
@@ -193,6 +213,10 @@ export default function ProductionWorkspace() {
   useEffect(() => {
     void loadJobs();
   }, [loadJobs]);
+
+  useEffect(() => {
+    planningPhasesRef.current = planningPhases;
+  }, [planningPhases]);
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent) {
@@ -240,19 +264,27 @@ export default function ProductionWorkspace() {
     : 0;
   const firstStaged = Object.values(stagedSchedules)[0];
   const stagedSchedule = useMemo(() => firstStaged ? { jobId: firstStaged.job_id, persistedStart: firstStaged.original_planned_start, persistedEnd: firstStaged.original_planned_end, proposedStart: firstStaged.proposed_planned_start!, proposedEnd: firstStaged.proposed_planned_end! } : null, [firstStaged]);
+  const hasPendingSchedules = hasUnsavedSchedules(stagedSchedules) || hasUnsavedPlanningSchedules(stagedPlanningSchedules);
+  const stagedPlanningIssues = useMemo(() => schedulingIssues(
+    planningPhases.map((phase) => planningPhaseWithStagedDates(phase, stagedPlanningSchedules)),
+    jobs.map((job) => stagedSchedules[job.id] ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end } : job),
+  ), [jobs, planningPhases, stagedPlanningSchedules, stagedSchedules]);
+  const activePlanningIssues = previewPlanningIssues ?? stagedPlanningIssues;
+  const schedulingErrors = activePlanningIssues.filter((issue) => issue.severity === 'error');
 
   useEffect(() => {
-    if (!hasUnsavedSchedules(stagedSchedules)) return;
+    if (!hasPendingSchedules) return;
     const handleBeforeUnload = (event: BeforeUnloadEvent) => event.preventDefault();
     const handleDocumentClick = (event: MouseEvent) => {
       const link = (event.target as Element | null)?.closest('a[href]');
       if (!link || link.getAttribute('href')?.startsWith('#')) return;
-      if (!window.confirm('Leave with unsaved Production schedule changes?')) {
+      if (!window.confirm('Leave with unsaved Production or Planning schedule changes?')) {
         event.preventDefault();
         event.stopPropagation();
         return;
       }
       setStagedSchedules({});
+      setStagedPlanningSchedules({});
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     document.addEventListener('click', handleDocumentClick, true);
@@ -260,18 +292,24 @@ export default function ProductionWorkspace() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('click', handleDocumentClick, true);
     };
-  }, [stagedSchedules]);
+  }, [hasPendingSchedules]);
 
   const stageSchedule = useCallback((job: ProductionJob, start: string, end: string, source: 'production_timeline' | 'production_table' | 'production_inspector' = 'production_timeline') => {
     setScheduleMessage('');
     setScheduleSaveState('idle');
     setBatchId(null);
     setConflicts([]);
-    setStagedSchedules((current) => updateStagedSchedule(current, job, start, end, source));
-  }, []);
+    const previousStart = stagedSchedules[job.id]?.proposed_planned_start ?? job.planned_start;
+    const nextProduction = updateStagedSchedule(stagedSchedules, job, start, end, source);
+    const nextStart = nextProduction[job.id]?.proposed_planned_start ?? job.planned_start;
+    const incrementalDelta = productionStartDelta({ ...job, planned_start: previousStart }, nextStart);
+    setStagedSchedules(nextProduction);
+    setStagedPlanningSchedules((current) => translateJobPlanningSchedules(current, planningPhases, job.id, incrementalDelta));
+  }, [planningPhases, stagedSchedules]);
 
   const discardStagedSchedule = useCallback(() => {
     setStagedSchedules({});
+    setStagedPlanningSchedules({});
     setBatchId(null);
     setConflicts([]);
     setScheduleSaveState('idle');
@@ -279,7 +317,30 @@ export default function ProductionWorkspace() {
     requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
   }, []);
 
+  const revertStagedJob = useCallback((jobId: string) => {
+    const job = jobs.find((candidate) => candidate.id === jobId);
+    const proposal = stagedSchedules[jobId];
+    if (!job || !proposal) return;
+    const reverseDelta = productionStartDelta({ ...job, planned_start: proposal.proposed_planned_start }, proposal.original_planned_start);
+    setStagedSchedules((current) => { const next = { ...current }; delete next[jobId]; return next; });
+    setStagedPlanningSchedules((current) => translateJobPlanningSchedules(current, planningPhases, jobId, reverseDelta));
+  }, [jobs, planningPhases, stagedSchedules]);
+
+  const stagePlanningSchedules = useCallback((changes: Array<{ phase: PlanningPhase; start: string; end: string }>) => {
+    setScheduleMessage(''); setScheduleSaveState('idle'); setBatchId(null); setConflicts([]);
+    setStagedPlanningSchedules((current) => changes.reduce(
+      (next, change) => updateStagedPlanningSchedule(next, change.phase, change.start, change.end, 'planning_timeline'),
+      current,
+    ));
+  }, []);
+
   const openApprovalDialog = useCallback(() => {
+    if (schedulingErrors.length > 0) {
+      setScheduleSaveState('error');
+      setScheduleMessage('Resolve scheduling errors before saving. Warnings do not block Save All.');
+      requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
+      return;
+    }
     const decision = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
     if (decision.clearStoredExpiration) window.sessionStorage.removeItem(APPROVAL_EXPIRES_KEY);
     setApprovalExpiresAt(decision.state === 'active' ? decision.expiration : null);
@@ -288,10 +349,10 @@ export default function ProductionWorkspace() {
     setChangeNote('');
     setApprovalNow(Date.now());
     setApprovalDialogOpen(true);
-  }, []);
+  }, [schedulingErrors.length]);
 
   const saveStagedSchedule = useCallback(async (audit: { changedByName: string; changeNote: string | null }) => {
-    if (!hasUnsavedSchedules(stagedSchedules) || scheduleSaveRef.current) return;
+    if (!hasPendingSchedules || scheduleSaveRef.current || schedulingErrors.length > 0) return;
     scheduleSaveRef.current = true;
     setScheduleSaveState('saving'); setScheduleMessage('');
     const activeBatchId = batchId ?? crypto.randomUUID();
@@ -299,10 +360,26 @@ export default function ProductionWorkspace() {
     try {
       const approval = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
       if (approval.state !== 'active') throw new Error('Production approval expired. Confirm the batch again.');
-      const result = await saveProductionScheduleBatch(batchRpcArgs(stagedSchedules, jobs, audit.changedByName, audit.changeNote, activeBatchId));
+      const jobArgs = hasUnsavedSchedules(stagedSchedules) ? batchRpcArgs(stagedSchedules, jobs, audit.changedByName, audit.changeNote, activeBatchId) : null;
+      const result = await saveProductionPlanningScheduleBatch({
+        p_job_proposals: jobArgs?.p_proposals ?? [],
+        p_phase_proposals: Object.values(stagedPlanningSchedules).map((proposal) => ({
+          phase_id: proposal.phase_id,
+          original_start_date: proposal.original_start_date,
+          original_end_date: proposal.original_end_date,
+          original_updated_at: proposal.original_updated_at,
+          proposed_start_date: proposal.proposed_start_date,
+          proposed_end_date: proposal.proposed_end_date,
+          change_source: proposal.change_source,
+        })),
+        p_changed_by: audit.changedByName,
+        p_change_note: audit.changeNote,
+        p_batch_id: activeBatchId,
+      });
       setJobs((current) => sortJobs(reconcileBatch(current, result.updated_jobs)));
-      setStagedSchedules({}); setBatchId(null); setConflicts([]);
-      setScheduleSaveState('saved'); setScheduleMessage(`${result.updated_count} production schedules saved`);
+      setPlanningPhases((current) => { const updated = new Map(result.updated_phases.map((phase) => [phase.id, phase])); return current.map((phase) => updated.get(phase.id) ?? phase); });
+      setStagedSchedules({}); setStagedPlanningSchedules({}); setBatchId(null); setConflicts([]);
+      setScheduleSaveState('saved'); setScheduleMessage(`${result.updated_count} schedule changes saved`);
       requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
     } catch (error) {
       const feedback = describeProductionScheduleSaveError(error);
@@ -311,10 +388,10 @@ export default function ProductionWorkspace() {
       setScheduleMessage(feedback.message);
       requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
     } finally { scheduleSaveRef.current = false; }
-  }, [batchId, jobs, stagedSchedules]);
+  }, [batchId, hasPendingSchedules, jobs, schedulingErrors.length, stagedPlanningSchedules, stagedSchedules]);
 
   const confirmApprovedSave = useCallback(() => {
-    if (!stagedSchedule || scheduleSaveRef.current) return;
+    if (!hasPendingSchedules || scheduleSaveRef.current || schedulingErrors.length > 0) return;
     const name = changedByName.trim();
     if (!name) { setApprovalError('Changed by is required.'); return; }
     const now = Date.now();
@@ -340,16 +417,16 @@ export default function ProductionWorkspace() {
     setApprovalPassword('');
     setApprovalDialogOpen(false);
     void saveStagedSchedule({ changedByName: name, changeNote: changeNote.trim() || null });
-  }, [approvalPassword, changeNote, changedByName, saveStagedSchedule, stagedSchedule]);
+  }, [approvalPassword, changeNote, changedByName, hasPendingSchedules, saveStagedSchedule, schedulingErrors.length]);
 
   useEffect(() => {
-    if (!stagedSchedule || approvalDialogOpen) return;
+    if (!hasPendingSchedules || approvalDialogOpen) return;
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && window.confirm('Discard the pending Production schedule change?')) discardStagedSchedule();
     };
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [approvalDialogOpen, discardStagedSchedule, stagedSchedule]);
+  }, [approvalDialogOpen, discardStagedSchedule, hasPendingSchedules]);
 
   const filteredJobs = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -412,6 +489,14 @@ export default function ProductionWorkspace() {
     },
     [],
   );
+  const handlePlanningPhasesChanged = useCallback((jobId: string, nextPhases: PlanningPhase[]) => {
+    setPlanningPhases((current) => [...current.filter((phase) => phase.job_id !== jobId), ...nextPhases]);
+    setStagedPlanningSchedules((current) => nextPhases.reduce(rebaseStagedPlanningVersion, current));
+  }, []);
+  const handlePlanningItemsChanged = useCallback((jobId: string, nextItems: PlanningItem[]) => {
+    const phaseIds = new Set(planningPhasesRef.current.filter((phase) => phase.job_id === jobId).map((phase) => phase.id));
+    setPlanningItems((current) => [...current.filter((item) => !phaseIds.has(item.phase_id)), ...nextItems]);
+  }, []);
 
   async function handleCreateJob(input: NewProductionJob) {
     const proposedStart = input.planned_start;
@@ -500,7 +585,7 @@ export default function ProductionWorkspace() {
     .sort((first, second) => first.localeCompare(second, undefined, { sensitivity: 'base' }));
 
   return (
-    <div className={`mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7 ${hasUnsavedSchedules(stagedSchedules) ? 'pb-36' : ''}`}>
+    <div className={`mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7 ${hasPendingSchedules ? 'pb-36' : ''}`}>
       <datalist id="production-customer-suggestions">
         {customerSuggestions.map((customer) => <option key={customer} value={customer} />)}
       </datalist>
@@ -546,9 +631,6 @@ export default function ProductionWorkspace() {
             </div>
           </div>
 
-          <div className="mt-4">
-            <WhatsNewBulletin />
-          </div>
         </div>
 
         <div className="flex flex-col gap-3 rounded-sm border border-slate-200 bg-white p-2.5 shadow-sm lg:flex-row lg:items-center">
@@ -677,7 +759,10 @@ export default function ProductionWorkspace() {
         )}
         {planningIssueCount > 0 && <div className="mt-3 flex min-h-10 flex-wrap items-center gap-x-4 gap-y-2 border-l-2 border-amber-500 bg-amber-50/70 px-3 py-2 text-xs text-slate-600"><span className="font-bold text-amber-900">{language === 'es' ? `${planningIssueCount} ${planningIssueCount === 1 ? 'trabajo requiere' : 'trabajos requieren'} atención de planificación` : `${planningIssueCount} ${planningIssueCount === 1 ? 'job needs' : 'jobs need'} planning attention`}</span><button type="button" onClick={() => setPlanningIssuesOpen(true)} className="h-7 border border-amber-300 bg-white px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] text-amber-900 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-700">{tr('Review issues', 'Revisar pendientes')}</button></div>}
 
-        {stagedSchedule && (() => {
+        <SchedulingFeedbackPanel issues={hasPendingSchedules || previewPlanningIssues ? activePlanningIssues : []} focusedIssueId={focusedPlanningIssueId} />
+
+        {hasPendingSchedules && (() => {
+          if (!stagedSchedule) return <div ref={scheduleActionsRef} data-pending-schedule-actions="true" tabIndex={-1} role="status" aria-live="polite" className="fixed bottom-3 left-3 right-3 z-[90] mx-auto flex max-w-5xl flex-col gap-3 border border-amber-600 bg-amber-50 px-4 py-3 shadow-2xl lg:flex-row lg:items-center lg:justify-between"><div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Planning schedule pending</div><div className="mt-1 text-sm font-bold text-slate-950">{Object.keys(stagedPlanningSchedules).length} Planning Phase change{Object.keys(stagedPlanningSchedules).length === 1 ? '' : 's'} ready for review</div></div><div className="flex flex-wrap gap-2"><button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button><button type="button" onClick={discardStagedSchedule} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button><button type="button" onClick={openApprovalDialog} disabled={schedulingErrors.length > 0} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white">Save all changes</button></div></div>;
           const hadSchedule = Boolean(stagedSchedule.persistedStart && stagedSchedule.persistedEnd);
           const estimatedHours = stagedJob?.estimated_man_hours ?? null;
           const before = hadSchedule ? laborIntensity(estimatedHours, stagedSchedule.persistedStart!, stagedSchedule.persistedEnd!) : null;
@@ -687,14 +772,14 @@ export default function ProductionWorkspace() {
             <div ref={scheduleActionsRef} data-pending-schedule-actions="true" tabIndex={-1} role="status" aria-live="polite" className="fixed bottom-3 left-3 right-3 z-[90] mx-auto flex max-w-5xl flex-col gap-3 border border-amber-600 bg-amber-50 px-4 py-3 shadow-2xl lg:flex-row lg:items-center lg:justify-between">
               <div className="min-w-0">
                 <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Production planning pending</div>
-                <div className="mt-1 text-sm font-bold text-slate-950">{Object.keys(stagedSchedules).length} {Object.keys(stagedSchedules).length === 1 ? 'job has' : 'jobs have'} proposed schedule changes{conflicts.length ? ` · ${conflicts.length} conflicts` : ''}</div>
+                <div className="mt-1 text-sm font-bold text-slate-950">{Object.keys(stagedSchedules).length} Production · {Object.keys(stagedPlanningSchedules).length} Planning changes{conflicts.length ? ` · ${conflicts.length} conflicts` : ''}</div>
                 <div className="mt-1 text-sm font-bold text-slate-950">{hadSchedule ? `${stagedSchedule.persistedStart} – ${stagedSchedule.persistedEnd}` : 'Not scheduled'} → {stagedSchedule.proposedStart} – {stagedSchedule.proposedEnd}</div>
                 <div className="mt-1 text-xs text-slate-600">{hadSchedule ? `${inclusiveCalendarDays(stagedSchedule.persistedStart!, stagedSchedule.persistedEnd!)} days · ${hours(before!.hoursPerScheduledDay)}` : 'No saved production window'} → {inclusiveCalendarDays(stagedSchedule.proposedStart, stagedSchedule.proposedEnd)} days · {hours(after.hoursPerScheduledDay)}</div>
               </div>
               <div className="flex flex-wrap gap-2">
                 <button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button>
                 <button type="button" onClick={discardStagedSchedule} disabled={scheduleSaveState === 'saving'} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button>
-                <button type="button" onClick={openApprovalDialog} disabled={scheduleSaveState === 'saving'} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white">Save all changes</button>
+                <button type="button" onClick={openApprovalDialog} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white">Save all changes</button>
               </div>
             </div>
           );
@@ -719,23 +804,22 @@ export default function ProductionWorkspace() {
               onSelectJob={selectJob}
             />
           ) : (
-            <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} />
+            <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} planningPhases={planningPhases} planningItems={planningItems} stagedPlanningSchedules={stagedPlanningSchedules} onStagePlanningSchedules={stagePlanningSchedules} planningEnabled={planningEnabled} onSelectPlanningPhase={(job, phase) => selectJob(job, `planning:${phase.id}`)} planningIssues={activePlanningIssues} onPreviewPlanningIssuesChange={setPreviewPlanningIssues} onDependencyIssueFocus={setFocusedPlanningIssueId} />
           )}
         </div>
       </div>}
 
-      {reviewOpen && <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/55 p-4"><div role="dialog" aria-modal="true" aria-labelledby="schedule-review-title" className="max-h-[80vh] w-full max-w-2xl overflow-y-auto border border-slate-500 bg-white p-5 shadow-2xl"><div className="flex items-center justify-between"><h2 id="schedule-review-title" className="text-xl font-bold">Review proposed schedules</h2><button type="button" onClick={() => setReviewOpen(false)} className="h-9 border px-3 font-bold">Close</button></div><div className="mt-4 divide-y border">{orderedStagedSchedules(stagedSchedules, jobs).map((proposal) => { const job = jobs.find((item) => item.id === proposal.job_id); return <div key={proposal.job_id} className="p-3"><div className="font-bold">{job?.name}{job?.job_number ? ` · ${job.job_number}` : ''}</div><div className="mt-1 text-sm">{proposal.original_planned_start && proposal.original_planned_end ? `${proposal.original_planned_start} – ${proposal.original_planned_end}` : 'Not scheduled'} → {proposal.proposed_planned_start} – {proposal.proposed_planned_end}</div><div className="mt-1 text-xs text-slate-600">{proposal.changed_fields.map((field) => field === 'planned_start' ? 'Planned start' : 'Planned finish').join(', ')}</div><button type="button" onClick={() => setStagedSchedules((current) => { const next = { ...current }; delete next[proposal.job_id]; return next; })} className="mt-2 text-xs font-bold text-red-700 underline">Revert this job</button></div>; })}</div></div></div>}
+      {reviewOpen && <ScheduleReviewDialog jobs={jobs} phases={planningPhases} production={stagedSchedules} planning={stagedPlanningSchedules} issues={activePlanningIssues} onClose={() => setReviewOpen(false)} onRevertJob={revertStagedJob} onRevertPhase={(phaseId) => { setStagedPlanningSchedules((current) => { const next = { ...current }; delete next[phaseId]; return next; }); }} />}
 
-      {approvalDialogOpen && stagedSchedule && (
+      {approvalDialogOpen && hasPendingSchedules && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/55 px-4 py-8 backdrop-blur-sm">
           <div ref={approvalDialogRef} role="dialog" aria-modal="true" aria-labelledby="schedule-approval-title" className="max-h-full w-full max-w-xl overflow-y-auto border border-slate-500 bg-white p-5 shadow-2xl sm:p-6">
-            <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Production schedule approval</div>
-            <h2 id="schedule-approval-title" className="mt-1 text-xl font-bold text-slate-950">Confirm {Object.keys(stagedSchedules).length} schedule changes</h2>
+            <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Preliminary Timeline approval</div>
+            <h2 id="schedule-approval-title" className="mt-1 text-xl font-bold text-slate-950">Confirm {Object.keys(stagedSchedules).length + Object.keys(stagedPlanningSchedules).length} schedule changes</h2>
             <div className="mt-4 border border-slate-300 bg-slate-50 p-3 text-sm">
-              <div className="font-bold text-slate-950">{stagedJob?.job_number ? `${stagedJob.job_number} — ` : ''}{stagedJob?.name || 'Production job'}</div>
-              <div className="mt-2 font-semibold text-slate-800">{stagedSchedule.persistedStart && stagedSchedule.persistedEnd ? `${stagedSchedule.persistedStart} – ${stagedSchedule.persistedEnd}` : 'Not scheduled'} → {stagedSchedule.proposedStart} – {stagedSchedule.proposedEnd}</div>
-              <div className="mt-1 text-xs text-slate-600">{stagedSchedule.persistedStart && stagedSchedule.persistedEnd ? `${inclusiveCalendarDays(stagedSchedule.persistedStart, stagedSchedule.persistedEnd)} days → ` : ''}{inclusiveCalendarDays(stagedSchedule.proposedStart, stagedSchedule.proposedEnd)} days</div>
-              {(() => { if (!stagedSchedule.persistedStart || !stagedSchedule.persistedEnd) return null; const estimatedHours = stagedJob?.estimated_man_hours ?? null; const before = laborIntensity(estimatedHours, stagedSchedule.persistedStart, stagedSchedule.persistedEnd); const after = laborIntensity(estimatedHours, stagedSchedule.proposedStart, stagedSchedule.proposedEnd); return before.hoursPerScheduledDay !== null && after.hoursPerScheduledDay !== null ? <div className="mt-1 text-xs text-slate-600">{before.hoursPerScheduledDay.toFixed(1)} h/day → {after.hoursPerScheduledDay.toFixed(1)} h/day</div> : null; })()}
+              <div className="font-bold text-slate-950">{Object.keys(stagedSchedules).length} Production schedule change{Object.keys(stagedSchedules).length === 1 ? '' : 's'}</div>
+              <div className="mt-1 font-bold text-slate-950">{Object.keys(stagedPlanningSchedules).length} Planning Phase change{Object.keys(stagedPlanningSchedules).length === 1 ? '' : 's'}</div>
+              {stagedSchedule && <div className="mt-2 text-xs text-slate-600">{stagedSchedule.persistedStart && stagedSchedule.persistedEnd ? `${stagedSchedule.persistedStart} – ${stagedSchedule.persistedEnd}` : 'Not scheduled'} → {stagedSchedule.proposedStart} – {stagedSchedule.proposedEnd}</div>}
             </div>
             {approvalActive ? <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border border-blue-300 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-900"><span>Temporary approval active for {Math.floor(approvalSecondsRemaining / 60)}:{String(approvalSecondsRemaining % 60).padStart(2, '0')}. Explicit confirmation is still required.</span><button type="button" onClick={() => { window.sessionStorage.removeItem(APPROVAL_EXPIRES_KEY); setApprovalExpiresAt(null); setApprovalNow(Date.now()); }} className="text-xs font-bold uppercase underline focus-visible:ring-2 focus-visible:ring-blue-700">Lock approval</button></div> : approvalExpiresAt ? <div className="mt-4 border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700">Approval window expired. Enter the approval password to continue.</div> : null}
             <label htmlFor="production-changed-by" className="mt-4 block text-sm font-bold text-slate-800">Changed by <span className="font-normal text-slate-500">— Recorded name for this change</span></label>
@@ -745,12 +829,30 @@ export default function ProductionWorkspace() {
             <textarea id="production-change-note" value={changeNote} onChange={(event) => setChangeNote(event.target.value)} rows={3} className="mt-1 w-full resize-y border border-slate-400 px-3 py-2 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950" />
             {approvalError && <div role="alert" className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">{approvalError}</div>}
             <p className="mt-3 text-xs text-slate-500">This client-side confirmation is an internal MVP guardrail, not secure authentication.</p>
-            <div className="mt-5 flex flex-wrap justify-end gap-2"><button type="button" onClick={() => { setApprovalDialogOpen(false); setApprovalPassword(''); setApprovalError(''); }} className="h-10 border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-800">Cancel</button><button type="button" onClick={confirmApprovedSave} disabled={scheduleSaveState === 'saving'} className="h-10 border border-slate-950 bg-slate-900 px-4 text-sm font-bold text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">Confirm and save</button></div>
+            <div className="mt-5 flex flex-wrap justify-end gap-2"><button type="button" onClick={() => { setApprovalDialogOpen(false); setApprovalPassword(''); setApprovalError(''); }} className="h-10 border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-800">Cancel</button><button type="button" onClick={confirmApprovedSave} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0} className="h-10 border border-slate-950 bg-slate-900 px-4 text-sm font-bold text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">Confirm and save</button></div>
           </div>
         </div>
       )}
 
-      {selectedJob&&<ProductionJobInspector key={selectedJob.id} job={stagedSchedules[selectedJob.id]?{...selectedJob,planned_start:stagedSchedules[selectedJob.id].proposed_planned_start,planned_end:stagedSchedules[selectedJob.id].proposed_planned_end}:selectedJob} jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null }} onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged} onClose={closeInspector} onUpdateJob={handleUpdateJob} onArchive={async (job) => { const archived = await archiveProductionJob(job); setJobs((current) => includeArchived ? current.map((item) => item.id === job.id ? archived : item) : current.filter((item) => item.id !== job.id)); closeInspector(); }} onRestore={async (job) => { const restored = await restoreProductionJob(job); setJobs((current) => current.map((item) => item.id === job.id ? restored : item)); closeInspector(); }} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])} onAttachmentsChanged={(jobId,count)=>setAttachmentCounts((current)=>({...current,[jobId]:count}))} initialFocus={inspectorFocus}/>}
+      {selectedJob && <ProductionJobInspector
+        key={selectedJob.id}
+        job={stagedSchedules[selectedJob.id] ? { ...selectedJob, planned_start: stagedSchedules[selectedJob.id].proposed_planned_start, planned_end: stagedSchedules[selectedJob.id].proposed_planned_end } : selectedJob}
+        jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null }}
+        onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged}
+        onClose={closeInspector}
+        onUpdateJob={handleUpdateJob}
+        onArchive={async (job) => { const archived = await archiveProductionJob(job); setJobs((current) => includeArchived ? current.map((item) => item.id === job.id ? archived : item) : current.filter((item) => item.id !== job.id)); closeInspector(); }}
+        onRestore={async (job) => { const restored = await restoreProductionJob(job); setJobs((current) => current.map((item) => item.id === job.id ? restored : item)); closeInspector(); }}
+        onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')}
+        scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])}
+        onAttachmentsChanged={(jobId, count) => setAttachmentCounts((current) => ({ ...current, [jobId]: count }))}
+        onPlanningPhasesChanged={handlePlanningPhasesChanged}
+        onPlanningItemsChanged={handlePlanningItemsChanged}
+        stagedPlanningSchedules={stagedPlanningSchedules}
+        planningPhases={planningPhases}
+        planningIssues={activePlanningIssues}
+        initialFocus={inspectorFocus}
+      />}
       {planningIssuesOpen && <PlanningIssuesPanel jobs={jobs} stagedSchedules={stagedSchedules} onClose={() => setPlanningIssuesOpen(false)} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onOpenInspector={selectJob} />}
 
 
