@@ -19,11 +19,13 @@ Use the hierarchy **Planning → Phase → Items**. A Phase is intentionally unc
 - Planning dates never write or stage Production planned dates.
 - A Production job may have at most four coordination Phases: Overlay and Planning Only count; Pause does not.
 - Pause is an operational Timeline interruption rather than a coordination bucket. New Pause Items are not created.
-- Planning progress is derived from completed Items in Overlay and Planning Only Phases. Pause is excluded. It must never be presented as fabrication progress.
+- Every Item has a positive whole or decimal Estimated Hours value. It estimates selective Planning effort only; it is not actual time, payroll, capacity, or Production labor.
+- Planning progress is hours-weighted from completed Items in Overlay and Planning Only Phases. Pause is excluded. Item counts remain supporting context. It must never be presented as fabrication progress.
+- Planning Coverage reports modeled Items, Estimated Hours, and active Phases without implying exhaustive planning or comparing them with the job's estimated labor.
 
 ## Timeline visual language
 
-All dated Overlay Phases and Pause intervals in the current Production canvas are shown; the product cap removes Timeline overflow prioritization. Overlay identity is inherited as a frozen curated color when copied from the Phase Library. Ad-hoc Overlay Phases use the deterministic fallback palette. Pause uses a black-and-white diagonal hatch and does not consume a Planning Phase slot or color. Planning Only has no Timeline bar. Collapsed annotations remain read-only. Expanded lanes use the same drag handles, ghost geometry, cursor treatment, threshold, staged outline, and tooltip behavior as Production. Staged geometry drives both connectors and collapsed annotations.
+All dated Overlay Phases and Pause intervals in the current Production canvas are shown; the product cap removes Timeline overflow prioritization. Overlay identity is inherited as a frozen curated color when copied from the Phase Library. Ad-hoc Overlay Phases use the deterministic fallback palette. Each expanded Overlay Phase retains its full tinted schedule geometry and adds a saturated, hours-weighted completion fill. Pause uses a black-and-white diagonal hatch and does not consume a Planning Phase slot or color. Planning Only has no Timeline bar. Collapsed annotations remain read-only. Expanded lanes use the same drag handles, ghost geometry, cursor treatment, threshold, staged outline, and tooltip behavior as the Production Preliminary Timeline. Staged geometry drives both connectors and collapsed annotations.
 
 ## Rescheduling semantics
 
@@ -35,11 +37,11 @@ Planning Timeline changes and Production date changes share the existing review,
 
 Dependency feedback is derived from staged geometry. Whole-Phase movement translates only the selected Phase and every reachable dependency descendant; predecessor Phases and unrelated branches remain fixed. Finish-edge resizing translates those same descendants by the finish-date delta, while start-edge resizing changes only the selected Phase. Cascade traversal is disabled for a circular reachable graph, leaving the graph error visible and Save All blocked. Healthy connectors retain their neutral treatment. An unmet predecessor is ordinary dependency waiting: the Timeline and Inspector use a neutral incoming-arrow-to-node icon and `Waiting for` copy rather than warning language. Unusual dependency overlaps and calendar placement are orange warnings and do not block Save All. Circular, missing, or invalid dependency relationships and invalid intervals are red errors and block Save All until resolved. Clicking an issue connector highlights and brings both related Phases into view, focuses the persistent feedback entry, and opens an anchored explanation. Phase warning icons open the same compact treatment and list every active issue for that Phase. The Inspector repeats each issue beneath the affected Phase.
 
-The job's staged Production `planned_start` and `planned_end` define its **preliminary timeline** for feedback; persisted dates are used when no Production proposal exists. A dated Phase beginning before or finishing after that interval receives an orange warning. A Pause/calendar constraint wholly outside it receives an orange non-intersection warning. These conditions never clamp Phase dates, interrupt dependency cascading, expand Production automatically, or block Save All. They recompute immediately from live Phase geometry and staged Production geometry and disappear when the proposed interval contains the Phase again.
+The job's staged Production `planned_start` and `planned_end` define its **Preliminary Timeline** for feedback; persisted dates are used when no Production proposal exists. A dated Phase beginning before or finishing after that interval receives an orange warning. A Pause/calendar constraint wholly outside it receives an orange non-intersection warning. These conditions never clamp Phase dates, interrupt dependency cascading, expand Production automatically, or block Save All. They recompute immediately from live Phase geometry and staged Production geometry and disappear when the proposed interval contains the Phase again.
 
 ## Phase Library
 
-The Phase Library lives in Settings and is linked from the Inspector Planning tab. It stores reusable Phase definitions, curated default Timeline colors, and reusable Item definitions. Adding a library Phase to a job copies its behavior, frozen color, suggested owner, suggested duration, and Items. Pause definitions do not create reusable Items. Later library edits or deletion never modify the copied job Phase or its Items. Nothing is added to Production jobs automatically.
+The Phase Library lives in Settings and is linked from the Inspector Planning tab. It stores reusable Phase definitions, curated default Timeline colors, and reusable Item definitions with their Estimated Hours. Adding a library Phase to a job copies its behavior, frozen color, suggested owner, suggested duration, and Items. Pause definitions do not create reusable Items. Later library edits or deletion never modify the copied job Phase or its Items. Nothing is added to Production jobs automatically.
 
 ## Rollout and data
 
@@ -49,8 +51,10 @@ The original Whiteboard migrations `_001` and `_002` were applied remotely throu
 
 Migration `20260803_001_planning_library_colors_and_phase_cap.sql` is applied and assertion-verified. It adds frozen Phase colors, Phase Library color defaults, library-origin provenance, and the concurrency-safe four-non-Pause Phase guard. Migration `20260803_003_atomic_production_planning_schedule.sql` is an unapplied review candidate; direct Planning scheduling must not be released until that migration and its rollback verifier are approved, applied, and passed.
 
-Controlled demo data is restricted to job `cba79566-3fde-4910-9cf6-45687db70b01`. It creates Color Plate, Shop Drawings, and Customer Approval coordination Phases plus a Production Freeze Pause interval. Internal coordination is represented as an Item. `cleanup` removes only marker-owned Phases and restores the controlled Production dates. Demo content is never seeded automatically.
+Migration `20260804_001_planning_execution_progress.sql` is an unapplied review candidate. It adds positive Estimated Hours to job Items and reusable Phase Library Items, with a compatibility default/backfill of one hour for existing records. Its assertion verifier uses rollback-only fixtures.
+
+Controlled demo data is restricted to job `cba79566-3fde-4910-9cf6-45687db70b01`. It creates Prep, Grind, CTS, and Finish coordination Phases with selective manufacturing Items, realistic Estimated Hours, and varied completion levels, plus a Production Freeze Pause with no execution metrics. Build A-Frame is in Finish. `cleanup` recognizes both current and legacy demo markers and removes only marker-owned Phases. It never changes Production dates. Demo content is never seeded automatically.
 
 ## MVP exclusions
 
-The MVP does not add comments, mentions, notifications, attachments, Item dragging, automatic dependency creation or rewriting, Planning analytics, or a separate project-management application.
+This pass does not add actual hours, time entry, resource loading, crew capacity, critical path, comments, mentions, notifications, attachments, Item dragging, automatic dependency creation or rewriting, or a separate project-management application.

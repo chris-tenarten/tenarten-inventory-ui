@@ -6,7 +6,7 @@ import DocumentViewer from "@/components/documents/DocumentViewer";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
 import PlanningPanel from "@/modules/planning/PlanningPanel";
 import type { StagedPlanningSchedules } from "@/modules/planning/schedule-staging";
-import type { PlanningPhase } from "@/modules/planning/types";
+import type { PlanningItem, PlanningPhase } from "@/modules/planning/types";
 import type { PlanningScheduleIssue } from "@/modules/planning/schedule-model.mjs";
 import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
 import {
@@ -59,6 +59,7 @@ type Props = {
   ) => void;
   onAttachmentsChanged: (jobId: string, count: number) => void;
   onPlanningPhasesChanged?: (jobId: string, phases: PlanningPhase[]) => void;
+  onPlanningItemsChanged?: (jobId: string, items: PlanningItem[]) => void;
   stagedPlanningSchedules?: StagedPlanningSchedules;
   planningPhases?: PlanningPhase[];
   planningIssues?: PlanningScheduleIssue[];
@@ -196,6 +197,7 @@ export default function ProductionJobInspector({
   onJobUpdateSummaryChanged,
   onAttachmentsChanged,
   onPlanningPhasesChanged,
+  onPlanningItemsChanged,
   stagedPlanningSchedules,
   planningPhases,
   planningIssues = [],
@@ -1099,7 +1101,7 @@ export default function ProductionJobInspector({
 
           {activeSection === "planning" && planningEnabled && (
             <section className="mt-5">
-              <PlanningPanel key={(planningPhases ?? []).filter((phase) => phase.job_id === job.id).map((phase) => `${phase.id}:${phase.updated_at}`).join("|")} job={job} compact initialPhaseId={initialFocus?.startsWith("planning:") ? initialFocus.slice("planning:".length) : undefined} onPhasesChanged={onPlanningPhasesChanged} onEditorOpenChanged={setPlanningEditorOpen} stagedSchedules={stagedPlanningSchedules} planningIssues={planningIssues.filter((issue) => issue.phase_ids.some((phaseId) => (planningPhases ?? []).some((phase) => phase.id === phaseId && phase.job_id === job.id)))} />
+              <PlanningPanel key={(planningPhases ?? []).filter((phase) => phase.job_id === job.id).map((phase) => `${phase.id}:${phase.updated_at}`).join("|")} job={job} compact initialPhaseId={initialFocus?.startsWith("planning:") ? initialFocus.slice("planning:".length) : undefined} onPhasesChanged={onPlanningPhasesChanged} onItemsChanged={onPlanningItemsChanged} onEditorOpenChanged={setPlanningEditorOpen} stagedSchedules={stagedPlanningSchedules} planningIssues={planningIssues.filter((issue) => issue.phase_ids.some((phaseId) => (planningPhases ?? []).some((phase) => phase.id === phaseId && phase.job_id === job.id)))} />
             </section>
           )}
 

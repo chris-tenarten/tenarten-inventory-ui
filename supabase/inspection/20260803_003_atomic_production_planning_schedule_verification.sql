@@ -13,7 +13,12 @@ begin
   if to_regprocedure('public.save_production_planning_schedule_batch(jsonb,jsonb,text,text,uuid)') is null then
     raise exception 'VERIFY_MIXED_RPC_MISSING';
   end if;
-  if has_function_privilege('PUBLIC', 'public.save_production_planning_schedule_batch(jsonb,jsonb,text,text,uuid)', 'EXECUTE') then
+  if exists(
+    select 1 from pg_proc procedure
+    cross join lateral aclexplode(coalesce(procedure.proacl,acldefault('f',procedure.proowner))) acl
+    where procedure.oid='public.save_production_planning_schedule_batch(jsonb,jsonb,text,text,uuid)'::regprocedure
+      and acl.grantee=0 and acl.privilege_type='EXECUTE'
+  ) then
     raise exception 'VERIFY_MIXED_RPC_PUBLIC_EXECUTE';
   end if;
   if not has_function_privilege('anon', 'public.save_production_planning_schedule_batch(jsonb,jsonb,text,text,uuid)', 'EXECUTE')
@@ -28,8 +33,12 @@ begin
       and p.prosecdef and p.proowner='postgres'::regrole
       and p.proconfig @> array['search_path=public, pg_temp']
   ) then raise exception 'VERIFY_MIXED_RPC_SECURITY'; end if;
-  if has_table_privilege('PUBLIC','public.production_planning_schedule_batches','SELECT')
-    or has_table_privilege('anon','public.production_planning_schedule_batches','SELECT')
+  if exists(
+    select 1 from pg_class ledger
+    cross join lateral aclexplode(coalesce(ledger.relacl,acldefault('r',ledger.relowner))) acl
+    where ledger.oid='public.production_planning_schedule_batches'::regclass
+      and acl.grantee=0 and acl.privilege_type='SELECT'
+  ) or has_table_privilege('anon','public.production_planning_schedule_batches','SELECT')
     or has_table_privilege('authenticated','public.production_planning_schedule_batches','SELECT')
     or has_table_privilege('service_role','public.production_planning_schedule_batches','SELECT') then
     raise exception 'VERIFY_PRIVATE_MIXED_LEDGER';
@@ -40,8 +49,8 @@ begin
 
   insert into public.planning_phases(job_id,title,timeline_behavior,start_date,end_date,include_in_planning_progress)
   values(test_job,'Overlay','overlay','2026-08-04','2026-08-07',true) returning id into overlay_id;
-  insert into public.planning_phases(job_id,title,timeline_behavior,start_date,end_date,include_in_planning_progress)
-  values(test_job,'Pause','pause','2026-08-18','2026-08-19',false) returning id into pause_id;
+  insert into public.planning_phases(job_id,title,timeline_behavior,start_date,end_date,include_in_planning_progress,shift_with_production)
+  values(test_job,'Pause','pause','2026-08-18','2026-08-19',false,false) returning id into pause_id;
   insert into public.planning_phases(job_id,title,timeline_behavior,include_in_planning_progress)
   values(test_job,'Planning only','planning_only',true) returning id into planning_only_id;
 

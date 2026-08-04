@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertTriangle, ChevronDown, ChevronLeft, ChevronRight, ChevronRight as DisclosureRight, CircleX, Layers, LocateFixed, Maximize2, Minus, Plus } from 'lucide-react';
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent } from 'react';
 
 import type { StagedSchedules } from '../schedule-staging';
@@ -29,7 +29,8 @@ import {
   timelineZoomOption,
 } from '../timeline-preferences';
 import type { TimelinePreferences, TimelineZoom } from '../timeline-preferences';
-import type { PlanningPhase } from '@/modules/planning/types';
+import type { PlanningItem, PlanningPhase } from '@/modules/planning/types';
+import { calculatePhaseProgress } from '@/modules/planning/progress.mjs';
 import { adjustPlanningInterval, planningPhaseWithStagedDates, type StagedPlanningSchedules } from '@/modules/planning/schedule-staging';
 import { dependentPlanningPhaseIds, evaluatePlanningSchedule, planningCascadeDelta, planningDependencyGraphIsAcyclic, type PlanningScheduleIssue } from '@/modules/planning/schedule-model.mjs';
 import { overlayVisualForPhase, PLANNING_PAUSE_HATCH } from '@/modules/planning/phase-visuals';
@@ -41,6 +42,7 @@ type ProductionGanttProps = {
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   onSelectJob: (job: ProductionJob, focus?: string) => void;
   planningPhases?: PlanningPhase[];
+  planningItems?: PlanningItem[];
   stagedPlanningSchedules?: StagedPlanningSchedules;
   onStagePlanningSchedules?: (changes: Array<{ phase: PlanningPhase; start: string; end: string }>) => void;
   planningEnabled?: boolean;
@@ -99,6 +101,59 @@ type CanvasPan = {
   startScrollTop: number;
 };
 type NavigatorDrag = { pointerId: number; startX: number; startScrollLeft: number };
+
+type ExecutionLabelMode = 'hidden' | 'title' | 'percent';
+
+function PhaseExecutionLabels({ title, percent }: { title: string; percent: number }) {
+  const titleRef = useRef<HTMLSpanElement>(null);
+  const metricRef = useRef<HTMLSpanElement>(null);
+  const percentMeasureRef = useRef<HTMLSpanElement>(null);
+  const [mode, setMode] = useState<ExecutionLabelMode>('hidden');
+
+  useLayoutEffect(() => {
+    const metric = metricRef.current;
+    const titleElement = titleRef.current;
+    const container = metric?.parentElement;
+    if (!metric || !container || !titleElement || !percentMeasureRef.current) return;
+    const update = () => {
+      const warning = container.parentElement?.querySelector<HTMLElement>('[data-planning-warning-popover]');
+      const stagedBadge = container.querySelector<HTMLElement>('[data-planning-staged-badge]');
+      const reservedWidth = (warning?.getBoundingClientRect().width ?? 0) + (stagedBadge?.getBoundingClientRect().width ?? 0);
+      const reservedGaps = (warning ? 4 : 0) + (stagedBadge ? 4 : 0);
+      const availableWidth = container.clientWidth - 12 - reservedWidth - reservedGaps;
+      const titleWidth = titleElement.scrollWidth;
+      const gap = 4;
+      const percentWidth = percentMeasureRef.current!.getBoundingClientRect().width;
+      const phaseBar = container.parentElement;
+      const boundaryInContent = percent > 0 && percent < 100 && phaseBar
+        ? phaseBar.clientWidth * (percent / 100) - container.offsetLeft + 3
+        : 0;
+      const metricRegionStart = Math.max(titleWidth + gap, boundaryInContent);
+      const metricRegionWidth = availableWidth - metricRegionStart;
+      const nextMode: ExecutionLabelMode = availableWidth < 24
+        ? 'hidden'
+        : metricRegionWidth >= percentWidth
+          ? 'percent'
+          : 'title';
+      setMode((current) => current === nextMode ? current : nextMode);
+    };
+    const observer = new ResizeObserver(update);
+    observer.observe(container);
+    observer.observe(titleElement);
+    const warning = container.parentElement?.querySelector<HTMLElement>('[data-planning-warning-popover]');
+    const stagedBadge = container.querySelector<HTMLElement>('[data-planning-staged-badge]');
+    if (warning) observer.observe(warning);
+    if (stagedBadge) observer.observe(stagedBadge);
+    update();
+    return () => observer.disconnect();
+  }, [percent, title]);
+
+  return <>
+    <span ref={titleRef} data-planning-phase-title className={`${mode === 'hidden' ? 'hidden' : 'block'} min-w-0 truncate px-1 text-white`} style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{title}</span>
+    <span ref={metricRef} data-planning-execution-metric data-mode={mode} className={`${mode === 'percent' ? 'ml-auto inline-flex' : 'hidden'} shrink-0 px-1 tabular-nums text-[8px] text-white`} style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{percent}%</span>
+    <span ref={percentMeasureRef} aria-hidden="true" className="pointer-events-none fixed invisible whitespace-nowrap px-1 tabular-nums text-[8px]">{percent}%</span>
+  </>;
+}
 
 
 function startOfLocalDay(date: Date) {
@@ -165,7 +220,7 @@ function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom) {
   return { start: earliest, days };
 }
 
-export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule, onSelectJob, planningPhases = [], stagedPlanningSchedules = {}, onStagePlanningSchedules, planningEnabled = false, onSelectPlanningPhase, planningIssues = [], onPreviewPlanningIssuesChange, onDependencyIssueFocus }: ProductionGanttProps) {
+export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule, onSelectJob, planningPhases = [], planningItems = [], stagedPlanningSchedules = {}, onStagePlanningSchedules, planningEnabled = false, onSelectPlanningPhase, planningIssues = [], onPreviewPlanningIssuesChange, onDependencyIssueFocus }: ProductionGanttProps) {
   const [interaction, setInteraction] = useState<ScheduleInteraction | null>(null);
   const [phaseInteraction, setPhaseInteraction] = useState<PhaseScheduleInteraction | null>(null);
   const [preferences, setPreferences] = useState<TimelinePreferences>(defaultTimelinePreferences);
@@ -1063,13 +1118,16 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                       const phaseSeverity = phaseIssues.some((issue) => issue.severity === 'error') ? 'error' : phaseIssues.some((issue) => issue.severity === 'warning') ? 'warning' : null;
                       const phaseIssuePopoverOpen = selectedPhaseWarningId === phase.id;
                       const visual = phase.timeline_behavior === 'overlay' ? overlayVisualForPhase(jobPhases, phase.id) : null;
+                      const phaseProgress = calculatePhaseProgress(planningItems.filter((item) => item.phase_id === phase.id));
                       const barClass = phase.timeline_behavior === 'pause' ? 'border-slate-950 bg-white text-slate-950' : visual!.className;
                       const activePhaseInteraction = phaseInteraction?.phaseId === phase.id ? phaseInteraction : null;
                       const handleWidth = Math.max(6, Math.min(10, Math.floor(geometry.width / 3)));
                       const savedGeometry = stagedPhase ? planningIntervalGeometry(stagedPhase.original_start_date, stagedPhase.original_end_date, formatScheduleDate(start), dayWidth) : null;
-                      return <>{savedGeometry && <div aria-label={`Last saved schedule for ${phase.title}`} className="pointer-events-none absolute top-1/2 z-[2] h-6 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/25" style={{ left: savedGeometry.left, width: savedGeometry.width }} />}<div ref={(element) => { if (element) phaseElementRefs.current.set(phase.id, element); else phaseElementRefs.current.delete(phase.id); }} className={`absolute top-1/2 h-6 -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${phaseIssuePopoverOpen ? 'z-50' : 'z-[3]'} ${activePhaseInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isHighlighted ? 'ring-2 ring-slate-500 ring-offset-1' : ''} ${isStagedPhase ? 'ring-2 ring-amber-300 ring-offset-1' : ''} ${phaseSeverity === 'error' ? 'outline outline-2 outline-red-600 outline-offset-1' : phaseSeverity === 'warning' ? 'outline outline-2 outline-orange-500 outline-offset-1' : ''} ${barClass}`} style={{ left: geometry.left, width: geometry.width, backgroundImage: phase.timeline_behavior === 'pause' ? PLANNING_PAUSE_HATCH : undefined }}>
+                      return <>{savedGeometry && <div aria-label={`Last saved schedule for ${phase.title}`} className="pointer-events-none absolute top-1/2 z-[2] h-6 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/25" style={{ left: savedGeometry.left, width: savedGeometry.width }} />}<div ref={(element) => { if (element) phaseElementRefs.current.set(phase.id, element); else phaseElementRefs.current.delete(phase.id); }} className={`absolute top-1/2 h-6 overflow-visible -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${phaseIssuePopoverOpen ? 'z-50' : 'z-[3]'} ${activePhaseInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isHighlighted ? 'ring-2 ring-slate-500 ring-offset-1' : ''} ${isStagedPhase ? 'ring-2 ring-amber-300 ring-offset-1' : ''} ${phaseSeverity === 'error' ? 'outline outline-2 outline-red-600 outline-offset-1' : phaseSeverity === 'warning' ? 'outline outline-2 outline-orange-500 outline-offset-1' : ''} ${barClass}`} style={{ left: geometry.left, width: geometry.width, backgroundImage: phase.timeline_behavior === 'pause' ? PLANNING_PAUSE_HATCH : undefined }}>
+                        {visual && phaseProgress.percent > 0 && <div aria-hidden="true" data-planning-progress-fill className={`pointer-events-none absolute inset-y-0 left-0 z-[1] ${visual.progressClassName}`} style={{ width: `${phaseProgress.percent}%` }} />}
+                        {visual && phaseProgress.percent > 0 && phaseProgress.percent < 100 && <div aria-hidden="true" data-planning-progress-boundary className="pointer-events-none absolute inset-y-0 z-[9] w-0.5 -translate-x-0.5 bg-slate-950/80" style={{ left: `${phaseProgress.percent}%` }} />}
                         <button type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} start date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-start')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-start')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 left-0 z-20 border-r border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></button>
-                        <button type="button" data-timeline-interactive="true" onPointerDown={(event) => startPhaseInteraction(event, phase, 'move')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'move')} onMouseEnter={() => setHoveredPlanningPhaseId(phase.id)} onMouseLeave={() => setHoveredPlanningPhaseId(null)} onFocus={() => setHoveredPlanningPhaseId(phase.id)} onBlur={() => setHoveredPlanningPhaseId(null)} onDragStart={(event) => event.preventDefault()} title={phaseTitle(phase)} aria-label={`Move ${phase.title}. Use left and right arrow keys for one-day adjustments.`} className={`absolute inset-y-0 z-10 flex min-w-0 items-center gap-1 overflow-hidden px-1.5 text-left font-bold outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white ${preferences.rowDensity === 'compact' ? 'text-[6px]' : 'text-[6.5px]'}`} style={{ left: handleWidth, right: handleWidth, cursor: activePhaseInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: 'none' }}>{geometry.width >= 48 && <span className="truncate bg-white/75 px-1">{phase.title}</span>}{isStagedPhase && geometry.width >= 76 && <span className="ml-auto shrink-0 bg-amber-100/95 px-1 text-[8px] uppercase text-amber-950">Unsaved</span>}</button>
+                        <button type="button" data-timeline-interactive="true" onPointerDown={(event) => startPhaseInteraction(event, phase, 'move')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'move')} onMouseEnter={() => setHoveredPlanningPhaseId(phase.id)} onMouseLeave={() => setHoveredPlanningPhaseId(null)} onFocus={() => setHoveredPlanningPhaseId(phase.id)} onBlur={() => setHoveredPlanningPhaseId(null)} onDragStart={(event) => event.preventDefault()} title={phaseTitle(phase)} aria-label={`Move ${phase.title}. Use left and right arrow keys for one-day adjustments.`} className={`absolute inset-y-0 z-10 flex min-w-0 items-center gap-1 overflow-hidden px-1.5 text-left font-bold outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white ${preferences.rowDensity === 'compact' ? 'text-[6px]' : 'text-[6.5px]'}`} style={{ left: handleWidth, right: handleWidth, cursor: activePhaseInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: 'none' }}>{visual && phaseProgress.totalItems > 0 ? <PhaseExecutionLabels title={phase.title} percent={phaseProgress.percent} /> : <span data-planning-phase-title className="min-w-0 truncate px-1 text-white" style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{phase.title}</span>}{isStagedPhase && geometry.width >= 140 && <span data-planning-staged-badge className="shrink-0 bg-amber-100/95 px-1 text-[8px] uppercase text-amber-950">Unsaved</span>}</button>
                         <button type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} finish date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-end')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-end')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 right-0 z-20 border-l border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></button>
                         {phaseIssues.length > 0 && <div data-planning-warning-popover className="absolute top-1/2 z-40 -translate-y-1/2" style={{ left: handleWidth + 2 }}><button type="button" data-timeline-interactive="true" aria-expanded={phaseIssuePopoverOpen} aria-label={`${phaseSeverity === 'error' ? 'Scheduling errors' : 'Scheduling warnings'} for ${phase.title}`} title={phaseIssues.map((issue) => issue.message).join('\n')} onClick={(event) => { event.stopPropagation(); focusPhaseWarnings(phase.id, phaseIssues); }} className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/95 shadow-sm focus-visible:ring-2 focus-visible:ring-blue-700 ${phaseSeverity === 'error' ? 'text-red-600' : 'text-orange-600'}`}>{phaseSeverity === 'error' ? <CircleX className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}</button>{phaseIssuePopoverOpen && <div role="dialog" aria-label={`Scheduling feedback for ${phase.title}`} className={`absolute left-6 top-0 z-50 w-72 border bg-white p-3 text-left text-xs shadow-xl ${phaseSeverity === 'error' ? 'border-red-300' : 'border-orange-300'}`}><div className={`flex items-center gap-1.5 font-bold ${phaseSeverity === 'error' ? 'text-red-800' : 'text-orange-800'}`}>{phaseSeverity === 'error' ? <CircleX className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}{phaseSeverity === 'error' ? 'Scheduling Feedback' : 'Scheduling Warnings'}</div><ul className="mt-2 space-y-2 text-slate-800">{phaseIssues.map((issue) => <li key={issue.id} className="border-t border-slate-200 pt-2 first:border-t-0 first:pt-0">{issue.message}</li>)}</ul><p className="mt-2 text-slate-600">{phaseSeverity === 'error' ? 'Resolve errors before saving.' : 'Review before saving.'}</p></div>}</div>}
                       </div></>;

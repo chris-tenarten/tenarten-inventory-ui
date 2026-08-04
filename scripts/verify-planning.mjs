@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { calculatePhaseProgress, calculatePlanningProgress } from "../src/modules/planning/progress.mjs";
+import { calculatePhaseProgress, calculatePlanningCoverage, calculatePlanningProgress } from "../src/modules/planning/progress.mjs";
 import {
   isPlanningEnabled,
   normalizeLoadedJobIds,
@@ -9,15 +9,18 @@ import {
 } from "../src/modules/planning/timeline-model.mjs";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const [migration, refinement, schedulingMigration, schedulingVerification, scheduling, schedulingModel, data, panel, editor, library, workspace, gantt, inspector, shell, settings, visuals, demo] = await Promise.all([
+const [migration, refinement, progressMigration, progressVerification, schedulingMigration, schedulingVerification, scheduling, schedulingModel, data, panel, itemEditor, editor, library, workspace, gantt, inspector, shell, settings, visuals, demo] = await Promise.all([
   read("supabase/migrations/20260731_003_planning_phases_items.sql"),
   read("supabase/migrations/20260803_001_planning_library_colors_and_phase_cap.sql"),
+  read("supabase/migrations/20260804_001_planning_execution_progress.sql"),
+  read("supabase/inspection/20260804_001_planning_execution_progress_verification.sql"),
   read("supabase/migrations/20260803_003_atomic_production_planning_schedule.sql"),
   read("supabase/inspection/20260803_003_atomic_production_planning_schedule_verification.sql"),
   read("src/modules/planning/schedule-staging.ts"),
   read("src/modules/planning/schedule-model.mjs"),
   read("src/modules/planning/data.ts"),
   read("src/modules/planning/PlanningPanel.tsx"),
+  read("src/modules/planning/PlanningItemEditor.tsx"),
   read("src/modules/planning/PlanningPhaseEditor.tsx"),
   read("src/modules/planning/PhaseLibraryManager.tsx"),
   read("src/modules/production/ProductionWorkspace.tsx"),
@@ -43,14 +46,15 @@ const phase = (id, overrides = {}) => ({
   include_in_planning_progress: true, ...overrides,
 });
 const items = [
-  { id: "1", phase_id: "p1", is_complete: true },
-  { id: "2", phase_id: "p1", is_complete: false },
-  { id: "3", phase_id: "p2", is_complete: true },
+  { id: "1", phase_id: "p1", is_complete: true, estimated_hours: 2 },
+  { id: "2", phase_id: "p1", is_complete: false, estimated_hours: 6 },
+  { id: "3", phase_id: "p2", is_complete: true, estimated_hours: 4.5 },
 ];
-assert.deepEqual(calculatePhaseProgress(items.slice(0, 2)), { complete: 1, total: 2, percent: 50 });
-assert.deepEqual(calculatePlanningProgress([phase("p1"), phase("p2", { timeline_behavior: "planning_only" })], items), { complete: 2, total: 3, percent: 67 });
-assert.deepEqual(calculatePlanningProgress([phase("p1"), phase("p2", { timeline_behavior: "pause" })], items), { complete: 1, total: 2, percent: 50 });
-assert.deepEqual(calculatePlanningProgress([], []), { complete: 0, total: 0, percent: 0 });
+assert.deepEqual(calculatePhaseProgress(items.slice(0, 2)), { completedItems: 1, totalItems: 2, completedHours: 2, totalHours: 8, percent: 25 });
+assert.deepEqual(calculatePlanningProgress([phase("p1"), phase("p2", { timeline_behavior: "planning_only" })], items), { completedItems: 2, totalItems: 3, completedHours: 6.5, totalHours: 12.5, percent: 52 });
+assert.deepEqual(calculatePlanningProgress([phase("p1"), phase("p2", { timeline_behavior: "pause" })], items), { completedItems: 1, totalItems: 2, completedHours: 2, totalHours: 8, percent: 25 });
+assert.deepEqual(calculatePlanningProgress([], []), { completedItems: 0, totalItems: 0, completedHours: 0, totalHours: 0, percent: 0 });
+assert.deepEqual(calculatePlanningCoverage([phase("p1"), phase("p2", { timeline_behavior: "planning_only" })], items), { plannedItems: 3, plannedHours: 12.5, activePhases: 2 });
 
 const selected = selectCollapsedTimelinePhases([
   phase("far", { start_date: "2027-01-01", end_date: "2027-01-02" }), phase("normal"),
@@ -62,17 +66,48 @@ assert.equal(selected.all.some((entry) => entry.id === "far"), false);
 
 assert.match(data, /from\("planning_phases"\)/);
 assert.match(data, /from\("planning_items"\)/);
+assert.match(data, /estimated_hours: template\.estimated_hours/);
 assert.match(data, /deletePlanningPhase\(phase\.id\)/);
 assert.match(data, /entry\.default_timeline_behavior !== "pause" && item\.library_phase_id === entry\.id/);
 assert.match(data, /\.neq\("timeline_behavior", "pause"\)/);
 assert.match(data, /timeline_color: entry\.default_timeline_behavior === "overlay" \? entry\.default_timeline_color : null/);
 assert.match(data, /library_phase_id: entry\.id/);
 assert.match(panel, /Items/);
+assert.match(panel, /Planning Progress/);
+assert.match(panel, /Planning Coverage/);
+assert.match(panel, /phaseProgress\.completedHours/);
+assert.match(panel, /onItemsChanged/);
+assert.match(itemEditor, /Estimated hours/);
+assert.match(itemEditor, /estimatedHours <= 0/);
+assert.match(itemEditor, /embedded \? editor/);
+assert.match(itemEditor, /Back to \$\{backLabel\}/);
+assert.match(editor, /calculatePhaseProgress\(items\)/);
+assert.match(editor, /Planning Progress/);
+assert.match(editor, /planned hrs/);
+assert.match(editor, /Items complete/);
+assert.match(editor, /Item Overview/);
+assert.match(editor, /max-h-52 overflow-y-auto/);
+assert.match(editor, /draft\.timeline !== "pause"/);
+assert.match(editor, /<PlanningItemEditor embedded/);
+assert.match(panel, /items=\{phaseEditor \? items\.filter/);
+assert.match(panel, /onSaveItem=/);
+assert.match(panel, /onDeleteItem=/);
 assert.match(panel, /Phase Library/);
 assert.match(library, /Nothing is added to a Production job automatically/);
 assert.match(library, /Save the Phase definition before adding reusable Items/);
 assert.match(library, /Back to \{returnContext\.jobName\}/);
 assert.match(workspace, /planningEnabled \? await loadPlanningPhases/);
+assert.match(workspace, /planningEnabled \? await loadPlanningItems/);
+assert.match(gantt, /phaseProgress\.percent/);
+assert.match(gantt, /progressClassName/);
+assert.match(gantt, /data-planning-progress-fill/);
+assert.match(gantt, /data-planning-progress-boundary/);
+assert.match(gantt, /data-planning-execution-metric/);
+assert.match(gantt, /PhaseExecutionLabels title=\{phase\.title\} percent=\{phaseProgress\.percent\}/);
+assert.doesNotMatch(gantt, /PhaseExecutionLabels[^\n]*completedItems/);
+assert.doesNotMatch(gantt, /data-planning-phase-title className="[^"]*bg-/);
+assert.doesNotMatch(gantt, /data-planning-execution-metric[^>]*bg-/);
+assert.match(gantt, /textShadow/);
 assert.doesNotMatch(gantt, />Planning \{jobPhases\.length\}</);
 assert.match(gantt, /No Planning Phases/);
 assert.match(gantt, /Show Planning lanes/);
@@ -116,7 +151,10 @@ assert.equal((visuals.match(/key: "/g) ?? []).length, 8);
 assert.match(visuals, /assignedColor/);
 assert.match(visuals, /overlayVisualForColor/);
 assert.match(demo, /cba79566-3fde-4910-9cf6-45687db70b01/);
-for (const title of ["Color Plate", "Shop Drawings", "Customer Approval", "Production Freeze", "Internal coordination"]) assert.match(demo, new RegExp(title));
+for (const title of ["Prep", "Grind", "CTS", "Finish", "Production Freeze", "Build A-Frame", "Rough Grind on Wizard"]) assert.match(demo, new RegExp(title));
+assert.match(demo, /timeline_behavior: "pause"/);
+assert.match(demo, /shift_with_production: false/);
+assert.match(demo, /include_in_planning_progress: false/);
 assert.doesNotMatch(demo, /Freight Coordination/);
 assert.match(panel, /MAX_PLANNING_PHASES/);
 assert.match(panel, /countsTowardPlanningPhaseLimit/);
@@ -151,6 +189,12 @@ assert.match(refinement, /add column library_phase_id/);
 assert.match(refinement, /enforce_planning_phase_limit/);
 assert.match(refinement, /old\.timeline_behavior = 'pause'/);
 assert.match(refinement, /phase\.timeline_behavior <> 'pause'/);
+assert.match(progressMigration, /add column estimated_hours numeric\(10,2\) not null default 1/);
+assert.equal((progressMigration.match(/estimated_hours > 0/g) ?? []).length, 2);
+assert.match(progressMigration, /unrelated to Production labor estimates/);
+assert.match(progressVerification, /VERIFY_NON_POSITIVE_ITEM_HOURS_ACCEPTED/);
+assert.match(progressVerification, /VERIFY_NON_POSITIVE_LIBRARY_HOURS_ACCEPTED/);
+assert.match(progressVerification, /rollback;/);
 assert.doesNotMatch(schedulingMigration, /shift_with_production/);
 assert.match(schedulingMigration, /save_production_planning_schedule_batch/);
 assert.match(schedulingMigration, /security definer/);

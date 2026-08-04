@@ -39,6 +39,7 @@ export type PlanningItem = {
   notes: string;
   owner: string | null;
   is_complete: boolean;
+  estimated_hours: number;
   due_date: string | null;
   sort_order: number;
   created_by: string | null;
@@ -73,6 +74,7 @@ export type PhaseLibraryItem = {
   title: string;
   notes: string;
   suggested_owner: string | null;
+  estimated_hours: number;
   suggested_due_offset_days: number | null;
   sort_order: number;
   created_at: string;

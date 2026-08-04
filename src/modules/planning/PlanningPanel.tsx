@@ -16,7 +16,7 @@ import {
   updatePlanningItem,
   updatePlanningPhase,
 } from "./data";
-import { calculatePhaseProgress, calculatePlanningProgress } from "./progress.mjs";
+import { calculatePhaseProgress, calculatePlanningCoverage, calculatePlanningProgress, formatPlanningHours } from "./progress.mjs";
 import { overlayVisualForPhase, PLANNING_PAUSE_HATCH } from "./phase-visuals";
 import PlanningItemEditor from "./PlanningItemEditor";
 import PlanningPhaseEditor from "./PlanningPhaseEditor";
@@ -38,6 +38,7 @@ type Props = {
   compact?: boolean;
   initialPhaseId?: string;
   onPhasesChanged?: (jobId: string, phases: PlanningPhase[]) => void;
+  onItemsChanged?: (jobId: string, items: PlanningItem[]) => void;
   onEditorOpenChanged?: (open: boolean) => void;
   stagedSchedules?: StagedPlanningSchedules;
   planningIssues?: PlanningScheduleIssue[];
@@ -57,7 +58,7 @@ function timelineBehaviorLabel(phase: PlanningPhase) {
   return phase.timeline_behavior === "pause" ? "Pause" : "Overlay";
 }
 
-export default function PlanningPanel({ job, compact = false, initialPhaseId, onPhasesChanged, onEditorOpenChanged, stagedSchedules = {}, planningIssues = [] }: Props) {
+export default function PlanningPanel({ job, compact = false, initialPhaseId, onPhasesChanged, onItemsChanged, onEditorOpenChanged, stagedSchedules = {}, planningIssues = [] }: Props) {
   const [phases, setPhases] = useState<PlanningPhase[]>([]);
   const [items, setItems] = useState<PlanningItem[]>([]);
   const [library, setLibrary] = useState<PhaseLibraryEntry[]>([]);
@@ -79,6 +80,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
         if (!active) return;
         setPhases(loadedPhases);
         setItems(loadedItems);
+        onItemsChanged?.(job.id, loadedItems);
         setLibrary(templates.entries.filter((entry) => entry.active));
         setLibraryItems(templates.items);
         onPhasesChanged?.(job.id, loadedPhases);
@@ -100,9 +102,10 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
     return () => {
       active = false;
     };
-  }, [initialPhaseId, job.id, onEditorOpenChanged, onPhasesChanged]);
+  }, [initialPhaseId, job.id, onEditorOpenChanged, onItemsChanged, onPhasesChanged]);
 
   const progress = useMemo(() => calculatePlanningProgress(phases, items), [items, phases]);
+  const coverage = useMemo(() => calculatePlanningCoverage(phases, items), [items, phases]);
   const planningPhaseCount = phases.filter((phase) => countsTowardPlanningPhaseLimit(phase.timeline_behavior)).length;
   const owners = useMemo(
     () => [...new Set(phases.map((phase) => phase.owner).filter((value): value is string => Boolean(value)))].sort(),
@@ -117,6 +120,11 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
   function publishPhases(next: PlanningPhase[]) {
     setPhases(next);
     onPhasesChanged?.(job.id, next);
+  }
+
+  function publishItems(next: PlanningItem[]) {
+    setItems(next);
+    onItemsChanged?.(job.id, next);
   }
 
   function openPhase(phase: PlanningPhase | null, opener: HTMLElement) {
@@ -160,10 +168,10 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
   async function saveItem(input: PlanningItemInput) {
     if (itemEditor?.item) {
       const next = await updatePlanningItem(itemEditor.item.id, input);
-      setItems((current) => current.map((item) => (item.id === next.id ? next : item)));
+      publishItems(items.map((item) => (item.id === next.id ? next : item)));
     } else {
       const next = await createPlanningItem(input);
-      setItems((current) => [...current, next]);
+      publishItems([...items, next]);
       setExpanded((current) => new Set(current).add(input.phase_id));
     }
   }
@@ -179,7 +187,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
     try {
       const copied = await copyLibraryPhaseToJob(job.id, entry, libraryItems, job.planned_start);
       publishPhases([copied.phase, ...phases]);
-      setItems((current) => [...current, ...copied.items]);
+      publishItems([...items, ...copied.items]);
       setExpanded((current) => new Set(current).add(copied.phase.id));
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to add the Phase Library definition.");
@@ -191,10 +199,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           {!compact && <h2 className="text-lg font-bold">{job.job_number ? `${job.job_number} — ` : ""}{job.name}</h2>}
-          <p className="text-xs text-slate-500">
-            {phases.length} Phase{phases.length === 1 ? "" : "s"}
-            {progress.total ? ` · Planning progress: ${progress.complete} of ${progress.total} items complete` : ""}
-          </p>
+          <p className="text-xs text-slate-500">{phases.length} Phase{phases.length === 1 ? "" : "s"}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link href={`/settings?returnJobId=${encodeURIComponent(job.id)}&returnJobName=${encodeURIComponent(job.name)}#phase-library`} className="inline-flex h-9 items-center gap-1.5 border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600"><Settings2 className="h-4 w-4" aria-hidden="true" />Phase Library</Link>
@@ -207,6 +212,18 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
           <button type="button" title={planningPhaseCount >= MAX_PLANNING_PHASES ? "Four Planning Phases exist. Pause intervals may still be added." : "Add Planning Phase"} onClick={(event) => openPhase(null, event.currentTarget)} className="inline-flex h-9 items-center gap-1.5 border border-blue-800 bg-blue-50 px-3 text-xs font-bold text-blue-900 focus-visible:ring-2 focus-visible:ring-blue-600"><Plus className="h-4 w-4" aria-hidden="true" />{planningPhaseCount >= MAX_PLANNING_PHASES ? "Add Pause" : "Add Phase"}</button>
         </div>
       </div>
+
+      {!loading && phases.length > 0 && <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <section className="border border-slate-200 bg-white p-3" aria-label="Planning Progress">
+          <div className="flex items-center justify-between gap-3"><h3 className="text-xs font-bold uppercase tracking-[0.1em] text-slate-600">Planning Progress</h3><strong className="text-sm text-slate-900">{progress.percent}%</strong></div>
+          <div className="mt-2 h-2 overflow-hidden bg-slate-200"><div className="h-full bg-blue-700" style={{ width: `${progress.percent}%` }} /></div>
+          <p className="mt-2 text-xs text-slate-600">{formatPlanningHours(progress.completedHours)} / {formatPlanningHours(progress.totalHours)} hrs · {progress.completedItems} / {progress.totalItems} items complete</p>
+        </section>
+        <section className="border border-slate-200 bg-slate-50 p-3" aria-label="Planning Coverage">
+          <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-slate-600">Planning Coverage</h3>
+          <p className="mt-3 text-xs text-slate-600">{coverage.plannedItems} planned items · {formatPlanningHours(coverage.plannedHours)} planned hrs · {coverage.activePhases} active phases</p>
+        </section>
+      </div>}
 
       {planningPhaseCount >= MAX_PLANNING_PHASES && <div className={`mt-3 border px-3 py-2 text-xs font-semibold ${planningPhaseCount > MAX_PLANNING_PHASES ? "border-amber-300 bg-amber-50 text-amber-900" : "border-slate-300 bg-slate-50 text-slate-600"}`}>{planningPhaseCount > MAX_PLANNING_PHASES ? `This job has ${planningPhaseCount} Planning Phases. Existing data remains editable, but the over-limit condition cannot grow. Pause intervals remain available.` : "Maximum of four Planning Phases per Production job. Pause intervals do not count toward this limit."}</div>}
 
@@ -246,7 +263,8 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
                       <span className="truncate">{phase.title}</span>
                       {isBlocked && <span title={`Waiting for ${prerequisite!.title}`} className="inline-flex shrink-0 items-center border border-slate-300 bg-slate-50 px-1.5 py-0.5 text-[10px] font-bold text-slate-600">Waiting</span>}
                     </div>
-                    <div className="mt-0.5 text-xs text-slate-500">{[statusLabels[phase.status], timelineBehaviorLabel(phase), dateLabel ?? "Undated", isScheduleStaged ? "Unsaved schedule" : null, phaseItems.length ? `${phaseProgress.complete} of ${phaseProgress.total} items complete` : null].filter(Boolean).join(" · ")}</div>
+                    <div className="mt-0.5 text-xs text-slate-500">{[statusLabels[phase.status], timelineBehaviorLabel(phase), dateLabel ?? "Undated", isScheduleStaged ? "Unsaved schedule" : null, phaseItems.length ? `${formatPlanningHours(phaseProgress.completedHours)} / ${formatPlanningHours(phaseProgress.totalHours)} hrs · ${phaseProgress.completedItems} / ${phaseProgress.totalItems} items` : null].filter(Boolean).join(" · ")}</div>
+                    {phaseItems.length > 0 && <div className="mt-1 h-1.5 overflow-hidden bg-slate-200"><div className="h-full bg-blue-700" style={{ width: `${phaseProgress.percent}%` }} /></div>}
                     {prerequisite && <div className="mt-0.5 text-[10px] font-semibold text-slate-500"><span>{isBlocked ? "Waiting for" : "Depends on"}: {prerequisite.title}</span></div>}
                     {scheduleIssues.map((issue) => <div key={issue.id} className={`mt-1 flex items-start gap-1 text-[10px] font-semibold ${issue.severity === "error" ? "text-red-700" : "text-orange-700"}`}><AlertTriangle className="mt-px h-3 w-3 shrink-0" aria-hidden="true" /><span>{issue.inspector_message ?? issue.message}</span></div>)}
                   </button>
@@ -259,8 +277,8 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
                     ) : (
                       phaseItems.map((item) => (
                         <div key={item.id} className="flex min-h-9 items-center gap-2 border-b border-slate-200 py-1.5 last:border-b-0">
-                          <input type="checkbox" checked={item.is_complete} aria-label={`Mark ${item.title} ${item.is_complete ? "incomplete" : "complete"}`} onChange={async (event) => { const next = await updatePlanningItem(item.id, { is_complete: event.target.checked }); setItems((current) => current.map((candidate) => candidate.id === next.id ? next : candidate)); }} />
-                          <button type="button" onClick={(event) => openItem(phase.id, item, event.currentTarget)} className={`min-w-0 flex-1 text-left text-sm focus-visible:ring-2 focus-visible:ring-blue-600 ${item.is_complete ? "text-slate-500 line-through" : "text-slate-800"}`}><span className="block truncate">{item.title}</span>{(item.owner || item.due_date) && <span className="block text-[10px] text-slate-500 no-underline">{[item.owner, item.due_date ? `Due ${item.due_date}` : null].filter(Boolean).join(" · ")}</span>}</button>
+                          <input type="checkbox" checked={item.is_complete} aria-label={`Mark ${item.title} ${item.is_complete ? "incomplete" : "complete"}`} onChange={async (event) => { const next = await updatePlanningItem(item.id, { is_complete: event.target.checked }); publishItems(items.map((candidate) => candidate.id === next.id ? next : candidate)); }} />
+                          <button type="button" onClick={(event) => openItem(phase.id, item, event.currentTarget)} className={`min-w-0 flex-1 text-left text-sm focus-visible:ring-2 focus-visible:ring-blue-600 ${item.is_complete ? "text-slate-500 line-through" : "text-slate-800"}`}><span className="block truncate">{item.title}</span><span className="block text-[10px] text-slate-500 no-underline">{[`${formatPlanningHours(item.estimated_hours)} hrs`, item.owner, item.due_date ? `Due ${item.due_date}` : null].filter(Boolean).join(" · ")}</span></button>
                         </div>
                       ))
                     )}
@@ -273,10 +291,10 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
       )}
 
       {phaseEditor !== undefined && (
-        <PlanningPhaseEditor job={job} phase={phaseEditor} phases={phases} libraryEntry={phaseEditor?.library_phase_id ? library.find((entry) => entry.id === phaseEditor.library_phase_id) : undefined} phaseLimitReached={planningPhaseCount >= MAX_PLANNING_PHASES} onClose={closeEditor} onSave={savePhase} onDelete={phaseEditor ? async () => { await deletePlanningPhase(phaseEditor.id); publishPhases(phases.filter((phase) => phase.id !== phaseEditor.id)); setItems((current) => current.filter((item) => item.phase_id !== phaseEditor.id)); } : undefined} />
+        <PlanningPhaseEditor job={job} phase={phaseEditor} phases={phases} items={phaseEditor ? items.filter((item) => item.phase_id === phaseEditor.id) : []} libraryEntry={phaseEditor?.library_phase_id ? library.find((entry) => entry.id === phaseEditor.library_phase_id) : undefined} phaseLimitReached={planningPhaseCount >= MAX_PLANNING_PHASES} onClose={closeEditor} onSave={savePhase} onSaveItem={async (item, input) => { const next = await updatePlanningItem(item.id, input); publishItems(items.map((candidate) => candidate.id === next.id ? next : candidate)); }} onDeleteItem={async (item) => { await deletePlanningItem(item.id); publishItems(items.filter((candidate) => candidate.id !== item.id)); }} onDelete={phaseEditor ? async () => { await deletePlanningPhase(phaseEditor.id); publishPhases(phases.filter((phase) => phase.id !== phaseEditor.id)); publishItems(items.filter((item) => item.phase_id !== phaseEditor.id)); } : undefined} />
       )}
       {itemEditor && (
-        <PlanningItemEditor phaseId={itemEditor.phaseId} item={itemEditor.item} sortOrder={items.filter((item) => item.phase_id === itemEditor.phaseId).length} onClose={closeEditor} onSave={saveItem} onDelete={itemEditor.item ? async () => { await deletePlanningItem(itemEditor.item!.id); setItems((current) => current.filter((item) => item.id !== itemEditor.item!.id)); } : undefined} />
+        <PlanningItemEditor phaseId={itemEditor.phaseId} item={itemEditor.item} sortOrder={items.filter((item) => item.phase_id === itemEditor.phaseId).length} onClose={closeEditor} onSave={saveItem} onDelete={itemEditor.item ? async () => { await deletePlanningItem(itemEditor.item!.id); publishItems(items.filter((item) => item.id !== itemEditor.item!.id)); } : undefined} />
       )}
     </div>
   );

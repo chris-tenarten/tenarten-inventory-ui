@@ -14,7 +14,7 @@ import { countsTowardPlanningPhaseLimit, MAX_PLANNING_PHASES } from "./types";
 import { normalizeLoadedJobIds } from "./timeline-model.mjs";
 
 const PHASE_COLUMNS = "id,job_id,title,description,owner,category,status,start_date,end_date,timeline_behavior,include_in_planning_progress,timeline_color,library_phase_id,blocked_by_phase_id,created_at,updated_at,created_by";
-const ITEM_COLUMNS = "id,phase_id,title,notes,owner,is_complete,due_date,sort_order,created_by,created_at,updated_at";
+const ITEM_COLUMNS = "id,phase_id,title,notes,owner,is_complete,estimated_hours,due_date,sort_order,created_by,created_at,updated_at";
 
 export async function loadPlanningPhases(jobScope?: string | string[]) {
   let query = supabase.from("planning_phases").select(PHASE_COLUMNS).order("updated_at", { ascending: false });
@@ -188,6 +188,7 @@ export async function copyLibraryPhaseToJob(
           notes: template.notes,
           owner: template.suggested_owner,
           is_complete: false,
+          estimated_hours: template.estimated_hours,
           due_date: shiftedDate(phase.start_date, template.suggested_due_offset_days),
           sort_order: template.sort_order,
           created_by: null,

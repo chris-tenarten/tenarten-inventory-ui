@@ -49,8 +49,8 @@ import type { PlanningScheduleIssue } from '@/modules/planning/schedule-model.mj
 import SchedulingFeedbackPanel from '@/modules/planning/SchedulingFeedbackPanel';
 import type { ProductionIntegrationSummary } from './jobs';
 import { useLanguage } from '@/lib/language';
-import { loadPlanningPhases } from '@/modules/planning/data';
-import type { PlanningPhase } from '@/modules/planning/types';
+import { loadPlanningItems, loadPlanningPhases } from '@/modules/planning/data';
+import type { PlanningItem, PlanningPhase } from '@/modules/planning/types';
 import { isPlanningEnabled } from '@/modules/planning/timeline-model.mjs';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
@@ -94,6 +94,8 @@ export default function ProductionWorkspace() {
   const [jobUpdateSummaries, setJobUpdateSummaries] = useState<Record<string, JobUpdateSummary>>({});
   const [integrationSummaries, setIntegrationSummaries] = useState<Record<string, ProductionIntegrationSummary>>({});
   const [planningPhases, setPlanningPhases] = useState<PlanningPhase[]>([]);
+  const [planningItems, setPlanningItems] = useState<PlanningItem[]>([]);
+  const planningPhasesRef = useRef<PlanningPhase[]>([]);
   const [includeArchived, setIncludeArchived] = useState(false);
   const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => typeof window === 'undefined' ? 'stage' : (window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY) as ProductionArrangement) || 'stage');
   const [isLoading, setIsLoading] = useState(true);
@@ -185,11 +187,13 @@ export default function ProductionWorkspace() {
         ? [...loadedJobs, focusedJob]
         : loadedJobs;
       const loadedPlanningPhases = planningEnabled ? await loadPlanningPhases(jobsWithFocused.map((job) => job.id)) : [];
+      const loadedPlanningItems = planningEnabled ? await loadPlanningItems(loadedPlanningPhases.map((phase) => phase.id)) : [];
       setJobs(sortJobs(jobsWithFocused));
       setAttachmentCounts(loadedCounts);
       setIntegrationSummaries(summaries);
       setJobUpdateSummaries(updateSummaries);
       setPlanningPhases(loadedPlanningPhases);
+      setPlanningItems(loadedPlanningItems);
       if (focusedJob) {
         setFocusedJobId(focusedJob.id);
         setSearch(focusedJob.job_number || focusedJob.name);
@@ -210,6 +214,10 @@ export default function ProductionWorkspace() {
   useEffect(() => {
     void loadJobs();
   }, [loadJobs]);
+
+  useEffect(() => {
+    planningPhasesRef.current = planningPhases;
+  }, [planningPhases]);
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent) {
@@ -485,6 +493,10 @@ export default function ProductionWorkspace() {
   const handlePlanningPhasesChanged = useCallback((jobId: string, nextPhases: PlanningPhase[]) => {
     setPlanningPhases((current) => [...current.filter((phase) => phase.job_id !== jobId), ...nextPhases]);
     setStagedPlanningSchedules((current) => nextPhases.reduce(rebaseStagedPlanningVersion, current));
+  }, []);
+  const handlePlanningItemsChanged = useCallback((jobId: string, nextItems: PlanningItem[]) => {
+    const phaseIds = new Set(planningPhasesRef.current.filter((phase) => phase.job_id === jobId).map((phase) => phase.id));
+    setPlanningItems((current) => [...current.filter((item) => !phaseIds.has(item.phase_id)), ...nextItems]);
   }, []);
 
   async function handleCreateJob(input: NewProductionJob) {
@@ -796,7 +808,7 @@ export default function ProductionWorkspace() {
               onSelectJob={selectJob}
             />
           ) : (
-            <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} planningPhases={planningPhases} stagedPlanningSchedules={stagedPlanningSchedules} onStagePlanningSchedules={stagePlanningSchedules} planningEnabled={planningEnabled} onSelectPlanningPhase={(job, phase) => selectJob(job, `planning:${phase.id}`)} planningIssues={activePlanningIssues} onPreviewPlanningIssuesChange={setPreviewPlanningIssues} onDependencyIssueFocus={setFocusedPlanningIssueId} />
+            <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} planningPhases={planningPhases} planningItems={planningItems} stagedPlanningSchedules={stagedPlanningSchedules} onStagePlanningSchedules={stagePlanningSchedules} planningEnabled={planningEnabled} onSelectPlanningPhase={(job, phase) => selectJob(job, `planning:${phase.id}`)} planningIssues={activePlanningIssues} onPreviewPlanningIssuesChange={setPreviewPlanningIssues} onDependencyIssueFocus={setFocusedPlanningIssueId} />
           )}
         </div>
       </div>}
@@ -806,7 +818,7 @@ export default function ProductionWorkspace() {
       {approvalDialogOpen && hasPendingSchedules && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/55 px-4 py-8 backdrop-blur-sm">
           <div ref={approvalDialogRef} role="dialog" aria-modal="true" aria-labelledby="schedule-approval-title" className="max-h-full w-full max-w-xl overflow-y-auto border border-slate-500 bg-white p-5 shadow-2xl sm:p-6">
-            <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Production schedule approval</div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Preliminary Timeline approval</div>
             <h2 id="schedule-approval-title" className="mt-1 text-xl font-bold text-slate-950">Confirm {Object.keys(stagedSchedules).length + Object.keys(stagedPlanningSchedules).length} schedule changes</h2>
             <div className="mt-4 border border-slate-300 bg-slate-50 p-3 text-sm">
               <div className="font-bold text-slate-950">{Object.keys(stagedSchedules).length} Production schedule change{Object.keys(stagedSchedules).length === 1 ? '' : 's'}</div>
@@ -839,6 +851,7 @@ export default function ProductionWorkspace() {
         scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])}
         onAttachmentsChanged={(jobId, count) => setAttachmentCounts((current) => ({ ...current, [jobId]: count }))}
         onPlanningPhasesChanged={handlePlanningPhasesChanged}
+        onPlanningItemsChanged={handlePlanningItemsChanged}
         stagedPlanningSchedules={stagedPlanningSchedules}
         planningPhases={planningPhases}
         planningIssues={activePlanningIssues}
