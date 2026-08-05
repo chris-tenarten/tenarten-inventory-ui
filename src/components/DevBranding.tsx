@@ -17,7 +17,7 @@ export function DevWordmarkOverlay() {
 
 export function DevLoginWordmark() {
   return (
-    <span className="pointer-events-none relative mx-auto inline-block w-48 select-none sm:w-56">
+    <span className="pointer-events-none relative mx-auto inline-block w-40 select-none sm:w-56">
       <Image
         data-dev-branding-login-wordmark
         src="/dev-branding/tendev-overlay.webp"
@@ -29,7 +29,7 @@ export function DevLoginWordmark() {
       />
       <span
         data-dev-branding-login-environment
-        className="absolute -right-12 top-[32%] block h-8 w-24 sm:-right-14"
+        className="absolute -right-10 top-[32%] block h-7 w-20 sm:-right-14 sm:h-8 sm:w-24"
         aria-hidden="true"
       >
         <Image
@@ -38,7 +38,7 @@ export function DevLoginWordmark() {
           width={1536}
           height={1024}
           priority
-          className="absolute left-1/2 top-[25%] h-auto w-[5.1rem] -translate-x-1/2 -translate-y-1/2 sm:w-[5.75rem]"
+          className="absolute left-1/2 top-[25%] h-auto w-[4.25rem] -translate-x-1/2 -translate-y-1/2 sm:w-[5.75rem]"
         />
         <Image
           src="/dev-branding/chris-tag.webp"
@@ -46,7 +46,7 @@ export function DevLoginWordmark() {
           width={1536}
           height={1024}
           priority
-          className="absolute left-1/2 top-[55%] h-auto w-12 -translate-x-1/2 rotate-[-2deg] sm:w-[3.6rem]"
+          className="absolute left-1/2 top-[55%] h-auto w-10 -translate-x-1/2 rotate-[-2deg] sm:w-[3.6rem]"
         />
       </span>
     </span>
