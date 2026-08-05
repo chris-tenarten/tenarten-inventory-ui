@@ -75,6 +75,9 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const openerRef = useRef<HTMLElement | null>(null);
+  const itemsRef = useRef<PlanningItem[]>([]);
+  const savingCompletionIdsRef = useRef<Set<string>>(new Set());
+  const [savingCompletionIds, setSavingCompletionIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let active = true;
@@ -83,6 +86,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
         const loadedItems = await loadPlanningItems(loadedPhases.map((phase) => phase.id));
         if (!active) return;
         setPhases(loadedPhases);
+        itemsRef.current = loadedItems;
         setItems(loadedItems);
         onItemsChanged?.(job.id, loadedItems);
         setLibrary(templates.entries.filter((entry) => entry.active));
@@ -143,8 +147,38 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
   }
 
   function publishItems(next: PlanningItem[]) {
+    itemsRef.current = next;
     setItems(next);
     onItemsChanged?.(job.id, next);
+  }
+
+  function replacePublishedItem(itemId: string, update: (item: PlanningItem) => PlanningItem) {
+    publishItems(itemsRef.current.map((item) => item.id === itemId ? update(item) : item));
+  }
+
+  async function toggleItemCompletion(item: PlanningItem, isComplete: boolean) {
+    if (savingCompletionIdsRef.current.has(item.id)) return;
+
+    const previousCompletion = item.is_complete;
+    savingCompletionIdsRef.current.add(item.id);
+    setSavingCompletionIds((current) => new Set(current).add(item.id));
+    setError("");
+    replacePublishedItem(item.id, (current) => ({ ...current, is_complete: isComplete }));
+
+    try {
+      const confirmed = await updatePlanningItem(item.id, { is_complete: isComplete });
+      replacePublishedItem(item.id, () => confirmed);
+    } catch (caught) {
+      replacePublishedItem(item.id, (current) => ({ ...current, is_complete: previousCompletion }));
+      setError(caught instanceof Error ? caught.message : "Unable to update Item completion.");
+    } finally {
+      savingCompletionIdsRef.current.delete(item.id);
+      setSavingCompletionIds((current) => {
+        const next = new Set(current);
+        next.delete(item.id);
+        return next;
+      });
+    }
   }
 
   function openPhase(phase: PlanningPhase | null, opener: HTMLElement) {
@@ -320,8 +354,9 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
                     ) : (
                       phaseItems.map((item) => (
                         <div key={item.id} className="flex min-h-9 items-center gap-2 border-b border-slate-200 py-1.5 last:border-b-0">
-                          <input type="checkbox" checked={item.is_complete} aria-label={`Mark ${item.title} ${item.is_complete ? "incomplete" : "complete"}`} onChange={async (event) => { const next = await updatePlanningItem(item.id, { is_complete: event.target.checked }); publishItems(items.map((candidate) => candidate.id === next.id ? next : candidate)); }} />
+                          <input type="checkbox" checked={item.is_complete} disabled={savingCompletionIds.has(item.id)} aria-label={`Mark ${item.title} ${item.is_complete ? "incomplete" : "complete"}`} onChange={(event) => void toggleItemCompletion(item, event.target.checked)} />
                           <button type="button" onClick={(event) => openItem(phase.id, item, event.currentTarget)} className={`min-w-0 flex-1 text-left text-sm focus-visible:ring-2 focus-visible:ring-blue-600 ${item.is_complete ? "text-slate-500 line-through" : "text-slate-800"}`}><span className="block truncate">{item.title}</span><span className="block text-[10px] text-slate-500 no-underline">{[`${formatPlanningHours(item.estimated_hours)} hrs`, item.owner, item.due_date ? `Due ${item.due_date}` : null].filter(Boolean).join(" · ")}</span></button>
+                          {savingCompletionIds.has(item.id) && <span className="shrink-0 text-[9px] font-semibold uppercase tracking-wide text-slate-400">Saving</span>}
                         </div>
                       ))
                     )}
