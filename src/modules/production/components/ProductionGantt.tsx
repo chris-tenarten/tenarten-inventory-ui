@@ -31,6 +31,12 @@ import {
 import type { TimelinePreferences, TimelineZoom } from '../timeline-preferences';
 import type { PlanningItem, PlanningPhase } from '@/modules/planning/types';
 import { calculatePhaseProgress } from '@/modules/planning/progress.mjs';
+import {
+  COLLAPSED_PHASE_DISPLAY_EVENT,
+  COLLAPSED_PHASE_DISPLAY_STORAGE_KEY,
+  readCollapsedPhaseDisplayMode,
+  type CollapsedPhaseDisplayMode,
+} from '@/modules/planning/collapsed-phase-display';
 import { adjustPlanningInterval, planningPhaseWithStagedDates, type StagedPlanningSchedules } from '@/modules/planning/schedule-staging';
 import { dependentPlanningPhaseIds, evaluatePlanningSchedule, planningCascadeDelta, planningDependencyGraphIsAcyclic, type PlanningScheduleIssue } from '@/modules/planning/schedule-model.mjs';
 import { overlayVisualForPhase, PLANNING_PAUSE_HATCH } from '@/modules/planning/phase-visuals';
@@ -215,6 +221,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const [hoveredPlanningPhaseId, setHoveredPlanningPhaseId] = useState<string | null>(null);
   const [selectedDependencyIssueId, setSelectedDependencyIssueId] = useState<string | null>(null);
   const [selectedPhaseWarningId, setSelectedPhaseWarningId] = useState<string | null>(null);
+  const [collapsedPhaseDisplay, setCollapsedPhaseDisplay] = useState<CollapsedPhaseDisplayMode>('fill');
   const ganttRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const navigatorTrackRef = useRef<HTMLDivElement | null>(null);
@@ -288,9 +295,23 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       setPreferences(parseTimelinePreferences(window.localStorage.getItem(TIMELINE_PREFERENCES_KEY)));
+      setCollapsedPhaseDisplay(readCollapsedPhaseDisplayMode());
       setPreferencesLoaded(true);
     });
     return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    const syncCollapsedPhaseDisplay = (event: Event) => {
+      if (event instanceof StorageEvent && event.key !== COLLAPSED_PHASE_DISPLAY_STORAGE_KEY) return;
+      setCollapsedPhaseDisplay(readCollapsedPhaseDisplayMode());
+    };
+    window.addEventListener('storage', syncCollapsedPhaseDisplay);
+    window.addEventListener(COLLAPSED_PHASE_DISPLAY_EVENT, syncCollapsedPhaseDisplay);
+    return () => {
+      window.removeEventListener('storage', syncCollapsedPhaseDisplay);
+      window.removeEventListener(COLLAPSED_PHASE_DISPLAY_EVENT, syncCollapsedPhaseDisplay);
+    };
   }, []);
 
   useEffect(() => {
@@ -1042,12 +1063,12 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                   {hasSchedule && mergedPauses.map((pauseRange) => {
                     const pauseGeometry = planningIntervalGeometry(pauseRange.start, pauseRange.end, formatScheduleDate(start), dayWidth);
                     const intersectsProduction = rangesIntersect(pauseRange.start, pauseRange.end, displayStart, displayEnd);
-                    return <div key={pauseRange.phases.map((phase) => phase.id).join('-')} aria-label={pauseRange.phases.map(phaseTitle).join('; ')} title={pauseRange.phases.map(phaseTitle).join('; ')} className={`pointer-events-none absolute bg-white ${intersectsProduction ? 'top-1/2 z-[5] h-8 -translate-y-1/2 border-x border-slate-950' : 'top-[calc(50%-13px)] z-[4] h-1.5 border border-slate-950'}`} style={{ left: pauseGeometry.left, width: pauseGeometry.width, backgroundImage: PLANNING_PAUSE_HATCH }} />;
+                    return <div key={pauseRange.phases.map((phase) => phase.id).join('-')} data-collapsed-planning-pause="true" aria-label={pauseRange.phases.map(phaseTitle).join('; ')} title={pauseRange.phases.map(phaseTitle).join('; ')} className={`pointer-events-none absolute z-[5] border border-slate-950 bg-white ${collapsedPhaseDisplay === 'fill' ? 'top-1/2 h-8 -translate-y-1/2' : `top-[calc(50%+10px)] h-1.5 ${intersectsProduction ? '' : 'opacity-80'}`}`} style={{ left: pauseGeometry.left, width: pauseGeometry.width, backgroundImage: PLANNING_PAUSE_HATCH }} />;
                   })}
-                  {hasSchedule && visibleOverlays.map((card, index) => {
+                  {hasSchedule && visibleOverlays.map((card) => {
                     const cardGeometry = planningIntervalGeometry(card.start_date!, card.end_date!, formatScheduleDate(start), dayWidth);
                     const visual = overlayVisualForPhase(jobPhases, card.id);
-                    return <button key={card.id} type="button" data-timeline-interactive="true" onClick={(event) => { event.stopPropagation(); onSelectPlanningPhase?.(job, card); }} title={phaseTitle(card)} aria-label={`Open Phase ${card.title}`} className={`absolute z-[5] h-1.5 border outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${visual.className}`} style={{ left: cardGeometry.left, width: cardGeometry.width, top: `calc(50% - ${13 - index * 7}px)` }}><span className="sr-only">Planning overlay: {card.title}</span></button>;
+                    return <button key={card.id} type="button" data-timeline-interactive="true" data-collapsed-planning-phase="true" data-collapsed-phase-display={collapsedPhaseDisplay} onClick={(event) => { event.stopPropagation(); onSelectPlanningPhase?.(job, card); }} title={phaseTitle(card)} aria-label={`Open Phase ${card.title}`} className={`absolute z-[5] border outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${collapsedPhaseDisplay === 'fill' ? 'top-1/2 h-8 -translate-y-1/2 opacity-55 hover:opacity-70 focus-visible:opacity-80' : 'top-[calc(50%+10px)] h-1.5'} ${visual.className}`} style={{ left: cardGeometry.left, width: cardGeometry.width }}><span className="sr-only">Planning overlay: {card.title}</span></button>;
                   })}
                   {hasDeliveryMilestone && (
                     <div className="absolute top-1/2 z-[3] -translate-x-1/2 -translate-y-1/2" style={{ left: deliveryOffset * dayWidth + dayWidth / 2 }} title={`Requested delivery: ${job.requested_delivery_date}`}>

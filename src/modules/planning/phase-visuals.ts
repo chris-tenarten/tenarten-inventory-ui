@@ -1,7 +1,7 @@
 import type { PlanningPhase, PlanningTimelineColor } from "./types";
 
 export const PLANNING_OVERLAY_PALETTE: ReadonlyArray<{ key: PlanningTimelineColor; name: string; className: string; swatchClassName: string; progressClassName: string }> = [
-  { key: "steel_blue", name: "Steel Blue", className: "border-blue-700 bg-blue-200/90 text-blue-950", swatchClassName: "border-blue-700 bg-blue-300", progressClassName: "bg-blue-600" },
+  { key: "steel_blue", name: "Steel Blue", className: "border-blue-700 bg-blue-300/90 text-blue-950", swatchClassName: "border-blue-700 bg-blue-300", progressClassName: "bg-blue-600" },
   { key: "industrial_teal", name: "Industrial Teal", className: "border-teal-700 bg-teal-200/90 text-teal-950", swatchClassName: "border-teal-700 bg-teal-300", progressClassName: "bg-teal-600" },
   { key: "muted_violet", name: "Muted Violet", className: "border-violet-700 bg-violet-200/90 text-violet-950", swatchClassName: "border-violet-700 bg-violet-300", progressClassName: "bg-violet-600" },
   { key: "ochre_gold", name: "Ochre Gold", className: "border-amber-700 bg-amber-200/90 text-amber-950", swatchClassName: "border-amber-700 bg-amber-300", progressClassName: "bg-amber-600" },
