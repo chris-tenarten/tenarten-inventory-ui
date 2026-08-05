@@ -84,6 +84,13 @@ assert.match(panel, /Weighted completion of all modeled Planning Items for this 
 assert.doesNotMatch(panel, /Planning Progress/);
 assert.match(panel, /phaseProgress\.completedHours/);
 assert.match(panel, /onItemsChanged/);
+assert.match(panel, /savingCompletionIdsRef/);
+assert.match(panel, /if \(savingCompletionIdsRef\.current\.has\(item\.id\)\) return/);
+assert.match(panel, /replacePublishedItem\(item\.id, \(current\) => \(\{ \.\.\.current, is_complete: isComplete \}\)\)/);
+assert.match(panel, /await updatePlanningItem\(item\.id, \{ is_complete: isComplete \}\)/);
+assert.match(panel, /is_complete: previousCompletion/);
+assert.match(panel, /disabled=\{savingCompletionIds\.has\(item\.id\)\}/);
+assert.match(panel, />Saving<\/span>/);
 assert.match(itemEditor, /Estimated hours/);
 assert.match(itemEditor, /estimatedHours <= 0/);
 assert.match(itemEditor, /embedded \? editor/);

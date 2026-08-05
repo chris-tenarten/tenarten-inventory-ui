@@ -12,8 +12,14 @@ import {
   readDisplaySize,
 } from '@/lib/display-size';
 import { type TranslationKey, useLanguage } from '@/lib/language';
-import { EARLY_ACCESS_ENABLED } from '@/lib/early-access.mjs';
-import EarlyAccessBadge from '@/components/EarlyAccessBadge';
+import {
+  BrandSubtitle,
+  HeaderBrandArtwork,
+  HeaderEnvironmentIdentity,
+  HeaderProductName,
+  LoginBrandIdentity,
+} from '@/components/AppBranding';
+import { BRANDING } from '@/lib/dev-branding.mjs';
 
 const primaryNavItems = [
   { href: '/', labelKey: 'nav.dashboard' as TranslationKey, icon: HomeIcon },
@@ -48,9 +54,6 @@ const purchasingNavItems = [
   { href: '/purchasing', labelKey: 'nav.purchaseOrders' as TranslationKey, descriptionKey: 'nav.purchaseOrdersDescription' as TranslationKey },
   { href: '/catalog', labelKey: 'nav.catalog' as TranslationKey, descriptionKey: 'nav.catalogDescription' as TranslationKey },
 ];
-
-const ACCESS_STORAGE_KEY = 'tenarten_internal_access';
-const ACCESS_PASSWORD = 'tenarten123';
 
 function LaborIcon() {
   return (
@@ -281,7 +284,7 @@ export default function ClientLayoutShell({
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       setIsUnlocked(
-        window.localStorage.getItem(ACCESS_STORAGE_KEY) === 'granted',
+        window.localStorage.getItem(BRANDING.accessStorageKey) === 'granted',
       );
       setIsReady(true);
     }, 0);
@@ -314,9 +317,9 @@ export default function ClientLayoutShell({
   }, []);
 
   function handleUnlock() {
-    if (passwordInput === ACCESS_PASSWORD) {
+    if (passwordInput === BRANDING.accessPassword) {
       window.localStorage.setItem(
-        ACCESS_STORAGE_KEY,
+        BRANDING.accessStorageKey,
         'granted',
       );
 
@@ -332,7 +335,7 @@ export default function ClientLayoutShell({
   }
 
   function handleLogout() {
-    window.localStorage.removeItem(ACCESS_STORAGE_KEY);
+    window.localStorage.removeItem(BRANDING.accessStorageKey);
     window.localStorage.removeItem('tenarten_admin_access');
 
     setIsUnlocked(false);
@@ -342,7 +345,7 @@ export default function ClientLayoutShell({
   }
 
   return (
-    <>
+    <div data-app-shell>
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
         <div
           className={`mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
@@ -370,7 +373,7 @@ export default function ClientLayoutShell({
               />
 
               <div className="flex min-w-0 items-center gap-2">
-                <div className="min-w-0 leading-none">
+                <div className="relative min-w-0 leading-none">
                   <div
                     className={`truncate font-bold tracking-tight text-slate-950 transition-all duration-200 group-hover:text-slate-700 ${
                       hasScrolled
@@ -378,7 +381,7 @@ export default function ClientLayoutShell({
                         : 'text-[16px] sm:text-[17px]'
                     }`}
                   >
-                    TenOps
+                    <HeaderProductName loginGate={!isUnlocked} />
                   </div>
 
                   <div
@@ -388,15 +391,17 @@ export default function ClientLayoutShell({
                         : 'max-h-5 text-[9px] opacity-100 sm:text-[10px]'
                     }`}
                   >
-                    {t('shell.operationsControl')}
+                    <BrandSubtitle productionSubtitle={t('shell.operationsControl')} />
                   </div>
+                  <HeaderBrandArtwork loginGate={!isUnlocked} />
                 </div>
-                {EARLY_ACCESS_ENABLED && <EarlyAccessBadge title="TenOps Early Access environment" />}
+                <HeaderEnvironmentIdentity loginGate={!isUnlocked} />
               </div>
             </Link>
 
             {isUnlocked && (
               <button
+                data-theme-logout
                 type="button"
                 onClick={handleLogout}
                 title={t('shell.logout')}
@@ -455,6 +460,7 @@ export default function ClientLayoutShell({
 
             {isUnlocked ? (
               <button
+                data-theme-logout
                 type="button"
                 onClick={handleLogout}
                 title={t('shell.logout')}
@@ -485,8 +491,8 @@ export default function ClientLayoutShell({
           children
         ) : (
           <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-5 py-10">
-            <div className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
-              <div className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-6 py-8 text-center">
+            <div data-theme-access-card className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
+              <div data-theme-access-brand className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-6 py-8 text-center">
                 <Image
                   src="/logo.png"
                   alt="Tenarten logo"
@@ -495,16 +501,7 @@ export default function ClientLayoutShell({
                   className="mx-auto h-28 w-auto object-contain sm:h-32"
                 />
 
-                <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-                  <h1 className="text-3xl font-bold tracking-tight text-slate-950">
-                    TenOps
-                  </h1>
-                  {EARLY_ACCESS_ENABLED && <EarlyAccessBadge title="TenOps Early Access environment" />}
-                </div>
-
-                <div className="mt-2 text-[11px] font-bold uppercase tracking-[0.22em] text-slate-600">
-                  {t('shell.operationsControl')}
-                </div>
+                <LoginBrandIdentity productionSubtitle={t('shell.operationsControl')} />
               </div>
 
               <div className="px-6 py-6">
@@ -622,6 +619,6 @@ export default function ClientLayoutShell({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

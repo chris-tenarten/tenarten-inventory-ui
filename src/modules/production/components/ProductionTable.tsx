@@ -1019,7 +1019,7 @@ export default function ProductionTable({
           <colgroup>
             {visibleColumns.map((column) => <col key={column.id} style={{ width: effectiveWidths[column.id] }} />)}
           </colgroup>
-          <thead className="sticky top-0 z-30">
+          <thead data-production-table-header className="sticky top-0 z-30">
             <tr>
               {renderHeader(tableColumnById.inspector, <Search className="mx-auto h-3 w-3" aria-hidden="true" />, 'sticky left-0 z-50 px-0', 'Inspect job actions')}
               {renderHeader(tableColumnById.jobNumber, 'Job #', 'sticky z-40')}

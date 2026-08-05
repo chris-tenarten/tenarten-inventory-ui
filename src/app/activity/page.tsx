@@ -224,7 +224,7 @@ export default function ActivityPage() {
                   onClick={() => setTypeFilter(filter)}
                   className={`h-full px-3 text-center text-xs font-semibold transition focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 sm:px-4 ${
                     typeFilter === filter
-                      ? 'bg-slate-900 text-white'
+                      ? 'tenops-selected-surface'
                       : 'text-slate-600 hover:bg-white hover:text-slate-950'
                   }`}
                 >

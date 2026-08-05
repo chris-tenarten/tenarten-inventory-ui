@@ -488,14 +488,14 @@ export default function JobUpdatesPanel({
             <button
               type="button"
               onClick={() => setOpenOnly(false)}
-              className={`min-h-8 px-2 ${!openOnly ? "bg-slate-900 text-white" : "bg-white text-slate-700 hover:bg-slate-50"}`}
+              className={`min-h-8 px-2 ${!openOnly ? "tenops-selected-surface" : "bg-white text-slate-700 hover:bg-slate-50"}`}
             >
               All
             </button>
             <button
               type="button"
               onClick={() => setOpenOnly(true)}
-              className={`min-h-8 border-l border-slate-300 px-2 ${openOnly ? "bg-slate-900 text-white" : "bg-white text-slate-700 hover:bg-slate-50"}`}
+              className={`min-h-8 border-l border-slate-300 px-2 ${openOnly ? "tenops-selected-surface" : "bg-white text-slate-700 hover:bg-slate-50"}`}
             >
               Needs attention
             </button>

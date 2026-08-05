@@ -16,7 +16,9 @@
     "verify:purchasing-arim-skus": "node scripts/verify-purchasing-arim-skus.mjs",
     "verify:purchasing-pending-receivals": "node scripts/verify-purchasing-pending-receivals.mjs",
     "verify:planning": "node scripts/verify-planning.mjs",
-    "verify:early-access": "node scripts/verify-early-access.mjs"
+    "verify:early-access": "node scripts/verify-early-access.mjs",
+    "verify:theme": "node scripts/verify-theme.mjs",
+    "verify:dev-branding": "node scripts/verify-dev-branding.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",

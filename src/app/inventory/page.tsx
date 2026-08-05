@@ -2934,7 +2934,7 @@ export default function InventoryPage() {
                 onClick={() => selectLot(lot)}
                 className={`grid gap-2 border px-3 py-2 text-left text-sm transition sm:grid-cols-[auto_1fr_auto] sm:items-center ${
                   isActive
-                    ? 'border-slate-900 bg-slate-900 text-white'
+                    ? 'tenops-selected-surface'
                     : 'border-slate-300 bg-white text-slate-800 hover:border-slate-500 hover:bg-slate-50'
                 }`}
               >

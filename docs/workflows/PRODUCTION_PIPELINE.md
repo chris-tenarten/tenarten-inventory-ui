@@ -57,6 +57,8 @@ When `NEXT_PUBLIC_ENABLE_PLANNING=true`, Planning appears as the second job Insp
 
 `NEXT_PUBLIC_EARLY_ACCESS=true` enables the visual Early Access deployment badge. It is an exact-string, presentation-only flag: it does not enable Planning or alter application behavior. Planning remains independently controlled by `NEXT_PUBLIC_ENABLE_PLANNING=true`.
 
+TenOps appearance is an application-wide Light or Dark preference managed from Settings. Light is the first-visit default, and the selected appearance is stored only in the current browser. Appearance is not controlled by deployment variables and does not affect printed or generated documents.
+
 The selected view is remembered for the current browser-tab session. Selecting a job in any view opens the same keyboard-accessible job inspector. Planning fields remain editable there, while job details, attachments, and the newest `job_activity` entries provide context. Attachment indicators in Overview and Table open the inspector directly at Attachments; upload/removal updates the shared count map without a job reload. Schedule fields always feed the staged approval/audit workflow; the inspector does not bypass it.
 
 Planning completeness is derived in one shared helper. Jobs without both planned dates are Not Scheduled. Scheduled jobs missing a job number, requested delivery, labor estimate, or customer are Planning Needed; otherwise they are Planning Complete. This guidance is independent of material readiness and Production status and does not indicate that a job can begin or has no blockers.
