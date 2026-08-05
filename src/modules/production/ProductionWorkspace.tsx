@@ -633,8 +633,8 @@ export default function ProductionWorkspace() {
 
         </div>
 
-        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2 rounded-sm border border-slate-200 bg-white p-2 shadow-sm lg:flex lg:items-center lg:gap-3 lg:p-2.5">
-          <div className="col-span-2 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:flex-wrap lg:items-center lg:gap-2"><span id="production-view-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0 lg:text-xs">{tr('View', 'Vista')}</span><div role="group" aria-labelledby="production-view-label" className="grid min-w-0 grid-cols-3 items-center rounded-sm border border-slate-300 bg-slate-50 p-1 lg:flex">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2 rounded-sm border border-slate-200 bg-white p-2 shadow-sm lg:flex lg:items-center lg:gap-3 lg:p-2.5">
+          <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:flex-wrap lg:items-center lg:gap-2"><span id="production-view-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0 lg:text-xs">{tr('View', 'Vista')}</span><div role="group" aria-labelledby="production-view-label" className="grid min-w-0 grid-cols-3 items-center rounded-sm border border-slate-300 bg-slate-50 p-1 lg:flex">
             <button
               type="button"
               onClick={() => setActiveView('queue')}
@@ -666,16 +666,16 @@ export default function ProductionWorkspace() {
             value={search}
             onChange={(event) => { setFocusedJobId(null); setSearch(event.target.value); }}
             placeholder={tr('Search jobs...', 'Buscar trabajos...')}
-            className="col-span-2 h-9 min-w-0 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100 lg:col-auto lg:flex-1"
+            className="col-span-3 h-9 min-w-0 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100 lg:col-auto lg:flex-1"
           />
 
-          {activeView !== 'timeline' && <div className="col-span-2 flex min-w-0 items-center gap-2 lg:col-auto lg:shrink-0"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Sort', 'Ordenar')}</span><div className="grid h-9 min-w-0 flex-1 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
+          {activeView !== 'timeline' && <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:items-center lg:gap-2"><span id="production-sort-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0">{tr('Sort', 'Ordenar')}</span><div role="group" aria-labelledby="production-sort-label" className="grid h-9 min-w-0 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
 
           {activeView === 'spreadsheet' && (
             <div id="production-table-columns-toolbar-slot" className="relative min-w-0 lg:shrink-0" />
           )}
 
-          <div ref={filterRef} className="relative min-w-0 lg:shrink-0">
+          <div ref={filterRef} className={`relative min-w-0 lg:shrink-0 ${activeView === 'spreadsheet' ? '' : 'col-span-2'}`}>
             <button
               type="button"
               onClick={() => setIsFilterOpen((current) => !current)}
