@@ -69,7 +69,7 @@ export default function ProductionQueue({
                 <span className="sr-only">Open job details</span>
               </button>
 
-              <div className="relative z-10 md:hidden">
+              <div className="pointer-events-none relative z-10 md:hidden">
                 <div className="flex min-w-0 items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">{job.job_number || tr('No job number', 'Sin número')}</div>
