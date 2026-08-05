@@ -144,6 +144,24 @@ function LogoutIcon() {
   );
 }
 
+function AccessIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="5" y="10" width="14" height="11" rx="1.5" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+      <circle cx="12" cy="15" r="1" />
+    </svg>
+  );
+}
+
 function navClass(isActive: boolean) {
   return isActive
     ? 'font-semibold text-slate-950 shadow-[inset_0_-3px_0_#172554]'
@@ -355,7 +373,7 @@ export default function ClientLayoutShell({
               : 'gap-2 py-2.5 sm:gap-3 sm:py-3'
           }`}
         >
-          <div data-shell-branding className="flex min-w-0 items-center gap-3 pr-7 sm:pr-0">
+          <div data-shell-branding className="flex min-h-11 min-w-0 items-center gap-3 pr-12 sm:min-h-0 sm:pr-0">
             <Link
               data-shell-brand-link
               href="/"
@@ -480,11 +498,14 @@ export default function ClientLayoutShell({
               <button
                 type="button"
                 onClick={() => setShowAccessModal(true)}
-                className={`ml-auto border border-slate-950 bg-slate-900 px-4 text-[12px] font-bold uppercase tracking-[0.08em] text-white transition-all duration-200 hover:bg-slate-950 ${
-                  hasScrolled ? 'h-8 sm:h-9' : 'h-10'
+                title={t('shell.internalAccess')}
+                aria-label={t('shell.internalAccess')}
+                className={`absolute right-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center border border-slate-950 bg-slate-900 text-white transition-all duration-200 hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 sm:static sm:ml-auto sm:w-auto sm:translate-y-0 sm:px-4 sm:text-[12px] sm:font-bold sm:uppercase sm:tracking-[0.08em] ${
+                  hasScrolled ? 'sm:h-9' : 'sm:h-10'
                 }`}
               >
-                {t('shell.internalAccess')}
+                <AccessIcon />
+                <span className="hidden sm:ml-2 sm:inline">{t('shell.internalAccess')}</span>
               </button>
             )}
           </div>
