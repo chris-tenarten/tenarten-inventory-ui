@@ -592,8 +592,8 @@ export default function ProductionWorkspace() {
       <div className="mb-3 min-w-0 sm:mb-4 sm:flex sm:flex-wrap sm:items-center sm:gap-2" aria-label={tr('Dashboard mode', 'Modo del panel')}>
         <span className="mr-1 hidden text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500 sm:inline">{tr('Dashboard', 'Panel')}</span>
         <div className="grid w-full min-w-0 grid-cols-2 rounded-sm border border-slate-300 bg-slate-50 p-1 sm:inline-flex sm:w-auto">
-          <button type="button" aria-pressed={dashboardMode === 'pipeline'} onClick={() => setDashboardMode('pipeline')} className={`min-h-8 min-w-0 px-1.5 text-[9px] font-bold uppercase leading-tight tracking-[0.05em] sm:h-8 sm:px-3 sm:text-[10px] sm:tracking-[0.08em] ${dashboardMode === 'pipeline' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{tr('Production Pipeline', 'Flujo de producción')}</button>
-          <button type="button" aria-pressed={dashboardMode === 'snapshot'} onClick={() => setDashboardMode('snapshot')} className={`inline-flex min-h-8 min-w-0 items-center justify-center gap-1 px-1.5 text-[9px] font-bold uppercase leading-tight tracking-[0.05em] sm:h-8 sm:gap-1.5 sm:px-3 sm:text-[10px] sm:tracking-[0.08em] ${dashboardMode === 'snapshot' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}><Camera className="hidden h-3.5 w-3.5 shrink-0 sm:block" aria-hidden="true" />{tr('Monthly Snapshot', 'Resumen mensual')}</button>
+          <button type="button" aria-pressed={dashboardMode === 'pipeline'} onClick={() => setDashboardMode('pipeline')} className={`min-h-8 min-w-0 px-1.5 text-[9px] font-bold uppercase leading-tight tracking-[0.05em] sm:h-8 sm:px-3 sm:text-[10px] sm:tracking-[0.08em] ${dashboardMode === 'pipeline' ? 'tenops-selected-surface shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{tr('Production Pipeline', 'Flujo de producción')}</button>
+          <button type="button" aria-pressed={dashboardMode === 'snapshot'} onClick={() => setDashboardMode('snapshot')} className={`inline-flex min-h-8 min-w-0 items-center justify-center gap-1 px-1.5 text-[9px] font-bold uppercase leading-tight tracking-[0.05em] sm:h-8 sm:gap-1.5 sm:px-3 sm:text-[10px] sm:tracking-[0.08em] ${dashboardMode === 'snapshot' ? 'tenops-selected-surface shadow-sm' : 'text-slate-600 hover:bg-white'}`}><Camera className="hidden h-3.5 w-3.5 shrink-0 sm:block" aria-hidden="true" />{tr('Monthly Snapshot', 'Resumen mensual')}</button>
         </div>
       </div>
       {dashboardMode === 'snapshot' ? <MonthlySnapshot /> : <div>
@@ -640,7 +640,7 @@ export default function ProductionWorkspace() {
               onClick={() => setActiveView('queue')}
               className={`h-8 min-w-0 px-1 text-[9px] font-bold uppercase tracking-[0.05em] sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${
                 activeView === 'queue'
-                  ? 'bg-slate-900 text-white shadow-sm'
+                  ? 'tenops-selected-surface shadow-sm'
                   : 'text-slate-600 hover:bg-white'
               }`}
             >
@@ -651,13 +651,13 @@ export default function ProductionWorkspace() {
               onClick={() => setActiveView('spreadsheet')}
               className={`h-8 min-w-0 px-1 text-[9px] font-bold uppercase tracking-[0.05em] sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${
                 activeView === 'spreadsheet'
-                  ? 'bg-slate-900 text-white shadow-sm'
+                  ? 'tenops-selected-surface shadow-sm'
                   : 'text-slate-600 hover:bg-white'
               }`}
             >
               {tr('Table', 'Tabla')}
             </button>
-            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-8 min-w-0 rounded-sm px-1 text-[9px] font-bold uppercase tracking-[0.05em] focus-visible:ring-2 focus-visible:ring-blue-600 sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${activeView==='timeline'?'bg-slate-900 text-white shadow-sm':'text-slate-600 hover:bg-white'}`}>{tr('Timeline', 'Cronograma')}</button>
+            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-8 min-w-0 rounded-sm px-1 text-[9px] font-bold uppercase tracking-[0.05em] focus-visible:ring-2 focus-visible:ring-blue-600 sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${activeView==='timeline'?'tenops-selected-surface shadow-sm':'text-slate-600 hover:bg-white'}`}>{tr('Timeline', 'Cronograma')}</button>
           </div>
           </div>
 
@@ -669,7 +669,7 @@ export default function ProductionWorkspace() {
             className="col-span-2 h-9 min-w-0 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100 lg:col-auto lg:flex-1"
           />
 
-          {activeView !== 'timeline' && <div className="col-span-2 flex min-w-0 items-center gap-2 lg:col-auto lg:shrink-0"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Sort', 'Ordenar')}</span><div className="grid h-9 min-w-0 flex-1 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
+          {activeView !== 'timeline' && <div className="col-span-2 flex min-w-0 items-center gap-2 lg:col-auto lg:shrink-0"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Sort', 'Ordenar')}</span><div className="grid h-9 min-w-0 flex-1 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
 
           {activeView === 'spreadsheet' && (
             <div id="production-table-columns-toolbar-slot" className="relative min-w-0 lg:shrink-0" />

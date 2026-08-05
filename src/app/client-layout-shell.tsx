@@ -491,15 +491,15 @@ export default function ClientLayoutShell({
         {isReady && isUnlocked ? (
           children
         ) : (
-          <div className="flex min-h-[calc(100vh-65px)] items-center justify-center px-5 py-10">
+          <div data-login-gate-body className="flex min-h-[calc(100vh-65px)] items-center justify-center px-3 py-4 sm:px-5 sm:py-10">
             <div className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
-              <div className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-6 py-8 text-center">
+              <div className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-4 py-5 text-center sm:px-6 sm:py-8">
                 <Image
                   src="/logo.png"
                   alt="Tenarten logo"
                   width={256}
                   height={256}
-                  className="mx-auto h-28 w-auto object-contain sm:h-32"
+                  className="mx-auto h-20 w-auto object-contain sm:h-32"
                 />
 
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
@@ -514,7 +514,7 @@ export default function ClientLayoutShell({
                 </div>
               </div>
 
-              <div className="px-6 py-6">
+              <div className="px-4 py-5 sm:px-6 sm:py-6">
                 <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600">
                   {t('shell.internalAccess')}
                 </div>
@@ -539,7 +539,7 @@ export default function ClientLayoutShell({
                       handleUnlock();
                     }
                   }}
-                  className="mt-2 h-12 w-full border border-slate-500 bg-white px-3 text-slate-950 outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+                  className="mt-2 h-11 w-full border border-slate-500 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900 sm:h-12"
                   autoFocus
                 />
 
@@ -552,7 +552,7 @@ export default function ClientLayoutShell({
                 <button
                   type="button"
                   onClick={handleUnlock}
-                  className="mt-5 h-12 w-full border border-slate-950 bg-slate-900 px-4 text-sm font-bold uppercase tracking-[0.1em] text-white transition hover:bg-slate-950"
+                  className="mt-4 h-11 w-full border border-slate-950 bg-slate-900 px-4 text-sm font-bold uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 sm:mt-5 sm:h-12 sm:tracking-[0.1em]"
                 >
                   {t('shell.unlockWorkspace')}
                 </button>

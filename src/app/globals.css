@@ -28,6 +28,8 @@ html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(9)::after { c
   --foreground: #020617;
   --tenops-root-font-size: 16px;
   --tenops-density: 1;
+  --surface-selected: #19365f;
+  --surface-selected-hover: #214674;
 }
 
 html[data-display-size="compact"] {
@@ -98,6 +100,18 @@ select {
 input::placeholder,
 textarea::placeholder {
   color: #64748b;
+}
+
+/* Filled navigation, tab, and segmented-control selections share one brand surface. */
+.tenops-selected-surface {
+  background-color: var(--surface-selected) !important;
+  border-color: var(--surface-selected) !important;
+  color: #ffffff !important;
+}
+
+.tenops-selected-surface:hover {
+  background-color: var(--surface-selected-hover) !important;
+  border-color: var(--surface-selected-hover) !important;
 }
 
 .timeline-density-slider {

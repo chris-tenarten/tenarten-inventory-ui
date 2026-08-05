@@ -649,7 +649,7 @@ export default function TransactionsPage() {
                   }}
                   className={`min-h-[68px] border px-4 py-3 text-left text-sm font-bold uppercase tracking-[0.12em] transition ${
                     action === "add"
-                      ? "border-slate-950 bg-slate-900 text-white"
+                      ? "tenops-selected-surface"
                       : "border-slate-400 bg-white text-slate-800 hover:border-slate-900 hover:bg-slate-100"
                   }`}
                 >
@@ -667,7 +667,7 @@ export default function TransactionsPage() {
                   }}
                   className={`min-h-[68px] border px-4 py-3 text-left text-sm font-bold uppercase tracking-[0.12em] transition ${
                     action === "remove"
-                      ? "border-slate-950 bg-slate-900 text-white"
+                      ? "tenops-selected-surface"
                       : "border-slate-400 bg-white text-slate-800 hover:border-slate-900 hover:bg-slate-100"
                   }`}
                 >
@@ -687,7 +687,7 @@ export default function TransactionsPage() {
                     }}
                     className={`min-h-[68px] border px-4 py-3 text-left text-sm font-bold uppercase tracking-[0.12em] transition ${
                       action === "audit"
-                        ? "border-slate-950 bg-slate-900 text-white"
+                        ? "tenops-selected-surface"
                         : "border-slate-400 bg-white text-slate-800 hover:border-slate-900 hover:bg-slate-100"
                     }`}
                   >
@@ -714,7 +714,7 @@ export default function TransactionsPage() {
                     }}
                     className={`border-r border-slate-300 px-4 py-2.5 last:border-r-0 ${
                       entryMode === mode
-                        ? "bg-slate-900 text-white"
+                        ? "tenops-selected-surface"
                         : "bg-white text-slate-700 hover:bg-slate-100"
                     }`}
                   >
@@ -1068,7 +1068,7 @@ export default function TransactionsPage() {
                     type="button"
                     onClick={() => setReservationAction(option)}
                     className={`border-r border-slate-300 px-2 py-2 text-xs font-bold uppercase tracking-[0.12em] last:border-r-0 ${
-                      reservationAction === option ? "bg-slate-900 text-white" : "bg-white text-slate-700 hover:bg-slate-100"
+                      reservationAction === option ? "tenops-selected-surface" : "bg-white text-slate-700 hover:bg-slate-100"
                     }`}
                   >
                     {option === "none" ? "None" : option}
