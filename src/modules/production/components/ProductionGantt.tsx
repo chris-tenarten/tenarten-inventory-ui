@@ -222,6 +222,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const [selectedDependencyIssueId, setSelectedDependencyIssueId] = useState<string | null>(null);
   const [selectedPhaseWarningId, setSelectedPhaseWarningId] = useState<string | null>(null);
   const [collapsedPhaseDisplay, setCollapsedPhaseDisplay] = useState<CollapsedPhaseDisplayMode>('fill');
+  const [mobileReadOnly, setMobileReadOnly] = useState(false);
+  const [mobileLandscape, setMobileLandscape] = useState(false);
   const ganttRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const navigatorTrackRef = useRef<HTMLDivElement | null>(null);
@@ -232,9 +234,10 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const railResizeRef = useRef<{ pointerId: number; startX: number; startWidth: number } | null>(null);
   const phaseElementRefs = useRef(new Map<string, HTMLDivElement>());
   const zoom = preferences.zoom;
-  const railWidth = preferences.railWidth;
+  const railWidth = mobileReadOnly ? mobileLandscape ? 220 : 176 : preferences.railWidth;
   const rowDensityIndex = Math.max(0, TIMELINE_ROW_DENSITY_OPTIONS.findIndex((option) => option.value === preferences.rowDensity));
   const rowDensityOption = TIMELINE_ROW_DENSITY_OPTIONS[rowDensityIndex];
+  const displayJobRowHeight = mobileLandscape ? 44 : rowDensityOption.height;
   const displayJobs = useMemo(() => jobs.map((job) => stagedSchedules[job.id]
     ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
     : job), [jobs, stagedSchedules]);
@@ -291,6 +294,25 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, [onDependencyIssueFocus, selectedDependencyIssueId, selectedPhaseWarningId]);
+
+  useEffect(() => {
+    const narrowQuery = window.matchMedia('(max-width: 767px)');
+    const touchQuery = window.matchMedia('(pointer: coarse) and (max-width: 1023px)');
+    const landscapeQuery = window.matchMedia('(orientation: landscape) and (max-width: 1023px) and (max-height: 600px)');
+    const syncMobileMode = () => {
+      setMobileReadOnly(narrowQuery.matches || touchQuery.matches || landscapeQuery.matches);
+      setMobileLandscape(landscapeQuery.matches);
+    };
+    syncMobileMode();
+    narrowQuery.addEventListener('change', syncMobileMode);
+    touchQuery.addEventListener('change', syncMobileMode);
+    landscapeQuery.addEventListener('change', syncMobileMode);
+    return () => {
+      narrowQuery.removeEventListener('change', syncMobileMode);
+      touchQuery.removeEventListener('change', syncMobileMode);
+      landscapeQuery.removeEventListener('change', syncMobileMode);
+    };
+  }, []);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -463,6 +485,12 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   }, [jobs, onSelectPlanningPhase, onStagePlanningSchedules, phaseInteraction, planningPhases]);
 
   function startInteraction(event: ReactPointerEvent, job: ProductionJob, mode: InteractionMode) {
+    if (mobileReadOnly) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (mode === 'move') onSelectJob(job);
+      return;
+    }
     const proposed = stagedSchedules[job.id];
     const start = proposed?.proposed_planned_start ?? job.planned_start;
     const end = proposed?.proposed_planned_end ?? job.planned_end;
@@ -487,6 +515,15 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   }
 
   function startPhaseInteraction(event: ReactPointerEvent, phase: PlanningPhase, mode: InteractionMode) {
+    if (mobileReadOnly) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (mode === 'move') {
+        const job = jobs.find((candidate) => candidate.id === phase.job_id);
+        if (job) onSelectPlanningPhase?.(job, planningPhases.find((candidate) => candidate.id === phase.id) ?? phase);
+      }
+      return;
+    }
     if (!phase.start_date || !phase.end_date || phase.timeline_behavior === 'planning_only') return;
     event.preventDefault(); event.stopPropagation(); event.currentTarget.setPointerCapture(event.pointerId);
     const jobPhases = effectivePlanningPhases.filter((candidate) => candidate.job_id === phase.job_id);
@@ -500,6 +537,14 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   function handlePhaseScheduleKey(event: KeyboardEvent<HTMLButtonElement>, phase: PlanningPhase, mode: InteractionMode) {
     if (!phase.start_date || !phase.end_date) return;
+    if (mobileReadOnly) {
+      if ((event.key === 'Enter' || event.key === ' ') && mode === 'move') {
+        event.preventDefault();
+        const job = jobs.find((candidate) => candidate.id === phase.job_id);
+        if (job) onSelectPlanningPhase?.(job, planningPhases.find((candidate) => candidate.id === phase.id) ?? phase);
+      }
+      return;
+    }
     if ((event.key === 'Enter' || event.key === ' ') && mode === 'move') {
       event.preventDefault();
       const job = jobs.find((candidate) => candidate.id === phase.job_id);
@@ -549,6 +594,13 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     const baselineStart = proposed?.proposed_planned_start ?? job.planned_start;
     const baselineEnd = proposed?.proposed_planned_end ?? job.planned_end;
     if (!baselineStart || !baselineEnd) return;
+    if (mobileReadOnly) {
+      if ((event.key === 'Enter' || event.key === ' ') && mode === 'move') {
+        event.preventDefault();
+        onSelectJob(job);
+      }
+      return;
+    }
     if ((event.key === 'Enter' || event.key === ' ') && mode === 'move') {
       event.preventDefault();
       onSelectJob(job);
@@ -797,22 +849,23 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const allExpandableJobsExpanded = expandableJobIds.length > 0 && expandableJobIds.every((jobId) => expandedJobs.has(jobId));
 
   return (
-    <div ref={ganttRef} className="scroll-mt-16 overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
-      <div className="z-40 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-slate-200 bg-white px-3 py-2 text-[10px] font-semibold text-slate-700 shadow-sm">
-        <span id="timeline-zoom-label" className="font-bold uppercase tracking-[0.12em] text-slate-500">Zoom</span>
-        <div className="inline-flex h-8 overflow-hidden rounded-sm border border-slate-300 bg-white">
+    <div ref={ganttRef} data-production-gantt data-mobile-read-only={mobileReadOnly ? 'true' : undefined} data-mobile-landscape={mobileLandscape ? 'true' : undefined} className="scroll-mt-16 overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+      <div data-gantt-toolbar className="z-40 grid min-w-0 grid-cols-3 items-center gap-1.5 border-b border-slate-200 bg-white p-2 text-[10px] font-semibold text-slate-700 shadow-sm md:flex md:flex-wrap md:gap-x-3 md:gap-y-2 md:px-3">
+        {mobileReadOnly && <span data-mobile-read-only-label className="col-span-3 inline-flex h-7 items-center justify-center border border-slate-300 bg-slate-100 px-2 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-600 md:h-8">{mobileLandscape ? 'Read only' : 'Mobile view · Read only'}</span>}
+        <span id="timeline-zoom-label" className="hidden font-bold uppercase tracking-[0.12em] text-slate-500 md:inline">Zoom</span>
+        <div data-gantt-zoom-step className="hidden h-8 overflow-hidden rounded-sm border border-slate-300 bg-white md:inline-flex">
           <button type="button" aria-label="Zoom Timeline out" title="Zoom out" disabled={Boolean(interaction) || dayWidth <= zoomOption.minDayWidth} onClick={() => updateDayWidth(dayWidth - zoomOption.step)} className="inline-flex h-full w-8 items-center justify-center border-r border-slate-300 text-slate-700 hover:bg-slate-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:opacity-40"><Minus className="h-3.5 w-3.5" aria-hidden="true" /></button>
           <button type="button" aria-label="Zoom Timeline in" title="Zoom in" disabled={Boolean(interaction) || dayWidth >= zoomOption.maxDayWidth} onClick={() => updateDayWidth(dayWidth + zoomOption.step)} className="inline-flex h-full w-8 items-center justify-center text-slate-700 hover:bg-slate-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:opacity-40"><Plus className="h-3.5 w-3.5" aria-hidden="true" /></button>
         </div>
-        <div role="group" aria-labelledby="timeline-zoom-label" className="inline-flex h-8 items-stretch rounded-sm border border-slate-300 bg-slate-50 p-0.5">
+        <div data-gantt-zoom-modes role="group" aria-labelledby="timeline-zoom-label" className="col-span-3 grid h-8 min-w-0 grid-cols-5 items-stretch rounded-sm border border-slate-300 bg-slate-50 p-0.5 md:inline-flex">
           {TIMELINE_ZOOM_OPTIONS.map((option) => (
-            <button key={option.value} type="button" aria-pressed={zoom === option.value} disabled={Boolean(interaction)} onClick={() => changeZoom(option.value)} className={`h-full rounded-sm px-3 text-[9px] font-bold uppercase tracking-[0.08em] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 ${zoom === option.value ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{option.label}</button>
+            <button key={option.value} type="button" aria-pressed={zoom === option.value} disabled={Boolean(interaction)} onClick={() => changeZoom(option.value)} className={`h-full min-w-0 rounded-sm px-0.5 text-[8px] font-bold uppercase tracking-[0.03em] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 md:px-3 md:text-[9px] md:tracking-[0.08em] ${zoom === option.value ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{option.label}</button>
           ))}
         </div>
-        <button type="button" onClick={fitTimeline} disabled={Boolean(interaction)} className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-slate-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />Fit</button>
-        <button type="button" onClick={goToToday} disabled={Boolean(interaction)} className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-blue-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40"><LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Today</button>
-        {expandableJobIds.length > 0 && <button type="button" onClick={() => setExpandedJobs(allExpandableJobsExpanded ? new Set() : new Set(expandableJobIds))} className="h-8 rounded-sm border border-slate-300 bg-white px-2.5 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600">{allExpandableJobsExpanded ? 'Collapse all' : 'Expand all'}</button>}
-        <label className="inline-flex h-8 items-center gap-2 px-1 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-500" title={`Timeline rows: ${rowDensityOption.label}`}>
+        <button type="button" onClick={fitTimeline} disabled={Boolean(interaction)} className="inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border border-slate-300 bg-white px-1 text-[8px] font-bold uppercase tracking-[0.04em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:gap-1.5 md:px-2.5 md:text-[9px] md:tracking-[0.08em]"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />Fit</button>
+        <button type="button" onClick={goToToday} disabled={Boolean(interaction)} className="inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border border-blue-300 bg-white px-1 text-[8px] font-bold uppercase tracking-[0.04em] text-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:gap-1.5 md:px-2.5 md:text-[9px] md:tracking-[0.08em]"><LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Today</button>
+        {expandableJobIds.length > 0 && <button type="button" onClick={() => setExpandedJobs(allExpandableJobsExpanded ? new Set() : new Set(expandableJobIds))} className="h-8 min-w-0 rounded-sm border border-slate-300 bg-white px-1 text-[8px] font-bold uppercase tracking-[0.03em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 md:px-2.5 md:text-[9px] md:tracking-[0.08em]">{allExpandableJobsExpanded ? 'Collapse all' : 'Expand all'}</button>}
+        <label data-gantt-row-density className="hidden h-8 items-center gap-2 px-1 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-500 md:inline-flex" title={`Timeline rows: ${rowDensityOption.label}`}>
           <span>Rows</span>
           <input
             type="range"
@@ -829,7 +882,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             className="timeline-density-slider w-16 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
           />
         </label>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Timeline legend">
+        <div data-gantt-legend className="hidden flex-wrap items-center gap-x-4 gap-y-2 md:flex" aria-label="Timeline legend">
         <span className="font-bold uppercase tracking-[0.12em] text-slate-500">Legend</span>
         {productionStatusVisuals.map((visual) => (
           <span key={visual.value} className="inline-flex items-center gap-1.5 whitespace-nowrap">
@@ -870,8 +923,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
         className={`relative max-h-[calc(100dvh-9rem)] overflow-auto ${canvasPan ? 'cursor-grabbing select-none' : spacePressed ? 'cursor-grab' : ''}`}
       >
         <div style={{ minWidth: railWidth + timelineWidth }}>
-          <div className="sticky top-0 z-20 flex border-b border-slate-200 bg-slate-100/90">
-            <div className="sticky left-0 z-30 flex shrink-0 items-end border-r border-slate-300 bg-slate-100 px-4 pb-3 pt-9" style={{ width: railWidth }}>
+          <div data-gantt-header className="sticky top-0 z-20 flex border-b border-slate-200 bg-slate-100/90">
+            <div data-gantt-header-rail className="sticky left-0 z-30 flex shrink-0 items-end border-r border-slate-300 bg-slate-100 px-4 pb-3 pt-9" style={{ width: railWidth }}>
               <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600">Project / Schedule</div>
               <button
                 type="button"
@@ -883,7 +936,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                 onPointerCancel={finishRailResize}
                 onLostPointerCapture={finishRailResize}
                 onDoubleClick={() => setPreferences((current) => ({ ...current, railWidth: defaultTimelinePreferences.railWidth }))}
-                className="absolute inset-y-0 right-0 z-40 w-2 translate-x-1/2 cursor-col-resize touch-none bg-transparent outline-none after:absolute after:inset-y-2 after:left-1/2 after:w-px after:-translate-x-1/2 after:bg-slate-400/0 hover:after:bg-blue-600 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 focus-visible:after:bg-blue-600"
+                className="absolute inset-y-0 right-0 z-40 hidden w-2 translate-x-1/2 cursor-col-resize touch-none bg-transparent outline-none after:absolute after:inset-y-2 after:left-1/2 after:w-px after:-translate-x-1/2 after:bg-slate-400/0 hover:after:bg-blue-600 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 focus-visible:after:bg-blue-600 md:block"
               />
             </div>
             <div className="relative shrink-0" style={{ width: timelineWidth }}>
@@ -892,7 +945,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                   const previousDay = index > 0 ? days[index - 1] : null;
                   const showMonth = index === 0 || previousDay?.date.getMonth() !== day.date.getMonth();
                   return (
-                    <div key={`month-${day.key}`} className={`shrink-0 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''}`} style={{ width: dayWidth }}>
+                    <div key={`month-${day.key}`} data-month-boundary={day.dayNumber === 1 ? 'true' : undefined} className={`shrink-0 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''}`} style={{ width: dayWidth }}>
                       {showMonth && <div className="whitespace-nowrap px-2 pt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">{day.monthLabel}</div>}
                     </div>
                   );
@@ -900,7 +953,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
               </div>
               <div className="flex h-10">
                 {days.map((day) => (
-                  <div key={day.key} title={day.date.toLocaleDateString()} className={`flex shrink-0 flex-col items-center justify-center border-r border-slate-200 text-[10px] ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isToday ? 'bg-blue-100 font-bold text-blue-900' : day.isWeekend ? 'bg-slate-200/70 text-slate-500' : 'text-slate-600'}`} style={{ width: dayWidth }}>
+                  <div key={day.key} data-gantt-header-day data-today={day.isToday ? 'true' : undefined} data-weekend={day.isWeekend ? 'true' : undefined} data-month-boundary={day.dayNumber === 1 ? 'true' : undefined} title={day.date.toLocaleDateString()} className={`flex shrink-0 flex-col items-center justify-center border-r border-slate-200 text-[10px] ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isToday ? 'bg-blue-100 font-bold text-blue-900' : day.isWeekend ? 'bg-slate-200/70 text-slate-500' : 'text-slate-600'}`} style={{ width: dayWidth }}>
                     {(zoom === 'days' || zoom === 'weeks') && <span>{day.weekday}</span>}
                     {(zoom === 'days' || zoom === 'weeks' || (zoom === 'months' && (day.date.getDay() === 1 || day.dayNumber === 1))) && <span className="text-xs font-bold">{day.dayNumber}</span>}
                     {zoom === 'year' && day.dayNumber === 1 && <span className="text-[8px] font-bold uppercase">{day.date.toLocaleDateString(undefined, { month: 'narrow' })}</span>}
@@ -941,7 +994,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             const inCanvasPhases = timelinePhases.filter((card) => rangesIntersect(card.start_date, card.end_date, canvasStartKey, canvasEndKey));
             const outOfRangeCount = timelinePhases.length - inCanvasPhases.length;
             const isExpanded = expandedJobs.has(job.id);
-            const laneHeight = Math.max(32, rowDensityOption.height - 12);
+            const laneHeight = mobileLandscape ? 32 : Math.max(32, rowDensityOption.height - 12);
             const dependencyPairs = inCanvasPhases.flatMap((blocked) => {
               const blocker = inCanvasPhases.find((candidate) => candidate.id === blocked.blocked_by_phase_id);
               return blocker ? [{ blocker, blocked }] : [];
@@ -965,8 +1018,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
             return (
               <Fragment key={job.id}>
-              <div className="flex border-b border-slate-300 last:border-b-0" style={{ minHeight: rowDensityOption.height }}>
-                <div className={`relative sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-400 bg-white ${preferences.rowDensity === 'compact' ? 'px-3 py-1' : preferences.rowDensity === 'comfortable' ? 'px-4 py-3' : 'px-4 py-2'}`} style={{ width: railWidth }}>
+              <div data-gantt-job-row className="flex border-b border-slate-300 last:border-b-0" style={{ minHeight: displayJobRowHeight }}>
+                <div data-gantt-job-rail className={`relative sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-400 bg-white ${preferences.rowDensity === 'compact' ? 'px-3 py-1' : preferences.rowDensity === 'comfortable' ? 'px-4 py-3' : 'px-4 py-2'}`} style={{ width: railWidth }}>
                   <div className="min-w-0 flex-1 pr-16">
                     <div className="flex items-center gap-2">
                       <div title={job.name} className={`truncate font-bold text-slate-950 ${preferences.rowDensity === 'compact' ? 'text-xs' : 'text-[13px]'}`}>{job.name}</div>
@@ -992,13 +1045,14 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
                 <div
                   data-timeline-pan-canvas="true"
+                  data-gantt-canvas
                   className={`relative shrink-0 ${canvasPan ? 'cursor-grabbing' : 'cursor-move'}`}
                   style={{ width: timelineWidth }}
                 >
                   <div className="absolute inset-0 flex">
-                    {days.map((day) => <div key={`${job.id}-${day.key}`} className={`h-full shrink-0 border-r border-slate-200 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: dayWidth }} />)}
+                    {days.map((day) => <div key={`${job.id}-${day.key}`} data-gantt-day-cell data-weekend={day.isWeekend ? 'true' : undefined} data-month-boundary={day.dayNumber === 1 ? 'true' : undefined} className={`h-full shrink-0 border-r border-slate-200 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: dayWidth }} />)}
                   </div>
-                  {todayIndex >= 0 && <div className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-blue-600" style={{ left: todayIndex * dayWidth + dayWidth / 2 }} />}
+                  {todayIndex >= 0 && <div data-gantt-today className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-blue-600" style={{ left: todayIndex * dayWidth + dayWidth / 2 }} />}
 
                   {isStaged && stagedSchedule?.original_planned_start && stagedSchedule.original_planned_end && (
                     <div
@@ -1016,6 +1070,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                   {hasSchedule && displayStart && displayEnd && (
                     <div
                       data-timeline-interactive="true"
+                      data-production-bar
                       className={`absolute top-1/2 z-[3] h-8 -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${statusVisual.className} ${activeInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isStaged ? 'ring-2 ring-amber-300 ring-offset-1' : ''}`}
                       style={{ left: startOffset * dayWidth + 3, width: barWidth, backgroundImage: statusVisual.pattern }}
                       title={`${job.name}: ${statusVisual.label}; ${displayStart} through ${displayEnd}; ${intensityLabel(job, displayStart, displayEnd)}`}
@@ -1033,12 +1088,12 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                       </button>
                       <button
                         type="button"
-                        aria-label={`Move ${job.name}. Use left and right arrow keys for one-day adjustments.`}
+                        aria-label={mobileReadOnly ? `Open ${job.name}` : `Move ${job.name}. Use left and right arrow keys for one-day adjustments.`}
                         onPointerDown={(event) => startInteraction(event, job, 'move')}
                         onKeyDown={(event) => handleScheduleKey(event, job, 'move')}
                         onDragStart={(event) => event.preventDefault()}
                         className="absolute inset-y-0 z-10 flex min-w-0 items-center gap-2 overflow-hidden px-1.5 text-left text-[10px] font-bold uppercase tracking-[0.05em] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
-                        style={{ left: handleWidth, right: handleWidth, cursor: activeInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: 'none' }}
+                        style={{ left: handleWidth, right: handleWidth, cursor: mobileReadOnly ? 'pointer' : activeInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: mobileReadOnly ? 'manipulation' : 'none' }}
                       >
                         {duration >= 2 && <span className="pointer-events-none truncate">{job.name}</span>}
                         {isStaged && duration >= 3 && <span className="pointer-events-none shrink-0 bg-amber-100/95 px-1 text-[8px] text-amber-950">Unsaved</span>}
@@ -1080,11 +1135,11 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                 </div>
               </div>
               {isExpanded && inCanvasPhases.map((phase, phaseIndex) => (
-                <div key={`${job.id}-${phase.id}`} className="flex border-b border-slate-200 bg-slate-50/50" style={{ minHeight: laneHeight }}>
-                  <div className="sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-300 bg-slate-50 pl-10 pr-3 text-[10px] font-bold text-slate-700" style={{ width: railWidth }}><span className="truncate">{phase.title}</span></div>
-                  <div data-timeline-pan-canvas="true" className="relative shrink-0 cursor-move" style={{ width: timelineWidth }}>
-                    <div className="absolute inset-0 flex">{days.map((day) => <div key={`${job.id}-${phase.id}-${day.key}`} className={`h-full shrink-0 border-r border-slate-200 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: dayWidth }} />)}</div>
-                    {todayIndex >= 0 && <div className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-blue-600" style={{ left: todayIndex * dayWidth + dayWidth / 2 }} />}
+                <div key={`${job.id}-${phase.id}`} data-gantt-phase-row className="flex border-b border-slate-200 bg-slate-50/50" style={{ minHeight: laneHeight }}>
+                  <div data-gantt-phase-rail className="sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-300 bg-slate-50 pl-10 pr-3 text-[10px] font-bold text-slate-700" style={{ width: railWidth }}><span className="truncate">{phase.title}</span></div>
+                  <div data-timeline-pan-canvas="true" data-gantt-phase-canvas className="relative shrink-0 cursor-move" style={{ width: timelineWidth }}>
+                    <div className="absolute inset-0 flex">{days.map((day) => <div key={`${job.id}-${phase.id}-${day.key}`} data-gantt-day-cell data-weekend={day.isWeekend ? 'true' : undefined} data-month-boundary={day.dayNumber === 1 ? 'true' : undefined} className={`h-full shrink-0 border-r border-slate-200 ${day.dayNumber === 1 ? 'border-l-2 border-l-slate-500' : ''} ${day.isWeekend ? 'bg-slate-100' : ''}`} style={{ width: dayWidth }} />)}</div>
+                    {todayIndex >= 0 && <div data-gantt-today className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-blue-600" style={{ left: todayIndex * dayWidth + dayWidth / 2 }} />}
                     {dependencyPairs.filter(({ blocked }) => blocked.id === phase.id).map(({ blocker, blocked }) => {
                       const blockerIndex = inCanvasPhases.findIndex((candidate) => candidate.id === blocker.id);
                       const blockerGeometry = planningIntervalGeometry(blocker.start_date!, blocker.end_date!, formatScheduleDate(start), dayWidth);
@@ -1110,7 +1165,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                       const issueIsOpen = issue?.id === selectedDependencyIssueId && !selectedPhaseWarningId;
                       const issueAnchorX = Math.round((sourceExitX + destinationApproachX) / 2);
                       const issueDialogLeft = issueAnchorX + 280 > timelineWidth ? -260 : 16;
-                      return <svg key={`${blocker.id}-${blocked.id}`} aria-hidden={issue ? undefined : true} className={`pointer-events-none absolute left-0 overflow-visible ${issueIsOpen ? 'z-40' : 'z-[4]'}`} width={timelineWidth} height={svgHeight} style={{ top: svgTop }}><defs><marker id={markerId} viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" overflow="visible"><path d="M0,0 L8,4 L0,8 Z" fill={connectorColor} /></marker></defs><path d={path} fill="none" stroke={connectorColor} strokeWidth={highlighted || issue ? 2.5 : 1.5} markerEnd={`url(#${markerId})`} /><rect x={destinationNodeX} y={blockedY - destinationNodeSize / 2} width={destinationNodeSize} height={destinationNodeSize} fill={connectorColor} />{issue && <><path d={path} fill="none" stroke="transparent" strokeWidth="12" pointerEvents="stroke" className="cursor-pointer" onClick={(event) => { event.stopPropagation(); focusDependencyIssue(issue); }} /><foreignObject x={issueAnchorX - 7} y={routingY - 7} width={issueIsOpen ? 304 : 14} height={issueIsOpen ? 148 : 14} className="pointer-events-auto overflow-visible"><div data-planning-warning-popover className="relative h-3.5 w-3.5"><button type="button" title={issue.message} aria-expanded={issueIsOpen} aria-label={`${issue.severity === 'error' ? 'Scheduling error' : 'Scheduling warning'}: ${issue.message}`} onClick={(event) => { event.stopPropagation(); focusDependencyIssue(issue); }} className={`absolute inset-0 flex items-center justify-center rounded-full bg-white p-0 leading-none shadow-sm focus-visible:ring-2 focus-visible:ring-blue-700 ${issue.severity === 'error' ? 'text-red-600' : 'text-orange-600'}`}>{issue.severity === 'error' ? <CircleX className="h-2.5 w-2.5 shrink-0" /> : <AlertTriangle className="h-2.5 w-2.5 shrink-0" />}</button>{issueIsOpen && <div role="dialog" aria-label={issue.severity === 'error' ? 'Dependency error details' : 'Dependency warning details'} className={`absolute top-0 z-50 w-64 border bg-white p-3 text-left text-xs shadow-xl ${issue.severity === 'error' ? 'border-red-300' : 'border-orange-300'}`} style={{ left: issueDialogLeft }}><div className={`flex items-center gap-1.5 font-bold ${issue.severity === 'error' ? 'text-red-800' : 'text-orange-800'}`}>{issue.severity === 'error' ? <CircleX className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}{issue.severity === 'error' ? 'Dependency Error' : 'Dependency Warning'}</div><p className="mt-2 leading-5 text-slate-800">{issue.message}</p><p className="mt-1 text-slate-600">Dependency remains intact. {issue.severity === 'error' ? 'Resolve before saving.' : 'Review before saving.'}</p></div>}</div></foreignObject></>}</svg>;
+                      return <svg key={`${blocker.id}-${blocked.id}`} data-planning-connector-state={issue ? 'issue' : highlighted ? 'highlighted' : 'normal'} aria-hidden={issue ? undefined : true} className={`pointer-events-none absolute left-0 overflow-visible ${issueIsOpen ? 'z-40' : 'z-[4]'}`} width={timelineWidth} height={svgHeight} style={{ top: svgTop }}><defs><marker id={markerId} viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" overflow="visible"><path d="M0,0 L8,4 L0,8 Z" fill={connectorColor} /></marker></defs><path d={path} fill="none" stroke={connectorColor} strokeWidth={highlighted || issue ? 2.5 : 1.5} markerEnd={`url(#${markerId})`} /><rect x={destinationNodeX} y={blockedY - destinationNodeSize / 2} width={destinationNodeSize} height={destinationNodeSize} fill={connectorColor} />{issue && <><path d={path} fill="none" stroke="transparent" strokeWidth="12" pointerEvents="stroke" className="cursor-pointer" onClick={(event) => { event.stopPropagation(); focusDependencyIssue(issue); }} /><foreignObject x={issueAnchorX - 7} y={routingY - 7} width={issueIsOpen ? 304 : 14} height={issueIsOpen ? 148 : 14} className="pointer-events-auto overflow-visible"><div data-planning-warning-popover className="relative h-3.5 w-3.5"><button type="button" title={issue.message} aria-expanded={issueIsOpen} aria-label={`${issue.severity === 'error' ? 'Scheduling error' : 'Scheduling warning'}: ${issue.message}`} onClick={(event) => { event.stopPropagation(); focusDependencyIssue(issue); }} className={`absolute inset-0 flex items-center justify-center rounded-full bg-white p-0 leading-none shadow-sm focus-visible:ring-2 focus-visible:ring-blue-700 ${issue.severity === 'error' ? 'text-red-600' : 'text-orange-600'}`}>{issue.severity === 'error' ? <CircleX className="h-2.5 w-2.5 shrink-0" /> : <AlertTriangle className="h-2.5 w-2.5 shrink-0" />}</button>{issueIsOpen && <div role="dialog" aria-label={issue.severity === 'error' ? 'Dependency error details' : 'Dependency warning details'} className={`absolute top-0 z-50 w-64 border bg-white p-3 text-left text-xs shadow-xl ${issue.severity === 'error' ? 'border-red-300' : 'border-orange-300'}`} style={{ left: issueDialogLeft }}><div className={`flex items-center gap-1.5 font-bold ${issue.severity === 'error' ? 'text-red-800' : 'text-orange-800'}`}>{issue.severity === 'error' ? <CircleX className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}{issue.severity === 'error' ? 'Dependency Error' : 'Dependency Warning'}</div><p className="mt-2 leading-5 text-slate-800">{issue.message}</p><p className="mt-1 text-slate-600">Dependency remains intact. {issue.severity === 'error' ? 'Resolve before saving.' : 'Review before saving.'}</p></div>}</div></foreignObject></>}</svg>;
                     })}
                     {(() => {
                       const geometry = planningIntervalGeometry(phase.start_date!, phase.end_date!, formatScheduleDate(start), dayWidth);
@@ -1126,11 +1181,11 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                       const activePhaseInteraction = phaseInteraction?.phaseId === phase.id ? phaseInteraction : null;
                       const handleWidth = Math.max(6, Math.min(10, Math.floor(geometry.width / 3)));
                       const savedGeometry = stagedPhase ? planningIntervalGeometry(stagedPhase.original_start_date, stagedPhase.original_end_date, formatScheduleDate(start), dayWidth) : null;
-                      return <>{savedGeometry && <div aria-label={`Last saved schedule for ${phase.title}`} className="pointer-events-none absolute top-1/2 z-[2] h-6 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/25" style={{ left: savedGeometry.left, width: savedGeometry.width }} />}<div ref={(element) => { if (element) phaseElementRefs.current.set(phase.id, element); else phaseElementRefs.current.delete(phase.id); }} className={`absolute top-1/2 h-6 overflow-visible -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${phaseIssuePopoverOpen ? 'z-50' : 'z-[3]'} ${activePhaseInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isHighlighted ? 'ring-2 ring-slate-500 ring-offset-1' : ''} ${isStagedPhase ? 'ring-2 ring-amber-300 ring-offset-1' : ''} ${phaseSeverity === 'error' ? 'outline outline-2 outline-red-600 outline-offset-1' : phaseSeverity === 'warning' ? 'outline outline-2 outline-orange-500 outline-offset-1' : ''} ${barClass}`} style={{ left: geometry.left, width: geometry.width, backgroundImage: phase.timeline_behavior === 'pause' ? PLANNING_PAUSE_HATCH : undefined }}>
+                      return <>{savedGeometry && <div aria-label={`Last saved schedule for ${phase.title}`} className="pointer-events-none absolute top-1/2 z-[2] h-6 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/25" style={{ left: savedGeometry.left, width: savedGeometry.width }} />}<div data-planning-phase-bar ref={(element) => { if (element) phaseElementRefs.current.set(phase.id, element); else phaseElementRefs.current.delete(phase.id); }} className={`absolute top-1/2 h-6 overflow-visible -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${phaseIssuePopoverOpen ? 'z-50' : 'z-[3]'} ${activePhaseInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isHighlighted ? 'ring-2 ring-slate-500 ring-offset-1' : ''} ${isStagedPhase ? 'ring-2 ring-amber-300 ring-offset-1' : ''} ${phaseSeverity === 'error' ? 'outline outline-2 outline-red-600 outline-offset-1' : phaseSeverity === 'warning' ? 'outline outline-2 outline-orange-500 outline-offset-1' : ''} ${barClass}`} style={{ left: geometry.left, width: geometry.width, backgroundImage: phase.timeline_behavior === 'pause' ? PLANNING_PAUSE_HATCH : undefined }}>
                         {visual && phaseProgress.percent > 0 && <div aria-hidden="true" data-planning-progress-fill className={`pointer-events-none absolute inset-y-0 left-0 z-[1] ${visual.progressClassName}`} style={{ width: `${phaseProgress.percent}%` }} />}
                         {visual && phaseProgress.percent > 0 && phaseProgress.percent < 100 && <div aria-hidden="true" data-planning-progress-boundary className="pointer-events-none absolute inset-y-0 z-[9] w-0.5 -translate-x-0.5 bg-slate-950/80" style={{ left: `${phaseProgress.percent}%` }} />}
                         <button type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} start date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-start')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-start')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 left-0 z-20 border-r border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></button>
-                        <button type="button" data-timeline-interactive="true" onPointerDown={(event) => startPhaseInteraction(event, phase, 'move')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'move')} onMouseEnter={() => setHoveredPlanningPhaseId(phase.id)} onMouseLeave={() => setHoveredPlanningPhaseId(null)} onFocus={() => setHoveredPlanningPhaseId(phase.id)} onBlur={() => setHoveredPlanningPhaseId(null)} onDragStart={(event) => event.preventDefault()} title={phaseTitle(phase)} aria-label={`Move ${phase.title}. Use left and right arrow keys for one-day adjustments.`} className={`absolute inset-y-0 z-10 flex min-w-0 items-center gap-1 overflow-hidden px-1.5 text-left font-bold outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white ${preferences.rowDensity === 'compact' ? 'text-[6px]' : 'text-[6.5px]'}`} style={{ left: handleWidth, right: handleWidth, cursor: activePhaseInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: 'none' }}>{visual && phaseProgress.totalItems > 0 ? <PhaseExecutionLabels title={phase.title} percent={phaseProgress.percent} /> : <span data-planning-phase-title className="min-w-0 truncate px-1 text-white" style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{phase.title}</span>}{isStagedPhase && geometry.width >= 140 && <span data-planning-staged-badge className="shrink-0 bg-amber-100/95 px-1 text-[8px] uppercase text-amber-950">Unsaved</span>}</button>
+                        <button type="button" data-timeline-interactive="true" onPointerDown={(event) => startPhaseInteraction(event, phase, 'move')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'move')} onMouseEnter={() => setHoveredPlanningPhaseId(phase.id)} onMouseLeave={() => setHoveredPlanningPhaseId(null)} onFocus={() => setHoveredPlanningPhaseId(phase.id)} onBlur={() => setHoveredPlanningPhaseId(null)} onDragStart={(event) => event.preventDefault()} title={phaseTitle(phase)} aria-label={mobileReadOnly ? `Open Phase ${phase.title}` : `Move ${phase.title}. Use left and right arrow keys for one-day adjustments.`} className={`absolute inset-y-0 z-10 flex min-w-0 items-center gap-1 overflow-hidden px-1.5 text-left font-bold outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white ${preferences.rowDensity === 'compact' ? 'text-[6px]' : 'text-[6.5px]'}`} style={{ left: handleWidth, right: handleWidth, cursor: mobileReadOnly ? 'pointer' : activePhaseInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: mobileReadOnly ? 'manipulation' : 'none' }}>{visual && phaseProgress.totalItems > 0 ? <PhaseExecutionLabels title={phase.title} percent={phaseProgress.percent} /> : <span data-planning-phase-title className="min-w-0 truncate px-1 text-white" style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{phase.title}</span>}{isStagedPhase && geometry.width >= 140 && <span data-planning-staged-badge className="shrink-0 bg-amber-100/95 px-1 text-[8px] uppercase text-amber-950">Unsaved</span>}</button>
                         <button type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} finish date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-end')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-end')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 right-0 z-20 border-l border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></button>
                         {phaseIssues.length > 0 && <div data-planning-warning-popover className="absolute top-1/2 z-40 -translate-y-1/2" style={{ left: handleWidth + 2 }}><button type="button" data-timeline-interactive="true" aria-expanded={phaseIssuePopoverOpen} aria-label={`${phaseSeverity === 'error' ? 'Scheduling errors' : 'Scheduling warnings'} for ${phase.title}`} title={phaseIssues.map((issue) => issue.message).join('\n')} onClick={(event) => { event.stopPropagation(); focusPhaseWarnings(phase.id, phaseIssues); }} className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/95 shadow-sm focus-visible:ring-2 focus-visible:ring-blue-700 ${phaseSeverity === 'error' ? 'text-red-600' : 'text-orange-600'}`}>{phaseSeverity === 'error' ? <CircleX className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}</button>{phaseIssuePopoverOpen && <div role="dialog" aria-label={`Scheduling feedback for ${phase.title}`} className={`absolute left-6 top-0 z-50 w-72 border bg-white p-3 text-left text-xs shadow-xl ${phaseSeverity === 'error' ? 'border-red-300' : 'border-orange-300'}`}><div className={`flex items-center gap-1.5 font-bold ${phaseSeverity === 'error' ? 'text-red-800' : 'text-orange-800'}`}>{phaseSeverity === 'error' ? <CircleX className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}{phaseSeverity === 'error' ? 'Scheduling Feedback' : 'Scheduling Warnings'}</div><ul className="mt-2 space-y-2 text-slate-800">{phaseIssues.map((issue) => <li key={issue.id} className="border-t border-slate-200 pt-2 first:border-t-0 first:pt-0">{issue.message}</li>)}</ul><p className="mt-2 text-slate-600">{phaseSeverity === 'error' ? 'Resolve errors before saving.' : 'Review before saving.'}</p></div>}</div>}
                       </div></>;
@@ -1145,11 +1200,12 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
         {hasHorizontalOverflow && (
           <div
             aria-label="Timeline horizontal navigator"
+            data-gantt-navigator
             className="sticky bottom-0 left-0 z-30 flex h-9 border-t border-slate-300 bg-slate-100/95 shadow-[0_-2px_6px_rgba(15,23,42,0.08)] backdrop-blur"
             style={{ width: scrollMetrics.viewportWidth }}
             data-timeline-interactive="true"
           >
-            <div className="flex shrink-0 items-center border-r border-slate-300 px-3 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-500" style={{ width: railWidth }}>Timeline navigation</div>
+            <div data-gantt-navigator-label className="flex shrink-0 items-center border-r border-slate-300 px-3 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-500" style={{ width: railWidth }}>Timeline navigation</div>
             <div className="flex min-w-0 flex-1 items-center gap-1.5 px-2">
               <button
                 type="button"
@@ -1161,9 +1217,10 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                 onClick={(event) => { if (event.detail === 0 && scrollRef.current) scrollRef.current.scrollBy({ left: -80, behavior: 'smooth' }); }}
                 className="inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-sm border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600"
               ><ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" /></button>
-              <div ref={navigatorTrackRef} onPointerDown={clickNavigatorTrack} className="relative h-3 min-w-0 flex-1 cursor-pointer rounded-full bg-slate-300/80">
+              <div ref={navigatorTrackRef} data-gantt-navigator-track onPointerDown={clickNavigatorTrack} className="relative h-3 min-w-0 flex-1 cursor-pointer rounded-full bg-slate-300/80">
                 <button
                   type="button"
+                  data-gantt-navigator-thumb
                   aria-label="Drag to navigate Timeline horizontally"
                   onPointerDown={startNavigatorDrag}
                   onPointerMove={moveNavigatorDrag}
