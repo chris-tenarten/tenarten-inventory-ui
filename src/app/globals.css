@@ -149,6 +149,22 @@ textarea::placeholder {
 }
 
 @media (max-width: 767px) {
+  html,
+  body,
+  [data-app-shell],
+  [data-app-shell] > header,
+  [data-app-shell] > main {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  html,
+  body,
+  [data-app-shell] {
+    overflow-x: clip;
+  }
+
   [data-production-gantt][data-mobile-read-only="true"] [data-production-bar] > button:first-of-type,
   [data-production-gantt][data-mobile-read-only="true"] [data-production-bar] > button:last-of-type,
   [data-production-gantt][data-mobile-read-only="true"] [data-planning-phase-bar] > button:first-of-type,
