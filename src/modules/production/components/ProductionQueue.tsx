@@ -90,11 +90,6 @@ export default function ProductionQueue({
                   </div>
                 </div>
 
-                <div className="mt-2 flex min-w-0 items-center justify-between gap-2">
-                  <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} />
-                  {job.archived_at ? <span className="text-[9px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}
-                </div>
-
                 <div data-mobile-planning-summary data-planning-state={readiness.state} className={`mt-2 border-y border-r border-l-2 border-slate-200 bg-white px-2.5 py-1.5 ${readiness.state === 'ready' ? 'border-l-emerald-500' : 'border-l-amber-500'}`}>
                   <div className={`text-xs font-bold ${readiness.state === 'ready' ? 'text-emerald-800' : 'text-amber-900'}`}>
                     {language === 'es' ? readiness.state === 'ready' ? 'Planificación completa' : 'Requiere planificación' : readiness.label}
@@ -110,6 +105,11 @@ export default function ProductionQueue({
                     <span>·</span>
                     <button type="button" onClick={() => { window.location.href = hasMaterialUse ? `/material-usage?historyJob=${job.id}&openReportJob=${job.id}` : `/material-usage?newJob=${job.id}`; }} className={`pointer-events-auto font-bold underline-offset-2 hover:underline focus-visible:ring-2 ${hasMaterialUse ? 'text-emerald-800 focus-visible:ring-emerald-700' : 'text-amber-800 focus-visible:ring-amber-700'}`}>{hasMaterialUse ? tr('Material use linked', 'Uso vinculado') : tr('No material use', 'Sin uso vinculado')}</button>
                   </div>
+                </div>
+
+                <div className="mt-2 flex min-w-0 items-center justify-between gap-2 border-t border-slate-200 pt-2">
+                  <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} />
+                  {job.archived_at ? <span className="text-[9px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}
                 </div>
               </div>
 
