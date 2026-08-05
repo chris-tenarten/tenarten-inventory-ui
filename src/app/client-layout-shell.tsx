@@ -211,7 +211,7 @@ function DomainNav({
           setIsOpen(false);
           event.currentTarget.blur();
         }}
-        className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] outline-none transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(isActive)}`}
+        className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 px-2 text-[11px] font-bold uppercase leading-none tracking-[0.07em] outline-none transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(isActive)}`}
       >
         <Icon />
         <span className="hidden sm:inline">{label}</span>
@@ -346,16 +346,18 @@ export default function ClientLayoutShell({
 
   return (
     <div data-app-shell>
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
+      <header data-shell-header data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
         <div
-          className={`mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
+          data-shell-header-inner
+        className={`relative mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
             hasScrolled
               ? 'gap-1.5 py-1.5 sm:gap-2 sm:py-2'
               : 'gap-2 py-2.5 sm:gap-3 sm:py-3'
           }`}
         >
-          <div className="flex min-w-0 items-center justify-between gap-3">
+          <div data-shell-branding className="flex min-w-0 items-center gap-3 pr-7 sm:pr-0">
             <Link
+              data-shell-brand-link
               href="/"
               className="group flex min-w-0 items-center gap-2.5"
               aria-label={t('shell.goToDashboard')}
@@ -375,6 +377,7 @@ export default function ClientLayoutShell({
               <div className="flex min-w-0 items-center gap-2">
                 <div className="relative min-w-0 leading-none">
                   <div
+                    data-shell-product-name
                     className={`truncate font-bold tracking-tight text-slate-950 transition-all duration-200 group-hover:text-slate-700 ${
                       hasScrolled
                         ? 'text-[14px] sm:text-[15px]'
@@ -385,6 +388,7 @@ export default function ClientLayoutShell({
                   </div>
 
                   <div
+                    data-shell-brand-subtitle
                     className={`mt-1 overflow-hidden font-bold uppercase tracking-[0.16em] text-slate-600 transition-all duration-200 sm:tracking-[0.18em] ${
                       hasScrolled
                         ? 'max-h-0 opacity-0 lg:max-h-5 lg:text-[9px] lg:opacity-100'
@@ -395,7 +399,7 @@ export default function ClientLayoutShell({
                   </div>
                   <HeaderBrandArtwork loginGate={!isUnlocked} />
                 </div>
-                <HeaderEnvironmentIdentity loginGate={!isUnlocked} />
+                <span data-shell-environment><HeaderEnvironmentIdentity loginGate={!isUnlocked} /></span>
               </div>
             </Link>
 
@@ -406,7 +410,7 @@ export default function ClientLayoutShell({
                 onClick={handleLogout}
                 title={t('shell.logout')}
                 aria-label={t('shell.logout')}
-                className={`inline-flex h-9 w-9 shrink-0 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 sm:hidden ${
+                className={`absolute right-1.5 top-1.5 inline-flex h-7 w-7 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 focus-visible:ring-2 focus-visible:ring-red-600 sm:hidden ${
                   hasScrolled ? 'hidden' : ''
                 }`}
               >
@@ -415,10 +419,11 @@ export default function ClientLayoutShell({
             )}
           </div>
 
-          <div className="flex w-full items-center gap-2 lg:w-auto lg:justify-end">
+          <div data-shell-nav-row className="flex w-full items-center lg:w-auto lg:justify-end">
             {isUnlocked && (
               <nav
-                className="flex min-w-0 flex-1 items-center gap-1 overflow-visible lg:flex-none"
+                data-shell-primary-nav
+                className="flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none"
                 aria-label="Primary navigation"
               >
                 {primaryNavItems.map((item) => {
@@ -435,7 +440,7 @@ export default function ClientLayoutShell({
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
+                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 px-2 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
                         isActive,
                       )}`}
                     >
@@ -450,7 +455,7 @@ export default function ClientLayoutShell({
                 <DomainNav pathname={pathname} labelKey="nav.purchasing" href="/purchasing" icon={CartIcon} items={purchasingNavItems} />
                 <Link
                   href="/settings"
-                  className={`inline-flex h-9 shrink-0 items-center justify-center gap-1.5 px-3 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(pathname === '/settings' || pathname.startsWith('/settings/'))}`}
+                  className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 px-2 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(pathname === '/settings' || pathname.startsWith('/settings/'))}`}
                 >
                   <SettingsIcon />
                   <span className="hidden xl:inline">{t('nav.settings')}</span>

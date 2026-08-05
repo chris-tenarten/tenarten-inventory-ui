@@ -585,15 +585,15 @@ export default function ProductionWorkspace() {
     .sort((first, second) => first.localeCompare(second, undefined, { sensitivity: 'base' }));
 
   return (
-    <div className={`mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7 ${hasPendingSchedules ? 'pb-36' : ''}`}>
+    <div className={`mx-auto min-w-0 w-full max-w-[1800px] overflow-x-clip px-2 py-3 sm:px-5 sm:py-7 ${hasPendingSchedules ? 'pb-36' : ''}`}>
       <datalist id="production-customer-suggestions">
         {customerSuggestions.map((customer) => <option key={customer} value={customer} />)}
       </datalist>
-      <div className="mb-4 flex flex-wrap items-center gap-2" aria-label={tr('Dashboard mode', 'Modo del panel')}>
-        <span className="mr-1 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">{tr('Dashboard', 'Panel')}</span>
-        <div className="inline-flex rounded-sm border border-slate-300 bg-slate-50 p-1">
-          <button type="button" aria-pressed={dashboardMode === 'pipeline'} onClick={() => setDashboardMode('pipeline')} className={`h-8 px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${dashboardMode === 'pipeline' ? 'tenops-selected-surface shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{tr('Production Pipeline', 'Flujo de producción')}</button>
-          <button type="button" aria-pressed={dashboardMode === 'snapshot'} onClick={() => setDashboardMode('snapshot')} className={`inline-flex h-8 items-center gap-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${dashboardMode === 'snapshot' ? 'tenops-selected-surface shadow-sm' : 'text-slate-600 hover:bg-white'}`}><Camera className="h-3.5 w-3.5" aria-hidden="true" />{tr('Monthly Snapshot', 'Resumen mensual')}</button>
+      <div className="mb-3 min-w-0 sm:mb-4 sm:flex sm:flex-wrap sm:items-center sm:gap-2" aria-label={tr('Dashboard mode', 'Modo del panel')}>
+        <span className="mr-1 hidden text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500 sm:inline">{tr('Dashboard', 'Panel')}</span>
+        <div className="grid w-full min-w-0 grid-cols-2 rounded-sm border border-slate-300 bg-slate-50 p-1 sm:inline-flex sm:w-auto">
+          <button type="button" aria-pressed={dashboardMode === 'pipeline'} onClick={() => setDashboardMode('pipeline')} className={`min-h-8 min-w-0 px-1.5 text-[9px] font-bold uppercase leading-tight tracking-[0.05em] sm:h-8 sm:px-3 sm:text-[10px] sm:tracking-[0.08em] ${dashboardMode === 'pipeline' ? 'tenops-selected-surface shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{tr('Production Pipeline', 'Flujo de producción')}</button>
+          <button type="button" aria-pressed={dashboardMode === 'snapshot'} onClick={() => setDashboardMode('snapshot')} className={`inline-flex min-h-8 min-w-0 items-center justify-center gap-1 px-1.5 text-[9px] font-bold uppercase leading-tight tracking-[0.05em] sm:h-8 sm:gap-1.5 sm:px-3 sm:text-[10px] sm:tracking-[0.08em] ${dashboardMode === 'snapshot' ? 'tenops-selected-surface shadow-sm' : 'text-slate-600 hover:bg-white'}`}><Camera className="hidden h-3.5 w-3.5 shrink-0 sm:block" aria-hidden="true" />{tr('Monthly Snapshot', 'Resumen mensual')}</button>
         </div>
       </div>
       {dashboardMode === 'snapshot' ? <MonthlySnapshot /> : <div>
@@ -633,12 +633,12 @@ export default function ProductionWorkspace() {
 
         </div>
 
-        <div className="flex flex-col gap-3 rounded-sm border border-slate-200 bg-white p-2.5 shadow-sm lg:flex-row lg:items-center">
-          <div className="flex shrink-0 flex-wrap items-center gap-2"><span id="production-view-label" className="text-xs font-bold uppercase tracking-[0.08em] text-slate-600">{tr('View', 'Vista')}</span><div role="group" aria-labelledby="production-view-label" className="flex items-center rounded-sm border border-slate-300 bg-slate-50 p-1">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2 rounded-sm border border-slate-200 bg-white p-2 shadow-sm lg:flex lg:items-center lg:gap-3 lg:p-2.5">
+          <div className="col-span-2 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:flex-wrap lg:items-center lg:gap-2"><span id="production-view-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0 lg:text-xs">{tr('View', 'Vista')}</span><div role="group" aria-labelledby="production-view-label" className="grid min-w-0 grid-cols-3 items-center rounded-sm border border-slate-300 bg-slate-50 p-1 lg:flex">
             <button
               type="button"
               onClick={() => setActiveView('queue')}
-              className={`h-8 px-4 text-[10px] font-bold uppercase tracking-[0.09em] ${
+              className={`h-8 min-w-0 px-1 text-[9px] font-bold uppercase tracking-[0.05em] sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${
                 activeView === 'queue'
                   ? 'tenops-selected-surface shadow-sm'
                   : 'text-slate-600 hover:bg-white'
@@ -649,7 +649,7 @@ export default function ProductionWorkspace() {
             <button
               type="button"
               onClick={() => setActiveView('spreadsheet')}
-              className={`h-8 px-4 text-[10px] font-bold uppercase tracking-[0.09em] ${
+              className={`h-8 min-w-0 px-1 text-[9px] font-bold uppercase tracking-[0.05em] sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${
                 activeView === 'spreadsheet'
                   ? 'tenops-selected-surface shadow-sm'
                   : 'text-slate-600 hover:bg-white'
@@ -657,7 +657,7 @@ export default function ProductionWorkspace() {
             >
               {tr('Table', 'Tabla')}
             </button>
-            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-8 rounded-sm px-4 text-[10px] font-bold uppercase tracking-[0.09em] focus-visible:ring-2 focus-visible:ring-blue-600 ${activeView==='timeline'?'tenops-selected-surface shadow-sm':'text-slate-600 hover:bg-white'}`}>{tr('Timeline', 'Cronograma')}</button>
+            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-8 min-w-0 rounded-sm px-1 text-[9px] font-bold uppercase tracking-[0.05em] focus-visible:ring-2 focus-visible:ring-blue-600 sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${activeView==='timeline'?'tenops-selected-surface shadow-sm':'text-slate-600 hover:bg-white'}`}>{tr('Timeline', 'Cronograma')}</button>
           </div>
           </div>
 
@@ -666,20 +666,20 @@ export default function ProductionWorkspace() {
             value={search}
             onChange={(event) => { setFocusedJobId(null); setSearch(event.target.value); }}
             placeholder={tr('Search jobs...', 'Buscar trabajos...')}
-            className="h-9 min-w-0 flex-1 rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
+            className="col-span-2 h-9 min-w-0 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100 lg:col-auto lg:flex-1"
           />
 
-          {activeView !== 'timeline' && <div className="flex shrink-0 items-center gap-2"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Sort', 'Ordenar')}</span><div className="inline-flex h-9 overflow-hidden rounded-sm border border-slate-300">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`border-r border-slate-300 px-3 text-[10px] font-bold uppercase last:border-r-0 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
+          {activeView !== 'timeline' && <div className="col-span-2 flex min-w-0 items-center gap-2 lg:col-auto lg:shrink-0"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">{tr('Sort', 'Ordenar')}</span><div className="grid h-9 min-w-0 flex-1 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
 
           {activeView === 'spreadsheet' && (
-            <div id="production-table-columns-toolbar-slot" className="relative shrink-0" />
+            <div id="production-table-columns-toolbar-slot" className="relative min-w-0 lg:shrink-0" />
           )}
 
-          <div ref={filterRef} className="relative shrink-0">
+          <div ref={filterRef} className="relative min-w-0 lg:shrink-0">
             <button
               type="button"
               onClick={() => setIsFilterOpen((current) => !current)}
-              className={`inline-flex h-9 items-center gap-2 border px-3 text-xs font-bold uppercase tracking-[0.07em] transition ${
+              className={`inline-flex h-9 w-full items-center justify-center gap-2 border px-3 text-xs font-bold uppercase tracking-[0.07em] transition lg:w-auto ${
                 activeFilterCount > 0
                   ? 'border-blue-700 bg-blue-50 text-blue-800'
                   : 'border-slate-400 bg-white text-slate-700 hover:bg-slate-50'
@@ -695,7 +695,7 @@ export default function ProductionWorkspace() {
             </button>
 
             {isFilterOpen && (
-              <div className="absolute right-0 top-11 z-40 w-72 border border-slate-400 bg-white p-4 shadow-xl">
+              <div className="fixed left-2 right-2 top-32 z-40 border border-slate-400 bg-white p-4 shadow-xl sm:absolute sm:left-auto sm:right-0 sm:top-11 sm:w-72">
                 <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{tr('Schedule', 'Programación')}</div>
                 <div className="mt-2 space-y-2">
                   {(['scheduled', 'unscheduled'] as ScheduleFilter[]).map((value) => (
