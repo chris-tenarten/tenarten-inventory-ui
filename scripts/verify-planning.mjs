@@ -9,7 +9,7 @@ import {
 } from "../src/modules/planning/timeline-model.mjs";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const [migration, refinement, progressMigration, progressVerification, schedulingMigration, schedulingVerification, scheduling, schedulingModel, data, panel, creationDialog, itemEditor, editor, library, workspace, gantt, inspector, shell, settings, visuals, demo] = await Promise.all([
+const [migration, refinement, progressMigration, progressVerification, schedulingMigration, schedulingVerification, scheduling, schedulingModel, data, panel, creationDialog, itemEditor, editor, library, collapsedPhaseDisplay, collapsedPhaseToggle, workspace, gantt, inspector, shell, settings, visuals, demo] = await Promise.all([
   read("supabase/migrations/20260731_003_planning_phases_items.sql"),
   read("supabase/migrations/20260803_001_planning_library_colors_and_phase_cap.sql"),
   read("supabase/migrations/20260804_001_planning_execution_progress.sql"),
@@ -24,6 +24,8 @@ const [migration, refinement, progressMigration, progressVerification, schedulin
   read("src/modules/planning/PlanningItemEditor.tsx"),
   read("src/modules/planning/PlanningPhaseEditor.tsx"),
   read("src/modules/planning/PhaseLibraryManager.tsx"),
+  read("src/modules/planning/collapsed-phase-display.ts"),
+  read("src/modules/planning/CollapsedPhaseDisplayToggle.tsx"),
   read("src/modules/production/ProductionWorkspace.tsx"),
   read("src/modules/production/components/ProductionGantt.tsx"),
   read("src/modules/production/components/ProductionJobInspector.tsx"),
@@ -147,6 +149,21 @@ assert.match(gantt, /Show Planning lanes/);
 assert.match(gantt, /Hide Planning lanes/);
 assert.match(gantt, /inCanvasPhases\.map/);
 assert.doesNotMatch(gantt, /collapsedPhases\.hidden|additional Phase/);
+assert.match(gantt, /data-collapsed-phase-display=\{collapsedPhaseDisplay\}/);
+assert.match(gantt, /collapsedPhaseDisplay === 'fill'[\s\S]*top-1\/2 h-8 -translate-y-1\/2[\s\S]*top-\[calc\(50%\+10px\)\] h-1\.5/);
+assert.doesNotMatch(gantt, /data-collapsed-planning-progress-fill|data-collapsed-planning-progress-boundary/);
+assert.doesNotMatch(library, /Collapsed Phase bar display|COLLAPSED_PHASE_DISPLAY_MODES/);
+assert.match(panel, /<CollapsedPhaseDisplayToggle \/>/);
+assert.match(collapsedPhaseToggle, /role="radiogroup" aria-label="Collapsed Phase bar display"/);
+assert.match(collapsedPhaseToggle, /COLLAPSED_PHASE_DISPLAY_MODES\.map/);
+assert.match(collapsedPhaseToggle, /Settings2 className="h-3 w-3 shrink-0"/);
+assert.match(collapsedPhaseDisplay, /tenops\.planning\.collapsed-phase-display\.v1/);
+assert.match(collapsedPhaseDisplay, /\["compact", "fill"\]/);
+assert.match(collapsedPhaseDisplay, /typeof window === "undefined"\) return "fill"/);
+assert.match(collapsedPhaseDisplay, /isCollapsedPhaseDisplayMode\(stored\) \? stored : "fill"/);
+assert.match(collapsedPhaseDisplay, /window\.dispatchEvent/);
+assert.match(collapsedPhaseToggle, /useState<CollapsedPhaseDisplayMode>\("fill"\)/);
+assert.match(visuals, /steel_blue[\s\S]*bg-blue-300\/90/);
 assert.match(gantt, /planning-arrow-/);
 assert.match(gantt, /pointer-events-none absolute left-0/);
 assert.equal((gantt.match(/planningIntervalGeometry\(/g) ?? []).length, 6);

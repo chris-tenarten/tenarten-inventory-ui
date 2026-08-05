@@ -21,6 +21,7 @@ import { overlayVisualForPhase, PLANNING_PAUSE_HATCH } from "./phase-visuals";
 import PlanningItemEditor from "./PlanningItemEditor";
 import PlanningPhaseEditor from "./PlanningPhaseEditor";
 import PhaseCreationDialog from "./PhaseCreationDialog";
+import CollapsedPhaseDisplayToggle from "./CollapsedPhaseDisplayToggle";
 import { planningPhaseWithStagedDates, type StagedPlanningSchedules } from "./schedule-staging";
 import type { PlanningScheduleIssue } from "./schedule-model.mjs";
 import { countsTowardPlanningPhaseLimit, MAX_PLANNING_PHASES, planningStatuses, statusLabels } from "./types";
@@ -279,6 +280,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
           <p className="text-xs text-slate-500">{phases.length} Phase{phases.length === 1 ? "" : "s"}</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <CollapsedPhaseDisplayToggle />
           <Link href={`/settings?returnJobId=${encodeURIComponent(job.id)}&returnJobName=${encodeURIComponent(job.name)}#phase-library`} className="inline-flex h-9 items-center gap-1.5 border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600"><Settings2 className="h-4 w-4" aria-hidden="true" />Phase Library</Link>
           {library.length > 0 && (
             <select aria-label="Add from Phase Library" defaultValue="" onChange={(event) => { const value = event.target.value; event.target.value = ""; if (value) openPhaseCreation(value, event.currentTarget); }} className="h-9 border border-slate-300 bg-white px-2 text-xs font-bold">
