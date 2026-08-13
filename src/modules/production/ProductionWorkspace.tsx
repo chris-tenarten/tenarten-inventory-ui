@@ -495,6 +495,7 @@ export default function ProductionWorkspace() {
   };
   const closeInspector = () => {
     setSelectedJobId(null);
+    setFocusedJobId(null);
     setInspectorFocus(undefined);
     requestAnimationFrame(() => inspectorOpenerRef.current?.focus());
   };
