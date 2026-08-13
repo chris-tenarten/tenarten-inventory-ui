@@ -340,6 +340,66 @@ Status badges, Timeline bars, and legends use shared mappings. On Hold uses a st
 
 Desktop remains authoritative. Tablet receives deliberate future adaptations. Phone becomes a leadership/light-action experience. Do not remove desktop capability for superficial mobile compatibility.
 
+### Production interaction standards
+
+Production is an operational workspace. Its interface guides operators toward the next meaningful action without exposing implementation details or overwhelming them with system metrics.
+
+#### One operational question per surface
+
+Each Production surface answers one primary question:
+
+- **Overview:** What requires my attention?
+- **Timeline:** What should be planned next?
+- **Inspector:** What changes am I making?
+- **Table:** What information am I managing?
+
+Do not combine competing responsibilities merely because the underlying information is available.
+
+#### One canonical workflow
+
+Every significant business operation has one canonical path. Production Job creation, scheduling, attachment upload, and save operations must not acquire parallel implementations in different views. New entry points may open or extend the existing workflow; they must not reproduce its state, validation, persistence, or success handling.
+
+#### Explicit actions
+
+Critical operations expose a visible, purposeful affordance. Users must not have to discover Save, Schedule, Import, Update, or similar actions by clicking whitespace, changing focus, losing focus, or interacting accidentally. Direct manipulation may stage work, but the required commitment action remains explicit.
+
+#### Busy-state protection
+
+Every state-changing operation—create, update, upload, save, archive, import, and comparable mutations—enters a visible busy state immediately. While it runs, the initiating control prevents repeated activation and the workflow ignores duplicate rapid interactions. Interaction is restored after success or failure, and failure leaves the operator with a clear recovery path.
+
+Busy-state protection is preferred over a confirmation dialog when the primary risk is accidental repeated execution. Confirmation is reserved for destructive, irreversible, or otherwise consequential operations; duration alone is not a reason to ask for confirmation.
+
+#### Information hierarchy and local exceptions
+
+Prefer actionable operational guidance over persistent statistics:
+
+- headers summarize
+- status rows communicate health
+- badges identify local exceptions
+- Inspectors perform work
+- Timeline plans work
+- Tables manage work
+
+Do not show multiple metrics that express the same underlying state. Communicate exceptions where they occur whenever practical. Unscheduled badges, Planning Attention, and Review Issues are preferred to making operators infer local problems from global counters.
+
+#### Business language, not implementation language
+
+Operator-facing UI describes the work: Production Jobs, schedules, Work Orders, customers, plate numbers, reservations, shipments, and other operational concepts. Parser, provider, confidence, OCR, AI, matching algorithm, extraction engine, normalization, database, and API are implementation concepts. Keep them in code, diagnostics, logs, or developer tooling rather than ordinary Production workflows.
+
+#### Timeline navigation purposes
+
+The Timeline is a planning tool, not a historical archive. Its initial context prioritizes current planning decisions while completed and cancelled history remains available. Its navigation concepts stay distinct:
+
+- **Default:** Where should I begin planning?
+- **Today:** Where am I in time?
+- **Fit:** Show me the complete schedule.
+
+Do not redefine one of these controls to serve another purpose.
+
+#### Review expectation
+
+Evaluate future Production work against these standards before adding workflows or interaction patterns. Prefer extending the established model over inventing another one. Confirm that the proposed surface answers one operational question, uses business language, exposes consequential actions, protects mutations from repeated activation, and keeps exceptions close to the affected work.
+
 ### Visual language
 
 - Neutral slate surfaces with restrained status color.

@@ -14,12 +14,15 @@ import {
   parseScheduleDate,
 } from '../schedule';
 import type { ProductionJob } from '../types';
+import { arrangeProductionTimelineJobs } from '../arrangement';
 import { productionStatusVisuals, productionStatusVisualByValue } from '../status-visuals';
 import {
   clampTimelineDayWidth,
   defaultTimelinePreferences,
-  fitTimelineDayWidth,
+  fitRenderedTimelineScrollLeft,
   parseTimelinePreferences,
+  productionTimelineFitParticipates,
+  productionTimelinePlanningHorizon,
   RAIL_WIDTH_MAX,
   RAIL_WIDTH_MIN,
   TIMELINE_PREFERENCES_KEY,
@@ -41,6 +44,7 @@ import { adjustPlanningInterval, planningPhaseWithStagedDates, type StagedPlanni
 import { dependentPlanningPhaseIds, evaluatePlanningSchedule, planningCascadeDelta, planningDependencyGraphIsAcyclic, type PlanningScheduleIssue } from '@/modules/planning/schedule-model.mjs';
 import { overlayVisualForPhase, PLANNING_PAUSE_HATCH } from '@/modules/planning/phase-visuals';
 import { mergePauseRanges, planningIntervalGeometry, rangesIntersect, selectCollapsedTimelinePhases } from '@/modules/planning/timeline-model.mjs';
+import UnscheduledBadge from './UnscheduledBadge';
 
 type ProductionGanttProps = {
   jobs: ProductionJob[];
@@ -90,8 +94,8 @@ type PhaseScheduleInteraction = Omit<ScheduleInteraction, 'jobId'> & {
 };
 
 const DRAG_THRESHOLD_PX = 4;
-const FIT_PADDING_DAYS = 2;
 const PAN_BUTTON_SPEED = 520;
+const DOMAIN_EDGE_VIEWPORTS = 1.25;
 type TimelineScrollMetrics = {
   scrollLeft: number;
   maxScrollLeft: number;
@@ -173,7 +177,7 @@ function proposedDates(interaction: Pick<ScheduleInteraction, 'mode' | 'originCl
   return adjustPlanningInterval(interaction.originalStart, interaction.originalEnd, deltaDays, interaction.mode);
 }
 
-function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom) {
+function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom, extension: { past: number; future: number }) {
   const zoomOption = timelineZoomOption(zoom);
   const today = startOfLocalDay(new Date());
   const timelineDates = jobs.flatMap((job) => [job.planned_start, job.planned_end, job.requested_delivery_date]
@@ -185,10 +189,12 @@ function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom) {
   const latestJobDate = timelineDates.length > 0
     ? new Date(Math.max(...timelineDates.map((date) => date.getTime())))
     : addCalendarDays(today, 28);
-  const earliest = addCalendarDays(earliestJobDate < today ? earliestJobDate : today, -zoomOption.paddingDays);
-  const minimumEnd = addCalendarDays(earliest, zoomOption.minimumDays - 1);
+  const baseEarliest = addCalendarDays(earliestJobDate < today ? earliestJobDate : today, -zoomOption.paddingDays);
+  const earliest = addCalendarDays(baseEarliest, -extension.past);
+  const minimumEnd = addCalendarDays(baseEarliest, zoomOption.minimumDays - 1);
   const paddedLatest = addCalendarDays(latestJobDate > today ? latestJobDate : today, zoomOption.paddingDays);
-  const latest = paddedLatest > minimumEnd ? paddedLatest : minimumEnd;
+  const baseLatest = paddedLatest > minimumEnd ? paddedLatest : minimumEnd;
+  const latest = addCalendarDays(baseLatest, extension.future);
   const totalDays = differenceInCalendarDays(latest, earliest) + 1;
   const days: TimelineDay[] = [];
 
@@ -224,13 +230,21 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const [collapsedPhaseDisplay, setCollapsedPhaseDisplay] = useState<CollapsedPhaseDisplayMode>('fill');
   const [mobileReadOnly, setMobileReadOnly] = useState(false);
   const [mobileLandscape, setMobileLandscape] = useState(false);
+  const [navigationMode, setNavigationMode] = useState<'fit' | 'today' | null>(null);
+  const [domainExtension, setDomainExtension] = useState({ past: 0, future: 0 });
   const ganttRef = useRef<HTMLDivElement | null>(null);
+  const workspaceRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const navigatorTrackRef = useRef<HTMLDivElement | null>(null);
   const panFrameRef = useRef<number | null>(null);
   const panDirectionRef = useRef(0);
   const lastPanTimeRef = useRef(0);
   const timelinePointerInsideRef = useRef(false);
+  const initialViewportPositionedRef = useRef(false);
+  const domainExtensionPendingRef = useRef(false);
+  const pendingPrependWidthRef = useRef(0);
+  const programmaticNavigationRef = useRef(false);
+  const navigationReleaseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const railResizeRef = useRef<{ pointerId: number; startX: number; startWidth: number } | null>(null);
   const phaseElementRefs = useRef(new Map<string, HTMLDivElement>());
   const zoom = preferences.zoom;
@@ -238,10 +252,12 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const rowDensityIndex = Math.max(0, TIMELINE_ROW_DENSITY_OPTIONS.findIndex((option) => option.value === preferences.rowDensity));
   const rowDensityOption = TIMELINE_ROW_DENSITY_OPTIONS[rowDensityIndex];
   const displayJobRowHeight = mobileLandscape ? 44 : rowDensityOption.height;
-  const displayJobs = useMemo(() => jobs.map((job) => stagedSchedules[job.id]
+  const displayJobs = useMemo(() => arrangeProductionTimelineJobs(jobs.map((job) => stagedSchedules[job.id]
     ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
-    : job), [jobs, stagedSchedules]);
-  const timeline = useMemo(() => createTimeline(displayJobs, zoom), [displayJobs, zoom]);
+    : job)), [jobs, stagedSchedules]);
+  const scheduledJobs = useMemo(() => displayJobs.filter((job) => job.planned_start && job.planned_end), [displayJobs]);
+  const needsSchedulingJobs = useMemo(() => displayJobs.filter((job) => !job.planned_start || !job.planned_end), [displayJobs]);
+  const timeline = useMemo(() => createTimeline(displayJobs, zoom, domainExtension), [displayJobs, domainExtension, zoom]);
   const zoomOption = timelineZoomOption(zoom);
   const dayWidth = preferences.dayWidths[zoom];
   const effectivePlanningPhases = useMemo(() => {
@@ -353,6 +369,59 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     });
   }, []);
 
+  const releaseProgrammaticNavigation = useCallback(() => {
+    if (navigationReleaseTimerRef.current) clearTimeout(navigationReleaseTimerRef.current);
+    navigationReleaseTimerRef.current = setTimeout(() => {
+      programmaticNavigationRef.current = false;
+      navigationReleaseTimerRef.current = null;
+    }, 450);
+  }, []);
+
+  const focusTimelineWorkspace = useCallback(() => {
+    const workspace = workspaceRef.current;
+    if (!workspace) return;
+    const shellHeader = document.querySelector<HTMLElement>('[data-shell-header]');
+    const headerHeight = shellHeader?.getBoundingClientRect().height ?? 0;
+    window.scrollTo({ top: window.scrollY + workspace.getBoundingClientRect().top - headerHeight, behavior: 'smooth' });
+  }, []);
+
+  const extendTimelineAtEdge = useCallback((element: HTMLDivElement) => {
+    if (domainExtensionPendingRef.current || programmaticNavigationRef.current) return;
+    const calendarViewport = Math.max(1, element.clientWidth - railWidth);
+    const threshold = calendarViewport * DOMAIN_EDGE_VIEWPORTS;
+    const chunkDays = Math.max(28, Math.ceil(calendarViewport / dayWidth));
+    const maxScrollLeft = Math.max(0, element.scrollWidth - element.clientWidth);
+    if (element.scrollLeft <= threshold) {
+      domainExtensionPendingRef.current = true;
+      pendingPrependWidthRef.current = chunkDays * dayWidth;
+      setDomainExtension((current) => ({ ...current, past: current.past + chunkDays }));
+    } else if (maxScrollLeft - element.scrollLeft <= threshold) {
+      domainExtensionPendingRef.current = true;
+      setDomainExtension((current) => ({ ...current, future: current.future + chunkDays }));
+    }
+  }, [dayWidth, railWidth]);
+
+  const handleTimelineScroll = useCallback(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+    updateScrollMetrics();
+    if (!programmaticNavigationRef.current) setNavigationMode(null);
+    extendTimelineAtEdge(element);
+  }, [extendTimelineAtEdge, updateScrollMetrics]);
+
+  useLayoutEffect(() => {
+    if (!domainExtensionPendingRef.current) return;
+    const element = scrollRef.current;
+    if (element && pendingPrependWidthRef.current > 0) element.scrollLeft += pendingPrependWidthRef.current;
+    pendingPrependWidthRef.current = 0;
+    domainExtensionPendingRef.current = false;
+    updateScrollMetrics();
+  }, [domainExtension, updateScrollMetrics]);
+
+  useEffect(() => () => {
+    if (navigationReleaseTimerRef.current) clearTimeout(navigationReleaseTimerRef.current);
+  }, []);
+
   useEffect(() => {
     const element = scrollRef.current;
     if (!element) return;
@@ -366,6 +435,31 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
       window.removeEventListener('resize', updateScrollMetrics);
     };
   }, [dayWidth, railWidth, timeline.days.length, updateScrollMetrics]);
+
+  useEffect(() => {
+    if (!preferencesLoaded || initialViewportPositionedRef.current) return;
+
+    const positionInitialViewport = (remainingAttempts: number) => {
+      const element = scrollRef.current;
+      if (!element) return;
+      const calendarViewport = element.clientWidth - railWidth;
+      if (calendarViewport <= 0) {
+        if (remainingAttempts > 0) requestAnimationFrame(() => positionInitialViewport(remainingAttempts - 1));
+        return;
+      }
+
+      const horizon = productionTimelinePlanningHorizon(displayJobs);
+      const focusDate = horizon?.start ?? formatScheduleDate(startOfLocalDay(new Date()));
+      const focusOffset = differenceInCalendarDays(parseScheduleDate(focusDate), timeline.start);
+      const maxScrollLeft = Math.max(0, element.scrollWidth - element.clientWidth);
+      element.scrollLeft = Math.min(maxScrollLeft, Math.max(0, (focusOffset - zoomOption.paddingDays) * dayWidth));
+      initialViewportPositionedRef.current = true;
+      updateScrollMetrics();
+    };
+
+    const frame = requestAnimationFrame(() => positionInitialViewport(3));
+    return () => cancelAnimationFrame(frame);
+  }, [dayWidth, displayJobs, preferencesLoaded, railWidth, timeline.start, updateScrollMetrics, zoomOption.paddingDays]);
 
   useEffect(() => {
     function handleKeyDown(event: globalThis.KeyboardEvent) {
@@ -625,6 +719,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   }
 
   function updateDayWidth(nextWidth: number) {
+    setNavigationMode(null);
     const element = scrollRef.current;
     const calendarViewport = Math.max(1, (element?.clientWidth ?? 0) - railWidth);
     const centeredDay = element ? (element.scrollLeft + calendarViewport / 2) / dayWidth : 0;
@@ -639,6 +734,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   function changeZoom(nextZoom: TimelineZoom) {
     if (interaction) return;
+    setNavigationMode(null);
     setPreferences((current) => ({ ...current, zoom: nextZoom }));
     requestAnimationFrame(updateScrollMetrics);
   }
@@ -646,22 +742,26 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   function fitTimeline() {
     const element = scrollRef.current;
     if (!element) return;
-    const relevantDates = displayJobs.flatMap((job) => [job.planned_start, job.planned_end, job.requested_delivery_date]
-      .filter((value): value is string => Boolean(value))
-      .map(parseScheduleDate));
-    if (relevantDates.length === 0) return;
-    const earliest = new Date(Math.min(...relevantDates.map((date) => date.getTime())));
-    const latest = new Date(Math.max(...relevantDates.map((date) => date.getTime())));
-    const rangeDays = differenceInCalendarDays(latest, earliest) + 1;
+    const renderedBars = Array.from(element.querySelectorAll<HTMLElement>('[data-production-bar][data-fit-participant="true"]'));
+    if (renderedBars.length === 0) return;
+    const contentLeft = Math.min(...renderedBars.map((bar) => bar.offsetLeft));
+    const contentRight = Math.max(...renderedBars.map((bar) => bar.offsetLeft + bar.offsetWidth));
     const calendarViewport = Math.max(1, element.clientWidth - railWidth);
-    const width = fitTimelineDayWidth(zoom, rangeDays, calendarViewport, FIT_PADDING_DAYS);
-    setPreferences((current) => ({ ...current, dayWidths: { ...current.dayWidths, [zoom]: width } }));
+    programmaticNavigationRef.current = true;
+    setNavigationMode('fit');
     requestAnimationFrame(() => {
       if (!scrollRef.current) return;
-      const earliestOffset = differenceInCalendarDays(earliest, timeline.start);
-      scrollRef.current.scrollLeft = Math.max(0, (earliestOffset - FIT_PADDING_DAYS) * width);
+      const maxScrollLeft = Math.max(0, scrollRef.current.scrollWidth - scrollRef.current.clientWidth);
+      scrollRef.current.scrollLeft = fitRenderedTimelineScrollLeft({
+        contentLeft,
+        contentRight,
+        calendarViewportWidth: calendarViewport,
+        maxScrollLeft,
+        visualPadding: Math.min(48, calendarViewport * 0.08),
+      });
       updateScrollMetrics();
-      ganttRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      focusTimelineWorkspace();
+      releaseProgrammaticNavigation();
     });
   }
 
@@ -670,7 +770,11 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     const index = timeline.days.findIndex((day) => day.isToday);
     if (!element || index < 0) return;
     const calendarViewport = Math.max(1, element.clientWidth - railWidth);
+    programmaticNavigationRef.current = true;
+    setNavigationMode('today');
     element.scrollTo({ left: Math.max(0, index * dayWidth + dayWidth / 2 - calendarViewport / 2), behavior: 'smooth' });
+    focusTimelineWorkspace();
+    releaseProgrammaticNavigation();
   }
 
   function focusJobProductionInterval(job: ProductionJob) {
@@ -732,6 +836,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   function startCanvasPan(event: ReactPointerEvent<HTMLDivElement>) {
     const shouldPan = event.button === 1 || (event.button === 0 && (spacePressed || isTimelinePanCanvas(event.target)));
     if (!shouldPan || isInteractivePanTarget(event.target)) return;
+    setNavigationMode(null);
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
     setCanvasPan({
@@ -761,6 +866,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     if (event.button !== 0 || !scrollRef.current) return;
     event.preventDefault();
     event.stopPropagation();
+    setNavigationMode(null);
     event.currentTarget.setPointerCapture(event.pointerId);
     setNavigatorDrag({ pointerId: event.pointerId, startX: event.clientX, startScrollLeft: scrollRef.current.scrollLeft });
   }
@@ -784,6 +890,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   function clickNavigatorTrack(event: ReactPointerEvent<HTMLDivElement>) {
     if (!scrollRef.current || !navigatorTrackRef.current || event.target !== event.currentTarget) return;
+    setNavigationMode(null);
     const rect = navigatorTrackRef.current.getBoundingClientRect();
     const fraction = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
     scrollRef.current.scrollTo({ left: fraction * scrollMetrics.maxScrollLeft, behavior: 'smooth' });
@@ -798,6 +905,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   function startContinuousPan(direction: -1 | 1) {
     stopContinuousPan();
+    setNavigationMode(null);
     panDirectionRef.current = direction;
     if (scrollRef.current) scrollRef.current.scrollLeft += direction * 28;
     function step(time: number) {
@@ -850,6 +958,28 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   return (
     <div ref={ganttRef} data-production-gantt data-mobile-read-only={mobileReadOnly ? 'true' : undefined} data-mobile-landscape={mobileLandscape ? 'true' : undefined} className="scroll-mt-16 overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+      {needsSchedulingJobs.length > 0 && (
+        <section className="border-b border-slate-300 bg-slate-50 px-3 py-3" aria-labelledby="needs-scheduling-heading">
+          <div className="flex items-center justify-between gap-3">
+            <h3 id="needs-scheduling-heading" className="text-xs font-bold uppercase tracking-[0.1em] text-slate-800">Needs Scheduling</h3>
+            <span className="text-[10px] font-semibold text-slate-500">{needsSchedulingJobs.length} {needsSchedulingJobs.length === 1 ? 'job needs' : 'jobs need'} dates</span>
+          </div>
+          <div className="mt-2 grid gap-1.5 md:grid-cols-2">
+            {needsSchedulingJobs.map((job) => (
+              <button key={job.id} type="button" onClick={() => onSelectJob(job, 'planned-dates')} className="flex min-h-11 min-w-0 items-center justify-between gap-3 border border-slate-300 bg-white px-2.5 py-1.5 text-left hover:border-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-700">
+                <span className="min-w-0">
+                  <span className="block truncate text-xs font-bold text-slate-950">{job.job_number ? `${job.job_number} — ` : ''}{job.name}</span>
+                  <span className="block truncate text-[10px] text-slate-500">{job.customer || 'Customer not recorded'}</span>
+                </span>
+                <UnscheduledBadge compact />
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+      <div ref={workspaceRef} className="scroll-mt-16 border-b border-slate-200 bg-white px-3 py-2">
+        <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-slate-800">Planning Timeline</h3>
+      </div>
       <div data-gantt-toolbar className="z-40 grid min-w-0 grid-cols-3 items-center gap-1.5 border-b border-slate-200 bg-white p-2 text-[10px] font-semibold text-slate-700 shadow-sm md:flex md:flex-wrap md:gap-x-3 md:gap-y-2 md:px-3">
         {mobileReadOnly && <span data-mobile-read-only-label className="col-span-3 inline-flex h-7 items-center justify-center border border-slate-300 bg-slate-100 px-2 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-600 md:h-8">{mobileLandscape ? 'Read only' : 'Mobile view · Read only'}</span>}
         <span id="timeline-zoom-label" className="hidden font-bold uppercase tracking-[0.12em] text-slate-500 md:inline">Zoom</span>
@@ -862,8 +992,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             <button key={option.value} type="button" aria-pressed={zoom === option.value} disabled={Boolean(interaction)} onClick={() => changeZoom(option.value)} className={`h-full min-w-0 rounded-sm px-0.5 text-[8px] font-bold uppercase tracking-[0.03em] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 md:px-3 md:text-[9px] md:tracking-[0.08em] ${zoom === option.value ? 'tenops-selected-surface shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{option.label}</button>
           ))}
         </div>
-        <button type="button" onClick={fitTimeline} disabled={Boolean(interaction)} className="inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border border-slate-300 bg-white px-1 text-[8px] font-bold uppercase tracking-[0.04em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:gap-1.5 md:px-2.5 md:text-[9px] md:tracking-[0.08em]"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />Fit</button>
-        <button type="button" onClick={goToToday} disabled={Boolean(interaction)} className="inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border border-blue-300 bg-white px-1 text-[8px] font-bold uppercase tracking-[0.04em] text-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:gap-1.5 md:px-2.5 md:text-[9px] md:tracking-[0.08em]"><LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Today</button>
+        <button type="button" aria-pressed={navigationMode === 'fit'} onClick={fitTimeline} disabled={Boolean(interaction)} className={`inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border px-1 text-[8px] font-bold uppercase tracking-[0.04em] focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:gap-1.5 md:px-2.5 md:text-[9px] md:tracking-[0.08em] ${navigationMode === 'fit' ? 'tenops-selected-surface border-transparent shadow-sm' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'}`}><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />Fit</button>
+        <button type="button" aria-pressed={navigationMode === 'today'} onClick={goToToday} disabled={Boolean(interaction)} className={`inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border px-1 text-[8px] font-bold uppercase tracking-[0.04em] focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:gap-1.5 md:px-2.5 md:text-[9px] md:tracking-[0.08em] ${navigationMode === 'today' ? 'tenops-selected-surface border-transparent shadow-sm' : 'border-blue-300 bg-white text-blue-600 hover:bg-blue-50'}`}><LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Today</button>
         {expandableJobIds.length > 0 && <button type="button" onClick={() => setExpandedJobs(allExpandableJobsExpanded ? new Set() : new Set(expandableJobIds))} className="h-8 min-w-0 rounded-sm border border-slate-300 bg-white px-1 text-[8px] font-bold uppercase tracking-[0.03em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 md:px-2.5 md:text-[9px] md:tracking-[0.08em]">{allExpandableJobsExpanded ? 'Collapse all' : 'Expand all'}</button>}
         <label data-gantt-row-density className="hidden h-8 items-center gap-2 px-1 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-500 md:inline-flex" title={`Timeline rows: ${rowDensityOption.label}`}>
           <span>Rows</span>
@@ -907,10 +1037,11 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
       </div>
       <div
         ref={scrollRef}
-        onScroll={updateScrollMetrics}
+        onScroll={handleTimelineScroll}
         onWheel={(event) => {
           if (!event.shiftKey || event.ctrlKey || event.metaKey) return;
           event.preventDefault();
+          setNavigationMode(null);
           event.currentTarget.scrollLeft += event.deltaY || event.deltaX;
         }}
         onPointerDown={startCanvasPan}
@@ -963,7 +1094,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             </div>
           </div>
 
-          {displayJobs.filter((job) => job.planned_start && job.planned_end).map((job) => {
+          {scheduledJobs.map((job) => {
             const hasSchedule = Boolean(job.planned_start && job.planned_end);
             const hasDeliveryMilestone = Boolean(!hasSchedule && job.requested_delivery_date);
             const activeInteraction = interaction?.jobId === job.id ? interaction : null;
@@ -1071,6 +1202,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                     <div
                       data-timeline-interactive="true"
                       data-production-bar
+                      data-fit-participant={productionTimelineFitParticipates(job.production_status) ? 'true' : 'false'}
                       className={`absolute top-1/2 z-[3] h-8 -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${statusVisual.className} ${activeInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isStaged ? 'ring-2 ring-amber-300 ring-offset-1' : ''}`}
                       style={{ left: startOffset * dayWidth + 3, width: barWidth, backgroundImage: statusVisual.pattern }}
                       title={`${job.name}: ${statusVisual.label}; ${displayStart} through ${displayEnd}; ${intensityLabel(job, displayStart, displayEnd)}`}
@@ -1245,23 +1377,6 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
           </div>
         )}
       </div>
-
-      {displayJobs.some((job) => !job.planned_start || !job.planned_end) && (
-        <section className="border-t border-slate-400 bg-slate-50 p-4" aria-labelledby="not-scheduled-heading">
-          <div className="flex items-center justify-between gap-3">
-            <h3 id="not-scheduled-heading" className="text-sm font-bold uppercase tracking-[0.1em] text-slate-800">Not Scheduled</h3>
-            <span className="text-xs font-semibold text-slate-500">{displayJobs.filter((job) => !job.planned_start || !job.planned_end).length} need dates</span>
-          </div>
-          <div className="mt-3 grid gap-2 md:grid-cols-2">
-            {displayJobs.filter((job) => !job.planned_start || !job.planned_end).map((job) => (
-              <button key={job.id} type="button" onClick={() => onSelectJob(job, 'planned-dates')} className="flex min-w-0 items-center justify-between gap-3 border border-slate-300 bg-white px-3 py-2 text-left hover:border-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-700">
-                <span className="min-w-0"><span className="block truncate text-sm font-bold text-slate-950">{job.job_number ? `${job.job_number} — ` : ''}{job.name}</span><span className="block truncate text-xs text-slate-600">Add planned start and finish dates to place this job on the Timeline.</span></span>
-                <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide text-blue-800">Complete setup</span>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
 
       {interaction?.hasMoved && activeJob && (
         <div

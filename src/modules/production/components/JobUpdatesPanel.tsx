@@ -144,6 +144,8 @@ export default function JobUpdatesPanel({
     Record<string, ResolutionDraft>
   >({});
   const fileInput = useRef<HTMLInputElement>(null);
+  const postingRef = useRef(false);
+  const resolvingIdsRef = useRef(new Set<string>());
 
   useEffect(() => {
     let live = true;
@@ -210,7 +212,8 @@ export default function JobUpdatesPanel({
   }, [latestUpdate?.created_at, loading, onSummaryChanged, openCount, updates.length]);
 
   async function postUpdate() {
-    if (posting) return;
+    if (postingRef.current) return;
+    postingRef.current = true;
     setPosting(true);
     setError("");
     setMessage("");
@@ -279,12 +282,14 @@ export default function JobUpdatesPanel({
             : "Unable to post the update.",
       );
     } finally {
+      postingRef.current = false;
       setPosting(false);
     }
   }
 
   async function resolve(update: JobUpdate) {
-    if (resolvingId) return;
+    if (resolvingIdsRef.current.size > 0) return;
+    resolvingIdsRef.current.add(update.id);
     const resolutionDraft = resolutionDrafts[update.id] ?? {
       message: "",
       files: [],
@@ -359,6 +364,7 @@ export default function JobUpdatesPanel({
             : "Unable to resolve this item.",
       );
     } finally {
+      resolvingIdsRef.current.delete(update.id);
       setResolvingId(null);
     }
   }

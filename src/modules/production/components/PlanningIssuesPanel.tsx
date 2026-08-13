@@ -46,6 +46,7 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
   const [messages, setMessages] = useState<Record<string, string>>({});
   const panelRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const savingJobIdsRef = useRef(new Set<string>());
 
   const activeJobs = useMemo(() => jobs.filter((job) => !['complete', 'cancelled'].includes(job.production_status)), [jobs]);
   const issueRows = useMemo(() => activeJobs.map((job) => {
@@ -117,6 +118,7 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
   }
 
   async function saveOrdinary(job: ProductionJob) {
+    if (savingJobIdsRef.current.has(job.id)) return;
     const draft = drafts[job.id] ?? ordinaryDraft(job);
     const hours = draft.estimated_man_hours === '' ? null : Number(draft.estimated_man_hours);
     if (hours !== null && (!Number.isFinite(hours) || hours < 0)) {
@@ -131,6 +133,7 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
     };
     const changes = Object.fromEntries(Object.entries(candidate).filter(([field, value]) => !productionValuesEqual(field as keyof ProductionJobUpdate, job[field as keyof ProductionJob], value))) as ProductionJobUpdate;
     if (!Object.keys(changes).length) return;
+    savingJobIdsRef.current.add(job.id);
     setSavingId(job.id); setErrors((current) => ({ ...current, [job.id]: '' })); setMessages((current) => ({ ...current, [job.id]: '' }));
     try {
       const updated = await onUpdateJob(job.id, changes);
@@ -139,6 +142,7 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
     } catch (error) {
       setErrors((current) => ({ ...current, [job.id]: error instanceof Error ? error.message : 'Unable to save planning details.' }));
     } finally {
+      savingJobIdsRef.current.delete(job.id);
       setSavingId(null);
     }
   }

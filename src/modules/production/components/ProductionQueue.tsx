@@ -7,6 +7,7 @@ import { getJobReadiness } from '../readiness';
 import type { ProductionJob } from '../types';
 import ActivityStrip from './ActivityStrip';
 import ProductionStatusBadge from './ProductionStatusBadge';
+import UnscheduledBadge from './UnscheduledBadge';
 
 type Props = {
   jobs: ProductionJob[];
@@ -15,6 +16,7 @@ type Props = {
   integrationSummaries: Record<string, ProductionIntegrationSummary>;
   jobUpdateSummaries: Record<string, JobUpdateSummary>;
   onSelectJob(job: ProductionJob, focus?: string): void;
+  onScheduleJob(job: ProductionJob): void;
 };
 
 function formatHours(value: number) {
@@ -35,6 +37,7 @@ export default function ProductionQueue({
   integrationSummaries,
   jobUpdateSummaries,
   onSelectJob,
+  onScheduleJob,
 }: Props) {
   const { language, tr } = useLanguage();
   const materialLabels = { unknown: 'Sin definir', not_ready: 'No listo', ordered: 'Pedido', ready: 'Listo' } as const;
@@ -76,7 +79,7 @@ export default function ProductionQueue({
                     <h2 className="mt-0.5 truncate text-base font-bold leading-5 text-slate-950">{job.name}</h2>
                     <div className="mt-0.5 truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</div>
                   </div>
-                  <span className="pointer-events-none shrink-0"><ProductionStatusBadge status={job.production_status} /></span>
+                  <span className="pointer-events-auto flex shrink-0 flex-col items-end gap-1"><ProductionStatusBadge status={job.production_status} />{!job.planned_start || !job.planned_end ? <UnscheduledBadge compact onClick={() => onScheduleJob(job)} /> : null}</span>
                 </div>
 
                 <div className="mt-2.5 grid grid-cols-2 gap-px border border-slate-200 bg-slate-200 text-xs">
@@ -119,7 +122,7 @@ export default function ProductionQueue({
                 <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} />
                 {job.archived_at ? <span className="mt-1 inline-block text-[10px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}
               </span>
-              <span className="pointer-events-none relative z-10 hidden md:block"><ProductionStatusBadge status={job.production_status} /></span>
+              <span className="relative z-10 hidden md:flex md:flex-col md:items-start md:gap-1"><span className="pointer-events-none"><ProductionStatusBadge status={job.production_status} /></span>{!job.planned_start || !job.planned_end ? <UnscheduledBadge compact onClick={() => onScheduleJob(job)} /> : null}</span>
               <span className="pointer-events-none relative z-10 hidden text-xs md:block">{job.planned_start && job.planned_end ? `${job.planned_start} – ${job.planned_end}` : 'Dates not set'}</span>
               <span className="pointer-events-none relative z-10 hidden text-xs md:block">{job.requested_delivery_date ? `Delivery ${job.requested_delivery_date}` : 'Delivery not set'}</span>
               <span className="relative z-10 hidden flex-col items-start gap-1 text-[10px] md:flex">
