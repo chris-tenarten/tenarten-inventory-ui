@@ -26,3 +26,14 @@ export function arrangeProductionJobs(jobs: ProductionJob[], arrangement: Produc
       || identity(first, second);
   });
 }
+
+export function arrangeProductionTimelineJobs(jobs: ProductionJob[]) {
+  return [...jobs].sort((first, second) => {
+    const firstHistorical = first.production_status === 'complete' || first.production_status === 'cancelled' ? 1 : 0;
+    const secondHistorical = second.production_status === 'complete' || second.production_status === 'cancelled' ? 1 : 0;
+    return firstHistorical - secondHistorical
+      || date(first.planned_start).localeCompare(date(second.planned_start))
+      || date(first.planned_end).localeCompare(date(second.planned_end))
+      || identity(first, second);
+  });
+}

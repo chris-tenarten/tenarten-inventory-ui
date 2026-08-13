@@ -94,6 +94,54 @@ export function fitTimelineDayWidth(zoom: TimelineZoom, rangeDays: number, calen
   return clampTimelineDayWidth(zoom, calendarViewportWidth / Math.max(1, rangeDays + paddingDays * 2));
 }
 
+export function fitRenderedTimelineScrollLeft(options: {
+  contentLeft: number;
+  contentRight: number;
+  calendarViewportWidth: number;
+  maxScrollLeft: number;
+  visualPadding: number;
+}) {
+  const { contentLeft, contentRight, calendarViewportWidth, maxScrollLeft, visualPadding } = options;
+  if (calendarViewportWidth <= 0 || contentRight < contentLeft) return 0;
+  const padding = Math.max(0, visualPadding);
+  const paddedLeft = contentLeft - padding;
+  const paddedRight = contentRight + padding;
+  return Math.min(maxScrollLeft, Math.max(0, (paddedLeft + paddedRight) / 2 - calendarViewportWidth / 2));
+}
+
+export function productionTimelineFitParticipates(status: string) {
+  return status === 'not_started'
+    || status === 'on_deck'
+    || status === 'in_production'
+    || status === 'on_hold'
+    || status === 'shipped';
+}
+
+type PlanningHorizonJob = {
+  planned_start: string | null;
+  planned_end: string | null;
+  production_status: string;
+};
+
+export function productionTimelinePlanningHorizon(jobs: PlanningHorizonJob[]) {
+  const activeScheduledJobs = jobs.filter((job) => (
+    job.planned_start
+    && job.planned_end
+    && job.production_status !== 'complete'
+    && job.production_status !== 'cancelled'
+  ));
+  if (activeScheduledJobs.length === 0) return null;
+
+  return {
+    start: activeScheduledJobs.reduce((earliest, job) => (
+      job.planned_start! < earliest ? job.planned_start! : earliest
+    ), activeScheduledJobs[0].planned_start!),
+    end: activeScheduledJobs.reduce((latest, job) => (
+      job.planned_end! > latest ? job.planned_end! : latest
+    ), activeScheduledJobs[0].planned_end!),
+  };
+}
+
 export function timelineIntervalFocusScrollLeft(options: {
   intervalLeft: number;
   intervalRight: number;

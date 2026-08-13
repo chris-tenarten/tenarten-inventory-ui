@@ -10,6 +10,8 @@ import {
   saveDisplaySize,
 } from "@/lib/display-size";
 import { type TranslationKey, useLanguage } from "@/lib/language";
+import { APPEARANCES, useAppearance } from "@/lib/appearance";
+import { BRANDING } from "@/lib/dev-branding.mjs";
 import PhaseLibraryManager from "@/modules/planning/PhaseLibraryManager";
 import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
 
@@ -31,6 +33,7 @@ const settings = [
 export default function SettingsPage() {
   const [displaySize, setDisplaySize] = useState<DisplaySize>("default");
   const { language, setLanguage, t } = useLanguage();
+  const { appearance, setAppearance } = useAppearance();
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -58,7 +61,56 @@ export default function SettingsPage() {
       <p className="mt-1 text-sm text-slate-600">
         {t("settings.description")}
       </p>
-      <section className="mt-6 border border-slate-300 bg-white p-4">
+      {BRANDING.showDeveloperArtwork && <section className="mt-6 border border-slate-300 bg-white p-4">
+        <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+          {t("settings.appearance")}
+        </div>
+        <h2 className="mt-1 text-lg font-bold text-slate-950">
+          {t("settings.theme")}
+        </h2>
+        <p className="mt-1 text-sm text-slate-600">
+          {t("settings.themeDescription")}
+        </p>
+        <div
+          className="mt-4 grid max-w-lg gap-2 sm:grid-cols-2"
+          role="radiogroup"
+          aria-label={t("settings.theme")}
+        >
+          {APPEARANCES.map((value) => {
+            const selected = appearance === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => setAppearance(value)}
+                className={`min-h-14 border p-3 text-left transition ${
+                  selected
+                    ? "border-blue-700 bg-blue-50 shadow-[inset_0_0_0_1px_#1d4ed8]"
+                    : "border-slate-300 bg-white hover:border-slate-500 hover:bg-slate-50"
+                }`}
+              >
+                <span className="flex items-center gap-2 font-bold text-slate-950">
+                  <span
+                    aria-hidden="true"
+                    className={`h-3.5 w-3.5 rounded-full border ${
+                      selected
+                        ? "border-blue-700 bg-blue-700 shadow-[inset_0_0_0_3px_white]"
+                        : "border-slate-400 bg-white"
+                    }`}
+                  />
+                  {t(`settings.${value}` as TranslationKey)}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-xs text-slate-500">
+          {t("settings.browserOnly")}
+        </p>
+      </section>}
+      <section className={`${BRANDING.showDeveloperArtwork ? 'mt-4' : 'mt-6'} border border-slate-300 bg-white p-4`}>
         <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
           {t("settings.appearance")}
         </div>

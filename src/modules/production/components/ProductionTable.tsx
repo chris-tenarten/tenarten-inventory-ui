@@ -10,12 +10,12 @@ import { materialStatusLabel, materialStatusOptions } from '../material-status';
 import type { StagedSchedules } from '../schedule-staging';
 import type {
   MaterialStatus,
-  NewProductionJob,
   ProductionJob,
   ProductionStatus,
 } from '../types';
 import { productionValuesEqual } from '../update-normalization';
 import JobUpdatesIndicator from './JobUpdatesIndicator';
+import UnscheduledBadge from './UnscheduledBadge';
 
 const formatHours = (value: number) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value);
 
@@ -24,7 +24,6 @@ type Props = {
   attachmentCounts: Record<string, number>;
   integrationSummaries: Record<string, ProductionIntegrationSummary>;
   jobUpdateSummaries: Record<string, JobUpdateSummary>;
-  onCreateJob: (input: NewProductionJob) => Promise<ProductionJob>;
   onUpdateJob: (
     jobId: string,
     changes: ProductionJobUpdate,
@@ -34,6 +33,7 @@ type Props = {
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   selectedJobId: string | null;
   onSelectJob: (job: ProductionJob, focus?: string) => void;
+  onScheduleJob: (job: ProductionJob) => void;
 };
 
 type EditableRow = {
@@ -207,28 +207,6 @@ function parseStoredTableLayout(value: string | null): TableLayout {
   }
 }
 
-function blankRow(): EditableRow {
-  return {
-    name: '',
-    customer: '',
-    jobNumber: '',
-    estimateNumber: '',
-    workOrderNumber: '',
-    depositDate: '',
-    requestedDeliveryDate: '',
-    plannedStart: '',
-    plannedEnd: '',
-    estimatedManHours: '',
-    estimatedCalendarDays: '',
-    colorPlateNumber: '',
-    sampleSubmittedDate: '',
-    approvalDate: '',
-    materialStatus: 'unknown',
-    productionStatus: 'not_started',
-    remarks: '',
-  };
-}
-
 function toRow(job: ProductionJob): EditableRow {
   return {
     name: job.name,
@@ -260,50 +238,6 @@ function optionalNumber(value: string) {
   if (!trimmed) return null;
   const parsed = Number(trimmed);
   return Number.isFinite(parsed) ? parsed : null;
-}
-
-function toNewJob(row: EditableRow): NewProductionJob {
-  return {
-    name: row.name.trim(),
-    customer: row.customer.trim() || null,
-    job_number: row.jobNumber.trim() || null,
-    estimate_number: row.estimateNumber.trim() || null,
-    work_order_number: row.workOrderNumber.trim() || null,
-    deposit_date: row.depositDate || null,
-    requested_delivery_date: row.requestedDeliveryDate || null,
-    planned_start: row.plannedStart || null,
-    planned_end: row.plannedEnd || null,
-    estimated_man_hours: optionalNumber(row.estimatedManHours),
-    estimated_calendar_days: optionalNumber(row.estimatedCalendarDays),
-    color_plate_number: row.colorPlateNumber.trim() || null,
-    sample_submitted_date: row.sampleSubmittedDate || null,
-    approval_date: row.approvalDate || null,
-    remarks: row.remarks.trim() || null,
-  };
-}
-
-function validateDraft(row: EditableRow) {
-  if (!row.name.trim()) return 'Project name is required.';
-
-  if (row.plannedStart && row.plannedEnd && row.plannedEnd < row.plannedStart) {
-    return 'Planned finish cannot be before planned start.';
-  }
-
-  if (row.estimatedManHours.trim()) {
-    const hours = Number(row.estimatedManHours);
-    if (!Number.isFinite(hours) || hours < 0) {
-      return 'Estimated man hours must be zero or greater.';
-    }
-  }
-
-  if (row.estimatedCalendarDays.trim()) {
-    const days = Number(row.estimatedCalendarDays);
-    if (!Number.isInteger(days) || days < 0) {
-      return 'Estimated calendar days must be a whole number.';
-    }
-  }
-
-  return '';
 }
 
 type NonScheduleEditableField = Exclude<EditableField, 'plannedStart' | 'plannedEnd'>;
@@ -384,32 +318,6 @@ function validateField(field: EditableField, row: EditableRow) {
   return '';
 }
 
-function StateLabel({ state }: { state: SaveState }) {
-  const labels: Partial<Record<SaveState, string>> = {
-    dirty: 'Editing',
-    saving: 'Saving…',
-    saved: 'Saved',
-    error: 'Could not save',
-  };
-
-  const styles: Partial<Record<SaveState, string>> = {
-    dirty: 'text-amber-700',
-    saving: 'text-blue-700',
-    saved: 'text-emerald-700',
-    error: 'text-red-700',
-  };
-
-  if (!labels[state]) return null;
-
-  return (
-    <span
-      className={`text-[9px] font-bold uppercase tracking-[0.08em] ${styles[state]}`}
-    >
-      {labels[state]}
-    </span>
-  );
-}
-
 function blurOnEnter(event: KeyboardEvent<HTMLInputElement | HTMLSelectElement>) {
   if (event.key === 'Enter') {
     event.preventDefault();
@@ -422,22 +330,18 @@ export default function ProductionTable({
   attachmentCounts,
   integrationSummaries,
   jobUpdateSummaries,
-  onCreateJob,
   onUpdateJob,
   onOpenAttachments,
   stagedSchedules,
   onStageSchedule,
   selectedJobId,
   onSelectJob,
+  onScheduleJob,
 }: Props) {
   const [rows, setRows] = useState<Record<string, EditableRow>>({});
   const [states, setStates] = useState<Record<string, SaveState>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [feedback, setFeedback] = useState<Record<string, SaveFeedback | undefined>>({});
-  const [isAdding, setIsAdding] = useState(false);
-  const [draft, setDraft] = useState<EditableRow>(blankRow);
-  const [draftState, setDraftState] = useState<SaveState>('idle');
-  const [draftError, setDraftError] = useState('');
   const [remarksEditor, setRemarksEditor] = useState<RemarksEditor | null>(null);
   const [remarksPosition, setRemarksPosition] = useState({ left: 12, top: 12, width: 420 });
   const [remarksSaving, setRemarksSaving] = useState(false);
@@ -449,12 +353,12 @@ export default function ProductionTable({
   const [layoutMessage, setLayoutMessage] = useState('');
   const [resizingColumn, setResizingColumn] = useState<TableColumnId | null>(null);
   const [tableSort, setTableSort] = useState<TableSort | null>(null);
-  const draftNameRef = useRef<HTMLInputElement | null>(null);
   const remarksPanelRef = useRef<HTMLDivElement | null>(null);
   const remarksTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const columnsPanelRef = useRef<HTMLDivElement | null>(null);
   const resizeRef = useRef<{ id: TableColumnId; startX: number; startWidth: number } | null>(null);
   const savingFieldsRef = useRef<Record<string, Set<EditableField>>>({});
+  const remarksSavingRef = useRef(false);
 
   const remarksDirty = Boolean(remarksEditor && remarksEditor.draft !== remarksEditor.canonical);
   const remarksAnchor = remarksEditor?.anchor ?? null;
@@ -516,10 +420,6 @@ export default function ProductionTable({
       return next;
     });
   }, [jobs, states]);
-
-  useEffect(() => {
-    if (isAdding) requestAnimationFrame(() => draftNameRef.current?.focus());
-  }, [isAdding]);
 
   useEffect(() => {
     if (!remarksAnchor) return;
@@ -584,15 +484,6 @@ export default function ProductionTable({
     }));
     setStates((current) => ({ ...current, [job.id]: 'dirty' }));
     setErrors((current) => ({ ...current, [job.id]: '' }));
-  }
-
-  function changeDraft<K extends EditableField>(
-    field: K,
-    value: EditableRow[K],
-  ) {
-    setDraft((current) => ({ ...current, [field]: value }));
-    setDraftState('dirty');
-    setDraftError('');
   }
 
   async function saveField(job: ProductionJob, field: EditableField) {
@@ -670,28 +561,6 @@ export default function ProductionTable({
     }
   }
 
-  async function saveDraft() {
-    const validationError = validateDraft(draft);
-    if (validationError) {
-      setDraftState('error');
-      setDraftError(validationError);
-      return;
-    }
-
-    setDraftState('saving');
-
-    try {
-      await onCreateJob(toNewJob(draft));
-      setDraft(blankRow());
-      setDraftState('idle');
-      setDraftError('');
-      setIsAdding(false);
-    } catch (error) {
-      setDraftState('error');
-      setDraftError(error instanceof Error ? error.message : 'Unable to create job.');
-    }
-  }
-
   function closeRemarksEditor() {
     if (!remarksEditor) return;
     const anchor = remarksEditor.anchor;
@@ -709,7 +578,7 @@ export default function ProductionTable({
   }
 
   async function saveRemarks() {
-    if (!remarksEditor || remarksSaving) return;
+    if (!remarksEditor || remarksSavingRef.current) return;
     const normalized = remarksEditor.draft.trim() || null;
     const { job, anchor } = remarksEditor;
 
@@ -718,6 +587,7 @@ export default function ProductionTable({
       return;
     }
 
+    remarksSavingRef.current = true;
     setRemarksSaving(true);
     setRemarksError('');
     setStates((current) => ({ ...current, [job.id]: 'saving' }));
@@ -744,6 +614,7 @@ export default function ProductionTable({
       setErrors((current) => ({ ...current, [job.id]: message }));
       setRemarksError(message);
     } finally {
+      remarksSavingRef.current = false;
       setRemarksSaving(false);
     }
   }
@@ -1019,7 +890,7 @@ export default function ProductionTable({
           <colgroup>
             {visibleColumns.map((column) => <col key={column.id} style={{ width: effectiveWidths[column.id] }} />)}
           </colgroup>
-          <thead className="sticky top-0 z-30">
+          <thead data-production-table-header className="sticky top-0 z-30">
             <tr>
               {renderHeader(tableColumnById.inspector, <Search className="mx-auto h-3 w-3" aria-hidden="true" />, 'sticky left-0 z-50 px-0', 'Inspect job actions')}
               {renderHeader(tableColumnById.jobNumber, 'Job #', 'sticky z-40')}
@@ -1064,7 +935,7 @@ export default function ProductionTable({
                     (field) => void saveField(job, field),
                     undefined,
                     stagedSchedules[job.id] ? 'staged' : undefined,
-                    <div className="flex items-center gap-1">{count > 0 && <button
+                    <div className="flex items-center gap-1">{!job.planned_start || !job.planned_end ? <UnscheduledBadge compact onClick={() => onScheduleJob(job)} /> : null}{count > 0 && <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -1126,40 +997,15 @@ export default function ProductionTable({
                 </tr>
               );
             })}
-
-            {isAdding && (
-              <tr className="bg-blue-50/40">
-                {renderCells(draft, changeDraft, undefined, draftNameRef, undefined, undefined, undefined, <span className="block h-6 w-[28px]" />)}
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
 
-      <div className="border-t border-slate-200 bg-slate-50 px-3 py-3">
-        {!isAdding ? (
-          <button type="button" onClick={() => { setDraft(blankRow()); setDraftState('idle'); setDraftError(''); setIsAdding(true); }} className="h-10 border border-dashed border-slate-500 bg-white px-5 text-xs font-bold uppercase tracking-[0.08em] text-slate-700 hover:border-slate-950 hover:bg-slate-50">
-            + Add Job
-          </button>
-        ) : (
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="button" onClick={() => void saveDraft()} disabled={draftState === 'saving'} className="h-9 border border-blue-900 bg-blue-900 px-4 text-[10px] font-bold uppercase tracking-[0.07em] text-white disabled:opacity-50">
-              {draftState === 'saving' ? 'Saving…' : 'Save New Job'}
-            </button>
-            <button type="button" onClick={() => { setDraft(blankRow()); setDraftState('idle'); setDraftError(''); setIsAdding(false); }} disabled={draftState === 'saving'} className="h-9 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.07em] text-slate-600">
-              Cancel
-            </button>
-            <StateLabel state={draftState} />
-            {draftError && <span className="text-xs font-semibold text-red-700">{draftError}</span>}
-          </div>
-        )}
-      </div>
-
-      {jobs.length === 0 && !isAdding && (
+      {jobs.length === 0 && (
         <div className="flex min-h-40 items-center justify-center border-t border-slate-300 px-6 py-8 text-center">
           <div>
             <div className="text-lg font-bold text-slate-900">Production Pipeline is empty</div>
-            <div className="mt-2 text-sm text-slate-600">Use Add Job at the bottom of the table to create the first active job.</div>
+            <div className="mt-2 text-sm text-slate-600">Use New Job in the Production toolbar to create the first active job.</div>
           </div>
         </div>
       )}

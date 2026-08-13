@@ -37,6 +37,7 @@ import type {
 } from "../types";
 import JobUpdatesPanel from "./JobUpdatesPanel";
 import ProductionStatusBadge from "./ProductionStatusBadge";
+import UnscheduledBadge from "./UnscheduledBadge";
 
 type InspectorSection = "details" | "planning" | "updates" | "files" | "recent-changes";
 const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
@@ -51,7 +52,9 @@ type Props = {
   onArchive: (job: ProductionJob) => Promise<void>;
   onRestore: (job: ProductionJob) => Promise<void>;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
+  onSaveSchedule: () => void;
   scheduleIsStaged: boolean;
+  scheduleSaveDisabled?: boolean;
   jobUpdateSummary: JobUpdateSummary;
   onJobUpdateSummaryChanged: (
     jobId: string,
@@ -64,6 +67,7 @@ type Props = {
   planningPhases?: PlanningPhase[];
   planningIssues?: PlanningScheduleIssue[];
   initialFocus?: string;
+  onScheduleJob: (job: ProductionJob) => void;
 };
 
 const sectionTitle =
@@ -192,7 +196,9 @@ export default function ProductionJobInspector({
   onArchive,
   onRestore,
   onStageSchedule,
+  onSaveSchedule,
   scheduleIsStaged,
+  scheduleSaveDisabled = false,
   jobUpdateSummary,
   onJobUpdateSummaryChanged,
   onAttachmentsChanged,
@@ -202,6 +208,7 @@ export default function ProductionJobInspector({
   planningPhases,
   planningIssues = [],
   initialFocus,
+  onScheduleJob,
 }: Props) {
   const [activeSection, setActiveSection] = useState<InspectorSection>(
     initialFocus === "attachments"
@@ -256,6 +263,9 @@ export default function ProductionJobInspector({
   const closeRef = useRef<HTMLButtonElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const attachmentRequest = useRef(0);
+  const mutationInFlightRef = useRef(false);
+  const uploadInFlightRef = useRef(false);
+  const deletingAttachmentIdsRef = useRef(new Set<string>());
   const handleJobUpdateSummaryChanged = useCallback(
     (summary: JobUpdateSummary) => {
       setJobUpdateCount(summary.total);
@@ -433,7 +443,8 @@ export default function ProductionJobInspector({
       );
       return;
     }
-    if (!dirtyCount || saving) return;
+    if (!dirtyCount || mutationInFlightRef.current) return;
+    mutationInFlightRef.current = true;
     setSaving(true);
     setSaveError("");
     setSaveMessage("");
@@ -449,6 +460,7 @@ export default function ProductionJobInspector({
         error instanceof Error ? error.message : "Unable to save changes.",
       );
     } finally {
+      mutationInFlightRef.current = false;
       setSaving(false);
     }
   };
@@ -459,7 +471,8 @@ export default function ProductionJobInspector({
   };
 
   async function upload(files: FileList | null) {
-    if (!files?.length) return;
+    if (!files?.length || uploadInFlightRef.current) return;
+    uploadInFlightRef.current = true;
     setUploading(true);
     setAttachmentError("");
     try {
@@ -479,6 +492,7 @@ export default function ProductionJobInspector({
         error instanceof Error ? error.message : "Unable to upload attachment.",
       );
     } finally {
+      uploadInFlightRef.current = false;
       setUploading(false);
     }
   }
@@ -499,8 +513,10 @@ export default function ProductionJobInspector({
   }
 
   async function removeAttachment(attachment: JobAttachment) {
+    if (deletingAttachmentIdsRef.current.has(attachment.id)) return;
     if (!window.confirm(`Remove “${attachment.file_name}” from this job?`))
       return;
+    deletingAttachmentIdsRef.current.add(attachment.id);
     setDeletingId(attachment.id);
     setAttachmentError("");
     try {
@@ -518,6 +534,7 @@ export default function ProductionJobInspector({
         error instanceof Error ? error.message : "Unable to remove attachment.",
       );
     } finally {
+      deletingAttachmentIdsRef.current.delete(attachment.id);
       setDeletingId(null);
     }
   }
@@ -570,6 +587,7 @@ export default function ProductionJobInspector({
             <div className="mt-1.5">
               <ProductionStatusBadge status={job.production_status} />
             </div>
+            {!job.planned_start || !job.planned_end ? <div className="mt-1.5"><UnscheduledBadge onClick={() => onScheduleJob(job)} /></div> : null}
             <div
               className={`mt-1.5 inline-flex px-2 py-0.5 text-xs font-bold ${readiness.state === "ready" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}
             >
@@ -664,13 +682,7 @@ export default function ProductionJobInspector({
                       data-field="planned-dates"
                       type="date"
                       value={scheduleDraft.start}
-                      onChange={(event) =>
-                        setScheduleDraft((current) => ({
-                          ...current,
-                          start: event.target.value,
-                        }))
-                      }
-                      onBlur={(event) => schedule("start", event.target.value)}
+                      onChange={(event) => schedule("start", event.target.value)}
                       className={fieldClass}
                     />
                   </label>
@@ -680,13 +692,7 @@ export default function ProductionJobInspector({
                       type="date"
                       value={scheduleDraft.end}
                       min={scheduleDraft.start || undefined}
-                      onChange={(event) =>
-                        setScheduleDraft((current) => ({
-                          ...current,
-                          end: event.target.value,
-                        }))
-                      }
-                      onBlur={(event) => schedule("end", event.target.value)}
+                      onChange={(event) => schedule("end", event.target.value)}
                       className={fieldClass}
                     />
                   </label>
@@ -830,6 +836,8 @@ export default function ProductionJobInspector({
                         )
                       )
                         return;
+                      if (mutationInFlightRef.current) return;
+                      mutationInFlightRef.current = true;
                       setSaving(true);
                       setSaveError("");
                       try {
@@ -840,6 +848,8 @@ export default function ProductionJobInspector({
                             ? error.message
                             : "Unable to archive job.",
                         );
+                      } finally {
+                        mutationInFlightRef.current = false;
                         setSaving(false);
                       }
                     }}
@@ -861,6 +871,8 @@ export default function ProductionJobInspector({
                         )
                       )
                         return;
+                      if (mutationInFlightRef.current) return;
+                      mutationInFlightRef.current = true;
                       setSaving(true);
                       setSaveError("");
                       try {
@@ -871,6 +883,8 @@ export default function ProductionJobInspector({
                             ? error.message
                             : "Unable to restore job.",
                         );
+                      } finally {
+                        mutationInFlightRef.current = false;
                         setSaving(false);
                       }
                     }}
@@ -885,7 +899,7 @@ export default function ProductionJobInspector({
                   <span className="text-sm font-bold text-amber-900">
                     {dirtyCount} unsaved {dirtyCount === 1 ? "field" : "fields"}
                   </span>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap justify-end gap-2">
                     <button
                       type="button"
                       onClick={discardDraft}
@@ -902,6 +916,16 @@ export default function ProductionJobInspector({
                     >
                       {saving ? "Saving…" : "Save changes"}
                     </button>
+                    {scheduleIsStaged && (
+                      <button
+                        type="button"
+                        onClick={onSaveSchedule}
+                        disabled={scheduleSaveDisabled}
+                        className="h-9 border border-blue-900 bg-blue-800 px-3 text-xs font-bold uppercase text-white hover:bg-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Save schedule
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -1168,6 +1192,26 @@ export default function ProductionJobInspector({
             </section>
           )}
         </div>
+        {scheduleIsStaged && !(activeSection === "details" && dirtyCount > 0) && (
+          <div className="sticky bottom-0 z-10 -mx-4 mt-5 flex items-center justify-between gap-3 border-t border-amber-500 bg-amber-50 px-4 py-3 shadow-[0_-4px_12px_rgba(15,23,42,0.12)]">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">
+                Schedule changes pending
+              </div>
+              <div className="mt-0.5 text-xs font-semibold text-slate-700">
+                Planned dates remain staged until saved or reverted.
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onSaveSchedule}
+              disabled={scheduleSaveDisabled}
+              className="h-9 shrink-0 border border-blue-900 bg-blue-800 px-4 text-xs font-bold uppercase text-white hover:bg-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Save schedule
+            </button>
+          </div>
+        )}
       </aside>
       {attachmentPreview && attachmentFullscreen && (
         <DocumentViewer

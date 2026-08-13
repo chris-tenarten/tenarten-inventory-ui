@@ -16,7 +16,9 @@
     "verify:purchasing-arim-skus": "node scripts/verify-purchasing-arim-skus.mjs",
     "verify:purchasing-pending-receivals": "node scripts/verify-purchasing-pending-receivals.mjs",
     "verify:planning": "node scripts/verify-planning.mjs",
-    "verify:early-access": "node scripts/verify-early-access.mjs"
+    "verify:early-access": "node scripts/verify-early-access.mjs",
+    "verify:theme": "node scripts/verify-theme.mjs",
+    "verify:dev-branding": "node scripts/verify-dev-branding.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",
@@ -24,6 +26,7 @@
     "lucide-react": "^1.7.0",
     "next": "16.2.2",
     "papaparse": "^5.5.3",
+    "pdfjs-dist": "^6.2.108",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -37,6 +40,7 @@
     "eslint-config-next": "16.2.2",
     "start-server-and-test": "^3.0.11",
     "tailwindcss": "^4",
+    "tsx": "^4.23.12",
     "typescript": "^5"
   }
 }
