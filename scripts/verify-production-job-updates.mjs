@@ -2,13 +2,16 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
-const [migration, resolutionMigration, jobs, types, inspector, updatesPanel] = await Promise.all([
+const [migration, resolutionMigration, assignmentMigration, jobs, types, inspector, updatesPanel, personnel, indicator] = await Promise.all([
   read('supabase/migrations/20260727_001_production_job_updates.sql'),
   read('supabase/migrations/20260728_001_job_update_resolution_details.sql'),
+  read('supabase/migrations/20260817_001_job_update_assignment.sql'),
   read('src/modules/production/jobs.ts'),
   read('src/modules/production/types.ts'),
   read('src/modules/production/components/ProductionJobInspector.tsx'),
   read('src/modules/production/components/JobUpdatesPanel.tsx'),
+  read('src/modules/production/production-personnel.ts'),
+  read('src/modules/production/components/JobUpdatesIndicator.tsx'),
 ]);
 
 assert.match(migration, /create table public\.job_updates/);
@@ -39,6 +42,8 @@ assert.match(
   resolutionMigration,
   /resolution_message = resolution/,
 );
+assert.match(assignmentMigration, /add column follow_up_assignee_name text/);
+assert.doesNotMatch(assignmentMigration, /check|user_id|json/i);
 
 assert.match(types, /job_update_id: string \| null/);
 assert.match(
@@ -47,6 +52,7 @@ assert.match(
 );
 assert.match(types, /export type JobUpdate/);
 assert.match(types, /resolution_message: string \| null/);
+assert.match(types, /follow_up_assignee_name: string \| null/);
 assert.match(jobs, /loadJobUpdates/);
 assert.match(jobs, /createJobUpdate/);
 assert.match(jobs, /resolveJobUpdate/);
@@ -55,6 +61,8 @@ assert.match(jobs, /uploaded_by: uploadedBy/);
 assert.match(jobs, /resolve_job_update/);
 assert.match(jobs, /p_resolution_message/);
 assert.match(jobs, /job_update_attachment_role/);
+assert.match(jobs, /follow_up_assignee_name: requiresFollowUp \? assignee : null/);
+assert.match(jobs, /Select who needs to resolve this update/);
 
 assert.match(inspector, /Job Updates/);
 assert.match(inspector, /From update/);
@@ -65,17 +73,20 @@ assert.match(updatesPanel, /Posting as/);
 assert.match(updatesPanel, /Needs attention/);
 assert.match(updatesPanel, /Last updated/);
 assert.match(updatesPanel, /Update history/);
-assert.match(updatesPanel, /Chris/);
-assert.match(updatesPanel, /Gio/);
-assert.match(updatesPanel, /Anthony/);
-assert.match(updatesPanel, /Marcos/);
-assert.match(updatesPanel, /Pat/);
+assert.match(personnel, /Anthony/);
+assert.match(personnel, /Chris/);
+assert.match(personnel, /Gio/);
+assert.match(personnel, /Marcos/);
+assert.match(personnel, /Pat/);
 assert.match(updatesPanel, /Other…/);
-assert.match(
-  updatesPanel,
-  /AUTHOR_OPTIONS = \["Anthony", "Chris", "Gio", "Marcos", "Pat"\]/,
-);
+assert.doesNotMatch(updatesPanel, /AUTHOR_OPTIONS/);
+assert.match(updatesPanel, /PRODUCTION_PERSONNEL_NAMES/);
+assert.match(updatesPanel, /Needs resolution from/);
+assert.match(updatesPanel, /followUpAssigneeName/);
 assert.match(updatesPanel, /Resolve as/);
+assert.match(updatesPanel, /getResolutionResolverName/);
+assert.match(updatesPanel, /resolverNamesByUpdate/);
+assert.match(updatesPanel, /selectedResolverName/);
 assert.match(updatesPanel, /Resolution notes/);
 assert.doesNotMatch(updatesPanel, /How was this resolved\?/);
 assert.match(updatesPanel, /resolution_message/);
@@ -102,5 +113,7 @@ assert.match(updatesPanel, /localStorage/);
 assert.match(updatesPanel, /uploadJobAttachments/);
 assert.match(updatesPanel, /attachmentsByUpdate/);
 assert.doesNotMatch(updatesPanel, /deleteJobUpdate|editJobUpdate/);
+assert.match(indicator, /openFollowUpAssignees/);
+assert.match(indicator, /assigned to/);
 
 console.log('Production Job Updates checks passed.');

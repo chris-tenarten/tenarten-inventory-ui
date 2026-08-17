@@ -3,10 +3,13 @@ import { extractMetadataFromTextDocuments } from '../src/modules/production/prov
 import { findMatchingProductionJob } from '../src/modules/production/job-import-matching.ts';
 import { detectProductionDocumentFamily } from '../src/modules/production/providers/document-family-detector.ts';
 import { extractGenericIdentifiers } from '../src/modules/production/providers/generic-identifier-parser.ts';
+import { parseBlendSheet } from '../src/modules/production/providers/blend-sheet-parser.ts';
+import { parseEstimate } from '../src/modules/production/providers/estimate-parser.ts';
 import { parseMaterialQuantitySheet } from '../src/modules/production/providers/material-quantity-parser.ts';
 import { parsePurchaseOrder } from '../src/modules/production/providers/purchase-order-parser.ts';
 import { textInReadingOrder } from '../src/modules/production/providers/pdf-text.ts';
 import { parseSampleWorkOrder } from '../src/modules/production/providers/sample-work-order-parser.ts';
+import { parseShopDrawing } from '../src/modules/production/providers/shop-drawing-parser.ts';
 import { parseShopFabricationWorkOrder } from '../src/modules/production/providers/shop-fabrication-parser.ts';
 
 // Sanitized fragments preserve the actual pdfjs structure: content-stream order is
@@ -72,6 +75,7 @@ assert.equal(coralReefShop?.location, undefined);
 
 const coralReefOnly = extractMetadataFromTextDocuments([
   { name: 'WO #091225-4.pdf', text: coralReefShopText },
+  { name: 'vendor-reference.pdf', text: 'VENDOR ORDER NUMBER\nEXT-4419' },
 ]);
 assert.equal(coralReefOnly.jobNumber, '25-0730');
 assert.equal(coralReefOnly.jobName, 'CORAL REEF');
@@ -102,6 +106,82 @@ assert.equal(sample?.customer?.value, 'Williams');
 assert.equal(sample?.location?.value, 'Atlanta, GA');
 assert.equal(sample?.plateNumber?.value, 'T26-254-A');
 
+const shopDrawingText = [
+  'TENARTEN TERRAZZO CO.',
+  'PRECAST MFG.',
+  'ARCHITECT PROJECT # EXT-8841',
+  'PROJECT:',
+  'HERMES',
+  'LOCATION:',
+  'Manhasset, NY',
+  'PROJECT #',
+  '26-0808',
+  'CUSTOMER:',
+  'T. Yorie Corp.',
+  'DWG. DATE',
+  '08.16.26',
+  'TERR. COLOR PLATE:',
+  'T26-272-A',
+].join('\n');
+assert.equal(detectProductionDocumentFamily({ text: shopDrawingText }), 'shop_drawing');
+const shopDrawing = parseShopDrawing(shopDrawingText);
+assert.equal(shopDrawing.jobNumber?.value, '26-0808');
+assert.equal(shopDrawing.jobName?.value, 'HERMES');
+assert.equal(shopDrawing.customer?.value, 'T. Yorie Corp.');
+assert.equal(shopDrawing.location?.value, 'Manhasset, NY');
+assert.equal(shopDrawing.plateNumber?.value, 'T26-272-A');
+const shopDrawingWithGenericConflict = extractMetadataFromTextDocuments([
+  { name: 'shop-drawing.pdf', text: shopDrawingText },
+  { name: 'client-reference.pdf', text: 'Job #\nEXT-8841' },
+]);
+assert.equal(
+  shopDrawingWithGenericConflict.jobNumber,
+  '26-0808',
+  'Family-specific Tenarten evidence must beat weaker generic evidence.',
+);
+
+const shopTicketText = [
+  'PRECAST TERRAZZO 1',
+  'DESIGN ARCH.: External Design Group',
+  'CONTRACTOR: External Contractor',
+  'ARCHITECT: External Architect',
+  'PROJ. TITLE: Heights Career',
+  'CLIENT JOB NO: EXT-14191',
+  'JOB NO:',
+  'SHEET 1 OF 4',
+].join('\n');
+assert.equal(detectProductionDocumentFamily({ text: shopTicketText }), 'shop_ticket');
+const shopTicketOnly = extractMetadataFromTextDocuments([{ name: 'ticket.pdf', text: shopTicketText }]);
+assert.equal(shopTicketOnly.jobNumber, '', 'Ambiguous CAD title-block identifiers must not become Tenarten Job Numbers');
+assert.equal(shopTicketOnly.customer, '', 'External ticket parties must not become the canonical customer');
+
+const estimateText = [
+  'Tenarten Terrazzo Co.',
+  'Estimate',
+  'PRECAST MANUFACTURING',
+  'CLIENT REFERENCE # 88419',
+  'CLIENT JOB # EXT-2042',
+  'Date',
+  'Estimate #',
+  'Name / Address',
+  '4/23/26',
+  'Q26-0415-1.1',
+  'DePaoli Mosaic Co.',
+  'Side Mark',
+  'Boston City Hall',
+  'FORMULA: Match WT #TZ35 Turtle Dove',
+].join('\n');
+assert.equal(detectProductionDocumentFamily({ text: estimateText }), 'estimate');
+const estimate = parseEstimate(estimateText);
+assert.equal(estimate.estimateNumber?.value, 'Q26-0415-1.1');
+assert.equal(estimate.customer?.value, 'DePaoli Mosaic Co.');
+assert.equal(estimate.plateNumber, undefined, 'External/vendor color references must not become Tenarten plates');
+const estimateOnly = extractMetadataFromTextDocuments([{ name: 'estimate.pdf', text: `${estimateText}\nJob #\nEXT-2042` }]);
+assert.equal(estimateOnly.jobNumber, '', 'Estimate client Job Numbers must not become Tenarten Job Numbers');
+
+const legacyPlateEstimateText = `${estimateText}\nTerrazzo color plate to match D19-172-B (Overwash).`;
+assert.equal(parseEstimate(legacyPlateEstimateText).plateNumber?.value, 'D19-172-B');
+
 const materialText = textInReadingOrder([
   { str: 'Tenarten Terrazzo', x: 392, y: 710 },
   { str: 'JOB #', x: 50, y: 692 },
@@ -118,6 +198,28 @@ const materialText = textInReadingOrder([
 
 assert.equal(detectProductionDocumentFamily({ text: materialText, fileName: 'WO 062626-1 MAT QTY.pdf' }), 'material_quantity_sheet');
 assert.equal(parseMaterialQuantitySheet(materialText).jobNumber?.value, '26-0322');
+
+const blendText = [
+  'Tenarten Terrazzo',
+  'PRECAST MANUFACTURING',
+  'JOB #',
+  '25-1205',
+  'JOB. NAME',
+  'Big Springs',
+  'WO #',
+  '081726-1',
+  'PLATE #:',
+  'T25-125-A',
+  'VENDOR BLEND ID',
+  'SW-6123',
+  'CHIP BLEND',
+].join('\n');
+assert.equal(detectProductionDocumentFamily({ text: blendText }), 'blend_sheet');
+const blend = parseBlendSheet(blendText);
+assert.equal(blend.jobNumber?.value, '25-1205');
+assert.equal(blend.jobName?.value, 'Big Springs');
+assert.equal(blend.workOrderNumber?.value, '081726-1');
+assert.equal(blend.plateNumber?.value, 'T25-125-A');
 
 // Sanitized coordinates mirror the embedded text structure of the two existing
 // Tenarten PO formats without retaining vendor pricing or contact details.
@@ -210,7 +312,7 @@ assert.equal(unknownIdentifiers.confidence.jobNumber, 'medium');
 const corroborated = extractMetadataFromTextDocuments([
   { name: 'first.pdf', text: 'Job #\n27-9999' },
   { name: 'second.pdf', text: 'Job Number\n27-0001' },
-  { name: 'third.pdf', text: 'Project #\n27-0001' },
+  { name: 'third.pdf', text: 'Tenarten Terrazzo\nProject #\n27-0001' },
 ]);
 assert.equal(corroborated.jobNumber, '27-0001', 'Matching values from multiple files should corroborate');
 
@@ -221,10 +323,58 @@ const scalarConflict = extractMetadataFromTextDocuments([
 assert.equal(scalarConflict.jobNumber, '27-0001', 'Equal evidence should retain stable file order');
 
 const multiplePlates = extractMetadataFromTextDocuments([
-  { name: 'first.pdf', text: 'Plate #\nT27-001-A\nColor Plate No.\nT27-001-B' },
+  { name: 'first.pdf', text: 'Plate #\nT27-001-A\nColor Plate No.\nT27-001-B\nVendor Color #\nSW-6123' },
   { name: 'second.pdf', text: 'Color Plate Number\nT27-001-A' },
 ]);
 assert.equal(multiplePlates.plateNumber, 'T27-001-A, T27-001-B');
+
+const externalProjectOnly = extractGenericIdentifiers('CUSTOMER PROJECT #\nEXT-8841');
+assert.equal(externalProjectOnly.jobNumber, undefined);
+
+// One operational import may combine authoritative identifiers from several
+// supported Tenarten document families. Keep this fixture intentionally small
+// while exercising the same composite reconciliation used by Job Creator.
+const mixedShopDrawingText = [
+  'TENARTEN TERRAZZO CO.',
+  'ARCHITECT PROJECT # EXT-8841',
+  'PROJECT:',
+  'HERMES',
+  'PROJECT #',
+  '26-0808',
+  'DWG. DATE',
+  '08.16.26',
+  'JOB #',
+  'CLIENT-8841',
+].join('\n');
+const mixedBlendText = blendText
+  .replace('25-1205', '26-0808')
+  .replace('Big Springs', 'HERMES')
+  .replace('081726-1', '081726-7')
+  .replace('T25-125-A', 'T26-272-A');
+const mixedSampleText = [
+  'TENARTEN TERRAZZO',
+  'SAMPLE WORK ORDER',
+  'FORMULA #',
+  'T26-272-A',
+  'COLOR PLATE #',
+  'T26-272-B',
+  'VENDOR COLOR ID',
+  'SW-6123',
+].join('\n');
+const mixedFamilyImport = extractMetadataFromTextDocuments([
+  { name: 'shop-drawing.pdf', text: mixedShopDrawingText },
+  { name: 'estimate.pdf', text: estimateText },
+  { name: 'blend-sheet.pdf', text: mixedBlendText },
+  { name: 'color-plate.pdf', text: mixedSampleText },
+]);
+assert.equal(mixedFamilyImport.jobNumber, '26-0808');
+assert.equal(mixedFamilyImport.jobName, 'HERMES');
+assert.equal(mixedFamilyImport.estimateNumber, 'Q26-0415-1.1');
+assert.equal(mixedFamilyImport.customer, 'DePaoli Mosaic Co.');
+assert.equal(mixedFamilyImport.workOrderNumber, '081726-7');
+assert.equal(mixedFamilyImport.plateNumber, 'T26-272-A, T26-272-B');
+assert.doesNotMatch(mixedFamilyImport.jobNumber, /CLIENT|EXT/i);
+assert.doesNotMatch(mixedFamilyImport.plateNumber, /SW-6123/i);
 
 const combined = extractMetadataFromTextDocuments([
   { name: 'WO 062626-1 MAT QTY.pdf', text: materialText },

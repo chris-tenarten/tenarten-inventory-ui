@@ -1,12 +1,16 @@
 import type { ExtractedJobField, ExtractedJobMetadata, JobMetadataExtractionProvider } from '../job-import-provider';
 import { detectProductionDocumentFamily, type ProductionDocumentFamily } from './document-family-detector';
+import { parseBlendSheet } from './blend-sheet-parser';
+import { parseEstimate } from './estimate-parser';
 import { extractGenericIdentifiers, extractGenericPlateNumbers } from './generic-identifier-parser';
 import { parseMaterialQuantitySheet } from './material-quantity-parser';
 import { parsePurchaseOrder } from './purchase-order-parser';
 import { extractEmbeddedPdfText } from './pdf-text';
 import type { ExtractedCandidate, ParsedFields } from './parser-utils';
 import { parseSampleWorkOrder } from './sample-work-order-parser';
+import { parseShopDrawing } from './shop-drawing-parser';
 import { parseShopFabricationWorkOrder } from './shop-fabrication-parser';
+import { parseShopTicket } from './shop-ticket-parser';
 
 const fields: ExtractedJobField[] = [
   'jobNumber', 'jobName', 'customer', 'estimateNumber', 'workOrderNumber', 'plateNumber', 'productType',
@@ -22,6 +26,10 @@ const blankMetadata = (): ExtractedJobMetadata => {
 type TemplateParser = (text: string) => ParsedFields;
 const parsers: Record<ProductionDocumentFamily, TemplateParser> = {
   shop_work_order: parseShopFabricationWorkOrder,
+  shop_drawing: parseShopDrawing,
+  shop_ticket: parseShopTicket,
+  estimate: parseEstimate,
+  blend_sheet: parseBlendSheet,
   sample_work_order: parseSampleWorkOrder,
   material_quantity_sheet: parseMaterialQuantitySheet,
   purchase_order: parsePurchaseOrder,
@@ -30,10 +38,14 @@ const parsers: Record<ProductionDocumentFamily, TemplateParser> = {
 const confidenceRank = { medium: 1, high: 2 } as const;
 const familyRank: Record<ProductionDocumentFamily | 'unsupported', number> = {
   shop_work_order: 0,
-  sample_work_order: 1,
-  material_quantity_sheet: 2,
-  purchase_order: 3,
-  unsupported: 4,
+  shop_drawing: 1,
+  sample_work_order: 2,
+  blend_sheet: 3,
+  material_quantity_sheet: 4,
+  estimate: 5,
+  purchase_order: 6,
+  shop_ticket: 7,
+  unsupported: 8,
 };
 
 function normalizeCandidateValue(field: ExtractedJobField, value: string) {
@@ -99,9 +111,19 @@ function reconcileCandidates(candidates: ExtractedCandidate[]) {
     if (field === 'plateNumber') {
       const distinct = new Map<string, ExtractedCandidate>();
       for (const candidate of fieldCandidates) {
-        if (!distinct.has(candidate.normalizedValue)) distinct.set(candidate.normalizedValue, candidate);
+        const plateIdentity = candidate.normalizedValue.replace(/\s*\([^)]*\)\s*$/, '');
+        const existing = distinct.get(plateIdentity);
+        if (
+          !existing ||
+          candidate.value.length > existing.value.length ||
+          confidenceRank[candidate.confidence] > confidenceRank[existing.confidence]
+        ) {
+          distinct.set(plateIdentity, candidate);
+        }
       }
-      const plates = [...distinct.values()];
+      const plates = [...distinct.values()].sort((first, second) =>
+        first.normalizedValue.localeCompare(second.normalizedValue),
+      );
       if (plates.length) {
         result.plateNumber = plates.map((candidate) => candidate.value).join(', ');
         result.confidence.plateNumber = plates.some((candidate) => candidate.confidence === 'high') ? 'high' : 'medium';
@@ -125,7 +147,16 @@ export function extractMetadataFromTextDocuments(documents: Array<{ name: string
     family: detectProductionDocumentFamily({ text: document.text, fileName: document.name }),
   }));
   // Family priority preserves the established deterministic template precedence.
-  for (const family of ['shop_work_order', 'sample_work_order', 'material_quantity_sheet', 'purchase_order'] as const) {
+  for (const family of [
+    'shop_work_order',
+    'shop_drawing',
+    'sample_work_order',
+    'blend_sheet',
+    'material_quantity_sheet',
+    'estimate',
+    'purchase_order',
+    'shop_ticket',
+  ] as const) {
     for (const document of detected) {
       if (document.family === family) appendParsedCandidates(candidates, parsers[family](document.text), {
         sourceFile: document.name,
@@ -139,6 +170,13 @@ export function extractMetadataFromTextDocuments(documents: Array<{ name: string
   for (const document of detected) {
     const family = document.family ?? 'unsupported';
     const generic = extractGenericIdentifiers(document.text);
+    if (family === 'estimate') {
+      delete generic.jobNumber;
+      delete generic.workOrderNumber;
+    }
+    if (family === 'shop_ticket') {
+      for (const field of fields) delete generic[field];
+    }
     delete generic.plateNumber;
     appendParsedCandidates(candidates, generic, {
       sourceFile: document.name,
