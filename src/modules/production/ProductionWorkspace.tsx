@@ -870,7 +870,6 @@ export default function ProductionWorkspace() {
               onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_table')}
               selectedJobId={selectedJobId}
               onSelectJob={selectJob}
-              onScheduleJob={openJobScheduling}
             />
           ) : (
             <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} planningPhases={planningPhases} planningItems={planningItems} stagedPlanningSchedules={stagedPlanningSchedules} onStagePlanningSchedules={stagePlanningSchedules} planningEnabled={planningEnabled} onSelectPlanningPhase={(job, phase) => selectJob(job, `planning:${phase.id}`)} planningIssues={activePlanningIssues} onPreviewPlanningIssuesChange={setPreviewPlanningIssues} onDependencyIssueFocus={setFocusedPlanningIssueId} />

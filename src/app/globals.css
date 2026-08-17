@@ -165,8 +165,8 @@ textarea::placeholder {
 .production-status-complete {
   border-color: #6d28d9;
   background-color: #7c3aed;
-  color: #ffffff;
-  text-shadow: -1px 0 #312e81, 0 1px #312e81, 1px 0 #312e81, 0 -1px #312e81;
+  color: #111827;
+  text-shadow: -1px 0 rgb(255 255 255 / 0.95), 0 1px rgb(255 255 255 / 0.95), 1px 0 rgb(255 255 255 / 0.95), 0 -1px rgb(255 255 255 / 0.95);
 }
 
 .production-status-cancelled {
@@ -240,7 +240,8 @@ html[data-appearance="dark"] .production-status-shipped {
 html[data-appearance="dark"] .production-status-complete {
   border-color: #a78bfa;
   background-color: #7c3aed;
-  color: #ffffff;
+  color: #111827;
+  text-shadow: -1px 0 rgb(255 255 255 / 0.95), 0 1px rgb(255 255 255 / 0.95), 1px 0 rgb(255 255 255 / 0.95), 0 -1px rgb(255 255 255 / 0.95);
 }
 
 html[data-appearance="dark"] .production-status-cancelled {
