@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardList, File, History, Send, Trash2, Upload } from "lucide-react";
+import { ClipboardList, File, History, Pencil, Send, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
@@ -77,6 +77,51 @@ const sectionTitle =
 const fieldClass =
   "mt-1 h-9 w-full rounded-sm border border-slate-300 bg-white px-2 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100";
 
+type InspectorDraft = {
+  name: string;
+  customer: string;
+  job_number: string;
+  estimate_number: string;
+  work_order_number: string;
+  contract_value: string;
+  deposit_date: string;
+  requested_delivery_date: string;
+  estimated_man_hours: string;
+  estimated_calendar_days: string;
+  color_plate_number: string;
+  sample_submitted_date: string;
+  approval_date: string;
+  production_status: ProductionStatus;
+  material_status: MaterialStatus;
+  remarks: string;
+};
+
+function inspectorDraftFromJob(job: ProductionJob): InspectorDraft {
+  return {
+    name: job.name,
+    customer: job.customer ?? "",
+    job_number: job.job_number ?? "",
+    estimate_number: job.estimate_number ?? "",
+    work_order_number: job.work_order_number ?? "",
+    contract_value:
+      job.contract_value === null ? "" : String(job.contract_value),
+    deposit_date: job.deposit_date ?? "",
+    requested_delivery_date: job.requested_delivery_date ?? "",
+    estimated_man_hours:
+      job.estimated_man_hours === null ? "" : String(job.estimated_man_hours),
+    estimated_calendar_days:
+      job.estimated_calendar_days === null
+        ? ""
+        : String(job.estimated_calendar_days),
+    color_plate_number: job.color_plate_number ?? "",
+    sample_submitted_date: job.sample_submitted_date ?? "",
+    approval_date: job.approval_date ?? "",
+    production_status: job.production_status,
+    material_status: job.material_status,
+    remarks: job.remarks ?? "",
+  };
+}
+
 function readableDate(value: unknown) {
   if (typeof value !== "string" || !value) return "Not scheduled";
   const date = new Date(`${value}T00:00:00`);
@@ -95,6 +140,7 @@ const activityFieldLabels: Record<string, string> = {
   job_number: "Job number",
   estimate_number: "Estimate number",
   work_order_number: "Work order",
+  contract_value: "Contract value",
   deposit_date: "Deposit date",
   requested_delivery_date: "Requested delivery",
   estimated_man_hours: "Labor estimate",
@@ -129,6 +175,15 @@ function readableActivityValue(
   )
     return readableDate(value);
   if (field === "estimated_man_hours") return `${value} hours`;
+  if (field === "contract_value") {
+    const amount = Number(value);
+    return Number.isFinite(amount)
+      ? new Intl.NumberFormat(undefined, {
+          style: "currency",
+          currency: "USD",
+        }).format(amount)
+      : String(value);
+  }
   if (typeof value === "boolean") return value ? "Yes" : "No";
   return String(value);
 }
@@ -231,17 +286,8 @@ export default function ProductionJobInspector({
   const [saveError, setSaveError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
   const [saving, setSaving] = useState(false);
-  const [draft, setDraft] = useState(() => ({
-    requested_delivery_date: job.requested_delivery_date || "",
-    estimated_man_hours:
-      job.estimated_man_hours === null ? "" : String(job.estimated_man_hours),
-    estimated_calendar_days:
-      job.estimated_calendar_days === null
-        ? ""
-        : String(job.estimated_calendar_days),
-    production_status: job.production_status,
-    material_status: job.material_status,
-  }));
+  const [draft, setDraft] = useState(() => inspectorDraftFromJob(job));
+  const [headerNameEditing, setHeaderNameEditing] = useState(false);
   const [attachmentError, setAttachmentError] = useState("");
   const [attachmentsLoading, setAttachmentsLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -264,6 +310,9 @@ export default function ProductionJobInspector({
   }));
   const panel = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const projectNameRef = useRef<HTMLInputElement>(null);
+  const headerProjectNameRef = useRef<HTMLInputElement>(null);
+  const headerNameSessionStartRef = useRef(job.name);
   const fileRef = useRef<HTMLInputElement>(null);
   const attachmentRequest = useRef(0);
   const mutationInFlightRef = useRef(false);
@@ -342,7 +391,23 @@ export default function ProductionJobInspector({
     });
   }, [job.planned_end, job.planned_start]);
 
+  useEffect(() => {
+    if (!headerNameEditing) return;
+    requestAnimationFrame(() => {
+      headerProjectNameRef.current?.focus();
+      headerProjectNameRef.current?.select();
+    });
+  }, [headerNameEditing]);
+
   const normalizedDraft: ProductionJobUpdate = {
+    name: draft.name.trim(),
+    customer: draft.customer.trim() || null,
+    job_number: draft.job_number.trim() || null,
+    estimate_number: draft.estimate_number.trim() || null,
+    work_order_number: draft.work_order_number.trim() || null,
+    contract_value:
+      draft.contract_value === "" ? null : Number(draft.contract_value),
+    deposit_date: draft.deposit_date || null,
     requested_delivery_date: draft.requested_delivery_date || null,
     estimated_man_hours:
       draft.estimated_man_hours === ""
@@ -352,8 +417,12 @@ export default function ProductionJobInspector({
       draft.estimated_calendar_days === ""
         ? null
         : Number(draft.estimated_calendar_days),
+    color_plate_number: draft.color_plate_number.trim() || null,
+    sample_submitted_date: draft.sample_submitted_date || null,
+    approval_date: draft.approval_date || null,
     production_status: draft.production_status,
     material_status: draft.material_status,
+    remarks: draft.remarks.trim() || null,
   };
   const changedDraft = Object.fromEntries(
     Object.entries(normalizedDraft).filter(
@@ -426,31 +495,38 @@ export default function ProductionJobInspector({
   const selectSection = (section: InspectorSection) => {
     setActiveSection(section);
   };
+  const updateDraft = <Key extends keyof InspectorDraft>(
+    field: Key,
+    value: InspectorDraft[Key],
+  ) => {
+    setDraft((current) => ({ ...current, [field]: value }));
+    setSaveError("");
+    setSaveMessage("");
+  };
   const discardDraft = () => {
-    setDraft({
-      requested_delivery_date: job.requested_delivery_date || "",
-      estimated_man_hours:
-        job.estimated_man_hours === null ? "" : String(job.estimated_man_hours),
-      estimated_calendar_days:
-        job.estimated_calendar_days === null
-          ? ""
-          : String(job.estimated_calendar_days),
-      production_status: job.production_status,
-      material_status: job.material_status,
-    });
+    setDraft(inspectorDraftFromJob(job));
+    setHeaderNameEditing(false);
     setSaveError("");
     setSaveMessage("");
   };
   const saveDraft = async () => {
     const hours = normalizeNullableNumber(draft.estimated_man_hours);
     const days = normalizeNullableNumber(draft.estimated_calendar_days);
+    const contractValue = normalizeNullableNumber(draft.contract_value);
+    if (!draft.name.trim()) {
+      setSaveError("Project name is required.");
+      projectNameRef.current?.focus();
+      return;
+    }
     if (
       !hours.valid ||
       !days.valid ||
+      !contractValue.valid ||
+      (contractValue.value !== null && contractValue.value < 0) ||
       (days.value !== null && !Number.isInteger(days.value))
     ) {
       setSaveError(
-        "Enter valid non-negative labor hours and whole calendar days, or leave them blank.",
+        "Enter a valid non-negative contract value and labor hours, plus whole calendar days, or leave them blank.",
       );
       return;
     }
@@ -460,7 +536,9 @@ export default function ProductionJobInspector({
     setSaveError("");
     setSaveMessage("");
     try {
-      await onUpdateJob(job.id, changedDraft);
+      const updated = await onUpdateJob(job.id, changedDraft);
+      setDraft(inspectorDraftFromJob(updated));
+      setHeaderNameEditing(false);
       setSaveMessage(
         scheduleIsStaged
           ? "Job details saved. Planned dates remain staged for Save All."
@@ -585,16 +663,56 @@ export default function ProductionJobInspector({
         className="ml-auto flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-slate-200 bg-white shadow-2xl"
       >
         <div className="flex shrink-0 items-start justify-between gap-3 px-4 pt-4">
-          <div>
+          <div className="min-w-0">
             <div className="text-xs font-bold text-slate-500">
-              {job.job_number || "Job number not recorded"}
+              {draft.job_number || "Job number not recorded"}
             </div>
-            <h2
-              id="job-inspector-title"
-              className="text-2xl font-bold text-slate-950"
-            >
-              {job.name}
-            </h2>
+            <div className="flex min-w-0 items-center gap-1.5">
+              {headerNameEditing ? (
+                <input
+                  ref={headerProjectNameRef}
+                  id="job-inspector-title"
+                  aria-label="Project name"
+                  value={draft.name}
+                  onChange={(event) => updateDraft("name", event.target.value)}
+                  onBlur={() => setHeaderNameEditing(false)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    } else if (event.key === "Escape") {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      updateDraft("name", headerNameSessionStartRef.current);
+                      setHeaderNameEditing(false);
+                    }
+                  }}
+                  className="h-10 min-w-0 flex-1 rounded-sm border border-blue-600 bg-white px-2 text-2xl font-bold text-slate-950 outline-none ring-2 ring-blue-100"
+                />
+              ) : (
+                <>
+                  <h2
+                    id="job-inspector-title"
+                    className="min-w-0 truncate text-2xl font-bold text-slate-950"
+                    title={draft.name || "Untitled job"}
+                  >
+                    {draft.name || "Untitled job"}
+                  </h2>
+                  <button
+                    type="button"
+                    aria-label="Edit project name"
+                    title="Edit project name"
+                    onClick={() => {
+                      headerNameSessionStartRef.current = draft.name;
+                      setHeaderNameEditing(true);
+                    }}
+                    className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-sm text-slate-500 hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                  >
+                    <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                  </button>
+                </>
+              )}
+            </div>
             <div className="mt-1.5">
               <ProductionStatusBadge status={job.production_status} />
             </div>
@@ -644,6 +762,45 @@ export default function ProductionJobInspector({
         >
           {activeSection === "details" && (
             <>
+              <section
+                aria-label="Job identity"
+                className="mt-4 grid gap-3 sm:grid-cols-2"
+              >
+                <label className="text-xs font-bold">
+                  Job number
+                  <input
+                    data-field="job-number"
+                    value={draft.job_number}
+                    onChange={(event) =>
+                      updateDraft("job_number", event.target.value)
+                    }
+                    className={fieldClass}
+                  />
+                </label>
+                <label className="text-xs font-bold">
+                  Project name
+                  <input
+                    ref={projectNameRef}
+                    data-field="project-name"
+                    required
+                    value={draft.name}
+                    onChange={(event) => updateDraft("name", event.target.value)}
+                    className={fieldClass}
+                  />
+                </label>
+                <label className="text-xs font-bold sm:col-span-2">
+                  Customer
+                  <input
+                    list="production-customer-suggestions"
+                    autoComplete="off"
+                    value={draft.customer}
+                    onChange={(event) =>
+                      updateDraft("customer", event.target.value)
+                    }
+                    className={fieldClass}
+                  />
+                </label>
+              </section>
               <section className="mt-5">
                 <h3 className={sectionTitle}>Documents</h3>
                 <div className="mt-3 flex flex-col gap-2 sm:flex-row">
@@ -793,29 +950,88 @@ export default function ProductionJobInspector({
               </section>
               <section className="mt-5">
                 <h3 className={sectionTitle}>Job Details</h3>
-                <dl className="mt-3 grid grid-cols-[130px_1fr] gap-2 text-sm">
-                  <dt className="font-bold">Customer</dt>
-                  <dd>{job.customer || "Not recorded"}</dd>
-                  <dt className="font-bold">Estimate</dt>
-                  <dd>{job.estimate_number || "Not recorded"}</dd>
-                  <dt className="font-bold">Work order</dt>
-                  <dd>{job.work_order_number || "Not recorded"}</dd>
-                  <dt className="font-bold">Contract value</dt>
-                  <dd>
-                    {job.contract_value === null
-                      ? "Not recorded"
-                      : job.contract_value}
-                  </dd>
-                  <dt className="font-bold">Resin / Chip PO</dt>
-                  <dd>
-                    {[job.resin_po, job.chip_po].filter(Boolean).join(" / ") ||
-                      "Not recorded"}
-                  </dd>
-                  <dt className="font-bold">Remarks</dt>
-                  <dd className="whitespace-pre-wrap">
-                    {job.remarks || "None"}
-                  </dd>
-                </dl>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <label className="text-xs font-bold">
+                    Work order
+                    <input
+                      value={draft.work_order_number}
+                      onChange={(event) => updateDraft("work_order_number", event.target.value)}
+                      className={fieldClass}
+                    />
+                  </label>
+                  <label className="text-xs font-bold">
+                    Estimate number
+                    <input
+                      value={draft.estimate_number}
+                      onChange={(event) => updateDraft("estimate_number", event.target.value)}
+                      className={fieldClass}
+                    />
+                  </label>
+                  <label className="text-xs font-bold">
+                    Color plate number
+                    <input
+                      value={draft.color_plate_number}
+                      onChange={(event) => updateDraft("color_plate_number", event.target.value)}
+                      className={fieldClass}
+                    />
+                  </label>
+                  <label className="text-xs font-bold">
+                    Approval date
+                    <input
+                      type="date"
+                      value={draft.approval_date}
+                      onChange={(event) => updateDraft("approval_date", event.target.value)}
+                      className={fieldClass}
+                    />
+                  </label>
+                  <label className="text-xs font-bold">
+                    Sample submitted
+                    <input
+                      type="date"
+                      value={draft.sample_submitted_date}
+                      onChange={(event) => updateDraft("sample_submitted_date", event.target.value)}
+                      className={fieldClass}
+                    />
+                  </label>
+                  <label className="text-xs font-bold">
+                    Deposit date
+                    <input
+                      type="date"
+                      value={draft.deposit_date}
+                      onChange={(event) => updateDraft("deposit_date", event.target.value)}
+                      className={fieldClass}
+                    />
+                  </label>
+                  <label className="text-xs font-bold">
+                    Contract value
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputMode="decimal"
+                      value={draft.contract_value}
+                      onChange={(event) => updateDraft("contract_value", event.target.value)}
+                      placeholder="0.00"
+                      className={`${fieldClass} tabular-nums`}
+                    />
+                  </label>
+                  <div className="text-xs font-bold">
+                    Resin / Chip PO
+                    <div className="mt-1 flex min-h-9 items-center rounded-sm border border-slate-200 bg-slate-50 px-2 text-sm font-normal text-slate-700">
+                      {[job.resin_po, job.chip_po].filter(Boolean).join(" / ") ||
+                        "Not recorded"}
+                    </div>
+                  </div>
+                  <label className="text-xs font-bold sm:col-span-2">
+                    Remarks
+                    <textarea
+                      value={draft.remarks}
+                      onChange={(event) => updateDraft("remarks", event.target.value)}
+                      rows={4}
+                      className="mt-1 w-full resize-y rounded-sm border border-slate-300 bg-white px-2 py-2 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
+                    />
+                  </label>
+                </div>
               </section>
               {/* Archive eligibility: ['complete', 'shipped', 'cancelled'] */}
               {["complete", "shipped", "cancelled"].includes(

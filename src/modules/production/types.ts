@@ -94,5 +94,6 @@ export type JobUpdate = {
   resolved_at: string | null;
   resolved_by_name: string | null;
   resolution_message: string | null;
+  edited_at: string | null;
   created_at: string;
 };

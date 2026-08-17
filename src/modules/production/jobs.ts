@@ -70,6 +70,7 @@ const JOB_UPDATE_COLUMNS = [
   'resolved_at',
   'resolved_by_name',
   'resolution_message',
+  'edited_at',
   'created_at',
 ].join(',');
 
@@ -81,6 +82,7 @@ export type ProductionJobUpdate = Partial<
     | 'job_number'
     | 'estimate_number'
     | 'work_order_number'
+    | 'contract_value'
     | 'deposit_date'
     | 'color_plate_number'
     | 'sample_submitted_date'
@@ -303,6 +305,30 @@ export async function createJobUpdate(
     })
     .select(JOB_UPDATE_COLUMNS)
     .single();
+
+  if (error) throw error;
+  return data as unknown as JobUpdate;
+}
+
+export async function editJobUpdate(
+  updateId: string,
+  body: string,
+  requiresFollowUp: boolean,
+  followUpAssigneeName: string | null,
+): Promise<JobUpdate> {
+  const updateBody = body.trim();
+  if (!updateBody) throw new Error('Enter an update before saving.');
+  const assignee = followUpAssigneeName?.trim() || null;
+  if (requiresFollowUp && !assignee) {
+    throw new Error('Select who needs to resolve this update.');
+  }
+
+  const { data, error } = await supabase.rpc('edit_job_update', {
+    p_update_id: updateId,
+    p_body: updateBody,
+    p_requires_follow_up: requiresFollowUp,
+    p_follow_up_assignee_name: requiresFollowUp ? assignee : null,
+  });
 
   if (error) throw error;
   return data as unknown as JobUpdate;

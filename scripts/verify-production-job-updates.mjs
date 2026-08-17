@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
-const [migration, resolutionMigration, assignmentMigration, jobs, types, inspector, updatesPanel, personnel, indicator] = await Promise.all([
+const [migration, resolutionMigration, assignmentMigration, editingMigration, jobs, types, inspector, updatesPanel, personnel, indicator] = await Promise.all([
   read('supabase/migrations/20260727_001_production_job_updates.sql'),
   read('supabase/migrations/20260728_001_job_update_resolution_details.sql'),
   read('supabase/migrations/20260817_001_job_update_assignment.sql'),
+  read('supabase/migrations/20260817_002_job_update_editing.sql'),
   read('src/modules/production/jobs.ts'),
   read('src/modules/production/types.ts'),
   read('src/modules/production/components/ProductionJobInspector.tsx'),
@@ -44,6 +45,16 @@ assert.match(
 );
 assert.match(assignmentMigration, /add column follow_up_assignee_name text/);
 assert.doesNotMatch(assignmentMigration, /check|user_id|json/i);
+assert.match(editingMigration, /add column edited_at timestamptz/);
+assert.match(editingMigration, /create or replace function public\.edit_job_update/);
+assert.match(editingMigration, /security definer/);
+assert.match(editingMigration, /existing_update\.resolved_at is not null/);
+assert.match(editingMigration, /edited_at = now\(\)/);
+assert.match(editingMigration, /desired_assignee text/);
+assert.match(editingMigration, /desired_assignee := assignee/);
+assert.match(editingMigration, /desired_assignee := null/);
+assert.match(editingMigration, /follow_up_assignee_name = desired_assignee/);
+assert.match(editingMigration, /resolved Job Updates cannot be edited/i);
 
 assert.match(types, /job_update_id: string \| null/);
 assert.match(
@@ -53,9 +64,11 @@ assert.match(
 assert.match(types, /export type JobUpdate/);
 assert.match(types, /resolution_message: string \| null/);
 assert.match(types, /follow_up_assignee_name: string \| null/);
+assert.match(types, /edited_at: string \| null/);
 assert.match(jobs, /loadJobUpdates/);
 assert.match(jobs, /createJobUpdate/);
 assert.match(jobs, /resolveJobUpdate/);
+assert.match(jobs, /editJobUpdate/);
 assert.match(jobs, /job_update_id: jobUpdateId/);
 assert.match(jobs, /uploaded_by: uploadedBy/);
 assert.match(jobs, /resolve_job_update/);
@@ -112,7 +125,12 @@ assert.match(updatesPanel, /Resolved by/);
 assert.match(updatesPanel, /localStorage/);
 assert.match(updatesPanel, /uploadJobAttachments/);
 assert.match(updatesPanel, /attachmentsByUpdate/);
-assert.doesNotMatch(updatesPanel, /deleteJobUpdate|editJobUpdate/);
+assert.doesNotMatch(updatesPanel, /deleteJobUpdate/);
+assert.match(updatesPanel, /editJobUpdate/);
+assert.match(updatesPanel, /· Edited/);
+assert.match(updatesPanel, /Save Changes/);
+assert.match(updatesPanel, /Changes saved\./);
+assert.match(updatesPanel, /canEditJobUpdate/);
 assert.match(indicator, /openFollowUpAssignees/);
 assert.match(indicator, /assigned to/);
 

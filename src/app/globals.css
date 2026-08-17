@@ -130,10 +130,49 @@ textarea::placeholder {
   color: #64748b;
 }
 
+.production-status-not-started {
+  border-color: #94a3b8;
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.production-status-on-deck {
+  border-color: #166534;
+  background-color: #2f855a;
+  color: #020617;
+  box-shadow: 0 0 0 1px rgb(22 101 52 / 0.28), 0 2px 4px rgb(22 101 52 / 0.2);
+  text-shadow: 0 1px 0 rgb(255 255 255 / 0.7);
+}
+
+.production-status-in-production {
+  border-color: #0f172a;
+  background-color: #172554;
+  color: #f8fafc;
+}
+
+.production-status-on-hold {
+  border-color: #881337;
+  background-color: #be123c;
+  color: #ffffff;
+}
+
+.production-status-shipped {
+  border-color: #155e75;
+  background-color: #0e7490;
+  color: #ffffff;
+}
+
 .production-status-complete {
-  border-color: #8b5cf6;
-  background-color: #f8fafc;
-  color: #1e293b;
+  border-color: #6d28d9;
+  background-color: #7c3aed;
+  color: #ffffff;
+  text-shadow: -1px 0 #312e81, 0 1px #312e81, 1px 0 #312e81, 0 -1px #312e81;
+}
+
+.production-status-cancelled {
+  border-color: #7f3f46;
+  background-color: #a65359;
+  color: #ffffff;
 }
 
 /* Permanent appearance tokens and dark-theme compatibility mappings. */
@@ -166,10 +205,48 @@ html[data-appearance="dark"] {
   color-scheme: dark;
 }
 
+html[data-appearance="dark"] .production-status-not-started {
+  border-color: #cbd5e1;
+  background-color: #94a3b8;
+  color: #0f172a;
+}
+
+html[data-appearance="dark"] .production-status-on-deck {
+  border-color: #4ade80;
+  background-color: #2f855a;
+  color: #020617;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+html[data-appearance="dark"] .production-status-in-production {
+  border-color: #3b5b9a;
+  background-color: #172554;
+  color: #f8fafc;
+}
+
+html[data-appearance="dark"] .production-status-on-hold {
+  border-color: #e11d48;
+  background-color: #9f1239;
+  color: #ffffff;
+}
+
+html[data-appearance="dark"] .production-status-shipped {
+  border-color: #22a3bd;
+  background-color: #0e667c;
+  color: #f8fafc;
+}
+
 html[data-appearance="dark"] .production-status-complete {
-  border-color: #8b5cf6;
-  background-color: #2a3444;
-  color: #e2e8f0;
+  border-color: #a78bfa;
+  background-color: #7c3aed;
+  color: #ffffff;
+}
+
+html[data-appearance="dark"] .production-status-cancelled {
+  border-color: #a95862;
+  background-color: #6f3038;
+  color: #f8fafc;
 }
 
 html[data-appearance="dark"] body,

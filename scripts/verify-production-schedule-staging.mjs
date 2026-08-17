@@ -47,6 +47,16 @@ assert.equal(rebased.a.proposed_planned_start, staged.a.proposed_planned_start);
 assert.equal(rebased.a.proposed_planned_end, staged.a.proposed_planned_end);
 assert.deepEqual(rebased.a.changed_fields, staged.a.changed_fields);
 assert.equal(hasUnsavedSchedules(rebased), true);
+const ordinarySaveThenScheduleArgs = batchRpcArgs(
+  rebased,
+  [{ ...jobs[0], requested_delivery_date: '2026-07-20', updated_at: '2026-07-16T01:00:00.000Z' }, jobs[1]],
+  'Planner',
+  null,
+  'ordinary-save-then-schedule',
+);
+assert.equal(ordinarySaveThenScheduleArgs.p_proposals[0].original_updated_at, '2026-07-16T01:00:00.000Z');
+assert.equal(ordinarySaveThenScheduleArgs.p_proposals[0].proposed_planned_start, staged.a.proposed_planned_start);
+assert.equal(ordinarySaveThenScheduleArgs.p_proposals[0].proposed_planned_end, staged.a.proposed_planned_end);
 assert.equal(scheduleSaveBlockedByInspector({ jobId: 'a', dirty: true, saving: false }, staged), true);
 assert.equal(scheduleSaveBlockedByInspector({ jobId: 'a', dirty: false, saving: true }, staged), true);
 assert.equal(scheduleSaveBlockedByInspector({ jobId: 'a', dirty: false, saving: false }, rebased), false);
@@ -60,6 +70,8 @@ const concurrentSchedule = rebaseStagedScheduleVersion(staged, {
   updated_at: '2026-07-16T02:00:00.000Z',
 });
 assert.equal(concurrentSchedule.a.original_updated_at, staged.a.original_updated_at);
+assert.equal(concurrentSchedule.a.proposed_planned_start, staged.a.proposed_planned_start);
+assert.equal(concurrentSchedule.a.proposed_planned_end, staged.a.proposed_planned_end);
 const conflictFeedback = describeProductionScheduleSaveError({
   message: 'production_schedule_conflict',
   details: JSON.stringify({
