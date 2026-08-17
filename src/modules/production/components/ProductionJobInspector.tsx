@@ -6,6 +6,7 @@ import DocumentViewer from "@/components/documents/DocumentViewer";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
 import PlanningPanel from "@/modules/planning/PlanningPanel";
 import type { StagedPlanningSchedules } from "@/modules/planning/schedule-staging";
+import type { InspectorOrdinarySaveState } from "../schedule-staging";
 import type { PlanningItem, PlanningPhase } from "@/modules/planning/types";
 import type { PlanningScheduleIssue } from "@/modules/planning/schedule-model.mjs";
 import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
@@ -55,6 +56,7 @@ type Props = {
   onSaveSchedule: () => void;
   scheduleIsStaged: boolean;
   scheduleSaveDisabled?: boolean;
+  onOrdinarySaveStateChange: (state: InspectorOrdinarySaveState) => void;
   jobUpdateSummary: JobUpdateSummary;
   onJobUpdateSummaryChanged: (
     jobId: string,
@@ -199,6 +201,7 @@ export default function ProductionJobInspector({
   onSaveSchedule,
   scheduleIsStaged,
   scheduleSaveDisabled = false,
+  onOrdinarySaveStateChange,
   jobUpdateSummary,
   onJobUpdateSummaryChanged,
   onAttachmentsChanged,
@@ -363,6 +366,14 @@ export default function ProductionJobInspector({
     ),
   ) as ProductionJobUpdate;
   const dirtyCount = Object.keys(changedDraft).length;
+
+  useEffect(() => {
+    onOrdinarySaveStateChange({ jobId: job.id, dirty: dirtyCount > 0, saving });
+  }, [dirtyCount, job.id, onOrdinarySaveStateChange, saving]);
+
+  useEffect(() => () => {
+    onOrdinarySaveStateChange({ jobId: job.id, dirty: false, saving: false });
+  }, [job.id, onOrdinarySaveStateChange]);
 
   const requestClose = useCallback(() => {
     if (
@@ -571,9 +582,9 @@ export default function ProductionJobInspector({
         aria-modal="true"
         aria-labelledby="job-inspector-title"
         onMouseDown={(event) => event.stopPropagation()}
-        className="ml-auto h-full w-full max-w-xl overflow-y-auto border-l border-slate-200 bg-white p-4 shadow-2xl"
+        className="ml-auto flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-slate-200 bg-white shadow-2xl"
       >
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex shrink-0 items-start justify-between gap-3 px-4 pt-4">
           <div>
             <div className="text-xs font-bold text-slate-500">
               {job.job_number || "Job number not recorded"}
@@ -607,7 +618,7 @@ export default function ProductionJobInspector({
         <div
           role="tablist"
           aria-label="Job inspector sections"
-          className="mt-2.5 flex overflow-x-auto border-b border-slate-300"
+          className="mx-4 mt-2.5 flex shrink-0 overflow-x-auto border-b border-slate-300"
         >
           {tabs.map((tab) => (
             <button
@@ -629,6 +640,7 @@ export default function ProductionJobInspector({
           role="tabpanel"
           id={`inspector-${activeSection}`}
           aria-labelledby={`inspector-tab-${activeSection}`}
+          className="min-h-0 flex-1 overflow-y-auto px-4 pb-4"
         >
           {activeSection === "details" && (
             <>
@@ -657,22 +669,6 @@ export default function ProductionJobInspector({
                   </button>
                 </div>
               </section>
-              {saveError && (
-                <div
-                  role="alert"
-                  className="mt-4 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700"
-                >
-                  Could not save: {saveError}
-                </div>
-              )}
-              {saveMessage && (
-                <div
-                  role="status"
-                  className="mt-4 border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800"
-                >
-                  {saveMessage}
-                </div>
-              )}
               <section className="mt-5">
                 <h3 className={sectionTitle}>Planning</h3>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -705,6 +701,7 @@ export default function ProductionJobInspector({
                   <label className="text-xs font-bold">
                     Requested delivery
                     <input
+                      data-field="requested-delivery"
                       type="date"
                       value={draft.requested_delivery_date}
                       onChange={(event) => {
@@ -894,41 +891,6 @@ export default function ProductionJobInspector({
                   </button>
                 </section>
               ) : null}
-              {dirtyCount > 0 && (
-                <div className="sticky bottom-0 mt-5 flex items-center justify-between gap-3 border border-amber-500 bg-amber-50 p-3 shadow-lg">
-                  <span className="text-sm font-bold text-amber-900">
-                    {dirtyCount} unsaved {dirtyCount === 1 ? "field" : "fields"}
-                  </span>
-                  <div className="flex flex-wrap justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={discardDraft}
-                      disabled={saving}
-                      className="h-9 border border-slate-500 bg-white px-3 text-xs font-bold uppercase"
-                    >
-                      Discard
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void saveDraft()}
-                      disabled={saving}
-                      className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white disabled:opacity-50"
-                    >
-                      {saving ? "Saving…" : "Save changes"}
-                    </button>
-                    {scheduleIsStaged && (
-                      <button
-                        type="button"
-                        onClick={onSaveSchedule}
-                        disabled={scheduleSaveDisabled}
-                        className="h-9 border border-blue-900 bg-blue-800 px-3 text-xs font-bold uppercase text-white hover:bg-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        Save schedule
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
             </>
           )}
 
@@ -1192,24 +1154,25 @@ export default function ProductionJobInspector({
             </section>
           )}
         </div>
-        {scheduleIsStaged && !(activeSection === "details" && dirtyCount > 0) && (
-          <div className="sticky bottom-0 z-10 -mx-4 mt-5 flex items-center justify-between gap-3 border-t border-amber-500 bg-amber-50 px-4 py-3 shadow-[0_-4px_12px_rgba(15,23,42,0.12)]">
+        {(activeSection === "details" || dirtyCount > 0) && (
+          <div data-inspector-save-region className={`z-10 flex shrink-0 flex-wrap items-center justify-between gap-3 border-t px-4 py-3 shadow-[0_-4px_12px_rgba(15,23,42,0.12)] ${saveError ? "border-red-400 bg-red-50" : dirtyCount > 0 || scheduleIsStaged ? "border-amber-400 bg-amber-50" : saveMessage ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">
-                Schedule changes pending
+              <div className={`text-[10px] font-bold uppercase tracking-[0.12em] ${saveError ? "text-red-800" : dirtyCount > 0 || scheduleIsStaged ? "text-amber-800" : saveMessage ? "text-emerald-800" : "text-slate-500"}`}>
+                {saving ? "Saving…" : saveError ? "Save failed" : dirtyCount > 0 ? `${dirtyCount} unsaved ${dirtyCount === 1 ? "field" : "fields"}` : saveMessage ? "Changes saved" : scheduleIsStaged ? "Schedule changes pending" : "No unsaved changes"}
               </div>
-              <div className="mt-0.5 text-xs font-semibold text-slate-700">
-                Planned dates remain staged until saved or reverted.
-              </div>
+              {saveError ? <div role="alert" className="mt-0.5 max-w-sm text-xs font-semibold text-red-800">{saveError}</div> : scheduleIsStaged && (dirtyCount > 0 || saving) ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Save job details first. Planned dates will remain staged.</div> : scheduleIsStaged && saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Job details saved. Schedule changes still require approval.</div> : scheduleIsStaged ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Planned dates remain staged for the existing Save All approval workflow.</div> : saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">{saveMessage}</div> : null}
             </div>
-            <button
-              type="button"
-              onClick={onSaveSchedule}
-              disabled={scheduleSaveDisabled}
-              className="h-9 shrink-0 border border-blue-900 bg-blue-800 px-4 text-xs font-bold uppercase text-white hover:bg-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Save schedule
-            </button>
+            <div className="flex flex-wrap justify-end gap-2">
+              {dirtyCount > 0 && <button type="button" onClick={discardDraft} disabled={saving} className="h-9 border border-slate-500 bg-white px-3 text-xs font-bold uppercase text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-700 disabled:opacity-50">Discard</button>}
+              <button type="button" onClick={() => void saveDraft()} disabled={saving || dirtyCount === 0} className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Saving…" : saveError && dirtyCount > 0 ? "Retry save" : "Save changes"}</button>
+              {scheduleIsStaged && <button type="button" onClick={onSaveSchedule} disabled={scheduleSaveDisabled || dirtyCount > 0 || saving} title={dirtyCount > 0 || saving ? "Save job details before saving the schedule" : undefined} className="h-9 border border-blue-900 bg-blue-800 px-3 text-xs font-bold uppercase text-white hover:bg-blue-900 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50">Save schedule</button>}
+            </div>
+          </div>
+        )}
+        {scheduleIsStaged && activeSection !== "details" && dirtyCount === 0 && (
+          <div className="z-10 flex shrink-0 items-center justify-between gap-3 border-t border-amber-500 bg-amber-50 px-4 py-3 shadow-[0_-4px_12px_rgba(15,23,42,0.12)]">
+            <div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Schedule changes pending</div><div className="mt-0.5 text-xs font-semibold text-slate-700">Planned dates remain staged until saved or reverted.</div></div>
+            <button type="button" onClick={onSaveSchedule} disabled={scheduleSaveDisabled} className="h-9 shrink-0 border border-blue-900 bg-blue-800 px-4 text-xs font-bold uppercase text-white hover:bg-blue-900 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50">Save schedule</button>
           </div>
         )}
       </aside>

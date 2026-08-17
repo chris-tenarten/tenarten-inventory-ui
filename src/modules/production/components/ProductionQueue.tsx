@@ -1,5 +1,6 @@
 'use client';
 
+import { AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
 import type { JobUpdateSummary, ProductionIntegrationSummary } from '../jobs';
 import { materialStatusLabel } from '../material-status';
@@ -30,6 +31,12 @@ function formatMobileDate(value: string | null) {
   );
 }
 
+function formatOverviewDate(value: string) {
+  return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).format(
+    new Date(`${value}T00:00:00`),
+  );
+}
+
 export default function ProductionQueue({
   jobs,
   selectedJobId,
@@ -41,6 +48,13 @@ export default function ProductionQueue({
 }: Props) {
   const { language, tr } = useLanguage();
   const materialLabels = { unknown: 'Sin definir', not_ready: 'No listo', ordered: 'Pedido', ready: 'Listo' } as const;
+  const needsScheduling = (job: ProductionJob) => !['complete', 'cancelled'].includes(job.production_status) && (!job.planned_start || !job.planned_end);
+  const scheduledNotStarted = (job: ProductionJob) => job.production_status === 'not_started' && Boolean(job.planned_start && job.planned_end);
+  const overviewJobs = [
+    ...jobs.filter(needsScheduling),
+    ...jobs.filter(scheduledNotStarted),
+    ...jobs.filter((job) => !needsScheduling(job) && !scheduledNotStarted(job)),
+  ];
 
   return (
     <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
@@ -54,7 +68,7 @@ export default function ProductionQueue({
       </div>
 
       <div className="divide-y divide-slate-200">
-        {jobs.map((job) => {
+        {overviewJobs.map((job) => {
           const readiness = getJobReadiness(job);
           const setupFocus = readiness.state === 'not_scheduled' ? 'planned-dates' : readiness.missing.includes('labor estimate') ? 'labor' : undefined;
           const fileCount = attachmentCounts[job.id] ?? 0;
@@ -66,7 +80,8 @@ export default function ProductionQueue({
           return (
             <article
               key={job.id}
-              className={`relative px-3 py-3 hover:bg-slate-50 md:grid md:grid-cols-[minmax(260px,1.7fr)_125px_160px_140px_150px_145px] md:items-center md:gap-2 md:px-4 ${selectedJobId === job.id ? 'bg-blue-50/70 ring-2 ring-inset ring-blue-600' : ''}`}
+              data-overview-needs-dates={needsScheduling(job) ? 'true' : undefined}
+              className={`relative px-3 py-3 md:grid md:grid-cols-[minmax(260px,1.7fr)_125px_160px_140px_150px_145px] md:items-center md:gap-2 md:px-4 ${needsScheduling(job) ? 'bg-amber-50/50 hover:bg-amber-50/70' : 'hover:bg-slate-50'} ${selectedJobId === job.id ? 'bg-blue-50/70 ring-2 ring-inset ring-blue-600' : ''}`}
             >
               <button type="button" aria-label={`Open ${job.name}`} onClick={() => onSelectJob(job, setupFocus)} className="absolute inset-0 z-0 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-700">
                 <span className="sr-only">Open job details</span>
@@ -79,7 +94,7 @@ export default function ProductionQueue({
                     <h2 className="mt-0.5 truncate text-base font-bold leading-5 text-slate-950">{job.name}</h2>
                     <div className="mt-0.5 truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</div>
                   </div>
-                  <span className="pointer-events-auto flex shrink-0 flex-col items-end gap-1"><ProductionStatusBadge status={job.production_status} />{!job.planned_start || !job.planned_end ? <UnscheduledBadge compact onClick={() => onScheduleJob(job)} /> : null}</span>
+                  <div className="pointer-events-auto flex shrink-0 flex-col items-end justify-center gap-1"><ProductionStatusBadge status={job.production_status} />{!job.planned_start || !job.planned_end ? <span data-overview-schedule-condition><UnscheduledBadge ariaLabel={`${job.name} needs planned dates`} onClick={() => onScheduleJob(job)} /></span> : null}</div>
                 </div>
 
                 <div className="mt-2.5 grid grid-cols-2 gap-px border border-slate-200 bg-slate-200 text-xs">
@@ -116,14 +131,24 @@ export default function ProductionQueue({
                 </div>
               </div>
 
-              <span className="pointer-events-none relative z-10 hidden min-w-0 md:block">
-                <span className="block text-sm font-bold leading-5">{job.job_number && <span className="mr-2 text-slate-500">{job.job_number}</span>}{job.name}</span>
-                <span className="mt-0.5 block truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</span>
-                <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} />
-                {job.archived_at ? <span className="mt-1 inline-block text-[10px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}
+              <div className="pointer-events-none relative z-10 hidden min-w-0 items-start gap-4 md:flex">
+                {needsScheduling(job) ? <AlertTriangle data-overview-needs-dates-marker aria-hidden="true" className="h-4 w-4 shrink-0 self-center text-amber-700" /> : null}
+                <div className="min-w-0">
+                  <span className="block text-sm font-bold leading-5">{job.job_number && <span className="mr-2 text-slate-500">{job.job_number}</span>}{job.name}</span>
+                  <span className="mt-0.5 block truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</span>
+                  <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} />
+                  {job.archived_at ? <span className="mt-1 inline-block text-[10px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}
+                </div>
+              </div>
+              <div className="relative z-10 hidden min-w-0 flex-col items-start justify-center gap-1 md:flex md:pr-2"><span className="pointer-events-none"><ProductionStatusBadge status={job.production_status} /></span>{!job.planned_start || !job.planned_end ? <span data-overview-schedule-condition className="max-w-full"><UnscheduledBadge ariaLabel={`${job.name} needs planned dates`} onClick={() => onScheduleJob(job)} /></span> : null}</div>
+              <span className="pointer-events-none relative z-10 hidden text-xs md:flex md:flex-col md:items-start md:justify-center md:pl-2">
+                {job.planned_start && job.planned_end ? (
+                  <>
+                    <span className="whitespace-nowrap">{formatOverviewDate(job.planned_start)}</span>
+                    <span className="whitespace-nowrap">{formatOverviewDate(job.planned_end)}</span>
+                  </>
+                ) : <span className="whitespace-nowrap">Dates not set</span>}
               </span>
-              <span className="relative z-10 hidden md:flex md:flex-col md:items-start md:gap-1"><span className="pointer-events-none"><ProductionStatusBadge status={job.production_status} /></span>{!job.planned_start || !job.planned_end ? <UnscheduledBadge compact onClick={() => onScheduleJob(job)} /> : null}</span>
-              <span className="pointer-events-none relative z-10 hidden text-xs md:block">{job.planned_start && job.planned_end ? `${job.planned_start} – ${job.planned_end}` : 'Dates not set'}</span>
               <span className="pointer-events-none relative z-10 hidden text-xs md:block">{job.requested_delivery_date ? `Delivery ${job.requested_delivery_date}` : 'Delivery not set'}</span>
               <span className="relative z-10 hidden flex-col items-start gap-1 text-[10px] md:flex">
                 {job.estimated_man_hours !== null ? <span className="pointer-events-none flex items-baseline gap-1 text-slate-500"><strong className="text-xs text-slate-800">{formatHours(job.estimated_man_hours)}h</strong><span>{tr('Estimated', 'Estimadas')}</span></span> : <span className="pointer-events-none px-0.5 py-1 font-semibold text-slate-900">{tr('No Labor Estimate', 'Sin estimación de mano de obra')}</span>}

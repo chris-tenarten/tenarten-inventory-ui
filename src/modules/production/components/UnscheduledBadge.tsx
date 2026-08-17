@@ -1,12 +1,16 @@
 import { AlertTriangle } from 'lucide-react';
+import { productionTagClassName } from './production-tag';
 
 type Props = {
   onClick?: () => void;
-  compact?: boolean;
+  iconOnly?: boolean;
+  ariaLabel?: string;
 };
 
-export default function UnscheduledBadge({ onClick, compact = false }: Props) {
-  const content = <><AlertTriangle aria-hidden="true" className="h-3 w-3" /><span>Unscheduled</span></>;
-  const className = `inline-flex items-center gap-1 border border-amber-400 bg-amber-50 font-bold text-amber-900 ${compact ? 'h-5 px-1.5 text-[9px]' : 'h-6 px-2 text-[10px]'}`;
-  return onClick ? <button type="button" onClick={(event) => { event.stopPropagation(); onClick(); }} className={`${className} pointer-events-auto hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600`} aria-label="Open Timeline to schedule this job" title="Open Timeline to schedule this job">{content}</button> : <span className={className}>{content}</span>;
+export default function UnscheduledBadge({ onClick, iconOnly = false, ariaLabel }: Props) {
+  if (iconOnly) {
+    return <button type="button" onClick={(event) => { event.stopPropagation(); onClick?.(); }} className="inline-flex h-6 w-5 shrink-0 items-center justify-center text-amber-700 hover:bg-amber-50 hover:text-amber-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600" aria-label={ariaLabel ?? "Needs planned dates"} title="Needs planned dates"><AlertTriangle aria-hidden="true" className="h-3 w-3" /></button>;
+  }
+  const className = `${productionTagClassName} whitespace-nowrap border-amber-600 bg-amber-200 uppercase tracking-[0.06em] text-amber-950`;
+  return onClick ? <button data-needs-dates-tag type="button" onClick={(event) => { event.stopPropagation(); onClick(); }} className={`${className} pointer-events-auto hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600`} aria-label={ariaLabel ?? "Open Timeline to schedule this job"} title="Open Timeline to schedule this job">Needs dates</button> : <span data-needs-dates-tag className={className}>Needs dates</span>;
 }
