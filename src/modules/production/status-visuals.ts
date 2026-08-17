@@ -10,19 +10,33 @@ export type ProductionStatusVisual = {
 };
 
 export const productionStatusVisuals: ProductionStatusVisual[] = [
-  { value: 'not_started', label: 'Not Started', className: 'border-slate-800 bg-slate-600 text-white' },
-  { value: 'on_deck', label: 'On Deck', className: 'border-sky-800 bg-sky-600 text-white' },
-  { value: 'in_production', label: 'In Production', className: 'border-indigo-950 bg-indigo-800 text-white' },
-  { value: 'on_hold', label: 'On Hold', className: 'border-rose-950 bg-rose-800 text-white', pattern: 'repeating-linear-gradient(135deg, transparent 0, transparent 5px, rgba(255,255,255,0.22) 5px, rgba(255,255,255,0.22) 9px)' },
-  { value: 'shipped', label: 'Shipped', className: 'border-cyan-900 bg-cyan-700 text-white', pattern: 'repeating-linear-gradient(45deg, transparent 0, transparent 8px, rgba(255,255,255,0.08) 8px, rgba(255,255,255,0.08) 10px)' },
+  { value: 'not_started', label: 'Not Started', className: 'production-status-not-started' },
+  {
+    value: 'on_deck',
+    label: 'On Deck',
+    className: 'production-status-on-deck',
+    pattern: 'repeating-linear-gradient(135deg, #2f855a 0, #2f855a 8px, #f8fafc 8px, #f8fafc 14px)',
+  },
+  { value: 'in_production', label: 'In Production', className: 'production-status-in-production' },
+  {
+    value: 'on_hold',
+    label: 'On Hold',
+    className: 'production-status-on-hold',
+    pattern: 'repeating-linear-gradient(135deg, transparent 0, transparent 6px, rgba(255,255,255,0.24) 6px, rgba(255,255,255,0.24) 10px)',
+  },
+  {
+    value: 'shipped',
+    label: 'Shipped',
+    className: 'production-status-shipped',
+    pattern: 'repeating-linear-gradient(45deg, transparent 0, transparent 8px, rgba(255,255,255,0.1) 8px, rgba(255,255,255,0.1) 10px)',
+  },
   {
     value: 'complete',
     label: 'Complete',
     className: 'production-status-complete',
-    pattern: 'repeating-linear-gradient(135deg, transparent 0, transparent 9px, rgba(109,40,217,0.32) 9px, rgba(109,40,217,0.32) 10px)',
-    timelinePattern: 'repeating-linear-gradient(135deg, transparent 0, transparent 7px, rgba(109,40,217,0.34) 7px, rgba(109,40,217,0.34) 8px)',
+    pattern: 'repeating-linear-gradient(135deg, #7c3aed 0, #7c3aed 8px, #f8fafc 8px, #f8fafc 14px)',
   },
-  { value: 'cancelled', label: 'Cancelled', className: 'border-zinc-700 bg-zinc-500 text-white' },
+  { value: 'cancelled', label: 'Cancelled', className: 'production-status-cancelled' },
 ];
 
 export const productionStatusVisualByValue = Object.fromEntries(

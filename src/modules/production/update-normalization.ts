@@ -19,6 +19,7 @@ export function normalizeNullableNumber(value: unknown): NullableNumberResult {
 }
 
 const nullableNumberFields = new Set<keyof ProductionJob>([
+  'contract_value',
   'estimated_man_hours',
   'estimated_calendar_days',
 ]);

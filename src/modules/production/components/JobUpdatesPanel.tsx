@@ -6,10 +6,12 @@ import {
   Flag,
   MessageSquare,
   Paperclip,
+  Pencil,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   createJobUpdate,
+  editJobUpdate,
   loadJobAttachments,
   loadJobUpdates,
   resolveJobUpdate,
@@ -22,6 +24,13 @@ import {
 } from "../production-personnel";
 import { summarizeJobUpdates } from "../job-update-summary";
 import { getResolutionResolverName } from "../job-update-resolution";
+import {
+  canEditJobUpdate,
+  getJobUpdateEditDraft,
+  getJobUpdateEditValidationError,
+  hasJobUpdateEditChanges,
+  type JobUpdateEditDraft,
+} from "../job-update-editing";
 
 const ATTRIBUTION_STORAGE_KEY = "tenops.jobUpdateAttributionName";
 const OTHER_AUTHOR_VALUE = "__other__";
@@ -151,6 +160,10 @@ export default function JobUpdatesPanel({
   const [resolutionDrafts, setResolutionDrafts] = useState<
     Record<string, ResolutionDraft>
   >({});
+  const [editingUpdateId, setEditingUpdateId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState<JobUpdateEditDraft | null>(null);
+  const [editError, setEditError] = useState("");
+  const [savingEditId, setSavingEditId] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const postingRef = useRef(false);
   const resolvingIdsRef = useRef(new Set<string>());
@@ -159,6 +172,9 @@ export default function JobUpdatesPanel({
     let live = true;
     setLoading(true);
     setError("");
+    setEditingUpdateId(null);
+    setEditDraft(null);
+    setEditError("");
     loadJobUpdates(job.id)
       .then((rows) => {
         if (live) setUpdates(rows);
@@ -381,6 +397,56 @@ export default function JobUpdatesPanel({
     }
   }
 
+  function beginEdit(update: JobUpdate) {
+    if (!canEditJobUpdate(update)) return;
+    setEditingUpdateId(update.id);
+    setEditDraft(getJobUpdateEditDraft(update));
+    setEditError("");
+    setMessage("");
+  }
+
+  function cancelEdit() {
+    if (savingEditId) return;
+    setEditingUpdateId(null);
+    setEditDraft(null);
+    setEditError("");
+  }
+
+  async function saveEdit(update: JobUpdate) {
+    if (!editDraft || savingEditId) return;
+    const validationError = getJobUpdateEditValidationError(editDraft);
+    if (validationError) {
+      setEditError(validationError);
+      return;
+    }
+
+    setSavingEditId(update.id);
+    setEditError("");
+    setMessage("");
+    try {
+      const edited = await editJobUpdate(
+        update.id,
+        editDraft.body,
+        editDraft.requiresFollowUp,
+        editDraft.followUpAssigneeName,
+      );
+      setUpdates((current) =>
+        current.map((row) => (row.id === edited.id ? edited : row)),
+      );
+      setEditingUpdateId(null);
+      setEditDraft(null);
+      setMessage("Changes saved.");
+    } catch (saveError) {
+      setEditError(
+        saveError instanceof Error
+          ? saveError.message
+          : "Unable to save changes. Try again.",
+      );
+    } finally {
+      setSavingEditId(null);
+    }
+  }
+
   return (
     <section className="mt-5" data-field="job-updates">
       <div className="border-b border-slate-300 pb-3">
@@ -464,6 +530,13 @@ export default function JobUpdatesPanel({
                 resolverNamesByUpdate[update.id],
                 resolverName,
               );
+              const isEditing = editingUpdateId === update.id && editDraft;
+              const editValidationError = isEditing
+                ? getJobUpdateEditValidationError(editDraft)
+                : null;
+              const editHasChanges = isEditing
+                ? hasJobUpdateEditChanges(update, editDraft)
+                : false;
               return (
                 <article
                   id={`job-update-${update.id}`}
@@ -477,10 +550,16 @@ export default function JobUpdatesPanel({
                     </div>
                     <div className="text-xs text-slate-500">
                       {formatTimestamp(update.created_at)}
+                      {update.edited_at && (
+                        <span title={`Last edited ${formatTimestamp(update.edited_at)}`}>
+                          {" "}· Edited
+                        </span>
+                      )}
                     </div>
                   </div>
-                  {update.requires_follow_up ? (
-                    update.resolved_at ? (
+                  <div className="flex flex-wrap items-center justify-end gap-2">
+                    {update.requires_follow_up ? (
+                      update.resolved_at ? (
                       <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">
                         <CheckCircle2 className="h-3.5 w-3.5" />
                         Resolved
@@ -488,7 +567,7 @@ export default function JobUpdatesPanel({
                           ? ` · ${update.follow_up_assignee_name}`
                           : ""}
                       </span>
-                    ) : (
+                      ) : (
                       <span className="inline-flex items-center gap-1 bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-900">
                         <Flag className="h-3.5 w-3.5 fill-amber-50" />
                         Needs attention
@@ -496,16 +575,113 @@ export default function JobUpdatesPanel({
                           ? ` · ${update.follow_up_assignee_name}`
                           : ""}
                       </span>
-                    )
-                  ) : (
-                    <span className="bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600">
-                      Update
-                    </span>
-                  )}
+                      )
+                    ) : (
+                      <span className="bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600">
+                        Update
+                      </span>
+                    )}
+                    {canEditJobUpdate(update) && !isEditing && (
+                      <button
+                        type="button"
+                        onClick={() => beginEdit(update)}
+                        className="inline-flex min-h-8 items-center gap-1 px-1.5 text-xs font-semibold text-slate-500 hover:text-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        Edit
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-800">
-                  {update.body}
-                </p>
+                {isEditing ? (
+                  <div className="mt-3 border-t border-slate-200 pt-3">
+                    <label className="block text-xs font-bold text-slate-700">
+                      Update
+                      <textarea
+                        value={editDraft.body}
+                        disabled={savingEditId !== null}
+                        onChange={(event) =>
+                          setEditDraft({ ...editDraft, body: event.target.value })
+                        }
+                        rows={4}
+                        className="mt-1 w-full resize-y border border-slate-300 bg-white px-3 py-2 text-sm font-normal leading-6 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
+                      />
+                    </label>
+                    <div className="mt-3 flex flex-wrap items-center gap-x-7 gap-y-2">
+                      <label className="inline-flex min-h-8 items-center gap-2 text-xs font-bold text-slate-800">
+                        <input
+                          type="checkbox"
+                          checked={editDraft.requiresFollowUp}
+                          disabled={savingEditId !== null}
+                          onChange={(event) =>
+                            setEditDraft({
+                              ...editDraft,
+                              requiresFollowUp: event.target.checked,
+                              followUpAssigneeName: event.target.checked
+                                ? editDraft.followUpAssigneeName
+                                : "",
+                            })
+                          }
+                          className="h-4 w-4"
+                        />
+                        Needs attention
+                      </label>
+                      {editDraft.requiresFollowUp && (
+                        <label className="inline-flex min-h-8 items-center gap-2 text-xs font-semibold text-slate-700">
+                          <span>Needs resolution from</span>
+                          <select
+                            aria-label="Edit needs resolution from"
+                            value={editDraft.followUpAssigneeName}
+                            disabled={savingEditId !== null}
+                            onChange={(event) =>
+                              setEditDraft({
+                                ...editDraft,
+                                followUpAssigneeName: event.target.value,
+                              })
+                            }
+                            className="h-9 rounded-sm border border-slate-300 bg-white px-2 text-sm font-semibold text-slate-900 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
+                          >
+                            <option value="" disabled>Select</option>
+                            {PRODUCTION_PERSONNEL_NAMES.map((name) => (
+                              <option key={name} value={name}>{name}</option>
+                            ))}
+                          </select>
+                        </label>
+                      )}
+                    </div>
+                    {editError && (
+                      <div role="alert" className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                        {editError}
+                      </div>
+                    )}
+                    <div className="mt-3 flex justify-end gap-2 border-t border-slate-200 pt-3">
+                      <button
+                        type="button"
+                        onClick={cancelEdit}
+                        disabled={savingEditId !== null}
+                        className="h-9 border border-slate-300 bg-white px-3 text-xs font-bold uppercase text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void saveEdit(update)}
+                        disabled={
+                          savingEditId !== null ||
+                          Boolean(editValidationError) ||
+                          !editHasChanges
+                        }
+                        className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {savingEditId === update.id ? "Saving…" : "Save Changes"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-800">
+                    {update.body}
+                  </p>
+                )}
 
                 {updateAttachments.length > 0 && (
                   <div className="mt-3 space-y-1 border-t border-slate-200 pt-2">
@@ -568,7 +744,7 @@ export default function JobUpdatesPanel({
                     </div>
                   ))}
 
-                {isOpen && (
+                {isOpen && !isEditing && (
                   <div className="mt-3 border-t border-amber-200 pt-3">
                     <AuthorControl
                       label="Resolve as"
