@@ -33,7 +33,6 @@ type Props = {
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   selectedJobId: string | null;
   onSelectJob: (job: ProductionJob, focus?: string) => void;
-  onScheduleJob: (job: ProductionJob) => void;
 };
 
 type EditableRow = {
@@ -336,7 +335,6 @@ export default function ProductionTable({
   onStageSchedule,
   selectedJobId,
   onSelectJob,
-  onScheduleJob,
 }: Props) {
   const [rows, setRows] = useState<Record<string, EditableRow>>({});
   const [states, setStates] = useState<Record<string, SaveState>>({});
@@ -357,6 +355,7 @@ export default function ProductionTable({
   const remarksTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const columnsPanelRef = useRef<HTMLDivElement | null>(null);
   const resizeRef = useRef<{ id: TableColumnId; startX: number; startWidth: number } | null>(null);
+  const scheduleInputRefs = useRef(new Map<string, HTMLInputElement>());
   const savingFieldsRef = useRef<Record<string, Set<EditableField>>>({});
   const remarksSavingRef = useRef(false);
 
@@ -484,6 +483,23 @@ export default function ProductionTable({
     }));
     setStates((current) => ({ ...current, [job.id]: 'dirty' }));
     setErrors((current) => ({ ...current, [job.id]: '' }));
+  }
+
+  function focusMissingScheduleField(job: ProductionJob, row: EditableRow) {
+    const field = !row.plannedStart ? 'plannedStart' : 'plannedEnd';
+    const column: TableColumnId = field === 'plannedStart' ? 'start' : 'finish';
+    const focusInput = () => {
+      const input = scheduleInputRefs.current.get(`${job.id}:${field}`);
+      input?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      input?.focus();
+    };
+
+    if (hiddenColumns.has(column)) {
+      setColumnVisible(column, true);
+      requestAnimationFrame(() => requestAnimationFrame(focusInput));
+      return;
+    }
+    requestAnimationFrame(focusInput);
   }
 
   async function saveField(job: ProductionJob, field: EditableField) {
@@ -759,7 +775,12 @@ export default function ProductionTable({
     onChange: <K extends EditableField>(field: K, value: EditableRow[K]) => void,
     onBlur?: (field: EditableField) => void,
     nameRef?: RefObject<HTMLInputElement | null>,
+    scheduleRefs?: {
+      start: (element: HTMLInputElement | null) => void;
+      finish: (element: HTMLInputElement | null) => void;
+    },
     scheduleState?: 'staged' | 'locked',
+    jobNumberIndicator?: ReactNode,
     projectAttachmentIndicator?: ReactNode,
     operationsControl?: ReactNode,
     historyAction?: ReactNode,
@@ -773,7 +794,10 @@ export default function ProductionTable({
           {historyAction}
         </td>
         <td className={`${cellClass} sticky z-20`} style={{ left: jobNumberStickyLeft }}>
-          <input value={row.jobNumber} title={row.jobNumber || undefined} onChange={(e) => onChange('jobNumber', e.target.value)} onBlur={blur('jobNumber')} onKeyDown={blurOnEnter} placeholder="Job #" className={`${inputClass} bg-white`} />
+          <div className="flex h-6 min-w-0 items-center bg-white">
+            {jobNumberIndicator}
+            <input value={row.jobNumber} title={row.jobNumber || undefined} onChange={(e) => onChange('jobNumber', e.target.value)} onBlur={blur('jobNumber')} onKeyDown={blurOnEnter} placeholder="Job #" className={`${inputClass} min-w-0 flex-1 bg-white`} />
+          </div>
         </td>
         <td className={`${cellClass} sticky z-20`} style={{ left: projectStickyLeft }}>
           <div className="relative bg-white">
@@ -786,8 +810,8 @@ export default function ProductionTable({
         {!hiddenColumns.has('workOrder') && <td className={cellClass}><input value={row.workOrderNumber} title={row.workOrderNumber || undefined} onChange={(e) => onChange('workOrderNumber', e.target.value)} onBlur={blur('workOrderNumber')} onKeyDown={blurOnEnter} placeholder="Work order #" className={inputClass} /></td>}
         {!hiddenColumns.has('deposit') && <td className={cellClass}><input aria-label="Deposit date" title={row.depositDate || undefined} type="date" value={row.depositDate} onChange={(e) => onChange('depositDate', e.target.value)} onBlur={blur('depositDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.depositDate ? populatedDateClass : emptyDateClass}`} /></td>}
         {!hiddenColumns.has('delivery') && <td className={cellClass}><input aria-label="Requested delivery date" title={row.requestedDeliveryDate || undefined} type="date" value={row.requestedDeliveryDate} onChange={(e) => onChange('requestedDeliveryDate', e.target.value)} onBlur={blur('requestedDeliveryDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.requestedDeliveryDate ? populatedDateClass : emptyDateClass}`} /></td>}
-        {!hiddenColumns.has('start') && <td className={cellClass}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned start date, unsaved' : 'Planned start date'} title={row.plannedStart || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedStart ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
-        {!hiddenColumns.has('finish') && <td className={cellClass}><div className="relative"><input aria-label={scheduleState === 'staged' ? 'Proposed planned finish date, unsaved' : 'Planned finish date'} title={row.plannedEnd || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedEnd ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
+        {!hiddenColumns.has('start') && <td className={cellClass}><div className="relative"><input ref={scheduleRefs?.start} aria-label={scheduleState === 'staged' ? 'Proposed planned start date, unsaved' : 'Planned start date'} title={row.plannedStart || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedStart ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
+        {!hiddenColumns.has('finish') && <td className={cellClass}><div className="relative"><input ref={scheduleRefs?.finish} aria-label={scheduleState === 'staged' ? 'Proposed planned finish date, unsaved' : 'Planned finish date'} title={row.plannedEnd || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedEnd ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
         {!hiddenColumns.has('labor') && <td className={cellClass}><input type="number" min="0" step="0.25" value={row.estimatedManHours} onChange={(e) => onChange('estimatedManHours', e.target.value)} onBlur={blur('estimatedManHours')} onKeyDown={blurOnEnter} placeholder="Hours" className={inputClass} /></td>}
         {!hiddenColumns.has('days') && <td className={cellClass}><input type="number" min="0" step="1" value={row.estimatedCalendarDays} onChange={(e) => onChange('estimatedCalendarDays', e.target.value)} onBlur={blur('estimatedCalendarDays')} onKeyDown={blurOnEnter} placeholder="Days" className={inputClass} /></td>}
         {!hiddenColumns.has('colorPlate') && <td className={cellClass}><input value={row.colorPlateNumber} title={row.colorPlateNumber || undefined} onChange={(e) => onChange('colorPlateNumber', e.target.value)} onBlur={blur('colorPlateNumber')} onKeyDown={blurOnEnter} placeholder="Color plate #" className={inputClass} /></td>}
@@ -934,8 +958,21 @@ export default function ProductionTable({
                     (field, value) => changeRow(job, field, value),
                     (field) => void saveField(job, field),
                     undefined,
+                    {
+                      start: (element) => {
+                        const key = `${job.id}:plannedStart`;
+                        if (element) scheduleInputRefs.current.set(key, element);
+                        else scheduleInputRefs.current.delete(key);
+                      },
+                      finish: (element) => {
+                        const key = `${job.id}:plannedEnd`;
+                        if (element) scheduleInputRefs.current.set(key, element);
+                        else scheduleInputRefs.current.delete(key);
+                      },
+                    },
                     stagedSchedules[job.id] ? 'staged' : undefined,
-                    <div className="flex items-center gap-1">{!job.planned_start || !job.planned_end ? <span data-table-needs-dates><UnscheduledBadge iconOnly ariaLabel={`${job.name} needs planned dates`} onClick={() => onScheduleJob(job)} /></span> : null}{count > 0 && <button
+                    !row.plannedStart || !row.plannedEnd ? <span data-table-needs-dates className="flex h-6 w-5 shrink-0 items-center justify-center"><UnscheduledBadge iconOnly ariaLabel={`${job.name} needs planned dates`} onClick={() => focusMissingScheduleField(job, row)} /></span> : null,
+                    <div className="flex items-center gap-1">{count > 0 && <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
