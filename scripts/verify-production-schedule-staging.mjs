@@ -1,10 +1,24 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, rebaseStagedScheduleVersion, reconcileBatch, stageSchedule } from '../src/modules/production/schedule-staging.ts';
+import { batchRpcArgs, hasUnsavedSchedules, orderedStagedSchedules, rebaseStagedScheduleVersion, reconcileBatch, scheduleSaveBlockedByInspector, stageSchedule } from '../src/modules/production/schedule-staging.ts';
 import { describeProductionScheduleSaveError } from '../src/modules/production/schedule-batch-contract.ts';
 
 const job = (id, start, end) => ({ id, name: id, job_number: id, planned_start: start, planned_end: end, updated_at: `2026-07-16T00:00:0${id}.000Z` });
 const jobs = [job('a', '2026-07-01', '2026-07-02'), job('b', '2026-07-03', '2026-07-04')];
+const createdV1 = { ...job('created', null, null), updated_at: '2026-07-16T03:00:00.000Z' };
+const canonicalV2 = { ...createdV1, updated_at: '2026-07-16T03:01:00.000Z' };
+const handoffStaged = stageSchedule({}, canonicalV2, '2026-08-01', '2026-08-07', 'production_inspector');
+assert.notEqual(canonicalV2.updated_at, createdV1.updated_at);
+assert.equal(handoffStaged.created.original_updated_at, canonicalV2.updated_at);
+assert.notEqual(handoffStaged.created.original_updated_at, createdV1.updated_at);
+const canonicalV3 = { ...canonicalV2, updated_at: '2026-07-16T03:02:00.000Z' };
+const stagedBaselineConflictsWith = (proposal, canonical) => (
+  proposal.original_planned_start !== canonical.planned_start
+  || proposal.original_planned_end !== canonical.planned_end
+  || proposal.original_updated_at !== canonical.updated_at
+);
+assert.equal(stagedBaselineConflictsWith(handoffStaged.created, canonicalV2), false);
+assert.equal(stagedBaselineConflictsWith(handoffStaged.created, canonicalV3), true);
 let staged = {};
 staged = stageSchedule(staged, jobs[0], '2026-07-02', '2026-07-03', 'production_timeline');
 staged = stageSchedule(staged, jobs[1], '2026-07-04', '2026-07-05', 'production_table');
@@ -33,6 +47,13 @@ assert.equal(rebased.a.proposed_planned_start, staged.a.proposed_planned_start);
 assert.equal(rebased.a.proposed_planned_end, staged.a.proposed_planned_end);
 assert.deepEqual(rebased.a.changed_fields, staged.a.changed_fields);
 assert.equal(hasUnsavedSchedules(rebased), true);
+assert.equal(scheduleSaveBlockedByInspector({ jobId: 'a', dirty: true, saving: false }, staged), true);
+assert.equal(scheduleSaveBlockedByInspector({ jobId: 'a', dirty: false, saving: true }, staged), true);
+assert.equal(scheduleSaveBlockedByInspector({ jobId: 'a', dirty: false, saving: false }, rebased), false);
+assert.equal(scheduleSaveBlockedByInspector({ jobId: 'b', dirty: true, saving: false }, staged), false);
+assert.equal(scheduleSaveBlockedByInspector({ jobId: 'a', dirty: true, saving: false }, {}), false);
+assert.equal(rebased.a.proposed_planned_start, staged.a.proposed_planned_start);
+assert.equal(rebased.a.proposed_planned_end, staged.a.proposed_planned_end);
 const concurrentSchedule = rebaseStagedScheduleVersion(staged, {
   ...jobs[0],
   planned_end: '2026-07-10',
@@ -82,10 +103,16 @@ assert.equal(workspaceSource.includes('saveProductionPlanningScheduleBatch('), t
 assert.equal(workspaceSource.includes('updateProductionJobSchedule'), false);
 assert.equal(workspaceSource.includes('recordProductionScheduleAudit'), false);
 assert.equal(workspaceSource.includes('rebaseStagedScheduleVersion(current, updated)'), true);
+assert.equal(workspaceSource.includes('scheduleSaveBlockedByInspector(inspectorOrdinarySaveState, stagedSchedules)'), true);
+assert.equal(workspaceSource.includes("Save the open Inspector job details before saving schedule changes. Proposed dates remain staged."), true);
 assert.equal(workspaceSource.includes('scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])}'), true);
 assert.equal(workspaceSource.includes('onSaveSchedule={openApprovalDialog}'), true);
+assert.equal(workspaceSource.includes('onOrdinarySaveStateChange={setInspectorOrdinarySaveState}'), true);
+assert.equal(workspaceSource.includes("onClick={() => { setApprovalDialogOpen(false); setApprovalPassword(''); setApprovalError(''); }}"), true);
 assert.equal(inspectorSource.includes('Schedule changes pending'), true);
 assert.equal(inspectorSource.includes('onClick={onSaveSchedule}'), true);
+assert.equal(inspectorSource.includes('Save job details first. Planned dates will remain staged.'), true);
+assert.equal(inspectorSource.includes('scheduleSaveDisabled || dirtyCount > 0 || saving'), true);
 assert.equal(inspectorSource.includes('planned_start: job.planned_start'), false);
 assert.equal(inspectorSource.includes('planned_end: job.planned_end'), false);
 assert.equal(inspectorSource.includes('Planned dates remain staged for Save All.'), true);

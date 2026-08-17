@@ -1024,7 +1024,7 @@ export function PurchaseOrderEditor({
                   className={`${field} bg-slate-50`}
                 />
               </div>
-              <div>
+              <div className="md:col-span-2 2xl:col-span-1">
                 <label className={label} htmlFor="purchase-order-vendor">
                   {tr('Vendor', 'Proveedor')}
                 </label>
@@ -1043,10 +1043,12 @@ export function PurchaseOrderEditor({
                 <button
                   type="button"
                   onClick={() => setVendorManagerOpen(true)}
-                  className="mt-2 inline-flex h-8 w-full items-center justify-center gap-2 border border-blue-300 bg-blue-50 px-3 text-xs font-bold text-blue-800 transition hover:border-blue-500 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                  className="mt-2 inline-flex min-h-8 w-full items-center justify-center border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-bold leading-tight text-blue-800 transition hover:border-blue-500 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                 >
-                  <Settings2 className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  {tr("Manage Vendors & Contacts", "Administrar proveedores y contactos")}
+                  <span className="inline-flex w-fit max-w-full items-center justify-center gap-2">
+                    <Settings2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span className="min-w-0 text-center">{tr("Manage Vendors & Contacts", "Administrar proveedores y contactos")}</span>
+                  </span>
                 </button>
               </div>
               <div>

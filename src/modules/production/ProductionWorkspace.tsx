@@ -1,6 +1,6 @@
 'use client';
 
-import { Camera, ListFilter, Plus, RotateCw } from 'lucide-react';
+import { AlertTriangle, Camera, ClipboardList, ListFilter, Plus, RotateCw } from 'lucide-react';
 import {
   useCallback,
   useEffect,
@@ -41,9 +41,9 @@ import type {
 } from './types';
 import { PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY, PRODUCTION_JOB_FOCUS_STORAGE_KEY } from './job-options';
 import { inclusiveCalendarDays, laborIntensity } from './schedule';
-import { getJobReadiness } from './readiness';
+import { getJobNonblockingPlanningIssues, getJobSchedulingIssues, schedulingAttentionLabel } from './readiness';
 import { isProductionApprovalPasswordAccepted, productionApprovalDecision, PRODUCTION_APPROVAL_WINDOW_MS } from './approval';
-import { batchRpcArgs, hasUnsavedSchedules, rebaseStagedScheduleVersion, reconcileBatch, stageSchedule as updateStagedSchedule, type StagedSchedules } from './schedule-staging';
+import { batchRpcArgs, hasUnsavedSchedules, rebaseStagedScheduleVersion, reconcileBatch, scheduleSaveBlockedByInspector, stageSchedule as updateStagedSchedule, type InspectorOrdinarySaveState, type StagedSchedules } from './schedule-staging';
 import { describeProductionScheduleSaveError, type ProductionScheduleBatchConflictDetail } from './schedule-batch-contract';
 import { arrangeProductionJobs, PRODUCTION_ARRANGEMENT_KEY, type ProductionArrangement } from './arrangement';
 import { hasUnsavedPlanningSchedules, planningPhaseWithStagedDates, productionStartDelta, rebaseStagedPlanningVersion, schedulingIssues, stagePlanningSchedule as updateStagedPlanningSchedule, translateJobPlanningSchedules, type StagedPlanningSchedules } from '@/modules/planning/schedule-staging';
@@ -110,6 +110,7 @@ export default function ProductionWorkspace() {
     return saved === 'queue' || saved === 'spreadsheet' || saved === 'timeline' ? saved : 'queue';
   });
   const [selectedJobId, setSelectedJobId] = useState<string|null>(null);
+  const [inspectorOrdinarySaveState, setInspectorOrdinarySaveState] = useState<InspectorOrdinarySaveState | null>(null);
   const [inspectorFocus, setInspectorFocus] = useState<string|undefined>();
   const setActiveView = (view:ProductionView) => { setActiveViewState(view); window.sessionStorage.setItem('tenops.productionView',view); };
   const [scheduleFilters, setScheduleFilters] = useState<Set<ScheduleFilter>>(
@@ -120,9 +121,11 @@ export default function ProductionWorkspace() {
   );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [planningIssuesOpen, setPlanningIssuesOpen] = useState(false);
+  const [planningIssuesCategory, setPlanningIssuesCategory] = useState<'scheduling' | 'nonblocking'>('nonblocking');
   const [jobCreatorOpen, setJobCreatorOpen] = useState(false);
   const [jobCreatorReturnView, setJobCreatorReturnView] = useState<ProductionView>('queue');
   const [createdJob, setCreatedJob] = useState<ProductionJob | null>(null);
+  const [createdJobScheduleError, setCreatedJobScheduleError] = useState('');
   const [stagedSchedules, setStagedSchedules] = useState<StagedSchedules>({});
   const [stagedPlanningSchedules, setStagedPlanningSchedules] = useState<StagedPlanningSchedules>({});
   const [scheduleSaveState, setScheduleSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -271,6 +274,7 @@ export default function ProductionWorkspace() {
   const firstStaged = Object.values(stagedSchedules)[0];
   const stagedSchedule = useMemo(() => firstStaged ? { jobId: firstStaged.job_id, persistedStart: firstStaged.original_planned_start, persistedEnd: firstStaged.original_planned_end, proposedStart: firstStaged.proposed_planned_start!, proposedEnd: firstStaged.proposed_planned_end! } : null, [firstStaged]);
   const hasPendingSchedules = hasUnsavedSchedules(stagedSchedules) || hasUnsavedPlanningSchedules(stagedPlanningSchedules);
+  const inspectorBlocksScheduleSave = scheduleSaveBlockedByInspector(inspectorOrdinarySaveState, stagedSchedules);
   const stagedPlanningIssues = useMemo(() => schedulingIssues(
     planningPhases.map((phase) => planningPhaseWithStagedDates(phase, stagedPlanningSchedules)),
     jobs.map((job) => stagedSchedules[job.id] ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end } : job),
@@ -341,6 +345,12 @@ export default function ProductionWorkspace() {
   }, []);
 
   const openApprovalDialog = useCallback(() => {
+    if (inspectorBlocksScheduleSave) {
+      setScheduleSaveState('idle');
+      setScheduleMessage('Save the open Inspector job details before saving schedule changes. Proposed dates remain staged.');
+      requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
+      return;
+    }
     if (schedulingErrors.length > 0) {
       setScheduleSaveState('error');
       setScheduleMessage('Resolve scheduling errors before saving. Warnings do not block Save All.');
@@ -355,9 +365,15 @@ export default function ProductionWorkspace() {
     setChangeNote('');
     setApprovalNow(Date.now());
     setApprovalDialogOpen(true);
-  }, [schedulingErrors.length]);
+  }, [inspectorBlocksScheduleSave, schedulingErrors.length]);
 
   const saveStagedSchedule = useCallback(async (audit: { changedByName: string; changeNote: string | null }) => {
+    if (inspectorBlocksScheduleSave) {
+      setScheduleSaveState('idle');
+      setScheduleMessage('Save the open Inspector job details before saving schedule changes. Proposed dates remain staged.');
+      requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
+      return;
+    }
     if (!hasPendingSchedules || scheduleSaveRef.current || schedulingErrors.length > 0) return;
     scheduleSaveRef.current = true;
     setScheduleSaveState('saving'); setScheduleMessage('');
@@ -394,9 +410,13 @@ export default function ProductionWorkspace() {
       setScheduleMessage(feedback.message);
       requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
     } finally { scheduleSaveRef.current = false; }
-  }, [batchId, hasPendingSchedules, jobs, schedulingErrors.length, stagedPlanningSchedules, stagedSchedules]);
+  }, [batchId, hasPendingSchedules, inspectorBlocksScheduleSave, jobs, schedulingErrors.length, stagedPlanningSchedules, stagedSchedules]);
 
   const confirmApprovedSave = useCallback(() => {
+    if (inspectorBlocksScheduleSave) {
+      setApprovalError('Save the open Inspector job details before confirming schedule changes.');
+      return;
+    }
     if (!hasPendingSchedules || scheduleSaveRef.current || schedulingErrors.length > 0) return;
     const name = changedByName.trim();
     if (!name) { setApprovalError('Changed by is required.'); return; }
@@ -423,7 +443,7 @@ export default function ProductionWorkspace() {
     setApprovalPassword('');
     setApprovalDialogOpen(false);
     void saveStagedSchedule({ changedByName: name, changeNote: changeNote.trim() || null });
-  }, [approvalPassword, changeNote, changedByName, hasPendingSchedules, saveStagedSchedule, schedulingErrors.length]);
+  }, [approvalPassword, changeNote, changedByName, hasPendingSchedules, inspectorBlocksScheduleSave, saveStagedSchedule, schedulingErrors.length]);
 
   useEffect(() => {
     if (!hasPendingSchedules || approvalDialogOpen) return;
@@ -473,12 +493,15 @@ export default function ProductionWorkspace() {
   )), arrangement), [arrangement, filteredJobs, stagedSchedules]);
   const stagedJob = stagedSchedule ? jobs.find((job) => job.id === stagedSchedule.jobId) ?? null : null;
   const selectedJob = selectedJobId ? jobs.find(job=>job.id===selectedJobId)??null : null;
-  const planningIssueCount = useMemo(() => {
-    const activeJobs = jobs.filter((job) => !['complete', 'cancelled'].includes(job.production_status));
-    return activeJobs.filter((job) => getJobReadiness(stagedSchedules[job.id]
+  const activeReadinessJobs = useMemo(() => jobs
+    .filter((job) => !['complete', 'cancelled'].includes(job.production_status))
+    .map((job) => stagedSchedules[job.id]
       ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
-      : job).missingFields.length > 0).length;
-  }, [jobs, stagedSchedules]);
+      : job), [jobs, stagedSchedules]);
+  const schedulingAttentionJobs = useMemo(() => activeReadinessJobs.filter((job) => getJobSchedulingIssues(job).length > 0), [activeReadinessJobs]);
+  const nonblockingIssueCount = useMemo(() => {
+    return activeReadinessJobs.filter((job) => getJobNonblockingPlanningIssues(job).length > 0).length;
+  }, [activeReadinessJobs]);
   const selectJob = (job:ProductionJob, focus?:string) => {
     if (document.activeElement instanceof HTMLElement) inspectorOpenerRef.current = document.activeElement;
     setSelectedJobId(job.id);
@@ -492,6 +515,29 @@ export default function ProductionWorkspace() {
     setScheduleFilters(new Set());
     setActiveView('timeline');
     selectJob(job, 'planned-dates');
+  };
+  const reviewSchedulingAttention = () => {
+    if (schedulingAttentionJobs.length === 1) {
+      selectJob(schedulingAttentionJobs[0], 'planned-dates');
+      return;
+    }
+    setPlanningIssuesCategory('scheduling');
+    setPlanningIssuesOpen(true);
+  };
+  const openCreatedJobScheduling = async (job: ProductionJob) => {
+    setCreatedJobScheduleError('');
+    try {
+      const canonicalJob = await loadProductionJob(job.id);
+      if (!canonicalJob) throw new Error('The newly created Production Job could not be loaded.');
+
+      setJobs((current) => sortJobs(current.some((candidate) => candidate.id === canonicalJob.id)
+        ? current.map((candidate) => candidate.id === canonicalJob.id ? canonicalJob : candidate)
+        : [...current, canonicalJob]));
+      setCreatedJob(null);
+      openJobScheduling(canonicalJob);
+    } catch (error) {
+      setCreatedJobScheduleError(error instanceof Error ? error.message : 'Unable to open this Production Job for scheduling.');
+    }
   };
   const closeInspector = () => {
     setSelectedJobId(null);
@@ -586,13 +632,8 @@ export default function ProductionWorkspace() {
   }
 
   const activeFilterCount = scheduleFilters.size + statusFilters.size;
-  const jobsInQueue = jobs.filter(
-    (job) => !['complete', 'cancelled'].includes(job.production_status),
-  ).length;
-  const scheduledCount = jobs.filter(
-    (job) => !['complete', 'cancelled'].includes(job.production_status) && isScheduled(job),
-  ).length;
-  const unscheduledCount = jobsInQueue - scheduledCount;
+  const jobsInQueue = activeReadinessJobs.length;
+  const scheduledCount = activeReadinessJobs.filter(isScheduled).length;
   const customerSuggestions = [...new Map(jobs
     .map((job) => job.customer?.trim())
     .filter((customer): customer is string => Boolean(customer))
@@ -626,7 +667,7 @@ export default function ProductionWorkspace() {
               <button
                 type="button"
                 onClick={() => { setJobCreatorReturnView(activeView); setJobCreatorOpen(true); }}
-                className="inline-flex h-9 items-center justify-center gap-1.5 border border-blue-900 bg-blue-900 px-3 text-[10px] font-bold uppercase tracking-[0.07em] text-white hover:bg-blue-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                className="tenops-selected-surface inline-flex h-9 items-center justify-center gap-1.5 border px-3 text-[10px] font-bold uppercase tracking-[0.07em] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
               >
                 <Plus className="h-4 w-4" aria-hidden="true" />
                 {tr('New Job', 'Nuevo trabajo')}
@@ -760,15 +801,13 @@ export default function ProductionWorkspace() {
             {loadError}
           </div>
         )}
-        <div
-          data-operational-tone={planningIssueCount > 0 ? 'attention' : undefined}
-          className={`mt-3 flex min-h-10 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-3 py-2 text-xs ${planningIssueCount > 0 ? 'border-l-2 border-amber-500 bg-amber-50/70 text-slate-600' : 'border border-slate-200 bg-white text-slate-600'}`}
-        >
+        <div data-production-attention-strip data-operational-tone={schedulingAttentionJobs.length > 0 ? 'attention' : undefined} className={`mt-3 flex min-h-10 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-3 py-2 text-xs ${schedulingAttentionJobs.length > 0 ? 'border-l-2 border-amber-500 bg-amber-50/70 text-slate-600' : 'border border-slate-200 bg-white text-slate-600'}`}>
           <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
-            {planningIssueCount > 0 && <>
-              <span className="font-bold text-amber-900">{language === 'es' ? `${planningIssueCount} ${planningIssueCount === 1 ? 'trabajo requiere' : 'trabajos requieren'} atención de planificación` : `${planningIssueCount} ${planningIssueCount === 1 ? 'job needs' : 'jobs need'} planning attention`}</span>
-              <button type="button" onClick={() => setPlanningIssuesOpen(true)} className="h-7 border border-amber-300 bg-white px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] text-amber-900 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-700">{tr('Review issues', 'Revisar pendientes')}</button>
+            {schedulingAttentionJobs.length > 0 && <>
+              <span data-scheduling-attention-count className="inline-flex items-center gap-1.5 font-bold text-amber-900"><AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />{language === 'es' ? `${schedulingAttentionJobs.length} ${schedulingAttentionJobs.length === 1 ? 'trabajo necesita fechas' : 'trabajos necesitan fechas'}` : schedulingAttentionLabel(schedulingAttentionJobs.length)}</span>
+              <button type="button" onClick={reviewSchedulingAttention} className="h-7 border border-amber-300 bg-white px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] text-amber-900 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-700">{schedulingAttentionJobs.length === 1 ? tr('Review job', 'Revisar trabajo') : tr('Review jobs', 'Revisar trabajos')}</button>
             </>}
+            {nonblockingIssueCount > 0 && <button type="button" data-nonblocking-issue-count onClick={() => { setPlanningIssuesCategory('nonblocking'); setPlanningIssuesOpen(true); }} aria-label={`${nonblockingIssueCount} Production ${nonblockingIssueCount === 1 ? 'detail needs' : 'details need'} attention`} title="Review Production details that need attention" className="relative inline-flex h-7 w-7 items-center justify-center rounded-sm border border-slate-300 bg-white text-slate-600 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-900 focus-visible:ring-2 focus-visible:ring-blue-700"><ClipboardList className="h-3.5 w-3.5" aria-hidden="true" /><span data-nonblocking-issue-badge className="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold leading-none text-white ring-2 ring-white">{nonblockingIssueCount > 99 ? '99+' : nonblockingIssueCount}</span></button>}
           </div>
           <div className="ml-auto flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-[10px] font-bold text-slate-600">
             <div className="whitespace-nowrap">
@@ -778,20 +817,8 @@ export default function ProductionWorkspace() {
             <span aria-hidden="true" className="hidden text-slate-400 sm:inline">•</span>
             <div className="whitespace-nowrap">
               <span className="uppercase tracking-[0.06em]">{tr('Scheduled', 'Programados')}</span>
-              <span className="ml-1 text-xs text-slate-950">{scheduledCount} / {jobsInQueue}</span>
+              <span className="ml-1 text-xs text-slate-950">{scheduledCount}</span>
             </div>
-            <span aria-hidden="true" className="hidden text-slate-400 sm:inline">•</span>
-            <button
-              type="button"
-              onClick={() => {
-                setScheduleFilters(new Set(['unscheduled']));
-                setActiveView('timeline');
-              }}
-              className="whitespace-nowrap text-left hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
-            >
-              <span className="uppercase tracking-[0.06em]">{tr('Unscheduled', 'Sin programar')}</span>
-              <span className="ml-1 text-xs text-slate-950">{unscheduledCount} / {jobsInQueue}</span>
-            </button>
             <span aria-hidden="true" className="hidden text-slate-400 sm:inline">•</span>
             <div className="whitespace-nowrap">
               <span className="uppercase tracking-[0.06em]">{tr('Showing', 'Mostrando')}</span>
@@ -816,11 +843,12 @@ export default function ProductionWorkspace() {
                 <div className="mt-1 text-sm font-bold text-slate-950">{Object.keys(stagedSchedules).length} Production · {Object.keys(stagedPlanningSchedules).length} Planning changes{conflicts.length ? ` · ${conflicts.length} conflicts` : ''}</div>
                 <div className="mt-1 text-sm font-bold text-slate-950">{hadSchedule ? `${stagedSchedule.persistedStart} – ${stagedSchedule.persistedEnd}` : 'Not scheduled'} → {stagedSchedule.proposedStart} – {stagedSchedule.proposedEnd}</div>
                 <div className="mt-1 text-xs text-slate-600">{hadSchedule ? `${inclusiveCalendarDays(stagedSchedule.persistedStart!, stagedSchedule.persistedEnd!)} days · ${hours(before!.hoursPerScheduledDay)}` : 'No saved production window'} → {inclusiveCalendarDays(stagedSchedule.proposedStart, stagedSchedule.proposedEnd)} days · {hours(after.hoursPerScheduledDay)}</div>
+                {inspectorBlocksScheduleSave && <div className="mt-1 text-xs font-bold text-amber-900">Save the open Inspector job details first. Proposed dates will remain staged.</div>}
               </div>
               <div className="flex flex-wrap gap-2">
                 <button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button>
                 <button type="button" onClick={discardStagedSchedule} disabled={scheduleSaveState === 'saving'} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button>
-                <button type="button" onClick={openApprovalDialog} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white">Save all changes</button>
+                <button type="button" onClick={openApprovalDialog} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave} title={inspectorBlocksScheduleSave ? 'Save the open Inspector job details first' : undefined} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50">Save all changes</button>
               </div>
             </div>
           );
@@ -866,7 +894,7 @@ export default function ProductionWorkspace() {
           setAttachmentCounts((current) => ({ ...current, [jobId]: (current[jobId] ?? 0) + uploaded.length }));
         }}
         onOpenJob={(job) => selectJob(job, 'attachments')}
-        onCreated={setCreatedJob}
+        onCreated={(job) => { setCreatedJobScheduleError(''); setCreatedJob(job); }}
       />
 
       {createdJob && (
@@ -880,9 +908,10 @@ export default function ProductionWorkspace() {
               <UnscheduledBadge />
               <p className="mt-2 text-sm text-amber-900">This Production Job will not appear on the Timeline until it has been scheduled.</p>
             </div>
+            {createdJobScheduleError && <p role="alert" className="mt-3 text-sm font-semibold text-red-700">{createdJobScheduleError}</p>}
             <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button type="button" onClick={() => { setActiveView(jobCreatorReturnView); setCreatedJob(null); }} className="h-10 whitespace-nowrap border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-700 sm:flex-1">Return to Production</button>
-              <button type="button" onClick={() => { const job = createdJob; setCreatedJob(null); openJobScheduling(job); }} className="h-10 whitespace-nowrap border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white hover:bg-blue-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 sm:flex-1">Open Timeline to Schedule Job</button>
+              <button type="button" onClick={() => void openCreatedJobScheduling(createdJob)} className="h-10 whitespace-nowrap border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white hover:bg-blue-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 sm:flex-1">Open Timeline to Schedule Job</button>
             </div>
           </div>
         </div>
@@ -906,7 +935,7 @@ export default function ProductionWorkspace() {
             <textarea id="production-change-note" value={changeNote} onChange={(event) => setChangeNote(event.target.value)} rows={3} className="mt-1 w-full resize-y border border-slate-400 px-3 py-2 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950" />
             {approvalError && <div role="alert" className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">{approvalError}</div>}
             <p className="mt-3 text-xs text-slate-500">This client-side confirmation is an internal MVP guardrail, not secure authentication.</p>
-            <div className="mt-5 flex flex-wrap justify-end gap-2"><button type="button" onClick={() => { setApprovalDialogOpen(false); setApprovalPassword(''); setApprovalError(''); }} className="h-10 border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-800">Cancel</button><button type="button" onClick={confirmApprovedSave} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0} className="h-10 border border-slate-950 bg-slate-900 px-4 text-sm font-bold text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">Confirm and save</button></div>
+            <div className="mt-5 flex flex-wrap justify-end gap-2"><button type="button" onClick={() => { setApprovalDialogOpen(false); setApprovalPassword(''); setApprovalError(''); }} className="h-10 border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-800">Cancel</button><button type="button" onClick={confirmApprovedSave} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave} className="h-10 border border-slate-950 bg-slate-900 px-4 text-sm font-bold text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">Confirm and save</button></div>
           </div>
         </div>
       )}
@@ -923,7 +952,8 @@ export default function ProductionWorkspace() {
         onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')}
         onSaveSchedule={openApprovalDialog}
         scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])}
-        scheduleSaveDisabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0}
+        scheduleSaveDisabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave}
+        onOrdinarySaveStateChange={setInspectorOrdinarySaveState}
         onAttachmentsChanged={(jobId, count) => setAttachmentCounts((current) => ({ ...current, [jobId]: count }))}
         onPlanningPhasesChanged={handlePlanningPhasesChanged}
         onPlanningItemsChanged={handlePlanningItemsChanged}
@@ -933,7 +963,7 @@ export default function ProductionWorkspace() {
         initialFocus={inspectorFocus}
         onScheduleJob={openJobScheduling}
       />}
-      {planningIssuesOpen && <PlanningIssuesPanel jobs={jobs} stagedSchedules={stagedSchedules} onClose={() => setPlanningIssuesOpen(false)} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onOpenInspector={selectJob} />}
+      {planningIssuesOpen && <PlanningIssuesPanel category={planningIssuesCategory} jobs={jobs} stagedSchedules={stagedSchedules} onClose={() => setPlanningIssuesOpen(false)} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onOpenInspector={selectJob} />}
 
 
     </div>

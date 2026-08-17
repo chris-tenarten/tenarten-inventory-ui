@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ProductionJobUpdate } from '../jobs';
-import { getJobReadiness, planningIssueLabels } from '../readiness';
+import { getJobNonblockingPlanningIssues, getJobSchedulingIssues, planningIssueLabels, type PlanningIssueField } from '../readiness';
 import type { StagedSchedules } from '../schedule-staging';
 import type { ProductionJob } from '../types';
 import { productionValuesEqual } from '../update-normalization';
@@ -19,6 +19,7 @@ type Props = {
   onUpdateJob: (jobId: string, changes: ProductionJobUpdate) => Promise<ProductionJob>;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   onOpenInspector: (job: ProductionJob, focus?: string) => void;
+  category: 'scheduling' | 'nonblocking';
 };
 
 const fieldClass = 'mt-1 h-9 w-full rounded-sm border border-slate-300 bg-white px-2 text-sm text-slate-900 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100';
@@ -37,7 +38,14 @@ function effectiveJob(job: ProductionJob, stagedSchedules: StagedSchedules) {
   return staged ? { ...job, planned_start: staged.proposed_planned_start, planned_end: staged.proposed_planned_end } : job;
 }
 
-export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, onUpdateJob, onStageSchedule, onOpenInspector }: Props) {
+function inspectorFocus(missing: PlanningIssueField[]) {
+  if (missing.includes('planned_start') || missing.includes('planned_end')) return 'planned-dates';
+  if (missing.includes('estimated_man_hours')) return 'labor';
+  if (missing.includes('requested_delivery_date')) return 'requested-delivery';
+  return undefined;
+}
+
+export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, onUpdateJob, onStageSchedule, onOpenInspector, category }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [drafts, setDrafts] = useState<Record<string, OrdinaryDraft>>({});
   const [scheduleDrafts, setScheduleDrafts] = useState<Record<string, ScheduleDraft>>({});
@@ -51,8 +59,9 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
   const activeJobs = useMemo(() => jobs.filter((job) => !['complete', 'cancelled'].includes(job.production_status)), [jobs]);
   const issueRows = useMemo(() => activeJobs.map((job) => {
     const effective = effectiveJob(job, stagedSchedules);
-    return { job, effective, readiness: getJobReadiness(effective) };
-  }).filter((row) => row.readiness.state !== 'ready'), [activeJobs, stagedSchedules]);
+    const missing = category === 'scheduling' ? getJobSchedulingIssues(effective) : getJobNonblockingPlanningIssues(effective);
+    return { job, missing };
+  }).filter((row) => row.missing.length > 0), [activeJobs, category, stagedSchedules]);
 
   const dirtyOrdinaryIds = useMemo(() => Object.entries(drafts).filter(([jobId, draft]) => {
     const job = jobs.find((candidate) => candidate.id === jobId);
@@ -166,21 +175,21 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
   return <div className="fixed inset-0 z-[70] bg-slate-950/30" onMouseDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
     <aside ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="planning-issues-title" onMouseDown={(event) => event.stopPropagation()} className="ml-auto flex h-full w-full max-w-2xl flex-col border-l border-slate-300 bg-slate-50 shadow-2xl">
       <header className="flex items-start justify-between gap-4 border-b border-slate-300 bg-white px-5 py-4">
-        <div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-700">Production planning</div><h2 id="planning-issues-title" className="mt-1 text-xl font-bold text-slate-950">Planning Issues</h2><p className="mt-1 text-sm text-slate-600">Resolve missing details and stage schedule dates without leaving the Production workspace.</p></div>
+        <div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-700">Production planning</div><h2 id="planning-issues-title" className="mt-1 text-xl font-bold text-slate-950">{category === 'scheduling' ? 'Needs Scheduling' : 'Missing Information'}</h2><p className="mt-1 text-sm text-slate-600">{category === 'scheduling' ? 'Add planned dates so these jobs can be placed on the Production Timeline.' : 'Complete missing Production details without leaving the workspace.'}</p></div>
         <button ref={closeRef} type="button" onClick={requestClose} aria-label="Close Planning Issues" className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700"><X className="h-4 w-4" aria-hidden="true" /></button>
       </header>
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
         <div className="space-y-2">
-          {issueRows.map(({ job, readiness }) => {
+          {issueRows.map(({ job, missing }) => {
             const expanded = expandedId === job.id;
             const draft = drafts[job.id] ?? ordinaryDraft(job);
             const scheduleDraft = scheduleDrafts[job.id] ?? { start: job.planned_start ?? '', end: job.planned_end ?? '' };
-            const missing = readiness.missingFields;
             const ordinaryDirty = dirtyOrdinaryIds.includes(job.id);
             const scheduleDirty = dirtyScheduleIds.includes(job.id);
+            const focus = inspectorFocus(missing);
             return <section key={job.id} className="border border-slate-300 bg-white">
               <div className="flex items-start gap-3 p-3">
-                <button type="button" onClick={() => expand(job)} aria-expanded={expanded} aria-controls={`planning-issue-${job.id}`} className="inline-flex h-8 w-8 shrink-0 items-center justify-center text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700">{expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}<span className="sr-only">{expanded ? 'Collapse' : 'Fix'} {job.name}</span></button>
+                <button type="button" onClick={() => expand(job)} aria-expanded={expanded} aria-controls={`planning-issue-${job.id}`} className="inline-flex h-8 shrink-0 items-center justify-center gap-1 px-1.5 text-[9px] font-bold uppercase text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700">{expanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}<span>{expanded ? 'Close' : 'Fix here'}</span><span className="sr-only"> {job.name}</span></button>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-x-2"><span className="truncate text-sm font-bold text-slate-950">{job.name}</span><span className="text-xs font-semibold text-slate-500">{job.job_number || 'Job number missing'}</span></div>
                   <div className="mt-0.5 truncate text-xs text-slate-600">{job.customer || 'Customer missing'}</div>
@@ -189,8 +198,8 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
                     {missing.map((field) => <span key={field} className="border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[9px] font-semibold text-amber-900">{planningIssueLabels[field]}</span>)}
                   </div>
                 </div>
-                <span className="shrink-0 bg-amber-100 px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-amber-900">{readiness.label}</span>
-                <button type="button" onClick={() => onOpenInspector(job, missing.includes('planned_start') || missing.includes('planned_end') ? 'planned-dates' : missing.includes('estimated_man_hours') ? 'labor' : undefined)} className="h-8 shrink-0 border border-slate-300 bg-white px-2.5 text-[10px] font-bold uppercase text-blue-800 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-700">Open Inspector</button>
+                <span className="shrink-0 bg-amber-100 px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-amber-900">{category === 'scheduling' ? 'Needs dates' : 'Missing details'}</span>
+                {focus && <button type="button" onClick={() => { onClose(); onOpenInspector(job, focus); }} className="h-8 shrink-0 border border-slate-300 bg-white px-2.5 text-[10px] font-bold uppercase text-blue-800 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-700">Open Inspector</button>}
               </div>
               {expanded && <div id={`planning-issue-${job.id}`} className="border-t border-slate-200 bg-slate-50 p-3">
                 {errors[job.id] && <div role="alert" className="mb-3 border-l-2 border-red-500 bg-red-50 px-3 py-2 text-xs font-semibold text-red-800">{errors[job.id]}</div>}
@@ -208,7 +217,7 @@ export default function PlanningIssuesPanel({ jobs, stagedSchedules, onClose, on
               </div>}
             </section>;
           })}
-          {issueRows.length === 0 && <div className="border border-slate-200 bg-white px-4 py-10 text-center text-sm text-slate-600">No jobs currently need planning attention.</div>}
+          {issueRows.length === 0 && <div className="border border-slate-200 bg-white px-4 py-10 text-center text-sm text-slate-600">{category === 'scheduling' ? 'No active jobs need scheduling.' : 'No active jobs have missing Production information.'}</div>}
         </div>
       </div>
       {dirtyCount > 0 && <div className="border-t border-amber-300 bg-amber-50 px-5 py-3 text-xs font-bold text-amber-900">{dirtyCount} {dirtyCount === 1 ? 'job has' : 'jobs have'} unsaved planning drafts.</div>}

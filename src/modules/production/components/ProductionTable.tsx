@@ -549,7 +549,7 @@ export default function ProductionTable({
             : current,
         );
         setFeedback((current) => current[job.id] === saveFeedback ? { ...current, [job.id]: undefined } : current);
-      }, 1500);
+      }, 2500);
     } catch (error) {
       setStates((current) => ({ ...current, [job.id]: 'error' }));
       setErrors((current) => ({
@@ -607,7 +607,7 @@ export default function ProductionTable({
       window.setTimeout(() => {
         setStates((current) => current[job.id] === 'saved' ? { ...current, [job.id]: 'idle' } : current);
         setFeedback((current) => current[job.id] === saveFeedback ? { ...current, [job.id]: undefined } : current);
-      }, 1500);
+      }, 2500);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to save remarks.';
       setStates((current) => ({ ...current, [job.id]: 'error' }));
@@ -935,7 +935,7 @@ export default function ProductionTable({
                     (field) => void saveField(job, field),
                     undefined,
                     stagedSchedules[job.id] ? 'staged' : undefined,
-                    <div className="flex items-center gap-1">{!job.planned_start || !job.planned_end ? <UnscheduledBadge compact onClick={() => onScheduleJob(job)} /> : null}{count > 0 && <button
+                    <div className="flex items-center gap-1">{!job.planned_start || !job.planned_end ? <span data-table-needs-dates><UnscheduledBadge iconOnly ariaLabel={`${job.name} needs planned dates`} onClick={() => onScheduleJob(job)} /></span> : null}{count > 0 && <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -978,8 +978,8 @@ export default function ProductionTable({
                       <button type="button" onClick={(event) => { event.stopPropagation(); onSelectJob(job); }} aria-label="Inspect job" title={`Inspect ${job.job_number ? `${job.job_number} — ` : ''}${job.name}`} className={`inline-flex h-6 w-6 items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 group-hover:text-slate-700 ${selectedJobId === job.id ? 'text-blue-700' : ''}`}><Search className="h-3.5 w-3.5" aria-hidden="true" /></button>
                       {(state === 'saving' || state === 'saved' || state === 'error') && (() => {
                         const transition = feedback[job.id] ? `${feedback[job.id]!.field}: ${feedback[job.id]!.oldValue} → ${feedback[job.id]!.newValue}` : '';
-                        const message = state === 'saving' ? `Saving…${transition ? ` · ${transition}` : ''}` : state === 'saved' ? `Saved · ${transition}` : `Could not save${transition ? ` · ${transition}` : ''}${errors[job.id] ? ` · ${errors[job.id]}` : ''}`;
-                        return <div role="status" aria-live="polite" aria-label={message} title={message} className={`pointer-events-none absolute left-[38px] top-full z-[60] h-7 w-80 truncate border px-2 text-left text-[10px] font-bold leading-7 shadow-md ${state === 'error' ? 'border-red-400 bg-red-50 text-red-800' : state === 'saved' ? 'border-emerald-400 bg-emerald-50 text-emerald-800' : 'border-blue-400 bg-blue-50 text-blue-800'}`}>{message}</div>;
+                        const message = state === 'saving' ? `Saving…${transition ? ` · ${transition}` : ''}` : state === 'saved' ? `Changes saved${transition ? ` · ${transition}` : ''}` : `Could not save${transition ? ` · ${transition}` : ''}${errors[job.id] ? ` · ${errors[job.id]}` : ''}`;
+                        return <div role={state === 'error' ? 'alert' : 'status'} aria-live="polite" aria-label={message} title={message} className={`pointer-events-none absolute left-[38px] top-full z-[60] h-7 w-80 truncate border px-2 text-left text-[10px] font-bold leading-7 shadow-md ${state === 'error' ? 'border-red-400 bg-red-50 text-red-800' : state === 'saved' ? 'border-emerald-400 bg-emerald-50 text-emerald-800' : 'border-blue-400 bg-blue-50 text-blue-800'}`}>{message}</div>;
                       })()}
                     </div>,
                     <button

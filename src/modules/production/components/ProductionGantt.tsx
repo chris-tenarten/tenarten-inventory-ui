@@ -44,7 +44,6 @@ import { adjustPlanningInterval, planningPhaseWithStagedDates, type StagedPlanni
 import { dependentPlanningPhaseIds, evaluatePlanningSchedule, planningCascadeDelta, planningDependencyGraphIsAcyclic, type PlanningScheduleIssue } from '@/modules/planning/schedule-model.mjs';
 import { overlayVisualForPhase, PLANNING_PAUSE_HATCH } from '@/modules/planning/phase-visuals';
 import { mergePauseRanges, planningIntervalGeometry, rangesIntersect, selectCollapsedTimelinePhases } from '@/modules/planning/timeline-model.mjs';
-import UnscheduledBadge from './UnscheduledBadge';
 
 type ProductionGanttProps = {
   jobs: ProductionJob[];
@@ -256,7 +255,6 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
     : job)), [jobs, stagedSchedules]);
   const scheduledJobs = useMemo(() => displayJobs.filter((job) => job.planned_start && job.planned_end), [displayJobs]);
-  const needsSchedulingJobs = useMemo(() => displayJobs.filter((job) => !job.planned_start || !job.planned_end), [displayJobs]);
   const timeline = useMemo(() => createTimeline(displayJobs, zoom, domainExtension), [displayJobs, domainExtension, zoom]);
   const zoomOption = timelineZoomOption(zoom);
   const dayWidth = preferences.dayWidths[zoom];
@@ -958,44 +956,26 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   return (
     <div ref={ganttRef} data-production-gantt data-mobile-read-only={mobileReadOnly ? 'true' : undefined} data-mobile-landscape={mobileLandscape ? 'true' : undefined} className="scroll-mt-16 overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
-      {needsSchedulingJobs.length > 0 && (
-        <section className="border-b border-slate-300 bg-slate-50 px-3 py-3" aria-labelledby="needs-scheduling-heading">
-          <div className="flex items-center justify-between gap-3">
-            <h3 id="needs-scheduling-heading" className="text-xs font-bold uppercase tracking-[0.1em] text-slate-800">Needs Scheduling</h3>
-            <span className="text-[10px] font-semibold text-slate-500">{needsSchedulingJobs.length} {needsSchedulingJobs.length === 1 ? 'job needs' : 'jobs need'} dates</span>
-          </div>
-          <div className="mt-2 grid gap-1.5 md:grid-cols-2">
-            {needsSchedulingJobs.map((job) => (
-              <button key={job.id} type="button" onClick={() => onSelectJob(job, 'planned-dates')} className="flex min-h-11 min-w-0 items-center justify-between gap-3 border border-slate-300 bg-white px-2.5 py-1.5 text-left hover:border-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-700">
-                <span className="min-w-0">
-                  <span className="block truncate text-xs font-bold text-slate-950">{job.job_number ? `${job.job_number} — ` : ''}{job.name}</span>
-                  <span className="block truncate text-[10px] text-slate-500">{job.customer || 'Customer not recorded'}</span>
-                </span>
-                <UnscheduledBadge compact />
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
       <div ref={workspaceRef} className="scroll-mt-16 border-b border-slate-200 bg-white px-3 py-2">
         <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-slate-800">Planning Timeline</h3>
       </div>
-      <div data-gantt-toolbar className="z-40 grid min-w-0 grid-cols-3 items-center gap-1.5 border-b border-slate-200 bg-white p-2 text-[10px] font-semibold text-slate-700 shadow-sm md:flex md:flex-wrap md:gap-x-3 md:gap-y-2 md:px-3">
+      <div data-gantt-toolbar className="z-40 grid min-w-0 grid-cols-3 items-center gap-1.5 border-b border-slate-200 bg-white p-2 text-[10px] font-semibold text-slate-700 shadow-sm md:block md:p-0">
+        <div data-gantt-controls className="contents md:flex md:min-w-0 md:items-center md:gap-1.5 md:px-2 md:py-1.5">
         {mobileReadOnly && <span data-mobile-read-only-label className="col-span-3 inline-flex h-7 items-center justify-center border border-slate-300 bg-slate-100 px-2 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-600 md:h-8">{mobileLandscape ? 'Read only' : 'Mobile view · Read only'}</span>}
         <span id="timeline-zoom-label" className="hidden font-bold uppercase tracking-[0.12em] text-slate-500 md:inline">Zoom</span>
-        <div data-gantt-zoom-step className="hidden h-8 overflow-hidden rounded-sm border border-slate-300 bg-white md:inline-flex">
-          <button type="button" aria-label="Zoom Timeline out" title="Zoom out" disabled={Boolean(interaction) || dayWidth <= zoomOption.minDayWidth} onClick={() => updateDayWidth(dayWidth - zoomOption.step)} className="inline-flex h-full w-8 items-center justify-center border-r border-slate-300 text-slate-700 hover:bg-slate-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:opacity-40"><Minus className="h-3.5 w-3.5" aria-hidden="true" /></button>
-          <button type="button" aria-label="Zoom Timeline in" title="Zoom in" disabled={Boolean(interaction) || dayWidth >= zoomOption.maxDayWidth} onClick={() => updateDayWidth(dayWidth + zoomOption.step)} className="inline-flex h-full w-8 items-center justify-center text-slate-700 hover:bg-slate-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:opacity-40"><Plus className="h-3.5 w-3.5" aria-hidden="true" /></button>
+        <div data-gantt-zoom-step className="hidden h-7 overflow-hidden rounded-sm border border-slate-300 bg-white md:inline-flex">
+          <button type="button" aria-label="Zoom Timeline out" title="Zoom out" disabled={Boolean(interaction) || dayWidth <= zoomOption.minDayWidth} onClick={() => updateDayWidth(dayWidth - zoomOption.step)} className="inline-flex h-full w-7 items-center justify-center border-r border-slate-300 text-slate-700 hover:bg-slate-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:opacity-40"><Minus className="h-3.5 w-3.5" aria-hidden="true" /></button>
+          <button type="button" aria-label="Zoom Timeline in" title="Zoom in" disabled={Boolean(interaction) || dayWidth >= zoomOption.maxDayWidth} onClick={() => updateDayWidth(dayWidth + zoomOption.step)} className="inline-flex h-full w-7 items-center justify-center text-slate-700 hover:bg-slate-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:opacity-40"><Plus className="h-3.5 w-3.5" aria-hidden="true" /></button>
         </div>
-        <div data-gantt-zoom-modes role="group" aria-labelledby="timeline-zoom-label" className="col-span-3 grid h-8 min-w-0 grid-cols-5 items-stretch rounded-sm border border-slate-300 bg-slate-50 p-0.5 md:inline-flex">
+        <div data-gantt-zoom-modes role="group" aria-labelledby="timeline-zoom-label" className="col-span-3 grid h-8 min-w-0 grid-cols-5 items-stretch rounded-sm border border-slate-300 bg-slate-50 p-0.5 md:h-7 md:flex-1 lg:flex-none">
           {TIMELINE_ZOOM_OPTIONS.map((option) => (
             <button key={option.value} type="button" aria-pressed={zoom === option.value} disabled={Boolean(interaction)} onClick={() => changeZoom(option.value)} className={`h-full min-w-0 rounded-sm px-0.5 text-[8px] font-bold uppercase tracking-[0.03em] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50 md:px-3 md:text-[9px] md:tracking-[0.08em] ${zoom === option.value ? 'tenops-selected-surface shadow-sm' : 'text-slate-600 hover:bg-white'}`}>{option.label}</button>
           ))}
         </div>
-        <button type="button" aria-pressed={navigationMode === 'fit'} onClick={fitTimeline} disabled={Boolean(interaction)} className={`inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border px-1 text-[8px] font-bold uppercase tracking-[0.04em] focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:gap-1.5 md:px-2.5 md:text-[9px] md:tracking-[0.08em] ${navigationMode === 'fit' ? 'tenops-selected-surface border-transparent shadow-sm' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'}`}><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />Fit</button>
-        <button type="button" aria-pressed={navigationMode === 'today'} onClick={goToToday} disabled={Boolean(interaction)} className={`inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border px-1 text-[8px] font-bold uppercase tracking-[0.04em] focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:gap-1.5 md:px-2.5 md:text-[9px] md:tracking-[0.08em] ${navigationMode === 'today' ? 'tenops-selected-surface border-transparent shadow-sm' : 'border-blue-300 bg-white text-blue-600 hover:bg-blue-50'}`}><LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Today</button>
-        {expandableJobIds.length > 0 && <button type="button" onClick={() => setExpandedJobs(allExpandableJobsExpanded ? new Set() : new Set(expandableJobIds))} className="h-8 min-w-0 rounded-sm border border-slate-300 bg-white px-1 text-[8px] font-bold uppercase tracking-[0.03em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 md:px-2.5 md:text-[9px] md:tracking-[0.08em]">{allExpandableJobsExpanded ? 'Collapse all' : 'Expand all'}</button>}
-        <label data-gantt-row-density className="hidden h-8 items-center gap-2 px-1 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-500 md:inline-flex" title={`Timeline rows: ${rowDensityOption.label}`}>
+        <button type="button" aria-pressed={navigationMode === 'fit'} onClick={fitTimeline} disabled={Boolean(interaction)} className={`inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border px-1 text-[8px] font-bold uppercase tracking-[0.04em] focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:h-7 md:gap-1 md:px-2 md:text-[9px] md:tracking-[0.06em] ${navigationMode === 'fit' ? 'tenops-selected-surface border-transparent shadow-sm' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'}`}><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />Fit</button>
+        <button type="button" aria-pressed={navigationMode === 'today'} onClick={goToToday} disabled={Boolean(interaction)} className={`inline-flex h-8 min-w-0 items-center justify-center gap-1 rounded-sm border px-1 text-[8px] font-bold uppercase tracking-[0.04em] focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-40 md:h-7 md:gap-1 md:px-2 md:text-[9px] md:tracking-[0.06em] ${navigationMode === 'today' ? 'tenops-selected-surface border-transparent shadow-sm' : 'border-blue-300 bg-white text-blue-600 hover:bg-blue-50'}`}><LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Today</button>
+        {expandableJobIds.length > 0 && <button type="button" onClick={() => setExpandedJobs(allExpandableJobsExpanded ? new Set() : new Set(expandableJobIds))} className="h-8 min-w-0 rounded-sm border border-slate-300 bg-white px-1 text-[8px] font-bold uppercase tracking-[0.03em] text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 md:h-7 md:px-2 md:text-[9px] md:tracking-[0.06em]">{allExpandableJobsExpanded ? 'Collapse all' : 'Expand all'}</button>}
+        <label data-gantt-row-density className="hidden h-7 items-center gap-1.5 pl-1 text-[9px] font-bold uppercase tracking-[0.06em] text-slate-500 md:ml-auto md:inline-flex" title={`Timeline rows: ${rowDensityOption.label}`}>
           <span>Rows</span>
           <input
             type="range"
@@ -1012,14 +992,15 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             className="timeline-density-slider w-16 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
           />
         </label>
-        <div data-gantt-legend className="hidden flex-wrap items-center gap-x-4 gap-y-2 md:flex" aria-label="Timeline legend">
+        </div>
+        <div data-gantt-legend className="hidden min-w-0 items-center gap-3 overflow-x-auto border-t border-slate-200 px-2 py-1 text-[8px] md:flex" aria-label="Timeline legend">
         <span className="font-bold uppercase tracking-[0.12em] text-slate-500">Legend</span>
         {productionStatusVisuals.map((visual) => (
           <span key={visual.value} className="inline-flex items-center gap-1.5 whitespace-nowrap">
             <span
               aria-hidden="true"
-              className={`h-3 w-5 border ${visual.className}`}
-              style={visual.pattern ? { backgroundImage: visual.pattern } : undefined}
+              className={`h-3 w-5 border ${visual.timelineClassName ?? visual.className}`}
+              style={(visual.timelinePattern ?? visual.pattern) ? { backgroundImage: visual.timelinePattern ?? visual.pattern } : undefined}
             />
             {visual.label}
           </span>
@@ -1203,8 +1184,8 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                       data-timeline-interactive="true"
                       data-production-bar
                       data-fit-participant={productionTimelineFitParticipates(job.production_status) ? 'true' : 'false'}
-                      className={`absolute top-1/2 z-[3] h-8 -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${statusVisual.className} ${activeInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isStaged ? 'ring-2 ring-amber-300 ring-offset-1' : ''}`}
-                      style={{ left: startOffset * dayWidth + 3, width: barWidth, backgroundImage: statusVisual.pattern }}
+                      className={`absolute top-1/2 z-[3] h-8 -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${statusVisual.timelineClassName ?? statusVisual.className} ${activeInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isStaged ? 'ring-2 ring-amber-300 ring-offset-1' : ''}`}
+                      style={{ left: startOffset * dayWidth + 3, width: barWidth, backgroundImage: statusVisual.timelinePattern ?? statusVisual.pattern }}
                       title={`${job.name}: ${statusVisual.label}; ${displayStart} through ${displayEnd}; ${intensityLabel(job, displayStart, displayEnd)}`}
                     >
                       <button

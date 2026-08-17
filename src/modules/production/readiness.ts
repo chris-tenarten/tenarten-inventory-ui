@@ -2,6 +2,8 @@ import type { ProductionJob } from './types';
 
 export type PlanningIssueField = 'job_number' | 'customer' | 'requested_delivery_date' | 'estimated_man_hours' | 'planned_start' | 'planned_end';
 
+export const schedulingIssueFields: PlanningIssueField[] = ['planned_start', 'planned_end'];
+
 export const planningIssueLabels: Record<PlanningIssueField, string> = {
   job_number: 'Job number',
   customer: 'Customer',
@@ -30,11 +32,23 @@ export function getJobPlanningIssues(job: ProductionJob): PlanningIssueField[] {
   return missing;
 }
 
+export function getJobSchedulingIssues(job: ProductionJob): PlanningIssueField[] {
+  return getJobPlanningIssues(job).filter((field) => schedulingIssueFields.includes(field));
+}
+
+export function getJobNonblockingPlanningIssues(job: ProductionJob): PlanningIssueField[] {
+  return getJobPlanningIssues(job).filter((field) => !schedulingIssueFields.includes(field));
+}
+
+export function schedulingAttentionLabel(count: number): string {
+  return `${count} ${count === 1 ? 'job needs scheduling' : 'jobs need scheduling'}`;
+}
+
 export function getJobReadiness(job: ProductionJob): JobReadiness {
   const missingFields = getJobPlanningIssues(job);
   const missing = missingFields.map((field) => planningIssueLabels[field].toLowerCase());
   const missingDates = missingFields.includes('planned_start') || missingFields.includes('planned_end');
-  if (missingDates) return { state: 'not_scheduled', label: 'Not Scheduled', guidance: 'Add planned start and finish dates so this job appears on the Timeline.', missing, missingFields };
+  if (missingDates) return { state: 'not_scheduled', label: 'Needs Dates', guidance: 'Add planned start and finish dates so this job appears on the Timeline.', missing, missingFields };
   if (missing.length) return { state: 'needs_planning', label: 'Planning Needed', guidance: `${planningIssueLabels[missingFields[0]]} missing — complete setup for a clearer production plan.`, missing, missingFields };
   return { state: 'ready', label: 'Planning Complete', guidance: 'Required planning details are complete. Material readiness and production status are tracked separately.', missing: [], missingFields: [] };
 }

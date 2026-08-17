@@ -5,6 +5,22 @@ export type StagedSchedule = ProductionScheduleBatchProposal & {
   changed_fields: Array<'planned_start' | 'planned_end'>;
 };
 export type StagedSchedules = Record<string, StagedSchedule>;
+export type InspectorOrdinarySaveState = {
+  jobId: string;
+  dirty: boolean;
+  saving: boolean;
+};
+
+export function scheduleSaveBlockedByInspector(
+  inspectorState: InspectorOrdinarySaveState | null,
+  staged: StagedSchedules,
+) {
+  return Boolean(
+    inspectorState
+    && staged[inspectorState.jobId]
+    && (inspectorState.dirty || inspectorState.saving),
+  );
+}
 
 export function stageSchedule(current: StagedSchedules, job: ProductionJob, start: string | null, end: string | null, source: StagedSchedule['change_source']): StagedSchedules {
   const existing = current[job.id];
