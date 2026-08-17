@@ -37,3 +37,17 @@ export function arrangeProductionTimelineJobs(jobs: ProductionJob[]) {
       || identity(first, second);
   });
 }
+
+export function prioritizeProductionOverviewJobs(
+  jobs: ProductionJob[],
+  updateSummaries: Record<string, { openFollowUpCount: number }>,
+) {
+  const needsScheduling = (job: ProductionJob) =>
+    !['complete', 'cancelled'].includes(job.production_status) && (!job.planned_start || !job.planned_end);
+  const needsUpdateAttention = (job: ProductionJob) => (updateSummaries[job.id]?.openFollowUpCount ?? 0) > 0;
+  return [
+    ...jobs.filter(needsScheduling),
+    ...jobs.filter((job) => !needsScheduling(job) && needsUpdateAttention(job)),
+    ...jobs.filter((job) => !needsScheduling(job) && !needsUpdateAttention(job)),
+  ];
+}

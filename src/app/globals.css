@@ -316,11 +316,24 @@ html[data-appearance="dark"] [data-overview-needs-dates="true"] {
   background-image: none !important;
 }
 
+html[data-appearance="dark"] [data-overview-update-attention="true"] {
+  background-color: #242a33 !important;
+  background-image: none !important;
+}
+
+html[data-appearance="dark"] [data-overview-update-attention="true"]:hover {
+  background-color: #2b323d !important;
+}
+
 html[data-appearance="dark"] [data-overview-needs-dates="true"]:hover {
   background-color: #2b323d !important;
 }
 
 html[data-appearance="dark"] [data-overview-needs-dates-marker] {
+  color: #c5a24a !important;
+}
+
+html[data-appearance="dark"] [data-overview-update-attention-marker] {
   color: #c5a24a !important;
 }
 

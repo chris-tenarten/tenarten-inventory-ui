@@ -87,6 +87,16 @@ assert.doesNotMatch(updatesPanel, /Job Updates \(\{updates\.length\}\)/);
 assert.doesNotMatch(updatesPanel, /Requires follow-up/);
 assert.doesNotMatch(updatesPanel, /Open only/);
 assert.match(updatesPanel, /Mark resolved/);
+assert.ok(
+  updatesPanel.indexOf('Update history') <
+    updatesPanel.indexOf('Post a job update'),
+  'Update history should render before the posting composer.',
+);
+assert.ok(
+  updatesPanel.indexOf('Resolution notes') <
+    updatesPanel.indexOf('Mark resolved'),
+  'Mark resolved should render after the resolution notes field.',
+);
 assert.match(updatesPanel, /Resolved by/);
 assert.match(updatesPanel, /localStorage/);
 assert.match(updatesPanel, /uploadJobAttachments/);

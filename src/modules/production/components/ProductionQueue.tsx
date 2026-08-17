@@ -1,9 +1,10 @@
 'use client';
 
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Flag } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
 import type { JobUpdateSummary, ProductionIntegrationSummary } from '../jobs';
 import { materialStatusLabel } from '../material-status';
+import { prioritizeProductionOverviewJobs } from '../arrangement';
 import { getJobReadiness } from '../readiness';
 import type { ProductionJob } from '../types';
 import ActivityStrip from './ActivityStrip';
@@ -49,12 +50,7 @@ export default function ProductionQueue({
   const { language, tr } = useLanguage();
   const materialLabels = { unknown: 'Sin definir', not_ready: 'No listo', ordered: 'Pedido', ready: 'Listo' } as const;
   const needsScheduling = (job: ProductionJob) => !['complete', 'cancelled'].includes(job.production_status) && (!job.planned_start || !job.planned_end);
-  const scheduledNotStarted = (job: ProductionJob) => job.production_status === 'not_started' && Boolean(job.planned_start && job.planned_end);
-  const overviewJobs = [
-    ...jobs.filter(needsScheduling),
-    ...jobs.filter(scheduledNotStarted),
-    ...jobs.filter((job) => !needsScheduling(job) && !scheduledNotStarted(job)),
-  ];
+  const overviewJobs = prioritizeProductionOverviewJobs(jobs, jobUpdateSummaries);
 
   return (
     <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
@@ -73,6 +69,7 @@ export default function ProductionQueue({
           const setupFocus = readiness.state === 'not_scheduled' ? 'planned-dates' : readiness.missing.includes('labor estimate') ? 'labor' : undefined;
           const fileCount = attachmentCounts[job.id] ?? 0;
           const updateSummary = jobUpdateSummaries[job.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null };
+          const hasUpdateAttention = updateSummary.openFollowUpCount > 0;
           const summary = integrationSummaries[job.id] ?? { actualHours: 0, laborEntryCount: 0, materialReportDates: [] };
           const hasMaterialUse = summary.materialReportDates.length > 0;
           const materialLabel = language === 'es' ? materialLabels[job.material_status] : materialStatusLabel(job.material_status);
@@ -81,7 +78,8 @@ export default function ProductionQueue({
             <article
               key={job.id}
               data-overview-needs-dates={needsScheduling(job) ? 'true' : undefined}
-              className={`relative px-3 py-3 md:grid md:grid-cols-[minmax(260px,1.7fr)_125px_160px_140px_150px_145px] md:items-center md:gap-2 md:px-4 ${needsScheduling(job) ? 'bg-amber-50/50 hover:bg-amber-50/70' : 'hover:bg-slate-50'} ${selectedJobId === job.id ? 'bg-blue-50/70 ring-2 ring-inset ring-blue-600' : ''}`}
+              data-overview-update-attention={hasUpdateAttention ? 'true' : undefined}
+              className={`relative px-3 py-3 md:grid md:grid-cols-[minmax(260px,1.7fr)_125px_160px_140px_150px_145px] md:items-center md:gap-2 md:px-4 ${needsScheduling(job) || hasUpdateAttention ? 'bg-amber-50/50 hover:bg-amber-50/70' : 'hover:bg-slate-50'} ${selectedJobId === job.id ? 'bg-blue-50/70 ring-2 ring-inset ring-blue-600' : ''}`}
             >
               <button type="button" aria-label={`Open ${job.name}`} onClick={() => onSelectJob(job, setupFocus)} className="absolute inset-0 z-0 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-700">
                 <span className="sr-only">Open job details</span>
@@ -132,7 +130,10 @@ export default function ProductionQueue({
               </div>
 
               <div className="pointer-events-none relative z-10 hidden min-w-0 items-start gap-4 md:flex">
-                {needsScheduling(job) ? <AlertTriangle data-overview-needs-dates-marker aria-hidden="true" className="h-4 w-4 shrink-0 self-center text-amber-700" /> : null}
+                {needsScheduling(job) || hasUpdateAttention ? <span className="flex shrink-0 self-stretch flex-col items-center justify-center gap-1">
+                  {needsScheduling(job) ? <AlertTriangle data-overview-needs-dates-marker aria-hidden="true" className="h-4 w-4 text-amber-700" /> : null}
+                  {hasUpdateAttention ? <Flag data-overview-update-attention-marker aria-hidden="true" className="h-4 w-4 fill-current text-amber-700" /> : null}
+                </span> : null}
                 <div className="min-w-0">
                   <span className="block text-sm font-bold leading-5">{job.job_number && <span className="mr-2 text-slate-500">{job.job_number}</span>}{job.name}</span>
                   <span className="mt-0.5 block truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</span>

@@ -2,7 +2,7 @@ import { compositeExtractionProvider } from './providers/composite-extraction-pr
 
 export type ExtractionConfidence = 'high' | 'medium' | 'missing';
 export type ExtractedJobField =
-  | 'jobNumber' | 'jobName' | 'customer' | 'workOrderNumber' | 'plateNumber'
+  | 'jobNumber' | 'jobName' | 'customer' | 'estimateNumber' | 'workOrderNumber' | 'plateNumber'
   | 'productType' | 'resin' | 'thickness' | 'pieces' | 'requestedDelivery' | 'location';
 
 export type ExtractedJobMetadata = Record<ExtractedJobField, string> & {
@@ -14,10 +14,10 @@ export interface JobMetadataExtractionProvider {
 }
 
 export const emptyExtractedJobMetadata = (): ExtractedJobMetadata => ({
-  jobNumber: '', jobName: '', customer: '', workOrderNumber: '', plateNumber: '',
+  jobNumber: '', jobName: '', customer: '', estimateNumber: '', workOrderNumber: '', plateNumber: '',
   productType: '', resin: '', thickness: '', pieces: '', requestedDelivery: '', location: '',
   confidence: {
-    jobNumber: 'missing', jobName: 'missing', customer: 'missing', workOrderNumber: 'missing',
+    jobNumber: 'missing', jobName: 'missing', customer: 'missing', estimateNumber: 'missing', workOrderNumber: 'missing',
     plateNumber: 'missing', productType: 'missing', resin: 'missing', thickness: 'missing',
     pieces: 'missing', requestedDelivery: 'missing', location: 'missing',
   },

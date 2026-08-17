@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { extractMetadataFromTextDocuments } from '../src/modules/production/providers/composite-extraction-provider.ts';
+import { findMatchingProductionJob } from '../src/modules/production/job-import-matching.ts';
 import { detectProductionDocumentFamily } from '../src/modules/production/providers/document-family-detector.ts';
 import { extractGenericIdentifiers } from '../src/modules/production/providers/generic-identifier-parser.ts';
 import { parseMaterialQuantitySheet } from '../src/modules/production/providers/material-quantity-parser.ts';
@@ -194,6 +195,37 @@ assert.equal(genericOnly.jobNumber?.value, '27-0001');
 assert.equal(genericOnly.jobNumber?.confidence, 'medium');
 assert.equal(genericOnly.customer?.value, 'Generic Customer');
 
+const unknownIdentifiers = extractMetadataFromTextDocuments([{ name: 'supporting-record.pdf', text: [
+  'JOB #', '27-0001',
+  'Estimate No.', 'Q27-0042-1.0',
+  'W/O #', '070127-2',
+  'Color Plate #', 'T27-042-A',
+].join('\n') }]);
+assert.equal(unknownIdentifiers.jobNumber, '27-0001');
+assert.equal(unknownIdentifiers.estimateNumber, 'Q27-0042-1.0');
+assert.equal(unknownIdentifiers.workOrderNumber, '070127-2');
+assert.equal(unknownIdentifiers.plateNumber, 'T27-042-A');
+assert.equal(unknownIdentifiers.confidence.jobNumber, 'medium');
+
+const corroborated = extractMetadataFromTextDocuments([
+  { name: 'first.pdf', text: 'Job #\n27-9999' },
+  { name: 'second.pdf', text: 'Job Number\n27-0001' },
+  { name: 'third.pdf', text: 'Project #\n27-0001' },
+]);
+assert.equal(corroborated.jobNumber, '27-0001', 'Matching values from multiple files should corroborate');
+
+const scalarConflict = extractMetadataFromTextDocuments([
+  { name: 'first.pdf', text: 'Job #\n27-0001' },
+  { name: 'second.pdf', text: 'Job #\n27-0002' },
+]);
+assert.equal(scalarConflict.jobNumber, '27-0001', 'Equal evidence should retain stable file order');
+
+const multiplePlates = extractMetadataFromTextDocuments([
+  { name: 'first.pdf', text: 'Plate #\nT27-001-A\nColor Plate No.\nT27-001-B' },
+  { name: 'second.pdf', text: 'Color Plate Number\nT27-001-A' },
+]);
+assert.equal(multiplePlates.plateNumber, 'T27-001-A, T27-001-B');
+
 const combined = extractMetadataFromTextDocuments([
   { name: 'WO 062626-1 MAT QTY.pdf', text: materialText },
   { name: 'T26-254-A.pdf', text: sampleText },
@@ -204,11 +236,24 @@ assert.equal(combined.jobNumber, '26-0322');
 assert.equal(combined.jobName, 'Grady Hospital');
 assert.equal(combined.customer, 'Williams');
 assert.equal(combined.workOrderNumber, '062626-1');
-assert.equal(combined.plateNumber, 'T26-254-A', 'Shop/Sample precedence must beat conflicting Material Quantity data');
+assert.equal(combined.plateNumber, 'T26-254-A, T26-257-A', 'Distinct legitimate plates should survive family reconciliation');
 assert.equal(combined.location, 'Atlanta, GA');
 assert.equal(combined.requestedDelivery, '');
 
 assert.equal(detectProductionDocumentFamily({ text: 'Unrelated vendor invoice', fileName: 'invoice.pdf' }), null);
 assert.equal(detectProductionDocumentFamily({ text: 'Unrelated vendor invoice', fileName: 'PO 0421-001.pdf' }), null, 'PO filenames must not drive classification');
-assert.deepEqual(extractMetadataFromTextDocuments([{ name: 'invoice.pdf', text: 'JOB #\n99-9999\nUnrelated vendor invoice' }]).jobNumber, '');
+assert.equal(extractMetadataFromTextDocuments([{ name: 'invoice.pdf', text: 'JOB #\n99-9999\nUnrelated vendor invoice' }]).jobNumber, '99-9999');
+
+const specializedBeatsGeneric = extractMetadataFromTextDocuments([
+  { name: 'shop.pdf', text: shopText },
+  { name: 'unknown.pdf', text: 'Job #\n99-9999' },
+]);
+assert.equal(specializedBeatsGeneric.jobNumber, '26-0322');
+
+const matchBase = {
+  id: 'existing', name: 'Existing', customer: null, job_number: null, estimate_number: 'Q27-0042-1.0',
+  work_order_number: null, color_plate_number: 'T27-042-A, T27-042-B',
+};
+assert.equal(findMatchingProductionJob([matchBase], unknownIdentifiers)?.matchedBy, 'estimate_number');
+assert.equal(findMatchingProductionJob([{ ...matchBase, estimate_number: null }], unknownIdentifiers)?.matchedBy, 'plate_number');
 console.log('Production Job import real-structure parser checks passed.');

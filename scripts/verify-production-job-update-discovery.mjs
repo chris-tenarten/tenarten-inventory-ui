@@ -23,6 +23,9 @@ assert.match(workspace, /jobUpdateSummaries=\{jobUpdateSummaries\}/);
 
 assert.match(queue, /ActivityStrip/);
 assert.match(queue, /onSelectJob\(job, 'job-updates'\)/);
+assert.match(queue, /hasUpdateAttention = updateSummary\.openFollowUpCount > 0/);
+assert.match(queue, /data-overview-update-attention/);
+assert.match(queue, /data-overview-update-attention-marker/);
 assert.doesNotMatch(queue, /hasUnviewedJobUpdates/);
 assert.doesNotMatch(queue, /markJobUpdatesViewed/);
 assert.doesNotMatch(queue, /job-update-view-state/);
