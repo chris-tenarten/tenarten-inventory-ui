@@ -21,6 +21,11 @@ assert.deepEqual(prioritizeProductionOverviewJobs(jobs.map((job) => job.id === '
 assert.deepEqual(prioritizeProductionOverviewJobs(jobs, { ...attention, D: { openFollowUpCount: 0 } }).map((job) => job.id), ['A', 'D', 'B', 'C', 'E']);
 
 assert.match(queue, /prioritizeProductionOverviewJobs\(jobs, jobUpdateSummaries\)/);
+assert.match(queue, /data-overview-needs-dates-marker/);
+assert.match(queue, /onClick=\{\(\) => onScheduleJob\(job\)\}/);
+assert.match(queue, /data-overview-update-attention-marker/);
+assert.match(queue, /onClick=\{\(\) => onSelectJob\(job, 'job-updates'\)\}/);
+assert.match(queue, /flex-col items-center justify-center gap-1/);
 assert.doesNotMatch(table, /prioritizeProductionOverviewJobs/);
 assert.doesNotMatch(gantt, /prioritizeProductionOverviewJobs/);
 console.log('Production Overview priority checks passed.');

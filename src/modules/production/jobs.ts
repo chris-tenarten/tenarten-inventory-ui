@@ -7,6 +7,12 @@ import type {
   NewProductionJob,
   ProductionJob,
 } from './types';
+import {
+  summarizeJobUpdates,
+  type JobUpdateSummary,
+} from './job-update-summary';
+
+export { EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary } from './job-update-summary';
 import { productionValuesEqual } from './update-normalization';
 import type { ProductionScheduleBatchRpcArgs, ProductionScheduleBatchSuccess } from './schedule-batch-contract';
 
@@ -60,6 +66,7 @@ const JOB_UPDATE_COLUMNS = [
   'author_name',
   'body',
   'requires_follow_up',
+  'follow_up_assignee_name',
   'resolved_at',
   'resolved_by_name',
   'resolution_message',
@@ -101,37 +108,23 @@ export async function loadProductionJobs(includeArchived = false): Promise<Produ
 }
 
 export type ProductionIntegrationSummary = { actualHours: number; laborEntryCount: number; materialReportDates: string[] };
-export type JobUpdateSummary = {
-  total: number;
-  openFollowUpCount: number;
-  latestCreatedAt: string | null;
-};
-
 export async function loadJobUpdateSummaries(): Promise<Record<string, JobUpdateSummary>> {
   const { data, error } = await supabase
     .from('job_updates')
-    .select('job_id,created_at,requires_follow_up,resolved_at');
+    .select('job_id,created_at,requires_follow_up,resolved_at,follow_up_assignee_name');
   if (error) throw error;
 
-  const summaries: Record<string, JobUpdateSummary> = {};
+  const grouped: Record<string, typeof data> = {};
   for (const row of data ?? []) {
     const jobId = String(row.job_id);
-    const summary = summaries[jobId] ?? {
-      total: 0,
-      openFollowUpCount: 0,
-      latestCreatedAt: null,
-    };
-    summary.total += 1;
-    if (row.requires_follow_up && !row.resolved_at) {
-      summary.openFollowUpCount += 1;
-    }
-    const createdAt = String(row.created_at);
-    if (!summary.latestCreatedAt || createdAt > summary.latestCreatedAt) {
-      summary.latestCreatedAt = createdAt;
-    }
-    summaries[jobId] = summary;
+    grouped[jobId] = [...(grouped[jobId] ?? []), row];
   }
-  return summaries;
+  return Object.fromEntries(
+    Object.entries(grouped).map(([jobId, rows]) => [
+      jobId,
+      summarizeJobUpdates(rows ?? []),
+    ]),
+  );
 }
 
 export async function loadProductionIntegrationSummaries(): Promise<Record<string, ProductionIntegrationSummary>> {
@@ -288,11 +281,16 @@ export async function createJobUpdate(
   authorName: string,
   body: string,
   requiresFollowUp: boolean,
+  followUpAssigneeName: string | null,
 ): Promise<JobUpdate> {
   const author = authorName.trim();
   const updateBody = body.trim();
   if (!author) throw new Error('Your name is required.');
   if (!updateBody) throw new Error('Enter an update before posting.');
+  const assignee = followUpAssigneeName?.trim() || null;
+  if (requiresFollowUp && !assignee) {
+    throw new Error('Select who needs to resolve this update.');
+  }
 
   const { data, error } = await supabase
     .from('job_updates')
@@ -301,6 +299,7 @@ export async function createJobUpdate(
       author_name: author,
       body: updateBody,
       requires_follow_up: requiresFollowUp,
+      follow_up_assignee_name: requiresFollowUp ? assignee : null,
     })
     .select(JOB_UPDATE_COLUMNS)
     .single();

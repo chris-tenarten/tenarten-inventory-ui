@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
-const [jobs, workspace, queue, table, activityStrip, indicator, inspector] = await Promise.all([
+const [jobs, summary, workspace, queue, table, activityStrip, indicator, inspector] = await Promise.all([
   read('src/modules/production/jobs.ts'),
+  read('src/modules/production/job-update-summary.ts'),
   read('src/modules/production/ProductionWorkspace.tsx'),
   read('src/modules/production/components/ProductionQueue.tsx'),
   read('src/modules/production/components/ProductionTable.tsx'),
@@ -12,11 +13,12 @@ const [jobs, workspace, queue, table, activityStrip, indicator, inspector] = awa
   read('src/modules/production/components/ProductionJobInspector.tsx'),
 ]);
 
-assert.match(jobs, /export type JobUpdateSummary/);
+assert.match(jobs, /export \{ EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary \}/);
 assert.match(jobs, /loadJobUpdateSummaries/);
 assert.match(jobs, /\.from\('job_updates'\)/);
-assert.match(jobs, /openFollowUpCount/);
-assert.match(jobs, /latestCreatedAt/);
+assert.match(summary, /openFollowUpCount/);
+assert.match(summary, /openFollowUpAssignees/);
+assert.match(summary, /latestCreatedAt/);
 
 assert.match(workspace, /loadJobUpdateSummaries/);
 assert.match(workspace, /jobUpdateSummaries=\{jobUpdateSummaries\}/);
@@ -36,7 +38,7 @@ assert.doesNotMatch(queue, /animate-|bounce|flash/i);
 
 assert.match(activityStrip, /JobUpdatesIndicator/);
 assert.match(activityStrip, /Paperclip/);
-assert.match(activityStrip, /className="w-24"/);
+assert.match(activityStrip, /className="min-w-24 max-w-48"/);
 assert.match(activityStrip, /display="overview-slots"/);
 assert.match(activityStrip, /h-6 w-12/);
 assert.match(activityStrip, /tabular-nums/);
@@ -51,6 +53,9 @@ assert.match(indicator, /Flag/);
 assert.match(indicator, /Open Job Updates for/);
 assert.match(indicator, /summary\.total/);
 assert.match(indicator, /summary\.openFollowUpCount/);
+assert.match(indicator, /summary\.openFollowUpAssignees/);
+assert.match(indicator, />\|<\/span>/);
+assert.doesNotMatch(indicator, /assigneeLabel && \(\s*<span\s+className="max-w-24 truncate border-l/);
 assert.match(indicator, /overview-slots/);
 assert.match(indicator, /w-12/);
 assert.match(indicator, /event\.stopPropagation\(\)/);

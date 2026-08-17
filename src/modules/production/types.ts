@@ -90,6 +90,7 @@ export type JobUpdate = {
   author_name: string;
   body: string;
   requires_follow_up: boolean;
+  follow_up_assignee_name: string | null;
   resolved_at: string | null;
   resolved_by_name: string | null;
   resolution_message: string | null;

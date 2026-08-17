@@ -33,7 +33,7 @@ import {
   updateProductionJob,
 } from './jobs';
 
-import type { JobUpdateSummary, ProductionJobUpdate } from './jobs';
+import { EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary, type ProductionJobUpdate } from './jobs';
 import type {
   NewProductionJob,
   ProductionJob,
@@ -943,7 +943,7 @@ export default function ProductionWorkspace() {
       {selectedJob && <ProductionJobInspector
         key={selectedJob.id}
         job={stagedSchedules[selectedJob.id] ? { ...selectedJob, planned_start: stagedSchedules[selectedJob.id].proposed_planned_start, planned_end: stagedSchedules[selectedJob.id].proposed_planned_end } : selectedJob}
-        jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null }}
+        jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? EMPTY_JOB_UPDATE_SUMMARY}
         onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged}
         onClose={closeInspector}
         onUpdateJob={handleUpdateJob}

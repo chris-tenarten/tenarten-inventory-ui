@@ -2,7 +2,7 @@
 
 import { AlertTriangle, Flag } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
-import type { JobUpdateSummary, ProductionIntegrationSummary } from '../jobs';
+import { EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary, type ProductionIntegrationSummary } from '../jobs';
 import { materialStatusLabel } from '../material-status';
 import { prioritizeProductionOverviewJobs } from '../arrangement';
 import { getJobReadiness } from '../readiness';
@@ -68,7 +68,7 @@ export default function ProductionQueue({
           const readiness = getJobReadiness(job);
           const setupFocus = readiness.state === 'not_scheduled' ? 'planned-dates' : readiness.missing.includes('labor estimate') ? 'labor' : undefined;
           const fileCount = attachmentCounts[job.id] ?? 0;
-          const updateSummary = jobUpdateSummaries[job.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null };
+          const updateSummary = jobUpdateSummaries[job.id] ?? EMPTY_JOB_UPDATE_SUMMARY;
           const hasUpdateAttention = updateSummary.openFollowUpCount > 0;
           const summary = integrationSummaries[job.id] ?? { actualHours: 0, laborEntryCount: 0, materialReportDates: [] };
           const hasMaterialUse = summary.materialReportDates.length > 0;
@@ -130,9 +130,9 @@ export default function ProductionQueue({
               </div>
 
               <div className="pointer-events-none relative z-10 hidden min-w-0 items-start gap-4 md:flex">
-                {needsScheduling(job) || hasUpdateAttention ? <span className="flex shrink-0 self-stretch flex-col items-center justify-center gap-1">
-                  {needsScheduling(job) ? <AlertTriangle data-overview-needs-dates-marker aria-hidden="true" className="h-4 w-4 text-amber-700" /> : null}
-                  {hasUpdateAttention ? <Flag data-overview-update-attention-marker aria-hidden="true" className="h-4 w-4 fill-current text-amber-700" /> : null}
+                {needsScheduling(job) || hasUpdateAttention ? <span className="pointer-events-auto flex shrink-0 self-stretch flex-col items-center justify-center gap-1">
+                  {needsScheduling(job) ? <button type="button" data-overview-needs-dates-marker aria-label={`Schedule ${job.name}`} title="Needs planned dates" onClick={() => onScheduleJob(job)} className="inline-flex h-6 w-6 items-center justify-center text-amber-700 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"><AlertTriangle aria-hidden="true" className="h-4 w-4" /></button> : null}
+                  {hasUpdateAttention ? <button type="button" data-overview-update-attention-marker aria-label={`Open Job Updates requiring attention for ${job.name}`} title="Job Updates need attention" onClick={() => onSelectJob(job, 'job-updates')} className="inline-flex h-6 w-6 items-center justify-center text-amber-700 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"><Flag aria-hidden="true" className="h-4 w-4 fill-current" /></button> : null}
                 </span> : null}
                 <div className="min-w-0">
                   <span className="block text-sm font-bold leading-5">{job.job_number && <span className="mr-2 text-slate-500">{job.job_number}</span>}{job.name}</span>

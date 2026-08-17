@@ -17,9 +17,13 @@ import {
 } from "../jobs";
 import type { JobUpdateSummary } from "../jobs";
 import type { JobAttachment, JobUpdate, ProductionJob } from "../types";
+import {
+  PRODUCTION_PERSONNEL_NAMES,
+} from "../production-personnel";
+import { summarizeJobUpdates } from "../job-update-summary";
+import { getResolutionResolverName } from "../job-update-resolution";
 
 const ATTRIBUTION_STORAGE_KEY = "tenops.jobUpdateAttributionName";
-const AUTHOR_OPTIONS = ["Anthony", "Chris", "Gio", "Marcos", "Pat"] as const;
 const OTHER_AUTHOR_VALUE = "__other__";
 
 type Props = {
@@ -74,7 +78,7 @@ function AuthorControl({
   onChange: (value: string) => void;
   disabled?: boolean;
 }) {
-  const isPreset = AUTHOR_OPTIONS.some((option) => option === value);
+  const isPreset = PRODUCTION_PERSONNEL_NAMES.some((option) => option === value);
   const [custom, setCustom] = useState(Boolean(value && !isPreset));
 
   return (
@@ -98,7 +102,7 @@ function AuthorControl({
         <option value="" disabled>
           Select
         </option>
-        {AUTHOR_OPTIONS.map((option) => (
+        {PRODUCTION_PERSONNEL_NAMES.map((option) => (
           <option key={option} value={option}>
             {option}
           </option>
@@ -135,11 +139,15 @@ export default function JobUpdatesPanel({
   const [authorName, setAuthorName] = useState(storedAttributionName);
   const [body, setBody] = useState("");
   const [requiresFollowUp, setRequiresFollowUp] = useState(false);
+  const [followUpAssigneeName, setFollowUpAssigneeName] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [posting, setPosting] = useState(false);
   const [openOnly, setOpenOnly] = useState(false);
   const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [resolverName, setResolverName] = useState(storedAttributionName);
+  const [resolverNamesByUpdate, setResolverNamesByUpdate] = useState<
+    Record<string, string>
+  >({});
   const [resolutionDrafts, setResolutionDrafts] = useState<
     Record<string, ResolutionDraft>
   >({});
@@ -192,9 +200,8 @@ export default function JobUpdatesPanel({
     return grouped;
   }, [attachments]);
 
-  const openCount = updates.filter(
-    (update) => update.requires_follow_up && !update.resolved_at,
-  ).length;
+  const summary = useMemo(() => summarizeJobUpdates(updates), [updates]);
+  const openCount = summary.openFollowUpCount;
   const visibleUpdates = openOnly
     ? updates.filter(
         (update) => update.requires_follow_up && !update.resolved_at,
@@ -205,11 +212,9 @@ export default function JobUpdatesPanel({
   useEffect(() => {
     if (loading) return;
     onSummaryChanged({
-      total: updates.length,
-      openFollowUpCount: openCount,
-      latestCreatedAt: latestUpdate?.created_at ?? null,
+      ...summary,
     });
-  }, [latestUpdate?.created_at, loading, onSummaryChanged, openCount, updates.length]);
+  }, [loading, onSummaryChanged, summary]);
 
   async function postUpdate() {
     if (postingRef.current) return;
@@ -224,6 +229,7 @@ export default function JobUpdatesPanel({
         authorName,
         body,
         requiresFollowUp,
+        followUpAssigneeName,
       );
       setUpdates((current) => [created as JobUpdate, ...current]);
       window.localStorage.setItem(
@@ -253,6 +259,7 @@ export default function JobUpdatesPanel({
 
       setBody("");
       setRequiresFollowUp(false);
+      setFollowUpAssigneeName("");
       setSelectedFiles([]);
       if (fileInput.current) fileInput.current.value = "";
       setMessage(
@@ -298,10 +305,15 @@ export default function JobUpdatesPanel({
     setError("");
     setMessage("");
     let resolved: JobUpdate | null = null;
+    const selectedResolverName = getResolutionResolverName(
+      update,
+      resolverNamesByUpdate[update.id],
+      resolverName,
+    );
     try {
       const resolvedUpdate = await resolveJobUpdate(
         update,
-        resolverName,
+        selectedResolverName,
         resolutionDraft.message,
       );
       resolved = resolvedUpdate;
@@ -312,7 +324,7 @@ export default function JobUpdatesPanel({
       );
       window.localStorage.setItem(
         ATTRIBUTION_STORAGE_KEY,
-        resolverName.trim(),
+        selectedResolverName.trim(),
       );
 
       const failedFiles: string[] = [];
@@ -323,7 +335,7 @@ export default function JobUpdatesPanel({
             [file],
             "other",
             update.id,
-            resolverName,
+            selectedResolverName,
             "resolution",
           );
         } catch {
@@ -447,6 +459,11 @@ export default function JobUpdatesPanel({
                 message: "",
                 files: [],
               };
+              const selectedResolverName = getResolutionResolverName(
+                update,
+                resolverNamesByUpdate[update.id],
+                resolverName,
+              );
               return (
                 <article
                   id={`job-update-${update.id}`}
@@ -467,11 +484,17 @@ export default function JobUpdatesPanel({
                       <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">
                         <CheckCircle2 className="h-3.5 w-3.5" />
                         Resolved
+                        {update.follow_up_assignee_name
+                          ? ` · ${update.follow_up_assignee_name}`
+                          : ""}
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-900">
                         <Flag className="h-3.5 w-3.5 fill-amber-50" />
                         Needs attention
+                        {update.follow_up_assignee_name
+                          ? ` · ${update.follow_up_assignee_name}`
+                          : ""}
                       </span>
                     )
                   ) : (
@@ -549,8 +572,13 @@ export default function JobUpdatesPanel({
                   <div className="mt-3 border-t border-amber-200 pt-3">
                     <AuthorControl
                       label="Resolve as"
-                      value={resolverName}
-                      onChange={setResolverName}
+                      value={selectedResolverName}
+                      onChange={(value) =>
+                        setResolverNamesByUpdate((current) => ({
+                          ...current,
+                          [update.id]: value,
+                        }))
+                      }
                       disabled={resolvingId !== null}
                     />
                     <label className="mt-3 block text-xs font-bold text-slate-700">
@@ -607,7 +635,7 @@ export default function JobUpdatesPanel({
                         type="button"
                         onClick={() => void resolve(update)}
                         disabled={
-                          resolvingId !== null || !resolverName.trim()
+                          resolvingId !== null || !selectedResolverName.trim()
                         }
                         className="h-9 border border-emerald-700 bg-emerald-700 px-3 text-xs font-bold uppercase text-white disabled:opacity-50"
                       >
@@ -679,11 +707,28 @@ export default function JobUpdatesPanel({
               />
               Needs attention
             </label>
+            {requiresFollowUp && (
+              <label className="inline-flex min-h-8 items-center gap-2 text-xs font-semibold text-slate-700">
+                <span>Needs resolution from</span>
+                <select
+                  aria-label="Needs resolution from"
+                  value={followUpAssigneeName}
+                  disabled={posting}
+                  onChange={(event) => setFollowUpAssigneeName(event.target.value)}
+                  className="h-9 rounded-sm border border-slate-300 bg-white px-2 text-sm font-semibold text-slate-900 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
+                >
+                  <option value="" disabled>Select</option>
+                  {PRODUCTION_PERSONNEL_NAMES.map((name) => (
+                    <option key={name} value={name}>{name}</option>
+                  ))}
+                </select>
+              </label>
+            )}
           </div>
           <button
             type="button"
             onClick={() => void postUpdate()}
-            disabled={posting || !authorName.trim() || !body.trim()}
+            disabled={posting || !authorName.trim() || !body.trim() || (requiresFollowUp && !followUpAssigneeName)}
             className="inline-flex min-h-9 items-center gap-2 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             <MessageSquare className="h-4 w-4" />

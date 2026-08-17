@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode, RefObject } from 'react';
 
-import type { JobUpdateSummary, ProductionIntegrationSummary, ProductionJobUpdate } from '../jobs';
+import { EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary, type ProductionIntegrationSummary, type ProductionJobUpdate } from '../jobs';
 import { materialStatusLabel, materialStatusOptions } from '../material-status';
 import type { StagedSchedules } from '../schedule-staging';
 import type {
@@ -919,7 +919,7 @@ export default function ProductionTable({
               const row = rows[job.id] ?? toRow(job);
               const state = states[job.id] ?? 'idle';
               const count = attachmentCounts[job.id] ?? 0;
-              const updateSummary = jobUpdateSummaries[job.id] ?? { total: 0, openFollowUpCount: 0, latestCreatedAt: null };
+              const updateSummary = jobUpdateSummaries[job.id] ?? EMPTY_JOB_UPDATE_SUMMARY;
               const integration = integrationSummaries[job.id] ?? { actualHours: 0, laborEntryCount: 0, materialReportDates: [] };
               const hasMaterialUse = integration.materialReportDates.length > 0;
 
