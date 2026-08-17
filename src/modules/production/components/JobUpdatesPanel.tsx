@@ -398,96 +398,7 @@ export default function JobUpdatesPanel({
         </div>
       </div>
 
-      <div className="mt-4 border border-slate-300 bg-slate-50/70 p-3">
-        <h4 className="text-sm font-bold text-slate-950">Post a job update</h4>
-        <div className="mt-3">
-          <AuthorControl
-            label="Posting as"
-            value={authorName}
-            onChange={setAuthorName}
-            disabled={posting}
-          />
-        </div>
-        <div className="mt-3">
-          <label className="sr-only" htmlFor={`job-update-body-${job.id}`}>
-            Job update
-          </label>
-          <textarea
-            id={`job-update-body-${job.id}`}
-            value={body}
-            onChange={(event) => setBody(event.target.value)}
-            rows={4}
-            placeholder={
-              "Share important information about this job.\n\nThis can be an update, question, request, reminder, decision, or blocker."
-            }
-            className="w-full resize-y border border-slate-300 bg-white px-3 py-2 text-sm outline-none placeholder:text-slate-500 focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
-          />
-        </div>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-x-7 gap-y-2">
-            <label className="inline-flex min-h-8 cursor-pointer items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-950">
-              <Paperclip className="h-3.5 w-3.5" />
-              {selectedFiles.length
-                ? `${selectedFiles.length} selected`
-                : "Attach files (optional)"}
-              <input
-                ref={fileInput}
-                type="file"
-                multiple
-                disabled={posting}
-                onChange={(event) =>
-                  setSelectedFiles([...(event.target.files ?? [])])
-                }
-                className="sr-only"
-              />
-            </label>
-            <label className="inline-flex min-h-8 items-center gap-2 text-xs font-bold text-slate-800">
-              <input
-                type="checkbox"
-                checked={requiresFollowUp}
-                onChange={(event) =>
-                  setRequiresFollowUp(event.target.checked)
-                }
-                className="h-4 w-4"
-              />
-              Needs attention
-            </label>
-          </div>
-          <button
-            type="button"
-            onClick={() => void postUpdate()}
-            disabled={posting || !authorName.trim() || !body.trim()}
-            className="inline-flex min-h-9 items-center gap-2 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <MessageSquare className="h-4 w-4" />
-            {posting ? "Posting…" : "Post update"}
-          </button>
-        </div>
-        {selectedFiles.length > 0 && (
-          <div className="mt-2 text-xs text-slate-600">
-            {selectedFiles.map((file) => file.name).join(", ")}
-          </div>
-        )}
-      </div>
-
-      {error && (
-        <div
-          role="alert"
-          className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700"
-        >
-          {error}
-        </div>
-      )}
-      {message && (
-        <div
-          role="status"
-          className="mt-3 border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800"
-        >
-          {message}
-        </div>
-      )}
-
-      <section className="mt-7 border-t border-slate-300 pt-5">
+      <section className="mt-4">
         <div className="flex items-center justify-between gap-3">
           <h4 className="text-sm font-bold text-slate-950">Update history</h4>
           <div className="inline-flex border border-slate-300 text-xs font-bold">
@@ -636,26 +547,12 @@ export default function JobUpdatesPanel({
 
                 {isOpen && (
                   <div className="mt-3 border-t border-amber-200 pt-3">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <AuthorControl
-                        label="Resolve as"
-                        value={resolverName}
-                        onChange={setResolverName}
-                        disabled={resolvingId !== null}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => void resolve(update)}
-                        disabled={
-                          resolvingId !== null || !resolverName.trim()
-                        }
-                        className="h-9 border border-emerald-700 bg-emerald-700 px-3 text-xs font-bold uppercase text-white disabled:opacity-50"
-                      >
-                        {resolvingId === update.id
-                          ? "Resolving…"
-                          : "Mark resolved"}
-                      </button>
-                    </div>
+                    <AuthorControl
+                      label="Resolve as"
+                      value={resolverName}
+                      onChange={setResolverName}
+                      disabled={resolvingId !== null}
+                    />
                     <label className="mt-3 block text-xs font-bold text-slate-700">
                       Resolution notes{" "}
                       <span className="font-normal text-slate-500">
@@ -705,6 +602,20 @@ export default function JobUpdatesPanel({
                           .join(", ")}
                       </div>
                     )}
+                    <div className="mt-3 flex justify-end border-t border-amber-200 pt-3">
+                      <button
+                        type="button"
+                        onClick={() => void resolve(update)}
+                        disabled={
+                          resolvingId !== null || !resolverName.trim()
+                        }
+                        className="h-9 border border-emerald-700 bg-emerald-700 px-3 text-xs font-bold uppercase text-white disabled:opacity-50"
+                      >
+                        {resolvingId === update.id
+                          ? "Resolving…"
+                          : "Mark resolved"}
+                      </button>
+                    </div>
                   </div>
                 )}
                 </article>
@@ -713,6 +624,95 @@ export default function JobUpdatesPanel({
           )}
         </div>
       </section>
+
+      <div className="mt-5 border border-slate-300 bg-slate-50/70 p-3">
+        <h4 className="text-sm font-bold text-slate-950">Post a job update</h4>
+        <div className="mt-3">
+          <AuthorControl
+            label="Posting as"
+            value={authorName}
+            onChange={setAuthorName}
+            disabled={posting}
+          />
+        </div>
+        <div className="mt-3">
+          <label className="sr-only" htmlFor={`job-update-body-${job.id}`}>
+            Job update
+          </label>
+          <textarea
+            id={`job-update-body-${job.id}`}
+            value={body}
+            onChange={(event) => setBody(event.target.value)}
+            rows={4}
+            placeholder={
+              "Share important information about this job.\n\nThis can be an update, question, request, reminder, decision, or blocker."
+            }
+            className="w-full resize-y border border-slate-300 bg-white px-3 py-2 text-sm outline-none placeholder:text-slate-500 focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
+          />
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-x-7 gap-y-2">
+            <label className="inline-flex min-h-8 cursor-pointer items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-950">
+              <Paperclip className="h-3.5 w-3.5" />
+              {selectedFiles.length
+                ? `${selectedFiles.length} selected`
+                : "Attach files (optional)"}
+              <input
+                ref={fileInput}
+                type="file"
+                multiple
+                disabled={posting}
+                onChange={(event) =>
+                  setSelectedFiles([...(event.target.files ?? [])])
+                }
+                className="sr-only"
+              />
+            </label>
+            <label className="inline-flex min-h-8 items-center gap-2 text-xs font-bold text-slate-800">
+              <input
+                type="checkbox"
+                checked={requiresFollowUp}
+                onChange={(event) =>
+                  setRequiresFollowUp(event.target.checked)
+                }
+                className="h-4 w-4"
+              />
+              Needs attention
+            </label>
+          </div>
+          <button
+            type="button"
+            onClick={() => void postUpdate()}
+            disabled={posting || !authorName.trim() || !body.trim()}
+            className="inline-flex min-h-9 items-center gap-2 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <MessageSquare className="h-4 w-4" />
+            {posting ? "Posting…" : "Post update"}
+          </button>
+        </div>
+        {selectedFiles.length > 0 && (
+          <div className="mt-2 text-xs text-slate-600">
+            {selectedFiles.map((file) => file.name).join(", ")}
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <div
+          role="alert"
+          className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700"
+        >
+          {error}
+        </div>
+      )}
+      {message && (
+        <div
+          role="status"
+          className="mt-3 border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800"
+        >
+          {message}
+        </div>
+      )}
     </section>
   );
 }

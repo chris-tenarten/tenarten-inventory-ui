@@ -1,6 +1,18 @@
-import type { ExtractedJobField, ExtractedJobMetadata, ExtractionConfidence } from '../job-import-provider';
+import type { ExtractedJobField, ExtractionConfidence } from '../job-import-provider';
 
 export type ParsedFields = Partial<Record<ExtractedJobField, { value: string; confidence: Exclude<ExtractionConfidence, 'missing'> }>>;
+
+export type ExtractedCandidate = {
+  field: ExtractedJobField;
+  value: string;
+  normalizedValue: string;
+  confidence: Exclude<ExtractionConfidence, 'missing'>;
+  sourceFile: string;
+  family: string;
+  sourceKind: 'family_parser' | 'generic';
+  fileIndex: number;
+  sequence: number;
+};
 
 export const normalizedLines = (text: string) => text.split(/\r?\n/).map((line) => line.replace(/\s+/g, ' ').trim()).filter(Boolean);
 
@@ -16,6 +28,21 @@ export function labeledValue(lines: string[], labels: RegExp[], valuePattern = /
     }
   }
   return '';
+}
+
+export function labeledValues(lines: string[], labels: RegExp[], valuePattern = /(.+)/): string[] {
+  const values: string[] = [];
+  for (let index = 0; index < lines.length; index += 1) {
+    for (const label of labels) {
+      const inline = lines[index].match(new RegExp(`^(?:${label.source})(?:\\s*[:#-]\\s*|\\s+)${valuePattern.source}$`, 'i'));
+      if (inline?.[1]?.trim()) values.push(inline[1].trim());
+      else if (new RegExp(`^(?:${label.source})\\s*[:#-]?\\s*$`, 'i').test(lines[index])) {
+        const next = lines[index + 1]?.trim();
+        if (next && valuePattern.test(next)) values.push(next);
+      }
+    }
+  }
+  return values;
 }
 
 export function setHigh(fields: ParsedFields, field: ExtractedJobField, value: string) {
@@ -35,21 +62,12 @@ function normalizedDate(value: string) {
   return `${year}-${match[1].padStart(2, '0')}-${match[2].padStart(2, '0')}`;
 }
 
-export function mergeParsed(target: ExtractedJobMetadata, parsed: ParsedFields) {
-  const rank: Record<ExtractionConfidence, number> = { missing: 0, medium: 1, high: 2 };
-  for (const [field, candidate] of Object.entries(parsed) as Array<[ExtractedJobField, NonNullable<ParsedFields[ExtractedJobField]>]>) {
-    if (rank[candidate.confidence] > rank[target.confidence[field]]) {
-      target[field] = candidate.value;
-      target.confidence[field] = candidate.confidence;
-    }
-  }
-}
-
 export function commonLabeledFields(lines: string[]): ParsedFields {
   const fields: ParsedFields = {};
   setHigh(fields, 'jobNumber', labeledValue(lines, [/job\s*number/, /job\s*no\.?/, /job\s*#/, /project\s*(?:number|no\.?|#)/] , /([A-Z0-9-]+)/));
   setHigh(fields, 'jobName', labeledValue(lines, [/job[.\s]*name/, /project\s*name/]));
   setHigh(fields, 'customer', labeledValue(lines, [/customer/, /custiomer/, /contractor/]));
+  setHigh(fields, 'estimateNumber', labeledValue(lines, [/estimate\s*number/, /estimate\s*no\.?/, /estimate\s*#/, /estimate/], /([A-Z0-9][A-Z0-9./-]*)/));
   setHigh(fields, 'workOrderNumber', labeledValue(lines, [/work\s*order\s*number/, /work\s*order\s*no\.?/, /work\s*order\s*#/, /w\/?o\s*#/] , /([A-Z0-9-]+)/));
   setHigh(fields, 'plateNumber', labeledValue(lines, [/(?:color\s*)?plate\s*number/, /(?:color\s*)?plate\s*no\.?/, /(?:color\s*)?plate\s*#/] , /([A-Z0-9-]+)/));
   setHigh(fields, 'productType', labeledValue(lines, [/product\s*type/, /production\s*type/, /system/, /type/]));
