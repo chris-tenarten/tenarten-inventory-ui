@@ -4,6 +4,7 @@ import {
   buildPurchaseOrderPdfModel,
   PURCHASE_ORDER_PDF_VERSION,
 } from "../_shared/purchase-order-pdf-model.mjs";
+import { EdgeAuthorizationError, requireEdgeCapability } from "../_shared/rbac.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,7 +30,20 @@ const wrap = (font: { widthOfTextAtSize(value: string, size: number): number }, 
   const lines: string[] = [];
   for (const paragraph of safeText(value).split("\n")) {
     let current = "";
-    for (const word of paragraph.split(/\s+/).filter(Boolean)) {
+    const words = paragraph.split(/\s+/).filter(Boolean).flatMap((word) => {
+      if (font.widthOfTextAtSize(word, size) <= width) return [word];
+      const parts: string[] = [];
+      let part = "";
+      for (const character of word) {
+        if (part && font.widthOfTextAtSize(`${part}${character}`, size) > width) {
+          parts.push(part);
+          part = character;
+        } else part += character;
+      }
+      if (part) parts.push(part);
+      return parts;
+    });
+    for (const word of words) {
       const candidate = current ? `${current} ${word}` : word;
       if (font.widthOfTextAtSize(candidate, size) <= width) current = candidate;
       else {
@@ -81,7 +95,37 @@ async function renderPdf(
   const margin = 32;
   const generationLabel = generatedAt.toISOString();
 
-  model.pages.forEach((pageLines, pageIndex) => {
+  const columns = [
+    { key: "item", label: "#", x: 32, width: 22 },
+    { key: "material", label: "MATERIAL", x: 54, width: 66 },
+    { key: "vendorSku", label: "VENDOR SKU", x: 120, width: 48 },
+    { key: "partComponent", label: "PART / COMPONENT", x: 168, width: 60 },
+    { key: "description", label: "DESCRIPTION", x: 228, width: 104 },
+    { key: "quantity", label: "QTY", x: 332, width: 34 },
+    { key: "unit", label: "UNIT", x: 366, width: 34 },
+    { key: "container", label: "CONTAINER", x: 400, width: 45 },
+    { key: "containerSize", label: "CONTAINER SIZE", x: 445, width: 47 },
+    { key: "unitCost", label: "UNIT COST", x: 492, width: 44 },
+    { key: "extendedCost", label: "EXTENDED", x: 536, width: 44 },
+  ] as const;
+  const rowFontSize = 6.2;
+  const rowLineHeight = 8;
+  const laidOutLines = model.lines.map((line) => {
+    const cells = columns.map((column) => wrap(regular, line[column.key], rowFontSize, column.width - 8, 16));
+    const lineCount = Math.max(1, ...cells.map((cell) => cell.length));
+    return { line, cells, height: Math.max(24, lineCount * rowLineHeight + 8) };
+  });
+  const renderPages: typeof laidOutLines[] = [];
+  for (const laidOutLine of laidOutLines) {
+    let pageLines = renderPages.at(-1);
+    if (!pageLines || pageLines.reduce((sum, item) => sum + item.height, 0) + laidOutLine.height > 294) {
+      pageLines = [];
+      renderPages.push(pageLines);
+    }
+    pageLines.push(laidOutLine);
+  }
+
+  renderPages.forEach((pageLines, pageIndex) => {
     const page = pdf.addPage([pageWidth, pageHeight]);
     const drawText = (value: unknown, x: number, y: number, size = 8, font = regular, color = ink) =>
       page.drawText(safeText(value), { x, y, size, font, color });
@@ -142,9 +186,8 @@ async function renderPdf(
     box(332, 530, 248, 64, pale);
     fieldLabel(model.job.kind === "linked" ? "JOB REFERENCE" : "PURCHASE TYPE", 38, 583);
     fieldValue(model.job.kind === "linked" ? model.job.name : "Stock Purchase", 38, 568, 152, 8, bold);
-    if (model.job.customer) fieldValue(model.job.customer, 38, 555, 152, 7);
-    fieldLabel("PAYMENT TERMS", 38, 543);
-    fieldValue(model.paymentTerms, 116, 543, 74, 7);
+    fieldLabel("PAYMENT TERMS", 38, 548);
+    fieldValue(model.paymentTerms, 116, 548, 74, 7);
     fieldLabel("JOB NUMBER", 206, 583);
     fieldValue(model.job.kind === "linked" ? model.job.number : "-", 206, 568, 116, 8, bold);
     fieldLabel("DATE REQUESTED", 206, 548);
@@ -152,35 +195,26 @@ async function renderPdf(
     fieldLabel("SHIP TO", 338, 583);
     drawWrapped(model.shipTo || "-", 338, 568, 234, 7, 4);
 
-    const columns = [
-      { label: "#", x: 32, width: 24, align: "left" },
-      { label: "MATERIAL", x: 56, width: 90, align: "left" },
-      { label: "VENDOR SKU", x: 146, width: 70, align: "left" },
-      { label: "DESCRIPTION", x: 216, width: 160, align: "left" },
-      { label: "QTY", x: 376, width: 48, align: "right" },
-      { label: "UNIT", x: 424, width: 44, align: "left" },
-      { label: "UNIT COST", x: 468, width: 56, align: "right" },
-      { label: "EXTENDED", x: 524, width: 56, align: "right" },
-    ];
-    page.drawRectangle({ x: margin, y: 510, width: 548, height: 20, color: accent, borderColor: lineColor, borderWidth: 0.6 });
-    columns.forEach(column => drawText(column.label, column.x + 4, 517, 6.5, bold, accentText));
-
-    let rowY = 486;
-    pageLines.forEach((line, rowIndex) => {
-      if (rowIndex % 2 === 1) page.drawRectangle({ x: margin, y: rowY - 2, width: 548, height: 24, color: pale });
-      columns.forEach(column => page.drawRectangle({ x: column.x, y: rowY - 2, width: column.width, height: 24, borderColor: lineColor, borderWidth: 0.4 }));
-      drawText(line.item, 36, rowY + 7, 7);
-      drawText(shorten(regular, line.material, 7, 82), 60, rowY + 7, 7);
-      drawText(shorten(regular, line.vendorSku, 7, 62), 150, rowY + 7, 7);
-      drawText(shorten(regular, line.description, 7, 152), 220, rowY + 7, 7);
-      drawText(shorten(regular, line.quantity, 7, 40), 380, rowY + 7, 7);
-      drawText(shorten(regular, line.unit, 7, 36), 428, rowY + 7, 7);
-      drawText(line.unitCost, 474, rowY + 7, 7);
-      drawText(line.extendedCost, 530, rowY + 7, 7);
-      rowY -= 24;
+    page.drawRectangle({ x: margin, y: 502, width: 548, height: 28, color: accent, borderColor: lineColor, borderWidth: 0.6 });
+    columns.forEach((column) => {
+      const labels = wrap(bold, column.label, 5.2, column.width - 8, 2);
+      labels.forEach((line, index) => drawText(line, column.x + 4, 519 - index * 7, 5.2, bold, accentText));
     });
 
-    if (pageIndex === model.pages.length - 1) {
+    let rowTop = 502;
+    pageLines.forEach((laidOutLine, rowIndex) => {
+      const rowBottom = rowTop - laidOutLine.height;
+      if (rowIndex % 2 === 1) page.drawRectangle({ x: margin, y: rowBottom, width: 548, height: laidOutLine.height, color: pale });
+      columns.forEach((column, columnIndex) => {
+        page.drawRectangle({ x: column.x, y: rowBottom, width: column.width, height: laidOutLine.height, borderColor: lineColor, borderWidth: 0.4 });
+        laidOutLine.cells[columnIndex].forEach((value, lineIndex) => {
+          drawText(value, column.x + 4, rowTop - 10 - lineIndex * rowLineHeight, rowFontSize);
+        });
+      });
+      rowTop = rowBottom;
+    });
+
+    if (pageIndex === renderPages.length - 1) {
       box(margin, 94, 342, 82);
       page.drawRectangle({ x: margin, y: 160, width: 342, height: 16, color: accent, borderColor: lineColor, borderWidth: 0.6 });
       drawText("NOTES & SPECIAL CONDITIONS", 40, 165, 7, bold, accentText);
@@ -205,7 +239,7 @@ async function renderPdf(
 
     drawText(`Generated ${generationLabel}`, margin, 22, 6, regular, slate);
     drawText(`${model.templateName} v${model.templateVersion} | ${model.documentVersion}`, 218, 22, 6, regular, slate);
-    drawText(`Page ${pageIndex + 1} of ${model.pages.length}`, 520, 22, 6, regular, slate);
+    drawText(`Page ${pageIndex + 1} of ${renderPages.length}`, 520, 22, 6, regular, slate);
     if (draft) {
       page.drawText("DRAFT - NOT ISSUED", {
         x: 92,
@@ -245,6 +279,17 @@ Deno.serve(async (request) => {
     body = await request.json();
   } catch {
     return json({ error: "A JSON request body is required." }, 400);
+  }
+  try {
+    const capability = body.action === "purge-test-purchase-order"
+      ? "manageUsers"
+      : body.action === "draft-preview" || body.action === "preview" || body.action === "download"
+        ? "previewOperationalDocuments"
+        : "issuePurchaseOrder";
+    await requireEdgeCapability(request, capability);
+  } catch (error) {
+    if (error instanceof EdgeAuthorizationError) return json({ error: error.message }, error.status);
+    return json({ error: "Authorization failed." }, 500);
   }
   if (body.action === "draft-preview") {
     if (!body.orderSnapshot || !Array.isArray(body.linesSnapshot)) {

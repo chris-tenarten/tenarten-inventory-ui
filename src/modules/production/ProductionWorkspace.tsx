@@ -55,6 +55,7 @@ import { useLanguage } from '@/lib/language';
 import { loadPlanningItems, loadPlanningPhases } from '@/modules/planning/data';
 import type { PlanningItem, PlanningPhase } from '@/modules/planning/types';
 import { isPlanningEnabled } from '@/modules/planning/timeline-model.mjs';
+import { useAuth } from '@/lib/auth';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
 type DashboardMode = 'pipeline' | 'snapshot';
@@ -90,6 +91,7 @@ function sortJobs(jobs: ProductionJob[]) {
 }
 
 export default function ProductionWorkspace() {
+  const auth = useAuth();
   const { language, tr } = useLanguage();
   const [dashboardMode, setDashboardModeState] = useState<DashboardMode>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('view') === 'snapshot' ? 'snapshot' : 'pipeline');
   const [jobs, setJobs] = useState<ProductionJob[]>([]);
@@ -346,29 +348,6 @@ export default function ProductionWorkspace() {
     ));
   }, []);
 
-  const openApprovalDialog = useCallback(() => {
-    if (inspectorBlocksScheduleSave) {
-      setScheduleSaveState('idle');
-      setScheduleMessage('Save the open Inspector job details before saving schedule changes. Proposed dates remain staged.');
-      requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
-      return;
-    }
-    if (schedulingErrors.length > 0) {
-      setScheduleSaveState('error');
-      setScheduleMessage('Resolve scheduling errors before saving. Warnings do not block Save All.');
-      requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
-      return;
-    }
-    const decision = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
-    if (decision.clearStoredExpiration) window.sessionStorage.removeItem(APPROVAL_EXPIRES_KEY);
-    setApprovalExpiresAt(decision.state === 'active' ? decision.expiration : null);
-    setApprovalError(decision.state === 'missing_configuration' ? 'Production approval is not configured. Save is unavailable.' : '');
-    setApprovalPassword('');
-    setChangeNote('');
-    setApprovalNow(Date.now());
-    setApprovalDialogOpen(true);
-  }, [inspectorBlocksScheduleSave, schedulingErrors.length]);
-
   const saveStagedSchedule = useCallback(async (audit: { changedByName: string; changeNote: string | null }) => {
     if (inspectorBlocksScheduleSave) {
       setScheduleSaveState('idle');
@@ -382,8 +361,10 @@ export default function ProductionWorkspace() {
     const activeBatchId = batchId ?? crypto.randomUUID();
     if (!batchId) setBatchId(activeBatchId);
     try {
-      const approval = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
-      if (approval.state !== 'active') throw new Error('Production approval expired. Confirm the batch again.');
+      if (!(auth.isAuthenticated && auth.profile?.isActive)) {
+        const approval = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
+        if (approval.state !== 'active') throw new Error('Production approval expired. Confirm the batch again.');
+      }
       const reworkJobIds = new Set(jobs.filter((job) => job.rework_cycle).map((job) => job.id));
       const ordinaryStaged = Object.fromEntries(Object.entries(stagedSchedules).filter(([jobId]) => !reworkJobIds.has(jobId)));
       const reworkStaged = Object.fromEntries(Object.entries(stagedSchedules).filter(([jobId]) => reworkJobIds.has(jobId)));
@@ -426,7 +407,34 @@ export default function ProductionWorkspace() {
       setScheduleMessage(feedback.message);
       requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
     } finally { scheduleSaveRef.current = false; }
-  }, [batchId, hasPendingSchedules, inspectorBlocksScheduleSave, jobs, schedulingErrors.length, stagedPlanningSchedules, stagedSchedules]);
+  }, [auth.isAuthenticated, auth.profile?.isActive, batchId, hasPendingSchedules, inspectorBlocksScheduleSave, jobs, schedulingErrors.length, stagedPlanningSchedules, stagedSchedules]);
+
+  const requestScheduleSave = useCallback(() => {
+    if (inspectorBlocksScheduleSave) {
+      setScheduleSaveState('idle');
+      setScheduleMessage('Save the open Inspector job details before saving schedule changes. Proposed dates remain staged.');
+      requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
+      return;
+    }
+    if (schedulingErrors.length > 0) {
+      setScheduleSaveState('error');
+      setScheduleMessage('Resolve scheduling errors before saving. Warnings do not block Save All.');
+      requestAnimationFrame(() => scheduleFeedbackRef.current?.focus());
+      return;
+    }
+    if (auth.isAuthenticated && auth.profile?.isActive) {
+      void saveStagedSchedule({ changedByName: auth.profile.displayName, changeNote: null });
+      return;
+    }
+    const decision = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
+    if (decision.clearStoredExpiration) window.sessionStorage.removeItem(APPROVAL_EXPIRES_KEY);
+    setApprovalExpiresAt(decision.state === 'active' ? decision.expiration : null);
+    setApprovalError(decision.state === 'missing_configuration' ? 'Production approval is not configured. Save is unavailable.' : '');
+    setApprovalPassword('');
+    setChangeNote('');
+    setApprovalNow(Date.now());
+    setApprovalDialogOpen(true);
+  }, [auth.isAuthenticated, auth.profile, inspectorBlocksScheduleSave, saveStagedSchedule, schedulingErrors.length]);
 
   const confirmApprovedSave = useCallback(() => {
     if (inspectorBlocksScheduleSave) {
@@ -683,7 +691,7 @@ export default function ProductionWorkspace() {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:justify-end">
+            <div className="flex flex-col items-stretch gap-1.5 text-xs sm:items-end">
               <button
                 type="button"
                 onClick={() => { setJobCreatorReturnView(activeView); setJobCreatorOpen(true); }}
@@ -850,7 +858,7 @@ export default function ProductionWorkspace() {
         <SchedulingFeedbackPanel issues={hasPendingSchedules || previewPlanningIssues ? activePlanningIssues : []} focusedIssueId={focusedPlanningIssueId} />
 
         {hasPendingSchedules && (() => {
-          if (!stagedSchedule) return <div ref={scheduleActionsRef} data-pending-schedule-actions="true" tabIndex={-1} role="status" aria-live="polite" className="fixed bottom-3 left-3 right-3 z-[90] mx-auto flex max-w-5xl flex-col gap-3 border border-amber-600 bg-amber-50 px-4 py-3 shadow-2xl lg:flex-row lg:items-center lg:justify-between"><div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Planning schedule pending</div><div className="mt-1 text-sm font-bold text-slate-950">{Object.keys(stagedPlanningSchedules).length} Planning Phase change{Object.keys(stagedPlanningSchedules).length === 1 ? '' : 's'} ready for review</div></div><div className="flex flex-wrap gap-2"><button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button><button type="button" onClick={discardStagedSchedule} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button><button type="button" onClick={openApprovalDialog} disabled={schedulingErrors.length > 0} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white">Save all changes</button></div></div>;
+          if (!stagedSchedule) return <div ref={scheduleActionsRef} data-pending-schedule-actions="true" tabIndex={-1} role="status" aria-live="polite" className="fixed bottom-3 left-3 right-3 z-[90] mx-auto flex max-w-5xl flex-col gap-3 border border-amber-600 bg-amber-50 px-4 py-3 shadow-2xl lg:flex-row lg:items-center lg:justify-between"><div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Planning schedule pending</div><div className="mt-1 text-sm font-bold text-slate-950">{Object.keys(stagedPlanningSchedules).length} Planning Phase change{Object.keys(stagedPlanningSchedules).length === 1 ? '' : 's'} ready for review</div></div><div className="flex flex-wrap gap-2"><button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button><button type="button" onClick={discardStagedSchedule} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button><button type="button" onClick={requestScheduleSave} disabled={schedulingErrors.length > 0} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white">Save all changes</button></div></div>;
           const hadSchedule = Boolean(stagedSchedule.persistedStart && stagedSchedule.persistedEnd);
           const estimatedHours = stagedJob?.estimated_man_hours ?? null;
           const before = hadSchedule ? laborIntensity(estimatedHours, stagedSchedule.persistedStart!, stagedSchedule.persistedEnd!) : null;
@@ -868,7 +876,7 @@ export default function ProductionWorkspace() {
               <div className="flex flex-wrap gap-2">
                 <button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button>
                 <button type="button" onClick={discardStagedSchedule} disabled={scheduleSaveState === 'saving'} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button>
-                <button type="button" onClick={openApprovalDialog} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave} title={inspectorBlocksScheduleSave ? 'Save the open Inspector job details first' : undefined} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50">Save all changes</button>
+                <button type="button" onClick={requestScheduleSave} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave} title={inspectorBlocksScheduleSave ? 'Save the open Inspector job details first' : undefined} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50">Save all changes</button>
               </div>
             </div>
           );
@@ -970,9 +978,7 @@ export default function ProductionWorkspace() {
         onArchive={async (job) => { const archived = await archiveProductionJob(job); setJobs((current) => includeArchived ? current.map((item) => item.id === job.id ? archived : item) : current.filter((item) => item.id !== job.id)); closeInspector(); }}
         onRestore={async (job) => { const restored = await restoreProductionJob(job); setJobs((current) => current.map((item) => item.id === job.id ? restored : item)); closeInspector(); }}
         onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')}
-        onSaveSchedule={openApprovalDialog}
         scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])}
-        scheduleSaveDisabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave}
         onOrdinarySaveStateChange={setInspectorOrdinarySaveState}
         onAttachmentsChanged={(jobId, count) => setAttachmentCounts((current) => ({ ...current, [jobId]: count }))}
         onPlanningPhasesChanged={handlePlanningPhasesChanged}

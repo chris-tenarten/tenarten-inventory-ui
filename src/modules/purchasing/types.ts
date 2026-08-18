@@ -1,6 +1,7 @@
 export type PurchaseOrderStatus = 'draft' | 'issued' | 'cancelled' | 'superseded';
 export type PurchaseOrderCategory = 'chip';
 export type PurchaseOrderTemplate = 'classic' | 'tenops';
+export type JobPurchaseOrderReferenceType = '' | 'resin' | 'chip';
 export type MoistureCondition = '' | 'dry' | 'damp' | 'wet';
 export type CatalogSource = 'standard' | 'specialty';
 
@@ -15,7 +16,7 @@ export type ChipPurchaseOrderLineDetails = {
 export type PurchaseOrderLine = { id?: string; lineNumber: number; lineCategory: 'chip'; status: 'active'; details: ChipPurchaseOrderLineDetails };
 export type PurchaseOrder = {
   id: string; poFamilyId: string; poNumber: string | null; poCategory: PurchaseOrderCategory; status: PurchaseOrderStatus; documentTemplate?: PurchaseOrderTemplate;
-  productionJobId: string; jobNumberSnapshot: string; jobNameSnapshot: string;
+  productionJobId: string; jobNumberSnapshot: string; jobNameSnapshot: string; jobPoReferenceType: JobPurchaseOrderReferenceType;
   vendorId: string; vendorNameSnapshot: string; vendorAddressSnapshot: string; vendorContactSnapshot: string;
   shipToSnapshot: string; paymentTermsSnapshot: string; authorizedBySnapshot: string;
   orderDate: string; requestedDate: string; currency: string; subtotal: string;

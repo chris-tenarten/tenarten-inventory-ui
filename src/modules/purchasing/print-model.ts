@@ -1,7 +1,7 @@
 import { calculatePurchaseOrderTotals, centsToMoney } from './calculations';
 import type { PurchaseOrderDraft } from './types';
 
-export type PurchaseOrderPrintLine = { item: number; sku: string; description: string; quantity: string; unit: string; unitPrice: string; lineTotal: string };
+export type PurchaseOrderPrintLine = { item: number; material: string; sku: string; partComponent: string; description: string; quantity: string; unit: string; container: string; containerSize: string; unitPrice: string; lineTotal: string };
 export type PurchaseOrderPrintModel = {
   poNumber: string; poDate: string; originatedBy: string; status: 'DRAFT'|'ISSUED'; vendorName: string; vendorAddress: string; vendorContact: string;
   jobReference: string; jobNumber: string; shipTo: string; paymentTerms: string; requestedDate: string; notes: string; authorizedBy: string;
@@ -15,9 +15,7 @@ export function toPurchaseOrderPrintModel(draft: PurchaseOrderDraft): PurchaseOr
   const totals = calculatePurchaseOrderTotals(draft.lines.map(line => ({ quantityOrdered: line.details.quantityOrdered, unitPrice: line.details.unitPrice })), draft.discountPercent, draft.taxPercent, draft.freight);
   const lines = draft.lines.map((line, index) => {
     const details = line.details;
-    const packageText = [details.packageQuantity, details.packageMeasure, details.containerType].filter(Boolean).join(' ');
-    const description = [details.materialNameSnapshot, details.chipSize, packageText, details.moistureCondition ? `${details.moistureCondition[0].toUpperCase()}${details.moistureCondition.slice(1)}` : ''].filter(Boolean).join(', ');
-    return { item: index + 1, sku: details.vendorSkuSnapshot, description, quantity: details.quantityOrdered, unit: details.orderUnit, unitPrice: details.unitPrice ? `$ ${details.unitPrice}` : '', lineTotal: money(totals.lineTotals[index]) };
+    return { item: index + 1, material: details.materialNameSnapshot, sku: details.vendorSkuSnapshot, partComponent: details.chipSize, description: details.notes, quantity: details.quantityOrdered, unit: details.orderUnit, container: details.containerType, containerSize: [details.packageQuantity, details.packageMeasure].filter(Boolean).join(' '), unitPrice: details.unitPrice ? `$ ${details.unitPrice}` : '', lineTotal: money(totals.lineTotals[index]) };
   });
   return { poNumber: draft.poNumber || 'Not assigned', poDate: displayDate(draft.orderDate), originatedBy: draft.createdBy, status: draft.status === 'issued' ? 'ISSUED' : 'DRAFT', vendorName: draft.vendorNameSnapshot, vendorAddress: draft.vendorAddressSnapshot, vendorContact: draft.vendorContactSnapshot, jobReference: draft.jobNameSnapshot, jobNumber: draft.jobNumberSnapshot, shipTo: draft.shipToSnapshot, paymentTerms: draft.paymentTermsSnapshot, requestedDate: displayDate(draft.requestedDate), notes: draft.commercialNotes, authorizedBy: draft.authorizedBySnapshot, lines, subtotal: money(totals.subtotal), discountPercent: draft.discountPercent, discountAmount: money(totals.discountAmount), taxableSubtotal: money(totals.taxableSubtotal), taxPercent: draft.taxPercent, taxAmount: money(totals.taxAmount), freight: totals.freightAmount === null ? '—' : totals.freightAmount === 0 && !draft.freight.trim() ? '' : money(totals.freightAmount), total: money(totals.total) };
 }

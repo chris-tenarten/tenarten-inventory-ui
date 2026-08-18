@@ -52,6 +52,48 @@ import { validatePurchaseOrderDraft } from "./validation";
 const field = "mt-1 h-10 w-full border border-slate-300 bg-white px-3 text-sm";
 const label = "text-xs font-bold uppercase tracking-[0.08em] text-slate-600";
 
+const quantityUnits = ["gal", "lb", "oz", "ea", "sq ft", "lin ft"];
+const containerTypes = ["pail", "drum", "bag", "box", "case", "tote"];
+
+function ChoiceWithCustom({ value, options, onChange }: { value: string; options: string[]; onChange(value: string): void }) {
+  const recognized = options.find((option) => option.toLowerCase() === value.trim().toLowerCase());
+  const [custom, setCustom] = useState(Boolean(value) && !recognized);
+  return (
+    <div>
+      <select
+        value={custom ? "__other" : recognized || ""}
+        onChange={(event) => {
+          if (event.target.value === "__other") {
+            setCustom(true);
+            onChange("");
+          } else {
+            setCustom(false);
+            onChange(event.target.value);
+          }
+        }}
+        className={field}
+      >
+        <option value="">Not specified</option>
+        {options.map((option) => <option key={option} value={option}>{option}</option>)}
+        <option value="__other">Other</option>
+      </select>
+      {custom && <input autoFocus value={value} onChange={(event) => onChange(event.target.value)} placeholder="Enter custom value" className={field} />}
+    </div>
+  );
+}
+
+function containerSize(details: PurchaseOrderLine["details"]) {
+  return [details.packageQuantity, details.packageMeasure].filter(Boolean).join(" ");
+}
+
+function parseContainerSize(value: string) {
+  const source = value.trim();
+  const match = /^(\d+(?:\.\d+)?)\s*(.*)$/.exec(source);
+  return match
+    ? { packageQuantity: match[1], packageMeasure: match[2] }
+    : { packageQuantity: "", packageMeasure: source };
+}
+
 function LineEditor({
   line,
   index,
@@ -198,7 +240,7 @@ function LineEditor({
   return (
     <section className="rounded-sm border border-slate-300 bg-white">
       <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 py-2">
-        <div className="text-xs font-bold uppercase">{tr('Chip Line', 'Partida de chip')} {index + 1}</div>
+        <div className="text-xs font-bold uppercase">{tr('Purchase Order Line', 'Partida de orden de compra')} {index + 1}</div>
         <div className="flex gap-2">
           <button
             type="button"
@@ -302,7 +344,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          {tr('Chip Size', 'Tamaño de chip')}
+          {tr('Part / Component', 'Parte / Componente')}
           <input
             value={details.chipSize}
             onChange={(e) => set("chipSize", e.target.value)}
@@ -323,32 +365,23 @@ function LineEditor({
           </select>
         </label>
         <label className={label}>
-          {tr('Amount Per Container', 'Contenido por envase')}
+          {tr('Container Size', 'Tamaño del envase')}
           <input
-            inputMode="decimal"
-            value={details.packageQuantity}
-            onChange={(e) => set("packageQuantity", e.target.value)}
+            value={containerSize(details)}
+            onChange={(event) => {
+              const parsed = parseContainerSize(event.target.value);
+              onChange({ ...line, details: { ...details, ...parsed, catalogSource: "", catalogItemId: "" } });
+            }}
+            placeholder="5 gal or 50 lb"
             className={field}
           />
         </label>
         <label className={label}>
-          {tr('Measure', 'Medida')}
-          <input
-            value={details.packageMeasure}
-            onChange={(e) => set("packageMeasure", e.target.value)}
-            className={field}
-          />
+          {tr('Container', 'Envase')}
+          <ChoiceWithCustom value={details.containerType} options={containerTypes} onChange={(value) => set("containerType", value)} />
         </label>
         <label className={label}>
-          {tr('Container Type', 'Tipo de envase')}
-          <input
-            value={details.containerType}
-            onChange={(e) => set("containerType", e.target.value)}
-            className={field}
-          />
-        </label>
-        <label className={label}>
-          {tr('Quantity Ordered', 'Cantidad solicitada')}
+          {tr('Quantity', 'Cantidad')}
           <input
             inputMode="decimal"
             value={details.quantityOrdered}
@@ -357,15 +390,11 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          {tr('Order Unit', 'Unidad de compra')}
-          <input
-            value={details.orderUnit}
-            onChange={(e) => set("orderUnit", e.target.value)}
-            className={field}
-          />
+          {tr('Quantity Unit', 'Unidad de cantidad')}
+          <ChoiceWithCustom value={details.orderUnit} options={quantityUnits} onChange={(value) => set("orderUnit", value)} />
         </label>
         <label className={label}>
-          {tr('Unit Price', 'Precio unitario')}
+          {tr('Unit Cost', 'Costo unitario')}
           <input
             inputMode="decimal"
             value={details.unitPrice}
@@ -390,7 +419,7 @@ function LineEditor({
           />
         </label>
         <label className={`${label} sm:col-span-2`}>
-          {tr('Line Notes', 'Notas de la partida')}
+          {tr('Description', 'Descripción')}
           <input
             value={details.notes}
             onChange={(e) => set("notes", e.target.value)}
@@ -592,6 +621,7 @@ export function PurchaseOrderEditor({
       productionJobId: id,
       jobNumberSnapshot: job?.job_number || "",
       jobNameSnapshot: job?.name || "",
+      jobPoReferenceType: id ? current.jobPoReferenceType : "",
       requestedDate:
         current.requestedDate || job?.requested_delivery_date || "",
       lines: current.lines.map((line) => ({
@@ -918,7 +948,7 @@ export function PurchaseOrderEditor({
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-300 bg-white p-4">
           <div>
             <div className="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">
-              Chip Purchase Order · {readOnly ? "Issued" : "Draft"}
+              Purchase Order · {readOnly ? "Issued" : "Draft"}
             </div>
             <h2 className="text-xl font-bold">
               {draft.id ? tr("Edit Purchase Order", "Editar orden de compra") : tr("New Purchase Order", "Nueva orden de compra")}
@@ -1023,6 +1053,20 @@ export function PurchaseOrderEditor({
                   readOnly
                   className={`${field} bg-slate-50`}
                 />
+              </div>
+              <div className="md:col-span-2">
+                <label className={label}>{tr('Production PO Reference', 'Referencia de OC de Producción')}</label>
+                <select
+                  value={draft.jobPoReferenceType}
+                  onChange={(event) => setHeader("jobPoReferenceType", event.target.value as PurchaseOrderDraft["jobPoReferenceType"])}
+                  disabled={!draft.productionJobId}
+                  className={field}
+                >
+                  <option value="">Do not update a Job PO reference</option>
+                  <option value="resin">Resin PO</option>
+                  <option value="chip">Chip PO</option>
+                </select>
+                <p className="mt-1 text-xs text-slate-500">The selected Job reference is populated only after this PO is successfully issued.</p>
               </div>
               <div className="md:col-span-2 2xl:col-span-1">
                 <label className={label} htmlFor="purchase-order-vendor">
@@ -1197,7 +1241,7 @@ export function PurchaseOrderEditor({
               }
               className="h-9 border border-slate-400 bg-white px-4 text-sm font-bold"
             >
-              + {tr('Add Chip Line', 'Agregar partida de chip')}
+              + {tr('Add Line', 'Agregar partida')}
             </button>
             </fieldset>
           </main>

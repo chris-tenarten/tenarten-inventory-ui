@@ -14,6 +14,7 @@ import { APPEARANCES, useAppearance } from "@/lib/appearance";
 import { BRANDING } from "@/lib/dev-branding.mjs";
 import PhaseLibraryManager from "@/modules/planning/PhaseLibraryManager";
 import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
+import AdminSettingsPanel from "@/components/AdminSettingsPanel";
 
 const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 
@@ -229,6 +230,7 @@ export default function SettingsPage() {
         ))}
       </div>
       {planningEnabled && <PhaseLibraryManager />}
+      <AdminSettingsPanel />
     </div>
   );
 }

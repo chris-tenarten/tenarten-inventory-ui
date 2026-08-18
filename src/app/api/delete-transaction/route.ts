@@ -1,17 +1,9 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+import { authorizeServerRequest, createServiceClient } from "@/lib/server-auth";
 
 export async function POST(request: Request) {
   try {
-    if (!supabaseUrl || !serviceRoleKey) {
-      return NextResponse.json(
-        { error: "Supabase server credentials are not configured." },
-        { status: 500 },
-      );
-    }
+    await authorizeServerRequest(request, "adjustInventory");
 
     const { transactionId } = await request.json();
 
@@ -22,12 +14,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = createClient(supabaseUrl, serviceRoleKey, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    });
+    const supabase = createServiceClient();
 
     const { error } = await supabase
       .from("inventory_transactions")
@@ -44,6 +31,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, transactionId });
   } catch (error) {
+    if (error instanceof Response) return error;
     console.error("Unexpected delete-transaction error:", error);
     return NextResponse.json(
       { error: "Unexpected server error while deleting transaction." },

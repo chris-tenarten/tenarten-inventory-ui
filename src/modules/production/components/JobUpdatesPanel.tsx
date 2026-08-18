@@ -338,6 +338,7 @@ export default function JobUpdatesPanel({
           row.id === resolvedUpdate.id ? resolvedUpdate : row,
         ),
       );
+      window.dispatchEvent(new Event("tenops:notifications-changed"));
       window.localStorage.setItem(
         ATTRIBUTION_STORAGE_KEY,
         selectedResolverName.trim(),

@@ -57,9 +57,7 @@ type Props = {
   onArchive: (job: ProductionJob) => Promise<void>;
   onRestore: (job: ProductionJob) => Promise<void>;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
-  onSaveSchedule: () => void;
   scheduleIsStaged: boolean;
-  scheduleSaveDisabled?: boolean;
   onOrdinarySaveStateChange: (state: InspectorOrdinarySaveState) => void;
   jobUpdateSummary: JobUpdateSummary;
   onJobUpdateSummaryChanged: (
@@ -258,9 +256,7 @@ export default function ProductionJobInspector({
   onArchive,
   onRestore,
   onStageSchedule,
-  onSaveSchedule,
   scheduleIsStaged,
-  scheduleSaveDisabled = false,
   onOrdinarySaveStateChange,
   jobUpdateSummary,
   onJobUpdateSummaryChanged,
@@ -279,7 +275,7 @@ export default function ProductionJobInspector({
       ? "files"
       : initialFocus?.startsWith("planning") && planningEnabled
         ? "planning"
-      : initialFocus === "job-updates"
+      : initialFocus?.startsWith("job-updates")
         ? "updates"
         : initialFocus === "recent-changes"
           ? "recent-changes"
@@ -305,7 +301,9 @@ export default function ProductionJobInspector({
   } | null>(null);
   const [attachmentFullscreen, setAttachmentFullscreen] = useState(false);
   const [transmittalOpen, setTransmittalOpen] = useState(false);
-  const [focusedUpdateId, setFocusedUpdateId] = useState<string | null>(null);
+  const [focusedUpdateId, setFocusedUpdateId] = useState<string | null>(() =>
+    initialFocus?.startsWith("job-updates:") ? initialFocus.slice("job-updates:".length) : null,
+  );
   const [planningEditorOpen, setPlanningEditorOpen] = useState(false);
   const [reworkCycles, setReworkCycles] = useState<ProductionReworkCycle[]>([]);
   const [jobUpdateCount, setJobUpdateCount] = useState(
@@ -315,6 +313,7 @@ export default function ProductionJobInspector({
     start: job.planned_start || "",
     end: job.planned_end || "",
   }));
+  const scheduleIsIncomplete = Boolean(scheduleDraft.start) !== Boolean(scheduleDraft.end);
   const panel = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const projectNameRef = useRef<HTMLInputElement>(null);
@@ -893,6 +892,11 @@ export default function ProductionJobInspector({
                       Save All succeeds or the schedule change is reverted.
                     </div>
                   )}
+                  {!scheduleIsStaged && scheduleIsIncomplete && (
+                    <div role="status" className="sm:col-span-2 border-l-2 border-amber-500 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-900">
+                      Schedule incomplete. Enter both planned dates to stage this change for Save All.
+                    </div>
+                  )}
                   <label className="text-xs font-bold">
                     Requested delivery
                     <input
@@ -1409,24 +1413,17 @@ export default function ProductionJobInspector({
           )}
         </div>
         {(activeSection === "details" || dirtyCount > 0) && (
-          <div data-inspector-save-region className={`z-10 flex shrink-0 flex-wrap items-center justify-between gap-3 border-t px-4 py-3 shadow-[0_-4px_12px_rgba(15,23,42,0.12)] ${saveError ? "border-red-400 bg-red-50" : dirtyCount > 0 || scheduleIsStaged ? "border-amber-400 bg-amber-50" : saveMessage ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
+          <div data-inspector-save-region className={`z-10 flex shrink-0 flex-wrap items-center justify-between gap-3 border-t px-4 py-3 shadow-[0_-4px_12px_rgba(15,23,42,0.12)] ${saveError ? "border-red-400 bg-red-50" : dirtyCount > 0 || scheduleIsStaged || scheduleIsIncomplete ? "border-amber-400 bg-amber-50" : saveMessage ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
             <div>
-              <div className={`text-[10px] font-bold uppercase tracking-[0.12em] ${saveError ? "text-red-800" : dirtyCount > 0 || scheduleIsStaged ? "text-amber-800" : saveMessage ? "text-emerald-800" : "text-slate-500"}`}>
-                {saving ? "Saving…" : saveError ? "Save failed" : dirtyCount > 0 ? `${dirtyCount} unsaved ${dirtyCount === 1 ? "field" : "fields"}` : saveMessage ? "Changes saved" : scheduleIsStaged ? "Schedule changes pending" : "No unsaved changes"}
+              <div className={`text-[10px] font-bold uppercase tracking-[0.12em] ${saveError ? "text-red-800" : dirtyCount > 0 || scheduleIsStaged || scheduleIsIncomplete ? "text-amber-800" : saveMessage ? "text-emerald-800" : "text-slate-500"}`}>
+                {saving ? "Saving…" : saveError ? "Save failed" : dirtyCount > 0 ? `${dirtyCount} unsaved ${dirtyCount === 1 ? "field" : "fields"}` : saveMessage ? "Changes saved" : scheduleIsStaged ? "Schedule changes pending" : scheduleIsIncomplete ? "Schedule incomplete" : "No unsaved changes"}
               </div>
-              {saveError ? <div role="alert" className="mt-0.5 max-w-sm text-xs font-semibold text-red-800">{saveError}</div> : scheduleIsStaged && (dirtyCount > 0 || saving) ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Save job details first. Planned dates will remain staged.</div> : scheduleIsStaged && saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Job details saved. Schedule changes still require approval.</div> : scheduleIsStaged ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Planned dates remain staged for the existing Save All approval workflow.</div> : saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">{saveMessage}</div> : null}
+              {saveError ? <div role="alert" className="mt-0.5 max-w-sm text-xs font-semibold text-red-800">{saveError}</div> : scheduleIsStaged && (dirtyCount > 0 || saving) ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Save job details first. Planned dates will remain staged.</div> : scheduleIsStaged && saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Job details saved. Schedule changes still require approval.</div> : scheduleIsStaged ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Planned dates remain staged for the existing Save All approval workflow.</div> : scheduleIsIncomplete ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Enter both planned dates to stage this schedule for Save All.</div> : saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">{saveMessage}</div> : null}
             </div>
             <div className="flex flex-wrap justify-end gap-2">
               {dirtyCount > 0 && <button type="button" onClick={discardDraft} disabled={saving} className="h-9 border border-slate-500 bg-white px-3 text-xs font-bold uppercase text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-700 disabled:opacity-50">Discard</button>}
               <button type="button" onClick={() => void saveDraft()} disabled={saving || dirtyCount === 0} className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Saving…" : saveError && dirtyCount > 0 ? "Retry save" : "Save changes"}</button>
-              {scheduleIsStaged && <button type="button" onClick={onSaveSchedule} disabled={scheduleSaveDisabled || dirtyCount > 0 || saving} title={dirtyCount > 0 || saving ? "Save job details before saving the schedule" : undefined} className="h-9 border border-blue-900 bg-blue-800 px-3 text-xs font-bold uppercase text-white hover:bg-blue-900 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50">Save schedule</button>}
             </div>
-          </div>
-        )}
-        {scheduleIsStaged && activeSection !== "details" && dirtyCount === 0 && (
-          <div className="z-10 flex shrink-0 items-center justify-between gap-3 border-t border-amber-500 bg-amber-50 px-4 py-3 shadow-[0_-4px_12px_rgba(15,23,42,0.12)]">
-            <div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Schedule changes pending</div><div className="mt-0.5 text-xs font-semibold text-slate-700">Planned dates remain staged until saved or reverted.</div></div>
-            <button type="button" onClick={onSaveSchedule} disabled={scheduleSaveDisabled} className="h-9 shrink-0 border border-blue-900 bg-blue-800 px-4 text-xs font-bold uppercase text-white hover:bg-blue-900 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50">Save schedule</button>
           </div>
         )}
       </aside>
