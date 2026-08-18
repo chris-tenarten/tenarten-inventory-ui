@@ -16,7 +16,7 @@ async function throwPdfFunctionError(error: unknown): Promise<never> {
 
 export async function savePurchaseOrderDraft(draft: PurchaseOrderDraft): Promise<string> {
   const lines = draft.lines.map((line,index) => ({ id:line.id || null, line_number:index+1, production_job_id:line.details.productionJobId || null, catalog_source:line.details.catalogSource || null, catalog_item_id:line.details.catalogItemId || null, vendor_sku_snapshot:line.details.vendorSkuSnapshot || null, material_name_snapshot:line.details.materialNameSnapshot, chip_size:line.details.chipSize, package_quantity:line.details.packageQuantity || null, package_measure:line.details.packageMeasure || null, container_type:line.details.containerType || null, moisture_condition:line.details.moistureCondition || null, quantity_ordered:line.details.quantityOrdered, order_unit:line.details.orderUnit, unit_price:line.details.unitPrice || null, price_basis:line.details.priceBasis || null, notes:line.details.notes || null }));
-  const { data,error } = await supabase.rpc('save_chip_purchase_order_draft_v2',{ p_order:{ id:draft.id || null, production_job_id:draft.productionJobId || null, job_number_snapshot:draft.jobNumberSnapshot || null, job_name_snapshot:draft.jobNameSnapshot || null, vendor_id:draft.vendorId || null, vendor_name_snapshot:draft.vendorNameSnapshot, vendor_address_snapshot:draft.vendorAddressSnapshot || null, vendor_contact_snapshot:draft.vendorContactSnapshot || null, ship_to_snapshot:draft.shipToSnapshot || null, payment_terms_snapshot:draft.paymentTermsSnapshot || null, authorized_by_snapshot:draft.authorizedBySnapshot || null, order_date:draft.orderDate, requested_date:draft.requestedDate || null, currency:'USD', discount_percent:draft.discountPercent || null, tax_percent:draft.taxPercent || null, freight:draft.freight || null, commercial_notes:draft.commercialNotes || null, internal_notes:draft.internalNotes || null }, p_lines:lines, p_actor:draft.createdBy.trim() });
+  const { data,error } = await supabase.rpc('save_chip_purchase_order_draft_v2',{ p_order:{ id:draft.id || null, production_job_id:draft.productionJobId || null, job_number_snapshot:draft.jobNumberSnapshot || null, job_name_snapshot:draft.jobNameSnapshot || null, job_po_reference_type:draft.jobPoReferenceType || null, vendor_id:draft.vendorId || null, vendor_name_snapshot:draft.vendorNameSnapshot, vendor_address_snapshot:draft.vendorAddressSnapshot || null, vendor_contact_snapshot:draft.vendorContactSnapshot || null, ship_to_snapshot:draft.shipToSnapshot || null, payment_terms_snapshot:draft.paymentTermsSnapshot || null, authorized_by_snapshot:draft.authorizedBySnapshot || null, order_date:draft.orderDate, requested_date:draft.requestedDate || null, currency:'USD', discount_percent:draft.discountPercent || null, tax_percent:draft.taxPercent || null, freight:draft.freight || null, commercial_notes:draft.commercialNotes || null, internal_notes:draft.internalNotes || null }, p_lines:lines, p_actor:draft.createdBy.trim() });
   if (error) throw error;
   const id = String(data);
   const { error:templateError } = await supabase.rpc('set_purchase_order_document_template', {
@@ -153,12 +153,12 @@ export async function generatePurchaseOrderDraftPdf(draft: PurchaseOrderDraft): 
       line_number:index + 1,
       material:details.materialNameSnapshot,
       vendor_sku:details.vendorSkuSnapshot,
-      display_description:[
-        details.materialNameSnapshot,
-        details.chipSize,
-        [details.packageQuantity,details.packageMeasure,details.containerType].filter(Boolean).join(' '),
-        details.moistureCondition,
-      ].filter(Boolean).join(', '),
+      part_component:details.chipSize,
+      description:details.notes,
+      display_description:details.notes,
+      container:details.containerType,
+      container_size:[details.packageQuantity,details.packageMeasure].filter(Boolean).join(' '),
+      notes:details.notes,
       quantity:details.quantityOrdered,
       unit:details.orderUnit,
       unit_price:details.unitPrice || null,

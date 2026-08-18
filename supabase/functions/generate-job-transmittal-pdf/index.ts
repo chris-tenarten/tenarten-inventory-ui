@@ -4,6 +4,7 @@ import {
   buildJobTransmittalPdfModel,
   JOB_TRANSMITTAL_PDF_VERSION,
 } from "../_shared/job-transmittal-pdf-model.mjs";
+import { EdgeAuthorizationError, requireEdgeCapability } from "../_shared/rbac.ts";
 
 const allowedOrigins = (Deno.env.get("TENOPS_ALLOWED_ORIGINS") || "http://localhost:3000")
   .split(",").map((value) => value.trim()).filter(Boolean);
@@ -173,12 +174,12 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
       t("Address", 42, 638, 6.5, bold, muted); wrapped([model.recipient.addressLine1,model.recipient.addressLine2].filter(Boolean).join("\n"),84,638,210,7,3);
       t("Attn", 42, 605, 6.5, bold, muted); wrapped(model.recipient.attention,84,605,210,7,1);
       t("Contact", 42, 590, 6.5, bold, muted); wrapped([model.recipient.officePhone,model.recipient.mobilePhone,model.recipient.email].filter(Boolean).join(" | "),84,590,210,6.4,1);
-      t("Date", 316, 653, 6.5, bold, muted); t(model.documentDate, 400, 653, 7.5);
-      t("Re / Project", 316, 638, 6.5, bold, muted); wrapped(model.job.name,400,638,170,7.2,2);
-      t("Customer", 316, 623, 6.5, bold, muted); wrapped(model.job.customer,400,623,170,7.2,1);
-      t("Job #", 316, 608, 6.5, bold, muted); t(model.job.number, 400, 608, 7.5);
-      t("Transmittal #", 316, 593, 6.5, bold, muted); t(model.transmittalNumber, 400, 593, 8, bold);
-      t("CC", 316, 578, 6.5, bold, muted); wrapped(model.cc,400,578,170,6.8,1);
+      t("Date", 316, 657, 6.5, bold, muted); t(model.documentDate, 400, 657, 7.5);
+      t("Re / Project", 316, 642, 6.5, bold, muted); wrapped(model.job.name,400,642,170,7.2,2);
+      t("Customer", 316, 627, 6.5, bold, muted); wrapped(model.job.customer,400,627,170,7.2,1);
+      t("Job #", 316, 612, 6.5, bold, muted); t(model.job.number, 400, 612, 7.5);
+      t("Transmittal #", 316, 597, 6.5, bold, muted); t(model.transmittalNumber, 400, 597, 8, bold);
+      t("CC", 316, 582, 6.5, bold, muted); wrapped(model.cc,400,582,170,6.8,1);
       band("TRANSMITTED ITEMS", 561, true); rect(32, 508, 548, 53);
       t("Delivery", 42, 542, 7, bold); checkbox(model.delivery.attached,"Attached",105,538); checkbox(model.delivery.separateCover,`Under Separate Cover Via ${model.delivery.via}`,200,538);
       t("Item type", 42, 519, 7, bold); checkbox(model.types.shopDrawing,"Shop Drawing",105,515); checkbox(model.types.letter,"Letter",210,515); checkbox(model.types.samples,"Samples",280,515); checkbox(model.types.other,`Other ${model.types.otherLabel}`,365,515);
@@ -271,6 +272,10 @@ Deno.serve(async (request) => {
   }
   const body = parsed;
   try {
+    await requireEdgeCapability(
+      request,
+      body.action === "generate" ? "issueTransmittal" : "previewOperationalDocuments",
+    );
     if (body.action === "draft-preview") {
       if (!hasExactKeys(body,["action","snapshot"])
         || !isObject(body.snapshot)
@@ -343,6 +348,7 @@ Deno.serve(async (request) => {
       throw generationError;
     }
   } catch (error) {
+    if (error instanceof EdgeAuthorizationError) return json({ error: error.message }, error.status, cors);
     console.error("Job Transmittal request failed", error);
     return json({error:"The transmittal request failed. Retry the operation or contact an administrator."},500,cors);
   }

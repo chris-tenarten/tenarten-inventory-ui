@@ -7,7 +7,7 @@ import {
 } from '../supabase/functions/_shared/purchase-order-pdf-model.mjs';
 
 const read = path => readFile(new URL(path, import.meta.url), 'utf8');
-const [migration, v2Migration, pgcryptoFix, databaseVerification, edgeFunction, editor, mutations, queries] = await Promise.all([
+const [migration, v2Migration, pgcryptoFix, databaseVerification, edgeFunction, editor, mutations, queries, validation, printModel] = await Promise.all([
   read('../supabase/migrations/20260723_004_purchase_order_pdf_documents.sql'),
   read('../supabase/migrations/20260723_005_purchase_order_pdf_v2.sql'),
   read('../supabase/migrations/20260723_009_purchase_order_pdf_snapshot_pgcrypto_path.sql'),
@@ -16,6 +16,8 @@ const [migration, v2Migration, pgcryptoFix, databaseVerification, edgeFunction, 
   read('../src/modules/purchasing/PurchaseOrderEditor.tsx'),
   read('../src/modules/purchasing/mutations.ts'),
   read('../src/modules/purchasing/queries.ts'),
+  read('../src/modules/purchasing/validation.ts'),
+  read('../src/modules/purchasing/print-model.ts'),
 ]);
 
 const header = {
@@ -28,7 +30,8 @@ const header = {
 };
 const lines = Array.from({length:35}, (_, index) => ({
   line_number:index + 1, material:`Snapshot Material ${index + 1}`, vendor_sku:`SKU-${index + 1}`,
-  display_description:`Snapshot Description ${index + 1}`, quantity:10, unit:'Bag',
+  chip_size:index === 0 ? 'Part A' : '', notes:index === 0 ? 'Granite Brown 0702226 with a longer description that must wrap cleanly' : `Snapshot Description ${index + 1}`,
+  display_description:`Legacy synthesized description ${index + 1}`, container_type:index === 0 ? 'pail' : '', package_quantity:index === 0 ? 5 : null, package_measure:index === 0 ? 'gal' : null, quantity:10, unit:'gal',
   unit_price:10, line_total:100,
 }));
 const model = buildPurchaseOrderPdfModel(header, lines);
@@ -38,20 +41,24 @@ assert.equal(model.templateName, 'tenops');
 assert.equal(model.templateVersion, 1);
 assert.equal(model.poNumber, '0206-002.1', 'PO numbers must remain exact text');
 assert.equal(model.poDate, '');
-assert.equal(model.job.customer, 'Snapshot Customer');
+assert.equal('customer' in model.job, false, 'Customer must not be exposed in the vendor-facing PDF model');
 assert.equal(model.lines.length, 35);
 assert.equal(model.lines[0].vendorSku, 'SKU-1');
+assert.equal(model.lines[0].partComponent, 'Part A');
+assert.equal(model.lines[0].description, 'Granite Brown 0702226 with a longer description that must wrap cleanly');
+assert.equal(model.lines[0].description.includes('Snapshot Material'), false, 'Description must not synthesize Material');
+assert.equal(model.lines[0].description.includes('SKU-1'), false, 'Description must not synthesize Vendor SKU');
+assert.equal(model.lines[0].container, 'pail');
+assert.equal(model.lines[0].containerSize, '5 gal');
 assert.equal(model.pages.length, Math.ceil(35 / PURCHASE_ORDER_ROWS_PER_PAGE));
 assert.deepEqual(model.pages.map(page => page.length), [12,12,11]);
 assert.equal(model.totals.grandTotal, '$3650.00');
 assert.equal(model.totals.taxPercent, '');
 
 const currentVendor = {name:'Changed Live Vendor'};
-const currentJob = {name:'Changed Live Job',customer:'Changed Live Customer'};
 assert.equal(model.vendor.name, 'Snapshot Vendor');
 assert.equal(model.job.name, 'Snapshot Job');
 assert.notEqual(model.vendor.name, currentVendor.name);
-assert.notEqual(model.job.customer, currentJob.customer);
 
 const stock = buildPurchaseOrderPdfModel({...header,production_job_id:null,job_number:null,job_name:null,customer:null}, [lines[0]]);
 assert.equal(stock.job.kind, 'stock');
@@ -78,6 +85,9 @@ assert.match(edgeFunction, /claim\.order_snapshot/);
 assert.match(edgeFunction, /claim\.lines_snapshot/);
 assert.match(edgeFunction, /body\.action === "draft-preview"/);
 assert.match(edgeFunction, /DRAFT - NOT ISSUED/);
+assert.match(edgeFunction, /lineCount \* rowLineHeight \+ 8/);
+assert.match(edgeFunction, /rowTop - 10 - lineIndex \* rowLineHeight/);
+assert.doesNotMatch(edgeFunction, /model\.job\.customer/);
 assert.match(edgeFunction, /"Cache-Control": "no-store"/);
 assert.match(edgeFunction, /upsert: false/);
 assert.match(edgeFunction, /body\.action === "download" \|\| body\.action === "preview"/);
@@ -89,6 +99,21 @@ assert.match(editor, /View Issued PDF/);
 assert.match(editor, /Document Template/);
 assert.match(mutations, /generate-purchase-order-pdf/);
 assert.match(mutations, /action:'draft-preview'/);
+assert.match(mutations, /display_description:details\.notes/);
+assert.match(mutations, /part_component:details\.chipSize/);
+assert.match(mutations, /container_size:\[details\.packageQuantity,details\.packageMeasure\]/);
+assert.doesNotMatch(printModel, /const description = \[details\.materialNameSnapshot/);
+assert.doesNotMatch(validation, /chip size is required/i, 'Part B and Part / Component must remain optional');
+assert.match(editor, /Purchase Order Line/);
+assert.match(editor, /Part \/ Component/);
+assert.match(editor, /Quantity Unit/);
+assert.match(editor, /Container Size/);
+assert.match(editor, /const quantityUnits = \["gal", "lb", "oz", "ea", "sq ft", "lin ft"\]/);
+assert.match(editor, /const containerTypes = \["pail", "drum", "bag", "box", "case", "tote"\]/);
+assert.doesNotMatch(editor, /const quantityUnits = \[[^\]]*"(?:bag|pail|drum|box|case|tote)"/);
+assert.doesNotMatch(editor, /const containerTypes = \[[^\]]*"(?:gal|lb|oz|ea|sq ft|lin ft)"/);
+assert.match(editor, /const \[custom, setCustom\] = useState\(Boolean\(value\) && !recognized\)/);
+assert.match(editor, /<option value="__other">Other<\/option>/);
 assert.match(mutations, /body: \{ action:'preview', issuanceId \}/);
 assert.match(queries, /purchase_order_documents/);
 

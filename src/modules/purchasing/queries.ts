@@ -66,6 +66,7 @@ export async function loadPurchaseOrder(id: string): Promise<PurchaseOrder> {
     poCategory:'chip', status:row.status as PurchaseOrder['status'],
     documentTemplate:text(row.document_template) === 'classic' ? 'classic' : 'tenops',
     productionJobId:text(row.production_job_id), jobNumberSnapshot:text(row.job_number_snapshot), jobNameSnapshot:text(row.job_name_snapshot),
+    jobPoReferenceType:(text(row.job_po_reference_type) === 'resin' ? 'resin' : text(row.job_po_reference_type) === 'chip' ? 'chip' : ''),
     vendorId:text(row.vendor_id), vendorNameSnapshot:text(row.vendor_name_snapshot), vendorAddressSnapshot:text(row.vendor_address_snapshot),
     vendorContactSnapshot:text(row.vendor_contact_snapshot), shipToSnapshot:text(row.ship_to_snapshot),
     paymentTermsSnapshot:text(row.payment_terms_snapshot), authorizedBySnapshot:text(row.authorized_by_snapshot),

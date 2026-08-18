@@ -3,6 +3,7 @@ import './globals.css';
 import ClientLayoutShell from './client-layout-shell';
 import { LanguageProvider } from '@/lib/language';
 import { ThemeProvider } from '@/lib/appearance';
+import { AuthProvider } from '@/lib/auth';
 import { BRANDING } from '@/lib/dev-branding.mjs';
 
 export const metadata: Metadata = {
@@ -52,9 +53,11 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider defaultAppearance={defaultAppearance}>
-          <LanguageProvider>
-            <ClientLayoutShell>{children}</ClientLayoutShell>
-          </LanguageProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              <ClientLayoutShell>{children}</ClientLayoutShell>
+            </LanguageProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -20,6 +20,10 @@ import {
   LoginBrandIdentity,
 } from '@/components/AppBranding';
 import { BRANDING } from '@/lib/dev-branding.mjs';
+import { useAuth } from '@/lib/auth';
+import AccountAccessPanel from '@/components/AccountAccessPanel';
+import AccountNotifications from '@/components/AccountNotifications';
+import { openProductionJob } from '@/modules/production/job-options';
 
 const primaryNavItems = [
   { href: '/', labelKey: 'nav.dashboard' as TranslationKey, icon: HomeIcon },
@@ -279,6 +283,7 @@ export default function ClientLayoutShell({
 }) {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const auth = useAuth();
 
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -352,7 +357,14 @@ export default function ClientLayoutShell({
     setAccessError(t('shell.incorrectPassword'));
   }
 
-  function handleLogout() {
+  async function handleLogout() {
+    if (auth.isAuthenticated) {
+      try {
+        await auth.signOut();
+      } catch {
+        // The local compatibility gate must still lock even if remote sign-out fails.
+      }
+    }
     window.localStorage.removeItem(BRANDING.accessStorageKey);
     window.localStorage.removeItem('tenarten_admin_access');
 
@@ -362,9 +374,11 @@ export default function ClientLayoutShell({
     setAccessError('');
   }
 
+  const shellUnlocked = !auth.requiresPasswordSetup && (isUnlocked || (auth.isAuthenticated && auth.accessAllowed));
+
   return (
     <div data-app-shell>
-      <header data-shell-header data-login-gate={!isUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
+      <header data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
         <div
           data-shell-header-inner
           className={`relative mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
@@ -402,7 +416,7 @@ export default function ClientLayoutShell({
                         : 'text-[16px] sm:text-[17px]'
                     }`}
                   >
-                    <HeaderProductName loginGate={!isUnlocked} />
+                    <HeaderProductName loginGate={!shellUnlocked} />
                   </div>
 
                   <div
@@ -415,13 +429,13 @@ export default function ClientLayoutShell({
                   >
                     <BrandSubtitle productionSubtitle={t('shell.operationsControl')} />
                   </div>
-                  <HeaderBrandArtwork loginGate={!isUnlocked} />
+                  <HeaderBrandArtwork loginGate={!shellUnlocked} />
                 </div>
-                <span data-shell-environment><HeaderEnvironmentIdentity loginGate={!isUnlocked} /></span>
+                <span data-shell-environment><HeaderEnvironmentIdentity loginGate={!shellUnlocked} /></span>
               </div>
             </Link>
 
-            {isUnlocked && (
+            {shellUnlocked && (
               <button
                 data-theme-logout
                 type="button"
@@ -438,7 +452,7 @@ export default function ClientLayoutShell({
           </div>
 
           <div data-shell-nav-row className="flex w-full items-center lg:w-auto lg:justify-end">
-            {isUnlocked && (
+            {shellUnlocked && (
               <nav
                 data-shell-primary-nav
                 className="flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none"
@@ -471,26 +485,29 @@ export default function ClientLayoutShell({
                 <DomainNav pathname={pathname} labelKey="nav.reporting" href="/manpower-reporting" icon={LaborIcon} items={reportingNavItems} />
                 <DomainNav pathname={pathname} labelKey="nav.inventory" href="/inventory" icon={PackageIcon} items={inventoryNavItems} />
                 <DomainNav pathname={pathname} labelKey="nav.purchasing" href="/purchasing" icon={CartIcon} items={purchasingNavItems} />
-                <Link
-                  href="/settings"
-                  className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 px-2 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(pathname === '/settings' || pathname.startsWith('/settings/'))}`}
-                >
-                  <SettingsIcon />
-                  <span className="hidden xl:inline">{t('nav.settings')}</span>
-                </Link>
+                <div className="flex shrink-0 items-center">
+                  <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
+                  <AccountNotifications onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
+                  <Link
+                    href="/settings"
+                    aria-label={t('nav.settings')}
+                    title={t('nav.settings')}
+                    className={`inline-flex h-9 w-9 shrink-0 items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 sm:h-10 sm:w-10 ${pathname === '/settings' || pathname.startsWith('/settings/') ? 'bg-slate-200 text-slate-950 ring-1 ring-inset ring-slate-300' : 'text-slate-600 hover:bg-slate-200/40 hover:text-slate-950'}`}
+                  >
+                    <SettingsIcon />
+                  </Link>
+                </div>
               </nav>
             )}
 
-            {isUnlocked ? (
+            {shellUnlocked ? (
               <button
                 data-theme-logout
                 type="button"
                 onClick={handleLogout}
                 title={t('shell.logout')}
                 aria-label={t('shell.logout')}
-                className={`hidden h-10 w-10 shrink-0 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 sm:inline-flex ${
-                  hasScrolled ? 'sm:h-9 sm:w-9' : ''
-                }`}
+                className="hidden h-9 w-9 shrink-0 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 sm:inline-flex sm:h-10 sm:w-10"
               >
                 <LogoutIcon />
               </button>
@@ -513,7 +530,7 @@ export default function ClientLayoutShell({
       </header>
 
       <main className="min-h-[calc(100vh-65px)] bg-[#eef1f4] text-slate-950">
-        {isReady && isUnlocked ? (
+        {isReady && shellUnlocked && auth.accessAllowed ? (
           children
         ) : (
           <div data-login-gate-body className="flex min-h-[calc(100vh-65px)] items-center justify-center px-3 py-4 sm:px-5 sm:py-10">
@@ -572,6 +589,8 @@ export default function ClientLayoutShell({
                 >
                   {t('shell.unlockWorkspace')}
                 </button>
+                <AccountAccessPanel onAuthenticated={() => setIsUnlocked(true)} />
+                {auth.isAuthenticated && !auth.accessAllowed ? <div role="alert" className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-xs font-semibold text-red-800">This account is disabled or does not have access to this TenOps environment.</div> : null}
               </div>
             </div>
           </div>
