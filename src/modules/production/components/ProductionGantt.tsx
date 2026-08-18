@@ -1135,7 +1135,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                 <div data-gantt-job-rail className={`relative sticky left-0 z-10 flex shrink-0 items-center border-r border-slate-400 bg-white ${preferences.rowDensity === 'compact' ? 'px-3 py-1' : preferences.rowDensity === 'comfortable' ? 'px-4 py-3' : 'px-4 py-2'}`} style={{ width: railWidth }}>
                   <div className="min-w-0 flex-1 pr-16">
                     <div className="flex items-center gap-2">
-                      <div title={job.name} className={`truncate font-bold text-slate-950 ${preferences.rowDensity === 'compact' ? 'text-xs' : 'text-[13px]'}`}>{job.name}</div>
+                      <div title={job.name} className={`flex min-w-0 items-center gap-1.5 truncate font-bold text-slate-950 ${preferences.rowDensity === 'compact' ? 'text-xs' : 'text-[13px]'}`}><span className="truncate">{job.name}</span>{job.rework_cycle ? <span className="shrink-0 text-[8px] font-bold uppercase tracking-[0.06em] text-violet-700">Rework #{job.rework_cycle.sequence_number}</span> : null}</div>
                       {isStaged && <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.08em] text-amber-700">Proposed</span>}
                     </div>
                     <div className={`truncate text-slate-600 ${preferences.rowDensity === 'compact' ? 'text-[10px]' : 'mt-0.5 text-[11px]'}`}>{[job.job_number, job.customer].filter(Boolean).join(' • ') || 'Identifiers not assigned'}</div>
@@ -1209,7 +1209,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                         className="absolute inset-y-0 z-10 flex min-w-0 items-center gap-2 overflow-hidden px-1.5 text-left text-[10px] font-bold uppercase tracking-[0.05em] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
                         style={{ left: handleWidth, right: handleWidth, cursor: mobileReadOnly ? 'pointer' : activeInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: mobileReadOnly ? 'manipulation' : 'none' }}
                       >
-                        {duration >= 2 && !hasCollapsedFillLayers && <span className="pointer-events-none truncate">{job.name}</span>}
+                        {duration >= 2 && !hasCollapsedFillLayers && <span className="pointer-events-none truncate">{job.name}{job.rework_cycle ? ` · REWORK #${job.rework_cycle.sequence_number}` : ''}</span>}
                         {isStaged && duration >= 3 && !hasCollapsedFillLayers && <span className="pointer-events-none shrink-0 bg-amber-100/95 px-1 text-[8px] text-amber-950">Unsaved</span>}
                         {duration >= 5 && !hasCollapsedFillLayers && intensity?.hoursPerScheduledDay !== null && intensity?.hoursPerScheduledDay !== undefined && (
                           <span className="pointer-events-none ml-auto shrink-0 border-l border-white/30 pl-2 text-[9px] normal-case tracking-normal">{formatHours(intensity.hoursPerScheduledDay)} h/day</span>
@@ -1253,7 +1253,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                         style={{ left: startOffset * dayWidth + 3 + handleWidth, width: Math.max(0, barWidth - handleWidth * 2) }}
                         aria-hidden="true"
                       >
-                        {duration >= 2 && <span className="truncate">{job.name}</span>}
+                        {duration >= 2 && <span className="truncate">{job.name}{job.rework_cycle ? ` · REWORK #${job.rework_cycle.sequence_number}` : ''}</span>}
                         {isStaged && duration >= 3 && <span className="shrink-0 bg-amber-100/95 px-1 text-[8px] text-amber-950">Unsaved</span>}
                         {duration >= 5 && intensity?.hoursPerScheduledDay !== null && intensity?.hoursPerScheduledDay !== undefined && (
                           <span className="ml-auto shrink-0 border-l border-white/50 px-1.5 text-[9px] normal-case tracking-normal">{formatHours(intensity.hoursPerScheduledDay)} h/day</span>

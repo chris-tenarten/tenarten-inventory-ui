@@ -5,6 +5,7 @@ import type { MouseEvent } from "react";
 import type { JobUpdateSummary } from "../jobs";
 import type { ProductionJob } from "../types";
 import JobUpdatesIndicator from "./JobUpdatesIndicator";
+import ReworkQuickAction from "./ReworkQuickAction";
 
 type Props = {
   job: ProductionJob;
@@ -12,6 +13,7 @@ type Props = {
   updateSummary: JobUpdateSummary;
   onOpenAttachments(): void;
   onOpenUpdates(): void;
+  onCreateRework(job: ProductionJob): void;
 };
 
 export default function ActivityStrip({
@@ -20,6 +22,7 @@ export default function ActivityStrip({
   updateSummary,
   onOpenAttachments,
   onOpenUpdates,
+  onCreateRework,
 }: Props) {
   function openAttachments(event: MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
@@ -51,6 +54,7 @@ export default function ActivityStrip({
           {attachmentCount > 0 ? attachmentCount : ""}
         </span>
       </button>
+      <ReworkQuickAction job={job} onCreate={onCreateRework} />
     </span>
   );
 }

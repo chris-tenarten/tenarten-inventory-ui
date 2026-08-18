@@ -16,6 +16,8 @@ import type {
 import { productionValuesEqual } from '../update-normalization';
 import JobUpdatesIndicator from './JobUpdatesIndicator';
 import UnscheduledBadge from './UnscheduledBadge';
+import ReworkBadge from './ReworkBadge';
+import ReworkQuickAction from './ReworkQuickAction';
 
 const formatHours = (value: number) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value);
 
@@ -29,6 +31,7 @@ type Props = {
     changes: ProductionJobUpdate,
   ) => Promise<ProductionJob>;
   onOpenAttachments: (job: ProductionJob) => void;
+  onCreateRework: (job: ProductionJob) => void;
   stagedSchedules: StagedSchedules;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   selectedJobId: string | null;
@@ -331,6 +334,7 @@ export default function ProductionTable({
   jobUpdateSummaries,
   onUpdateJob,
   onOpenAttachments,
+  onCreateRework,
   stagedSchedules,
   onStageSchedule,
   selectedJobId,
@@ -972,7 +976,7 @@ export default function ProductionTable({
                     },
                     stagedSchedules[job.id] ? 'staged' : undefined,
                     !row.plannedStart || !row.plannedEnd ? <span data-table-needs-dates className="flex h-6 w-5 shrink-0 items-center justify-center"><UnscheduledBadge iconOnly ariaLabel={`${job.name} needs planned dates`} onClick={() => focusMissingScheduleField(job, row)} /></span> : null,
-                    <div className="flex items-center gap-1">{count > 0 && <button
+                    <div className="flex items-center gap-1">{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} /> : null}{count > 0 && <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -984,7 +988,7 @@ export default function ProductionTable({
                       >
                         <Paperclip className="h-3.5 w-3.5" aria-hidden="true" />
                         {count}
-                      </button>}<JobUpdatesIndicator job={job} summary={updateSummary} onOpen={() => onSelectJob(job, 'job-updates')} /></div>,
+                      </button>}<JobUpdatesIndicator job={job} summary={updateSummary} onOpen={() => onSelectJob(job, 'job-updates')} /><ReworkQuickAction job={job} onCreate={onCreateRework} /></div>,
                     <div className="flex h-6 min-w-0 items-center gap-1 overflow-hidden whitespace-nowrap">
                       {job.estimated_man_hours !== null ? <span className="h-6 px-1 text-[9px] leading-6 text-slate-600"><strong className="text-slate-900">{formatHours(job.estimated_man_hours)}h</strong> Estimated</span> : <span className="h-6 px-1 text-[9px] font-semibold leading-6 text-slate-900">No Labor Estimate</span>}
                       {integration.laborEntryCount > 0 ? <button

@@ -18,6 +18,7 @@ import ProductionTable from './components/ProductionTable';
 import UnscheduledBadge from './components/UnscheduledBadge';
 import ScheduleReviewDialog from './components/ScheduleReviewDialog';
 import MonthlySnapshot from './components/MonthlySnapshot';
+import CreateReworkDialog from './components/CreateReworkDialog';
 
 import {
   createProductionJob,
@@ -28,7 +29,7 @@ import {
   loadProductionIntegrationSummaries,
   loadProductionJob,
   loadProductionJobs,
-  saveProductionPlanningScheduleBatch,
+  saveProductionReworkMixedScheduleBatch,
   uploadJobAttachments,
   updateProductionJob,
 } from './jobs';
@@ -92,6 +93,7 @@ export default function ProductionWorkspace() {
   const { language, tr } = useLanguage();
   const [dashboardMode, setDashboardModeState] = useState<DashboardMode>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('view') === 'snapshot' ? 'snapshot' : 'pipeline');
   const [jobs, setJobs] = useState<ProductionJob[]>([]);
+  const [reworkTargetJob, setReworkTargetJob] = useState<ProductionJob | null>(null);
   const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
   const [jobUpdateSummaries, setJobUpdateSummaries] = useState<Record<string, JobUpdateSummary>>({});
   const [integrationSummaries, setIntegrationSummaries] = useState<Record<string, ProductionIntegrationSummary>>({});
@@ -314,7 +316,7 @@ export default function ProductionWorkspace() {
     const nextStart = nextProduction[job.id]?.proposed_planned_start ?? job.planned_start;
     const incrementalDelta = productionStartDelta({ ...job, planned_start: previousStart }, nextStart);
     setStagedSchedules(nextProduction);
-    setStagedPlanningSchedules((current) => translateJobPlanningSchedules(current, planningPhases, job.id, incrementalDelta));
+    if (!job.rework_cycle) setStagedPlanningSchedules((current) => translateJobPlanningSchedules(current, planningPhases, job.id, incrementalDelta));
   }, [planningPhases, stagedSchedules]);
 
   const discardStagedSchedule = useCallback(() => {
@@ -382,9 +384,18 @@ export default function ProductionWorkspace() {
     try {
       const approval = productionApprovalDecision(APPROVAL_PASSWORD, window.sessionStorage.getItem(APPROVAL_EXPIRES_KEY), Date.now());
       if (approval.state !== 'active') throw new Error('Production approval expired. Confirm the batch again.');
-      const jobArgs = hasUnsavedSchedules(stagedSchedules) ? batchRpcArgs(stagedSchedules, jobs, audit.changedByName, audit.changeNote, activeBatchId) : null;
-      const result = await saveProductionPlanningScheduleBatch({
+      const reworkJobIds = new Set(jobs.filter((job) => job.rework_cycle).map((job) => job.id));
+      const ordinaryStaged = Object.fromEntries(Object.entries(stagedSchedules).filter(([jobId]) => !reworkJobIds.has(jobId)));
+      const reworkStaged = Object.fromEntries(Object.entries(stagedSchedules).filter(([jobId]) => reworkJobIds.has(jobId)));
+      const jobArgs = hasUnsavedSchedules(ordinaryStaged) ? batchRpcArgs(ordinaryStaged, jobs, audit.changedByName, audit.changeNote, activeBatchId) : null;
+      const reworkProposals = Object.values(reworkStaged).map((proposal) => {
+        const cycle = jobs.find((job) => job.id === proposal.job_id)?.rework_cycle;
+        if (!cycle) throw new Error('Active Rework lifecycle is no longer available.');
+        return { rework_cycle_id: cycle.id, original_planned_start: proposal.original_planned_start, original_planned_end: proposal.original_planned_end, original_updated_at: proposal.original_updated_at, proposed_planned_start: proposal.proposed_planned_start, proposed_planned_end: proposal.proposed_planned_end, change_source: proposal.change_source };
+      });
+      const result = await saveProductionReworkMixedScheduleBatch({
         p_job_proposals: jobArgs?.p_proposals ?? [],
+        p_rework_proposals: reworkProposals,
         p_phase_proposals: Object.values(stagedPlanningSchedules).map((proposal) => ({
           phase_id: proposal.phase_id,
           original_start_date: proposal.original_start_date,
@@ -398,7 +409,12 @@ export default function ProductionWorkspace() {
         p_change_note: audit.changeNote,
         p_batch_id: activeBatchId,
       });
-      setJobs((current) => sortJobs(reconcileBatch(current, result.updated_jobs)));
+      let nextJobs = reconcileBatch(jobs, result.updated_jobs);
+      if (result.updated_reworks.length) {
+        const updatedById = new Map(result.updated_reworks.map((cycle) => [cycle.id, cycle]));
+        nextJobs = nextJobs.map((job) => job.rework_cycle && updatedById.has(job.rework_cycle.id) ? { ...job, rework_cycle: updatedById.get(job.rework_cycle.id)!, planned_start: updatedById.get(job.rework_cycle.id)!.planned_start, planned_end: updatedById.get(job.rework_cycle.id)!.planned_end, updated_at: updatedById.get(job.rework_cycle.id)!.updated_at } : job);
+      }
+      setJobs(sortJobs(nextJobs));
       setPlanningPhases((current) => { const updated = new Map(result.updated_phases.map((phase) => [phase.id, phase])); return current.map((phase) => updated.get(phase.id) ?? phase); });
       setStagedSchedules({}); setStagedPlanningSchedules({}); setBatchId(null); setConflicts([]);
       setScheduleSaveState('saved'); setScheduleMessage(`${result.updated_count} schedule changes saved`);
@@ -583,6 +599,10 @@ export default function ProductionWorkspace() {
 
     try {
       const updated = await updateProductionJob(original, changes);
+      if (original.rework_cycle && changes.production_status && ['complete', 'cancelled'].includes(changes.production_status)) {
+        await loadJobs();
+        return updated;
+      }
       setJobs((current) =>
         sortJobs(current.map((job) => (job.id === jobId ? updated : job))),
       );
@@ -858,7 +878,7 @@ export default function ProductionWorkspace() {
         <div className="mt-4">
           {isLoading ? (
             <div className="flex min-h-72 items-center justify-center border border-slate-400 bg-white text-sm font-semibold text-slate-600">Loading active jobs…</div>
-          ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} integrationSummaries={integrationSummaries} jobUpdateSummaries={jobUpdateSummaries} onSelectJob={selectJob} onScheduleJob={openJobScheduling}/> : activeView === 'spreadsheet' ? (
+          ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} integrationSummaries={integrationSummaries} jobUpdateSummaries={jobUpdateSummaries} onSelectJob={selectJob} onScheduleJob={openJobScheduling} onCreateRework={setReworkTargetJob}/> : activeView === 'spreadsheet' ? (
             <ProductionTable
               jobs={displayedJobs}
               attachmentCounts={attachmentCounts}
@@ -866,6 +886,7 @@ export default function ProductionWorkspace() {
               jobUpdateSummaries={jobUpdateSummaries}
               onUpdateJob={handleUpdateJob}
               onOpenAttachments={(job) => selectJob(job, 'attachments')}
+              onCreateRework={setReworkTargetJob}
               stagedSchedules={stagedSchedules}
               onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_table')}
               selectedJobId={selectedJobId}
@@ -961,7 +982,9 @@ export default function ProductionWorkspace() {
         planningIssues={activePlanningIssues}
         initialFocus={inspectorFocus}
         onScheduleJob={openJobScheduling}
+        onCreateRework={setReworkTargetJob}
       />}
+      {reworkTargetJob && <CreateReworkDialog job={reworkTargetJob} onClose={() => setReworkTargetJob(null)} onCreated={async () => { setReworkTargetJob(null); await loadJobs(); }} />}
       {planningIssuesOpen && <PlanningIssuesPanel category={planningIssuesCategory} jobs={jobs} stagedSchedules={stagedSchedules} onClose={() => setPlanningIssuesOpen(false)} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onOpenInspector={selectJob} />}
 
 

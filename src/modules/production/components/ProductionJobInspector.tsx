@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardList, File, History, Pencil, Send, Trash2, Upload } from "lucide-react";
+import { ClipboardList, File, History, Pencil, RotateCcw, Send, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
@@ -15,6 +15,7 @@ import {
   deleteJobAttachment,
   loadJobAttachments,
   loadProductionJobActivity,
+  loadProductionReworkCycles,
   uploadJobAttachments,
 } from "../jobs";
 import type {
@@ -34,10 +35,13 @@ import type {
   JobDocumentType,
   MaterialStatus,
   ProductionJob,
+  ProductionReworkCycle,
   ProductionStatus,
 } from "../types";
 import JobUpdatesPanel from "./JobUpdatesPanel";
 import ProductionStatusBadge from "./ProductionStatusBadge";
+import ReworkBadge from "./ReworkBadge";
+import { canCreateProductionRework } from "./ReworkQuickAction";
 import UnscheduledBadge from "./UnscheduledBadge";
 
 type InspectorSection = "details" | "planning" | "updates" | "files" | "recent-changes";
@@ -70,6 +74,7 @@ type Props = {
   planningIssues?: PlanningScheduleIssue[];
   initialFocus?: string;
   onScheduleJob: (job: ProductionJob) => void;
+  onCreateRework: (job: ProductionJob) => void;
 };
 
 const sectionTitle =
@@ -267,6 +272,7 @@ export default function ProductionJobInspector({
   planningIssues = [],
   initialFocus,
   onScheduleJob,
+  onCreateRework,
 }: Props) {
   const [activeSection, setActiveSection] = useState<InspectorSection>(
     initialFocus === "attachments"
@@ -301,6 +307,7 @@ export default function ProductionJobInspector({
   const [transmittalOpen, setTransmittalOpen] = useState(false);
   const [focusedUpdateId, setFocusedUpdateId] = useState<string | null>(null);
   const [planningEditorOpen, setPlanningEditorOpen] = useState(false);
+  const [reworkCycles, setReworkCycles] = useState<ProductionReworkCycle[]>([]);
   const [jobUpdateCount, setJobUpdateCount] = useState(
     jobUpdateSummary.total,
   );
@@ -325,6 +332,14 @@ export default function ProductionJobInspector({
     },
     [job.id, onJobUpdateSummaryChanged],
   );
+
+  useEffect(() => {
+    let live = true;
+    loadProductionReworkCycles(job.id)
+      .then((cycles) => { if (live) setReworkCycles(cycles); })
+      .catch(() => { if (live) setReworkCycles([]); });
+    return () => { live = false; };
+  }, [job.id, job.rework_cycle?.updated_at]);
 
   useEffect(() => {
     let live = true;
@@ -716,6 +731,18 @@ export default function ProductionJobInspector({
             <div className="mt-1.5">
               <ProductionStatusBadge status={job.production_status} />
             </div>
+            {job.rework_cycle ? <div className="mt-1.5"><ReworkBadge sequence={job.rework_cycle.sequence_number} /></div> : null}
+            {canCreateProductionRework(job) ? (
+              <button
+                type="button"
+                data-rework-quick-action
+                onClick={() => onCreateRework(job)}
+                className="mt-1.5 inline-flex h-7 items-center gap-1.5 border px-2 text-[11px] font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700"
+              >
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+                Create Rework
+              </button>
+            ) : null}
             {!job.planned_start || !job.planned_end ? <div className="mt-1.5"><UnscheduledBadge onClick={() => onScheduleJob(job)} /></div> : null}
             <div
               className={`mt-1.5 inline-flex px-2 py-0.5 text-xs font-bold ${readiness.state === "ready" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}
@@ -762,6 +789,17 @@ export default function ProductionJobInspector({
         >
           {activeSection === "details" && (
             <>
+              <section className="mt-4 rounded-sm border border-slate-200 bg-slate-50 p-3" aria-labelledby="production-history-title">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 id="production-history-title" className="text-xs font-bold uppercase tracking-[0.1em] text-slate-700">Production History</h3>
+                </div>
+                <div className="mt-2 text-xs text-slate-700"><strong>Original Production</strong> · {(job.original_production_status ?? (reworkCycles.length ? "complete" : job.production_status)).replaceAll("_", " ")}</div>
+                {reworkCycles.map((cycle) => <div key={cycle.id} className="mt-2 border-t border-slate-200 pt-2 text-xs text-slate-700">
+                  <div className="flex flex-wrap items-center gap-2"><ReworkBadge sequence={cycle.sequence_number} /><strong>{cycle.reason_category === "quality_qc" ? "Quality / QC" : cycle.reason_category === "shipping_handling" ? "Shipping / Handling Damage" : cycle.reason_category === "customer_change" ? "Customer Change" : "Other"}</strong><span>· {cycle.production_status.replaceAll("_", " ")}</span></div>
+                  <p className="mt-1 text-slate-600">{cycle.scope_details}</p>
+                  <p className="mt-1 text-[10px] text-slate-500">Intake {cycle.intake_date}{cycle.planned_start && cycle.planned_end ? ` · Production ${cycle.planned_start} – ${cycle.planned_end}` : " · Dates not set"}{cycle.completed_at ? ` · Completed ${cycle.completed_at.slice(0, 10)}` : ""}</p>
+                </div>)}
+              </section>
               <section
                 aria-label="Job identity"
                 className="mt-4 grid gap-3 sm:grid-cols-2"

@@ -111,7 +111,8 @@ assert.equal(
 const workspaceSource = readFileSync(new URL('../src/modules/production/ProductionWorkspace.tsx', import.meta.url), 'utf8');
 const inspectorSource = readFileSync(new URL('../src/modules/production/components/ProductionJobInspector.tsx', import.meta.url), 'utf8');
 const jobsSource = readFileSync(new URL('../src/modules/production/jobs.ts', import.meta.url), 'utf8');
-assert.equal(workspaceSource.includes('saveProductionPlanningScheduleBatch('), true);
+assert.equal(workspaceSource.includes('saveProductionReworkMixedScheduleBatch('), true);
+assert.equal(workspaceSource.includes('p_rework_proposals: reworkProposals'), true);
 assert.equal(workspaceSource.includes('updateProductionJobSchedule'), false);
 assert.equal(workspaceSource.includes('recordProductionScheduleAudit'), false);
 assert.equal(workspaceSource.includes('rebaseStagedScheduleVersion(current, updated)'), true);
