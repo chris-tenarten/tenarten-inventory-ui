@@ -6,6 +6,8 @@ import type {
   JobUpdate,
   NewProductionJob,
   ProductionJob,
+  ProductionReworkCycle,
+  ReworkReasonCategory,
 } from './types';
 import {
   summarizeJobUpdates,
@@ -103,10 +105,95 @@ export async function loadProductionJobs(includeArchived = false): Promise<Produ
     .order('planned_start', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false });
   if (!includeArchived) query = query.is('archived_at', null);
-  const { data, error } = await query;
+  const [{ data, error }, reworks] = await Promise.all([
+    query,
+    supabase.from('production_rework_cycles').select('*').order('sequence_number', { ascending: false }),
+  ]);
 
   if (error) throw error;
-  return (data ?? []) as unknown as ProductionJob[];
+  if (reworks.error) throw reworks.error;
+  const activeByJob = new Map<string, ProductionReworkCycle>();
+  for (const cycle of (reworks.data ?? []) as ProductionReworkCycle[]) {
+    if (!['complete', 'cancelled'].includes(cycle.production_status) && !activeByJob.has(cycle.job_id)) {
+      activeByJob.set(cycle.job_id, cycle);
+    }
+  }
+  return ((data ?? []) as unknown as ProductionJob[]).map((job) => {
+    const cycle = activeByJob.get(job.id);
+    if (!cycle) return { ...job, lifecycle_key: `original:${job.id}`, rework_cycle: null };
+    return {
+      ...job,
+      lifecycle_key: `rework:${cycle.id}`,
+      rework_cycle: cycle,
+      original_production_status: job.production_status,
+      original_planned_start: job.planned_start,
+      original_planned_end: job.planned_end,
+      original_updated_at: job.updated_at,
+      production_status: cycle.production_status,
+      planned_start: cycle.planned_start,
+      planned_end: cycle.planned_end,
+      updated_at: cycle.updated_at,
+    };
+  });
+}
+
+export async function loadProductionReworkCycles(jobId: string): Promise<ProductionReworkCycle[]> {
+  const { data, error } = await supabase.from('production_rework_cycles').select('*').eq('job_id', jobId).order('sequence_number', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as ProductionReworkCycle[];
+}
+
+export async function createProductionRework(input: {
+  jobId: string;
+  reasonCategory: ReworkReasonCategory;
+  scopeDetails: string;
+  intakeDate: string;
+  createdBy: string | null;
+}): Promise<ProductionReworkCycle> {
+  const { data, error } = await supabase.rpc('create_production_rework', {
+    p_job_id: input.jobId,
+    p_reason_category: input.reasonCategory,
+    p_scope_details: input.scopeDetails,
+    p_intake_date: input.intakeDate,
+    p_created_by: input.createdBy,
+  });
+  if (error) throw error;
+  return data as ProductionReworkCycle;
+}
+
+export async function saveProductionReworkScheduleBatch(args: {
+  p_proposals: Array<{ rework_cycle_id: string; original_planned_start: string | null; original_planned_end: string | null; original_updated_at: string; proposed_planned_start: string | null; proposed_planned_end: string | null; change_source: string }>;
+  p_changed_by: string;
+  p_change_note: string | null;
+  p_batch_id: string;
+}) {
+  const { data, error } = await supabase.rpc('save_production_rework_schedule_batch', args);
+  if (error) throw error;
+  return data as { updated_count: number; updated_reworks: ProductionReworkCycle[] };
+}
+
+export async function saveProductionReworkMixedScheduleBatch(args: {
+  p_job_proposals: unknown[];
+  p_phase_proposals: unknown[];
+  p_rework_proposals: unknown[];
+  p_changed_by: string;
+  p_change_note: string | null;
+  p_batch_id: string;
+}) {
+  const { data, error } = await supabase.rpc('save_production_rework_mixed_schedule_batch', args);
+  if (error) throw error;
+  return data as { updated_count: number; updated_jobs: import('./schedule-batch-contract').ProductionScheduleBatchUpdatedJob[]; updated_phases: import('@/modules/planning/types').PlanningPhase[]; updated_reworks: ProductionReworkCycle[] };
+}
+
+export async function updateProductionReworkStatus(cycleId: string, status: ProductionJob['production_status'], expectedUpdatedAt: string, actorName: string | null) {
+  const { data, error } = await supabase.rpc('update_production_rework_status', {
+    p_rework_cycle_id: cycleId,
+    p_production_status: status,
+    p_expected_updated_at: expectedUpdatedAt,
+    p_actor_name: actorName,
+  });
+  if (error) throw error;
+  return data as ProductionReworkCycle;
 }
 
 export type ProductionIntegrationSummary = { actualHours: number; laborEntryCount: number; materialReportDates: string[] };
@@ -143,6 +230,7 @@ export async function loadProductionIntegrationSummaries(): Promise<Record<strin
 }
 
 export async function archiveProductionJob(job: ProductionJob): Promise<ProductionJob> {
+  if (job.rework_cycle) throw new Error('Complete or cancel the active Rework before archiving this Production Job.');
   if (!['complete', 'shipped', 'cancelled'].includes(job.production_status)) throw new Error('Only Complete, Shipped, or Cancelled jobs can be archived.');
   const archivedAt = new Date().toISOString();
   const { data, error } = await supabase.from('jobs').update({ archived_at: archivedAt }).eq('id', job.id).is('archived_at', null).select(JOB_COLUMNS).single();
@@ -209,6 +297,14 @@ export async function updateProductionJob(
   currentJob: ProductionJob,
   changes: ProductionJobUpdate,
 ): Promise<ProductionJob> {
+  if (currentJob.rework_cycle && changes.production_status) {
+    if (Object.keys(changes).length > 1) {
+      throw new Error('Save job-detail changes separately before changing the Rework Production status.');
+    }
+    const status = changes.production_status;
+    const updatedCycle = await updateProductionReworkStatus(currentJob.rework_cycle.id, status, currentJob.rework_cycle.updated_at, null);
+    return { ...currentJob, production_status: updatedCycle.production_status, updated_at: updatedCycle.updated_at, rework_cycle: updatedCycle };
+  }
   const effectiveChanges = Object.fromEntries(
     Object.entries(changes).filter(([field, value]) => (
       !productionValuesEqual(field as keyof ProductionJob, currentJob[field as keyof ProductionJob], value)

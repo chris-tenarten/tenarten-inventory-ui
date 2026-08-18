@@ -10,6 +10,29 @@ export type ProductionStatus =
 export type MaterialStatus = 'unknown' | 'not_ready' | 'ordered' | 'ready';
 export type JobPriority = 'low' | 'normal' | 'high' | 'urgent';
 
+export type ReworkReasonCategory =
+  | 'quality_qc'
+  | 'shipping_handling'
+  | 'customer_change'
+  | 'other';
+
+export type ProductionReworkCycle = {
+  id: string;
+  job_id: string;
+  sequence_number: number;
+  reason_category: ReworkReasonCategory;
+  scope_details: string;
+  intake_date: string;
+  planned_start: string | null;
+  planned_end: string | null;
+  production_status: ProductionStatus;
+  completed_at: string | null;
+  created_by: string | null;
+  completed_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type JobDocumentType =
   | 'estimate'
   | 'work_order'
@@ -50,6 +73,12 @@ export type ProductionJob = {
   archived_at: string | null;
   created_at: string;
   updated_at: string;
+  lifecycle_key?: `original:${string}` | `rework:${string}`;
+  rework_cycle?: ProductionReworkCycle | null;
+  original_production_status?: ProductionStatus;
+  original_planned_start?: string | null;
+  original_planned_end?: string | null;
+  original_updated_at?: string;
 };
 
 export type NewProductionJob = {

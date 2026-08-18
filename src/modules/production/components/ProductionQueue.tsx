@@ -10,6 +10,7 @@ import type { ProductionJob } from '../types';
 import ActivityStrip from './ActivityStrip';
 import ProductionStatusBadge from './ProductionStatusBadge';
 import UnscheduledBadge from './UnscheduledBadge';
+import ReworkBadge from './ReworkBadge';
 
 type Props = {
   jobs: ProductionJob[];
@@ -19,6 +20,7 @@ type Props = {
   jobUpdateSummaries: Record<string, JobUpdateSummary>;
   onSelectJob(job: ProductionJob, focus?: string): void;
   onScheduleJob(job: ProductionJob): void;
+  onCreateRework(job: ProductionJob): void;
 };
 
 function formatHours(value: number) {
@@ -46,6 +48,7 @@ export default function ProductionQueue({
   jobUpdateSummaries,
   onSelectJob,
   onScheduleJob,
+  onCreateRework,
 }: Props) {
   const { language, tr } = useLanguage();
   const materialLabels = { unknown: 'Sin definir', not_ready: 'No listo', ordered: 'Pedido', ready: 'Listo' } as const;
@@ -89,7 +92,7 @@ export default function ProductionQueue({
                 <div className="flex min-w-0 items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">{job.job_number || tr('No job number', 'Sin número')}</div>
-                    <h2 className="mt-0.5 truncate text-base font-bold leading-5 text-slate-950">{job.name}</h2>
+                    <div className="mt-0.5 flex items-center gap-1.5"><h2 className="truncate text-base font-bold leading-5 text-slate-950">{job.name}</h2>{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} /> : null}</div>
                     <div className="mt-0.5 truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</div>
                   </div>
                   <div className="pointer-events-auto flex shrink-0 flex-col items-end justify-center gap-1"><ProductionStatusBadge status={job.production_status} />{!job.planned_start || !job.planned_end ? <span data-overview-schedule-condition><UnscheduledBadge ariaLabel={`${job.name} needs planned dates`} onClick={() => onScheduleJob(job)} /></span> : null}</div>
@@ -124,7 +127,7 @@ export default function ProductionQueue({
                 </div>
 
                 <div className="mt-2 flex min-w-0 items-center justify-between gap-2 border-t border-slate-200 pt-2">
-                  <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} />
+                  <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} onCreateRework={onCreateRework} />
                   {job.archived_at ? <span className="text-[9px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}
                 </div>
               </div>
@@ -135,9 +138,9 @@ export default function ProductionQueue({
                   {hasUpdateAttention ? <button type="button" data-overview-update-attention-marker aria-label={`Open Job Updates requiring attention for ${job.name}`} title="Job Updates need attention" onClick={() => onSelectJob(job, 'job-updates')} className="inline-flex h-6 w-6 items-center justify-center text-amber-700 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"><Flag aria-hidden="true" className="h-4 w-4 fill-current" /></button> : null}
                 </span> : null}
                 <div className="min-w-0">
-                  <span className="block text-sm font-bold leading-5">{job.job_number && <span className="mr-2 text-slate-500">{job.job_number}</span>}{job.name}</span>
+                  <span className="flex items-center gap-1.5 text-sm font-bold leading-5">{job.job_number && <span className="text-slate-500">{job.job_number}</span>}<span className="truncate">{job.name}</span>{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} /> : null}</span>
                   <span className="mt-0.5 block truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</span>
-                  <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} />
+                  <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} onCreateRework={onCreateRework} />
                   {job.archived_at ? <span className="mt-1 inline-block text-[10px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}
                 </div>
               </div>
