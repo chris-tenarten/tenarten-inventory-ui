@@ -1,11 +1,28 @@
 "use client";
 
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { APP_ROLES, CAPABILITIES, CAPABILITY_LABELS, type AppRole, ROLE_CAPABILITIES, ROLE_LABELS } from "@/lib/rbac";
 
 type AdminUser = { user_id: string; display_name: string; email: string; role: AppRole; is_active: boolean };
+
+async function adminFunctionErrorMessage(error: unknown) {
+  if (error instanceof FunctionsHttpError) {
+    try {
+      const payload = await error.context.json() as {
+        error?: string | { message?: string };
+      };
+      if (typeof payload.error === "string") return payload.error;
+      if (payload.error?.message) return payload.error.message;
+    } catch {
+      // Use the safe generic fallback below when the function response is not JSON.
+    }
+    return "The user administration service could not complete the request.";
+  }
+  return error instanceof Error ? error.message : "Admin action failed.";
+}
 
 export default function AdminSettingsPanel() {
   const auth = useAuth();
@@ -24,8 +41,9 @@ export default function AdminSettingsPanel() {
       body,
       headers: { authorization: `Bearer ${token}` },
     });
-    if (error) throw error;
-    if (data?.error) throw new Error(data.error);
+    if (error) throw new Error(await adminFunctionErrorMessage(error));
+    if (typeof data?.error === "string") throw new Error(data.error);
+    if (data?.error?.message) throw new Error(data.error.message);
     return data;
   }, [auth.session?.access_token]);
 

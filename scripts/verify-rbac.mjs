@@ -15,6 +15,7 @@ const authProvider = read("src/lib/auth.tsx");
 const notifications = read("src/components/AccountNotifications.tsx");
 const accountAccess = read("src/components/AccountAccessPanel.tsx");
 const adminSettings = read("src/components/AdminSettingsPanel.tsx");
+const adminEdge = read("supabase/functions/admin-manage-users/index.ts");
 const settingsPage = read("src/app/settings/page.tsx");
 const clientShell = read("src/app/client-layout-shell.tsx");
 
@@ -92,6 +93,15 @@ assert(clientShell.includes('<AccountAccessPanel onAuthenticated={() => setIsUnl
 assert(accountAccess.includes('auth.isAuthenticated && !auth.requiresPasswordSetup'), "Authenticated Settings must show account identity instead of sign-in fields");
 assert(accountAccess.includes('Sign out of account'), "Authenticated Account Access must retain account sign-out");
 assert(adminSettings.includes('auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.can("manageUsers")'), "Admin Settings must require an authenticated active capable profile");
+assert(adminSettings.includes("FunctionsHttpError"), "Admin Settings must read safe Edge Function error responses");
+assert(adminSettings.includes("payload.error?.message"), "Admin Settings must display the structured safe error message");
+for (const code of [
+  "invite_rate_limited", "user_already_exists", "invalid_email",
+  "auth_provider_failure", "auth_configuration_failure",
+  "profile_provisioning_failed", "unexpected_failure",
+]) assert(adminEdge.includes(code), `Admin Edge Function missing safe error code ${code}`);
+assert(adminEdge.includes('stage: "auth_invite"') || adminEdge.includes('"auth_invite"'), "Admin Edge Function must log the Auth invite stage");
+assert(adminEdge.includes('"app_user_provisioning"'), "Admin Edge Function must log the profile provisioning stage");
 for (const source of [purchaseOrderEdge, transmittalEdge]) {
   assert(source.includes("requireEdgeCapability"), "Document Edge Function missing trusted capability check");
 }
