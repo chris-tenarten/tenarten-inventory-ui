@@ -19,7 +19,113 @@ const json = (body: unknown, status: number, origin: string) =>
 
 const roles = new Set(["guest", "member", "lead", "developer", "admin"]);
 
+type SafeError = {
+  code: string;
+  message: string;
+  status: number;
+};
+
+function errorDetails(cause: unknown) {
+  const source = cause && typeof cause === "object"
+    ? cause as Record<string, unknown>
+    : {};
+  return {
+    code: typeof source.code === "string" ? source.code : "",
+    message: cause instanceof Error ? cause.message : "",
+    status: typeof source.status === "number" ? source.status : 0,
+  };
+}
+
+function classifyInviteError(cause: unknown): SafeError {
+  const details = errorDetails(cause);
+  const code = details.code.toLowerCase();
+  const message = details.message.toLowerCase();
+
+  if (
+    details.status === 429 ||
+    code.includes("rate_limit") ||
+    message.includes("rate limit")
+  ) {
+    return {
+      code: "invite_rate_limited",
+      message: "Invitation email rate limit reached. Please wait before trying again.",
+      status: 429,
+    };
+  }
+
+  if (
+    code.includes("already_exists") ||
+    code.includes("email_exists") ||
+    message.includes("already been registered") ||
+    message.includes("already exists")
+  ) {
+    return {
+      code: "user_already_exists",
+      message: "A user with this email address already exists.",
+      status: 409,
+    };
+  }
+
+  if (
+    code.includes("email_address_invalid") ||
+    code.includes("validation_failed") ||
+    message.includes("invalid email") ||
+    message.includes("valid email")
+  ) {
+    return {
+      code: "invalid_email",
+      message: "Enter a valid email address.",
+      status: 400,
+    };
+  }
+
+  if (
+    details.status >= 500 ||
+    code.includes("unexpected_failure") ||
+    message.includes("error sending") ||
+    message.includes("smtp")
+  ) {
+    return {
+      code: "auth_provider_failure",
+      message: "Supabase could not send the invitation email. Check the Auth email provider and redirect configuration.",
+      status: 503,
+    };
+  }
+
+  return {
+    code: "invitation_failed",
+    message: "The invitation could not be sent. Please verify the email address and try again.",
+    status: 400,
+  };
+}
+
+function logFailure(
+  requestId: string,
+  action: string,
+  stage: string,
+  cause: unknown,
+  safeError: SafeError,
+) {
+  const details = errorDetails(cause);
+  console.error(JSON.stringify({
+    event: "admin_manage_users_failure",
+    requestId,
+    action,
+    stage,
+    safeCode: safeError.code,
+    providerCode: details.code || undefined,
+    providerStatus: details.status || undefined,
+  }));
+}
+
+const errorResponse = (
+  error: SafeError,
+  origin: string,
+  requestId: string,
+) => json({ error: { code: error.code, message: error.message }, requestId }, error.status, origin);
+
 Deno.serve(async (request) => {
+  const requestId = crypto.randomUUID();
   const origin = request.headers.get("origin") || allowedOrigins[0];
 
   if (!allowedOrigins.includes(origin)) {
@@ -35,9 +141,19 @@ Deno.serve(async (request) => {
   }
 
   try {
-    const url = Deno.env.get("SUPABASE_URL")!;
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const url = Deno.env.get("SUPABASE_URL");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!url || !anonKey || !serviceKey) {
+      const safeError = {
+        code: "auth_configuration_failure",
+        message: "User administration is not configured correctly.",
+        status: 503,
+      };
+      logFailure(requestId, "initialize", "configuration", new Error("Required Supabase credential is unavailable."), safeError);
+      return errorResponse(safeError, origin, requestId);
+    }
 
     const authorization = request.headers.get("Authorization") || "";
     const token = authorization.replace(/^Bearer\s+/i, "");
@@ -143,7 +259,10 @@ Deno.serve(async (request) => {
       );
 
       if (error || !data.user) {
-        throw error ?? new Error("Invitation failed.");
+        const cause = error ?? new Error("Invitation returned no user.");
+        const safeError = classifyInviteError(cause);
+        logFailure(requestId, "invite", "auth_invite", cause, safeError);
+        return errorResponse(safeError, origin, requestId);
       }
 
       const { error: profileError } = await service
@@ -158,8 +277,19 @@ Deno.serve(async (request) => {
         });
 
       if (profileError) {
-        await service.auth.admin.deleteUser(data.user.id);
-        throw profileError;
+        const rollback = await service.auth.admin.deleteUser(data.user.id);
+        const safeError = {
+          code: "profile_provisioning_failed",
+          message: rollback.error
+            ? "The Auth invitation was created, but TenOps access could not be provisioned. Contact an administrator before retrying."
+            : "TenOps access could not be provisioned. The incomplete invitation was rolled back safely.",
+          status: 500,
+        };
+        logFailure(requestId, "invite", "app_user_provisioning", profileError, safeError);
+        if (rollback.error) {
+          logFailure(requestId, "invite", "auth_invite_rollback", rollback.error, safeError);
+        }
+        return errorResponse(safeError, origin, requestId);
       }
 
       return json({ invited: true }, 200, origin);
@@ -186,13 +316,12 @@ Deno.serve(async (request) => {
 
     return json({ error: "Unsupported action." }, 400, origin);
   } catch (cause) {
-    return json(
-      {
-        error:
-          cause instanceof Error ? cause.message : "Admin request failed.",
-      },
-      500,
-      origin,
-    );
+    const safeError = {
+      code: "unexpected_failure",
+      message: "An unexpected user administration error occurred.",
+      status: 500,
+    };
+    logFailure(requestId, "unknown", "unexpected", cause, safeError);
+    return errorResponse(safeError, origin, requestId);
   }
 });
