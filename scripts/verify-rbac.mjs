@@ -13,6 +13,10 @@ const enforcementHarness = read("scripts/verify-rbac-enforcement.mjs");
 const compatibilitySupport = read("supabase/migrations/20260818_004_final_compatibility_support.sql");
 const authProvider = read("src/lib/auth.tsx");
 const notifications = read("src/components/AccountNotifications.tsx");
+const accountAccess = read("src/components/AccountAccessPanel.tsx");
+const adminSettings = read("src/components/AdminSettingsPanel.tsx");
+const settingsPage = read("src/app/settings/page.tsx");
+const clientShell = read("src/app/client-layout-shell.tsx");
 
 function assert(condition, message) { if (!condition) throw new Error(message); }
 
@@ -83,6 +87,11 @@ assert(compatibilitySupport.includes("jsonb_build_object('role', selected_user.r
 assert(authProvider.includes('supabase.rpc("ensure_my_welcome_notification")'), "Authenticated profile load must ensure the welcome notification");
 assert(notifications.includes('supabase.rpc("list_my_account_notifications")'), "Header notifications must include account notices");
 assert(notifications.includes('supabase.rpc("mark_my_account_notification_read"'), "Account notices must support canonical read state");
+assert(settingsPage.includes('<AccountAccessPanel onAuthenticated={() => {}} showEyebrow={false} />'), "Unlocked Settings must expose Account Access");
+assert(clientShell.includes('<AccountAccessPanel onAuthenticated={() => setIsUnlocked(true)} />'), "Locked Internal Access must retain account authentication");
+assert(accountAccess.includes('auth.isAuthenticated && !auth.requiresPasswordSetup'), "Authenticated Settings must show account identity instead of sign-in fields");
+assert(accountAccess.includes('Sign out of account'), "Authenticated Account Access must retain account sign-out");
+assert(adminSettings.includes('auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.can("manageUsers")'), "Admin Settings must require an authenticated active capable profile");
 for (const source of [purchaseOrderEdge, transmittalEdge]) {
   assert(source.includes("requireEdgeCapability"), "Document Edge Function missing trusted capability check");
 }

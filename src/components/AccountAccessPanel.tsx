@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { ROLE_LABELS } from "@/lib/rbac";
 
-export default function AccountAccessPanel({ onAuthenticated }: { onAuthenticated(): void }) {
+export default function AccountAccessPanel({ onAuthenticated, showEyebrow = true }: { onAuthenticated(): void; showEyebrow?: boolean }) {
   const auth = useAuth();
   const [mode, setMode] = useState<"signin" | "forgot" | "password">("signin");
   const [email, setEmail] = useState("");
@@ -14,6 +15,19 @@ export default function AccountAccessPanel({ onAuthenticated }: { onAuthenticate
   const [saving, setSaving] = useState(false);
 
   const activeMode = auth.requiresPasswordSetup ? "password" : mode;
+
+  async function signOutAccount() {
+    setSaving(true);
+    setError("");
+    try {
+      await auth.signOut();
+      setMessage("Signed out of your TenOps account. Internal Access remains available.");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to sign out of the account.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function submit() {
     setSaving(true);
@@ -40,11 +54,26 @@ export default function AccountAccessPanel({ onAuthenticated }: { onAuthenticate
     }
   }
 
+  if (auth.isAuthenticated && !auth.requiresPasswordSetup) {
+    return (
+      <div className="mt-5 border-t border-slate-300 pt-5">
+        {showEyebrow ? <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">TenOps account access</div> : null}
+        <div className="mt-3 font-bold text-slate-950">{auth.profile?.displayName || auth.user?.email || "Authenticated TenOps account"}</div>
+        {auth.user?.email ? <div className="mt-1 text-xs text-slate-600">{auth.user.email}</div> : null}
+        {auth.profile ? <div className="mt-2 text-xs text-slate-600">Role: <strong>{ROLE_LABELS[auth.profile.role]}</strong> · {auth.profile.isActive ? "Active" : "Inactive"}</div> : null}
+        {!auth.profile && auth.profileError ? <div role="alert" className="mt-2 text-xs font-semibold text-red-700">{auth.profileError}</div> : null}
+        {error ? <div role="alert" className="mt-3 text-xs font-semibold text-red-700">{error}</div> : null}
+        {message ? <div role="status" className="mt-3 text-xs font-semibold text-emerald-800">{message}</div> : null}
+        <button type="button" disabled={saving} onClick={() => void signOutAccount()} className="mt-3 h-9 border border-slate-400 bg-white px-3 text-xs font-bold text-slate-700 disabled:opacity-50">{saving ? "Working…" : "Sign out of account"}</button>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-5 border-t border-slate-300 pt-5">
-      <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+      {showEyebrow ? <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
         TenOps account access
-      </div>
+      </div> : null}
       {activeMode !== "password" ? (
         <label className="mt-3 block text-xs font-bold text-slate-700">
           Email

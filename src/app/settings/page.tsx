@@ -15,6 +15,7 @@ import { BRANDING } from "@/lib/dev-branding.mjs";
 import PhaseLibraryManager from "@/modules/planning/PhaseLibraryManager";
 import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
 import AdminSettingsPanel from "@/components/AdminSettingsPanel";
+import AccountAccessPanel from "@/components/AccountAccessPanel";
 
 const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 
@@ -62,6 +63,12 @@ export default function SettingsPage() {
       <p className="mt-1 text-sm text-slate-600">
         {t("settings.description")}
       </p>
+      <section className="mt-6 border border-slate-300 bg-white p-4">
+        <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Account</div>
+        <h2 className="mt-1 text-lg font-bold text-slate-950">Account Access</h2>
+        <p className="mt-1 text-sm text-slate-600">Sign in with your individual TenOps account for personalized access, notifications, and role-based permissions.</p>
+        <AccountAccessPanel onAuthenticated={() => {}} showEyebrow={false} />
+      </section>
       {BRANDING.showDeveloperArtwork && <section className="mt-6 border border-slate-300 bg-white p-4">
         <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
           {t("settings.appearance")}

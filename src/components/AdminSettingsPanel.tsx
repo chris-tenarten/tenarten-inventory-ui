@@ -14,6 +14,7 @@ export default function AdminSettingsPanel() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [invite, setInvite] = useState({ displayName: "", email: "", role: "member" as AppRole });
+  const canManageUsers = auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.can("manageUsers");
 
   const request = useCallback(async (options?: RequestInit) => {
     const token = auth.session?.access_token;
@@ -35,8 +36,8 @@ export default function AdminSettingsPanel() {
     finally { setLoading(false); }
   }, [request]);
 
-  useEffect(() => { if (auth.can("manageUsers")) void load(); }, [auth, load]);
-  if (!auth.can("manageUsers")) return null;
+  useEffect(() => { if (canManageUsers) void load(); }, [canManageUsers, load]);
+  if (!canManageUsers) return null;
 
   async function action(body: Record<string, unknown>, success: string) {
     setLoading(true); setError(""); setMessage("");
