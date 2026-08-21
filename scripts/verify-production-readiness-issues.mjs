@@ -45,18 +45,15 @@ const [workspace, panel, gantt, badge, inspector, table, queue, statusBadge, pro
   readFile(new URL('../src/modules/production/components/ProductionStatusBadge.tsx', import.meta.url), 'utf8'),
   readFile(new URL('../src/modules/production/components/production-tag.ts', import.meta.url), 'utf8'),
 ]);
-assert.match(workspace, /schedulingAttentionJobs\.length > 0 &&/);
+assert.match(workspace, /data-production-attention-center/);
 assert.match(workspace, /const jobsInQueue = activeReadinessJobs\.length/);
 assert.match(workspace, /const scheduledCount = activeReadinessJobs\.filter\(isScheduled\)\.length/);
 assert.match(workspace, /tr\('Scheduled', 'Programados'\)/);
 assert.match(workspace, /activeView === 'queue'[\s\S]*activeView === 'spreadsheet'[\s\S]*<ProductionGantt/);
-assert.match(workspace, /data-nonblocking-issue-count/);
-assert.match(workspace, /data-nonblocking-issue-badge/);
-assert.match(workspace, /bg-red-600/);
-assert.match(workspace, /setPlanningIssuesCategory\('scheduling'\)/);
+assert.match(workspace, /Scheduling — Priority/);
+assert.match(workspace, /Needs Attention/);
 assert.match(workspace, /setPlanningIssuesCategory\('nonblocking'\)/);
-assert.match(workspace, /selectJob\(schedulingAttentionJobs\[0\], 'planned-dates'\)/);
-assert.doesNotMatch(workspace, /openJobScheduling\(schedulingAttentionJobs\[0\]\)/);
+assert.match(workspace, /selectJob\(job, 'planned-dates'\)/);
 assert.match(workspace, /openJobScheduling\(canonicalJob\)/);
 assert.match(panel, /category === 'scheduling' \? getJobSchedulingIssues\(effective\) : getJobNonblockingPlanningIssues\(effective\)/);
 assert.match(panel, /onClose\(\); onOpenInspector\(job, focus\)/);
@@ -82,12 +79,13 @@ assert.doesNotMatch(table, /<UnscheduledBadge compact/);
 assert.match(queue, /data-overview-schedule-condition/);
 assert.match(queue, /<UnscheduledBadge ariaLabel/);
 assert.doesNotMatch(queue, /<UnscheduledBadge compact/);
-assert.match(queue, /prioritizeProductionOverviewJobs\(jobs, jobUpdateSummaries\)/);
+assert.match(queue, /const overviewJobs = jobs/);
 assert.match(badge, /whitespace-nowrap/);
 assert.match(statusBadge, /productionTagClassName/);
 assert.match(badge, /productionTagClassName/);
 assert.match(productionTag, /rounded-sm border px-2 py-0\.5 !text-\[10px\] !font-bold !leading-\[1\.5\] shadow-sm/);
 assert.match(queue, /data-overview-needs-dates=\{needsScheduling\(job\) \? 'true' : undefined\}/);
 assert.match(queue, /needsScheduling\(job\) \|\| hasUpdateAttention \? 'bg-amber-50\/50 hover:bg-amber-50\/70'/);
+assert.doesNotMatch(queue, /data-overview-update-attention-marker/);
 
 console.log('Production planning issue readiness checks passed.');

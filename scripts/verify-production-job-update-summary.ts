@@ -15,6 +15,7 @@ assert.deepEqual(summarizeJobUpdates([row()]), {
   openFollowUpCount: 0,
   openFollowUpAssignees: [],
   latestCreatedAt: "2026-08-17T12:00:00Z",
+  hasUnseenActivity: false,
 });
 assert.deepEqual(
   summarizeJobUpdates([
@@ -32,6 +33,7 @@ assert.deepEqual(
     openFollowUpCount: 2,
     openFollowUpAssignees: ["Marcos"],
     latestCreatedAt: "2026-08-17T12:00:00Z",
+    hasUnseenActivity: false,
   },
 );
 assert.deepEqual(
@@ -55,6 +57,7 @@ assert.deepEqual(
     openFollowUpCount: 1,
     openFollowUpAssignees: [],
     latestCreatedAt: "2026-08-17T12:00:00Z",
+    hasUnseenActivity: false,
   },
 );
 

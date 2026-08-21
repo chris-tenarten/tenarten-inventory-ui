@@ -8,14 +8,20 @@ import {
   type CollapsedPhaseDisplayMode,
   writeCollapsedPhaseDisplayMode,
 } from "./collapsed-phase-display";
+import { useAccountPreferences } from "@/lib/account-preferences";
 
 export default function CollapsedPhaseDisplayToggle() {
+  const accountPreferences = useAccountPreferences();
   const [mode, setMode] = useState<CollapsedPhaseDisplayMode>("fill");
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setMode(readCollapsedPhaseDisplayMode()));
+    const frame = window.requestAnimationFrame(() => setMode(
+      accountPreferences.accountScoped
+        ? accountPreferences.preferences.collapsed_phase_display ?? "fill"
+        : readCollapsedPhaseDisplayMode(),
+    ));
     return () => window.cancelAnimationFrame(frame);
-  }, []);
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.collapsed_phase_display]);
 
   return (
     <div role="radiogroup" aria-label="Collapsed Phase bar display" className="inline-flex h-9 border border-slate-300">
@@ -31,7 +37,8 @@ export default function CollapsedPhaseDisplayToggle() {
           aria-checked={mode === value}
           onClick={() => {
             setMode(value);
-            writeCollapsedPhaseDisplayMode(value);
+            if (accountPreferences.accountScoped) void accountPreferences.setPreference("collapsed_phase_display", value);
+            else writeCollapsedPhaseDisplayMode(value);
           }}
           className={`border-r border-slate-300 px-2.5 text-[10px] font-bold capitalize last:border-r-0 ${
             mode === value ? "tenops-selected-surface bg-slate-900 text-white" : "bg-white text-slate-600 hover:bg-slate-50"

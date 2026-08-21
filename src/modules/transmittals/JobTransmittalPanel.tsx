@@ -16,6 +16,7 @@ import {
 import { loadJobTransmittals } from "./queries";
 import type { JobTransmittalDraft, JobTransmittalRecord } from "./types";
 import { validateJobTransmittal } from "./validation";
+import { useAccountPreferences } from "@/lib/account-preferences";
 
 const names = ["Anthony", "Chris", "Gio", "Marcos", "Pat"];
 const field = "mt-1 h-9 w-full rounded-sm border border-slate-300 bg-white px-2 text-sm";
@@ -27,6 +28,7 @@ const senderKey = "tenops.job-transmittal.sender";
 type Props = { job: ProductionJob; onClose(): void };
 
 export default function JobTransmittalPanel({ job, onClose }: Props) {
+  const accountPreferences = useAccountPreferences();
   const initialDraftRef = useRef<JobTransmittalDraft>(createJobTransmittalDraft(job));
   const [draft, setDraft] = useState<JobTransmittalDraft>(initialDraftRef.current);
   const [history, setHistory] = useState<JobTransmittalRecord[]>([]);
@@ -50,19 +52,29 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
 
   useEffect(() => {
     try {
-      const remembered = JSON.parse(localStorage.getItem(senderKey) || "{}") as {
+      const remembered = (accountPreferences.accountScoped
+        ? accountPreferences.preferences.transmittal_sender ?? {}
+        : JSON.parse(localStorage.getItem(senderKey) || "{}")) as {
         name?: string; phone?: string; email?: string;
       };
-      if (remembered.name) {
+      if (remembered.name || remembered.phone || remembered.email) {
         setDraft((current) => {
           const next = {...current,senderName:remembered.name || "",senderPhone:remembered.phone || "",senderEmail:remembered.email || ""};
           pristineRef.current = JSON.stringify(next);
           return next;
         });
-        setSenderChoice(names.includes(remembered.name) ? remembered.name : "Other");
+        const rememberedName = remembered.name ?? "";
+        setSenderChoice(names.includes(rememberedName) ? rememberedName : "Other");
+      } else if (accountPreferences.accountScoped) {
+        setDraft((current) => {
+          const next = { ...current, senderName: "", senderPhone: "", senderEmail: "" };
+          pristineRef.current = JSON.stringify(next);
+          return next;
+        });
+        setSenderChoice("Other");
       }
     } catch {}
-  }, []);
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.transmittal_sender]);
 
   useEffect(() => {
     let active = true;
@@ -112,9 +124,11 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
 
   const patch = <K extends keyof JobTransmittalDraft>(key: K, value: JobTransmittalDraft[K]) =>
     setDraft((current) => ({ ...current, [key]: value }));
-  const rememberSender = () => localStorage.setItem(senderKey, JSON.stringify({
-    name: draft.senderName.trim(), phone: draft.senderPhone.trim(), email: draft.senderEmail.trim(),
-  }));
+  const rememberSender = () => {
+    const sender = { name: draft.senderName.trim(), phone: draft.senderPhone.trim(), email: draft.senderEmail.trim() };
+    if (accountPreferences.accountScoped) void accountPreferences.setPreference("transmittal_sender", sender);
+    else localStorage.setItem(senderKey, JSON.stringify(sender));
+  };
 
   async function previewDraft() {
     setBusy("preview"); setError("");

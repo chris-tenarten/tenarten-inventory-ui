@@ -16,6 +16,7 @@ import PhaseLibraryManager from "@/modules/planning/PhaseLibraryManager";
 import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
 import AdminSettingsPanel from "@/components/AdminSettingsPanel";
 import AccountAccessPanel from "@/components/AccountAccessPanel";
+import { useAccountPreferences } from "@/lib/account-preferences";
 
 const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 
@@ -36,20 +37,24 @@ export default function SettingsPage() {
   const [displaySize, setDisplaySize] = useState<DisplaySize>("default");
   const { language, setLanguage, t } = useLanguage();
   const { appearance, setAppearance } = useAppearance();
+  const accountPreferences = useAccountPreferences();
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      const stored = readDisplaySize();
+      const accountValue = accountPreferences.preferences.display_size;
+      const stored = accountPreferences.accountScoped ? accountValue ?? "default" : readDisplaySize();
       setDisplaySize(stored);
       applyDisplaySize(stored);
     }, 0);
 
     return () => window.clearTimeout(timeout);
-  }, []);
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.display_size]);
 
   function changeDisplaySize(value: DisplaySize) {
     setDisplaySize(value);
-    saveDisplaySize(value);
+    applyDisplaySize(value);
+    if (accountPreferences.accountScoped) void accountPreferences.setPreference("display_size", value);
+    else saveDisplaySize(value);
   }
 
   return (
@@ -63,6 +68,7 @@ export default function SettingsPage() {
       <p className="mt-1 text-sm text-slate-600">
         {t("settings.description")}
       </p>
+      {accountPreferences.error ? <p role="status" className="mt-3 border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">{accountPreferences.error}</p> : null}
       <section className="mt-6 border border-slate-300 bg-white p-4">
         <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Account</div>
         <h2 className="mt-1 text-lg font-bold text-slate-950">Account Access</h2>
@@ -115,7 +121,7 @@ export default function SettingsPage() {
           })}
         </div>
         <p className="mt-3 text-xs text-slate-500">
-          {t("settings.browserOnly")}
+          {accountPreferences.accountScoped ? t("settings.accountPreference") : t("settings.browserOnly")}
         </p>
       </section>}
       <section className={`${BRANDING.showDeveloperArtwork ? 'mt-4' : 'mt-6'} border border-slate-300 bg-white p-4`}>
@@ -167,7 +173,7 @@ export default function SettingsPage() {
           })}
         </div>
         <p className="mt-3 text-xs text-slate-500">
-          {t("settings.browserOnly")}
+          {accountPreferences.accountScoped ? t("settings.accountPreference") : t("settings.browserOnly")}
         </p>
       </section>
       <section className="mt-4 border border-slate-300 bg-white p-4">
@@ -219,7 +225,7 @@ export default function SettingsPage() {
           })}
         </div>
         <p className="mt-3 text-xs text-slate-500">
-          {t("settings.browserOnly")}
+          {accountPreferences.accountScoped ? t("settings.accountPreference") : t("settings.browserOnly")}
         </p>
       </section>
       <div className="mt-6 grid gap-3 sm:grid-cols-2">

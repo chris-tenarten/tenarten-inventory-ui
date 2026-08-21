@@ -4,6 +4,7 @@ import ClientLayoutShell from './client-layout-shell';
 import { LanguageProvider } from '@/lib/language';
 import { ThemeProvider } from '@/lib/appearance';
 import { AuthProvider } from '@/lib/auth';
+import { AccountPreferencesProvider } from '@/lib/account-preferences';
 import { BRANDING } from '@/lib/dev-branding.mjs';
 
 export const metadata: Metadata = {
@@ -31,11 +32,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const defaultAppearance = BRANDING.defaultAppearance;
-  const appearanceSelection = BRANDING.showDeveloperArtwork
-    ? `var a=localStorage.getItem('tenops_appearance');document.documentElement.dataset.appearance=a==='dark'||a==='light'?a:'${defaultAppearance}'`
-    : `document.documentElement.dataset.appearance='${defaultAppearance}'`;
+  const appearanceSelection = `document.documentElement.dataset.appearance='${defaultAppearance}'`;
   const appearanceBootstrap =
-    `try{var s=localStorage.getItem('tenops_display_size');if(s==='compact'||s==='large'||s==='default'){document.documentElement.dataset.displaySize=s}var l=localStorage.getItem('tenops_language');if(l==='en'||l==='es'){document.documentElement.lang=l}${appearanceSelection}}catch(e){document.documentElement.dataset.appearance='${defaultAppearance}'}`;
+    `try{${appearanceSelection}}catch(e){document.documentElement.dataset.appearance='${defaultAppearance}'}`;
 
   return (
     <html
@@ -52,13 +51,15 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <ThemeProvider defaultAppearance={defaultAppearance}>
-          <AuthProvider>
+        <AuthProvider>
+          <AccountPreferencesProvider>
+            <ThemeProvider defaultAppearance={defaultAppearance}>
             <LanguageProvider>
               <ClientLayoutShell>{children}</ClientLayoutShell>
             </LanguageProvider>
-          </AuthProvider>
-        </ThemeProvider>
+            </ThemeProvider>
+          </AccountPreferencesProvider>
+        </AuthProvider>
       </body>
     </html>
   );

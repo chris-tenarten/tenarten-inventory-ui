@@ -25,11 +25,17 @@ assert.match(provider, /createContext/);
 assert.match(provider, /tenops_appearance/);
 assert.match(provider, /\["light", "dark"\]/);
 assert.match(provider, /useState<Appearance>\(defaultAppearance\)/);
-assert.match(provider, /window\.localStorage\.setItem/);
+assert.match(provider, /accountPreferences\.accountScoped/);
+assert.match(provider, /accountPreferences\.preferences\.appearance/);
+assert.match(provider, /accountPreferences\.setPreference\("appearance", next\)/);
+assert.match(provider, /accountPreferences\.accountScoped \|\| event\.key !== APPEARANCE_STORAGE_KEY/,
+  'Authenticated accounts must not synchronize another operator\'s browser-local Appearance');
+assert.match(provider, /window\.localStorage\.setItem\(APPEARANCE_STORAGE_KEY, next\)/,
+  'Unauthenticated Internal Access must retain the browser-local Appearance fallback');
 assert.doesNotMatch(provider, /hostname|NODE_ENV|branch|prefers-color-scheme|matchMedia/i);
 assert.match(layout, /data-appearance=\{defaultAppearance\}/);
-assert.match(layout, /localStorage\.getItem\('tenops_appearance'\)/);
-assert.match(layout, /a==='dark'\|\|a==='light'\?a:/);
+assert.doesNotMatch(layout, /localStorage\.getItem\(['"]tenops_appearance['"]\)/,
+  'The root layout must not initialize authenticated Appearance from ownerless browser storage');
 assert.match(layout, /<ThemeProvider defaultAppearance=\{defaultAppearance\}>/);
 assert.doesNotMatch(layout, /NEXT_PUBLIC_[A-Z_]*DARK|data-[a-z-]*prototype/);
 assert.match(shell, /data-app-shell/);
@@ -49,7 +55,7 @@ assert.match(styles, /\[role="tooltip"\]/);
 assert.match(planningEditor, /PLANNING_PAUSE_HATCH/);
 assert.match(creationDialog, /role="dialog"/);
 assert.match(schedulingFeedback, /data-scheduling-feedback/);
-assert.match(workspace, /data-operational-tone=\{planningIssueCount > 0 \? 'attention' : undefined\}/);
+assert.match(workspace, /data-operational-tone=\{schedulingAttentionJobs\.length > 0 \? 'attention' : undefined\}/);
 assert.match(workspace, /tenops-selected-surface/);
 assert.match(queue, /data-operational-tone="success"/);
 assert.match(queue, /data-operational-tone="warning"/);
