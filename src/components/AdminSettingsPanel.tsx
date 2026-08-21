@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { APP_ROLES, CAPABILITIES, CAPABILITY_LABELS, type AppRole, ROLE_CAPABILITIES, ROLE_LABELS } from "@/lib/rbac";
+import LegacyJobUpdateEnrollment from "./LegacyJobUpdateEnrollment";
 
 type AdminUser = { user_id: string; display_name: string; email: string; role: AppRole; is_active: boolean };
 
@@ -85,6 +86,7 @@ export default function AdminSettingsPanel() {
       </div>)}
       {!loading && !users.length ? <div className="p-3 text-sm text-slate-500">No application users are configured.</div> : null}
     </div>
+    <LegacyJobUpdateEnrollment users={users} />
     <h2 className="mt-6 text-xl font-bold text-slate-950">Roles &amp; Permissions</h2>
     <p className="mt-1 text-sm text-slate-600">System-defined bundles are read-only in the MVP. Custom roles and dynamic permission editing are deferred.</p>
     <div className="mt-4 overflow-x-auto border border-slate-200"><table className="min-w-[760px] w-full border-collapse text-xs"><thead><tr className="bg-slate-100"><th className="p-2 text-left">Capability</th>{APP_ROLES.map((role) => <th key={role} className="p-2 text-center">{ROLE_LABELS[role]}</th>)}</tr></thead><tbody>{CAPABILITIES.map((capability) => <tr key={capability} className="border-t border-slate-200"><td className="p-2 font-semibold">{CAPABILITY_LABELS[capability]}</td>{APP_ROLES.map((role) => <td key={role} className="p-2 text-center">{ROLE_CAPABILITIES[role].includes(capability) ? "✓" : "—"}</td>)}</tr>)}</tbody></table></div>

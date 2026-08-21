@@ -21,8 +21,12 @@ import {
 } from '@/components/AppBranding';
 import { BRANDING } from '@/lib/dev-branding.mjs';
 import { useAuth } from '@/lib/auth';
+import { ROLE_LABELS } from '@/lib/rbac';
+import { operationalFirstName } from '@/lib/identity-presentation';
+import { useAccountPreferences } from '@/lib/account-preferences';
 import AccountAccessPanel from '@/components/AccountAccessPanel';
 import AccountNotifications from '@/components/AccountNotifications';
+import WelcomeHero from '@/components/WelcomeHero';
 import { openProductionJob } from '@/modules/production/job-options';
 
 const primaryNavItems = [
@@ -284,6 +288,7 @@ export default function ClientLayoutShell({
   const pathname = usePathname();
   const { t } = useLanguage();
   const auth = useAuth();
+  const accountPreferences = useAccountPreferences();
 
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -293,16 +298,19 @@ export default function ClientLayoutShell({
   const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
-    applyDisplaySize(readDisplaySize());
+    const accountDisplaySize = accountPreferences.preferences.display_size;
+    applyDisplaySize(accountPreferences.accountScoped
+      ? isDisplaySize(accountDisplaySize) ? accountDisplaySize : 'default'
+      : readDisplaySize());
 
     function syncDisplaySize(event: StorageEvent) {
-      if (event.key !== DISPLAY_SIZE_STORAGE_KEY) return;
+      if (accountPreferences.accountScoped || event.key !== DISPLAY_SIZE_STORAGE_KEY) return;
       applyDisplaySize(isDisplaySize(event.newValue) ? event.newValue : 'default');
     }
 
     window.addEventListener('storage', syncDisplaySize);
     return () => window.removeEventListener('storage', syncDisplaySize);
-  }, []);
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.display_size]);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -378,6 +386,7 @@ export default function ClientLayoutShell({
 
   return (
     <div data-app-shell>
+      <WelcomeHero />
       <header data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
         <div
           data-shell-header-inner
@@ -487,6 +496,10 @@ export default function ClientLayoutShell({
                 <DomainNav pathname={pathname} labelKey="nav.purchasing" href="/purchasing" icon={CartIcon} items={purchasingNavItems} />
                 <div className="flex shrink-0 items-center">
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
+                  {auth.isAuthenticated && auth.profile?.isActive ? <div data-account-identity className="hidden max-w-36 px-2 text-right leading-tight md:block">
+                    <div className="truncate text-[11px] font-bold text-slate-900" title={auth.profile.displayName}>{operationalFirstName(auth.profile.displayName)}</div>
+                    <div className="text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-500">{ROLE_LABELS[auth.profile.role]}</div>
+                  </div> : null}
                   <AccountNotifications onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   <Link
                     href="/settings"

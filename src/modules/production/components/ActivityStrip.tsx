@@ -35,7 +35,7 @@ export default function ActivityStrip({
         job={job}
         summary={updateSummary}
         onOpen={onOpenUpdates}
-        className="min-w-24 max-w-48"
+        className="shrink-0"
         display="overview-slots"
       />
       <button

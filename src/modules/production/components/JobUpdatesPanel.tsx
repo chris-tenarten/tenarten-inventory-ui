@@ -7,18 +7,25 @@ import {
   MessageSquare,
   Paperclip,
   Pencil,
+  Trash2,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/lib/auth";
+import { operationalFirstName } from "@/lib/identity-presentation";
 import {
   createJobUpdate,
+  deleteJobUpdate,
   editJobUpdate,
   loadJobAttachments,
+  loadJobUpdateCollaborators,
+  loadJobUpdateMentions,
   loadJobUpdates,
+  markJobUpdatesSeen,
   resolveJobUpdate,
   uploadJobAttachments,
 } from "../jobs";
 import type { JobUpdateSummary } from "../jobs";
-import type { JobAttachment, JobUpdate, ProductionJob } from "../types";
+import type { JobAttachment, JobUpdate, JobUpdateCollaborator, JobUpdateMention, ProductionJob } from "../types";
 import {
   PRODUCTION_PERSONNEL_NAMES,
 } from "../production-personnel";
@@ -31,6 +38,7 @@ import {
   hasJobUpdateEditChanges,
   type JobUpdateEditDraft,
 } from "../job-update-editing";
+import JobUpdateMentionTextarea, { type SelectedMention } from "./JobUpdateMentionTextarea";
 
 const ATTRIBUTION_STORAGE_KEY = "tenops.jobUpdateAttributionName";
 const OTHER_AUTHOR_VALUE = "__other__";
@@ -74,6 +82,16 @@ function formatLatestTimestamp(value: string) {
   });
   if (date.toDateString() === today.toDateString()) return `Today at ${time}`;
   return formatTimestamp(value);
+}
+
+function renderMentionedBody(body: string, mentions: JobUpdateMention[]) {
+  if (!mentions.length) return body;
+  const mentionByToken = new Map(mentions.map((mention) => [`@${mention.displayName}`, mention]));
+  const tokens = [...mentionByToken.keys()].sort((left, right) => right.length - left.length);
+  const pattern = new RegExp(`(?<![\\p{L}\\p{N}_])(${tokens.map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?![\\p{L}\\p{N}_])`, "gu");
+  return body.split(pattern).map((part, index) => mentionByToken.has(part) ? (
+    <span key={`${part}-${index}`} className="font-semibold text-blue-700">{part}</span>
+  ) : part);
 }
 
 function AuthorControl({
@@ -141,17 +159,18 @@ export default function JobUpdatesPanel({
   onAttachmentsChanged,
   onOpenAttachment,
 }: Props) {
+  const auth = useAuth();
   const [updates, setUpdates] = useState<JobUpdate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [authorName, setAuthorName] = useState(storedAttributionName);
   const [body, setBody] = useState("");
-  const [requiresFollowUp, setRequiresFollowUp] = useState(false);
-  const [followUpAssigneeName, setFollowUpAssigneeName] = useState("");
+  const [mentions, setMentions] = useState<SelectedMention[]>([]);
+  const [mentionsByUpdate, setMentionsByUpdate] = useState<Record<string, JobUpdateMention[]>>({});
+  const [collaborators, setCollaborators] = useState<JobUpdateCollaborator[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [posting, setPosting] = useState(false);
-  const [openOnly, setOpenOnly] = useState(false);
   const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [resolverName, setResolverName] = useState(storedAttributionName);
   const [resolverNamesByUpdate, setResolverNamesByUpdate] = useState<
@@ -162,8 +181,11 @@ export default function JobUpdatesPanel({
   >({});
   const [editingUpdateId, setEditingUpdateId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<JobUpdateEditDraft | null>(null);
+  const [editMentions, setEditMentions] = useState<SelectedMention[]>([]);
   const [editError, setEditError] = useState("");
   const [savingEditId, setSavingEditId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<JobUpdate | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const postingRef = useRef(false);
   const resolvingIdsRef = useRef(new Set<string>());
@@ -175,9 +197,20 @@ export default function JobUpdatesPanel({
     setEditingUpdateId(null);
     setEditDraft(null);
     setEditError("");
-    loadJobUpdates(job.id)
-      .then((rows) => {
-        if (live) setUpdates(rows);
+    Promise.all([
+      loadJobUpdates(job.id),
+      auth.isAuthenticated && auth.profile?.isActive ? loadJobUpdateMentions(job.id) : Promise.resolve([]),
+      auth.isAuthenticated && auth.profile?.isActive ? loadJobUpdateCollaborators() : Promise.resolve([]),
+    ])
+      .then(([rows, loadedMentions, loadedCollaborators]) => {
+        if (live) {
+          setUpdates(rows);
+          setCollaborators(loadedCollaborators);
+          setMentionsByUpdate(loadedMentions.reduce<Record<string, JobUpdateMention[]>>((grouped, mention) => {
+            grouped[mention.updateId] = [...(grouped[mention.updateId] ?? []), mention];
+            return grouped;
+          }, {}));
+        }
       })
       .catch((loadError: unknown) => {
         if (live) {
@@ -194,7 +227,7 @@ export default function JobUpdatesPanel({
     return () => {
       live = false;
     };
-  }, [job.id]);
+  }, [auth.isAuthenticated, auth.profile?.isActive, job.id]);
 
   useEffect(() => {
     if (!focusedUpdateId || loading) return;
@@ -218,19 +251,26 @@ export default function JobUpdatesPanel({
 
   const summary = useMemo(() => summarizeJobUpdates(updates), [updates]);
   const openCount = summary.openFollowUpCount;
-  const visibleUpdates = openOnly
-    ? updates.filter(
-        (update) => update.requires_follow_up && !update.resolved_at,
-      )
-    : updates;
+  const mentionableCollaborators = useMemo(
+    () => collaborators.filter((user) => !["developer", "guest"].includes(user.role.toLocaleLowerCase())),
+    [collaborators],
+  );
   const latestUpdate = updates[0] ?? null;
 
   useEffect(() => {
     if (loading) return;
-    onSummaryChanged({
-      ...summary,
+    if (!auth.isAuthenticated || !auth.profile?.isActive) {
+      onSummaryChanged(summary);
+      return;
+    }
+    let live = true;
+    void markJobUpdatesSeen(job.id).then(() => {
+      if (live) onSummaryChanged({ ...summary, hasUnseenActivity: false });
+    }).catch(() => {
+      if (live) onSummaryChanged(summary);
     });
-  }, [loading, onSummaryChanged, summary]);
+    return () => { live = false; };
+  }, [auth.isAuthenticated, auth.profile?.isActive, job.id, loading, onSummaryChanged, summary]);
 
   async function postUpdate() {
     if (postingRef.current) return;
@@ -242,17 +282,19 @@ export default function JobUpdatesPanel({
     try {
       created = await createJobUpdate(
         job.id,
-        authorName,
+        auth.profile?.displayName ?? authorName,
         body,
-        requiresFollowUp,
-        followUpAssigneeName,
+        false,
+        null,
+        null,
+        mentions.map((mention) => mention.userId),
       );
       setUpdates((current) => [created as JobUpdate, ...current]);
       window.localStorage.setItem(
         ATTRIBUTION_STORAGE_KEY,
-        authorName.trim(),
+        (auth.profile?.displayName ?? authorName).trim(),
       );
-      setResolverName(authorName.trim());
+      setResolverName((auth.profile?.displayName ?? authorName).trim());
 
       const failedFiles: string[] = [];
       if (selectedFiles.length) {
@@ -263,7 +305,7 @@ export default function JobUpdatesPanel({
               [file],
               "other",
               created.id,
-              authorName,
+              auth.profile?.displayName ?? authorName,
             );
           } catch {
             failedFiles.push(file.name);
@@ -274,8 +316,7 @@ export default function JobUpdatesPanel({
       }
 
       setBody("");
-      setRequiresFollowUp(false);
-      setFollowUpAssigneeName("");
+      setMentions([]);
       setSelectedFiles([]);
       if (fileInput.current) fileInput.current.value = "";
       setMessage(
@@ -321,16 +362,20 @@ export default function JobUpdatesPanel({
     setError("");
     setMessage("");
     let resolved: JobUpdate | null = null;
-    const selectedResolverName = getResolutionResolverName(
+    const preferredResolverName = getResolutionResolverName(
       update,
       resolverNamesByUpdate[update.id],
       resolverName,
     );
+    const selectedResolverName = auth.isAuthenticated
+      ? auth.profile?.displayName ?? ""
+      : preferredResolverName;
     try {
       const resolvedUpdate = await resolveJobUpdate(
         update,
         selectedResolverName,
         resolutionDraft.message,
+        auth.isAuthenticated ? auth.profile?.userId ?? null : null,
       );
       resolved = resolvedUpdate;
       setUpdates((current) =>
@@ -402,6 +447,7 @@ export default function JobUpdatesPanel({
     if (!canEditJobUpdate(update)) return;
     setEditingUpdateId(update.id);
     setEditDraft(getJobUpdateEditDraft(update));
+    setEditMentions((mentionsByUpdate[update.id] ?? []).map((mention) => ({ userId: mention.userId, displayName: mention.displayName })));
     setEditError("");
     setMessage("");
   }
@@ -410,6 +456,7 @@ export default function JobUpdatesPanel({
     if (savingEditId) return;
     setEditingUpdateId(null);
     setEditDraft(null);
+    setEditMentions([]);
     setEditError("");
   }
 
@@ -430,12 +477,16 @@ export default function JobUpdatesPanel({
         editDraft.body,
         editDraft.requiresFollowUp,
         editDraft.followUpAssigneeName,
+        editDraft.followUpAssigneeUserId,
+        editMentions.map((mention) => mention.userId),
       );
       setUpdates((current) =>
         current.map((row) => (row.id === edited.id ? edited : row)),
       );
       setEditingUpdateId(null);
       setEditDraft(null);
+      setMentionsByUpdate((current) => ({ ...current, [update.id]: editMentions.map((mention) => ({ updateId: update.id, userId: mention.userId, displayName: mention.displayName, isActive: true })) }));
+      setEditMentions([]);
       setMessage("Changes saved.");
     } catch (saveError) {
       setEditError(
@@ -445,6 +496,35 @@ export default function JobUpdatesPanel({
       );
     } finally {
       setSavingEditId(null);
+    }
+  }
+
+  function canDeleteUpdate(update: JobUpdate) {
+    if (!auth.isAuthenticated || !auth.profile?.isActive) return false;
+    return update.author_user_id === auth.profile.userId || auth.can("deleteJobUpdate");
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget || deletingId) return;
+    setDeletingId(deleteTarget.id);
+    setError("");
+    setMessage("");
+    try {
+      await deleteJobUpdate(deleteTarget.id);
+      setUpdates((current) => current.filter((update) => update.id !== deleteTarget.id));
+      setMentionsByUpdate((current) => {
+        const next = { ...current };
+        delete next[deleteTarget.id];
+        return next;
+      });
+      onAttachmentsChanged(await loadJobAttachments(job.id));
+      window.dispatchEvent(new Event("tenops:notifications-changed"));
+      setDeleteTarget(null);
+      setMessage("Job Update deleted.");
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : "Unable to delete this Job Update.");
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -459,7 +539,7 @@ export default function JobUpdatesPanel({
             {latestUpdate ? (
               <div className="mt-1 text-slate-600">
                 <span className="font-bold text-slate-900">
-                  {latestUpdate.author_name}
+                  {operationalFirstName(latestUpdate.author_name)}
                 </span>
                 <span className="mx-1.5 text-slate-300">·</span>
                 {formatLatestTimestamp(latestUpdate.created_at)}
@@ -478,38 +558,18 @@ export default function JobUpdatesPanel({
       </div>
 
       <section className="mt-4">
-        <div className="flex items-center justify-between gap-3">
-          <h4 className="text-sm font-bold text-slate-950">Update history</h4>
-          <div className="inline-flex border border-slate-300 text-xs font-bold">
-            <button
-              type="button"
-              onClick={() => setOpenOnly(false)}
-              className={`min-h-8 px-2 ${!openOnly ? "tenops-selected-surface" : "bg-white text-slate-700 hover:bg-slate-50"}`}
-            >
-              All
-            </button>
-            <button
-              type="button"
-              onClick={() => setOpenOnly(true)}
-              className={`min-h-8 border-l border-slate-300 px-2 ${openOnly ? "tenops-selected-surface" : "bg-white text-slate-700 hover:bg-slate-50"}`}
-            >
-              Needs attention
-            </button>
-          </div>
-        </div>
+        <h4 className="text-sm font-bold text-slate-950">Update history</h4>
         <div className="mt-4 space-y-3">
           {loading ? (
             <div className="border border-slate-300 p-4 text-sm text-slate-500">
               Loading Job Updates…
             </div>
-          ) : visibleUpdates.length === 0 ? (
+          ) : updates.length === 0 ? (
             <div className="border border-slate-300 p-4 text-sm text-slate-500">
-              {openOnly
-                ? "No updates need attention."
-                : "No Job Updates have been posted yet."}
+              No Job Updates have been posted yet.
             </div>
           ) : (
-            visibleUpdates.map((update) => {
+            updates.map((update) => {
               const isOpen =
                 update.requires_follow_up && update.resolved_at === null;
               const updateAttachments =
@@ -526,28 +586,33 @@ export default function JobUpdatesPanel({
                 message: "",
                 files: [],
               };
-              const selectedResolverName = getResolutionResolverName(
+              const preferredResolverName = getResolutionResolverName(
                 update,
                 resolverNamesByUpdate[update.id],
                 resolverName,
               );
+              const selectedResolverName = auth.isAuthenticated
+                ? auth.profile?.displayName ?? ""
+                : preferredResolverName;
               const isEditing = editingUpdateId === update.id && editDraft;
               const editValidationError = isEditing
                 ? getJobUpdateEditValidationError(editDraft)
                 : null;
               const editHasChanges = isEditing
-                ? hasJobUpdateEditChanges(update, editDraft)
+                ? hasJobUpdateEditChanges(update, editDraft) ||
+                  JSON.stringify(editMentions.map((mention) => mention.userId).sort()) !==
+                    JSON.stringify((mentionsByUpdate[update.id] ?? []).map((mention) => mention.userId).sort())
                 : false;
               return (
                 <article
                   id={`job-update-${update.id}`}
                   key={update.id}
-                  className={`scroll-mt-5 border bg-white p-3 ${isOpen ? "border-slate-300 border-l-4 border-l-amber-500" : "border-slate-300"}`}
+                  className={`scroll-mt-5 border bg-white p-3 transition ${focusedUpdateId === update.id ? "ring-2 ring-blue-600 ring-offset-2" : ""} ${isOpen ? "border-slate-300 border-l-4 border-l-amber-500" : "border-slate-300"}`}
                 >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="text-sm font-bold text-slate-950">
-                      {update.author_name}
+                      {operationalFirstName(update.author_name)}
                     </div>
                     <div className="text-xs text-slate-500">
                       {formatTimestamp(update.created_at)}
@@ -565,7 +630,7 @@ export default function JobUpdatesPanel({
                         <CheckCircle2 className="h-3.5 w-3.5" />
                         Resolved
                         {update.follow_up_assignee_name
-                          ? ` · ${update.follow_up_assignee_name}`
+                          ? ` · ${operationalFirstName(update.follow_up_assignee_name)}`
                           : ""}
                       </span>
                       ) : (
@@ -573,7 +638,7 @@ export default function JobUpdatesPanel({
                         <Flag className="h-3.5 w-3.5 fill-amber-50" />
                         Needs attention
                         {update.follow_up_assignee_name
-                          ? ` · ${update.follow_up_assignee_name}`
+                          ? ` · ${operationalFirstName(update.follow_up_assignee_name)}`
                           : ""}
                       </span>
                       )
@@ -592,64 +657,35 @@ export default function JobUpdatesPanel({
                         Edit
                       </button>
                     )}
+                    {canDeleteUpdate(update) && !isEditing && (
+                      <button
+                        type="button"
+                        onClick={() => setDeleteTarget(update)}
+                        className="inline-flex min-h-8 items-center gap-1 px-1.5 text-xs font-semibold text-slate-500 hover:text-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
                 {isEditing ? (
                   <div className="mt-3 border-t border-slate-200 pt-3">
                     <label className="block text-xs font-bold text-slate-700">
                       Update
-                      <textarea
-                        value={editDraft.body}
-                        disabled={savingEditId !== null}
-                        onChange={(event) =>
-                          setEditDraft({ ...editDraft, body: event.target.value })
-                        }
-                        rows={4}
-                        className="mt-1 w-full resize-y border border-slate-300 bg-white px-3 py-2 text-sm font-normal leading-6 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
-                      />
-                    </label>
-                    <div className="mt-3 flex flex-wrap items-center gap-x-7 gap-y-2">
-                      <label className="inline-flex min-h-8 items-center gap-2 text-xs font-bold text-slate-800">
-                        <input
-                          type="checkbox"
-                          checked={editDraft.requiresFollowUp}
+                      <div className="mt-1">
+                        <JobUpdateMentionTextarea
+                          value={editDraft.body}
+                          mentions={editMentions}
+                          collaborators={mentionableCollaborators}
                           disabled={savingEditId !== null}
-                          onChange={(event) =>
-                            setEditDraft({
-                              ...editDraft,
-                              requiresFollowUp: event.target.checked,
-                              followUpAssigneeName: event.target.checked
-                                ? editDraft.followUpAssigneeName
-                                : "",
-                            })
-                          }
-                          className="h-4 w-4"
+                          onChange={(nextBody, nextMentions) => {
+                            setEditDraft({ ...editDraft, body: nextBody });
+                            setEditMentions(nextMentions);
+                          }}
                         />
-                        Needs attention
-                      </label>
-                      {editDraft.requiresFollowUp && (
-                        <label className="inline-flex min-h-8 items-center gap-2 text-xs font-semibold text-slate-700">
-                          <span>Needs resolution from</span>
-                          <select
-                            aria-label="Edit needs resolution from"
-                            value={editDraft.followUpAssigneeName}
-                            disabled={savingEditId !== null}
-                            onChange={(event) =>
-                              setEditDraft({
-                                ...editDraft,
-                                followUpAssigneeName: event.target.value,
-                              })
-                            }
-                            className="h-9 rounded-sm border border-slate-300 bg-white px-2 text-sm font-semibold text-slate-900 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
-                          >
-                            <option value="" disabled>Select</option>
-                            {PRODUCTION_PERSONNEL_NAMES.map((name) => (
-                              <option key={name} value={name}>{name}</option>
-                            ))}
-                          </select>
-                        </label>
-                      )}
-                    </div>
+                      </div>
+                    </label>
                     {editError && (
                       <div role="alert" className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
                         {editError}
@@ -679,9 +715,9 @@ export default function JobUpdatesPanel({
                     </div>
                   </div>
                 ) : (
-                  <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-800">
-                    {update.body}
-                  </p>
+                  <div className="mt-3">
+                    <p className="whitespace-pre-wrap text-sm leading-6 text-slate-800">{renderMentionedBody(update.body, mentionsByUpdate[update.id] ?? [])}</p>
+                  </div>
                 )}
 
                 {updateAttachments.length > 0 && (
@@ -710,7 +746,7 @@ export default function JobUpdatesPanel({
                         Resolution
                       </div>
                       <div className="mt-2 text-sm font-bold text-slate-900">
-                        {update.resolved_by_name}
+                        {operationalFirstName(update.resolved_by_name)}
                       </div>
                       <div className="text-xs text-slate-500">
                         {formatLatestTimestamp(update.resolved_at)}
@@ -740,24 +776,25 @@ export default function JobUpdatesPanel({
                     </section>
                   ) : (
                     <div className="mt-3 border-t border-slate-200 pt-2 text-xs text-slate-500">
-                      Resolved by {update.resolved_by_name} ·{" "}
+                      Resolved by {operationalFirstName(update.resolved_by_name)} ·{" "}
                       {formatTimestamp(update.resolved_at)}
                     </div>
                   ))}
 
                 {isOpen && !isEditing && (
                   <div className="mt-3 border-t border-amber-200 pt-3">
-                    <AuthorControl
-                      label="Resolve as"
-                      value={selectedResolverName}
-                      onChange={(value) =>
-                        setResolverNamesByUpdate((current) => ({
-                          ...current,
-                          [update.id]: value,
-                        }))
-                      }
-                      disabled={resolvingId !== null}
-                    />
+                    {auth.isAuthenticated ? (
+                      <div className="text-xs text-slate-600">
+                        Resolve as <strong className="text-slate-900">{operationalFirstName(auth.profile?.displayName)}</strong>
+                      </div>
+                    ) : (
+                      <AuthorControl
+                        label="Resolve as"
+                        value={selectedResolverName}
+                        onChange={(value) => setResolverNamesByUpdate((current) => ({ ...current, [update.id]: value }))}
+                        disabled={resolvingId !== null}
+                      />
+                    )}
                     <label className="mt-3 block text-xs font-bold text-slate-700">
                       Resolution notes{" "}
                       <span className="font-normal text-slate-500">
@@ -833,26 +870,26 @@ export default function JobUpdatesPanel({
       <div className="mt-5 border border-slate-300 bg-slate-50/70 p-3">
         <h4 className="text-sm font-bold text-slate-950">Post a job update</h4>
         <div className="mt-3">
-          <AuthorControl
-            label="Posting as"
-            value={authorName}
-            onChange={setAuthorName}
-            disabled={posting}
-          />
+          {auth.isAuthenticated && auth.profile?.isActive ? (
+            <div className="text-xs text-slate-600">Posting as <strong className="text-slate-900">{operationalFirstName(auth.profile.displayName)}</strong></div>
+          ) : (
+            <AuthorControl label="Posting as" value={authorName} onChange={setAuthorName} disabled={posting} />
+          )}
         </div>
         <div className="mt-3">
           <label className="sr-only" htmlFor={`job-update-body-${job.id}`}>
             Job update
           </label>
-          <textarea
+          <JobUpdateMentionTextarea
             id={`job-update-body-${job.id}`}
             value={body}
-            onChange={(event) => setBody(event.target.value)}
-            rows={4}
-            placeholder={
-              "Share important information about this job.\n\nThis can be an update, question, request, reminder, decision, or blocker."
-            }
-            className="w-full resize-y border border-slate-300 bg-white px-3 py-2 text-sm outline-none placeholder:text-slate-500 focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
+            mentions={mentions}
+            collaborators={mentionableCollaborators}
+            disabled={posting}
+            onChange={(nextBody, nextMentions) => {
+              setBody(nextBody);
+              setMentions(nextMentions);
+            }}
           />
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -873,39 +910,11 @@ export default function JobUpdatesPanel({
                 className="sr-only"
               />
             </label>
-            <label className="inline-flex min-h-8 items-center gap-2 text-xs font-bold text-slate-800">
-              <input
-                type="checkbox"
-                checked={requiresFollowUp}
-                onChange={(event) =>
-                  setRequiresFollowUp(event.target.checked)
-                }
-                className="h-4 w-4"
-              />
-              Needs attention
-            </label>
-            {requiresFollowUp && (
-              <label className="inline-flex min-h-8 items-center gap-2 text-xs font-semibold text-slate-700">
-                <span>Needs resolution from</span>
-                <select
-                  aria-label="Needs resolution from"
-                  value={followUpAssigneeName}
-                  disabled={posting}
-                  onChange={(event) => setFollowUpAssigneeName(event.target.value)}
-                  className="h-9 rounded-sm border border-slate-300 bg-white px-2 text-sm font-semibold text-slate-900 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
-                >
-                  <option value="" disabled>Select</option>
-                  {PRODUCTION_PERSONNEL_NAMES.map((name) => (
-                    <option key={name} value={name}>{name}</option>
-                  ))}
-                </select>
-              </label>
-            )}
           </div>
           <button
             type="button"
             onClick={() => void postUpdate()}
-            disabled={posting || !authorName.trim() || !body.trim() || (requiresFollowUp && !followUpAssigneeName)}
+            disabled={posting || !(auth.profile?.displayName ?? authorName).trim() || !body.trim()}
             className="inline-flex min-h-9 items-center gap-2 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             <MessageSquare className="h-4 w-4" />
@@ -935,6 +944,18 @@ export default function JobUpdatesPanel({
           {message}
         </div>
       )}
+      {deleteTarget ? (
+        <div className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/45 p-4" role="dialog" aria-modal="true" aria-labelledby="delete-job-update-title">
+          <div className="w-full max-w-md border border-slate-400 bg-white p-5 shadow-2xl">
+            <h3 id="delete-job-update-title" className="text-lg font-bold text-slate-950">Delete Job Update?</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">This permanently removes the Update from the Job history and cannot be undone. Supporting files remain available on the Job.</p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button type="button" disabled={deletingId !== null} onClick={() => setDeleteTarget(null)} className="h-9 border border-slate-300 bg-white px-3 text-xs font-bold uppercase text-slate-700 disabled:opacity-50">Cancel</button>
+              <button type="button" disabled={deletingId !== null} onClick={() => void confirmDelete()} className="h-9 border border-red-800 bg-red-800 px-3 text-xs font-bold uppercase text-white disabled:opacity-50">{deletingId ? "Deleting…" : "Delete Update"}</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

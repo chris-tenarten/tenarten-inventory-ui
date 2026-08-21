@@ -117,12 +117,28 @@ export type JobUpdate = {
   id: string;
   job_id: string;
   author_name: string;
+  author_user_id: string | null;
   body: string;
   requires_follow_up: boolean;
   follow_up_assignee_name: string | null;
+  follow_up_assignee_user_id: string | null;
   resolved_at: string | null;
   resolved_by_name: string | null;
+  resolved_by_user_id: string | null;
   resolution_message: string | null;
   edited_at: string | null;
   created_at: string;
+};
+
+export type JobUpdateCollaborator = {
+  userId: string;
+  displayName: string;
+  role: string;
+};
+
+export type JobUpdateMention = {
+  updateId: string;
+  userId: string;
+  displayName: string;
+  isActive: boolean;
 };

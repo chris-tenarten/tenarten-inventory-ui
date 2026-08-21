@@ -5,6 +5,7 @@ export type JobUpdateSummary = {
   openFollowUpCount: number;
   openFollowUpAssignees: string[];
   latestCreatedAt: string | null;
+  hasUnseenActivity: boolean;
 };
 
 type SummaryRow = {
@@ -19,6 +20,7 @@ export const EMPTY_JOB_UPDATE_SUMMARY: JobUpdateSummary = {
   openFollowUpCount: 0,
   openFollowUpAssignees: [],
   latestCreatedAt: null,
+  hasUnseenActivity: false,
 };
 
 export function summarizeJobUpdates(rows: SummaryRow[]): JobUpdateSummary {
@@ -27,6 +29,7 @@ export function summarizeJobUpdates(rows: SummaryRow[]): JobUpdateSummary {
     openFollowUpCount: 0,
     openFollowUpAssignees: [],
     latestCreatedAt: null,
+    hasUnseenActivity: false,
   };
 
   for (const row of rows) {

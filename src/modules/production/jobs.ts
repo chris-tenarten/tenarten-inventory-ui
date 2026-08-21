@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabase';
+import { operationalFirstName } from '../../lib/identity-presentation';
 
 import type {
   JobAttachment,
@@ -66,11 +67,14 @@ const JOB_UPDATE_COLUMNS = [
   'id',
   'job_id',
   'author_name',
+  'author_user_id',
   'body',
   'requires_follow_up',
   'follow_up_assignee_name',
+  'follow_up_assignee_user_id',
   'resolved_at',
   'resolved_by_name',
+  'resolved_by_user_id',
   'resolution_message',
   'edited_at',
   'created_at',
@@ -198,10 +202,18 @@ export async function updateProductionReworkStatus(cycleId: string, status: Prod
 
 export type ProductionIntegrationSummary = { actualHours: number; laborEntryCount: number; materialReportDates: string[] };
 export async function loadJobUpdateSummaries(): Promise<Record<string, JobUpdateSummary>> {
-  const { data, error } = await supabase
-    .from('job_updates')
-    .select('job_id,created_at,requires_follow_up,resolved_at,follow_up_assignee_name');
+  const [{ data, error }, sessionResult] = await Promise.all([
+    supabase.from('job_updates').select('job_id,created_at,requires_follow_up,resolved_at,follow_up_assignee_name'),
+    supabase.auth.getSession(),
+  ]);
   if (error) throw error;
+
+  const unseenJobIds = new Set<string>();
+  if (sessionResult.data.session) {
+    const unseen = await supabase.rpc('list_my_unseen_job_update_jobs');
+    if (unseen.error && unseen.error.code !== 'PGRST202') throw unseen.error;
+    for (const row of unseen.data ?? []) unseenJobIds.add(String(row.job_id));
+  }
 
   const grouped: Record<string, typeof data> = {};
   for (const row of data ?? []) {
@@ -211,9 +223,14 @@ export async function loadJobUpdateSummaries(): Promise<Record<string, JobUpdate
   return Object.fromEntries(
     Object.entries(grouped).map(([jobId, rows]) => [
       jobId,
-      summarizeJobUpdates(rows ?? []),
+      { ...summarizeJobUpdates(rows ?? []), hasUnseenActivity: unseenJobIds.has(jobId) },
     ]),
   );
+}
+
+export async function markJobUpdatesSeen(jobId: string) {
+  const { error } = await supabase.rpc('mark_my_job_updates_seen', { p_job_id: jobId });
+  if (error && error.code !== 'PGRST202') throw error;
 }
 
 export async function loadProductionIntegrationSummaries(): Promise<Record<string, ProductionIntegrationSummary>> {
@@ -380,6 +397,8 @@ export async function createJobUpdate(
   body: string,
   requiresFollowUp: boolean,
   followUpAssigneeName: string | null,
+  followUpAssigneeUserId: string | null = null,
+  mentionedUserIds: string[] = [],
 ): Promise<JobUpdate> {
   const author = authorName.trim();
   const updateBody = body.trim();
@@ -390,17 +409,15 @@ export async function createJobUpdate(
     throw new Error('Select who needs to resolve this update.');
   }
 
-  const { data, error } = await supabase
-    .from('job_updates')
-    .insert({
-      job_id: jobId,
-      author_name: author,
-      body: updateBody,
-      requires_follow_up: requiresFollowUp,
-      follow_up_assignee_name: requiresFollowUp ? assignee : null,
-    })
-    .select(JOB_UPDATE_COLUMNS)
-    .single();
+  const { data, error } = await supabase.rpc('create_job_update_with_mentions', {
+    p_job_id: jobId,
+    p_author_name: author,
+    p_body: updateBody,
+    p_requires_follow_up: requiresFollowUp,
+    p_follow_up_assignee_name: requiresFollowUp ? assignee : null,
+    p_follow_up_assignee_user_id: requiresFollowUp ? followUpAssigneeUserId : null,
+    p_mentioned_user_ids: mentionedUserIds,
+  });
 
   if (error) throw error;
   return data as unknown as JobUpdate;
@@ -411,6 +428,8 @@ export async function editJobUpdate(
   body: string,
   requiresFollowUp: boolean,
   followUpAssigneeName: string | null,
+  followUpAssigneeUserId: string | null = null,
+  mentionedUserIds: string[] = [],
 ): Promise<JobUpdate> {
   const updateBody = body.trim();
   if (!updateBody) throw new Error('Enter an update before saving.');
@@ -419,21 +438,31 @@ export async function editJobUpdate(
     throw new Error('Select who needs to resolve this update.');
   }
 
-  const { data, error } = await supabase.rpc('edit_job_update', {
+  const { data, error } = await supabase.rpc('edit_job_update_with_mentions', {
     p_update_id: updateId,
     p_body: updateBody,
     p_requires_follow_up: requiresFollowUp,
     p_follow_up_assignee_name: requiresFollowUp ? assignee : null,
+    p_follow_up_assignee_user_id: requiresFollowUp ? followUpAssigneeUserId : null,
+    p_mentioned_user_ids: mentionedUserIds,
   });
 
   if (error) throw error;
   return data as unknown as JobUpdate;
 }
 
+export async function deleteJobUpdate(updateId: string): Promise<void> {
+  const { error } = await supabase.rpc('delete_job_update', {
+    p_update_id: updateId,
+  });
+  if (error) throw error;
+}
+
 export async function resolveJobUpdate(
   update: JobUpdate,
   resolverName: string,
   resolutionMessage: string,
+  resolverUserId: string | null = null,
 ): Promise<JobUpdate> {
   const resolver = resolverName.trim();
   if (!resolver) throw new Error('Resolver name is required.');
@@ -441,14 +470,36 @@ export async function resolveJobUpdate(
     throw new Error('Only follow-up updates can be resolved.');
   }
 
-  const { data, error } = await supabase.rpc('resolve_job_update', {
+  const { data, error } = await supabase.rpc('resolve_job_update_with_identity', {
     p_update_id: update.id,
     p_resolved_by_name: resolver,
     p_resolution_message: resolutionMessage.trim() || null,
+    p_resolved_by_user_id: resolverUserId,
   });
 
   if (error) throw error;
   return data as unknown as JobUpdate;
+}
+
+export async function loadJobUpdateCollaborators() {
+  const { data, error } = await supabase.rpc('list_active_job_update_collaborators');
+  if (error) throw error;
+  return ((data ?? []) as Array<{ user_id: string; display_name: string; role: string }>).map((row) => ({
+    userId: row.user_id,
+    displayName: operationalFirstName(row.display_name),
+    role: row.role,
+  }));
+}
+
+export async function loadJobUpdateMentions(jobId: string) {
+  const { data, error } = await supabase.rpc('list_job_update_mentions', { p_job_id: jobId });
+  if (error) throw error;
+  return ((data ?? []) as Array<{ update_id: string; user_id: string; display_name: string; is_active: boolean }>).map((row) => ({
+    updateId: row.update_id,
+    userId: row.user_id,
+    displayName: operationalFirstName(row.display_name),
+    isActive: row.is_active,
+  }));
 }
 
 export async function loadJobAttachmentCounts(): Promise<

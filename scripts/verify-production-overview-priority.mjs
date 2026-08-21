@@ -1,31 +1,33 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { prioritizeProductionOverviewJobs } from '../src/modules/production/arrangement.ts';
 
 const queue = readFileSync(new URL('../src/modules/production/components/ProductionQueue.tsx', import.meta.url), 'utf8');
 const table = readFileSync(new URL('../src/modules/production/components/ProductionTable.tsx', import.meta.url), 'utf8');
 const gantt = readFileSync(new URL('../src/modules/production/components/ProductionGantt.tsx', import.meta.url), 'utf8');
-const base = { job_number: null, requested_delivery_date: null, estimated_man_hours: null };
-const jobs = [
-  { ...base, id: 'C', name: 'Normal', production_status: 'not_started', planned_start: '2026-08-01', planned_end: '2026-08-02' },
-  { ...base, id: 'A', name: 'Unscheduled', production_status: 'not_started', planned_start: null, planned_end: null },
-  { ...base, id: 'E', name: 'Resolved history', production_status: 'not_started', planned_start: '2026-08-03', planned_end: '2026-08-04' },
-  { ...base, id: 'D', name: 'Both', production_status: 'not_started', planned_start: null, planned_end: null },
-  { ...base, id: 'B', name: 'Update attention', production_status: 'not_started', planned_start: '2026-08-05', planned_end: '2026-08-06' },
-];
-const attention = { B: { openFollowUpCount: 1 }, D: { openFollowUpCount: 1 }, E: { openFollowUpCount: 0 } };
-
-assert.deepEqual(prioritizeProductionOverviewJobs(jobs, attention).map((job) => job.id), ['A', 'D', 'B', 'C', 'E']);
-assert.deepEqual(prioritizeProductionOverviewJobs(jobs, { ...attention, B: { openFollowUpCount: 0 } }).map((job) => job.id), ['A', 'D', 'C', 'E', 'B']);
-assert.deepEqual(prioritizeProductionOverviewJobs(jobs.map((job) => job.id === 'D' ? { ...job, planned_start: '2026-08-07', planned_end: '2026-08-08' } : job), attention).map((job) => job.id), ['A', 'D', 'B', 'C', 'E']);
-assert.deepEqual(prioritizeProductionOverviewJobs(jobs, { ...attention, D: { openFollowUpCount: 0 } }).map((job) => job.id), ['A', 'D', 'B', 'C', 'E']);
-
-assert.match(queue, /prioritizeProductionOverviewJobs\(jobs, jobUpdateSummaries\)/);
+const reworkBadge = readFileSync(new URL('../src/modules/production/components/ReworkBadge.tsx', import.meta.url), 'utf8');
+const styles = readFileSync(new URL('../src/app/globals.css', import.meta.url), 'utf8');
+assert.match(queue, /const overviewJobs = jobs/);
+assert.doesNotMatch(queue, /prioritizeProductionOverviewJobs/);
 assert.match(queue, /data-overview-needs-dates-marker/);
 assert.match(queue, /onClick=\{\(\) => onScheduleJob\(job\)\}/);
-assert.match(queue, /data-overview-update-attention-marker/);
-assert.match(queue, /onClick=\{\(\) => onSelectJob\(job, 'job-updates'\)\}/);
+assert.doesNotMatch(queue, /data-overview-update-attention-marker/);
+assert.match(queue, /onOpenUpdates=\{\(\) => onSelectJob\(job, 'job-updates'\)\}/);
 assert.match(queue, /flex-col items-center justify-center gap-1/);
+assert.doesNotMatch(queue, /selectedJobId === job\.id \? 'bg-blue-50\/70 ring-2 ring-inset ring-blue-600'/,
+  'Overview selection must not wash or ring the entire row');
+assert.doesNotMatch(queue, /data-overview-selected/,
+  'Overview rows must not expose a large-area selected-state styling hook');
+assert.doesNotMatch(queue, /data-overview-update-attention|hasUpdateAttention/,
+  'Mentions, assignments, and follow-ups must not tint an Overview row');
+assert.match(queue, /selectedJobId === job\.id \? 'text-blue-800'/,
+  'Overview selection may remain localized to restrained Job identity emphasis');
+assert.match(queue, /data-production-overview-row/);
+assert.match(styles, /\[data-production-overview-row\]:not\(\[data-overview-needs-dates="true"\]\):hover[\s\S]*background-color: var\(--surface-secondary\)/,
+  'Dark Overview hover must remain subtle rather than using the global blue/slate interactive surface');
+assert.match(queue, /<ReworkBadge sequence=\{job\.rework_cycle\.sequence_number\} showSequence=\{false\} \/>/,
+  'Compact Overview Rework badges must omit sequence numbering');
+assert.match(reworkBadge, /showSequence \? `Rework #\$\{sequence\}` : "Rework"/,
+  'Detailed history must retain meaningful Rework sequence numbers');
 assert.doesNotMatch(table, /prioritizeProductionOverviewJobs/);
 assert.doesNotMatch(gantt, /prioritizeProductionOverviewJobs/);
-console.log('Production Overview priority checks passed.');
+console.log('Production Overview stable-order checks passed.');

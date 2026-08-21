@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, Camera, ClipboardList, ListFilter, Plus, RotateCw } from 'lucide-react';
+import { AlertTriangle, Camera, ChevronDown, ChevronUp, Flag, ListFilter, Plus, RotateCw } from 'lucide-react';
 import {
   useCallback,
   useEffect,
@@ -42,7 +42,7 @@ import type {
 } from './types';
 import { PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY, PRODUCTION_JOB_FOCUS_STORAGE_KEY } from './job-options';
 import { inclusiveCalendarDays, laborIntensity } from './schedule';
-import { getJobNonblockingPlanningIssues, getJobSchedulingIssues, schedulingAttentionLabel } from './readiness';
+import { getJobNonblockingPlanningIssues, getJobSchedulingIssues } from './readiness';
 import { isProductionApprovalPasswordAccepted, productionApprovalDecision, PRODUCTION_APPROVAL_WINDOW_MS } from './approval';
 import { batchRpcArgs, hasUnsavedSchedules, rebaseStagedScheduleVersion, reconcileBatch, scheduleSaveBlockedByInspector, stageSchedule as updateStagedSchedule, type InspectorOrdinarySaveState, type StagedSchedules } from './schedule-staging';
 import { describeProductionScheduleSaveError, type ProductionScheduleBatchConflictDetail } from './schedule-batch-contract';
@@ -56,6 +56,7 @@ import { loadPlanningItems, loadPlanningPhases } from '@/modules/planning/data';
 import type { PlanningItem, PlanningPhase } from '@/modules/planning/types';
 import { isPlanningEnabled } from '@/modules/planning/timeline-model.mjs';
 import { useAuth } from '@/lib/auth';
+import { useAccountPreferences } from '@/lib/account-preferences';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
 type DashboardMode = 'pipeline' | 'snapshot';
@@ -92,6 +93,9 @@ function sortJobs(jobs: ProductionJob[]) {
 
 export default function ProductionWorkspace() {
   const auth = useAuth();
+  const accountPreferences = useAccountPreferences();
+  const accountPreferencesScoped = accountPreferences.accountScoped;
+  const setAccountPreference = accountPreferences.setPreference;
   const { language, tr } = useLanguage();
   const [dashboardMode, setDashboardModeState] = useState<DashboardMode>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('view') === 'snapshot' ? 'snapshot' : 'pipeline');
   const [jobs, setJobs] = useState<ProductionJob[]>([]);
@@ -103,20 +107,27 @@ export default function ProductionWorkspace() {
   const [planningItems, setPlanningItems] = useState<PlanningItem[]>([]);
   const planningPhasesRef = useRef<PlanningPhase[]>([]);
   const [includeArchived, setIncludeArchived] = useState(false);
-  const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => typeof window === 'undefined' ? 'stage' : (window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY) as ProductionArrangement) || 'stage');
+  const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => accountPreferences.accountScoped || typeof window === 'undefined' ? 'stage' : (window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY) as ProductionArrangement) || 'stage');
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [search, setSearch] = useState('');
   const [focusedJobId, setFocusedJobId] = useState<string | null>(null);
   const [activeView, setActiveViewState] = useState<ProductionView>(() => {
-    if (typeof window === 'undefined') return 'queue';
+    if (accountPreferences.accountScoped || typeof window === 'undefined') return 'queue';
     const saved = window.sessionStorage.getItem('tenops.productionView');
     return saved === 'queue' || saved === 'spreadsheet' || saved === 'timeline' ? saved : 'queue';
   });
   const [selectedJobId, setSelectedJobId] = useState<string|null>(null);
   const [inspectorOrdinarySaveState, setInspectorOrdinarySaveState] = useState<InspectorOrdinarySaveState | null>(null);
   const [inspectorFocus, setInspectorFocus] = useState<string|undefined>();
-  const setActiveView = (view:ProductionView) => { setActiveViewState(view); window.sessionStorage.setItem('tenops.productionView',view); };
+  const setActiveView = useCallback((view:ProductionView, persist = true) => {
+    setActiveViewState(view);
+    if (!persist) return;
+    if (accountPreferencesScoped) {
+      const storedView = view === 'queue' ? 'overview' : view === 'spreadsheet' ? 'table' : 'timeline';
+      void setAccountPreference('production_view', storedView);
+    } else window.sessionStorage.setItem('tenops.productionView', view);
+  }, [accountPreferencesScoped, setAccountPreference]);
   const [scheduleFilters, setScheduleFilters] = useState<Set<ScheduleFilter>>(
     () => new Set(),
   );
@@ -125,6 +136,7 @@ export default function ProductionWorkspace() {
   );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [planningIssuesOpen, setPlanningIssuesOpen] = useState(false);
+  const [attentionCenterOpen, setAttentionCenterOpen] = useState(false);
   const [planningIssuesCategory, setPlanningIssuesCategory] = useState<'scheduling' | 'nonblocking'>('nonblocking');
   const [jobCreatorOpen, setJobCreatorOpen] = useState(false);
   const [jobCreatorReturnView, setJobCreatorReturnView] = useState<ProductionView>('queue');
@@ -165,6 +177,20 @@ export default function ProductionWorkspace() {
     if (mode === 'snapshot') url.searchParams.set('view', 'snapshot'); else url.searchParams.delete('view');
     window.history[history === 'push' ? 'pushState' : 'replaceState'](null, '', `${url.pathname}${url.search}${url.hash}`);
   }, []);
+
+  useEffect(() => {
+    if (accountPreferences.accountScoped) {
+      const nextArrangement = accountPreferences.preferences.production_arrangement;
+      setArrangementState(nextArrangement === 'stage' || nextArrangement === 'deadline' || nextArrangement === 'labor' ? nextArrangement : 'stage');
+      const nextView = accountPreferences.preferences.production_view;
+      setActiveViewState(nextView === 'table' ? 'spreadsheet' : nextView === 'timeline' ? 'timeline' : 'queue');
+      return;
+    }
+    const localArrangement = window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY);
+    setArrangementState(localArrangement === 'deadline' || localArrangement === 'labor' ? localArrangement : 'stage');
+    const localView = window.sessionStorage.getItem('tenops.productionView');
+    setActiveViewState(localView === 'spreadsheet' || localView === 'timeline' ? localView : 'queue');
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.production_arrangement, accountPreferences.preferences.production_view]);
 
   useEffect(() => {
     const syncMode = () => setDashboardModeState(new URLSearchParams(window.location.search).get('view') === 'snapshot' ? 'snapshot' : 'pipeline');
@@ -211,7 +237,7 @@ export default function ProductionWorkspace() {
         setSearch(focusedJob.job_number || focusedJob.name);
         setSelectedJobId(focusedJob.id);
         setInspectorFocus(focusedSection);
-        setActiveView('queue');
+        setActiveView('queue', false);
       }
     } catch (error) {
       console.error(error);
@@ -221,7 +247,7 @@ export default function ProductionWorkspace() {
     } finally {
       setIsLoading(false);
     }
-  }, [includeArchived]);
+  }, [includeArchived, setActiveView]);
 
   useEffect(() => {
     void loadJobs();
@@ -523,9 +549,9 @@ export default function ProductionWorkspace() {
       ? { ...job, planned_start: stagedSchedules[job.id].proposed_planned_start, planned_end: stagedSchedules[job.id].proposed_planned_end }
       : job), [jobs, stagedSchedules]);
   const schedulingAttentionJobs = useMemo(() => activeReadinessJobs.filter((job) => getJobSchedulingIssues(job).length > 0), [activeReadinessJobs]);
-  const nonblockingIssueCount = useMemo(() => {
-    return activeReadinessJobs.filter((job) => getJobNonblockingPlanningIssues(job).length > 0).length;
-  }, [activeReadinessJobs]);
+  const ordinaryAttentionJobs = useMemo(() => activeReadinessJobs.filter((job) =>
+    getJobNonblockingPlanningIssues(job).length > 0 || (jobUpdateSummaries[job.id]?.openFollowUpCount ?? 0) > 0
+  ), [activeReadinessJobs, jobUpdateSummaries]);
   const selectJob = (job:ProductionJob, focus?:string) => {
     if (document.activeElement instanceof HTMLElement) inspectorOpenerRef.current = document.activeElement;
     setSelectedJobId(job.id);
@@ -537,16 +563,8 @@ export default function ProductionWorkspace() {
     setFocusedJobId(job.id);
     setStatusFilters(new Set());
     setScheduleFilters(new Set());
-    setActiveView('timeline');
+    setActiveView('timeline', false);
     selectJob(job, 'planned-dates');
-  };
-  const reviewSchedulingAttention = () => {
-    if (schedulingAttentionJobs.length === 1) {
-      selectJob(schedulingAttentionJobs[0], 'planned-dates');
-      return;
-    }
-    setPlanningIssuesCategory('scheduling');
-    setPlanningIssuesOpen(true);
   };
   const openCreatedJobScheduling = async (job: ProductionJob) => {
     setCreatedJobScheduleError('');
@@ -741,7 +759,7 @@ export default function ProductionWorkspace() {
             className="col-span-3 h-9 min-w-0 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100 lg:col-auto lg:flex-1"
           />
 
-          {activeView !== 'timeline' && <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:items-center lg:gap-2"><span id="production-sort-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0">{tr('Sort', 'Ordenar')}</span><div role="group" aria-labelledby="production-sort-label" className="grid h-9 min-w-0 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
+          {activeView !== 'timeline' && <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:items-center lg:gap-2"><span id="production-sort-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0">{tr('Sort', 'Ordenar')}</span><div role="group" aria-labelledby="production-sort-label" className="grid h-9 min-w-0 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_arrangement', value); else window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
 
           {activeView === 'spreadsheet' && (
             <div id="production-table-columns-toolbar-slot" className="relative min-w-0 lg:shrink-0" />
@@ -829,14 +847,14 @@ export default function ProductionWorkspace() {
             {loadError}
           </div>
         )}
-        <div data-production-attention-strip data-operational-tone={schedulingAttentionJobs.length > 0 ? 'attention' : undefined} className={`mt-3 flex min-h-10 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-3 py-2 text-xs ${schedulingAttentionJobs.length > 0 ? 'border-l-2 border-amber-500 bg-amber-50/70 text-slate-600' : 'border border-slate-200 bg-white text-slate-600'}`}>
-          <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
-            {schedulingAttentionJobs.length > 0 && <>
-              <span data-scheduling-attention-count className="inline-flex items-center gap-1.5 font-bold text-amber-900"><AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />{language === 'es' ? `${schedulingAttentionJobs.length} ${schedulingAttentionJobs.length === 1 ? 'trabajo necesita fechas' : 'trabajos necesitan fechas'}` : schedulingAttentionLabel(schedulingAttentionJobs.length)}</span>
-              <button type="button" onClick={reviewSchedulingAttention} className="h-7 border border-amber-300 bg-white px-2.5 text-[10px] font-bold uppercase tracking-[0.06em] text-amber-900 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-700">{schedulingAttentionJobs.length === 1 ? tr('Review job', 'Revisar trabajo') : tr('Review jobs', 'Revisar trabajos')}</button>
-            </>}
-            {nonblockingIssueCount > 0 && <button type="button" data-nonblocking-issue-count onClick={() => { setPlanningIssuesCategory('nonblocking'); setPlanningIssuesOpen(true); }} aria-label={`${nonblockingIssueCount} Production ${nonblockingIssueCount === 1 ? 'detail needs' : 'details need'} attention`} title="Review Production details that need attention" className="relative inline-flex h-7 w-7 items-center justify-center rounded-sm border border-slate-300 bg-white text-slate-600 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-900 focus-visible:ring-2 focus-visible:ring-blue-700"><ClipboardList className="h-3.5 w-3.5" aria-hidden="true" /><span data-nonblocking-issue-badge className="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold leading-none text-white ring-2 ring-white">{nonblockingIssueCount > 99 ? '99+' : nonblockingIssueCount}</span></button>}
-          </div>
+        <div className="relative mt-3">
+        <div data-production-attention-strip data-operational-tone={schedulingAttentionJobs.length > 0 ? 'attention' : undefined} className={`flex min-h-10 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-3 py-2 text-xs ${schedulingAttentionJobs.length > 0 ? 'border-l-2 border-amber-500 bg-amber-50/70 text-slate-600' : 'border border-slate-200 bg-white text-slate-600'}`}>
+          <button type="button" onClick={() => setAttentionCenterOpen((value) => !value)} aria-expanded={attentionCenterOpen} className="inline-flex min-h-7 items-center gap-2 text-left focus-visible:ring-2 focus-visible:ring-blue-700">
+            {schedulingAttentionJobs.length > 0 ? <span data-scheduling-attention-count className="inline-flex items-center gap-1.5 font-bold text-amber-900"><AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />{schedulingAttentionJobs.length} Unscheduled</span> : <span className="font-semibold text-slate-600">All active jobs scheduled</span>}
+            <span aria-hidden="true" className="text-slate-400">·</span>
+            <span className="font-semibold text-slate-600">{ordinaryAttentionJobs.length} need attention</span>
+            {attentionCenterOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          </button>
           <div className="ml-auto flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-[10px] font-bold text-slate-600">
             <div className="whitespace-nowrap">
               <span className="uppercase tracking-[0.06em]">{tr('Active Jobs', 'Trabajos activos')}</span>
@@ -853,6 +871,11 @@ export default function ProductionWorkspace() {
               <span className="ml-1 text-xs text-slate-950">{filteredJobs.length}</span>
             </div>
           </div>
+        </div>
+        {attentionCenterOpen && <div data-production-attention-center className="absolute left-0 top-full z-30 mt-1 w-full max-w-xl border border-slate-300 bg-white p-2 shadow-xl">
+          {schedulingAttentionJobs.length > 0 && <section><h3 className="px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-amber-800">Scheduling — Priority</h3>{schedulingAttentionJobs.map((job) => <button key={job.id} type="button" onClick={() => { setAttentionCenterOpen(false); selectJob(job, 'planned-dates'); }} className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-2 py-2 text-left hover:bg-amber-50"><span className="truncate text-xs font-bold text-slate-900">{job.job_number ? `${job.job_number} · ` : ''}{job.name}</span><span className="shrink-0 text-[10px] text-amber-800">No production schedule</span></button>)}</section>}
+          <section className={schedulingAttentionJobs.length ? 'mt-2 border-t border-slate-200 pt-1' : ''}><h3 className="px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600">Needs Attention</h3>{ordinaryAttentionJobs.map((job) => { const followUps = jobUpdateSummaries[job.id]?.openFollowUpCount ?? 0; const details = getJobNonblockingPlanningIssues(job).length; return <button key={job.id} type="button" onClick={() => { setAttentionCenterOpen(false); if (followUps > 0) selectJob(job, 'job-updates'); else { setPlanningIssuesCategory('nonblocking'); setPlanningIssuesOpen(true); } }} className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-2 py-2 text-left hover:bg-slate-50"><span className="truncate text-xs font-bold text-slate-900">{job.job_number ? `${job.job_number} · ` : ''}{job.name}</span><span className="inline-flex shrink-0 items-center gap-1 text-[10px] text-slate-600">{followUps > 0 ? <><Flag className="h-3 w-3" />{followUps} unresolved {followUps === 1 ? 'Update' : 'Updates'}</> : `${details} missing ${details === 1 ? 'detail' : 'details'}`}</span></button>})}{ordinaryAttentionJobs.length === 0 && <p className="px-2 py-2 text-xs text-slate-500">No other Production items need attention.</p>}</section>
+        </div>}
         </div>
 
         <SchedulingFeedbackPanel issues={hasPendingSchedules || previewPlanningIssues ? activePlanningIssues : []} focusedIssueId={focusedPlanningIssueId} />
@@ -938,7 +961,7 @@ export default function ProductionWorkspace() {
             </div>
             {createdJobScheduleError && <p role="alert" className="mt-3 text-sm font-semibold text-red-700">{createdJobScheduleError}</p>}
             <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <button type="button" onClick={() => { setActiveView(jobCreatorReturnView); setCreatedJob(null); }} className="h-10 whitespace-nowrap border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-700 sm:flex-1">Return to Production</button>
+              <button type="button" onClick={() => { setActiveView(jobCreatorReturnView, false); setCreatedJob(null); }} className="h-10 whitespace-nowrap border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-700 sm:flex-1">Return to Production</button>
               <button type="button" onClick={() => void openCreatedJobScheduling(createdJob)} className="h-10 whitespace-nowrap border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white hover:bg-blue-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 sm:flex-1">Open Timeline to Schedule Job</button>
             </div>
           </div>

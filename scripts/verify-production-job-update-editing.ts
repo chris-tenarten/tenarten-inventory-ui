@@ -13,11 +13,14 @@ const update: JobUpdate = {
   id: "00000000-0000-4000-8000-000000000001",
   job_id: "00000000-0000-4000-8000-000000000002",
   author_name: "Anthony",
+  author_user_id: null,
   body: "Original update",
   requires_follow_up: false,
   follow_up_assignee_name: null,
+  follow_up_assignee_user_id: null,
   resolved_at: null,
   resolved_by_name: null,
+  resolved_by_user_id: null,
   resolution_message: null,
   edited_at: null,
   created_at: "2026-08-17T12:00:00Z",
@@ -28,6 +31,7 @@ assert.deepEqual(originalDraft, {
   body: "Original update",
   requiresFollowUp: false,
   followUpAssigneeName: "",
+  followUpAssigneeUserId: null,
 });
 assert.equal(canEditJobUpdate(update), true);
 assert.equal(hasJobUpdateEditChanges(update, originalDraft), false);
@@ -51,6 +55,7 @@ assert.deepEqual(summarizeJobUpdates([assigned]), {
   openFollowUpCount: 1,
   openFollowUpAssignees: ["Marcos"],
   latestCreatedAt: update.created_at,
+  hasUnseenActivity: false,
 });
 
 const reassignedDraft = {

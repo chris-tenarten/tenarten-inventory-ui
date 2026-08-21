@@ -9,6 +9,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useAccountPreferences } from "@/lib/account-preferences";
 
 export const APPEARANCE_STORAGE_KEY = "tenops_appearance";
 export const APPEARANCES = ["light", "dark"] as const;
@@ -36,17 +37,21 @@ export function ThemeProvider({
   children: ReactNode;
   defaultAppearance?: Appearance;
 }) {
+  const accountPreferences = useAccountPreferences();
   const [appearance, setAppearanceState] = useState<Appearance>(defaultAppearance);
 
   useLayoutEffect(() => {
-    const initial = isAppearance(document.documentElement.dataset.appearance)
-      ? document.documentElement.dataset.appearance
-      : defaultAppearance;
+    const accountAppearance = accountPreferences.preferences.appearance;
+    const initial = accountPreferences.accountScoped
+      ? (isAppearance(accountAppearance) ? accountAppearance : defaultAppearance)
+      : isAppearance(document.documentElement.dataset.appearance)
+        ? document.documentElement.dataset.appearance
+        : defaultAppearance;
     applyAppearance(initial);
     const timeout = window.setTimeout(() => setAppearanceState(initial), 0);
 
     function syncAppearance(event: StorageEvent) {
-      if (event.key !== APPEARANCE_STORAGE_KEY) return;
+      if (accountPreferences.accountScoped || event.key !== APPEARANCE_STORAGE_KEY) return;
       const next = isAppearance(event.newValue) ? event.newValue : defaultAppearance;
       setAppearanceState(next);
       applyAppearance(next);
@@ -57,17 +62,21 @@ export function ThemeProvider({
       window.clearTimeout(timeout);
       window.removeEventListener("storage", syncAppearance);
     };
-  }, [defaultAppearance]);
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.appearance, defaultAppearance]);
 
   const setAppearance = useCallback((next: Appearance) => {
     setAppearanceState(next);
     applyAppearance(next);
+    if (accountPreferences.accountScoped) {
+      void accountPreferences.setPreference("appearance", next);
+      return;
+    }
     try {
       window.localStorage.setItem(APPEARANCE_STORAGE_KEY, next);
     } catch {
       // Appearance still applies for the current page when storage is unavailable.
     }
-  }, []);
+  }, [accountPreferences]);
 
   const value = useMemo(
     () => ({ appearance, setAppearance }),

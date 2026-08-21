@@ -4,6 +4,7 @@ export type JobUpdateEditDraft = {
   body: string;
   requiresFollowUp: boolean;
   followUpAssigneeName: string;
+  followUpAssigneeUserId: string | null;
 };
 
 export function canEditJobUpdate(update: Pick<JobUpdate, "resolved_at">) {
@@ -13,13 +14,14 @@ export function canEditJobUpdate(update: Pick<JobUpdate, "resolved_at">) {
 export function getJobUpdateEditDraft(
   update: Pick<
     JobUpdate,
-    "body" | "requires_follow_up" | "follow_up_assignee_name"
+    "body" | "requires_follow_up" | "follow_up_assignee_name" | "follow_up_assignee_user_id"
   >,
 ): JobUpdateEditDraft {
   return {
     body: update.body,
     requiresFollowUp: update.requires_follow_up,
     followUpAssigneeName: update.follow_up_assignee_name ?? "",
+    followUpAssigneeUserId: update.follow_up_assignee_user_id,
   };
 }
 
@@ -34,7 +36,7 @@ export function getJobUpdateEditValidationError(draft: JobUpdateEditDraft) {
 export function hasJobUpdateEditChanges(
   update: Pick<
     JobUpdate,
-    "body" | "requires_follow_up" | "follow_up_assignee_name"
+    "body" | "requires_follow_up" | "follow_up_assignee_name" | "follow_up_assignee_user_id"
   >,
   draft: JobUpdateEditDraft,
 ) {
@@ -45,5 +47,6 @@ export function hasJobUpdateEditChanges(
     update.body !== draft.body.trim() ||
     update.requires_follow_up !== draft.requiresFollowUp ||
     update.follow_up_assignee_name !== nextAssignee
+    || update.follow_up_assignee_user_id !== (draft.requiresFollowUp ? draft.followUpAssigneeUserId : null)
   );
 }

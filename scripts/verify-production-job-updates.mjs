@@ -74,7 +74,7 @@ assert.match(jobs, /uploaded_by: uploadedBy/);
 assert.match(jobs, /resolve_job_update/);
 assert.match(jobs, /p_resolution_message/);
 assert.match(jobs, /job_update_attachment_role/);
-assert.match(jobs, /follow_up_assignee_name: requiresFollowUp \? assignee : null/);
+assert.match(jobs, /p_follow_up_assignee_name: requiresFollowUp \? assignee : null/);
 assert.match(jobs, /Select who needs to resolve this update/);
 
 assert.match(inspector, /Job Updates/);
@@ -83,7 +83,7 @@ assert.match(inspector, /View update/);
 assert.match(inspector, /<JobUpdatesPanel/);
 assert.match(updatesPanel, /Post a job update/);
 assert.match(updatesPanel, /Posting as/);
-assert.match(updatesPanel, /Needs attention/);
+assert.doesNotMatch(updatesPanel, /checked=\{requiresFollowUp\}|setRequiresFollowUp/);
 assert.match(updatesPanel, /Last updated/);
 assert.match(updatesPanel, /Update history/);
 assert.match(personnel, /Anthony/);
@@ -94,8 +94,7 @@ assert.match(personnel, /Pat/);
 assert.match(updatesPanel, /Other…/);
 assert.doesNotMatch(updatesPanel, /AUTHOR_OPTIONS/);
 assert.match(updatesPanel, /PRODUCTION_PERSONNEL_NAMES/);
-assert.match(updatesPanel, /Needs resolution from/);
-assert.match(updatesPanel, /followUpAssigneeName/);
+assert.doesNotMatch(updatesPanel, /setOpenOnly|openOnly/);
 assert.match(updatesPanel, /Resolve as/);
 assert.match(updatesPanel, /getResolutionResolverName/);
 assert.match(updatesPanel, /resolverNamesByUpdate/);
@@ -125,13 +124,20 @@ assert.match(updatesPanel, /Resolved by/);
 assert.match(updatesPanel, /localStorage/);
 assert.match(updatesPanel, /uploadJobAttachments/);
 assert.match(updatesPanel, /attachmentsByUpdate/);
-assert.doesNotMatch(updatesPanel, /deleteJobUpdate/);
+assert.match(updatesPanel, /deleteJobUpdate/);
 assert.match(updatesPanel, /editJobUpdate/);
 assert.match(updatesPanel, /· Edited/);
 assert.match(updatesPanel, /Save Changes/);
 assert.match(updatesPanel, /Changes saved\./);
 assert.match(updatesPanel, /canEditJobUpdate/);
-assert.match(indicator, /openFollowUpAssignees/);
-assert.match(indicator, /assigned to/);
+assert.match(indicator, /data-job-updates-unseen-dot/);
+assert.match(indicator, /const hasUpdates = summary\.total > 0/);
+assert.match(indicator, /const hasUnseenActivity = hasUpdates && summary\.hasUnseenActivity/,
+  'A zero-update control must never display an unseen dot');
+assert.doesNotMatch(indicator, /if \(summary\.total === 0\) return null/,
+  'Every applicable Overview row must retain the Job Updates navigation control');
+assert.match(indicator, /hasUpdates \? <>[\s\S]*\|[\s\S]*summary\.total[\s\S]*<\/>(?:\s*): null/,
+  'Only nonzero controls may render the typographic separator and count');
+assert.doesNotMatch(indicator, /openFollowUpAssignees|assigned to|Flag/);
 
 console.log('Production Job Updates checks passed.');

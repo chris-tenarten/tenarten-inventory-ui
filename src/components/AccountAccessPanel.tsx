@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { operationalFirstName } from "@/lib/identity-presentation";
 import { ROLE_LABELS } from "@/lib/rbac";
 
 export default function AccountAccessPanel({ onAuthenticated, showEyebrow = true }: { onAuthenticated(): void; showEyebrow?: boolean }) {
@@ -58,7 +59,7 @@ export default function AccountAccessPanel({ onAuthenticated, showEyebrow = true
     return (
       <div className="mt-5 border-t border-slate-300 pt-5">
         {showEyebrow ? <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">TenOps account access</div> : null}
-        <div className="mt-3 font-bold text-slate-950">{auth.profile?.displayName || auth.user?.email || "Authenticated TenOps account"}</div>
+        <div className="mt-3 font-bold text-slate-950">{operationalFirstName(auth.profile?.displayName) || auth.user?.email || "Authenticated TenOps account"}</div>
         {auth.user?.email ? <div className="mt-1 text-xs text-slate-600">{auth.user.email}</div> : null}
         {auth.profile ? <div className="mt-2 text-xs text-slate-600">Role: <strong>{ROLE_LABELS[auth.profile.role]}</strong> · {auth.profile.isActive ? "Active" : "Inactive"}</div> : null}
         {!auth.profile && auth.profileError ? <div role="alert" className="mt-2 text-xs font-semibold text-red-700">{auth.profileError}</div> : null}

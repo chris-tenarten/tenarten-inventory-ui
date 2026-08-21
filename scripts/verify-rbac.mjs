@@ -11,6 +11,7 @@ const purchaseOrderEdge = read("supabase/functions/generate-purchase-order-pdf/i
 const transmittalEdge = read("supabase/functions/generate-job-transmittal-pdf/index.ts");
 const enforcementHarness = read("scripts/verify-rbac-enforcement.mjs");
 const compatibilitySupport = read("supabase/migrations/20260818_004_final_compatibility_support.sql");
+const jobUpdateDeletion = read("supabase/migrations/20260821_001_job_update_deletion.sql");
 const authProvider = read("src/lib/auth.tsx");
 const notifications = read("src/components/AccountNotifications.tsx");
 const accountAccess = read("src/components/AccountAccessPanel.tsx");
@@ -18,11 +19,16 @@ const adminSettings = read("src/components/AdminSettingsPanel.tsx");
 const adminEdge = read("supabase/functions/admin-manage-users/index.ts");
 const settingsPage = read("src/app/settings/page.tsx");
 const clientShell = read("src/app/client-layout-shell.tsx");
+const welcomeHero = read("src/components/WelcomeHero.tsx");
 
 function assert(condition, message) { if (!condition) throw new Error(message); }
 
 for (const role of ["guest", "member", "lead", "developer", "admin"]) assert(rbac.includes(`"${role}"`), `Missing role ${role}`);
 assert(rbac.includes('"manageProductionRework"'), "Missing Rework capability");
+assert(rbac.includes('"deleteJobUpdate"'), "Missing Admin Job Update deletion capability");
+assert(!/const member = \[[\s\S]*?deleteJobUpdate[\s\S]*?\] as const;/.test(rbac), "Member must not inherit delete-any Job Update authority");
+assert(jobUpdateDeletion.includes("values ('admin', 'deleteJobUpdate')"), "Only Admin receives delete-any Job Update authority");
+assert(jobUpdateDeletion.includes("selected_update.author_user_id is distinct from caller_user.user_id"), "Canonical authorship must govern own-update deletion");
 assert(/const developer = \[\.\.\.guest, "accessDevelopmentEnvironment"\]/.test(rbac), "Developer must not inherit production authority");
 assert(/const lead = \[[\s\S]*"manageProductionRework"/.test(rbac), "Lead must manage Rework");
 assert(!/const member = \[[\s\S]*"manageProductionRework"/.test(rbac.split("const lead")[0]), "Member must not manage Rework");
@@ -86,8 +92,17 @@ assert(compatibilitySupport.includes("'account-welcome-v1'"), "Welcome notificat
 assert(compatibilitySupport.includes("Welcome to TenOps, ' || btrim(selected_user.display_name)"), "Welcome title must use canonical display name");
 assert(compatibilitySupport.includes("jsonb_build_object('role', selected_user.role)"), "Welcome metadata must use canonical role");
 assert(authProvider.includes('supabase.rpc("ensure_my_welcome_notification")'), "Authenticated profile load must ensure the welcome notification");
-assert(notifications.includes('supabase.rpc("list_my_account_notifications")'), "Header notifications must include account notices");
+assert(notifications.includes('supabase.rpc("list_my_account_notification_history"'), "Header notifications must include retained account-notification history");
 assert(notifications.includes('supabase.rpc("mark_my_account_notification_read"'), "Account notices must support canonical read state");
+assert(notifications.includes('item.notification_type === "welcome"'), "Welcome notification must open the retained onboarding entry point");
+assert(notifications.includes('auth.profile?.displayName'), "Welcome onboarding must use the canonical account display name");
+assert(notifications.includes('ROLE_LABELS[auth.profile.role]'), "Welcome onboarding must use the canonical role");
+assert(clientShell.includes('data-account-identity'), "Authenticated header must expose compact account identity");
+assert(clientShell.includes('operationalFirstName(auth.profile.displayName)'), "Header identity must present the canonical display_name as an operational first name");
+assert(clientShell.includes('ROLE_LABELS[auth.profile.role]'), "Header identity must use canonical role");
+assert(welcomeHero.includes('welcome.read_at === null'), "Automatic Welcome hero must be account-scoped to unread durable Welcome state");
+assert(!welcomeHero.includes('mark_my_account_notification_read'), "Hero completion must not mutate durable Welcome read state");
+assert(welcomeHero.includes('tenops:start-notification-onboarding'), "Hero completion must teach the real Notification path");
 assert(settingsPage.includes('<AccountAccessPanel onAuthenticated={() => {}} showEyebrow={false} />'), "Unlocked Settings must expose Account Access");
 assert(clientShell.includes('<AccountAccessPanel onAuthenticated={() => setIsUnlocked(true)} />'), "Locked Internal Access must retain account authentication");
 assert(accountAccess.includes('auth.isAuthenticated && !auth.requiresPasswordSetup'), "Authenticated Settings must show account identity instead of sign-in fields");

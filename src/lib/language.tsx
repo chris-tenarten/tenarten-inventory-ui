@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useAccountPreferences } from "@/lib/account-preferences";
 
 export const LANGUAGE_STORAGE_KEY = "tenops_language";
 
@@ -50,7 +51,7 @@ const english = {
   "settings.description": "Operational configuration remains with the module that owns it.",
   "settings.appearance": "Appearance",
   "settings.theme": "Theme",
-  "settings.themeDescription": "Choose the TenOps appearance for this browser.",
+  "settings.themeDescription": "Choose your preferred TenOps appearance.",
   "settings.light": "Light",
   "settings.dark": "Dark",
   "settings.displaySize": "Display Size",
@@ -62,6 +63,7 @@ const english = {
   "settings.large": "Large",
   "settings.largeDescription": "Larger text, controls, and spacing for easier reading.",
   "settings.browserOnly": "This preference is stored only in this browser.",
+  "settings.accountPreference": "Follows your account across devices.",
   "settings.language": "Language",
   "settings.languageDescription": "Translate the TenOps interface. Operational data and generated documents remain unchanged.",
   "settings.english": "English",
@@ -111,7 +113,7 @@ const spanish: Record<TranslationKey, string> = {
   "settings.description": "La configuración operativa permanece en el módulo responsable.",
   "settings.appearance": "Apariencia",
   "settings.theme": "Tema",
-  "settings.themeDescription": "Elige la apariencia de TenOps para este navegador.",
+  "settings.themeDescription": "Elige tu apariencia preferida de TenOps.",
   "settings.light": "Claro",
   "settings.dark": "Oscuro",
   "settings.displaySize": "Tamaño de interfaz",
@@ -123,6 +125,7 @@ const spanish: Record<TranslationKey, string> = {
   "settings.large": "Grande",
   "settings.largeDescription": "Texto, controles y espacios más grandes para facilitar la lectura.",
   "settings.browserOnly": "Esta preferencia se guarda únicamente en este navegador.",
+  "settings.accountPreference": "Sigue a tu cuenta en todos tus dispositivos.",
   "settings.language": "Idioma",
   "settings.languageDescription": "Traduce la interfaz de TenOps. Los datos operativos y documentos generados no cambian.",
   "settings.english": "English",
@@ -147,19 +150,21 @@ function isLanguage(value: unknown): value is Language {
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
+  const accountPreferences = useAccountPreferences();
   const [language, setLanguageState] = useState<Language>("en");
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      const stored = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-      if (isLanguage(stored)) {
-        document.documentElement.lang = stored;
-        setLanguageState(stored);
-      }
+      const stored = accountPreferences.accountScoped
+        ? accountPreferences.preferences.language
+        : window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+      const next = isLanguage(stored) ? stored : "en";
+      document.documentElement.lang = next;
+      setLanguageState(next);
     }, 0);
 
     function syncLanguage(event: StorageEvent) {
-      if (event.key === LANGUAGE_STORAGE_KEY && isLanguage(event.newValue)) {
+      if (!accountPreferences.accountScoped && event.key === LANGUAGE_STORAGE_KEY && isLanguage(event.newValue)) {
         document.documentElement.lang = event.newValue;
         setLanguageState(event.newValue);
       }
@@ -170,20 +175,21 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       window.clearTimeout(timeout);
       window.removeEventListener("storage", syncLanguage);
     };
-  }, []);
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.language]);
 
   const value = useMemo<LanguageContextValue>(
     () => ({
       language,
       setLanguage: (next) => {
-        window.localStorage.setItem(LANGUAGE_STORAGE_KEY, next);
+        if (accountPreferences.accountScoped) void accountPreferences.setPreference("language", next);
+        else window.localStorage.setItem(LANGUAGE_STORAGE_KEY, next);
         document.documentElement.lang = next;
         setLanguageState(next);
       },
       t: (key) => (language === "es" ? spanish[key] : english[key]),
       tr: (englishText, spanishText) => language === "es" ? spanishText : englishText,
     }),
-    [language],
+    [accountPreferences, language],
   );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;

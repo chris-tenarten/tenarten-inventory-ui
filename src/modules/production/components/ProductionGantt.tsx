@@ -44,6 +44,7 @@ import { adjustPlanningInterval, planningPhaseWithStagedDates, type StagedPlanni
 import { dependentPlanningPhaseIds, evaluatePlanningSchedule, planningCascadeDelta, planningDependencyGraphIsAcyclic, type PlanningScheduleIssue } from '@/modules/planning/schedule-model.mjs';
 import { overlayVisualForPhase, PLANNING_PAUSE_HATCH } from '@/modules/planning/phase-visuals';
 import { mergePauseRanges, planningIntervalGeometry, rangesIntersect, selectCollapsedTimelinePhases } from '@/modules/planning/timeline-model.mjs';
+import { useAccountPreferences } from '@/lib/account-preferences';
 
 type ProductionGanttProps = {
   jobs: ProductionJob[];
@@ -214,6 +215,7 @@ function createTimeline(jobs: ProductionJob[], zoom: TimelineZoom, extension: { 
 }
 
 export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule, onSelectJob, planningPhases = [], planningItems = [], stagedPlanningSchedules = {}, onStagePlanningSchedules, planningEnabled = false, onSelectPlanningPhase, planningIssues = [], onPreviewPlanningIssuesChange, onDependencyIssueFocus }: ProductionGanttProps) {
+  const accountPreferences = useAccountPreferences();
   const [interaction, setInteraction] = useState<ScheduleInteraction | null>(null);
   const [phaseInteraction, setPhaseInteraction] = useState<PhaseScheduleInteraction | null>(null);
   const [preferences, setPreferences] = useState<TimelinePreferences>(defaultTimelinePreferences);
@@ -330,14 +332,22 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
-      setPreferences(parseTimelinePreferences(window.localStorage.getItem(TIMELINE_PREFERENCES_KEY)));
-      setCollapsedPhaseDisplay(readCollapsedPhaseDisplayMode());
+      const localPreferences = parseTimelinePreferences(window.localStorage.getItem(TIMELINE_PREFERENCES_KEY));
+      setPreferences({
+        ...localPreferences,
+        zoom: accountPreferences.accountScoped ? accountPreferences.preferences.timeline_zoom ?? defaultTimelinePreferences.zoom : localPreferences.zoom,
+        rowDensity: accountPreferences.accountScoped ? accountPreferences.preferences.timeline_row_density ?? defaultTimelinePreferences.rowDensity : localPreferences.rowDensity,
+      });
+      setCollapsedPhaseDisplay(accountPreferences.accountScoped
+        ? accountPreferences.preferences.collapsed_phase_display ?? 'fill'
+        : readCollapsedPhaseDisplayMode());
       setPreferencesLoaded(true);
     });
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.collapsed_phase_display, accountPreferences.preferences.timeline_row_density, accountPreferences.preferences.timeline_zoom]);
 
   useEffect(() => {
+    if (accountPreferences.accountScoped) return;
     const syncCollapsedPhaseDisplay = (event: Event) => {
       if (event instanceof StorageEvent && event.key !== COLLAPSED_PHASE_DISPLAY_STORAGE_KEY) return;
       setCollapsedPhaseDisplay(readCollapsedPhaseDisplayMode());
@@ -348,12 +358,17 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
       window.removeEventListener('storage', syncCollapsedPhaseDisplay);
       window.removeEventListener(COLLAPSED_PHASE_DISPLAY_EVENT, syncCollapsedPhaseDisplay);
     };
-  }, []);
+  }, [accountPreferences.accountScoped]);
 
   useEffect(() => {
     if (!preferencesLoaded) return;
-    window.localStorage.setItem(TIMELINE_PREFERENCES_KEY, JSON.stringify(preferences));
-  }, [preferences, preferencesLoaded]);
+    const devicePreferences = accountPreferences.accountScoped ? {
+      ...preferences,
+      zoom: defaultTimelinePreferences.zoom,
+      rowDensity: defaultTimelinePreferences.rowDensity,
+    } : preferences;
+    window.localStorage.setItem(TIMELINE_PREFERENCES_KEY, JSON.stringify(devicePreferences));
+  }, [accountPreferences.accountScoped, preferences, preferencesLoaded]);
 
   const updateScrollMetrics = useCallback(() => {
     const element = scrollRef.current;
@@ -734,6 +749,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     if (interaction) return;
     setNavigationMode(null);
     setPreferences((current) => ({ ...current, zoom: nextZoom }));
+    if (accountPreferences.accountScoped) void accountPreferences.setPreference('timeline_zoom', nextZoom);
     requestAnimationFrame(updateScrollMetrics);
   }
 
@@ -987,7 +1003,10 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
             aria-valuetext={rowDensityOption.label}
             onChange={(event) => {
               const option = TIMELINE_ROW_DENSITY_OPTIONS[Number(event.currentTarget.value)];
-              if (option) setPreferences((current) => ({ ...current, rowDensity: option.value }));
+              if (option) {
+                setPreferences((current) => ({ ...current, rowDensity: option.value }));
+                if (accountPreferences.accountScoped) void accountPreferences.setPreference('timeline_row_density', option.value);
+              }
             }}
             className="timeline-density-slider w-16 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
           />

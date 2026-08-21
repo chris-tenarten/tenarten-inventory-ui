@@ -1,10 +1,9 @@
 'use client';
 
-import { AlertTriangle, Flag } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
 import { EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary, type ProductionIntegrationSummary } from '../jobs';
 import { materialStatusLabel } from '../material-status';
-import { prioritizeProductionOverviewJobs } from '../arrangement';
 import { getJobReadiness } from '../readiness';
 import type { ProductionJob } from '../types';
 import ActivityStrip from './ActivityStrip';
@@ -53,7 +52,7 @@ export default function ProductionQueue({
   const { language, tr } = useLanguage();
   const materialLabels = { unknown: 'Sin definir', not_ready: 'No listo', ordered: 'Pedido', ready: 'Listo' } as const;
   const needsScheduling = (job: ProductionJob) => !['complete', 'cancelled'].includes(job.production_status) && (!job.planned_start || !job.planned_end);
-  const overviewJobs = prioritizeProductionOverviewJobs(jobs, jobUpdateSummaries);
+  const overviewJobs = jobs;
 
   return (
     <div className="overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
@@ -72,7 +71,6 @@ export default function ProductionQueue({
           const setupFocus = readiness.state === 'not_scheduled' ? 'planned-dates' : readiness.missing.includes('labor estimate') ? 'labor' : undefined;
           const fileCount = attachmentCounts[job.id] ?? 0;
           const updateSummary = jobUpdateSummaries[job.id] ?? EMPTY_JOB_UPDATE_SUMMARY;
-          const hasUpdateAttention = updateSummary.openFollowUpCount > 0;
           const summary = integrationSummaries[job.id] ?? { actualHours: 0, laborEntryCount: 0, materialReportDates: [] };
           const hasMaterialUse = summary.materialReportDates.length > 0;
           const materialLabel = language === 'es' ? materialLabels[job.material_status] : materialStatusLabel(job.material_status);
@@ -80,9 +78,9 @@ export default function ProductionQueue({
           return (
             <article
               key={job.id}
+              data-production-overview-row
               data-overview-needs-dates={needsScheduling(job) ? 'true' : undefined}
-              data-overview-update-attention={hasUpdateAttention ? 'true' : undefined}
-              className={`relative px-3 py-3 md:grid md:grid-cols-[minmax(260px,1.7fr)_125px_160px_140px_150px_145px] md:items-center md:gap-2 md:px-4 ${needsScheduling(job) || hasUpdateAttention ? 'bg-amber-50/50 hover:bg-amber-50/70' : 'hover:bg-slate-50'} ${selectedJobId === job.id ? 'bg-blue-50/70 ring-2 ring-inset ring-blue-600' : ''}`}
+              className={`relative px-3 py-3 md:grid md:grid-cols-[minmax(260px,1.7fr)_125px_160px_140px_150px_145px] md:items-center md:gap-2 md:px-4 ${needsScheduling(job) ? 'bg-amber-50/50 hover:bg-amber-50/70' : 'hover:bg-slate-50'}`}
             >
               <button type="button" aria-label={`Open ${job.name}`} onClick={() => onSelectJob(job, setupFocus)} className="absolute inset-0 z-0 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-700">
                 <span className="sr-only">Open job details</span>
@@ -92,7 +90,7 @@ export default function ProductionQueue({
                 <div className="flex min-w-0 items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">{job.job_number || tr('No job number', 'Sin número')}</div>
-                    <div className="mt-0.5 flex items-center gap-1.5"><h2 className="truncate text-base font-bold leading-5 text-slate-950">{job.name}</h2>{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} /> : null}</div>
+                    <div className="mt-0.5 flex items-center gap-1.5"><h2 className={`truncate text-base font-bold leading-5 ${selectedJobId === job.id ? 'text-blue-800' : 'text-slate-950'}`}>{job.name}</h2>{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} showSequence={false} /> : null}</div>
                     <div className="mt-0.5 truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</div>
                   </div>
                   <div className="pointer-events-auto flex shrink-0 flex-col items-end justify-center gap-1"><ProductionStatusBadge status={job.production_status} />{!job.planned_start || !job.planned_end ? <span data-overview-schedule-condition><UnscheduledBadge ariaLabel={`${job.name} needs planned dates`} onClick={() => onScheduleJob(job)} /></span> : null}</div>
@@ -133,12 +131,11 @@ export default function ProductionQueue({
               </div>
 
               <div className="pointer-events-none relative z-10 hidden min-w-0 items-start gap-4 md:flex">
-                {needsScheduling(job) || hasUpdateAttention ? <span className="pointer-events-auto flex shrink-0 self-stretch flex-col items-center justify-center gap-1">
+                {needsScheduling(job) ? <span className="pointer-events-auto flex shrink-0 self-stretch flex-col items-center justify-center gap-1">
                   {needsScheduling(job) ? <button type="button" data-overview-needs-dates-marker aria-label={`Schedule ${job.name}`} title="Needs planned dates" onClick={() => onScheduleJob(job)} className="inline-flex h-6 w-6 items-center justify-center text-amber-700 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"><AlertTriangle aria-hidden="true" className="h-4 w-4" /></button> : null}
-                  {hasUpdateAttention ? <button type="button" data-overview-update-attention-marker aria-label={`Open Job Updates requiring attention for ${job.name}`} title="Job Updates need attention" onClick={() => onSelectJob(job, 'job-updates')} className="inline-flex h-6 w-6 items-center justify-center text-amber-700 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"><Flag aria-hidden="true" className="h-4 w-4 fill-current" /></button> : null}
                 </span> : null}
                 <div className="min-w-0">
-                  <span className="flex items-center gap-1.5 text-sm font-bold leading-5">{job.job_number && <span className="text-slate-500">{job.job_number}</span>}<span className="truncate">{job.name}</span>{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} /> : null}</span>
+                  <span className={`flex items-center gap-1.5 text-sm font-bold leading-5 ${selectedJobId === job.id ? 'text-blue-800' : ''}`}>{job.job_number && <span className="text-slate-500">{job.job_number}</span>}<span className="truncate">{job.name}</span>{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} showSequence={false} /> : null}</span>
                   <span className="mt-0.5 block truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</span>
                   <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} onCreateRework={onCreateRework} />
                   {job.archived_at ? <span className="mt-1 inline-block text-[10px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}

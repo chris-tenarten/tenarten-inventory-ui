@@ -18,6 +18,7 @@ import JobUpdatesIndicator from './JobUpdatesIndicator';
 import UnscheduledBadge from './UnscheduledBadge';
 import ReworkBadge from './ReworkBadge';
 import ReworkQuickAction from './ReworkQuickAction';
+import { useAccountPreferences } from '@/lib/account-preferences';
 
 const formatHours = (value: number) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value);
 
@@ -340,6 +341,7 @@ export default function ProductionTable({
   selectedJobId,
   onSelectJob,
 }: Props) {
+  const accountPreferences = useAccountPreferences();
   const [rows, setRows] = useState<Record<string, EditableRow>>({});
   const [states, setStates] = useState<Record<string, SaveState>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -388,16 +390,26 @@ export default function ProductionTable({
   const projectStickyLeft = effectiveWidths.inspector + effectiveWidths.jobNumber;
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
-      setTableLayout(parseStoredTableLayout(window.localStorage.getItem(TABLE_LAYOUT_STORAGE_KEY)));
+      const localLayout = parseStoredTableLayout(window.localStorage.getItem(TABLE_LAYOUT_STORAGE_KEY));
+      const accountHidden = accountPreferences.preferences.production_table_hidden_columns;
+      setTableLayout({
+        widths: localLayout.widths,
+        hidden: accountPreferences.accountScoped && Array.isArray(accountHidden)
+          ? accountHidden.filter((id): id is TableColumnId => id in tableColumnById && tableColumnById[id as TableColumnId].hideable)
+          : accountPreferences.accountScoped ? defaultTableLayout.hidden : localLayout.hidden,
+      });
       setLayoutLoaded(true);
     });
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.production_table_hidden_columns]);
 
   useEffect(() => {
     if (!layoutLoaded) return;
-    window.localStorage.setItem(TABLE_LAYOUT_STORAGE_KEY, JSON.stringify(tableLayout));
-  }, [layoutLoaded, tableLayout]);
+    window.localStorage.setItem(TABLE_LAYOUT_STORAGE_KEY, JSON.stringify({
+      widths: tableLayout.widths,
+      hidden: accountPreferences.accountScoped ? defaultTableLayout.hidden : tableLayout.hidden,
+    }));
+  }, [accountPreferences.accountScoped, layoutLoaded, tableLayout]);
 
   useEffect(() => {
     setColumnsToolbarTarget(document.getElementById('production-table-columns-toolbar-slot'));
@@ -686,17 +698,19 @@ export default function ProductionTable({
       setRemarksEditor(null);
       setRemarksError('');
     }
-    setTableLayout((current) => ({
-      ...current,
-      hidden: visible
+    setTableLayout((current) => {
+      const hidden = visible
         ? current.hidden.filter((columnId) => columnId !== id)
-        : [...new Set([...current.hidden, id])],
-    }));
+        : [...new Set([...current.hidden, id])];
+      if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_table_hidden_columns', hidden);
+      return { ...current, hidden };
+    });
   }
 
   function showAllColumns() {
     setLayoutMessage('');
     setTableLayout((current) => ({ ...current, hidden: [] }));
+    if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_table_hidden_columns', []);
   }
 
   function resetTableLayout() {
@@ -708,6 +722,7 @@ export default function ProductionTable({
     setRemarksError('');
     setLayoutMessage('');
     setTableLayout(defaultTableLayout);
+    if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_table_hidden_columns', defaultTableLayout.hidden);
   }
 
   function renderResizeHandle(column: TableColumn) {
