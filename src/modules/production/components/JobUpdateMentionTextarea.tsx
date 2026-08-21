@@ -1,34 +1,121 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { type CSSProperties, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  reconstructJobUpdateMentionText,
+  retainCanonicalMentions,
+  tokenizeJobUpdateMentionText,
+} from "../job-update-mention-tokenization";
 import type { JobUpdateCollaborator } from "../types";
 
 export type SelectedMention = Pick<JobUpdateCollaborator, "userId" | "displayName">;
 
-function getCaretMenuPosition(textarea: HTMLTextAreaElement, caret: number) {
-  const mirror = document.createElement("div");
-  const style = window.getComputedStyle(textarea);
-  for (const property of [
-    "fontFamily", "fontSize", "fontWeight", "letterSpacing", "lineHeight",
-    "paddingTop", "paddingRight", "paddingBottom", "paddingLeft",
-    "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth",
-  ]) mirror.style.setProperty(property, style.getPropertyValue(property));
-  mirror.style.position = "absolute";
-  mirror.style.visibility = "hidden";
-  mirror.style.whiteSpace = "pre-wrap";
-  mirror.style.overflowWrap = "break-word";
-  mirror.style.width = `${textarea.clientWidth}px`;
-  mirror.textContent = textarea.value.slice(0, caret);
-  const marker = document.createElement("span");
-  marker.textContent = textarea.value.slice(caret, caret + 1) || "\u200b";
-  mirror.append(marker);
-  document.body.append(mirror);
-  const position = {
-    left: Math.min(marker.offsetLeft, Math.max(0, textarea.clientWidth - 256)),
-    top: marker.offsetTop + Number.parseFloat(style.lineHeight || "24"),
+const EDITOR_TEXT_METRICS: CSSProperties = {
+  boxSizing: "border-box",
+  fontFamily: "inherit",
+  fontFeatureSettings: '"kern" 0, "liga" 0',
+  fontKerning: "none",
+  fontSize: "0.875rem",
+  fontStyle: "normal",
+  fontVariantLigatures: "none",
+  fontWeight: 400,
+  letterSpacing: "normal",
+  lineHeight: "1.5rem",
+  overflowWrap: "break-word",
+  padding: "0.5rem 0.75rem",
+  tabSize: 4,
+  textAlign: "start",
+  textIndent: 0,
+  textTransform: "none",
+  whiteSpace: "pre-wrap",
+  wordSpacing: "normal",
+};
+
+function getCaretOffset(editor: HTMLElement) {
+  const selection = window.getSelection();
+  if (!selection?.rangeCount || !selection.anchorNode || !editor.contains(selection.anchorNode)) return 0;
+  const range = document.createRange();
+  range.selectNodeContents(editor);
+  range.setEnd(selection.anchorNode, selection.anchorOffset);
+  return range.toString().length;
+}
+
+function setCaretOffset(editor: HTMLElement, requestedOffset: number) {
+  const selection = window.getSelection();
+  if (!selection) return;
+  const targetOffset = Math.max(0, Math.min(requestedOffset, editor.textContent?.length ?? 0));
+  const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
+  let traversed = 0;
+  let node = walker.nextNode();
+  const range = document.createRange();
+
+  while (node) {
+    const length = node.textContent?.length ?? 0;
+    if (traversed + length >= targetOffset) {
+      range.setStart(node, targetOffset - traversed);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      return;
+    }
+    traversed += length;
+    node = walker.nextNode();
+  }
+
+  range.selectNodeContents(editor);
+  range.collapse(false);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function renderControlledValue(
+  editor: HTMLElement,
+  value: string,
+  mentions: SelectedMention[],
+) {
+  const segments = tokenizeJobUpdateMentionText(value, mentions);
+  if (reconstructJobUpdateMentionText(segments) !== value) {
+    throw new Error("Job Update mention rendering must reproduce the controlled value exactly.");
+  }
+  const fragment = document.createDocumentFragment();
+  for (const segment of segments) {
+    if (segment.userId) {
+      const mention = document.createElement("span");
+      mention.dataset.canonicalMentionUserId = segment.userId;
+      mention.className = "text-blue-700";
+      mention.textContent = segment.text;
+      fragment.append(mention);
+    } else {
+      fragment.append(document.createTextNode(segment.text));
+    }
+  }
+  editor.replaceChildren(fragment);
+}
+
+function insertTextAtSelection(editor: HTMLElement, text: string) {
+  const selection = window.getSelection();
+  if (!selection?.rangeCount || !editor.contains(selection.anchorNode)) return;
+  const range = selection.getRangeAt(0);
+  range.deleteContents();
+  const textNode = document.createTextNode(text);
+  range.insertNode(textNode);
+  range.setStartAfter(textNode);
+  range.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function getCaretMenuPosition(editor: HTMLElement) {
+  const selection = window.getSelection();
+  const editorRect = editor.getBoundingClientRect();
+  if (!selection?.rangeCount || !editor.contains(selection.anchorNode)) {
+    return { left: 0, top: editor.offsetHeight };
+  }
+  const caretRect = selection.getRangeAt(0).getBoundingClientRect();
+  return {
+    left: Math.min(Math.max(0, caretRect.left - editorRect.left), Math.max(0, editor.clientWidth - 256)),
+    top: Math.max(0, caretRect.bottom - editorRect.top + editor.scrollTop),
   };
-  mirror.remove();
-  return position;
 }
 
 export default function JobUpdateMentionTextarea({
@@ -50,8 +137,8 @@ export default function JobUpdateMentionTextarea({
   placeholder?: string;
   onChange(value: string, mentions: SelectedMention[]): void;
 }) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const highlightRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
+  const pendingCaretRef = useRef<number | null>(null);
   const [mentionStart, setMentionStart] = useState<number | null>(null);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -65,23 +152,18 @@ export default function JobUpdateMentionTextarea({
       .slice(0, 8);
   }, [collaborators, mentions, query]);
 
-  const highlightedValue = useMemo(() => {
-    if (mentions.length === 0) return value;
-    const names = [...mentions].sort((a, b) => b.displayName.length - a.displayName.length);
-    const tokens = names.map((mention) => `@${mention.displayName}`);
-    const parts: Array<{ text: string; mention: boolean }> = [];
-    let cursor = 0;
-    while (cursor < value.length) {
-      const match = tokens
-        .map((token) => ({ token, index: value.indexOf(token, cursor) }))
-        .filter((candidate) => candidate.index >= 0)
-        .sort((a, b) => a.index - b.index || b.token.length - a.token.length)[0];
-      if (!match) { parts.push({ text: value.slice(cursor), mention: false }); break; }
-      if (match.index > cursor) parts.push({ text: value.slice(cursor, match.index), mention: false });
-      parts.push({ text: match.token, mention: true });
-      cursor = match.index + match.token.length;
+  useLayoutEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+    const wasFocused = document.activeElement === editor;
+    const caret = pendingCaretRef.current ?? (wasFocused ? getCaretOffset(editor) : null);
+    renderControlledValue(editor, value, mentions);
+    editor.dataset.empty = value ? "false" : "true";
+    if (caret !== null) {
+      editor.focus();
+      setCaretOffset(editor, caret);
     }
-    return parts.map((part, index) => <span key={`${index}-${part.text}`} className={part.mention ? "font-medium text-blue-700" : "text-slate-900"}>{part.text}</span>);
+    pendingCaretRef.current = null;
   }, [mentions, value]);
 
   function updateMentionQuery(nextValue: string, caret: number) {
@@ -95,75 +177,88 @@ export default function JobUpdateMentionTextarea({
     setMentionStart(caret - match[1].length - 1);
     setQuery(match[1]);
     setActiveIndex(0);
-    if (textareaRef.current) setMenuPosition(getCaretMenuPosition(textareaRef.current, caret));
+    if (editorRef.current) setMenuPosition(getCaretMenuPosition(editorRef.current));
   }
 
-  function handleChange(nextValue: string, caret: number) {
-    const retained = mentions.filter((mention) => nextValue.includes(`@${mention.displayName}`));
-    onChange(nextValue, retained);
+  function commitEditorValue(editor: HTMLDivElement) {
+    const nextValue = editor.textContent ?? "";
+    const caret = getCaretOffset(editor);
+    pendingCaretRef.current = caret;
+    onChange(nextValue, retainCanonicalMentions(nextValue, mentions));
     updateMentionQuery(nextValue, caret);
   }
 
   function selectMention(user: JobUpdateCollaborator) {
     if (mentionStart === null) return;
-    const textarea = textareaRef.current;
-    const caret = textarea?.selectionStart ?? value.length;
+    const editor = editorRef.current;
+    const caret = editor ? getCaretOffset(editor) : value.length;
     const token = `@${user.displayName}`;
     const nextValue = `${value.slice(0, mentionStart)}${token} ${value.slice(caret)}`;
+    pendingCaretRef.current = mentionStart + token.length + 1;
     onChange(nextValue, [...mentions, { userId: user.userId, displayName: user.displayName }]);
     setMentionStart(null);
     setQuery("");
     setActiveIndex(0);
-    requestAnimationFrame(() => {
-      const nextCaret = mentionStart + token.length + 1;
-      textarea?.focus();
-      textarea?.setSelectionRange(nextCaret, nextCaret);
-    });
   }
 
   return (
     <div className="relative">
-      {mentions.length > 0 ? <div
-        ref={highlightRef}
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 overflow-hidden whitespace-pre-wrap break-words border border-transparent px-3 py-2 text-sm font-normal leading-6"
-      >{highlightedValue}</div> : null}
-      <textarea
-        ref={textareaRef}
+      <div
+        ref={editorRef}
         id={id}
-        value={value}
-        disabled={disabled}
-        rows={rows}
-        placeholder={placeholder}
+        role="textbox"
+        aria-multiline="true"
+        aria-disabled={disabled || undefined}
+        contentEditable={!disabled}
+        suppressContentEditableWarning
+        spellCheck
+        data-job-update-mention-editor
+        data-placeholder={placeholder ?? ""}
+        data-empty={value ? "false" : "true"}
+        style={{ ...EDITOR_TEXT_METRICS, minHeight: `calc(${rows} * 1.5rem + 1rem + 2px)` }}
         onBlur={() => window.setTimeout(() => setMentionStart(null), 120)}
-        onChange={(event) => handleChange(event.target.value, event.target.selectionStart)}
-        onClick={(event) => updateMentionQuery(event.currentTarget.value, event.currentTarget.selectionStart)}
-        onScroll={(event) => {
-          if (highlightRef.current) {
-            highlightRef.current.scrollTop = event.currentTarget.scrollTop;
-            highlightRef.current.scrollLeft = event.currentTarget.scrollLeft;
-          }
+        onInput={(event) => commitEditorValue(event.currentTarget)}
+        onClick={(event) => {
+          const caret = getCaretOffset(event.currentTarget);
+          updateMentionQuery(event.currentTarget.textContent ?? "", caret);
+        }}
+        onPaste={(event) => {
+          event.preventDefault();
+          insertTextAtSelection(event.currentTarget, event.clipboardData.getData("text/plain"));
+          commitEditorValue(event.currentTarget);
         }}
         onKeyUp={(event) => {
           if (["ArrowDown", "ArrowUp", "Enter", "Tab", "Escape"].includes(event.key)) return;
-          updateMentionQuery(event.currentTarget.value, event.currentTarget.selectionStart);
+          const caret = getCaretOffset(event.currentTarget);
+          updateMentionQuery(event.currentTarget.textContent ?? "", caret);
         }}
         onKeyDown={(event) => {
-          if (mentionStart === null || options.length === 0) return;
-          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-            event.preventDefault();
-            const direction = event.key === "ArrowDown" ? 1 : -1;
-            setActiveIndex((current) => (current + direction + options.length) % options.length);
-          } else if (event.key === "Enter" || event.key === "Tab") {
-            event.preventDefault();
-            selectMention(options[activeIndex] ?? options[0]);
-          } else if (event.key === "Escape") {
+          if (mentionStart !== null && options.length > 0) {
+            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+              event.preventDefault();
+              const direction = event.key === "ArrowDown" ? 1 : -1;
+              setActiveIndex((current) => (current + direction + options.length) % options.length);
+              return;
+            }
+            if (event.key === "Enter" || event.key === "Tab") {
+              event.preventDefault();
+              selectMention(options[activeIndex] ?? options[0]);
+              return;
+            }
+          }
+          if (event.key === "Escape" && mentionStart !== null) {
             event.preventDefault();
             setMentionStart(null);
             setQuery("");
+            return;
+          }
+          if (event.key === "Enter") {
+            event.preventDefault();
+            insertTextAtSelection(event.currentTarget, "\n");
+            commitEditorValue(event.currentTarget);
           }
         }}
-        className={`relative w-full resize-y border border-slate-300 px-3 py-2 text-sm font-normal leading-6 outline-none placeholder:text-slate-500 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:opacity-50 ${mentions.length > 0 ? "bg-transparent text-transparent caret-slate-900" : "bg-white text-slate-900"}`}
+        className="w-full resize-y overflow-auto border border-slate-300 bg-white text-slate-900 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
       />
       {mentionStart !== null && options.length > 0 ? (
         <div role="listbox" aria-label="Mention a TenOps user" style={menuPosition} className="absolute z-20 mt-1 max-h-48 w-64 overflow-y-auto border border-slate-300 bg-white p-1 shadow-lg">
@@ -182,9 +277,6 @@ export default function JobUpdateMentionTextarea({
           ))}
         </div>
       ) : null}
-      {collaborators.length === 0 ? null : (
-        <div className="mt-1 text-[11px] text-slate-500">Type @ to mention an active TenOps user.</div>
-      )}
     </div>
   );
 }
