@@ -28,6 +28,12 @@ assert.match(provider, /useState<Appearance>\(defaultAppearance\)/);
 assert.match(provider, /accountPreferences\.accountScoped/);
 assert.match(provider, /accountPreferences\.preferences\.appearance/);
 assert.match(provider, /accountPreferences\.setPreference\("appearance", next\)/);
+assert.match(provider, /const initial = !allowUserAppearance\s*\? defaultAppearance/,
+  'An environment-locked Appearance must take precedence over account and browser preferences');
+assert.match(provider, /if \(!allowUserAppearance\) \{\s*setAppearanceState\(defaultAppearance\);\s*applyAppearance\(defaultAppearance\);\s*return;/,
+  'An environment-locked Appearance must reject runtime preference changes');
+assert.match(provider, /if \(!allowUserAppearance \|\| accountPreferences\.accountScoped \|\| event\.key !== APPEARANCE_STORAGE_KEY\) return;/,
+  'An environment-locked Appearance must ignore browser storage changes');
 assert.match(provider, /accountPreferences\.accountScoped \|\| event\.key !== APPEARANCE_STORAGE_KEY/,
   'Authenticated accounts must not synchronize another operator\'s browser-local Appearance');
 assert.match(provider, /window\.localStorage\.setItem\(APPEARANCE_STORAGE_KEY, next\)/,
@@ -36,7 +42,8 @@ assert.doesNotMatch(provider, /hostname|NODE_ENV|branch|prefers-color-scheme|mat
 assert.match(layout, /data-appearance=\{defaultAppearance\}/);
 assert.doesNotMatch(layout, /localStorage\.getItem\(['"]tenops_appearance['"]\)/,
   'The root layout must not initialize authenticated Appearance from ownerless browser storage');
-assert.match(layout, /<ThemeProvider defaultAppearance=\{defaultAppearance\}>/);
+assert.match(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/,
+  'Only the developer-branded environment may honor user Appearance preferences');
 assert.doesNotMatch(layout, /NEXT_PUBLIC_[A-Z_]*DARK|data-[a-z-]*prototype/);
 assert.match(shell, /data-app-shell/);
 assert.match(shell, /data-theme-access-brand/);
