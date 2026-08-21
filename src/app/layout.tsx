@@ -53,7 +53,10 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <AccountPreferencesProvider>
-            <ThemeProvider defaultAppearance={defaultAppearance}>
+            <ThemeProvider
+              defaultAppearance={defaultAppearance}
+              allowUserAppearance={BRANDING.showDeveloperArtwork}
+            >
             <LanguageProvider>
               <ClientLayoutShell>{children}</ClientLayoutShell>
             </LanguageProvider>
