@@ -2,12 +2,14 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const [migration, identityMigration, jobs, panel, mentionEditor, notifications, shell, indicator, rollout] = await Promise.all([
+const [migration, selfMentionMigration, identityMigration, jobs, panel, mentionEditor, tokenization, notifications, shell, indicator, rollout] = await Promise.all([
   read("supabase/migrations/20260819_001_job_update_account_collaboration.sql"),
+  read("supabase/migrations/20260821_003_job_update_self_mention_notifications.sql"),
   read("supabase/migrations/20260818_001_rbac_identity_infrastructure.sql"),
   read("src/modules/production/jobs.ts"),
   read("src/modules/production/components/JobUpdatesPanel.tsx"),
   read("src/modules/production/components/JobUpdateMentionTextarea.tsx"),
+  read("src/modules/production/job-update-mention-tokenization.ts"),
   read("src/components/AccountNotifications.tsx"),
   read("src/app/client-layout-shell.tsx"),
   read("src/modules/production/components/JobUpdatesIndicator.tsx"),
@@ -42,7 +44,21 @@ assert.match(migration, /resolver_user_id := caller_user\.user_id/,
   "Authenticated resolver identity must come from the caller profile");
 assert.doesNotMatch(migration, /\bcurrent_user\b/,
   "PL/pgSQL record variables must not collide with PostgreSQL CURRENT_USER");
-assert.match(migration, /p_user_id = auth\.uid\(\)/, "Self mentions must not notify");
+assert.match(migration, /p_user_id = auth\.uid\(\)/, "The applied base migration documents the previous self-notification suppression point");
+assert.match(selfMentionMigration, /begin;[\s\S]*create or replace function public\.notify_job_update_account[\s\S]*commit;/,
+  "Self-mention behavior must be changed by one transactional replacement migration");
+assert.match(selfMentionMigration, /if p_user_id is null then return; end if;/);
+assert.doesNotMatch(selfMentionMigration, /p_user_id is null or p_user_id = auth\.uid\(\)/,
+  "An explicit canonical self-mention must no longer be suppressed");
+assert.match(selfMentionMigration, /if p_purpose = 'assignment' and p_user_id = auth\.uid\(\) then return; end if;/,
+  "The narrow self-mention change must not alter existing self-assignment behavior");
+assert.match(selfMentionMigration, /on conflict \(user_id, notification_key\) do nothing/,
+  "A repeated canonical mention must remain idempotent");
+assert.match(selfMentionMigration, /'job-update-' \|\| p_purpose \|\| ':' \|\| p_update\.id::text/);
+assert.match(selfMentionMigration, /'update_id', p_update\.id/,
+  "Self-mention notifications must deep-link through the normal exact-Update metadata");
+assert.doesNotMatch(selfMentionMigration, /insert into public\.account_notifications[\s\S]*select[\s\S]*from public\.job_updates/i,
+  "The self-mention migration must not backfill historical notifications");
 assert.match(migration, /on conflict \(user_id, notification_key\) do nothing/, "Notification keys must be idempotent");
 assert.match(migration, /'job-update-' \|\| p_purpose \|\| ':' \|\| p_update\.id::text/);
 assert.match(migration, /delete from public\.job_update_mentions/);
@@ -95,16 +111,33 @@ assert.match(panel, /createJobUpdate\([\s\S]*?body,\s*false,\s*null,\s*null,/,
 assert.match(panel, /auth\.profile\?\.displayName \?\? authorName/);
 assert.match(panel, /Resolve as <strong[^>]*>\{operationalFirstName\(auth\.profile\?\.displayName\)\}/,
   "Authenticated resolution UI must present the caller-derived identity by first name");
-assert.match(mentionEditor, /nextValue\.includes\(`@\$\{mention\.displayName\}`\)/,
+assert.match(mentionEditor, /retainCanonicalMentions\(nextValue, mentions\)/,
   "Removing readable mention text must remove its canonical selection");
 assert.match(mentionEditor, /mentions\.some\(\(mention\) => mention\.userId === user\.userId\)/,
   "The autocomplete must prevent duplicate structured mentions");
 assert.match(mentionEditor, /onClick=\{\(\) => selectMention\(user\)\}/,
   "Mention autocomplete must support explicit mouse selection");
-assert.match(mentionEditor, /font-medium text-blue-700/,
+assert.match(mentionEditor, /mention\.className = "text-blue-700"/,
   "Selected canonical mentions must render blue immediately in the composer");
-assert.match(mentionEditor, /mentions\.length > 0 \? "bg-transparent text-transparent caret-slate-900"/,
-  "Composer highlighting must remain synchronized with the editable textarea");
+assert.match(mentionEditor, /const EDITOR_TEXT_METRICS: CSSProperties =/,
+  "The single visible editor surface must use deterministic text metrics");
+for (const metric of ["fontFamily", "fontFeatureSettings", "fontKerning", "fontSize", "fontVariantLigatures", "fontWeight", "letterSpacing", "lineHeight", "overflowWrap", "padding", "tabSize", "whiteSpace", "wordSpacing"]) {
+  assert.match(mentionEditor, new RegExp(`${metric}:`), `The shared editor metrics must define ${metric}`);
+}
+assert.match(mentionEditor, /contentEditable=\{!disabled\}/);
+assert.match(mentionEditor, /data-job-update-mention-editor/);
+assert.match(mentionEditor, /renderControlledValue\(editor, value, mentions\)/,
+  "One controlled value must produce the complete visible editor DOM");
+assert.match(mentionEditor, /reconstructJobUpdateMentionText\(segments\) !== value/,
+  "Rendering must fail rather than silently diverge from the controlled value");
+assert.match(mentionEditor, /fragment\.append\(document\.createTextNode\(segment\.text\)\)/,
+  "Ordinary text must be rendered explicitly in the same visible surface as mentions");
+assert.doesNotMatch(mentionEditor, /<textarea|text-transparent|WebkitTextFillColor|data-job-update-mention-highlight/,
+  "The composer must not retain a competing transparent textarea or mirror layer");
+assert.match(mentionEditor, /spellCheck/,
+  "Spellcheck may remain native because there is now only one visible editing surface");
+assert.match(tokenization, /tokenizeJobUpdateMentionText/);
+assert.match(tokenization, /reconstructJobUpdateMentionText/);
 for (const key of ["ArrowDown", "ArrowUp", "Enter", "Tab", "Escape"]) {
   assert.match(mentionEditor, new RegExp(`event\\.key === \\\"${key}\\\"|\\[\\\"ArrowDown\\\", \\\"ArrowUp\\\", \\\"Enter\\\", \\\"Tab\\\", \\\"Escape\\\"\\]`),
     `Mention autocomplete must handle ${key}`);

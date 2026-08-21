@@ -385,6 +385,12 @@ html[data-appearance="dark"] textarea::placeholder {
   color: var(--text-muted) !important;
 }
 
+[data-job-update-mention-editor][data-empty="true"]::before {
+  color: #64748b;
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+
 html[data-appearance="dark"] option {
   background: var(--surface-input);
   color: var(--text-primary);

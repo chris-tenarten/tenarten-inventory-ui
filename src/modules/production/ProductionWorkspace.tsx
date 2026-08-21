@@ -57,6 +57,7 @@ import type { PlanningItem, PlanningPhase } from '@/modules/planning/types';
 import { isPlanningEnabled } from '@/modules/planning/timeline-model.mjs';
 import { useAuth } from '@/lib/auth';
 import { useAccountPreferences } from '@/lib/account-preferences';
+import { productionJobsVisibleToRole } from './fixture-visibility';
 
 type ProductionView = 'queue' | 'spreadsheet' | 'timeline';
 type DashboardMode = 'pipeline' | 'snapshot';
@@ -224,18 +225,20 @@ export default function ProductionWorkspace() {
       const jobsWithFocused = focusedJob && !loadedJobs.some((job) => job.id === focusedJob.id)
         ? [...loadedJobs, focusedJob]
         : loadedJobs;
-      const loadedPlanningPhases = planningEnabled ? await loadPlanningPhases(jobsWithFocused.map((job) => job.id)) : [];
+      const visibleJobs = productionJobsVisibleToRole(jobsWithFocused, auth.profile?.isActive ? auth.profile.role : null);
+      const visibleFocusedJob = focusedJob && visibleJobs.some((job) => job.id === focusedJob.id) ? focusedJob : null;
+      const loadedPlanningPhases = planningEnabled ? await loadPlanningPhases(visibleJobs.map((job) => job.id)) : [];
       const loadedPlanningItems = planningEnabled ? await loadPlanningItems(loadedPlanningPhases.map((phase) => phase.id)) : [];
-      setJobs(sortJobs(jobsWithFocused));
+      setJobs(sortJobs(visibleJobs));
       setAttachmentCounts(loadedCounts);
       setIntegrationSummaries(summaries);
       setJobUpdateSummaries(updateSummaries);
       setPlanningPhases(loadedPlanningPhases);
       setPlanningItems(loadedPlanningItems);
-      if (focusedJob) {
-        setFocusedJobId(focusedJob.id);
-        setSearch(focusedJob.job_number || focusedJob.name);
-        setSelectedJobId(focusedJob.id);
+      if (visibleFocusedJob) {
+        setFocusedJobId(visibleFocusedJob.id);
+        setSearch(visibleFocusedJob.job_number || visibleFocusedJob.name);
+        setSelectedJobId(visibleFocusedJob.id);
         setInspectorFocus(focusedSection);
         setActiveView('queue', false);
       }
@@ -247,7 +250,7 @@ export default function ProductionWorkspace() {
     } finally {
       setIsLoading(false);
     }
-  }, [includeArchived, setActiveView]);
+  }, [auth.profile?.isActive, auth.profile?.role, includeArchived, setActiveView]);
 
   useEffect(() => {
     void loadJobs();
