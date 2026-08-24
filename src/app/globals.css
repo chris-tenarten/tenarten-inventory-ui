@@ -103,7 +103,7 @@ html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(9)::after { c
 
 [data-welcome-logo-stack] {
   width: clamp(19rem, 51.25vw, 34.5rem);
-  margin-top: max(-3rem, calc(clamp(13rem, 35vw, 23.5rem) - clamp(19rem, 51.25vw, 34.5rem)));
+  margin-top: max(0rem, calc(clamp(13rem, 35vw, 23.5rem) - clamp(19rem, 51.25vw, 34.5rem)));
 }
 
 @media (max-height: 36rem) {
