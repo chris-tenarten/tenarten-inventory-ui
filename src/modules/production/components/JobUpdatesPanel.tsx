@@ -47,6 +47,7 @@ type Props = {
   job: ProductionJob;
   attachments: JobAttachment[];
   focusedUpdateId: string | null;
+  onFocusedUpdateResolved?: (updateId: string, found: boolean) => void;
   onSummaryChanged: (summary: JobUpdateSummary) => void;
   onAttachmentsChanged: (attachments: JobAttachment[]) => void;
   onOpenAttachment: (attachment: JobAttachment) => void;
@@ -155,6 +156,7 @@ export default function JobUpdatesPanel({
   job,
   attachments,
   focusedUpdateId,
+  onFocusedUpdateResolved,
   onSummaryChanged,
   onAttachmentsChanged,
   onOpenAttachment,
@@ -173,6 +175,7 @@ export default function JobUpdatesPanel({
   const [posting, setPosting] = useState(false);
   const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [resolverName, setResolverName] = useState(storedAttributionName);
+  const resolvedFocusedUpdateIdRef = useRef<string | null>(null);
   const [resolverNamesByUpdate, setResolverNamesByUpdate] = useState<
     Record<string, string>
   >({});
@@ -231,12 +234,20 @@ export default function JobUpdatesPanel({
 
   useEffect(() => {
     if (!focusedUpdateId || loading) return;
-    requestAnimationFrame(() => {
-      document
-        .getElementById(`job-update-${focusedUpdateId}`)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (resolvedFocusedUpdateIdRef.current === focusedUpdateId) return;
+    resolvedFocusedUpdateIdRef.current = focusedUpdateId;
+    const target = document.getElementById(`job-update-${focusedUpdateId}`);
+    if (!target) {
+      setError("The requested Job Update is no longer available.");
+      onFocusedUpdateResolved?.(focusedUpdateId, false);
+      return;
+    }
+    const frame = requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      onFocusedUpdateResolved?.(focusedUpdateId, true);
     });
-  }, [focusedUpdateId, loading]);
+    return () => cancelAnimationFrame(frame);
+  }, [focusedUpdateId, loading, onFocusedUpdateResolved]);
 
   const attachmentsByUpdate = useMemo(() => {
     const grouped = new Map<string, JobAttachment[]>();

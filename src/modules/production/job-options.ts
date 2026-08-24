@@ -66,5 +66,7 @@ export function openProductionJob(jobId: string, focus?: string) {
   window.sessionStorage.setItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY, jobId);
   if (focus) window.sessionStorage.setItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY, focus);
   else window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY);
-  window.location.assign('/');
+  // A distinct URL forces the app shell to remount even when the user is already
+  // on Production, so the stored inspector/update focus is consumed reliably.
+  window.location.assign(`/?open-production-job=${encodeURIComponent(jobId)}`);
 }

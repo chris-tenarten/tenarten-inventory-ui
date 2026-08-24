@@ -1,16 +1,18 @@
 "use client";
 
 import { AlertTriangle, ArrowRight, AtSign, Bell, MessageSquare, Sparkles, UserRoundCheck, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "@/lib/auth";
 import { ROLE_LABELS, type AppRole } from "@/lib/rbac";
 import { supabase } from "@/lib/supabase";
 import { initialNotificationOnboardingState, notificationOnboardingReducer } from "./notification-onboarding-state";
+import { createNotificationArrivalSession, dismissNotificationArrival, observeLiveNotificationArrival, observeNotificationArrivals } from "./notification-arrival-state";
 
 export type AccountNotification = {
   kind: "job_update";
   id: string;
+  notification_type: string;
   title: string;
   update_id: string;
   job_id: string;
@@ -34,6 +36,7 @@ type GeneralNotification = {
 };
 
 type NotificationItem = AccountNotification | GeneralNotification;
+type AccountNotificationInsert = Omit<GeneralNotification, "kind"> & { user_id: string };
 type NotificationTab = "unread" | "all";
 function relativeTime(value: string) {
   const elapsedSeconds = Math.round((Date.now() - new Date(value).getTime()) / 1000);
@@ -50,22 +53,42 @@ function relativeTime(value: string) {
 
 export default function AccountNotifications({ onOpen }: { onOpen(notification: AccountNotification): void }) {
   const auth = useAuth();
-  const [{ open, spotlight }, dispatchOnboarding] = useReducer(notificationOnboardingReducer, initialNotificationOnboardingState);
+  const isAuthenticated = auth.isAuthenticated;
+  const profileIsActive = auth.profile?.isActive;
+  const profileUserId = auth.profile?.userId;
+  const [{ open, spotlight, arrivalNotificationId }, dispatchOnboarding] = useReducer(notificationOnboardingReducer, initialNotificationOnboardingState);
   const [tab, setTab] = useState<NotificationTab>("unread");
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [error, setError] = useState("");
   const [working, setWorking] = useState(false);
   const [welcomeOpen, setWelcomeOpen] = useState(false);
+  const arrivalSessionRef = useRef(createNotificationArrivalSession());
+  const pendingLiveIdsRef = useRef(new Set<string>());
+  const loadRequestRef = useRef(0);
+  const arrivalNotificationIdRef = useRef(arrivalNotificationId);
 
-  const load = useCallback(async () => {
-    if (!auth.isAuthenticated || !auth.profile?.isActive) { setItems([]); return; }
+  useEffect(() => {
+    arrivalNotificationIdRef.current = arrivalNotificationId;
+  }, [arrivalNotificationId]);
+
+  const dismissArrival = useCallback((notificationId: string) => {
+    dismissNotificationArrival(arrivalSessionRef.current, notificationId);
+    dispatchOnboarding({ type: "finish-arrival" });
+  }, []);
+
+  const load = useCallback(async (liveNotificationId?: string) => {
+    if (!isAuthenticated || !profileIsActive || !profileUserId) { setItems([]); return; }
+    if (liveNotificationId) pendingLiveIdsRef.current.add(liveNotificationId);
+    const requestId = ++loadRequestRef.current;
     const account = await supabase.rpc("list_my_account_notification_history", { p_limit: 100 });
+    if (requestId !== loadRequestRef.current) return;
     if (account.error) { setError(account.error.message); return; }
     const accountItems = ((account.data ?? []) as Omit<GeneralNotification, "kind">[]).map((item): NotificationItem => {
       if (item.notification_type.startsWith("job_update_") && item.metadata.job_id && item.metadata.update_id && item.metadata.job_name) {
         return {
           kind: "job_update",
           id: item.id,
+          notification_type: item.notification_type,
           title: item.title,
           update_id: item.metadata.update_id,
           job_id: item.metadata.job_id,
@@ -80,8 +103,35 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
       return { ...item, kind: "general" };
     });
     setItems(accountItems);
+    const activeArrivalId = arrivalNotificationIdRef.current;
+    if (activeArrivalId && !accountItems.some((item) => item.id === activeArrivalId && item.read_at === null)) {
+      dispatchOnboarding({ type: "finish-arrival" });
+    }
+    const arrivalCandidates = accountItems.map((item) => ({ id: item.id, notificationType: item.notification_type, readAt: item.read_at }));
+    const liveCandidates = arrivalCandidates.filter((item) => pendingLiveIdsRef.current.has(item.id));
+    let focusId: string | null = null;
+    if (liveCandidates.length) {
+      for (const candidate of liveCandidates) {
+        pendingLiveIdsRef.current.delete(candidate.id);
+        const candidateFocusId = observeLiveNotificationArrival(arrivalSessionRef.current, candidate);
+        focusId ??= candidateFocusId;
+      }
+    } else {
+      focusId = observeNotificationArrivals(arrivalSessionRef.current, arrivalCandidates);
+    }
+    if (focusId) {
+      setTab("unread");
+      dispatchOnboarding({ type: "focus-arrival", notificationId: focusId });
+    }
     setError("");
-  }, [auth.isAuthenticated, auth.profile?.isActive]);
+  }, [isAuthenticated, profileIsActive, profileUserId]);
+
+  useEffect(() => {
+    loadRequestRef.current += 1;
+    arrivalSessionRef.current = createNotificationArrivalSession();
+    pendingLiveIdsRef.current.clear();
+    dispatchOnboarding({ type: "reset" });
+  }, [isAuthenticated, profileIsActive, profileUserId]);
 
   useEffect(() => {
     const initialLoad = window.setTimeout(() => void load(), 0);
@@ -92,6 +142,23 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
   }, [load]);
 
   useEffect(() => {
+    if (!isAuthenticated || !profileIsActive || !profileUserId) return;
+    const channel = supabase
+      .channel(`account-notifications:${profileUserId}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "account_notifications", filter: `user_id=eq.${profileUserId}` },
+        (payload) => {
+          const inserted = payload.new as AccountNotificationInsert;
+          if (inserted.user_id !== profileUserId || !inserted.id) return;
+          void load(inserted.id);
+        },
+      )
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [isAuthenticated, load, profileIsActive, profileUserId]);
+
+  useEffect(() => {
     const startOnboarding = () => {
       dispatchOnboarding({ type: "start" });
     };
@@ -100,20 +167,22 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
   }, []);
 
   useEffect(() => {
-    if (!spotlight) {
+    const lockMode = spotlight ?? (arrivalNotificationId ? "arrival" : null);
+    if (!lockMode) {
       delete document.body.dataset.notificationOnboarding;
       return;
     }
-    document.body.dataset.notificationOnboarding = spotlight;
+    document.body.dataset.notificationOnboarding = lockMode;
     const cancel = (event: KeyboardEvent) => {
       if (event.key === "Escape") dispatchOnboarding({ type: "cancel-spotlight" });
+      if (event.key === "Escape" && arrivalNotificationId) dismissArrival(arrivalNotificationId);
     };
     window.addEventListener("keydown", cancel);
     return () => {
       delete document.body.dataset.notificationOnboarding;
       window.removeEventListener("keydown", cancel);
     };
-  }, [spotlight]);
+  }, [spotlight, arrivalNotificationId, dismissArrival]);
 
   const unreadCount = useMemo(() => items.filter((item) => item.read_at === null).length, [items]);
   const visibleItems = useMemo(() => tab === "unread" ? items.filter((item) => item.read_at === null) : items, [items, tab]);
@@ -128,6 +197,10 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
   }
 
   async function openItem(item: NotificationItem) {
+    if (arrivalNotificationId === item.id) {
+      dismissNotificationArrival(arrivalSessionRef.current, item.id);
+      dispatchOnboarding({ type: "finish-arrival" });
+    }
     if (!await markRead(item)) return;
     if (item.kind === "general" && item.notification_type === "welcome") {
       dispatchOnboarding({ type: "cancel-spotlight" });
@@ -142,6 +215,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
   }
 
   async function markAllRead() {
+    if (arrivalNotificationId) dismissArrival(arrivalNotificationId);
     setWorking(true);
     const { error: readError } = await supabase.rpc("mark_all_my_account_notifications_read");
     if (readError) setError(readError.message);
@@ -155,13 +229,14 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
 
   if (!auth.isAuthenticated || !auth.profile?.isActive) return null;
   const welcomeItem = items.find((item): item is GeneralNotification => item.kind === "general" && item.notification_type === "welcome") ?? null;
+  const arrivalItem = arrivalNotificationId ? items.find((item) => item.id === arrivalNotificationId) ?? null : null;
   const overlays = typeof document === "undefined" ? null : createPortal(<>
-    {spotlight ? <div data-notification-onboarding-scrim className="fixed inset-0 z-50 bg-slate-950/35" aria-hidden="true" /> : null}
+    {spotlight || arrivalItem ? <div data-notification-onboarding-scrim className="fixed inset-0 z-50 bg-slate-950/35" aria-hidden="true" /> : null}
     {open ? <div role="dialog" aria-label="Notifications" className="fixed right-3 top-[max(4rem,env(safe-area-inset-top))] z-[80] flex max-h-[calc(100dvh-max(5rem,env(safe-area-inset-top)))] w-[min(24rem,calc(100vw-1.5rem))] flex-col overflow-hidden border border-slate-300 bg-white p-2 text-left shadow-xl">
       <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-2 pb-2">
         <strong className="text-sm">Notifications</strong>
         <span className="flex items-center">
-          <button type="button" onClick={() => dispatchOnboarding({ type: "close" })} aria-label="Close Notifications" className="inline-flex h-7 w-7 items-center justify-center hover:bg-slate-100"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={() => arrivalNotificationId ? dismissArrival(arrivalNotificationId) : dispatchOnboarding({ type: "close" })} aria-label="Close Notifications" className="inline-flex h-7 w-7 items-center justify-center hover:bg-slate-100"><X className="h-4 w-4" /></button>
         </span>
       </div>
       <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-2 py-2">
@@ -171,12 +246,15 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
         {unreadCount && spotlight !== "welcome" ? <button type="button" disabled={working} onClick={() => void markAllRead()} className="text-[10px] font-bold uppercase text-blue-700 disabled:opacity-50">Mark all as read</button> : null}
       </div>
       {spotlight === "welcome" ? <div data-welcome-row-guidance className="shrink-0 border-b border-blue-200 bg-blue-50 px-2 py-2 text-[10px] font-semibold text-blue-900">Open Welcome to finish Getting Started.</div> : null}
+      {arrivalItem ? <div data-notification-arrival-guidance className="shrink-0 border-b border-blue-200 bg-blue-50 px-2 py-2 text-[10px] font-semibold text-blue-900">A new personal notification needs your attention.</div> : null}
       {error ? <div role="alert" className="shrink-0 p-2 text-xs font-semibold text-red-700">Unable to load Notifications.</div> : null}
       {!error && !visibleItems.length ? <div className="p-4 text-xs text-slate-500">{tab === "unread" ? "You're all caught up." : "No notifications yet."}</div> : null}
       <div data-notification-scroll-region className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {visibleItems.map((item) => {
           const isWelcome = item.kind === "general" && item.notification_type === "welcome";
-          return <button key={item.id} type="button" data-welcome-notification-row={isWelcome ? "true" : undefined} onClick={() => void openItem(item)} className={`block w-full border-b border-slate-100 px-2 py-3 text-left transition hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${item.read_at && !isWelcome ? "opacity-65" : item.read_at ? "" : "bg-blue-50/40"} ${isWelcome ? "cursor-pointer hover:bg-blue-50/70" : ""} ${spotlight === "welcome" && isWelcome ? "relative z-[1] ring-2 ring-inset ring-blue-600" : ""}`}>
+          const isArrival = item.id === arrivalNotificationId;
+          return <div key={item.id} data-welcome-notification-row={isWelcome ? "true" : undefined} data-arrival-notification-row={isArrival ? "true" : undefined} className={`border-b border-slate-100 ${item.read_at && !isWelcome ? "opacity-65" : item.read_at ? "" : "bg-blue-50/40"} ${spotlight === "welcome" && isWelcome ? "relative z-[1] ring-2 ring-inset ring-blue-600" : ""} ${isArrival ? "relative z-[1] bg-blue-50 ring-2 ring-inset ring-blue-600" : ""}`}>
+          <button type="button" onClick={() => void openItem(item)} className={`block w-full px-2 py-3 text-left transition hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${isWelcome ? "cursor-pointer hover:bg-blue-50/70" : ""}`}>
             <span className="flex items-start justify-between gap-3">
               <span className="flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-950">{isWelcome ? <Sparkles className="h-3.5 w-3.5 shrink-0 text-blue-700" /> : item.kind === "job_update" && item.title.toLowerCase().includes("mention") ? <AtSign className="h-3.5 w-3.5 shrink-0 text-blue-700" /> : <UserRoundCheck className="h-3.5 w-3.5 shrink-0 text-slate-500" />}<span className="truncate">{item.title}</span></span>
               <time dateTime={item.created_at} className="shrink-0 text-[10px] text-slate-500">{relativeTime(item.created_at)}</time>
@@ -190,7 +268,12 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
               {item.metadata.role && ROLE_LABELS[item.metadata.role] ? <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-blue-700">Role: {ROLE_LABELS[item.metadata.role]}</span> : null}
               {isWelcome ? <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.08em] text-blue-700">Open Welcome <ArrowRight className="h-3 w-3" aria-hidden="true" /></span> : null}
             </>}
-          </button>;
+          </button>
+          {isArrival ? <div className="flex items-center justify-end gap-2 px-2 pb-3">
+            <button type="button" onClick={() => dismissArrival(item.id)} className="h-8 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase text-slate-700 hover:bg-slate-50">Not now</button>
+            <button type="button" onClick={() => void openItem(item)} className="tenops-selected-surface h-8 border px-3 text-[10px] font-bold uppercase">View notification</button>
+          </div> : null}
+          </div>;
         })}
       </div>
     </div> : null}
@@ -215,7 +298,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
     dispatchOnboarding({ type: "toggle" });
   }
 
-  return <div data-account-notifications data-onboarding-spotlight={spotlight ?? undefined} className={`relative shrink-0 ${spotlight ? "z-[90]" : ""}`}>
+  return <div data-account-notifications data-onboarding-spotlight={spotlight ?? undefined} data-arrival-attention={arrivalNotificationId ?? undefined} className={`relative shrink-0 ${spotlight || arrivalNotificationId ? "z-[90]" : ""}`}>
     <button
       type="button"
       onClick={toggleNotifications}
