@@ -52,7 +52,7 @@ assert.doesNotMatch(settings, /Saved to your TenOps account/, 'Settings persiste
 assert.doesNotMatch(language, /settings\.themeDescription[^\n]*browser/i, 'Account-scoped Appearance copy must not claim browser-only persistence');
 assert.match(language, /"settings\.accountPreference": "Follows your account across devices\."/);
 assert.match(language, /"settings\.browserOnly": "This preference is stored only in this browser\."/);
-assert.match(settings, /<AccountAccessPanel/, 'Internal Access account enrollment remains distinct from account-scoped preferences');
+assert.match(settings, /<AccountAccessPanel/, 'Account access remains distinct from account-scoped preferences');
 
 assert.match(appearance, /setPreference\("appearance", next\)/);
 assert.match(appearance, /const initial = !allowUserAppearance\s*\? defaultAppearance/,

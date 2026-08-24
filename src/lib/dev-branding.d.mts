@@ -5,8 +5,6 @@ export type BrandingConfig = Readonly<{
   productName: "TenOps" | "TenDev";
   subtitle: "RESEARCH & DEVELOPMENT" | null;
   defaultAppearance: "light" | "dark";
-  accessStorageKey: string;
-  accessPassword: string;
   showDeveloperArtwork: boolean;
   allowEarlyAccessBadge: boolean;
 }>;

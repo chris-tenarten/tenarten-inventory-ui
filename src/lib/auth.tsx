@@ -31,6 +31,7 @@ type AuthContextValue = {
   can(capability: Capability): boolean;
   signIn(email: string, password: string): Promise<void>;
   signOut(): Promise<void>;
+  requestAccountSetup(email: string): Promise<void>;
   requestPasswordReset(email: string): Promise<void>;
   updatePassword(password: string): Promise<void>;
   refreshProfile(): Promise<void>;
@@ -89,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     void supabase.auth.getSession().then(async ({ data }) => {
       if (!live) return;
       const accountFlow = new URLSearchParams(window.location.search).get("account");
-      setRequiresPasswordSetup(accountFlow === "recovery" && Boolean(data.session));
+      setRequiresPasswordSetup((accountFlow === "setup" || accountFlow === "recovery") && Boolean(data.session));
       setSession(data.session);
       await loadProfile(data.session);
       if (live) setReady(true);
@@ -134,6 +135,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     },
+    async requestAccountSetup(email) {
+      const emailRedirectTo = `${window.location.origin}/?account=setup`;
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: email.trim(),
+        options: { emailRedirectTo },
+      });
+      if (error) throw error;
+    },
     async requestPasswordReset(email) {
       const redirectTo = `${window.location.origin}/?account=recovery`;
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
@@ -142,6 +152,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async updatePassword(password) {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
+      const { error: signOutError } = await supabase.auth.signOut({ scope: "local" });
+      if (signOutError) throw signOutError;
       setRequiresPasswordSetup(false);
       window.history.replaceState({}, "", window.location.pathname);
     },

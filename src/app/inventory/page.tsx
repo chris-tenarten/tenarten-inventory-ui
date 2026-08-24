@@ -11,6 +11,7 @@ import {
 import type { ProductionJobOption } from '@/modules/production/job-options';
 import { JobTag } from '@/modules/production/components/JobTag';
 import { useLanguage } from '@/lib/language';
+import { useAuth } from '@/lib/auth';
 
 type ReservationMode = 'none' | 'canonical' | 'temporary';
 type BulkReservationMode = 'unchanged' | ReservationMode;
@@ -117,8 +118,6 @@ type PendingReceivalForm = {
 
 const LAST_ENTERED_BY_KEY = 'tenarten_last_entered_by';
 const ADMIN_STORAGE_KEY = 'tenarten_admin_access';
-const PENDING_RECEIVAL_ACCESS_KEY = 'tenarten_pending_receival_access';
-const PENDING_RECEIVAL_PASSWORD = 'tenarten123';
 const PEOPLE_OPTIONS = ['Gio', 'Anthony'];
 const DEFAULT_LOCATION_OPTIONS = ['Denton', 'Carrollton'];
 
@@ -422,6 +421,9 @@ function stockLineStatusClass(tone: 'neutral' | 'good' | 'warning' | 'bad') {
 
 export default function InventoryPage() {
   const { tr } = useLanguage();
+  const auth = useAuth();
+  const canAdjustPendingReceivals = auth.can('adjustInventory');
+  const canReceivePendingReceivals = auth.can('receiveInventory');
   const [rows, setRows] = useState<InventoryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -470,12 +472,10 @@ export default function InventoryPage() {
   const [pendingReceivalsLoading, setPendingReceivalsLoading] = useState(true);
   const [pendingReceivalsError, setPendingReceivalsError] = useState('');
   const [pendingReceivalsExpanded, setPendingReceivalsExpanded] = useState(false);
-  const [pendingReceivalUnlocked, setPendingReceivalUnlocked] = useState(false);
   const [isPendingReceivalFormOpen, setIsPendingReceivalFormOpen] = useState(false);
   const [pendingReceivalForm, setPendingReceivalForm] = useState<PendingReceivalForm>(createPendingReceivalForm());
   const [pendingReceivalLines, setPendingReceivalLines] = useState<StockLine[]>([createStockLine()]);
   const [pendingReceivalMessage, setPendingReceivalMessage] = useState('');
-  const [pendingReceivalPasswordInput, setPendingReceivalPasswordInput] = useState('');
   const [isSavingPendingReceival, setIsSavingPendingReceival] = useState(false);
   const [editingPendingReceivalId, setEditingPendingReceivalId] = useState<string | null>(null);
   const [selectedPendingReceivalIds, setSelectedPendingReceivalIds] = useState<Set<string>>(new Set());
@@ -587,7 +587,6 @@ export default function InventoryPage() {
 
     setEditEnteredBy(window.localStorage.getItem(LAST_ENTERED_BY_KEY) || '');
     setIsAdmin(window.localStorage.getItem(ADMIN_STORAGE_KEY) === 'granted');
-    setPendingReceivalUnlocked(window.localStorage.getItem(PENDING_RECEIVAL_ACCESS_KEY) === 'granted');
   }, []);
 
   useEffect(() => {
@@ -609,7 +608,7 @@ export default function InventoryPage() {
   const categoryOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.category), ...pendingReceivals.map((row) => row.category)]), [rows, pendingReceivals]);
   const unitOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.unit), ...pendingReceivals.map((row) => row.unit), 'Bags', 'Pails', 'Buckets', 'Boxes']), [rows, pendingReceivals]);
   const locationOptions = useMemo(() => uniqueSorted([...rows.map((row) => row.location), ...pendingReceivals.map((row) => row.location), ...DEFAULT_LOCATION_OPTIONS]), [rows, pendingReceivals]);
-  const pendingReceivalHasUnsavedChanges = isPendingReceivalFormOpen && pendingReceivalUnlocked && pendingReceivalDraftSignature(pendingReceivalForm, pendingReceivalLines) !== pendingReceivalBaselineRef.current;
+  const pendingReceivalHasUnsavedChanges = isPendingReceivalFormOpen && pendingReceivalDraftSignature(pendingReceivalForm, pendingReceivalLines) !== pendingReceivalBaselineRef.current;
   const editablePendingReceivalIds = useMemo(() => pendingReceivals
     .filter((item) => item.status === 'pending' || item.status === 'partially_received')
     .map((item) => item.id), [pendingReceivals]);
@@ -1581,12 +1580,11 @@ export default function InventoryPage() {
   }
 
   function openPendingReceivalForm() {
-    if (!pendingReceivalUnlocked) {
-      setPendingReceivalPasswordInput('');
-      setPendingReceivalMessage('Enter the pending receival password to add expected material.');
-    } else {
-      setPendingReceivalMessage('');
+    if (!canAdjustPendingReceivals) {
+      setPendingReceivalsError('You do not have permission to add Pending Receivals.');
+      return;
     }
+    setPendingReceivalMessage('');
 
     const form = createPendingReceivalForm();
     const lines = [createStockLine()];
@@ -1606,7 +1604,6 @@ export default function InventoryPage() {
     setIsPendingReceivalFormOpen(false);
     setEditingPendingReceivalId(null);
     setPendingReceivalMessage('');
-    setPendingReceivalPasswordInput('');
     setIsSavingPendingReceival(false);
     const form = createPendingReceivalForm();
     const lines = [createStockLine()];
@@ -1616,6 +1613,10 @@ export default function InventoryPage() {
   }
 
   function openEditPendingReceivalForm(receival: PendingReceival) {
+    if (!canAdjustPendingReceivals) {
+      setPendingReceivalsError('You do not have permission to edit Pending Receivals.');
+      return;
+    }
     const form = createPendingReceivalForm({
       vendor: receival.vendor || '', orderedBy: receival.ordered_by || '', orderDate: receival.order_date || getTodayDateInputValue(),
       eta: receival.eta || '', note: receival.notes || '',
@@ -1634,18 +1635,6 @@ export default function InventoryPage() {
     setPendingReceivalMessage('');
     pendingReceivalBaselineRef.current = pendingReceivalDraftSignature(form, lines);
     setIsPendingReceivalFormOpen(true);
-  }
-
-  function unlockPendingReceivalForm() {
-    if (pendingReceivalPasswordInput === PENDING_RECEIVAL_PASSWORD) {
-      window.localStorage.setItem(PENDING_RECEIVAL_ACCESS_KEY, 'granted');
-      setPendingReceivalUnlocked(true);
-      setPendingReceivalPasswordInput('');
-      setPendingReceivalMessage('Unlocked.');
-      return;
-    }
-
-    setPendingReceivalMessage('Incorrect pending receival password.');
   }
 
   function updatePendingReceivalForm(field: keyof PendingReceivalForm, value: string | boolean) {
@@ -1759,8 +1748,8 @@ export default function InventoryPage() {
   }
 
   async function handleCreatePendingReceival() {
-    if (!pendingReceivalUnlocked) {
-      setPendingReceivalMessage('Unlock pending receivals before creating expected material lines.');
+    if (!canAdjustPendingReceivals) {
+      setPendingReceivalMessage('You do not have permission to add or edit Pending Receivals.');
       return;
     }
 
@@ -1943,6 +1932,10 @@ export default function InventoryPage() {
   }
 
   function openReceivePendingDialog(receival: PendingReceival) {
+    if (!canReceivePendingReceivals) {
+      setPendingReceivalsError('You do not have permission to receive Inventory.');
+      return;
+    }
     setReceivePendingTargetId(receival.id);
     setReceivePendingByInput(editEnteredBy && editEnteredBy !== 'chris_test' ? editEnteredBy : '');
     setReceivePendingMessage('');
@@ -2014,6 +2007,10 @@ export default function InventoryPage() {
   }
 
   function openUndoReceiveDialog(receival: PendingReceival) {
+    if (!canAdjustPendingReceivals) {
+      setPendingReceivalsError('You do not have permission to undo Pending Receival receipts.');
+      return;
+    }
     setUndoReceiveTargetId(receival.id);
     setUndoReceiveByInput(editEnteredBy && editEnteredBy !== 'chris_test' ? editEnteredBy : '');
     setUndoReceiveReasonInput('');
@@ -2067,6 +2064,10 @@ export default function InventoryPage() {
   }
 
   function openBulkReceivePendingDialog() {
+    if (!canReceivePendingReceivals) {
+      setPendingReceivalsError('You do not have permission to receive Inventory.');
+      return;
+    }
     setBulkReceivePendingByInput(editEnteredBy && editEnteredBy !== 'chris_test' ? editEnteredBy : '');
     setBulkReceivePendingMessage('');
     setIsBulkReceivePendingOpen(true);
@@ -2117,6 +2118,10 @@ export default function InventoryPage() {
   }
 
   async function handleCancelPendingReceival(receival: PendingReceival) {
+    if (!canAdjustPendingReceivals) {
+      setPendingReceivalsError('You do not have permission to cancel Pending Receivals.');
+      return;
+    }
     const confirmed = window.confirm(
       `Cancel this pending receival?\n\n${receival.vendor || '—'} / ${receival.material_name} / ${receival.size || '—'}\nExpected: ${formatQuantity(receival.quantity_expected)} ${receival.unit || ''}\n\nThis will not affect inventory.`,
     );
@@ -2142,6 +2147,10 @@ export default function InventoryPage() {
   }
 
   async function handleClearReceivedPendingReceivals() {
+    if (!canAdjustPendingReceivals) {
+      setPendingReceivalsError('You do not have permission to clear received items.');
+      return;
+    }
     const receivedIds = pendingReceivals.filter((item) => item.status === 'received').map((item) => item.id);
 
     if (receivedIds.length === 0) return;
@@ -2195,8 +2204,8 @@ export default function InventoryPage() {
   }
 
   async function handleApplyPendingBulkEdit() {
-    if (!pendingReceivalUnlocked) {
-      setPendingBulkEditMessage('Unlock Pending Receivals through Add or Edit before applying bulk changes.');
+    if (!canAdjustPendingReceivals) {
+      setPendingBulkEditMessage('You do not have permission to edit Pending Receivals.');
       return;
     }
 
@@ -2313,7 +2322,8 @@ export default function InventoryPage() {
               <button
                 type="button"
                 onClick={handleClearReceivedPendingReceivals}
-                disabled={clearingReceivedPending}
+                disabled={clearingReceivedPending || !canAdjustPendingReceivals}
+                title={!canAdjustPendingReceivals ? 'Requires Inventory adjustment permission' : undefined}
                 className="h-8 rounded-md border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {clearingReceivedPending ? tr('Clearing...', 'Limpiando...') : tr('Clear Received Items', 'Ocultar artículos recibidos')}
@@ -2322,7 +2332,9 @@ export default function InventoryPage() {
             <button
               type="button"
               onClick={openPendingReceivalForm}
-              className="h-8 rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+              disabled={!canAdjustPendingReceivals}
+              title={!canAdjustPendingReceivals ? 'Requires Inventory adjustment permission' : undefined}
+              className="h-8 rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
               + {tr('Pending Receival', 'Recepción pendiente')}
             </button>
@@ -2336,11 +2348,11 @@ export default function InventoryPage() {
                 <div className="text-xs text-slate-500">{tr('Only fields chosen below will be changed.', 'Solo se modificarán los campos seleccionados a continuación.')}</div>
               </div>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={openBulkReceivePendingDialog} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending} className="h-8 rounded-md bg-slate-900 px-3 text-xs font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{tr('Receive selected', 'Recibir seleccionadas')}</button>
+                <button type="button" onClick={openBulkReceivePendingDialog} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending || !canReceivePendingReceivals} title={!canReceivePendingReceivals ? 'Requires Inventory receiving permission' : undefined} className="h-8 rounded-md bg-slate-900 px-3 text-xs font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{tr('Receive selected', 'Recibir seleccionadas')}</button>
                 <button type="button" onClick={() => resetPendingBulkEditor(true)} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending} className="text-xs font-medium text-slate-600 underline-offset-2 hover:underline disabled:opacity-60">{tr('Clear selection', 'Limpiar selección')}</button>
               </div>
             </div>
-            <div className="grid gap-3 lg:grid-cols-[1fr_1fr_auto]">
+            {canAdjustPendingReceivals && <div className="grid gap-3 lg:grid-cols-[1fr_1fr_auto]">
               <div className="rounded-md border border-slate-200 bg-white p-3">
                 <label className={labelClass}>{tr('Reservation', 'Reserva')}</label>
                 <select value={bulkPendingReservationMode} onChange={(event) => {
@@ -2375,7 +2387,7 @@ export default function InventoryPage() {
               <div className="flex items-end">
                 <button type="button" onClick={handleApplyPendingBulkEdit} disabled={isApplyingPendingBulkEdit} className="h-9 rounded-md bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{isApplyingPendingBulkEdit ? tr('Applying...', 'Aplicando...') : tr('Apply changes', 'Aplicar cambios')}</button>
               </div>
-            </div>
+            </div>}
             {pendingBulkEditMessage && <div className="mt-2 text-xs font-medium text-slate-700" role="status">{pendingBulkEditMessage}</div>}
           </div>
         )}
@@ -2429,12 +2441,12 @@ export default function InventoryPage() {
                     return (
                       <tr key={receival.id} className={rowClass}>
                         <td className="px-3 py-2 text-center">
-                          {!isReceived && (
+                          {!isReceived && (canReceivePendingReceivals || canAdjustPendingReceivals) && (
                             <input
                               type="checkbox"
                               aria-label={`Select ${receival.material_name}`}
                               checked={selectedPendingReceivalIds.has(receival.id)}
-                              disabled={isApplyingPendingBulkEdit}
+                                disabled={isApplyingPendingBulkEdit}
                               onChange={() => togglePendingReceivalSelection(receival.id)}
                               className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600"
                             />
@@ -2470,7 +2482,7 @@ export default function InventoryPage() {
                                 <span className="border border-emerald-700 bg-emerald-100 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-emerald-900">
                                   Received
                                 </span>
-                                {canUndoReceipt && (
+                                {canUndoReceipt && canAdjustPendingReceivals && (
                                   <button
                                     type="button"
                                     onClick={() => openUndoReceiveDialog(receival)}
@@ -2481,7 +2493,7 @@ export default function InventoryPage() {
                                   </button>
                                 )}
                               </>
-                            ) : (
+                            ) : canReceivePendingReceivals ? (
                               <button
                                 type="button"
                                 onClick={() => openReceivePendingDialog(receival)}
@@ -2490,8 +2502,8 @@ export default function InventoryPage() {
                               >
                                 {receivingPendingId === receival.id ? 'Receiving...' : 'Receive'}
                               </button>
-                            )}
-                            {!isReceived && (
+                            ) : null}
+                            {!isReceived && canAdjustPendingReceivals && (
                               <button
                                 type="button"
                                 onClick={() => openEditPendingReceivalForm(receival)}
@@ -2501,7 +2513,7 @@ export default function InventoryPage() {
                                 Edit
                               </button>
                             )}
-                            {!isReceived && (
+                            {!isReceived && canAdjustPendingReceivals && (
                               <button
                                 type="button"
                                 onClick={() => handleCancelPendingReceival(receival)}
@@ -2554,29 +2566,7 @@ export default function InventoryPage() {
           </div>
 
           <div className="max-h-[calc(100vh-7.5rem)] overflow-y-auto bg-[#eef1f4] p-3 sm:p-4">
-            {!pendingReceivalUnlocked ? (
-              <div className="border border-slate-400 bg-white p-4">
-                <label className={labelClass}>Pending Receival Password</label>
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <input
-                    value={pendingReceivalPasswordInput}
-                    onChange={(event) => setPendingReceivalPasswordInput(event.target.value)}
-                    type="password"
-                    className={fieldClass}
-                    placeholder="Enter password"
-                  />
-                  <button
-                    type="button"
-                    onClick={unlockPendingReceivalForm}
-                    className="border border-slate-900 bg-slate-800 px-5 py-2 text-sm font-black uppercase tracking-[0.08em] text-white transition hover:bg-slate-950"
-                  >
-                    Unlock
-                  </button>
-                </div>
-                <p className="mt-3 text-xs font-semibold leading-5 text-slate-500">This is only a temporary client-side gate. It is not real security.</p>
-              </div>
-            ) : (
-              <div className="border border-slate-400 bg-white p-4">
+            <div className="border border-slate-400 bg-white p-4">
                 <datalist id="pending-inventory-material-options">
                   {materialOptions.map((material) => (
                     <option key={material} value={material} />
@@ -2758,8 +2748,7 @@ export default function InventoryPage() {
                     {isSavingPendingReceival ? 'Saving...' : editingPendingReceivalId ? 'Save Changes' : 'Add Pending Receivals'}
                   </button>
                 </div>
-              </div>
-            )}
+            </div>
 
             {pendingReceivalMessage && (
               <div className="mt-3 border border-slate-300 bg-white p-3 text-sm font-semibold text-slate-700">

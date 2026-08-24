@@ -152,24 +152,6 @@ function LogoutIcon() {
   );
 }
 
-function AccessIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="5" y="10" width="14" height="11" rx="1.5" />
-      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-      <circle cx="12" cy="15" r="1" />
-    </svg>
-  );
-}
-
 function navClass(isActive: boolean) {
   return isActive
     ? 'font-semibold text-slate-950 shadow-[inset_0_-3px_0_#172554]'
@@ -290,11 +272,6 @@ export default function ClientLayoutShell({
   const auth = useAuth();
   const accountPreferences = useAccountPreferences();
 
-  const [isUnlocked, setIsUnlocked] = useState(false);
-  const [isReady, setIsReady] = useState(false);
-  const [showAccessModal, setShowAccessModal] = useState(false);
-  const [passwordInput, setPasswordInput] = useState('');
-  const [accessError, setAccessError] = useState('');
   const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
@@ -311,17 +288,6 @@ export default function ClientLayoutShell({
     window.addEventListener('storage', syncDisplaySize);
     return () => window.removeEventListener('storage', syncDisplaySize);
   }, [accountPreferences.accountScoped, accountPreferences.preferences.display_size]);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      setIsUnlocked(
-        window.localStorage.getItem(BRANDING.accessStorageKey) === 'granted',
-      );
-      setIsReady(true);
-    }, 0);
-
-    return () => window.clearTimeout(timeout);
-  }, []);
 
   useEffect(() => {
     function handleScroll() {
@@ -347,42 +313,11 @@ export default function ClientLayoutShell({
     };
   }, []);
 
-  function handleUnlock() {
-    if (passwordInput === BRANDING.accessPassword) {
-      window.localStorage.setItem(
-        BRANDING.accessStorageKey,
-        'granted',
-      );
-
-      setIsUnlocked(true);
-      setShowAccessModal(false);
-      setPasswordInput('');
-      setAccessError('');
-
-      return;
-    }
-
-    setAccessError(t('shell.incorrectPassword'));
-  }
-
   async function handleLogout() {
-    if (auth.isAuthenticated) {
-      try {
-        await auth.signOut();
-      } catch {
-        // The local compatibility gate must still lock even if remote sign-out fails.
-      }
-    }
-    window.localStorage.removeItem(BRANDING.accessStorageKey);
-    window.localStorage.removeItem('tenarten_admin_access');
-
-    setIsUnlocked(false);
-    setShowAccessModal(false);
-    setPasswordInput('');
-    setAccessError('');
+    await auth.signOut();
   }
 
-  const shellUnlocked = !auth.requiresPasswordSetup && (isUnlocked || (auth.isAuthenticated && auth.accessAllowed));
+  const shellUnlocked = !auth.requiresPasswordSetup && auth.isAuthenticated && auth.accessAllowed;
 
   return (
     <div data-app-shell>
@@ -525,85 +460,31 @@ export default function ClientLayoutShell({
               >
                 <LogoutIcon />
               </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setShowAccessModal(true)}
-                title={t('shell.internalAccess')}
-                aria-label={t('shell.internalAccess')}
-                className={`absolute right-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center border border-slate-950 bg-slate-900 text-white transition-all duration-200 hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 sm:static sm:ml-auto sm:w-auto sm:translate-y-0 sm:px-4 sm:text-[12px] sm:font-bold sm:uppercase sm:tracking-[0.08em] ${
-                  hasScrolled ? 'sm:h-9' : 'sm:h-10'
-                }`}
-              >
-                <AccessIcon />
-                <span className="hidden sm:ml-2 sm:inline">{t('shell.internalAccess')}</span>
-              </button>
-            )}
+            ) : null}
           </div>
         </div>
       </header>
 
       <main className="min-h-[calc(100vh-65px)] bg-[#eef1f4] text-slate-950">
-        {isReady && shellUnlocked && auth.accessAllowed ? (
+        {auth.ready && shellUnlocked ? (
           children
         ) : (
           <div data-login-gate-body className="flex min-h-[calc(100vh-65px)] items-center justify-center px-3 py-4 sm:px-5 sm:py-10">
-            <div data-theme-access-card className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
-              <div data-theme-access-brand className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-4 py-5 text-center sm:px-6 sm:py-8">
+            <div data-theme-access-card className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)] sm:max-w-2xl lg:max-w-3xl">
+              <div data-theme-access-brand className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-4 py-5 text-center sm:px-8 sm:py-10 lg:px-10 lg:py-12">
                 <Image
                   src="/tenarten-logo-steel-welcome.webp"
                   alt="Tenarten logo"
                   width={1024}
                   height={1048}
-                  className="mx-auto h-20 w-auto object-contain sm:h-32"
+                  className="mx-auto h-20 w-auto object-contain sm:h-40 lg:h-44"
                 />
 
                 <LoginBrandIdentity productionSubtitle={t('shell.operationsControl')} />
               </div>
 
-              <div className="px-4 py-5 sm:px-6 sm:py-6">
-                <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600">
-                  {t('shell.internalAccess')}
-                </div>
-
-                <label
-                  htmlFor="inline-access-password"
-                  className="mt-4 block text-sm font-bold text-slate-800"
-                >
-                  {t('shell.password')}
-                </label>
-
-                <input
-                  id="inline-access-password"
-                  type="password"
-                  value={passwordInput}
-                  onChange={(event) => {
-                    setPasswordInput(event.target.value);
-                    setAccessError('');
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                      handleUnlock();
-                    }
-                  }}
-                  className="mt-2 h-11 w-full border border-slate-500 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900 sm:h-12"
-                  autoFocus
-                />
-
-                {accessError && (
-                  <div className="mt-3 text-sm font-semibold text-red-700">
-                    {accessError}
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={handleUnlock}
-                  className="mt-4 h-11 w-full border border-slate-950 bg-slate-900 px-4 text-sm font-bold uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 sm:mt-5 sm:h-12 sm:tracking-[0.1em]"
-                >
-                  {t('shell.unlockWorkspace')}
-                </button>
-                <AccountAccessPanel onAuthenticated={() => setIsUnlocked(true)} />
+              <div className="px-4 py-5 sm:px-10 sm:py-8 lg:px-12">
+                <AccountAccessPanel onAuthenticated={() => {}} showCutoverNotice separated={false} />
                 {auth.isAuthenticated && !auth.accessAllowed ? <div role="alert" className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-xs font-semibold text-red-800">This account is disabled or does not have access to this TenOps environment.</div> : null}
               </div>
             </div>
@@ -611,73 +492,6 @@ export default function ClientLayoutShell({
         )}
       </main>
 
-      {showAccessModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-6 backdrop-blur-sm">
-          <div className="w-full max-w-md border border-slate-500 bg-white p-6 shadow-xl">
-            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600">
-              {t('shell.internalAccess')}
-            </div>
-
-            <h2 className="mt-2 text-2xl font-bold text-slate-950">
-              {t('shell.enterPassword')}
-            </h2>
-
-            <div className="mt-5">
-              <label
-                htmlFor="access-password"
-                className="mb-2 block text-sm font-bold text-slate-800"
-              >
-                {t('shell.password')}
-              </label>
-
-              <input
-                id="access-password"
-                type="password"
-                value={passwordInput}
-                onChange={(event) => {
-                  setPasswordInput(event.target.value);
-                  setAccessError('');
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    handleUnlock();
-                  }
-                }}
-                className="h-11 w-full border border-slate-500 bg-white px-3 text-slate-950 outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
-                autoFocus
-              />
-            </div>
-
-            {accessError && (
-              <div className="mt-3 text-sm font-semibold text-red-700">
-                {accessError}
-              </div>
-            )}
-
-            <div className="mt-6 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleUnlock}
-                className="h-10 border border-slate-950 bg-slate-900 px-4 text-sm font-bold text-white transition hover:bg-slate-950"
-              >
-                {t('shell.unlock')}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setShowAccessModal(false);
-                  setPasswordInput('');
-                  setAccessError('');
-                }}
-                className="h-10 border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 transition hover:bg-slate-100"
-              >
-                {t('shell.cancel')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
