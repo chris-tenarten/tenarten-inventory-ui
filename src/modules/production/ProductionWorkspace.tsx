@@ -716,7 +716,7 @@ export default function ProductionWorkspace() {
               <button
                 type="button"
                 onClick={() => { setJobCreatorReturnView(activeView); setJobCreatorOpen(true); }}
-                className="tenops-selected-surface inline-flex h-9 items-center justify-center gap-1.5 border px-3 text-[10px] font-bold uppercase tracking-[0.07em] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                className="tenops-selected-surface inline-flex h-10 items-center justify-center gap-1.5 border px-3 text-[10px] font-bold uppercase tracking-[0.07em] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
               >
                 <Plus className="h-4 w-4" aria-hidden="true" />
                 {tr('New Job', 'Nuevo trabajo')}
@@ -726,12 +726,12 @@ export default function ProductionWorkspace() {
 
         </div>
 
-        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2 rounded-sm border border-slate-200 bg-white p-2 shadow-sm lg:flex lg:items-center lg:gap-3 lg:p-2.5">
-          <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:flex-wrap lg:items-center lg:gap-2"><span id="production-view-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0 lg:text-xs">{tr('View', 'Vista')}</span><div role="group" aria-labelledby="production-view-label" className="grid min-w-0 grid-cols-3 items-center rounded-sm border border-slate-300 bg-slate-50 p-1 lg:flex">
+        <div data-production-toolbar className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2 rounded-sm border border-slate-200 bg-white p-2 shadow-sm lg:flex lg:flex-wrap lg:items-center lg:gap-3 lg:p-2.5">
+          <div data-production-toolbar-group="view" className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:flex-wrap lg:items-center lg:gap-2"><span id="production-view-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0 lg:text-xs">{tr('View', 'Vista')}</span><div role="group" aria-labelledby="production-view-label" className="grid min-w-0 grid-cols-3 items-center rounded-sm border border-slate-300 bg-slate-50 p-1 lg:flex">
             <button
               type="button"
               onClick={() => setActiveView('queue')}
-              className={`h-8 min-w-0 px-1 text-[9px] font-bold uppercase tracking-[0.05em] sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${
+              className={`h-9 min-w-0 px-1 text-[9px] font-bold uppercase tracking-[0.05em] sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${
                 activeView === 'queue'
                   ? 'tenops-selected-surface shadow-sm'
                   : 'text-slate-600 hover:bg-white'
@@ -742,7 +742,7 @@ export default function ProductionWorkspace() {
             <button
               type="button"
               onClick={() => setActiveView('spreadsheet')}
-              className={`h-8 min-w-0 px-1 text-[9px] font-bold uppercase tracking-[0.05em] sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${
+              className={`h-9 min-w-0 px-1 text-[9px] font-bold uppercase tracking-[0.05em] sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${
                 activeView === 'spreadsheet'
                   ? 'tenops-selected-surface shadow-sm'
                   : 'text-slate-600 hover:bg-white'
@@ -750,19 +750,20 @@ export default function ProductionWorkspace() {
             >
               {tr('Table', 'Tabla')}
             </button>
-            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-8 min-w-0 rounded-sm px-1 text-[9px] font-bold uppercase tracking-[0.05em] focus-visible:ring-2 focus-visible:ring-blue-600 sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${activeView==='timeline'?'tenops-selected-surface shadow-sm':'text-slate-600 hover:bg-white'}`}>{tr('Timeline', 'Cronograma')}</button>
+            <button type="button" onClick={()=>setActiveView('timeline')} className={`h-9 min-w-0 rounded-sm px-1 text-[9px] font-bold uppercase tracking-[0.05em] focus-visible:ring-2 focus-visible:ring-blue-600 sm:text-[10px] lg:px-4 lg:tracking-[0.09em] ${activeView==='timeline'?'tenops-selected-surface shadow-sm':'text-slate-600 hover:bg-white'}`}>{tr('Timeline', 'Cronograma')}</button>
           </div>
           </div>
 
           <input
+            data-production-search
             type="search"
             value={search}
             onChange={(event) => { setFocusedJobId(null); setSearch(event.target.value); }}
             placeholder={tr('Search jobs...', 'Buscar trabajos...')}
-            className="col-span-3 h-9 min-w-0 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100 lg:col-auto lg:flex-1"
+            className="col-span-3 h-10 min-w-0 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100 lg:col-auto lg:min-w-64 lg:flex-[1_1_20rem]"
           />
 
-          {activeView !== 'timeline' && <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:items-center lg:gap-2"><span id="production-sort-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0">{tr('Sort', 'Ordenar')}</span><div role="group" aria-labelledby="production-sort-label" className="grid h-9 min-w-0 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_arrangement', value); else window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
+          {activeView !== 'timeline' && <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:items-center lg:gap-2"><span id="production-sort-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0">{tr('Sort', 'Ordenar')}</span><div role="group" aria-labelledby="production-sort-label" className="grid h-10 min-w-0 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_arrangement', value); else window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
 
           {activeView === 'spreadsheet' && (
             <div id="production-table-columns-toolbar-slot" className="relative min-w-0 lg:shrink-0" />
@@ -772,7 +773,7 @@ export default function ProductionWorkspace() {
             <button
               type="button"
               onClick={() => setIsFilterOpen((current) => !current)}
-              className={`inline-flex h-9 w-full items-center justify-center gap-2 border px-3 text-xs font-bold uppercase tracking-[0.07em] transition lg:w-auto ${
+              className={`inline-flex h-10 w-full items-center justify-center gap-2 border px-3 text-xs font-bold uppercase tracking-[0.07em] transition lg:w-auto ${
                 activeFilterCount > 0
                   ? 'border-blue-700 bg-blue-50 text-blue-800'
                   : 'border-slate-400 bg-white text-slate-700 hover:bg-slate-50'
@@ -781,7 +782,7 @@ export default function ProductionWorkspace() {
               <ListFilter className="h-4 w-4" />
               {tr('Filters', 'Filtros')}
               {activeFilterCount > 0 && (
-                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-700 px-1 text-[10px] text-white">
+                <span className="tenops-compact-type flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-700 px-1 text-white">
                   {activeFilterCount}
                 </span>
               )}
@@ -834,12 +835,13 @@ export default function ProductionWorkspace() {
           </div>
 
           <button
+            data-production-refresh
             type="button"
             onClick={() => void loadJobs()}
             disabled={isLoading}
             title={tr('Refresh jobs', 'Actualizar trabajos')}
             aria-label={tr('Refresh jobs', 'Actualizar trabajos')}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-slate-400 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center border border-slate-400 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
             <RotateCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
