@@ -107,6 +107,7 @@ export default function ProductionWorkspace() {
   const [planningPhases, setPlanningPhases] = useState<PlanningPhase[]>([]);
   const [planningItems, setPlanningItems] = useState<PlanningItem[]>([]);
   const planningPhasesRef = useRef<PlanningPhase[]>([]);
+  const jobLoadRequestRef = useRef(0);
   const [includeArchived, setIncludeArchived] = useState(false);
   const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => accountPreferences.accountScoped || typeof window === 'undefined' ? 'stage' : (window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY) as ProductionArrangement) || 'stage');
   const [isLoading, setIsLoading] = useState(true);
@@ -200,14 +201,17 @@ export default function ProductionWorkspace() {
   }, []);
 
   const loadJobs = useCallback(async () => {
+    // Auth can report a session before its app-user profile resolves. Waiting
+    // prevents the Admin-only controlled fixture from being filtered as though
+    // the authenticated user had no role.
+    if (auth.isAuthenticated && !auth.profile) return;
+    const requestId = ++jobLoadRequestRef.current;
     setIsLoading(true);
     setLoadError('');
 
     try {
       const focusedJobId = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
       const focusedSection = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY) ?? undefined;
-      window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
-      window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY);
       const [loadedJobs, loadedCounts, summaries, updateSummaries, focusedJob] = await Promise.all([
         loadProductionJobs(includeArchived),
         loadJobAttachmentCounts().catch((error) => {
@@ -229,6 +233,7 @@ export default function ProductionWorkspace() {
       const visibleFocusedJob = focusedJob && visibleJobs.some((job) => job.id === focusedJob.id) ? focusedJob : null;
       const loadedPlanningPhases = planningEnabled ? await loadPlanningPhases(visibleJobs.map((job) => job.id)) : [];
       const loadedPlanningItems = planningEnabled ? await loadPlanningItems(loadedPlanningPhases.map((phase) => phase.id)) : [];
+      if (requestId !== jobLoadRequestRef.current) return;
       setJobs(sortJobs(visibleJobs));
       setAttachmentCounts(loadedCounts);
       setIntegrationSummaries(summaries);
@@ -241,16 +246,23 @@ export default function ProductionWorkspace() {
         setSelectedJobId(visibleFocusedJob.id);
         setInspectorFocus(focusedSection);
         setActiveView('queue', false);
+      } else if (focusedJobId) {
+        if (window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY) === focusedJobId) {
+          window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+          window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY);
+        }
+        setLoadError('The requested Production Job is no longer available.');
       }
     } catch (error) {
+      if (requestId !== jobLoadRequestRef.current) return;
       console.error(error);
       setLoadError(
         error instanceof Error ? error.message : 'Unable to load active jobs.',
       );
     } finally {
-      setIsLoading(false);
+      if (requestId === jobLoadRequestRef.current) setIsLoading(false);
     }
-  }, [auth.profile?.isActive, auth.profile?.role, includeArchived, setActiveView]);
+  }, [auth.isAuthenticated, auth.profile, includeArchived, setActiveView]);
 
   useEffect(() => {
     void loadJobs();
@@ -997,7 +1009,7 @@ export default function ProductionWorkspace() {
       )}
 
       {selectedJob && <ProductionJobInspector
-        key={selectedJob.id}
+        key={`${selectedJob.id}:${inspectorFocus ?? ''}`}
         job={stagedSchedules[selectedJob.id] ? { ...selectedJob, planned_start: stagedSchedules[selectedJob.id].proposed_planned_start, planned_end: stagedSchedules[selectedJob.id].proposed_planned_end } : selectedJob}
         jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? EMPTY_JOB_UPDATE_SUMMARY}
         onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged}
@@ -1015,6 +1027,16 @@ export default function ProductionWorkspace() {
         planningPhases={planningPhases}
         planningIssues={activePlanningIssues}
         initialFocus={inspectorFocus}
+        onInitialFocusResolved={(focus, found) => {
+          if (
+            window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY) === selectedJob.id
+            && window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY) === focus
+          ) {
+            window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+            window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY);
+          }
+          if (!found) setLoadError('The requested Job Update is no longer available.');
+        }}
         onScheduleJob={openJobScheduling}
         onCreateRework={setReworkTargetJob}
       />}

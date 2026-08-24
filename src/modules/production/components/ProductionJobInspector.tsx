@@ -73,6 +73,7 @@ type Props = {
   planningPhases?: PlanningPhase[];
   planningIssues?: PlanningScheduleIssue[];
   initialFocus?: string;
+  onInitialFocusResolved?: (focus: string, found: boolean) => void;
   onScheduleJob: (job: ProductionJob) => void;
   onCreateRework: (job: ProductionJob) => void;
 };
@@ -273,6 +274,7 @@ export default function ProductionJobInspector({
   planningPhases,
   planningIssues = [],
   initialFocus,
+  onInitialFocusResolved,
   onScheduleJob,
   onCreateRework,
 }: Props) {
@@ -1349,6 +1351,7 @@ export default function ProductionJobInspector({
               job={job}
               attachments={attachments}
               focusedUpdateId={focusedUpdateId}
+              onFocusedUpdateResolved={(updateId, found) => onInitialFocusResolved?.(`job-updates:${updateId}`, found)}
               onSummaryChanged={handleJobUpdateSummaryChanged}
               onAttachmentsChanged={(nextAttachments) => {
                 setAttachments(nextAttachments);
