@@ -40,8 +40,8 @@ assert.match(hero, /data-welcome-primary-region/);
 assert.match(hero, /data-welcome-identity-group/);
 assert.match(hero, /data-welcome-identity-group[\s\S]*data-welcome-scroll-affordance/, 'Identity and scroll guidance must be separate groups in one normal-flow layout');
 assert.match(hero, /grid-rows-\[minmax\(0,1fr\)_auto\]/, 'Available viewport height must separate primary identity from the reserved guidance row');
-assert.match(hero, /data-welcome-primary-region[\s\S]{0,180}pb-\[clamp\(2rem,8vh,6rem\)\]/,
-  'The identity-to-guidance separation must grow with available viewport height');
+assert.match(hero, /data-welcome-primary-region[\s\S]{0,180}pb-\[clamp\(0rem,1vh,0\.75rem\)\]/,
+  'The identity group must remain centered without bottom padding pushing the crest beyond the viewport');
 assert.doesNotMatch(hero, /data-welcome-scroll-affordance[\s\S]{0,250}className="[^"]*absolute/, 'The scroll cue must not use independent absolute positioning');
 assert.match(hero, /Scroll to explore/);
 assert.match(hero, /onClick=\{explore\}/, 'The scroll affordance must be keyboard-clickable');
@@ -50,8 +50,8 @@ assert.match(hero, /behavior: reducedMotion \? "auto" : "smooth"/);
 assert.match(hero, /data-welcome-logo-stack/);
 assert.match(hero, /data-welcome-logo-stack className="relative aspect-\[1024\/1048\] shrink-0"/,
   'Welcome crest sizing must remain centralized on its semantic logo stack');
-assert.match(styles, /\[data-welcome-logo-stack\] \{[\s\S]*width: clamp\(19rem, 51\.25vw, 34\.5rem\);[\s\S]*margin-top: max\(-3rem, calc\(clamp\(13rem, 35vw, 23\.5rem\) - clamp\(19rem, 51\.25vw, 34\.5rem\)\)\);/,
-  'Welcome crest must reach the 552px desktop target without allowing its composition lift to clip the artwork');
+assert.match(styles, /\[data-welcome-logo-stack\] \{[\s\S]*width: clamp\(19rem, 51\.25vw, 34\.5rem\);[\s\S]*margin-top: max\(0rem, calc\(clamp\(13rem, 35vw, 23\.5rem\) - clamp\(19rem, 51\.25vw, 34\.5rem\)\)\);/,
+  'Welcome crest must reach the 552px desktop target without allowing a negative composition lift to clip the artwork');
 assert.match(hero, /tenarten-logo-gold-welcome\.webp/);
 assert.match(hero, /tenarten-logo-steel-welcome\.webp/);
 assert.match(hero, /data-welcome-logo-steel/);

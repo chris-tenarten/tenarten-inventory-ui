@@ -159,7 +159,7 @@ export default function WelcomeHero() {
         style={{ opacity: Math.max(0, 1 - exitProgress * 1.08) }}
       >
         <div data-welcome-content-layout className="grid h-full w-full grid-rows-[minmax(0,1fr)_auto] items-center py-[clamp(0.75rem,2vh,1.5rem)]">
-          <div data-welcome-primary-region className="flex min-h-0 w-full items-center justify-center pb-[clamp(2rem,8vh,6rem)]">
+          <div data-welcome-primary-region className="flex min-h-0 w-full items-center justify-center pb-[clamp(0rem,1vh,0.75rem)]">
             <div
               data-welcome-identity-group
               className="flex max-w-2xl flex-col items-center"
