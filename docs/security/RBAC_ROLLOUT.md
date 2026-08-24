@@ -4,7 +4,7 @@ RBAC is split deliberately into compatibility infrastructure and final enforceme
 
 ## Compatibility phase
 
-The currently applied compatibility state consists of `20260818_001_rbac_identity_infrastructure.sql` and `20260818_003_rbac_compatibility_authenticated_access.sql`. It adds application users, fixed role bundles, identity columns, trusted capability helpers, notification discovery, Admin helpers, and authenticated access equivalent to the legacy anonymous application contract. It does not revoke anonymous access or disable Internal Access.
+The currently applied database compatibility state consists of `20260818_001_rbac_identity_infrastructure.sql` and `20260818_003_rbac_compatibility_authenticated_access.sql`. It adds application users, fixed role bundles, identity columns, trusted capability helpers, notification discovery, Admin helpers, and authenticated access equivalent to the legacy anonymous database contract. It does not revoke anonymous database access. The application shell independently requires an authenticated, active TenOps account and no longer exposes the legacy client-side Internal Access gate.
 
 Deploy `admin-manage-users` only after the infrastructure migration. It is an additive Admin-only Edge Function; its service credential remains server-side and its caller must pass the trusted `manageUsers` check.
 
@@ -104,13 +104,14 @@ recovery point, so use this exact sequence:
    PostgREST there before testing. Do not reopen traffic yet.
 4. Sign out and reauthenticate a known active Admin. Confirm `get_my_app_user`
    still returns the expected active Admin identity.
-5. Verify anonymous compatibility operational reads through the existing Internal
-   Access path and confirm representative Production data is visible.
+5. Verify anonymous compatibility operational reads directly against the legacy
+   database contract and confirm representative Production data is visible. The
+   application shell remains account-authenticated and is not an anonymous test path.
 6. Verify authenticated compatibility reads and one already-established,
    non-destructive operational path. Confirm Production data remains visible to the
    authenticated Admin.
-7. Confirm Internal Access remains available and the compatibility runtime does
-   not require final RBAC enforcement.
+7. Confirm anonymous database compatibility remains available and the compatibility
+   runtime does not require final RBAC enforcement.
 8. Keep `_002`, Edge `RBAC_ENFORCED`, and frontend enforced mode disabled until the
    original failure is diagnosed and a new controlled cutover is explicitly
    authorized. Reopen operator traffic only after these compatibility checks pass.

@@ -4,6 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
+    "auth:qa:start": "npx --yes supabase@2.110.0 start --workdir auth-qa && npx --yes supabase@2.110.0 db reset --workdir auth-qa --local",
+    "auth:qa:reset": "node scripts/reset-local-auth-qa.mjs",
+    "auth:qa:dev": "node scripts/start-local-auth-qa.mjs",
+    "auth:qa:stop": "npx --yes supabase@2.110.0 stop --workdir auth-qa",
+    "auth:qa:verify": "node scripts/verify-local-auth-qa.mjs",
+    "auth:qa:verify-flow": "node scripts/verify-local-auth-qa-flow.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

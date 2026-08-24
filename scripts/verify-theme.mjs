@@ -37,7 +37,7 @@ assert.match(provider, /if \(!allowUserAppearance \|\| accountPreferences\.accou
 assert.match(provider, /accountPreferences\.accountScoped \|\| event\.key !== APPEARANCE_STORAGE_KEY/,
   'Authenticated accounts must not synchronize another operator\'s browser-local Appearance');
 assert.match(provider, /window\.localStorage\.setItem\(APPEARANCE_STORAGE_KEY, next\)/,
-  'Unauthenticated Internal Access must retain the browser-local Appearance fallback');
+  'The pre-authentication Appearance fallback remains browser-local');
 assert.doesNotMatch(provider, /hostname|NODE_ENV|branch|prefers-color-scheme|matchMedia/i);
 assert.match(layout, /data-appearance=\{defaultAppearance\}/);
 assert.doesNotMatch(layout, /localStorage\.getItem\(['"]tenops_appearance['"]\)/,

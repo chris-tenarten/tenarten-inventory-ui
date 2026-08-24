@@ -25,10 +25,9 @@ assert.deepEqual(
   { name: development.productName, subtitle: development.subtitle, appearance: development.defaultAppearance, artwork: development.showDeveloperArtwork, earlyAccess: development.allowEarlyAccessBadge },
   { name: "TenDev", subtitle: "RESEARCH & DEVELOPMENT", appearance: "dark", artwork: true, earlyAccess: false },
 );
-assert.notEqual(development.accessStorageKey, production.accessStorageKey);
-assert.notEqual(development.accessPassword, production.accessPassword);
-assert.match(shell, /BRANDING\.accessStorageKey/);
-assert.match(shell, /BRANDING\.accessPassword/);
+assert.equal("accessStorageKey" in development, false);
+assert.equal("accessPassword" in development, false);
+assert.doesNotMatch(shell, /accessStorageKey|accessPassword/);
 assert.doesNotMatch(shell, /DEV_BRANDING_ENABLED|RESEARCH & DEVELOPMENT|tendev_internal_access|harlesbarkley/);
 assert.match(appBranding, /BRANDING\.subtitle \?\? productionSubtitle/);
 assert.match(appBranding, /BRANDING\.showDeveloperArtwork/);

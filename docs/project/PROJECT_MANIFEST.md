@@ -193,7 +193,7 @@ Inventory is implemented primarily in `src/app/inventory/page.tsx`, coordinating
 
 ### Shared shell and access gate
 
-`src/app/client-layout-shell.tsx` owns header, navigation, internal access, and logout. The current access gate and schedule approval password are client-visible MVP friction, not authentication or security.
+`src/app/client-layout-shell.tsx` owns the authenticated account gate, header, navigation, and logout. Operational approval controls remain separate from application authentication.
 
 ## 7. Data architecture
 

@@ -9,8 +9,6 @@ const PRODUCTION_BRANDING = Object.freeze({
   productName: "TenOps",
   subtitle: null,
   defaultAppearance: "light",
-  accessStorageKey: "tenarten_internal_access",
-  accessPassword: "tenarten123",
   showDeveloperArtwork: false,
   allowEarlyAccessBadge: true,
 });
@@ -20,8 +18,6 @@ const DEVELOPMENT_BRANDING = Object.freeze({
   productName: "TenDev",
   subtitle: "RESEARCH & DEVELOPMENT",
   defaultAppearance: "dark",
-  accessStorageKey: "tendev_internal_access_v1",
-  accessPassword: "harlesbarkley",
   showDeveloperArtwork: true,
   allowEarlyAccessBadge: false,
 });

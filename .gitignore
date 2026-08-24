@@ -27,6 +27,8 @@
 .DS_Store
 *.pem
 /supabase/.temp/
+/auth-qa/supabase/.temp/
+/auth-qa/supabase/.branches/
 
 # debug
 npm-debug.log*
