@@ -50,8 +50,8 @@ assert.match(hero, /behavior: reducedMotion \? "auto" : "smooth"/);
 assert.match(hero, /data-welcome-logo-stack/);
 assert.match(hero, /data-welcome-logo-stack className="relative aspect-\[1024\/1048\] shrink-0"/,
   'Welcome crest sizing must remain centralized on its semantic logo stack');
-assert.match(styles, /\[data-welcome-logo-stack\] \{[\s\S]*width: clamp\(19rem, 51\.25vw, 34\.5rem\);[\s\S]*margin-top: max\(0rem, calc\(clamp\(13rem, 35vw, 23\.5rem\) - clamp\(19rem, 51\.25vw, 34\.5rem\)\)\);/,
-  'Welcome crest must reach the 552px desktop target without allowing a negative composition lift to clip the artwork');
+assert.match(styles, /\[data-welcome-logo-stack\] \{[\s\S]*width: max\(10\.5rem, min\(clamp\(19rem, 51\.25vw, 34\.5rem\), calc\(100dvh - 11rem\)\)\);[\s\S]*margin-top: max\(0rem, calc\(clamp\(13rem, 35vw, 23\.5rem\) - clamp\(19rem, 51\.25vw, 34\.5rem\)\)\);/,
+  'Welcome crest must retain its 552px desktop target while continuously yielding to the available viewport height');
 assert.match(hero, /tenarten-logo-gold-welcome\.webp/);
 assert.match(hero, /tenarten-logo-steel-welcome\.webp/);
 assert.match(hero, /data-welcome-logo-steel/);
@@ -115,7 +115,8 @@ assert.match(styles, /\[data-welcome-hero\] \{[\s\S]*background: #eef1f4;[\s\S]*
 assert.match(styles, /html\[data-appearance="dark"\] \[data-welcome-hero\],[\s\S]*background: #111820;/, 'TenDev dark Welcome must retain an opaque backing surface');
 assert.match(styles, /\[data-header-steel-logo-preview\] \{[\s\S]*filter: contrast/, 'Header-scale steel contrast treatment must remain presentation-scoped');
 assert.match(styles, /html\[data-appearance="dark"\] \[data-header-steel-logo-preview\]/, 'Dark mode must receive its own restrained steel-logo treatment');
-assert.match(styles, /@media \(max-height: 36rem\)[\s\S]*\[data-welcome-logo-stack\]/, 'Only genuinely short viewports may constrain the enlarged crest by height');
+assert.match(styles, /@media \(max-height: 36rem\)[\s\S]*\[data-welcome-logo-stack\] \{ margin-top: 0; \}/,
+  'Short viewports must not replace the continuous crest sizing rule with a breakpoint-specific size');
 assert.match(styles, /prefers-reduced-motion: reduce/);
 
 console.log('TenOps branded Welcome hero checks passed.');

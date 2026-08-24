@@ -102,14 +102,14 @@ html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(9)::after { c
 }
 
 [data-welcome-logo-stack] {
-  width: clamp(19rem, 51.25vw, 34.5rem);
+  width: max(10.5rem, min(clamp(19rem, 51.25vw, 34.5rem), calc(100dvh - 11rem)));
   margin-top: max(0rem, calc(clamp(13rem, 35vw, 23.5rem) - clamp(19rem, 51.25vw, 34.5rem)));
 }
 
 @media (max-height: 36rem) {
   [data-welcome-content-layout] { padding-block: 1rem; }
   [data-welcome-primary-region] { padding-bottom: 0.75rem; }
-  [data-welcome-logo-stack] { width: clamp(10.5rem, 32vh, 16rem); margin-top: 0; }
+  [data-welcome-logo-stack] { margin-top: 0; }
 }
 
 html[data-display-size="compact"] {
