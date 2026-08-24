@@ -18,6 +18,8 @@ import {
 export { EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary } from './job-update-summary';
 import { productionValuesEqual } from './update-normalization';
 import type { ProductionScheduleBatchRpcArgs, ProductionScheduleBatchSuccess } from './schedule-batch-contract';
+import { isActiveProductionRework } from './rework';
+import { summarizeLaborLifecycles, type JobLaborLifecycleSummary } from './labor-lifecycle';
 
 const JOB_COLUMNS = [
   'id',
@@ -118,7 +120,7 @@ export async function loadProductionJobs(includeArchived = false): Promise<Produ
   if (reworks.error) throw reworks.error;
   const activeByJob = new Map<string, ProductionReworkCycle>();
   for (const cycle of (reworks.data ?? []) as ProductionReworkCycle[]) {
-    if (!['complete', 'cancelled'].includes(cycle.production_status) && !activeByJob.has(cycle.job_id)) {
+    if (isActiveProductionRework(cycle) && !activeByJob.has(cycle.job_id)) {
       activeByJob.set(cycle.job_id, cycle);
     }
   }
@@ -201,6 +203,21 @@ export async function updateProductionReworkStatus(cycleId: string, status: Prod
 }
 
 export type ProductionIntegrationSummary = { actualHours: number; laborEntryCount: number; materialReportDates: string[] };
+export async function loadProductionJobLaborLifecycleSummary(jobId: string): Promise<JobLaborLifecycleSummary> {
+  const { data, error } = await supabase
+    .from('manpower_entries')
+    .select('job_id,rework_cycle_id,am_hours,pm_hours,rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id,sequence_number)')
+    .eq('job_id', jobId);
+  if (error) throw error;
+  return summarizeLaborLifecycles(data ?? []).get(jobId) ?? {
+    jobId,
+    totalHours: 0,
+    entryCount: 0,
+    originalOrUnclassifiedHours: 0,
+    originalOrUnclassifiedEntryCount: 0,
+    reworks: [],
+  };
+}
 export async function loadJobUpdateSummaries(): Promise<Record<string, JobUpdateSummary>> {
   const [{ data, error }, sessionResult] = await Promise.all([
     supabase.from('job_updates').select('job_id,created_at,requires_follow_up,resolved_at,follow_up_assignee_name'),
