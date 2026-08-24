@@ -9,8 +9,22 @@
   animation: tenops-welcome-chevron 2.4s ease-in-out infinite;
 }
 
+[data-welcome-hero] {
+  background: #eef1f4;
+  overscroll-behavior-y: none;
+}
+
+[data-header-steel-logo-preview] {
+  filter: contrast(1.14) brightness(0.94) drop-shadow(0 0 0.35px rgb(15 23 42 / 0.32));
+}
+
+html[data-appearance="dark"] [data-welcome-hero],
 html[data-appearance="dark"] [data-welcome-hero-surface] {
   background: #111820;
+}
+
+html[data-appearance="dark"] [data-header-steel-logo-preview] {
+  filter: contrast(1.06) brightness(1.02);
 }
 
 body[data-notification-onboarding] [data-app-shell] {
@@ -55,8 +69,12 @@ html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(9)::after { c
 :root {
   --background: #eef1f4;
   --foreground: #020617;
-  --tenops-root-font-size: 16px;
-  --tenops-density: 1;
+  --tenops-type-micro: 10px;
+  --tenops-type-compact-tag: 10px;
+  --tenops-type-label: 12px;
+  --tenops-type-caption: 14px;
+  --tenops-type-small: 16px;
+  --tenops-type-body: 18px;
   --surface-page: #eef1f4;
   --surface-primary: #ffffff;
   --surface-secondary: #f8fafc;
@@ -79,14 +97,35 @@ html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(9)::after { c
   --rework-action-separator: #d8b6b8;
 }
 
+.tenops-compact-type {
+  font-size: var(--tenops-type-compact-tag) !important;
+}
+
+[data-welcome-logo-stack] {
+  width: clamp(19rem, 51.25vw, 34.5rem);
+  margin-top: max(-3rem, calc(clamp(13rem, 35vw, 23.5rem) - clamp(19rem, 51.25vw, 34.5rem)));
+}
+
+@media (max-height: 36rem) {
+  [data-welcome-content-layout] { padding-block: 1rem; }
+  [data-welcome-primary-region] { padding-bottom: 0.75rem; }
+  [data-welcome-logo-stack] { width: clamp(10.5rem, 32vh, 16rem); margin-top: 0; }
+}
+
 html[data-display-size="compact"] {
-  --tenops-root-font-size: 14px;
-  --tenops-density: 0.875;
+  --tenops-type-micro: 9px;
+  --tenops-type-label: 10.5px;
+  --tenops-type-caption: 12.5px;
+  --tenops-type-small: 14.5px;
+  --tenops-type-body: 16px;
 }
 
 html[data-display-size="large"] {
-  --tenops-root-font-size: 18px;
-  --tenops-density: 1.125;
+  --tenops-type-micro: 12px;
+  --tenops-type-label: 14px;
+  --tenops-type-caption: 16px;
+  --tenops-type-small: 18px;
+  --tenops-type-body: 20px;
 }
 
 html[data-appearance="light"] {
@@ -107,7 +146,7 @@ html[data-appearance="light"] {
 html {
   min-height: 100%;
   background: var(--background);
-  font-size: var(--tenops-root-font-size);
+  font-size: 16px;
 }
 
 body {
@@ -117,6 +156,23 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/*
+ * TenOps readability sizes are type primitives, not a page zoom. Geometry,
+ * responsive breakpoints, and viewport-composed surfaces keep their native
+ * dimensions while high-frequency operational copy receives a measured lift.
+ */
+body .text-\[8px\] { font-size: var(--tenops-type-micro); }
+body .text-\[9px\],
+body .text-\[10px\] { font-size: var(--tenops-type-label); }
+body .text-\[11px\],
+body .text-\[12px\],
+body .text-xs { font-size: var(--tenops-type-caption); }
+body .text-sm { font-size: var(--tenops-type-small); }
+body .text-base { font-size: var(--tenops-type-body); }
+
+/* Welcome is a deliberately viewport-composed presentation, not app chrome. */
+[data-welcome-hero] .text-xs { font-size: 0.75rem; }
 
 .tendev-engineering-stencil {
   color: #334155;

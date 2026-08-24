@@ -1,11 +1,12 @@
 "use client";
 
-import { AlertTriangle, AtSign, Bell, MessageSquare, Sparkles, UserRoundCheck, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { AlertTriangle, ArrowRight, AtSign, Bell, MessageSquare, Sparkles, UserRoundCheck, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "@/lib/auth";
 import { ROLE_LABELS, type AppRole } from "@/lib/rbac";
 import { supabase } from "@/lib/supabase";
+import { initialNotificationOnboardingState, notificationOnboardingReducer } from "./notification-onboarding-state";
 
 export type AccountNotification = {
   kind: "job_update";
@@ -34,8 +35,6 @@ type GeneralNotification = {
 
 type NotificationItem = AccountNotification | GeneralNotification;
 type NotificationTab = "unread" | "all";
-type OnboardingSpotlight = "bell" | "welcome" | null;
-
 function relativeTime(value: string) {
   const elapsedSeconds = Math.round((Date.now() - new Date(value).getTime()) / 1000);
   const formatter = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
@@ -51,13 +50,12 @@ function relativeTime(value: string) {
 
 export default function AccountNotifications({ onOpen }: { onOpen(notification: AccountNotification): void }) {
   const auth = useAuth();
-  const [open, setOpen] = useState(false);
+  const [{ open, spotlight }, dispatchOnboarding] = useReducer(notificationOnboardingReducer, initialNotificationOnboardingState);
   const [tab, setTab] = useState<NotificationTab>("unread");
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [error, setError] = useState("");
   const [working, setWorking] = useState(false);
   const [welcomeOpen, setWelcomeOpen] = useState(false);
-  const [spotlight, setSpotlight] = useState<OnboardingSpotlight>(null);
 
   const load = useCallback(async () => {
     if (!auth.isAuthenticated || !auth.profile?.isActive) { setItems([]); return; }
@@ -95,8 +93,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
 
   useEffect(() => {
     const startOnboarding = () => {
-      setOpen(false);
-      setSpotlight("bell");
+      dispatchOnboarding({ type: "start" });
     };
     window.addEventListener("tenops:start-notification-onboarding", startOnboarding);
     return () => window.removeEventListener("tenops:start-notification-onboarding", startOnboarding);
@@ -109,7 +106,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
     }
     document.body.dataset.notificationOnboarding = spotlight;
     const cancel = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSpotlight(null);
+      if (event.key === "Escape") dispatchOnboarding({ type: "cancel-spotlight" });
     };
     window.addEventListener("keydown", cancel);
     return () => {
@@ -133,13 +130,13 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
   async function openItem(item: NotificationItem) {
     if (!await markRead(item)) return;
     if (item.kind === "general" && item.notification_type === "welcome") {
-      setSpotlight(null);
-      setOpen(false);
+      dispatchOnboarding({ type: "cancel-spotlight" });
+      dispatchOnboarding({ type: "close" });
       setWelcomeOpen(true);
       return;
     }
     if (item.kind === "job_update" && item.source_available) {
-      setOpen(false);
+      dispatchOnboarding({ type: "close" });
       onOpen(item);
     }
   }
@@ -164,7 +161,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
       <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-2 pb-2">
         <strong className="text-sm">Notifications</strong>
         <span className="flex items-center">
-          <button type="button" onClick={() => { setOpen(false); setSpotlight(null); }} aria-label="Close Notifications" className="inline-flex h-7 w-7 items-center justify-center hover:bg-slate-100"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={() => dispatchOnboarding({ type: "close" })} aria-label="Close Notifications" className="inline-flex h-7 w-7 items-center justify-center hover:bg-slate-100"><X className="h-4 w-4" /></button>
         </span>
       </div>
       <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-2 py-2">
@@ -179,7 +176,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
       <div data-notification-scroll-region className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {visibleItems.map((item) => {
           const isWelcome = item.kind === "general" && item.notification_type === "welcome";
-          return <button key={item.id} type="button" data-welcome-notification-row={isWelcome ? "true" : undefined} onClick={() => void openItem(item)} className={`block w-full border-b border-slate-100 px-2 py-3 text-left hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none ${item.read_at ? "opacity-65" : "bg-blue-50/40"} ${spotlight === "welcome" && isWelcome ? "relative z-[1] ring-2 ring-inset ring-blue-600" : ""}`}>
+          return <button key={item.id} type="button" data-welcome-notification-row={isWelcome ? "true" : undefined} onClick={() => void openItem(item)} className={`block w-full border-b border-slate-100 px-2 py-3 text-left transition hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${item.read_at && !isWelcome ? "opacity-65" : item.read_at ? "" : "bg-blue-50/40"} ${isWelcome ? "cursor-pointer hover:bg-blue-50/70" : ""} ${spotlight === "welcome" && isWelcome ? "relative z-[1] ring-2 ring-inset ring-blue-600" : ""}`}>
             <span className="flex items-start justify-between gap-3">
               <span className="flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-950">{isWelcome ? <Sparkles className="h-3.5 w-3.5 shrink-0 text-blue-700" /> : item.kind === "job_update" && item.title.toLowerCase().includes("mention") ? <AtSign className="h-3.5 w-3.5 shrink-0 text-blue-700" /> : <UserRoundCheck className="h-3.5 w-3.5 shrink-0 text-slate-500" />}<span className="truncate">{item.title}</span></span>
               <time dateTime={item.created_at} className="shrink-0 text-[10px] text-slate-500">{relativeTime(item.created_at)}</time>
@@ -191,6 +188,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
             </> : <>
               <span className="mt-1 block text-xs leading-relaxed text-slate-600">{item.body}</span>
               {item.metadata.role && ROLE_LABELS[item.metadata.role] ? <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-blue-700">Role: {ROLE_LABELS[item.metadata.role]}</span> : null}
+              {isWelcome ? <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.08em] text-blue-700">Open Welcome <ArrowRight className="h-3 w-3" aria-hidden="true" /></span> : null}
             </>}
           </button>;
         })}
@@ -211,12 +209,10 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
   </>, document.body);
 
   function toggleNotifications() {
-    const nextOpen = !open;
-    setOpen(nextOpen);
-    if (nextOpen && spotlight === "bell") {
+    if (!open && spotlight === "bell") {
       setTab(welcomeItem?.read_at ? "all" : "unread");
-      setSpotlight("welcome");
     }
+    dispatchOnboarding({ type: "toggle" });
   }
 
   return <div data-account-notifications data-onboarding-spotlight={spotlight ?? undefined} className={`relative shrink-0 ${spotlight ? "z-[90]" : ""}`}>
@@ -230,7 +226,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
       className={`relative inline-flex h-9 w-9 items-center justify-center text-slate-600 transition hover:bg-slate-200/40 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 sm:h-10 sm:w-10 ${spotlight === "bell" ? "bg-white text-blue-800 ring-2 ring-blue-500 shadow-lg" : ""}`}
     >
       <Bell className="h-4 w-4" aria-hidden="true" />
-      {unreadCount ? <span aria-label={`${unreadCount} unread notifications`} className="absolute right-0.5 top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold leading-none text-white ring-2 ring-white">{unreadCount}</span> : null}
+      {unreadCount ? <span aria-label={`${unreadCount} unread notifications`} className="tenops-compact-type absolute right-0.5 top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 font-bold leading-none text-white ring-2 ring-white">{unreadCount}</span> : null}
     </button>
     {spotlight === "bell" ? <div role="note" className="absolute right-0 top-full mt-2 w-max max-w-48 border border-blue-300 bg-white px-3 py-2 text-left shadow-lg"><div className="text-[10px] font-bold text-slate-900">Your updates live here</div><div className="mt-0.5 text-[10px] leading-relaxed text-slate-600">Open Notifications to continue.</div></div> : null}
     {overlays}

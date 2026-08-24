@@ -14,7 +14,8 @@ const updates = readFileSync(new URL("../src/modules/production/components/JobUp
 const helper = readFileSync(new URL("../src/lib/identity-presentation.ts", import.meta.url), "utf8");
 const collaboration = readFileSync(new URL("../supabase/migrations/20260819_001_job_update_account_collaboration.sql", import.meta.url), "utf8");
 
-assert.match(hero, /Welcome, \{auth\.profile\.displayName\}/, "Welcome must use the full canonical display name");
+assert.match(hero, /data-welcome-account-identity[\s\S]*\{auth\.profile\.displayName\}/, "Welcome must use the full canonical display name");
+assert.doesNotMatch(hero, /Welcome, \{auth\.profile\.displayName\}/, "Welcome must present identity without redundant greeting copy");
 assert.doesNotMatch(hero, /operationalFirstName/, "Welcome must not shorten the canonical display name");
 assert.match(shell, /operationalFirstName\(auth\.profile\.displayName\)/);
 assert.match(updates, /Posting as <strong[^>]*>\{operationalFirstName\(auth\.profile\.displayName\)\}/);

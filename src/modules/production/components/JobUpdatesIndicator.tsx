@@ -41,7 +41,7 @@ export default function JobUpdatesIndicator({
       onClick={openUpdates}
       aria-label={accessibleLabel}
       title={tooltip}
-      className={`pointer-events-auto inline-flex h-6 items-center border border-slate-300 bg-white px-1.5 text-[10px] font-bold tabular-nums text-slate-600 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${className}`}
+      className={`tenops-compact-type pointer-events-auto inline-flex h-6 items-center border border-slate-300 bg-white px-1.5 font-bold tabular-nums text-slate-600 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${className}`}
     >
       <span data-job-updates-total className="inline-flex items-center gap-1">
         <span className="relative inline-flex">

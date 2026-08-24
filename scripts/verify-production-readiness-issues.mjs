@@ -83,7 +83,7 @@ assert.match(queue, /const overviewJobs = jobs/);
 assert.match(badge, /whitespace-nowrap/);
 assert.match(statusBadge, /productionTagClassName/);
 assert.match(badge, /productionTagClassName/);
-assert.match(productionTag, /rounded-sm border px-2 py-0\.5 !text-\[10px\] !font-bold !leading-\[1\.5\] shadow-sm/);
+assert.match(productionTag, /tenops-compact-type inline-flex items-center rounded-sm border px-2 py-0\.5 !font-bold !leading-\[1\.5\] shadow-sm/);
 assert.match(queue, /data-overview-needs-dates=\{needsScheduling\(job\) \? 'true' : undefined\}/);
 assert.match(queue, /needsScheduling\(job\) \|\| hasUpdateAttention \? 'bg-amber-50\/50 hover:bg-amber-50\/70'/);
 assert.doesNotMatch(queue, /data-overview-update-attention-marker/);

@@ -43,7 +43,7 @@ export default function ActivityStrip({
         onClick={openAttachments}
         aria-label={`Open Project Files for ${job.job_number || job.name}: ${attachmentCount} ${attachmentCount === 1 ? "attachment" : "attachments"}`}
         title={attachmentCount ? `${attachmentCount} attached ${attachmentCount === 1 ? "file" : "files"}` : "No attached files"}
-        className={`pointer-events-auto inline-flex h-6 w-12 items-center justify-center gap-1 border text-[10px] font-bold tabular-nums hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${
+        className={`tenops-compact-type pointer-events-auto inline-flex h-6 w-12 items-center justify-center gap-1 border font-bold tabular-nums hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${
           attachmentCount
             ? "border-slate-300 bg-white text-slate-600"
             : "border-slate-200 bg-slate-50 text-slate-400"

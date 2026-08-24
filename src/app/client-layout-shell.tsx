@@ -404,10 +404,11 @@ export default function ClientLayoutShell({
               aria-label={t('shell.goToDashboard')}
             >
               <Image
-                src="/logo.png"
+                data-header-steel-logo-preview
+                src="/tenarten-logo-steel-welcome.webp"
                 alt="Tenarten logo"
-                width={256}
-                height={256}
+                width={1024}
+                height={1048}
                 className={`shrink-0 object-contain transition-all duration-200 ${
                   hasScrolled
                     ? 'h-9 w-auto'
@@ -498,7 +499,7 @@ export default function ClientLayoutShell({
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
                   {auth.isAuthenticated && auth.profile?.isActive ? <div data-account-identity className="hidden max-w-36 px-2 text-right leading-tight md:block">
                     <div className="truncate text-[11px] font-bold text-slate-900" title={auth.profile.displayName}>{operationalFirstName(auth.profile.displayName)}</div>
-                    <div className="text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-500">{ROLE_LABELS[auth.profile.role]}</div>
+                    <div className="tenops-compact-type font-semibold uppercase tracking-[0.08em] text-slate-500">{ROLE_LABELS[auth.profile.role]}</div>
                   </div> : null}
                   <AccountNotifications onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   <Link
@@ -550,10 +551,10 @@ export default function ClientLayoutShell({
             <div data-theme-access-card className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
               <div data-theme-access-brand className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-4 py-5 text-center sm:px-6 sm:py-8">
                 <Image
-                  src="/logo.png"
+                  src="/tenarten-logo-steel-welcome.webp"
                   alt="Tenarten logo"
-                  width={256}
-                  height={256}
+                  width={1024}
+                  height={1048}
                   className="mx-auto h-20 w-auto object-contain sm:h-32"
                 />
 

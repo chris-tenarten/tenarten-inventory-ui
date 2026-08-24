@@ -18,6 +18,7 @@ import JobUpdatesIndicator from './JobUpdatesIndicator';
 import UnscheduledBadge from './UnscheduledBadge';
 import ReworkBadge from './ReworkBadge';
 import ReworkQuickAction from './ReworkQuickAction';
+import { productionTagClassName } from './production-tag';
 import { useAccountPreferences } from '@/lib/account-preferences';
 
 const formatHours = (value: number) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value);
@@ -857,7 +858,7 @@ export default function ProductionTable({
   return (
     <>
       {columnsToolbarTarget && createPortal(
-        <div ref={columnsPanelRef} className="relative flex w-full items-center gap-2 lg:w-auto">
+        <div ref={columnsPanelRef} className="relative flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap">
           {tableSort && (
             <button
               type="button"
@@ -883,7 +884,7 @@ export default function ProductionTable({
               setLayoutMessage('');
               setColumnsOpen((current) => !current);
             }}
-            className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-sm border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 lg:w-auto"
+            className="inline-flex h-10 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-sm border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 lg:w-auto lg:flex-none"
           >
             <Settings2 className="h-3.5 w-3.5" aria-hidden="true" />
             Columns
@@ -1025,7 +1026,7 @@ export default function ProductionTable({
                           window.location.href = hasMaterialUse ? `/material-usage?historyJob=${job.id}` : `/material-usage?newJob=${job.id}`;
                         }}
                         aria-label={`${hasMaterialUse ? 'Open' : 'Create'} material usage for ${job.name}`}
-                        className={`h-6 cursor-pointer rounded-sm border px-1 text-[9px] font-bold shadow-sm transition hover:-translate-y-px hover:shadow focus-visible:outline-none focus-visible:ring-2 ${hasMaterialUse ? 'border-emerald-200 bg-emerald-100 text-emerald-800 hover:border-emerald-300 hover:bg-emerald-200 focus-visible:ring-emerald-700' : 'border-amber-200 bg-amber-100 text-amber-900 hover:border-amber-300 hover:bg-amber-200 focus-visible:ring-amber-700'}`}
+                        className={`${productionTagClassName} h-auto cursor-pointer whitespace-nowrap px-1 transition hover:-translate-y-px hover:shadow focus-visible:outline-none focus-visible:ring-2 ${hasMaterialUse ? 'border-emerald-200 bg-emerald-100 text-emerald-800 hover:border-emerald-300 hover:bg-emerald-200 focus-visible:ring-emerald-700' : 'border-amber-200 bg-amber-100 text-amber-900 hover:border-amber-300 hover:bg-amber-200 focus-visible:ring-amber-700'}`}
                       >
                         {hasMaterialUse ? 'Material Use' : 'No Material Use Linked'}
                       </button>
