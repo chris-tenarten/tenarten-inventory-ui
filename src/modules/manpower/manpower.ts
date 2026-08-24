@@ -1,18 +1,21 @@
 import { supabase } from '../../lib/supabase';
+import { isActiveProductionRework } from '../production/rework';
 import type {
   ManpowerEntry,
   ManpowerEntryInput,
   ManpowerJob,
+  ManpowerReworkCycle,
   ManpowerReference,
   ManpowerReportingGroup,
 } from './types';
 
 const ENTRY_COLUMNS = `
-  id, work_date, worker_id, task_id, job_id, reporting_group_id, unlisted_work_label,
+  id, work_date, worker_id, task_id, job_id, rework_cycle_id, reporting_group_id, unlisted_work_label,
   am_hours, pm_hours, notes, entered_by, created_at, updated_at,
   worker:manpower_workers!worker_id(id, display_name),
   task:manpower_tasks!task_id(id, display_name),
   job:jobs(id, name, job_number, production_status, archived_at),
+  rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id, job_id, sequence_number, production_status),
   reporting_group:manpower_reporting_groups(id, display_name, created_at, updated_at)
 `;
 
@@ -27,13 +30,20 @@ export async function loadManpowerEntries(): Promise<ManpowerEntry[]> {
 }
 
 export async function loadManpowerJobs(): Promise<ManpowerJob[]> {
-  const { data, error } = await supabase
-    .from('jobs')
-    .select('id,name,job_number,production_status,archived_at')
-    .is('archived_at', null)
-    .order('name');
-  if (error) throw error;
-  return (data ?? []) as ManpowerJob[];
+  const [jobs, reworks] = await Promise.all([
+    supabase.from('jobs').select('id,name,job_number,production_status,archived_at').is('archived_at', null).order('name'),
+    supabase.from('production_rework_cycles').select('id,job_id,sequence_number,production_status').order('sequence_number', { ascending: false }),
+  ]);
+  if (jobs.error) throw jobs.error;
+  if (reworks.error) throw reworks.error;
+  const activeByJob = new Map<string, ManpowerReworkCycle>();
+  for (const cycle of (reworks.data ?? []) as ManpowerReworkCycle[]) {
+    if (isActiveProductionRework(cycle) && !activeByJob.has(cycle.job_id)) activeByJob.set(cycle.job_id, cycle);
+  }
+  return ((jobs.data ?? []) as Omit<ManpowerJob, 'active_rework_cycle'>[]).map((job) => ({
+    ...job,
+    active_rework_cycle: activeByJob.get(job.id) ?? null,
+  }));
 }
 
 export async function loadManpowerReportingGroups(): Promise<ManpowerReportingGroup[]> {
@@ -215,7 +225,7 @@ export async function updateManpowerEntries(
 
 export async function updateManpowerGroupIdentity(
   ids: string[],
-  identity: Pick<ManpowerEntryInput, 'job_id' | 'unlisted_work_label'>,
+  identity: Pick<ManpowerEntryInput, 'job_id' | 'rework_cycle_id' | 'unlisted_work_label'>,
 ): Promise<ManpowerEntry[]> {
   if (ids.length === 0) return [];
   const { data, error } = await supabase

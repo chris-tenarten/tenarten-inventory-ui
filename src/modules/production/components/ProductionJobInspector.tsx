@@ -14,6 +14,7 @@ import {
   createJobAttachmentDownloadUrl,
   deleteJobAttachment,
   loadJobAttachments,
+  loadProductionJobLaborLifecycleSummary,
   loadProductionJobActivity,
   loadProductionReworkCycles,
   uploadJobAttachments,
@@ -23,6 +24,7 @@ import type {
   ProductionJobActivity,
   ProductionJobUpdate,
 } from "../jobs";
+import type { JobLaborLifecycleSummary } from "../labor-lifecycle";
 import { materialStatusLabel, materialStatusOptions } from "../material-status";
 import { getJobReadiness } from "../readiness";
 import { productionStatusVisuals } from "../status-visuals";
@@ -135,6 +137,10 @@ function readableDate(value: unknown) {
         day: "numeric",
         year: "numeric",
       });
+}
+
+function readableLaborHours(value: number) {
+  return `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value)}h`;
 }
 
 const activityFieldLabels: Record<string, string> = {
@@ -306,6 +312,7 @@ export default function ProductionJobInspector({
   );
   const [planningEditorOpen, setPlanningEditorOpen] = useState(false);
   const [reworkCycles, setReworkCycles] = useState<ProductionReworkCycle[]>([]);
+  const [laborLifecycle, setLaborLifecycle] = useState<JobLaborLifecycleSummary | null>(null);
   const [jobUpdateCount, setJobUpdateCount] = useState(
     jobUpdateSummary.total,
   );
@@ -334,9 +341,15 @@ export default function ProductionJobInspector({
 
   useEffect(() => {
     let live = true;
-    loadProductionReworkCycles(job.id)
-      .then((cycles) => { if (live) setReworkCycles(cycles); })
-      .catch(() => { if (live) setReworkCycles([]); });
+    Promise.allSettled([
+      loadProductionReworkCycles(job.id),
+      loadProductionJobLaborLifecycleSummary(job.id),
+    ])
+      .then(([cycles, labor]) => {
+        if (!live) return;
+        setReworkCycles(cycles.status === "fulfilled" ? cycles.value : []);
+        setLaborLifecycle(labor.status === "fulfilled" ? labor.value : null);
+      });
     return () => { live = false; };
   }, [job.id, job.rework_cycle?.updated_at]);
 
@@ -791,10 +804,15 @@ export default function ProductionJobInspector({
               <section className="mt-4 rounded-sm border border-slate-200 bg-slate-50 p-3" aria-labelledby="production-history-title">
                 <div className="flex items-center justify-between gap-3">
                   <h3 id="production-history-title" className="text-xs font-bold uppercase tracking-[0.1em] text-slate-700">Production History</h3>
+                  {laborLifecycle ? <span className="text-xs font-bold tabular-nums text-slate-900">Total Job Labor {readableLaborHours(laborLifecycle.totalHours)}</span> : null}
                 </div>
-                <div className="mt-2 text-xs text-slate-700"><strong>Original Production</strong> · {(job.original_production_status ?? (reworkCycles.length ? "complete" : job.production_status)).replaceAll("_", " ")}</div>
+                <p className="mt-1 text-[10px] text-slate-500">One canonical Job with lifecycle-specific status, schedule, and attributed Manpower labor.</p>
+                <div className="mt-2 border-t border-slate-200 pt-2 text-xs text-slate-700">
+                  <div className="flex flex-wrap items-center gap-2"><strong>Original Production</strong><span>· {(job.original_production_status ?? (reworkCycles.length ? "complete" : job.production_status)).replaceAll("_", " ")}</span>{!job.rework_cycle ? <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-blue-800">Current lifecycle</span> : null}<strong className="ml-auto tabular-nums text-slate-900">{laborLifecycle ? readableLaborHours(laborLifecycle.originalOrUnclassifiedHours) : "Labor unavailable"}</strong></div>
+                  <p className="mt-1 text-[10px] text-slate-500">{(job.original_planned_start ?? job.planned_start) && (job.original_planned_end ?? job.planned_end) ? `Production ${job.original_planned_start ?? job.planned_start} – ${job.original_planned_end ?? job.planned_end}` : "Original schedule not recorded"} · Labor includes legacy rows that cannot be distinguished from explicit Original Production attribution.</p>
+                </div>
                 {reworkCycles.map((cycle) => <div key={cycle.id} className="mt-2 border-t border-slate-200 pt-2 text-xs text-slate-700">
-                  <div className="flex flex-wrap items-center gap-2"><ReworkBadge sequence={cycle.sequence_number} /><strong>{cycle.reason_category === "quality_qc" ? "Quality / QC" : cycle.reason_category === "shipping_handling" ? "Shipping / Handling Damage" : cycle.reason_category === "customer_change" ? "Customer Change" : "Other"}</strong><span>· {cycle.production_status.replaceAll("_", " ")}</span></div>
+                  <div className="flex flex-wrap items-center gap-2"><ReworkBadge sequence={cycle.sequence_number} /><strong>{cycle.reason_category === "quality_qc" ? "Quality / QC" : cycle.reason_category === "shipping_handling" ? "Shipping / Handling Damage" : cycle.reason_category === "customer_change" ? "Customer Change" : "Other"}</strong><span>· {cycle.production_status.replaceAll("_", " ")}</span>{job.rework_cycle?.id === cycle.id ? <span className="rounded bg-violet-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-violet-800">Current lifecycle</span> : null}<strong className="ml-auto tabular-nums text-slate-900">{laborLifecycle ? readableLaborHours(laborLifecycle.reworks.find((item) => item.reworkCycleId === cycle.id)?.hours ?? 0) : "Labor unavailable"}</strong></div>
                   <p className="mt-1 text-slate-600">{cycle.scope_details}</p>
                   <p className="mt-1 text-[10px] text-slate-500">Intake {cycle.intake_date}{cycle.planned_start && cycle.planned_end ? ` · Production ${cycle.planned_start} – ${cycle.planned_end}` : " · Dates not set"}{cycle.completed_at ? ` · Completed ${cycle.completed_at.slice(0, 10)}` : ""}</p>
                 </div>)}

@@ -2,8 +2,9 @@ import { supabase } from '@/lib/supabase';
 import type { ProductionJob } from './types';
 import { loadProductionJobs } from './jobs';
 import { last30Days, type SnapshotPeriod } from './snapshot-period';
+import { summarizeLaborLifecycles, type LaborLifecycleBreakdown } from './labor-lifecycle';
 
-export type RankedValue = { label: string; value: number; jobId?: string; jobNumber?: string | null };
+export type RankedValue = { label: string; value: number; jobId?: string; jobNumber?: string | null; lifecycleLabor?: { originalOrUnclassifiedHours: number; reworks: LaborLifecycleBreakdown[] } };
 export type SnapshotActivity = { label: string; count: number };
 export type SnapshotAttention = { job: ProductionJob; issue: string; focus?: string };
 export type SnapshotData = {
@@ -47,7 +48,7 @@ export async function loadMonthlySnapshot(now = new Date()): Promise<SnapshotDat
   const [jobs, activity, labor, laborLinks, reports, materialLinks, transactions, completedReceivals, unresolved] = await Promise.all([
     loadProductionJobs(true),
     supabase.from('job_activity').select('job_id,event_type,metadata,occurred_at').gte('occurred_at', startInstant).lte('occurred_at', endInstant),
-    supabase.from('manpower_entries').select('job_id,work_date,am_hours,pm_hours,worker:manpower_workers(display_name),task:manpower_tasks(display_name)').gte('work_date', period.start).lte('work_date', period.end),
+    supabase.from('manpower_entries').select('job_id,rework_cycle_id,work_date,am_hours,pm_hours,worker:manpower_workers(display_name),task:manpower_tasks(display_name),rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id,sequence_number)').gte('work_date', period.start).lte('work_date', period.end),
     supabase.from('manpower_entries').select('job_id').not('job_id', 'is', null),
     supabase.from('material_usage_reports').select('id,job_id,report_date,material_usage_lines(material_name,quantity,unit)').gte('report_date', period.start).lte('report_date', period.end),
     supabase.from('material_usage_reports').select('job_id').not('job_id', 'is', null),
@@ -79,6 +80,7 @@ export async function loadMonthlySnapshot(now = new Date()): Promise<SnapshotDat
   const workers = new Map<string, number>();
   const tasks = new Map<string, number>();
   const dailyLabor = new Map<string, number>();
+  const lifecycleLabor = summarizeLaborLifecycles(labor.data ?? []);
   for (const row of labor.data ?? []) {
     const hours = Number(row.am_hours ?? 0) + Number(row.pm_hours ?? 0);
     reportedHours += hours;
@@ -122,7 +124,7 @@ export async function loadMonthlySnapshot(now = new Date()): Promise<SnapshotDat
 
   return {
     period, jobs, transitionJobIds, jobsDeliveredLate: jobsDeliveredLate.size, reportedHours, reportingDays: reportingDays.size, laborJobCount: laborJobIds.size, laborJobIds, linkedLaborJobIds,
-    topLaborJobs: rank(laborJobs).map((row) => { const job = jobById.get(row.label); return { ...row, label: job ? `${job.job_number ? `${job.job_number} — ` : ''}${job.name}` : 'Unlinked job', jobId: job?.id, jobNumber: job?.job_number }; }), topWorkers: rank(workers), topTasks: rank(tasks),
+    topLaborJobs: rank(laborJobs).map((row) => { const job = jobById.get(row.label); const lifecycle = lifecycleLabor.get(row.label); return { ...row, label: job ? `${job.job_number ? `${job.job_number} — ` : ''}${job.name}` : 'Unlinked job', jobId: job?.id, jobNumber: job?.job_number, lifecycleLabor: lifecycle ? { originalOrUnclassifiedHours: lifecycle.originalOrUnclassifiedHours, reworks: lifecycle.reworks } : undefined }; }), topWorkers: rank(workers), topTasks: rank(tasks),
     dailyLabor: Array.from({ length: 30 }, (_, index) => { const date = new Date(`${period.start}T12:00:00`); date.setDate(date.getDate() + index); const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`; return { date: key, hours: dailyLabor.get(key) ?? 0 }; }),
     materialReportCount: reports.data?.length ?? 0, materialJobIds, linkedMaterialJobIds, topMaterialsByFrequency: rank(materialFrequency), topMaterialsByQuantity: rank(materialQuantity),
     receivalsCompleted: completedReceivals.data?.length ?? 0, inventoryCounts, activeMaterials: rank(materialActivity).map(({ label, value }) => ({ label, count: value })),

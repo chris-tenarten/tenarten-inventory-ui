@@ -31,20 +31,27 @@ import type {
   ManpowerReference,
   ManpowerReportingGroup,
 } from './types';
+import {
+  buildManpowerWorkTargetOptions,
+  manpowerEntryTargetValue,
+  manpowerIdentityForTarget,
+  manpowerJobLabel,
+  UNLISTED_WORK_TARGET,
+} from './work-target';
+import type { ManpowerWorkTargetOption } from './work-target';
 
 type Draft = {
   reportingGroupId: string;
   workDate: string;
   workerId: string;
   taskId: string;
-  jobChoice: string;
+  workTarget: string;
   unlistedLabel: string;
   amHours: string;
   pmHours: string;
   notes: string;
 };
 
-const UNLISTED = '__unlisted__';
 const inputClass = 'h-9 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-2 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100';
 const headerClass = 'border-b border-r border-slate-200 bg-slate-100 px-2 py-2 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600';
 
@@ -56,7 +63,7 @@ function today() {
 
 function blankDraft(): Draft {
   return {
-    reportingGroupId: '', workDate: today(), workerId: '', taskId: '', jobChoice: '', unlistedLabel: '',
+    reportingGroupId: '', workDate: today(), workerId: '', taskId: '', workTarget: '', unlistedLabel: '',
     amHours: '', pmHours: '', notes: '',
   };
 }
@@ -67,7 +74,7 @@ function entryDraft(entry: ManpowerEntry): Draft {
     workDate: entry.work_date,
     workerId: entry.worker_id,
     taskId: entry.task_id,
-    jobChoice: entry.job_id ?? UNLISTED,
+    workTarget: manpowerEntryTargetValue(entry),
     unlistedLabel: entry.unlisted_work_label ?? '',
     amHours: String(entry.am_hours),
     pmHours: String(entry.pm_hours),
@@ -75,14 +82,13 @@ function entryDraft(entry: ManpowerEntry): Draft {
   };
 }
 
-function toInput(draft: Draft): ManpowerEntryInput {
+function toInput(draft: Draft, targets: ManpowerWorkTargetOption[]): ManpowerEntryInput {
   return {
     reporting_group_id: draft.reportingGroupId || null,
     work_date: draft.workDate,
     worker_id: draft.workerId,
     task_id: draft.taskId,
-    job_id: draft.jobChoice === UNLISTED ? null : draft.jobChoice,
-    unlisted_work_label: draft.jobChoice === UNLISTED ? draft.unlistedLabel.trim() : null,
+    ...manpowerIdentityForTarget(draft.workTarget, draft.unlistedLabel, targets),
     am_hours: Number(draft.amHours || 0),
     pm_hours: Number(draft.pmHours || 0),
     notes: draft.notes.trim() || null,
@@ -90,8 +96,8 @@ function toInput(draft: Draft): ManpowerEntryInput {
 }
 
 function validate(draft: Draft) {
-  if (!draft.reportingGroupId || !draft.workDate || !draft.workerId || !draft.taskId || !draft.jobChoice) return 'Reporting group, date, worker, task, and job are required.';
-  if (draft.jobChoice === UNLISTED && !draft.unlistedLabel.trim()) return 'Enter the unlisted job or work label.';
+  if (!draft.reportingGroupId || !draft.workDate || !draft.workerId || !draft.taskId || !draft.workTarget) return 'Reporting group, date, worker, task, and job are required.';
+  if (draft.workTarget === UNLISTED_WORK_TARGET && !draft.unlistedLabel.trim()) return 'Enter the unlisted job or work label.';
   const am = Number(draft.amHours || 0);
   const pm = Number(draft.pmHours || 0);
   if (!Number.isFinite(am) || !Number.isFinite(pm) || am < 0 || pm < 0) return 'Hours must be valid nonnegative numbers.';
@@ -99,26 +105,18 @@ function validate(draft: Draft) {
   return '';
 }
 
-function jobLabel(job: Pick<ManpowerJob, 'name' | 'job_number'>) {
-  return job.job_number ? `${job.job_number} — ${job.name}` : job.name;
-}
-
-function jobOptionLabel(job: ManpowerJob) {
-  return `${jobLabel(job)} — ${productionStatusVisualByValue[job.production_status].label}`;
-}
-
-function ProductionJobLinkSelector({ groupLabel, jobs, value, disabled, onChange }: { groupLabel: string; jobs: ManpowerJob[]; value: string; disabled: boolean; onChange(value: string): void }) {
+function ProductionJobLinkSelector({ groupLabel, targets, value, selectedLabel, disabled, onChange }: { groupLabel: string; targets: ManpowerWorkTargetOption[]; value: string; selectedLabel: string; disabled: boolean; onChange(value: string): void }) {
   const [open, setOpen] = useState(false);
-  const selectedJob = jobs.find((job) => job.id === value);
+  const selectedTarget = targets.find((target) => target.value === value);
 
   return <div className="relative min-w-72" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false); }}>
     <button type="button" aria-label={`Production job for ${groupLabel}`} aria-haspopup="listbox" aria-expanded={open} disabled={disabled} onClick={() => setOpen((current) => !current)} className="flex h-9 w-full items-center justify-between gap-3 rounded-sm border border-slate-300 bg-white px-2 text-left text-xs text-slate-800 outline-none transition hover:border-slate-500 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-wait disabled:opacity-60">
-      <span className="min-w-0 truncate font-medium">{selectedJob ? jobLabel(selectedJob) : 'Not Linked to Production'}</span>
-      <span className="flex shrink-0 items-center gap-2">{selectedJob ? <ProductionStatusBadge status={selectedJob.production_status} /> : null}<ChevronDown className={`h-3.5 w-3.5 transition ${open ? 'rotate-180' : ''}`} aria-hidden="true" /></span>
+      <span className="min-w-0 truncate font-medium">{selectedLabel || 'Mixed lifecycle targets'}</span>
+      <span className="flex shrink-0 items-center gap-2">{selectedTarget ? <ProductionStatusBadge status={selectedTarget.status} /> : null}<ChevronDown className={`h-3.5 w-3.5 transition ${open ? 'rotate-180' : ''}`} aria-hidden="true" /></span>
     </button>
     {open ? <div role="listbox" aria-label={`Production jobs for ${groupLabel}`} className="absolute right-0 top-10 z-50 max-h-80 w-[28rem] overflow-y-auto rounded-sm border border-slate-300 bg-white p-1 shadow-xl">
-      <button type="button" role="option" aria-selected={!value} onClick={() => { setOpen(false); onChange(''); }} className={`flex min-h-9 w-full items-center px-2 text-left text-xs font-medium hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none ${!value ? 'bg-blue-50 text-blue-900' : 'text-slate-700'}`}>Not Linked to Production</button>
-      {jobs.map((job) => <button key={job.id} type="button" role="option" aria-selected={job.id === value} onClick={() => { setOpen(false); onChange(job.id); }} className={`flex min-h-10 w-full items-center justify-between gap-3 px-2 text-left hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none ${job.id === value ? 'bg-blue-50' : ''}`}><span className="min-w-0 truncate text-xs font-semibold text-slate-900">{jobLabel(job)}</span><ProductionStatusBadge status={job.production_status} /></button>)}
+      <button type="button" role="option" aria-selected={!value && !selectedLabel} onClick={() => { setOpen(false); onChange(''); }} className={`flex min-h-9 w-full items-center px-2 text-left text-xs font-medium hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none ${!value && !selectedLabel ? 'bg-blue-50 text-blue-900' : 'text-slate-700'}`}>Not Linked to Production</button>
+      {targets.filter((target) => target.selectable || target.value === value).map((target) => <button key={target.value} type="button" role="option" aria-selected={target.value === value} onClick={() => { setOpen(false); onChange(target.value); }} className={`flex min-h-10 w-full items-center justify-between gap-3 px-2 text-left hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none ${target.value === value ? 'bg-blue-50' : ''}`}><span className="min-w-0 truncate text-xs font-semibold text-slate-900">{target.label}</span><ProductionStatusBadge status={target.status} /></button>)}
     </div> : null}
   </div>;
 }
@@ -316,10 +314,10 @@ function ReferenceManager({ noun, options, onCreate, onUpdate, onEditingChange }
     </tbody></table></div>{error && <div className="mt-1 text-xs font-semibold text-red-700">{error}</div>}</section>;
 }
 
-function WorkIdentityControl({ value, temporaryLabel, jobs, onChange, compact = false, savedTemporaryLabel }: {
+function WorkIdentityControl({ value, temporaryLabel, targets, onChange, compact = false, savedTemporaryLabel }: {
   value: string;
   temporaryLabel: string;
-  jobs: ManpowerJob[];
+  targets: ManpowerWorkTargetOption[];
   onChange: (value: string, temporaryLabel: string) => void;
   compact?: boolean;
   savedTemporaryLabel?: string | null;
@@ -328,30 +326,30 @@ function WorkIdentityControl({ value, temporaryLabel, jobs, onChange, compact = 
   const controlClass = compact
     ? 'h-8 min-w-0 border border-slate-400 bg-white px-2 text-xs text-slate-950 outline-none focus:border-blue-700'
     : inputClass;
-  const hasSavedTemporary = value === UNLISTED && Boolean(savedTemporaryLabel) && temporaryLabel === savedTemporaryLabel;
+  const hasSavedTemporary = value === UNLISTED_WORK_TARGET && Boolean(savedTemporaryLabel) && temporaryLabel === savedTemporaryLabel;
   if (hasSavedTemporary && !changingSavedTemporary) {
     return <div className="flex min-w-[260px] items-center gap-1"><span title="Preserved label from an imported or unlinked labor entry." className="shrink-0 rounded bg-slate-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-slate-600">Imported Label</span><span className="min-w-0 flex-1 truncate text-sm text-slate-900">{temporaryLabel}</span></div>;
   }
   if (changingSavedTemporary) {
-    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setChangingSavedTemporary(false); }}><select autoFocus defaultValue="" onChange={(event) => { const next = event.target.value; if (!next) return; setChangingSavedTemporary(false); onChange(next, next === UNLISTED ? '' : temporaryLabel); }} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); setChangingSavedTemporary(false); } }} className={`${controlClass} min-w-0 flex-1`}><option value="">Choose Production job</option><option value={UNLISTED}>+ Replace imported label</option>{jobs.map((job) => <option key={job.id} value={job.id}>{jobOptionLabel(job)}</option>)}</select><button type="button" onClick={() => setChangingSavedTemporary(false)} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-slate-700">Back</button></div>;
+    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setChangingSavedTemporary(false); }}><select autoFocus defaultValue="" onChange={(event) => { const next = event.target.value; if (!next) return; setChangingSavedTemporary(false); onChange(next, next === UNLISTED_WORK_TARGET ? '' : temporaryLabel); }} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); setChangingSavedTemporary(false); } }} className={`${controlClass} min-w-0 flex-1`}><option value="">Choose Production job</option><option value={UNLISTED_WORK_TARGET}>+ Replace imported label</option>{targets.filter((target) => target.selectable || target.value === value).map((target) => <option key={target.value} value={target.value}>{target.label} — {productionStatusVisualByValue[target.status].label}</option>)}</select><button type="button" onClick={() => setChangingSavedTemporary(false)} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-slate-700">Back</button></div>;
   }
-  if (value === UNLISTED) {
-    const cancelTemporaryEdit = () => onChange(savedTemporaryLabel ? UNLISTED : '', savedTemporaryLabel ?? '');
-    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (savedTemporaryLabel && !event.currentTarget.contains(event.relatedTarget as Node | null)) { event.stopPropagation(); cancelTemporaryEdit(); } }}><span className="shrink-0 rounded bg-slate-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-slate-600">Imported Label</span><input autoFocus value={temporaryLabel} onChange={(event) => onChange(UNLISTED, event.target.value)} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); cancelTemporaryEdit(); } }} placeholder="Enter imported or unlinked label" className={`${controlClass} bg-slate-50`} /><button type="button" onClick={cancelTemporaryEdit} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-blue-700">Back</button></div>;
+  if (value === UNLISTED_WORK_TARGET) {
+    const cancelTemporaryEdit = () => onChange(savedTemporaryLabel ? UNLISTED_WORK_TARGET : '', savedTemporaryLabel ?? '');
+    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (savedTemporaryLabel && !event.currentTarget.contains(event.relatedTarget as Node | null)) { event.stopPropagation(); cancelTemporaryEdit(); } }}><span className="shrink-0 rounded bg-slate-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-slate-600">Imported Label</span><input autoFocus value={temporaryLabel} onChange={(event) => onChange(UNLISTED_WORK_TARGET, event.target.value)} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); cancelTemporaryEdit(); } }} placeholder="Enter imported or unlinked label" className={`${controlClass} bg-slate-50`} /><button type="button" onClick={cancelTemporaryEdit} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-blue-700">Back</button></div>;
   }
   return <select value={value} onChange={(event) => onChange(event.target.value, '')} className={`${controlClass} min-w-[260px]`}>
     <option value="">Production Job</option>
-    <option value={UNLISTED}>+ Add temporary job label</option>
-    {jobs.map((job) => <option key={job.id} value={job.id}>{jobOptionLabel(job)}</option>)}
+    <option value={UNLISTED_WORK_TARGET}>+ Add temporary job label</option>
+    {targets.filter((target) => target.selectable || target.value === value).map((target) => <option key={target.value} value={target.value}>{target.label} — {productionStatusVisualByValue[target.status].label}</option>)}
   </select>;
 }
 
 function EntryFields({
-  draft, setDraft, jobs, workers, tasks, addWorker, addTask, actions, savedTemporaryLabel, jobReadOnly = false, jobControl,
+  draft, setDraft, targets, workers, tasks, addWorker, addTask, actions, savedTemporaryLabel, jobReadOnly = false, jobControl,
 }: {
   draft: Draft;
   setDraft: (next: Draft) => void;
-  jobs: ManpowerJob[];
+  targets: ManpowerWorkTargetOption[];
   workers: ManpowerReference[];
   tasks: ManpowerReference[];
   addWorker: (name: string) => Promise<ManpowerReference>;
@@ -369,7 +367,7 @@ function EntryFields({
       <td className="border-r border-slate-300 p-1"><ReferenceSelect value={draft.workerId} options={workers} noun="worker" onChange={(value) => set('workerId', value)} onAdd={addWorker} /></td>
       <td className="border-r border-slate-300 p-1"><ReferenceSelect value={draft.taskId} options={tasks} noun="task" onChange={(value) => set('taskId', value)} onAdd={addTask} /></td>
       <td className="border-r border-slate-300 p-1">
-        {jobControl ?? (jobReadOnly ? <div className="min-w-[220px] px-2 text-xs text-slate-600">{draft.jobChoice && draft.jobChoice !== UNLISTED ? jobLabel(jobs.find((job) => job.id === draft.jobChoice) ?? { name: 'Linked Production job', job_number: null }) : draft.unlistedLabel || 'Unlinked'}</div> : <WorkIdentityControl value={draft.jobChoice} temporaryLabel={draft.unlistedLabel} savedTemporaryLabel={savedTemporaryLabel} jobs={jobs} onChange={(jobChoice, unlistedLabel) => setDraft({ ...draft, jobChoice, unlistedLabel })} />)}
+        {jobControl ?? (jobReadOnly ? <div className="min-w-[220px] px-2 text-xs text-slate-600">{targets.find((target) => target.value === draft.workTarget)?.label ?? (draft.unlistedLabel || 'Unlinked')}</div> : <WorkIdentityControl value={draft.workTarget} temporaryLabel={draft.unlistedLabel} savedTemporaryLabel={savedTemporaryLabel} targets={targets} onChange={(workTarget, unlistedLabel) => setDraft({ ...draft, workTarget, unlistedLabel })} />)}
       </td>
       <td className="border-r border-slate-300 p-1"><input type="number" min="0" max="24" step="0.25" value={draft.amHours} onChange={(e) => set('amHours', e.target.value)} className={inputClass} /></td>
       <td className="border-r border-slate-300 p-1"><input type="number" min="0" max="24" step="0.25" value={draft.pmHours} onChange={(e) => set('pmHours', e.target.value)} className={inputClass} /></td>
@@ -379,9 +377,9 @@ function EntryFields({
   );
 }
 
-function EditableEntryRow({ entry, jobs, workers, tasks, addWorker, addTask, onSaved, selected, onSelected, jobControl }: {
+function EditableEntryRow({ entry, targets, workers, tasks, addWorker, addTask, onSaved, selected, onSelected, jobControl }: {
   entry: ManpowerEntry;
-  jobs: ManpowerJob[];
+  targets: ManpowerWorkTargetOption[];
   workers: ManpowerReference[];
   tasks: ManpowerReference[];
   addWorker: (name: string) => Promise<ManpowerReference>;
@@ -413,7 +411,7 @@ function EditableEntryRow({ entry, jobs, workers, tasks, addWorker, addTask, onS
     if (validation) { setState('error'); setMessage(validation); return; }
     setState('saving');
     try {
-      const updated = await updateManpowerEntry(entry.id, toInput(draft));
+      const updated = await updateManpowerEntry(entry.id, toInput(draft, targets));
       onSaved(updated);
       setState('saved');
       setMessage('');
@@ -424,11 +422,11 @@ function EditableEntryRow({ entry, jobs, workers, tasks, addWorker, addTask, onS
   }
 
   return (
-    <tr className={`border-b border-slate-300 align-top ${selected ? 'bg-blue-50 ring-1 ring-inset ring-blue-300' : draft.jobChoice === UNLISTED ? 'bg-amber-50/50' : 'bg-white'}`} onBlur={(event) => {
+    <tr className={`border-b border-slate-300 align-top ${selected ? 'bg-blue-50 ring-1 ring-inset ring-blue-300' : draft.workTarget === UNLISTED_WORK_TARGET ? 'bg-amber-50/50' : 'bg-white'}`} onBlur={(event) => {
       if (!event.currentTarget.contains(event.relatedTarget as Node | null)) void save();
     }}>
       <td className="border-r border-slate-300 px-3 pt-3 text-center"><SelectionCheckbox checked={selected} label={`Select ${entry.worker.display_name} entry on ${entry.work_date}`} onChange={onSelected} /></td>
-      <EntryFields draft={draft} setDraft={change} jobs={jobs} workers={workers} tasks={tasks} addWorker={addWorker} addTask={addTask} savedTemporaryLabel={entry.unlisted_work_label} jobReadOnly jobControl={jobControl} actions={<span className="shrink-0 text-center text-[10px] font-bold uppercase tracking-wide">
+      <EntryFields draft={draft} setDraft={change} targets={targets} workers={workers} tasks={tasks} addWorker={addWorker} addTask={addTask} savedTemporaryLabel={entry.unlisted_work_label} jobReadOnly jobControl={jobControl} actions={<span className="shrink-0 text-center text-[10px] font-bold uppercase tracking-wide">
         {state === 'dirty' && <button type="button" onClick={() => void save()} className="text-blue-700">Save</button>}
         {state === 'saving' && <span className="text-slate-500">Saving…</span>}
         {state === 'saved' && <span className="text-emerald-700">Saved</span>}
@@ -440,7 +438,7 @@ function EditableEntryRow({ entry, jobs, workers, tasks, addWorker, addTask, onS
 
 function BulkActionBar({
   selectedCount,
-  jobs,
+  targets,
   reportingGroups,
   workers,
   tasks,
@@ -449,7 +447,7 @@ function BulkActionBar({
   onApply,
 }: {
   selectedCount: number;
-  jobs: ManpowerJob[];
+  targets: ManpowerWorkTargetOption[];
   reportingGroups: ManpowerReportingGroup[];
   workers: ManpowerReference[];
   tasks: ManpowerReference[];
@@ -460,7 +458,7 @@ function BulkActionBar({
   const [workDate, setWorkDate] = useState('');
   const [workerId, setWorkerId] = useState('');
   const [taskId, setTaskId] = useState('');
-  const [jobChoice, setJobChoice] = useState('');
+  const [workTarget, setWorkTarget] = useState('');
   const [reportingGroupId, setReportingGroupId] = useState('');
   const [unlistedLabel, setUnlistedLabel] = useState('');
   const [busy, setBusy] = useState('');
@@ -526,13 +524,11 @@ function BulkActionBar({
         </div>
 
         <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
-          <WorkIdentityControl compact value={jobChoice} temporaryLabel={unlistedLabel} jobs={jobs} onChange={(value, label) => { setJobChoice(value); setUnlistedLabel(label); }} />
+          <WorkIdentityControl compact value={workTarget} temporaryLabel={unlistedLabel} targets={targets} onChange={(value, label) => { setWorkTarget(value); setUnlistedLabel(label); }} />
           <button
             type="button"
-            disabled={!jobChoice || (jobChoice === UNLISTED && !unlistedLabel.trim()) || Boolean(busy)}
-            onClick={() => void apply('identity', jobChoice === UNLISTED
-              ? { job_id: null, unlisted_work_label: unlistedLabel.trim() }
-              : { job_id: jobChoice, unlisted_work_label: null })}
+            disabled={!workTarget || (workTarget === UNLISTED_WORK_TARGET && !unlistedLabel.trim()) || Boolean(busy)}
+            onClick={() => void apply('identity', manpowerIdentityForTarget(workTarget, unlistedLabel, targets))}
             className={buttonClass}
           >{busy === 'identity' ? 'Applying…' : 'Apply Job / Label'}</button>
         </div>
@@ -568,6 +564,7 @@ export default function ManpowerWorkspace() {
   const [linkingGroupId, setLinkingGroupId] = useState<string | null>(null);
   const collapseInitialized = useRef(false);
   const newGroupInputRef = useRef<HTMLInputElement | null>(null);
+  const targets = useMemo(() => buildManpowerWorkTargetOptions(jobs, entries), [entries, jobs]);
 
   useEffect(() => {
     if (showNewGroup) newGroupInputRef.current?.focus();
@@ -654,9 +651,9 @@ export default function ManpowerWorkspace() {
     if (validation) { setError(validation); return; }
     setSaving(true); setError('');
     try {
-      const created = await createManpowerEntry(toInput(draft));
+      const created = await createManpowerEntry(toInput(draft, targets));
       setEntries((items) => [created, ...items]);
-      setDraft({ ...blankDraft(), reportingGroupId: draft.reportingGroupId, workDate: draft.workDate, jobChoice: draft.jobChoice, unlistedLabel: draft.unlistedLabel });
+      setDraft({ ...blankDraft(), reportingGroupId: draft.reportingGroupId, workDate: draft.workDate, workTarget: draft.workTarget, unlistedLabel: draft.unlistedLabel });
     } catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to add labor entry.'); }
     finally { setSaving(false); }
   }
@@ -671,7 +668,7 @@ export default function ManpowerWorkspace() {
       setDraft({
         ...blankDraft(),
         reportingGroupId: created.id,
-        jobChoice: UNLISTED,
+        workTarget: UNLISTED_WORK_TARGET,
         unlistedLabel: created.display_name,
       });
       setAddingToGroupId(created.id);
@@ -731,6 +728,7 @@ export default function ManpowerWorkspace() {
           entry.task.display_name,
           entry.job?.name,
           entry.job?.job_number,
+          entry.rework_cycle ? `REWORK #${entry.rework_cycle.sequence_number}` : null,
           entry.unlisted_work_label,
           entry.notes,
           entry.entered_by,
@@ -740,11 +738,11 @@ export default function ManpowerWorkspace() {
   }, [entries, linkedJobId, normalizedSearch, reportingGroups]);
 
   function startAddingToGroup(groupId: string, groupEntries: ManpowerEntry[], groupLabel: string) {
-    const identities = new Map<string, Pick<Draft, 'jobChoice' | 'unlistedLabel'>>();
+    const identities = new Map<string, Pick<Draft, 'workTarget' | 'unlistedLabel'>>();
     for (const entry of groupEntries) {
-      const key = entry.job_id ? `job:${entry.job_id}` : `temporary:${entry.unlisted_work_label}`;
+      const key = entry.rework_cycle_id ? `rework:${entry.rework_cycle_id}` : entry.job_id ? `job:${entry.job_id}` : `temporary:${entry.unlisted_work_label}`;
       identities.set(key, {
-        jobChoice: entry.job_id ?? UNLISTED,
+        workTarget: manpowerEntryTargetValue(entry),
         unlistedLabel: entry.unlisted_work_label ?? '',
       });
     }
@@ -752,7 +750,7 @@ export default function ManpowerWorkspace() {
     setDraft({
       ...blankDraft(),
       reportingGroupId: groupId,
-      jobChoice: identity?.jobChoice ?? (groupEntries.length === 0 ? UNLISTED : ''),
+      workTarget: identity?.workTarget ?? (groupEntries.length === 0 ? UNLISTED_WORK_TARGET : ''),
       unlistedLabel: identity?.unlistedLabel ?? (groupEntries.length === 0 ? groupLabel : ''),
     });
     setAddingToGroupId(groupId);
@@ -800,7 +798,7 @@ export default function ManpowerWorkspace() {
     return { updated: result.updated.length, failed: result.failures.length };
   }
 
-  async function applyGroupIdentity(groupKey: string, groupEntries: ManpowerEntry[], changes: Pick<ManpowerEntryInput, 'job_id' | 'unlisted_work_label'>) {
+  async function applyGroupIdentity(groupKey: string, groupEntries: ManpowerEntry[], changes: Pick<ManpowerEntryInput, 'job_id' | 'rework_cycle_id' | 'unlisted_work_label'>) {
     setLinkingGroupId(groupKey);
     setError('');
     try {
@@ -814,16 +812,22 @@ export default function ManpowerWorkspace() {
     }
   }
 
-  async function linkReportingGroup(groupKey: string, groupEntries: ManpowerEntry[], jobId: string, previousJobName: string) {
-    await applyGroupIdentity(groupKey, groupEntries, jobId
-      ? { job_id: jobId, unlisted_work_label: null }
-      : { job_id: null, unlisted_work_label: previousJobName });
+  async function linkReportingGroup(groupKey: string, groupEntries: ManpowerEntry[], workTarget: string, previousJobName: string) {
+    const identity = workTarget
+      ? manpowerIdentityForTarget(workTarget, '', targets)
+      : { job_id: null, rework_cycle_id: null, unlisted_work_label: previousJobName };
+    const destination = workTarget
+      ? targets.find((target) => target.value === workTarget)?.label ?? 'selected Production target'
+      : `temporary label “${previousJobName}”`;
+    if (groupEntries.length > 1 && !window.confirm(`Change ${groupEntries.length} manpower entries to ${destination}?`)) return;
+    await applyGroupIdentity(groupKey, groupEntries, identity);
   }
 
   async function renameUnlinkedGroup(groupKey: string, groupEntries: ManpowerEntry[], jobName: string) {
     const normalized = jobName.trim();
     if (!normalized) return;
-    await applyGroupIdentity(groupKey, groupEntries, { job_id: null, unlisted_work_label: normalized });
+    if (groupEntries.length > 1 && !window.confirm(`Change ${groupEntries.length} manpower entries to temporary label “${normalized}”?`)) return;
+    await applyGroupIdentity(groupKey, groupEntries, { job_id: null, rework_cycle_id: null, unlisted_work_label: normalized });
   }
 
   async function deleteSelectedEntries(ids: string[]) {
@@ -896,9 +900,18 @@ export default function ManpowerWorkspace() {
           const linkedJobIds = [...new Set(group.entries.map((entry) => entry.job_id).filter((id): id is string => Boolean(id)))];
           const groupJobId = linkedJobIds.length === 1 && group.entries.every((entry) => entry.job_id === linkedJobIds[0]) ? linkedJobIds[0] : '';
           const groupJob = jobs.find((job) => job.id === groupJobId);
+          const lifecycleIdentities = new Set(group.entries.map((entry) => entry.job_id
+            ? manpowerEntryTargetValue(entry)
+            : `${UNLISTED_WORK_TARGET}:${entry.unlisted_work_label}`));
+          const groupTargetValue = lifecycleIdentities.size === 1 && group.entries.length > 0
+            ? manpowerEntryTargetValue(group.entries[0])
+            : '';
+          const groupTargetLabel = lifecycleIdentities.size === 1 && group.entries.length > 0
+            ? targets.find((target) => target.value === groupTargetValue)?.label ?? group.entries[0].unlisted_work_label ?? ''
+            : group.entries.length > 0 ? 'Mixed lifecycle targets' : '';
           const previousJobName = group.entries.find((entry) => entry.unlisted_work_label?.trim())?.unlisted_work_label?.trim() || group.label;
-          const effectiveJobLabel = groupJob ? jobLabel(groupJob) : previousJobName;
-          const jobCell = groupJob ? <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{effectiveJobLabel}</div> : <input key={`${group.key}:${previousJobName}`} defaultValue={previousJobName} aria-label={`Job name for ${group.label}`} onBlur={(event) => { if (event.target.value.trim() !== previousJobName) void renameUnlinkedGroup(group.key, group.entries, event.target.value); }} className="h-8 min-w-[220px] w-full border border-slate-300 bg-white px-2 text-xs outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-200" />;
+          const newEntryJobCell = <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === draft.workTarget)?.label ?? (draft.unlistedLabel || 'Choose a work target')}</div>;
+          const temporaryGroupJobCell = <input key={`${group.key}:${previousJobName}`} defaultValue={previousJobName} aria-label={`Job name for ${group.label}`} onBlur={(event) => { if (event.target.value.trim() !== previousJobName) void renameUnlinkedGroup(group.key, group.entries, event.target.value); }} className="h-8 min-w-[220px] w-full border border-slate-300 bg-white px-2 text-xs outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-200" />;
           return (
             <section key={group.key} className={`overflow-hidden rounded-sm border bg-white ${selectedGroupIds.length > 0 || emptyGroupSelected ? 'border-blue-600' : 'border-slate-200'}`}>
               <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800">
@@ -923,7 +936,7 @@ export default function ManpowerWorkspace() {
                   {isCollapsed ? <ChevronRight className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
                 </button>
                 {group.group ? <ReportingGroupName group={group.group} onRename={(name) => renameGroup(group.group!, name)} /> : <span className="min-w-0 truncate text-sm font-bold text-slate-950">{group.label}</span>}
-                {groupJob ? <JobTag label={jobLabel(groupJob)} onClick={() => openProductionJob(groupJob.id)} title={`Open ${jobLabel(groupJob)} in Production`} className="max-w-[140px] shrink-0" /> : <span className="shrink-0 rounded-sm bg-slate-200 px-2 py-1 text-[10px] font-bold text-slate-700">Unlinked</span>}
+                {groupJob ? <JobTag label={manpowerJobLabel(groupJob)} onClick={() => openProductionJob(groupJob.id)} title={`Open ${manpowerJobLabel(groupJob)} in Production`} className="max-w-[140px] shrink-0" /> : <span className="shrink-0 rounded-sm bg-slate-200 px-2 py-1 text-[10px] font-bold text-slate-700">{lifecycleIdentities.size > 1 ? 'Mixed' : 'Unlinked'}</span>}
                 <span className="min-w-0 flex-1" />
                 <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold text-slate-700">{group.entries.length} {group.entries.length === 1 ? 'entry' : 'entries'}</span>
                 {isCollapsed && selectedGroupIds.length > 0 && <span className="shrink-0 rounded bg-blue-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">{selectedGroupIds.length} selected</span>}
@@ -934,11 +947,11 @@ export default function ManpowerWorkspace() {
               {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries, group.label)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</button></div>}
               {!isCollapsed && <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                 <span className="flex-1">{groupJob ? tr('This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.','Este grupo de mano de obra está vinculado al trabajo de Producción. Las horas registradas aquí se incluyen en las horas registradas del flujo de producción.') : tr('This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.','Este grupo de mano de obra no está vinculado a un trabajo de Producción. Las horas registradas aquí no aparecerán en Producción hasta que se vincule un trabajo.')}</span>
-                <ProductionJobLinkSelector groupLabel={group.label} jobs={jobs} value={groupJobId} disabled={linkingGroupId === group.key} onChange={(jobId) => void linkReportingGroup(group.key, group.entries, jobId, previousJobName)} />
+                <ProductionJobLinkSelector groupLabel={group.label} targets={targets} value={groupTargetValue} selectedLabel={groupTargetLabel} disabled={linkingGroupId === group.key} onChange={(workTarget) => void linkReportingGroup(group.key, group.entries, workTarget, previousJobName)} />
               </div>}
-              {selectedGroupIds.length > 0 && <BulkActionBar selectedCount={selectedGroupIds.length} jobs={jobs} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
+              {selectedGroupIds.length > 0 && <BulkActionBar selectedCount={selectedGroupIds.length} targets={targets} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
               {emptyGroupSelected && group.group && <div className="flex items-center justify-between border-b border-blue-200 bg-blue-50 px-3 py-2 text-xs"><span className="font-semibold text-blue-900">Empty group selected</span><div className="flex items-center gap-3"><button type="button" onClick={() => setSelectedEmptyGroupIds((current) => { const next = new Set(current); next.delete(group.key); return next; })} className="font-bold text-slate-600 hover:underline">Clear selection</button><button type="button" onClick={() => void deleteSelectedEmptyGroup(group.group!)} className="h-8 border border-red-500 bg-white px-3 font-bold text-red-700 hover:bg-red-50">Delete Empty Group</button></div></div>}
-              {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1300px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{addingToGroupId === group.key && group.group && <tr className="border-b-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly jobControl={jobCell} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} jobs={jobs} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={jobCell} />)}</tbody></table></div>}
+              {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1300px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{addingToGroupId === group.key && group.group && <tr className="border-b-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly={Boolean(draft.workTarget)} jobControl={draft.workTarget ? newEntryJobCell : undefined} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={groupTargetValue === UNLISTED_WORK_TARGET ? temporaryGroupJobCell : <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === manpowerEntryTargetValue(entry))?.label ?? entry.unlisted_work_label ?? 'Unlinked'}</div>} />)}</tbody></table></div>}
             </section>
           );
         })}
