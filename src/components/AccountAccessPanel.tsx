@@ -1,21 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { operationalFirstName } from "@/lib/identity-presentation";
 import { ROLE_LABELS } from "@/lib/rbac";
 
-const CUTOVER_NOTICE_KEY = "tenops-account-cutover-notice-dismissed";
-
 export default function AccountAccessPanel({
   onAuthenticated,
   showEyebrow = true,
-  showCutoverNotice = false,
   separated = true,
 }: {
   onAuthenticated(): void;
   showEyebrow?: boolean;
-  showCutoverNotice?: boolean;
   separated?: boolean;
 }) {
   const auth = useAuth();
@@ -26,28 +22,7 @@ export default function AccountAccessPanel({
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const [noticeVisible, setNoticeVisible] = useState(false);
-
   const activeMode = auth.requiresPasswordSetup ? "password" : mode;
-
-  useEffect(() => {
-    if (!showCutoverNotice) return;
-    setNoticeVisible(window.sessionStorage.getItem(CUTOVER_NOTICE_KEY) !== "true");
-  }, [showCutoverNotice]);
-
-  useEffect(() => {
-    if (!noticeVisible) return;
-    const dismissOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") dismissNotice();
-    };
-    window.addEventListener("keydown", dismissOnEscape);
-    return () => window.removeEventListener("keydown", dismissOnEscape);
-  }, [noticeVisible]);
-
-  function dismissNotice() {
-    window.sessionStorage.setItem(CUTOVER_NOTICE_KEY, "true");
-    setNoticeVisible(false);
-  }
 
   async function signOutAccount() {
     setSaving(true);
@@ -124,25 +99,6 @@ export default function AccountAccessPanel({
 
   return (
     <div className={separated ? "mt-5 border-t border-slate-300 pt-5" : ""}>
-      {noticeVisible ? (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/45 px-4 py-6 backdrop-blur-[2px]">
-          <div role="dialog" aria-modal="true" aria-labelledby="tenops-cutover-notice-title" className="relative w-full max-w-md border border-slate-400 bg-white p-5 text-left text-slate-800 shadow-[0_24px_70px_rgba(15,23,42,0.35)] sm:p-6">
-            <button type="button" aria-label="Dismiss account sign-in notice" title="Close" onClick={dismissNotice} className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center text-xl leading-none text-slate-500 transition hover:bg-slate-100 hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600">×</button>
-            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">Account access</div>
-            <h2 id="tenops-cutover-notice-title" className="mt-1 pr-8 text-lg font-bold text-slate-950">TenOps account sign-in is changing</h2>
-            <div className="mt-3 space-y-2 text-sm leading-relaxed text-slate-600">
-              <p>TenOps now uses individual account sign-in and role-based access.</p>
-              <p>If you&apos;ve already set up your account, close this message and sign in normally.</p>
-              <p>If you haven&apos;t set your password yet, choose <strong>Set up account</strong> on this screen and we&apos;ll send you a fresh account setup email.</p>
-              <p>If you&apos;ve already used TenOps but forgot your password, choose <strong>Reset password</strong>.</p>
-            </div>
-            <div className="mt-4 border-t border-slate-300 pt-3 text-xs font-semibold text-slate-600">The legacy TenOps access method has been disabled.</div>
-            <div className="mt-4 flex justify-end">
-              <button type="button" autoFocus onClick={dismissNotice} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold text-white transition hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600">Got it</button>
-            </div>
-          </div>
-        </div>
-      ) : null}
       {showEyebrow ? <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
         TenOps account access
       </div> : null}
