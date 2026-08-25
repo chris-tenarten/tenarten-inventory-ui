@@ -21,8 +21,8 @@ assert.doesNotMatch(styles, /data-display-size="large"[\s\S]{0,500}(letter-spaci
   'Display size must not simulate larger text through tracking or transforms');
 assert.match(styles, /body \.text-\\\[12px\\\][\s\S]{0,100}var\(--tenops-type-caption\)/,
   'Header navigation typography must participate in the user display-size preference');
-assert.match(styles, /\[data-welcome-hero\] \.text-xs/,
-  'Viewport-composed Welcome typography must remain isolated from application readability sizing');
+assert.match(styles, /\[data-welcome-hero\],[\s\S]{0,80}\[data-welcome-hero-cover\][\s\S]{0,240}--tenops-type-label: 14px;[\s\S]{0,120}--tenops-type-body: 20px;/,
+  'Both viewport-composed Welcome surfaces must use fixed Large typography independent of account readability sizing');
 assert.match(styles, /--tenops-type-compact-tag: 10px;/,
   'Fixed-density operational tags must have a semantic type token independent of readability scaling');
 assert.match(styles, /\.tenops-compact-type \{[\s\S]*font-size: var\(--tenops-type-compact-tag\) !important;/,

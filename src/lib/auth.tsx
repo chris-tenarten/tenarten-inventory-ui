@@ -87,6 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let live = true;
+    let authChangeProfileTimer: number | null = null;
     void supabase.auth.getSession().then(async ({ data }) => {
       if (!live) return;
       const accountFlow = new URLSearchParams(window.location.search).get("account");
@@ -98,11 +99,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
       if (event === "PASSWORD_RECOVERY") setRequiresPasswordSetup(true);
       setSession(nextSession);
-      void loadProfile(nextSession);
+      // Supabase holds its auth-token lock while this callback runs. Starting
+      // an authenticated RPC here can contend with that lock for five seconds.
+      if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
+      authChangeProfileTimer = window.setTimeout(() => {
+        if (live) void loadProfile(nextSession);
+      }, 0);
       setReady(true);
     });
     return () => {
       live = false;
+      if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
       data.subscription.unsubscribe();
     };
   }, [loadProfile]);

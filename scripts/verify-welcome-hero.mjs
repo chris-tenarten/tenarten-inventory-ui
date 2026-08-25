@@ -5,6 +5,7 @@ const hero = readFileSync(new URL('../src/components/WelcomeHero.tsx', import.me
 const notifications = readFileSync(new URL('../src/components/AccountNotifications.tsx', import.meta.url), 'utf8');
 const shell = readFileSync(new URL('../src/app/client-layout-shell.tsx', import.meta.url), 'utf8');
 const access = readFileSync(new URL('../src/components/AccountAccessPanel.tsx', import.meta.url), 'utf8');
+const auth = readFileSync(new URL('../src/lib/auth.tsx', import.meta.url), 'utf8');
 const production = readFileSync(new URL('../src/modules/production/ProductionWorkspace.tsx', import.meta.url), 'utf8');
 const styles = readFileSync(new URL('../src/app/globals.css', import.meta.url), 'utf8');
 const rollout = readFileSync(new URL('../supabase/migrations/20260821_002_friday_welcome_and_job_update_seen.sql', import.meta.url), 'utf8');
@@ -57,8 +58,22 @@ assert.match(access, /tenops:prepare-hero-boot[\s\S]{0,120}await auth\.signIn/,
   'The login action must establish Hero ownership before Supabase can expose authenticated content');
 assert.match(access, /tenops:cancel-hero-boot/,
   'A failed login must release the pre-auth Hero cover');
+assert.match(auth, /onAuthStateChange[\s\S]{0,420}window\.setTimeout\(\(\) => \{[\s\S]{0,100}loadProfile\(nextSession\)/,
+  'Authenticated profile loading must begin after the Supabase auth callback releases its token lock');
 assert.match(hero, /const heroCoverVisible = preparingBoot \|\| heroVisible/);
-assert.match(hero, /if \(!heroCoverVisible\) return null/);
+assert.match(hero, /const coverRef = useRef<HTMLDivElement \| null>\(null\)/);
+assert.match(hero, /if \(coverRef\.current\) coverRef\.current\.hidden = false;[\s\S]{0,160}setPreparingBoot\(true\)/,
+  'Sign-in must synchronously reveal the already-mounted Hero cover before queued React state can yield ownership');
+assert.match(hero, /const cancel = \(\) => \{\s*if \(coverRef\.current\) coverRef\.current\.hidden = true;/,
+  'A failed login must synchronously return visual ownership to Account Access');
+assert.match(hero, /ref=\{coverRef\}[\s\S]{0,100}hidden=\{!preparingBoot \|\| heroVisible\}[\s\S]{0,80}data-welcome-hero-cover/,
+  'A lightweight static starting cover must remain mounted and natively hidden between boots');
+assert.match(hero, /data-welcome-hero-cover[\s\S]{0,1800}data-welcome-progress-cover[\s\S]{0,500}OPERATIONS ENGINE INITIATING[\s\S]{0,120}0%/,
+  'The immediate handoff cover must include the same starting progress composition and grid geometry');
+assert.match(hero, /\{heroVisible \? <div\s*data-welcome-hero/,
+  'The full animated Hero subtree must mount only when existing auth and profile readiness permits animation');
+assert.doesNotMatch(hero, /if \(!heroCoverVisible\) return null/,
+  'The lightweight ownership cover must not require mounting a new subtree after login begins');
 assert.match(hero, /sessionStorage\.getItem\(playedKey\) && !preparingBootRef\.current/,
   'An explicitly armed fresh login must boot even if stale session playback state remains');
 
@@ -123,5 +138,9 @@ assert.match(shell, /data-login-gate-body[\s\S]*src="\/logo\.png"/,
 assert.match(styles, /data-authenticated-steel-logo/);
 assert.match(styles, /html\[data-appearance="dark"\] \[data-welcome-hero\]/,
   'Dark development appearance must retain the opaque Hero surface');
+assert.match(styles, /html\[data-appearance="dark"\] \[data-welcome-hero-cover\]/,
+  'The immediate handoff cover and animated Hero must consume the same retained Appearance');
+assert.match(styles, /\[data-welcome-hero\],[\s\S]{0,80}\[data-welcome-hero-cover\][\s\S]{0,240}--tenops-type-label: 14px;[\s\S]{0,120}--tenops-type-body: 20px;/,
+  'Both viewport-composed Hero surfaces must retain the established Large typography independent of account resolution');
 
 console.log('TenOps automatic post-login Hero checks passed.');

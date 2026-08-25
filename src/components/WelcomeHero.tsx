@@ -42,6 +42,7 @@ function diagonalRevealCoverage(progress: number) {
 
 export default function WelcomeHero() {
   const auth = useAuth();
+  const coverRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const animationStartedAtRef = useRef<number | null>(null);
   const animationCompletedAtRef = useRef<number | null>(null);
@@ -109,10 +110,14 @@ export default function WelcomeHero() {
 
   useEffect(() => {
     const prepare = () => {
+      // The cover is kept mounted so login can hand off visual ownership
+      // synchronously before Supabase publishes the authenticated session.
+      if (coverRef.current) coverRef.current.hidden = false;
       preparingBootRef.current = true;
       setPreparingBoot(true);
     };
     const cancel = () => {
+      if (coverRef.current) coverRef.current.hidden = true;
       preparingBootRef.current = false;
       setPreparingBoot(false);
     };
@@ -249,14 +254,42 @@ export default function WelcomeHero() {
     return () => window.removeEventListener("keydown", closeReplay);
   }, [mode, visible]);
 
-  if (!heroCoverVisible) return null;
-
   const heroProgress = reducedMotion ? (progress > 0 ? 1 : 0) : smoothstep(progress);
   const logoProgress = heroProgress;
   const percent = Math.round(diagonalRevealCoverage(logoProgress) * 100);
   const statusLabel = heroAnimationComplete ? "OPERATIONS ENGINE ONLINE" : "OPERATIONS ENGINE INITIATING";
 
-  return <div
+  return <>
+    <div
+      ref={coverRef}
+      hidden={!preparingBoot || heroVisible}
+      data-welcome-hero-cover
+      className="fixed inset-0 z-[80] bg-[#eef1f4]"
+      aria-hidden="true"
+    >
+      <section className="flex h-dvh min-h-[28rem] flex-col items-center justify-center overflow-hidden px-5 text-center text-slate-950">
+        <div className="grid h-full w-full grid-rows-[minmax(0,1fr)_auto] items-center py-[clamp(0.75rem,2vh,1.5rem)]">
+          <div className="flex min-h-0 w-full items-center justify-center">
+            <div className="flex max-w-2xl flex-col items-center">
+              <div data-welcome-logo-stack className="relative aspect-[1024/1048] shrink-0">
+                <Image src="/tenarten-logo-gold-welcome.webp" alt="" aria-hidden="true" fill priority sizes="(max-width: 640px) 19rem, 35rem" className="object-contain" />
+              </div>
+              <div className="mt-3 text-[clamp(0.9rem,2vw,1.08rem)] font-bold uppercase tracking-[0.18em] text-slate-700">TenOps Operations Control</div>
+            </div>
+          </div>
+          <div data-welcome-progress-cover className="mx-auto mb-[clamp(1rem,3vh,2.25rem)] w-full max-w-md px-2">
+            <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-600">
+              <span className="min-w-0 flex-1 truncate text-left">OPERATIONS ENGINE INITIATING</span>
+              <span className="tabular-nums">0%</span>
+            </div>
+            <div className="mt-2 h-1 overflow-hidden bg-slate-300">
+              <div className="h-full w-0 bg-slate-800" />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    {heroVisible ? <div
     data-welcome-hero
     data-hero-animation-complete={heroAnimationComplete ? "true" : "false"}
     data-critical-app-ready={criticalAppReady ? "true" : "false"}
@@ -301,5 +334,6 @@ export default function WelcomeHero() {
       </div>
       {mode === "replay" ? <button type="button" onClick={() => setVisible(false)} aria-label="Close Welcome introduction" title="Close" className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center text-slate-500 transition hover:bg-white/60 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"><X className="h-4 w-4" aria-hidden="true" /></button> : null}
     </section>
-  </div>;
+    </div> : null}
+  </>;
 }
