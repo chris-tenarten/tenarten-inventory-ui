@@ -55,6 +55,9 @@ assert.match(language, /"settings\.browserOnly": "This preference is stored only
 assert.match(settings, /<AccountAccessPanel/, 'Account access remains distinct from account-scoped preferences');
 
 assert.match(appearance, /setPreference\("appearance", next\)/);
+assert.match(appearance, /if \(!isTenDev && accountPreferences\.accountScoped\)/,
+  'TenDev must bypass shared account Appearance persistence');
+assert.match(appearance, /TENDEV_APPEARANCE_STORAGE_KEY = "tenops:tendev:appearance"/);
 assert.doesNotMatch(appearance, /allowUserAppearance/,
   'Stored account Appearance must not be disabled by environment branding');
 assert.doesNotMatch(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/,
