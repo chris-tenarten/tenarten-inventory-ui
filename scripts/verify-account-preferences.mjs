@@ -55,10 +55,10 @@ assert.match(language, /"settings\.browserOnly": "This preference is stored only
 assert.match(settings, /<AccountAccessPanel/, 'Account access remains distinct from account-scoped preferences');
 
 assert.match(appearance, /setPreference\("appearance", next\)/);
-assert.match(appearance, /const initial = !allowUserAppearance\s*\? defaultAppearance/,
-  'Stored account Appearance must remain separate from the effective environment Appearance');
-assert.match(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/,
-  'Production must not consume the shared account Appearance preference');
+assert.doesNotMatch(appearance, /allowUserAppearance/,
+  'Stored account Appearance must not be disabled by environment branding');
+assert.doesNotMatch(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/,
+  'Production and development must consume the same account Appearance preference');
 assert.match(language, /setPreference\("language", next\)/);
 assert.match(shell, /preferences\.display_size/);
 assert.match(workspace, /setAccountPreference\('production_view', storedView\)/);

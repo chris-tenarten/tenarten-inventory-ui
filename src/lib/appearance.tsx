@@ -33,29 +33,29 @@ function applyAppearance(appearance: Appearance) {
 export function ThemeProvider({
   children,
   defaultAppearance = "light",
-  allowUserAppearance = true,
 }: {
   children: ReactNode;
   defaultAppearance?: Appearance;
-  allowUserAppearance?: boolean;
 }) {
   const accountPreferences = useAccountPreferences();
   const [appearance, setAppearanceState] = useState<Appearance>(defaultAppearance);
 
   useLayoutEffect(() => {
+    // Keep the already-painted login Appearance while an authenticated
+    // account's canonical preference is resolving. Applying the TenDev default
+    // in this gap causes a light Hero to flash dark during sign-in.
+    if (accountPreferences.accountScoped && !accountPreferences.ready) return;
     const accountAppearance = accountPreferences.preferences.appearance;
-    const initial = !allowUserAppearance
-      ? defaultAppearance
-      : accountPreferences.accountScoped
-        ? (isAppearance(accountAppearance) ? accountAppearance : defaultAppearance)
-        : isAppearance(document.documentElement.dataset.appearance)
-          ? document.documentElement.dataset.appearance
-          : defaultAppearance;
+    const initial = accountPreferences.accountScoped
+      ? (isAppearance(accountAppearance) ? accountAppearance : defaultAppearance)
+      : isAppearance(document.documentElement.dataset.appearance)
+        ? document.documentElement.dataset.appearance
+        : defaultAppearance;
     applyAppearance(initial);
     const timeout = window.setTimeout(() => setAppearanceState(initial), 0);
 
     function syncAppearance(event: StorageEvent) {
-      if (!allowUserAppearance || accountPreferences.accountScoped || event.key !== APPEARANCE_STORAGE_KEY) return;
+      if (accountPreferences.accountScoped || event.key !== APPEARANCE_STORAGE_KEY) return;
       const next = isAppearance(event.newValue) ? event.newValue : defaultAppearance;
       setAppearanceState(next);
       applyAppearance(next);
@@ -66,14 +66,9 @@ export function ThemeProvider({
       window.clearTimeout(timeout);
       window.removeEventListener("storage", syncAppearance);
     };
-  }, [accountPreferences.accountScoped, accountPreferences.preferences.appearance, allowUserAppearance, defaultAppearance]);
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.appearance, accountPreferences.ready, defaultAppearance]);
 
   const setAppearance = useCallback((next: Appearance) => {
-    if (!allowUserAppearance) {
-      setAppearanceState(defaultAppearance);
-      applyAppearance(defaultAppearance);
-      return;
-    }
     setAppearanceState(next);
     applyAppearance(next);
     if (accountPreferences.accountScoped) {
@@ -85,7 +80,7 @@ export function ThemeProvider({
     } catch {
       // Appearance still applies for the current page when storage is unavailable.
     }
-  }, [accountPreferences, allowUserAppearance, defaultAppearance]);
+  }, [accountPreferences]);
 
   const value = useMemo(
     () => ({ appearance, setAppearance }),

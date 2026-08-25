@@ -92,6 +92,10 @@ function sortJobs(jobs: ProductionJob[]) {
   });
 }
 
+function announceCriticalAppReady() {
+  window.requestAnimationFrame(() => window.dispatchEvent(new Event('tenops:critical-app-ready')));
+}
+
 export default function ProductionWorkspace() {
   const auth = useAuth();
   const accountPreferences = useAccountPreferences();
@@ -251,6 +255,7 @@ export default function ProductionWorkspace() {
         // enrich progressively without blocking the initial list.
         setJobs(sortJobs(visibleJobs));
         setIsLoading(false);
+        announceCriticalAppReady();
         if (visibleFocusedJob) {
           setFocusedJobId(visibleFocusedJob.id);
           setSearch(visibleFocusedJob.job_number || visibleFocusedJob.name);
@@ -287,6 +292,7 @@ export default function ProductionWorkspace() {
         setLoadError(
           error instanceof Error ? error.message : 'Unable to load active jobs.',
         );
+        announceCriticalAppReady();
       } finally {
         if (requestId === jobLoadRequestRef.current) {
           setIsLoading(false);

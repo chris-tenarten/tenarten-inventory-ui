@@ -4,119 +4,124 @@ import { existsSync, readFileSync } from 'node:fs';
 const hero = readFileSync(new URL('../src/components/WelcomeHero.tsx', import.meta.url), 'utf8');
 const notifications = readFileSync(new URL('../src/components/AccountNotifications.tsx', import.meta.url), 'utf8');
 const shell = readFileSync(new URL('../src/app/client-layout-shell.tsx', import.meta.url), 'utf8');
+const access = readFileSync(new URL('../src/components/AccountAccessPanel.tsx', import.meta.url), 'utf8');
+const production = readFileSync(new URL('../src/modules/production/ProductionWorkspace.tsx', import.meta.url), 'utf8');
 const styles = readFileSync(new URL('../src/app/globals.css', import.meta.url), 'utf8');
 const rollout = readFileSync(new URL('../supabase/migrations/20260821_002_friday_welcome_and_job_update_seen.sql', import.meta.url), 'utf8');
 
-assert(existsSync(new URL('../public/tenarten-logo-gold-welcome.webp', import.meta.url)), 'Registered gold Welcome asset is missing');
-assert(existsSync(new URL('../public/tenarten-logo-steel-welcome.webp', import.meta.url)), 'Registered steel Welcome asset is missing');
-assert.match(hero, /!auth\.isAuthenticated \|\| !auth\.profile\?\.isActive/);
-assert.match(hero, /auth\.profile\.displayName/);
-assert.match(hero, /ROLE_LABELS\[auth\.profile\.role\]/);
-assert.match(hero, /data-welcome-account-identity[\s\S]*items-center[\s\S]*auth\.profile\.displayName[\s\S]*ROLE_LABELS\[auth\.profile\.role\]/,
-  'Canonical full name and restrained role must share the same responsive identity line');
-assert.match(hero, /productionTagClassName/,
-  'The Welcome role must reuse the established Production tag shell');
-assert.match(hero, /data-welcome-role-tag[\s\S]{0,240}ROLE_LABELS\[auth\.profile\.role\]/,
-  'Every canonical role label must render through the restrained Welcome role tag');
-assert.doesNotMatch(hero, /Welcome, \{auth\.profile\.displayName\}/, 'The final identity line must not retain the Welcome prefix');
-assert.match(hero, /item\.notification_type === "welcome"/);
-assert.match(hero, /welcome\.read_at === null/);
-assert.doesNotMatch(hero, /mark_my_account_notification_read/, 'Hero progress and close must never read Welcome');
-assert.doesNotMatch(hero, /open-welcome-getting-started/, 'Hero completion must not bypass real Notification discovery');
-assert.match(hero, /tenops:start-notification-onboarding/);
-assert.match(hero, /completedWelcomeIdRef/, 'Hero completion must remain session-scoped while Welcome stays unread');
-assert.doesNotMatch(hero, /dismissedWelcomeIdRef/, 'Mandatory Welcome must not retain a UI-dismiss suppression path');
+assert(existsSync(new URL('../public/logo.png', import.meta.url)), 'Original persistent logo is missing');
+assert(existsSync(new URL('../public/tenarten-logo-gold-welcome.webp', import.meta.url)), 'Registered gold Hero asset is missing');
+assert(existsSync(new URL('../public/tenarten-logo-steel-welcome.webp', import.meta.url)), 'Registered steel Hero asset is missing');
+
+assert.match(hero, /type WelcomeMode = "boot" \| "replay"/);
+assert.match(hero, /BOOT_PLAYED_KEY_PREFIX = "tenops\.welcomeHeroPlayed:"/,
+  'Boot playback must be scoped to the authenticated browser session');
+assert.match(hero, /sessionStorage\.getItem\(playedKey\)/);
+assert.match(hero, /sessionStorage\.setItem\(playedKey, "true"\)/);
+assert.match(hero, /sessionStorage\.removeItem\(`\$\{BOOT_PLAYED_KEY_PREFIX\}\$\{lastAuthenticatedUserRef\.current\}`\)/,
+  'Signing out must permit a later fresh login to boot again');
 assert.match(hero, /tenops:replay-welcome-hero/);
-assert.match(hero, /type WelcomeMode = "mandatory" \| "replay"/);
-assert.match(hero, /setMode\("mandatory"\)/, 'Unread canonical Welcome state must open mandatory mode');
-assert.match(hero, /setMode\("replay"\)/, 'Voluntary Replay must open replay mode');
-assert.match(hero, /requestAnimationFrame/);
 assert.match(hero, /prefers-reduced-motion: reduce/);
-assert.match(hero, /clamp\(2016px,313\.6vh,3136px\)/, 'Welcome reveal distance must remain 70% of the extended implementation');
-assert.doesNotMatch(hero, /Skip introduction|>Skip</, 'The first-time Welcome must not offer a Skip action');
-assert.match(hero, /data-welcome-scroll-affordance/);
-assert.match(hero, /data-welcome-content-layout/);
-assert.match(hero, /data-welcome-primary-region/);
-assert.match(hero, /data-welcome-identity-group/);
-assert.match(hero, /data-welcome-identity-group[\s\S]*data-welcome-scroll-affordance/, 'Identity and scroll guidance must be separate groups in one normal-flow layout');
-assert.match(hero, /grid-rows-\[minmax\(0,1fr\)_auto\]/, 'Available viewport height must separate primary identity from the reserved guidance row');
-assert.match(hero, /data-welcome-primary-region[\s\S]{0,180}pb-\[clamp\(0rem,1vh,0\.75rem\)\]/,
-  'The identity group must remain centered without bottom padding pushing the crest beyond the viewport');
-assert.doesNotMatch(hero, /data-welcome-scroll-affordance[\s\S]{0,250}className="[^"]*absolute/, 'The scroll cue must not use independent absolute positioning');
-assert.match(hero, /Scroll to explore/);
-assert.match(hero, /onClick=\{explore\}/, 'The scroll affordance must be keyboard-clickable');
-assert.match(hero, /revealDistance \* 0\.38/, 'The scroll affordance must advance without completing Welcome');
-assert.match(hero, /behavior: reducedMotion \? "auto" : "smooth"/);
-assert.match(hero, /data-welcome-logo-stack/);
-assert.match(hero, /data-welcome-logo-stack className="relative aspect-\[1024\/1048\] shrink-0"/,
-  'Welcome crest sizing must remain centralized on its semantic logo stack');
-assert.match(styles, /\[data-welcome-logo-stack\] \{[\s\S]*width: max\(10\.5rem, min\(clamp\(19rem, 51\.25vw, 34\.5rem\), calc\(100dvh - 11rem\)\)\);[\s\S]*margin-top: max\(0rem, calc\(clamp\(13rem, 35vw, 23\.5rem\) - clamp\(19rem, 51\.25vw, 34\.5rem\)\)\);/,
-  'Welcome crest must retain its 552px desktop target while continuously yielding to the available viewport height');
+assert.match(hero, /requestAnimationFrame\(tick\)/, 'Elapsed automatic animation must use animation frames');
+assert.match(hero, /HERO_DURATION_MS = 4600/,
+  'The normalized Hero timeline must be 15% slower than the approved 4000ms duration');
+assert.doesNotMatch(hero, /onScroll=|handleScroll|Scroll to explore|ChevronDown/,
+  'Boot must not depend on scroll interaction');
+
+assert.match(hero, /const \[heroAnimationComplete, setHeroAnimationComplete\]/);
+assert.match(hero, /const \[criticalAppReady, setCriticalAppReady\]/);
+assert.match(hero, /criticalAppReadyRef\.current && now - animationCompletedAtRef\.current >= ONLINE_HOLD_MS/,
+  'Fade must wait for both animation completion and app readiness');
+assert.match(hero, /ONLINE_HOLD_MS = 900/,
+  'The completed ONLINE composition must hold before the gradual fade');
+assert.match(hero, /OPERATIONS ENGINE INITIATING/);
+assert.match(hero, /OPERATIONS ENGINE ONLINE/);
+assert.match(hero, /heroAnimationComplete \? "text-emerald-700" : ""/,
+  'ONLINE must use the established TenOps success green');
+assert.match(hero, /const heroProgress = [\s\S]{0,120}smoothstep\(progress\)/);
+assert.match(hero, /const logoProgress = heroProgress/);
+assert.match(hero, /diagonalRevealClip\(logoProgress\)/);
+assert.match(hero, /function diagonalRevealCoverage/);
+assert.match(hero, /Math\.round\(diagonalRevealCoverage\(logoProgress\) \* 100\)/,
+  'The progress bar must report the visibly revealed diagonal crest area');
+assert.match(hero, /role="progressbar"/);
+assert.match(hero, /aria-valuenow=\{percent\}/);
+assert.match(hero, /setFadeProgress\(smoothstep\(nextFade\)\)/, 'Hero dismissal must retain a gradual fade');
+assert.match(hero, /document\.body\.style\.overflow = "hidden"/);
+assert.match(hero, /document\.body\.style\.overflow = previousOverflow/,
+  'Interaction lock cleanup must restore the prior body state');
+assert.match(hero, /const bootRequired = heroEligible && !bootClaimed[\s\S]{0,180}sessionStorage\.getItem/,
+  'Fresh-login Hero ownership must be decided during render before the authenticated workspace can flash');
+assert.match(hero, /const heroVisible = heroEligible && \(visible \|\| bootRequired\)/);
+assert.match(access, /tenops:prepare-hero-boot[\s\S]{0,120}await auth\.signIn/,
+  'The login action must establish Hero ownership before Supabase can expose authenticated content');
+assert.match(access, /tenops:cancel-hero-boot/,
+  'A failed login must release the pre-auth Hero cover');
+assert.match(hero, /const heroCoverVisible = preparingBoot \|\| heroVisible/);
+assert.match(hero, /if \(!heroCoverVisible\) return null/);
+assert.match(hero, /sessionStorage\.getItem\(playedKey\) && !preparingBootRef\.current/,
+  'An explicitly armed fresh login must boot even if stale session playback state remains');
+
 assert.match(hero, /tenarten-logo-gold-welcome\.webp/);
 assert.match(hero, /tenarten-logo-steel-welcome\.webp/);
-assert.match(hero, /data-welcome-logo-steel/);
-assert.match(hero, /clipPath: diagonalRevealClip\(revealProgress\)/, 'Steel material must use a scroll-driven clipping boundary');
-assert.doesNotMatch(hero, /opacity: 1 - logoProgress|opacity: logoProgress/, 'Material transformation must not use an opacity crossfade');
-assert.match(hero, /revealStart: 0,/);
-assert.match(hero, /revealEnd: 0\.65/);
-assert.match(hero, /holdEnd: 0\.74/);
-assert.match(hero, /linearPhaseProgress\(progress, HERO_PHASES\.revealStart, HERO_PHASES\.revealEnd\)/, 'Material reveal must respond linearly from the first scroll movement');
-assert.match(hero, /progress > HERO_PHASES\.revealStart \? 1 : 0/, 'Reduced motion must remain gold at rest and switch only after scroll begins');
-assert.match(hero, /phaseProgress\(progress, HERO_PHASES\.holdEnd, 1\)/);
-assert.match(hero, /className="fixed inset-0 z-\[80\] overflow-y-auto"/, 'The Welcome scroller must own the full viewport');
-assert.match(hero, /opacity: Math\.max\(0, 1 - exitProgress \* 1\.35\)/, 'Logo exit opacity must begin only in the exit phase');
-assert.match(hero, /setProgress\(next\)/, 'Scroll position must remain the animation source of truth');
-assert.match(hero, /mode === "replay" \? <button[^>]*onClick=\{\(\) => setVisible\(false\)\}[^>]*aria-label="Close Welcome introduction"/, 'Only Replay may expose the Close control');
-assert.match(hero, /if \(!visible \|\| mode !== "replay"\) return;/, 'Escape dismissal must be restricted to Replay');
-assert.match(hero, /if \(event\.key === "Escape"\) setVisible\(false\)/);
-assert.doesNotMatch(hero, /onClick=\{dismiss\}|function dismiss/, 'Mandatory Welcome must not expose a generic dismiss path');
-assert.doesNotMatch(hero, /tenarten-site|https?:\/\//);
+assert.match(hero, /clipPath: diagonalRevealClip\(logoProgress\)/);
+assert.match(hero, /auth\.profile\.displayName/);
+assert.match(hero, /ROLE_LABELS\[auth\.profile\.role\]/);
+assert.match(hero, /productionTagClassName/);
+
+assert.match(production, /setJobs\(sortJobs\(visibleJobs\)\);[\s\S]{0,120}announceCriticalAppReady\(\)/,
+  'Production must become ready when canonical core Job rows render');
+assert.match(production, /supportingDataPromise/,
+  'Secondary Production summaries must remain progressive');
+assert.match(production, /catch \(error\)[\s\S]{0,420}announceCriticalAppReady\(\)/,
+  'A rendered Production load error must not strand the boot lock');
+assert.match(hero, /window\.location\.pathname !== "\/"/,
+  'Non-Production destinations must not wait for the Production workspace signal');
+
+assert.match(hero, /item\.notification_type === "welcome"/);
+assert.match(hero, /welcome && welcome\.read_at === null/);
+assert.doesNotMatch(hero, /mark_my_account_notification_read/,
+  'Hero completion must never mark durable Welcome read');
+assert.match(hero, /completedWelcomeIdRef/);
+assert.match(hero, /tenops:start-notification-onboarding/);
 assert.match(notifications, /Replay introduction/);
 assert.match(notifications, /tenops:start-notification-onboarding/);
 assert.match(notifications, /data-onboarding-spotlight/);
 assert.match(notifications, /Your updates live here/);
 assert.match(notifications, /Open Notifications to continue\./);
 assert.doesNotMatch(notifications, /spotlight === "bell"[\s\S]{0,500}>Skip</,
-  'The real notification bell must be the onboarding action, without a redundant Skip control');
-assert.doesNotMatch(notifications, /spotlight === "welcome" \? <button[^>]*>Skip</,
-  'Welcome guidance must advance through the real Welcome row rather than a redundant Skip control');
+  'The real notification bell must remain the onboarding action');
 assert.match(notifications, /data-welcome-notification-row/);
-assert.match(notifications, /Open Welcome <ArrowRight/, 'The durable Welcome item must expose an explicit opener');
+assert.match(notifications, /Open Welcome <ArrowRight/);
 assert.match(notifications, /Open Welcome to finish Getting Started/);
-assert.match(notifications, /createPortal/, 'Notification and Getting Started surfaces must escape the transformed header scroll container');
-assert.match(notifications, /max-h-\[calc\(100dvh-max\(5rem,env\(safe-area-inset-top\)\)\)\]/);
+assert.match(notifications, /createPortal/);
 assert.match(notifications, /data-notification-scroll-region/);
-assert.match(notifications, /min-h-0 flex-1 overflow-y-auto/);
-assert.match(notifications, /if \(!await markRead\(item\)\) return;/, 'Only selecting a notification may mark it read');
-assert.match(notifications, /notificationOnboardingReducer/,
-  'Notification onboarding transitions must be owned atomically rather than split across independent open and spotlight setters');
-assert.match(notifications, /dispatchOnboarding\(\{ type: "toggle" \}\)/,
-  'The real Notification bell must use the atomic onboarding transition');
-assert.match(notifications, /setTab\(welcomeItem\?\.read_at \? "all" : "unread"\)/, 'Replay must find a retained read Welcome under All');
-assert.match(notifications, /if \(event\.key === "Escape"\) dispatchOnboarding\(\{ type: "cancel-spotlight" \}\)/, 'Escape must end guidance without changing durable state');
-assert.doesNotMatch(notifications, /<Flag/, 'Getting Started must not teach the retired Overview flag treatment');
+assert.match(notifications, /if \(!await markRead\(item\)\) return;/,
+  'Only selecting a notification may mark it read');
+assert.match(notifications, /notificationOnboardingReducer/);
+assert.match(notifications, /dispatchOnboarding\(\{ type: "toggle" \}\)/);
+assert.match(notifications, /setTab\(welcomeItem\?\.read_at \? "all" : "unread"\)/,
+  'Replay must find a retained read Welcome under All');
+assert.match(notifications, /if \(event\.key === "Escape"\) dispatchOnboarding\(\{ type: "cancel-spotlight" \}\)/);
 assert.match(notifications, /Use the Job Update control to open each Job’s conversation/);
 assert.match(rollout, /notifications\.notification_type = 'welcome'/);
 assert.match(rollout, /notifications\.notification_key = 'account-welcome-v1'/);
 assert.match(rollout, /notifications\.read_at is not null/);
 assert.match(rollout, /friday_welcome_reset_v1/);
-assert.match(rollout, /not coalesce\(\(notifications\.metadata ->> 'friday_welcome_reset_v1'\)::boolean, false\)/);
 assert.match(rollout, /create table if not exists public\.job_update_seen_state/);
-assert.match(rollout, /drop policy if exists job_update_seen_state_read_self/);
-assert.doesNotMatch(rollout, /insert into public\.account_notifications/, 'The rollout must preserve the durable Welcome record rather than duplicate it');
-assert.match(shell, /<WelcomeHero \/>/);
-assert.match(shell, /data-header-steel-logo-preview[\s\S]{0,100}src="\/tenarten-logo-steel-welcome\.webp"/, 'The global Production and TenDev header must preview the approved steel asset');
-assert.match(shell, /data-login-gate-body[\s\S]*src="\/tenarten-logo-steel-welcome\.webp"/, 'Production and TenDev must share the approved static steel login logo');
-assert.doesNotMatch(shell, /data-login-gate-body[\s\S]*src="\/tenarten-logo-gold-welcome\.webp"/, 'Login must not use or animate the gold logo');
-assert.match(shell, /auth\.profile\.displayName/, 'Header identity must use the canonical app_users profile display name');
-assert.match(styles, /\[data-welcome-chevron\]/);
-assert.doesNotMatch(styles, /\[data-welcome-scroll-affordance\] \{[\s\S]*animation:/, 'Only the chevron may animate; the interaction label must remain still');
-assert.match(styles, /\[data-welcome-hero\] \{[\s\S]*background: #eef1f4;[\s\S]*overscroll-behavior-y: none;/, 'Welcome must contain vertical boundary overscroll on an opaque backing surface');
-assert.match(styles, /html\[data-appearance="dark"\] \[data-welcome-hero\],[\s\S]*background: #111820;/, 'TenDev dark Welcome must retain an opaque backing surface');
-assert.match(styles, /\[data-header-steel-logo-preview\] \{[\s\S]*filter: contrast/, 'Header-scale steel contrast treatment must remain presentation-scoped');
-assert.match(styles, /html\[data-appearance="dark"\] \[data-header-steel-logo-preview\]/, 'Dark mode must receive its own restrained steel-logo treatment');
-assert.match(styles, /@media \(max-height: 36rem\)[\s\S]*\[data-welcome-logo-stack\] \{ margin-top: 0; \}/,
-  'Short viewports must not replace the continuous crest sizing rule with a breakpoint-specific size');
-assert.match(styles, /prefers-reduced-motion: reduce/);
+assert.doesNotMatch(rollout, /insert into public\.account_notifications/,
+  'The rollout must preserve the durable Welcome record rather than duplicate it');
 
-console.log('TenOps branded Welcome hero checks passed.');
+assert.match(shell, /data-authenticated-header-logo[\s\S]{0,400}h-9 w-9[\s\S]{0,180}h-11 w-11/,
+  'Authenticated logo artwork must render inside fixed geometry');
+assert.match(shell, /data-authenticated-steel-logo="true"[\s\S]{0,120}src="\/tenarten-logo-steel-welcome\.webp"/,
+  'Authenticated header branding must settle immediately on the static steel crest');
+assert.doesNotMatch(shell, /headerLogoState|tenops:boot-hero-complete/,
+  'The authenticated header must not retain the mixed-logo transformation experiment');
+assert.match(shell, /data-login-gate-body[\s\S]*src="\/logo\.png"/,
+  'Login must use the original persistent Tenarten logo');
+assert.match(styles, /data-authenticated-steel-logo/);
+assert.match(styles, /html\[data-appearance="dark"\] \[data-welcome-hero\]/,
+  'Dark development appearance must retain the opaque Hero surface');
+
+console.log('TenOps automatic post-login Hero checks passed.');

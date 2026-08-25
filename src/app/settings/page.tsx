@@ -11,7 +11,6 @@ import {
 } from "@/lib/display-size";
 import { type TranslationKey, useLanguage } from "@/lib/language";
 import { APPEARANCES, useAppearance } from "@/lib/appearance";
-import { BRANDING } from "@/lib/dev-branding.mjs";
 import PhaseLibraryManager from "@/modules/planning/PhaseLibraryManager";
 import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
 import AdminSettingsPanel from "@/components/AdminSettingsPanel";
@@ -75,7 +74,7 @@ export default function SettingsPage() {
         <p className="mt-1 text-sm text-slate-600">Sign in with your individual TenOps account for personalized access, notifications, and role-based permissions.</p>
         <AccountAccessPanel onAuthenticated={() => {}} showEyebrow={false} />
       </section>
-      {BRANDING.showDeveloperArtwork && <section className="mt-6 border border-slate-300 bg-white p-4">
+      <section id="appearance" className="mt-6 scroll-mt-20 border border-slate-300 bg-white p-4">
         <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
           {t("settings.appearance")}
         </div>
@@ -123,8 +122,8 @@ export default function SettingsPage() {
         <p className="mt-3 text-xs text-slate-500">
           {accountPreferences.accountScoped ? t("settings.accountPreference") : t("settings.browserOnly")}
         </p>
-      </section>}
-      <section className={`${BRANDING.showDeveloperArtwork ? 'mt-4' : 'mt-6'} border border-slate-300 bg-white p-4`}>
+      </section>
+      <section className="mt-4 border border-slate-300 bg-white p-4">
         <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
           {t("settings.appearance")}
         </div>

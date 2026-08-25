@@ -653,11 +653,7 @@ export default function JobUpdatesPanel({
                           : ""}
                       </span>
                       )
-                    ) : (
-                      <span className="bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600">
-                        Update
-                      </span>
-                    )}
+                    ) : null}
                     {canEditJobUpdate(update) && !isEditing && (
                       <button
                         type="button"

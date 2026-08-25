@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const [provider, layout, shell, settings, styles, planningEditor, creationDialog, schedulingFeedback, workspace, queue, table, updatesIndicator, gantt, manifest] =
+const [provider, layout, shell, settings, styles, planningEditor, creationDialog, schedulingFeedback, workspace, queue, table, updatesIndicator, gantt, manpower, inventory, manifest] =
   await Promise.all([
     read("src/lib/appearance.tsx"),
     read("src/app/layout.tsx"),
@@ -17,6 +17,8 @@ const [provider, layout, shell, settings, styles, planningEditor, creationDialog
     read("src/modules/production/components/ProductionTable.tsx"),
     read("src/modules/production/components/JobUpdatesIndicator.tsx"),
     read("src/modules/production/components/ProductionGantt.tsx"),
+    read("src/modules/manpower/ManpowerWorkspace.tsx"),
+    read("src/app/inventory/page.tsx"),
     read("docs/workflows/PRODUCTION_PIPELINE.md"),
   ]);
 
@@ -27,13 +29,11 @@ assert.match(provider, /\["light", "dark"\]/);
 assert.match(provider, /useState<Appearance>\(defaultAppearance\)/);
 assert.match(provider, /accountPreferences\.accountScoped/);
 assert.match(provider, /accountPreferences\.preferences\.appearance/);
+assert.match(provider, /accountPreferences\.accountScoped && !accountPreferences\.ready\) return/,
+  'Authenticated Appearance must not fall back while account preferences are still resolving');
 assert.match(provider, /accountPreferences\.setPreference\("appearance", next\)/);
-assert.match(provider, /const initial = !allowUserAppearance\s*\? defaultAppearance/,
-  'An environment-locked Appearance must take precedence over account and browser preferences');
-assert.match(provider, /if \(!allowUserAppearance\) \{\s*setAppearanceState\(defaultAppearance\);\s*applyAppearance\(defaultAppearance\);\s*return;/,
-  'An environment-locked Appearance must reject runtime preference changes');
-assert.match(provider, /if \(!allowUserAppearance \|\| accountPreferences\.accountScoped \|\| event\.key !== APPEARANCE_STORAGE_KEY\) return;/,
-  'An environment-locked Appearance must ignore browser storage changes');
+assert.doesNotMatch(provider, /allowUserAppearance/,
+  'Appearance availability must not be gated by the deployment environment');
 assert.match(provider, /accountPreferences\.accountScoped \|\| event\.key !== APPEARANCE_STORAGE_KEY/,
   'Authenticated accounts must not synchronize another operator\'s browser-local Appearance');
 assert.match(provider, /window\.localStorage\.setItem\(APPEARANCE_STORAGE_KEY, next\)/,
@@ -42,20 +42,33 @@ assert.doesNotMatch(provider, /hostname|NODE_ENV|branch|prefers-color-scheme|mat
 assert.match(layout, /data-appearance=\{defaultAppearance\}/);
 assert.doesNotMatch(layout, /localStorage\.getItem\(['"]tenops_appearance['"]\)/,
   'The root layout must not initialize authenticated Appearance from ownerless browser storage');
-assert.match(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/,
-  'Only the developer-branded environment may honor user Appearance preferences');
+assert.doesNotMatch(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/,
+  'Production and development must both honor the canonical user Appearance preference');
 assert.doesNotMatch(layout, /NEXT_PUBLIC_[A-Z_]*DARK|data-[a-z-]*prototype/);
 assert.match(shell, /data-app-shell/);
 assert.match(shell, /data-theme-access-brand/);
 assert.match(shell, /data-theme-logout/);
 assert.match(settings, /useAppearance/);
 assert.match(settings, /APPEARANCES\.map/);
-assert.match(settings, /BRANDING\.showDeveloperArtwork && <section/);
+assert.match(settings, /id="appearance"/);
+assert.doesNotMatch(settings, /BRANDING\.showDeveloperArtwork/);
 assert.match(settings, /role="radiogroup"/);
 assert.match(styles, /:root[\s\S]*--surface-page:/);
 assert.match(styles, /html\[data-appearance="dark"\]/);
 assert.match(styles, /--surface-selected:/);
+assert.match(styles, /--semantic-info-foreground:/);
+assert.match(styles, /--operational-violet-surface:/);
 assert.match(styles, /\.tenops-selected-surface/);
+assert.match(styles, /\[class\*="bg-\[\#eef1f4\]"\]/);
+assert.match(styles, /\.border-orange-300/);
+assert.match(styles, /\.border-red-300/);
+assert.match(styles, /\.border-emerald-300/);
+assert.match(styles, /\[data-manpower-unlinked="true"\]/);
+assert.match(styles, /\[data-pending-receival-received="true"\]/);
+assert.match(styles, /\.bg-violet-200/);
+assert.match(manpower, /data-manpower-unlinked=/);
+assert.match(inventory, /data-pending-receival-received=/);
+assert.match(inventory, /data-received-status className="inline-flex min-h-8 items-center justify-center/);
 assert.doesNotMatch(styles, /[a-z-]+-prototype/);
 assert.match(styles, /\[role="dialog"\]/);
 assert.match(styles, /\[role="tooltip"\]/);

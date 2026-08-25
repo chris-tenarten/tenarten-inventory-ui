@@ -1,21 +1,11 @@
 @import "tailwindcss";
 
-@keyframes tenops-welcome-chevron {
-  0%, 100% { transform: translateY(0); opacity: 0.62; }
-  50% { transform: translateY(3px); opacity: 0.9; }
-}
-
-[data-welcome-chevron] {
-  animation: tenops-welcome-chevron 2.4s ease-in-out infinite;
-}
-
 [data-welcome-hero] {
   background: #eef1f4;
-  overscroll-behavior-y: none;
 }
 
-[data-header-steel-logo-preview] {
-  filter: contrast(1.14) brightness(0.94) drop-shadow(0 0 0.35px rgb(15 23 42 / 0.32));
+[data-authenticated-steel-logo="true"] {
+  filter: contrast(1.12) brightness(0.96);
 }
 
 html[data-appearance="dark"] [data-welcome-hero],
@@ -23,8 +13,8 @@ html[data-appearance="dark"] [data-welcome-hero-surface] {
   background: #111820;
 }
 
-html[data-appearance="dark"] [data-header-steel-logo-preview] {
-  filter: contrast(1.06) brightness(1.02);
+html[data-appearance="dark"] [data-authenticated-steel-logo="true"] {
+  filter: contrast(1.06) brightness(1.04);
 }
 
 body[data-notification-onboarding] [data-app-shell] {
@@ -37,10 +27,6 @@ body[data-notification-onboarding] [data-shell-header] {
 
 body[data-notification-onboarding] [data-account-notifications] {
   pointer-events: auto;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-welcome-chevron] { animation: none; }
 }
 
 /*
@@ -89,6 +75,7 @@ html[lang="es"] table.min-w-\[1300px\] > thead > tr > th:nth-child(9)::after { c
   --interactive-selected: #eff6ff;
   --surface-selected: #19365f;
   --surface-selected-hover: #214674;
+  --semantic-info-foreground: #1d4ed8;
   --rework-action-surface: #f8e7e7;
   --rework-action-surface-hover: #f2d6d6;
   --rework-action-border: #b96a6d;
@@ -282,14 +269,23 @@ html[data-appearance="dark"] {
   --interactive-selected: #243b63;
   --surface-selected: #243b63;
   --surface-selected-hover: #2d4a78;
+  --semantic-info-foreground: #93c5fd;
+  --semantic-info-border: #38649a;
   --semantic-success-surface: #0b3a2b;
   --semantic-success-border: #18875f;
+  --semantic-success-foreground: #a7f3d0;
   --semantic-warning-surface: #42290d;
   --semantic-warning-border: #b66a10;
+  --semantic-warning-foreground: #fde68a;
   --semantic-attention-surface: #38230d;
   --semantic-attention-border: #d18419;
   --semantic-error-surface: #3a171b;
+  --semantic-error-border: #bd4b57;
+  --semantic-error-foreground: #fecaca;
   --semantic-info-surface: #172c4d;
+  --operational-violet-surface: #30274d;
+  --operational-violet-border: #7c6ab0;
+  --operational-violet-foreground: #ddd6fe;
   --rework-action-surface: #2b2226;
   --rework-action-surface-hover: #35282d;
   --rework-action-border: #765158;
@@ -395,6 +391,23 @@ html[data-appearance="dark"] .bg-slate-200 {
   background-color: #354052 !important;
 }
 
+/* Legacy literal grays share the same canonical Dark surfaces. */
+html[data-appearance="dark"] [class*="bg-[#eef1f4]"],
+html[data-appearance="dark"] [class*="bg-[#f2f5f8]"] {
+  background-color: var(--surface-page) !important;
+}
+
+html[data-appearance="dark"] [class*="bg-[#f3f5f7]"],
+html[data-appearance="dark"] [class*="bg-[#f6f7f9]"],
+html[data-appearance="dark"] [class*="bg-[#f8fafc]"] {
+  background-color: var(--surface-secondary) !important;
+}
+
+html[data-appearance="dark"] [class*="bg-[#dfe4ea]"],
+html[data-appearance="dark"] [class*="bg-[#e8edf3]"] {
+  background-color: var(--surface-raised) !important;
+}
+
 html[data-appearance="dark"] .bg-slate-900,
 html[data-appearance="dark"] .bg-slate-950 {
   background-color: #0d1117 !important;
@@ -480,14 +493,24 @@ html[data-appearance="dark"] .hover\:text-slate-950:hover {
 html[data-appearance="dark"] .bg-blue-50,
 html[data-appearance="dark"] .bg-blue-50\/70,
 html[data-appearance="dark"] .bg-blue-50\/30,
-html[data-appearance="dark"] .bg-blue-100 {
-  background-color: #172c4d !important;
+html[data-appearance="dark"] .bg-blue-100,
+html[data-appearance="dark"] .bg-blue-200,
+html[data-appearance="dark"] [class*="bg-blue-50/"] {
+  background-color: var(--semantic-info-surface) !important;
 }
 
 html[data-appearance="dark"] .text-blue-900,
 html[data-appearance="dark"] .text-blue-800,
-html[data-appearance="dark"] .text-blue-700 {
-  color: #bfdbfe !important;
+html[data-appearance="dark"] .text-blue-700,
+html[data-appearance="dark"] .text-blue-600,
+html[data-appearance="dark"] .text-blue-950 {
+  color: var(--semantic-info-foreground) !important;
+}
+
+html[data-appearance="dark"] .border-blue-200,
+html[data-appearance="dark"] .border-blue-300,
+html[data-appearance="dark"] .border-blue-400 {
+  border-color: var(--semantic-info-border) !important;
 }
 
 html[data-appearance="dark"] button:disabled {
@@ -506,8 +529,12 @@ html[data-appearance="dark"] [role="tooltip"] {
 
 /* Keep operational feedback hues recognizable while increasing dark contrast. */
 html[data-appearance="dark"] .bg-amber-50,
-html[data-appearance="dark"] .bg-amber-100 {
-  background-color: #3b2a12 !important;
+html[data-appearance="dark"] .bg-amber-100,
+html[data-appearance="dark"] .bg-amber-200,
+html[data-appearance="dark"] .bg-amber-300,
+html[data-appearance="dark"] .bg-orange-50,
+html[data-appearance="dark"] .bg-orange-100 {
+  background-color: var(--semantic-warning-surface) !important;
 }
 
 html[data-appearance="dark"] [data-overview-needs-dates="true"] {
@@ -539,29 +566,100 @@ html[data-appearance="dark"] button[data-needs-dates-tag]:hover {
 }
 
 html[data-appearance="dark"] .text-amber-900,
-html[data-appearance="dark"] .text-amber-800 {
-  color: #fde68a !important;
+html[data-appearance="dark"] .text-amber-800,
+html[data-appearance="dark"] .text-amber-700,
+html[data-appearance="dark"] .text-amber-950,
+html[data-appearance="dark"] .text-orange-900,
+html[data-appearance="dark"] .text-orange-800,
+html[data-appearance="dark"] .text-orange-700,
+html[data-appearance="dark"] .text-orange-600,
+html[data-appearance="dark"] .text-orange-950 {
+  color: var(--semantic-warning-foreground) !important;
+}
+
+html[data-appearance="dark"] .border-amber-300,
+html[data-appearance="dark"] .border-amber-400,
+html[data-appearance="dark"] .border-amber-500,
+html[data-appearance="dark"] .border-amber-600,
+html[data-appearance="dark"] .border-orange-300,
+html[data-appearance="dark"] .border-orange-400,
+html[data-appearance="dark"] .border-orange-500,
+html[data-appearance="dark"] .border-orange-600 {
+  border-color: var(--semantic-warning-border) !important;
 }
 
 html[data-appearance="dark"] .bg-red-50 {
-  background-color: #3a171b !important;
+  background-color: var(--semantic-error-surface) !important;
 }
+
+html[data-appearance="dark"] .bg-red-100 { background-color: var(--semantic-error-surface) !important; }
 
 html[data-appearance="dark"] .text-red-900,
 html[data-appearance="dark"] .text-red-800,
-html[data-appearance="dark"] .text-red-700 {
-  color: #fecaca !important;
+html[data-appearance="dark"] .text-red-700,
+html[data-appearance="dark"] .text-red-600 {
+  color: var(--semantic-error-foreground) !important;
+}
+
+html[data-appearance="dark"] .border-red-300,
+html[data-appearance="dark"] .border-red-400,
+html[data-appearance="dark"] .border-red-500 {
+  border-color: var(--semantic-error-border) !important;
 }
 
 html[data-appearance="dark"] .bg-emerald-50,
+html[data-appearance="dark"] .bg-emerald-100,
+html[data-appearance="dark"] .bg-emerald-200,
 html[data-appearance="dark"] .bg-green-100 {
-  background-color: #143326 !important;
+  background-color: var(--semantic-success-surface) !important;
 }
 
 html[data-appearance="dark"] .text-emerald-800,
+html[data-appearance="dark"] .text-emerald-900,
+html[data-appearance="dark"] .text-emerald-700,
 html[data-appearance="dark"] .text-green-800,
 html[data-appearance="dark"] .text-green-700 {
-  color: #a7f3d0 !important;
+  color: var(--semantic-success-foreground) !important;
+}
+
+html[data-appearance="dark"] .border-emerald-200,
+html[data-appearance="dark"] .border-emerald-300,
+html[data-appearance="dark"] .border-green-300 {
+  border-color: var(--semantic-success-border) !important;
+}
+
+html[data-appearance="dark"] .bg-violet-50,
+html[data-appearance="dark"] .bg-violet-100,
+html[data-appearance="dark"] .bg-violet-200 {
+  background-color: var(--operational-violet-surface) !important;
+}
+
+html[data-appearance="dark"] .border-violet-200,
+html[data-appearance="dark"] .border-violet-300,
+html[data-appearance="dark"] .border-violet-800 {
+  border-color: var(--operational-violet-border) !important;
+}
+
+html[data-appearance="dark"] .text-violet-700,
+html[data-appearance="dark"] .text-violet-800,
+html[data-appearance="dark"] .text-violet-900 {
+  color: var(--operational-violet-foreground) !important;
+}
+
+/* Historical/unlinked rows retain meaning without flooding editable controls. */
+html[data-appearance="dark"] [data-manpower-unlinked="true"] {
+  background: var(--surface-primary) !important;
+  box-shadow: inset 3px 0 0 var(--semantic-warning-border);
+}
+
+/* Completed receivals recede behind pending work while retaining success status. */
+html[data-appearance="dark"] [data-pending-receival-received="true"] {
+  background: var(--surface-primary) !important;
+  box-shadow: inset 3px 0 0 var(--semantic-success-border);
+}
+
+html[data-appearance="dark"] [data-pending-receival-received="true"]:hover {
+  background: var(--surface-secondary) !important;
 }
 
 /* Dashboard operational tones use dedicated dark surfaces, never light pastels. */

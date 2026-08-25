@@ -2439,7 +2439,7 @@ export default function InventoryPage() {
                       : 'bg-white hover:bg-slate-50';
 
                     return (
-                      <tr key={receival.id} className={rowClass}>
+                      <tr key={receival.id} data-pending-receival-received={isReceived ? 'true' : undefined} className={rowClass}>
                         <td className="px-3 py-2 text-center">
                           {!isReceived && (canReceivePendingReceivals || canAdjustPendingReceivals) && (
                             <input
@@ -2476,10 +2476,10 @@ export default function InventoryPage() {
                           {isReceived && <div className="text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">Received</div>}
                         </td>
                         <td className="px-3 py-2">
-                          <div className="flex justify-end gap-2">
+                          <div className="flex items-center justify-end gap-2">
                             {isReceived ? (
                               <>
-                                <span className="border border-emerald-700 bg-emerald-100 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.08em] text-emerald-900">
+                                <span data-received-status className="inline-flex min-h-8 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 px-3 text-center text-[11px] font-semibold uppercase tracking-[0.08em] text-emerald-800">
                                   Received
                                 </span>
                                 {canUndoReceipt && canAdjustPendingReceivals && (

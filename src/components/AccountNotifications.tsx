@@ -3,6 +3,7 @@
 import { AlertTriangle, ArrowRight, AtSign, Bell, MessageSquare, Sparkles, UserRoundCheck, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { ROLE_LABELS, type AppRole } from "@/lib/rbac";
 import { supabase } from "@/lib/supabase";
@@ -52,6 +53,7 @@ function relativeTime(value: string) {
 }
 
 export default function AccountNotifications({ onOpen }: { onOpen(notification: AccountNotification): void }) {
+  const router = useRouter();
   const auth = useAuth();
   const isAuthenticated = auth.isAuthenticated;
   const profileIsActive = auth.profile?.isActive;
@@ -206,6 +208,11 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
       dispatchOnboarding({ type: "cancel-spotlight" });
       dispatchOnboarding({ type: "close" });
       setWelcomeOpen(true);
+      return;
+    }
+    if (item.kind === "general" && item.notification_type === "appearance_available") {
+      dispatchOnboarding({ type: "close" });
+      router.push("/settings#appearance");
       return;
     }
     if (item.kind === "job_update" && item.source_available) {

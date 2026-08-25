@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { operationalFirstName } from "../src/lib/identity-presentation";
+import { accountInitials, operationalFirstName } from "../src/lib/identity-presentation";
 
 assert.equal(operationalFirstName("  Taylor   Morgan  "), "Taylor");
 assert.equal(operationalFirstName("Taylor"), "Taylor");
 assert.equal(operationalFirstName(""), "");
 assert.equal(operationalFirstName(null), "");
+assert.equal(accountInitials("Chris Ngo"), "CN");
+assert.equal(accountInitials("Jane Marie Smith"), "JS");
+assert.equal(accountInitials("  Prince  "), "P");
+assert.equal(accountInitials(""), "TO");
 
 const hero = readFileSync(new URL("../src/components/WelcomeHero.tsx", import.meta.url), "utf8");
 const shell = readFileSync(new URL("../src/app/client-layout-shell.tsx", import.meta.url), "utf8");
@@ -17,7 +21,18 @@ const collaboration = readFileSync(new URL("../supabase/migrations/20260819_001_
 assert.match(hero, /data-welcome-account-identity[\s\S]*\{auth\.profile\.displayName\}/, "Welcome must use the full canonical display name");
 assert.doesNotMatch(hero, /Welcome, \{auth\.profile\.displayName\}/, "Welcome must present identity without redundant greeting copy");
 assert.doesNotMatch(hero, /operationalFirstName/, "Welcome must not shorten the canonical display name");
-assert.match(shell, /operationalFirstName\(auth\.profile\.displayName\)/);
+assert.match(shell, /accountInitials\(auth\.profile\.displayName\)/,
+  "Authenticated header identity must derive initials from the canonical display name");
+assert.match(shell, /Account menu for \$\{auth\.profile\.displayName\}/);
+assert.match(shell, /Account menu for \$\{auth\.profile\.displayName\}, \$\{ROLE_LABELS\[auth\.profile\.role\]\}/);
+assert.match(shell, /absolute bottom-\[-5px\][\s\S]{0,260}ROLE_LABELS\[auth\.profile\.role\]/,
+  "The canonical role must render as an overlapping operator nameplate");
+assert.match(shell, /group relative inline-flex h-9 w-14 shrink-0 items-center justify-center/,
+  "Initials must remain centered inside the circular avatar geometry");
+assert.match(shell, /whitespace-nowrap/,
+  "Long canonical role labels must remain on one line");
+assert.match(shell, /title=\{auth\.profile\.displayName\}>\{auth\.profile\.displayName\}/,
+  "The account menu must retain the canonical full display name");
 assert.match(updates, /Posting as <strong[^>]*>\{operationalFirstName\(auth\.profile\.displayName\)\}/);
 assert.match(jobs, /displayName: operationalFirstName\(row\.display_name\)/,
   "Mention suggestions and persisted mention presentation must derive from canonical display_name");
