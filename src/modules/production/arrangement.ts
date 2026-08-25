@@ -1,7 +1,20 @@
 import type { ProductionJob, ProductionStatus } from './types';
 
-export type ProductionArrangement = 'stage' | 'deadline' | 'labor';
+export type ProductionArrangement = 'stage' | 'recent' | 'deadline';
+export type PersistedProductionArrangement = 'stage' | 'deadline' | 'labor';
 export const PRODUCTION_ARRANGEMENT_KEY = 'tenops.productionArrangement';
+
+export function normalizeProductionArrangement(value: string | null | undefined): ProductionArrangement {
+  if (value === 'labor' || value === 'recent') return 'recent';
+  return value === 'deadline' ? 'deadline' : 'stage';
+}
+
+export function persistedProductionArrangement(value: ProductionArrangement): PersistedProductionArrangement {
+  // The hosted preference contract still accepts "labor"; it is now the
+  // backwards-compatible wire value for the Recent Overview arrangement.
+  if (value === 'recent') return 'labor';
+  return value === 'deadline' ? 'deadline' : 'stage';
+}
 
 const stageOrder: Record<ProductionStatus, number> = {
   in_production: 0, on_deck: 1, not_started: 2, on_hold: 3,
@@ -14,7 +27,7 @@ const date = (value: string | null) => value ?? '9999-12-31';
 
 export function arrangeProductionJobs(jobs: ProductionJob[], arrangement: ProductionArrangement, today = new Date().toISOString().slice(0, 10)) {
   return [...jobs].sort((first, second) => {
-    if (arrangement === 'labor') return (second.estimated_man_hours ?? -1) - (first.estimated_man_hours ?? -1) || identity(first, second);
+    if (arrangement === 'recent') return (second.created_at ?? '').localeCompare(first.created_at ?? '') || identity(first, second);
     if (arrangement === 'deadline') {
       const firstDate = date(first.requested_delivery_date); const secondDate = date(second.requested_delivery_date);
       const firstOverdue = firstDate < today ? 0 : 1; const secondOverdue = secondDate < today ? 0 : 1;

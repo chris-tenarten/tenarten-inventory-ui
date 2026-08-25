@@ -62,7 +62,7 @@ assert.match(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/,
 assert.match(language, /setPreference\("language", next\)/);
 assert.match(shell, /preferences\.display_size/);
 assert.match(workspace, /setAccountPreference\('production_view', storedView\)/);
-assert.match(workspace, /setPreference\('production_arrangement', value\)/);
+assert.match(workspace, /setPreference\('production_arrangement', persistedProductionArrangement\(value\)\)/);
 assert.match(timeline, /setPreference\('timeline_zoom', nextZoom\)/);
 assert.match(timeline, /setPreference\('timeline_row_density', option\.value\)/);
 assert.match(timeline, /const localPreferences = parseTimelinePreferences/);
