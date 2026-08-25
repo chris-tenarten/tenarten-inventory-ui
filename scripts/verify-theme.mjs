@@ -38,6 +38,9 @@ assert.match(provider, /accountPreferences\.accountScoped \|\| event\.key !== AP
   'Authenticated accounts must not synchronize another operator\'s browser-local Appearance');
 assert.match(provider, /window\.localStorage\.setItem\(APPEARANCE_STORAGE_KEY, next\)/,
   'The pre-authentication Appearance fallback remains browser-local');
+assert.match(provider, /function readStoredAppearance\(\)/);
+assert.match(provider, /: readStoredAppearance\(\)[\s\S]{0,180}document\.documentElement\.dataset\.appearance/,
+  'Logged-out hydration must prefer the durable handoff over the server-rendered default attribute');
 assert.doesNotMatch(provider, /hostname|NODE_ENV|branch|prefers-color-scheme|matchMedia/i);
 assert.match(layout, /data-appearance=\{defaultAppearance\}/);
 assert.match(layout, /localStorage\.getItem\('\$\{APPEARANCE_STORAGE_KEY\}'\)/,
