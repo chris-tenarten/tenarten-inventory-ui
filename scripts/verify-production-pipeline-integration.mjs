@@ -23,7 +23,7 @@ const jobs = [
 ];
 assert.deepEqual(arrangeProductionJobs(jobs, 'stage').map((job) => job.id), ['prod','hold','done','ship']);
 assert.deepEqual(arrangeProductionJobs(jobs, 'deadline', '2026-07-21').map((job) => job.id), ['prod','hold','done','ship']);
-assert.deepEqual(arrangeProductionJobs(jobs, 'labor').map((job) => job.id), ['ship','hold','prod','done']);
+assert.deepEqual(arrangeProductionJobs(jobs, 'recent').map((job) => job.id), ['done','hold','prod','ship']);
 assert.match(workspace, /PRODUCTION_ARRANGEMENT_KEY/);
 assert.match(jobsSource, /from\('manpower_entries'\)/);
 assert.match(jobsSource, /from\('material_usage_reports'\)/);

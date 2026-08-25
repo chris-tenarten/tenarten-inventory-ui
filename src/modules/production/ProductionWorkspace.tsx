@@ -46,7 +46,7 @@ import { getJobNonblockingPlanningIssues, getJobSchedulingIssues } from './readi
 import { isProductionApprovalPasswordAccepted, productionApprovalDecision, PRODUCTION_APPROVAL_WINDOW_MS } from './approval';
 import { batchRpcArgs, hasUnsavedSchedules, rebaseStagedScheduleVersion, reconcileBatch, scheduleSaveBlockedByInspector, stageSchedule as updateStagedSchedule, type InspectorOrdinarySaveState, type StagedSchedules } from './schedule-staging';
 import { describeProductionScheduleSaveError, type ProductionScheduleBatchConflictDetail } from './schedule-batch-contract';
-import { arrangeProductionJobs, PRODUCTION_ARRANGEMENT_KEY, type ProductionArrangement } from './arrangement';
+import { arrangeProductionJobs, normalizeProductionArrangement, persistedProductionArrangement, PRODUCTION_ARRANGEMENT_KEY, type ProductionArrangement } from './arrangement';
 import { hasUnsavedPlanningSchedules, planningPhaseWithStagedDates, productionStartDelta, rebaseStagedPlanningVersion, schedulingIssues, stagePlanningSchedule as updateStagedPlanningSchedule, translateJobPlanningSchedules, type StagedPlanningSchedules } from '@/modules/planning/schedule-staging';
 import type { PlanningScheduleIssue } from '@/modules/planning/schedule-model.mjs';
 import SchedulingFeedbackPanel from '@/modules/planning/SchedulingFeedbackPanel';
@@ -108,9 +108,11 @@ export default function ProductionWorkspace() {
   const [planningItems, setPlanningItems] = useState<PlanningItem[]>([]);
   const planningPhasesRef = useRef<PlanningPhase[]>([]);
   const jobLoadRequestRef = useRef(0);
+  const jobLoadInFlightRef = useRef<{ key: string; promise: Promise<void> } | null>(null);
   const [includeArchived, setIncludeArchived] = useState(false);
-  const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => accountPreferences.accountScoped || typeof window === 'undefined' ? 'stage' : (window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY) as ProductionArrangement) || 'stage');
+  const [arrangement, setArrangementState] = useState<ProductionArrangement>(() => accountPreferences.accountScoped || typeof window === 'undefined' ? 'stage' : normalizeProductionArrangement(window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY)));
   const [isLoading, setIsLoading] = useState(true);
+  const [isPlanningLoading, setIsPlanningLoading] = useState(planningEnabled);
   const [loadError, setLoadError] = useState('');
   const [search, setSearch] = useState('');
   const [focusedJobId, setFocusedJobId] = useState<string | null>(null);
@@ -183,13 +185,13 @@ export default function ProductionWorkspace() {
   useEffect(() => {
     if (accountPreferences.accountScoped) {
       const nextArrangement = accountPreferences.preferences.production_arrangement;
-      setArrangementState(nextArrangement === 'stage' || nextArrangement === 'deadline' || nextArrangement === 'labor' ? nextArrangement : 'stage');
+      setArrangementState(normalizeProductionArrangement(nextArrangement));
       const nextView = accountPreferences.preferences.production_view;
       setActiveViewState(nextView === 'table' ? 'spreadsheet' : nextView === 'timeline' ? 'timeline' : 'queue');
       return;
     }
     const localArrangement = window.localStorage.getItem(PRODUCTION_ARRANGEMENT_KEY);
-    setArrangementState(localArrangement === 'deadline' || localArrangement === 'labor' ? localArrangement : 'stage');
+    setArrangementState(normalizeProductionArrangement(localArrangement));
     const localView = window.sessionStorage.getItem('tenops.productionView');
     setActiveViewState(localView === 'spreadsheet' || localView === 'timeline' ? localView : 'queue');
   }, [accountPreferences.accountScoped, accountPreferences.preferences.production_arrangement, accountPreferences.preferences.production_view]);
@@ -200,69 +202,105 @@ export default function ProductionWorkspace() {
     return () => window.removeEventListener('popstate', syncMode);
   }, []);
 
-  const loadJobs = useCallback(async () => {
+  const productionProfileResolved = !auth.isAuthenticated || auth.profile !== null;
+  const productionProfileUserId = auth.profile?.userId ?? null;
+  const productionProfileRole = auth.profile?.isActive ? auth.profile.role : null;
+  const loadJobs = useCallback(() => {
     // Auth can report a session before its app-user profile resolves. Waiting
     // prevents the Admin-only controlled fixture from being filtered as though
-    // the authenticated user had no role.
-    if (auth.isAuthenticated && !auth.profile) return;
+    // the authenticated user had no role. Auth readiness also prevents the
+    // initial unknown session state from starting a redundant anonymous load.
+    if (!auth.ready || !productionProfileResolved) return Promise.resolve();
+
+    const focusedJobId = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+    const focusedSection = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY) ?? undefined;
+    const loadKey = [includeArchived, productionProfileUserId ?? 'anonymous', productionProfileRole ?? 'none', focusedJobId ?? '', focusedSection ?? ''].join(':');
+    if (jobLoadInFlightRef.current?.key === loadKey) return jobLoadInFlightRef.current.promise;
+
     const requestId = ++jobLoadRequestRef.current;
-    setIsLoading(true);
-    setLoadError('');
+    const promise = (async () => {
+      setIsLoading(true);
+      setIsPlanningLoading(planningEnabled);
+      setLoadError('');
 
-    try {
-      const focusedJobId = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
-      const focusedSection = window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY) ?? undefined;
-      const [loadedJobs, loadedCounts, summaries, updateSummaries, focusedJob] = await Promise.all([
-        loadProductionJobs(includeArchived),
-        loadJobAttachmentCounts().catch((error) => {
-          console.error('Unable to load Production attachment counts', error);
-          return {};
-        }),
-        loadProductionIntegrationSummaries().catch((error) => { console.error('Unable to load Production integration summaries', error); return {}; }),
-        loadJobUpdateSummaries().catch((error) => {
-          console.error('Unable to load Production Job Update summaries', error);
-          return {};
-        }),
-        focusedJobId ? loadProductionJob(focusedJobId) : Promise.resolve(null),
-      ]);
+      try {
+        const supportingDataPromise = Promise.all([
+          loadJobAttachmentCounts().catch((error) => {
+            console.error('Unable to load Production attachment counts', error);
+            return {};
+          }),
+          loadProductionIntegrationSummaries().catch((error) => { console.error('Unable to load Production integration summaries', error); return {}; }),
+          loadJobUpdateSummaries().catch((error) => {
+            console.error('Unable to load Production Job Update summaries', error);
+            return {};
+          }),
+        ]);
+        const [loadedJobs, focusedJob] = await Promise.all([
+          loadProductionJobs(includeArchived),
+          focusedJobId ? loadProductionJob(focusedJobId) : Promise.resolve(null),
+        ]);
 
-      const jobsWithFocused = focusedJob && !loadedJobs.some((job) => job.id === focusedJob.id)
-        ? [...loadedJobs, focusedJob]
-        : loadedJobs;
-      const visibleJobs = productionJobsVisibleToRole(jobsWithFocused, auth.profile?.isActive ? auth.profile.role : null);
-      const visibleFocusedJob = focusedJob && visibleJobs.some((job) => job.id === focusedJob.id) ? focusedJob : null;
-      const loadedPlanningPhases = planningEnabled ? await loadPlanningPhases(visibleJobs.map((job) => job.id)) : [];
-      const loadedPlanningItems = planningEnabled ? await loadPlanningItems(loadedPlanningPhases.map((phase) => phase.id)) : [];
-      if (requestId !== jobLoadRequestRef.current) return;
-      setJobs(sortJobs(visibleJobs));
-      setAttachmentCounts(loadedCounts);
-      setIntegrationSummaries(summaries);
-      setJobUpdateSummaries(updateSummaries);
-      setPlanningPhases(loadedPlanningPhases);
-      setPlanningItems(loadedPlanningItems);
-      if (visibleFocusedJob) {
-        setFocusedJobId(visibleFocusedJob.id);
-        setSearch(visibleFocusedJob.job_number || visibleFocusedJob.name);
-        setSelectedJobId(visibleFocusedJob.id);
-        setInspectorFocus(focusedSection);
-        setActiveView('queue', false);
-      } else if (focusedJobId) {
-        if (window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY) === focusedJobId) {
-          window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
-          window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY);
+        const jobsWithFocused = focusedJob && !loadedJobs.some((job) => job.id === focusedJob.id)
+          ? [...loadedJobs, focusedJob]
+          : loadedJobs;
+        const visibleJobs = productionJobsVisibleToRole(jobsWithFocused, productionProfileRole);
+        const visibleFocusedJob = focusedJob && visibleJobs.some((job) => job.id === focusedJob.id) ? focusedJob : null;
+        if (requestId !== jobLoadRequestRef.current) return;
+
+        // Core Job rows make the Overview usable. Supporting badges and Planning
+        // enrich progressively without blocking the initial list.
+        setJobs(sortJobs(visibleJobs));
+        setIsLoading(false);
+        if (visibleFocusedJob) {
+          setFocusedJobId(visibleFocusedJob.id);
+          setSearch(visibleFocusedJob.job_number || visibleFocusedJob.name);
+          setSelectedJobId(visibleFocusedJob.id);
+          setInspectorFocus(focusedSection);
+          setActiveView('queue', false);
+        } else if (focusedJobId) {
+          if (window.sessionStorage.getItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY) === focusedJobId) {
+            window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_STORAGE_KEY);
+            window.sessionStorage.removeItem(PRODUCTION_JOB_FOCUS_SECTION_STORAGE_KEY);
+          }
+          setLoadError('The requested Production Job is no longer available.');
         }
-        setLoadError('The requested Production Job is no longer available.');
+
+        const planningDataPromise = planningEnabled
+          ? loadPlanningPhases(visibleJobs.map((job) => job.id)).then(async (loadedPlanningPhases) => ({
+            phases: loadedPlanningPhases,
+            items: await loadPlanningItems(loadedPlanningPhases.map((phase) => phase.id)),
+          }))
+          : Promise.resolve({ phases: [] as PlanningPhase[], items: [] as PlanningItem[] });
+        const [[loadedCounts, summaries, updateSummaries], planningData] = await Promise.all([
+          supportingDataPromise,
+          planningDataPromise,
+        ]);
+        if (requestId !== jobLoadRequestRef.current) return;
+        setAttachmentCounts(loadedCounts);
+        setIntegrationSummaries(summaries);
+        setJobUpdateSummaries(updateSummaries);
+        setPlanningPhases(planningData.phases);
+        setPlanningItems(planningData.items);
+      } catch (error) {
+        if (requestId !== jobLoadRequestRef.current) return;
+        console.error(error);
+        setLoadError(
+          error instanceof Error ? error.message : 'Unable to load active jobs.',
+        );
+      } finally {
+        if (requestId === jobLoadRequestRef.current) {
+          setIsLoading(false);
+          setIsPlanningLoading(false);
+        }
       }
-    } catch (error) {
-      if (requestId !== jobLoadRequestRef.current) return;
-      console.error(error);
-      setLoadError(
-        error instanceof Error ? error.message : 'Unable to load active jobs.',
-      );
-    } finally {
-      if (requestId === jobLoadRequestRef.current) setIsLoading(false);
-    }
-  }, [auth.isAuthenticated, auth.profile, includeArchived, setActiveView]);
+    })();
+    jobLoadInFlightRef.current = { key: loadKey, promise };
+    void promise.then(
+      () => { if (jobLoadInFlightRef.current?.promise === promise) jobLoadInFlightRef.current = null; },
+      () => { if (jobLoadInFlightRef.current?.promise === promise) jobLoadInFlightRef.current = null; },
+    );
+    return promise;
+  }, [auth.ready, includeArchived, productionProfileResolved, productionProfileRole, productionProfileUserId, setActiveView]);
 
   useEffect(() => {
     void loadJobs();
@@ -567,6 +605,10 @@ export default function ProductionWorkspace() {
   const ordinaryAttentionJobs = useMemo(() => activeReadinessJobs.filter((job) =>
     getJobNonblockingPlanningIssues(job).length > 0 || (jobUpdateSummaries[job.id]?.openFollowUpCount ?? 0) > 0
   ), [activeReadinessJobs, jobUpdateSummaries]);
+  const planningPhaseCounts = useMemo(() => planningPhases.reduce<Record<string, number>>((counts, phase) => {
+    counts[phase.job_id] = (counts[phase.job_id] ?? 0) + 1;
+    return counts;
+  }, {}), [planningPhases]);
   const selectJob = (job:ProductionJob, focus?:string) => {
     if (document.activeElement instanceof HTMLElement) inspectorOpenerRef.current = document.activeElement;
     setSelectedJobId(job.id);
@@ -775,7 +817,7 @@ export default function ProductionWorkspace() {
             className="col-span-3 h-10 min-w-0 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100 lg:col-auto lg:min-w-64 lg:flex-[1_1_20rem]"
           />
 
-          {activeView !== 'timeline' && <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:items-center lg:gap-2"><span id="production-sort-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0">{tr('Sort', 'Ordenar')}</span><div role="group" aria-labelledby="production-sort-label" className="grid h-10 min-w-0 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','deadline','labor'] as ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_arrangement', value); else window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', deadline: 'Entrega', labor: 'Mano de obra' } as const)[value] : value === 'stage' ? 'Status' : value}</button>)}</div></div>}
+          {activeView !== 'timeline' && <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:items-center lg:gap-2"><span id="production-sort-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0">{tr('Sort', 'Ordenar')}</span><div role="group" aria-labelledby="production-sort-label" className="grid h-10 min-w-0 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','recent','deadline'] as const satisfies readonly ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_arrangement', persistedProductionArrangement(value)); else window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', recent: 'Añadido recientemente', deadline: 'Entrega' } as const)[value] : ({ stage: 'Status', recent: 'Recently Added', deadline: 'Deadline' } as const)[value]}</button>)}</div></div>}
 
           {activeView === 'spreadsheet' && (
             <div id="production-table-columns-toolbar-slot" className="relative min-w-0 lg:shrink-0" />
@@ -924,7 +966,7 @@ export default function ProductionWorkspace() {
         {scheduleMessage && <div ref={scheduleFeedbackRef} tabIndex={-1} role={scheduleSaveState === 'error' ? 'alert' : 'status'} className={`mt-3 px-4 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-slate-700 ${scheduleSaveState === 'error' ? 'border border-red-300 bg-red-50 text-red-800' : 'border border-slate-300 bg-white text-slate-700'}`}>{scheduleMessage}</div>}
 
         <div className="mt-4">
-          {isLoading ? (
+          {isLoading || (activeView === 'timeline' && isPlanningLoading) ? (
             <div className="flex min-h-72 items-center justify-center border border-slate-400 bg-white text-sm font-semibold text-slate-600">Loading active jobs…</div>
           ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} integrationSummaries={integrationSummaries} jobUpdateSummaries={jobUpdateSummaries} onSelectJob={selectJob} onScheduleJob={openJobScheduling} onCreateRework={setReworkTargetJob}/> : activeView === 'spreadsheet' ? (
             <ProductionTable
@@ -955,7 +997,7 @@ export default function ProductionWorkspace() {
         jobs={jobs}
         attachmentCounts={attachmentCounts}
         jobUpdateSummaries={jobUpdateSummaries}
-        planningPhaseCounts={planningPhases.reduce<Record<string, number>>((counts, phase) => ({ ...counts, [phase.job_id]: (counts[phase.job_id] ?? 0) + 1 }), {})}
+        planningPhaseCounts={planningPhaseCounts}
         onUpdateJob={handleUpdateJob}
         onAttachFiles={async (jobId, files) => {
           const uploaded = await uploadJobAttachments(jobId, files, 'work_order');
