@@ -66,7 +66,8 @@ export default function WelcomeHero() {
   const heroEligible = auth.ready && !auth.requiresPasswordSetup && auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.accessAllowed && Boolean(auth.user);
   const bootRequired = heroEligible && !bootClaimed && typeof window !== "undefined" && !window.sessionStorage.getItem(`${BOOT_PLAYED_KEY_PREFIX}${auth.user?.id}`);
   const heroVisible = heroEligible && (visible || bootRequired);
-  const heroCoverVisible = !auth.requiresPasswordSetup && (preparingBoot || heroVisible);
+  const heroStartingCoverVisible = !auth.requiresPasswordSetup && (preparingBoot || (bootRequired && !visible));
+  const heroCoverVisible = heroStartingCoverVisible || heroVisible;
 
   const resetTimeline = useCallback(() => {
     animationStartedAtRef.current = null;
@@ -262,9 +263,9 @@ export default function WelcomeHero() {
   return <>
     <div
       ref={coverRef}
-      hidden={auth.requiresPasswordSetup || !preparingBoot || heroVisible}
+      hidden={!heroStartingCoverVisible}
       data-welcome-hero-cover
-      className="fixed inset-0 z-[80] bg-[#eef1f4]"
+      className="fixed inset-0 z-[81] bg-[#eef1f4]"
       aria-hidden="true"
     >
       <section className="flex h-dvh min-h-[28rem] flex-col items-center justify-center overflow-hidden px-5 text-center text-slate-950">

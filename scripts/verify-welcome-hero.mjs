@@ -149,15 +149,19 @@ assert.match(auth, /setRequiresPasswordSetup\(Boolean\(nextSession\) && \(event 
   'Callback state must be established atomically with the temporary Supabase session');
 assert.match(auth, /updateUser\(\{ password \}\)[\s\S]{0,180}signOut\(\{ scope: "local" \}\)[\s\S]{0,180}setRequiresPasswordSetup\(false\)[\s\S]{0,120}history\.replaceState/,
   'Successful Setup and Recovery must sign out locally and clear callback state before normal login');
-assert.match(hero, /const heroCoverVisible = !auth\.requiresPasswordSetup && \(preparingBoot \|\| heroVisible\)/,
-  'Callback state must synchronously release any stale Hero cover ownership');
+assert.match(hero, /const heroStartingCoverVisible = !auth\.requiresPasswordSetup && \(preparingBoot \|\| \(bootRequired && !visible\)\)/,
+  'Restored sessions must retain the pre-mounted starting cover until the animated Hero explicitly owns the screen');
+assert.match(hero, /const heroCoverVisible = heroStartingCoverVisible \|\| heroVisible/,
+  'Callback state must synchronously release stale ownership while every active Hero surface retains the interaction lock');
 assert.match(hero, /const coverRef = useRef<HTMLDivElement \| null>\(null\)/);
 assert.match(hero, /if \(coverRef\.current\) coverRef\.current\.hidden = false;[\s\S]{0,160}setPreparingBoot\(true\)/,
   'Sign-in must synchronously reveal the already-mounted Hero cover before queued React state can yield ownership');
 assert.match(hero, /const cancel = \(\) => \{\s*if \(coverRef\.current\) coverRef\.current\.hidden = true;/,
   'A failed login must synchronously return visual ownership to Account Access');
-assert.match(hero, /ref=\{coverRef\}[\s\S]{0,120}hidden=\{auth\.requiresPasswordSetup \|\| !preparingBoot \|\| heroVisible\}[\s\S]{0,80}data-welcome-hero-cover/,
+assert.match(hero, /ref=\{coverRef\}[\s\S]{0,120}hidden=\{!heroStartingCoverVisible\}[\s\S]{0,80}data-welcome-hero-cover/,
   'A lightweight static starting cover must remain mounted and natively hidden between boots');
+assert.match(hero, /data-welcome-hero-cover[\s\S]{0,100}z-\[81\]/,
+  'The starting cover must remain above the newly mounted animated Hero until ownership transfers');
 assert.match(hero, /data-welcome-hero-cover[\s\S]{0,1800}data-welcome-progress-cover[\s\S]{0,500}OPERATIONS ENGINE INITIATING[\s\S]{0,120}0%/,
   'The immediate handoff cover must include the same starting progress composition and grid geometry');
 assert.match(hero, /\{heroVisible \? <div\s*data-welcome-hero/,
