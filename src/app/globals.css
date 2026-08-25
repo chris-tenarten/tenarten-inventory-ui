@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
-[data-welcome-hero] {
+[data-welcome-hero],
+[data-welcome-hero-cover] {
   background: #eef1f4;
+  --tenops-type-micro: 12px;
+  --tenops-type-label: 14px;
+  --tenops-type-caption: 16px;
+  --tenops-type-small: 18px;
+  --tenops-type-body: 20px;
 }
 
 [data-authenticated-steel-logo="true"] {
@@ -9,6 +15,7 @@
 }
 
 html[data-appearance="dark"] [data-welcome-hero],
+html[data-appearance="dark"] [data-welcome-hero-cover],
 html[data-appearance="dark"] [data-welcome-hero-surface] {
   background: #111820;
 }
@@ -159,7 +166,8 @@ body .text-sm { font-size: var(--tenops-type-small); }
 body .text-base { font-size: var(--tenops-type-body); }
 
 /* Welcome is a deliberately viewport-composed presentation, not app chrome. */
-[data-welcome-hero] .text-xs { font-size: 0.75rem; }
+[data-welcome-hero] .text-xs,
+[data-welcome-hero-cover] .text-xs { font-size: 0.75rem; }
 
 .tendev-engineering-stencil {
   color: #334155;
