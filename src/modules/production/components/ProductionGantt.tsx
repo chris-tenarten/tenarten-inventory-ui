@@ -1203,6 +1203,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                     <div
                       data-timeline-interactive="true"
                       data-production-bar
+                      data-production-status={job.production_status}
                       data-fit-participant={productionTimelineFitParticipates(job.production_status) ? 'true' : 'false'}
                       className={`absolute top-1/2 z-[3] h-8 -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${statusVisual.timelineClassName ?? statusVisual.className} ${activeInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isStaged ? 'ring-2 ring-amber-300 ring-offset-1' : ''}`}
                       style={{ left: startOffset * dayWidth + 3, width: barWidth, backgroundImage: statusVisual.timelinePattern ?? statusVisual.pattern }}
@@ -1228,10 +1229,10 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                         className="absolute inset-y-0 z-10 flex min-w-0 items-center gap-2 overflow-hidden px-1.5 text-left text-[10px] font-bold uppercase tracking-[0.05em] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
                         style={{ left: handleWidth, right: handleWidth, cursor: mobileReadOnly ? 'pointer' : activeInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: mobileReadOnly ? 'manipulation' : 'none' }}
                       >
-                        {duration >= 2 && !hasCollapsedFillLayers && <span className="pointer-events-none truncate">{job.name}{job.rework_cycle ? ` · REWORK #${job.rework_cycle.sequence_number}` : ''}</span>}
+                        {duration >= 2 && !hasCollapsedFillLayers && <span data-gantt-bar-copy className="pointer-events-none truncate">{job.name}{job.rework_cycle ? ` · REWORK #${job.rework_cycle.sequence_number}` : ''}</span>}
                         {isStaged && duration >= 3 && !hasCollapsedFillLayers && <span className="pointer-events-none shrink-0 bg-amber-100/95 px-1 text-[8px] text-amber-950">Unsaved</span>}
                         {duration >= 5 && !hasCollapsedFillLayers && intensity?.hoursPerScheduledDay !== null && intensity?.hoursPerScheduledDay !== undefined && (
-                          <span className="pointer-events-none ml-auto shrink-0 border-l border-white/30 pl-2 text-[9px] normal-case tracking-normal">{formatHours(intensity.hoursPerScheduledDay)} h/day</span>
+                          <span data-gantt-bar-copy className="pointer-events-none ml-auto shrink-0 border-l border-white/30 pl-2 text-[9px] normal-case tracking-normal">{formatHours(intensity.hoursPerScheduledDay)} h/day</span>
                         )}
                       </button>
                       <button
@@ -1251,31 +1252,25 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                   {hasSchedule && mergedPauses.map((pauseRange) => {
                     const pauseGeometry = planningIntervalGeometry(pauseRange.start, pauseRange.end, formatScheduleDate(start), dayWidth);
                     const intersectsProduction = rangesIntersect(pauseRange.start, pauseRange.end, displayStart, displayEnd);
-                    return <div key={pauseRange.phases.map((phase) => phase.id).join('-')} data-collapsed-planning-pause="true" aria-label={pauseRange.phases.map(phaseTitle).join('; ')} title={pauseRange.phases.map(phaseTitle).join('; ')} className={`pointer-events-none absolute border border-slate-950 bg-white ${collapsedPhaseDisplay === 'fill' ? 'top-1/2 z-[4] h-8 -translate-y-1/2' : `top-[calc(50%+10px)] z-[5] h-1.5 ${intersectsProduction ? '' : 'opacity-80'}`}`} style={{ left: pauseGeometry.left, width: pauseGeometry.width, backgroundImage: PLANNING_PAUSE_HATCH }} />;
+                    return <div key={pauseRange.phases.map((phase) => phase.id).join('-')} data-collapsed-planning-pause="true" aria-label={pauseRange.phases.map(phaseTitle).join('; ')} title={pauseRange.phases.map(phaseTitle).join('; ')} className={`pointer-events-none absolute border-y border-l border-slate-950 bg-white ${collapsedPhaseDisplay === 'fill' ? 'top-1/2 z-[4] h-8 -translate-y-1/2' : `top-[calc(50%+10px)] z-[5] h-1.5 ${intersectsProduction ? '' : 'opacity-80'}`}`} style={{ left: pauseGeometry.left - 3, width: pauseGeometry.width + 6, backgroundImage: PLANNING_PAUSE_HATCH }} />;
                   })}
                   {hasSchedule && visibleOverlays.map((card) => {
                     const cardGeometry = planningIntervalGeometry(card.start_date!, card.end_date!, formatScheduleDate(start), dayWidth);
                     const visual = overlayVisualForPhase(jobPhases, card.id);
-                    return <button key={card.id} type="button" data-timeline-interactive="true" data-collapsed-planning-phase="true" data-collapsed-phase-display={collapsedPhaseDisplay} onClick={(event) => { event.stopPropagation(); onSelectPlanningPhase?.(job, card); }} title={phaseTitle(card)} aria-label={`Open Phase ${card.title}`} className={`absolute border outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${collapsedPhaseDisplay === 'fill' ? 'top-1/2 z-[4] h-8 -translate-y-1/2 opacity-70 hover:opacity-80 focus-visible:opacity-[0.85]' : 'top-[calc(50%+10px)] z-[5] h-1.5'} ${visual.className}`} style={{ left: cardGeometry.left, width: cardGeometry.width }}><span className="sr-only">Planning overlay: {card.title}</span></button>;
+                    return <button key={card.id} type="button" data-timeline-interactive="true" data-collapsed-planning-phase="true" data-collapsed-phase-display={collapsedPhaseDisplay} onClick={(event) => { event.stopPropagation(); onSelectPlanningPhase?.(job, card); }} title={phaseTitle(card)} aria-label={`Open Phase ${card.title}`} className={`absolute border-y border-l outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${collapsedPhaseDisplay === 'fill' ? 'top-1/2 z-[4] h-8 -translate-y-1/2 opacity-70 hover:opacity-80 focus-visible:opacity-[0.85]' : 'top-[calc(50%+10px)] z-[5] h-1.5'} ${visual.className}`} style={{ left: cardGeometry.left - 3, width: cardGeometry.width + 6, borderColor: '#0f172a' }}><span className="sr-only">Planning overlay: {card.title}</span></button>;
                   })}
                   {hasSchedule && displayStart && displayEnd && hasCollapsedFillLayers && (
                     <>
-                      <div
-                        data-collapsed-production-status-rail="true"
-                        className={`pointer-events-none absolute top-1/2 z-[5] h-1 -translate-y-4 border-x border-t ${statusVisual.timelineClassName ?? statusVisual.className}`}
-                        style={{ left: startOffset * dayWidth + 3, width: barWidth, backgroundImage: statusVisual.timelinePattern ?? statusVisual.pattern }}
-                        aria-hidden="true"
-                      />
                       <div
                         data-collapsed-production-label="true"
                         className="pointer-events-none absolute top-1/2 z-[6] flex h-8 min-w-0 -translate-y-1/2 items-center gap-2 overflow-hidden px-1.5 text-left text-[10px] font-bold uppercase tracking-[0.05em] text-slate-950"
                         style={{ left: startOffset * dayWidth + 3 + handleWidth, width: Math.max(0, barWidth - handleWidth * 2) }}
                         aria-hidden="true"
                       >
-                        {duration >= 2 && <span className="truncate">{job.name}{job.rework_cycle ? ` · REWORK #${job.rework_cycle.sequence_number}` : ''}</span>}
+                        {duration >= 2 && <span data-collapsed-production-label-copy className="truncate">{job.name}{job.rework_cycle ? ` · REWORK #${job.rework_cycle.sequence_number}` : ''}</span>}
                         {isStaged && duration >= 3 && <span className="shrink-0 bg-amber-100/95 px-1 text-[8px] text-amber-950">Unsaved</span>}
                         {duration >= 5 && intensity?.hoursPerScheduledDay !== null && intensity?.hoursPerScheduledDay !== undefined && (
-                          <span className="ml-auto shrink-0 border-l border-white/50 px-1.5 text-[9px] normal-case tracking-normal">{formatHours(intensity.hoursPerScheduledDay)} h/day</span>
+                          <span data-collapsed-production-label-copy className="ml-auto shrink-0 border-l border-white/50 px-1.5 text-[9px] normal-case tracking-normal">{formatHours(intensity.hoursPerScheduledDay)} h/day</span>
                         )}
                       </div>
                       <div

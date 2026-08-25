@@ -10,6 +10,83 @@ const production = readFileSync(new URL('../src/modules/production/ProductionWor
 const styles = readFileSync(new URL('../src/app/globals.css', import.meta.url), 'utf8');
 const rollout = readFileSync(new URL('../supabase/migrations/20260821_002_friday_welcome_and_job_update_seen.sql', import.meta.url), 'utf8');
 
+function callbackRequiresPasswordSetup({ accountFlow, event, hasSession }) {
+  const callbackFlow = accountFlow === 'setup' || accountFlow === 'recovery';
+  return hasSession && (event === 'PASSWORD_RECOVERY' || callbackFlow);
+}
+
+function automaticHeroEligible({ ready = true, requiresPasswordSetup = false, authenticated = true, activeProfile = true, accessAllowed = true, user = true } = {}) {
+  return ready && !requiresPasswordSetup && authenticated && activeProfile && accessAllowed && user;
+}
+
+function sourceSection(source, start, end) {
+  const startIndex = source.indexOf(start);
+  const endIndex = source.indexOf(end, startIndex + start.length);
+  assert.notEqual(startIndex, -1, `Missing source section start: ${start}`);
+  assert.notEqual(endIndex, -1, `Missing source section end: ${end}`);
+  return source.slice(startIndex, endIndex);
+}
+
+function assertOrdered(source, fragments, message) {
+  let priorIndex = -1;
+  for (const fragment of fragments) {
+    const index = source.indexOf(fragment);
+    assert.ok(index > priorIndex, `${message}: expected ${fragment} after prior transition`);
+    priorIndex = index;
+  }
+}
+
+for (const accountFlow of ['setup', 'recovery']) {
+  assert.equal(callbackRequiresPasswordSetup({ accountFlow, event: 'SIGNED_IN', hasSession: true }), true,
+    `${accountFlow} URL plus a temporary session must require password setup`);
+  assert.equal(automaticHeroEligible({ requiresPasswordSetup: true }), false,
+    `${accountFlow} callback state must make automatic Hero ineligible`);
+}
+assert.equal(callbackRequiresPasswordSetup({ accountFlow: null, event: 'PASSWORD_RECOVERY', hasSession: true }), true,
+  'Supabase PASSWORD_RECOVERY must be protected even without a retained query parameter');
+assert.equal(callbackRequiresPasswordSetup({ accountFlow: null, event: 'SIGNED_IN', hasSession: true }), false,
+  'Ordinary sign-in must not enter callback mode');
+assert.equal(callbackRequiresPasswordSetup({ accountFlow: 'setup', event: 'SIGNED_IN', hasSession: false }), false,
+  'An invalid or expired Setup URL without a session must not create stale callback state');
+assert.equal(callbackRequiresPasswordSetup({ accountFlow: 'recovery', event: 'SIGNED_IN', hasSession: false }), false,
+  'An invalid or expired Recovery URL without a session must not create stale callback state');
+assert.equal(automaticHeroEligible(), true, 'Ordinary eligible sign-in must retain automatic Hero behavior');
+
+const initialSessionPath = sourceSection(auth, 'void supabase.auth.getSession()', 'const { data } = supabase.auth.onAuthStateChange');
+assertOrdered(initialSessionPath, [
+  'setRequiresPasswordSetup(',
+  'setSession(data.session)',
+  'await loadProfile(data.session)',
+  'setReady(true)',
+], 'Initial callback URL state must precede session/profile readiness');
+
+const authChangePath = sourceSection(auth, 'const { data } = supabase.auth.onAuthStateChange', 'return () => {');
+assertOrdered(authChangePath, [
+  'setRequiresPasswordSetup(',
+  'setSession(nextSession)',
+  'window.setTimeout(',
+  'loadProfile(nextSession)',
+  'setReady(true)',
+], 'Auth callback state must be committed with the session before deferred profile readiness');
+
+const heroBootPath = sourceSection(hero, 'useEffect(() => {\n    if (!auth.ready) return;', 'useEffect(() => {\n    const refresh');
+assert.match(heroBootPath, /if \(auth\.requiresPasswordSetup \|\|[\s\S]{0,520}setVisible\(false\);\s*return;/,
+  'Callback guard must clear automatic Hero state and exit');
+assert.ok(
+  heroBootPath.indexOf('if (auth.requiresPasswordSetup ||') < heroBootPath.indexOf('window.sessionStorage.setItem(playedKey, "true")'),
+  'Callback guard must precede every automatic Hero playback marker write',
+);
+
+const passwordCompletionPath = sourceSection(auth, 'async updatePassword(password)', 'refreshProfile,');
+assertOrdered(passwordCompletionPath, [
+  'updateUser({ password })',
+  'if (error) throw error',
+  'signOut({ scope: "local" })',
+  'if (signOutError) throw signOutError',
+  'setRequiresPasswordSetup(false)',
+  'window.history.replaceState',
+], 'Callback completion must clear state only after password update and local sign-out succeed');
+
 assert(existsSync(new URL('../public/logo.png', import.meta.url)), 'Original persistent logo is missing');
 assert(existsSync(new URL('../public/tenarten-logo-gold-welcome.webp', import.meta.url)), 'Registered gold Hero asset is missing');
 assert(existsSync(new URL('../public/tenarten-logo-steel-welcome.webp', import.meta.url)), 'Registered steel Hero asset is missing');
@@ -54,19 +131,32 @@ assert.match(hero, /document\.body\.style\.overflow = previousOverflow/,
 assert.match(hero, /const bootRequired = heroEligible && !bootClaimed[\s\S]{0,180}sessionStorage\.getItem/,
   'Fresh-login Hero ownership must be decided during render before the authenticated workspace can flash');
 assert.match(hero, /const heroVisible = heroEligible && \(visible \|\| bootRequired\)/);
+assert.match(hero, /const heroEligible = auth\.ready && !auth\.requiresPasswordSetup && auth\.isAuthenticated/,
+  'Temporary Setup and Recovery sessions must never become eligible for automatic Hero boot');
 assert.match(access, /tenops:prepare-hero-boot[\s\S]{0,120}await auth\.signIn/,
   'The login action must establish Hero ownership before Supabase can expose authenticated content');
 assert.match(access, /tenops:cancel-hero-boot/,
   'A failed login must release the pre-auth Hero cover');
-assert.match(auth, /onAuthStateChange[\s\S]{0,420}window\.setTimeout\(\(\) => \{[\s\S]{0,100}loadProfile\(nextSession\)/,
+assert.match(access, /const activeMode = auth\.requiresPasswordSetup \? "password" : mode/,
+  'A recognized callback must keep the password setup/recovery UI active');
+assert.match(access, /activeMode === "signin"[\s\S]{0,520}else \{[\s\S]{0,260}auth\.updatePassword\(password\)/,
+  'Password callback submission must not arm the ordinary sign-in Hero cover');
+assert.match(auth, /onAuthStateChange[\s\S]{0,800}window\.setTimeout\(\(\) => \{[\s\S]{0,100}loadProfile\(nextSession\)/,
   'Authenticated profile loading must begin after the Supabase auth callback releases its token lock');
-assert.match(hero, /const heroCoverVisible = preparingBoot \|\| heroVisible/);
+assert.match(auth, /callbackFlow = accountFlow === "setup" \|\| accountFlow === "recovery"/,
+  'Setup and Recovery URLs must remain canonical temporary-auth callback flows');
+assert.match(auth, /setRequiresPasswordSetup\(Boolean\(nextSession\) && \(event === "PASSWORD_RECOVERY" \|\| callbackFlow\)\)/,
+  'Callback state must be established atomically with the temporary Supabase session');
+assert.match(auth, /updateUser\(\{ password \}\)[\s\S]{0,180}signOut\(\{ scope: "local" \}\)[\s\S]{0,180}setRequiresPasswordSetup\(false\)[\s\S]{0,120}history\.replaceState/,
+  'Successful Setup and Recovery must sign out locally and clear callback state before normal login');
+assert.match(hero, /const heroCoverVisible = !auth\.requiresPasswordSetup && \(preparingBoot \|\| heroVisible\)/,
+  'Callback state must synchronously release any stale Hero cover ownership');
 assert.match(hero, /const coverRef = useRef<HTMLDivElement \| null>\(null\)/);
 assert.match(hero, /if \(coverRef\.current\) coverRef\.current\.hidden = false;[\s\S]{0,160}setPreparingBoot\(true\)/,
   'Sign-in must synchronously reveal the already-mounted Hero cover before queued React state can yield ownership');
 assert.match(hero, /const cancel = \(\) => \{\s*if \(coverRef\.current\) coverRef\.current\.hidden = true;/,
   'A failed login must synchronously return visual ownership to Account Access');
-assert.match(hero, /ref=\{coverRef\}[\s\S]{0,100}hidden=\{!preparingBoot \|\| heroVisible\}[\s\S]{0,80}data-welcome-hero-cover/,
+assert.match(hero, /ref=\{coverRef\}[\s\S]{0,120}hidden=\{auth\.requiresPasswordSetup \|\| !preparingBoot \|\| heroVisible\}[\s\S]{0,80}data-welcome-hero-cover/,
   'A lightweight static starting cover must remain mounted and natively hidden between boots');
 assert.match(hero, /data-welcome-hero-cover[\s\S]{0,1800}data-welcome-progress-cover[\s\S]{0,500}OPERATIONS ENGINE INITIATING[\s\S]{0,120}0%/,
   'The immediate handoff cover must include the same starting progress composition and grid geometry');

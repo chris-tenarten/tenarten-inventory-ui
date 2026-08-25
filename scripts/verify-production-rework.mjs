@@ -48,11 +48,19 @@ assert.match(inspector, /Original schedule not recorded/);
 assert.match(inspector, /laborLifecycle\.reworks\.find\(\(item\) => item\.reworkCycleId === cycle\.id\)/);
 assert.match(inspector, /job\.original_planned_start \?\? job\.planned_start/);
 assert.match(inspector, /canCreateProductionRework\(job\)[\s\S]*onCreateRework\(job\)[\s\S]*Create Rework/);
+assert.match(inspector, /draft\.job_number[\s\S]{0,500}data-rework-inspector-action[\s\S]{0,100}data-rework-quick-action[\s\S]{0,260}h-5/,
+  'Inspector Rework must be a compact tinted button immediately beside the Job number');
+assert.match(inspector, /RotateCcw className="h-2\.5 w-2\.5" aria-hidden="true"[\s\S]{0,100}relative top-px/,
+  'The Inspector cycle icon retains its lighter default stroke while its label is optically centered');
 assert.match(quickAction, /canonicalStatus === "complete" && !job\.rework_cycle && !job\.archived_at/);
 assert.match(quickAction, /title="Create Rework"/);
 assert.match(quickAction, /onCreate\(job\)/);
 assert.match(queue, /<ActivityStrip[\s\S]*onCreateRework=\{onCreateRework\}/);
-assert.match(table, /<ReworkQuickAction job=\{job\} onCreate=\{onCreateRework\}/);
+assert.match(table, /<ReworkQuickAction job=\{job\} onCreate=\{onCreateRework\} compact/);
+assert.match(quickAction, /compact \? "h-5 w-6" : "h-6 w-7"/,
+  'Table Rework must use the smaller centered quick-action geometry');
+assert.match(quickAction, /strokeWidth=\{2\.5\}/,
+  'Rework cycle glyphs must be bolder without increasing adjacent text weight');
 assert.match(workspace, /<CreateReworkDialog job=\{reworkTargetJob\}/);
 assert.match(workspace, /<ProductionJobInspector[\s\S]*onCreateRework=\{setReworkTargetJob\}/);
 assert.equal((jobs.match(/supabase\.rpc\('create_production_rework'/g) ?? []).length, 1);

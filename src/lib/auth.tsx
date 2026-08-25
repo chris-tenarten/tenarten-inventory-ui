@@ -97,7 +97,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (live) setReady(true);
     });
     const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      if (event === "PASSWORD_RECOVERY") setRequiresPasswordSetup(true);
+      const accountFlow = new URLSearchParams(window.location.search).get("account");
+      const callbackFlow = accountFlow === "setup" || accountFlow === "recovery";
+      setRequiresPasswordSetup(Boolean(nextSession) && (event === "PASSWORD_RECOVERY" || callbackFlow));
       setSession(nextSession);
       // Supabase holds its auth-token lock while this callback runs. Starting
       // an authenticated RPC here can contend with that lock for five seconds.
