@@ -123,14 +123,26 @@ assert.match(creationDialog, /Select at least one Item to create this Phase\./);
 assert.match(creationDialog, /entry\.default_timeline_behavior === "overlay"/);
 assert.match(creationDialog, /selectedItems\.reduce/);
 assert.match(creationDialog, /disabled=\{busy \|\| selectionInvalid\}/);
-assert.match(inspector, /mt-2\.5 flex overflow-x-auto border-b/);
-assert.match(inspector, /min-h-8 min-w-max flex-1 whitespace-nowrap border-b-2 px-2 py-1/);
+assert.match(inspector, /role="tablist"\s+aria-label="Job inspector sections"/,
+  'Inspector sections must remain an accessible tab strip');
+assert.match(inspector, /className="(?=[^"]*\bflex\b)(?=[^"]*\boverflow-x-auto\b)(?=[^"]*\bborder-b\b)[^"]*"/,
+  'Inspector tabs must remain horizontally scrollable with a visible strip boundary');
+assert.match(inspector, /planningEnabled \? \[\{ id: "planning" as const, label: "Planning" \}\] : \[\]/,
+  'Planning must remain present in the Inspector tab model when enabled');
+assert.match(inspector, /role="tab"[\s\S]{0,180}aria-selected=\{activeSection === tab\.id\}[\s\S]{0,220}onClick=\{\(\) => selectSection\(tab\.id\)\}/,
+  'Inspector tabs must retain selected state and section navigation');
+assert.match(inspector, /activeSection === "planning" && planningEnabled[\s\S]{0,260}<PlanningPanel/,
+  'Selecting Planning must continue rendering the Planning panel');
+assert.match(inspector, /className=\{`(?=[^`]*\bmin-w-max\b)(?=[^`]*\bborder-b-2\b)[^`]*`\}/,
+  'Individual tabs must remain non-wrapping and visibly selectable');
 assert.match(panel, /Phase Library/);
 assert.match(library, /Nothing is added to a Production job automatically/);
 assert.match(library, /Save the Phase definition before adding reusable Items/);
 assert.match(library, /Back to \{returnContext\.jobName\}/);
-assert.match(workspace, /planningEnabled \? await loadPlanningPhases/);
-assert.match(workspace, /planningEnabled \? await loadPlanningItems/);
+assert.match(workspace, /const planningDataPromise = planningEnabled[\s\S]{0,180}loadPlanningPhases\(visibleJobs\.map\(\(job\) => job\.id\)\)/,
+  'Planning-enabled Production loads phases for the currently visible Jobs');
+assert.match(workspace, /loadPlanningPhases[\s\S]{0,220}items: await loadPlanningItems\(loadedPlanningPhases\.map\(\(phase\) => phase\.id\)\)/,
+  'Production loads Planning items from the phases returned by the phase query');
 assert.match(gantt, /phaseProgress\.percent/);
 assert.match(gantt, /progressClassName/);
 assert.match(gantt, /data-planning-progress-fill/);
@@ -157,7 +169,20 @@ assert.match(gantt, /mobileReadOnly \? mobileLandscape \? 220 : 176 : preference
 assert.match(gantt, /Mobile view · Read only/);
 assert.match(gantt, /mobileLandscape \? 'Read only'/);
 assert.match(gantt, /if \(mobileReadOnly\)[\s\S]*if \(mode === 'move'\) onSelectJob\(job\)/);
-assert.match(gantt, /collapsedPhaseDisplay === 'fill'[\s\S]*top-1\/2 h-8 -translate-y-1\/2[\s\S]*top-\[calc\(50%\+10px\)\] h-1\.5/);
+assert.match(gantt, /data-collapsed-planning-pause[\s\S]{0,500}collapsedPhaseDisplay === 'fill' \? '(?=[^']*\btop-1\/2\b)(?=[^']*\bh-8\b)(?=[^']*-translate-y-1\/2\b)[^']*' : `(?=[^`]*top-\[calc\(50%\+10px\)\])(?=[^`]*\bh-1\.5\b)[^`]*`/,
+  'Collapsed pauses must fill the Production bar in Fill mode and use the compact strip geometry otherwise');
+assert.match(gantt, /data-collapsed-planning-phase[\s\S]{0,500}collapsedPhaseDisplay === 'fill' \? '(?=[^']*\btop-1\/2\b)(?=[^']*\bh-8\b)(?=[^']*-translate-y-1\/2\b)[^']*' : '(?=[^']*top-\[calc\(50%\+10px\)\])(?=[^']*\bh-1\.5\b)[^']*'/,
+  'Collapsed phase overlays must fill the Production bar in Fill mode and use the compact strip geometry otherwise');
+assert.match(gantt, /data-collapsed-planning-phase[\s\S]{0,800}border-y border-l[\s\S]{0,500}borderColor: '#0f172a'/,
+  'Collapsed phases must use a single thin dark boundary instead of a visible interval gap');
+assert.match(gantt, /left: cardGeometry\.left - 3, width: cardGeometry\.width \+ 6/,
+  'Collapsed overlay geometry must remove the shared editable-bar inset so contiguous dates touch');
+assert.match(gantt, /collapsedPhaseDisplay === 'fill'[\s\S]{0,220}h-8 -translate-y-1\/2 opacity-70[\s\S]{0,220}visual\.className/,
+  'Fill overlays must retain the original translucent tint across the full Production bar height');
+assert.doesNotMatch(gantt, /data-collapsed-production-status-rail/,
+  'Fill mode must not leave a separate Production-status strip visible above the phase tint');
+assert.equal((gantt.match(/data-collapsed-production-label-copy/g) ?? []).length, 2,
+  'Fill overlay Job and labor labels must share the outlined copy treatment');
 assert.doesNotMatch(gantt, /data-collapsed-planning-progress-fill|data-collapsed-planning-progress-boundary/);
 assert.doesNotMatch(library, /Collapsed Phase bar display|COLLAPSED_PHASE_DISPLAY_MODES/);
 assert.match(panel, /<CollapsedPhaseDisplayToggle \/>/);
@@ -278,7 +303,7 @@ assert.match(gantt, /phaseInteraction\.previewStart/);
 assert.doesNotMatch(workspace, /Apply proposed Planning shifts|Keep Planning dates unchanged/);
 assert.match(workspace, /SchedulingFeedbackPanel/);
 assert.match(workspace, /schedulingErrors\.length > 0/);
-assert.match(workspace, /saveProductionPlanningScheduleBatch/);
+assert.match(workspace, /saveProductionReworkMixedScheduleBatch/);
 assert.match(inspector, /stagedPlanningSchedules/);
 assert.match(panel, /Unsaved schedule/);
 

@@ -1004,7 +1004,7 @@ export default function ProductionTable({
                       >
                         <Paperclip className="h-3.5 w-3.5" aria-hidden="true" />
                         {count}
-                      </button>}<JobUpdatesIndicator job={job} summary={updateSummary} onOpen={() => onSelectJob(job, 'job-updates')} /><ReworkQuickAction job={job} onCreate={onCreateRework} /></div>,
+                      </button>}<JobUpdatesIndicator job={job} summary={updateSummary} onOpen={() => onSelectJob(job, 'job-updates')} /><ReworkQuickAction job={job} onCreate={onCreateRework} compact /></div>,
                     <div className="flex h-6 min-w-0 items-center gap-1 overflow-hidden whitespace-nowrap">
                       {job.estimated_man_hours !== null ? <span className="h-6 px-1 text-[9px] leading-6 text-slate-600"><strong className="text-slate-900">{formatHours(job.estimated_man_hours)}h</strong> Estimated</span> : <span className="h-6 px-1 text-[9px] font-semibold leading-6 text-slate-900">No Labor Estimate</span>}
                       {integration.laborEntryCount > 0 ? <button

@@ -693,8 +693,22 @@ export default function ProductionJobInspector({
       >
         <div className="flex shrink-0 items-start justify-between gap-3 px-4 pt-4">
           <div className="min-w-0">
-            <div className="text-xs font-bold text-slate-500">
-              {draft.job_number || "Job number not recorded"}
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="min-w-0 truncate text-xs font-bold text-slate-500">
+                {draft.job_number || "Job number not recorded"}
+              </span>
+              {canCreateProductionRework(job) ? (
+                <button
+                  type="button"
+                  data-rework-inspector-action
+                  data-rework-quick-action
+                  onClick={() => onCreateRework(job)}
+                  className="inline-flex h-5 shrink-0 items-center gap-1 border px-1.5 text-[9px] font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700"
+                >
+                  <RotateCcw className="h-2.5 w-2.5" aria-hidden="true" />
+                  <span className="relative top-px">Create Rework</span>
+                </button>
+              ) : null}
             </div>
             <div className="flex min-w-0 items-center gap-1.5">
               {headerNameEditing ? (
@@ -746,17 +760,6 @@ export default function ProductionJobInspector({
               <ProductionStatusBadge status={job.production_status} />
             </div>
             {job.rework_cycle ? <div className="mt-1.5"><ReworkBadge sequence={job.rework_cycle.sequence_number} /></div> : null}
-            {canCreateProductionRework(job) ? (
-              <button
-                type="button"
-                data-rework-quick-action
-                onClick={() => onCreateRework(job)}
-                className="mt-1.5 inline-flex h-7 items-center gap-1.5 border px-2 text-[11px] font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700"
-              >
-                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
-                Create Rework
-              </button>
-            ) : null}
             {!job.planned_start || !job.planned_end ? <div className="mt-1.5"><UnscheduledBadge onClick={() => onScheduleJob(job)} /></div> : null}
             <div
               className={`mt-1.5 inline-flex px-2 py-0.5 text-xs font-bold ${readiness.state === "ready" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}

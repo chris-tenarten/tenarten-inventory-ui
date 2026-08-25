@@ -63,10 +63,10 @@ export default function WelcomeHero() {
   const [heroAnimationComplete, setHeroAnimationComplete] = useState(false);
   const [criticalAppReady, setCriticalAppReady] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const heroEligible = auth.ready && auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.accessAllowed && Boolean(auth.user);
+  const heroEligible = auth.ready && !auth.requiresPasswordSetup && auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.accessAllowed && Boolean(auth.user);
   const bootRequired = heroEligible && !bootClaimed && typeof window !== "undefined" && !window.sessionStorage.getItem(`${BOOT_PLAYED_KEY_PREFIX}${auth.user?.id}`);
   const heroVisible = heroEligible && (visible || bootRequired);
-  const heroCoverVisible = preparingBoot || heroVisible;
+  const heroCoverVisible = !auth.requiresPasswordSetup && (preparingBoot || heroVisible);
 
   const resetTimeline = useCallback(() => {
     animationStartedAtRef.current = null;
@@ -132,7 +132,7 @@ export default function WelcomeHero() {
   useEffect(() => {
     if (!auth.ready) return;
     const timeout = window.setTimeout(() => {
-      if (!auth.isAuthenticated || !auth.profile?.isActive || !auth.accessAllowed || !auth.user) {
+      if (auth.requiresPasswordSetup || !auth.isAuthenticated || !auth.profile?.isActive || !auth.accessAllowed || !auth.user) {
         if (lastAuthenticatedUserRef.current) {
           window.sessionStorage.removeItem(`${BOOT_PLAYED_KEY_PREFIX}${lastAuthenticatedUserRef.current}`);
         }
@@ -164,12 +164,12 @@ export default function WelcomeHero() {
       setVisible(true);
     }, 0);
     return () => window.clearTimeout(timeout);
-  }, [auth.accessAllowed, auth.isAuthenticated, auth.profile, auth.profileError, auth.ready, auth.user, loadWelcome, resetTimeline]);
+  }, [auth.accessAllowed, auth.isAuthenticated, auth.profile, auth.profileError, auth.ready, auth.requiresPasswordSetup, auth.user, loadWelcome, resetTimeline]);
 
   useEffect(() => {
     const refresh = () => void loadWelcome();
     const replay = () => {
-      if (!auth.isAuthenticated || !auth.profile?.isActive || !auth.accessAllowed) return;
+      if (auth.requiresPasswordSetup || !auth.isAuthenticated || !auth.profile?.isActive || !auth.accessAllowed) return;
       modeRef.current = "replay";
       setMode("replay");
       resetTimeline();
@@ -181,7 +181,7 @@ export default function WelcomeHero() {
       window.removeEventListener("tenops:notifications-changed", refresh);
       window.removeEventListener("tenops:replay-welcome-hero", replay);
     };
-  }, [auth.accessAllowed, auth.isAuthenticated, auth.profile?.isActive, loadWelcome, resetTimeline]);
+  }, [auth.accessAllowed, auth.isAuthenticated, auth.profile?.isActive, auth.requiresPasswordSetup, loadWelcome, resetTimeline]);
 
   useEffect(() => {
     const markReady = () => {
@@ -262,7 +262,7 @@ export default function WelcomeHero() {
   return <>
     <div
       ref={coverRef}
-      hidden={!preparingBoot || heroVisible}
+      hidden={auth.requiresPasswordSetup || !preparingBoot || heroVisible}
       data-welcome-hero-cover
       className="fixed inset-0 z-[80] bg-[#eef1f4]"
       aria-hidden="true"

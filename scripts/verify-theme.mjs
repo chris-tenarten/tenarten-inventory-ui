@@ -84,11 +84,21 @@ assert.match(updatesIndicator, /data-job-updates-indicator/);
 assert.match(styles, /\[data-production-table-header\]/);
 assert.match(styles, /\[data-job-updates-indicator\]/);
 assert.match(gantt, /data-production-gantt/);
+assert.match(gantt, /data-production-status=\{job\.production_status\}/);
+assert.equal((gantt.match(/data-gantt-bar-copy/g) ?? []).length, 2,
+  'Gantt Job and labor labels must share the readable status backing treatment');
 assert.match(gantt, /data-gantt-phase-row/);
 assert.match(gantt, /data-gantt-navigator/);
 assert.match(gantt, /data-planning-connector-state/);
 assert.match(styles, /--semantic-success-surface:/);
 assert.match(styles, /\[data-production-bar\]/);
+assert.match(styles, /data-production-status="complete"[\s\S]{0,100}data-gantt-bar-copy/);
+assert.match(styles, /data-production-status="on_deck"[\s\S]{0,100}data-gantt-bar-copy/);
+assert.match(styles, /data-gantt-bar-copy[\s\S]{0,140}-webkit-text-stroke: 0\.45px/,
+  'Striped Gantt labels must use an outline without obscuring the status hatch');
+assert.match(styles, /data-collapsed-production-label-copy[\s\S]{0,140}-webkit-text-stroke: 0\.45px/,
+  'Labels over translucent phase overlays must retain a dark outline in both themes');
+assert.match(styles, /html\[data-appearance="dark"\][\s\S]{0,120}data-production-status="complete"[\s\S]{0,180}data-gantt-bar-copy/);
 assert.match(styles, /\[data-planning-phase-bar\]/);
 assert.match(manifest, /Light or Dark preference/);
 assert.doesNotMatch(manifest, /NEXT_PUBLIC_[A-Z_]*DARK/);
