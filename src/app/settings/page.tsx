@@ -16,6 +16,7 @@ import { isPlanningEnabled } from "@/modules/planning/timeline-model.mjs";
 import AdminSettingsPanel from "@/components/AdminSettingsPanel";
 import AccountAccessPanel from "@/components/AccountAccessPanel";
 import { useAccountPreferences } from "@/lib/account-preferences";
+import { BRANDING } from "@/lib/dev-branding.mjs";
 
 const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 
@@ -120,7 +121,7 @@ export default function SettingsPage() {
           })}
         </div>
         <p className="mt-3 text-xs text-slate-500">
-          {accountPreferences.accountScoped ? t("settings.accountPreference") : t("settings.browserOnly")}
+          {!BRANDING.showDeveloperArtwork && accountPreferences.accountScoped ? t("settings.accountPreference") : t("settings.browserOnly")}
         </p>
       </section>
       <section className="mt-4 border border-slate-300 bg-white p-4">

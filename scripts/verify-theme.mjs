@@ -25,31 +25,39 @@ const [provider, layout, shell, settings, styles, planningEditor, creationDialog
 assert.match(provider, /export function ThemeProvider/);
 assert.match(provider, /createContext/);
 assert.match(provider, /tenops_appearance/);
+assert.match(provider, /tenops:tendev:appearance/);
 assert.match(provider, /\["light", "dark"\]/);
 assert.match(provider, /useState<Appearance>\(defaultAppearance\)/);
 assert.match(provider, /accountPreferences\.accountScoped/);
 assert.match(provider, /accountPreferences\.preferences\.appearance/);
-assert.match(provider, /accountPreferences\.accountScoped && !accountPreferences\.ready\) return/,
-  'Authenticated Appearance must not fall back while account preferences are still resolving');
+assert.match(provider, /!isTenDev && accountPreferences\.accountScoped && !accountPreferences\.ready\) return/,
+  'Production Appearance must not fall back while account preferences are still resolving');
 assert.match(provider, /accountPreferences\.setPreference\("appearance", next\)/);
 assert.doesNotMatch(provider, /allowUserAppearance/,
   'Appearance availability must not be gated by the deployment environment');
-assert.match(provider, /accountPreferences\.accountScoped \|\| event\.key !== APPEARANCE_STORAGE_KEY/,
-  'Authenticated accounts must not synchronize another operator\'s browser-local Appearance');
-assert.match(provider, /window\.localStorage\.setItem\(APPEARANCE_STORAGE_KEY, next\)/,
-  'The pre-authentication Appearance fallback remains browser-local');
-assert.match(provider, /function readStoredAppearance\(\)/);
-assert.match(provider, /: readStoredAppearance\(\)[\s\S]{0,180}document\.documentElement\.dataset\.appearance/,
+assert.match(provider, /event\.key !== storageKey \|\| \(!isTenDev && accountPreferences\.accountScoped\)/,
+  'Production accounts must not synchronize browser-local Appearance while TenDev remains locally synchronized');
+assert.match(provider, /window\.localStorage\.setItem\(storageKey, next\)/,
+  'The selected environment Appearance remains browser-local for pre-authentication paint');
+assert.match(provider, /function readStoredAppearance\(storageKey: string\)/);
+assert.match(provider, /const initial = isTenDev[\s\S]{0,100}readStoredAppearance\(storageKey\) \?\? defaultAppearance/,
+  'TenDev must use only its local Appearance and Dark branding default');
+assert.match(provider, /: readStoredAppearance\(storageKey\)[\s\S]{0,180}document\.documentElement\.dataset\.appearance/,
   'Logged-out hydration must prefer the durable handoff over the server-rendered default attribute');
+assert.match(provider, /if \(!isTenDev && accountPreferences\.accountScoped\)[\s\S]{0,100}setPreference\("appearance", next\)/,
+  'Only Production may persist Appearance to the account preference');
 assert.doesNotMatch(provider, /hostname|NODE_ENV|branch|prefers-color-scheme|matchMedia/i);
 assert.match(layout, /data-appearance=\{defaultAppearance\}/);
-assert.match(layout, /localStorage\.getItem\('\$\{APPEARANCE_STORAGE_KEY\}'\)/,
-  'The root layout must restore the last-used Appearance before the login surface paints');
+assert.match(layout, /BRANDING\.showDeveloperArtwork \? TENDEV_APPEARANCE_STORAGE_KEY : APPEARANCE_STORAGE_KEY/,
+  'The root layout must select the canonical environment-specific Appearance key');
+assert.match(layout, /localStorage\.getItem\('\$\{appearanceStorageKey\}'\)/,
+  'The root layout must restore the environment Appearance before the login surface paints');
 assert.match(layout, /stored==='light'\|\|stored==='dark'/,
   'The pre-authentication Appearance bootstrap must reject invalid stored values');
-assert.match(provider, /Retain the last-used visual mode for the next pre-authentication paint/);
+assert.match(settings, /!BRANDING\.showDeveloperArtwork && accountPreferences\.accountScoped \? t\("settings\.accountPreference"\) : t\("settings\.browserOnly"\)/,
+  'TenDev Appearance must be described as browser-local');
 assert.doesNotMatch(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/,
-  'Production and development must both honor the canonical user Appearance preference');
+  'Appearance availability must not be gated by environment branding');
 assert.doesNotMatch(layout, /NEXT_PUBLIC_[A-Z_]*DARK|data-[a-z-]*prototype/);
 assert.match(shell, /data-app-shell/);
 assert.match(shell, /data-theme-access-brand/);
@@ -57,7 +65,6 @@ assert.match(shell, /data-theme-logout/);
 assert.match(settings, /useAppearance/);
 assert.match(settings, /APPEARANCES\.map/);
 assert.match(settings, /id="appearance"/);
-assert.doesNotMatch(settings, /BRANDING\.showDeveloperArtwork/);
 assert.match(settings, /role="radiogroup"/);
 assert.match(styles, /:root[\s\S]*--surface-page:/);
 assert.match(styles, /html\[data-appearance="dark"\]/);
