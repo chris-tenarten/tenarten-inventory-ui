@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import type { ComponentType, ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   applyDisplaySize,
   DISPLAY_SIZE_STORAGE_KEY,
@@ -22,7 +22,7 @@ import {
 import { BRANDING } from '@/lib/dev-branding.mjs';
 import { useAuth } from '@/lib/auth';
 import { ROLE_LABELS } from '@/lib/rbac';
-import { operationalFirstName } from '@/lib/identity-presentation';
+import { accountInitials } from '@/lib/identity-presentation';
 import { useAccountPreferences } from '@/lib/account-preferences';
 import AccountAccessPanel from '@/components/AccountAccessPanel';
 import AccountNotifications from '@/components/AccountNotifications';
@@ -273,6 +273,8 @@ export default function ClientLayoutShell({
   const accountPreferences = useAccountPreferences();
 
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const accountDisplaySize = accountPreferences.preferences.display_size;
@@ -313,6 +315,21 @@ export default function ClientLayoutShell({
     };
   }, []);
 
+  useEffect(() => {
+    if (!accountMenuOpen) return;
+    const closeAccountMenu = (event: MouseEvent | KeyboardEvent) => {
+      if (event instanceof KeyboardEvent && event.key !== 'Escape') return;
+      if (event instanceof MouseEvent && accountMenuRef.current?.contains(event.target as Node)) return;
+      setAccountMenuOpen(false);
+    };
+    document.addEventListener('mousedown', closeAccountMenu);
+    window.addEventListener('keydown', closeAccountMenu);
+    return () => {
+      document.removeEventListener('mousedown', closeAccountMenu);
+      window.removeEventListener('keydown', closeAccountMenu);
+    };
+  }, [accountMenuOpen]);
+
   async function handleLogout() {
     await auth.signOut();
   }
@@ -338,18 +355,29 @@ export default function ClientLayoutShell({
               className="group flex min-w-0 items-center gap-2.5"
               aria-label={t('shell.goToDashboard')}
             >
-              <Image
-                data-header-steel-logo-preview
-                src="/tenarten-logo-steel-welcome.webp"
-                alt="Tenarten logo"
-                width={1024}
-                height={1048}
-                className={`shrink-0 object-contain transition-all duration-200 ${
+              {shellUnlocked ? <span
+                data-authenticated-header-logo
+                className={`relative shrink-0 transition-all duration-200 ${
                   hasScrolled
-                    ? 'h-9 w-auto'
-                    : 'h-11 w-auto sm:h-12'
+                    ? 'h-9 w-9'
+                    : 'h-11 w-11 sm:h-12 sm:w-12'
                 }`}
-              />
+              >
+                <Image
+                  data-authenticated-steel-logo="true"
+                  src="/tenarten-logo-steel-welcome.webp"
+                  alt="Tenarten logo"
+                  fill
+                  sizes="48px"
+                  className="object-contain"
+                />
+              </span> : <Image
+                src="/logo.png"
+                alt="Tenarten logo"
+                width={256}
+                height={256}
+                className={`shrink-0 object-contain transition-all duration-200 ${hasScrolled ? 'h-9 w-auto' : 'h-11 w-auto sm:h-12'}`}
+              />}
 
               <div className="flex min-w-0 items-center gap-2">
                 <div className="relative min-w-0 leading-none">
@@ -432,9 +460,30 @@ export default function ClientLayoutShell({
                 <DomainNav pathname={pathname} labelKey="nav.purchasing" href="/purchasing" icon={CartIcon} items={purchasingNavItems} />
                 <div className="flex shrink-0 items-center">
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
-                  {auth.isAuthenticated && auth.profile?.isActive ? <div data-account-identity className="hidden max-w-36 px-2 text-right leading-tight md:block">
-                    <div className="truncate text-[11px] font-bold text-slate-900" title={auth.profile.displayName}>{operationalFirstName(auth.profile.displayName)}</div>
-                    <div className="tenops-compact-type font-semibold uppercase tracking-[0.08em] text-slate-500">{ROLE_LABELS[auth.profile.role]}</div>
+                  {auth.isAuthenticated && auth.profile?.isActive ? <div ref={accountMenuRef} data-account-identity className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setAccountMenuOpen((current) => !current)}
+                      aria-haspopup="menu"
+                      aria-expanded={accountMenuOpen}
+                      aria-label={`Account menu for ${auth.profile.displayName}, ${ROLE_LABELS[auth.profile.role]}`}
+                      title={auth.profile.displayName}
+                      className="group relative inline-flex h-9 w-14 shrink-0 items-center justify-center overflow-visible text-xs font-bold uppercase tracking-wide text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 sm:h-10"
+                    >
+                      <span aria-hidden="true" className="absolute left-1/2 top-0 h-9 w-9 -translate-x-1/2 rounded-full border-2 border-slate-400 bg-slate-100 transition group-hover:border-slate-500 group-hover:bg-slate-200 sm:h-10 sm:w-10" />
+                      <span className="relative z-10 leading-none">{accountInitials(auth.profile.displayName)}</span>
+                      <span className="absolute bottom-[-5px] left-1/2 z-20 inline-flex h-3 -translate-x-1/2 items-center justify-center whitespace-nowrap border border-slate-400 bg-white px-1.5 text-[6px] font-bold leading-none tracking-[0.08em] text-slate-600 shadow-sm sm:text-[7px]">
+                        {ROLE_LABELS[auth.profile.role]}
+                      </span>
+                    </button>
+                    {accountMenuOpen ? <div role="menu" className="absolute right-0 top-full z-50 mt-1 w-56 border border-slate-300 bg-white py-1 text-left shadow-xl">
+                      <div className="border-b border-slate-200 px-3 py-2">
+                        <div className="truncate text-sm font-bold text-slate-950" title={auth.profile.displayName}>{auth.profile.displayName}</div>
+                        <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500">{ROLE_LABELS[auth.profile.role]}</div>
+                      </div>
+                      <Link role="menuitem" href="/settings" onClick={() => setAccountMenuOpen(false)} className="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-950">Settings</Link>
+                      <button role="menuitem" type="button" onClick={() => { setAccountMenuOpen(false); void handleLogout(); }} className="block w-full px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 hover:text-red-800">Sign out</button>
+                    </div> : null}
                   </div> : null}
                   <AccountNotifications onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   <Link
@@ -473,10 +522,10 @@ export default function ClientLayoutShell({
             <div data-theme-access-card className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)] sm:max-w-2xl lg:max-w-3xl">
               <div data-theme-access-brand className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-4 py-5 text-center sm:px-8 sm:py-10 lg:px-10 lg:py-12">
                 <Image
-                  src="/tenarten-logo-steel-welcome.webp"
+                  src="/logo.png"
                   alt="Tenarten logo"
-                  width={1024}
-                  height={1048}
+                  width={256}
+                  height={256}
                   className="mx-auto h-20 w-auto object-contain sm:h-40 lg:h-44"
                 />
 

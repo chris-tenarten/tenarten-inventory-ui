@@ -130,6 +130,10 @@ assert.match(updatesPanel, /· Edited/);
 assert.match(updatesPanel, /Save Changes/);
 assert.match(updatesPanel, /Changes saved\./);
 assert.match(updatesPanel, /canEditJobUpdate/);
+assert.doesNotMatch(updatesPanel, />\s*Update\s*<\/span>/,
+  'Normal Job Update cards must not render the redundant Update badge');
+assert.match(updatesPanel, /<Pencil[\s\S]{0,100}Edit/);
+assert.match(updatesPanel, /<Trash2[\s\S]{0,100}Delete/);
 assert.match(indicator, /data-job-updates-unseen-dot/);
 assert.match(indicator, /const hasUpdates = summary\.total > 0/);
 assert.match(indicator, /const hasUnseenActivity = hasUpdates && summary\.hasUnseenActivity/,

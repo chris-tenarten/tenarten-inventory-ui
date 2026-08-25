@@ -68,7 +68,13 @@ export default function AccountAccessPanel({
     setMessage("");
     try {
       if (activeMode === "signin") {
-        await auth.signIn(email, password);
+        window.dispatchEvent(new Event("tenops:prepare-hero-boot"));
+        try {
+          await auth.signIn(email, password);
+        } catch (cause) {
+          window.dispatchEvent(new Event("tenops:cancel-hero-boot"));
+          throw cause;
+        }
         onAuthenticated();
       } else {
         if (password.length < 10) throw new Error("Use at least 10 characters.");

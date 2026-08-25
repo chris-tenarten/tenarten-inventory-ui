@@ -96,7 +96,7 @@ export function AccountPreferencesProvider({ children }: { children: ReactNode }
 
   const value = useMemo<AccountPreferencesContextValue>(() => ({
     accountScoped,
-    ready: !accountUserId || loaded.userId === accountUserId,
+    ready: !accountScoped || Boolean(accountUserId && loaded.userId === accountUserId),
     preferences: loaded.userId === accountUserId ? loaded.preferences : {},
     error: loaded.userId === accountUserId ? loaded.error : "",
     setPreference,

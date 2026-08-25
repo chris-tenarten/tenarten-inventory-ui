@@ -422,7 +422,7 @@ function EditableEntryRow({ entry, targets, workers, tasks, addWorker, addTask, 
   }
 
   return (
-    <tr className={`border-b border-slate-300 align-top ${selected ? 'bg-blue-50 ring-1 ring-inset ring-blue-300' : draft.workTarget === UNLISTED_WORK_TARGET ? 'bg-amber-50/50' : 'bg-white'}`} onBlur={(event) => {
+    <tr data-manpower-unlinked={!selected && draft.workTarget === UNLISTED_WORK_TARGET ? 'true' : undefined} className={`border-b border-slate-300 align-top ${selected ? 'bg-blue-50 ring-1 ring-inset ring-blue-300' : draft.workTarget === UNLISTED_WORK_TARGET ? 'bg-amber-50/50' : 'bg-white'}`} onBlur={(event) => {
       if (!event.currentTarget.contains(event.relatedTarget as Node | null)) void save();
     }}>
       <td className="border-r border-slate-300 px-3 pt-3 text-center"><SelectionCheckbox checked={selected} label={`Select ${entry.worker.display_name} entry on ${entry.work_date}`} onChange={onSelected} /></td>
