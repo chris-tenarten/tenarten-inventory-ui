@@ -30,6 +30,15 @@ function applyAppearance(appearance: Appearance) {
   document.documentElement.dataset.appearance = appearance;
 }
 
+function readStoredAppearance() {
+  try {
+    const stored = window.localStorage.getItem(APPEARANCE_STORAGE_KEY);
+    return isAppearance(stored) ? stored : null;
+  } catch {
+    return null;
+  }
+}
+
 export function ThemeProvider({
   children,
   defaultAppearance = "light",
@@ -48,9 +57,10 @@ export function ThemeProvider({
     const accountAppearance = accountPreferences.preferences.appearance;
     const initial = accountPreferences.accountScoped
       ? (isAppearance(accountAppearance) ? accountAppearance : defaultAppearance)
-      : isAppearance(document.documentElement.dataset.appearance)
-        ? document.documentElement.dataset.appearance
-        : defaultAppearance;
+      : readStoredAppearance()
+        ?? (isAppearance(document.documentElement.dataset.appearance)
+          ? document.documentElement.dataset.appearance
+          : defaultAppearance);
     applyAppearance(initial);
     try {
       window.localStorage.setItem(APPEARANCE_STORAGE_KEY, initial);
