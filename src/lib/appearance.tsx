@@ -52,6 +52,11 @@ export function ThemeProvider({
         ? document.documentElement.dataset.appearance
         : defaultAppearance;
     applyAppearance(initial);
+    try {
+      window.localStorage.setItem(APPEARANCE_STORAGE_KEY, initial);
+    } catch {
+      // Appearance still applies when browser storage is unavailable.
+    }
     const timeout = window.setTimeout(() => setAppearanceState(initial), 0);
 
     function syncAppearance(event: StorageEvent) {
@@ -71,14 +76,15 @@ export function ThemeProvider({
   const setAppearance = useCallback((next: Appearance) => {
     setAppearanceState(next);
     applyAppearance(next);
-    if (accountPreferences.accountScoped) {
-      void accountPreferences.setPreference("appearance", next);
-      return;
-    }
     try {
+      // Retain the last-used visual mode for the next pre-authentication paint.
       window.localStorage.setItem(APPEARANCE_STORAGE_KEY, next);
     } catch {
       // Appearance still applies for the current page when storage is unavailable.
+    }
+    if (accountPreferences.accountScoped) {
+      void accountPreferences.setPreference("appearance", next);
+      return;
     }
   }, [accountPreferences]);
 

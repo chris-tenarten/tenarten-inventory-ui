@@ -40,8 +40,11 @@ assert.match(provider, /window\.localStorage\.setItem\(APPEARANCE_STORAGE_KEY, n
   'The pre-authentication Appearance fallback remains browser-local');
 assert.doesNotMatch(provider, /hostname|NODE_ENV|branch|prefers-color-scheme|matchMedia/i);
 assert.match(layout, /data-appearance=\{defaultAppearance\}/);
-assert.doesNotMatch(layout, /localStorage\.getItem\(['"]tenops_appearance['"]\)/,
-  'The root layout must not initialize authenticated Appearance from ownerless browser storage');
+assert.match(layout, /localStorage\.getItem\('\$\{APPEARANCE_STORAGE_KEY\}'\)/,
+  'The root layout must restore the last-used Appearance before the login surface paints');
+assert.match(layout, /stored==='light'\|\|stored==='dark'/,
+  'The pre-authentication Appearance bootstrap must reject invalid stored values');
+assert.match(provider, /Retain the last-used visual mode for the next pre-authentication paint/);
 assert.doesNotMatch(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/,
   'Production and development must both honor the canonical user Appearance preference');
 assert.doesNotMatch(layout, /NEXT_PUBLIC_[A-Z_]*DARK|data-[a-z-]*prototype/);

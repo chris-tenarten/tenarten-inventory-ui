@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import ClientLayoutShell from './client-layout-shell';
 import { LanguageProvider } from '@/lib/language';
-import { ThemeProvider } from '@/lib/appearance';
+import { APPEARANCE_STORAGE_KEY, ThemeProvider } from '@/lib/appearance';
 import { AuthProvider } from '@/lib/auth';
 import { AccountPreferencesProvider } from '@/lib/account-preferences';
 import { BRANDING } from '@/lib/dev-branding.mjs';
@@ -32,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const defaultAppearance = BRANDING.defaultAppearance;
-  const appearanceSelection = `document.documentElement.dataset.appearance='${defaultAppearance}'`;
+  const appearanceSelection = `const stored=localStorage.getItem('${APPEARANCE_STORAGE_KEY}');document.documentElement.dataset.appearance=stored==='light'||stored==='dark'?stored:'${defaultAppearance}'`;
   const appearanceBootstrap =
     `try{${appearanceSelection}}catch(e){document.documentElement.dataset.appearance='${defaultAppearance}'}`;
 
