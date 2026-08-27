@@ -1,8 +1,11 @@
 "use client";
 
-import { ClipboardList, File, History, Pencil, RotateCcw, Send, Trash2, Upload } from "lucide-react";
+import { ClipboardList, File, FileText, History, Pencil, RotateCcw, Send, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
+import { useAuth } from "@/lib/auth";
+import ProposalPanel from "@/modules/proposals/ProposalPanel";
+import { hasProposalAccess } from "@/modules/proposals/queries";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
 import PlanningPanel from "@/modules/planning/PlanningPanel";
 import type { StagedPlanningSchedules } from "@/modules/planning/schedule-staging";
@@ -45,12 +48,16 @@ import ProductionStatusBadge from "./ProductionStatusBadge";
 import ReworkBadge from "./ReworkBadge";
 import { canCreateProductionRework } from "./ReworkQuickAction";
 import UnscheduledBadge from "./UnscheduledBadge";
+import { findJobNumberConflict,jobNumberConflictMessage,type JobNumberOwner } from "../job-identifiers";
 
 type InspectorSection = "details" | "planning" | "updates" | "files" | "recent-changes";
 const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
+const documentActionClass =
+  "inline-flex min-h-10 items-center justify-center gap-2 whitespace-nowrap border border-blue-800 bg-blue-50 px-3 text-sm font-bold text-blue-900 hover:bg-blue-100";
 
 type Props = {
   job: ProductionJob;
+  jobNumberOwners: JobNumberOwner[];
   onClose: () => void;
   onUpdateJob: (
     id: string,
@@ -258,6 +265,7 @@ function activityDescription(change: ProductionJobActivity) {
 
 export default function ProductionJobInspector({
   job,
+  jobNumberOwners,
   onClose,
   onUpdateJob,
   onArchive,
@@ -278,6 +286,7 @@ export default function ProductionJobInspector({
   onScheduleJob,
   onCreateRework,
 }: Props) {
+  const auth = useAuth();
   const [activeSection, setActiveSection] = useState<InspectorSection>(
     initialFocus === "attachments"
       ? "files"
@@ -313,6 +322,8 @@ export default function ProductionJobInspector({
     initialFocus?.startsWith("job-updates:") ? initialFocus.slice("job-updates:".length) : null,
   );
   const [planningEditorOpen, setPlanningEditorOpen] = useState(false);
+  const [proposalAccess, setProposalAccess] = useState(auth.profile?.role === "admin");
+  const [proposalPanelOpen, setProposalPanelOpen] = useState(false);
   const [reworkCycles, setReworkCycles] = useState<ProductionReworkCycle[]>([]);
   const [laborLifecycle, setLaborLifecycle] = useState<JobLaborLifecycleSummary | null>(null);
   const [jobUpdateCount, setJobUpdateCount] = useState(
@@ -340,6 +351,7 @@ export default function ProductionJobInspector({
     },
     [job.id, onJobUpdateSummaryChanged],
   );
+  useEffect(() => { let active=true; void hasProposalAccess().then((allowed)=>{if(active)setProposalAccess(allowed);}); return()=>{active=false;}; }, [auth.profile?.userId]);
 
   useEffect(() => {
     let live = true;
@@ -464,6 +476,7 @@ export default function ProductionJobInspector({
     ),
   ) as ProductionJobUpdate;
   const dirtyCount = Object.keys(changedDraft).length;
+  const jobNumberConflict=findJobNumberConflict(jobNumberOwners,draft.job_number,job.id);
 
   useEffect(() => {
     onOrdinarySaveStateChange({ jobId: job.id, dirty: dirtyCount > 0, saving });
@@ -547,6 +560,7 @@ export default function ProductionJobInspector({
       projectNameRef.current?.focus();
       return;
     }
+    if(jobNumberConflict){setSaveError(jobNumberConflictMessage(draft.job_number,jobNumberConflict));return;}
     if (
       !hours.valid ||
       !days.valid ||
@@ -831,6 +845,7 @@ export default function ProductionJobInspector({
                   <input
                     data-field="job-number"
                     value={draft.job_number}
+                    aria-invalid={Boolean(jobNumberConflict)}
                     onChange={(event) =>
                       updateDraft("job_number", event.target.value)
                     }
@@ -863,14 +878,14 @@ export default function ProductionJobInspector({
               </section>
               <section className="mt-5">
                 <h3 className={sectionTitle}>Documents</h3>
-                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
                   <button
                     type="button"
                     onClick={() => setTransmittalOpen(true)}
-                    className="inline-flex min-h-9 items-center justify-center gap-2 whitespace-nowrap border border-blue-800 bg-blue-50 px-3 text-sm font-bold text-blue-900 hover:bg-blue-100"
+                    className={documentActionClass}
                   >
-                    <Send className="h-5 w-5 shrink-0" />
-                    Letter of Transmittal
+                    <Send className="h-4 w-4 shrink-0" />
+                    Transmittal
                   </button>
                   <button
                     type="button"
@@ -879,11 +894,21 @@ export default function ProductionJobInspector({
                         `/purchasing?jobId=${encodeURIComponent(job.id)}`,
                       );
                     }}
-                    className="inline-flex min-h-9 items-center justify-center gap-2 whitespace-nowrap border border-blue-800 bg-blue-50 px-3 text-sm font-bold text-blue-900 hover:bg-blue-100"
+                    className={documentActionClass}
                   >
-                    <ClipboardList className="h-5 w-5 shrink-0" />
-                    Create Purchase Order
+                    <ClipboardList className="h-4 w-4 shrink-0" />
+                    Purchase
                   </button>
+                  {proposalAccess && (
+                    <button
+                      type="button"
+                      onClick={() => setProposalPanelOpen(true)}
+                      className={documentActionClass}
+                    >
+                      <FileText className="h-4 w-4 shrink-0" />
+                      Proposal
+                    </button>
+                  )}
                 </div>
               </section>
               <section className="mt-5">
@@ -1442,15 +1467,16 @@ export default function ProductionJobInspector({
               <div className={`text-[10px] font-bold uppercase tracking-[0.12em] ${saveError ? "text-red-800" : dirtyCount > 0 || scheduleIsStaged || scheduleIsIncomplete ? "text-amber-800" : saveMessage ? "text-emerald-800" : "text-slate-500"}`}>
                 {saving ? "Saving…" : saveError ? "Save failed" : dirtyCount > 0 ? `${dirtyCount} unsaved ${dirtyCount === 1 ? "field" : "fields"}` : saveMessage ? "Changes saved" : scheduleIsStaged ? "Schedule changes pending" : scheduleIsIncomplete ? "Schedule incomplete" : "No unsaved changes"}
               </div>
-              {saveError ? <div role="alert" className="mt-0.5 max-w-sm text-xs font-semibold text-red-800">{saveError}</div> : scheduleIsStaged && (dirtyCount > 0 || saving) ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Save job details first. Planned dates will remain staged.</div> : scheduleIsStaged && saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Job details saved. Schedule changes still require approval.</div> : scheduleIsStaged ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Planned dates remain staged for the existing Save All approval workflow.</div> : scheduleIsIncomplete ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Enter both planned dates to stage this schedule for Save All.</div> : saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">{saveMessage}</div> : null}
+              {jobNumberConflict ? <div role="alert" className="mt-0.5 max-w-sm text-xs font-semibold text-red-800">{jobNumberConflictMessage(draft.job_number,jobNumberConflict)}</div> : saveError ? <div role="alert" className="mt-0.5 max-w-sm text-xs font-semibold text-red-800">{saveError}</div> : scheduleIsStaged && (dirtyCount > 0 || saving) ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Save job details first. Planned dates will remain staged.</div> : scheduleIsStaged && saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Job details saved. Schedule changes still require approval.</div> : scheduleIsStaged ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Planned dates remain staged for the existing Save All approval workflow.</div> : scheduleIsIncomplete ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Enter both planned dates to stage this schedule for Save All.</div> : saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">{saveMessage}</div> : null}
             </div>
             <div className="flex flex-wrap justify-end gap-2">
               {dirtyCount > 0 && <button type="button" onClick={discardDraft} disabled={saving} className="h-9 border border-slate-500 bg-white px-3 text-xs font-bold uppercase text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-700 disabled:opacity-50">Discard</button>}
-              <button type="button" onClick={() => void saveDraft()} disabled={saving || dirtyCount === 0} className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Saving…" : saveError && dirtyCount > 0 ? "Retry save" : "Save changes"}</button>
+              <button type="button" onClick={() => void saveDraft()} disabled={saving || dirtyCount === 0 || Boolean(jobNumberConflict)} className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Saving…" : saveError && dirtyCount > 0 ? "Retry save" : "Save changes"}</button>
             </div>
           </div>
         )}
       </aside>
+      {proposalPanelOpen && proposalAccess && auth.profile && <ProposalPanel job={job} isAdmin={auth.profile.role==="admin"} onClose={()=>setProposalPanelOpen(false)}/>}
       {attachmentPreview && attachmentFullscreen && (
         <DocumentViewer
           key={`fullscreen-${attachmentPreview.attachment.id}`}

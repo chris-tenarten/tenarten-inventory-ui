@@ -13,6 +13,7 @@ import ProductionGantt from './components/ProductionGantt';
 import PlanningIssuesPanel from './components/PlanningIssuesPanel';
 import ProductionJobInspector from './components/ProductionJobInspector';
 import ProductionJobCreator from './components/ProductionJobCreator';
+import { findJobNumberConflict,jobNumberConflictMessage } from './job-identifiers';
 import ProductionQueue from './components/ProductionQueue';
 import ProductionTable from './components/ProductionTable';
 import UnscheduledBadge from './components/UnscheduledBadge';
@@ -666,6 +667,7 @@ export default function ProductionWorkspace() {
   }, []);
 
   async function handleCreateJob(input: NewProductionJob) {
+    const conflict=findJobNumberConflict(jobs,input.job_number);if(conflict)throw new Error(jobNumberConflictMessage(input.job_number,conflict));
     const proposedStart = input.planned_start;
     const proposedEnd = input.planned_end;
     const created = await createProductionJob({
@@ -681,6 +683,7 @@ export default function ProductionWorkspace() {
   async function handleUpdateJob(jobId: string, changes: ProductionJobUpdate) {
     const original = jobs.find((job) => job.id === jobId);
     if (!original) throw new Error('Production job is no longer available.');
+    if('job_number'in changes){const conflict=findJobNumberConflict(jobs,changes.job_number,jobId);if(conflict)throw new Error(jobNumberConflictMessage(changes.job_number,conflict));}
 
     setJobs((current) => sortJobs(current.map((job) => (
       job.id === jobId ? { ...job, ...changes } : job
@@ -1059,6 +1062,7 @@ export default function ProductionWorkspace() {
       {selectedJob && <ProductionJobInspector
         key={`${selectedJob.id}:${inspectorFocus ?? ''}`}
         job={stagedSchedules[selectedJob.id] ? { ...selectedJob, planned_start: stagedSchedules[selectedJob.id].proposed_planned_start, planned_end: stagedSchedules[selectedJob.id].proposed_planned_end } : selectedJob}
+        jobNumberOwners={jobs}
         jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? EMPTY_JOB_UPDATE_SUMMARY}
         onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged}
         onClose={closeInspector}

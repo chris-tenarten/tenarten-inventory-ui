@@ -20,6 +20,7 @@ import { productionValuesEqual } from './update-normalization';
 import type { ProductionScheduleBatchRpcArgs, ProductionScheduleBatchSuccess } from './schedule-batch-contract';
 import { isActiveProductionRework } from './rework';
 import { summarizeLaborLifecycles, type JobLaborLifecycleSummary } from './labor-lifecycle';
+import { canonicalJobNumber,findJobNumberConflict,isJobNumberUniqueViolation,jobNumberConflictMessage } from './job-identifiers';
 
 const JOB_COLUMNS = [
   'id',
@@ -282,16 +283,26 @@ export async function restoreProductionJob(job: ProductionJob): Promise<Producti
   return data as unknown as ProductionJob;
 }
 
+async function loadJobNumberConflict(jobNumber:string|null|undefined,excludeJobId?:string){
+  if(!jobNumber)return null;
+  const{data,error}=await supabase.from('jobs').select('id,name,job_number').not('job_number','is',null);
+  if(error)throw error;
+  return findJobNumberConflict((data??[]) as Array<Pick<ProductionJob,'id'|'name'|'job_number'>>,jobNumber,excludeJobId);
+}
+
 export async function createProductionJob(
   input: NewProductionJob,
 ): Promise<ProductionJob> {
   if (input.planned_start || input.planned_end) {
     throw new Error('Initial planned dates must use the guarded Production schedule workflow.');
   }
+  const canonicalInput={...input,job_number:canonicalJobNumber(input.job_number)};
+  const conflict=await loadJobNumberConflict(canonicalInput.job_number);
+  if(conflict)throw new Error(jobNumberConflictMessage(canonicalInput.job_number,conflict));
   const { data, error } = await supabase
     .from('jobs')
     .insert({
-      ...input,
+      ...canonicalInput,
       production_status: 'not_started',
       material_status: 'unknown',
       priority: 'normal',
@@ -304,7 +315,7 @@ export async function createProductionJob(
     .select(JOB_COLUMNS)
     .single();
 
-  if (error) throw error;
+  if(error){if(isJobNumberUniqueViolation(error))throw new Error(jobNumberConflictMessage(canonicalInput.job_number));throw error;}
 
   const createdJob = data as unknown as ProductionJob;
 
@@ -339,13 +350,15 @@ export async function updateProductionJob(
     const updatedCycle = await updateProductionReworkStatus(currentJob.rework_cycle.id, status, currentJob.rework_cycle.updated_at, null);
     return { ...currentJob, production_status: updatedCycle.production_status, updated_at: updatedCycle.updated_at, rework_cycle: updatedCycle };
   }
+  const canonicalChanges={...changes,...('job_number'in changes?{job_number:canonicalJobNumber(changes.job_number)}:{})};
   const effectiveChanges = Object.fromEntries(
-    Object.entries(changes).filter(([field, value]) => (
+    Object.entries(canonicalChanges).filter(([field, value]) => (
       !productionValuesEqual(field as keyof ProductionJob, currentJob[field as keyof ProductionJob], value)
     )),
   ) as ProductionJobUpdate;
   const changedFields = Object.keys(effectiveChanges) as Array<keyof ProductionJobUpdate>;
   if (changedFields.length === 0) return currentJob;
+  if('job_number'in effectiveChanges){const conflict=await loadJobNumberConflict(effectiveChanges.job_number,currentJob.id);if(conflict)throw new Error(jobNumberConflictMessage(effectiveChanges.job_number,conflict));}
 
   const { data, error } = await supabase
     .from('jobs')
@@ -354,7 +367,7 @@ export async function updateProductionJob(
     .select(JOB_COLUMNS)
     .single();
 
-  if (error) throw error;
+  if(error){if(isJobNumberUniqueViolation(error))throw new Error(jobNumberConflictMessage(effectiveChanges.job_number??currentJob.job_number));throw error;}
 
   const updatedJob = data as unknown as ProductionJob;
 

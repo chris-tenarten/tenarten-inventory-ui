@@ -7,6 +7,7 @@ import type { NewProductionJob, ProductionJob } from '../types';
 import type { JobUpdateSummary, ProductionJobUpdate } from '../jobs';
 import { findMatchingProductionJob, type ProductionJobMatch } from '../job-import-matching';
 import { deterministicJobMetadataExtractionProvider, type ExtractedJobMetadata } from '../job-import-provider';
+import { findJobNumberConflict,jobNumberConflictMessage } from '../job-identifiers';
 
 type Props = {
   open: boolean;
@@ -117,6 +118,7 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
   }, [method, open]);
 
   if (!open) return null;
+  const blankJobNumberConflict=findJobNumberConflict(jobs,draft.jobNumber);
 
   const update = <K extends keyof BlankJobDraft>(field: K, value: BlankJobDraft[K]) => {
     setDraft((current) => ({ ...current, [field]: value }));
@@ -146,6 +148,7 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
   const create = async () => {
     const validationError = validateDraft(draft);
     if (validationError) { setError(validationError); return; }
+    if(blankJobNumberConflict){setError(jobNumberConflictMessage(draft.jobNumber,blankJobNumberConflict));return;}
     if (!beginOperation()) return;
     try {
       const created = await onCreateJob(toNewJob(draft));
@@ -277,7 +280,7 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <label className={labelClass}>Project name<input ref={nameRef} value={draft.name} onChange={(e) => update('name', e.target.value)} className={inputClass} /></label>
               <label className={labelClass}>Customer<input value={draft.customer} onChange={(e) => update('customer', e.target.value)} list="production-customer-suggestions" autoComplete="off" className={inputClass} /></label>
-              <label className={labelClass}>Job number<input value={draft.jobNumber} onChange={(e) => update('jobNumber', e.target.value)} className={inputClass} /></label>
+              <label className={labelClass}>Job number<input value={draft.jobNumber} onChange={(e) => update('jobNumber', e.target.value)} aria-invalid={Boolean(blankJobNumberConflict)} aria-describedby={blankJobNumberConflict?'production-job-number-conflict':undefined} className={inputClass} />{blankJobNumberConflict&&<span id="production-job-number-conflict" className="mt-1 block text-xs font-semibold text-red-700">{jobNumberConflictMessage(draft.jobNumber,blankJobNumberConflict)} <button type="button" className="underline" onClick={()=>{const existing=blankJobNumberConflict;reset();onClose();onOpenJob(existing);}}>Open existing Job</button></span>}</label>
               <label className={labelClass}>Estimate number<input value={draft.estimateNumber} onChange={(e) => update('estimateNumber', e.target.value)} className={inputClass} /></label>
               <label className={labelClass}>Work order<input value={draft.workOrderNumber} onChange={(e) => update('workOrderNumber', e.target.value)} className={inputClass} /></label>
               <label className={labelClass}>Color plate<input value={draft.colorPlateNumber} onChange={(e) => update('colorPlateNumber', e.target.value)} className={inputClass} /></label>
@@ -301,7 +304,7 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
         </div>
         <footer className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-300 bg-slate-50 px-4 py-3 sm:px-5">
           <button type="button" onClick={() => { setDraft(emptyDraft()); setError(''); setMethod('choose'); }} disabled={saveState === 'saving'} className="h-10 border border-slate-400 bg-white px-4 text-xs font-bold uppercase tracking-[0.07em] text-slate-700 hover:bg-slate-100 disabled:opacity-50">Back</button>
-          <button type="button" onClick={() => void create()} disabled={saveState === 'saving'} className="inline-flex h-10 items-center gap-2 border border-blue-900 bg-blue-900 px-5 text-xs font-bold uppercase tracking-[0.07em] text-white hover:bg-blue-950 disabled:opacity-50"><Plus className="h-4 w-4" />{saveState === 'saving' ? 'Creating…' : 'Create Job'}</button>
+          <button type="button" onClick={() => void create()} disabled={saveState === 'saving'||Boolean(blankJobNumberConflict)} className="inline-flex h-10 items-center gap-2 border border-blue-900 bg-blue-900 px-5 text-xs font-bold uppercase tracking-[0.07em] text-white hover:bg-blue-950 disabled:opacity-50"><Plus className="h-4 w-4" />{saveState === 'saving' ? 'Creating…' : 'Create Job'}</button>
         </footer>
         </>}
         {method === 'import' && <>

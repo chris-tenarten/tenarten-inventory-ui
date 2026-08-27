@@ -1,5 +1,6 @@
 import type { ProductionJob } from './types';
 import type { ExtractedJobMetadata } from './job-import-provider';
+import { normalizedJobNumber } from './job-identifiers';
 
 const normalized = (value: string | null | undefined) => value?.trim().toLocaleLowerCase() ?? '';
 
@@ -17,7 +18,10 @@ export function findMatchingProductionJob(jobs: ProductionJob[], imported: Extra
     const target = normalized(value);
     return target ? jobs.find((job) => normalized(String(job[field] ?? '')) === target) : undefined;
   };
-  const jobNumber = exact('job_number', imported.jobNumber);
+  const importedJobNumber = normalizedJobNumber(imported.jobNumber);
+  const jobNumber = importedJobNumber
+    ? jobs.find((job) => normalizedJobNumber(job.job_number) === importedJobNumber)
+    : undefined;
   if (jobNumber) return { job: jobNumber, matchedBy: 'job_number' };
   const workOrder = exact('work_order_number', imported.workOrderNumber);
   if (workOrder) return { job: workOrder, matchedBy: 'work_order_number' };
