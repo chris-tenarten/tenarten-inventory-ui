@@ -1,6 +1,6 @@
 import {createClient} from 'npm:@supabase/supabase-js@2.101.1';
 import {PDFDocument,StandardFonts,rgb} from 'npm:pdf-lib@1.17.1';
-import{buildProposalPdfModel,paginateProposalPdf,PROPOSAL_PDF_VERSION}from'./proposal-pdf-model.ts';
+import{buildProposalPdfModel,paginateProposalPdf,PROPOSAL_ESCALATION_NOTICE,PROPOSAL_LEAD_TIME_NOTICE,PROPOSAL_PDF_VERSION,wrapProposalText}from'./proposal-pdf-model.ts';
 import{tenartenLogo}from'./tenarten-logo.ts';
 
 const allowed=(Deno.env.get('TENOPS_ALLOWED_ORIGINS')||'http://localhost:3000').split(',').map(v=>v.trim()).filter(Boolean);
@@ -18,7 +18,7 @@ export async function render(snapshot:Record<string,unknown>){
     if(pageLayout.pageNumber===1){
       page.drawImage(logo,{x:32,y:700,width:66,height:67.55});text('Tenarten Terrazzo Co.',106,752,15,bold,navy);text('PRECAST MANUFACTURING',106,738,7,bold);text('2933 Eisenhower St., Suite 120',106,725);text('Carrollton, TX 75007',106,714);text('www.precasttz.com',106,703,7,regular,navy);text('Estimate',478,750,18,bold,ink);rect(478,716,102,22);if(model.revised)text('REVISED',500,723,10,bold,red);page.drawLine({start:{x:32,y:693},end:{x:580,y:693},thickness:1.5,color:navy});
       rect(32,610,274,73);rect(306,610,274,73);text('Name / Address',39,671,6,bold,gray);wrapped([model.customerName,model.customerAddress,model.customerContact].filter(Boolean).join('\n'),39,657,255,7.5,6);[['Date',model.proposalDate],['Estimate #',model.estimateNumber],['Valid for',`${model.validDays} days`],['Delivery',model.requestedDelivery]].forEach(([label,value],index)=>{text(label,315,670-index*15,6,bold,gray);text(value,390,670-index*15,7.2,index===1?bold:regular);});
-      [['F.O.B.',model.fob],['Side Mark',model.sideMark],['Sales Rep',model.salesRep],['Terms',model.terms]].forEach(([label,value],index)=>{const x=32+index*137;rect(x,576,137,34,pale);text(label,x+6,598,6,bold,gray);text(value,x+6,584,7,bold);});wrapped(model.disclaimer,35,562,540,6.2,7);
+      [['F.O.B.',model.fob],['Side Mark',model.sideMark],['Sales Rep',model.salesRep],['Terms',model.terms]].forEach(([label,value],index)=>{const x=32+(index%2)*137,y=580-Math.floor(index/2)*30;rect(x,y,137,30,pale);text(label,x+6,y+18,6,bold,gray);text(value,x+6,y+7,7,bold);});rect(306,550,274,60);page.drawLine({start:{x:306,y:580},end:{x:580,y:580},thickness:.55,color:gray});[[PROPOSAL_ESCALATION_NOTICE,594],[PROPOSAL_LEAD_TIME_NOTICE,564]].forEach(([notice,top])=>{const lines=wrapProposalText(notice,254,6,(candidate,size)=>bold.widthOfTextAtSize(candidate,size)).slice(0,3);lines.forEach((line,index)=>text(line,316+(254-bold.widthOfTextAtSize(line,6))/2,top-index*8,6,bold));});const[materialDisclaimer,...dimensionDisclaimerParts]=safe(model.disclaimer).split(/\n\s*\n/);rect(32,506,274,44);rect(306,506,274,44);wrapped(materialDisclaimer,39,535,258,5.4,4);wrapped(dimensionDisclaimerParts.join(' '),313,535,258,5.4,4);
     }else{
       text('Tenarten Terrazzo Co.',32,754,12,bold,navy);text(`Estimate ${model.estimateNumber}`,365,754,11,bold,navy);text(`${model.projectNumber}${model.projectNumber&&model.projectName?' - ':''}${model.projectName}`,32,737,7,bold);text(`Page ${pageLayout.pageNumber} of ${pageLayout.pageCount}`,500,737,7,regular,gray);if(model.revised)text('REVISED',501,718,9,bold,red);page.drawLine({start:{x:32,y:710},end:{x:580,y:710},thickness:1.2,color:navy});
     }

@@ -1,4 +1,6 @@
 import type { Proposal,ProposalLine } from './types';
+export const proposalEscalationNotice='This estimate may be subject to an escalation if not supplied by requested date';
+export const proposalLeadTimeNotice='Lead time for materials and fabrication durations TBD upon receipt of notice to proceed';
 const amount=(value:string)=>{const parsed=Number(value);return Number.isFinite(parsed)?parsed:0;};
 export const lineTotal=(line:Pick<ProposalLine,'quantity'|'rate'|'lineType'>)=>line.lineType==='included'||line.lineType==='informational'?0:Math.round(amount(line.quantity)*amount(line.rate)*100)/100;
 export function proposalTotals(lines:ProposalLine[],taxEnabled:boolean,taxRate:string){const subtotal=Math.round(lines.reduce((sum,line)=>sum+lineTotal(line),0)*100)/100;const tax=taxEnabled?Math.round(subtotal*amount(taxRate))/100:0;return{subtotal,tax,total:Math.round((subtotal+tax)*100)/100};}

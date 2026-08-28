@@ -1,5 +1,7 @@
 // @ts-nocheck -- Shared pure model accepts both database snake_case and UI camelCase snapshots.
 export const PROPOSAL_PDF_VERSION='proposal-pdf-v1';
+export const PROPOSAL_ESCALATION_NOTICE='This estimate may be subject to an escalation if not supplied by requested date';
+export const PROPOSAL_LEAD_TIME_NOTICE='Lead time for materials and fabrication durations TBD upon receipt of notice to proceed';
 const value=(source,camel,snake=camel)=>String(source?.[camel]??source?.[snake]??'');
 const number=(source,camel,snake=camel)=>{const parsed=Number(source?.[camel]??source?.[snake]??0);return Number.isFinite(parsed)?parsed:0;};
 export function buildProposalPdfModel(snapshot){
