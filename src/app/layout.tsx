@@ -8,11 +8,21 @@ import { AccountPreferencesProvider } from '@/lib/account-preferences';
 import { BRANDING } from '@/lib/dev-branding.mjs';
 
 export const metadata: Metadata = {
+  applicationName: BRANDING.productName,
   title: {
     default: `${BRANDING.productName} Cloud — Dashboard`,
     template: `${BRANDING.productName} Cloud — %s`,
   },
   description: 'Tenarten inventory and material management',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: BRANDING.productName,
+    statusBarStyle: 'default',
+  },
+  formatDetection: {
+    telephone: false,
+  },
   icons: {
     icon: '/logo.png',
     shortcut: '/logo.png',
@@ -24,6 +34,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
+  themeColor: BRANDING.defaultAppearance === 'dark' ? '#11151b' : '#eef1f4',
 };
 
 export default function RootLayout({
