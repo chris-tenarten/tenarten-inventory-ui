@@ -17,7 +17,7 @@ export function DevWordmarkOverlay() {
 
 export function DevLoginWordmark() {
   return (
-    <span className="pointer-events-none relative mx-auto inline-block w-40 select-none sm:w-56">
+    <span data-dev-branding-login-lockup className="pointer-events-none relative mx-auto inline-block w-40 select-none sm:w-56">
       <Image
         data-dev-branding-login-wordmark
         src="/dev-branding/tendev-overlay.webp"

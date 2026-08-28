@@ -269,19 +269,37 @@ export default function ClientLayoutShell({
   }, [accountPreferences.accountScoped, accountPreferences.preferences.display_size]);
 
   useEffect(() => {
-    function handleScroll() {
-      const scrollY = window.scrollY;
+    let frame: number | null = null;
+    let initialized = false;
+    let lastScrollY = Math.max(0, window.scrollY);
 
-      setHasScrolled((current) => {
-        if (current) {
-          return scrollY > 4;
-        }
+    function updateHeaderState() {
+      frame = null;
+      const scrollY = Math.max(0, window.scrollY);
+      const delta = scrollY - lastScrollY;
+      lastScrollY = scrollY;
 
-        return scrollY > 36;
-      });
+      if (!initialized) {
+        initialized = true;
+        setHasScrolled(scrollY >= 64);
+        return;
+      }
+
+      // Ignore iOS bounce/sub-pixel noise and require intentional movement
+      // across separate enter/exit thresholds. This prevents the header's own
+      // height transition from feeding back into its scroll state.
+      if (Math.abs(delta) < 1) return;
+      setHasScrolled((current) => current
+        ? !(scrollY <= 8 && delta < 0)
+        : scrollY >= 64 && delta > 0);
     }
 
-    handleScroll();
+    function handleScroll() {
+      if (frame !== null) return;
+      frame = window.requestAnimationFrame(updateHeaderState);
+    }
+
+    updateHeaderState();
 
     window.addEventListener('scroll', handleScroll, {
       passive: true,
@@ -289,6 +307,7 @@ export default function ClientLayoutShell({
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      if (frame !== null) window.cancelAnimationFrame(frame);
     };
   }, []);
 
@@ -316,7 +335,7 @@ export default function ClientLayoutShell({
   return (
     <div data-app-shell>
       <WelcomeHero />
-      <header data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
+      <header data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} data-compact-header={hasScrolled ? 'true' : undefined} className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
         <div
           data-shell-header-inner
           className={`relative mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
@@ -356,7 +375,7 @@ export default function ClientLayoutShell({
                 className={`shrink-0 object-contain transition-all duration-200 ${hasScrolled ? 'h-9 w-auto' : 'h-11 w-auto sm:h-12'}`}
               />}
 
-              <div className="flex min-w-0 items-center gap-2">
+              <div data-shell-brand-content className="flex min-w-0 items-center gap-2">
                 <div className="relative min-w-0 leading-none">
                   <div
                     data-shell-product-name
@@ -471,6 +490,7 @@ export default function ClientLayoutShell({
             <div data-theme-access-card className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)] sm:max-w-2xl lg:max-w-3xl">
               <div data-theme-access-brand className="border-b border-slate-300 bg-gradient-to-b from-white to-slate-100 px-4 py-5 text-center sm:px-8 sm:py-10 lg:px-10 lg:py-12">
                 <Image
+                  data-login-primary-logo
                   src="/logo.png"
                   alt="Tenarten logo"
                   width={256}

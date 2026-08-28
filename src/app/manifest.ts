@@ -5,6 +5,7 @@ export const dynamic = 'force-static';
 
 export default function manifest(): MetadataRoute.Manifest {
   const dark = BRANDING.defaultAppearance === 'dark';
+  const iconPrefix = BRANDING.showDeveloperArtwork ? 'tendev-app-icon' : 'tenops-gold-app-icon';
 
   return {
     id: '/my-work',
@@ -19,8 +20,14 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: 'any',
     icons: [
       {
-        src: '/logo.png',
-        sizes: 'any',
+        src: `/${iconPrefix}-192.png`,
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: `/${iconPrefix}-512.png`,
+        sizes: '512x512',
         type: 'image/png',
         purpose: 'any',
       },
