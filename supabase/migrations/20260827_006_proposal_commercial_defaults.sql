@@ -15,7 +15,7 @@ begin
   if not public.has_proposal_access() then raise exception 'TenOps Proposal access denied.' using errcode='42501'; end if;
   select * into strict j from public.jobs where id=p_job_id;
   if nullif(btrim(j.estimate_number),'') is not null and j.estimate_number ~ '^.+-[0-9]+\.[0-9]+$' then base:=regexp_replace(j.estimate_number,'-[0-9]+\.[0-9]+$',''); major:=split_part(regexp_replace(j.estimate_number,'^.*-([0-9]+\.[0-9]+)$','\1'),'.',1)::integer; minor:=split_part(regexp_replace(j.estimate_number,'^.*-([0-9]+\.[0-9]+)$','\1'),'.',2)::integer;
-  else base:='Q'||to_char(current_date,'YY')||'-'||coalesce(nullif(regexp_replace(coalesce(j.job_number,''),'\D','','g'),''),to_char(current_date,'MMDD')); end if;
+  else base:='Q'||coalesce(nullif(btrim(j.job_number),''),to_char(current_date,'YY-MMDD')); end if;
   number:=base||'-'||major||'.'||minor;
   if exists(select 1 from public.proposals where estimate_number=number) then raise exception 'A Proposal already exists for estimate %.',number using errcode='23505'; end if;
   insert into public.proposals(id,job_id,lineage_id,estimate_base,version_major,version_minor,estimate_number,customer_name,project_name,project_number,requested_delivery,sales_rep,tax_county,tax_rate,submitted_by_name,submitted_by_phone,submitted_by_email,created_by_user_id,created_by_name)
