@@ -499,6 +499,27 @@ html[data-appearance="dark"] textarea::placeholder {
   color: var(--text-muted) !important;
 }
 
+html[data-appearance="dark"] [data-my-work] {
+  --text-primary: #f5f7fa;
+  --text-secondary: #d0d6df;
+  --text-muted: #a5afbd;
+}
+
+html[data-appearance="dark"] [data-my-work] ::selection {
+  background: #60a5fa;
+  color: #08111f;
+}
+
+html[data-appearance="dark"] [data-welcome-hero][data-dev-branding="true"],
+html[data-appearance="dark"] [data-welcome-hero-cover][data-dev-branding="true"] {
+  --tendev-signature-pink: #f04f9d;
+}
+
+html[data-appearance="dark"] [data-welcome-hero][data-dev-branding="true"] [data-welcome-progress-fill],
+html[data-appearance="dark"] [data-welcome-hero-cover][data-dev-branding="true"] [data-welcome-progress-fill] {
+  background-color: var(--tendev-signature-pink) !important;
+}
+
 [data-job-update-mention-editor][data-empty="true"]::before {
   color: #64748b;
   content: attr(data-placeholder);

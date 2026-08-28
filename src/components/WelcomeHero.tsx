@@ -4,6 +4,7 @@ import Image from "next/image";
 import { X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { BRANDING } from "@/lib/dev-branding.mjs";
 import { ROLE_LABELS } from "@/lib/rbac";
 import { supabase } from "@/lib/supabase";
 import { productionTagClassName } from "@/modules/production/components/production-tag";
@@ -265,6 +266,7 @@ export default function WelcomeHero() {
       ref={coverRef}
       hidden={!heroStartingCoverVisible}
       data-welcome-hero-cover
+      data-dev-branding={BRANDING.showDeveloperArtwork ? "true" : undefined}
       className="fixed inset-0 z-[81] bg-[#eef1f4]"
       aria-hidden="true"
     >
@@ -284,7 +286,7 @@ export default function WelcomeHero() {
               <span className="tabular-nums">0%</span>
             </div>
             <div className="mt-2 h-1 overflow-hidden bg-slate-300">
-              <div className="h-full w-0 bg-slate-800" />
+              <div data-welcome-progress-fill className="h-full w-0 bg-slate-800" />
             </div>
           </div>
         </div>
@@ -292,6 +294,7 @@ export default function WelcomeHero() {
     </div>
     {heroVisible ? <div
     data-welcome-hero
+    data-dev-branding={BRANDING.showDeveloperArtwork ? "true" : undefined}
     data-hero-animation-complete={heroAnimationComplete ? "true" : "false"}
     data-critical-app-ready={criticalAppReady ? "true" : "false"}
     className="fixed inset-0 z-[80]"

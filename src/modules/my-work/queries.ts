@@ -1,0 +1,15 @@
+import {supabase} from '@/lib/supabase';
+import {loadJobUpdateCollaborators} from '@/modules/production/jobs';
+import {loadProductionJobOptions} from '@/modules/production/job-options';
+import type {WorkCollaborator,WorkJob,WorkTask,WorkTaskColor} from './types';
+
+type TaskRow={id:string;title:string;notes:string;visibility:'private'|'shared';creator_user_id:string;creator_name:string;assignee_user_id:string;assignee_name:string;due_date:string|null;context_type:string|null;context_id:string|null;job_number:string|null;job_name:string|null;job_customer:string|null;color_key:WorkTaskColor;completed_at:string|null;created_at:string;updated_at:string};
+export async function loadMyWorkTasks():Promise<WorkTask[]>{
+  const{data,error}=await supabase.rpc('list_my_work_tasks');if(error)throw error;return((data??[]) as TaskRow[]).map(row=>({id:row.id,title:row.title,notes:row.notes||'',visibility:row.visibility,creatorUserId:row.creator_user_id,creatorName:row.creator_name||'TenOps user',assigneeUserId:row.assignee_user_id,assigneeName:row.assignee_name||'TenOps user',dueDate:row.due_date||'',contextType:row.context_type||'',contextId:row.context_id||'',jobNumber:row.job_number||'',jobName:row.job_name||'',jobCustomer:row.job_customer||'',color:row.color_key||'neutral',completedAt:row.completed_at||'',createdAt:row.created_at,updatedAt:row.updated_at}));
+}
+export async function loadWorkCollaborators():Promise<WorkCollaborator[]>{return loadJobUpdateCollaborators();}
+export async function loadWorkJobs():Promise<WorkJob[]>{return(await loadProductionJobOptions()).map(job=>({id:job.id,jobNumber:job.job_number||'',name:job.name||'',customer:job.customer||''}));}
+export async function createWorkTask(input:{title:string;assigneeUserId?:string;dueDate?:string;jobId?:string;notes?:string;color?:WorkTaskColor}){const{data,error}=await supabase.rpc('create_my_work_task',{p_title:input.title,p_assignee_user_id:input.assigneeUserId||null,p_due_date:input.dueDate||null,p_context_type:input.jobId?'job':null,p_context_id:input.jobId||null,p_notes:input.notes||'',p_color_key:input.color||'neutral'});if(error)throw error;return String(data);}
+export async function updateWorkTask(input:{id:string;title:string;notes:string;assigneeUserId:string;dueDate:string;jobId:string;color:WorkTaskColor}){const{error}=await supabase.rpc('update_my_work_task',{p_task_id:input.id,p_title:input.title,p_notes:input.notes,p_assignee_user_id:input.assigneeUserId,p_due_date:input.dueDate||null,p_context_type:input.jobId?'job':null,p_context_id:input.jobId||null,p_color_key:input.color});if(error)throw error;}
+export async function setWorkTaskCompleted(id:string,completed:boolean){const{error}=await supabase.rpc('set_my_work_task_completed',{p_task_id:id,p_completed:completed});if(error)throw error;}
+export async function loadMyOpenTaskCountForJob(jobId:string){const{count,error}=await supabase.from('work_tasks').select('id',{count:'exact',head:true}).eq('context_type','job').eq('context_id',jobId).is('completed_at',null);if(error)throw error;return count??0;}

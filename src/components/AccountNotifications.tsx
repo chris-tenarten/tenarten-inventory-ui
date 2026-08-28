@@ -31,7 +31,7 @@ type GeneralNotification = {
   notification_type: string;
   title: string;
   body: string;
-  metadata: { role?: AppRole; job_id?: string; update_id?: string; job_number?: string | null; job_name?: string; purpose?: string; source_available?: boolean };
+  metadata: { role?: AppRole; job_id?: string; update_id?: string; task_id?: string; job_number?: string | null; job_name?: string; purpose?: string; source_available?: boolean };
   read_at: string | null;
   created_at: string;
 };
@@ -213,6 +213,11 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
     if (item.kind === "general" && item.notification_type === "appearance_available") {
       dispatchOnboarding({ type: "close" });
       router.push("/settings#appearance");
+      return;
+    }
+    if (item.kind === "general" && item.notification_type.startsWith("shared_task_") && item.metadata.task_id) {
+      dispatchOnboarding({ type: "close" });
+      router.push(`/my-work?view=shared&taskId=${encodeURIComponent(item.metadata.task_id)}`);
       return;
     }
     if (item.kind === "job_update" && item.source_available) {

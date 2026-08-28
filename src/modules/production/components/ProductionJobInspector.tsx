@@ -6,6 +6,7 @@ import DocumentViewer from "@/components/documents/DocumentViewer";
 import { useAuth } from "@/lib/auth";
 import ProposalPanel from "@/modules/proposals/ProposalPanel";
 import { hasProposalAccess } from "@/modules/proposals/queries";
+import {loadMyOpenTaskCountForJob} from "@/modules/my-work/queries";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
 import PlanningPanel from "@/modules/planning/PlanningPanel";
 import type { StagedPlanningSchedules } from "@/modules/planning/schedule-staging";
@@ -324,6 +325,7 @@ export default function ProductionJobInspector({
   const [planningEditorOpen, setPlanningEditorOpen] = useState(false);
   const [proposalAccess, setProposalAccess] = useState(auth.profile?.role === "admin");
   const [proposalPanelOpen, setProposalPanelOpen] = useState(false);
+  const [myOpenTaskCount,setMyOpenTaskCount]=useState(0);
   const [reworkCycles, setReworkCycles] = useState<ProductionReworkCycle[]>([]);
   const [laborLifecycle, setLaborLifecycle] = useState<JobLaborLifecycleSummary | null>(null);
   const [jobUpdateCount, setJobUpdateCount] = useState(
@@ -390,6 +392,12 @@ export default function ProductionJobInspector({
       live = false;
     };
   }, [job.id, job.updated_at]);
+
+  useEffect(() => {
+    let live = true;
+    loadMyOpenTaskCountForJob(job.id).then((count)=>{if(live)setMyOpenTaskCount(count);}).catch(()=>{if(live)setMyOpenTaskCount(0);});
+    return()=>{live=false;};
+  },[job.id]);
 
   useEffect(() => {
     let live = true;
@@ -910,6 +918,7 @@ export default function ProductionJobInspector({
                     </button>
                   )}
                 </div>
+                {myOpenTaskCount>0&&<button type="button" onClick={()=>window.location.assign(`/my-work?jobId=${encodeURIComponent(job.id)}`)} className="mt-3 inline-flex min-h-10 items-center gap-2 border border-slate-300 bg-slate-50 px-3 text-xs font-bold text-blue-800 hover:bg-blue-50"><ClipboardList className="h-4 w-4"/>View my tasks for this Job <span className="text-slate-500">({myOpenTaskCount})</span></button>}
               </section>
               <section className="mt-5">
                 <h3 className={sectionTitle}>Planning</h3>

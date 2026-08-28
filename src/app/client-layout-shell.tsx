@@ -127,30 +127,7 @@ function HomeIcon() {
   );
 }
 
-function SettingsIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z" />
-    </svg>
-  );
-}
-
-function LogoutIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M10 17 15 12l-5-5" />
-      <path d="M15 12H3" />
-      <path d="M21 3v18" />
-    </svg>
-  );
-}
+function MyWorkIcon() { return <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m8 9 2 2 4-4M8 16h8"/></svg>; }
 
 function navClass(isActive: boolean) {
   return isActive
@@ -408,20 +385,6 @@ export default function ClientLayoutShell({
               </div>
             </Link>
 
-            {shellUnlocked && (
-              <button
-                data-theme-logout
-                type="button"
-                onClick={handleLogout}
-                title={t('shell.logout')}
-                aria-label={t('shell.logout')}
-                className={`absolute right-1.5 top-1.5 inline-flex h-7 w-7 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 focus-visible:ring-2 focus-visible:ring-red-600 sm:hidden ${
-                  hasScrolled ? 'hidden' : ''
-                }`}
-              >
-                <LogoutIcon />
-              </button>
-            )}
           </div>
 
           <div data-shell-nav-row className="flex w-full items-center lg:w-auto lg:justify-end">
@@ -450,7 +413,7 @@ export default function ClientLayoutShell({
                       )}`}
                     >
                       <Icon />
-                      <span className={item.href === '/' ? 'hidden sm:inline' : ''}>{t(item.labelKey)}</span>
+                      <span className={item.href === '/' || item.href === '/my-work' ? 'hidden sm:inline' : ''}>{t(item.labelKey)}</span>
                     </Link>
                   );
                 })}
@@ -460,6 +423,14 @@ export default function ClientLayoutShell({
                 <DomainNav pathname={pathname} labelKey="nav.purchasing" href="/purchasing" icon={CartIcon} items={purchasingNavItems} />
                 <div className="flex shrink-0 items-center">
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
+                  <Link
+                    href="/my-work"
+                    className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 px-2 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-3 sm:text-[12px] ${navClass(pathname === '/my-work' || pathname.startsWith('/my-work/'))}`}
+                  >
+                    <MyWorkIcon />
+                    <span className="hidden sm:inline">{t('nav.myWork')}</span>
+                  </Link>
+                  <AccountNotifications onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   {auth.isAuthenticated && auth.profile?.isActive ? <div ref={accountMenuRef} data-account-identity className="relative">
                     <button
                       type="button"
@@ -485,31 +456,9 @@ export default function ClientLayoutShell({
                       <button role="menuitem" type="button" onClick={() => { setAccountMenuOpen(false); void handleLogout(); }} className="block w-full px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 hover:text-red-800">Sign out</button>
                     </div> : null}
                   </div> : null}
-                  <AccountNotifications onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
-                  <Link
-                    href="/settings"
-                    aria-label={t('nav.settings')}
-                    title={t('nav.settings')}
-                    className={`inline-flex h-9 w-9 shrink-0 items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 sm:h-10 sm:w-10 ${pathname === '/settings' || pathname.startsWith('/settings/') ? 'bg-slate-200 text-slate-950 ring-1 ring-inset ring-slate-300' : 'text-slate-600 hover:bg-slate-200/40 hover:text-slate-950'}`}
-                  >
-                    <SettingsIcon />
-                  </Link>
                 </div>
               </nav>
             )}
-
-            {shellUnlocked ? (
-              <button
-                data-theme-logout
-                type="button"
-                onClick={handleLogout}
-                title={t('shell.logout')}
-                aria-label={t('shell.logout')}
-                className="hidden h-9 w-9 shrink-0 items-center justify-center text-red-700 transition hover:bg-red-50 hover:text-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 sm:inline-flex sm:h-10 sm:w-10"
-              >
-                <LogoutIcon />
-              </button>
-            ) : null}
           </div>
         </div>
       </header>
