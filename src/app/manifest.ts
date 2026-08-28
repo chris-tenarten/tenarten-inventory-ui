@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { BRANDING } from '@/lib/dev-branding.mjs';
 
+export const dynamic = 'force-static';
+
 export default function manifest(): MetadataRoute.Manifest {
   const dark = BRANDING.defaultAppearance === 'dark';
 
