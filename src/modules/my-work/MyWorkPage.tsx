@@ -29,11 +29,12 @@ import ToolboxLauncher from "@/components/ToolboxLauncher";
 import { supabase } from "@/lib/supabase";
 import { openProductionJob } from "@/modules/production/job-options";
 import InboxDialog from "./InboxDialog";
-import { isTenOpsSystemInboxUser, loadInboxMessages, loadInboxRecipients, type InboxMessage } from "./inbox";
+import { isTenOpsSystemInboxUser, loadInboxMessages, loadInboxUnreadCount, type InboxMessage } from "./inbox";
 import {
   createWorkTask,
   finalizeWorkTaskCreation,
   loadMyWorkTasks,
+  loadWorkTaskAttachmentCounts,
   loadWorkTaskAttachments,
   loadWorkCollaborators,
   loadWorkJobs,
@@ -44,7 +45,7 @@ import {
   uploadWorkTaskAttachments,
 } from "./queries";
 import type { WorkCollaborator, WorkJob, WorkTask, WorkTaskAttachment, WorkTaskColor } from "./types";
-import AttachmentFileInput from "./AttachmentFileInput";
+import AttachmentFileInput, { StagedImagePreview } from "./AttachmentFileInput";
 
 type View = "today" | "all" | "private" | "shared";
 type SortMode = "attention" | "due" | "recent" | "color" | "job";
@@ -101,8 +102,8 @@ function ColorPicker({ value, onChange }: { value: WorkTaskColor; onChange: (val
 }
 
 const attachmentSize=(bytes:number)=>bytes<1024?`${bytes} B`:bytes<1048576?`${Math.ceil(bytes/1024)} KB`:`${(bytes/1048576).toFixed(1)} MB`;
-function StagedAttachments({files,onAdd,onRemove,onError,disabled=false}:{files:File[];onAdd:(files:File[])=>void;onRemove:(index:number)=>void;onError:(message:string)=>void;disabled?:boolean}){
-  return <div><label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700"><Upload className="h-4 w-4" />Add attachments<AttachmentFileInput disabled={disabled} onFiles={onAdd} onError={onError} /></label>{files.length>0&&<div className="mt-2 space-y-1">{files.map((file,index)=><div key={`${file.name}-${file.size}-${index}`} className="flex min-w-0 items-center gap-2 rounded border border-slate-200 px-2 py-1.5 text-xs"><Paperclip className="h-3.5 w-3.5 shrink-0" /><span className="min-w-0 flex-1 truncate">{file.name}</span><span className="shrink-0 text-slate-400">{attachmentSize(file.size)}</span><button type="button" onClick={()=>onRemove(index)} aria-label={`Remove ${file.name}`} className="flex h-9 w-9 shrink-0 items-center justify-center text-red-700"><X className="h-4 w-4" /></button></div>)}</div>}</div>;
+function StagedAttachments({files,onAdd,onRemove,onError,onPreparing,disabled=false}:{files:File[];onAdd:(files:File[])=>void;onRemove:(index:number)=>void;onError:(message:string)=>void;onPreparing?:(preparing:boolean)=>void;disabled?:boolean}){
+  return <div><label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700"><Upload className="h-4 w-4" />Add attachments<AttachmentFileInput disabled={disabled} onFiles={onAdd} onError={onError} onPreparing={onPreparing} /></label>{files.length>0&&<div className="mt-2 space-y-1">{files.map((file,index)=><div key={`${file.name}-${file.size}-${index}`} className="flex min-w-0 items-center gap-2 rounded border border-slate-200 px-2 py-1.5 text-xs"><StagedImagePreview file={file} /><Paperclip className="h-3.5 w-3.5 shrink-0" /><span className="min-w-0 flex-1 truncate">{file.name}</span><span className="shrink-0 text-slate-400">{attachmentSize(file.size)}</span><button type="button" onClick={()=>onRemove(index)} aria-label={`Remove ${file.name}`} className="flex h-9 w-9 shrink-0 items-center justify-center text-red-700"><X className="h-4 w-4" /></button></div>)}</div>}</div>;
 }
 
 function AttachmentList({attachments,currentUserId,creatorUserId,onChanged,setError}:{attachments:WorkTaskAttachment[];currentUserId:string;creatorUserId:string;onChanged:()=>Promise<void>;setError:(value:string)=>void}){
@@ -154,6 +155,7 @@ export default function MyWorkPage() {
   const [completedOpen, setCompletedOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [attachmentActivity,setAttachmentActivity]=useState("");
   const [error, setError] = useState("");
   const [filterJobId, setFilterJobId] = useState("");
   const [focusTaskId, setFocusTaskId] = useState("");
@@ -177,14 +179,14 @@ export default function MyWorkPage() {
     if (!auth.profile?.isActive) return;
     setLoading(true);
     try {
-      const [nextTasks, nextUsers, nextJobs] = await Promise.all([loadMyWorkTasks(), loadWorkCollaborators(), loadWorkJobs()]);
-      setTasks(nextTasks);
-      setCollaborators(nextUsers.filter((user) => user.userId !== auth.profile?.userId));
-      setJobs(nextJobs);
+      const nextTasks = await loadMyWorkTasks();
+      setTasks((current)=>{const counts=new Map(current.map((task)=>[task.id,task.attachmentCount]));return nextTasks.map((task)=>({...task,attachmentCount:counts.get(task.id)??0}));});
       setError("");
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to load My Work."); }
     finally { setLoading(false); }
-  }, [auth.profile?.isActive, auth.profile?.userId]);
+  }, [auth.profile?.isActive]);
+
+  const refreshAttachmentCounts=useCallback(async()=>{const counts=await loadWorkTaskAttachmentCounts();setTasks((current)=>current.map((task)=>({...task,attachmentCount:counts.get(task.id)??0})));},[]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -211,13 +213,14 @@ export default function MyWorkPage() {
     }
     void load();
   }, [load]);
+  useEffect(()=>{if(!auth.profile?.isActive)return;void Promise.all([loadWorkCollaborators(),loadWorkJobs(),refreshAttachmentCounts()]).then(([nextUsers,nextJobs])=>{const others=nextUsers.filter((user)=>user.userId!==auth.profile?.userId);setCollaborators(others);setInboxRecipients(others);setJobs(nextJobs);}).catch((caught)=>setError(caught instanceof Error?caught.message:"Some My Work options could not be loaded."));},[auth.profile?.isActive,auth.profile?.userId,refreshAttachmentCounts]);
   const refreshInboxUnread = useCallback(async () => {
-    const userId=auth.profile?.userId;if(!userId)return;
-    try { const nextInboxMessages=await loadInboxMessages();setInboxMessages(nextInboxMessages);setInboxUnreadCount(nextInboxMessages.filter((message)=>message.recipientUserId===userId&&!message.readAt).length); } catch { /* The Inbox surface reports migration/load errors when opened. */ }
+    if(!auth.profile?.userId)return;
+    try { setInboxUnreadCount(await loadInboxUnreadCount(auth.profile.userId)); } catch { /* The Inbox surface reports migration/load errors when opened. */ }
   },[auth.profile?.userId]);
-  useEffect(()=>{if(!auth.profile?.isActive)return;void loadInboxRecipients().then(setInboxRecipients).catch(()=>setInboxRecipients([]));},[auth.profile?.isActive]);
   useEffect(()=>{void refreshInboxUnread();},[refreshInboxUnread]);
-  useEffect(()=>{const userId=auth.profile?.userId;if(!userId)return;const refresh=()=>void refreshInboxUnread();const channel=supabase.channel(`my-work-inbox-badge:${userId}`).on("postgres_changes",{event:"INSERT",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${userId}`},refresh).on("postgres_changes",{event:"UPDATE",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${userId}`},refresh).subscribe();return()=>{void supabase.removeChannel(channel);};},[auth.profile?.userId,refreshInboxUnread]);
+  useEffect(()=>{if(!inboxRailExpanded)return;void loadInboxMessages().then(setInboxMessages).catch(()=>setInboxMessages([]));},[inboxRailExpanded]);
+  useEffect(()=>{const userId=auth.profile?.userId;if(!userId)return;const refresh=()=>{void refreshInboxUnread();if(inboxRailExpanded)void loadInboxMessages().then(setInboxMessages).catch(()=>setInboxMessages([]));};const channel=supabase.channel(`my-work-inbox-badge:${userId}`).on("postgres_changes",{event:"INSERT",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${userId}`},refresh).on("postgres_changes",{event:"UPDATE",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${userId}`},refresh).subscribe();return()=>{void supabase.removeChannel(channel);};},[auth.profile?.userId,inboxRailExpanded,refreshInboxUnread]);
   useEffect(()=>{const openInbox=(event:Event)=>{const userId=(event as CustomEvent<{userId?:string}>).detail?.userId??"";setInboxInitialUserId(userId);setInboxComposeNew(false);setInboxOpen(true);};window.addEventListener("tenops:open-inbox",openInbox);return()=>window.removeEventListener("tenops:open-inbox",openInbox);},[]);
   useEffect(() => { if (!focusTaskId || loading) return; window.setTimeout(() => document.querySelector(`[data-work-task-id="${focusTaskId}"]`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 0); }, [focusTaskId, loading]);
   useEffect(() => {
@@ -256,13 +259,13 @@ export default function MyWorkPage() {
     setSaving(true); setError("");
     try {
       const id = await createWorkTask({ title: title.trim(), notes, assigneeUserId: assignee, dueDate, jobId, color });
-      try { await uploadWorkTaskAttachments(id,stagedFiles); await finalizeWorkTaskCreation(id,stagedFiles.length); }
+      try { await uploadWorkTaskAttachments(id,stagedFiles,(stage)=>setAttachmentActivity(stage==='uploading'?'Uploading attachments…':'Associating attachments…'));setAttachmentActivity('Finalizing task…'); await finalizeWorkTaskCreation(id,stagedFiles.length); }
       catch(caught){setTitle("");setNotes("");setDueDate("");setJobId("");setAssignee("");setColor("neutral");setStagedFiles([]);await load();setFocusTaskId(id);throw new Error(`Task created, but attachments are incomplete and no assignment notification was sent. Open the task and retry the attachment. ${caught instanceof Error?caught.message:""}`.trim());}
-      setTitle(""); setNotes(""); setDueDate(""); setJobId(""); setAssignee(""); setColor("neutral"); setStagedFiles([]);
-      await load(); setFocusTaskId(id);
+      setTitle(""); setNotes(""); setDueDate(""); setJobId(""); setAssignee(""); setColor("neutral"); setStagedFiles([]);setAttachmentActivity("");
+      await load();setTasks((current)=>current.map((task)=>task.id===id?{...task,attachmentCount:stagedFiles.length}:task)); setFocusTaskId(id);
       window.dispatchEvent(new Event("tenops:notifications-changed"));
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to create task."); }
-    finally { setSaving(false); }
+    finally { setSaving(false);setAttachmentActivity(""); }
   }
 
   async function toggle(task: WorkTask) {
@@ -291,13 +294,13 @@ export default function MyWorkPage() {
     setDetailSaving(true); setError("");
     try {
       await updateWorkTask({ id: selectedTask.id, ...detail, title: detail.title.trim() });
-      if(detailFiles.length)await uploadWorkTaskAttachments(selectedTask.id,detailFiles);
+      if(detailFiles.length)await uploadWorkTaskAttachments(selectedTask.id,detailFiles,(stage)=>setAttachmentActivity(stage==='uploading'?'Uploading attachments…':'Associating attachments…'));
       const nextAttachments=await loadWorkTaskAttachments(selectedTask.id);
       if(selectedTask.creatorUserId===auth.profile?.userId)await finalizeWorkTaskCreation(selectedTask.id,nextAttachments.length);
-      await load(); setSelectedTask(null); setDetail(null);
+      await load();setTasks((current)=>current.map((task)=>task.id===selectedTask.id?{...task,attachmentCount:nextAttachments.length}:task)); setSelectedTask(null); setDetail(null);
       window.dispatchEvent(new Event("tenops:notifications-changed"));
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to save task."); }
-    finally { setDetailSaving(false); }
+    finally { setDetailSaving(false);setAttachmentActivity(""); }
   }
 
   function taskCard(task: WorkTask,{hideJob=false,hideDue=false}:{hideJob?:boolean;hideDue?:boolean}={}) {
@@ -334,7 +337,7 @@ export default function MyWorkPage() {
     {filterJobId && <div className="mt-3 flex items-center justify-between gap-3 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-900"><span className="truncate">Showing tasks for {selectedJob ? jobLabel(selectedJob) : "this Job"}</span><button type="button" onClick={() => { setFilterJobId(""); window.history.replaceState({}, "", window.location.pathname); }} className="flex h-10 w-10 shrink-0 items-center justify-center" aria-label="Clear Job filter"><X className="h-4 w-4" /></button></div>}
 
     <section className="mt-4 rounded-lg border border-slate-300 bg-white p-2 sm:p-3" onFocus={() => setComposerOpen(true)}>
-      <div className="flex items-center gap-2"><Plus className="h-5 w-5 shrink-0 text-slate-500" aria-hidden="true" /><input ref={titleInputRef} value={title} onChange={(event) => setTitle(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void add(); } }} placeholder="What needs to get done?" aria-label="Task title" className="h-11 min-w-0 flex-1 border-0 bg-transparent px-1 text-base font-normal text-slate-950 outline-none" /><button type="button" onClick={() => void add()} disabled={!title.trim() || saving} className="tenops-selected-surface hidden h-10 shrink-0 rounded-md border px-4 text-sm font-medium disabled:opacity-40 sm:block">{saving ? "Adding…" : "Add task"}</button></div>
+      <div className="flex items-center gap-2"><Plus className="h-5 w-5 shrink-0 text-slate-500" aria-hidden="true" /><input ref={titleInputRef} value={title} onChange={(event) => setTitle(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void add(); } }} placeholder="What needs to get done?" aria-label="Task title" className="h-11 min-w-0 flex-1 border-0 bg-transparent px-1 text-base font-normal text-slate-950 outline-none" /><button type="button" onClick={() => void add()} disabled={!title.trim() || saving} className="tenops-selected-surface hidden h-10 shrink-0 rounded-md border px-4 text-sm font-medium disabled:opacity-40 sm:block">{saving ? attachmentActivity||"Adding…" : "Add task"}</button></div>
       {composerOpen && <div className="mt-2 space-y-2 border-t border-slate-200 pt-2">
         <label className="block text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><NotebookPen className="h-3.5 w-3.5" />Notes</span><textarea value={notes} onChange={(event)=>setNotes(event.target.value)} rows={2} className="w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 text-sm" /></label>
         <div className="grid gap-2 md:grid-cols-[180px_minmax(0,1fr)_240px]">
@@ -343,8 +346,9 @@ export default function MyWorkPage() {
           <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><UserRound className="h-3.5 w-3.5" />Share</span><select value={assignee} onChange={(event) => setAssignee(event.target.value)} className="h-11 w-full rounded-md border border-slate-300 bg-white px-2 text-sm"><option value="">Keep private</option>{collaborators.map((user) => <option key={user.userId} value={user.userId}>{user.displayName}</option>)}</select></label>
         </div>
         <div><div className="mb-2 text-xs text-slate-600">Color</div><ColorPicker value={color} onChange={setColor} /></div>
-        <StagedAttachments files={stagedFiles} onAdd={(files)=>setStagedFiles((current)=>[...current,...files])} onRemove={(index)=>setStagedFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} disabled={saving} />
-        <button type="button" onClick={() => void add()} disabled={!title.trim() || saving} className="tenops-selected-surface h-11 w-full rounded-md border px-4 text-sm font-medium disabled:opacity-40 sm:hidden">{saving ? "Adding…" : "Add task"}</button>
+        <StagedAttachments files={stagedFiles} onAdd={(files)=>setStagedFiles((current)=>[...current,...files])} onRemove={(index)=>setStagedFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} onPreparing={(preparing)=>setAttachmentActivity(preparing?"Preparing preview…":"")} disabled={saving} />
+        {attachmentActivity&&!saving?<p role="status" className="text-xs font-medium text-blue-800">{attachmentActivity}</p>:null}
+        <button type="button" onClick={() => void add()} disabled={!title.trim() || saving} className="tenops-selected-surface h-11 w-full rounded-md border px-4 text-sm font-medium disabled:opacity-40 sm:hidden">{saving ? attachmentActivity||"Adding…" : "Add task"}</button>
       </div>}
     </section>
 
@@ -364,9 +368,9 @@ export default function MyWorkPage() {
         <label className="block text-sm font-medium text-slate-700">Job<span className="mt-1 block"><JobCombobox jobs={jobs} value={detail.jobId} onChange={(nextJobId) => setDetail({ ...detail, jobId: nextJobId })} label="Task detail Job" /></span></label>
         {detail.jobId && <button type="button" onClick={() => openProductionJob(detail.jobId)} className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-blue-800"><BriefcaseBusiness className="h-4 w-4" />Open linked Job</button>}
         <div><div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-700">Color<span title="Color is personal to your workspace and does not change another participant’s view." aria-label="About task color" tabIndex={0} className="inline-flex text-slate-400"><Info className="h-3.5 w-3.5" /></span></div><ColorPicker value={detail.color} onChange={(color) => setDetail({ ...detail, color })} /></div>
-        <div className="space-y-2"><div className="text-sm font-medium text-slate-700">Attachments</div><AttachmentList attachments={detailAttachments} currentUserId={auth.profile?.userId??""} creatorUserId={selectedTask.creatorUserId} setError={setError} onChanged={async()=>setDetailAttachments(await loadWorkTaskAttachments(selectedTask.id))} /><StagedAttachments files={detailFiles} onAdd={(files)=>setDetailFiles((current)=>[...current,...files])} onRemove={(index)=>setDetailFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} disabled={detailSaving} /><p className="text-[11px] text-slate-400">Photos, PDFs, and Office files · 25 MB max</p></div>
+        <div className="space-y-2"><div className="text-sm font-medium text-slate-700">Attachments</div><AttachmentList attachments={detailAttachments} currentUserId={auth.profile?.userId??""} creatorUserId={selectedTask.creatorUserId} setError={setError} onChanged={async()=>setDetailAttachments(await loadWorkTaskAttachments(selectedTask.id))} /><StagedAttachments files={detailFiles} onAdd={(files)=>setDetailFiles((current)=>[...current,...files])} onRemove={(index)=>setDetailFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} onPreparing={(preparing)=>setAttachmentActivity(preparing?"Preparing preview…":"")} disabled={detailSaving} />{attachmentActivity?<p role="status" className="text-xs font-medium text-blue-800">{attachmentActivity}</p>:null}<p className="text-[11px] text-slate-400">Photos, PDFs, and Office files · 25 MB max</p></div>
       </div>
-      <footer className="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3 sm:px-6"><button type="button" onClick={closeDetails} className="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium">Cancel</button><button type="button" onClick={() => void saveDetails()} disabled={!detail.title.trim() || detailSaving} className="tenops-selected-surface h-10 rounded-md border px-4 text-sm font-medium disabled:opacity-40">{detailSaving ? "Saving…" : "Save task"}</button></footer>
+      <footer className="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3 sm:px-6"><button type="button" onClick={closeDetails} className="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium">Cancel</button><button type="button" onClick={() => void saveDetails()} disabled={!detail.title.trim() || detailSaving} className="tenops-selected-surface h-10 rounded-md border px-4 text-sm font-medium disabled:opacity-40">{detailSaving ? attachmentActivity||"Saving…" : "Save task"}</button></footer>
     </div></div>}
     </div>
     <InboxDialog open={inboxOpen} onClose={()=>{setInboxOpen(false);setInboxComposeNew(false);}} currentUserId={auth.profile?.userId??""} collaborators={inboxRecipients} jobs={jobs} initialUserId={inboxInitialUserId} startNewMessage={inboxComposeNew} onUnreadChange={setInboxUnreadCount} />
