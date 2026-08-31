@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { BookOpen, Hammer } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -27,6 +28,7 @@ import { useAccountPreferences } from '@/lib/account-preferences';
 import AccountAccessPanel from '@/components/AccountAccessPanel';
 import AccountNotifications from '@/components/AccountNotifications';
 import WelcomeHero from '@/components/WelcomeHero';
+import { toolboxMenuSections } from '@/components/ToolboxLauncher';
 import { openProductionJob } from '@/modules/production/job-options';
 
 const primaryNavItems = [
@@ -56,11 +58,6 @@ const inventoryNavItems = [
   { href: '/inventory', labelKey: 'nav.currentInventory' as TranslationKey, descriptionKey: 'nav.currentInventoryDescription' as TranslationKey },
   { href: '/inventory?section=pending-receivals#pending-receivals', matchPath: '__pending-receivals__', labelKey: 'nav.pendingReceivals' as TranslationKey, descriptionKey: 'nav.pendingReceivalsDescription' as TranslationKey },
   { href: '/activity', labelKey: 'nav.activity' as TranslationKey, descriptionKey: 'nav.activityDescription' as TranslationKey },
-];
-
-const purchasingNavItems = [
-  { href: '/purchasing', labelKey: 'nav.purchaseOrders' as TranslationKey, descriptionKey: 'nav.purchaseOrdersDescription' as TranslationKey },
-  { href: '/catalog', labelKey: 'nav.catalog' as TranslationKey, descriptionKey: 'nav.catalogDescription' as TranslationKey },
 ];
 
 function LaborIcon() {
@@ -110,8 +107,6 @@ function PackageIcon() {
   );
 }
 
-function CartIcon() { return <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 4h2l2 11h10l2-7H6"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg>; }
-
 function HomeIcon() {
   return (
     <svg
@@ -128,6 +123,14 @@ function HomeIcon() {
 }
 
 function MyWorkIcon() { return <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m8 9 2 2 4-4M8 16h8"/></svg>; }
+
+const myWorkMenuSections = [
+  { label: 'My Work', items: [
+    { href: '/my-work', label: 'Tasks' },
+    { href: '/my-work?inbox=1', label: 'Inbox' },
+  ] },
+  ...toolboxMenuSections,
+];
 
 function navClass(isActive: boolean) {
   return isActive
@@ -237,6 +240,36 @@ function DomainNav({
       </div>
     </div>
   );
+}
+
+function LauncherMenuSections({ pathname, sections, onSelect }: { pathname: string; sections: typeof myWorkMenuSections; onSelect(): void }) {
+  return sections.map((section, sectionIndex) => <div key={section.label} className={sectionIndex ? 'border-t border-slate-200 pt-1' : ''}>
+    <div className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
+      {section.label === 'Tools' ? <Hammer className="h-3.5 w-3.5" /> : section.label === 'Resources' ? <BookOpen className="h-3.5 w-3.5" /> : <MyWorkIcon />}
+      {section.label}
+    </div>
+    {section.items.map((item) => <Link key={item.href} role="menuitem" href={item.href} onClick={(event)=>{if(item.href==='/my-work?inbox=1'&&pathname==='/my-work'){event.preventDefault();window.dispatchEvent(new CustomEvent('tenops:open-inbox'));}onSelect();}} className={`block min-h-11 px-4 py-3 text-sm font-bold transition ${dropdownItemClass(pathname === item.href || pathname.startsWith(`${item.href}/`))}`}>{item.label}</Link>)}
+  </div>);
+}
+
+function MyWorkNav({ pathname }: { pathname: string }) {
+  const { t } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
+  const active = pathname === '/my-work' || pathname.startsWith('/my-work/');
+  return <div className="relative flex shrink-0" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false); }}>
+    <Link href="/my-work" className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 pl-2 pr-1 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:pl-3 sm:text-[12px] ${navClass(active)}`}>
+      <MyWorkIcon />
+      <span className="hidden sm:inline">{t('nav.myWork')}</span>
+    </Link>
+    <button type="button" aria-label="Open My Work tools" aria-haspopup="menu" aria-expanded={isOpen} onClick={() => setIsOpen((current) => !current)} className={`inline-flex h-9 w-7 items-center justify-center sm:h-10 ${navClass(active)}`}>
+      <span className={`transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`}><ChevronDownIcon /></span>
+    </button>
+    <div className={`absolute right-0 top-full z-50 w-[min(19rem,calc(100vw-1rem))] pt-1 transition-all duration-150 ${isOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
+      <div role="menu" className="border border-slate-300 bg-white py-1 shadow-[0_12px_30px_rgba(15,23,42,0.18)]">
+        <LauncherMenuSections pathname={pathname} sections={myWorkMenuSections} onSelect={() => setIsOpen(false)} />
+      </div>
+    </div>
+  </div>;
 }
 
 export default function ClientLayoutShell({
@@ -439,16 +472,9 @@ export default function ClientLayoutShell({
 
                 <DomainNav pathname={pathname} labelKey="nav.reporting" href="/manpower-reporting" icon={LaborIcon} items={reportingNavItems} />
                 <DomainNav pathname={pathname} labelKey="nav.inventory" href="/inventory" icon={PackageIcon} items={inventoryNavItems} />
-                <DomainNav pathname={pathname} labelKey="nav.purchasing" href="/purchasing" icon={CartIcon} items={purchasingNavItems} />
                 <div className="flex shrink-0 items-center">
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
-                  <Link
-                    href="/my-work"
-                    className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 px-2 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-3 sm:text-[12px] ${navClass(pathname === '/my-work' || pathname.startsWith('/my-work/'))}`}
-                  >
-                    <MyWorkIcon />
-                    <span className="hidden sm:inline">{t('nav.myWork')}</span>
-                  </Link>
+                  <MyWorkNav pathname={pathname} />
                   <AccountNotifications onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   {auth.isAuthenticated && auth.profile?.isActive ? <div ref={accountMenuRef} data-account-identity className="relative">
                     <button

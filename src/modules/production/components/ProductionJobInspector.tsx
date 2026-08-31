@@ -1,11 +1,8 @@
 "use client";
 
-import { ClipboardList, File, FileText, History, Pencil, RotateCcw, Send, Trash2, Upload } from "lucide-react";
+import { ClipboardList, File, History, Pencil, RotateCcw, Send, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
-import { useAuth } from "@/lib/auth";
-import ProposalPanel from "@/modules/proposals/ProposalPanel";
-import { hasProposalAccess } from "@/modules/proposals/queries";
 import {loadMyOpenTaskCountForJob} from "@/modules/my-work/queries";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
 import PlanningPanel from "@/modules/planning/PlanningPanel";
@@ -287,7 +284,6 @@ export default function ProductionJobInspector({
   onScheduleJob,
   onCreateRework,
 }: Props) {
-  const auth = useAuth();
   const [activeSection, setActiveSection] = useState<InspectorSection>(
     initialFocus === "attachments"
       ? "files"
@@ -323,8 +319,6 @@ export default function ProductionJobInspector({
     initialFocus?.startsWith("job-updates:") ? initialFocus.slice("job-updates:".length) : null,
   );
   const [planningEditorOpen, setPlanningEditorOpen] = useState(false);
-  const [proposalAccess, setProposalAccess] = useState(auth.profile?.role === "admin");
-  const [proposalPanelOpen, setProposalPanelOpen] = useState(false);
   const [myOpenTaskCount,setMyOpenTaskCount]=useState(0);
   const [reworkCycles, setReworkCycles] = useState<ProductionReworkCycle[]>([]);
   const [laborLifecycle, setLaborLifecycle] = useState<JobLaborLifecycleSummary | null>(null);
@@ -353,8 +347,6 @@ export default function ProductionJobInspector({
     },
     [job.id, onJobUpdateSummaryChanged],
   );
-  useEffect(() => { let active=true; void hasProposalAccess().then((allowed)=>{if(active)setProposalAccess(allowed);}); return()=>{active=false;}; }, [auth.profile?.userId]);
-
   useEffect(() => {
     let live = true;
     Promise.allSettled([
@@ -886,7 +878,7 @@ export default function ProductionJobInspector({
               </section>
               <section className="mt-5">
                 <h3 className={sectionTitle}>Documents</h3>
-                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <button
                     type="button"
                     onClick={() => setTransmittalOpen(true)}
@@ -907,16 +899,6 @@ export default function ProductionJobInspector({
                     <ClipboardList className="h-4 w-4 shrink-0" />
                     Purchase
                   </button>
-                  {proposalAccess && (
-                    <button
-                      type="button"
-                      onClick={() => setProposalPanelOpen(true)}
-                      className={documentActionClass}
-                    >
-                      <FileText className="h-4 w-4 shrink-0" />
-                      Proposal
-                    </button>
-                  )}
                 </div>
                 {myOpenTaskCount>0&&<button type="button" onClick={()=>window.location.assign(`/my-work?jobId=${encodeURIComponent(job.id)}`)} className="mt-3 inline-flex min-h-10 items-center gap-2 border border-slate-300 bg-slate-50 px-3 text-xs font-bold text-blue-800 hover:bg-blue-50"><ClipboardList className="h-4 w-4"/>View my tasks for this Job <span className="text-slate-500">({myOpenTaskCount})</span></button>}
               </section>
@@ -1485,7 +1467,6 @@ export default function ProductionJobInspector({
           </div>
         )}
       </aside>
-      {proposalPanelOpen && proposalAccess && auth.profile && <ProposalPanel job={job} isAdmin={auth.profile.role==="admin"} onClose={()=>setProposalPanelOpen(false)}/>}
       {attachmentPreview && attachmentFullscreen && (
         <DocumentViewer
           key={`fullscreen-${attachmentPreview.attachment.id}`}

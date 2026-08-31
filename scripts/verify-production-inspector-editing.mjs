@@ -62,11 +62,11 @@ assert.match(inspector, /type="number"[\s\S]*?value=\{draft\.contract_value\}/);
 assert.match(inspector, /Resin \/ Chip PO/);
 assert.doesNotMatch(inspector, /id: "proposals"|label: "Proposals"|activeSection === "proposals"/);
 assert.match(inspector, /const documentActionClass =[\s\S]*min-h-10[\s\S]*h-4 w-4/);
-assert.match(inspector, /Documents[\s\S]*Transmittal[\s\S]*Purchase[\s\S]*proposalAccess &&[\s\S]*Proposal/);
-assert.match(inspector, /className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3"/);
+assert.match(inspector, /Documents[\s\S]*Transmittal[\s\S]*Purchase/);
+assert.doesNotMatch(inspector, /setProposalPanelOpen|<ProposalPanel|>Proposal</);
+assert.match(inspector, /className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"/);
 assert.match(inspector, /setTransmittalOpen\(true\)/);
 assert.match(inspector, /\/purchasing\?jobId=/);
-assert.match(inspector, /setProposalPanelOpen\(true\)/);
 
 assert.match(workspace, /const updated = await updateProductionJob\(original, changes\)/);
 assert.match(workspace, /job\.id === jobId \? updated : job/);

@@ -31,7 +31,7 @@ type GeneralNotification = {
   notification_type: string;
   title: string;
   body: string;
-  metadata: { role?: AppRole; job_id?: string; update_id?: string; task_id?: string; job_number?: string | null; job_name?: string; purpose?: string; source_available?: boolean };
+  metadata: { role?: AppRole; job_id?: string; update_id?: string; task_id?: string; message_id?: string; conversation_user_id?: string; job_number?: string | null; job_name?: string; purpose?: string; destination?: string; announcement_key?: string; source_available?: boolean };
   read_at: string | null;
   created_at: string;
 };
@@ -215,6 +215,17 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
       router.push("/settings#appearance");
       return;
     }
+    if (item.kind === "general" && item.notification_type === "feature_announcement" && item.metadata.destination?.startsWith("/") && !item.metadata.destination.startsWith("//")) {
+      dispatchOnboarding({ type: "close" });
+      router.push(item.metadata.destination);
+      return;
+    }
+    if (item.kind === "general" && item.notification_type === "inbox_message" && item.metadata.conversation_user_id) {
+      dispatchOnboarding({ type: "close" });
+      window.dispatchEvent(new CustomEvent("tenops:open-inbox", { detail: { userId: item.metadata.conversation_user_id } }));
+      router.push(`/my-work?inboxUserId=${encodeURIComponent(item.metadata.conversation_user_id)}`);
+      return;
+    }
     if (item.kind === "general" && item.notification_type.startsWith("shared_task_") && item.metadata.task_id) {
       dispatchOnboarding({ type: "close" });
       router.push(`/my-work?view=shared&taskId=${encodeURIComponent(item.metadata.task_id)}`);
@@ -268,7 +279,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
           return <div key={item.id} data-welcome-notification-row={isWelcome ? "true" : undefined} data-arrival-notification-row={isArrival ? "true" : undefined} className={`border-b border-slate-100 ${item.read_at && !isWelcome ? "opacity-65" : item.read_at ? "" : "bg-blue-50/40"} ${spotlight === "welcome" && isWelcome ? "relative z-[1] ring-2 ring-inset ring-blue-600" : ""} ${isArrival ? "relative z-[1] bg-blue-50 ring-2 ring-inset ring-blue-600" : ""}`}>
           <button type="button" onClick={() => void openItem(item)} className={`block w-full px-2 py-3 text-left transition hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${isWelcome ? "cursor-pointer hover:bg-blue-50/70" : ""}`}>
             <span className="flex items-start justify-between gap-3">
-              <span className="flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-950">{isWelcome ? <Sparkles className="h-3.5 w-3.5 shrink-0 text-blue-700" /> : item.kind === "job_update" && item.title.toLowerCase().includes("mention") ? <AtSign className="h-3.5 w-3.5 shrink-0 text-blue-700" /> : <UserRoundCheck className="h-3.5 w-3.5 shrink-0 text-slate-500" />}<span className="truncate">{item.title}</span></span>
+              <span className="flex min-w-0 items-center gap-1.5 text-xs font-bold text-slate-950">{isWelcome || item.kind === "general" && item.notification_type === "feature_announcement" ? <Sparkles className="h-3.5 w-3.5 shrink-0 text-blue-700" /> : item.kind === "general" && item.notification_type === "inbox_message" ? <MessageSquare className="h-3.5 w-3.5 shrink-0 text-blue-700" /> : item.kind === "job_update" && item.title.toLowerCase().includes("mention") ? <AtSign className="h-3.5 w-3.5 shrink-0 text-blue-700" /> : <UserRoundCheck className="h-3.5 w-3.5 shrink-0 text-slate-500" />}<span className="truncate">{item.title}</span></span>
               <time dateTime={item.created_at} className="shrink-0 text-[10px] text-slate-500">{relativeTime(item.created_at)}</time>
             </span>
             {item.kind === "job_update" ? <>

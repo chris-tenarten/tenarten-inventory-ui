@@ -7,21 +7,29 @@ import {
   CalendarCheck,
   Check,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Handshake,
   Info,
+  Inbox as InboxIcon,
+  MessageSquarePlus,
   NotebookPen,
   Paperclip,
   Plus,
   Search,
+  Sparkles,
   Trash2,
   Upload,
   UserRound,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
+import ToolboxLauncher from "@/components/ToolboxLauncher";
+import { supabase } from "@/lib/supabase";
 import { openProductionJob } from "@/modules/production/job-options";
+import InboxDialog from "./InboxDialog";
+import { isTenOpsSystemInboxUser, loadInboxMessages, loadInboxRecipients, type InboxMessage } from "./inbox";
 import {
   createWorkTask,
   finalizeWorkTaskCreation,
@@ -53,11 +61,21 @@ const COLORS: Array<{ key: WorkTaskColor; label: string; swatch: string; edge: s
   { key: "violet", label: "Violet", swatch: "bg-violet-500", edge: "border-l-violet-500" },
 ];
 const colorEdge = (color: WorkTaskColor) => COLORS.find((item) => item.key === color)?.edge ?? "border-l-slate-300";
-const firstName = (value: string) => value.trim().split(/\s+/)[0] || "TenOps user";
+const participantName = (value: string) => value.trim() || "TenOps user";
 const wait = (milliseconds: number) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 const detailFromTask = (task: WorkTask): DetailDraft => ({ title: task.title, notes: task.notes, assigneeUserId: task.assigneeUserId, dueDate: task.dueDate, jobId: task.contextType === "job" ? task.contextId : "", color: task.color });
 const jobLabel = (job: WorkJob) => [job.jobNumber, job.name, job.customer].filter(Boolean).join(" · ");
 const SORT_OPTIONS: Array<{ value: SortMode; label: string }> = [{ value: "attention", label: "Recommended" }, { value: "due", label: "Due Date" }, { value: "recent", label: "Recently Added" }, { value: "color", label: "Color" }, { value: "job", label: "Job" }];
+const inboxInitials=(name:string)=>name.trim().split(/\s+/).slice(0,2).map((part)=>part[0]?.toUpperCase()).join("")||"?";
+const inboxTime=(value:string)=>new Intl.DateTimeFormat(undefined,{month:"short",day:"numeric"}).format(new Date(value));
+
+function InboxRail({expanded,onExpanded,messages,currentUserId,recipients,unreadCount,onOpenConversation,onNewMessage}:{expanded:boolean;onExpanded:(value:boolean)=>void;messages:InboxMessage[];currentUserId:string;recipients:WorkCollaborator[];unreadCount:number;onOpenConversation:(userId:string)=>void;onNewMessage:()=>void}){
+  const conversations=useMemo(()=>{const grouped=new Map<string,InboxMessage[]>();for(const message of messages){const other=message.senderUserId===currentUserId?message.recipientUserId:message.senderUserId;grouped.set(other,[...(grouped.get(other)??[]),message]);}return[...grouped.entries()].map(([userId,items])=>{const latest=items.at(-1)!;const person=recipients.find((candidate)=>candidate.userId===userId);return{userId,name:person?.displayName||(latest.senderUserId===userId?latest.senderName:latest.recipientName),latest,unread:items.filter((item)=>item.recipientUserId===currentUserId&&!item.readAt).length};}).sort((left,right)=>new Date(right.latest.createdAt).getTime()-new Date(left.latest.createdAt).getTime());},[currentUserId,messages,recipients]);
+  return <aside data-inbox-rail data-expanded={expanded?"true":"false"} className={`sticky top-[65px] hidden h-[calc(100dvh-65px)] shrink-0 self-start border-r border-slate-300 bg-white transition-[width] duration-200 min-[1440px]:flex min-[1440px]:flex-col ${expanded?"w-72":"w-14"}`}>
+    <button type="button" onClick={()=>onExpanded(!expanded)} aria-label={expanded?"Collapse Inbox rail":"Expand Inbox rail"} aria-expanded={expanded} className={`tenops-selected-surface relative flex h-14 shrink-0 items-center border-b ${expanded?"justify-between px-4":"justify-center"}`}><span className="flex items-center gap-2"><InboxIcon className="h-5 w-5" />{expanded?<strong className="text-sm">Inbox</strong>:null}</span>{expanded?<ChevronLeft className="h-4 w-4" />:<ChevronRight className="absolute bottom-1 right-1 h-3 w-3" />}{unreadCount?<span aria-label={`${unreadCount} unread messages`} className={`absolute inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold text-white ring-2 ring-white ${expanded?"right-9 top-2":"right-1 top-1"}`}>{unreadCount>9?"9+":unreadCount}</span>:null}</button>
+    {expanded?<><div className="p-3"><button type="button" onClick={onNewMessage} className="tenops-selected-surface flex h-10 w-full items-center justify-center gap-2 rounded-md border text-sm font-semibold"><MessageSquarePlus className="h-4 w-4" />New message</button></div><div className="min-h-0 flex-1 overflow-y-auto">{conversations.length?conversations.map((conversation)=><button key={conversation.userId} type="button" onClick={()=>onOpenConversation(conversation.userId)} className="flex w-full gap-2 border-t border-slate-200 px-3 py-3 text-left hover:bg-slate-50"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold ${isTenOpsSystemInboxUser(conversation.userId)?"tenops-selected-surface":"border-slate-300 bg-slate-50"}`}>{isTenOpsSystemInboxUser(conversation.userId)?<Sparkles className="h-3.5 w-3.5" />:inboxInitials(conversation.name)}</span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><strong className="truncate text-xs text-slate-900">{conversation.name}</strong><time className="shrink-0 text-[9px] text-slate-400">{inboxTime(conversation.latest.createdAt)}</time></span><span className="mt-1 flex items-center gap-2"><span className="min-w-0 flex-1 truncate text-[11px] text-slate-500">{conversation.latest.body}</span>{conversation.unread?<span className="h-2 w-2 shrink-0 rounded-full bg-red-600" aria-label={`${conversation.unread} unread`} />:null}</span></span></button>):<p className="px-4 py-8 text-center text-xs text-slate-500">No conversations yet.</p>}</div></>:null}
+  </aside>;
+}
 
 function PrivateTaskIcon({ className }: { className?: string }) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true"><path d="M8 10V7a4 4 0 0 1 8 0v3" /><rect width="14" height="11" x="5" y="10" rx="2" /><path d="m9 15 2 2 4-4" /></svg>;
@@ -147,6 +165,14 @@ export default function MyWorkPage() {
   const [detailSaving, setDetailSaving] = useState(false);
   const [detailAttachments, setDetailAttachments] = useState<WorkTaskAttachment[]>([]);
   const [detailFiles, setDetailFiles] = useState<File[]>([]);
+  const [inboxOpen, setInboxOpen] = useState(false);
+  const [inboxInitialUserId, setInboxInitialUserId] = useState("");
+  const [inboxUnreadCount, setInboxUnreadCount] = useState(0);
+  const [inboxRecipients, setInboxRecipients] = useState<WorkCollaborator[]>([]);
+  const [inboxMessages, setInboxMessages] = useState<InboxMessage[]>([]);
+  const [inboxRailExpanded, setInboxRailExpanded] = useState(false);
+  const [inboxComposeNew, setInboxComposeNew] = useState(false);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
     if (!auth.profile?.isActive) return;
@@ -166,8 +192,34 @@ export default function MyWorkPage() {
     setFilterJobId(params.get("jobId") || "");
     setFocusTaskId(params.get("taskId") || "");
     if (params.get("view") === "shared") setView("shared");
+    if (params.get("inbox") === "1" || params.get("inboxUserId")) {
+      setInboxInitialUserId(params.get("inboxUserId") || "");
+      setInboxComposeNew(false);
+      setInboxOpen(true);
+      params.delete("inbox");
+      params.delete("inboxUserId");
+      const nextQuery=params.toString();
+      window.history.replaceState({},"",`${window.location.pathname}${nextQuery?`?${nextQuery}`:""}`);
+    }
+    if (params.get("newTask") === "1") {
+      setComposerOpen(true);
+      setJobId(params.get("newTaskJobId") || "");
+      params.delete("newTask");
+      params.delete("newTaskJobId");
+      const nextQuery=params.toString();
+      window.history.replaceState({},"",`${window.location.pathname}${nextQuery?`?${nextQuery}`:""}`);
+      window.setTimeout(()=>titleInputRef.current?.focus(),0);
+    }
     void load();
   }, [load]);
+  const refreshInboxUnread = useCallback(async () => {
+    const userId=auth.profile?.userId;if(!userId)return;
+    try { const nextInboxMessages=await loadInboxMessages();setInboxMessages(nextInboxMessages);setInboxUnreadCount(nextInboxMessages.filter((message)=>message.recipientUserId===userId&&!message.readAt).length); } catch { /* The Inbox surface reports migration/load errors when opened. */ }
+  },[auth.profile?.userId]);
+  useEffect(()=>{if(!auth.profile?.isActive)return;void loadInboxRecipients().then(setInboxRecipients).catch(()=>setInboxRecipients([]));},[auth.profile?.isActive]);
+  useEffect(()=>{void refreshInboxUnread();},[refreshInboxUnread]);
+  useEffect(()=>{const userId=auth.profile?.userId;if(!userId)return;const refresh=()=>void refreshInboxUnread();const channel=supabase.channel(`my-work-inbox-badge:${userId}`).on("postgres_changes",{event:"INSERT",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${userId}`},refresh).on("postgres_changes",{event:"UPDATE",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${userId}`},refresh).subscribe();return()=>{void supabase.removeChannel(channel);};},[auth.profile?.userId,refreshInboxUnread]);
+  useEffect(()=>{const openInbox=(event:Event)=>{const userId=(event as CustomEvent<{userId?:string}>).detail?.userId??"";setInboxInitialUserId(userId);setInboxComposeNew(false);setInboxOpen(true);};window.addEventListener("tenops:open-inbox",openInbox);return()=>window.removeEventListener("tenops:open-inbox",openInbox);},[]);
   useEffect(() => { if (!focusTaskId || loading) return; window.setTimeout(() => document.querySelector(`[data-work-task-id="${focusTaskId}"]`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 0); }, [focusTaskId, loading]);
   useEffect(() => {
     const userId = auth.profile?.userId;
@@ -252,7 +304,11 @@ export default function MyWorkPage() {
   function taskCard(task: WorkTask,{hideJob=false,hideDue=false}:{hideJob?:boolean;hideDue?:boolean}={}) {
     const isFocused = task.id === focusTaskId;
     const visualCompleted = task.id in transitioning ? transitioning[task.id] : Boolean(task.completedAt);
-    const sharedCopy = task.creatorUserId === auth.profile?.userId ? `With ${firstName(task.assigneeName)}` : `From ${firstName(task.creatorName)}`;
+    const sharedCopy = task.creatorUserId === auth.profile?.userId
+      ? `Assigned to ${participantName(task.assigneeName)}`
+      : task.assigneeUserId === auth.profile?.userId
+        ? `From ${participantName(task.creatorName)}`
+        : `With ${participantName(task.assigneeName)}`;
     const due = dueCopy(task.dueDate);
     return <div key={task.id} className={`grid transition-[grid-template-rows,opacity,margin] duration-150 ${collapsing.has(task.id) ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"}`}><div className="min-h-0 overflow-hidden"><article data-work-task-id={task.id} className={`group flex min-h-14 items-start gap-2 rounded-md border border-l-4 bg-white px-2 py-1.5 transition ${colorEdge(task.color)} ${isFocused ? "border-blue-600 ring-2 ring-blue-200" : "border-slate-200"}`}>
       <button type="button" onClick={() => void toggle(task)} aria-label={visualCompleted ? `Reopen ${task.title}` : `Complete ${task.title}`} className="flex h-11 w-11 shrink-0 items-center justify-center"><span className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition ${visualCompleted ? "border-blue-700 bg-blue-700 text-white" : "border-slate-400 bg-white text-transparent group-hover:border-blue-700"}`}><Check className="h-4 w-4" /></span></button>
@@ -260,8 +316,7 @@ export default function MyWorkPage() {
         <button type="button" onClick={() => openDetails(task)} className={`block w-full text-left text-[16px] font-medium leading-5 text-slate-950 transition ${visualCompleted ? "text-slate-500 line-through decoration-slate-400" : ""}`}>{task.title}</button>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-slate-500">
           {!hideJob&&task.contextType === "job" && <button type="button" onClick={() => openProductionJob(task.contextId)} className="inline-flex min-w-0 max-w-full items-center gap-1 font-medium text-blue-800 hover:underline"><BriefcaseBusiness className="h-3.5 w-3.5 shrink-0" /><span className="truncate">{task.jobNumber ? `${task.jobNumber} · ` : ""}{task.jobName}</span></button>}
-          {task.visibility === "shared" ? <span className="inline-flex items-center gap-1"><Handshake className="h-4 w-4" />{visualCompleted ? `${firstName(task.assigneeName)} completed` : sharedCopy}</span> : <span className="inline-flex items-center gap-1"><PrivateTaskIcon className="h-3.5 w-3.5" />Private</span>}
-          {task.notes && <span className="inline-flex items-center gap-1"><NotebookPen className="h-3.5 w-3.5" />Notes</span>}
+          {task.visibility === "shared" ? <span className="inline-flex items-center gap-1"><Handshake className="h-4 w-4" />{sharedCopy}</span> : <span className="inline-flex items-center gap-1"><PrivateTaskIcon className="h-3.5 w-3.5" />Private</span>}
           {task.attachmentCount>0&&<span className="inline-flex items-center gap-1"><Paperclip className="h-3.5 w-3.5" />{task.attachmentCount}</span>}
         </div>
       </div>
@@ -269,8 +324,10 @@ export default function MyWorkPage() {
     </article></div></div>;
   }
 
-  return <main data-my-work className="mx-auto w-full max-w-[1120px] px-3 py-5 sm:px-6 sm:py-7">
-    <header className="flex flex-wrap items-start justify-between gap-3"><div><div className="text-[10px] font-semibold uppercase tracking-[.15em] text-slate-500">Personal workspace</div><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">My Work</h1><p className="mt-0.5 text-sm text-slate-600">Your tasks, all in one place.</p></div></header>
+  return <main data-my-work className="flex w-full items-start">
+    <InboxRail expanded={inboxRailExpanded} onExpanded={setInboxRailExpanded} messages={inboxMessages} currentUserId={auth.profile?.userId??""} recipients={inboxRecipients} unreadCount={inboxUnreadCount} onOpenConversation={(userId)=>{setInboxInitialUserId(userId);setInboxComposeNew(false);setInboxOpen(true);}} onNewMessage={()=>{setInboxInitialUserId("");setInboxComposeNew(true);setInboxOpen(true);}} />
+    <div className="mx-auto min-w-0 w-full max-w-[1120px] flex-1 px-3 py-5 sm:px-6 sm:py-7">
+    <header className="flex flex-wrap items-start justify-between gap-3"><div><div className="text-[10px] font-semibold uppercase tracking-[.15em] text-slate-500">Personal workspace</div><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">My Work</h1><p className="mt-0.5 text-sm text-slate-600">Your tasks, all in one place.</p></div><div className="flex flex-wrap items-center justify-end gap-2"><button type="button" onClick={()=>{setInboxInitialUserId("");setInboxComposeNew(false);setInboxOpen(true);}} aria-label={inboxUnreadCount?`Inbox, ${inboxUnreadCount} unread messages`:"Inbox"} className="relative inline-flex h-11 items-center gap-2 rounded-md border border-blue-300 bg-blue-50/70 px-4 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-px hover:border-blue-400 hover:bg-blue-50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 min-[1440px]:hidden"><InboxIcon className="h-4 w-4 text-blue-800" />Inbox{inboxUnreadCount?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold leading-none text-white ring-2 ring-white">{inboxUnreadCount>9?"9+":inboxUnreadCount}</span>:null}</button><ToolboxLauncher /></div></header>
 
     <div className="mt-2 flex max-w-full flex-nowrap overflow-x-auto border-b border-slate-300 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist" aria-label="My Work views">{([['today','Today'],['all','All Tasks'],['private','My Tasks'],['shared','Shared Tasks']] as const).map(([value, label]) => <button key={value} type="button" role="tab" aria-selected={view === value} onClick={(event) => {setView(value);event.currentTarget.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});}} className={`flex h-11 shrink-0 items-center justify-center gap-2 border-b-2 px-3 text-sm font-medium sm:px-4 ${view === value ? "border-blue-800 text-blue-900" : "border-transparent text-slate-500 hover:text-slate-900"}`}>{value === "today"&&<CalendarCheck className="h-4 w-4" />}{value === "private" && <PrivateTaskIcon className="h-4 w-4" />}{value === "shared" && <Handshake className="h-[18px] w-[18px]" />}{label}</button>)}</div>
     <div className="mt-2 min-h-5 text-xs text-slate-500">{view === "today"?"Open tasks due now or within the next 7 days.":view === "private" ? <span className="inline-flex items-center gap-1.5"><PrivateTaskIcon className="h-3.5 w-3.5" />Private to you</span> : view === "shared" ? <span className="inline-flex items-center gap-1.5"><Handshake className="h-[17px] w-[17px]" />Tasks exchanged with another TenOps user</span> : "Your private tasks and participant-visible Shared Tasks together."}</div>
@@ -278,7 +335,7 @@ export default function MyWorkPage() {
     {filterJobId && <div className="mt-3 flex items-center justify-between gap-3 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-900"><span className="truncate">Showing tasks for {selectedJob ? jobLabel(selectedJob) : "this Job"}</span><button type="button" onClick={() => { setFilterJobId(""); window.history.replaceState({}, "", window.location.pathname); }} className="flex h-10 w-10 shrink-0 items-center justify-center" aria-label="Clear Job filter"><X className="h-4 w-4" /></button></div>}
 
     <section className="mt-4 rounded-lg border border-slate-300 bg-white p-2 sm:p-3" onFocus={() => setComposerOpen(true)}>
-      <div className="flex items-center gap-2"><Plus className="h-5 w-5 shrink-0 text-slate-500" aria-hidden="true" /><input value={title} onChange={(event) => setTitle(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void add(); } }} placeholder="What needs to get done?" aria-label="Task title" className="h-11 min-w-0 flex-1 border-0 bg-transparent px-1 text-base font-normal text-slate-950 outline-none" /><button type="button" onClick={() => void add()} disabled={!title.trim() || saving} className="tenops-selected-surface hidden h-10 shrink-0 rounded-md border px-4 text-sm font-medium disabled:opacity-40 sm:block">{saving ? "Adding…" : "Add task"}</button></div>
+      <div className="flex items-center gap-2"><Plus className="h-5 w-5 shrink-0 text-slate-500" aria-hidden="true" /><input ref={titleInputRef} value={title} onChange={(event) => setTitle(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void add(); } }} placeholder="What needs to get done?" aria-label="Task title" className="h-11 min-w-0 flex-1 border-0 bg-transparent px-1 text-base font-normal text-slate-950 outline-none" /><button type="button" onClick={() => void add()} disabled={!title.trim() || saving} className="tenops-selected-surface hidden h-10 shrink-0 rounded-md border px-4 text-sm font-medium disabled:opacity-40 sm:block">{saving ? "Adding…" : "Add task"}</button></div>
       {composerOpen && <div className="mt-2 space-y-2 border-t border-slate-200 pt-2">
         <label className="block text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><NotebookPen className="h-3.5 w-3.5" />Notes</span><textarea value={notes} onChange={(event)=>setNotes(event.target.value)} rows={2} className="w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 text-sm" /></label>
         <div className="grid gap-2 md:grid-cols-[180px_minmax(0,1fr)_240px]">
@@ -312,5 +369,7 @@ export default function MyWorkPage() {
       </div>
       <footer className="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3 sm:px-6"><button type="button" onClick={closeDetails} className="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium">Cancel</button><button type="button" onClick={() => void saveDetails()} disabled={!detail.title.trim() || detailSaving} className="tenops-selected-surface h-10 rounded-md border px-4 text-sm font-medium disabled:opacity-40">{detailSaving ? "Saving…" : "Save task"}</button></footer>
     </div></div>}
+    </div>
+    <InboxDialog open={inboxOpen} onClose={()=>{setInboxOpen(false);setInboxComposeNew(false);}} currentUserId={auth.profile?.userId??""} collaborators={inboxRecipients} jobs={jobs} initialUserId={inboxInitialUserId} startNewMessage={inboxComposeNew} onUnreadChange={setInboxUnreadCount} />
   </main>;
 }

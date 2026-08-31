@@ -1,6 +1,6 @@
 "use client";
 
-import { Paperclip } from "lucide-react";
+import { ListTodo, Paperclip } from "lucide-react";
 import type { MouseEvent } from "react";
 import type { JobUpdateSummary } from "../jobs";
 import type { ProductionJob } from "../types";
@@ -29,6 +29,11 @@ export default function ActivityStrip({
     onOpenAttachments();
   }
 
+  function createTask(event: MouseEvent<HTMLButtonElement>) {
+    event.stopPropagation();
+    window.location.href = `/my-work?newTask=1&newTaskJobId=${encodeURIComponent(job.id)}`;
+  }
+
   return (
     <span className="pointer-events-none mt-1.5 flex h-6 items-center gap-1.5">
       <JobUpdatesIndicator
@@ -53,6 +58,15 @@ export default function ActivityStrip({
         <span className="min-w-4 text-center">
           {attachmentCount > 0 ? attachmentCount : ""}
         </span>
+      </button>
+      <button
+        type="button"
+        onClick={createTask}
+        aria-label={`New task for ${job.job_number || job.name}`}
+        title="New task"
+        className="pointer-events-auto inline-flex h-6 w-6 shrink-0 items-center justify-center border border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
+      >
+        <ListTodo className="h-3.5 w-3.5" aria-hidden="true" />
       </button>
       <ReworkQuickAction job={job} onCreate={onCreateRework} />
     </span>

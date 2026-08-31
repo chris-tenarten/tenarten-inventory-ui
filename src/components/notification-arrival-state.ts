@@ -4,6 +4,7 @@ export const ARRIVAL_ATTENTION_TYPES = new Set([
   "job_update_legacy_assignment_enrollment",
   "shared_task_assigned",
   "shared_task_completed",
+  "inbox_message",
 ]);
 
 export type ArrivalCandidate = {

@@ -6,7 +6,7 @@ import {
 } from "../supabase/functions/_shared/job-transmittal-pdf-model.mjs";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
-const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, editableCustomer, sharedNumberingVerification, defaults, validation, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector] = await Promise.all([
+const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, editableCustomer, sharedNumberingVerification, defaults, validation, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector, workspace, route] = await Promise.all([
   read("../supabase/migrations/20260728_001_job_transmittals.sql"),
   read("../supabase/migrations/20260728_002_job_transmittal_hardening.sql"),
   read("../supabase/migrations/20260728_003_job_document_reservation_privileges.sql"),
@@ -25,6 +25,8 @@ const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, 
   read("../src/modules/transmittals/queries.ts"),
   read("../src/modules/transmittals/mutations.ts"),
   read("../src/modules/production/components/ProductionJobInspector.tsx"),
+  read("../src/modules/transmittals/TransmittalWorkspace.tsx"),
+  read("../src/app/transmittals/page.tsx"),
 ]);
 
 for (const requirement of [
@@ -50,7 +52,12 @@ assert.match(panel, /History \(\{history\.length\}\)/);
 assert.match(panel, /Generate & Download/);
 assert.match(panel, /Retry/);
 assert.match(mutations, /issue_job_transmittal/);
-assert.match(inspector, /Letter of Transmittal/);
+assert.match(inspector, />\s*Transmittal\s*</);
+assert.match(route, /import TransmittalWorkspace from ['"]@\/modules\/transmittals\/TransmittalWorkspace['"]/);
+assert.match(route, /<TransmittalWorkspace \/>/);
+assert.match(workspace, /loadProductionJobOptions\(\{ includeArchived: false \}\)/);
+assert.match(workspace, /loadProductionJob\(selectedId\)/);
+assert.match(workspace, /<JobTransmittalPanel job=\{job\}/);
 for (const requirement of [
   /job_document_numbers/,
   /unique \(prefix, suffix\)/,
