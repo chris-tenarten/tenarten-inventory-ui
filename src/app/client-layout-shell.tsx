@@ -368,10 +368,10 @@ export default function ClientLayoutShell({
   return (
     <div data-app-shell>
       <WelcomeHero />
-      <header data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} data-compact-header={hasScrolled ? 'true' : undefined} className="sticky top-0 z-40 border-b border-slate-200 bg-[#f2f5f8]/95 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur transition-all duration-200">
+      <header data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} data-compact-header={hasScrolled ? 'true' : undefined} className="sticky top-0 z-[100] border-b border-slate-200 bg-[#f2f5f8] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200">
         <div
           data-shell-header-inner
-          className={`relative mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
+          className={`relative z-10 mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${
             hasScrolled
               ? 'gap-1.5 py-1.5 sm:gap-2 sm:py-2'
               : 'gap-2 py-2.5 sm:gap-3 sm:py-3'

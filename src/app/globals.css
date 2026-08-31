@@ -420,7 +420,7 @@ html[data-appearance="dark"] [data-app-shell] > main {
 }
 
 html[data-appearance="dark"] [data-app-shell] > header {
-  background: rgb(23 28 36 / 0.96) !important;
+  background: #171c24 !important;
   box-shadow: 0 1px 0 rgb(255 255 255 / 0.04);
 }
 
@@ -515,6 +515,16 @@ html[data-appearance="dark"] [data-my-work] ::selection {
   background: #60a5fa;
   color: #08111f;
 }
+
+/* Preserve the personal task-color edge after the global dark border override. */
+html[data-appearance="dark"] [data-my-work] [data-task-color="neutral"] { border-left-color: #cbd5e1 !important; }
+html[data-appearance="dark"] [data-my-work] [data-task-color="blue"] { border-left-color: #3b82f6 !important; }
+html[data-appearance="dark"] [data-my-work] [data-task-color="teal"] { border-left-color: #06b6d4 !important; }
+html[data-appearance="dark"] [data-my-work] [data-task-color="green"] { border-left-color: #059669 !important; }
+html[data-appearance="dark"] [data-my-work] [data-task-color="yellow"] { border-left-color: #fbbf24 !important; }
+html[data-appearance="dark"] [data-my-work] [data-task-color="orange"] { border-left-color: #f97316 !important; }
+html[data-appearance="dark"] [data-my-work] [data-task-color="rose"] { border-left-color: #f43f5e !important; }
+html[data-appearance="dark"] [data-my-work] [data-task-color="violet"] { border-left-color: #8b5cf6 !important; }
 
 html[data-appearance="dark"] [data-welcome-hero][data-dev-branding="true"],
 html[data-appearance="dark"] [data-welcome-hero-cover][data-dev-branding="true"] {
@@ -1277,6 +1287,13 @@ html[data-appearance="dark"] .document-print-root .border-slate-400 { border-col
   [data-shell-header][data-dev-branding="true"]:not([data-compact-header="true"]) [data-shell-product-name] {
     overflow: visible;
     text-overflow: clip;
+  }
+
+  [data-shell-header][data-dev-branding="true"]:not([data-compact-header="true"]) [data-shell-brand-subtitle] {
+    width: 12rem;
+    max-height: 2.5rem;
+    overflow: visible;
+    line-height: 1.05;
   }
 
   [data-shell-header][data-dev-branding="true"]:not([data-compact-header="true"]) [data-dev-branding-wordmark] {
