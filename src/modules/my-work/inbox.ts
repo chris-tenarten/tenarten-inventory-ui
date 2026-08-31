@@ -16,6 +16,7 @@ export type InboxMessage = {
   jobName: string;
   readAt: string;
   createdAt: string;
+  editedAt: string;
   attachments: InboxAttachment[];
 };
 
@@ -23,17 +24,17 @@ export type InboxAttachment = { id: string; messageId: string; storagePath: stri
 
 type InboxMessageRow = {
   id: string; sender_user_id: string; sender_name: string; recipient_user_id: string; recipient_name: string;
-  body: string; job_id: string | null; job_number: string | null; job_name: string | null; read_at: string | null; created_at: string;
+  body: string; job_id: string | null; job_number: string | null; job_name: string | null; read_at: string | null; created_at: string; edited_at: string | null;
 };
 
 export async function loadInboxMessages(): Promise<InboxMessage[]> {
-  const { data, error } = await supabase.rpc("list_my_work_inbox_messages");
+  const { data, error } = await supabase.rpc("list_my_work_inbox_messages_v2");
   if (error) throw error;
   const messages = ((data ?? []) as InboxMessageRow[]).map((row): InboxMessage => ({
     id: row.id, senderUserId: row.sender_user_id, senderName: row.sender_name,
     recipientUserId: row.recipient_user_id, recipientName: row.recipient_name,
     body: row.body, jobId: row.job_id ?? "", jobNumber: row.job_number ?? "", jobName: row.job_name ?? "",
-    readAt: row.read_at ?? "", createdAt: row.created_at, attachments: [],
+    readAt: row.read_at ?? "", createdAt: row.created_at, editedAt: row.edited_at ?? "", attachments: [],
   }));
   return messages;
 }
@@ -85,4 +86,13 @@ export async function openInboxAttachment(attachment:InboxAttachment){window.ope
 export async function markInboxConversationRead(otherUserId: string) {
   const { error } = await supabase.rpc("mark_my_work_inbox_conversation_read", { p_other_user_id: otherUserId });
   if (error) throw error;
+}
+
+export async function editInboxMessage(messageId:string,body:string){const{error}=await supabase.rpc("edit_my_work_inbox_message",{p_message_id:messageId,p_body:body});if(error)throw error;}
+
+export async function permanentlyDeleteInboxMessage(messageId:string){
+  const prepared=await supabase.rpc("prepare_admin_delete_my_work_message",{p_message_id:messageId});if(prepared.error)throw prepared.error;
+  const paths=((prepared.data??[]) as Array<{storage_path:string}>).map((row)=>row.storage_path);
+  if(paths.length){const removed=await supabase.storage.from(INBOX_ATTACHMENT_BUCKET).remove(paths);if(removed.error)throw removed.error;}
+  const deleted=await supabase.rpc("admin_permanently_delete_my_work_message",{p_message_id:messageId,p_confirmation:"PERMANENTLY_DELETE_MESSAGE"});if(deleted.error)throw deleted.error;
 }

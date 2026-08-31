@@ -39,6 +39,7 @@ import {
   loadWorkCollaborators,
   loadWorkJobs,
   openWorkTaskAttachment,
+  permanentlyDeleteWorkTask,
   removeWorkTaskAttachment,
   setWorkTaskCompleted,
   updateWorkTask,
@@ -164,6 +165,7 @@ export default function MyWorkPage() {
   const [selectedTask, setSelectedTask] = useState<WorkTask | null>(null);
   const [detail, setDetail] = useState<DetailDraft | null>(null);
   const [detailSaving, setDetailSaving] = useState(false);
+  const [taskDeleting,setTaskDeleting]=useState(false);
   const [detailAttachments, setDetailAttachments] = useState<WorkTaskAttachment[]>([]);
   const [detailFiles, setDetailFiles] = useState<File[]>([]);
   const [inboxOpen, setInboxOpen] = useState(false);
@@ -288,7 +290,7 @@ export default function MyWorkPage() {
   }
 
   function openDetails(task: WorkTask) { setSelectedTask(task); setDetail(detailFromTask(task));setDetailFiles([]);setDetailAttachments([]);void loadWorkTaskAttachments(task.id).then(setDetailAttachments).catch((caught)=>setError(caught instanceof Error?caught.message:"Unable to load attachments.")); }
-  function closeDetails() { if (!detailSaving) { setSelectedTask(null); setDetail(null); setDetailFiles([]);setDetailAttachments([]); } }
+  function closeDetails() { if (!detailSaving&&!taskDeleting) { setSelectedTask(null); setDetail(null); setDetailFiles([]);setDetailAttachments([]); } }
   async function saveDetails() {
     if (!selectedTask || !detail || !detail.title.trim() || detailSaving) return;
     setDetailSaving(true); setError("");
@@ -302,6 +304,7 @@ export default function MyWorkPage() {
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to save task."); }
     finally { setDetailSaving(false);setAttachmentActivity(""); }
   }
+  async function deleteSelectedTask(){if(!selectedTask||taskDeleting||!window.confirm("Permanently delete this task? This removes the task, its attachments, and task-owned metadata for all participants. This cannot be undone."))return;setTaskDeleting(true);setError("");try{await permanentlyDeleteWorkTask(selectedTask.id);setSelectedTask(null);setDetail(null);setDetailAttachments([]);setDetailFiles([]);await load();window.dispatchEvent(new Event("tenops:notifications-changed"));}catch(caught){setError(caught instanceof Error?caught.message:"Unable to permanently delete task.");}finally{setTaskDeleting(false);}}
 
   function taskCard(task: WorkTask,{hideJob=false,hideDue=false}:{hideJob?:boolean;hideDue?:boolean}={}) {
     const isFocused = task.id === focusTaskId;
@@ -369,8 +372,9 @@ export default function MyWorkPage() {
         {detail.jobId && <button type="button" onClick={() => openProductionJob(detail.jobId)} className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-blue-800"><BriefcaseBusiness className="h-4 w-4" />Open linked Job</button>}
         <div><div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-700">Color<span title="Color is personal to your workspace and does not change another participant’s view." aria-label="About task color" tabIndex={0} className="inline-flex text-slate-400"><Info className="h-3.5 w-3.5" /></span></div><ColorPicker value={detail.color} onChange={(color) => setDetail({ ...detail, color })} /></div>
         <div className="space-y-2"><div className="text-sm font-medium text-slate-700">Attachments</div><AttachmentList attachments={detailAttachments} currentUserId={auth.profile?.userId??""} creatorUserId={selectedTask.creatorUserId} setError={setError} onChanged={async()=>setDetailAttachments(await loadWorkTaskAttachments(selectedTask.id))} /><StagedAttachments files={detailFiles} onAdd={(files)=>setDetailFiles((current)=>[...current,...files])} onRemove={(index)=>setDetailFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} onPreparing={(preparing)=>setAttachmentActivity(preparing?"Preparing preview…":"")} disabled={detailSaving} />{attachmentActivity?<p role="status" className="text-xs font-medium text-blue-800">{attachmentActivity}</p>:null}<p className="text-[11px] text-slate-400">Photos, PDFs, and Office files · 25 MB max</p></div>
+        {auth.profile?.role==="admin"?<section className="rounded-md border border-red-200 bg-red-50/60 p-3"><h3 className="text-sm font-semibold text-red-900">Admin cleanup</h3><p className="mt-1 text-xs text-red-800">Permanently removes this task and its task-owned attachments and metadata. This cannot be undone.</p><button type="button" onClick={()=>void deleteSelectedTask()} disabled={taskDeleting||detailSaving} className="mt-3 min-h-11 w-full rounded-md border border-red-500 bg-white px-3 text-sm font-semibold text-red-700 disabled:opacity-50 sm:w-auto">{taskDeleting?"Permanently deleting…":"Permanently delete task"}</button></section>:null}
       </div>
-      <footer className="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3 sm:px-6"><button type="button" onClick={closeDetails} className="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium">Cancel</button><button type="button" onClick={() => void saveDetails()} disabled={!detail.title.trim() || detailSaving} className="tenops-selected-surface h-10 rounded-md border px-4 text-sm font-medium disabled:opacity-40">{detailSaving ? attachmentActivity||"Saving…" : "Save task"}</button></footer>
+      <footer className="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3 sm:px-6"><button type="button" onClick={closeDetails} disabled={taskDeleting} className="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium disabled:opacity-50">Cancel</button><button type="button" onClick={() => void saveDetails()} disabled={!detail.title.trim() || detailSaving || taskDeleting} className="tenops-selected-surface h-10 rounded-md border px-4 text-sm font-medium disabled:opacity-40">{detailSaving ? attachmentActivity||"Saving…" : "Save task"}</button></footer>
     </div></div>}
     </div>
     <InboxDialog open={inboxOpen} onClose={()=>{setInboxOpen(false);setInboxComposeNew(false);}} currentUserId={auth.profile?.userId??""} collaborators={inboxRecipients} jobs={jobs} initialUserId={inboxInitialUserId} startNewMessage={inboxComposeNew} onUnreadChange={setInboxUnreadCount} />

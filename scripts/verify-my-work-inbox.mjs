@@ -71,7 +71,8 @@ assert.match(dialog, /window\.setTimeout\(\(\)=>setRemoteTypingUserId\(""\),2600
 assert.match(dialog, /typing:false[\s\S]*removeChannel\(channel\)/, "typing state must clear and unsubscribe when the direct conversation closes");
 assert.match(dialog, /\$\{selected\.name\} is typing…/);
 assert.doesNotMatch(inbox, /typing/, "typing state must remain ephemeral and outside persisted Inbox queries");
-assert.match(inbox, /list_my_work_inbox_messages/);
+assert.match(inbox, /list_my_work_inbox_messages_v2/);
+assert.match(inbox, /editedAt/);
 assert.match(inbox, /send_my_work_inbox_message/);
 assert.match(inbox, /create_my_work_inbox_message_draft/);
 assert.match(inbox, /finalize_my_work_inbox_message/);
