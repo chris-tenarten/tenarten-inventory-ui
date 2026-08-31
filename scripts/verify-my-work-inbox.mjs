@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const [migration, attachments, dialog, inbox, page, notifications, arrival, tasks, activity, theme, nav] = await Promise.all([
+const [migration, attachments, dialog, inbox, page, notifications, arrival, tasks, activity, theme, nav, attachmentInput] = await Promise.all([
   read("supabase/migrations/20260831_016_my_work_inbox.sql"),
   read("supabase/migrations/20260831_017_my_work_inbox_attachments.sql"),
   read("src/modules/my-work/InboxDialog.tsx"),
@@ -14,6 +14,7 @@ const [migration, attachments, dialog, inbox, page, notifications, arrival, task
   read("src/modules/production/components/ActivityStrip.tsx"),
   read("src/app/globals.css"),
   read("src/app/client-layout-shell.tsx"),
+  read("src/modules/my-work/AttachmentFileInput.tsx"),
 ]);
 
 assert.match(migration, /create table public\.my_work_messages/);
@@ -51,7 +52,10 @@ assert.match(dialog, /event:"UPDATE"[\s\S]*recipient_user_id=eq\.\$\{currentUser
 assert.match(dialog, /removeChannel\(channel\)/);
 assert.match(dialog, /event\.key!=="Escape"/);
 assert.match(dialog, /event\.key==="Enter"&&!event\.shiftKey/);
-assert.match(dialog, /type="file" multiple accept=\{attachmentAccept\}/);
+assert.match(dialog, /<AttachmentFileInput/);
+assert.match(attachmentInput, /type="file" multiple accept=\{attachmentAccept\}/);
+assert.match(attachmentInput, /new File\(\[await file\.arrayBuffer\(\)\]/);
+assert.match(attachmentInput, /onFiles\(owned\)[\s\S]*finally[\s\S]*input\.value=""/, "camera files must be owned by application state before the native input resets");
 assert.match(dialog, /sendInboxMessageWithAttachments/);
 assert.match(dialog, /AttachmentView/);
 assert.match(dialog, /preview\?\.previewUrl/);

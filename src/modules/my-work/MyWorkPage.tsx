@@ -44,6 +44,7 @@ import {
   uploadWorkTaskAttachments,
 } from "./queries";
 import type { WorkCollaborator, WorkJob, WorkTask, WorkTaskAttachment, WorkTaskColor } from "./types";
+import AttachmentFileInput from "./AttachmentFileInput";
 
 type View = "today" | "all" | "private" | "shared";
 type SortMode = "attention" | "due" | "recent" | "color" | "job";
@@ -100,10 +101,8 @@ function ColorPicker({ value, onChange }: { value: WorkTaskColor; onChange: (val
 }
 
 const attachmentSize=(bytes:number)=>bytes<1024?`${bytes} B`:bytes<1048576?`${Math.ceil(bytes/1024)} KB`:`${(bytes/1048576).toFixed(1)} MB`;
-const attachmentAccept="image/*,.pdf,.txt,.csv,.doc,.docx,.xls,.xlsx,.ppt,.pptx";
-
-function StagedAttachments({files,onAdd,onRemove,disabled=false}:{files:File[];onAdd:(files:File[])=>void;onRemove:(index:number)=>void;disabled?:boolean}){
-  return <div><label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700"><Upload className="h-4 w-4" />Add attachments<input type="file" multiple accept={attachmentAccept} disabled={disabled} onChange={(event)=>{onAdd(Array.from(event.target.files??[]));event.currentTarget.value="";}} className="sr-only" /></label>{files.length>0&&<div className="mt-2 space-y-1">{files.map((file,index)=><div key={`${file.name}-${file.size}-${index}`} className="flex min-w-0 items-center gap-2 rounded border border-slate-200 px-2 py-1.5 text-xs"><Paperclip className="h-3.5 w-3.5 shrink-0" /><span className="min-w-0 flex-1 truncate">{file.name}</span><span className="shrink-0 text-slate-400">{attachmentSize(file.size)}</span><button type="button" onClick={()=>onRemove(index)} aria-label={`Remove ${file.name}`} className="flex h-9 w-9 shrink-0 items-center justify-center text-red-700"><X className="h-4 w-4" /></button></div>)}</div>}</div>;
+function StagedAttachments({files,onAdd,onRemove,onError,disabled=false}:{files:File[];onAdd:(files:File[])=>void;onRemove:(index:number)=>void;onError:(message:string)=>void;disabled?:boolean}){
+  return <div><label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700"><Upload className="h-4 w-4" />Add attachments<AttachmentFileInput disabled={disabled} onFiles={onAdd} onError={onError} /></label>{files.length>0&&<div className="mt-2 space-y-1">{files.map((file,index)=><div key={`${file.name}-${file.size}-${index}`} className="flex min-w-0 items-center gap-2 rounded border border-slate-200 px-2 py-1.5 text-xs"><Paperclip className="h-3.5 w-3.5 shrink-0" /><span className="min-w-0 flex-1 truncate">{file.name}</span><span className="shrink-0 text-slate-400">{attachmentSize(file.size)}</span><button type="button" onClick={()=>onRemove(index)} aria-label={`Remove ${file.name}`} className="flex h-9 w-9 shrink-0 items-center justify-center text-red-700"><X className="h-4 w-4" /></button></div>)}</div>}</div>;
 }
 
 function AttachmentList({attachments,currentUserId,creatorUserId,onChanged,setError}:{attachments:WorkTaskAttachment[];currentUserId:string;creatorUserId:string;onChanged:()=>Promise<void>;setError:(value:string)=>void}){
@@ -344,7 +343,7 @@ export default function MyWorkPage() {
           <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><UserRound className="h-3.5 w-3.5" />Share</span><select value={assignee} onChange={(event) => setAssignee(event.target.value)} className="h-11 w-full rounded-md border border-slate-300 bg-white px-2 text-sm"><option value="">Keep private</option>{collaborators.map((user) => <option key={user.userId} value={user.userId}>{user.displayName}</option>)}</select></label>
         </div>
         <div><div className="mb-2 text-xs text-slate-600">Color</div><ColorPicker value={color} onChange={setColor} /></div>
-        <StagedAttachments files={stagedFiles} onAdd={(files)=>setStagedFiles((current)=>[...current,...files])} onRemove={(index)=>setStagedFiles((current)=>current.filter((_,candidate)=>candidate!==index))} disabled={saving} />
+        <StagedAttachments files={stagedFiles} onAdd={(files)=>setStagedFiles((current)=>[...current,...files])} onRemove={(index)=>setStagedFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} disabled={saving} />
         <button type="button" onClick={() => void add()} disabled={!title.trim() || saving} className="tenops-selected-surface h-11 w-full rounded-md border px-4 text-sm font-medium disabled:opacity-40 sm:hidden">{saving ? "Adding…" : "Add task"}</button>
       </div>}
     </section>
@@ -365,7 +364,7 @@ export default function MyWorkPage() {
         <label className="block text-sm font-medium text-slate-700">Job<span className="mt-1 block"><JobCombobox jobs={jobs} value={detail.jobId} onChange={(nextJobId) => setDetail({ ...detail, jobId: nextJobId })} label="Task detail Job" /></span></label>
         {detail.jobId && <button type="button" onClick={() => openProductionJob(detail.jobId)} className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-blue-800"><BriefcaseBusiness className="h-4 w-4" />Open linked Job</button>}
         <div><div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-700">Color<span title="Color is personal to your workspace and does not change another participant’s view." aria-label="About task color" tabIndex={0} className="inline-flex text-slate-400"><Info className="h-3.5 w-3.5" /></span></div><ColorPicker value={detail.color} onChange={(color) => setDetail({ ...detail, color })} /></div>
-        <div className="space-y-2"><div className="text-sm font-medium text-slate-700">Attachments</div><AttachmentList attachments={detailAttachments} currentUserId={auth.profile?.userId??""} creatorUserId={selectedTask.creatorUserId} setError={setError} onChanged={async()=>setDetailAttachments(await loadWorkTaskAttachments(selectedTask.id))} /><StagedAttachments files={detailFiles} onAdd={(files)=>setDetailFiles((current)=>[...current,...files])} onRemove={(index)=>setDetailFiles((current)=>current.filter((_,candidate)=>candidate!==index))} disabled={detailSaving} /><p className="text-[11px] text-slate-400">Photos, PDFs, and Office files · 25 MB max</p></div>
+        <div className="space-y-2"><div className="text-sm font-medium text-slate-700">Attachments</div><AttachmentList attachments={detailAttachments} currentUserId={auth.profile?.userId??""} creatorUserId={selectedTask.creatorUserId} setError={setError} onChanged={async()=>setDetailAttachments(await loadWorkTaskAttachments(selectedTask.id))} /><StagedAttachments files={detailFiles} onAdd={(files)=>setDetailFiles((current)=>[...current,...files])} onRemove={(index)=>setDetailFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} disabled={detailSaving} /><p className="text-[11px] text-slate-400">Photos, PDFs, and Office files · 25 MB max</p></div>
       </div>
       <footer className="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3 sm:px-6"><button type="button" onClick={closeDetails} className="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium">Cancel</button><button type="button" onClick={() => void saveDetails()} disabled={!detail.title.trim() || detailSaving} className="tenops-selected-surface h-10 rounded-md border px-4 text-sm font-medium disabled:opacity-40">{detailSaving ? "Saving…" : "Save task"}</button></footer>
     </div></div>}
