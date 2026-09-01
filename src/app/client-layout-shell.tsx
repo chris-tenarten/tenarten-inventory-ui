@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { BookOpen, BriefcaseBusiness, Hammer } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   applyDisplaySize,
   DISPLAY_SIZE_STORAGE_KEY,
@@ -285,7 +285,25 @@ export default function ClientLayoutShell({
 
   const [hasScrolled, setHasScrolled] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const shellRef = useRef<HTMLDivElement | null>(null);
+  const shellHeaderRef = useRef<HTMLElement | null>(null);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const shell = shellRef.current;
+    const header = shellHeaderRef.current;
+    if (!shell || !header) return;
+    const measure = () => shell.style.setProperty('--tenops-shell-header-height', `${Math.ceil(header.getBoundingClientRect().height)}px`);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(header);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+      shell.style.removeProperty('--tenops-shell-header-height');
+    };
+  }, []);
 
   useEffect(() => {
     const accountDisplaySize = accountPreferences.preferences.display_size;
@@ -367,9 +385,9 @@ export default function ClientLayoutShell({
   const shellUnlocked = !auth.requiresPasswordSetup && auth.isAuthenticated && auth.accessAllowed;
 
   return (
-    <div data-app-shell>
+    <div ref={shellRef} data-app-shell>
       <WelcomeHero />
-      <header data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} data-compact-header={hasScrolled ? 'true' : undefined} className="sticky top-0 z-[100] border-b border-slate-200 bg-[#f2f5f8] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200">
+      <header ref={shellHeaderRef} data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} data-compact-header={hasScrolled ? 'true' : undefined} className="sticky top-0 z-[100] border-b border-slate-200 bg-[#f2f5f8] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200">
         <div
           data-shell-header-inner
           className={`relative z-10 mx-auto flex max-w-[1800px] flex-col px-3 transition-all duration-200 sm:px-5 lg:flex-row lg:items-center lg:justify-between ${

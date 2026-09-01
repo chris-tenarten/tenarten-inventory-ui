@@ -692,6 +692,7 @@ export default function ProductionJobInspector({
 
   return (
     <div
+      data-shell-below-header
       className="fixed inset-0 z-[80] bg-slate-950/30"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) requestClose();

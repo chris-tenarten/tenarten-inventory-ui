@@ -36,6 +36,11 @@ body[data-notification-onboarding] [data-account-notifications] {
   pointer-events: auto;
 }
 
+/* Fixed workspaces below the sticky shell header share its live rendered offset. */
+[data-shell-below-header] {
+  top: var(--tenops-shell-header-height, 0px);
+}
+
 /*
  * The Manpower entry grid is intentionally kept as a single dense operational
  * table. Its header labels are localized here until that legacy row renderer is
