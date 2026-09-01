@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Hammer } from 'lucide-react';
+import { BookOpen, BriefcaseBusiness, Hammer } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -33,6 +33,7 @@ import { openProductionJob } from '@/modules/production/job-options';
 
 const primaryNavItems = [
   { href: '/', labelKey: 'nav.dashboard' as TranslationKey, icon: HomeIcon },
+  { href: '/pre-production', labelKey: 'nav.preProduction' as TranslationKey, icon: BriefcaseBusiness },
 ];
 
 const reportingNavItems = [
@@ -465,7 +466,7 @@ export default function ClientLayoutShell({
                       )}`}
                     >
                       <Icon />
-                      <span className={item.href === '/' || item.href === '/my-work' ? 'hidden sm:inline' : ''}>{t(item.labelKey)}</span>
+                      <span className={item.href === '/' || item.href === '/my-work' || item.href === '/pre-production' ? 'hidden sm:inline' : ''}>{t(item.labelKey)}</span>
                     </Link>
                   );
                 })}

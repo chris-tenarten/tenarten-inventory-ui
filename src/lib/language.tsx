@@ -16,6 +16,7 @@ export type Language = "en" | "es";
 
 const english = {
   "nav.dashboard": "Dashboard",
+  "nav.preProduction": "Pre-Production",
   "nav.myWork": "My Work",
   "nav.reporting": "Reporting",
   "nav.inventory": "Inventory",
@@ -72,6 +73,7 @@ export type TranslationKey = keyof typeof english;
 
 const spanish: Record<TranslationKey, string> = {
   "nav.dashboard": "Panel",
+  "nav.preProduction": "Preproducción",
   "nav.myWork": "Mi trabajo",
   "nav.reporting": "Reportes",
   "nav.inventory": "Inventario",
