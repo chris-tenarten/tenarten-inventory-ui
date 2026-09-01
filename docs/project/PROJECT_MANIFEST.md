@@ -13,13 +13,7 @@ TenOps—Tenarten Operations Control—is Tenarten's internal operations platfor
 
 TenOps is not a generic ERP, project-management clone, low-code builder, or recreation of Monday.com. It preserves operational workflows Tenarten already trusts while replacing the structural limits of spreadsheets, disconnected files, and flat boards.
 
-Use this authority order when sources disagree:
-
-1. The live Supabase schema and verified deployed behavior define operational reality.
-2. Checked-in migrations and application source define intended implementation.
-3. This manifest defines enduring product, architecture, UX, and engineering direction.
-4. Focused schema and workflow references may provide detail, but cannot override current code, migrations, or this manifest.
-5. Historical notes and context-transfer documents are evidence, not authority.
+Use the authority and evidence hierarchy in the repository-root [`AGENTS.md`](../../AGENTS.md). In short: Chris and the canonical Product/Architecture context own current product intent; repository/Git state and narrowly verified hosted behavior own implementation reality; this manifest defines enduring product and architecture direction. Historical notes and conversation summaries are evidence, not authority.
 
 Identify discrepancies before extending the system. Do not preserve stale behavior merely because an older document describes it.
 
@@ -130,9 +124,9 @@ Total hours derive from AM plus PM and are not stored. Client-side search covers
 
 Job attachments are private storage objects with relational metadata. Users can upload multiple files, open and remove them, and access them through the shared Inspector. Attachment counts remain visible near job identity.
 
-Purchase Orders are the first structured Form. Draft preview renders current editor state, while issued Purchase Orders own an immutable snapshot and a separately retryable permanent PDF generated only from that snapshot. Letter of Transmittal is a job-scoped Production form with unsaved PDF preview, immutable history, and separately retryable private PDF generation. For controlled internal testing it uses validated anonymous business RPCs, sanitized history, private internals, and a disabled-by-default rollout flag; authenticated identity and RBAC remain deferred. Quote remains a placeholder.
+Purchase Orders, Proposals, and Transmittals are implemented structured document domains. Draft/preview behavior is separated from immutable issuance/history and retryable private PDF generation where applicable. Generic Proposal creation can exist independently of a Production Job and must be reused by future Pre-Production work. A generic Sample Form Generator remains planned and must not be implemented before its Product Acceptance Contract.
 
-### Future operational reporting
+### Operational reporting
 
 Material Usage, Daily Production, and Manpower remain distinct because they describe different facts and may be entered at different times:
 
@@ -160,12 +154,17 @@ The application uses client-heavy workspaces. Shared domain helpers should isola
 - `/production` — compatibility route to Production
 - `/manpower-reporting` — Manpower Reporting; navigation label: Production Reporting
 - `/inventory` — Inventory and Pending Receivals
-- `/purchasing` — structured chip and aggregate Purchase Order drafts
+- `/purchasing` — structured Purchase Orders, issuance, PDFs, and receiving projection
 - `/catalog` — supporting Catalog tool
 - `/activity` — supporting Inventory Activity tool
+- `/material-usage` — Material Usage reporting
+- `/proposals` — Proposal generator and generic Proposal workspace
+- `/transmittals` — Transmittal entry and document history
+- `/my-work` — private/shared tasks, workload, attachments, and Inbox
+- `/settings` — account and administrative settings
 - `/transactions` — legacy route outside primary navigation
 
-Primary navigation is Dashboard, Production Reporting, and Inventory. Planning is job-scoped and does not add a top-level route or navigation item. Catalog and Inventory Activity are supporting tools.
+Navigation has expanded beyond the original Dashboard/Production Reporting/Inventory shell. Treat the current shell configuration as authoritative for visible navigation. Planning remains job-scoped and does not add a top-level route.
 
 ### Production module
 
@@ -301,18 +300,18 @@ Current project records state that reservation, Ordered Material Status, and ato
 
 ## 10. Security model and limitations
 
-The application is an internal MVP with permissive anonymous policies and client-side access/approval gates. Public build variables, browser checks, and local/session storage are inspectable and bypassable.
+TenOps now includes authenticated account and RBAC infrastructure, but authorization maturity varies by surface and some legacy/internal-MVP boundaries remain permissive or client-authorized. Public build variables, browser checks, and local/session storage are inspectable and are never security boundaries.
 
 Therefore:
 
 - do not expose sensitive commercial data without access control
-- do not describe current gates as authentication
+- do not describe client-side gates as authentication
 - do not rely on client validation for authorization
 - do not put secrets in `NEXT_PUBLIC_*`
 - do not log or document passwords, keys, or tokens
 - do not stage `.env.local`
 
-Real authentication, role-based authorization, least-privilege RLS, server-authoritative identity, and protected administration are required before broader access or sensitive features.
+Authentication/RBAC infrastructure and later enforcement/compatibility migrations now exist. Security maturity is surface-specific: inspect actual grants, RLS, RPCs, Storage, Realtime authorization, and deployed behavior before making a claim. Remaining permissive or client-authorized boundaries still require least-privilege hardening.
 
 ## 11. UX principles and design language
 
@@ -508,15 +507,15 @@ Roadmap order may respond to operational need, but current direction is:
 
 ### Near term
 
-1. Production smoke testing and stabilization of atomic multi-job scheduling.
-2. Archive and Restore Jobs while preserving activity, files, reservations, and history.
-3. Correct Manpower group-name edit-field contrast without changing behavior.
+1. Define the Pre-Production Bid/Sample Product Acceptance Contract; implementation is not yet authorized.
+2. Reuse generic Proposal and Vendor Catalog foundations rather than creating parallel domains.
+3. Continue production stabilization, security verification, and focused regression protection.
 4. Extract Inventory domain logic before substantial receiving/reservation expansion.
 5. Improve attachment batch staging, classification, and feedback.
 
 ### Operational expansion
 
-1. Material Usage linked to jobs and inventory.
+1. Pre-Production Bid pipeline and generic Sample Form generation after Product acceptance.
 2. Daily Production and configurable output metrics.
 3. Actual-versus-estimated labor and material reporting.
 4. Production KPIs and bottleneck visibility.
@@ -565,8 +564,7 @@ Roadmap order may respond to operational need, but current direction is:
 - Live schema history predates checked-in migrations; inspection remains essential.
 - Material readiness is broad job state rather than derived requirements.
 - Labor intensity uses inclusive calendar days without capacity, holiday, or planned-workday modeling.
-- Forms are placeholders.
-- `archived_at` exists but Archive/Restore UX is incomplete.
+- Some planned forms, including the generic Sample Form, remain unimplemented; Proposal, Purchase Order, and Transmittal foundations are implemented.
 - Permanent deletion lacks authenticated, dependency-aware durable audit.
 
 ### UX

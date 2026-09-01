@@ -1,40 +1,40 @@
 # Open Questions
 
-These are unresolved workflow questions, not commitments.
+This file separates confirmed Product direction from unresolved semantics. Unresolved items are not implementation commitments.
 
-## Manpower Utilization
+## Pre-Production: confirmed direction
 
-- What exact notebook format does Marcos use?
-- Does he transcribe a printed version of the Excel matrix or shorthand?
-- Does he commonly enter one job per report or several jobs per date?
-- Which process rows are actually used?
-- Which worker-management permissions should Marcos have?
+- The Pre-Production parent is a **Bid**; Tenarten operationally “wins a bid.”
+- Proposal contains Estimate and the existing generic Proposal domain must be reused.
+- One Bid entering Production maps 1:1 to one canonical `public.jobs` Production Job.
+- Deposit receipt is the known practical Production gate.
+- Bid Line Items describe commercial scope/piece types; they are not separate Production Jobs.
+- Production may later contain multiple Work Orders/areas.
+- Proposal and Sample documents may exist independently and acquire Bid/Job relationships later; issued history is not silently rewritten.
+- Sample does not require a Production Job. A generic Sample Form Generator is planned.
+- Vendor Catalog should support Sample chip-blend authoring with manual fallback.
+- Color Plate format is `T[YY]-[###][letter]`; suffixes are neutral and do not automatically encode A→B supersession.
+- Sample approval is explicit and date-based.
 
-## Material Usage
+## Pre-Production: unresolved for Product Acceptance Contract
 
-- How frequently is it entered?
-- Is it completed during production, at day end, or in batches?
-- Which fields from the original form are actually required?
-- Are all consumed materials expected to exist in inventory?
-- How should custom mixes and unmatched materials be handled?
+- What exact states, transitions, and terminal states make up the Bid lifecycle?
+- What event creates a Bid, and which fields are required at each stage?
+- How do Estimate, Proposal, Bid, Bid Line Items, and revisions relate and retain immutable issued history?
+- Can one Bid contain multiple Proposals/Estimates, and which version becomes accepted commercial scope?
+- What exactly counts as “deposit received,” who records it, and are exceptions or overrides allowed before Production creation?
+- At the Production gate, which values are copied as snapshots, which remain linked, and how are conflicts/retries handled without duplicate Jobs or Job numbers?
+- How are Bid Line Items mapped into later Work Orders/areas without becoming Jobs?
+- What are the Sample lifecycle states, revision rules, approval/rejection semantics, and required approval evidence?
+- How do standalone Samples later attach to a Bid or Job while preserving their original issued context?
+- How are Color Plate base numbers and neutral suffixes allocated, validated, and associated across Sample revisions?
+- Which Vendor Catalog fields feed chip-blend authoring, and how is manual fallback normalized without inventing catalog records?
+- What visibility, edit, approval, deletion, and privacy/RBAC rules apply to Bids, commercial values, Estimates, Proposals, and Samples?
+- What search, inbox/task, notification, audit, attachment, and document-generation behaviors belong in the first release boundary?
 
-## Daily Production
+## Other unresolved operational questions
 
-- How often is the report currently used?
-- Which throughput metrics are meaningful?
-- Does Marcos filter or group the Monday board to match the original form?
-- Are values recorded live, daily, or retroactively?
-
-## Production Pipeline
-
-- Which columns should be visible by default?
-- Which columns need resizing or hiding?
-- How should job workspace navigation behave?
-- Which statuses should remain fixed vs. configurable?
-
-## Access Control
-
-- Final role definitions
-- who can see financial fields
-- who can manage reference data
-- who can edit historical reports
+- Manpower: exact shop notebook workflow, commonly used process rows, and reference-management permissions.
+- Material Usage: entry timing, required legacy-form fields, inventory expectations, and custom/unmatched mix handling.
+- Daily Production: reporting cadence, meaningful throughput metrics, and live versus retrospective entry.
+- Access control: final role definitions, financial-field visibility, reference-data administration, and historical-report editing.
