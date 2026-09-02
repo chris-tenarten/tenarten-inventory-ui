@@ -83,6 +83,23 @@ const JOB_UPDATE_COLUMNS = [
   'created_at',
 ].join(',');
 
+const ACTIVE_REWORK_COLUMNS = [
+  'id',
+  'job_id',
+  'sequence_number',
+  'reason_category',
+  'scope_details',
+  'intake_date',
+  'production_status',
+  'planned_start',
+  'planned_end',
+  'created_by',
+  'completed_at',
+  'completed_by',
+  'created_at',
+  'updated_at',
+].join(',');
+
 export type ProductionJobUpdate = Partial<
   Pick<
     ProductionJob,
@@ -114,13 +131,13 @@ export async function loadProductionJobs(includeArchived = false): Promise<Produ
   if (!includeArchived) query = query.is('archived_at', null);
   const [{ data, error }, reworks] = await Promise.all([
     query,
-    supabase.from('production_rework_cycles').select('*').order('sequence_number', { ascending: false }),
+    supabase.from('production_rework_cycles').select(ACTIVE_REWORK_COLUMNS).not('production_status', 'in', '(complete,cancelled)').order('sequence_number', { ascending: false }),
   ]);
 
   if (error) throw error;
   if (reworks.error) throw reworks.error;
   const activeByJob = new Map<string, ProductionReworkCycle>();
-  for (const cycle of (reworks.data ?? []) as ProductionReworkCycle[]) {
+  for (const cycle of (reworks.data ?? []) as unknown as ProductionReworkCycle[]) {
     if (isActiveProductionRework(cycle) && !activeByJob.has(cycle.job_id)) {
       activeByJob.set(cycle.job_id, cycle);
     }

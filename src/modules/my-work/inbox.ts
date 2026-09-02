@@ -41,6 +41,13 @@ export async function loadInboxMessages(): Promise<InboxMessage[]> {
 
 export async function loadInboxUnreadCount(recipientUserId:string){const{count,error}=await supabase.from("my_work_messages").select("id",{count:"exact",head:true}).eq("recipient_user_id",recipientUserId).eq("delivery_status","ready").is("read_at",null);if(error)throw error;return count??0;}
 
+export type RecentInboxMessage={id:string;senderUserId:string;recipientUserId:string;body:string;readAt:string;createdAt:string};
+export async function loadRecentInboxMessages(limit=40):Promise<RecentInboxMessage[]>{
+  const{data,error}=await supabase.from("my_work_messages").select("id,sender_user_id,recipient_user_id,body,read_at,created_at").eq("delivery_status","ready").order("created_at",{ascending:false}).order("id",{ascending:false}).limit(limit);
+  if(error)throw error;
+  return((data??[]) as Array<{id:string;sender_user_id:string;recipient_user_id:string;body:string;read_at:string|null;created_at:string}>).map(row=>({id:row.id,senderUserId:row.sender_user_id,recipientUserId:row.recipient_user_id,body:row.body,readAt:row.read_at??"",createdAt:row.created_at}));
+}
+
 export async function loadInboxAttachments(messageIds:string[]):Promise<InboxAttachment[]>{if(!messageIds.length)return[];const{data,error}=await supabase.from("my_work_message_attachments").select("id,message_id,storage_path,original_filename,content_type,byte_size,created_at").in("message_id",messageIds).order("created_at").order("id");if(error)throw error;return((data??[]) as Array<{id:string;message_id:string;storage_path:string;original_filename:string;content_type:string;byte_size:number;created_at:string}>).map(row=>({id:row.id,messageId:row.message_id,storagePath:row.storage_path,originalFilename:row.original_filename,contentType:row.content_type,byteSize:Number(row.byte_size),createdAt:row.created_at,previewUrl:""}));}
 
 export async function loadInboxRecipients(): Promise<WorkCollaborator[]> {

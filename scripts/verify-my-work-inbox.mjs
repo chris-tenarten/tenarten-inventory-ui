@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const [migration, attachments, dialog, inbox, page, notifications, arrival, tasks, activity, theme, nav, attachmentInput] = await Promise.all([
+const [migration, attachments, dialog, inbox, page, notifications, arrival, tasks, activity, theme, nav, attachmentInput, globalMessaging] = await Promise.all([
   read("supabase/migrations/20260831_016_my_work_inbox.sql"),
   read("supabase/migrations/20260831_017_my_work_inbox_attachments.sql"),
   read("src/modules/my-work/InboxDialog.tsx"),
@@ -15,6 +15,7 @@ const [migration, attachments, dialog, inbox, page, notifications, arrival, task
   read("src/app/globals.css"),
   read("src/app/client-layout-shell.tsx"),
   read("src/modules/my-work/AttachmentFileInput.tsx"),
+  read("src/components/GlobalMessaging.tsx"),
 ]);
 
 assert.match(migration, /create table public\.my_work_messages/);
@@ -79,40 +80,41 @@ assert.match(inbox, /finalize_my_work_inbox_message/);
 assert.match(inbox, /discard_my_work_inbox_message_draft/);
 assert.match(inbox, /createSignedUrl/);
 assert.match(inbox, /mark_my_work_inbox_conversation_read/);
-assert.match(page, /<InboxIcon[\s\S]*Inbox/);
 assert.match(page, /<ToolboxLauncher \/>/);
-assert.match(page, /data-inbox-rail/);
-assert.match(page, /sticky top-\[53px\] hidden h-\[calc\(100dvh-53px\)\][\s\S]*min-\[1440px\]:flex/);
-assert.match(page, /expanded\?"w-72":"w-14"/);
-assert.match(page, /aria-label=\{expanded\?"Collapse Inbox rail":"Expand Inbox rail"\}[\s\S]*tenops-selected-surface/,'the rail header must use the established high-contrast selected surface in both themes');
-assert.match(page, /min-\[1440px\]:hidden/,'mobile and intermediate widths must retain the header Inbox button until the rail can coexist with the full task workspace');
-assert.match(page, /data-my-work className="flex w-full items-start"/,'the rail must remain pinned to the viewport-side edge instead of a centered outer wrapper');
-assert.match(page, /mx-auto min-w-0 w-full max-w-\[1120px\] flex-1/,'only the established-width task workspace should center in the space remaining beside the rail');
-assert.match(page, /onOpenConversation=\{\(userId\)=>[\s\S]*setInboxOpen\(true\)/,'rail conversation selection must open the existing centered Inbox');
-assert.match(page, /onNewMessage=\{\(\)=>[\s\S]*setInboxComposeNew\(true\)/);
-assert.match(page, /inboxUnreadCount/);
-assert.match(page, /inboxUnreadCount>9\?"9\+"/);
-assert.match(page, /absolute -right-1 -top-1[\s\S]*bg-red-600/);
-assert.match(page, /my-work-inbox-badge[\s\S]*event:"UPDATE"/);
-assert.match(page, /const nextTasks = await loadMyWorkTasks\(\);[\s\S]*setTasks\(\(current\)=>/, "tasks must render without waiting for secondary My Work or Inbox metadata");
+assert.doesNotMatch(page, /data-inbox-rail|InboxIcon|inboxUnreadCount|<InboxDialog/,'My Work must no longer expose or mount a second Inbox presentation');
+assert.match(page, /const \{tasks:nextTasks,groups:nextGroups\} = await loadMyWorkOverview\(\);[\s\S]*setTasks\(\(current\)=>/, "tasks and their lightweight personal groups must render without waiting for secondary My Work or Inbox metadata");
 assert.match(page, /loadWorkCollaborators\(\),loadWorkJobs\(\),refreshAttachmentCounts\(\)/);
-assert.match(page, /setInboxRecipients\(others\)/, "Inbox must reuse the canonical collaborator lookup");
-assert.match(page, /loadInboxUnreadCount\(auth\.profile\.userId\)/, "Inbox badge must use a recipient-scoped narrow count instead of loading message history");
 assert.match(inbox, /loadInboxAttachments\(messageIds/);
 assert.match(inbox, /createInboxAttachmentUrl/);
 assert.doesNotMatch(inbox.match(/export async function loadInboxMessages[\s\S]*?\n\}/)?.[0]??"", /createSignedUrl/, "Inbox list loading must not sign attachment URLs");
-assert.match(page, /inboxUserId/);
-assert.match(nav, /href: '\/my-work\?inbox=1', label: 'Inbox'/);
+assert.match(globalMessaging, /aria-label="Messaging"[\s\S]*<Send/);
+assert.match(globalMessaging, /loadInboxUnreadCount\(userId\)/, "global badge must use the canonical recipient-scoped narrow count");
+assert.match(globalMessaging, /bg-red-600[\s\S]*unreadCount/);
+assert.match(globalMessaging, /dynamic\(\(\) => import\("@\/modules\/my-work\/InboxDialog"\)/, "the full Inbox workspace must be lazy loaded");
+assert.match(globalMessaging, /const prepareWorkspace=[\s\S]*loadWorkJobs\(\)/, "full Inbox supporting data must load only when a full Messaging workspace opens");
+assert.match(inbox, /loadRecentInboxMessages[\s\S]*\.limit\(limit\)/, "recent awareness must use a bounded metadata query");
+assert.doesNotMatch(globalMessaging, /loadInboxMessages/, "the header dropdown and compact sidebar must not load full conversation history");
+assert.match(globalMessaging, /addEventListener\("tenops:open-inbox"/);
+assert.match(globalMessaging, /params\.get\("inbox"\)[\s\S]*params\.get\("inboxUserId"\)[\s\S]*history\.replaceState/,'dedicated Inbox deep links must remain functional without route navigation');
+assert.match(globalMessaging, /global-messaging-badge:[\s\S]*event:\s*"UPDATE"/);
+assert.match(globalMessaging, /onMouseEnter=\{showMenu\}[\s\S]*aria-label="Open Messaging menu"/, "recent-message menu must support hover and a click-accessible control");
+assert.match(globalMessaging, /role="switch" aria-checked=\{sidebarOpen\}[\s\S]*Message sidebar[\s\S]*data-global-message-sidebar/);
+assert.match(globalMessaging, /headerPortalTarget&&sidebarOpen&&!sidebarExpanded[\s\S]*onClick=\{expandSidebar\}[\s\S]*<Send[\s\S]*createPortal\(<aside data-global-message-sidebar data-expanded="false"/, "the compact rail header must move with the sticky shell header while its body remains fixed behind it");
+assert.match(globalMessaging, /data-global-message-sidebar data-expanded="false"[\s\S]*fixed inset-y-0 left-0 z-\[90\]/, "the rail body must extend behind the elastically moving header segment so overscroll cannot expose a gap");
+assert.match(globalMessaging, /presentation=\{sidebarExpanded\?"sidepane":"dialog"\}/, "sidebar expansion and header shortcut must select distinct full-workspace presentations");
+assert.match(dialog, /presentation\?:"dialog"\|"sidepane"[\s\S]*sidepane\?"items-stretch justify-start"/, "expanded Messaging must reuse the canonical Inbox as a left sidepane");
+assert.match(theme, /@media \(min-width: 768px\) \{[\s\S]*data-global-message-sidebar\]\[data-expanded="false"\]\) \[data-app-shell\] > header,[\s\S]*\[data-app-shell\] > main \{[\s\S]*width: calc\(100% - 3\.5rem\);[\s\S]*margin-left: 3\.5rem/, "the header and page must both compact at the same breakpoint where the persistent rail becomes visible");
+assert.doesNotMatch(globalMessaging, /presentation="sidecar"/);
+assert.match(dialog, /sidepane\?"items-stretch justify-start":"items-center justify-center sm:p-4"/, "full Messaging must retain the established centered modal while supporting the left sidepane");
+assert.doesNotMatch(nav, /href: '\/my-work\?inbox=1', label: 'Inbox'/);
+assert.match(nav, /<GlobalMessaging key=\{auth\.profile\?\.userId\?\?'signed-out'\} \/>[\s\S]*<AccountNotifications/,'identity-scoped Messaging must appear immediately before Notifications');
 assert.match(nav, /data-shell-header[\s\S]*sticky top-0 z-\[100\]/,'the global header must remain above page-level sticky surfaces');
 assert.doesNotMatch(nav, /data-shell-header[\s\S]{0,400}backdrop-blur/,'the momentum-scrolled sticky header must not depend on a backdrop-filter compositing layer');
 assert.match(nav, /data-shell-header-inner[\s\S]*relative z-10/,'header branding, navigation, notifications, and profile must remain above the header surface');
 assert.match(theme, /html\[data-appearance="dark"\] \[data-app-shell\] > header \{\s*background: #171c24 !important;/,'the dark header must use an opaque non-filtered surface');
 assert.match(theme, /@media \(max-width: 767px\)[\s\S]*\[data-shell-header\]\[data-dev-branding="true"\]:not\(\[data-compact-header="true"\]\) \[data-shell-brand-subtitle\]/,'the retained mobile subtitle sizing must remain scoped to TenDev branding');
-assert.match(nav, /item\.href==='\/my-work\?inbox=1'[\s\S]*tenops:open-inbox/,'the submenu must open Inbox immediately when My Work is already mounted');
-assert.match(page, /params\.get\("inbox"\) === "1"[\s\S]*setInboxOpen\(true\)[\s\S]*params\.delete\("inbox"\)/,'the Inbox submenu URL must open the existing Inbox surface after navigation');
-assert.match(notifications, /notification_type === "inbox_message"[\s\S]*\/my-work\?inboxUserId=/);
+assert.doesNotMatch(notifications, /notification_type === "inbox_message"[\s\S]{0,500}router\.push\(`\/my-work\?inboxUserId=/,'Inbox notifications must not navigate away from the current route');
 assert.match(notifications, /tenops:open-inbox/);
-assert.match(page, /addEventListener\("tenops:open-inbox"/);
 assert.match(arrival, /"inbox_message"/);
 assert.match(tasks, /work_tasks_participant_select/);
 assert.match(page, /Assigned to \$\{participantName\(task\.assigneeName\)\}/);
@@ -120,4 +122,4 @@ assert.match(page, /From \$\{participantName\(task\.creatorName\)\}/);
 assert.match(activity, /\/my-work\?newTask=1&newTaskJobId=/);
 assert.match(theme, /\.bg-slate-50\\\/60/);
 
-console.log("My Work Inbox V1.1 checks passed.");
+console.log("Global Messaging / canonical Inbox checks passed.");

@@ -1,8 +1,9 @@
 "use client";
 
-import { ClipboardList, File, History, Pencil, RotateCcw, Send, Trash2, Upload } from "lucide-react";
+import { ClipboardList, File, Pencil, RotateCcw, Send, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
+import ActivityHistory from "@/components/inspector/ActivityHistory";
 import {loadMyOpenTaskCountForJob} from "@/modules/my-work/queries";
 import JobTransmittalPanel from "@/modules/transmittals/JobTransmittalPanel";
 import PlanningPanel from "@/modules/planning/PlanningPanel";
@@ -53,7 +54,7 @@ import { findJobNumberConflict,jobNumberConflictMessage,type JobNumberOwner } fr
 type InspectorSection = "details" | "planning" | "updates" | "files" | "recent-changes";
 const planningEnabled = isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING);
 const documentActionClass =
-  "inline-flex min-h-10 items-center justify-center gap-2 whitespace-nowrap border border-blue-800 bg-blue-50 px-3 text-sm font-bold text-blue-900 hover:bg-blue-100";
+  "group flex min-h-20 w-full flex-col items-start justify-center gap-1 rounded-sm border border-slate-200 bg-slate-50 px-3 py-2 text-left text-blue-900 transition hover:border-slate-400 hover:bg-white hover:shadow-sm focus-visible:ring-2 focus-visible:ring-blue-600";
 
 type Props = {
   job: ProductionJob;
@@ -724,6 +725,7 @@ export default function ProductionJobInspector({
         (file) => file.id === attachmentPreview.attachment.id,
       )
     : -1;
+  const activityEntries=activity.map((change)=>{const description=activityDescription(change);return{id:change.id,actor:change.actor_name||"TenOps",occurredAt:change.occurred_at,content:<><span className="text-slate-700">{description.action}</span>{description.detail&&<span className="mt-0.5 block whitespace-pre-line text-xs text-slate-500">{description.detail}</span>}{description.reason&&<span className="mt-0.5 block text-xs text-slate-500"><b>Reason:</b> {description.reason}</span>}</>};});
 
   return (
     <div
@@ -852,7 +854,7 @@ export default function ProductionJobInspector({
           role="tabpanel"
           id={`inspector-${activeSection}`}
           aria-labelledby={`inspector-tab-${activeSection}`}
-          className="min-h-0 flex-1 overflow-y-auto px-4 pb-4"
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4"
         >
           {activeSection === "details" && (
             <>
@@ -920,8 +922,8 @@ export default function ProductionJobInspector({
                     onClick={() => setTransmittalOpen(true)}
                     className={documentActionClass}
                   >
-                    <Send className="h-4 w-4 shrink-0" />
-                    Transmittal
+                    <span className="flex items-center gap-2 text-sm font-bold"><Send className="h-4 w-4 shrink-0" />Transmittal</span>
+                    <span className="text-xs font-normal text-slate-600">Create or manage this Job’s canonical transmittal.</span>
                   </button>
                   <button
                     type="button"
@@ -932,8 +934,8 @@ export default function ProductionJobInspector({
                     }}
                     className={documentActionClass}
                   >
-                    <ClipboardList className="h-4 w-4 shrink-0" />
-                    Purchase
+                    <span className="flex items-center gap-2 text-sm font-bold"><ClipboardList className="h-4 w-4 shrink-0" />Purchasing</span>
+                    <span className="text-xs font-normal text-slate-600">Open purchasing context for this Production Job.</span>
                   </button>
                 </div>
                 {myOpenTaskCount>0&&<button type="button" onClick={()=>window.location.assign(`/my-work?jobId=${encodeURIComponent(job.id)}`)} className="mt-3 inline-flex min-h-10 items-center gap-2 border border-slate-300 bg-slate-50 px-3 text-xs font-bold text-blue-800 hover:bg-blue-50"><ClipboardList className="h-4 w-4"/>View my tasks for this Job <span className="text-slate-500">({myOpenTaskCount})</span></button>}
@@ -1433,66 +1435,21 @@ export default function ProductionJobInspector({
           )}
 
           {activeSection === "recent-changes" && (
-            <section className="mt-5">
-              <div className="flex items-center gap-2 border-b border-slate-300 pb-2">
-                <History className="h-4 w-4 text-slate-500" />
-                <h3 className="text-sm font-bold uppercase tracking-wide">
-                  Recent Changes
-                </h3>
-              </div>
+            <div className="mt-4">
               {activityError && (
                 <div
                   role="alert"
-                  className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700"
+                  className="mb-3 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700"
                 >
                   Recent Changes could not be loaded: {activityError}
                 </div>
               )}
-              <div className="mt-3 space-y-3">
-                {activityLoading ? (
-                  <p className="text-sm text-slate-500">
-                    Loading recent changes…
-                  </p>
-                ) : activity.length === 0 && !activityError ? (
-                  <p className="text-sm text-slate-500">
-                    No recorded changes yet.
-                  </p>
-                ) : (
-                  activity.map((change) => {
-                    const description = activityDescription(change);
-                    return (
-                      <article
-                        key={change.id}
-                        className="border-l-2 border-slate-400 pl-3 text-sm"
-                      >
-                        <div className="font-bold text-slate-950">
-                          {change.actor_name || "TenOps"}
-                        </div>
-                        <time
-                          dateTime={change.occurred_at}
-                          className="text-xs text-slate-500"
-                        >
-                          {new Date(change.occurred_at).toLocaleString()}
-                        </time>
-                        <div className="mt-1 font-semibold text-slate-800">
-                          {description.action}
-                        </div>
-                        {description.detail && (
-                          <div className="mt-1 whitespace-pre-line text-slate-600">
-                            {description.detail}
-                          </div>
-                        )}
-                        {description.reason && (
-                          <div className="mt-1 text-slate-600">
-                            <b>Reason:</b> {description.reason}
-                          </div>
-                        )}
-                      </article>
-                    );
-                  })
-                )}
-              </div>
-            </section>
+              {activityLoading ? (
+                <p className="rounded-sm border border-slate-200 bg-white p-4 text-sm text-slate-500">Loading recent changes…</p>
+              ) : (
+                <ActivityHistory title="Recent Changes" initialCount={5} entries={activityEntries}/>
+              )}
+            </div>
           )}
         </div>
         {(activeSection === "details" || dirtyCount > 0) && (

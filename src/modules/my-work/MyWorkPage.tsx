@@ -7,19 +7,16 @@ import {
   CalendarCheck,
   Check,
   ChevronDown,
-  ChevronLeft,
   ChevronRight,
   Clock3,
+  Folder,
   Handshake,
   Info,
-  Inbox as InboxIcon,
-  MessageSquarePlus,
   MoreHorizontal,
   NotebookPen,
   Paperclip,
   Plus,
   Search,
-  Sparkles,
   Trash2,
   Upload,
   UserRound,
@@ -28,33 +25,35 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import ToolboxLauncher from "@/components/ToolboxLauncher";
-import { supabase } from "@/lib/supabase";
 import { openProductionJob } from "@/modules/production/job-options";
-import InboxDialog from "./InboxDialog";
-import { isTenOpsSystemInboxUser, loadInboxMessages, loadInboxUnreadCount, type InboxMessage } from "./inbox";
 import {
   createWorkTask,
+  createWorkTaskGroup,
+  deleteWorkTaskGroup,
   finalizeWorkTaskCreation,
-  loadMyWorkTasks,
+  loadMyWorkOverview,
   loadWorkTaskAttachmentCounts,
   loadWorkTaskAttachments,
   loadWorkCollaborators,
   loadWorkJobs,
+  loadWorkTaskGroups,
   openWorkTaskAttachment,
   permanentlyDeleteWorkTask,
   removeWorkTaskAttachment,
   setWorkTaskCompleted,
+  setWorkTaskGroup,
+  updateWorkTaskGroup,
   updateWorkTask,
   uploadWorkTaskAttachments,
 } from "./queries";
-import type { WorkCollaborator, WorkJob, WorkTask, WorkTaskAttachment, WorkTaskColor } from "./types";
+import type { WorkCollaborator, WorkJob, WorkTask, WorkTaskAttachment, WorkTaskColor, WorkTaskGroup } from "./types";
 import AttachmentFileInput, { StagedImagePreview } from "./AttachmentFileInput";
 import { estimateInputToMinutes, estimatedMinutesToInput, formatEstimatedMinutes, normalizeEstimatedMinutes, type EstimateUnit } from "./estimated-time";
 
 type View = "today" | "all" | "private" | "shared";
 type SortMode = "attention" | "due" | "recent" | "color" | "job" | "estimate-asc" | "estimate-desc";
 type GroupMode = "none" | "due" | "job" | "effort";
-type DetailDraft = { title: string; notes: string; assigneeUserId: string; dueDate: string; estimatedMinutes: number|null; jobId: string; color: WorkTaskColor };
+type DetailDraft = { title: string; notes: string; assigneeUserId: string; dueDate: string; estimatedMinutes: number|null; jobId: string; color: WorkTaskColor; groupId:string };
 
 const COLORS: Array<{ key: WorkTaskColor; label: string; swatch: string; edge: string }> = [
   { key: "neutral", label: "Default", swatch: "bg-slate-300", edge: "border-l-slate-300" },
@@ -67,22 +66,12 @@ const COLORS: Array<{ key: WorkTaskColor; label: string; swatch: string; edge: s
   { key: "violet", label: "Violet", swatch: "bg-violet-500", edge: "border-l-violet-500" },
 ];
 const colorEdge = (color: WorkTaskColor) => COLORS.find((item) => item.key === color)?.edge ?? "border-l-slate-300";
+const effectiveColor=(task:WorkTask)=>task.groupColor??task.color;
 const participantName = (value: string) => value.trim() || "TenOps user";
 const wait = (milliseconds: number) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
-const detailFromTask = (task: WorkTask): DetailDraft => ({ title: task.title, notes: task.notes, assigneeUserId: task.assigneeUserId, dueDate: task.dueDate, estimatedMinutes: task.estimatedMinutes, jobId: task.contextType === "job" ? task.contextId : "", color: task.color });
+const detailFromTask = (task: WorkTask): DetailDraft => ({ title: task.title, notes: task.notes, assigneeUserId: task.assigneeUserId, dueDate: task.dueDate, estimatedMinutes: task.estimatedMinutes, jobId: task.contextType === "job" ? task.contextId : "", color: task.color,groupId:task.groupId });
 const jobLabel = (job: WorkJob) => [job.jobNumber, job.name, job.customer].filter(Boolean).join(" · ");
 const SORT_OPTIONS: Array<{ value: SortMode; label: string }> = [{ value: "attention", label: "Recommended" }, { value: "due", label: "Due Date" }, { value: "recent", label: "Recently Added" }, { value: "estimate-asc", label: "Estimated time: shortest first" }, { value: "estimate-desc", label: "Estimated time: longest first" }, { value: "color", label: "Color" }, { value: "job", label: "Job" }];
-const inboxInitials=(name:string)=>name.trim().split(/\s+/).slice(0,2).map((part)=>part[0]?.toUpperCase()).join("")||"?";
-const inboxTime=(value:string)=>new Intl.DateTimeFormat(undefined,{month:"short",day:"numeric"}).format(new Date(value));
-
-function InboxRail({expanded,onExpanded,messages,currentUserId,recipients,unreadCount,onOpenConversation,onNewMessage}:{expanded:boolean;onExpanded:(value:boolean)=>void;messages:InboxMessage[];currentUserId:string;recipients:WorkCollaborator[];unreadCount:number;onOpenConversation:(userId:string)=>void;onNewMessage:()=>void}){
-  const conversations=useMemo(()=>{const grouped=new Map<string,InboxMessage[]>();for(const message of messages){const other=message.senderUserId===currentUserId?message.recipientUserId:message.senderUserId;grouped.set(other,[...(grouped.get(other)??[]),message]);}return[...grouped.entries()].map(([userId,items])=>{const latest=items.at(-1)!;const person=recipients.find((candidate)=>candidate.userId===userId);return{userId,name:person?.displayName||(latest.senderUserId===userId?latest.senderName:latest.recipientName),latest,unread:items.filter((item)=>item.recipientUserId===currentUserId&&!item.readAt).length};}).sort((left,right)=>new Date(right.latest.createdAt).getTime()-new Date(left.latest.createdAt).getTime());},[currentUserId,messages,recipients]);
-  return <aside data-inbox-rail data-expanded={expanded?"true":"false"} className={`sticky top-[53px] hidden h-[calc(100dvh-53px)] shrink-0 self-start border-r border-slate-300 bg-white transition-[width] duration-200 min-[1440px]:flex min-[1440px]:flex-col ${expanded?"w-72":"w-14"}`}>
-    <button type="button" onClick={()=>onExpanded(!expanded)} aria-label={expanded?"Collapse Inbox rail":"Expand Inbox rail"} aria-expanded={expanded} className={`tenops-selected-surface relative flex h-14 shrink-0 items-center border-b ${expanded?"justify-between px-4":"justify-center"}`}><span className="flex items-center gap-2"><InboxIcon className="h-5 w-5" />{expanded?<strong className="text-sm">Inbox</strong>:null}</span>{expanded?<ChevronLeft className="h-4 w-4" />:<ChevronRight className="absolute bottom-1 right-1 h-3 w-3" />}{unreadCount?<span aria-label={`${unreadCount} unread messages`} className={`absolute inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold text-white ring-2 ring-white ${expanded?"right-9 top-2":"right-1 top-1"}`}>{unreadCount>9?"9+":unreadCount}</span>:null}</button>
-    {expanded?<><div className="p-3"><button type="button" onClick={onNewMessage} className="tenops-selected-surface flex h-10 w-full items-center justify-center gap-2 rounded-md border text-sm font-semibold"><MessageSquarePlus className="h-4 w-4" />New message</button></div><div className="min-h-0 flex-1 overflow-y-auto">{conversations.length?conversations.map((conversation)=><button key={conversation.userId} type="button" onClick={()=>onOpenConversation(conversation.userId)} className="flex w-full gap-2 border-t border-slate-200 px-3 py-3 text-left hover:bg-slate-50"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold ${isTenOpsSystemInboxUser(conversation.userId)?"tenops-selected-surface":"border-slate-300 bg-slate-50"}`}>{isTenOpsSystemInboxUser(conversation.userId)?<Sparkles className="h-3.5 w-3.5" />:inboxInitials(conversation.name)}</span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><strong className="truncate text-xs text-slate-900">{conversation.name}</strong><time className="shrink-0 text-[9px] text-slate-400">{inboxTime(conversation.latest.createdAt)}</time></span><span className="mt-1 flex items-center gap-2"><span className="min-w-0 flex-1 truncate text-[11px] text-slate-500">{conversation.latest.body}</span>{conversation.unread?<span className="h-2 w-2 shrink-0 rounded-full bg-red-600" aria-label={`${conversation.unread} unread`} />:null}</span></span></button>):<p className="px-4 py-8 text-center text-xs text-slate-500">No conversations yet.</p>}</div></>:null}
-  </aside>;
-}
-
 function PrivateTaskIcon({ className }: { className?: string }) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true"><path d="M8 10V7a4 4 0 0 1 8 0v3" /><rect width="14" height="11" x="5" y="10" rx="2" /><path d="m9 15 2 2 4-4" /></svg>;
 }
@@ -157,6 +146,11 @@ export default function MyWorkPage() {
   const [tasks, setTasks] = useState<WorkTask[]>([]);
   const [collaborators, setCollaborators] = useState<WorkCollaborator[]>([]);
   const [jobs, setJobs] = useState<WorkJob[]>([]);
+  const [taskGroups,setTaskGroups]=useState<WorkTaskGroup[]>([]);
+  const [groupsOpen,setGroupsOpen]=useState(false);
+  const [groupName,setGroupName]=useState("");
+  const [groupColor,setGroupColor]=useState<WorkTaskColor>("blue");
+  const [groupSaving,setGroupSaving]=useState(false);
   const [title, setTitle] = useState("");
   const [assignee, setAssignee] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -183,13 +177,6 @@ export default function MyWorkPage() {
   const [taskDeleting,setTaskDeleting]=useState(false);
   const [detailAttachments, setDetailAttachments] = useState<WorkTaskAttachment[]>([]);
   const [detailFiles, setDetailFiles] = useState<File[]>([]);
-  const [inboxOpen, setInboxOpen] = useState(false);
-  const [inboxInitialUserId, setInboxInitialUserId] = useState("");
-  const [inboxUnreadCount, setInboxUnreadCount] = useState(0);
-  const [inboxRecipients, setInboxRecipients] = useState<WorkCollaborator[]>([]);
-  const [inboxMessages, setInboxMessages] = useState<InboxMessage[]>([]);
-  const [inboxRailExpanded, setInboxRailExpanded] = useState(false);
-  const [inboxComposeNew, setInboxComposeNew] = useState(false);
   const [quickTaskId,setQuickTaskId]=useState("");
   const [quickAction,setQuickAction]=useState<""|"color"|"due"|"estimate">("");
   const [quickDueDate,setQuickDueDate]=useState("");
@@ -197,34 +184,27 @@ export default function MyWorkPage() {
   const [quickSaving,setQuickSaving]=useState(false);
   const [workloadOpen,setWorkloadOpen]=useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const attachmentCountsRef=useRef<Map<string,number>>(new Map());
 
   const load = useCallback(async () => {
     if (!auth.profile?.isActive) return;
     setLoading(true);
     try {
-      const nextTasks = await loadMyWorkTasks();
-      setTasks((current)=>{const counts=new Map(current.map((task)=>[task.id,task.attachmentCount]));return nextTasks.map((task)=>({...task,attachmentCount:counts.get(task.id)??0}));});
+      const {tasks:nextTasks,groups:nextGroups} = await loadMyWorkOverview();
+      setTasks(nextTasks.map((task)=>({...task,attachmentCount:attachmentCountsRef.current.get(task.id)??0})));
+      setTaskGroups(nextGroups);
       setError("");
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to load My Work."); }
     finally { setLoading(false); }
   }, [auth.profile?.isActive]);
 
-  const refreshAttachmentCounts=useCallback(async()=>{const counts=await loadWorkTaskAttachmentCounts();setTasks((current)=>current.map((task)=>({...task,attachmentCount:counts.get(task.id)??0})));},[]);
+  const refreshAttachmentCounts=useCallback(async()=>{const counts=await loadWorkTaskAttachmentCounts();attachmentCountsRef.current=counts;setTasks((current)=>current.map((task)=>({...task,attachmentCount:counts.get(task.id)??0})));},[]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setFilterJobId(params.get("jobId") || "");
     setFocusTaskId(params.get("taskId") || "");
     if (params.get("view") === "shared") setView("shared");
-    if (params.get("inbox") === "1" || params.get("inboxUserId")) {
-      setInboxInitialUserId(params.get("inboxUserId") || "");
-      setInboxComposeNew(false);
-      setInboxOpen(true);
-      params.delete("inbox");
-      params.delete("inboxUserId");
-      const nextQuery=params.toString();
-      window.history.replaceState({},"",`${window.location.pathname}${nextQuery?`?${nextQuery}`:""}`);
-    }
     if (params.get("newTask") === "1") {
       setComposerOpen(true);
       setJobId(params.get("newTaskJobId") || "");
@@ -236,15 +216,8 @@ export default function MyWorkPage() {
     }
     void load();
   }, [load]);
-  useEffect(()=>{if(!auth.profile?.isActive)return;void Promise.all([loadWorkCollaborators(),loadWorkJobs(),refreshAttachmentCounts()]).then(([nextUsers,nextJobs])=>{const others=nextUsers.filter((user)=>user.userId!==auth.profile?.userId);setCollaborators(others);setInboxRecipients(others);setJobs(nextJobs);}).catch((caught)=>setError(caught instanceof Error?caught.message:"Some My Work options could not be loaded."));},[auth.profile?.isActive,auth.profile?.userId,refreshAttachmentCounts]);
-  const refreshInboxUnread = useCallback(async () => {
-    if(!auth.profile?.userId)return;
-    try { setInboxUnreadCount(await loadInboxUnreadCount(auth.profile.userId)); } catch { /* The Inbox surface reports migration/load errors when opened. */ }
-  },[auth.profile?.userId]);
-  useEffect(()=>{void refreshInboxUnread();},[refreshInboxUnread]);
-  useEffect(()=>{if(!inboxRailExpanded)return;void loadInboxMessages().then(setInboxMessages).catch(()=>setInboxMessages([]));},[inboxRailExpanded]);
-  useEffect(()=>{const userId=auth.profile?.userId;if(!userId)return;const refresh=()=>{void refreshInboxUnread();if(inboxRailExpanded)void loadInboxMessages().then(setInboxMessages).catch(()=>setInboxMessages([]));};const channel=supabase.channel(`my-work-inbox-badge:${userId}`).on("postgres_changes",{event:"INSERT",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${userId}`},refresh).on("postgres_changes",{event:"UPDATE",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${userId}`},refresh).subscribe();return()=>{void supabase.removeChannel(channel);};},[auth.profile?.userId,inboxRailExpanded,refreshInboxUnread]);
-  useEffect(()=>{const openInbox=(event:Event)=>{const userId=(event as CustomEvent<{userId?:string}>).detail?.userId??"";setInboxInitialUserId(userId);setInboxComposeNew(false);setInboxOpen(true);};window.addEventListener("tenops:open-inbox",openInbox);return()=>window.removeEventListener("tenops:open-inbox",openInbox);},[]);
+  useEffect(()=>{if(!auth.profile?.isActive)return;void Promise.all([loadWorkCollaborators(),loadWorkJobs(),refreshAttachmentCounts()]).then(([nextUsers,nextJobs])=>{setCollaborators(nextUsers.filter((user)=>user.userId!==auth.profile?.userId));setJobs(nextJobs);}).catch((caught)=>setError(caught instanceof Error?caught.message:"Some My Work options could not be loaded."));},[auth.profile?.isActive,auth.profile?.userId,refreshAttachmentCounts]);
+  useEffect(()=>{if(!quickTaskId)return;const dismissPointer=(event:PointerEvent)=>{const target=event.target as Element|null;if(target?.closest('[role="menu"]')||target?.closest('button[aria-expanded="true"][aria-label^="Quick actions"]'))return;setQuickTaskId("");setQuickAction("");};const dismissKey=(event:KeyboardEvent)=>{if(event.key==='Escape'){setQuickTaskId("");setQuickAction("");}};document.addEventListener('pointerdown',dismissPointer);document.addEventListener('keydown',dismissKey);return()=>{document.removeEventListener('pointerdown',dismissPointer);document.removeEventListener('keydown',dismissKey);};},[quickTaskId]);
   useEffect(() => { if (!focusTaskId || loading) return; window.setTimeout(() => document.querySelector(`[data-work-task-id="${focusTaskId}"]`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 0); }, [focusTaskId, loading]);
   useEffect(() => {
     const userId = auth.profile?.userId;
@@ -263,7 +236,7 @@ export default function MyWorkPage() {
       else if (sortMode === "recent") comparison = new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime();
       else if (sortMode === "estimate-asc") comparison = (normalizeEstimatedMinutes(left.estimatedMinutes)??Number.POSITIVE_INFINITY)-(normalizeEstimatedMinutes(right.estimatedMinutes)??Number.POSITIVE_INFINITY);
       else if (sortMode === "estimate-desc") {const leftEstimate=normalizeEstimatedMinutes(left.estimatedMinutes);const rightEstimate=normalizeEstimatedMinutes(right.estimatedMinutes);comparison=leftEstimate===null?1:rightEstimate===null?-1:rightEstimate-leftEstimate;}
-      else if (sortMode === "color") comparison = (colorOrder.get(left.color) ?? 0) - (colorOrder.get(right.color) ?? 0);
+      else if (sortMode === "color") comparison = (colorOrder.get(effectiveColor(left)) ?? 0) - (colorOrder.get(effectiveColor(right)) ?? 0);
       else comparison = `${left.jobNumber} ${left.jobName}`.localeCompare(`${right.jobNumber} ${right.jobName}`, undefined, { numeric: true, sensitivity: "base" });
       return comparison || new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime() || left.id.localeCompare(right.id);
     });
@@ -281,6 +254,12 @@ export default function MyWorkPage() {
   },[groupMode,open]);
   const selectedJob = jobs.find((job) => job.id === filterJobId);
   const changeSort = (next: SortMode) => { setSortMode(next); if (auth.profile?.userId) window.localStorage.setItem(`tenops_my_work_sort:${auth.profile.userId}`, next); };
+
+  async function refreshGroups(){setTaskGroups(await loadWorkTaskGroups());await load();}
+  async function addGroup(){if(!groupName.trim()||groupSaving)return;setGroupSaving(true);setError("");try{await createWorkTaskGroup(groupName.trim(),groupColor);setGroupName("");setGroupColor("blue");await refreshGroups();}catch(caught){setError(caught instanceof Error?caught.message:"Unable to create Task Group.");}finally{setGroupSaving(false);}}
+  async function editGroup(group:WorkTaskGroup,changes:{name?:string;color?:WorkTaskColor}){setGroupSaving(true);setError("");try{await updateWorkTaskGroup(group.id,changes.name??group.name,changes.color??group.color);await refreshGroups();}catch(caught){setError(caught instanceof Error?caught.message:"Unable to update Task Group.");}finally{setGroupSaving(false);}}
+  async function removeGroup(group:WorkTaskGroup){const count=tasks.filter(task=>task.groupId===group.id).length;if(!window.confirm(count?`Delete “${group.name}” and remove ${count} task ${count===1?'membership':'memberships'}? Tasks will remain intact.`:`Delete empty Task Group “${group.name}”?`))return;setGroupSaving(true);setError("");try{await deleteWorkTaskGroup(group.id);await refreshGroups();}catch(caught){setError(caught instanceof Error?caught.message:"Unable to delete Task Group.");}finally{setGroupSaving(false);}}
+  async function assignGroup(task:WorkTask,nextGroupId:string){setQuickSaving(true);setError("");try{await setWorkTaskGroup(task.id,nextGroupId);await load();setQuickTaskId("");setQuickAction("");}catch(caught){setError(caught instanceof Error?caught.message:"Unable to organize task.");}finally{setQuickSaving(false);}}
 
   async function add() {
     if (!title.trim() || saving) return;
@@ -321,7 +300,8 @@ export default function MyWorkPage() {
     if (!selectedTask || !detail || !detail.title.trim() || detailSaving) return;
     setDetailSaving(true); setError("");
     try {
-      await updateWorkTask({ id: selectedTask.id, ...detail, title: detail.title.trim() });
+      await updateWorkTask({ id:selectedTask.id,title:detail.title.trim(),notes:detail.notes,assigneeUserId:detail.assigneeUserId,dueDate:detail.dueDate,estimatedMinutes:detail.estimatedMinutes,jobId:detail.jobId,color:detail.color });
+      if(detail.groupId!==selectedTask.groupId)await setWorkTaskGroup(selectedTask.id,detail.groupId);
       if(detailFiles.length)await uploadWorkTaskAttachments(selectedTask.id,detailFiles,(stage)=>setAttachmentActivity(stage==='uploading'?'Uploading attachments…':'Associating attachments…'));
       const nextAttachments=await loadWorkTaskAttachments(selectedTask.id);
       if(selectedTask.creatorUserId===auth.profile?.userId)await finalizeWorkTaskCreation(selectedTask.id,nextAttachments.length);
@@ -332,7 +312,7 @@ export default function MyWorkPage() {
   }
   async function applyQuickTaskUpdate(task:WorkTask,changes:{color?:WorkTaskColor;dueDate?:string;estimatedMinutes?:number|null}){
     if(quickSaving)return;setQuickSaving(true);setError("");
-    try{await updateWorkTask({id:task.id,title:task.title,notes:task.notes,assigneeUserId:task.assigneeUserId,dueDate:changes.dueDate??task.dueDate,estimatedMinutes:changes.estimatedMinutes===undefined?task.estimatedMinutes:changes.estimatedMinutes,jobId:task.contextType==='job'?task.contextId:'',color:changes.color??task.color});await load();setQuickTaskId("");setQuickAction("");}
+    try{if(changes.color&&task.groupId){const group=taskGroups.find(candidate=>candidate.id===task.groupId);if(group)await updateWorkTaskGroup(group.id,group.name,changes.color);}else await updateWorkTask({id:task.id,title:task.title,notes:task.notes,assigneeUserId:task.assigneeUserId,dueDate:changes.dueDate??task.dueDate,estimatedMinutes:changes.estimatedMinutes===undefined?task.estimatedMinutes:changes.estimatedMinutes,jobId:task.contextType==='job'?task.contextId:'',color:changes.color??task.color});if(changes.color&&task.groupId)setTaskGroups(await loadWorkTaskGroups());await load();setQuickTaskId("");setQuickAction("");}
     catch(caught){setError(caught instanceof Error?caught.message:"Unable to update task.");}
     finally{setQuickSaving(false);}
   }
@@ -353,11 +333,13 @@ export default function MyWorkPage() {
         ? `From ${participantName(task.creatorName)}`
         : `With ${participantName(task.assigneeName)}`;
     const due = dueCopy(task.dueDate);
-    return <div key={task.id} className={`grid transition-[grid-template-rows,opacity,margin] duration-150 ${collapsing.has(task.id) ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"}`}><div className={`min-h-0 ${collapsing.has(task.id)?"overflow-hidden":"overflow-visible"}`}><article data-work-task-id={task.id} data-task-color={task.color} role="button" tabIndex={0} onClick={(event)=>{if((event.target as Element).closest('[data-task-interactive]'))return;openDetails(task);}} onKeyDown={(event)=>{if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openDetails(task);}}} className={`group relative flex min-h-14 cursor-pointer items-start gap-2 rounded-md border border-l-4 bg-white px-2 py-1.5 transition hover:border-slate-400 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${colorEdge(task.color)} ${isFocused ? "border-blue-600 ring-2 ring-blue-200" : "border-slate-200"}`}>
+    const shownColor=effectiveColor(task);
+    return <div key={task.id} className={`grid transition-[grid-template-rows,opacity,margin] duration-150 ${collapsing.has(task.id) ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"}`}><div className={`min-h-0 ${collapsing.has(task.id)?"overflow-hidden":"overflow-visible"}`}><article data-work-task-id={task.id} data-task-color={shownColor} role="button" tabIndex={0} onClick={(event)=>{if((event.target as Element).closest('[data-task-interactive]'))return;openDetails(task);}} onKeyDown={(event)=>{if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openDetails(task);}}} className={`group relative flex min-h-14 cursor-pointer items-start gap-2 rounded-md border border-l-4 bg-white px-2 py-1.5 transition hover:border-slate-400 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${colorEdge(shownColor)} ${isFocused ? "border-blue-600 ring-2 ring-blue-200" : "border-slate-200"}`}>
       <button data-task-interactive type="button" onClick={() => void toggle(task)} aria-label={visualCompleted ? `Reopen ${task.title}` : `Complete ${task.title}`} className="flex h-11 w-11 shrink-0 items-center justify-center"><span className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition ${visualCompleted ? "border-blue-700 bg-blue-700 text-white" : "border-slate-400 bg-white text-transparent group-hover:border-blue-700"}`}><Check className="h-4 w-4" /></span></button>
       <div className="min-w-0 flex-1 py-1">
         <div className={`text-[16px] font-medium leading-5 text-slate-950 transition ${visualCompleted ? "text-slate-500 line-through decoration-slate-400" : ""}`}>{task.title}</div>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-slate-500">
+          {task.groupId&&<span className="inline-flex items-center gap-1 font-medium text-slate-700"><Folder className="h-3.5 w-3.5"/>{task.groupName}</span>}
           {!hideJob&&task.contextType === "job" && <button data-task-interactive type="button" onClick={() => openProductionJob(task.contextId)} className="inline-flex min-w-0 max-w-full items-center gap-1 font-medium text-blue-800 hover:underline"><BriefcaseBusiness className="h-3.5 w-3.5 shrink-0" /><span className="truncate">{task.jobNumber ? `${task.jobNumber} · ` : ""}{task.jobName}</span></button>}
           {task.visibility === "shared" ? <span className="inline-flex items-center gap-1"><Handshake className="h-4 w-4" />{sharedCopy}</span> : <span className="inline-flex items-center gap-1"><PrivateTaskIcon className="h-3.5 w-3.5" />Private</span>}
           {formatEstimatedMinutes(task.estimatedMinutes)&&<span className="inline-flex items-center gap-1" title={`Estimated time: ${formatEstimatedMinutes(task.estimatedMinutes)}`}><Clock3 className="h-3.5 w-3.5" />{formatEstimatedMinutes(task.estimatedMinutes)}</span>}
@@ -366,7 +348,8 @@ export default function MyWorkPage() {
       </div>
       {!hideDue&&due && <div className={`shrink-0 px-2 py-2 text-xs font-medium ${visualCompleted?"text-slate-400":due.className}`}><CalendarDays className="mr-1 inline h-3.5 w-3.5" />{due.label}</div>}
       <div data-task-interactive className="shrink-0"><button type="button" aria-label={`Quick actions for ${task.title}`} aria-expanded={quickTaskId===task.id} onClick={()=>{const opening=quickTaskId!==task.id;setQuickTaskId(opening?task.id:"");setQuickAction("");setQuickDueDate(task.dueDate);setQuickEstimate(normalizeEstimatedMinutes(task.estimatedMinutes));}} className="flex h-11 w-11 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-900"><MoreHorizontal className="h-5 w-5" /></button>{quickTaskId===task.id&&<div role="menu" className="absolute right-2 top-12 z-40 w-[min(18rem,calc(100vw-2rem))] rounded-md border border-slate-300 bg-white p-2 text-left shadow-xl" onClick={(event)=>event.stopPropagation()}>
-        <div className="grid gap-1"><button type="button" onClick={()=>setQuickAction(quickAction==='color'?'':'color')} className="min-h-11 rounded px-3 text-left text-sm font-medium hover:bg-slate-100">Change color</button>{quickAction==='color'&&<div className="flex flex-wrap gap-2 border-b border-slate-200 px-2 pb-3">{COLORS.map((item)=><button key={item.key} type="button" aria-label={item.label} onClick={()=>void applyQuickTaskUpdate(task,{color:item.key})} className={`flex h-10 w-10 items-center justify-center rounded-full border ${task.color===item.key?'border-slate-900 ring-2 ring-blue-200':'border-slate-300'}`}><span className={`h-5 w-5 rounded-full ${item.swatch}`} /></button>)}</div>}
+        <div className="grid gap-1"><button type="button" onClick={()=>setQuickAction(quickAction==='color'?'':'color')} className="min-h-11 rounded px-3 text-left text-sm font-medium hover:bg-slate-100">Change {task.groupId?'Group':'Task'} color</button>{quickAction==='color'&&<div className="flex flex-wrap gap-2 border-b border-slate-200 px-2 pb-3">{COLORS.map((item)=><button key={item.key} type="button" aria-label={item.label} onClick={()=>void applyQuickTaskUpdate(task,{color:item.key})} className={`flex h-10 w-10 items-center justify-center rounded-full border ${shownColor===item.key?'border-slate-900 ring-2 ring-blue-200':'border-slate-300'}`}><span className={`h-5 w-5 rounded-full ${item.swatch}`} /></button>)}</div>}
+        <label className="px-3 py-2 text-xs font-medium text-slate-600">Task Group<select value={task.groupId} onChange={(event)=>void assignGroup(task,event.target.value)} disabled={quickSaving} className="mt-1 h-11 w-full rounded border border-slate-300 bg-white px-2 text-sm text-slate-800"><option value="">Ungrouped</option>{taskGroups.map(group=><option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
         <button type="button" onClick={()=>setQuickAction(quickAction==='due'?'':'due')} className="min-h-11 rounded px-3 text-left text-sm font-medium hover:bg-slate-100">Set or change due date</button>{quickAction==='due'&&<div className="flex gap-2 border-b border-slate-200 px-2 pb-3"><input type="date" value={quickDueDate} onChange={(event)=>setQuickDueDate(event.target.value)} className="h-11 min-w-0 flex-1 rounded border border-slate-300 px-2 text-sm" /><button type="button" disabled={quickSaving} onClick={()=>void applyQuickTaskUpdate(task,{dueDate:quickDueDate})} className="tenops-selected-surface h-11 rounded border px-3 text-sm">Apply</button></div>}
         <button type="button" onClick={()=>setQuickAction(quickAction==='estimate'?'':'estimate')} className="min-h-11 rounded px-3 text-left text-sm font-medium hover:bg-slate-100">Set or change estimated time</button>{quickAction==='estimate'&&<div className="space-y-2 border-b border-slate-200 px-2 pb-3"><EstimatedTimeInput value={quickEstimate} onChange={setQuickEstimate} label={`Quick estimated time ${task.id}`} showPresets /><div className="flex gap-2"><button type="button" onClick={()=>setQuickEstimate(null)} className="h-10 rounded border border-slate-300 px-3 text-xs">Clear</button><button type="button" disabled={quickSaving} onClick={()=>void applyQuickTaskUpdate(task,{estimatedMinutes:quickEstimate})} className="tenops-selected-surface h-10 rounded border px-3 text-xs">Apply</button></div></div>}
         <label className="flex min-h-11 cursor-pointer items-center rounded px-3 text-sm font-medium hover:bg-slate-100">Add attachment<AttachmentFileInput disabled={quickSaving} onFiles={(files)=>void addQuickAttachments(task,files)} onError={setError} onPreparing={(preparing)=>setAttachmentActivity(preparing?'Preparing preview…':'')} /></label>
@@ -377,9 +360,8 @@ export default function MyWorkPage() {
   }
 
   return <main data-my-work className="flex w-full items-start">
-    <InboxRail expanded={inboxRailExpanded} onExpanded={setInboxRailExpanded} messages={inboxMessages} currentUserId={auth.profile?.userId??""} recipients={inboxRecipients} unreadCount={inboxUnreadCount} onOpenConversation={(userId)=>{setInboxInitialUserId(userId);setInboxComposeNew(false);setInboxOpen(true);}} onNewMessage={()=>{setInboxInitialUserId("");setInboxComposeNew(true);setInboxOpen(true);}} />
     <div className="mx-auto min-w-0 w-full max-w-[1120px] flex-1 px-3 py-5 sm:px-6 sm:py-7">
-    <header className="flex flex-wrap items-start justify-between gap-3"><div><div className="text-[10px] font-semibold uppercase tracking-[.15em] text-slate-500">Personal workspace</div><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">My Work</h1><p className="mt-0.5 text-sm text-slate-600">Your tasks, all in one place.</p></div><div className="flex flex-wrap items-center justify-end gap-2"><button type="button" onClick={()=>{setInboxInitialUserId("");setInboxComposeNew(false);setInboxOpen(true);}} aria-label={inboxUnreadCount?`Inbox, ${inboxUnreadCount} unread messages`:"Inbox"} className="relative inline-flex h-11 items-center gap-2 rounded-md border border-blue-300 bg-blue-50/70 px-4 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-px hover:border-blue-400 hover:bg-blue-50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 min-[1440px]:hidden"><InboxIcon className="h-4 w-4 text-blue-800" />Inbox{inboxUnreadCount?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold leading-none text-white ring-2 ring-white">{inboxUnreadCount>9?"9+":inboxUnreadCount}</span>:null}</button><ToolboxLauncher /></div></header>
+    <header className="flex flex-wrap items-start justify-between gap-3"><div><div className="text-[10px] font-semibold uppercase tracking-[.15em] text-slate-500">Personal workspace</div><h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">My Work</h1><p className="mt-0.5 text-sm text-slate-600">Your tasks, all in one place.</p></div><div className="flex flex-wrap items-center justify-end gap-2"><button type="button" onClick={()=>setGroupsOpen(true)} className="inline-flex h-11 items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-800"><Folder className="h-4 w-4"/>Task Groups</button><ToolboxLauncher /></div></header>
 
     <div className="mt-2 flex max-w-full flex-nowrap overflow-x-auto border-b border-slate-300 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist" aria-label="My Work views">{([['today','Today'],['all','All Tasks'],['private','My Tasks'],['shared','Shared Tasks']] as const).map(([value, label]) => <button key={value} type="button" role="tab" aria-selected={view === value} onClick={(event) => {setView(value);event.currentTarget.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});}} className={`flex h-11 shrink-0 items-center justify-center gap-2 border-b-2 px-3 text-sm font-medium sm:px-4 ${view === value ? "border-blue-800 text-blue-900" : "border-transparent text-slate-500 hover:text-slate-900"}`}>{value === "today"&&<CalendarCheck className="h-4 w-4" />}{value === "private" && <PrivateTaskIcon className="h-4 w-4" />}{value === "shared" && <Handshake className="h-[18px] w-[18px]" />}{label}</button>)}</div>
     <div className="mt-2 min-h-5 text-xs text-slate-500">{view === "today"?"Open tasks due now or within the next 7 days.":view === "private" ? <span className="inline-flex items-center gap-1.5"><PrivateTaskIcon className="h-3.5 w-3.5" />Private to you</span> : view === "shared" ? <span className="inline-flex items-center gap-1.5"><Handshake className="h-[17px] w-[17px]" />Tasks exchanged with another TenOps user</span> : "Your private tasks and participant-visible Shared Tasks together."}</div>
@@ -396,7 +378,7 @@ export default function MyWorkPage() {
           <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><BriefcaseBusiness className="h-3.5 w-3.5" />Job</span><JobCombobox jobs={jobs} value={jobId} onChange={setJobId} label="Composer Job" /></label>
           <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><UserRound className="h-3.5 w-3.5" />Share</span><select value={assignee} onChange={(event) => setAssignee(event.target.value)} className="h-11 w-full rounded-md border border-slate-300 bg-white px-2 text-sm"><option value="">Keep private</option>{collaborators.map((user) => <option key={user.userId} value={user.userId}>{user.displayName}</option>)}</select></label>
         </div>
-        <div><div className="mb-2 text-xs text-slate-600">Color</div><ColorPicker value={color} onChange={setColor} /></div>
+        <div><div className="mb-2 text-xs text-slate-600">Task color</div><ColorPicker value={color} onChange={setColor} /></div>
         <StagedAttachments files={stagedFiles} onAdd={(files)=>setStagedFiles((current)=>[...current,...files])} onRemove={(index)=>setStagedFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} onPreparing={(preparing)=>setAttachmentActivity(preparing?"Preparing preview…":"")} disabled={saving} />
         {attachmentActivity&&!saving?<p role="status" className="text-xs font-medium text-blue-800">{attachmentActivity}</p>:null}
         <button type="button" onClick={() => void add()} disabled={!title.trim() || saving} className="tenops-selected-surface h-11 w-full rounded-md border px-4 text-sm font-medium disabled:opacity-40 sm:hidden">{saving ? attachmentActivity||"Adding…" : "Add task"}</button>
@@ -411,7 +393,8 @@ export default function MyWorkPage() {
       {view!=='today'&&completed.length > 0 && <section className="mt-8 border-t-2 border-slate-400 pt-2"><button type="button" onClick={() => setCompletedOpen((value) => !value)} aria-expanded={completedOpen} className="flex h-11 w-full items-center justify-between border-b border-slate-200 px-2 text-sm font-medium text-slate-500"><span>Completed ({completed.length})</span>{completedOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}</button>{completedOpen && <div className="mt-3 space-y-2">{completed.map((task)=>taskCard(task))}</div>}</section>}
     </>}
 
-    {selectedTask && detail && <div className="fixed inset-0 z-[80] flex justify-end bg-slate-950/35" role="dialog" aria-modal="true" aria-labelledby="my-work-detail-title" onMouseDown={(event) => { if (event.target === event.currentTarget) closeDetails(); }}><div className="flex h-full w-full max-w-xl flex-col border-l border-slate-300 bg-white shadow-[-12px_0_30px_rgba(15,23,42,.18)]">
+    {groupsOpen&&<div data-shell-below-header className="fixed inset-0 z-[85] flex justify-end bg-slate-950/35" role="dialog" aria-modal="true" aria-labelledby="task-groups-title" onMouseDown={(event)=>{if(event.target===event.currentTarget)setGroupsOpen(false);}}><div className="flex h-full w-full max-w-lg flex-col bg-white shadow-2xl"><header className="flex items-center justify-between border-b border-slate-200 px-4 py-3"><div><div className="text-[10px] font-semibold uppercase tracking-[.14em] text-slate-500">Personal organization</div><h2 id="task-groups-title" className="mt-1 text-xl font-semibold">Task Groups</h2></div><button type="button" onClick={()=>setGroupsOpen(false)} aria-label="Close Task Groups" className="flex h-11 w-11 items-center justify-center rounded-md border border-slate-300"><X className="h-5 w-5"/></button></header><div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4"><section className="rounded-md border border-slate-300 p-3"><label className="text-xs font-medium text-slate-600">New Group name<input value={groupName} maxLength={100} onChange={(event)=>setGroupName(event.target.value)} className="mt-1 h-11 w-full rounded-md border border-slate-300 px-3 text-base"/></label><div className="mt-3 text-xs font-medium text-slate-600">Group color</div><div className="mt-2"><ColorPicker value={groupColor} onChange={setGroupColor}/></div><button type="button" disabled={!groupName.trim()||groupSaving} onClick={()=>void addGroup()} className="tenops-selected-surface mt-3 h-11 w-full rounded-md border px-4 text-sm font-medium disabled:opacity-40">Create Group</button></section><div className="mt-4 space-y-3">{taskGroups.map(group=><article key={group.id} className="rounded-md border border-slate-200 p-3"><div className="flex items-start gap-2"><label className="min-w-0 flex-1 text-xs font-medium text-slate-600">Group name<input defaultValue={group.name} maxLength={100} onBlur={(event)=>{const name=event.target.value.trim();if(name&&name!==group.name)void editGroup(group,{name});}} className="mt-1 h-11 w-full rounded-md border border-slate-300 px-3 text-base"/></label><button type="button" disabled={groupSaving} onClick={()=>void removeGroup(group)} aria-label={`Delete ${group.name}`} className="mt-5 flex h-11 w-11 items-center justify-center rounded-md border border-red-300 text-red-700"><Trash2 className="h-4 w-4"/></button></div><div className="mt-3 text-xs font-medium text-slate-600">Group color</div><div className="mt-2 flex flex-wrap gap-2">{COLORS.map(color=><button key={color.key} type="button" aria-label={`${group.name}: ${color.label}`} aria-pressed={group.color===color.key} disabled={groupSaving} onClick={()=>void editGroup(group,{color:color.key})} className={`flex h-10 w-10 items-center justify-center rounded-full border ${group.color===color.key?'border-slate-900 ring-2 ring-blue-200':'border-slate-300'}`}><span className={`h-5 w-5 rounded-full ${color.swatch}`}/></button>)}</div><p className="mt-2 text-xs text-slate-500">{tasks.filter(task=>task.groupId===group.id).length} tasks in your view</p></article>)}{!taskGroups.length&&<p className="py-8 text-center text-sm text-slate-500">No Task Groups yet.</p>}</div></div></div></div>}
+    {selectedTask && detail && <div data-shell-below-header className="fixed inset-0 z-[80] flex justify-end bg-slate-950/35" role="dialog" aria-modal="true" aria-labelledby="my-work-detail-title" onMouseDown={(event) => { if (event.target === event.currentTarget) closeDetails(); }}><div className="flex h-full w-full max-w-xl flex-col border-l border-slate-300 bg-white shadow-[-12px_0_30px_rgba(15,23,42,.18)]">
       <header className="flex items-start justify-between gap-3 border-b border-slate-200 px-4 py-4 sm:px-6"><div><div className="text-[10px] font-semibold uppercase tracking-[.14em] text-slate-500">Task details</div><h2 id="my-work-detail-title" className="mt-1 text-xl font-semibold text-slate-950">Edit task</h2></div><button type="button" onClick={closeDetails} aria-label="Close task details" className="flex h-11 w-11 items-center justify-center rounded-md border border-slate-300"><X className="h-5 w-5" /></button></header>
       <div className="flex-1 space-y-5 overflow-y-auto px-4 py-5 sm:px-6">
         <label className="block text-sm font-medium text-slate-700">Title<input value={detail.title} onChange={(event) => setDetail({ ...detail, title: event.target.value })} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-base font-normal" /></label>
@@ -419,13 +402,13 @@ export default function MyWorkPage() {
         <div className="grid gap-4 sm:grid-cols-2"><label className="text-sm font-medium text-slate-700">Due date<input type="date" value={detail.dueDate} onChange={(event) => setDetail({ ...detail, dueDate: event.target.value })} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 font-normal" /></label><label className="text-sm font-medium text-slate-700">Estimated time<span className="mt-1 block"><EstimatedTimeInput value={detail.estimatedMinutes} onChange={(next)=>setDetail({...detail,estimatedMinutes:next})} label="Task estimated time" /></span></label><label className="text-sm font-medium text-slate-700">Share with<select value={detail.assigneeUserId} disabled={selectedTask.creatorUserId !== auth.profile?.userId} onChange={(event) => setDetail({ ...detail, assigneeUserId: event.target.value })} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 font-normal disabled:opacity-60"><option value={selectedTask.creatorUserId}>Keep private</option>{collaborators.map((user) => <option key={user.userId} value={user.userId}>{user.displayName}</option>)}</select></label></div>
         <label className="block text-sm font-medium text-slate-700">Job<span className="mt-1 block"><JobCombobox jobs={jobs} value={detail.jobId} onChange={(nextJobId) => setDetail({ ...detail, jobId: nextJobId })} label="Task detail Job" /></span></label>
         {detail.jobId && <button type="button" onClick={() => openProductionJob(detail.jobId)} className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-blue-800"><BriefcaseBusiness className="h-4 w-4" />Open linked Job</button>}
-        <div><div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-700">Color<span title="Color is personal to your workspace and does not change another participant’s view." aria-label="About task color" tabIndex={0} className="inline-flex text-slate-400"><Info className="h-3.5 w-3.5" /></span></div><ColorPicker value={detail.color} onChange={(color) => setDetail({ ...detail, color })} /></div>
+        <label className="block text-sm font-medium text-slate-700">Task Group<select value={detail.groupId} onChange={(event)=>setDetail({...detail,groupId:event.target.value})} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 font-normal"><option value="">Ungrouped</option>{taskGroups.map(group=><option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
+        <div><div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-700">Task color<span title={detail.groupId?"This stored Task color returns when the task is removed from its Group. Group color is currently displayed.":"Task color is personal to your workspace and does not change another participant’s view."} aria-label="About task color" tabIndex={0} className="inline-flex text-slate-400"><Info className="h-3.5 w-3.5" /></span></div>{detail.groupId&&<p className="mb-2 text-xs text-slate-500">Group color is currently displayed.</p>}<ColorPicker value={detail.color} onChange={(color) => setDetail({ ...detail, color })} /></div>
         <div className="space-y-2"><div className="text-sm font-medium text-slate-700">Attachments</div><AttachmentList attachments={detailAttachments} currentUserId={auth.profile?.userId??""} creatorUserId={selectedTask.creatorUserId} setError={setError} onChanged={async()=>setDetailAttachments(await loadWorkTaskAttachments(selectedTask.id))} /><StagedAttachments files={detailFiles} onAdd={(files)=>setDetailFiles((current)=>[...current,...files])} onRemove={(index)=>setDetailFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} onPreparing={(preparing)=>setAttachmentActivity(preparing?"Preparing preview…":"")} disabled={detailSaving} />{attachmentActivity?<p role="status" className="text-xs font-medium text-blue-800">{attachmentActivity}</p>:null}<p className="text-[11px] text-slate-400">Photos, PDFs, and Office files · 25 MB max</p></div>
         {auth.profile?.role==="admin"?<section className="rounded-md border border-red-200 bg-red-50/60 p-3"><h3 className="text-sm font-semibold text-red-900">Admin cleanup</h3><p className="mt-1 text-xs text-red-800">Permanently removes this task and its task-owned attachments and metadata. This cannot be undone.</p><button type="button" onClick={()=>void deleteSelectedTask()} disabled={taskDeleting||detailSaving} className="mt-3 min-h-11 w-full rounded-md border border-red-500 bg-white px-3 text-sm font-semibold text-red-700 disabled:opacity-50 sm:w-auto">{taskDeleting?"Permanently deleting…":"Permanently delete task"}</button></section>:null}
       </div>
       <footer className="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3 sm:px-6"><button type="button" onClick={closeDetails} disabled={taskDeleting} className="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium disabled:opacity-50">Cancel</button><button type="button" onClick={() => void saveDetails()} disabled={!detail.title.trim() || detailSaving || taskDeleting} className="tenops-selected-surface h-10 rounded-md border px-4 text-sm font-medium disabled:opacity-40">{detailSaving ? attachmentActivity||"Saving…" : "Save task"}</button></footer>
     </div></div>}
     </div>
-    <InboxDialog open={inboxOpen} onClose={()=>{setInboxOpen(false);setInboxComposeNew(false);}} currentUserId={auth.profile?.userId??""} collaborators={inboxRecipients} jobs={jobs} initialUserId={inboxInitialUserId} startNewMessage={inboxComposeNew} onUnreadChange={setInboxUnreadCount} />
   </main>;
 }

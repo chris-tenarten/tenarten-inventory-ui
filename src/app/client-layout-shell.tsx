@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Factory, Hammer, Inbox } from 'lucide-react';
+import { BookOpen, Factory, Hammer } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -27,9 +27,11 @@ import { accountInitials } from '@/lib/identity-presentation';
 import { useAccountPreferences } from '@/lib/account-preferences';
 import AccountAccessPanel from '@/components/AccountAccessPanel';
 import AccountNotifications from '@/components/AccountNotifications';
+import GlobalMessaging from '@/components/GlobalMessaging';
 import WelcomeHero from '@/components/WelcomeHero';
 import { toolboxMenuSections } from '@/components/ToolboxLauncher';
 import { openProductionJob } from '@/modules/production/job-options';
+import { IntakeIcon, MyWorkIcon } from '@/components/primary-navigation-icons';
 
 const dashboardNavItems = [
   { href: '/', matchPaths: ['/', '/production'], labelKey: 'nav.production' as TranslationKey, descriptionKey: 'nav.productionDescription' as TranslationKey, icon: ProductionIcon },
@@ -60,10 +62,6 @@ const inventoryNavItems = [
   { href: '/inventory?section=pending-receivals#pending-receivals', matchPath: '__pending-receivals__', labelKey: 'nav.pendingReceivals' as TranslationKey, descriptionKey: 'nav.pendingReceivalsDescription' as TranslationKey },
   { href: '/activity', labelKey: 'nav.activity' as TranslationKey, descriptionKey: 'nav.activityDescription' as TranslationKey },
 ];
-
-function IntakeIcon() {
-  return <Inbox className="h-4 w-4" strokeWidth={2} />;
-}
 
 function ProductionIcon() {
   return <Factory className="h-4 w-4" strokeWidth={2} />;
@@ -131,12 +129,9 @@ function HomeIcon() {
   );
 }
 
-function MyWorkIcon() { return <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m8 9 2 2 4-4M8 16h8"/></svg>; }
-
 const myWorkMenuSections = [
   { label: 'My Work', items: [
     { href: '/my-work', label: 'Tasks' },
-    { href: '/my-work?inbox=1', label: 'Inbox' },
   ] },
   ...toolboxMenuSections,
 ];
@@ -260,7 +255,7 @@ function LauncherMenuSections({ pathname, sections, onSelect }: { pathname: stri
       {section.label === 'Tools' ? <Hammer className="h-3.5 w-3.5" /> : section.label === 'Resources' ? <BookOpen className="h-3.5 w-3.5" /> : <MyWorkIcon />}
       {section.label}
     </div>
-    {section.items.map((item) => <Link key={item.href} role="menuitem" href={item.href} onClick={(event)=>{if(item.href==='/my-work?inbox=1'&&pathname==='/my-work'){event.preventDefault();window.dispatchEvent(new CustomEvent('tenops:open-inbox'));}onSelect();}} className={`block min-h-11 px-4 py-3 text-sm font-bold transition ${dropdownItemClass(pathname === item.href || pathname.startsWith(`${item.href}/`))}`}>{item.label}</Link>)}
+    {section.items.map((item) => <Link key={item.href} role="menuitem" href={item.href} onClick={onSelect} className={`block min-h-11 px-4 py-3 text-sm font-bold transition ${dropdownItemClass(pathname === item.href || pathname.startsWith(`${item.href}/`))}`}>{item.label}</Link>)}
   </div>);
 }
 
@@ -304,7 +299,11 @@ export default function ClientLayoutShell({
     const shell = shellRef.current;
     const header = shellHeaderRef.current;
     if (!shell || !header) return;
-    const measure = () => shell.style.setProperty('--tenops-shell-header-height', `${Math.ceil(header.getBoundingClientRect().height)}px`);
+    const measure = () => {
+      const height = `${Math.ceil(header.getBoundingClientRect().height)}px`;
+      shell.style.setProperty('--tenops-shell-header-height', height);
+      document.documentElement.style.setProperty('--tenops-shell-header-height', height);
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(header);
@@ -313,6 +312,7 @@ export default function ClientLayoutShell({
       observer.disconnect();
       window.removeEventListener('resize', measure);
       shell.style.removeProperty('--tenops-shell-header-height');
+      document.documentElement.style.removeProperty('--tenops-shell-header-height');
     };
   }, []);
 
@@ -482,6 +482,7 @@ export default function ClientLayoutShell({
                 <div className="flex shrink-0 items-center">
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
                   <MyWorkNav pathname={pathname} />
+                  <GlobalMessaging key={auth.profile?.userId??'signed-out'} />
                   <AccountNotifications onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   {auth.isAuthenticated && auth.profile?.isActive ? <div ref={accountMenuRef} data-account-identity className="relative">
                     <button

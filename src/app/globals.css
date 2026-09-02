@@ -41,6 +41,38 @@ body[data-notification-onboarding] [data-account-notifications] {
   top: var(--tenops-shell-header-height, 0px);
 }
 
+/* A full Inspector owns vertical scrolling while it is open. Keep the
+   obscured document at its current position; the Inspector's own scroller
+   retains native wheel, touch, and momentum behavior. */
+html:has([data-shell-below-header]),
+body:has([data-shell-below-header]) {
+  overflow: hidden;
+}
+
+/* Continue the sticky header surface beyond its box so native elastic
+   overscroll never exposes the page color above it. */
+[data-shell-header]::before {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: max(6rem, env(safe-area-inset-top, 0px));
+  background: rgb(242 245 248 / 0.98);
+  content: "";
+}
+
+html[data-appearance="dark"] [data-shell-header]::before {
+  background: rgb(23 28 36 / 0.98);
+}
+
+@media (min-width: 768px) {
+  body:has([data-global-message-sidebar][data-expanded="false"]) [data-app-shell] > header,
+  body:has([data-global-message-sidebar][data-expanded="false"]) [data-app-shell] > main {
+    width: calc(100% - 3.5rem);
+    margin-left: 3.5rem;
+  }
+}
+
 /*
  * The Manpower entry grid is intentionally kept as a single dense operational
  * table. Its header labels are localized here until that legacy row renderer is
@@ -1222,22 +1254,6 @@ html[data-appearance="dark"] .document-print-root .border-slate-400 { border-col
     padding-top: env(safe-area-inset-top, 0px);
   }
 
-  /* Continue the header surface above its sticky box so iOS rubber-band
-     overscroll never reveals an unowned strip at the application boundary. */
-  [data-shell-header]::before {
-    position: absolute;
-    right: 0;
-    bottom: 100%;
-    left: 0;
-    height: max(6rem, env(safe-area-inset-top, 0px));
-    background: rgb(242 245 248 / 0.98);
-    content: "";
-  }
-
-  html[data-appearance="dark"] [data-shell-header]::before {
-    background: rgb(23 28 36 / 0.98);
-  }
-
   [data-login-primary-logo] {
     height: clamp(7rem, 32vw, 9rem) !important;
   }
@@ -1559,6 +1575,46 @@ html[data-appearance="dark"] .document-print-root .border-slate-400 { border-col
     padding-left: 5px !important;
     padding-right: 5px !important;
     font-size: 0 !important;
+  }
+}
+
+@media (max-width: 639px) {
+  [data-sample-editor] > section:first-of-type > div.grid,
+  [data-sample-editor] > section:nth-of-type(2) > div.grid,
+  [data-sample-editor] > section:nth-of-type(3) article > div.grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-sample-editor] > section:first-of-type > div.grid > label:nth-child(5),
+  [data-sample-editor] > section:first-of-type > div.grid > label:nth-child(6),
+  [data-sample-editor] > section:first-of-type > div.grid > label:nth-child(11),
+  [data-sample-editor] > section:first-of-type > div.grid > label:nth-child(12),
+  [data-sample-editor] > section:nth-of-type(3) article > div.grid > label:nth-child(2),
+  [data-sample-editor] > section:nth-of-type(3) article > div.grid > label:nth-child(7) {
+    grid-column: 1 / -1;
+  }
+
+  [data-sample-editor] > section:nth-of-type(3) > div:first-child {
+    flex-wrap: wrap;
+  }
+
+  [data-sample-editor] > section:nth-of-type(3) > div:first-child > button {
+    min-height: 44px;
+  }
+
+  [data-sample-editor] > footer {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    overscroll-behavior: contain;
+  }
+
+  [data-sample-editor] > footer > div {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-sample-editor] > footer > div > button:last-child {
+    grid-column: 1 / -1;
   }
 }
 

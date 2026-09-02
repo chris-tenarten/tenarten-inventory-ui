@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, ArrowRight, AtSign, Bell, MessageSquare, Sparkles, UserRoundCheck, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, AtSign, Bell, Inbox, MessageSquare, Send, Sparkles, UserRoundCheck, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { ROLE_LABELS, type AppRole } from "@/lib/rbac";
 import { supabase } from "@/lib/supabase";
 import { initialNotificationOnboardingState, notificationOnboardingReducer } from "./notification-onboarding-state";
 import { createNotificationArrivalSession, dismissNotificationArrival, observeLiveNotificationArrival, observeNotificationArrivals } from "./notification-arrival-state";
+import { MyWorkIcon } from "./primary-navigation-icons";
 
 export type AccountNotification = {
   kind: "job_update";
@@ -223,7 +224,6 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
     if (item.kind === "general" && item.notification_type === "inbox_message" && item.metadata.conversation_user_id) {
       dispatchOnboarding({ type: "close" });
       window.dispatchEvent(new CustomEvent("tenops:open-inbox", { detail: { userId: item.metadata.conversation_user_id } }));
-      router.push(`/my-work?inboxUserId=${encodeURIComponent(item.metadata.conversation_user_id)}`);
       return;
     }
     if (item.kind === "general" && item.notification_type.startsWith("shared_task_") && item.metadata.task_id) {
@@ -275,6 +275,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
       <div data-notification-scroll-region className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {visibleItems.map((item) => {
           const isWelcome = item.kind === "general" && item.notification_type === "welcome";
+          const isTasksMessagingIntakeRelease = item.kind === "general" && item.notification_type === "feature_announcement" && item.metadata.announcement_key === "tasks_messaging_intake_20260902";
           const isArrival = item.id === arrivalNotificationId;
           return <div key={item.id} data-welcome-notification-row={isWelcome ? "true" : undefined} data-arrival-notification-row={isArrival ? "true" : undefined} className={`border-b border-slate-100 ${item.read_at && !isWelcome ? "opacity-65" : item.read_at ? "" : "bg-blue-50/40"} ${spotlight === "welcome" && isWelcome ? "relative z-[1] ring-2 ring-inset ring-blue-600" : ""} ${isArrival ? "relative z-[1] bg-blue-50 ring-2 ring-inset ring-blue-600" : ""}`}>
           <button type="button" onClick={() => void openItem(item)} className={`block w-full px-2 py-3 text-left transition hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${isWelcome ? "cursor-pointer hover:bg-blue-50/70" : ""}`}>
@@ -288,6 +289,7 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
               <span className={`mt-1 block text-[10px] font-bold uppercase tracking-[0.08em] ${item.source_available ? "text-blue-700" : "text-slate-500"}`}>{item.source_available ? "Open Job Update" : "Job Update no longer available"}</span>
             </> : <>
               <span className="mt-1 block text-xs leading-relaxed text-slate-600">{item.body}</span>
+              {isTasksMessagingIntakeRelease ? <span className="mt-2 grid gap-1.5 border-t border-slate-200 pt-2 text-[11px] font-semibold text-slate-700"><span className="flex items-center gap-2"><MyWorkIcon/><span>Tasks — organize personal and shared work.</span></span><span className="flex items-center gap-2"><Send className="h-4 w-4"/><span>Messaging — open the canonical Inbox globally.</span></span><span className="flex items-center gap-2"><Inbox className="h-4 w-4" strokeWidth={2}/><span>Intake — manage Bids, Files, and Samples upstream.</span></span></span> : null}
               {item.metadata.role && ROLE_LABELS[item.metadata.role] ? <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-blue-700">Role: {ROLE_LABELS[item.metadata.role]}</span> : null}
               {isWelcome ? <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.08em] text-blue-700">Open Welcome <ArrowRight className="h-3 w-3" aria-hidden="true" /></span> : null}
             </>}
