@@ -86,7 +86,7 @@ export default function DocumentViewer({ mode = 'fullscreen', title, filename, m
     </div>
   </div>;
 
-  return <div className="fixed inset-0 z-[140] flex flex-col bg-slate-950/80" role="dialog" aria-modal="true" aria-label={title}>
+  return <div data-shell-below-header className="fixed inset-x-0 bottom-0 z-[140] flex flex-col bg-slate-950/80" role="dialog" aria-modal="true" aria-label={title}>
     <header className="flex min-h-14 flex-wrap items-center gap-2 border-b border-slate-700 bg-slate-950 px-3 py-2 text-white print:hidden">
       <div className="min-w-0 flex-1"><div className="truncate text-sm font-bold">{title}</div><div className="truncate text-[11px] text-slate-300">{filename}{formatSize(sizeBytes) ? ` · ${formatSize(sizeBytes)}` : ''}{metadata ? ` · ${metadata}` : ''}</div></div>
       {(onPrevious || onNext) && <div className="flex"><button type="button" disabled={!hasPrevious} onClick={onPrevious} className="inline-flex h-9 w-9 items-center justify-center border border-slate-600 disabled:opacity-30" aria-label="Previous document"><ChevronLeft className="h-4 w-4"/></button><button type="button" disabled={!hasNext} onClick={onNext} className="inline-flex h-9 w-9 items-center justify-center border border-l-0 border-slate-600 disabled:opacity-30" aria-label="Next document"><ChevronRight className="h-4 w-4"/></button></div>}
