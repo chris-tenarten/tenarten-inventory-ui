@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { BookOpen, BriefcaseBusiness, Hammer } from 'lucide-react';
+import { BookOpen, Factory, Hammer, Inbox } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -31,9 +31,9 @@ import WelcomeHero from '@/components/WelcomeHero';
 import { toolboxMenuSections } from '@/components/ToolboxLauncher';
 import { openProductionJob } from '@/modules/production/job-options';
 
-const primaryNavItems = [
-  { href: '/', labelKey: 'nav.dashboard' as TranslationKey, icon: HomeIcon },
-  { href: '/pre-production', labelKey: 'nav.preProduction' as TranslationKey, icon: BriefcaseBusiness },
+const dashboardNavItems = [
+  { href: '/', matchPaths: ['/', '/production'], labelKey: 'nav.production' as TranslationKey, descriptionKey: 'nav.productionDescription' as TranslationKey, icon: ProductionIcon },
+  { href: '/pre-production', labelKey: 'nav.intake' as TranslationKey, descriptionKey: 'nav.intakeDescription' as TranslationKey, icon: IntakeIcon },
 ];
 
 const reportingNavItems = [
@@ -60,6 +60,14 @@ const inventoryNavItems = [
   { href: '/inventory?section=pending-receivals#pending-receivals', matchPath: '__pending-receivals__', labelKey: 'nav.pendingReceivals' as TranslationKey, descriptionKey: 'nav.pendingReceivalsDescription' as TranslationKey },
   { href: '/activity', labelKey: 'nav.activity' as TranslationKey, descriptionKey: 'nav.activityDescription' as TranslationKey },
 ];
+
+function IntakeIcon() {
+  return <Inbox className="h-4 w-4" strokeWidth={2} />;
+}
+
+function ProductionIcon() {
+  return <Factory className="h-4 w-4" strokeWidth={2} />;
+}
 
 function LaborIcon() {
   return (
@@ -150,8 +158,15 @@ type DomainNavItem = {
   labelKey: TranslationKey;
   descriptionKey: TranslationKey;
   matchPath?: string;
+  matchPaths?: string[];
+  icon?: ComponentType;
   disabled?: boolean;
 };
+
+function domainItemIsActive(item: DomainNavItem, pathname: string) {
+  const paths = item.matchPaths ?? [item.matchPath || item.href];
+  return paths.some((path) => path && (pathname === path || (path !== '/' && pathname.startsWith(`${path}/`))));
+}
 
 function DomainNav({
   pathname,
@@ -170,10 +185,7 @@ function DomainNav({
   const label = t(labelKey);
   const [isOpen, setIsOpen] = useState(false);
   const [dismissedWhileHovered, setDismissedWhileHovered] = useState(false);
-  const isActive = items.some((item) => {
-    const path = item.matchPath || item.href;
-    return path && (pathname === path || pathname.startsWith(`${path}/`));
-  });
+  const isActive = items.some((item) => domainItemIsActive(item, pathname));
   return (
     <div
       className="relative shrink-0"
@@ -214,8 +226,8 @@ function DomainNav({
             <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{label}</div>
           </div>
           {items.map((item) => {
-            const path = item.matchPath || item.href;
-            const itemActive = Boolean(path) && (pathname === path || pathname.startsWith(`${path}/`));
+            const ItemIcon = item.icon;
+            const itemActive = domainItemIsActive(item, pathname);
             return item.disabled ? (
               <div key={item.labelKey} aria-disabled="true" className="px-4 py-3 text-slate-400">
                 <div className="text-sm font-bold">{t(item.labelKey)}</div>
@@ -230,10 +242,9 @@ function DomainNav({
                   setIsOpen(false);
                   event.currentTarget.blur();
                 }}
-                className={`block px-4 py-3 transition ${dropdownItemClass(itemActive)}`}
+                className={`${ItemIcon ? 'flex items-start gap-3' : 'block'} px-4 py-3 transition ${dropdownItemClass(itemActive)}`}
               >
-                <div className="text-sm font-bold">{t(item.labelKey)}</div>
-                <div className="mt-0.5 text-xs font-medium text-slate-500">{t(item.descriptionKey)}</div>
+                {ItemIcon ? <><span className="mt-0.5 shrink-0"><ItemIcon /></span><span className="min-w-0"><span className="block text-sm font-bold">{t(item.labelKey)}</span><span className="mt-0.5 block text-xs font-medium text-slate-500">{t(item.descriptionKey)}</span></span></> : <><div className="text-sm font-bold">{t(item.labelKey)}</div><div className="mt-0.5 text-xs font-medium text-slate-500">{t(item.descriptionKey)}</div></>}
               </Link>
             );
           })}
@@ -401,7 +412,7 @@ export default function ClientLayoutShell({
               data-shell-brand-link
               href="/"
               className="group flex min-w-0 items-center gap-2.5"
-              aria-label={t('shell.goToDashboard')}
+              aria-label={t('shell.goToProduction')}
             >
               {shellUnlocked ? <span
                 data-authenticated-header-logo
@@ -465,30 +476,7 @@ export default function ClientLayoutShell({
                 className="flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none"
                 aria-label="Primary navigation"
               >
-                {primaryNavItems.map((item) => {
-                  const Icon = item.icon;
-
-                  const isActive =
-                    item.href === '/'
-                      ? pathname === '/' ||
-                        pathname === '/production'
-                      : pathname === item.href ||
-                        pathname.startsWith(`${item.href}/`);
-
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-1 px-2 text-[11px] font-bold uppercase leading-none tracking-[0.07em] transition-all duration-150 sm:h-10 sm:gap-2 sm:px-4 sm:text-[12px] ${navClass(
-                        isActive,
-                      )}`}
-                    >
-                      <Icon />
-                      <span className={item.href === '/' || item.href === '/my-work' || item.href === '/pre-production' ? 'hidden sm:inline' : ''}>{t(item.labelKey)}</span>
-                    </Link>
-                  );
-                })}
-
+                <DomainNav pathname={pathname} labelKey="nav.dashboard" href="/" icon={HomeIcon} items={dashboardNavItems} />
                 <DomainNav pathname={pathname} labelKey="nav.reporting" href="/manpower-reporting" icon={LaborIcon} items={reportingNavItems} />
                 <DomainNav pathname={pathname} labelKey="nav.inventory" href="/inventory" icon={PackageIcon} items={inventoryNavItems} />
                 <div className="flex shrink-0 items-center">

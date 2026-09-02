@@ -36,6 +36,12 @@ import {
 } from "./mutations";
 import { getHistoricalPriceSuggestions } from "./pricing";
 import { loadPurchaseOrderDocument, loadPurchaseOrderPendingReceivalProjection, loadVendors } from "./queries";
+import {
+  PurchasingChoiceWithCustom,
+  PurchasingVendorNameInput,
+  purchasingContainerTypes,
+  purchasingQuantityUnits,
+} from "./material-controls";
 import type {
   PendingReceivalProposalLine,
   PriceSuggestion,
@@ -51,36 +57,6 @@ import { validatePurchaseOrderDraft } from "./validation";
 
 const field = "mt-1 h-10 w-full border border-slate-300 bg-white px-3 text-sm";
 const label = "text-xs font-bold uppercase tracking-[0.08em] text-slate-600";
-
-const quantityUnits = ["gal", "lb", "oz", "ea", "sq ft", "lin ft"];
-const containerTypes = ["pail", "drum", "bag", "box", "case", "tote"];
-
-function ChoiceWithCustom({ value, options, onChange }: { value: string; options: string[]; onChange(value: string): void }) {
-  const recognized = options.find((option) => option.toLowerCase() === value.trim().toLowerCase());
-  const [custom, setCustom] = useState(Boolean(value) && !recognized);
-  return (
-    <div>
-      <select
-        value={custom ? "__other" : recognized || ""}
-        onChange={(event) => {
-          if (event.target.value === "__other") {
-            setCustom(true);
-            onChange("");
-          } else {
-            setCustom(false);
-            onChange(event.target.value);
-          }
-        }}
-        className={field}
-      >
-        <option value="">Not specified</option>
-        {options.map((option) => <option key={option} value={option}>{option}</option>)}
-        <option value="__other">Other</option>
-      </select>
-      {custom && <input autoFocus value={value} onChange={(event) => onChange(event.target.value)} placeholder="Enter custom value" className={field} />}
-    </div>
-  );
-}
 
 function containerSize(details: PurchaseOrderLine["details"]) {
   return [details.packageQuantity, details.packageMeasure].filter(Boolean).join(" ");
@@ -378,7 +354,7 @@ function LineEditor({
         </label>
         <label className={label}>
           {tr('Container', 'Envase')}
-          <ChoiceWithCustom value={details.containerType} options={containerTypes} onChange={(value) => set("containerType", value)} />
+          <PurchasingChoiceWithCustom value={details.containerType} options={purchasingContainerTypes} onChange={(value) => set("containerType", value)} className={field} />
         </label>
         <label className={label}>
           {tr('Quantity', 'Cantidad')}
@@ -391,7 +367,7 @@ function LineEditor({
         </label>
         <label className={label}>
           {tr('Quantity Unit', 'Unidad de cantidad')}
-          <ChoiceWithCustom value={details.orderUnit} options={quantityUnits} onChange={(value) => set("orderUnit", value)} />
+          <PurchasingChoiceWithCustom value={details.orderUnit} options={purchasingQuantityUnits} onChange={(value) => set("orderUnit", value)} className={field} />
         </label>
         <label className={label}>
           {tr('Unit Cost', 'Costo unitario')}
@@ -1072,18 +1048,13 @@ export function PurchaseOrderEditor({
                 <label className={label} htmlFor="purchase-order-vendor">
                   {tr('Vendor', 'Proveedor')}
                 </label>
-                <input
+                <PurchasingVendorNameInput
                   id="purchase-order-vendor"
-                  list="po-vendor-options"
                   value={draft.vendorNameSnapshot}
-                  onChange={(e) => selectVendor(e.target.value)}
+                  vendors={vendors}
+                  onChange={selectVendor}
                   className={field}
                 />
-                <datalist id="po-vendor-options">
-                  {vendors.map((v) => (
-                    <option key={v.id} value={v.name} />
-                  ))}
-                </datalist>
                 <button
                   type="button"
                   onClick={() => setVendorManagerOpen(true)}

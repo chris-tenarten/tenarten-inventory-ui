@@ -1069,6 +1069,8 @@ export default function ProductionWorkspace() {
         onUpdateJob={handleUpdateJob}
         onArchive={async (job) => { const archived = await archiveProductionJob(job); setJobs((current) => includeArchived ? current.map((item) => item.id === job.id ? archived : item) : current.filter((item) => item.id !== job.id)); closeInspector(); }}
         onRestore={async (job) => { const restored = await restoreProductionJob(job); setJobs((current) => current.map((item) => item.id === job.id ? restored : item)); closeInspector(); }}
+        isAdmin={productionProfileRole === 'admin'}
+        onPermanentlyDeleted={(jobId) => { setJobs((current) => current.filter((item) => item.id !== jobId)); setSelectedJobId(null); setInspectorFocus(undefined); }}
         onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')}
         scheduleIsStaged={Boolean(stagedSchedules[selectedJob.id])}
         onOrdinarySaveStateChange={setInspectorOrdinarySaveState}

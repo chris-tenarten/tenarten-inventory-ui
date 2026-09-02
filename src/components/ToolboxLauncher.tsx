@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 
 export const toolboxMenuSections = [
   { label: 'Tools', items: [
+    { href: '/samples', label: 'Sample Form Generator' },
     { href: '/proposals', label: 'Proposal Generator' },
     { href: '/purchasing', label: 'PO Generator' },
     { href: '/transmittals', label: 'Letter of Transmittal' },

@@ -18,6 +18,8 @@ import {
   loadProductionJobLaborLifecycleSummary,
   loadProductionJobActivity,
   loadProductionReworkCycles,
+  permanentlyDeleteProductionJob,
+  preflightPermanentProductionJobDelete,
   uploadJobAttachments,
 } from "../jobs";
 import type {
@@ -63,6 +65,8 @@ type Props = {
   ) => Promise<ProductionJob>;
   onArchive: (job: ProductionJob) => Promise<void>;
   onRestore: (job: ProductionJob) => Promise<void>;
+  isAdmin: boolean;
+  onPermanentlyDeleted: (jobId: string) => void;
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   scheduleIsStaged: boolean;
   onOrdinarySaveStateChange: (state: InspectorOrdinarySaveState) => void;
@@ -268,6 +272,8 @@ export default function ProductionJobInspector({
   onUpdateJob,
   onArchive,
   onRestore,
+  isAdmin,
+  onPermanentlyDeleted,
   onStageSchedule,
   scheduleIsStaged,
   onOrdinarySaveStateChange,
@@ -668,6 +674,35 @@ export default function ProductionJobInspector({
     } finally {
       deletingAttachmentIdsRef.current.delete(attachment.id);
       setDeletingId(null);
+    }
+  }
+
+  async function permanentlyDeleteCurrentJob() {
+    if (mutationInFlightRef.current) return;
+    mutationInFlightRef.current = true;
+    setSaving(true);
+    setSaveError("");
+    try {
+      const preflight = await preflightPermanentProductionJobDelete(job.id);
+      if (!preflight.eligible) {
+        setSaveError(`This Production Job cannot be permanently deleted: ${preflight.blockers.join("; ")}.`);
+        return;
+      }
+      const confirmation = window.prompt(
+        `Permanently delete this Production Job and its ordinary attachments? This cannot be undone.\n\nType exactly: ${preflight.confirmationValue}`,
+      );
+      if (confirmation === null) return;
+      if (confirmation !== preflight.confirmationValue) {
+        setSaveError("Typed confirmation did not match the Production Job.");
+        return;
+      }
+      await permanentlyDeleteProductionJob(job.id, confirmation);
+      onPermanentlyDeleted(job.id);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Unable to permanently delete Production Job.");
+    } finally {
+      mutationInFlightRef.current = false;
+      setSaving(false);
     }
   }
 
@@ -1187,6 +1222,13 @@ export default function ProductionJobInspector({
                   >
                     Restore job
                   </button>
+                </section>
+              ) : null}
+              {isAdmin ? (
+                <section className="mt-5 border-t border-red-200 pt-4">
+                  <div className="text-xs font-bold uppercase tracking-[0.08em] text-red-800">Admin cleanup</div>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">Only empty or disposable Jobs without operational history can be permanently deleted.</p>
+                  <button type="button" disabled={saving} onClick={()=>void permanentlyDeleteCurrentJob()} className="mt-3 h-9 rounded-sm border border-red-400 bg-white px-3 text-sm font-bold text-red-700 transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 disabled:opacity-50">Permanently delete Job</button>
                 </section>
               ) : null}
             </>

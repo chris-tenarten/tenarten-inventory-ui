@@ -25,6 +25,7 @@ type Props = {
 const imageTypes = new Set(['image/png', 'image/jpeg', 'image/jpg', 'image/webp']);
 const extension = (filename: string) => filename.split('.').pop()?.toLowerCase() ?? '';
 const formatSize = (bytes?: number | null) => bytes === null || bytes === undefined ? '' : bytes < 1024 ? `${bytes} B` : bytes < 1048576 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1048576).toFixed(1)} MB`;
+export const isDocumentPreviewSupported = (filename: string,mimeType?: string|null) => mimeType === 'application/pdf' || imageTypes.has(mimeType ?? '') || ['pdf','png','jpg','jpeg','webp'].includes(extension(filename));
 
 export default function DocumentViewer({ mode = 'fullscreen', title, filename, mimeType, sizeBytes, metadata, url: sourceUrl, children, onClose, onPrevious, onNext, hasPrevious, hasNext, onOpenFullscreen }: Props) {
   const [zoom, setZoom] = useState(100);
@@ -32,7 +33,7 @@ export default function DocumentViewer({ mode = 'fullscreen', title, filename, m
   const [previewError, setPreviewError] = useState('');
   const ext = extension(filename);
   const isPdf = mimeType === 'application/pdf' || ext === 'pdf';
-  const isImage = imageTypes.has(mimeType ?? '') || ['png', 'jpg', 'jpeg', 'webp'].includes(ext);
+  const isImage = isDocumentPreviewSupported(filename,mimeType) && !isPdf;
   const [pdfRenderUrl, setPdfRenderUrl] = useState<string>();
   const url = isPdf ? pdfRenderUrl : sourceUrl;
   const previewable = Boolean(children || (url && (isPdf || isImage)));

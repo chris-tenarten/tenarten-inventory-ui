@@ -6,6 +6,19 @@ function text(value: unknown) {
   return value === null || value === undefined ? "" : String(value);
 }
 
+function distinctDisplayValues(...values: unknown[]) {
+  const seen = new Set<string>();
+  return values
+    .map((value) => text(value).trim())
+    .filter((value) => {
+      const key = value.toLocaleLowerCase();
+      if (!value || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .join(" ");
+}
+
 function parsePackage(value: string) {
   const match = value.match(
     /(\d+(?:\.\d+)?)\s*(lb|lbs|kg|oz)\.?\s*(bag|pail|box|bucket)?/i,
@@ -54,7 +67,7 @@ function mapStandard(row: CatalogRecord): PurchasingCatalogSuggestion | null {
     packageQuantity: pkg.quantity,
     packageMeasure: pkg.measure,
     containerType: pkg.container,
-    materialType: `${text(row.category)} ${text(row.material_class)}`.trim(),
+    materialType: distinctDisplayValues(row.category, row.material_class),
     referencePrice: row.price == null ? "" : text(row.price),
     bulkPrice: "",
     bulkMinimumQuantity: "",

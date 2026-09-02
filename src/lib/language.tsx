@@ -16,7 +16,10 @@ export type Language = "en" | "es";
 
 const english = {
   "nav.dashboard": "Dashboard",
-  "nav.preProduction": "Pre-Production",
+  "nav.intake": "Intake",
+  "nav.intakeDescription": "Manage upstream work before Production",
+  "nav.production": "Production",
+  "nav.productionDescription": "Open Production overview and operations",
   "nav.myWork": "My Work",
   "nav.reporting": "Reporting",
   "nav.inventory": "Inventory",
@@ -39,7 +42,7 @@ const english = {
   "nav.catalog": "Catalog",
   "nav.catalogDescription": "Maintain Inventory and purchasing references",
   "shell.operationsControl": "Operations Control",
-  "shell.goToDashboard": "Go to dashboard",
+  "shell.goToProduction": "Go to Production",
   "shell.logout": "Logout",
   "settings.eyebrow": "Administration",
   "settings.title": "Settings",
@@ -73,7 +76,10 @@ export type TranslationKey = keyof typeof english;
 
 const spanish: Record<TranslationKey, string> = {
   "nav.dashboard": "Panel",
-  "nav.preProduction": "Preproducción",
+  "nav.intake": "Ingreso",
+  "nav.intakeDescription": "Gestionar el trabajo previo a Producción",
+  "nav.production": "Producción",
+  "nav.productionDescription": "Abrir el resumen y las operaciones de Producción",
   "nav.myWork": "Mi trabajo",
   "nav.reporting": "Reportes",
   "nav.inventory": "Inventario",
@@ -96,7 +102,7 @@ const spanish: Record<TranslationKey, string> = {
   "nav.catalog": "Catálogo",
   "nav.catalogDescription": "Mantener referencias de inventario y compras",
   "shell.operationsControl": "Control de operaciones",
-  "shell.goToDashboard": "Ir al panel",
+  "shell.goToProduction": "Ir a Producción",
   "shell.logout": "Cerrar sesión",
   "settings.eyebrow": "Administración",
   "settings.title": "Configuración",

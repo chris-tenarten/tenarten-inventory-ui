@@ -659,6 +659,10 @@ export async function deleteJobAttachment(
   if (rowError) throw rowError;
 }
 
+export type ProductionJobDeletePreflight={eligible:boolean;blockers:string[];confirmationValue:string;attachmentCount:number};
+export async function preflightPermanentProductionJobDelete(jobId:string):Promise<ProductionJobDeletePreflight>{const{data,error}=await supabase.rpc('preflight_admin_delete_production_job',{p_job_id:jobId});if(error)throw error;const row=(data as Array<{eligible:boolean;blockers:string[];confirmation_value:string;attachment_count:number}>|null)?.[0];if(!row)throw new Error('Unable to evaluate Production Job cleanup.');return{eligible:row.eligible,blockers:Array.isArray(row.blockers)?row.blockers:[],confirmationValue:row.confirmation_value,attachmentCount:Number(row.attachment_count)};}
+export async function permanentlyDeleteProductionJob(jobId:string,confirmation:string):Promise<void>{const prepared=await supabase.rpc('prepare_admin_delete_production_job',{p_job_id:jobId});if(prepared.error)throw prepared.error;const paths=((prepared.data??[]) as Array<{storage_path:string}>).map((row)=>row.storage_path);if(paths.length){const removed=await supabase.storage.from('job-attachments').remove(paths);if(removed.error)throw removed.error;}const finalized=await supabase.rpc('admin_permanently_delete_production_job',{p_job_id:jobId,p_confirmation:confirmation});if(finalized.error)throw finalized.error;}
+
 export async function loadProductionJob(jobId: string): Promise<ProductionJob | null> {
   const { data, error } = await supabase
     .from('jobs')

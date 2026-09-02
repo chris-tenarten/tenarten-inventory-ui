@@ -110,4 +110,5 @@ const [arim] = combinePurchasingCatalogRecords([
 ], []);
 assert.equal(arim.vendorSku, 'B30');
 assert.equal(arim.materialName, 'Toros Black');
+assert.equal(arim.materialType, 'marble');
 console.log('Purchasing catalog pricing checks passed.');
