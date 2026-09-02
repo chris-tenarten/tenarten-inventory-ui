@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 
 const migration=await readFile(new URL('../supabase/migrations/20260901_001_preproduction_bids.sql',import.meta.url),'utf8');
 const workspace=await readFile(new URL('../src/modules/pre-production/BidWorkspace.tsx',import.meta.url),'utf8');
+const proposalCard=await readFile(new URL('../src/modules/pre-production/BidProposalCard.tsx',import.meta.url),'utf8');
+const samplesCard=await readFile(new URL('../src/modules/pre-production/BidSamplesCard.tsx',import.meta.url),'utf8');
 const queries=await readFile(new URL('../src/modules/pre-production/queries.ts',import.meta.url),'utf8');
 
 assert.match(migration,/create table public\.bids/);
@@ -28,8 +30,8 @@ assert.doesNotMatch(migration,/policy[^;]+owner_user_id\s*=\s*auth\.uid\(\)/is);
 assert.match(workspace,/No Production Job is created/);
 assert.match(workspace,/useState<BidStatus\|'all'>\('active'\)/);
 assert.match(workspace,/filter==='all'\|\|bid\.status===filter/);
-assert.match(workspace,/Proposal & Estimate/);
-assert.match(workspace,/Samples \/ Color Plates/);
+assert.match(proposalCard,/Proposal &amp; Estimate/);
+assert.match(samplesCard,/Samples \/ Color Plates/);
 assert.match(workspace,/This Bid is not a Production Job/);
 assert.doesNotMatch(workspace,/Bid Number|Pre-Job|lead scoring|probability/i);
 assert.match(queries,/p_deposit_received_date:bid\.depositReceivedDate\|\|null/);
