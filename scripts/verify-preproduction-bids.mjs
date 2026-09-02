@@ -32,7 +32,7 @@ assert.match(workspace,/useState<BidStatus\|'all'>\('active'\)/);
 assert.match(workspace,/filter==='all'\|\|bid\.status===filter/);
 assert.match(proposalCard,/Proposal &amp; Estimate/);
 assert.match(samplesCard,/Samples \/ Color Plates/);
-assert.match(workspace,/This Bid is not a Production Job/);
+assert.match(workspace,/title="Production">Production handoff has not occurred/);
 assert.doesNotMatch(workspace,/Bid Number|Pre-Job|lead scoring|probability/i);
 assert.match(queries,/p_deposit_received_date:bid\.depositReceivedDate\|\|null/);
 
