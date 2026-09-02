@@ -919,7 +919,7 @@ export function PurchaseOrderEditor({
     : "9999-";
   const displayedPoNumber = draft.poNumber || provisionalPoPrefix;
   return (
-    <div className="fixed inset-0 z-[90] overflow-y-auto bg-slate-950/40 p-2">
+    <div data-shell-below-header className="fixed inset-x-0 bottom-0 z-[90] overflow-y-auto bg-slate-950/40 p-2">
       <div className="mx-auto min-h-full max-w-[1500px] bg-[#eef1f4] shadow-2xl">
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-300 bg-white p-4">
           <div>
