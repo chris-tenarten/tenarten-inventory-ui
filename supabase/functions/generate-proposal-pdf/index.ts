@@ -2,11 +2,12 @@ import {createClient} from 'npm:@supabase/supabase-js@2.101.1';
 import {PDFDocument,StandardFonts,rgb} from 'npm:pdf-lib@1.17.1';
 import{buildProposalPdfModel,paginateProposalPdf,PROPOSAL_ESCALATION_NOTICE,PROPOSAL_LEAD_TIME_NOTICE,PROPOSAL_PDF_VERSION,wrapProposalText}from'./proposal-pdf-model.ts';
 import{tenartenLogo}from'./tenarten-logo.ts';
+import{normalizePdfText}from'../_shared/pdf-text.mjs';
 
 const allowed=(Deno.env.get('TENOPS_ALLOWED_ORIGINS')||'http://localhost:3000').split(',').map(v=>v.trim()).filter(Boolean);
 const cors=(origin:string)=>({'Access-Control-Allow-Origin':allowed.includes(origin)?origin:allowed[0]||'http://localhost:3000','Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type','Vary':'Origin'});
 const json=(body:unknown,status:number,headers:Record<string,string>)=>new Response(JSON.stringify(body),{status,headers:{...headers,'Content-Type':'application/json'}});
-const safe=(value:unknown)=>String(value??'').replace(/^Delivery$/,'Requested delivery date').replaceAll('—','-').replaceAll('–','-').replace(/[^\x20-\x7e\n]/g,'?');
+const safe=(value:unknown)=>normalizePdfText(value).replace(/^Delivery$/,'Requested delivery date');
 
 export async function render(snapshot:Record<string,unknown>){
   const model=buildProposalPdfModel(snapshot);const pdf=await PDFDocument.create();const logo=await pdf.embedPng(tenartenLogo);pdf.setTitle(`Estimate ${model.estimateNumber}`);pdf.setAuthor('Tenarten Terrazzo Co.');pdf.setProducer(`TenOps ${PROPOSAL_PDF_VERSION}`);

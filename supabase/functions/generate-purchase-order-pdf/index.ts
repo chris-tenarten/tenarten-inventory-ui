@@ -5,6 +5,7 @@ import {
   PURCHASE_ORDER_PDF_VERSION,
 } from "../_shared/purchase-order-pdf-model.mjs";
 import { EdgeAuthorizationError, requireEdgeCapability } from "../_shared/rbac.ts";
+import { normalizePdfText } from "../_shared/pdf-text.mjs";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,11 +15,7 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
   status,
   headers: { ...corsHeaders, "Content-Type": "application/json" },
 });
-const safeText = (value: unknown) => String(value ?? "")
-  .replaceAll("—", "-")
-  .replaceAll("–", "-")
-  .replaceAll("·", " | ")
-  .replace(/[^\x20-\x7e\n]/g, "?");
+const safeText = (value: unknown) => normalizePdfText(value);
 const shorten = (font: { widthOfTextAtSize(value: string, size: number): number }, value: string, size: number, width: number) => {
   const source = safeText(value);
   if (font.widthOfTextAtSize(source, size) <= width) return source;
@@ -99,7 +96,7 @@ async function renderPdf(
     { key: "item", label: "#", x: 32, width: 22 },
     { key: "material", label: "MATERIAL", x: 54, width: 66 },
     { key: "vendorSku", label: "VENDOR SKU", x: 120, width: 48 },
-    { key: "partComponent", label: "PART / COMPONENT", x: 168, width: 60 },
+    { key: "partComponent", label: "SIZE", x: 168, width: 60 },
     { key: "description", label: "DESCRIPTION", x: 228, width: 104 },
     { key: "quantity", label: "QTY", x: 332, width: 34 },
     { key: "unit", label: "UNIT", x: 366, width: 34 },

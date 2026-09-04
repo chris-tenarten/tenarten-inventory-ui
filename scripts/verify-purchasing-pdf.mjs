@@ -7,13 +7,14 @@ import {
 } from '../supabase/functions/_shared/purchase-order-pdf-model.mjs';
 
 const read = path => readFile(new URL(path, import.meta.url), 'utf8');
-const [migration, v2Migration, pgcryptoFix, databaseVerification, edgeFunction, editor, mutations, queries, validation, printModel] = await Promise.all([
+const [migration, v2Migration, pgcryptoFix, databaseVerification, edgeFunction, editor, materialControls, mutations, queries, validation, printModel] = await Promise.all([
   read('../supabase/migrations/20260723_004_purchase_order_pdf_documents.sql'),
   read('../supabase/migrations/20260723_005_purchase_order_pdf_v2.sql'),
   read('../supabase/migrations/20260723_009_purchase_order_pdf_snapshot_pgcrypto_path.sql'),
   read('../supabase/inspection/20260723_003_purchase_order_pdf_verification.sql'),
   read('../supabase/functions/generate-purchase-order-pdf/index.ts'),
   read('../src/modules/purchasing/PurchaseOrderEditor.tsx'),
+  read('../src/modules/purchasing/material-controls.tsx'),
   read('../src/modules/purchasing/mutations.ts'),
   read('../src/modules/purchasing/queries.ts'),
   read('../src/modules/purchasing/validation.ts'),
@@ -103,17 +104,18 @@ assert.match(mutations, /display_description:details\.notes/);
 assert.match(mutations, /part_component:details\.chipSize/);
 assert.match(mutations, /container_size:\[details\.packageQuantity,details\.packageMeasure\]/);
 assert.doesNotMatch(printModel, /const description = \[details\.materialNameSnapshot/);
-assert.doesNotMatch(validation, /chip size is required/i, 'Part B and Part / Component must remain optional');
+assert.doesNotMatch(validation, /chip size is required/i, 'Size must remain optional');
 assert.match(editor, /Purchase Order Line/);
-assert.match(editor, /Part \/ Component/);
+assert.match(editor, /tr\('Size', 'Tamaño'\)/);
+assert.match(edgeFunction, /label: "SIZE"/);
 assert.match(editor, /Quantity Unit/);
 assert.match(editor, /Container Size/);
-assert.match(editor, /const quantityUnits = \["gal", "lb", "oz", "ea", "sq ft", "lin ft"\]/);
-assert.match(editor, /const containerTypes = \["pail", "drum", "bag", "box", "case", "tote"\]/);
-assert.doesNotMatch(editor, /const quantityUnits = \[[^\]]*"(?:bag|pail|drum|box|case|tote)"/);
-assert.doesNotMatch(editor, /const containerTypes = \[[^\]]*"(?:gal|lb|oz|ea|sq ft|lin ft)"/);
-assert.match(editor, /const \[custom, setCustom\] = useState\(Boolean\(value\) && !recognized\)/);
-assert.match(editor, /<option value="__other">Other<\/option>/);
+assert.match(materialControls, /purchasingQuantityUnits = \["gal", "lb", "oz", "ea", "sq ft", "lin ft"\]/);
+assert.match(materialControls, /purchasingContainerTypes = \["pail", "drum", "bag", "box", "case", "tote"\]/);
+assert.doesNotMatch(materialControls, /purchasingQuantityUnits = \[[^\]]*"(?:bag|pail|drum|box|case|tote)"/);
+assert.doesNotMatch(materialControls, /purchasingContainerTypes = \[[^\]]*"(?:gal|lb|oz|ea|sq ft|lin ft)"/);
+assert.match(materialControls, /const \[custom, setCustom\] = useState\(Boolean\(value\) && !recognized\)/);
+assert.match(materialControls, /<option value="__other">Other<\/option>/);
 assert.match(mutations, /body: \{ action:'preview', issuanceId \}/);
 assert.match(queries, /purchase_order_documents/);
 
