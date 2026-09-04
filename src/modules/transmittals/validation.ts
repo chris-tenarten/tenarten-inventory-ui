@@ -1,6 +1,13 @@
 import type { JobTransmittalDraft } from "./types";
 
-export function validateJobTransmittal(draft: JobTransmittalDraft): string[] {
+type ValidationOptions = {
+  requireManualNumber?: boolean;
+};
+
+export function validateJobTransmittal(
+  draft: JobTransmittalDraft,
+  { requireManualNumber = false }: ValidationOptions = {},
+): string[] {
   const errors: string[] = [];
   if (!draft.jobId) errors.push("A valid Production job is required.");
   if (!draft.documentDate) errors.push("Document date is required.");
@@ -26,7 +33,10 @@ export function validateJobTransmittal(draft: JobTransmittalDraft): string[] {
       errors.push(`Item ${index + 1} date is not valid.`);
     }
   }
-  if (draft.transmittalNumber.trim() && !/^[A-Za-z0-9]+-\d{3}$/.test(draft.transmittalNumber.trim())) {
+  if (requireManualNumber && !draft.transmittalNumber.trim()) {
+    errors.push("Enter a Transmittal Number before generating because this Production Job does not yet have a Job Number.");
+  }
+  if (draft.transmittalNumber.trim() && !/^\d{4}-\d{3}$/.test(draft.transmittalNumber.trim())) {
     errors.push("Use a Transmittal Number such as 0319-001.");
   }
   if (draft.recipient.company.length > 200 || draft.recipient.attention.length > 200 || draft.cc.length > 400) {
