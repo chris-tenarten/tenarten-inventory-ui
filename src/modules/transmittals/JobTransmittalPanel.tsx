@@ -47,7 +47,11 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const pristineRef = useRef(JSON.stringify(initialDraftRef.current));
-  const errors = useMemo(() => validateJobTransmittal(draft), [draft]);
+  const requiresManualNumber = !job.job_number?.trim();
+  const errors = useMemo(
+    () => validateJobTransmittal(draft, { requireManualNumber: requiresManualNumber }),
+    [draft, requiresManualNumber],
+  );
   const dirty = JSON.stringify(draft) !== pristineRef.current;
 
   useEffect(() => {
@@ -252,8 +256,8 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
           </div> : <div className="space-y-5">
             <section className="border border-slate-300 bg-white p-4"><h3 className={section}>Document details</h3>
               <div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={label}>Date<input type="date" value={draft.documentDate} onChange={(e)=>patch("documentDate",e.target.value)} className={field}/></label>
-                <label className={label}>Transmittal # <span className="font-normal text-slate-500">(optional override)</span><input value={draft.transmittalNumber || provisionalNumber} onChange={(e)=>{setNumberOverride(Boolean(e.target.value.trim()));patch("transmittalNumber",e.target.value);}} placeholder="Allocated when generated" className={field}/>{provisionalNumber && !numberOverride && <span className="mt-1 block text-[11px] font-normal text-slate-500">Checked against existing Purchase Orders and Transmittals. Rechecked when generated.</span>}</label>
-                <label className={label}>Job #<input value={draft.jobNumber} onChange={(e)=>patch("jobNumber",e.target.value)} className={field}/></label>
+                <label className={label}>Transmittal # <span className="font-normal text-slate-500">{requiresManualNumber ? "(required until Job # is assigned)" : "(optional override)"}</span><input value={draft.transmittalNumber || provisionalNumber} onChange={(e)=>{setNumberOverride(Boolean(e.target.value.trim()));patch("transmittalNumber",e.target.value);}} placeholder={requiresManualNumber ? "Example: 0904-001" : "Allocated when generated"} className={field}/>{requiresManualNumber ? <span className="mt-1 block text-[11px] font-normal text-slate-500">Use a unique NNNN-NNN document number. The issued Job # will remain blank.</span> : provisionalNumber && !numberOverride && <span className="mt-1 block text-[11px] font-normal text-slate-500">Checked against existing Purchase Orders and Transmittals. Rechecked when generated.</span>}</label>
+                <label className={label}>Job # <span className="font-normal text-slate-500">(optional)</span><input value={draft.jobNumber} onChange={(e)=>patch("jobNumber",e.target.value)} className={field}/></label>
                 <label className={label}>Job name<input value={draft.jobName} onChange={(e)=>patch("jobName",e.target.value)} className={field}/></label>
                 <label className={`${label} sm:col-span-2`}>Customer Name<input value={draft.customer} onChange={(e)=>patch("customer",e.target.value)} className={field}/><span className="mt-1 block text-[10px] font-normal text-slate-500">Populated from the Production job for this document only. Editing it does not change the job.</span></label></div></section>
             <section className="border border-slate-300 bg-white p-4"><h3 className={section}>Recipient</h3>

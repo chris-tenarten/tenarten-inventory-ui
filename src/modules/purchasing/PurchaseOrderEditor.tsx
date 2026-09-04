@@ -320,7 +320,7 @@ function LineEditor({
           />
         </label>
         <label className={label}>
-          {tr('Part / Component', 'Parte / Componente')}
+          {tr('Size', 'Tamaño')}
           <input
             value={details.chipSize}
             onChange={(e) => set("chipSize", e.target.value)}

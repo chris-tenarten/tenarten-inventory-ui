@@ -26,7 +26,10 @@ The panel contains:
    number, or upload a permanent file.
 3. Final generation validates the form and calls `issue_job_transmittal`.
 4. The RPC locks the job-document number prefix, verifies a manual override or
-   allocates the next suffix, and inserts one immutable snapshot.
+   allocates the next suffix, and inserts one immutable snapshot. If the
+   canonical Production Job does not yet have a Job Number, the operator must
+   supply a unique numeric `NNNN-NNN` Transmittal Number; the issued snapshot
+   keeps Job # blank.
 5. The Edge Function renders only the stored snapshot and uploads the PDF to
    the private `job-transmittal-documents` bucket.
 6. The browser downloads the PDF from a short-lived signed URL.
@@ -50,6 +53,10 @@ the exact-ID cleanup scope.
 Automatic numbers are `<last four job-number digits>-<three-digit suffix>`.
 Allocation begins at `001` when no conflicting document exists. Purchase Orders
 and Letters of Transmittal consume the same per-job sequence in issuance order.
+Automatic allocation therefore applies only after the Production Job has a
+usable Job Number. A Transmittal issued earlier uses an operator-supplied
+`NNNN-NNN` number reserved through the same shared registry; TenOps does not
+fabricate or backfill a Job Number for that document.
 It checks:
 
 - persisted Purchase Order numbers using the same prefix;

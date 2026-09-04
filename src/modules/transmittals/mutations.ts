@@ -92,7 +92,19 @@ export async function issueJobTransmittal(
     p_snapshot: buildTransmittalSnapshot(draft),
     p_actor: draft.senderName.trim(),
   });
-  if (error) throw error;
+  if (error) {
+    const message = String(error.message || "Unable to issue the Letter of Transmittal.");
+    if (message.includes("TRANSMITTAL_NUMBER_REQUIRED_WITHOUT_JOB_NUMBER")) {
+      throw new Error("Enter a Transmittal Number because this Production Job does not yet have a Job Number.");
+    }
+    if (message.includes("DOCUMENT_NUMBER_FORMAT_INVALID")) {
+      throw new Error("Use a Transmittal Number in NNNN-NNN format, such as 0904-001.");
+    }
+    if (message.includes("DOCUMENT_NUMBER_COLLISION")) {
+      throw new Error("That Transmittal Number is already in use. Enter another number.");
+    }
+    throw new Error(message);
+  }
   const row = Array.isArray(data) ? data[0] : data;
   if (!row) throw new Error("The Letter of Transmittal was not issued.");
   return { id: String(row.transmittal_id), number: String(row.transmittal_number) };

@@ -56,7 +56,7 @@ assert.doesNotMatch(overlays, /overflow-hidden|object-cover/);
 assert.match(layout, /BRANDING\.defaultAppearance/);
 assert.match(layout, /data-appearance=\{defaultAppearance\}/);
 assert.doesNotMatch(layout, /allowUserAppearance=\{BRANDING\.showDeveloperArtwork\}/);
-assert.doesNotMatch(settings, /BRANDING\.showDeveloperArtwork/);
+assert.match(settings, /!BRANDING\.showDeveloperArtwork && accountPreferences\.accountScoped/);
 assert.match(settings, /id="appearance"/);
 assert.match(appBranding, /BRANDING\.showDeveloperArtwork/);
 assert.match(appearance, /defaultAppearance = "light"/);

@@ -8,6 +8,7 @@ import {
   sampleRowHeight,
   wrapSampleText,
 } from "../_shared/sample-work-order-pdf-model.mjs";
+import { normalizePdfText } from "../_shared/pdf-text.mjs";
 
 const allowedOrigins = new Set([
   "https://tenops.pages.dev",
@@ -51,7 +52,7 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>) {
     const page = pdf.addPage([612, 792]);
     page.drawRectangle({ x: 0, y: 0, width: 612, height: 792, color: white });
     const text = (value: string, x: number, y: number, size = 8, font = regular, color = navy) =>
-      page.drawText(String(value ?? ""), { x, y, size, font, color });
+      page.drawText(normalizePdfText(value), { x, y, size, font, color });
     const rect = (x: number, y: number, width: number, height: number, fill = white) =>
       page.drawRectangle({ x, y, width, height, borderColor: line, borderWidth: 0.7, color: fill });
     const tableRect = (x: number, y: number, width: number, height: number, fill = white) =>

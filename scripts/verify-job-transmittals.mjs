@@ -6,13 +6,14 @@ import {
 } from "../supabase/functions/_shared/job-transmittal-pdf-model.mjs";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
-const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, editableCustomer, sharedNumberingVerification, defaults, validation, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector, workspace, route] = await Promise.all([
+const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, editableCustomer, withoutJobNumber, sharedNumberingVerification, defaults, validation, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector, workspace, route] = await Promise.all([
   read("../supabase/migrations/20260728_001_job_transmittals.sql"),
   read("../supabase/migrations/20260728_002_job_transmittal_hardening.sql"),
   read("../supabase/migrations/20260728_003_job_document_reservation_privileges.sql"),
   read("../supabase/migrations/20260728_004_purchase_order_allocator_privileges.sql"),
   read("../supabase/migrations/20260729_001_shared_document_numbering_suffix_one.sql"),
   read("../supabase/migrations/20260803_002_job_transmittal_editable_customer.sql"),
+  read("../supabase/migrations/20260904_001_job_transmittal_without_job_number.sql"),
   read("../supabase/inspection/20260729_001_shared_document_numbering_suffix_one_verification.sql"),
   read("../src/modules/transmittals/defaults.ts"),
   read("../src/modules/transmittals/validation.ts"),
@@ -162,6 +163,21 @@ assert.match(editableCustomer, /'customer', display_customer/);
 assert.doesNotMatch(editableCustomer, /'customer', selected_job\.customer/);
 assert.match(editableCustomer, /p_requested_number, 1/);
 assert.match(editableCustomer, /grant execute on function public\.issue_job_transmittal/);
+assert.match(withoutJobNumber, /TRANSMITTAL_NUMBER_REQUIRED_WITHOUT_JOB_NUMBER/);
+assert.match(withoutJobNumber, /normalized_requested !~ '\^\[0-9\]\{4\}-\[0-9\]\{3\}\$'/);
+assert.match(withoutJobNumber, /selected_prefix := split_part\(normalized_requested, '-', 1\)/);
+assert.match(withoutJobNumber, /reserve_job_document_number\([\s\S]*'job_transmittal'/);
+assert.match(withoutJobNumber, /'job_number', display_job_number/);
+assert.doesNotMatch(withoutJobNumber, /update public\.jobs|insert into public\.jobs/);
+assert.match(withoutJobNumber, /grant execute on function public\.issue_job_transmittal\(uuid,text,jsonb,text\)/);
+assert.match(validation, /requireManualNumber/);
+assert.match(validation, /does not yet have a Job Number/);
+assert.match(validation, /\^\\d\{4\}-\\d\{3\}\$/);
+assert.match(panel, /requiresManualNumber = !job\.job_number\?\.trim\(\)/);
+assert.match(panel, /required until Job # is assigned/);
+assert.match(panel, /The issued Job # will remain blank/);
+assert.match(mutations, /TRANSMITTAL_NUMBER_REQUIRED_WITHOUT_JOB_NUMBER/);
+assert.match(mutations, /That Transmittal Number is already in use/);
 assert.match(panel, /record\.documentStatus !== "generated"/);
 assert.doesNotMatch(panel, /previewDraft\(\)[\s\S]{0,120}errors\.length/);
 assert.match(panel, /useState\(true\)/);
