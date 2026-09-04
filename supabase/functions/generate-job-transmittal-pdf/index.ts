@@ -72,7 +72,7 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
   const pdf = await PDFDocument.create();
   const now = new Date();
   pdf.setTitle(`Letter of Transmittal ${model.transmittalNumber}`);
-  pdf.setAuthor("Tenarten Terrazzo Co.");
+  pdf.setAuthor("Tenarten Terrazzo");
   pdf.setSubject(`Letter of Transmittal for ${model.job.name}`);
   pdf.setProducer(`TenOps ${JOB_TRANSMITTAL_PDF_VERSION}`);
   pdf.setCreationDate(now);
@@ -155,7 +155,7 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
       page.drawRectangle({x:margin,y:716,width:45,height:45,borderColor:gold,borderWidth:1.5});
       t("T",48,729,22,bold,gold);
     }
-    t("Tenarten Terrazzo Co.", 104, 755, 15, bold, navy);
+    t("Tenarten Terrazzo", 104, 755, 15, bold, navy);
     t("PRECAST MANUFACTURING", 104, 741, 7, bold, gold);
     t("2933 Eisenhower St., Suite 120", 104, 727, 7);
     t("Carrollton, TX 75007", 104, 716, 7);
@@ -217,7 +217,7 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
       t(model.sender.name,410,commentsY+53,8,bold); t(model.sender.phone,410,commentsY+36,7); t(model.sender.email,410,commentsY+20,7,regular,navy);
     }
 
-    t("Tenarten Terrazzo Co. · Precast Manufacturing · www.precasttz.com", margin, 20, 6.3, regular, muted);
+    t("Tenarten Terrazzo · Precast Manufacturing · www.precasttz.com", margin, 20, 6.3, regular, muted);
     t(`Page ${pageIndex + 1} of ${totalPages}`, 535, 20, 6.3, regular, muted);
     if (draft) page.drawText("DRAFT PREVIEW", { x:140,y:380,size:43,font:bold,color:rgb(.72,.75,.8),rotate:degrees(32),opacity:.32 });
   });
@@ -226,7 +226,7 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
     const page = pdf.addPage([pageWidth,pageHeight]);
     const t = (value: unknown,x:number,y:number,size=7.5,font=regular,color=ink) =>
       page.drawText(safe(value),{x,y,size,font,color});
-    t("Tenarten Terrazzo Co.",margin,755,15,bold,navy);
+    t("Tenarten Terrazzo",margin,755,15,bold,navy);
     t("LETTER OF TRANSMITTAL - COMMENTS CONTINUED",300,748,11,bold,navy);
     page.drawLine({start:{x:margin,y:724},end:{x:580,y:724},thickness:1.2,color:navy});
     page.drawLine({start:{x:margin,y:721},end:{x:580,y:721},thickness:2.2,color:gold});
@@ -235,7 +235,7 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
     page.drawRectangle({x:margin,y:665,width:548,height:17,color:pale,borderColor:navy,borderWidth:.65});
     t("COMMENTS CONTINUED",margin+9,670,7.5,bold,navy);
     wrap(comment,8,526,60).forEach((line,index)=>t(line,margin+10,646-index*11,8));
-    t("Tenarten Terrazzo Co. · Precast Manufacturing · www.precasttz.com",margin,20,6.3,regular,muted);
+    t("Tenarten Terrazzo · Precast Manufacturing · www.precasttz.com",margin,20,6.3,regular,muted);
     t(`Page ${pageIndex+1} of ${totalPages}`,535,20,6.3,regular,muted);
   });
   return new Uint8Array(await pdf.save({ useObjectStreams: false }));

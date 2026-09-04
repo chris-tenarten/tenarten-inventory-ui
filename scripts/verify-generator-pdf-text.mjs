@@ -9,14 +9,21 @@ assert.equal(normalizePdfText("François · Muñoz & Co."), "François | Muñoz 
 assert.equal(normalizePdfText("ordinary punctuation: #42, $5.00 (net-30)!"), "ordinary punctuation: #42, $5.00 (net-30)!");
 assert.doesNotMatch(normalizePdfText(excelPaste), /\?/);
 
-const [purchaseOrder, proposal, sample] = await Promise.all([
+const [purchaseOrder, proposal, sample, transmittal, purchaseOrderDocument] = await Promise.all([
   readFile(new URL("../supabase/functions/generate-purchase-order-pdf/index.ts", import.meta.url), "utf8"),
   readFile(new URL("../supabase/functions/generate-proposal-pdf/index.ts", import.meta.url), "utf8"),
   readFile(new URL("../supabase/functions/generate-sample-pdf/index.ts", import.meta.url), "utf8"),
+  readFile(new URL("../supabase/functions/generate-job-transmittal-pdf/index.ts", import.meta.url), "utf8"),
+  readFile(new URL("../src/modules/purchasing/PurchaseOrderDocument.tsx", import.meta.url), "utf8"),
 ]);
 for (const source of [purchaseOrder, proposal, sample]) {
   assert.match(source, /normalizePdfText/);
   assert.doesNotMatch(source, /replace\(\/\[\^\\x20-\\x7e\\n\]\/g,['"]\?['"]\)/);
+}
+
+for (const source of [purchaseOrder, proposal, sample, transmittal, purchaseOrderDocument]) {
+  assert.match(source, /Tenarten Terrazzo/i);
+  assert.doesNotMatch(source, /Tenarten Terrazzo (?:Co\.?|LLC)/i);
 }
 
 console.log("Generator PDF text normalization checks passed.");

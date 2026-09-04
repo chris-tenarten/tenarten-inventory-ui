@@ -27,7 +27,7 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>) {
   const model = buildSamplePdfModel(snapshot);
   const pdf = await PDFDocument.create();
   pdf.setTitle(`Sample Work Order ${model.colorPlateNumber || ""}`.trim());
-  pdf.setAuthor("Tenarten Terrazzo Co.");
+  pdf.setAuthor("Tenarten Terrazzo");
   pdf.setProducer(`TenOps ${SAMPLE_PDF_VERSION}`);
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);

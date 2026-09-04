@@ -65,7 +65,7 @@ async function renderPdf(
   const model = buildPurchaseOrderPdfModel(orderSnapshot, linesSnapshot);
   const pdf = await PDFDocument.create();
   pdf.setTitle(`Purchase Order ${model.poNumber}`);
-  pdf.setAuthor("Tenarten Terrazzo LLC");
+  pdf.setAuthor("Tenarten Terrazzo");
   pdf.setSubject("Issued Purchase Order");
   pdf.setProducer(`TenOps ${PURCHASE_ORDER_PDF_VERSION}`);
   pdf.setCreationDate(generatedAt);
@@ -156,7 +156,7 @@ async function renderPdf(
 
     const logoScale = Math.min(48 / logo.height, 54 / logo.width);
     page.drawImage(logo, { x: margin, y: pageHeight - margin - logo.height * logoScale, width: logo.width * logoScale, height: logo.height * logoScale });
-    drawText("TENARTEN TERRAZZO LLC", 94, 750, 15, bold);
+    drawText("TENARTEN TERRAZZO", 94, 750, 15, bold);
     drawText("PRECAST MANUFACTURING", 94, 736, 7, bold, slate);
     drawText("2933 Eisenhower St., Suite 120", 94, 724, 7, regular, slate);
     drawText("Carrollton, TX 75007 | www.precasttz.com", 94, 713, 7, regular, slate);
