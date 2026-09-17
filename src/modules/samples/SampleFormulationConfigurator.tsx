@@ -80,14 +80,12 @@ export default function SampleFormulationConfigurator({
             Total area: {number(result.finishedAreaSf)} SF
           </p>
           <p className="mt-1 text-sm font-bold">
-            Chip Mix: {number(result.targetWeight)} lb /{" "}
-            {number(result.targetWeightOz)} oz
+            Chip Mix: {number(result.availableChipMixOz)} oz
           </p>
-          {state.basis === "total_weight" && (
-            <p className="mt-1 text-xs font-bold text-amber-700">
-              Modified target; calculated target is overridden.
-            </p>
-          )}
+          <p className="mt-1 text-xs text-slate-600">
+            {number(result.totalFormulaWeightOz)} oz formula − {number(result.nonChipWeightOz)} oz filler/resin/hardener
+          </p>
+          {result.invalidMassBalance && <p className="mt-1 text-xs font-bold text-red-700">Non-chip ingredients exceed Total Formula Weight. Reduce them or increase the total.</p>}
         </div>
         <button
           type="button"
@@ -117,6 +115,11 @@ export default function SampleFormulationConfigurator({
             </button>
           </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <label className={label}>
+              Total Formula Weight
+              <input type="number" min="0" step="0.01" value={state.totalFormulaWeightOz} onChange={(event)=>patch({totalFormulaWeightOz:event.target.value})} className={input}/>
+              <span className={hint}>ounces · includes Chip Mix, Filler, Resin, and Hardener</span>
+            </label>
             <label className={label}>
               Finished Plate Width
               <input
@@ -268,7 +271,7 @@ export default function SampleFormulationConfigurator({
               )}
             </label>
             <label className={label}>
-              Target Aggregate Weight
+              Geometry Chip Mix Reference
               <input
                 type="number"
                 min="0"
@@ -276,7 +279,7 @@ export default function SampleFormulationConfigurator({
                 value={
                   state.basis === "total_weight"
                     ? state.totalWeight
-                    : result.targetWeight
+                    : result.geometryChipMixWeight
                 }
                 onChange={(event) =>
                   patch({
@@ -289,7 +292,7 @@ export default function SampleFormulationConfigurator({
               <span className={hint}>
                 {state.basis === "total_weight"
                   ? "Modified for this Sample"
-                  : `Calculated: ${number(calculatedTarget.targetWeight)} lb`}
+                  : `Reference only: ${number(calculatedTarget.geometryChipMixWeight)} lb`}
               </span>
               {state.basis === "total_weight" && (
                 <button
