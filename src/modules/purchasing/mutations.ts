@@ -15,7 +15,7 @@ async function throwPdfFunctionError(error: unknown): Promise<never> {
 }
 
 export async function savePurchaseOrderDraft(draft: PurchaseOrderDraft): Promise<string> {
-  const lines = draft.lines.map((line,index) => ({ id:line.id || null, line_number:index+1, production_job_id:line.details.productionJobId || null, catalog_source:line.details.catalogSource || null, catalog_item_id:line.details.catalogItemId || null, vendor_sku_snapshot:line.details.vendorSkuSnapshot || null, material_name_snapshot:line.details.materialNameSnapshot, chip_size:line.details.chipSize, package_quantity:line.details.packageQuantity || null, package_measure:line.details.packageMeasure || null, container_type:line.details.containerType || null, moisture_condition:line.details.moistureCondition || null, quantity_ordered:line.details.quantityOrdered, order_unit:line.details.orderUnit, unit_price:line.details.unitPrice || null, price_basis:line.details.priceBasis || null, notes:line.details.notes || null }));
+  const lines = draft.lines.map((line,index) => ({ id:line.id || null, line_number:index+1, material_type:line.materialType || null, production_job_id:line.details.productionJobId || null, catalog_source:line.details.catalogSource || null, catalog_item_id:line.details.catalogItemId || null, vendor_sku_snapshot:line.details.vendorSkuSnapshot || null, material_name_snapshot:line.details.materialNameSnapshot, chip_size:line.details.chipSize || null, resin_color:line.details.resinColor || null, component_type:line.details.componentType || null, package_quantity:line.details.packageQuantity || null, package_measure:line.details.packageMeasure || null, container_type:line.details.containerType || null, moisture_condition:line.materialType === 'chip' ? line.details.moistureCondition || null : null, quantity_ordered:line.details.quantityOrdered, order_unit:line.details.orderUnit, unit_price:line.details.unitPrice || null, price_basis:line.details.priceBasis || null, notes:line.details.notes || null }));
   const { data,error } = await supabase.rpc('save_chip_purchase_order_draft_v2',{ p_order:{ id:draft.id || null, production_job_id:draft.productionJobId || null, job_number_snapshot:draft.jobNumberSnapshot || null, job_name_snapshot:draft.jobNameSnapshot || null, job_po_reference_type:draft.jobPoReferenceType || null, vendor_id:draft.vendorId || null, vendor_name_snapshot:draft.vendorNameSnapshot, vendor_address_snapshot:draft.vendorAddressSnapshot || null, vendor_contact_snapshot:draft.vendorContactSnapshot || null, ship_to_snapshot:draft.shipToSnapshot || null, payment_terms_snapshot:draft.paymentTermsSnapshot || null, authorized_by_snapshot:draft.authorizedBySnapshot || null, order_date:draft.orderDate, requested_date:draft.requestedDate || null, currency:'USD', discount_percent:draft.discountPercent || null, tax_percent:draft.taxPercent || null, freight:draft.freight || null, commercial_notes:draft.commercialNotes || null, internal_notes:draft.internalNotes || null }, p_lines:lines, p_actor:draft.createdBy.trim() });
   if (error) throw error;
   const id = String(data);
@@ -119,6 +119,7 @@ export async function generatePurchaseOrderDraftPdf(draft: PurchaseOrderDraft): 
     draft.taxPercent,
     draft.freight,
   );
+  const materialTypes = new Set(draft.lines.map((line) => line.materialType).filter((value) => value === 'chip' || value === 'resin'));
   const orderSnapshot = {
     po_number:draft.poNumber.trim() || 'DRAFT',
     po_date:draft.orderDate,
@@ -143,6 +144,7 @@ export async function generatePurchaseOrderDraftPdf(draft: PurchaseOrderDraft): 
     freight:draft.freight || null,
     total:totals.total === null ? null : centsToMoney(totals.total),
     template_name:draft.documentTemplate || 'tenops',
+    material_classification:materialTypes.size > 1 ? 'mixed' : materialTypes.values().next().value || null,
     template_version:1,
     document_version:'po-pdf-v2',
   };
@@ -153,7 +155,11 @@ export async function generatePurchaseOrderDraftPdf(draft: PurchaseOrderDraft): 
       line_number:index + 1,
       material:details.materialNameSnapshot,
       vendor_sku:details.vendorSkuSnapshot,
-      part_component:details.chipSize,
+      line_kind:line.materialType,
+      chip_size:details.chipSize || null,
+      part_component:details.chipSize || null,
+      resin_color:details.resinColor || null,
+      component_type:details.componentType || null,
       description:details.notes,
       display_description:details.notes,
       container:details.containerType,
@@ -187,7 +193,7 @@ export async function saveVendorContact(contact: Partial<VendorContact> & Pick<V
 }
 
 export async function savePurchasingCatalogItem(item: PurchasingCatalogItemInput): Promise<string> {
-  const { data,error } = await supabase.rpc('save_purchasing_catalog_item',{ p_item:{ id:item.id || null, vendor_id:item.vendorId, vendor_sku:item.vendorSku || null, item_name:item.itemName, category:item.category || null, size:item.size || null, unit_size:item.unitSize || null, unit_size_uom:item.unitSizeUom || null, packaging:item.packaging || null, price:item.price || null, bulk_price:item.bulkPrice || null, bulk_minimum_quantity:item.bulkMinimumQuantity || null, bulk_minimum_uom:item.bulkMinimumUom || null, truckload_price:item.truckloadPrice || null, truckload_minimum_quantity:item.truckloadMinimumQuantity || null, truckload_minimum_uom:item.truckloadMinimumUom || null, price_unit:item.priceUnit || null, lead_time_days:item.leadTimeDays || null, minimum_order_qty:item.minimumOrderQty || null, minimum_order_uom:item.minimumOrderUom || null, product_line:item.productLine || null, material_type:item.materialType || null, notes:item.notes || null, is_active:item.isActive } });
+  const { data,error } = await supabase.rpc('save_purchasing_catalog_item_v2',{ p_item:{ id:item.id || null, vendor_id:item.vendorId, vendor_sku:item.vendorSku || null, item_name:item.itemName, category:item.category || null, size:item.size || null, color:item.resinColor || null, component_type:item.componentType || null, unit_size:item.unitSize || null, unit_size_uom:item.unitSizeUom || null, packaging:item.packaging || null, price:item.price || null, bulk_price:item.bulkPrice || null, bulk_minimum_quantity:item.bulkMinimumQuantity || null, bulk_minimum_uom:item.bulkMinimumUom || null, truckload_price:item.truckloadPrice || null, truckload_minimum_quantity:item.truckloadMinimumQuantity || null, truckload_minimum_uom:item.truckloadMinimumUom || null, price_unit:item.priceUnit || null, lead_time_days:item.leadTimeDays || null, minimum_order_qty:item.minimumOrderQty || null, minimum_order_uom:item.minimumOrderUom || null, product_line:item.productLine || null, material_type:item.materialType || null, notes:item.notes || null, is_active:item.isActive } });
   if (error) throw error;
   return String(data);
 }

@@ -4,7 +4,7 @@ import { Download, Eye, FileText, Info, Plus, RefreshCw, Trash2, X } from "lucid
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import type { ProductionJob } from "@/modules/production/types";
-import { createJobTransmittalDraft, createTransmittalItem } from "./defaults";
+import { createJobTransmittalDraft, createStandaloneTransmittalDraft, createTransmittalItem } from "./defaults";
 import {
   generateJobTransmittalPdf,
   getJobTransmittalPdfUrl,
@@ -14,8 +14,8 @@ import {
   previewJobTransmittal,
 } from "./mutations";
 import { loadJobTransmittals } from "./queries";
-import type { JobTransmittalDraft, JobTransmittalRecord } from "./types";
-import { validateJobTransmittal } from "./validation";
+import type { JobTransmittalDraft, JobTransmittalRecord, TransmittalMode } from "./types";
+import { hasUsableTransmittalJobNumber, validateJobTransmittal } from "./validation";
 import { useAccountPreferences } from "@/lib/account-preferences";
 
 const names = ["Anthony", "Chris", "Gio", "Marcos", "Pat"];
@@ -25,11 +25,21 @@ const label = "text-xs font-bold text-slate-700";
 const section = "border-b border-slate-200 pb-2 text-xs font-bold uppercase tracking-[0.1em] text-slate-700";
 const senderKey = "tenops.job-transmittal.sender";
 
-type Props = { job: ProductionJob; onClose(): void };
+type Props = {
+  job?: ProductionJob | null;
+  mode?: TransmittalMode;
+  onClose(): void;
+};
 
-export default function JobTransmittalPanel({ job, onClose }: Props) {
+export default function JobTransmittalPanel({ job = null, mode: requestedMode, onClose }: Props) {
   const accountPreferences = useAccountPreferences();
-  const initialDraftRef = useRef<JobTransmittalDraft>(createJobTransmittalDraft(job));
+  const mode: TransmittalMode = requestedMode ?? (job ? "job-linked" : "standalone");
+  const isJobLinked = mode === "job-linked";
+  const canonicalJobNumber = job?.job_number?.trim() ?? "";
+  const hasCanonicalJobNumber = isJobLinked && hasUsableTransmittalJobNumber(canonicalJobNumber);
+  const initialDraftRef = useRef<JobTransmittalDraft>(
+    job && isJobLinked ? createJobTransmittalDraft(job) : createStandaloneTransmittalDraft(),
+  );
   const [draft, setDraft] = useState<JobTransmittalDraft>(initialDraftRef.current);
   const [history, setHistory] = useState<JobTransmittalRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -41,16 +51,14 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
   );
   const [historyMode, setHistoryMode] = useState(false);
   const [provisionalNumber, setProvisionalNumber] = useState("");
-  const [numberOverride, setNumberOverride] = useState(false);
   const [issuedRecord, setIssuedRecord] = useState<{id:string;number:string}|null>(null);
   const [showEarlyAccessBanner, setShowEarlyAccessBanner] = useState(true);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const pristineRef = useRef(JSON.stringify(initialDraftRef.current));
-  const requiresManualNumber = !job.job_number?.trim();
   const errors = useMemo(
-    () => validateJobTransmittal(draft, { requireManualNumber: requiresManualNumber }),
-    [draft, requiresManualNumber],
+    () => validateJobTransmittal(draft, { mode, canonicalJobNumber }),
+    [canonicalJobNumber, draft, mode],
   );
   const dirty = JSON.stringify(draft) !== pristineRef.current;
 
@@ -82,22 +90,26 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
 
   useEffect(() => {
     let active = true;
+    if (!job || !hasCanonicalJobNumber) {
+      setProvisionalNumber("");
+      return () => { active = false; };
+    }
     loadProvisionalTransmittalNumber(job.id)
       .then((number) => { if (active) setProvisionalNumber(number); })
-      .catch(() => {});
+      .catch(() => { if (active) setProvisionalNumber(""); });
     return () => { active = false; };
-  }, [job.id]);
+  }, [hasCanonicalJobNumber, job]);
 
   const reload = useCallback(async () => {
     setHistoryLoading(true);
     try {
-      setHistory(await loadJobTransmittals(job.id));
+      setHistory(await loadJobTransmittals(isJobLinked ? job?.id ?? null : null));
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Unable to load transmittal history.");
     } finally {
       setHistoryLoading(false);
     }
-  }, [job.id]);
+  }, [isJobLinked, job?.id]);
   useEffect(() => { void reload(); }, [reload]);
 
   const requestClose = useCallback(() => {
@@ -137,7 +149,7 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
   async function previewDraft() {
     setBusy("preview"); setError("");
     try {
-      const displayedNumber = draft.transmittalNumber.trim() || provisionalNumber;
+      const displayedNumber = isJobLinked ? provisionalNumber : draft.transmittalNumber.trim();
       const blob = await previewJobTransmittal({
         ...draft,
         transmittalNumber: displayedNumber,
@@ -155,24 +167,21 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
     setBusy("issue"); setError("");
     try {
       rememberSender();
-      const displayedNumber = draft.transmittalNumber.trim() || provisionalNumber;
-      const issued = await issueJobTransmittal(
-        { ...draft, transmittalNumber: displayedNumber },
-        numberOverride ? displayedNumber : null,
-      );
+      const issued = await issueJobTransmittal(draft, mode);
       setIssuedRecord(issued);
       await generateJobTransmittalPdf(issued.id);
       await downloadJobTransmittalPdf(issued.id, `${issued.number}.pdf`);
       setDraft({
-        ...createJobTransmittalDraft(job),
+        ...(job && isJobLinked ? createJobTransmittalDraft(job) : createStandaloneTransmittalDraft()),
         senderName: draft.senderName,
         senderPhone: draft.senderPhone,
         senderEmail: draft.senderEmail,
       });
-      setNumberOverride(false);
-      void loadProvisionalTransmittalNumber(job.id)
-        .then(setProvisionalNumber)
-        .catch(() => {});
+      if (job && hasCanonicalJobNumber) {
+        void loadProvisionalTransmittalNumber(job.id)
+          .then(setProvisionalNumber)
+          .catch(() => setProvisionalNumber(""));
+      }
       await reload();
       setHistoryMode(true);
     } catch (issueError) {
@@ -205,14 +214,16 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
   }
 
   return <>
-    <div className="fixed inset-0 z-[120] bg-slate-950/45" role="dialog" aria-modal="true" aria-label="Letter of Transmittal">
-      <div ref={dialogRef} className="ml-auto flex h-full w-full max-w-4xl flex-col bg-[#eef1f4] shadow-2xl">
+    <div data-shell-below-header className="fixed inset-0 z-[120] bg-slate-950/45" role="dialog" aria-modal="true" aria-label="Letter of Transmittal">
+      <div ref={dialogRef} className="ml-auto flex h-full w-full max-w-4xl flex-col overflow-hidden bg-[#eef1f4] shadow-2xl">
         <header className="flex items-start justify-between border-b border-slate-300 bg-white px-5 py-4">
-          <div><div className="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">Production · Forms</div>
+          <div><div className="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">{isJobLinked ? "Production · Forms" : "Commercial tools · Standalone"}</div>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-bold text-slate-950">Letter of Transmittal</h2>
             </div>
-            <p className="mt-1 text-sm text-slate-600">{job.job_number || "No job number"} · {job.name}</p></div>
+            <p className="mt-1 text-sm text-slate-600">{isJobLinked && job
+              ? `${canonicalJobNumber || "Job Number required"} · ${job.name}`
+              : "Standalone / one-off · No Production Job"}</p></div>
           <button ref={closeRef} type="button" onClick={requestClose} className="flex h-9 w-9 items-center justify-center border border-slate-300 bg-white" aria-label="Close"><X className="h-5 w-5"/></button>
         </header>
         {showEarlyAccessBanner && (
@@ -238,14 +249,18 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
           <button type="button" onClick={() => setHistoryMode(false)} className={`min-h-11 border-b-2 px-3 text-sm font-bold ${!historyMode ? "border-blue-800 text-blue-900" : "border-transparent text-slate-500"}`}>Create</button>
           <button type="button" onClick={() => setHistoryMode(true)} className={`min-h-11 border-b-2 px-3 text-sm font-bold ${historyMode ? "border-blue-800 text-blue-900" : "border-transparent text-slate-500"}`}>History ({history.length})</button>
         </div>
-        <main className="min-h-0 flex-1 overflow-y-auto p-5">
+        <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5">
           <div>
           {error && <div role="alert" className="mb-4 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">{error}</div>}
+          {isJobLinked && !hasCanonicalJobNumber && <div role="alert" className="mb-4 border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+            <div className="font-bold">A canonical Job Number is required for a Job-linked Letter of Transmittal.</div>
+            <div className="mt-1">Assign the Job Number in Production before generating. Use Standalone only for an unrelated one-off document; this workspace will not fabricate a Job Number or switch modes automatically.</div>
+          </div>}
           {historyMode ? <div className="space-y-3">
-            {historyLoading ? <p className="text-sm text-slate-600">Loading history…</p> : history.length === 0 ? <div className="border border-slate-300 bg-white p-5 text-sm text-slate-600">No Letters of Transmittal have been generated for this job.</div> : history.map((record) =>
+            {historyLoading ? <p className="text-sm text-slate-600">Loading history…</p> : history.length === 0 ? <div className="border border-slate-300 bg-white p-5 text-sm text-slate-600">{isJobLinked ? "No Letters of Transmittal have been generated for this Job." : "No standalone Letters of Transmittal have been generated."}</div> : history.map((record) =>
               <article key={record.id} className="flex flex-wrap items-center gap-3 border border-slate-300 bg-white p-4">
                 <FileText className="h-5 w-5 text-slate-500"/><div className="min-w-0 flex-1"><div className="font-bold">{record.transmittalNumber}</div>
-                  <div className="text-xs text-slate-500">{record.documentDate} · {record.recipientName} · {record.generatedBy}</div>
+                  <div className="text-xs text-slate-500">{!record.jobId ? "Standalone · " : ""}{record.documentDate} · {record.recipientName} · {record.generatedBy}</div>
                   <div className="mt-1 text-[11px] text-slate-500">Issued {new Date(record.issuedAt).toLocaleString()}{record.generatedAt ? ` · PDF generated ${new Date(record.generatedAt).toLocaleString()}` : ""}</div>
                   {record.documentStatus === "failed" && <div className="mt-1 text-xs font-semibold text-red-700">{record.documentError || "PDF generation failed."}</div>}</div>
                 <span className="text-xs font-bold uppercase text-slate-500">{record.documentStatus}</span>
@@ -256,10 +271,11 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
           </div> : <div className="space-y-5">
             <section className="border border-slate-300 bg-white p-4"><h3 className={section}>Document details</h3>
               <div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={label}>Date<input type="date" value={draft.documentDate} onChange={(e)=>patch("documentDate",e.target.value)} className={field}/></label>
-                <label className={label}>Transmittal # <span className="font-normal text-slate-500">{requiresManualNumber ? "(required until Job # is assigned)" : "(optional override)"}</span><input value={draft.transmittalNumber || provisionalNumber} onChange={(e)=>{setNumberOverride(Boolean(e.target.value.trim()));patch("transmittalNumber",e.target.value);}} placeholder={requiresManualNumber ? "Example: 0904-001" : "Allocated when generated"} className={field}/>{requiresManualNumber ? <span className="mt-1 block text-[11px] font-normal text-slate-500">Use a unique NNNN-NNN document number. The issued Job # will remain blank.</span> : provisionalNumber && !numberOverride && <span className="mt-1 block text-[11px] font-normal text-slate-500">Checked against existing Purchase Orders and Transmittals. Rechecked when generated.</span>}</label>
-                <label className={label}>Job # <span className="font-normal text-slate-500">(optional)</span><input value={draft.jobNumber} onChange={(e)=>patch("jobNumber",e.target.value)} className={field}/></label>
-                <label className={label}>Job name<input value={draft.jobName} onChange={(e)=>patch("jobName",e.target.value)} className={field}/></label>
-                <label className={`${label} sm:col-span-2`}>Customer Name<input value={draft.customer} onChange={(e)=>patch("customer",e.target.value)} className={field}/><span className="mt-1 block text-[10px] font-normal text-slate-500">Populated from the Production job for this document only. Editing it does not change the job.</span></label></div></section>
+                {isJobLinked ? <label className={label}>Transmittal # <span className="font-normal text-slate-500">(derived)</span><input value={provisionalNumber} readOnly placeholder={hasCanonicalJobNumber ? "Allocated when generated" : "Job Number required"} className={`${field} bg-slate-50 text-slate-700`}/>{provisionalNumber && <span className="mt-1 block text-[11px] font-normal text-slate-500">Provisional next number from the shared Purchase Order and Transmittal sequence. Rechecked when generated.</span>}</label>
+                  : <label className={label}>Transmittal # <span className="font-normal text-slate-500">(required)</span><input value={draft.transmittalNumber} onChange={(e)=>patch("transmittalNumber",e.target.value)} placeholder="Example: 0904-001" className={field}/><span className="mt-1 block text-[11px] font-normal text-slate-500">Enter a unique NNNN-NNN document number. It will not create or imply a Production Job.</span></label>}
+                {isJobLinked && <label className={label}>Job # <span className="font-normal text-slate-500">(canonical)</span><input value={canonicalJobNumber} readOnly className={`${field} bg-slate-50 text-slate-700`}/></label>}
+                <label className={label}>{isJobLinked ? "Job name" : "Reference / Project"}<input value={draft.jobName} onChange={(e)=>patch("jobName",e.target.value)} className={field}/></label>
+                <label className={`${label} sm:col-span-2`}>Customer Name<input value={draft.customer} onChange={(e)=>patch("customer",e.target.value)} className={field}/>{isJobLinked && <span className="mt-1 block text-[10px] font-normal text-slate-500">Populated from the Production Job for this document only. Editing it does not change the Job.</span>}</label></div></section>
             <section className="border border-slate-300 bg-white p-4"><h3 className={section}>Recipient</h3>
               <div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={`${label} sm:col-span-2`}>Attention<input value={draft.recipient.attention} onChange={(e)=>patch("recipient",{...draft.recipient,attention:e.target.value})} className={field}/></label>
                 <label className={`${label} sm:col-span-2`}>Address<textarea value={draft.recipient.addressLine1} onChange={(e)=>patch("recipient",{...draft.recipient,addressLine1:e.target.value})} rows={3} className={area}/></label>
@@ -293,8 +309,8 @@ export default function JobTransmittalPanel({ job, onClose }: Props) {
         </main>
         {!historyMode && <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-300 bg-white px-5 py-3">
           <div className="text-xs text-slate-500">{errors.length ? errors[0] : "Preview does not reserve a number or create history."}</div>
-          <div className="flex gap-2"><button type="button" disabled={Boolean(busy)} onClick={previewDraft} className="inline-flex h-10 items-center gap-2 border border-slate-400 bg-white px-4 text-sm font-bold"><Eye className="h-4 w-4"/>{busy==="preview"?"Rendering…":"Preview PDF"}</button>
-            <button type="button" disabled={Boolean(busy)||Boolean(issuedRecord)} onClick={issue} className="inline-flex h-10 items-center gap-2 border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white disabled:opacity-50"><Download className="h-4 w-4"/>{issuedRecord?`Issued ${issuedRecord.number}`:busy==="issue"?"Generating…":"Generate & Download"}</button></div></footer>}
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row"><button type="button" disabled={Boolean(busy)} onClick={previewDraft} className="inline-flex h-10 items-center justify-center gap-2 border border-slate-400 bg-white px-4 text-sm font-bold"><Eye className="h-4 w-4"/>{busy==="preview"?"Rendering…":"Preview PDF"}</button>
+            <button type="button" disabled={Boolean(busy)||Boolean(issuedRecord)||(isJobLinked&&!hasCanonicalJobNumber)} onClick={issue} className="inline-flex h-10 items-center justify-center gap-2 border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white disabled:opacity-50"><Download className="h-4 w-4"/>{issuedRecord?`Issued ${issuedRecord.number}`:busy==="issue"?"Generating…":"Generate & Download"}</button></div></footer>}
       </div>
     </div>
     {preview && <DocumentViewer title="Letter of Transmittal" filename={preview.filename} mimeType="application/pdf" url={preview.url} onClose={()=>{if(preview.url.startsWith("blob:"))URL.revokeObjectURL(preview.url);setPreview(null);}}/>}

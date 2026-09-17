@@ -19,11 +19,14 @@ import {
   lineTotalCents,
 } from "./calculations";
 import {
+  getPurchaseOrderCatalogOrderUnit,
+  loadPurchasingContainerSizeOptions,
   samePurchasingVendor,
   searchPurchasingCatalog,
 } from "./catalog";
 import { getApplicableCatalogPrice } from "./catalog-pricing";
-import { createChipLine } from "./defaults";
+import { applyPurchaseOrderMaterialDefaults, createPurchaseOrderMaterialLine } from "./defaults";
+import { suggestedPartBQuantity } from "./resin-assist";
 import {
   deletePurchaseOrderDraft,
   createPendingReceivalsFromPurchaseOrder,
@@ -35,7 +38,7 @@ import {
   savePurchaseOrderDraft,
 } from "./mutations";
 import { getHistoricalPriceSuggestions } from "./pricing";
-import { loadPurchaseOrderDocument, loadPurchaseOrderPendingReceivalProjection, loadVendors } from "./queries";
+import { loadPurchaseOrder, loadPurchaseOrderDocument, loadPurchaseOrderPendingReceivalProjection, loadVendors } from "./queries";
 import {
   PurchasingChoiceWithCustom,
   PurchasingVendorNameInput,
@@ -76,6 +79,7 @@ function LineEditor({
   vendorName,
   vendorId,
   vendors,
+  allLines,
   onChange,
   onRemove,
   onDuplicate,
@@ -85,6 +89,7 @@ function LineEditor({
   vendorName: string;
   vendorId: string;
   vendors: VendorOption[];
+  allLines: PurchaseOrderLine[];
   onChange(line: PurchaseOrderLine): void;
   onRemove(): void;
   onDuplicate(): void;
@@ -94,6 +99,7 @@ function LineEditor({
   const [results, setResults] = useState<PurchasingCatalogSuggestion[]>([]);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState("");
+  const [catalogContainerSizes, setCatalogContainerSizes] = useState<string[]>([]);
   const [reference, setReference] =
     useState<PurchasingCatalogSuggestion | null>(null);
   const [priceSuggestions, setPriceSuggestions] = useState<PriceSuggestion[]>(
@@ -112,6 +118,8 @@ function LineEditor({
       "vendorSkuSnapshot",
       "materialNameSnapshot",
       "chipSize",
+      "resinColor",
+      "componentType",
       "packageQuantity",
       "packageMeasure",
       "containerType",
@@ -142,7 +150,7 @@ function LineEditor({
       }
       setSearching(true);
       setSearchError("");
-      searchPurchasingCatalog(query, vendorName)
+      searchPurchasingCatalog(query, vendorName, line.materialType)
         .then((items) => {
           if (request === searchRequest.current) setResults(items);
         })
@@ -157,12 +165,20 @@ function LineEditor({
         });
     }, 250);
     return () => clearTimeout(timer);
-  }, [query, vendorName]);
+  }, [query, vendorName, line.materialType]);
+  useEffect(() => {
+    let active = true;
+    loadPurchasingContainerSizeOptions(line.materialType, vendorName)
+      .then((options) => { if (active) setCatalogContainerSizes(options); })
+      .catch(() => { if (active) setCatalogContainerSizes([]); });
+    return () => { active = false; };
+  }, [line.materialType, vendorName]);
   const select = (item: PurchasingCatalogSuggestion) => {
+    const orderUnit = getPurchaseOrderCatalogOrderUnit(line.materialType, item, details.orderUnit);
     const suggestion = getApplicableCatalogPrice(
       item,
       details.quantityOrdered,
-      details.orderUnit,
+      orderUnit,
     );
     onChange({
       ...line,
@@ -173,9 +189,12 @@ function LineEditor({
         vendorSkuSnapshot: item.vendorSku,
         materialNameSnapshot: item.materialName,
         chipSize: item.chipSize || details.chipSize,
+        resinColor: item.resinColor || details.resinColor,
+        componentType: item.componentType || details.componentType,
         packageQuantity: item.packageQuantity || details.packageQuantity,
         packageMeasure: item.packageMeasure || details.packageMeasure,
         containerType: item.containerType || details.containerType,
+        orderUnit,
         unitPrice: suggestion.price || details.unitPrice,
         priceBasis: item.priceBasis || details.priceBasis,
       },
@@ -213,6 +232,40 @@ function LineEditor({
     Boolean(vendorId) &&
     Boolean(activeReference);
   const total = lineTotalCents(details.quantityOrdered, details.unitPrice);
+  const availableContainerSizes = [...new Set([
+    containerSize(details),
+    ...catalogContainerSizes,
+    ...results.map((item) => [item.packageQuantity, item.packageMeasure].filter(Boolean).join(" ")),
+  ].filter(Boolean))];
+  const partBSuggestion = line.materialType === "resin" ? suggestedPartBQuantity(allLines, index) : "";
+  const selectMaterialType = (materialType: "chip" | "resin") => {
+    if (line.materialType === materialType) return;
+    const classifyingHistoricalLine = Boolean(line.id) && !line.materialType;
+    const resetDetails: PurchaseOrderLine["details"] = {
+      ...details,
+      catalogSource: "",
+      catalogItemId: "",
+      vendorSkuSnapshot: classifyingHistoricalLine ? details.vendorSkuSnapshot : "",
+      materialNameSnapshot: classifyingHistoricalLine ? details.materialNameSnapshot : "",
+      chipSize: classifyingHistoricalLine && materialType === "chip" ? details.chipSize : "",
+      resinColor: "",
+      componentType: "",
+      moistureCondition: classifyingHistoricalLine && materialType === "chip" ? details.moistureCondition : "",
+      unitPrice: classifyingHistoricalLine ? details.unitPrice : "",
+      priceBasis: classifyingHistoricalLine ? details.priceBasis : "",
+      orderUnit: materialType === "chip" ? "Bag" : details.orderUnit,
+    };
+    setReference(null);
+    setQuery("");
+    setResults([]);
+    onChange({
+      ...line,
+      materialType,
+      details: classifyingHistoricalLine
+        ? resetDetails
+        : applyPurchaseOrderMaterialDefaults(resetDetails, materialType, line.materialType),
+    });
+  };
   return (
     <section className="rounded-sm border border-slate-300 bg-white">
       <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 py-2">
@@ -235,14 +288,26 @@ function LineEditor({
         </div>
       </div>
       <div className="m-3 border border-blue-200 bg-blue-50/60 p-3">
+        <div className="mb-3">
+          <div className={label}>{tr('Material Type', 'Tipo de material')}</div>
+          <div className="mt-1 inline-flex border border-slate-300 bg-white p-1">
+            {(['chip', 'resin'] as const).map((materialType) => (
+              <button key={materialType} type="button" onClick={() => selectMaterialType(materialType)} className={`h-8 px-4 text-xs font-bold ${line.materialType === materialType ? 'bg-slate-900 text-white' : 'text-slate-700'}`}>
+                {materialType === 'chip' ? 'Chip' : 'Resin'}
+              </button>
+            ))}
+          </div>
+          {!line.materialType && <p className="mt-1 text-xs text-amber-700">Choose a material type before editing or searching this line.</p>}
+        </div>
         <label className={label}>{tr('Search Catalog', 'Buscar en el catálogo')}</label>
         <div className="relative mt-1">
           <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            disabled={!line.materialType}
             className="h-9 w-full border border-slate-300 bg-white pl-9 pr-3 text-sm"
-            placeholder={tr('Search by material, SKU, vendor, or size...', 'Buscar por material, SKU, proveedor o tamaño...')}
+            placeholder={line.materialType === 'resin' ? 'Search Resin products, SKU, color, or component...' : tr('Search Chip materials, SKU, vendor, or size...', 'Buscar materiales, SKU, proveedor o tamaño...')}
           />
         </div>
         <p className="mt-1 text-xs text-slate-500">
@@ -263,7 +328,7 @@ function LineEditor({
                 onClick={() => select(item)}
                 className="block w-full border-b border-slate-100 px-3 py-2 text-left text-xs hover:bg-slate-50"
               >
-                <b>{item.materialName}</b> · {item.chipSize || "No size"}
+                <b>{item.materialName}</b>{line.materialType === 'chip' ? ` · ${item.chipSize || "No size"}` : item.componentType ? ` · ${item.componentType}` : ''}
                 <span className="block text-slate-500">
                   {item.vendor}
                   {item.vendorSku ? ` · ${item.vendorSku}` : ""}
@@ -298,13 +363,14 @@ function LineEditor({
           }
           suggestedMode={catalogEditor === "truckload" ? "truckload" : catalogEditor === "bulk" ? "bulk" : applicable?.mode}
           proposedPrice={details.unitPrice}
+          materialType={line.materialType || 'chip'}
           onCancel={() => setCatalogEditor(null)}
           onSaved={select}
         />
       )}
       <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className={label}>
-          {tr('Material', 'Material')}
+          {line.materialType === 'resin' ? tr('Product', 'Producto') : tr('Material', 'Material')}
           <input
             value={details.materialNameSnapshot}
             onChange={(e) => set("materialNameSnapshot", e.target.value)}
@@ -319,15 +385,10 @@ function LineEditor({
             className={field}
           />
         </label>
-        <label className={label}>
-          {tr('Size', 'Tamaño')}
-          <input
-            value={details.chipSize}
-            onChange={(e) => set("chipSize", e.target.value)}
-            className={field}
-          />
-        </label>
-        <label className={label}>
+        {line.materialType === 'chip' && <label className={label}>
+          {tr('Size', 'Tamaño')}<input value={details.chipSize} onChange={(e) => set("chipSize", e.target.value)} className={field} />
+        </label>}
+        {line.materialType === 'chip' && <label className={label}>
           {tr('Moisture', 'Condición de humedad')}
           <select
             value={details.moistureCondition}
@@ -339,18 +400,22 @@ function LineEditor({
             <option value="damp">{tr('Damp', 'Húmedo')}</option>
             <option value="wet">{tr('Wet', 'Mojado')}</option>
           </select>
-        </label>
+        </label>}
+        {line.materialType === 'resin' && <label className={label}>Resin Color<input value={details.resinColor} onChange={(e) => set('resinColor', e.target.value)} className={field} /></label>}
+        {line.materialType === 'resin' && <label className={label}>Component Type<input value={details.componentType} onChange={(e) => set('componentType', e.target.value)} placeholder="Part A, Part B, or Hardener" className={field} /></label>}
         <label className={label}>
           {tr('Container Size', 'Tamaño del envase')}
-          <input
+          <select
             value={containerSize(details)}
             onChange={(event) => {
               const parsed = parseContainerSize(event.target.value);
               onChange({ ...line, details: { ...details, ...parsed, catalogSource: "", catalogItemId: "" } });
             }}
-            placeholder="5 gal or 50 lb"
             className={field}
-          />
+          >
+            <option value="">Select a Catalog package size</option>
+            {availableContainerSizes.map((size) => <option key={size.toLowerCase()} value={size}>{size}</option>)}
+          </select>
         </label>
         <label className={label}>
           {tr('Container', 'Envase')}
@@ -364,11 +429,12 @@ function LineEditor({
             onChange={(e) => set("quantityOrdered", e.target.value)}
             className={field}
           />
+          {partBSuggestion && partBSuggestion !== details.quantityOrdered && <button type="button" onClick={() => set('quantityOrdered', partBSuggestion)} className="mt-1 text-left text-[11px] font-bold normal-case tracking-normal text-blue-700">Use 5:1 Part B suggestion: {partBSuggestion}</button>}
         </label>
-        <label className={label}>
+        {line.materialType === 'resin' && <label className={label}>
           {tr('Quantity Unit', 'Unidad de cantidad')}
           <PurchasingChoiceWithCustom value={details.orderUnit} options={purchasingQuantityUnits} onChange={(value) => set("orderUnit", value)} className={field} />
-        </label>
+        </label>}
         <label className={label}>
           {tr('Unit Cost', 'Costo unitario')}
           <input
@@ -496,12 +562,14 @@ export function PurchaseOrderEditor({
   initial,
   onClose,
   onSaved,
+  onPersisted,
   onDeleted,
   onIssued,
 }: {
   initial: PurchaseOrderDraft;
   onClose(): void;
   onSaved(id: string): void;
+  onPersisted(): void;
   onDeleted(id: string): void;
   onIssued(id: string): void;
 }) {
@@ -787,14 +855,35 @@ export function PurchaseOrderEditor({
   };
   const openDraftPdf = async () => {
     if (pdfLoading) return;
+    const found = validatePurchaseOrderDraft(draft);
+    if (found.length) {
+      setErrors(found);
+      return;
+    }
     setPdfLoading(true);
     setErrors([]);
+    setMessage("");
+    let savedDraft: PurchaseOrderDraft;
     try {
-      const blob = await generatePurchaseOrderDraftPdf(draft);
+      const id = await savePurchaseOrderDraft(draft);
+      const saved = await loadPurchaseOrder(id);
+      savedDraft = { ...draft, ...saved, id:saved.id, poNumber:saved.poNumber || "", status:"draft" };
+      setDraft(savedDraft);
+      original.current = JSON.stringify(savedDraft);
+      onPersisted();
+    } catch (error) {
+      setErrors([`The Purchase Order Draft was not saved, so no PDF preview was generated: ${error instanceof Error ? error.message : "Unknown save error."}`]);
+      setPdfLoading(false);
+      return;
+    }
+    try {
+      const blob = await generatePurchaseOrderDraftPdf(savedDraft);
+      if (pdfUrl.startsWith("blob:")) URL.revokeObjectURL(pdfUrl);
       setPdfUrl(URL.createObjectURL(blob));
       setPreview(true);
+      setMessage("Purchase Order Draft saved before previewing.");
     } catch (error) {
-      setErrors([error instanceof Error ? error.message : "Unable to preview the Draft PDF."]);
+      setErrors([`The Purchase Order Draft was saved and is available in the PO library, but its PDF preview could not be generated: ${error instanceof Error ? error.message : "Unknown PDF generation error."} You can retry Preview Draft PDF.`]);
     } finally {
       setPdfLoading(false);
     }
@@ -1171,6 +1260,7 @@ export function PurchaseOrderEditor({
                 vendorName={draft.vendorNameSnapshot}
                 vendorId={draft.vendorId}
                 vendors={vendors}
+                allLines={draft.lines}
                 onChange={(next) =>
                   setDraft((current) => ({
                     ...current,
@@ -1206,14 +1296,15 @@ export function PurchaseOrderEditor({
                   ...current,
                   lines: [
                     ...current.lines,
-                    createChipLine(current.lines.length + 1),
+                    createPurchaseOrderMaterialLine('chip', current.lines.length + 1),
                   ],
                 }))
               }
               className="h-9 border border-slate-400 bg-white px-4 text-sm font-bold"
             >
-              + {tr('Add Line', 'Agregar partida')}
+              + {tr('Add Chip Line', 'Agregar partida de chip')}
             </button>
+            <button type="button" onClick={() => setDraft((current) => ({...current, lines:[...current.lines, createPurchaseOrderMaterialLine('resin', current.lines.length + 1)]}))} className="ml-2 h-9 border border-slate-400 bg-white px-4 text-sm font-bold">+ Add Resin Line</button>
             </fieldset>
           </main>
           <aside className="space-y-3">

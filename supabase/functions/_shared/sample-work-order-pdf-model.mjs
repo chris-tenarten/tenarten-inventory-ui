@@ -9,6 +9,20 @@ export function buildSamplePdfModel(snapshot) {
     : Array.isArray(snapshot.blend_rows)
       ? snapshot.blend_rows
       : [];
+  const formulation = snapshot.formulation ?? snapshot.formulation_state ?? {};
+  const derived = formulation.derived ?? {};
+  const formulationBasis = value(formulation, "basis");
+  const formulationSummary = formulationBasis
+    ? [
+        formulationBasis === "weight_per_sf" ? "Weight / SF" : "Total Weight",
+        derived.areaSf == null ? "" : `Area ${derived.areaSf} SF`,
+        derived.effectiveWeightPerSf == null ? "" : `${derived.effectiveWeightPerSf} lb/SF`,
+        derived.targetWeight == null ? "" : `Target ${derived.targetWeight} ${value(formulation, "weightUnit") || "lb"}`,
+        value(formulation, "materialDensity") ? `Density ${value(formulation, "materialDensity")} lb/CFT` : "",
+        value(formulation, "thicknessIn") ? `Thickness ${value(formulation, "thicknessIn")} in` : "",
+        `Resin : Hardener ${value(formulation, "resinParts") || "5"}:${value(formulation, "hardenerParts") || "1"}`,
+      ].filter(Boolean).join(" · ")
+    : "";
   return {
     requestedBy: value(snapshot, "requestedBy", "requested_by"),
     requestedDate: value(snapshot, "requestedDate", "requested_date"),
@@ -28,12 +42,19 @@ export function buildSamplePdfModel(snapshot) {
     moreNotes: value(snapshot, "moreNotes", "more_notes"),
     approvedDate: value(snapshot, "approvedDate", "approved_date"),
     issueNumber: Number(snapshot.issueNumber ?? snapshot.issue_number ?? 0),
+    renderContext: value(snapshot, "renderContext", "render_context"),
+    formulationSummary,
+    calculationVersion: value(formulation, "calculationVersion"),
     rows: rows.map((row) => ({
       percentage: value(row, "percentage"),
       color: value(row, "color"),
       size: value(row, "size"),
       materialType: value(row, "materialType", "material_type"),
-      quantity: value(row, "quantity"),
+      quantity: value(row, "quantityProvenance", "quantity_provenance") === "calculated"
+        ? value(row, "calculatedQuantity", "calculated_quantity") || value(row, "quantity")
+        : value(row, "quantity"),
+      calculatedQuantity: value(row, "calculatedQuantity", "calculated_quantity"),
+      quantityProvenance: value(row, "quantityProvenance", "quantity_provenance"),
       unit: value(row, "unit"),
       vendor: value(row, "vendor"),
     })),

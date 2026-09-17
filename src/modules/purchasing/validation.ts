@@ -10,7 +10,10 @@ export function validatePurchaseOrderDraft(draft: PurchaseOrderDraft): string[] 
   if (!draft.lines.length) errors.push('Add at least one line.');
   draft.lines.forEach((line,index) => {
     const label = `Line ${index + 1}`;
+    if (!line.materialType) errors.push(`${label}: choose Chip or Resin as the material type.`);
     if (!line.details.materialNameSnapshot.trim()) errors.push(`${label}: material is required.`);
+    if (line.materialType === 'chip' && !line.details.chipSize.trim()) errors.push(`${label}: size is required for a Chip line.`);
+    if (line.materialType === 'chip' && line.details.orderUnit.trim().toLowerCase().replace(/s$/, '') !== 'bag') errors.push(`${label}: Chip quantity unit must be Bag.`);
     if (!(Number(line.details.quantityOrdered) > 0)) errors.push(`${label}: quantity must be positive.`);
     if (line.details.packageQuantity && !(Number(line.details.packageQuantity) > 0)) errors.push(`${label}: container size quantity must be positive.`);
     if (!line.details.orderUnit.trim()) errors.push(`${label}: quantity unit is required.`);

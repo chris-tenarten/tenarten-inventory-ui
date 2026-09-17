@@ -15,7 +15,7 @@ This is a concise map of the released/current TenOps architecture as of Septembe
 - `/purchasing` and `/catalog`: Purchase Orders, immutable issuance/PDF pipeline, Vendor configuration, Vendor Catalog, and PO-to-Pending-Receival projection.
 - `/manpower-reporting` and `/material-usage`: distinct operational reporting streams linked to canonical Jobs or permitted temporary work identity.
 - `/proposals`: Proposal generator plus generic Proposal workspace/creation.
-- `/transmittals`: generic Transmittal entry and immutable document history.
+- `/transmittals`: explicit Job-linked or standalone Letter of Transmittal entry and immutable document history.
 - `/my-work`: private/shared tasks, estimated effort/workload, attachments, Inbox, Inbox attachments, release communications, private typing authorization, and Admin lifecycle cleanup.
 - `/settings`: account/administrative settings and Toolbox entry points supported by the current shell.
 - `/transactions`: legacy route outside primary navigation.
@@ -32,7 +32,7 @@ Pre-Production must not create pseudo Jobs or reserve Job numbers to stand in fo
 - Inventory preserves canonical-or-temporary reservation identity through receiving and history. Undo Receive is lineage-aware and audit-preserving.
 - Purchasing owns structured drafts, immutable issuance snapshots, retryable private PDFs, Vendor data, Vendor Catalog pricing, and guarded projection into Pending Receivals.
 - Material Usage and Manpower remain separate facts and use canonical Job links where available; reporting groups are not Jobs.
-- Proposal and Transmittal document domains are implemented. Issued artifacts are historical snapshots and must not be silently rewritten after later Job/Bid relationships change.
+- Proposal and Transmittal document domains are implemented. Job-linked LoTs derive identity from canonical Job Numbers; explicitly standalone LoTs remain unlinked and require a manual document number. Issued artifacts are historical snapshots and must not be silently rewritten after later Job/Bid relationships change.
 - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries.
 - Admin lifecycle cleanup exists but does not grant routine private-content reading authority.
 - Job Update collaboration, assignment, editing, deletion, mentions/notifications, seen state, and Production rework cycles are implemented.

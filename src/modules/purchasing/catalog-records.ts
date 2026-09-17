@@ -19,14 +19,19 @@ function distinctDisplayValues(...values: unknown[]) {
     .join(" ");
 }
 
-function parsePackage(value: string) {
+export function parsePurchasingPackage(value: string) {
   const match = value.match(
-    /(\d+(?:\.\d+)?)\s*(lb|lbs|kg|oz)\.?\s*(bag|pail|box|bucket)?/i,
+    /(\d+(?:\.\d+)?)\s*(pounds|pound|lbs|lb|kilograms|kilogram|kg|ounces|ounce|oz|gallons|gallon|gal|liters|liter|l)\.?\s*(bag|pail|box|bucket|drum|case|tote|kit)?/i,
   );
+  const measure = match?.[2].toLowerCase();
   return match
     ? {
         quantity: match[1],
-        measure: match[2].toUpperCase().replace("LBS", "LB"),
+        measure: /^(lb|lbs|pound|pounds)$/.test(measure!) ? "LB"
+          : /^(gal|gallon|gallons)$/.test(measure!) ? "GAL"
+            : /^(l|liter|liters)$/.test(measure!) ? "L"
+              : /^(kg|kilogram|kilograms)$/.test(measure!) ? "KG"
+                : "OZ",
         container: match[3] || "",
       }
     : { quantity: "", measure: "", container: value };
@@ -53,10 +58,18 @@ export function samePurchasingVendor(
   return normalizeVendor(catalogVendor) === normalizeVendor(selectedVendor);
 }
 
+export function getPurchaseOrderCatalogOrderUnit(
+  materialType: "" | "chip" | "resin",
+  item: Pick<PurchasingCatalogSuggestion, "orderUnit">,
+  currentOrderUnit = "",
+) {
+  return materialType === "chip" ? "Bag" : item.orderUnit || currentOrderUnit;
+}
+
 function mapStandard(row: CatalogRecord): PurchasingCatalogSuggestion | null {
   const materialName = text(row.item_name).trim();
   if (!materialName) return null;
-  const pkg = parsePackage(text(row.unit));
+  const pkg = parsePurchasingPackage(text(row.unit));
   return {
     source: "standard",
     id: text(row.id),
@@ -67,7 +80,10 @@ function mapStandard(row: CatalogRecord): PurchasingCatalogSuggestion | null {
     packageQuantity: pkg.quantity,
     packageMeasure: pkg.measure,
     containerType: pkg.container,
+    orderUnit: pkg.container,
     materialType: distinctDisplayValues(row.category, row.material_class),
+    resinColor: "",
+    componentType: "",
     referencePrice: row.price == null ? "" : text(row.price),
     bulkPrice: "",
     bulkMinimumQuantity: "",
@@ -88,7 +104,7 @@ function mapSpecialty(row: CatalogRecord): PurchasingCatalogSuggestion | null {
     text(row.canonical_item_name) || text(row.item_name)
   ).trim();
   if (!materialName) return null;
-  const pkg = parsePackage(text(row.packaging));
+  const pkg = parsePurchasingPackage(text(row.packaging));
   return {
     source: "specialty",
     id: text(row.id),
@@ -100,7 +116,10 @@ function mapSpecialty(row: CatalogRecord): PurchasingCatalogSuggestion | null {
       row.unit_size == null ? pkg.quantity : text(row.unit_size),
     packageMeasure: text(row.unit_size_uom) || pkg.measure,
     containerType: pkg.container || text(row.packaging),
+    orderUnit: text(row.price_unit) || pkg.container,
     materialType: text(row.material_type) || text(row.category),
+    resinColor: text(row.color),
+    componentType: text(row.component_type),
     referencePrice: row.price == null ? "" : text(row.price),
     bulkPrice: row.bulk_price == null ? "" : text(row.bulk_price),
     bulkMinimumQuantity:
@@ -142,6 +161,7 @@ export function combinePurchasingCatalogRecords(
   standardRecords: CatalogRecord[],
   specialtyRecords: CatalogRecord[],
   vendor = "",
+  materialType: "" | "chip" | "resin" = "",
 ) {
   const maintained = specialtyRecords
     .map(mapSpecialty)
@@ -152,7 +172,14 @@ export function combinePurchasingCatalogRecords(
     .filter((item): item is PurchasingCatalogSuggestion => Boolean(item))
     .filter((item) => !maintainedIdentities.has(identity(item)));
 
-  return [...maintained, ...legacy]
+  const candidates = [...maintained, ...legacy].filter((item) => {
+    if (!materialType) return true;
+    const classification = `${item.materialType} ${item.materialName}`.toLowerCase();
+    return materialType === "resin"
+      ? classification.includes("resin") || classification.includes("epoxy")
+      : /chip|aggregate|marble|glass|filler/.test(classification);
+  });
+  return candidates
     .sort(
       (a, b) =>
         Number(Boolean(vendor) && samePurchasingVendor(b.vendor, vendor)) -

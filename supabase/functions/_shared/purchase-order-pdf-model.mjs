@@ -13,6 +13,34 @@ const displayDate = (value) => {
   return match ? `${Number(match[2])}/${Number(match[3])}/${match[1]}` : source;
 };
 
+const appendUnique = (parts, value) => {
+  const next = text(value).trim();
+  if (!next) return;
+  const normalized = next.toLowerCase();
+  if (!parts.some((part) => part.toLowerCase().includes(normalized) || normalized.includes(part.toLowerCase()))) parts.push(next);
+};
+
+export function buildPurchaseOrderLineDescription(line) {
+  const lineKind = text(line.line_kind) === "resin" ? "resin" : "chip";
+  const parts = [];
+  const manual = text(line.description || line.notes).trim();
+  const manualNormalized = manual.toLowerCase();
+  const structured = [];
+  appendUnique(structured, line.material);
+  if (lineKind === "resin") {
+    appendUnique(structured, line.resin_color);
+    appendUnique(structured, line.component_type);
+  } else {
+    appendUnique(structured, line.chip_size || line.part_component);
+  }
+  appendUnique(structured, text(line.container_size) || [text(line.package_quantity), text(line.package_measure)].filter(Boolean).join(" "));
+  appendUnique(structured, line.container || line.container_type);
+  if (lineKind === "chip") appendUnique(structured, line.moisture_condition ? text(line.moisture_condition).replace(/^./, (letter) => letter.toUpperCase()) : "");
+  structured.forEach((value) => { if (!manualNormalized.includes(value.toLowerCase())) appendUnique(parts, value); });
+  appendUnique(parts, manual);
+  return parts.join(", ");
+}
+
 export function buildPurchaseOrderPdfModel(orderSnapshot, linesSnapshot) {
   if (!orderSnapshot || typeof orderSnapshot !== "object" || Array.isArray(orderSnapshot)) {
     throw new Error("The issuance header snapshot is invalid.");
@@ -25,14 +53,16 @@ export function buildPurchaseOrderPdfModel(orderSnapshot, linesSnapshot) {
   if (!poNumber) throw new Error("The issuance snapshot has no Purchase Order number.");
 
   const linked = Boolean(text(orderSnapshot.production_job_id));
+  const modeAware = Object.prototype.hasOwnProperty.call(orderSnapshot, "material_classification");
   const lines = [...linesSnapshot]
     .sort((left, right) => Number(left.line_number) - Number(right.line_number))
     .map((line) => ({
       item: text(line.line_number),
       material: text(line.material),
       vendorSku: text(line.vendor_sku),
+      lineKind: text(line.line_kind) === "resin" ? "resin" : "chip",
       partComponent: text(line.part_component || line.chip_size),
-      description: text(line.description || line.notes || line.display_description),
+      description: modeAware ? buildPurchaseOrderLineDescription(line) || text(line.display_description) : text(line.description || line.notes || line.display_description),
       quantity: text(line.quantity),
       unit: text(line.unit),
       container: text(line.container || line.container_type),
@@ -54,6 +84,11 @@ export function buildPurchaseOrderPdfModel(orderSnapshot, linesSnapshot) {
     poDate: displayDate(orderSnapshot.po_date),
     issueDate: displayDate(orderSnapshot.issued_at || orderSnapshot.po_date),
     generatedFromStatus: text(orderSnapshot.status),
+    lineLayout: modeAware ? "material-aware" : "legacy",
+    materialClassification: (() => {
+      const kinds = new Set(lines.map((line) => line.lineKind));
+      return kinds.size > 1 ? "Mixed" : kinds.has("resin") ? "Resin" : "Chip";
+    })(),
     vendor: {
       name: text(orderSnapshot.vendor_name),
       contact: text(orderSnapshot.vendor_contact),

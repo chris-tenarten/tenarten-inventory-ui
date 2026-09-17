@@ -7,6 +7,8 @@ export type TransmittalItem = {
   description: string;
 };
 
+export type TransmittalMode = "job-linked" | "standalone";
+
 export type JobTransmittalDraft = {
   jobId: string;
   jobNumber: string;
@@ -47,7 +49,7 @@ export type JobTransmittalDraft = {
 
 export type JobTransmittalRecord = {
   id: string;
-  jobId: string;
+  jobId: string | null;
   transmittalNumber: string;
   documentDate: string;
   recipientName: string;

@@ -1,8 +1,12 @@
 # Purchasing Schema
 
-Phase 1 establishes structured chip and aggregate Purchase Order drafts. The structured record is canonical; a future PDF is an artifact.
+Purchasing establishes structured, material-agnostic Purchase Order drafts. Each line carries its own canonical material classification, while the PDF remains an artifact.
 
-`purchase_orders` owns the optional primary `jobs.id` relationship; job number/name snapshots; vendor snapshots; Ship To and Authorized By snapshots; lifecycle; commercial totals; revision identity; dates; and attribution. `purchase_order_lines` is only stable shared line identity. `chip_purchase_order_line_details` owns chip-specific material, size, packaging, moisture, quantity, price, requested date, and canonical Production job identity.
+`purchase_orders` owns the optional primary `jobs.id` relationship; job number/name snapshots; vendor snapshots; Ship To and Authorized By snapshots; lifecycle; commercial totals; revision identity; dates; and attribution. `purchase_order_lines` owns stable shared line identity and canonical `chip` / `resin` classification. The legacy-named `chip_purchase_order_line_details` table stores structured material, optional size, Resin Color, Component Type, packaging, Chip moisture, quantity, price, requested date, and canonical Production job identity.
+
+Migration `20260908_002_purchase_order_line_material_types.sql` keeps the Purchase Order material-agnostic while adding nullable per-line `chip` / `resin` classification. New editable lines require explicit classification; historical rows remain unclassified. The legacy detail table and `chip_size` name remain for compatibility, while Resin Color and Component Type are additive structured attributes and Resin Size may be blank. New issuance snapshots retain each line's classification independently, so a single PO may contain Chip and Resin lines.
+
+Migration `20260908_003_purchase_order_chip_order_unit.sql` enforces `Bag` / `Bags` as the Chip order unit at both draft persistence and issuance. This does not reinterpret `package_quantity` or `package_measure`: those fields continue to describe capacity per bag, and historical issued snapshots remain unchanged.
 
 `vendors` is the canonical office-managed company profile. `vendor_contacts` supports multiple active or inactive contacts and one active default contact per Vendor. `vendor_catalog_v2.vendor_id` links maintained catalog entries to that profile while retaining vendor-name snapshots for compatibility. PO drafts always preserve editable vendor, address, contact, and terms snapshots; later Vendor edits never rewrite historical POs.
 

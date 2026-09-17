@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import {
   combinePurchasingCatalogRecords,
+  getPurchaseOrderCatalogOrderUnit,
+  parsePurchasingPackage,
   samePurchasingVendor,
 } from '../src/modules/purchasing/catalog-records.ts';
 import { getApplicableCatalogPrice, getCatalogPricingMode } from '../src/modules/purchasing/catalog-pricing.ts';
@@ -88,6 +90,7 @@ assert.equal(records.some((record) => record.id === 'inactive'), false);
 assert.equal(records.some((record) => record.id === 'blank'), false);
 assert.equal(records.filter((record) => record.materialName === 'Arabian Black' && record.chipSize === '#1').length, 1);
 assert.equal(records.find((record) => record.chipSize === '#1')?.source, 'specialty');
+assert.equal(records.find((record) => record.chipSize === '#1')?.orderUnit, 'Bag');
 assert.equal(records.find((record) => record.id === 'legacy-nullable')?.referencePrice, '');
 assert.equal(records.find((record) => record.id === 'legacy-nullable')?.packageQuantity, '');
 assert.equal(samePurchasingVendor('T&M Supply', 'Terrazzo & Marble Supply, Inc.'), true);
@@ -111,4 +114,14 @@ const [arim] = combinePurchasingCatalogRecords([
 assert.equal(arim.vendorSku, 'B30');
 assert.equal(arim.materialName, 'Toros Black');
 assert.equal(arim.materialType, 'marble');
+assert.equal(arim.packageQuantity, '50');
+assert.equal(arim.packageMeasure, 'LB');
+assert.equal(arim.containerType, 'Bag');
+assert.equal(arim.orderUnit, 'Bag');
+assert.equal(getPurchaseOrderCatalogOrderUnit('chip', { orderUnit:'LB' }, 'lb'), 'Bag');
+assert.equal(getPurchaseOrderCatalogOrderUnit('resin', { orderUnit:'gal' }, 'pail'), 'gal');
+assert.equal(getPurchaseOrderCatalogOrderUnit('resin', { orderUnit:'' }, 'kit'), 'kit');
+assert.deepEqual(parsePurchasingPackage('50 lb bag'), { quantity:'50', measure:'LB', container:'bag' });
+assert.deepEqual(parsePurchasingPackage('5 gallon pail'), { quantity:'5', measure:'GAL', container:'pail' });
+assert.deepEqual(parsePurchasingPackage('20 KG drum'), { quantity:'20', measure:'KG', container:'drum' });
 console.log('Purchasing catalog pricing checks passed.');

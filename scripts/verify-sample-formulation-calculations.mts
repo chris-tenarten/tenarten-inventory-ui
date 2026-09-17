@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import {applySupplierRatioDefault,calculateSampleFormulation,resolveSupplierRatio,SAMPLE_FORMULATION_CALCULATION_VERSION,standardFormulationState} from '../src/modules/samples/formulation';
+
+const aggregate=(percentage:string)=>({percentage,quantity:'',componentRole:'aggregate' as const,calculationBasis:'target_total' as const,quantityProvenance:'calculated' as const});
+const rows=[aggregate('40'),aggregate('30'),aggregate('20'),aggregate('5'),aggregate('5'),{percentage:'',quantity:'18',componentRole:'other' as const,calculationBasis:null,quantityProvenance:'manual' as const},{percentage:'',quantity:'15',componentRole:'resin' as const,calculationBasis:null,quantityProvenance:'manual' as const},{percentage:'',quantity:'',componentRole:'hardener' as const,calculationBasis:null,quantityProvenance:'calculated' as const}];
+const supplierDefaults={mtt:'5:1',key:'5:1','key resin co.':'5:1',terroxy:'5:1',sherwin:'4:1','sherwin williams':'4:1'};
+const standard=standardFormulationState(2,supplierDefaults);
+assert.equal(standard.calculationVersion,SAMPLE_FORMULATION_CALCULATION_VERSION);
+assert.deepEqual([standard.finishedPlateWidth,standard.finishedPlateLength,standard.finishedPlateQuantity,standard.thicknessIn],['6','6','4','0.375']);
+let result=calculateSampleFormulation(standard,rows);
+assert.equal(result.finishedAreaSf,'1');assert.equal(result.areaSf,'1');assert.equal(result.productionVolumeCft,'0.0313');assert.equal(result.calculatedWeightPerSf,'4');assert.equal(result.effectiveWeightPerSf,'4');assert.equal(result.targetWeight,'4');assert.equal(result.targetWeightOz,'64');
+assert.equal(result.percentageTotal,'100');assert.equal(result.percentageReconciles,true);
+assert.deepEqual(result.rows.slice(0,5).map(row=>row.effectiveQuantity),['1.6','1.2','0.8','0.2','0.2']);
+assert.deepEqual(result.rows.slice(0,5).map(row=>row.calculatedQuantityOz),['25.6','19.2','12.8','3.2','3.2']);
+assert.equal(result.rows[5].effectiveQuantity,'18','Filler stays manual and outside Aggregate 100%');
+assert.equal(result.rows[6].effectiveQuantity,'15','Resin stays manual and outside Aggregate 100%');
+assert.equal(result.rows[7].effectiveQuantity,'3','5:1 Hardener derives from effective Resin');
+result=calculateSampleFormulation({...standard,resinParts:'4',ratioProvenance:'manual'},rows);assert.equal(result.rows[7].effectiveQuantity,'3.75');
+result=calculateSampleFormulation({...standard,weightPerSf:'6',weightPerSfProvenance:'manual'},rows);assert.equal(result.effectiveWeightPerSf,'6');assert.equal(result.targetWeight,'6');
+result=calculateSampleFormulation({...standard,basis:'total_weight',totalWeight:'6'},rows);assert.equal(result.targetWeight,'6');assert.equal(result.rows[0].effectiveQuantity,'2.4');
+result=calculateSampleFormulation(standard,rows.map((row,index)=>index===4?{...row,percentage:'4'}:row));assert.equal(result.percentageReconciles,false);assert.equal(result.percentageTotal,'99');
+assert.equal(resolveSupplierRatio('Sherwin',standard),'4:1');assert.equal(resolveSupplierRatio('Sherwin Williams',standard),'4:1');assert.equal(resolveSupplierRatio('Key Resin Co.',standard),'5:1');assert.equal(resolveSupplierRatio('Unknown',standard),'5:1');
+let supplierState=applySupplierRatioDefault(standard,'Sherwin');assert.equal(`${supplierState.resinParts}:${supplierState.hardenerParts}`,'4:1');assert.equal(supplierState.ratioProvenance,'default');
+supplierState={...supplierState,resinParts:'5',ratioProvenance:'manual'};assert.equal(`${supplierState.resinParts}:${supplierState.hardenerParts}`,'5:1','explicit override is preserved by caller');
+supplierState=applySupplierRatioDefault(supplierState,'Sherwin');assert.equal(`${supplierState.resinParts}:${supplierState.hardenerParts}`,'4:1','reset reapplies supplier default');
+console.log('Sample formulation calculation checks passed.');

@@ -1,6 +1,14 @@
-# Chip Purchase Orders
+# Purchase Orders
 
-Phase 1 supports New Purchase Order, draft search/filtering, structured chip lines, deterministic line totals and subtotal, save, reopen, and edit.
+The canonical Purchase Order editor supports independently classified Chip and Resin lines on the same PO. Each line chooses its material type before mode-specific editing or Catalog search. Chip lines expose Size and Moisture; Resin lines expose Resin Color and Component Type. The vendor-facing PDF uses the shared original-workbook columns and composes Description from the structured fields without changing quantity-by-price calculations. Existing unclassified drafts require an explicit line choice, while issued snapshots and already-generated PDFs remain immutable.
+
+For Chip lines, Container Size is package capacity (for example, `50 LB`) and Container is the package type (`Bag`), while Quantity is the number of bags ordered and Quantity Unit is canonically `Bag`. Unit Cost and tier selection therefore operate per ordered bag without multiplying by package capacity. Resin order units remain independently driven by their product and pricing basis.
+
+Container Size is selected from Catalog-backed package capacities for the line's material type, with values from the selected Vendor prioritized. Catalog selection prefills the capacity when the selected item defines one. Chip hides the redundant Quantity Unit control while persisting `Bag`; Resin retains the control because its order/pricing unit may differ from its package capacity and container.
+
+New Chip lines start with `50 LB` / `Bag`; new Resin lines start with `5 GAL` / `Pail` and `gal` as the order unit. These are material-type editor defaults rather than validation constraints. Catalog package data overrides them when supplied, and users may select another supported capacity or container. Existing drafts and issued snapshots are loaded as stored and are not backfilled with these defaults.
+
+Phase 1 supports New Purchase Order, draft search/filtering, structured per-line Chip or Resin classification, deterministic line totals and subtotal, save, reopen, and edit. One material-agnostic PO may contain any combination of Chip and Resin lines.
 
 Chip identity remains separate: material, chip size, package quantity, package measure, container, moisture condition, order quantity, and order unit. A line may reference `jobs.id` and display the current Production job identity.
 
