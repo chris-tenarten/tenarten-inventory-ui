@@ -5,6 +5,9 @@ type ClassifiedMaterialType = Exclude<PurchaseOrderLine['materialType'], ''>;
 export const purchaseOrderMaterialDefaults: Record<ClassifiedMaterialType, Pick<ChipPurchaseOrderLineDetails, 'packageQuantity' | 'packageMeasure' | 'containerType' | 'orderUnit'>> = {
   chip: { packageQuantity:'50', packageMeasure:'LB', containerType:'Bag', orderUnit:'Bag' },
   resin: { packageQuantity:'5', packageMeasure:'GAL', containerType:'Pail', orderUnit:'gal' },
+  pigment: { packageQuantity:'', packageMeasure:'', containerType:'', orderUnit:'' },
+  filler: { packageQuantity:'', packageMeasure:'', containerType:'', orderUnit:'' },
+  other: { packageQuantity:'', packageMeasure:'', containerType:'', orderUnit:'' },
 };
 
 export function applyPurchaseOrderMaterialDefaults(

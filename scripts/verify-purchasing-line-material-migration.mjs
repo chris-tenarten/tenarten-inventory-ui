@@ -7,6 +7,7 @@ const migration = readFileSync('supabase/migrations/20260908_002_purchase_order_
 const inspection = readFileSync('supabase/inspection/20260908_002_purchase_order_line_material_types_verification.sql', 'utf8');
 const orderUnitMigration = readFileSync('supabase/migrations/20260908_003_purchase_order_chip_order_unit.sql', 'utf8');
 const orderUnitInspection = readFileSync('supabase/inspection/20260908_003_purchase_order_chip_order_unit_verification.sql', 'utf8');
+const taxonomyMigration = readFileSync('supabase/migrations/20260917_004_purchase_order_material_taxonomy.sql', 'utf8');
 const setup = String.raw`
 do $$begin
   if not exists(select 1 from pg_roles where rolname='anon') then create role anon; end if;
@@ -32,11 +33,15 @@ create function public.tenops_create_pending_receivals_from_po_impl(uuid,jsonb,t
 `.replace(/\n/g, '\r\n');
 const tests = String.raw`
 do $$begin
-  if pg_get_functiondef('public.save_chip_purchase_order_draft(jsonb,jsonb,text)'::regprocedure) not like '%Every material line requires Chip or Resin classification.%' then raise exception 'Draft validation patch missing';end if;
+  if pg_get_functiondef('public.save_chip_purchase_order_draft(jsonb,jsonb,text)'::regprocedure) not like '%Every material line requires a supported material classification.%' then raise exception 'Draft validation patch missing';end if;
   if pg_get_functiondef('public.issue_purchase_order(uuid,text,timestamptz)'::regprocedure) not like '%material_classification%' then raise exception 'Issuance classification patch missing';end if;
-  if pg_get_functiondef('public.tenops_create_pending_receivals_from_po_impl(uuid,jsonb,text)'::regprocedure) not like '%not in (''chip'',''resin'')%' then raise exception 'Receival eligibility patch missing';end if;
+  if pg_get_functiondef('public.tenops_create_pending_receivals_from_po_impl(uuid,jsonb,text)'::regprocedure) not like '%not in (''chip'',''resin'',''pigment'',''filler'',''other'')%' then raise exception 'Receival eligibility patch missing';end if;
   if pg_get_functiondef('public.save_chip_purchase_order_draft(jsonb,jsonb,text)'::regprocedure) not like '%Every Chip line requires Bag as its order unit.%' then raise exception 'Chip draft Bag guard missing';end if;
   if pg_get_functiondef('public.issue_purchase_order(uuid,text,timestamptz)'::regprocedure) not like '%lower(trim(details.order_unit)) not in (''bag'',''bags'')%' then raise exception 'Chip issuance Bag guard missing';end if;
+  if pg_get_functiondef('public.save_chip_purchase_order_draft(jsonb,jsonb,text)'::regprocedure) not like '%''pigment'',''filler'',''other''%' then raise exception 'Expanded draft taxonomy missing';end if;
+  if pg_get_functiondef('public.issue_purchase_order(uuid,text,timestamptz)'::regprocedure) not like '%''pigment'',''filler'',''other''%' then raise exception 'Expanded issuance taxonomy missing';end if;
+  if pg_get_functiondef('public.tenops_create_pending_receivals_from_po_impl(uuid,jsonb,text)'::regprocedure) not like '%''pigment'',''filler'',''other''%' then raise exception 'Expanded Receival taxonomy missing';end if;
+  if not exists(select 1 from pg_constraint where conname='purchase_order_lines_material_type_check' and pg_get_constraintdef(oid) like '%pigment%filler%other%') then raise exception 'Expanded line constraint missing';end if;
 end$$;
 `;
 
@@ -56,7 +61,7 @@ try {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 250);
     if (attempt === 59) throw new Error('Disposable PostgreSQL did not become ready.');
   }
-  run(['exec', '-i', name, 'psql', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1'], setup + migration + inspection + orderUnitMigration + orderUnitInspection + tests);
+  run(['exec', '-i', name, 'psql', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1'], setup + migration + inspection + orderUnitMigration + orderUnitInspection + taxonomyMigration + tests);
   console.log('Purchasing line-material migration checks passed.');
 } finally {
   spawnSync('docker', ['stop', name]);

@@ -119,7 +119,7 @@ export async function generatePurchaseOrderDraftPdf(draft: PurchaseOrderDraft): 
     draft.taxPercent,
     draft.freight,
   );
-  const materialTypes = new Set(draft.lines.map((line) => line.materialType).filter((value) => value === 'chip' || value === 'resin'));
+  const materialTypes = new Set(draft.lines.map((line) => line.materialType).filter(Boolean));
   const orderSnapshot = {
     po_number:draft.poNumber.trim() || 'DRAFT',
     po_date:draft.orderDate,

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { savePurchasingCatalogItem } from "./mutations";
 import { getPurchasingCatalogCategory } from "./catalog-category";
 import type {
+  PurchaseOrderLineMaterialType,
   PurchasingCatalogItemInput,
   PurchasingCatalogSuggestion,
   VendorOption,
@@ -26,7 +27,7 @@ export default function CatalogItemEditor({
   existing?: PurchasingCatalogSuggestion;
   suggestedMode?: "individual" | "bulk" | "truckload";
   proposedPrice?: string;
-  materialType: "chip" | "resin";
+  materialType: Exclude<PurchaseOrderLineMaterialType, "">;
   onCancel(): void;
   onSaved(item: PurchasingCatalogSuggestion): void;
 }) {
@@ -38,13 +39,13 @@ export default function CatalogItemEditor({
     vendorId: matchedVendor?.id || "",
     vendorSku: existing?.vendorSku || "",
     itemName: existing?.materialName || "",
-    category: existing ? getPurchasingCatalogCategory(existing) : materialType === "resin" ? "resin" : "marble",
+    category: existing ? getPurchasingCatalogCategory(existing) : materialType === "resin" ? "resin" : materialType === "chip" ? "marble" : materialType,
     size: existing?.chipSize || "",
     resinColor: existing?.resinColor || "",
     componentType: existing?.componentType || "",
     unitSize: existing?.packageQuantity || "",
-    unitSizeUom: existing?.packageMeasure || (materialType === "resin" ? "GAL" : "LB"),
-    packaging: existing?.containerType || (materialType === "resin" ? "Pail" : "Bag"),
+    unitSizeUom: existing?.packageMeasure || (materialType === "resin" ? "GAL" : materialType === "chip" ? "LB" : ""),
+    packaging: existing?.containerType || (materialType === "resin" ? "Pail" : materialType === "chip" ? "Bag" : ""),
     price:
       suggestedMode === "individual" && proposedPrice !== undefined
         ? proposedPrice
@@ -245,12 +246,12 @@ export default function CatalogItemEditor({
         </label>
         {materialType === "chip" ? (
           <label className={label}>Size<input className={field} value={draft.size} onChange={(e) => set("size", e.target.value)} readOnly={Boolean(draft.id)} /></label>
-        ) : (
+        ) : materialType === "resin" ? (
           <>
             <label className={label}>Resin Color<input className={field} value={draft.resinColor} onChange={(e) => set("resinColor", e.target.value)} readOnly={Boolean(draft.id)} /></label>
             <label className={label}>Component Type<input className={field} value={draft.componentType} onChange={(e) => set("componentType", e.target.value)} readOnly={Boolean(draft.id)} placeholder="Part A, Part B, or Hardener" /></label>
           </>
-        )}
+        ) : null}
         <label className={label}>
           Amount Per Container
           <input
@@ -268,6 +269,7 @@ export default function CatalogItemEditor({
             onChange={(e) => set("unitSizeUom", e.target.value)}
             disabled={Boolean(draft.id)}
           >
+            <option value="">Select measure</option>
             <option>LB</option>
             <option>GAL</option>
             <option>KG</option>

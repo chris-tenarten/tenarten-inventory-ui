@@ -3,6 +3,7 @@ import type { PurchaseOrder, PurchaseOrderDocument, PurchaseOrderLine, PurchaseO
 
 type DbOrder = Record<string, unknown>;
 const text = (value: unknown) => value == null ? '' : String(value);
+const purchaseOrderMaterialTypes = new Set(['chip','resin','pigment','filler','other']);
 const address = (row: Record<string, unknown>) => [row.address_line_1 || row.address, row.address_line_2, [row.city, row.state, row.postal_code].filter(Boolean).join(', '), row.country].filter(Boolean).join('\n');
 const contactText = (contact: VendorContact) => [contact.contactName, contact.role, contact.email, contact.phone].filter(Boolean).join(' · ');
 
@@ -47,7 +48,7 @@ export async function loadPurchaseOrder(id: string): Promise<PurchaseOrder> {
   const lines = ((row.lines as Array<Record<string,unknown>>) || []).sort((a,b) => Number(a.line_number)-Number(b.line_number)).map((line): PurchaseOrderLine => {
     const detail = (Array.isArray(line.details) ? line.details[0] : line.details) as Record<string,unknown>;
     return {
-      id:text(line.id), lineNumber:Number(line.line_number), lineCategory:'chip', materialType:(text(line.material_type) === 'chip' || text(line.material_type) === 'resin' ? text(line.material_type) : '') as PurchaseOrderLine['materialType'], status:'active',
+      id:text(line.id), lineNumber:Number(line.line_number), lineCategory:'chip', materialType:(purchaseOrderMaterialTypes.has(text(line.material_type)) ? text(line.material_type) : '') as PurchaseOrderLine['materialType'], status:'active',
       details:{
         productionJobId:text(detail.production_job_id), catalogSource:text(detail.catalog_source) as PurchaseOrderLine['details']['catalogSource'],
         catalogItemId:text(detail.catalog_item_id), vendorSkuSnapshot:text(detail.vendor_sku_snapshot),
@@ -135,7 +136,7 @@ export async function loadPurchaseOrderPendingReceivalProjection(
       const quantity = Number(line.quantity);
       const lineKind = text(line.line_kind);
       let exclusionReason = '';
-      if (lineKind !== 'chip' && lineKind !== 'resin') exclusionReason = 'This is not a supported material line.';
+      if (!purchaseOrderMaterialTypes.has(lineKind)) exclusionReason = 'This is not a supported material line.';
       else if (!Number.isFinite(quantity) || quantity <= 0) exclusionReason = 'Quantity must be greater than zero.';
       else if (!material) exclusionReason = 'Material name is missing.';
       else if (!unit) exclusionReason = 'Order unit is missing.';
@@ -151,7 +152,7 @@ export async function loadPurchaseOrderPendingReceivalProjection(
         selected:!exclusionReason && !pendingReceivalId,
         materialName:material,
         size:text(line.chip_size),
-        category:lineKind === 'resin' ? 'Resin' : 'Chip / Aggregate',
+        category:lineKind === 'chip' ? 'Chip / Aggregate' : lineKind.replace(/^./, letter => letter.toUpperCase()),
         quantityExpected:text(line.quantity),
         unit,
         eta:'',

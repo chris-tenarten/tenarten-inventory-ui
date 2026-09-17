@@ -52,6 +52,7 @@ import type {
   PurchaseOrderDraft,
   PurchaseOrderPendingReceivalProjection,
   PurchaseOrderLine,
+  PurchaseOrderLineMaterialType,
   PurchasingCatalogSuggestion,
   VendorOption,
 } from "./types";
@@ -238,7 +239,7 @@ function LineEditor({
     ...results.map((item) => [item.packageQuantity, item.packageMeasure].filter(Boolean).join(" ")),
   ].filter(Boolean))];
   const partBSuggestion = line.materialType === "resin" ? suggestedPartBQuantity(allLines, index) : "";
-  const selectMaterialType = (materialType: "chip" | "resin") => {
+  const selectMaterialType = (materialType: Exclude<PurchaseOrderLineMaterialType, "">) => {
     if (line.materialType === materialType) return;
     const classifyingHistoricalLine = Boolean(line.id) && !line.materialType;
     const resetDetails: PurchaseOrderLine["details"] = {
@@ -291,9 +292,9 @@ function LineEditor({
         <div className="mb-3">
           <div className={label}>{tr('Material Type', 'Tipo de material')}</div>
           <div className="mt-1 inline-flex border border-slate-300 bg-white p-1">
-            {(['chip', 'resin'] as const).map((materialType) => (
+            {(['chip', 'resin', 'pigment', 'filler', 'other'] as const).map((materialType) => (
               <button key={materialType} type="button" onClick={() => selectMaterialType(materialType)} className={`h-8 px-4 text-xs font-bold ${line.materialType === materialType ? 'bg-slate-900 text-white' : 'text-slate-700'}`}>
-                {materialType === 'chip' ? 'Chip' : 'Resin'}
+                {materialType === 'chip' ? 'Chip / Aggregate' : materialType.replace(/^./, (letter) => letter.toUpperCase())}
               </button>
             ))}
           </div>
@@ -307,7 +308,7 @@ function LineEditor({
             onChange={(e) => setQuery(e.target.value)}
             disabled={!line.materialType}
             className="h-9 w-full border border-slate-300 bg-white pl-9 pr-3 text-sm"
-            placeholder={line.materialType === 'resin' ? 'Search Resin products, SKU, color, or component...' : tr('Search Chip materials, SKU, vendor, or size...', 'Buscar materiales, SKU, proveedor o tamaño...')}
+            placeholder={line.materialType === 'resin' ? 'Search Resin products, SKU, color, or component...' : line.materialType === 'chip' ? tr('Search Chip materials, SKU, vendor, or size...', 'Buscar materiales, SKU, proveedor o tamaño...') : 'Search matching Catalog products, SKU, or vendor...'}
           />
         </div>
         <p className="mt-1 text-xs text-slate-500">
@@ -431,7 +432,7 @@ function LineEditor({
           />
           {partBSuggestion && partBSuggestion !== details.quantityOrdered && <button type="button" onClick={() => set('quantityOrdered', partBSuggestion)} className="mt-1 text-left text-[11px] font-bold normal-case tracking-normal text-blue-700">Use 5:1 Part B suggestion: {partBSuggestion}</button>}
         </label>
-        {line.materialType === 'resin' && <label className={label}>
+        {line.materialType && line.materialType !== 'chip' && <label className={label}>
           {tr('Quantity Unit', 'Unidad de cantidad')}
           <PurchasingChoiceWithCustom value={details.orderUnit} options={purchasingQuantityUnits} onChange={(value) => set("orderUnit", value)} className={field} />
         </label>}
@@ -1304,7 +1305,11 @@ export function PurchaseOrderEditor({
             >
               + {tr('Add Chip Line', 'Agregar partida de chip')}
             </button>
-            <button type="button" onClick={() => setDraft((current) => ({...current, lines:[...current.lines, createPurchaseOrderMaterialLine('resin', current.lines.length + 1)]}))} className="ml-2 h-9 border border-slate-400 bg-white px-4 text-sm font-bold">+ Add Resin Line</button>
+            {(['resin','pigment','filler','other'] as const).map((materialType) => (
+              <button key={materialType} type="button" onClick={() => setDraft((current) => ({...current, lines:[...current.lines, createPurchaseOrderMaterialLine(materialType, current.lines.length + 1)]}))} className="ml-2 h-9 border border-slate-400 bg-white px-4 text-sm font-bold">
+                + Add {materialType.replace(/^./, (letter) => letter.toUpperCase())} Line
+              </button>
+            ))}
             </fieldset>
           </main>
           <aside className="space-y-3">

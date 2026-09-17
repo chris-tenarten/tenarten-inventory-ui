@@ -21,7 +21,7 @@ const appendUnique = (parts, value) => {
 };
 
 export function buildPurchaseOrderLineDescription(line) {
-  const lineKind = text(line.line_kind) === "resin" ? "resin" : "chip";
+  const lineKind = text(line.line_kind) || "chip";
   const parts = [];
   const manual = text(line.description || line.notes).trim();
   const manualNormalized = manual.toLowerCase();
@@ -60,7 +60,7 @@ export function buildPurchaseOrderPdfModel(orderSnapshot, linesSnapshot) {
       item: text(line.line_number),
       material: text(line.material),
       vendorSku: text(line.vendor_sku),
-      lineKind: text(line.line_kind) === "resin" ? "resin" : "chip",
+      lineKind: text(line.line_kind) || "chip",
       partComponent: text(line.part_component || line.chip_size),
       description: modeAware ? buildPurchaseOrderLineDescription(line) || text(line.display_description) : text(line.description || line.notes || line.display_description),
       quantity: text(line.quantity),
@@ -86,8 +86,11 @@ export function buildPurchaseOrderPdfModel(orderSnapshot, linesSnapshot) {
     generatedFromStatus: text(orderSnapshot.status),
     lineLayout: modeAware ? "material-aware" : "legacy",
     materialClassification: (() => {
+      if (!modeAware) return "Chip";
       const kinds = new Set(lines.map((line) => line.lineKind));
-      return kinds.size > 1 ? "Mixed" : kinds.has("resin") ? "Resin" : "Chip";
+      if (kinds.size > 1) return "Mixed";
+      const only = [...kinds][0] || "chip";
+      return only === "chip" ? "Chip / Aggregate" : only.replace(/^./, (letter) => letter.toUpperCase());
     })(),
     vendor: {
       name: text(orderSnapshot.vendor_name),

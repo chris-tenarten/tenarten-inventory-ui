@@ -1,7 +1,7 @@
 export type PurchaseOrderStatus = 'draft' | 'issued' | 'cancelled' | 'superseded';
 export type PurchaseOrderCategory = 'chip';
 export type PurchaseOrderTemplate = 'classic' | 'tenops';
-export type PurchaseOrderLineMaterialType = '' | 'chip' | 'resin';
+export type PurchaseOrderLineMaterialType = '' | 'chip' | 'resin' | 'pigment' | 'filler' | 'other';
 export type JobPurchaseOrderReferenceType = '' | 'resin' | 'chip';
 export type MoistureCondition = '' | 'dry' | 'damp' | 'wet';
 export type CatalogSource = 'standard' | 'specialty';
