@@ -5,6 +5,15 @@ import type { PurchaseOrderLineMaterialType } from "./types";
 
 type CatalogRecord = Record<string, unknown>;
 
+function catalogMatchesMaterialType(classification: string, materialType: PurchaseOrderLineMaterialType) {
+  if (materialType === "resin") return /resin|epoxy/.test(classification);
+  if (materialType === "chip") return /chip|aggregate|marble|glass/.test(classification);
+  if (materialType === "pigment") return /pigment|colorant/.test(classification);
+  if (materialType === "filler") return /filler/.test(classification);
+  if (materialType === "other") return /other|misc/.test(classification);
+  return false;
+}
+
 export { getPurchaseOrderCatalogOrderUnit, samePurchasingVendor } from "./catalog-records";
 
 export async function loadPurchasingContainerSizeOptions(
@@ -28,13 +37,13 @@ export async function loadPurchasingContainerSizeOptions(
   };
   for (const row of standard.data ?? []) {
     const classification = `${row.category ?? ""} ${row.material_class ?? ""}`.toLowerCase();
-    if (materialType === "resin" ? !/resin|epoxy/.test(classification) : !/chip|aggregate|marble|glass|filler/.test(classification)) continue;
+    if (!catalogMatchesMaterialType(classification, materialType)) continue;
     const parsed = parsePurchasingPackage(String(row.unit ?? ""));
     add(parsed.quantity, parsed.measure, Boolean(vendor) && samePurchasingVendor(String(row.vendor ?? ""), vendor));
   }
   for (const row of specialty.data ?? []) {
     const classification = `${row.material_type ?? ""} ${row.category ?? ""}`.toLowerCase();
-    if (materialType === "resin" ? !/resin|epoxy/.test(classification) : !/chip|aggregate|marble|glass|filler/.test(classification)) continue;
+    if (!catalogMatchesMaterialType(classification, materialType)) continue;
     const parsed = parsePurchasingPackage(String(row.packaging ?? ""));
     add(row.unit_size ?? parsed.quantity, row.unit_size_uom ?? parsed.measure, Boolean(vendor) && samePurchasingVendor(String(row.vendor_name ?? ""), vendor));
   }

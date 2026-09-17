@@ -59,7 +59,7 @@ export function samePurchasingVendor(
 }
 
 export function getPurchaseOrderCatalogOrderUnit(
-  materialType: "" | "chip" | "resin",
+  materialType: "" | "chip" | "resin" | "pigment" | "filler" | "other",
   item: Pick<PurchasingCatalogSuggestion, "orderUnit">,
   currentOrderUnit = "",
 ) {
@@ -161,7 +161,7 @@ export function combinePurchasingCatalogRecords(
   standardRecords: CatalogRecord[],
   specialtyRecords: CatalogRecord[],
   vendor = "",
-  materialType: "" | "chip" | "resin" = "",
+  materialType: "" | "chip" | "resin" | "pigment" | "filler" | "other" = "",
 ) {
   const maintained = specialtyRecords
     .map(mapSpecialty)
@@ -175,9 +175,11 @@ export function combinePurchasingCatalogRecords(
   const candidates = [...maintained, ...legacy].filter((item) => {
     if (!materialType) return true;
     const classification = `${item.materialType} ${item.materialName}`.toLowerCase();
-    return materialType === "resin"
-      ? classification.includes("resin") || classification.includes("epoxy")
-      : /chip|aggregate|marble|glass|filler/.test(classification);
+    if (materialType === "resin") return /resin|epoxy/.test(classification);
+    if (materialType === "chip") return /chip|aggregate|marble|glass/.test(classification);
+    if (materialType === "pigment") return /pigment|colorant/.test(classification);
+    if (materialType === "filler") return /filler/.test(classification);
+    return /other|misc/.test(classification);
   });
   return candidates
     .sort(
