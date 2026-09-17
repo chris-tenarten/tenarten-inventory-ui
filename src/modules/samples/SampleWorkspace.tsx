@@ -32,6 +32,7 @@ import type {
 import {
   blankSampleBlendRow,
   newLocalSample,
+  sampleRowsForDisplay,
   type SampleBlendRow,
   type SampleRecord,
 } from "./types";
@@ -509,6 +510,7 @@ export default function SampleWorkspace() {
   const formulationResult = draft
     ? calculateSampleFormulation(draft.formulation, draft.blendRows)
     : null;
+  const displayRows = draft ? sampleRowsForDisplay(draft.blendRows) : [];
   const visibleSamples = initialContext.bid
     ? samples.filter((sample) => sample.bidId === initialContext.bid)
     : samples;
@@ -905,24 +907,14 @@ export default function SampleWorkspace() {
                     {formulationResult?.availableChipMixOz || "0"} oz Chip Mix
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    patch("blendRows", [
-                      ...draft.blendRows,
-                      blankSampleBlendRow(draft.blendRows.length),
-                    ])
-                  }
-                  className="inline-flex h-11 items-center gap-1 border border-slate-400 px-3 text-xs font-bold"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Material
-                </button>
               </div>
               <div className="mt-3 space-y-3">
-                {draft.blendRows.map((row, index) => (
+                {!displayRows.some(({row})=>row.componentRole==='aggregate') && (
+                  <button type="button" onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])} className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"><Plus className="h-4 w-4" />Add Aggregate</button>
+                )}
+                {displayRows.map(({row,sourceIndex:index},displayIndex) => (
+                  <div key={row.id} className="space-y-3">
                   <article
-                    key={row.id}
                     className="border border-slate-200 bg-slate-50 p-3"
                   >
                     <div className="flex items-center justify-between">
@@ -934,7 +926,7 @@ export default function SampleWorkspace() {
                             : row.componentRole === "hardener"
                               ? "Hardener"
                               : "Filler / Other"}{" "}
-                        · row {index + 1}
+                        · row {displayIndex + 1}
                         {row.catalogItemId
                           ? " · Catalog-assisted"
                           : " · Manual"}
@@ -953,7 +945,7 @@ export default function SampleWorkspace() {
                               })),
                           )
                         }
-                        aria-label={`Remove material row ${index + 1}`}
+                        aria-label={`Remove material row ${displayIndex + 1}`}
                         className="h-11 w-11 border border-slate-300 bg-white text-red-700 disabled:opacity-30"
                       >
                         <Trash2 className="mx-auto h-4 w-4" />
@@ -1176,6 +1168,17 @@ export default function SampleWorkspace() {
                       </label>
                     </div>
                   </article>
+                  {row.componentRole === "aggregate" && displayRows[displayIndex+1]?.row.componentRole !== "aggregate" && (
+                    <button
+                      type="button"
+                      onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])}
+                      className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Aggregate
+                    </button>
+                  )}
+                  </div>
                 ))}
               </div>
             </section>
