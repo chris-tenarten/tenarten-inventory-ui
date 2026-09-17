@@ -37,8 +37,8 @@ const workspace=readFileSync(new URL('../src/modules/samples/SampleWorkspace.tsx
 const versions=readFileSync(new URL('../src/modules/samples/SampleVersionHistory.tsx',import.meta.url),'utf8');
 assert.match(workspace,/Sample not issued — Draft could not be saved/);
 assert.match(workspace,/Sample issued, but its PDF could not be generated\. The issued snapshot is safe/);
-assert.ok(workspace.indexOf("documentId=await issueSample")<workspace.indexOf("url=await generateSamplePdf(documentId)"),'issuance must precede issued PDF generation');
-assert.match(versions,/Draft saved, but Working PDF could not be generated\. Your Sample changes were saved/);
-assert.ok(versions.indexOf('await saveSample(sample)')<versions.indexOf('await generateWorkingSamplePdf'),'current Working PDF must save before generation');
+assert.ok(workspace.search(/documentId\s*=\s*await issueSample/) < workspace.search(/url\s*=\s*await generateSamplePdf\(documentId\)/),'issuance must precede issued PDF generation');
+assert.match(versions,/Draft saved, but Working Sheet could not be generated\. Your Sample changes were saved/);
+assert.ok(versions.search(/target\s*=\s*await onSave\(\)/) < versions.indexOf('await generateWorkingSamplePdf'),'current Working PDF must save before generation');
 
 console.log('Sample actionable error handling checks passed.');

@@ -1,25 +1,354 @@
-'use client';
-
-import {Settings2} from 'lucide-react';
-import {useState} from 'react';
-import {applySupplierRatioDefault,calculateSampleFormulation,type SampleFormulationState} from './formulation';
-import type {SampleBlendRow} from './types';
-import {setSampleFormulationDefault} from './queries';
-
-const input='mt-1 h-12 w-full min-w-0 border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 sm:h-9 sm:px-2 sm:text-sm';
-const label='text-xs font-bold text-slate-700';
-const assumption='mt-1 block text-[11px] font-normal text-slate-500';
-export default function SampleFormulationConfigurator({state,rows,resinSupplier,onChange,onRowsChange}:{state:SampleFormulationState;rows:SampleBlendRow[];resinSupplier:string;onChange:(state:SampleFormulationState)=>void;onRowsChange:(rows:SampleBlendRow[])=>void}){
- const result=calculateSampleFormulation(state,rows);const patch=(changes:Partial<SampleFormulationState>)=>onChange({...state,...changes});
- const patchRow=(index:number,changes:Partial<SampleBlendRow>)=>onRowsChange(rows.map((row,rowIndex)=>rowIndex===index?{...row,...changes}:row));
- const[defaultStatus,setDefaultStatus]=useState('');const saveDefault=async()=>{setDefaultStatus('Saving…');try{await setSampleFormulationDefault(state,resinSupplier);setDefaultStatus('Saved for future new Samples. Existing Samples were not changed.');}catch(caught){setDefaultStatus(caught instanceof Error?caught.message:'Unable to save default.');}};
- const resetWeightPerSf=()=>patch({weightPerSf:result.calculatedWeightPerSf,weightPerSfProvenance:'calculated'});
- const resetRatio=()=>onChange(applySupplierRatioDefault(state,resinSupplier));
- return <section className="border border-slate-300 bg-white p-4"><div className="flex flex-wrap items-start justify-between gap-2"><div><h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide"><Settings2 className="h-4 w-4"/>Formulation Settings</h2><p className="mt-1 text-xs text-slate-500">Default formulation assumptions are editable for this Sample. Aggregate rows alone form the 100% denominator.</p></div><span className="text-xs font-semibold text-slate-500">Calculation {state.calculationVersion}</span></div>
- <fieldset className="mt-4"><legend className={label}>Target Aggregate Weight basis</legend><div className="mt-2 grid grid-cols-2 gap-2"><button type="button" aria-pressed={state.basis==='total_weight'} onClick={()=>patch({basis:'total_weight'})} className={`min-h-11 border px-3 text-sm font-bold ${state.basis==='total_weight'?'border-blue-900 bg-blue-900 text-white':'border-slate-300 bg-white'}`}>Total Weight</button><button type="button" aria-pressed={state.basis==='weight_per_sf'} onClick={()=>patch({basis:'weight_per_sf'})} className={`min-h-11 border px-3 text-sm font-bold ${state.basis==='weight_per_sf'?'border-blue-900 bg-blue-900 text-white':'border-slate-300 bg-white'}`}>Weight / SF</button></div></fieldset>
- <div className="mt-4 border border-slate-200 bg-slate-50 p-3"><h3 className="flex items-center gap-1 text-xs font-bold uppercase text-slate-600"><Settings2 className="h-3.5 w-3.5"/>Standard Sample assumptions</h3><div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><label className={label}>Finished Plate Width<input type="number" min="0" step="0.001" value={state.finishedPlateWidth} onChange={event=>patch({finishedPlateWidth:event.target.value})} className={input}/><span className={assumption}>inches · editable default</span></label><label className={label}>Finished Plate Length<input type="number" min="0" step="0.001" value={state.finishedPlateLength} onChange={event=>patch({finishedPlateLength:event.target.value})} className={input}/><span className={assumption}>inches · editable default</span></label><label className={label}>Finished Plate Quantity<input type="number" min="0" step="1" value={state.finishedPlateQuantity} onChange={event=>patch({finishedPlateQuantity:event.target.value})} className={input}/><span className={assumption}>pieces · editable default</span></label><label className={label}>Thickness<input type="number" min="0" step="0.001" value={state.thicknessIn} onChange={event=>patch({thicknessIn:event.target.value})} className={input}/><span className={assumption}>inches · 0.375 = 3/8&quot;</span></label></div><p className="mt-3 text-xs font-semibold text-slate-600">Combined finished plate area: {result.finishedAreaSf?`${result.finishedAreaSf} SF`:'—'}</p></div>
- {state.basis==='total_weight'?<div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={label}>Target Aggregate Weight<input type="number" min="0" step="0.0001" value={state.totalWeight} onChange={event=>patch({totalWeight:event.target.value})} className={input}/><span className={assumption}>lb · directly authored for this Sample</span></label></div>:<div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><label className={label}>Production Pour Width<input type="number" min="0" step="0.001" value={state.width} onChange={event=>patch({width:event.target.value})} className={input}/></label><label className={label}>Production Pour Length<input type="number" min="0" step="0.001" value={state.length} onChange={event=>patch({length:event.target.value})} className={input}/></label><label className={label}>Dimension Unit<select value={state.dimensionUnit} onChange={event=>patch({dimensionUnit:event.target.value as 'in'|'ft'})} className={input}><option value="in">inches</option><option value="ft">feet</option></select></label><label className={label}>Material Density<input type="number" min="0" step="0.001" value={state.materialDensity} onChange={event=>patch({materialDensity:event.target.value})} className={input}/><span className={assumption}>lb/CFT · editable default</span></label><label className={label}>Weight / SF<input type="number" min="0" step="0.0001" readOnly={state.weightPerSfProvenance==='calculated'} value={state.weightPerSfProvenance==='calculated'?result.effectiveWeightPerSf:state.weightPerSf} onChange={event=>patch({weightPerSf:event.target.value,weightPerSfProvenance:'manual'})} className={`${input} ${state.weightPerSfProvenance==='calculated'?'bg-slate-100':''}`}/><span className={assumption}>{state.weightPerSfProvenance==='manual'?'Modified for this Sample':'Calculated: Density × Thickness ÷ 12'}</span>{state.weightPerSfProvenance==='manual'?<button type="button" onClick={resetWeightPerSf} className="mt-2 min-h-9 border border-slate-300 bg-white px-2 text-xs font-bold">Reset to Calculated</button>:<button type="button" onClick={()=>patch({weightPerSf:result.effectiveWeightPerSf,weightPerSfProvenance:'manual'})} className="mt-2 min-h-9 border border-slate-300 bg-white px-2 text-xs font-bold">Override</button>}</label></div>}
- <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><label className={label}>Resin : Hardener Ratio<select value={`${state.resinParts}:${state.hardenerParts}`} onChange={event=>{const[resinParts,hardenerParts]=event.target.value.split(':');patch({resinParts,hardenerParts,ratioProvenance:'manual'});setDefaultStatus('');}} className={input}><option value="5:1">5:1</option><option value="4:1">4:1</option></select><span className={assumption}>{state.ratioProvenance==='manual'?'Modified for this Sample':`${state.ratioDefaultSource||'General'} default`}</span>{state.ratioProvenance==='manual'&&<button type="button" onClick={resetRatio} className="mt-2 min-h-9 border border-slate-300 bg-white px-2 text-xs font-bold">Reset to Supplier Default</button>}<button type="button" onClick={()=>void saveDefault()} className="mt-2 min-h-10 border border-slate-300 bg-white px-3 text-xs font-bold">Use settings for future new Samples</button>{defaultStatus&&<span role="status" className={assumption}>{defaultStatus}</span>}</label></div>
- <div className="mt-4 grid gap-2 sm:grid-cols-4"><div className="border border-slate-200 bg-slate-50 p-3"><span className="block text-[10px] font-bold uppercase text-slate-500">Production Pour</span><strong>{result.areaSf?`${result.areaSf} SF`:'—'}</strong><span className="ml-2 text-xs text-slate-500">{result.productionVolumeCft?`${result.productionVolumeCft} CFT`:''}</span></div><div className="border border-slate-200 bg-slate-50 p-3"><span className="block text-[10px] font-bold uppercase text-slate-500">Effective Weight / SF</span><strong>{result.effectiveWeightPerSf?`${result.effectiveWeightPerSf} lb/SF`:'—'}</strong></div><div className="border border-slate-200 bg-slate-50 p-3"><span className="block text-[10px] font-bold uppercase text-slate-500">Target Aggregate Weight</span><strong>{result.targetWeight?`${result.targetWeight} lb · ${result.targetWeightOz} oz`:'—'}</strong></div><div className={`border p-3 ${result.percentageReconciles?'border-emerald-300 bg-emerald-50':'border-amber-300 bg-amber-50'}`}><span className="block text-[10px] font-bold uppercase text-slate-500">Aggregate Percentage Total</span><strong>{result.percentageTotal||'0'}%</strong><span className="ml-2 text-xs">{result.percentageReconciles?'Reconciled':'Does not reconcile to 100%'}</span></div></div>
- <div className="mt-4 space-y-2"><h3 className="text-xs font-bold uppercase text-slate-600">Component calculation participation</h3>{rows.map((row,index)=><div key={row.id} className="grid gap-2 border border-slate-200 bg-slate-50 p-3 sm:grid-cols-[minmax(130px,1.5fr)_1fr_1.3fr_1fr]"><div className="min-w-0"><span className="block truncate text-sm font-bold">{row.color||`Material row ${index+1}`}</span><span className="text-xs text-slate-500">{row.percentage||'0'}%</span></div><label className={label}>Role<select value={row.componentRole} onChange={event=>{const componentRole=event.target.value as SampleBlendRow['componentRole'];patchRow(index,{componentRole,...(componentRole==='aggregate'?{}:{calculationBasis:null})});}} className={input}><option value="aggregate">Aggregate</option><option value="resin">Resin</option><option value="hardener">Hardener</option><option value="other">Filler / Other</option></select></label><label className={label}>Aggregate basis<select disabled={row.componentRole!=='aggregate'} value={row.componentRole==='aggregate'?(row.calculationBasis??''):''} onChange={event=>patchRow(index,{calculationBasis:event.target.value==='target_total'?'target_total':null})} className={input}><option value="">Not calculated</option><option value="target_total">% of aggregate target</option></select><span className={assumption}>{row.componentRole==='aggregate'?'Only opted-in Aggregate rows share 100%.':'Outside Aggregate 100%.'}</span></label><label className={label}>Quantity source<select value={row.quantityProvenance} onChange={event=>patchRow(index,{quantityProvenance:event.target.value as SampleBlendRow['quantityProvenance']})} className={input}><option value="manual">Manual</option><option value="calculated">Calculated</option></select><span className={assumption}>{row.quantityProvenance==='manual'?`Modified / authored: ${row.quantity||'—'} ${row.unit}`:`Calculated: ${result.rows[index]?.calculatedQuantity||'—'} ${row.unit||state.weightUnit}`}</span></label></div>)}</div></section>;
+"use client";
+import { Settings2, X } from "lucide-react";
+import { useState } from "react";
+import {
+  applySupplierRatioDefault,
+  calculateSampleFormulation,
+  type SampleFormulationState,
+} from "./formulation";
+import type { SampleBlendRow } from "./types";
+import { setSampleFormulationDefault } from "./queries";
+const input =
+  "mt-1 h-12 w-full min-w-0 border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 sm:h-9 sm:px-2 sm:text-sm";
+const label = "text-xs font-bold text-slate-700";
+const hint = "mt-1 block text-[11px] font-normal text-slate-500";
+const number = (value: string, digits = 2) => {
+  const parsed = Number(value);
+  return value !== "" && Number.isFinite(parsed) ? parsed.toFixed(digits) : "—";
+};
+const inches = (value: string) =>
+  Number(value) === 0.375
+    ? "3/8″"
+    : value
+      ? `${Number(value).toLocaleString()}″`
+      : "—";
+export default function SampleFormulationConfigurator({
+  state,
+  rows,
+  resinSupplier,
+  onChange,
+}: {
+  state: SampleFormulationState;
+  rows: SampleBlendRow[];
+  resinSupplier: string;
+  onChange: (state: SampleFormulationState) => void;
+}) {
+  const result = calculateSampleFormulation(state, rows);
+  const calculatedTarget = calculateSampleFormulation(
+    { ...state, basis: "weight_per_sf", totalWeight: "" },
+    rows,
+  );
+  const [advanced, setAdvanced] = useState(false);
+  const [defaultStatus, setDefaultStatus] = useState("");
+  const patch = (changes: Partial<SampleFormulationState>) =>
+    onChange({ ...state, ...changes });
+  const resetWeightPerSf = () =>
+    patch({
+      weightPerSf: result.calculatedWeightPerSf,
+      weightPerSfProvenance: "calculated",
+    });
+  const resetTarget = () => patch({ basis: "weight_per_sf", totalWeight: "" });
+  const resetRatio = () =>
+    onChange(applySupplierRatioDefault(state, resinSupplier));
+  const saveDefault = async () => {
+    setDefaultStatus("Saving…");
+    try {
+      await setSampleFormulationDefault(state, resinSupplier);
+      setDefaultStatus("Saved for future new Samples.");
+    } catch (caught) {
+      setDefaultStatus(
+        caught instanceof Error ? caught.message : "Unable to save default.",
+      );
+    }
+  };
+  return (
+    <section className="border border-slate-300 bg-white p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-wide">
+            Sample Plate Quantities
+          </h2>
+          <p className="mt-2 text-base font-semibold">
+            {state.finishedPlateQuantity || "—"} pcs ·{" "}
+            {inches(state.finishedPlateWidth)} ×{" "}
+            {inches(state.finishedPlateLength)} · {inches(state.thicknessIn)}
+          </p>
+          <p className="mt-1 text-sm text-slate-600">
+            Production pour: {inches(state.width)} × {inches(state.length)}
+          </p>
+          <p className="mt-1 text-sm text-slate-600">
+            Total area: {number(result.finishedAreaSf)} SF
+          </p>
+          <p className="mt-1 text-sm font-bold">
+            Chip Mix: {number(result.targetWeight)} lb /{" "}
+            {number(result.targetWeightOz)} oz
+          </p>
+          {state.basis === "total_weight" && (
+            <p className="mt-1 text-xs font-bold text-amber-700">
+              Modified target; calculated target is overridden.
+            </p>
+          )}
+        </div>
+        <button
+          type="button"
+          aria-expanded={advanced}
+          onClick={() => setAdvanced((value) => !value)}
+          className="inline-flex min-h-11 items-center gap-2 border border-slate-400 bg-white px-3 text-xs font-bold"
+        >
+          <Settings2 className="h-4 w-4" />
+          {advanced
+            ? "Close Calculation Settings"
+            : "Adjust Sample Plate Calculation"}
+        </button>
+      </div>
+      {advanced && (
+        <div className="mt-4 border-t border-slate-200 pt-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              Custom Sample Calculation
+            </h3>
+            <button
+              type="button"
+              onClick={() => setAdvanced(false)}
+              aria-label="Close calculation settings"
+              className="h-9 w-9 border border-slate-300"
+            >
+              <X className="mx-auto h-4 w-4" />
+            </button>
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <label className={label}>
+              Finished Plate Width
+              <input
+                type="number"
+                min="0"
+                step="0.001"
+                value={state.finishedPlateWidth}
+                onChange={(event) =>
+                  patch({ finishedPlateWidth: event.target.value })
+                }
+                className={input}
+              />
+              <span className={hint}>inches</span>
+            </label>
+            <label className={label}>
+              Finished Plate Length
+              <input
+                type="number"
+                min="0"
+                step="0.001"
+                value={state.finishedPlateLength}
+                onChange={(event) =>
+                  patch({ finishedPlateLength: event.target.value })
+                }
+                className={input}
+              />
+              <span className={hint}>inches</span>
+            </label>
+            <label className={label}>
+              Finished Pieces
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value={state.finishedPlateQuantity}
+                onChange={(event) =>
+                  patch({ finishedPlateQuantity: event.target.value })
+                }
+                className={input}
+              />
+            </label>
+            <label className={label}>
+              Thickness
+              <input
+                type="number"
+                min="0"
+                step="0.001"
+                value={state.thicknessIn}
+                onChange={(event) => patch({ thicknessIn: event.target.value })}
+                className={input}
+              />
+              <span className={hint}>inches · 0.375 = 3/8″</span>
+            </label>
+            <label className={label}>
+              Production Pour Width
+              <input
+                type="number"
+                min="0"
+                step="0.001"
+                value={state.width}
+                onChange={(event) => patch({ width: event.target.value })}
+                className={input}
+              />
+            </label>
+            <label className={label}>
+              Production Pour Length
+              <input
+                type="number"
+                min="0"
+                step="0.001"
+                value={state.length}
+                onChange={(event) => patch({ length: event.target.value })}
+                className={input}
+              />
+            </label>
+            <label className={label}>
+              Dimension Unit
+              <select
+                value={state.dimensionUnit}
+                onChange={(event) =>
+                  patch({ dimensionUnit: event.target.value as "in" | "ft" })
+                }
+                className={input}
+              >
+                <option value="in">inches</option>
+                <option value="ft">feet</option>
+              </select>
+            </label>
+            <label className={label}>
+              Material Density
+              <input
+                type="number"
+                min="0"
+                step="0.001"
+                value={state.materialDensity}
+                onChange={(event) =>
+                  patch({ materialDensity: event.target.value })
+                }
+                className={input}
+              />
+              <span className={hint}>lb/CFT</span>
+            </label>
+            <label className={label}>
+              Weight / SF
+              <input
+                type="number"
+                min="0"
+                step="0.0001"
+                readOnly={state.weightPerSfProvenance === "calculated"}
+                value={
+                  state.weightPerSfProvenance === "calculated"
+                    ? result.effectiveWeightPerSf
+                    : state.weightPerSf
+                }
+                onChange={(event) =>
+                  patch({
+                    weightPerSf: event.target.value,
+                    weightPerSfProvenance: "manual",
+                  })
+                }
+                className={`${input} ${state.weightPerSfProvenance === "calculated" ? "bg-slate-100" : ""}`}
+              />
+              <span className={hint}>
+                {state.weightPerSfProvenance === "manual"
+                  ? "Modified"
+                  : "Calculated: Density × Thickness ÷ 12"}
+              </span>
+              {state.weightPerSfProvenance === "manual" ? (
+                <button
+                  type="button"
+                  onClick={resetWeightPerSf}
+                  className="mt-2 min-h-9 border border-slate-300 px-2 text-xs font-bold"
+                >
+                  Reset to Calculated
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() =>
+                    patch({
+                      weightPerSf: result.effectiveWeightPerSf,
+                      weightPerSfProvenance: "manual",
+                    })
+                  }
+                  className="mt-2 min-h-9 border border-slate-300 px-2 text-xs font-bold"
+                >
+                  Override
+                </button>
+              )}
+            </label>
+            <label className={label}>
+              Target Aggregate Weight
+              <input
+                type="number"
+                min="0"
+                step="0.0001"
+                value={
+                  state.basis === "total_weight"
+                    ? state.totalWeight
+                    : result.targetWeight
+                }
+                onChange={(event) =>
+                  patch({
+                    basis: "total_weight",
+                    totalWeight: event.target.value,
+                  })
+                }
+                className={input}
+              />
+              <span className={hint}>
+                {state.basis === "total_weight"
+                  ? "Modified for this Sample"
+                  : `Calculated: ${number(calculatedTarget.targetWeight)} lb`}
+              </span>
+              {state.basis === "total_weight" && (
+                <button
+                  type="button"
+                  onClick={resetTarget}
+                  className="mt-2 min-h-9 border border-slate-300 px-2 text-xs font-bold"
+                >
+                  Reset to Calculated
+                </button>
+              )}
+            </label>
+            <label className={label}>
+              Resin : Hardener Ratio
+              <select
+                value={`${state.resinParts}:${state.hardenerParts}`}
+                onChange={(event) => {
+                  const [resinParts, hardenerParts] =
+                    event.target.value.split(":");
+                  patch({
+                    resinParts,
+                    hardenerParts,
+                    ratioProvenance: "manual",
+                  });
+                }}
+                className={input}
+              >
+                <option value="5:1">5:1</option>
+                <option value="4:1">4:1</option>
+              </select>
+              <span className={hint}>
+                {state.ratioProvenance === "manual"
+                  ? "Modified"
+                  : `${state.ratioDefaultSource || "General"} default`}
+              </span>
+              {state.ratioProvenance === "manual" && (
+                <button
+                  type="button"
+                  onClick={resetRatio}
+                  className="mt-2 min-h-9 border border-slate-300 px-2 text-xs font-bold"
+                >
+                  Reset to Supplier Default
+                </button>
+              )}
+            </label>
+          </div>
+          <button
+            type="button"
+            onClick={() => void saveDefault()}
+            className="mt-4 min-h-10 border border-slate-300 bg-white px-3 text-xs font-bold"
+          >
+            Use settings for future new Samples
+          </button>
+          {defaultStatus && (
+            <span role="status" className="ml-3 text-xs text-slate-500">
+              {defaultStatus}
+            </span>
+          )}
+        </div>
+      )}
+    </section>
+  );
 }
