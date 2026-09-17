@@ -1,4 +1,4 @@
-export const SAMPLE_PDF_VERSION = "sample-work-order-pdf-v2-local-candidate";
+export const SAMPLE_PDF_VERSION = "sample-work-order-pdf-v3-mass-balance";
 
 const value = (source, camel, snake = camel) => String(source?.[camel] ?? source?.[snake] ?? "");
 
@@ -12,12 +12,15 @@ export function buildSamplePdfModel(snapshot) {
   const formulation = snapshot.formulation ?? snapshot.formulation_state ?? {};
   const derived = formulation.derived ?? {};
   const formulationBasis = value(formulation, "basis");
+  const massBalance = value(formulation, "calculationVersion") === "sample-formulation-v2-mass-balance";
   const formulationSummary = formulationBasis
     ? [
-        formulationBasis === "weight_per_sf" ? "Weight / SF" : "Total Weight",
+        massBalance ? `Total Formula ${derived.totalFormulaWeightOz ?? value(formulation, "totalFormulaWeightOz")} oz` : formulationBasis === "weight_per_sf" ? "Weight / SF" : "Total Weight",
+        massBalance && derived.availableChipMixOz != null ? `Chip Mix ${derived.availableChipMixOz} oz` : "",
+        massBalance && derived.nonChipWeightOz != null ? `Filler / Resin / Hardener ${derived.nonChipWeightOz} oz` : "",
         derived.areaSf == null ? "" : `Area ${derived.areaSf} SF`,
         derived.effectiveWeightPerSf == null ? "" : `${derived.effectiveWeightPerSf} lb/SF`,
-        derived.targetWeight == null ? "" : `Target ${derived.targetWeight} ${value(formulation, "weightUnit") || "lb"}`,
+        !massBalance && derived.targetWeight != null ? `Target ${derived.targetWeight} ${value(formulation, "weightUnit") || "lb"}` : "",
         value(formulation, "materialDensity") ? `Density ${value(formulation, "materialDensity")} lb/CFT` : "",
         value(formulation, "thicknessIn") ? `Thickness ${value(formulation, "thicknessIn")} in` : "",
         `Resin : Hardener ${value(formulation, "resinParts") || "5"}:${value(formulation, "hardenerParts") || "1"}`,

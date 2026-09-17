@@ -896,14 +896,13 @@ export default function SampleWorkspace() {
                     Chip Mix
                   </h2>
                   <p className="mt-1 text-xs text-slate-500">
-                    Choose Aggregate, enter %, and TenOps calculates its working
-                    weight. Resin and Filler quantities remain manual.
+                    Aggregate percentages divide the available Chip Mix. Formula quantities are shown in ounces.
                   </p>
                   <p
                     className={`mt-2 text-sm font-bold ${formulationResult?.percentageReconciles ? "text-emerald-700" : "text-amber-700"}`}
                   >
                     Total {formulationResult?.percentageTotal || "0"}% ·{" "}
-                    {formulationResult?.targetWeightOz || "0"} oz
+                    {formulationResult?.availableChipMixOz || "0"} oz Chip Mix
                   </p>
                 </div>
                 <button
@@ -1116,20 +1115,16 @@ export default function SampleWorkspace() {
                         />
                       </label>
                       <label className={`${label} text-left sm:text-center`}>
-                        {row.componentRole === "aggregate"
+                        {row.quantityProvenance === "calculated"
                           ? "Calculated Weight"
                           : "Quantity"}
                         <input
                           type="number"
                           min="0"
                           step="0.0001"
-                          readOnly={
-                            row.componentRole === "aggregate" ||
-                            row.componentRole === "hardener"
-                          }
+                          readOnly={row.quantityProvenance === "calculated"}
                           value={
-                            row.componentRole === "aggregate" ||
-                            row.componentRole === "hardener"
+                            row.quantityProvenance === "calculated"
                               ? formulationResult?.rows[index]
                                   ?.calculatedQuantity || ""
                               : row.quantity
@@ -1137,18 +1132,17 @@ export default function SampleWorkspace() {
                           onChange={(e) =>
                             patchRow(index, { quantity: e.target.value })
                           }
-                          className={`${field} ${row.componentRole === "aggregate" || row.componentRole === "hardener" ? "bg-slate-100" : ""}`}
+                          className={`${field} ${row.quantityProvenance === "calculated" ? "bg-slate-100" : ""}`}
                         />
                         <span className="mt-1 block text-[11px] font-normal text-slate-500">
                           {row.componentRole === "aggregate"
-                            ? `${formulationResult?.rows[index]?.calculatedQuantityOz || "0"} oz`
+                            ? "oz · % of available Chip Mix"
                             : row.componentRole === "hardener"
                               ? `From ${draft.formulation.resinParts}:${draft.formulation.hardenerParts} Resin ratio`
                               : "Authored amount"}
                         </span>
                       </label>
-                      {row.componentRole !== "aggregate" &&
-                        row.componentRole !== "hardener" && (
+                      {row.quantityProvenance === "manual" && (
                           <label
                             className={`${label} text-left sm:text-center`}
                           >
@@ -1163,6 +1157,11 @@ export default function SampleWorkspace() {
                             />
                           </label>
                         )}
+                      {(row.componentRole === "aggregate" || row.componentRole === "hardener") && (
+                        <button type="button" onClick={()=>patchRow(index,{quantityProvenance:row.quantityProvenance==='calculated'?'manual':'calculated',calculationBasis:row.componentRole==='aggregate'&&row.quantityProvenance==='manual'?'target_total':null,quantity:row.quantityProvenance==='calculated'?(formulationResult?.rows[index]?.calculatedQuantity||''):row.quantity,unit:'oz'})} className="min-h-10 self-end border border-slate-300 bg-white px-2 text-xs font-bold">
+                          {row.quantityProvenance==='calculated'?'Enter manually':'Use calculated'}
+                        </button>
+                      )}
                       <label className={`${label} text-left sm:text-center`}>
                         Vendor
                         <PurchasingVendorNameInput
