@@ -1,15 +1,30 @@
-import type { JobTransmittalDraft } from "./types";
+import type { JobTransmittalDraft, TransmittalMode } from "./types";
 
 type ValidationOptions = {
-  requireManualNumber?: boolean;
+  mode?: TransmittalMode;
+  canonicalJobNumber?: string | null;
 };
+
+export function hasUsableTransmittalJobNumber(value: string | null | undefined): boolean {
+  return /^\d{4}$/.test(String(value ?? "").replace(/\D/g, "").slice(-4));
+}
 
 export function validateJobTransmittal(
   draft: JobTransmittalDraft,
-  { requireManualNumber = false }: ValidationOptions = {},
+  { mode = "job-linked", canonicalJobNumber = draft.jobNumber }: ValidationOptions = {},
 ): string[] {
   const errors: string[] = [];
-  if (!draft.jobId) errors.push("A valid Production job is required.");
+  if (mode === "job-linked") {
+    if (!draft.jobId) errors.push("A valid Production Job is required.");
+    if (!hasUsableTransmittalJobNumber(canonicalJobNumber)) {
+      errors.push("Assign a canonical Job Number in Production before generating a Job-linked Letter of Transmittal.");
+    }
+    if (draft.transmittalNumber.trim()) {
+      errors.push("The Transmittal Number for a Job-linked document is derived from its canonical Job Number.");
+    }
+  } else if (!draft.transmittalNumber.trim()) {
+    errors.push("Enter a Transmittal Number for this standalone Letter of Transmittal.");
+  }
   if (!draft.documentDate) errors.push("Document date is required.");
   if (!draft.recipient.company.trim() && !draft.recipient.attention.trim()) {
     errors.push("Recipient company or attention name is required.");
@@ -32,9 +47,6 @@ export function validateJobTransmittal(
     if (item.date && !/^\d{4}-\d{2}-\d{2}$/.test(item.date)) {
       errors.push(`Item ${index + 1} date is not valid.`);
     }
-  }
-  if (requireManualNumber && !draft.transmittalNumber.trim()) {
-    errors.push("Enter a Transmittal Number before generating because this Production Job does not yet have a Job Number.");
   }
   if (draft.transmittalNumber.trim() && !/^\d{4}-\d{3}$/.test(draft.transmittalNumber.trim())) {
     errors.push("Use a Transmittal Number such as 0319-001.");

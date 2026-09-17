@@ -22,28 +22,16 @@ const ANTHONY_SENDER = {
   email: "sales@tenartenterrazzo.com",
 };
 
-export function createJobTransmittalDraft(job: ProductionJob): JobTransmittalDraft {
-  const colorPlateNumber = job.color_plate_number?.trim() ?? "";
-  const items = colorPlateNumber
-    ? [{
-        id: crypto.randomUUID(),
-        submittal: "Color Plate",
-        quantity: "1",
-        date: job.sample_submitted_date ?? "",
-        number: colorPlateNumber,
-        description: job.name,
-      }]
-    : [createTransmittalItem()];
-
+export function createStandaloneTransmittalDraft(): JobTransmittalDraft {
   return {
-    jobId: job.id,
-    jobNumber: job.job_number ?? "",
-    jobName: job.name,
-    customer: job.customer ?? "",
+    jobId: "",
+    jobNumber: "",
+    jobName: "",
+    customer: "",
     transmittalNumber: "",
     documentDate: today(),
     recipient: {
-      company: job.customer ?? "",
+      company: "",
       addressLine1: "",
       addressLine2: "",
       attention: "",
@@ -57,10 +45,10 @@ export function createJobTransmittalDraft(job: ProductionJob): JobTransmittalDra
     deliveryVia: "",
     typeShopDrawing: false,
     typeLetter: false,
-    typeSamples: Boolean(colorPlateNumber),
+    typeSamples: false,
     typeOther: false,
     typeOtherLabel: "",
-    items,
+    items: [createTransmittalItem()],
     purposeApproval: false,
     purposeUse: false,
     purposeRecord: false,
@@ -71,5 +59,33 @@ export function createJobTransmittalDraft(job: ProductionJob): JobTransmittalDra
     senderName: ANTHONY_SENDER.name,
     senderPhone: ANTHONY_SENDER.phone,
     senderEmail: ANTHONY_SENDER.email,
+  };
+}
+
+export function createJobTransmittalDraft(job: ProductionJob): JobTransmittalDraft {
+  const colorPlateNumber = job.color_plate_number?.trim() ?? "";
+  const draft = createStandaloneTransmittalDraft();
+
+  return {
+    ...draft,
+    jobId: job.id,
+    jobNumber: job.job_number ?? "",
+    jobName: job.name,
+    customer: job.customer ?? "",
+    recipient: {
+      ...draft.recipient,
+      company: job.customer ?? "",
+    },
+    typeSamples: Boolean(colorPlateNumber),
+    items: colorPlateNumber
+      ? [{
+          id: crypto.randomUUID(),
+          submittal: "Color Plate",
+          quantity: "1",
+          date: job.sample_submitted_date ?? "",
+          number: colorPlateNumber,
+          description: job.name,
+        }]
+      : draft.items,
   };
 }

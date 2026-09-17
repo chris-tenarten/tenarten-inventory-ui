@@ -5,6 +5,8 @@ import {
   JOB_TRANSMITTAL_PDF_VERSION,
 } from "../_shared/job-transmittal-pdf-model.mjs";
 import { EdgeAuthorizationError, requireEdgeCapability } from "../_shared/rbac.ts";
+import { chunkPdfLines, wrapMeasuredPdfText } from "../_shared/pdf-layout.mjs";
+import { normalizePdfText } from "../_shared/pdf-text.mjs";
 
 const allowedOrigins = (Deno.env.get("TENOPS_ALLOWED_ORIGINS") || "http://localhost:3000")
   .split(",").map((value) => value.trim()).filter(Boolean);
@@ -17,9 +19,7 @@ const json = (body: unknown, status = 200, cors: Record<string,string> = {}) => 
   status,
   headers: { ...cors, "Content-Type": "application/json" },
 });
-const safe = (value: unknown) => String(value ?? "")
-  .replaceAll("—", "-").replaceAll("–", "-")
-  .replace(/[^\x20-\x7e\u00a0-\u00ff\n]/g, "?");
+const safe = (value: unknown) => normalizePdfText(value);
 const filename = (value: string) => `${value.replace(/[^A-Za-z0-9._-]+/g, "-") || "transmittal"}.pdf`;
 const digest = async (bytes: Uint8Array) =>
   Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)))
@@ -98,41 +98,76 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
   const pale = rgb(0.90, 0.92, 0.95);
   const border = rgb(0.56, 0.63, 0.71);
   const pageWidth = 612, pageHeight = 792, margin = 32, contentWidth = 548;
-  const wrap = (value: unknown, size: number, width: number, max = 4) => {
-    const lines: string[] = [];
-    for (const paragraph of safe(value).split("\n")) {
-      let current = "";
-      const words = paragraph.split(/\s+/).filter(Boolean).flatMap((word) => {
-        if (regular.widthOfTextAtSize(word,size) <= width) return [word];
-        const pieces:string[] = [];
-        let piece = "";
-        for (const character of word) {
-          if (piece && regular.widthOfTextAtSize(piece+character,size) > width) {
-            pieces.push(piece); piece = character;
-          } else piece += character;
-        }
-        if (piece) pieces.push(piece);
-        return pieces;
-      });
-      for (const word of words) {
-        const candidate = current ? `${current} ${word}` : word;
-        if (regular.widthOfTextAtSize(candidate, size) <= width) current = candidate;
-        else { if (current) lines.push(current); current = word; }
-        if (lines.length >= max) break;
-      }
-      if (current && lines.length < max) lines.push(current);
-      if (lines.length >= max) break;
+  const wrap = (value: unknown, size: number, width: number) =>
+    wrapMeasuredPdfText(safe(value), width, size, (candidate, fontSize) => regular.widthOfTextAtSize(candidate, fontSize));
+  const columns = [
+    {x:32,w:112,label:"Submittal",key:"submittal"},{x:144,w:58,label:"Quantity",key:"quantity"},{x:202,w:72,label:"Date",key:"date"},
+    {x:274,w:82,label:"Number",key:"number"},{x:356,w:224,label:"Description",key:"description"},
+  ] as const;
+  const recipientCompanyLines = wrap(model.recipient.company || "-", 7.5, 210);
+  const recipientAddressLines = wrap([model.recipient.addressLine1,model.recipient.addressLine2].filter(Boolean).join("\n") || "-", 7, 210);
+  const recipientAttentionLines = wrap(model.recipient.attention || "-", 7, 210);
+  const recipientContactLines = wrap([model.recipient.officePhone,model.recipient.mobilePhone,model.recipient.email].filter(Boolean).join(" | ") || "-", 6.4, 210);
+  const projectNameLines = wrap(model.job.name || "-", 7.2, 170);
+  const customerLines = wrap(model.job.customer || "-", 7.2, 170);
+  const jobNumberLines = wrap(model.job.number || "-", 7.5, 170);
+  const transmittalNumberLines = wrap(model.transmittalNumber || "-", 8, 170);
+  const ccLines = wrap(model.cc || "-", 6.8, 170);
+  const recipientHeight = Math.max(95, 28 + recipientCompanyLines.length * 9.5 + recipientAddressLines.length * 9 + recipientAttentionLines.length * 9 + recipientContactLines.length * 8.5);
+  const projectHeight = Math.max(95, 24 + (projectNameLines.length + customerLines.length + jobNumberLines.length + transmittalNumberLines.length + ccLines.length) * 9);
+  const informationHeight = Math.max(recipientHeight, projectHeight);
+  const informationBottom = 669 - informationHeight;
+  const transmittedBandY = informationBottom - 13;
+  const separateCoverLineCount = wrap(`Under Separate Cover Via ${model.delivery.via}`, 7.2, 366).length;
+  const otherTypeLineCount = wrap(`Other ${model.types.otherLabel}`, 7.2, 201).length;
+  const deliveryRowHeight = Math.max(23, separateCoverLineCount * 9 + 9);
+  const typeRowHeight = Math.max(23, otherTypeLineCount * 9 + 9);
+  const transmittedHeight = deliveryRowHeight + typeRowHeight + 7;
+  const transmittedBottom = transmittedBandY - transmittedHeight;
+  const firstTableTop = transmittedBottom - 16;
+  const firstTableCapacity = Math.max(42, firstTableTop - 250);
+  // The identity is rendered bold; keep a conservative measure because the local
+  // wrapping helper measures with the regular face.
+  const continuationIdentityLines = wrap(`Transmittal ${model.transmittalNumber} | Job ${model.job.number} | ${model.job.name} | ${model.documentDate}`, 7, contentWidth - 36);
+  const continuationTableTop = 665 - Math.max(0, continuationIdentityLines.length - 1) * 9;
+  const continuationCapacity = continuationTableTop - 90;
+  const rowLineHeight = 9;
+  const maxFragmentLines = Math.max(1, Math.floor((continuationCapacity - 8) / rowLineHeight));
+  const laidOutItems = model.pages.flat().flatMap((item) => {
+    const cells = columns.map((column) => wrap(item[column.key], column.key === "description" ? 7 : 6.8, column.w - 12));
+    const lineCount = Math.max(1, ...cells.map((cell) => cell.length));
+    const fragments = [];
+    for (let offset = 0; offset < lineCount; offset += maxFragmentLines) {
+      const fragmentCells = cells.map((cell) => cell.slice(offset, offset + maxFragmentLines));
+      const fragmentLineCount = Math.max(1, ...fragmentCells.map((cell) => cell.length));
+      fragments.push({ item, cells:fragmentCells, height:Math.max(42, 16 + fragmentLineCount * rowLineHeight) });
     }
-    return lines;
-  };
-
-  const totalPages = model.pages.length + Math.max(0, model.commentPages.length - 1);
-  model.pages.forEach((items, pageIndex) => {
+    return fragments;
+  });
+  const itemPages: typeof laidOutItems[] = [[]];
+  for (const item of laidOutItems) {
+    let page = itemPages.at(-1)!;
+    const capacity = itemPages.length === 1 ? firstTableCapacity : continuationCapacity;
+    if (page.reduce((sum,current)=>sum+current.height,0)+item.height>capacity) {
+      page=[];
+      itemPages.push(page);
+    }
+    page.push(item);
+  }
+  const senderLines = [model.sender.name,model.sender.phone,model.sender.email].flatMap((value)=>wrap(value,7,160));
+  const commentBoxHeight = Math.min(120,Math.max(72,25+senderLines.length*10));
+  const firstCommentCapacity = Math.max(1,Math.floor((commentBoxHeight-20)/9.5));
+  const commentLines = wrap(model.comments || "-", 7.5, 336);
+  const firstCommentLines = commentLines.slice(0,firstCommentCapacity);
+  const overflowCommentLines = commentLines.slice(firstCommentCapacity);
+  const commentChunks = overflowCommentLines.length ? chunkPdfLines(overflowCommentLines,52) : [];
+  const totalPages = itemPages.length + commentChunks.length;
+  itemPages.forEach((items, pageIndex) => {
     const page = pdf.addPage([pageWidth, pageHeight]);
     const t = (value: unknown, x: number, y: number, size = 7.5, font = regular, color = ink) =>
       page.drawText(safe(value), { x, y, size, font, color });
-    const wrapped = (value: unknown, x: number, y: number, width: number, size = 7.5, max = 4, font = regular, color = ink) =>
-      wrap(value, size, width, max).forEach((line, index) => page.drawText(line, { x, y: y - index * (size + 2), size, font, color }));
+    const wrapped = (value: unknown, x: number, y: number, width: number, size = 7.5, _max = Number.POSITIVE_INFINITY, font = regular, color = ink) =>
+      wrap(value, size, width).forEach((line, index) => page.drawText(line, { x, y: y - index * (size + 2), size, font, color }));
     const rect = (x: number, y: number, width: number, height: number, fill = rgb(1, 1, 1), stroke = border) =>
       page.drawRectangle({ x, y, width, height, color: fill, borderColor: stroke, borderWidth: 0.65 });
     const checkbox = (checked: boolean, label: string, x: number, y: number) => {
@@ -141,7 +176,7 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
         page.drawLine({ start:{x:x+2,y:y+4},end:{x:x+4,y:y+2},thickness:1.2,color:rgb(1,1,1) });
         page.drawLine({ start:{x:x+4,y:y+2},end:{x:x+8,y:y+8},thickness:1.2,color:rgb(1,1,1) });
       }
-      t(label, x + 14, y + 1, 7.2);
+      wrap(label,7.2,Math.max(30,580-x-14)).forEach((line,index)=>t(line,x+14,y+1-index*9,7.2));
     };
     const band = (label: string, y: number, dark = false) => {
       page.drawRectangle({ x: margin, y, width: contentWidth, height: 17, color: dark ? navy : pale, borderColor: navy, borderWidth: 0.65 });
@@ -164,40 +199,41 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
     page.drawLine({ start:{x:margin,y:696},end:{x:580,y:696},thickness:1.2,color:navy });
     page.drawLine({ start:{x:margin,y:693},end:{x:580,y:693},thickness:2.2,color:gold });
     if (pageIndex > 0) {
-      t(`Transmittal ${model.transmittalNumber} | Job ${model.job.number} | ${model.job.name} | ${model.documentDate}`,margin,681,7,bold,navy);
+      continuationIdentityLines.forEach((line,index)=>t(line,margin,681-index*9,7,bold,navy));
     }
 
     if (pageIndex === 0) {
       band("RECIPIENT", 669); page.drawRectangle({ x:306, y:669, width:274, height:17, color:pale, borderColor:navy, borderWidth:.65 }); t("PROJECT INFORMATION", 315,674,7.5,bold,navy);
-      rect(32, 574, 274, 95); rect(306, 574, 274, 95);
-      t("To", 42, 653, 6.5, bold, muted); wrapped(model.recipient.company,84,653,210,7.5,2,bold);
-      t("Address", 42, 638, 6.5, bold, muted); wrapped([model.recipient.addressLine1,model.recipient.addressLine2].filter(Boolean).join("\n"),84,638,210,7,3);
-      t("Attn", 42, 605, 6.5, bold, muted); wrapped(model.recipient.attention,84,605,210,7,1);
-      t("Contact", 42, 590, 6.5, bold, muted); wrapped([model.recipient.officePhone,model.recipient.mobilePhone,model.recipient.email].filter(Boolean).join(" | "),84,590,210,6.4,1);
-      t("Date", 316, 657, 6.5, bold, muted); t(model.documentDate, 400, 657, 7.5);
-      t("Re / Project", 316, 642, 6.5, bold, muted); wrapped(model.job.name,400,642,170,7.2,2);
-      t("Customer", 316, 627, 6.5, bold, muted); wrapped(model.job.customer,400,627,170,7.2,1);
-      t("Job #", 316, 612, 6.5, bold, muted); t(model.job.number, 400, 612, 7.5);
-      t("Transmittal #", 316, 597, 6.5, bold, muted); t(model.transmittalNumber, 400, 597, 8, bold);
-      t("CC", 316, 582, 6.5, bold, muted); wrapped(model.cc,400,582,170,6.8,1);
-      band("TRANSMITTED ITEMS", 561, true); rect(32, 508, 548, 53);
-      t("Delivery", 42, 542, 7, bold); checkbox(model.delivery.attached,"Attached",105,538); checkbox(model.delivery.separateCover,`Under Separate Cover Via ${model.delivery.via}`,200,538);
-      t("Item type", 42, 519, 7, bold); checkbox(model.types.shopDrawing,"Shop Drawing",105,515); checkbox(model.types.letter,"Letter",210,515); checkbox(model.types.samples,"Samples",280,515); checkbox(model.types.other,`Other ${model.types.otherLabel}`,365,515);
+      rect(32, informationBottom, 274, informationHeight); rect(306, informationBottom, 274, informationHeight);
+      let recipientY = 653;
+      t("To", 42, recipientY, 6.5, bold, muted); recipientCompanyLines.forEach((line,index)=>t(line,84,recipientY-index*9.5,7.5,bold)); recipientY-=recipientCompanyLines.length*9.5+5;
+      t("Address", 42, recipientY, 6.5, bold, muted); recipientAddressLines.forEach((line,index)=>t(line,84,recipientY-index*9,7)); recipientY-=recipientAddressLines.length*9+5;
+      t("Attn", 42, recipientY, 6.5, bold, muted); recipientAttentionLines.forEach((line,index)=>t(line,84,recipientY-index*9,7)); recipientY-=recipientAttentionLines.length*9+5;
+      t("Contact", 42, recipientY, 6.5, bold, muted); recipientContactLines.forEach((line,index)=>t(line,84,recipientY-index*8.5,6.4));
+      let projectY = 657;
+      const projectField = (label:string, lines:string[], size=7.2, font=regular) => { t(label,316,projectY,6.5,bold,muted); lines.forEach((line,index)=>t(line,400,projectY-index*9,size,font)); projectY-=Math.max(15,lines.length*9+5); };
+      projectField("Date",wrap(model.documentDate || "-",7.5,170),7.5);
+      projectField("Re / Project",projectNameLines);
+      projectField("Customer",customerLines);
+      projectField("Job #",jobNumberLines,7.5);
+      projectField("Transmittal #",transmittalNumberLines,8,bold);
+      projectField("CC",ccLines,6.8);
+      band("TRANSMITTED ITEMS", transmittedBandY, true); rect(32, transmittedBottom, 548, transmittedHeight);
+      t("Delivery", 42, transmittedBandY-19, 7, bold); checkbox(model.delivery.attached,"Attached",105,transmittedBandY-23); checkbox(model.delivery.separateCover,`Under Separate Cover Via ${model.delivery.via}`,200,transmittedBandY-23);
+      const typeY = transmittedBandY-deliveryRowHeight-19;
+      t("Item type", 42, typeY, 7, bold); checkbox(model.types.shopDrawing,"Shop Drawing",105,typeY-4); checkbox(model.types.letter,"Letter",210,typeY-4); checkbox(model.types.samples,"Samples",280,typeY-4); checkbox(model.types.other,`Other ${model.types.otherLabel}`,365,typeY-4);
     }
 
-    const tableTop = pageIndex === 0 ? 492 : 665;
+    const tableTop = pageIndex === 0 ? firstTableTop : continuationTableTop;
     const headerY = tableTop - 20;
-    const columns = [
-      {x:32,w:112,label:"Submittal"},{x:144,w:58,label:"Quantity"},{x:202,w:72,label:"Date"},
-      {x:274,w:82,label:"Number"},{x:356,w:224,label:"Description"},
-    ];
     columns.forEach((column) => { rect(column.x, headerY, column.w, 20, pale); t(column.label,column.x+6,headerY+7,7,bold,navy); });
-    let y = headerY - 42;
-    items.forEach((item) => {
-      columns.forEach((column) => rect(column.x, y, column.w, 42));
-      t(item.submittal,38,y+27,7); t(item.quantity,150,y+27,7); t(item.date,208,y+27,7); t(item.number,280,y+27,7);
-      wrapped(item.description,362,y+27,210,7,3);
-      y -= 42;
+    let y = headerY;
+    items.forEach((layout) => {
+      y -= layout.height;
+      columns.forEach((column,columnIndex) => {
+        rect(column.x, y, column.w, layout.height);
+        layout.cells[columnIndex].forEach((line,lineIndex)=>t(line,column.x+6,y+layout.height-14-lineIndex*rowLineHeight,column.key === "description" ? 7 : 6.8));
+      });
     });
 
     if (pageIndex === 0) {
@@ -209,20 +245,21 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
       checkbox(model.purpose.record,"For Record Purpose",240,purposeY-20);
       checkbox(model.purpose.rfi,"Request for Information",375,purposeY-20);
       checkbox(model.purpose.review,`Review and Advise By ${model.purpose.reviewBy}`,42,purposeY-43);
-      const commentsY = purposeY - 132;
-      band("COMMENTS", commentsY + 72); rect(32, commentsY, 356, 72);
-      wrapped(model.commentPages[0], 42, commentsY + 56, 336, 7.5, 8);
-      page.drawRectangle({x:400,y:commentsY+72,width:180,height:17,color:navy,borderColor:navy,borderWidth:.65});
-      t("TRANSMITTED BY",409,commentsY+77,7.5,bold,rgb(1,1,1)); rect(400,commentsY,180,72);
-      t(model.sender.name,410,commentsY+53,8,bold); t(model.sender.phone,410,commentsY+36,7); t(model.sender.email,410,commentsY+20,7,regular,navy);
+      const commentsTop = purposeY - 60;
+      const commentsY = commentsTop - commentBoxHeight;
+      band("COMMENTS", commentsTop); rect(32, commentsY, 356, commentBoxHeight);
+      firstCommentLines.forEach((line,index)=>t(line,42,commentsTop-16-index*9.5,7.5));
+      page.drawRectangle({x:400,y:commentsTop,width:180,height:17,color:navy,borderColor:navy,borderWidth:.65});
+      t("TRANSMITTED BY",409,commentsTop+5,7.5,bold,rgb(1,1,1)); rect(400,commentsY,180,commentBoxHeight);
+      senderLines.forEach((line,index)=>t(line,410,commentsTop-17-index*10,index===0?8:7,index===0?bold:regular,index>1?navy:ink));
     }
 
     t("Tenarten Terrazzo · Precast Manufacturing · www.precasttz.com", margin, 20, 6.3, regular, muted);
     t(`Page ${pageIndex + 1} of ${totalPages}`, 535, 20, 6.3, regular, muted);
     if (draft) page.drawText("DRAFT PREVIEW", { x:140,y:380,size:43,font:bold,color:rgb(.72,.75,.8),rotate:degrees(32),opacity:.32 });
   });
-  model.commentPages.slice(1).forEach((comment, commentIndex) => {
-    const pageIndex = model.pages.length + commentIndex;
+  commentChunks.forEach((comment, commentIndex) => {
+    const pageIndex = itemPages.length + commentIndex;
     const page = pdf.addPage([pageWidth,pageHeight]);
     const t = (value: unknown,x:number,y:number,size=7.5,font=regular,color=ink) =>
       page.drawText(safe(value),{x,y,size,font,color});
@@ -234,7 +271,7 @@ async function render(snapshot: Record<string, unknown>, logoUrl: string, draft:
     page.drawRectangle({x:margin,y:72,width:548,height:610,color:rgb(1,1,1),borderColor:border,borderWidth:.65});
     page.drawRectangle({x:margin,y:665,width:548,height:17,color:pale,borderColor:navy,borderWidth:.65});
     t("COMMENTS CONTINUED",margin+9,670,7.5,bold,navy);
-    wrap(comment,8,526,60).forEach((line,index)=>t(line,margin+10,646-index*11,8));
+    comment.forEach((line,index)=>t(line,margin+10,646-index*11,8));
     t("Tenarten Terrazzo · Precast Manufacturing · www.precasttz.com",margin,20,6.3,regular,muted);
     t(`Page ${pageIndex+1} of ${totalPages}`,535,20,6.3,regular,muted);
   });

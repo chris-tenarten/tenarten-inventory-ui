@@ -6,7 +6,7 @@ import {
 } from "../supabase/functions/_shared/job-transmittal-pdf-model.mjs";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
-const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, editableCustomer, withoutJobNumber, sharedNumberingVerification, defaults, validation, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector, workspace, route] = await Promise.all([
+const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, editableCustomer, withoutJobNumber, linkageCorrection, linkageVerification, sharedNumberingVerification, defaults, validation, preflight, privilegeInspection, allocatorInspection, verification, edge, panel, queries, mutations, inspector, workspace, route] = await Promise.all([
   read("../supabase/migrations/20260728_001_job_transmittals.sql"),
   read("../supabase/migrations/20260728_002_job_transmittal_hardening.sql"),
   read("../supabase/migrations/20260728_003_job_document_reservation_privileges.sql"),
@@ -14,6 +14,8 @@ const [migration, hardening, privilegeRepair, allocatorRepair, sharedNumbering, 
   read("../supabase/migrations/20260729_001_shared_document_numbering_suffix_one.sql"),
   read("../supabase/migrations/20260803_002_job_transmittal_editable_customer.sql"),
   read("../supabase/migrations/20260904_001_job_transmittal_without_job_number.sql"),
+  read("../supabase/migrations/20260908_001_job_transmittal_linkage_semantics.sql"),
+  read("../supabase/inspection/20260908_001_job_transmittal_linkage_semantics_verification.sql"),
   read("../supabase/inspection/20260729_001_shared_document_numbering_suffix_one_verification.sql"),
   read("../src/modules/transmittals/defaults.ts"),
   read("../src/modules/transmittals/validation.ts"),
@@ -114,9 +116,9 @@ assert.match(defaults, /email: "sales@tenartenterrazzo\.com"/);
 assert.doesNotMatch(panel, />Company<input/);
 assert.match(panel, />Customer Name<input/);
 assert.match(panel, /value=\{draft\.customer\}/);
-assert.match(panel, /Editing it does not change the job/);
+assert.match(panel, /Editing it does not change the Job/);
 assert.match(panel, />Address<textarea/);
-assert.match(panel, />Job name<input/);
+assert.match(panel, /Reference \/ Project/);
 assert.match(validation, /0319-001/);
 assert.match(validation, /Address fields must be 200 characters or fewer/);
 for (const requirement of [
@@ -153,9 +155,9 @@ assert.match(edge, /fail_job_transmittal_pdf_generation/);
 assert.match(edge, /TENOPS_ALLOWED_ORIGINS/);
 assert.doesNotMatch(edge, /Access-Control-Allow-Origin": "\*"/);
 assert.match(panel, /Discard this unsaved Letter of Transmittal/);
-assert.match(panel, /Checked against existing Purchase Orders and Transmittals/);
-assert.match(panel, /numberOverride \? displayedNumber : null/);
-assert.match(mutations, /requestedNumber: string \| null/);
+assert.match(panel, /Provisional next number from the shared Purchase Order and Transmittal sequence/);
+assert.doesNotMatch(panel, /numberOverride/);
+assert.match(mutations, /mode: TransmittalMode = "job-linked"/);
 assert.match(mutations, /customer: draft\.customer\.trim\(\)/);
 assert.match(editableCustomer, /display_customer := trim\(coalesce\(p_snapshot->>'customer', ''\)\)/);
 assert.match(editableCustomer, /jsonb_typeof\(p_snapshot->'customer'\) is distinct from 'string'/);
@@ -170,13 +172,27 @@ assert.match(withoutJobNumber, /reserve_job_document_number\([\s\S]*'job_transmi
 assert.match(withoutJobNumber, /'job_number', display_job_number/);
 assert.doesNotMatch(withoutJobNumber, /update public\.jobs|insert into public\.jobs/);
 assert.match(withoutJobNumber, /grant execute on function public\.issue_job_transmittal\(uuid,text,jsonb,text\)/);
-assert.match(validation, /requireManualNumber/);
-assert.match(validation, /does not yet have a Job Number/);
+assert.match(linkageCorrection, /alter column job_id drop not null/);
+assert.match(linkageCorrection, /JOB_NUMBER_REQUIRED_FOR_JOB_LINKED_TRANSMITTAL/);
+assert.match(linkageCorrection, /JOB_LINKED_TRANSMITTAL_NUMBER_OVERRIDE_NOT_ALLOWED/);
+assert.match(linkageCorrection, /STANDALONE_TRANSMITTAL_NUMBER_REQUIRED/);
+assert.match(linkageCorrection, /selected_prefix, 'job_transmittal', selected_id, p_job_id, null, 1/);
+assert.match(linkageCorrection, /selected_prefix, 'job_transmittal', selected_id, null, normalized_requested, 1/);
+assert.match(linkageCorrection, /p_job_id is null and transmittal\.job_id is null/);
+assert.doesNotMatch(linkageCorrection, /insert into public\.jobs|update public\.jobs/i);
+assert.match(linkageVerification, /VERIFY_LINKED_NUMBER_NOT_DERIVED/);
+assert.match(linkageVerification, /VERIFY_STANDALONE_CREATED_JOB/);
+assert.match(linkageVerification, /VERIFY_HISTORICAL_TRANSMITTAL_CHANGED/);
+assert.match(validation, /mode = "job-linked"/);
+assert.match(validation, /Assign a canonical Job Number in Production/);
 assert.match(validation, /\^\\d\{4\}-\\d\{3\}\$/);
-assert.match(panel, /requiresManualNumber = !job\.job_number\?\.trim\(\)/);
-assert.match(panel, /required until Job # is assigned/);
-assert.match(panel, /The issued Job # will remain blank/);
-assert.match(mutations, /TRANSMITTAL_NUMBER_REQUIRED_WITHOUT_JOB_NUMBER/);
+assert.match(panel, /hasUsableTransmittalJobNumber/);
+assert.match(panel, /Standalone \/ one-off · No Production Job/);
+assert.match(panel, /Use Standalone only for an unrelated one-off document/);
+assert.match(panel, /readOnly placeholder=\{hasCanonicalJobNumber/);
+assert.match(mutations, /p_job_id: mode === "job-linked" \? draft\.jobId : null/);
+assert.match(mutations, /p_requested_number: mode === "standalone"/);
+assert.match(mutations, /JOB_LINKED_TRANSMITTAL_NUMBER_OVERRIDE_NOT_ALLOWED/);
 assert.match(mutations, /That Transmittal Number is already in use/);
 assert.match(panel, /record\.documentStatus !== "generated"/);
 assert.doesNotMatch(panel, /previewDraft\(\)[\s\S]{0,120}errors\.length/);
@@ -188,14 +204,19 @@ assert.doesNotMatch(panel, /EARLY ACCESS|rotate-\[28deg\]|opacity-\[0\.07\]/);
 assert.doesNotMatch(edge, /EARLY ACCESS/);
 assert.match(edge, /allowEmptyItems: draft/);
 assert.match(edge, /allowBlankTransmittalNumber: draft/);
-assert.match(edge, /t\("CC", 316, 582,[\s\S]{0,100}wrapped\(model\.cc,400,582/);
-assert.match(edge, /band\("TRANSMITTED ITEMS", 561, true\)/);
+assert.match(edge, /projectField\("CC",ccLines/);
+assert.match(edge, /band\("TRANSMITTED ITEMS", transmittedBandY, true\)/);
+assert.match(edge, /continuationIdentityLines\.forEach/);
 assert.match(edge, /snapshot\.recipient\.address_line_1\.length > 200/);
 assert.doesNotMatch(panel, /auth\.getSession|authenticated/);
 assert.match(queries, /rpc\("list_job_transmittals"/);
+assert.match(queries, /jobId: string \| null/);
 assert.doesNotMatch(queries, /\.from\("job_transmittals"\)/);
 assert.match(inspector, /onClick=\{\(\) => setTransmittalOpen\(true\)\}/);
 assert.match(inspector, /\{transmittalOpen && \(/);
+assert.match(workspace, /Job-linked/);
+assert.match(workspace, /Standalone \/ one-off/);
+assert.match(workspace, /mode="standalone"/);
 
 const items = Array.from({ length: FIRST_PAGE_ROWS + 3 }, (_, index) => ({
   line_number: index + 1,

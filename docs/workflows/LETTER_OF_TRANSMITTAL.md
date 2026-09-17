@@ -3,14 +3,18 @@
 ## Entry point
 
 Open a Production job in the Inspector and choose **Letter of Transmittal**
-from Job Details. Every Transmittal is linked to one canonical `jobs.id`.
+from Job Details for the normal Job-linked flow. The generic `/transmittals`
+Toolbox entry explicitly offers either a Job-linked LoT or a rare standalone /
+one-off LoT. A standalone LoT has no Production Job relationship and never
+creates a Job or Job Number.
 
 The panel contains:
 
 - Create: document details, recipient, delivery and item types, item rows,
   purpose, comments, sender, preview, and final generation.
-- History: immutable Transmittals for the selected job, newest first, with
-  document status, preview, download, and failed-generation retry.
+- History: immutable Transmittals for the selected Job or the standalone
+  collection, newest first, with document status, preview, download, and
+  failed-generation retry.
 
 ## Lifecycle
 
@@ -24,12 +28,13 @@ The panel contains:
 2. Preview renders the current unsaved values through
    `generate-job-transmittal-pdf`. It does not persist history, allocate a
    number, or upload a permanent file.
-3. Final generation validates the form and calls `issue_job_transmittal`.
-4. The RPC locks the job-document number prefix, verifies a manual override or
-   allocates the next suffix, and inserts one immutable snapshot. If the
-   canonical Production Job does not yet have a Job Number, the operator must
-   supply a unique numeric `NNNN-NNN` Transmittal Number; the issued snapshot
-   keeps Job # blank.
+3. Final generation validates the form and calls `issue_job_transmittal` with
+   either a canonical Job UUID or an explicit null standalone relationship.
+4. For a Job-linked LoT, the RPC requires a usable canonical Job Number,
+   derives its four-digit prefix, rejects manual number overrides, and allocates
+   the next suffix. For a standalone LoT, it requires an explicit unique
+   `NNNN-NNN` Transmittal Number and persists a null `job_id`. Both paths use
+   the same immutable snapshot and shared document-number registry.
 5. The Edge Function renders only the stored snapshot and uploads the PDF to
    the private `job-transmittal-documents` bucket.
 6. The browser downloads the PDF from a short-lived signed URL.
@@ -53,10 +58,15 @@ the exact-ID cleanup scope.
 Automatic numbers are `<last four job-number digits>-<three-digit suffix>`.
 Allocation begins at `001` when no conflicting document exists. Purchase Orders
 and Letters of Transmittal consume the same per-job sequence in issuance order.
-Automatic allocation therefore applies only after the Production Job has a
-usable Job Number. A Transmittal issued earlier uses an operator-supplied
-`NNNN-NNN` number reserved through the same shared registry; TenOps does not
-fabricate or backfill a Job Number for that document.
+Job-linked allocation therefore requires a Production Job with a usable
+canonical Job Number and does not accept a manual override. A selected Job
+without one remains blocked until Production assigns it; TenOps does not
+fabricate a Job Number or silently reinterpret the document as standalone.
+
+Standalone LoTs require an operator-supplied `NNNN-NNN` number reserved through
+the same shared registry. Their canonical `job_transmittals.job_id` is null,
+which distinguishes them from historical Job-linked documents without changing
+or backfilling any issued snapshot.
 It checks:
 
 - persisted Purchase Order numbers using the same prefix;
@@ -65,8 +75,8 @@ It checks:
 The hardening migration replaces the isolated allocators with a private shared
 `job_document_numbers` registry and per-prefix sequence. Both Purchase Orders
 and Transmittals reserve a globally unique normalized number in the same
-transaction and under the same prefix lock. Manual overrides use the same
-registry. Existing collisions cause the migration to abort for explicit
+transaction and under the same prefix lock. Standalone manual numbers use the
+same registry. Existing collisions cause the migration to abort for explicit
 resolution; issued documents are never silently renumbered.
 
 ## Storage and document ownership

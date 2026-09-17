@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { JobTransmittalDraft } from "./types";
+import type { JobTransmittalDraft, TransmittalMode } from "./types";
 
 async function throwFunctionError(error: unknown): Promise<never> {
   if (typeof error === "object" && error !== null && "context" in error && error.context instanceof Response) {
@@ -62,7 +62,7 @@ export function buildTransmittalSnapshot(draft: JobTransmittalDraft, forPreview 
       phone: draft.senderPhone.trim(),
       email: draft.senderEmail.trim(),
     },
-    job_id: draft.jobId,
+    job_id: draft.jobId || null,
     job_number: draft.jobNumber,
     job_name: draft.jobName,
     customer: draft.customer.trim(),
@@ -84,18 +84,24 @@ export async function previewJobTransmittal(draft: JobTransmittalDraft): Promise
 
 export async function issueJobTransmittal(
   draft: JobTransmittalDraft,
-  requestedNumber: string | null = draft.transmittalNumber.trim() || null,
+  mode: TransmittalMode = "job-linked",
 ): Promise<{ id: string; number: string }> {
   const { data, error } = await supabase.rpc("issue_job_transmittal", {
-    p_job_id: draft.jobId,
-    p_requested_number: requestedNumber,
+    p_job_id: mode === "job-linked" ? draft.jobId : null,
+    p_requested_number: mode === "standalone" ? draft.transmittalNumber.trim() || null : null,
     p_snapshot: buildTransmittalSnapshot(draft),
     p_actor: draft.senderName.trim(),
   });
   if (error) {
     const message = String(error.message || "Unable to issue the Letter of Transmittal.");
-    if (message.includes("TRANSMITTAL_NUMBER_REQUIRED_WITHOUT_JOB_NUMBER")) {
-      throw new Error("Enter a Transmittal Number because this Production Job does not yet have a Job Number.");
+    if (message.includes("JOB_NUMBER_REQUIRED_FOR_JOB_LINKED_TRANSMITTAL")) {
+      throw new Error("Assign a canonical Job Number in Production before generating this Job-linked Letter of Transmittal.");
+    }
+    if (message.includes("JOB_LINKED_TRANSMITTAL_NUMBER_OVERRIDE_NOT_ALLOWED")) {
+      throw new Error("A Job-linked Transmittal Number is derived from the canonical Job Number and cannot be overridden.");
+    }
+    if (message.includes("STANDALONE_TRANSMITTAL_NUMBER_REQUIRED")) {
+      throw new Error("Enter a Transmittal Number for this standalone Letter of Transmittal.");
     }
     if (message.includes("DOCUMENT_NUMBER_FORMAT_INVALID")) {
       throw new Error("Use a Transmittal Number in NNNN-NNN format, such as 0904-001.");
