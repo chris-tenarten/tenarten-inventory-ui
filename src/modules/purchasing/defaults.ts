@@ -1,4 +1,35 @@
-import type { PurchaseOrderDraft, PurchaseOrderLine } from './types';
+import type { ChipPurchaseOrderLineDetails, PurchaseOrderDraft, PurchaseOrderLine } from './types';
+
+type ClassifiedMaterialType = Exclude<PurchaseOrderLine['materialType'], ''>;
+
+export const purchaseOrderMaterialDefaults: Record<ClassifiedMaterialType, Pick<ChipPurchaseOrderLineDetails, 'packageQuantity' | 'packageMeasure' | 'containerType' | 'orderUnit'>> = {
+  chip: { packageQuantity:'50', packageMeasure:'LB', containerType:'Bag', orderUnit:'Bag' },
+  resin: { packageQuantity:'5', packageMeasure:'GAL', containerType:'Pail', orderUnit:'gal' },
+};
+
+export function applyPurchaseOrderMaterialDefaults(
+  details: ChipPurchaseOrderLineDetails,
+  materialType: ClassifiedMaterialType,
+  previousMaterialType: PurchaseOrderLine['materialType'] = '',
+): ChipPurchaseOrderLineDetails {
+  const defaults = purchaseOrderMaterialDefaults[materialType];
+  const previousDefaults = previousMaterialType ? purchaseOrderMaterialDefaults[previousMaterialType] : null;
+  const packageIsBlank = !details.packageQuantity && !details.packageMeasure;
+  const packageUsesPreviousDefault = Boolean(previousDefaults)
+    && details.packageQuantity === previousDefaults?.packageQuantity
+    && details.packageMeasure.toUpperCase() === previousDefaults?.packageMeasure.toUpperCase();
+  const containerUsesPreviousDefault = Boolean(previousDefaults)
+    && details.containerType.toLowerCase() === previousDefaults?.containerType.toLowerCase();
+  const orderUnitUsesPreviousDefault = Boolean(previousDefaults)
+    && details.orderUnit.toLowerCase() === previousDefaults?.orderUnit.toLowerCase();
+  return {
+    ...details,
+    packageQuantity: packageIsBlank || packageUsesPreviousDefault ? defaults.packageQuantity : details.packageQuantity,
+    packageMeasure: packageIsBlank || packageUsesPreviousDefault ? defaults.packageMeasure : details.packageMeasure,
+    containerType: !details.containerType || containerUsesPreviousDefault ? defaults.containerType : details.containerType,
+    orderUnit: materialType === 'chip' || !details.orderUnit || orderUnitUsesPreviousDefault ? defaults.orderUnit : details.orderUnit,
+  };
+}
 
 export const localDateInput = () => {
   const now = new Date();
@@ -9,6 +40,7 @@ export function createChipLine(lineNumber = 1): PurchaseOrderLine {
   return {
     lineNumber,
     lineCategory:'chip',
+    materialType:'',
     status:'active',
     details:{
       productionJobId:'',
@@ -17,6 +49,8 @@ export function createChipLine(lineNumber = 1): PurchaseOrderLine {
       vendorSkuSnapshot:'',
       materialNameSnapshot:'',
       chipSize:'',
+      resinColor:'',
+      componentType:'',
       packageQuantity:'',
       packageMeasure:'',
       containerType:'',
@@ -27,6 +61,18 @@ export function createChipLine(lineNumber = 1): PurchaseOrderLine {
       priceBasis:'',
       notes:'',
     },
+  };
+}
+
+export function createPurchaseOrderMaterialLine(
+  materialType: ClassifiedMaterialType,
+  lineNumber = 1,
+): PurchaseOrderLine {
+  const line = createChipLine(lineNumber);
+  return {
+    ...line,
+    materialType,
+    details: applyPurchaseOrderMaterialDefaults(line.details, materialType),
   };
 }
 

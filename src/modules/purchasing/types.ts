@@ -1,6 +1,7 @@
 export type PurchaseOrderStatus = 'draft' | 'issued' | 'cancelled' | 'superseded';
 export type PurchaseOrderCategory = 'chip';
 export type PurchaseOrderTemplate = 'classic' | 'tenops';
+export type PurchaseOrderLineMaterialType = '' | 'chip' | 'resin';
 export type JobPurchaseOrderReferenceType = '' | 'resin' | 'chip';
 export type MoistureCondition = '' | 'dry' | 'damp' | 'wet';
 export type CatalogSource = 'standard' | 'specialty';
@@ -10,10 +11,11 @@ export type VendorOption = { id: string; name: string; canonicalName: string; ad
 export type ChipPurchaseOrderLineDetails = {
   productionJobId: string; catalogSource: CatalogSource | ''; catalogItemId: string; vendorSkuSnapshot: string;
   materialNameSnapshot: string; chipSize: string; packageQuantity: string; packageMeasure: string;
+  resinColor: string; componentType: string;
   containerType: string; moistureCondition: MoistureCondition; quantityOrdered: string; orderUnit: string;
   unitPrice: string; priceBasis: string; notes: string;
 };
-export type PurchaseOrderLine = { id?: string; lineNumber: number; lineCategory: 'chip'; status: 'active'; details: ChipPurchaseOrderLineDetails };
+export type PurchaseOrderLine = { id?: string; lineNumber: number; lineCategory: 'chip'; materialType: PurchaseOrderLineMaterialType; status: 'active'; details: ChipPurchaseOrderLineDetails };
 export type PurchaseOrder = {
   id: string; poFamilyId: string; poNumber: string | null; poCategory: PurchaseOrderCategory; status: PurchaseOrderStatus; documentTemplate?: PurchaseOrderTemplate;
   productionJobId: string; jobNumberSnapshot: string; jobNameSnapshot: string; jobPoReferenceType: JobPurchaseOrderReferenceType;
@@ -57,9 +59,9 @@ export type PurchaseOrderSummary = Pick<PurchaseOrder,'id'|'poNumber'|'status'|'
 export type PriceSuggestion = { source: 'prior_exact'|'prior_partial'|'catalog'; amount: string; label: string; detail: string; purchaseOrderId?: string };
 export type PurchasingCatalogSuggestion = {
   source: CatalogSource; id: string; vendor: string; vendorSku: string; materialName: string; chipSize: string;
-  packageQuantity: string; packageMeasure: string; containerType: string; materialType: string;
+  packageQuantity: string; packageMeasure: string; containerType: string; orderUnit?: string; materialType: string; resinColor?: string; componentType?: string;
   referencePrice: string; bulkPrice: string; bulkMinimumQuantity: string; bulkMinimumUom: string;
   truckloadPrice: string; truckloadMinimumQuantity: string; truckloadMinimumUom: string;
   priceBasis: string; leadTimeDays: number | null; minimumOrder: string; score: number;
 };
-export type PurchasingCatalogItemInput = { id?: string; vendorId: string; vendorSku: string; itemName: string; category: string; size: string; unitSize: string; unitSizeUom: string; packaging: string; price: string; bulkPrice: string; bulkMinimumQuantity: string; bulkMinimumUom: string; truckloadPrice: string; truckloadMinimumQuantity: string; truckloadMinimumUom: string; priceUnit: string; leadTimeDays: string; minimumOrderQty: string; minimumOrderUom: string; productLine: string; materialType: string; notes: string; isActive: boolean };
+export type PurchasingCatalogItemInput = { id?: string; vendorId: string; vendorSku: string; itemName: string; category: string; size: string; resinColor: string; componentType: string; unitSize: string; unitSizeUom: string; packaging: string; price: string; bulkPrice: string; bulkMinimumQuantity: string; bulkMinimumUom: string; truckloadPrice: string; truckloadMinimumQuantity: string; truckloadMinimumUom: string; priceUnit: string; leadTimeDays: string; minimumOrderQty: string; minimumOrderUom: string; productLine: string; materialType: string; notes: string; isActive: boolean };

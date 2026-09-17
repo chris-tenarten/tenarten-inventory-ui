@@ -7,13 +7,14 @@ import {
 } from '../supabase/functions/_shared/purchase-order-pdf-model.mjs';
 
 const read = path => readFile(new URL(path, import.meta.url), 'utf8');
-const [migration, v2Migration, pgcryptoFix, databaseVerification, edgeFunction, editor, materialControls, mutations, queries, validation, printModel] = await Promise.all([
+const [migration, v2Migration, pgcryptoFix, databaseVerification, edgeFunction, editor, catalogEditor, materialControls, mutations, queries, validation, printModel] = await Promise.all([
   read('../supabase/migrations/20260723_004_purchase_order_pdf_documents.sql'),
   read('../supabase/migrations/20260723_005_purchase_order_pdf_v2.sql'),
   read('../supabase/migrations/20260723_009_purchase_order_pdf_snapshot_pgcrypto_path.sql'),
   read('../supabase/inspection/20260723_003_purchase_order_pdf_verification.sql'),
   read('../supabase/functions/generate-purchase-order-pdf/index.ts'),
   read('../src/modules/purchasing/PurchaseOrderEditor.tsx'),
+  read('../src/modules/purchasing/CatalogItemEditor.tsx'),
   read('../src/modules/purchasing/material-controls.tsx'),
   read('../src/modules/purchasing/mutations.ts'),
   read('../src/modules/purchasing/queries.ts'),
@@ -65,6 +66,16 @@ const stock = buildPurchaseOrderPdfModel({...header,production_job_id:null,job_n
 assert.equal(stock.job.kind, 'stock');
 assert.equal(stock.job.name, 'Stock Purchase');
 
+const materialExamples = buildPurchaseOrderPdfModel(header, [
+  {...lines[0], line_number:1, material:'Arabian Black Marble', chip_size:'#1'},
+  {...lines[0], line_number:2, material:'Epoxy Resin', chip_size:'3-gallon kit'},
+]);
+assert.deepEqual(
+  materialExamples.lines.map(line => [line.material, line.partComponent]),
+  [['Arabian Black Marble', '#1'], ['Epoxy Resin', '3-gallon kit']],
+  'Chip and resin Size values must pass through the same unchanged PDF field',
+);
+
 assert.match(migration, /unique references public\.purchase_order_issuances/);
 assert.match(migration, /'pending', 'generating', 'generated', 'failed'/);
 assert.match(migration, /purchase-order-documents/);
@@ -86,7 +97,8 @@ assert.match(edgeFunction, /claim\.order_snapshot/);
 assert.match(edgeFunction, /claim\.lines_snapshot/);
 assert.match(edgeFunction, /body\.action === "draft-preview"/);
 assert.match(edgeFunction, /DRAFT - NOT ISSUED/);
-assert.match(edgeFunction, /lineCount \* rowLineHeight \+ 8/);
+assert.match(edgeFunction, /fragmentLineCount \* rowLineHeight \+ 8/);
+assert.match(edgeFunction, /fragmentCells = cells\.map/);
 assert.match(edgeFunction, /rowTop - 10 - lineIndex \* rowLineHeight/);
 assert.doesNotMatch(edgeFunction, /model\.job\.customer/);
 assert.match(edgeFunction, /"Cache-Control": "no-store"/);
@@ -96,6 +108,11 @@ assert.match(edgeFunction, /body\.action === "download"\s*\?\s*\{ download: true
 assert.doesNotMatch(edgeFunction, /\.from\(["'](?:vendors|jobs|vendor_catalog|purchase_orders)/);
 assert.match(editor, /Retry PDF Generation/);
 assert.match(editor, /Preview Draft PDF/);
+assert.match(editor, /const id = await savePurchaseOrderDraft\(draft\)/);
+assert.match(editor, /const saved = await loadPurchaseOrder\(id\)/);
+assert.match(editor, /was not saved, so no PDF preview was generated/);
+assert.match(editor, /was saved and is available in the PO library, but its PDF preview could not be generated/);
+assert.match(editor, /generatePurchaseOrderDraftPdf\(savedDraft\)/);
 assert.match(editor, /View Issued PDF/);
 assert.match(editor, /Document Template/);
 assert.match(mutations, /generate-purchase-order-pdf/);
@@ -107,6 +124,8 @@ assert.doesNotMatch(printModel, /const description = \[details\.materialNameSnap
 assert.doesNotMatch(validation, /chip size is required/i, 'Size must remain optional');
 assert.match(editor, /Purchase Order Line/);
 assert.match(editor, /tr\('Size', 'Tamaño'\)/);
+assert.match(catalogEditor, />\s*Size\s*</);
+assert.doesNotMatch(catalogEditor, />\s*Chip Size\s*</);
 assert.match(edgeFunction, /label: "SIZE"/);
 assert.match(editor, /Quantity Unit/);
 assert.match(editor, /Container Size/);

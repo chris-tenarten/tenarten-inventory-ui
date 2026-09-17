@@ -6,6 +6,7 @@ import {
 } from "../_shared/purchase-order-pdf-model.mjs";
 import { EdgeAuthorizationError, requireEdgeCapability } from "../_shared/rbac.ts";
 import { normalizePdfText } from "../_shared/pdf-text.mjs";
+import { chunkPdfLines, wrapMeasuredPdfText } from "../_shared/pdf-layout.mjs";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,44 +17,6 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
   headers: { ...corsHeaders, "Content-Type": "application/json" },
 });
 const safeText = (value: unknown) => normalizePdfText(value);
-const shorten = (font: { widthOfTextAtSize(value: string, size: number): number }, value: string, size: number, width: number) => {
-  const source = safeText(value);
-  if (font.widthOfTextAtSize(source, size) <= width) return source;
-  let result = source;
-  while (result.length > 1 && font.widthOfTextAtSize(`${result}...`, size) > width) result = result.slice(0, -1);
-  return `${result}...`;
-};
-const wrap = (font: { widthOfTextAtSize(value: string, size: number): number }, value: string, size: number, width: number, maxLines = 3) => {
-  const lines: string[] = [];
-  for (const paragraph of safeText(value).split("\n")) {
-    let current = "";
-    const words = paragraph.split(/\s+/).filter(Boolean).flatMap((word) => {
-      if (font.widthOfTextAtSize(word, size) <= width) return [word];
-      const parts: string[] = [];
-      let part = "";
-      for (const character of word) {
-        if (part && font.widthOfTextAtSize(`${part}${character}`, size) > width) {
-          parts.push(part);
-          part = character;
-        } else part += character;
-      }
-      if (part) parts.push(part);
-      return parts;
-    });
-    for (const word of words) {
-      const candidate = current ? `${current} ${word}` : word;
-      if (font.widthOfTextAtSize(candidate, size) <= width) current = candidate;
-      else {
-        if (current) lines.push(current);
-        current = word;
-      }
-      if (lines.length === maxLines) break;
-    }
-    if (lines.length < maxLines && current) lines.push(current);
-    if (lines.length === maxLines) break;
-  }
-  return lines;
-};
 
 async function renderPdf(
   orderSnapshot: Record<string, unknown>,
@@ -72,6 +35,8 @@ async function renderPdf(
   pdf.setModificationDate(generatedAt);
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const wrap = (font: { widthOfTextAtSize(value: string, size: number): number }, value: unknown, size: number, width: number) =>
+    wrapMeasuredPdfText(safeText(value), width, size, (candidate, fontSize) => font.widthOfTextAtSize(candidate, fontSize));
   const logoResponse = await fetch(logoUrl);
   if (!logoResponse.ok) throw new Error("The configured Tenarten logo could not be loaded.");
   const logoBytes = new Uint8Array(await logoResponse.arrayBuffer());
@@ -92,7 +57,15 @@ async function renderPdf(
   const margin = 32;
   const generationLabel = generatedAt.toISOString();
 
-  const columns = [
+  const columns = model.lineLayout === "material-aware" ? [
+    { key: "item", label: "ITEM", x: 32, width: 30 },
+    { key: "vendorSku", label: "SKU", x: 62, width: 62 },
+    { key: "description", label: "DESCRIPTION", x: 124, width: 238 },
+    { key: "quantity", label: "QTY", x: 362, width: 48 },
+    { key: "unit", label: "UNIT", x: 410, width: 48 },
+    { key: "unitCost", label: "UNIT PRICE", x: 458, width: 58 },
+    { key: "extendedCost", label: "TOTAL", x: 516, width: 64 },
+  ] as const : [
     { key: "item", label: "#", x: 32, width: 22 },
     { key: "material", label: "MATERIAL", x: 54, width: 66 },
     { key: "vendorSku", label: "VENDOR SKU", x: 120, width: 48 },
@@ -107,36 +80,53 @@ async function renderPdf(
   ] as const;
   const rowFontSize = 6.2;
   const rowLineHeight = 8;
-  const laidOutLines = model.lines.map((line) => {
-    const cells = columns.map((column) => wrap(regular, line[column.key], rowFontSize, column.width - 8, 16));
+  const vendorNameLines = wrap(bold, model.vendor.name || "-", 8.5, 284);
+  const vendorAddressLines = wrap(regular, model.vendor.address || "-", 7, 284);
+  const vendorContactLines = wrap(regular, model.vendor.contact || "-", 7, 234);
+  const vendorHeight = Math.max(60, 34 + vendorNameLines.length * 10 + vendorAddressLines.length * 9, 26 + vendorContactLines.length * 9);
+  const vendorBandY = 674;
+  const vendorBottom = vendorBandY - vendorHeight;
+  const projectBandY = vendorBottom - 20;
+  const jobNameLines = wrap(bold, model.job.kind === "linked" ? model.job.name : "Stock Purchase", 8, 152);
+  const paymentLines = wrap(regular, model.paymentTerms || "-", 7, 74);
+  const jobNumberLines = wrap(bold, model.job.kind === "linked" ? model.job.number : "-", 8, 116);
+  const requestedDateLines = wrap(regular, model.requestedDate || "-", 7, 52);
+  const shipToLines = wrap(regular, model.shipTo || "-", 7, 234);
+  const projectHeight = Math.max(64, 42 + jobNameLines.length * 9 + paymentLines.length * 9, 42 + jobNumberLines.length * 9 + requestedDateLines.length * 9, 26 + shipToLines.length * 9);
+  const projectBottom = projectBandY - projectHeight;
+  const tableHeaderY = projectBottom - 28;
+  const tableCapacity = Math.max(40, tableHeaderY - 208);
+  const maxFragmentLines = Math.max(1, Math.floor((tableCapacity - 8) / rowLineHeight));
+  const laidOutLines = model.lines.flatMap((line) => {
+    const cells = columns.map((column) => wrap(regular, line[column.key], rowFontSize, column.width - 8));
     const lineCount = Math.max(1, ...cells.map((cell) => cell.length));
-    return { line, cells, height: Math.max(24, lineCount * rowLineHeight + 8) };
+    const fragments = [];
+    for (let offset = 0; offset < lineCount; offset += maxFragmentLines) {
+      const fragmentCells = cells.map((cell) => cell.slice(offset, offset + maxFragmentLines));
+      const fragmentLineCount = Math.max(1, ...fragmentCells.map((cell) => cell.length));
+      fragments.push({ line, cells: fragmentCells, height: Math.max(24, fragmentLineCount * rowLineHeight + 8) });
+    }
+    return fragments;
   });
   const renderPages: typeof laidOutLines[] = [];
   for (const laidOutLine of laidOutLines) {
     let pageLines = renderPages.at(-1);
-    if (!pageLines || pageLines.reduce((sum, item) => sum + item.height, 0) + laidOutLine.height > 294) {
+    if (!pageLines || pageLines.reduce((sum, item) => sum + item.height, 0) + laidOutLine.height > tableCapacity) {
       pageLines = [];
       renderPages.push(pageLines);
     }
     pageLines.push(laidOutLine);
   }
+  const noteLines = wrap(regular, model.vendorNotes || "-", 8, 325);
+  const firstNoteLines = noteLines.slice(0, 5);
+  const overflowNoteLines = noteLines.slice(5);
+  const noteChunks = overflowNoteLines.length ? chunkPdfLines(overflowNoteLines, 48) : [];
+  const totalPages = renderPages.length + noteChunks.length;
 
   renderPages.forEach((pageLines, pageIndex) => {
     const page = pdf.addPage([pageWidth, pageHeight]);
     const drawText = (value: unknown, x: number, y: number, size = 8, font = regular, color = ink) =>
       page.drawText(safeText(value), { x, y, size, font, color });
-    const drawWrapped = (
-      value: unknown,
-      x: number,
-      y: number,
-      width: number,
-      size = 8,
-      maxLines = 3,
-      font = regular,
-      color = ink,
-    ) => wrap(font, String(value ?? ""), size, width, maxLines)
-      .forEach((line, index) => drawText(line, x, y - index * (size + 2), size, font, color));
     const box = (x: number, y: number, width: number, height: number, fill = rgb(1, 1, 1)) =>
       page.drawRectangle({ x, y, width, height, color: fill, borderColor: lineColor, borderWidth: 0.6 });
     const sectionBand = (label: string, y: number) => {
@@ -145,14 +135,6 @@ async function renderPdf(
       drawText(label, margin + (548 - labelWidth) / 2, y + 5, 7, bold, accentText);
     };
     const fieldLabel = (label: string, x: number, y: number) => drawText(label, x, y, 6.2, bold, slate);
-    const fieldValue = (
-      value: unknown,
-      x: number,
-      y: number,
-      width: number,
-      size = 7.5,
-      font = regular,
-    ) => drawText(shorten(font, safeText(value) || "-", size, width), x, y, size, font);
 
     const logoScale = Math.min(48 / logo.height, 54 / logo.width);
     page.drawImage(logo, { x: margin, y: pageHeight - margin - logo.height * logoScale, width: logo.width * logoScale, height: logo.height * logoScale });
@@ -169,36 +151,39 @@ async function renderPdf(
     // Both templates deliberately share the original form's grid. Only their
     // restrained color treatment differs.
     sectionBand("VENDOR INFORMATION", 674);
-    box(margin, 614, 300, 60, pale);
-    box(332, 614, 248, 60, pale);
+    box(margin, vendorBottom, 300, vendorHeight, pale);
+    box(332, vendorBottom, 248, vendorHeight, pale);
     fieldLabel("VENDOR", 38, 663);
-    fieldValue(model.vendor.name, 38, 649, 284, 8.5, bold);
-    drawWrapped(model.vendor.address, 38, 636, 284, 7, 3);
+    vendorNameLines.forEach((line, index) => drawText(line, 38, 649 - index * 10, 8.5, bold));
+    vendorAddressLines.forEach((line, index) => drawText(line, 38, 649 - vendorNameLines.length * 10 - index * 9, 7));
     fieldLabel("CONTACT", 338, 663);
-    drawWrapped(model.vendor.contact, 338, 649, 234, 7, 4);
+    vendorContactLines.forEach((line, index) => drawText(line, 338, 649 - index * 9, 7));
 
-    sectionBand("PROJECT INFORMATION", 594);
-    box(margin, 530, 168, 64, pale);
-    box(200, 530, 132, 64, pale);
-    box(332, 530, 248, 64, pale);
-    fieldLabel(model.job.kind === "linked" ? "JOB REFERENCE" : "PURCHASE TYPE", 38, 583);
-    fieldValue(model.job.kind === "linked" ? model.job.name : "Stock Purchase", 38, 568, 152, 8, bold);
-    fieldLabel("PAYMENT TERMS", 38, 548);
-    fieldValue(model.paymentTerms, 116, 548, 74, 7);
-    fieldLabel("JOB NUMBER", 206, 583);
-    fieldValue(model.job.kind === "linked" ? model.job.number : "-", 206, 568, 116, 8, bold);
-    fieldLabel("DATE REQUESTED", 206, 548);
-    fieldValue(model.requestedDate, 270, 548, 52, 7);
-    fieldLabel("SHIP TO", 338, 583);
-    drawWrapped(model.shipTo || "-", 338, 568, 234, 7, 4);
+    sectionBand("PROJECT INFORMATION", projectBandY);
+    box(margin, projectBottom, 168, projectHeight, pale);
+    box(200, projectBottom, 132, projectHeight, pale);
+    box(332, projectBottom, 248, projectHeight, pale);
+    const projectLabelY = projectBandY - 11;
+    fieldLabel(model.job.kind === "linked" ? "JOB REFERENCE" : "PURCHASE TYPE", 38, projectLabelY);
+    jobNameLines.forEach((line, index) => drawText(line, 38, projectLabelY - 15 - index * 9, 8, bold));
+    const paymentY = projectLabelY - 22 - jobNameLines.length * 9;
+    fieldLabel("PAYMENT TERMS", 38, paymentY);
+    paymentLines.forEach((line, index) => drawText(line, 116, paymentY - index * 9, 7));
+    fieldLabel("JOB NUMBER", 206, projectLabelY);
+    jobNumberLines.forEach((line, index) => drawText(line, 206, projectLabelY - 15 - index * 9, 8, bold));
+    const requestedY = projectLabelY - 22 - jobNumberLines.length * 9;
+    fieldLabel("DATE REQUESTED", 206, requestedY);
+    requestedDateLines.forEach((line, index) => drawText(line, 270, requestedY - index * 9, 7));
+    fieldLabel("SHIP TO", 338, projectLabelY);
+    shipToLines.forEach((line, index) => drawText(line, 338, projectLabelY - 15 - index * 9, 7));
 
-    page.drawRectangle({ x: margin, y: 502, width: 548, height: 28, color: accent, borderColor: lineColor, borderWidth: 0.6 });
+    page.drawRectangle({ x: margin, y: tableHeaderY, width: 548, height: 28, color: accent, borderColor: lineColor, borderWidth: 0.6 });
     columns.forEach((column) => {
-      const labels = wrap(bold, column.label, 5.2, column.width - 8, 2);
-      labels.forEach((line, index) => drawText(line, column.x + 4, 519 - index * 7, 5.2, bold, accentText));
+      const labels = wrap(bold, column.label, 5.2, column.width - 8);
+      labels.forEach((line, index) => drawText(line, column.x + 4, tableHeaderY + 17 - index * 7, 5.2, bold, accentText));
     });
 
-    let rowTop = 502;
+    let rowTop = tableHeaderY;
     pageLines.forEach((laidOutLine, rowIndex) => {
       const rowBottom = rowTop - laidOutLine.height;
       if (rowIndex % 2 === 1) page.drawRectangle({ x: margin, y: rowBottom, width: 548, height: laidOutLine.height, color: pale });
@@ -215,7 +200,7 @@ async function renderPdf(
       box(margin, 94, 342, 82);
       page.drawRectangle({ x: margin, y: 160, width: 342, height: 16, color: accent, borderColor: lineColor, borderWidth: 0.6 });
       drawText("NOTES & SPECIAL CONDITIONS", 40, 165, 7, bold, accentText);
-      drawWrapped(model.vendorNotes, 40, 146, 325, 8, 5);
+      firstNoteLines.forEach((line, index) => drawText(line, 40, 146 - index * 10, 8));
       box(382, 94, 198, 112, pale);
       const totals = [
         ["Subtotal", model.totals.subtotal],
@@ -236,7 +221,7 @@ async function renderPdf(
 
     drawText(`Generated ${generationLabel}`, margin, 22, 6, regular, slate);
     drawText(`${model.templateName} v${model.templateVersion} | ${model.documentVersion}`, 218, 22, 6, regular, slate);
-    drawText(`Page ${pageIndex + 1} of ${renderPages.length}`, 520, 22, 6, regular, slate);
+    drawText(`Page ${pageIndex + 1} of ${totalPages}`, 520, 22, 6, regular, slate);
     if (draft) {
       page.drawText("DRAFT - NOT ISSUED", {
         x: 92,
@@ -248,6 +233,23 @@ async function renderPdf(
         opacity: 0.45,
       });
     }
+  });
+
+  noteChunks.forEach((lines, noteIndex) => {
+    const pageIndex = renderPages.length + noteIndex;
+    const page = pdf.addPage([pageWidth, pageHeight]);
+    const drawText = (value: unknown, x: number, y: number, size = 8, font = regular, color = ink) =>
+      page.drawText(safeText(value), { x, y, size, font, color });
+    drawText("TENARTEN TERRAZZO", margin, 750, 14, bold);
+    drawText(`PURCHASE ORDER ${model.poNumber} - NOTES CONTINUED`, 260, 750, 10, bold);
+    page.drawLine({ start: { x: margin, y: 730 }, end: { x: pageWidth - margin, y: 730 }, thickness: 1.5, color: accent });
+    page.drawRectangle({ x: margin, y: 690, width: 548, height: 20, color: accent, borderColor: lineColor, borderWidth: 0.6 });
+    drawText("NOTES & SPECIAL CONDITIONS - CONTINUED", 40, 697, 7, bold, accentText);
+    page.drawRectangle({ x: margin, y: 70, width: 548, height: 620, color: rgb(1,1,1), borderColor: lineColor, borderWidth: 0.6 });
+    lines.forEach((line, index) => drawText(line, 40, 672 - index * 12, 8));
+    drawText(`Generated ${generationLabel}`, margin, 22, 6, regular, slate);
+    drawText(`${model.templateName} v${model.templateVersion} | ${model.documentVersion}`, 218, 22, 6, regular, slate);
+    drawText(`Page ${pageIndex + 1} of ${totalPages}`, 520, 22, 6, regular, slate);
   });
 
   return new Uint8Array(await pdf.save({ useObjectStreams: false }));

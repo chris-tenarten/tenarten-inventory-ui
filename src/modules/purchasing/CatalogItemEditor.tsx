@@ -17,6 +17,7 @@ export default function CatalogItemEditor({
   existing,
   suggestedMode,
   proposedPrice,
+  materialType,
   onCancel,
   onSaved,
 }: {
@@ -25,6 +26,7 @@ export default function CatalogItemEditor({
   existing?: PurchasingCatalogSuggestion;
   suggestedMode?: "individual" | "bulk" | "truckload";
   proposedPrice?: string;
+  materialType: "chip" | "resin";
   onCancel(): void;
   onSaved(item: PurchasingCatalogSuggestion): void;
 }) {
@@ -36,11 +38,13 @@ export default function CatalogItemEditor({
     vendorId: matchedVendor?.id || "",
     vendorSku: existing?.vendorSku || "",
     itemName: existing?.materialName || "",
-    category: getPurchasingCatalogCategory(existing),
+    category: existing ? getPurchasingCatalogCategory(existing) : materialType === "resin" ? "resin" : "marble",
     size: existing?.chipSize || "",
+    resinColor: existing?.resinColor || "",
+    componentType: existing?.componentType || "",
     unitSize: existing?.packageQuantity || "",
-    unitSizeUom: existing?.packageMeasure || "LB",
-    packaging: existing?.containerType || "Bag",
+    unitSizeUom: existing?.packageMeasure || (materialType === "resin" ? "GAL" : "LB"),
+    packaging: existing?.containerType || (materialType === "resin" ? "Pail" : "Bag"),
     price:
       suggestedMode === "individual" && proposedPrice !== undefined
         ? proposedPrice
@@ -64,7 +68,7 @@ export default function CatalogItemEditor({
     minimumOrderQty: existing?.minimumOrder.split(" ")[0] || "",
     minimumOrderUom: existing?.minimumOrder.split(" ").slice(1).join(" ") || "",
     productLine: "",
-    materialType: "chip",
+    materialType: existing?.materialType || materialType,
     notes: "",
     isActive: true,
   });
@@ -137,7 +141,10 @@ export default function CatalogItemEditor({
         packageQuantity: draft.unitSize,
         packageMeasure: draft.unitSizeUom,
         containerType: draft.packaging,
+        orderUnit: materialType === "chip" ? "Bag" : draft.priceUnit,
         materialType: draft.materialType,
+        resinColor: draft.resinColor,
+        componentType: draft.componentType,
         referencePrice: draft.price,
         bulkPrice: draft.bulkPrice,
         bulkMinimumQuantity: draft.bulkMinimumQuantity,
@@ -236,15 +243,14 @@ export default function CatalogItemEditor({
             readOnly={Boolean(draft.id)}
           />
         </label>
-        <label className={label}>
-          Chip Size
-          <input
-            className={field}
-            value={draft.size}
-            onChange={(e) => set("size", e.target.value)}
-            readOnly={Boolean(draft.id)}
-          />
-        </label>
+        {materialType === "chip" ? (
+          <label className={label}>Size<input className={field} value={draft.size} onChange={(e) => set("size", e.target.value)} readOnly={Boolean(draft.id)} /></label>
+        ) : (
+          <>
+            <label className={label}>Resin Color<input className={field} value={draft.resinColor} onChange={(e) => set("resinColor", e.target.value)} readOnly={Boolean(draft.id)} /></label>
+            <label className={label}>Component Type<input className={field} value={draft.componentType} onChange={(e) => set("componentType", e.target.value)} readOnly={Boolean(draft.id)} placeholder="Part A, Part B, or Hardener" /></label>
+          </>
+        )}
         <label className={label}>
           Amount Per Container
           <input
@@ -263,6 +269,7 @@ export default function CatalogItemEditor({
             disabled={Boolean(draft.id)}
           >
             <option>LB</option>
+            <option>GAL</option>
             <option>KG</option>
             <option>OZ</option>
           </select>
