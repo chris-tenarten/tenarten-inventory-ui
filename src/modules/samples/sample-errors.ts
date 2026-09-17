@@ -30,7 +30,7 @@ export function formatSampleError(error:SampleActionError){return `${error.title
 export function logSampleError(error:SampleActionError){console.error('[Sample operation failed]',error.diagnostic);}
 
 export function validateSampleForOutput(sample:SampleRecord,operation:'working-pdf'|'formal-issue'='working-pdf'):SampleActionError|null{
- const calculated=calculateSampleFormulation(sample.formulation,sample.blendRows);const participating=sample.blendRows.filter(row=>row.componentRole==='aggregate'&&row.calculationBasis==='target_total');
+ const calculated=calculateSampleFormulation(sample.formulation,sample.blendRows);const participating=sample.blendRows.filter(row=>row.componentRole==='aggregate');
  if(operation==='formal-issue'&&!sample.preparedBy.trim())return result(operation,{code:'SAMPLE_PREPARED_BY_REQUIRED'},'validation','Prepared By is required for formal issuance.','Select or confirm Prepared By, then try again.');
  if(!['4:1','5:1'].includes(`${sample.formulation.resinParts}:${sample.formulation.hardenerParts}`))return result(operation,{code:'SAMPLE_INVALID_RATIO'},'validation','Choose a valid Resin : Hardener ratio.','Select 5:1 or 4:1, then try again.');
  if(participating.length&&calculated.targetWeight==='')return result(operation,{code:'SAMPLE_TARGET_MISSING'},'calculation-incomplete',sample.formulation.basis==='total_weight'?'Enter a Total Weight before calculating percentage-based quantities.':'Complete Production Pour Width and Length, Material Density, and Thickness before calculating percentage-based quantities.','Complete the Weight / SF formulation inputs, then try again.');

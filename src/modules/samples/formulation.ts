@@ -43,9 +43,9 @@ export function calculateSampleFormulation(state:SampleFormulationState,rows:For
   const calculatedRate=density===null||thickness===null?null:density*(thickness/12);
   const effectiveRate=state.weightPerSfProvenance==='manual'?authoredRate:calculatedRate;
   const targetWeight=state.basis==='total_weight'?authoredTotal:area===null||effectiveRate===null?null:area*effectiveRate;
-  const percentageRows=rows.filter(row=>row.componentRole==='aggregate'&&row.calculationBasis==='target_total');
+  const percentageRows=rows.filter(row=>row.componentRole==='aggregate');
   const percentageTotal=percentageRows.reduce((sum,row)=>sum+(positive(row.percentage)??0),0);
-  const calculated=rows.map(row=>row.componentRole==='aggregate'&&row.calculationBasis==='target_total'&&targetWeight!==null&&positive(row.percentage)!==null?targetWeight*(positive(row.percentage)!/100):null);
+  const calculated=rows.map(row=>row.componentRole==='aggregate'&&targetWeight!==null&&positive(row.percentage)!==null?targetWeight*(positive(row.percentage)!/100):null);
   const resinIndex=rows.findIndex(row=>row.componentRole==='resin');
   const hardenerIndex=rows.findIndex(row=>row.componentRole==='hardener');
   const resinEffective=resinIndex<0?null:rows[resinIndex].quantityProvenance==='manual'?positive(rows[resinIndex].quantity):calculated[resinIndex];
