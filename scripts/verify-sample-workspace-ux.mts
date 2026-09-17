@@ -7,6 +7,7 @@ import {
 import {
   blankSampleBlendRow,
   newLocalSample,
+  sampleRowsForDisplay,
 } from "../src/modules/samples/types";
 
 const workspace = readFileSync(
@@ -53,6 +54,19 @@ const local = newLocalSample({ preparedBy: "Gio", formulation: standard });
 assert.equal(local.id, "");
 assert.equal(local.blendRows[0].calculationBasis, "target_total");
 assert.equal(local.blendRows[0].quantityProvenance, "calculated");
+const authoredRows=[
+  {...blankSampleBlendRow(0),id:"aggregate-1",percentage:"60"},
+  {...blankSampleBlendRow(1),id:"filler",componentRole:"other" as const,quantityProvenance:"manual" as const,calculationBasis:null,quantity:"18"},
+  {...blankSampleBlendRow(2),id:"resin",componentRole:"resin" as const,quantityProvenance:"manual" as const,calculationBasis:null,quantity:"15"},
+  {...blankSampleBlendRow(3),id:"hardener",componentRole:"hardener" as const,calculationBasis:null},
+  {...blankSampleBlendRow(4),id:"aggregate-2",percentage:"40"},
+];
+const grouped=sampleRowsForDisplay(authoredRows);
+assert.deepEqual(grouped.map(({row})=>row.id),["aggregate-1","aggregate-2","filler","resin","hardener"]);
+assert.deepEqual(grouped.map(({sourceIndex})=>sourceIndex),[0,4,1,2,3],"presentation grouping must retain canonical source indices");
+assert.deepEqual(authoredRows.map(row=>row.id),["aggregate-1","filler","resin","hardener","aggregate-2"],"presentation grouping must not mutate persisted order");
+const groupedCalculation=calculateSampleFormulation(standard,authoredRows);
+assert.deepEqual(grouped.filter(({row})=>row.componentRole==='aggregate').map(({sourceIndex})=>groupedCalculation.rows[sourceIndex].calculatedQuantity),["38.4","25.6"],"calculated ounces must remain attached through source index");
 assert.match(workspace, /loadSampleFormulationDefault/);
 assert.match(workspace, /newLocalSample/);
 assert.match(workspace, /if \(!source\.id\)/);
@@ -67,6 +81,8 @@ assert.match(configurator, /Reset to Calculated/);
 assert.match(configurator, /Total Formula Weight/);
 assert.match(configurator, /Geometry Chip Mix Reference/);
 assert.match(workspace, /Formula Role/);
+assert.match(workspace, /sampleRowsForDisplay/);
+assert.match(workspace, /Add Aggregate/);
 assert.match(workspace, /Aggregate total|Total \{/);
 assert.doesNotMatch(
   workspace,

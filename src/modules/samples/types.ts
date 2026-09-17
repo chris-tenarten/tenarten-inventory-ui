@@ -5,6 +5,9 @@ export type SampleIssuedDocument={id:string;sampleId:string;issueNumber:number;i
 export type SampleWorkingVersion={id:string;sampleId:string;versionNumber:number;versionNote:string;savedAt:string;savedByUserId:string;savedByName:string};
 export type SampleRecord={id:string;sampleName:string;bidId:string;jobId:string;requestedBy:string;requestedDate:string;projectName:string;preparedBy:string;customerName:string;colorPlateNumber:string;finishRequested:string;sampleSize:string;sampleQuantity:string;notes:string;filler:string;sealer:string;resinSupplier:string;resinColorNumber:string;moreNotes:string;approvedDate:string;createdByUserId:string;creatorName:string;createdAt:string;updatedAt:string;jobNumber:string;formulation:SampleFormulationState;blendRows:SampleBlendRow[];workingVersions:SampleWorkingVersion[];issuedDocuments:SampleIssuedDocument[]};
 
+const sampleRoleOrder:Record<SampleBlendRow['componentRole'],number>={aggregate:0,other:1,resin:2,hardener:3};
+export function sampleRowsForDisplay(rows:SampleBlendRow[]){return rows.map((row,sourceIndex)=>({row,sourceIndex})).sort((left,right)=>sampleRoleOrder[left.row.componentRole]-sampleRoleOrder[right.row.componentRole]||left.sourceIndex-right.sourceIndex);}
+
 export function blankSampleBlendRow(order:number):SampleBlendRow{return{id:crypto.randomUUID(),percentage:'',color:'',size:'',materialType:'',quantity:'',unit:'oz',vendor:'',catalogSource:null,catalogItemId:null,catalogSnapshot:{},displayOrder:order,componentRole:'aggregate',calculationBasis:'target_total',quantityProvenance:'calculated',calculatedQuantity:''};}
 function standardFormulaRows():SampleBlendRow[]{return[
   blankSampleBlendRow(0),
