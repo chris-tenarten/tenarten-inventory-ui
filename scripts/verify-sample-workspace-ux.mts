@@ -30,25 +30,24 @@ const rows = [40, 30, 20, 5, 5].map((percentage, index) => ({
   color: `Aggregate ${index + 1}`,
 }));
 const standard = standardFormulationState();
-const calculated = calculateSampleFormulation(standard, rows);
+const calculated = calculateSampleFormulation(standard, [...rows,{...blankSampleBlendRow(5),componentRole:'filler',color:'Filler',quantityProvenance:'calculated',calculationBasis:null}]);
 assert.equal(calculated.finishedAreaSf, "1");
 assert.equal(calculated.areaSf, "1");
 assert.equal(calculated.calculatedWeightPerSf, "4");
 assert.equal(calculated.availableChipMixOz, "64");
 assert.deepEqual(
-  calculated.rows.map((row) => row.calculatedQuantityOz),
+  calculated.rows.slice(0,5).map((row) => row.calculatedQuantityOz),
   ["25.6", "19.2", "12.8", "3.2", "3.2"],
 );
 
-const custom = calculateSampleFormulation({ ...standard, width: "24" }, rows);
+const custom = calculateSampleFormulation({ ...standard, width: "24" }, [...rows,{...blankSampleBlendRow(5),componentRole:'filler',color:'Filler',quantity:'36',quantityProvenance:'manual',calculationBasis:null}]);
 assert.equal(custom.areaSf, "2");
 assert.equal(custom.geometryChipMixWeight, "8");
 const overridden = calculateSampleFormulation(
   { ...standard, basis: "total_weight", totalWeight: "6" },
   rows,
 );
-assert.equal(overridden.geometryChipMixWeight, "6");
-assert.equal(overridden.availableChipMixOz, "96");
+assert.equal(overridden.availableChipMixOz, "96", "corrected V4 remains density-driven instead of using legacy total-weight override");
 
 const local = newLocalSample({ preparedBy: "Gio", formulation: standard });
 assert.equal(local.id, "");
@@ -56,7 +55,7 @@ assert.equal(local.blendRows[0].calculationBasis, "target_total");
 assert.equal(local.blendRows[0].quantityProvenance, "calculated");
 const authoredRows=[
   {...blankSampleBlendRow(0),id:"aggregate-1",percentage:"60"},
-  {...blankSampleBlendRow(1),id:"filler",componentRole:"other" as const,quantityProvenance:"manual" as const,calculationBasis:null,quantity:"18"},
+  {...blankSampleBlendRow(1),id:"filler",componentRole:"filler" as const,quantityProvenance:"manual" as const,calculationBasis:null,quantity:"18"},
   {...blankSampleBlendRow(2),id:"resin",componentRole:"resin" as const,quantityProvenance:"manual" as const,calculationBasis:null,quantity:"15"},
   {...blankSampleBlendRow(3),id:"hardener",componentRole:"hardener" as const,calculationBasis:null},
   {...blankSampleBlendRow(4),id:"aggregate-2",percentage:"40"},
@@ -79,8 +78,11 @@ assert.match(configurator, /Sample Plate Quantities/);
 assert.match(configurator, /Adjust Sample Plate Calculation/);
 assert.match(configurator, /Reset to Calculated/);
 assert.match(configurator, /historical V2 mass-balance input/);
-assert.match(configurator, /Calculated from production pour area/);
-assert.match(configurator, /Geometry Chip Mix Reference/);
+assert.match(configurator, /dry pool/);
+assert.match(configurator, /Material Density/);
+assert.match(configurator, /Adjust Formulation/);
+assert.match(configurator, /preserving dry-material profile/);
+assert.match(configurator, /This formula differs from the selected profile/);
 assert.match(workspace, /Formula Role/);
 assert.match(workspace, /sampleRowsForDisplay/);
 assert.match(workspace, /Add Aggregate/);

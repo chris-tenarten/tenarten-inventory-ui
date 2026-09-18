@@ -77,6 +77,7 @@ import {
 import {
   applySupplierRatioDefault,
   calculateSampleFormulation,
+  SAMPLE_FORMULATION_CALCULATION_VERSION,
 } from "./formulation";
 
 const field =
@@ -217,12 +218,14 @@ export default function SampleWorkspace() {
   );
   function patchRow(index: number, changes: Partial<SampleBlendRow>) {
     if (!draft) return;
-    patch(
-      "blendRows",
-      draft.blendRows.map((row, rowIndex) =>
-        rowIndex === index ? { ...row, ...changes } : row,
-      ),
-    );
+    setDraft((current) => {
+      if (!current) return current;
+      const role=changes.componentRole??current.blendRows[index]?.componentRole;
+      const provenance=changes.quantityProvenance;
+      const directFillerEdit=role==='filler'&&changes.quantity!==undefined;
+      return {...current,blendRows:current.blendRows.map((row,rowIndex)=>rowIndex===index?{...row,...changes}:row),formulation:{...current.formulation,...(role==='filler'&&(provenance||directFillerEdit)?{fillerProvenance:provenance==='calculated'?'profile_default':'manual',chipDensityProvenance:current.formulation.chipDensityProvenance==='increased_filler_adjustment'?'manual':current.formulation.chipDensityProvenance,adjustment:null}:{}),...(role==='resin'&&provenance?{resinProvenance:provenance==='manual'?'manual':'profile_default'}:{})}};
+    });
+    setMessage("");
   }
   function patchResinSupplier(value: string) {
     setDraft((current) =>
@@ -231,7 +234,7 @@ export default function SampleWorkspace() {
             ...current,
             resinSupplier: value,
             formulation:
-              current.formulation.ratioProvenance === "manual"
+              current.formulation.ratioProvenance === "manual" || current.formulation.calculationVersion === SAMPLE_FORMULATION_CALCULATION_VERSION
                 ? current.formulation
                 : applySupplierRatioDefault(current.formulation, value),
           }
@@ -847,6 +850,7 @@ export default function SampleWorkspace() {
               rows={draft.blendRows}
               resinSupplier={draft.resinSupplier}
               onChange={(formulation) => patch("formulation", formulation)}
+              onApplyAdjustment={(formulation,targetFillerOz)=>setDraft(current=>current?{...current,formulation,blendRows:current.blendRows.map(row=>row.componentRole==='filler'?{...row,quantity:targetFillerOz,quantityProvenance:'manual'}:row)}:current)}
             />
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
@@ -898,7 +902,7 @@ export default function SampleWorkspace() {
                     Chip Mix
                   </h2>
                   <p className="mt-1 text-xs text-slate-500">
-                    Aggregate percentages divide the geometry-calculated Chip Mix. Filler and Resin are entered separately.
+                    Aggregate percentages divide the profile-calculated Chip Mix. Filler substitutes within the dry-material pool; Resin remains separate.
                   </p>
                   <p
                     className={`mt-2 text-sm font-bold ${formulationResult?.percentageReconciles ? "text-emerald-700" : "text-amber-700"}`}
@@ -921,6 +925,8 @@ export default function SampleWorkspace() {
                       <span className="text-xs font-bold text-slate-600">
                         {row.componentRole === "aggregate"
                           ? "Aggregate"
+                          : row.componentRole === "filler"
+                            ? "Filler"
                           : row.componentRole === "resin"
                             ? "Resin"
                             : row.componentRole === "hardener"
@@ -967,6 +973,7 @@ export default function SampleWorkspace() {
                                   : null,
                               quantityProvenance:
                                 componentRole === "aggregate" ||
+                                componentRole === "resin" ||
                                 componentRole === "hardener"
                                   ? "calculated"
                                   : "manual",
@@ -980,9 +987,10 @@ export default function SampleWorkspace() {
                           className={field}
                         >
                           <option value="aggregate">Aggregate</option>
+                          <option value="filler">Filler</option>
                           <option value="resin">Resin</option>
                           <option value="hardener">Hardener</option>
-                          <option value="other">Filler / Other</option>
+                          <option value="other">Other</option>
                         </select>
                       </label>
                       {row.componentRole === "aggregate" && (
@@ -1138,7 +1146,11 @@ export default function SampleWorkspace() {
                               : "Authored · enter quantity"
                             : row.componentRole === "aggregate"
                               ? "Calculated · oz from Aggregate % × Chip Mix"
-                              : `Calculated · fl oz from Resin at ${draft.formulation.resinParts}:${draft.formulation.hardenerParts}`}
+                              : row.componentRole === "filler"
+                                ? "Profile default · oz within the dry-material pool"
+                                : row.componentRole === "resin"
+                                  ? "Profile default · fl oz from production volume"
+                                  : `Calculated · fl oz from Resin at ${draft.formulation.resinParts}:${draft.formulation.hardenerParts}`}
                         </span>
                       </label>
                       {row.quantityProvenance === "manual" && (
@@ -1156,7 +1168,7 @@ export default function SampleWorkspace() {
                             />
                           </label>
                         )}
-                      {(row.componentRole === "aggregate" || row.componentRole === "hardener") && (
+                      {(row.componentRole === "aggregate" || row.componentRole === "filler" || row.componentRole === "resin" || row.componentRole === "hardener") && (
                         <button type="button" onClick={()=>patchRow(index,{quantityProvenance:row.quantityProvenance==='calculated'?'manual':'calculated',calculationBasis:row.componentRole==='aggregate'&&row.quantityProvenance==='manual'?'target_total':null,quantity:row.quantityProvenance==='calculated'?(formulationResult?.rows[index]?.calculatedQuantity||''):row.quantity,unit:row.componentRole==='hardener'?'fl oz':'oz'})} className="min-h-10 self-end border border-slate-300 bg-white px-2 text-xs font-bold">
                           {row.quantityProvenance==='calculated'?'Enter manually':'Use calculated'}
                         </button>

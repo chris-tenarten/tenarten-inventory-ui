@@ -1,4 +1,4 @@
-export const SAMPLE_PDF_VERSION = "sample-work-order-pdf-v4-historical-parity";
+export const SAMPLE_PDF_VERSION = "sample-work-order-pdf-v6-density-profile";
 
 const value = (source, camel, snake = camel) => String(source?.[camel] ?? source?.[snake] ?? "");
 
@@ -14,16 +14,27 @@ export function buildSamplePdfModel(snapshot) {
   const formulationBasis = value(formulation, "basis");
   const massBalance = value(formulation, "calculationVersion") === "sample-formulation-v2-mass-balance";
   const historicalParity = value(formulation, "calculationVersion") === "sample-formulation-v3-historical-parity";
+  const volumetricProfile = value(formulation, "calculationVersion") === "sample-formulation-v4-volumetric-profile";
+  const densityProfile = value(formulation, "calculationVersion") === "sample-formulation-v4-density-profile";
+  const capturedProfile = volumetricProfile || densityProfile;
+  const profile = formulation.profile ?? {};
   const formulationSummary = formulationBasis
     ? [
-        massBalance ? `Total Formula ${derived.totalFormulaWeightOz ?? value(formulation, "totalFormulaWeightOz")} oz` : formulationBasis === "weight_per_sf" ? "Weight / SF" : "Total Weight",
-        (massBalance || historicalParity) && derived.availableChipMixOz != null ? `Chip Mix ${derived.availableChipMixOz} oz` : "",
+        massBalance ? `Total Formula ${derived.totalFormulaWeightOz ?? value(formulation, "totalFormulaWeightOz")} oz` : capturedProfile ? "Captured formulation profile" : formulationBasis === "weight_per_sf" ? "Weight / SF" : "Total Weight",
+        (massBalance || historicalParity || capturedProfile) && derived.availableChipMixOz != null ? `Chip Mix ${derived.availableChipMixOz} oz` : "",
+        capturedProfile && value(profile, "name") ? `Profile ${value(profile, "name")}` : "",
+        densityProfile && derived.effectiveChipDensityLbCft != null ? `Density ${derived.effectiveChipDensityLbCft} lb/CFT` : "",
+        capturedProfile && derived.effectiveFillerOz != null ? `Filler ${derived.effectiveFillerOz} oz` : "",
+        capturedProfile && derived.effectiveResinFlOz != null ? `Resin ${derived.effectiveResinFlOz} fl oz` : "",
+        densityProfile && derived.dryPoolOz != null ? `Expected dry ${derived.dryPoolOz} oz` : "",
+        densityProfile && derived.actualDryTotalOz != null ? `Actual dry ${derived.actualDryTotalOz} oz` : "",
+        densityProfile && derived.dryPoolVarianceOz != null ? `Variance ${Number(derived.dryPoolVarianceOz)>0?'+':''}${derived.dryPoolVarianceOz} oz` : "",
         historicalParity && derived.availableChipMixOz != null ? "Calculated from production pour" : "",
         massBalance && derived.nonChipWeightOz != null ? `Filler / Resin / Hardener ${derived.nonChipWeightOz} oz` : "",
         derived.areaSf == null ? "" : `Area ${derived.areaSf} SF`,
         derived.effectiveWeightPerSf == null ? "" : `${derived.effectiveWeightPerSf} lb/SF`,
         !massBalance && !historicalParity && derived.targetWeight != null ? `Target ${derived.targetWeight} ${value(formulation, "weightUnit") || "lb"}` : "",
-        value(formulation, "materialDensity") ? `Density ${value(formulation, "materialDensity")} lb/CFT` : "",
+        !densityProfile && value(formulation, "materialDensity") ? `Density ${value(formulation, "materialDensity")} lb/CFT` : "",
         value(formulation, "thicknessIn") ? `Thickness ${value(formulation, "thicknessIn")} in` : "",
         `Resin : Hardener ${value(formulation, "resinParts") || "5"}:${value(formulation, "hardenerParts") || "1"}`,
       ].filter(Boolean).join(" · ")
