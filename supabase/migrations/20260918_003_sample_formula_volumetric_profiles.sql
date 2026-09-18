@@ -1,0 +1,133 @@
+-- Sample Formulation V4: captured volumetric profiles and dry-pool Filler substitution.
+-- Forward-only. V1/V2/V3 payloads retain their captured calculation versions and semantics.
+begin;
+
+create table public.sample_formulation_profiles(
+ id text not null,
+ version integer not null check(version>0),
+ display_name text not null check(length(display_name)<=200),
+ dry_pool_oz_per_cft numeric(14,6) not null check(dry_pool_oz_per_cft>0),
+ default_filler_oz_per_cft numeric(14,6) not null check(default_filler_oz_per_cft>=0 and default_filler_oz_per_cft<dry_pool_oz_per_cft),
+ resin_fl_oz_per_cft numeric(14,6) not null check(resin_fl_oz_per_cft>0),
+ resin_parts numeric(12,4) not null check(resin_parts>0),
+ hardener_parts numeric(12,4) not null check(hardener_parts>0),
+ evidence text not null default '',
+ is_active boolean not null default true,
+ is_default boolean not null default false,
+ created_at timestamptz not null default clock_timestamp(),
+ primary key(id,version)
+);
+create unique index sample_formulation_profiles_one_default on public.sample_formulation_profiles(is_default) where is_default;
+alter table public.sample_formulation_profiles enable row level security;
+revoke all on public.sample_formulation_profiles from public,anon,authenticated;
+grant select on public.sample_formulation_profiles to authenticated;
+grant all on public.sample_formulation_profiles to service_role;
+create policy sample_formulation_profiles_operational_select on public.sample_formulation_profiles for select to authenticated using(public.has_app_capability('readOperationalData'));
+
+insert into public.sample_formulation_profiles(id,version,display_name,dry_pool_oz_per_cft,default_filler_oz_per_cft,resin_fl_oz_per_cft,resin_parts,hardener_parts,evidence,is_default) values
+ ('generic-epoxy-standard-200-5to1',1,'Tenarten Epoxy Standard 200 / 5:1',2624,576,480,5,1,'2026 corpus ordinary 200-lb/5:1 family',true),
+ ('sherwin-150-standard-4to1',1,'Sherwin 150 Standard / 4:1',2560,512,512,4,1,'2026 corpus p17,p26,p34,p61,p66,p82',false),
+ ('mtt-2560-standard-5to1',1,'MTT 2560 / 5:1',2560,512,480,5,1,'2026 corpus p19,p49-p52,p65',false),
+ ('idaho-high-filler-4to1',1,'Sherwin Idaho High Filler / 4:1',2752,1152,512,4,1,'2026 corpus p74-p76',false),
+ ('mtt-high-filler-5to1',1,'MTT High Filler / 5:1',3200,1152,480,5,1,'2026 corpus p78; captured historical only',false);
+
+alter table public.sample_blend_rows drop constraint if exists sample_blend_rows_component_role_check;
+alter table public.sample_blend_rows add constraint sample_blend_rows_component_role_check check(component_role in('aggregate','filler','resin','hardener','other'));
+
+create or replace function public.normalize_sample_formulation(p_state jsonb)
+returns jsonb language plpgsql stable set search_path=pg_catalog,public as $$
+declare version text:=coalesce(nullif(p_state->>'calculationVersion',''),'sample-formulation-v1'); basis text:=coalesce(nullif(p_state->>'basis',''),'total_weight'); unit text:=coalesce(nullif(p_state->>'dimensionUnit',''),'in'); rate_source text:=coalesce(nullif(p_state->>'weightPerSfProvenance',''),'calculated'); ratio_source text:=coalesce(nullif(p_state->>'ratioProvenance',''),'default'); profile_source text:=coalesce(nullif(p_state->>'profileProvenance',''),'legacy_captured'); filler_source text:=coalesce(nullif(p_state->>'fillerProvenance',''),'manual'); resin_source text:=coalesce(nullif(p_state->>'resinProvenance',''),'manual');
+ total_weight numeric:=public.sample_nonnegative_numeric(p_state->>'totalWeight'); formula_oz numeric:=public.sample_nonnegative_numeric(p_state->>'totalFormulaWeightOz'); length_value numeric:=public.sample_nonnegative_numeric(p_state->>'length'); width_value numeric:=public.sample_nonnegative_numeric(p_state->>'width'); finished_width numeric:=public.sample_nonnegative_numeric(p_state->>'finishedPlateWidth'); finished_length numeric:=public.sample_nonnegative_numeric(p_state->>'finishedPlateLength'); finished_quantity numeric:=public.sample_nonnegative_numeric(p_state->>'finishedPlateQuantity'); density numeric:=public.sample_nonnegative_numeric(p_state->>'materialDensity'); thickness numeric:=public.sample_nonnegative_numeric(p_state->>'thicknessIn'); authored_rate numeric:=public.sample_nonnegative_numeric(p_state->>'weightPerSf'); resin_parts numeric:=public.sample_nonnegative_numeric(p_state->>'resinParts'); hardener_parts numeric:=public.sample_nonnegative_numeric(p_state->>'hardenerParts'); area_sf numeric; finished_area_sf numeric; volume_cft numeric; calculated_rate numeric; effective_rate numeric; geometry_weight numeric; supplier_defaults jsonb:=coalesce(p_state->'supplierRatioDefaults','{}'::jsonb); profile jsonb:=p_state->'profile'; dry_rate numeric; filler_rate numeric; resin_rate numeric; dry_pool numeric; default_filler numeric; default_resin numeric;
+begin
+ if version not in('sample-formulation-v1','sample-formulation-v2-mass-balance','sample-formulation-v3-historical-parity','sample-formulation-v4-volumetric-profile') or basis not in('total_weight','weight_per_sf') or unit not in('in','ft') or rate_source not in('calculated','manual') or ratio_source not in('default','manual') then raise exception 'Invalid Sample formulation settings.' using errcode='22023'; end if;
+ if jsonb_typeof(supplier_defaults)<>'object' or resin_parts not in(4,5) or hardener_parts<>1 then raise exception 'Resin : Hardener ratio must be 5:1 or 4:1.' using errcode='22023'; end if;
+ if version='sample-formulation-v2-mass-balance' and formula_oz is null then raise exception 'Total Formula Weight is required for mass-balance Samples.' using errcode='22023'; end if;
+ if profile_source not in('default','selected','catalog_suggestion_accepted','supplier_suggestion_accepted','custom','legacy_captured') or filler_source not in('profile_default','manual','restored') or resin_source not in('profile_default','manual','restored') then raise exception 'Invalid V4 formulation provenance.' using errcode='22023'; end if;
+ if length_value is not null and width_value is not null then area_sf:=length_value*width_value*(case when unit='in' then 1::numeric/144 else 1 end); end if;
+ if finished_width is not null and finished_length is not null and finished_quantity is not null then finished_area_sf:=finished_width*finished_length*finished_quantity/144; end if;
+ if area_sf is not null and thickness is not null then volume_cft:=area_sf*thickness/12; end if;
+ if density is not null and thickness is not null then calculated_rate:=density*thickness/12; end if;
+ effective_rate:=case when rate_source='manual' then authored_rate else calculated_rate end;
+ geometry_weight:=case when basis='total_weight' then total_weight when area_sf is not null and effective_rate is not null then area_sf*effective_rate end;
+ if version='sample-formulation-v4-volumetric-profile' then
+  if jsonb_typeof(profile)<>'object' then raise exception 'A captured V4 formulation profile is required.' using errcode='22023'; end if;
+  dry_rate:=public.sample_nonnegative_numeric(profile->>'dryPoolOzPerCft'); filler_rate:=public.sample_nonnegative_numeric(profile->>'defaultFillerOzPerCft'); resin_rate:=public.sample_nonnegative_numeric(profile->>'resinFlOzPerCft');
+  if coalesce(profile->>'id','')='' or coalesce(profile->>'name','')='' or coalesce(profile->>'version','')!~'^[1-9][0-9]*$' or dry_rate is null or dry_rate<=0 or filler_rate is null or filler_rate>=dry_rate or resin_rate is null or resin_rate<=0 then raise exception 'Invalid captured V4 formulation profile.' using errcode='22023'; end if;
+  dry_pool:=volume_cft*dry_rate; default_filler:=volume_cft*filler_rate; default_resin:=volume_cft*resin_rate;
+ end if;
+ return jsonb_build_object('basis',basis,'weightUnit','lb','totalWeight',coalesce(p_state->>'totalWeight',''),'totalFormulaWeightOz',case when formula_oz is null then '' else formula_oz::text end,'finishedPlateWidth',coalesce(p_state->>'finishedPlateWidth',''),'finishedPlateLength',coalesce(p_state->>'finishedPlateLength',''),'finishedPlateQuantity',coalesce(p_state->>'finishedPlateQuantity',''),'thicknessIn',coalesce(p_state->>'thicknessIn',''),'length',coalesce(p_state->>'length',''),'width',coalesce(p_state->>'width',''),'dimensionUnit',unit,'materialDensity',case when version='sample-formulation-v4-volumetric-profile' then '' else coalesce(p_state->>'materialDensity','') end,'weightPerSf',case when version='sample-formulation-v4-volumetric-profile' then '' else coalesce(p_state->>'weightPerSf','') end,'weightPerSfProvenance',rate_source,'resinParts',resin_parts::text,'hardenerParts',hardener_parts::text,'ratioProvenance',ratio_source,'ratioDefaultSource',coalesce(p_state->>'ratioDefaultSource','General'),'supplierRatioDefaults',supplier_defaults,'defaultVersion',case when coalesce(p_state->>'defaultVersion','')~'^[0-9]+$' then (p_state->>'defaultVersion')::integer end,'calculationVersion',version,'profile',profile,'profileProvenance',profile_source,'fillerProvenance',filler_source,'resinProvenance',resin_source,'derived',jsonb_build_object('finishedAreaSf',finished_area_sf,'areaSf',area_sf,'productionVolumeCft',volume_cft,'calculatedWeightPerSf',calculated_rate,'effectiveWeightPerSf',effective_rate,'geometryChipMixWeight',geometry_weight,'dryPoolOz',dry_pool,'defaultFillerOz',default_filler,'defaultResinFlOz',default_resin,'targetWeight',case when version in('sample-formulation-v1','sample-formulation-v3-historical-parity') then geometry_weight end,'targetWeightOz',case when version in('sample-formulation-v1','sample-formulation-v3-historical-parity') then geometry_weight*16 end,'availableChipMixOz',case when version='sample-formulation-v3-historical-parity' then geometry_weight*16 end));
+end $$;
+
+create or replace function public.issue_sample_form(p_sample_id uuid)
+returns uuid language plpgsql security definer set search_path=pg_catalog,public as $$
+declare actor public.app_users%rowtype; target public.samples%rowtype; issued_id uuid:=gen_random_uuid(); next_issue integer; snapshot jsonb; aggregate_total numeric;
+begin
+ perform public.require_app_capability('readOperationalData'); select * into strict actor from public.app_users where user_id=auth.uid() and is_active; select * into strict target from public.samples where id=p_sample_id for update;
+ if btrim(target.prepared_by)='' then raise exception 'Prepared By is required to issue a Sample Form.' using errcode='22023'; end if;
+ if exists(select 1 from public.sample_blend_rows where sample_id=p_sample_id and component_role='aggregate' and calculation_basis='target_total') then select coalesce(sum(percentage),0) into aggregate_total from public.sample_blend_rows where sample_id=p_sample_id and component_role='aggregate' and calculation_basis='target_total'; if abs(aggregate_total-100)>.0005 then raise exception 'Participating Aggregate formulation rows must total 100%%; current total is %.',aggregate_total using errcode='22023'; end if; end if;
+ select coalesce(max(issue_number),0)+1 into next_issue from public.sample_issued_documents where sample_id=p_sample_id;
+ snapshot:=to_jsonb(target)||jsonb_build_object('job_number',(select job_number from public.jobs where id=target.job_id),'blend_rows',(select coalesce(jsonb_agg(to_jsonb(row_data) order by row_data.display_order),'[]'::jsonb) from public.sample_blend_rows row_data where row_data.sample_id=target.id),'issue_number',next_issue,'issued_at',clock_timestamp(),'issued_by_name',actor.display_name,'render_context','issued');
+ insert into public.sample_issued_documents(id,sample_id,issue_number,issued_snapshot,issued_by_user_id,document_version) values(issued_id,p_sample_id,next_issue,snapshot,actor.user_id,case when target.formulation_state->>'calculationVersion'='sample-formulation-v4-volumetric-profile' then 'sample-work-order-pdf-v5-volumetric-profile' else 'sample-work-order-pdf-v3-formulation' end); return issued_id;
+end $$;
+
+create or replace function public.create_sample(p_bid_id uuid default null,p_job_id uuid default null)
+returns uuid language plpgsql security definer set search_path=pg_catalog,public as $$
+declare actor public.app_users%rowtype; created_id uuid:=gen_random_uuid(); linked_bid public.bids%rowtype; linked_job public.jobs%rowtype; defaults public.sample_formulation_defaults%rowtype; profile public.sample_formulation_profiles%rowtype; profile_json jsonb;
+begin
+ perform public.require_app_capability('readOperationalData'); select * into strict actor from public.app_users where user_id=auth.uid() and is_active;
+ if p_bid_id is not null then select * into strict linked_bid from public.bids where id=p_bid_id; end if; if p_job_id is not null then select * into strict linked_job from public.jobs where id=p_job_id; end if;
+ select * into strict defaults from public.sample_formulation_defaults order by version desc limit 1; select * into strict profile from public.sample_formulation_profiles where is_default and is_active;
+ profile_json:=jsonb_build_object('id',profile.id,'version',profile.version,'name',profile.display_name,'dryPoolOzPerCft',profile.dry_pool_oz_per_cft::text,'defaultFillerOzPerCft',profile.default_filler_oz_per_cft::text,'resinFlOzPerCft',profile.resin_fl_oz_per_cft::text,'resinParts',profile.resin_parts::text,'hardenerParts',profile.hardener_parts::text,'evidence',profile.evidence);
+ insert into public.samples(id,bid_id,job_id,requested_by,project_name,prepared_by,customer_name,formulation_state,created_by_user_id) values(created_id,p_bid_id,p_job_id,'',coalesce(linked_bid.project_name,linked_job.name,''),actor.display_name,coalesce(linked_bid.customer,linked_job.customer,''),public.normalize_sample_formulation(jsonb_build_object('basis','weight_per_sf','weightUnit','lb','finishedPlateWidth',defaults.finished_plate_width,'finishedPlateLength',defaults.finished_plate_length,'finishedPlateQuantity',defaults.finished_plate_quantity,'thicknessIn',defaults.thickness_in,'length',defaults.pour_length,'width',defaults.pour_width,'dimensionUnit',defaults.dimension_unit,'materialDensity','','weightPerSf','','weightPerSfProvenance','calculated','resinParts',profile.resin_parts,'hardenerParts',profile.hardener_parts,'ratioProvenance','default','ratioDefaultSource',profile.display_name,'supplierRatioDefaults',defaults.supplier_ratio_defaults,'defaultVersion',defaults.version,'calculationVersion','sample-formulation-v4-volumetric-profile','profile',profile_json,'profileProvenance','default','fillerProvenance','profile_default','resinProvenance','profile_default')),actor.user_id);
+ insert into public.sample_blend_rows(sample_id,display_order,color,quantity,unit,component_role,calculation_basis,quantity_provenance) values(created_id,0,'',null,'oz','aggregate','target_total','calculated'),(created_id,1,'Filler',null,'oz','filler',null,'calculated'),(created_id,2,'Resin',null,'fl oz','resin',null,'calculated'),(created_id,3,'Hardener',null,'fl oz','hardener',null,'calculated'); return created_id;
+end $$;
+
+create or replace function public.save_sample_draft(p_sample jsonb,p_rows jsonb)
+returns void language plpgsql security definer set search_path=pg_catalog,public as $$
+declare target_id uuid:=(p_sample->>'id')::uuid; color_plate text:=nullif(upper(btrim(coalesce(p_sample->>'color_plate_number',''))),''); normalized jsonb:=public.normalize_sample_formulation(coalesce(p_sample->'formulation_state','{}'::jsonb)); version text:=normalized->>'calculationVersion'; target_weight numeric; total_oz numeric; resin_effective numeric; ratio numeric; nonchip_oz numeric; chip_oz numeric; dry_pool numeric; filler_effective numeric; default_filler numeric; default_resin numeric; volume_cft numeric;
+begin
+ perform public.require_app_capability('readOperationalData'); perform 1 from public.app_users where user_id=auth.uid() and is_active; if not found then raise exception 'Active operational access is required.' using errcode='42501'; end if;
+ if not exists(select 1 from public.samples where id=target_id for update) then raise exception 'Sample not found.' using errcode='P0002'; end if;
+ if color_plate is not null and color_plate !~ '^T[0-9]{2}-[0-9]{3}[A-Z]$' then raise exception 'New Color Plate numbers must use TYY-NNNL format, for example T26-123A.' using errcode='22023'; end if;
+ if jsonb_typeof(p_rows)<>'array' or jsonb_array_length(p_rows)>200 then raise exception 'Invalid Sample formulation rows.' using errcode='22023'; end if;
+ if nullif(p_sample->>'bid_id','') is not null and not exists(select 1 from public.bids where id=(p_sample->>'bid_id')::uuid) then raise exception 'Bid not found.' using errcode='P0002'; end if; if nullif(p_sample->>'job_id','') is not null and not exists(select 1 from public.jobs where id=(p_sample->>'job_id')::uuid) then raise exception 'Production Job not found.' using errcode='P0002'; end if;
+ update public.samples set bid_id=nullif(p_sample->>'bid_id','')::uuid,job_id=nullif(p_sample->>'job_id','')::uuid,requested_by=left(coalesce(p_sample->>'requested_by',''),200),requested_date=coalesce(nullif(p_sample->>'requested_date','')::date,current_date),project_name=left(coalesce(p_sample->>'project_name',''),300),prepared_by=left(coalesce(p_sample->>'prepared_by',''),200),customer_name=left(coalesce(p_sample->>'customer_name',''),200),color_plate_number=color_plate,finish_requested=left(coalesce(p_sample->>'finish_requested',''),300),sample_size=left(coalesce(p_sample->>'sample_size',''),100),sample_quantity=left(coalesce(p_sample->>'sample_quantity',''),100),notes=left(coalesce(p_sample->>'notes',''),20000),filler=left(coalesce(p_sample->>'filler',''),300),sealer=left(coalesce(p_sample->>'sealer',''),300),resin_supplier=left(coalesce(p_sample->>'resin_supplier',''),300),resin_color_number=left(coalesce(p_sample->>'resin_color_number',''),300),more_notes=left(coalesce(p_sample->>'more_notes',''),20000),approved_date=nullif(p_sample->>'approved_date','')::date,formulation_state=normalized where id=target_id;
+ target_weight:=public.sample_nonnegative_numeric(normalized#>>'{derived,targetWeight}'); total_oz:=public.sample_nonnegative_numeric(normalized->>'totalFormulaWeightOz'); ratio:=(normalized->>'hardenerParts')::numeric/(normalized->>'resinParts')::numeric;
+ delete from public.sample_blend_rows where sample_id=target_id;
+ insert into public.sample_blend_rows(sample_id,display_order,percentage,color,size,material_type,quantity,unit,vendor,catalog_source,catalog_item_id,catalog_snapshot,component_role,calculation_basis,quantity_provenance,calculated_quantity) select target_id,ordinality-1,nullif(row_data->>'percentage','')::numeric,left(coalesce(row_data->>'color',''),300),left(coalesce(row_data->>'size',''),120),left(coalesce(row_data->>'material_type',''),200),nullif(row_data->>'quantity','')::numeric,left(coalesce(nullif(row_data->>'unit',''),case when version in('sample-formulation-v3-historical-parity','sample-formulation-v4-volumetric-profile') and coalesce(row_data->>'component_role','aggregate') in('resin','hardener') then 'fl oz' when version in('sample-formulation-v2-mass-balance','sample-formulation-v3-historical-parity','sample-formulation-v4-volumetric-profile') then 'oz' else 'lb' end),80),left(coalesce(row_data->>'vendor',''),300),nullif(row_data->>'catalog_source',''),nullif(row_data->>'catalog_item_id',''),coalesce(row_data->'catalog_snapshot','{}'::jsonb),coalesce(nullif(row_data->>'component_role',''),'aggregate'),nullif(row_data->>'calculation_basis',''),coalesce(nullif(row_data->>'quantity_provenance',''),'manual'),null from jsonb_array_elements(p_rows) with ordinality as rows(row_data,ordinality);
+ if version='sample-formulation-v4-volumetric-profile' then
+  if (select count(*) from public.sample_blend_rows where sample_id=target_id and component_role='filler' and quantity_provenance='calculated')>1 then raise exception 'Only one profile-default Filler row is supported; additional Filler rows must be authored.' using errcode='22023'; end if;
+  dry_pool:=(normalized#>>'{derived,dryPoolOz}')::numeric; default_filler:=(normalized#>>'{derived,defaultFillerOz}')::numeric; default_resin:=(normalized#>>'{derived,defaultResinFlOz}')::numeric; volume_cft:=(normalized#>>'{derived,productionVolumeCft}')::numeric;
+  update public.sample_blend_rows set quantity=default_filler,calculated_quantity=default_filler,unit='oz' where sample_id=target_id and component_role='filler' and quantity_provenance='calculated';
+  select coalesce(sum(coalesce(quantity,calculated_quantity)),0) into filler_effective from public.sample_blend_rows where sample_id=target_id and component_role='filler'; chip_oz:=dry_pool-filler_effective;
+  if chip_oz<0 then raise exception 'Filler exceeds the V4 dry-material pool; Chip Mix cannot be negative.' using errcode='22023'; end if;
+  update public.sample_blend_rows set quantity=default_resin,calculated_quantity=default_resin,unit='fl oz' where sample_id=target_id and component_role='resin' and quantity_provenance='calculated';
+  select case when lower(unit) in('fl oz','fluid oz','fluid ounce','fluid ounces','oz') then quantity when lower(unit) in('gal','gallon','gallons') then quantity*128 end into resin_effective from public.sample_blend_rows where sample_id=target_id and component_role='resin' order by display_order limit 1;
+  update public.sample_blend_rows set calculated_quantity=resin_effective*ratio,quantity=resin_effective*ratio,unit='fl oz' where sample_id=target_id and component_role='hardener' and quantity_provenance='calculated' and resin_effective is not null;
+  update public.sample_blend_rows set calculated_quantity=chip_oz*percentage/100,quantity=chip_oz*percentage/100,unit='oz' where sample_id=target_id and component_role='aggregate' and quantity_provenance='calculated' and calculation_basis='target_total';
+  normalized:=jsonb_set(normalized,'{derived}',(normalized->'derived')||jsonb_build_object('effectiveFillerOz',filler_effective,'effectiveResinFlOz',resin_effective,'availableChipMixOz',chip_oz,'targetWeightOz',chip_oz,'targetWeight',chip_oz/16,'effectiveChipDensityLbCft',case when volume_cft>0 then chip_oz/16/volume_cft end,'effectiveWeightPerSf',case when volume_cft>0 then (chip_oz/16/volume_cft)*(normalized->>'thicknessIn')::numeric/12 end),true); update public.samples set formulation_state=normalized where id=target_id;
+ elsif version='sample-formulation-v3-historical-parity' then
+  select case when lower(unit) in('fl oz','fluid oz','fluid ounce','fluid ounces','oz') then quantity when lower(unit) in('gal','gallon','gallons') then quantity*128 end into resin_effective from public.sample_blend_rows where sample_id=target_id and component_role='resin' order by display_order limit 1;
+  update public.sample_blend_rows set calculated_quantity=resin_effective*ratio,quantity=resin_effective*ratio,unit='fl oz' where sample_id=target_id and component_role='hardener' and quantity_provenance='calculated' and resin_effective is not null; chip_oz:=target_weight*16;
+  update public.sample_blend_rows set calculated_quantity=chip_oz*percentage/100,quantity=chip_oz*percentage/100,unit='oz' where sample_id=target_id and component_role='aggregate' and quantity_provenance='calculated' and calculation_basis='target_total' and chip_oz is not null;
+ elsif version='sample-formulation-v2-mass-balance' then
+  select case when lower(unit)='lb' then quantity*16 else quantity end into resin_effective from public.sample_blend_rows where sample_id=target_id and component_role='resin' order by display_order limit 1; update public.sample_blend_rows set calculated_quantity=resin_effective*ratio,quantity=resin_effective*ratio,unit='oz' where sample_id=target_id and component_role='hardener' and quantity_provenance='calculated' and resin_effective is not null;
+  select coalesce(sum(case when lower(unit)='lb' then coalesce(quantity,calculated_quantity)*16 else coalesce(quantity,calculated_quantity) end),0) into nonchip_oz from public.sample_blend_rows where sample_id=target_id and component_role<>'aggregate'; chip_oz:=total_oz-nonchip_oz; if chip_oz<0 then raise exception 'Filler, Resin, and Hardener exceed Total Formula Weight; Chip Mix cannot be negative.' using errcode='22023'; end if;
+  update public.sample_blend_rows set calculated_quantity=chip_oz*percentage/100,quantity=chip_oz*percentage/100,unit='oz' where sample_id=target_id and component_role='aggregate' and quantity_provenance='calculated' and calculation_basis='target_total';
+  normalized:=jsonb_set(normalized,'{derived}',(normalized->'derived')||jsonb_build_object('totalFormulaWeightOz',total_oz,'nonChipWeightOz',nonchip_oz,'availableChipMixOz',chip_oz,'targetWeightOz',chip_oz,'targetWeight',chip_oz/16),true); update public.samples set formulation_state=normalized where id=target_id;
+ else
+  select quantity into resin_effective from public.sample_blend_rows where sample_id=target_id and component_role='resin' order by display_order limit 1; update public.sample_blend_rows set calculated_quantity=resin_effective*ratio,quantity=resin_effective*ratio where sample_id=target_id and component_role='hardener' and quantity_provenance='calculated' and resin_effective is not null;
+  update public.sample_blend_rows set calculated_quantity=target_weight*percentage/100,quantity=target_weight*percentage/100 where sample_id=target_id and component_role='aggregate' and quantity_provenance='calculated' and calculation_basis='target_total' and target_weight is not null;
+ end if;
+end $$;
+
+alter function public.normalize_sample_formulation(jsonb) owner to postgres;
+alter function public.create_sample(uuid,uuid) owner to postgres;
+alter function public.save_sample_draft(jsonb,jsonb) owner to postgres;
+alter function public.issue_sample_form(uuid) owner to postgres;
+revoke all on function public.normalize_sample_formulation(jsonb),public.create_sample(uuid,uuid),public.save_sample_draft(jsonb,jsonb) from public,anon;
+grant execute on function public.create_sample(uuid,uuid),public.save_sample_draft(jsonb,jsonb) to authenticated,service_role;
+grant execute on function public.normalize_sample_formulation(jsonb) to service_role;
+comment on table public.sample_formulation_profiles is 'Versioned V4 calculation definitions; Samples capture full profile snapshots and never depend on later mutable defaults.';
+comment on function public.normalize_sample_formulation(jsonb) is 'Dispatches immutable V1/V2/V3 semantics and V4 captured dry-pool/liquid-profile semantics.';
+commit;

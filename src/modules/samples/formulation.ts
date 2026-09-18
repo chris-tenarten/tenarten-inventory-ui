@@ -1,70 +1,50 @@
 export const LEGACY_SAMPLE_FORMULATION_CALCULATION_VERSION='sample-formulation-v1';
 export const MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION='sample-formulation-v2-mass-balance';
-export const SAMPLE_FORMULATION_CALCULATION_VERSION='sample-formulation-v3-historical-parity';
-
+export const HISTORICAL_PARITY_SAMPLE_FORMULATION_CALCULATION_VERSION='sample-formulation-v3-historical-parity';
+export const VOLUMETRIC_PROFILE_SAMPLE_FORMULATION_CALCULATION_VERSION='sample-formulation-v4-volumetric-profile';
+export const SAMPLE_FORMULATION_CALCULATION_VERSION='sample-formulation-v4-density-profile';
 export type FormulationBasis='total_weight'|'weight_per_sf';
 export type DimensionUnit='in'|'ft';
-export type SampleFormulationState={
-  basis:FormulationBasis;
-  weightUnit:'lb';
-  totalWeight:string;
-  totalFormulaWeightOz:string;
-  finishedPlateWidth:string;
-  finishedPlateLength:string;
-  finishedPlateQuantity:string;
-  thicknessIn:string;
-  length:string;
-  width:string;
-  dimensionUnit:DimensionUnit;
-  materialDensity:string;
-  weightPerSf:string;
-  weightPerSfProvenance:'calculated'|'manual';
-  resinParts:string;
-  hardenerParts:string;
-  ratioProvenance:'default'|'manual';
-  ratioDefaultSource:string;
-  supplierRatioDefaults:Record<string,string>;
-  defaultVersion:number|null;
-  calculationVersion:string;
-};
-export type FormulationRowInput={percentage:string;quantity:string;unit?:string;componentRole:'aggregate'|'resin'|'hardener'|'other';calculationBasis:'target_total'|null;quantityProvenance:'calculated'|'manual'};
-
-export const blankFormulationState=(resinParts='5',hardenerParts='1',defaultVersion:number|null=null):SampleFormulationState=>({basis:'total_weight',weightUnit:'lb',totalWeight:'',totalFormulaWeightOz:'',finishedPlateWidth:'',finishedPlateLength:'',finishedPlateQuantity:'',thicknessIn:'',length:'',width:'',dimensionUnit:'in',materialDensity:'',weightPerSf:'',weightPerSfProvenance:'calculated',resinParts,hardenerParts,ratioProvenance:'default',ratioDefaultSource:'General',supplierRatioDefaults:{},defaultVersion,calculationVersion:LEGACY_SAMPLE_FORMULATION_CALCULATION_VERSION});
-export const standardFormulationState=(defaultVersion:number|null=null,supplierRatioDefaults:Record<string,string>={}):SampleFormulationState=>({...blankFormulationState('5','1',defaultVersion),basis:'weight_per_sf',finishedPlateWidth:'6',finishedPlateLength:'6',finishedPlateQuantity:'4',thicknessIn:'0.375',length:'12',width:'12',materialDensity:'128',weightPerSf:'4',supplierRatioDefaults,calculationVersion:SAMPLE_FORMULATION_CALCULATION_VERSION});
-const positive=(value:string)=>{if(!value.trim())return null;const parsed=Number(value);return Number.isFinite(parsed)&&parsed>=0?parsed:null;};
-const display=(value:number|null)=>value===null?'':String(Math.round(value*10000)/10000);
+export type ProfileProvenance='default'|'selected'|'catalog_suggestion_accepted'|'supplier_suggestion_accepted'|'custom'|'legacy_captured';
+export type ValueProvenance='profile_default'|'manual'|'increased_filler_adjustment'|'restored';
+export type SampleFormulationAdjustment={kind:'increased_filler_preserve_dry_pool';baseProfileId:string;baseProfileVersion:number;expectedDryPoolOz:string;priorFillerOz:string;targetFillerOz:string;priorChipDensityLbCft:string;resultingChipDensityLbCft:string};
+export type SampleFormulationProfile={id:string;version:number;name:string;dryPoolOzPerCft:string;defaultChipDensityLbCft:string;defaultFillerOzPerCft:string;resinFlOzPerCft:string;resinParts:string;hardenerParts:string;evidence:string};
+export const SAMPLE_FORMULATION_PROFILES:SampleFormulationProfile[]=[
+ {id:'generic-epoxy-standard-200-5to1',version:2,name:'Tenarten Epoxy Standard 200 / 5:1',dryPoolOzPerCft:'2624',defaultChipDensityLbCft:'128',defaultFillerOzPerCft:'576',resinFlOzPerCft:'480',resinParts:'5',hardenerParts:'1',evidence:'2026 corpus ordinary 200-lb/5:1 family'},
+ {id:'sherwin-150-standard-4to1',version:2,name:'Sherwin 150 Standard / 4:1',dryPoolOzPerCft:'2560',defaultChipDensityLbCft:'128',defaultFillerOzPerCft:'512',resinFlOzPerCft:'512',resinParts:'4',hardenerParts:'1',evidence:'2026 corpus p17,p26,p34,p61,p66,p82'},
+ {id:'mtt-2560-standard-5to1',version:2,name:'MTT 2560 / 5:1',dryPoolOzPerCft:'2560',defaultChipDensityLbCft:'128',defaultFillerOzPerCft:'512',resinFlOzPerCft:'480',resinParts:'5',hardenerParts:'1',evidence:'2026 corpus p19,p49-p52,p65'},
+ {id:'idaho-high-filler-4to1',version:2,name:'Sherwin Idaho High Filler / 4:1',dryPoolOzPerCft:'2752',defaultChipDensityLbCft:'100',defaultFillerOzPerCft:'1152',resinFlOzPerCft:'512',resinParts:'4',hardenerParts:'1',evidence:'2026 corpus p74-p76'},
+ {id:'mtt-high-filler-5to1',version:2,name:'MTT High Filler / 5:1',dryPoolOzPerCft:'3200',defaultChipDensityLbCft:'128',defaultFillerOzPerCft:'1152',resinFlOzPerCft:'480',resinParts:'5',hardenerParts:'1',evidence:'2026 corpus p78; captured historical profile'},
+];
+export const DEFAULT_SAMPLE_FORMULATION_PROFILE=SAMPLE_FORMULATION_PROFILES[0];
+export type SampleFormulationState={basis:FormulationBasis;weightUnit:'lb';totalWeight:string;totalFormulaWeightOz:string;finishedPlateWidth:string;finishedPlateLength:string;finishedPlateQuantity:string;thicknessIn:string;length:string;width:string;dimensionUnit:DimensionUnit;materialDensity:string;weightPerSf:string;weightPerSfProvenance:'calculated'|'manual';chipDensityProvenance:ValueProvenance;resinParts:string;hardenerParts:string;ratioProvenance:'default'|'manual';ratioDefaultSource:string;supplierRatioDefaults:Record<string,string>;defaultVersion:number|null;calculationVersion:string;profile:SampleFormulationProfile|null;profileProvenance:ProfileProvenance;fillerProvenance:ValueProvenance;resinProvenance:ValueProvenance;adjustment:SampleFormulationAdjustment|null};
+export type FormulationRowInput={percentage:string;quantity:string;unit?:string;color?:string;componentRole:'aggregate'|'filler'|'resin'|'hardener'|'other';calculationBasis:'target_total'|null;quantityProvenance:'calculated'|'manual'};
+export const blankFormulationState=(resinParts='5',hardenerParts='1',defaultVersion:number|null=null):SampleFormulationState=>({basis:'total_weight',weightUnit:'lb',totalWeight:'',totalFormulaWeightOz:'',finishedPlateWidth:'',finishedPlateLength:'',finishedPlateQuantity:'',thicknessIn:'',length:'',width:'',dimensionUnit:'in',materialDensity:'',weightPerSf:'',weightPerSfProvenance:'calculated',chipDensityProvenance:'manual',resinParts,hardenerParts,ratioProvenance:'default',ratioDefaultSource:'General',supplierRatioDefaults:{},defaultVersion,calculationVersion:LEGACY_SAMPLE_FORMULATION_CALCULATION_VERSION,profile:null,profileProvenance:'legacy_captured',fillerProvenance:'manual',resinProvenance:'manual',adjustment:null});
+export const standardFormulationState=(defaultVersion:number|null=null,supplierRatioDefaults:Record<string,string>={}):SampleFormulationState=>({...blankFormulationState('5','1',defaultVersion),basis:'weight_per_sf',finishedPlateWidth:'6',finishedPlateLength:'6',finishedPlateQuantity:'4',thicknessIn:'0.375',length:'12',width:'12',materialDensity:DEFAULT_SAMPLE_FORMULATION_PROFILE.defaultChipDensityLbCft,weightPerSf:'',supplierRatioDefaults,calculationVersion:SAMPLE_FORMULATION_CALCULATION_VERSION,profile:{...DEFAULT_SAMPLE_FORMULATION_PROFILE},profileProvenance:'default',chipDensityProvenance:'profile_default',fillerProvenance:'profile_default',resinProvenance:'profile_default'});
+const positive=(value:string|undefined)=>{if(!value?.trim())return null;const parsed=Number(value);return Number.isFinite(parsed)&&parsed>=0?parsed:null;};
+const display=(value:number|null)=>value===null?'':String(Math.round(value*1000000)/1000000);
 export const normalizeSupplierKey=(value:string)=>value.trim().toLowerCase().replace(/\s+/g,' ');
-export function resolveSupplierRatio(supplier:string,state:Pick<SampleFormulationState,'supplierRatioDefaults'>){const key=normalizeSupplierKey(supplier);return state.supplierRatioDefaults[key]??'5:1';}
+export function resolveSupplierRatio(supplier:string,state:Pick<SampleFormulationState,'supplierRatioDefaults'>){const key=normalizeSupplierKey(supplier);return state.supplierRatioDefaults[key]??(key.includes('sherwin')?'4:1':'5:1');}
 export function applySupplierRatioDefault(state:SampleFormulationState,supplier:string):SampleFormulationState{const ratio=resolveSupplierRatio(supplier,state);const[resinParts,hardenerParts]=ratio.split(':');return{...state,resinParts,hardenerParts,ratioProvenance:'default',ratioDefaultSource:normalizeSupplierKey(supplier)?supplier.trim():'General'};}
+export function applyFormulationProfile(state:SampleFormulationState,profile:SampleFormulationProfile,provenance:ProfileProvenance='selected'):SampleFormulationState{return{...state,calculationVersion:SAMPLE_FORMULATION_CALCULATION_VERSION,profile:{...profile},profileProvenance:provenance,materialDensity:state.chipDensityProvenance==='manual'?state.materialDensity:profile.defaultChipDensityLbCft,chipDensityProvenance:state.chipDensityProvenance==='manual'?'manual':'profile_default',adjustment:null,resinParts:state.ratioProvenance==='manual'?state.resinParts:profile.resinParts,hardenerParts:state.ratioProvenance==='manual'?state.hardenerParts:profile.hardenerParts,ratioDefaultSource:state.ratioProvenance==='manual'?state.ratioDefaultSource:profile.name};}
 const toOunces=(value:string,unit='oz')=>{const amount=positive(value);if(amount===null)return null;return unit.trim().toLowerCase()==='lb'?amount*16:amount;};
-const toFluidOunces=(value:string,unit='fl oz')=>{const amount=positive(value);if(amount===null)return null;const normalized=unit.trim().toLowerCase();if(normalized==='gal'||normalized==='gallon'||normalized==='gallons')return amount*128;return normalized==='fl oz'||normalized==='fluid oz'||normalized==='fluid ounce'||normalized==='fluid ounces'||normalized==='oz'?amount:null;};
-
+const toFluidOunces=(value:string,unit='fl oz')=>{const amount=positive(value);if(amount===null)return null;const normalized=unit.trim().toLowerCase();if(['gal','gallon','gallons'].includes(normalized))return amount*128;return ['fl oz','fluid oz','fluid ounce','fluid ounces','oz'].includes(normalized)?amount:null;};
 export function calculateSampleFormulation(state:SampleFormulationState,rows:FormulationRowInput[]){
-  const length=positive(state.length),width=positive(state.width),density=positive(state.materialDensity),thickness=positive(state.thicknessIn),authoredRate=positive(state.weightPerSf),authoredTotal=positive(state.totalWeight);
-  const finishedWidth=positive(state.finishedPlateWidth),finishedLength=positive(state.finishedPlateLength),finishedQuantity=positive(state.finishedPlateQuantity);
-  const area=length===null||width===null?null:length*width*(state.dimensionUnit==='in'?1/144:1);
-  const finishedArea=finishedWidth===null||finishedLength===null||finishedQuantity===null?null:finishedWidth*finishedLength*finishedQuantity/144;
-  const productionVolume=area===null||thickness===null?null:area*(thickness/12);
-  const calculatedRate=density===null||thickness===null?null:density*(thickness/12);
-  const effectiveRate=state.weightPerSfProvenance==='manual'?authoredRate:calculatedRate;
-  const geometryTargetWeight=state.basis==='total_weight'?authoredTotal:area===null||effectiveRate===null?null:area*effectiveRate;
-  const percentageRows=rows.filter(row=>row.componentRole==='aggregate'&&row.quantityProvenance==='calculated');
-  const percentageTotal=percentageRows.reduce((sum,row)=>sum+(positive(row.percentage)??0),0);
-  const isMassBalance=state.calculationVersion===MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION;
-  const isHistoricalParity=state.calculationVersion===SAMPLE_FORMULATION_CALCULATION_VERSION;
-  const totalFormulaOz=isMassBalance?positive(state.totalFormulaWeightOz):null;
-  const calculated=rows.map(()=>null as number|null);
-  const resinIndex=rows.findIndex(row=>row.componentRole==='resin');
-  const hardenerIndex=rows.findIndex(row=>row.componentRole==='hardener');
-  const resinEffective=resinIndex<0?null:isHistoricalParity?toFluidOunces(rows[resinIndex].quantity,rows[resinIndex].unit):toOunces(rows[resinIndex].quantity,rows[resinIndex].unit);
-  const resinParts=positive(state.resinParts),hardenerParts=positive(state.hardenerParts);
-  if(hardenerIndex>=0&&rows[hardenerIndex].quantityProvenance==='calculated'&&resinEffective!==null&&resinParts&&hardenerParts!==null)calculated[hardenerIndex]=resinEffective*(hardenerParts/resinParts);
-  const nonChipOz=isMassBalance?rows.reduce((sum,row,index)=>row.componentRole==='aggregate'?sum:sum+(row.quantityProvenance==='calculated'?(calculated[index]??0):(toOunces(row.quantity,row.unit)??0)),0):null;
-  const availableChipMixOz=isMassBalance&&totalFormulaOz!==null&&nonChipOz!==null?totalFormulaOz-nonChipOz:null;
-  const invalidMassBalance=availableChipMixOz!==null&&availableChipMixOz<0;
-  const distributableChipOz=isMassBalance?(invalidMassBalance?null:availableChipMixOz):geometryTargetWeight===null?null:geometryTargetWeight*16;
-  rows.forEach((row,index)=>{if(row.componentRole==='aggregate'&&row.quantityProvenance==='calculated'&&distributableChipOz!==null&&positive(row.percentage)!==null)calculated[index]=distributableChipOz*(positive(row.percentage)!/100);});
-  const targetWeightOz=isMassBalance?distributableChipOz:geometryTargetWeight===null?null:geometryTargetWeight*16;
-  const targetWeight=isMassBalance?targetWeightOz===null?null:targetWeightOz/16:geometryTargetWeight;
-  return{areaSf:display(area),finishedAreaSf:display(finishedArea),productionVolumeCft:display(productionVolume),calculatedWeightPerSf:display(calculatedRate),effectiveWeightPerSf:display(effectiveRate),geometryChipMixWeight:display(geometryTargetWeight),geometryChipMixOz:display(geometryTargetWeight===null?null:geometryTargetWeight*16),totalFormulaWeightOz:display(totalFormulaOz),nonChipWeightOz:display(nonChipOz),availableChipMixOz:display(distributableChipOz),invalidMassBalance,targetWeight:display(targetWeight),targetWeightOz:display(targetWeightOz),percentageTotal:display(percentageTotal),percentageReconciles:percentageRows.length>0&&Math.abs(percentageTotal-100)<0.0005,rows:rows.map((row,index)=>({calculatedQuantity:display(calculated[index]),calculatedQuantityOz:display(isMassBalance||isHistoricalParity?calculated[index]:calculated[index]===null?null:calculated[index]!*16),effectiveQuantity:row.quantityProvenance==='manual'?row.quantity:display(calculated[index])}))};
+ const length=positive(state.length),width=positive(state.width),density=positive(state.materialDensity),thickness=positive(state.thicknessIn),authoredRate=positive(state.weightPerSf),authoredTotal=positive(state.totalWeight);
+ const finishedWidth=positive(state.finishedPlateWidth),finishedLength=positive(state.finishedPlateLength),finishedQuantity=positive(state.finishedPlateQuantity);
+ const area=length===null||width===null?null:length*width*(state.dimensionUnit==='in'?1/144:1);const finishedArea=finishedWidth===null||finishedLength===null||finishedQuantity===null?null:finishedWidth*finishedLength*finishedQuantity/144;const productionVolume=area===null||thickness===null?null:area*(thickness/12);
+ const calculatedRate=density===null||thickness===null?null:density*(thickness/12);const effectiveRate=state.weightPerSfProvenance==='manual'?authoredRate:calculatedRate;const geometryTargetWeight=state.basis==='total_weight'?authoredTotal:area===null||effectiveRate===null?null:area*effectiveRate;
+ const percentageRows=rows.filter(row=>row.componentRole==='aggregate'&&row.quantityProvenance==='calculated');const percentageTotal=percentageRows.reduce((sum,row)=>sum+(positive(row.percentage)??0),0);
+ const isMassBalance=state.calculationVersion===MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION;const isHistoricalParity=state.calculationVersion===HISTORICAL_PARITY_SAMPLE_FORMULATION_CALCULATION_VERSION;const isV4=state.calculationVersion===SAMPLE_FORMULATION_CALCULATION_VERSION;const isLegacyV4=state.calculationVersion===VOLUMETRIC_PROFILE_SAMPLE_FORMULATION_CALCULATION_VERSION;const isProfileV4=isV4||isLegacyV4;const totalFormulaOz=isMassBalance?positive(state.totalFormulaWeightOz):null;const calculated=rows.map(()=>null as number|null);
+ const resinIndex=rows.findIndex(row=>row.componentRole==='resin');const hardenerIndex=rows.findIndex(row=>row.componentRole==='hardener');const fillerIndexes=rows.map((row,index)=>row.componentRole==='filler'||(isProfileV4&&row.componentRole==='other'&&/^filler$/i.test(row.color??''))?index:-1).filter(index=>index>=0);
+ const profile=state.profile;const dryPoolOz=isProfileV4&&productionVolume!==null&&profile?productionVolume*(positive(profile.dryPoolOzPerCft)??0):null;const defaultFillerOz=isProfileV4&&productionVolume!==null&&profile?productionVolume*(positive(profile.defaultFillerOzPerCft)??0):null;
+ const fillerEffectiveOz=isProfileV4?fillerIndexes.reduce((sum,index)=>sum+(rows[index].quantityProvenance==='calculated'?(defaultFillerOz??0):(toOunces(rows[index].quantity,rows[index].unit)??0)),0):null;fillerIndexes.forEach(index=>{if(rows[index].quantityProvenance==='calculated')calculated[index]=defaultFillerOz;});
+ const defaultResinFlOz=isProfileV4&&productionVolume!==null&&profile?productionVolume*(positive(profile.resinFlOzPerCft)??0):null;const resinEffective=resinIndex<0?null:isProfileV4&&rows[resinIndex].quantityProvenance==='calculated'?defaultResinFlOz:isHistoricalParity||isProfileV4?toFluidOunces(rows[resinIndex].quantity,rows[resinIndex].unit):toOunces(rows[resinIndex].quantity,rows[resinIndex].unit);if(isProfileV4&&resinIndex>=0&&rows[resinIndex].quantityProvenance==='calculated')calculated[resinIndex]=defaultResinFlOz;
+ const resinParts=positive(state.resinParts),hardenerParts=positive(state.hardenerParts);if(hardenerIndex>=0&&rows[hardenerIndex].quantityProvenance==='calculated'&&resinEffective!==null&&resinParts&&hardenerParts!==null)calculated[hardenerIndex]=resinEffective*(hardenerParts/resinParts);
+ const nonChipOz=isMassBalance?rows.reduce((sum,row,index)=>row.componentRole==='aggregate'?sum:sum+(row.quantityProvenance==='calculated'?(calculated[index]??0):(toOunces(row.quantity,row.unit)??0)),0):null;const v2Chip=isMassBalance&&totalFormulaOz!==null&&nonChipOz!==null?totalFormulaOz-nonChipOz:null;const legacyV4Chip=isLegacyV4&&dryPoolOz!==null&&fillerEffectiveOz!==null?dryPoolOz-fillerEffectiveOz:null;const densityV4Chip=isV4&&geometryTargetWeight!==null?geometryTargetWeight*16:null;const invalidMassBalance=(v2Chip!==null&&v2Chip<0)||(legacyV4Chip!==null&&legacyV4Chip<0);
+ const distributableChipOz=isV4?densityV4Chip:isLegacyV4?(invalidMassBalance?null:legacyV4Chip):isMassBalance?(invalidMassBalance?null:v2Chip):geometryTargetWeight===null?null:geometryTargetWeight*16;rows.forEach((row,index)=>{if(row.componentRole==='aggregate'&&row.quantityProvenance==='calculated'&&distributableChipOz!==null&&positive(row.percentage)!==null)calculated[index]=distributableChipOz*(positive(row.percentage)!/100);});
+ const targetWeightOz=isMassBalance||isProfileV4?distributableChipOz:geometryTargetWeight===null?null:geometryTargetWeight*16;const targetWeight=targetWeightOz===null?geometryTargetWeight:targetWeightOz/16;const effectiveChipDensity=isProfileV4&&distributableChipOz!==null&&productionVolume?distributableChipOz/16/productionVolume:null;const actualDryTotalOz=isProfileV4&&distributableChipOz!==null&&fillerEffectiveOz!==null?distributableChipOz+fillerEffectiveOz:null;const dryPoolVarianceOz=actualDryTotalOz!==null&&dryPoolOz!==null?actualDryTotalOz-dryPoolOz:null;
+ return{areaSf:display(area),finishedAreaSf:display(finishedArea),productionVolumeCft:display(productionVolume),calculatedWeightPerSf:display(isProfileV4&&effectiveChipDensity!==null&&thickness!==null?effectiveChipDensity*thickness/12:calculatedRate),effectiveWeightPerSf:display(isProfileV4&&effectiveChipDensity!==null&&thickness!==null?effectiveChipDensity*thickness/12:effectiveRate),geometryChipMixWeight:display(isProfileV4&&distributableChipOz!==null?distributableChipOz/16:geometryTargetWeight),geometryChipMixOz:display(distributableChipOz),dryPoolOz:display(dryPoolOz),actualDryTotalOz:display(actualDryTotalOz),dryPoolVarianceOz:display(dryPoolVarianceOz),defaultFillerOz:display(defaultFillerOz),effectiveFillerOz:display(fillerEffectiveOz),defaultResinFlOz:display(defaultResinFlOz),effectiveResinFlOz:display(resinEffective),effectiveChipDensityLbCft:display(effectiveChipDensity),totalFormulaWeightOz:display(totalFormulaOz),nonChipWeightOz:display(nonChipOz),availableChipMixOz:display(distributableChipOz),invalidMassBalance,targetWeight:display(targetWeight),targetWeightOz:display(targetWeightOz),percentageTotal:display(percentageTotal),percentageReconciles:percentageRows.length>0&&Math.abs(percentageTotal-100)<0.0005,rows:rows.map((row,index)=>({calculatedQuantity:display(calculated[index]),calculatedQuantityOz:display(isMassBalance||isHistoricalParity||isProfileV4?calculated[index]:calculated[index]===null?null:calculated[index]!*16),effectiveQuantity:row.quantityProvenance==='manual'?row.quantity:display(calculated[index])}))};
 }
+
+export function previewIncreasedFillerAdjustment(state:SampleFormulationState,rows:FormulationRowInput[],targetFillerOz:string){const result=calculateSampleFormulation(state,rows);const target=positive(targetFillerOz),volume=positive(result.productionVolumeCft),dryPool=positive(result.dryPoolOz),priorFiller=positive(result.effectiveFillerOz),priorDensity=positive(result.effectiveChipDensityLbCft);if(state.calculationVersion!==SAMPLE_FORMULATION_CALCULATION_VERSION||!state.profile||target===null||!volume||dryPool===null||priorFiller===null||priorDensity===null)return null;const chip=dryPool-target;if(chip<0)return null;const density=chip/16/volume;return{targetFillerOz:display(target),resultingChipMixOz:display(chip),resultingChipDensityLbCft:display(density),adjustment:{kind:'increased_filler_preserve_dry_pool' as const,baseProfileId:state.profile.id,baseProfileVersion:state.profile.version,expectedDryPoolOz:display(dryPool),priorFillerOz:display(priorFiller),targetFillerOz:display(target),priorChipDensityLbCft:display(priorDensity),resultingChipDensityLbCft:display(density)}};}

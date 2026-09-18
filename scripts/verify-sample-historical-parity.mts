@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {calculateSampleFormulation,MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION,standardFormulationState} from '../src/modules/samples/formulation';
+import {calculateSampleFormulation,HISTORICAL_PARITY_SAMPLE_FORMULATION_CALCULATION_VERSION,MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION,standardFormulationState} from '../src/modules/samples/formulation';
 
 type Fixture={id:string;width:string;length:string;density:string;thickness:string;percentages:number[];expected:number[];filler:string;resin:string;hardener:string;ratio:'4'|'5'};
 const fixtures:Fixture[]=[
@@ -17,7 +17,7 @@ for(const fixture of fixtures){
   {percentage:'',quantity:fixture.resin,unit:'fl oz',componentRole:'resin' as const,calculationBasis:null,quantityProvenance:'manual' as const},
   {percentage:'',quantity:'',unit:'fl oz',componentRole:'hardener' as const,calculationBasis:null,quantityProvenance:'calculated' as const},
  ];
- const state={...standardFormulationState(),width:fixture.width,length:fixture.length,materialDensity:fixture.density,thicknessIn:fixture.thickness,resinParts:fixture.ratio,hardenerParts:'1'};
+ const state={...standardFormulationState(),calculationVersion:HISTORICAL_PARITY_SAMPLE_FORMULATION_CALCULATION_VERSION,profile:null,profileProvenance:'legacy_captured' as const,width:fixture.width,length:fixture.length,materialDensity:fixture.density,thicknessIn:fixture.thickness,resinParts:fixture.ratio,hardenerParts:'1'};
  const result=calculateSampleFormulation(state,rows);
  assert.equal(result.percentageTotal,'100',`${fixture.id} percentage total`);
  assert.deepEqual(result.rows.slice(0,fixture.percentages.length).map(row=>Number(row.calculatedQuantity)),fixture.expected,`${fixture.id} Aggregate parity`);

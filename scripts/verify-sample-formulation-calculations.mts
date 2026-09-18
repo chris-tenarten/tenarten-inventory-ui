@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
-import {applySupplierRatioDefault,calculateSampleFormulation,resolveSupplierRatio,SAMPLE_FORMULATION_CALCULATION_VERSION,standardFormulationState} from '../src/modules/samples/formulation';
+import {applySupplierRatioDefault,calculateSampleFormulation,previewIncreasedFillerAdjustment,resolveSupplierRatio,SAMPLE_FORMULATION_CALCULATION_VERSION,standardFormulationState,VOLUMETRIC_PROFILE_SAMPLE_FORMULATION_CALCULATION_VERSION} from '../src/modules/samples/formulation';
 
 const aggregate=(percentage:string)=>({percentage,quantity:'',componentRole:'aggregate' as const,calculationBasis:'target_total' as const,quantityProvenance:'calculated' as const});
-const rows=[aggregate('40'),aggregate('30'),aggregate('20'),aggregate('5'),aggregate('5'),{percentage:'',quantity:'18',componentRole:'other' as const,calculationBasis:null,quantityProvenance:'manual' as const},{percentage:'',quantity:'15',componentRole:'resin' as const,calculationBasis:null,quantityProvenance:'manual' as const},{percentage:'',quantity:'',componentRole:'hardener' as const,calculationBasis:null,quantityProvenance:'calculated' as const}];
+const rows=[aggregate('40'),aggregate('30'),aggregate('20'),aggregate('5'),aggregate('5'),{percentage:'',quantity:'18',componentRole:'filler' as const,calculationBasis:null,quantityProvenance:'manual' as const},{percentage:'',quantity:'15',componentRole:'resin' as const,calculationBasis:null,quantityProvenance:'manual' as const},{percentage:'',quantity:'',componentRole:'hardener' as const,calculationBasis:null,quantityProvenance:'calculated' as const}];
 const supplierDefaults={mtt:'5:1',key:'5:1','key resin co.':'5:1',terroxy:'5:1',sherwin:'4:1','sherwin williams':'4:1'};
 const standard=standardFormulationState(2,supplierDefaults);
 assert.equal(standard.calculationVersion,SAMPLE_FORMULATION_CALCULATION_VERSION);
 assert.deepEqual([standard.finishedPlateWidth,standard.finishedPlateLength,standard.finishedPlateQuantity,standard.thicknessIn],['6','6','4','0.375']);
 let result=calculateSampleFormulation(standard,rows);
-assert.equal(result.finishedAreaSf,'1');assert.equal(result.areaSf,'1');assert.equal(result.productionVolumeCft,'0.0313');assert.equal(result.calculatedWeightPerSf,'4');assert.equal(result.effectiveWeightPerSf,'4');assert.equal(result.totalFormulaWeightOz,'');assert.equal(result.nonChipWeightOz,'');assert.equal(result.availableChipMixOz,'64');
+assert.equal(result.finishedAreaSf,'1');assert.equal(result.areaSf,'1');assert.equal(result.productionVolumeCft,'0.03125');assert.equal(result.dryPoolOz,'82');assert.equal(result.effectiveChipDensityLbCft,'128');assert.equal(result.totalFormulaWeightOz,'');assert.equal(result.nonChipWeightOz,'');assert.equal(result.availableChipMixOz,'64');
 assert.equal(result.percentageTotal,'100');assert.equal(result.percentageReconciles,true);
 assert.deepEqual(result.rows.slice(0,5).map(row=>row.effectiveQuantity),['25.6','19.2','12.8','3.2','3.2']);
 assert.deepEqual(result.rows.slice(0,5).map(row=>row.calculatedQuantityOz),['25.6','19.2','12.8','3.2','3.2']);
@@ -16,7 +16,9 @@ assert.equal(result.rows[5].effectiveQuantity,'18','Filler stays manual and outs
 assert.equal(result.rows[6].effectiveQuantity,'15','Resin stays manual and outside Aggregate 100%');
 assert.equal(result.rows[7].effectiveQuantity,'3','5:1 Hardener derives from effective Resin');
 result=calculateSampleFormulation({...standard,resinParts:'4',ratioProvenance:'manual'},rows);assert.equal(result.rows[7].effectiveQuantity,'3.75');assert.equal(result.availableChipMixOz,'64');
-result=calculateSampleFormulation(standard,rows.map((row,index)=>index===5?{...row,quantity:'36'}:row));assert.equal(result.availableChipMixOz,'64');assert.deepEqual(result.rows.slice(0,5).map(row=>row.effectiveQuantity),['25.6','19.2','12.8','3.2','3.2']);
+result=calculateSampleFormulation(standard,rows.map((row,index)=>index===5?{...row,quantity:'22'}:row));assert.equal(result.availableChipMixOz,'64');assert.equal(result.actualDryTotalOz,'86');assert.equal(result.dryPoolVarianceOz,'4');assert.deepEqual(result.rows.slice(0,5).map(row=>row.effectiveQuantity),['25.6','19.2','12.8','3.2','3.2']);
+const legacyV4=calculateSampleFormulation({...standard,calculationVersion:VOLUMETRIC_PROFILE_SAMPLE_FORMULATION_CALCULATION_VERSION},rows.map((row,index)=>index===5?{...row,quantity:'22'}:row));assert.equal(legacyV4.availableChipMixOz,'60','captured 003-V4 preserves its legacy substitution semantics');
+const adjusted=previewIncreasedFillerAdjustment(standard,rows,'22');assert(adjusted);assert.deepEqual([adjusted.resultingChipMixOz,adjusted.resultingChipDensityLbCft],['60','120']);result=calculateSampleFormulation({...standard,materialDensity:adjusted.resultingChipDensityLbCft,chipDensityProvenance:'increased_filler_adjustment',fillerProvenance:'increased_filler_adjustment',adjustment:adjusted.adjustment},rows.map((row,index)=>index===5?{...row,quantity:'22'}:row));assert.deepEqual([result.availableChipMixOz,result.actualDryTotalOz,result.dryPoolVarianceOz],['60','82','0']);
 result=calculateSampleFormulation(standard,rows.map((row,index)=>index===6?{...row,quantity:'20'}:row));assert.equal(result.availableChipMixOz,'64');
 result=calculateSampleFormulation({...standard,resinParts:'4'},rows.map((row,index)=>index===6?{...row,quantity:'20'}:row));assert.equal(result.availableChipMixOz,'64');
 result=calculateSampleFormulation(standard,rows.map((row,index)=>index===7?{...row,quantity:'4.5',quantityProvenance:'manual' as const}:row));assert.equal(result.rows[7].effectiveQuantity,'4.5','manual Hardener provenance remains authoritative');assert.equal(result.availableChipMixOz,'64');
