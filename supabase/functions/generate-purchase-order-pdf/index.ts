@@ -17,6 +17,25 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
   headers: { ...corsHeaders, "Content-Type": "application/json" },
 });
 const safeText = (value: unknown) => normalizePdfText(value);
+type LogoAsset = { bytes: Uint8Array; contentType: string };
+let cachedLogoUrl = "";
+let cachedLogoAsset: Promise<LogoAsset> | null = null;
+
+function loadLogoAsset(logoUrl: string): Promise<LogoAsset> {
+  if (cachedLogoUrl === logoUrl && cachedLogoAsset) return cachedLogoAsset;
+  cachedLogoUrl = logoUrl;
+  cachedLogoAsset = fetch(logoUrl).then(async (response) => {
+    if (!response.ok) throw new Error("The configured Tenarten logo could not be loaded.");
+    return {
+      bytes: new Uint8Array(await response.arrayBuffer()),
+      contentType: response.headers.get("content-type") || "",
+    };
+  }).catch((error) => {
+    cachedLogoAsset = null;
+    throw error;
+  });
+  return cachedLogoAsset;
+}
 
 async function renderPdf(
   orderSnapshot: Record<string, unknown>,
@@ -35,15 +54,20 @@ async function renderPdf(
   pdf.setModificationDate(generatedAt);
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const measurementCache = new Map<string, number>();
   const wrap = (font: { widthOfTextAtSize(value: string, size: number): number }, value: unknown, size: number, width: number) =>
-    wrapMeasuredPdfText(safeText(value), width, size, (candidate, fontSize) => font.widthOfTextAtSize(candidate, fontSize));
-  const logoResponse = await fetch(logoUrl);
-  if (!logoResponse.ok) throw new Error("The configured Tenarten logo could not be loaded.");
-  const logoBytes = new Uint8Array(await logoResponse.arrayBuffer());
-  const contentType = logoResponse.headers.get("content-type") || "";
-  const logo = contentType.includes("jpeg") || contentType.includes("jpg")
-    ? await pdf.embedJpg(logoBytes)
-    : await pdf.embedPng(logoBytes);
+    wrapMeasuredPdfText(safeText(value), width, size, (candidate, fontSize) => {
+      const key = `${font === bold ? "b" : "r"}:${fontSize}:${candidate}`;
+      const cached = measurementCache.get(key);
+      if (cached !== undefined) return cached;
+      const measured = font.widthOfTextAtSize(candidate, fontSize);
+      measurementCache.set(key, measured);
+      return measured;
+    });
+  const logoAsset = await loadLogoAsset(logoUrl);
+  const logo = logoAsset.contentType.includes("jpeg") || logoAsset.contentType.includes("jpg")
+    ? await pdf.embedJpg(logoAsset.bytes)
+    : await pdf.embedPng(logoAsset.bytes);
 
   const classic = model.templateName === "classic";
   const accent = classic ? rgb(0.62, 0.82, 0.80) : rgb(0.035, 0.075, 0.16);

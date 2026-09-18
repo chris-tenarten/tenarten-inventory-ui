@@ -3,6 +3,7 @@
 import { Download, FileText, RefreshCw, Search, Settings2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
+import { pdfPreviewInputKey, SessionPdfPreviewCache } from "@/lib/pdf-preview-cache";
 import { JobTag } from "@/modules/production/components/JobTag";
 import {
   formatProductionJobOptionWithStatus,
@@ -595,6 +596,7 @@ export function PurchaseOrderEditor({
   const [vendorManagerOpen, setVendorManagerOpen] = useState(false);
   const original = useRef(JSON.stringify(initial));
   const issuanceInFlight = useRef(false);
+  const draftPreviewCache = useRef(new SessionPdfPreviewCache(1));
   const dirty = JSON.stringify(draft) !== original.current;
   const readOnly = draft.status === "issued";
   const refreshPdfDocument = async (issuanceId = draft.issuanceId) => {
@@ -861,6 +863,14 @@ export function PurchaseOrderEditor({
       setErrors(found);
       return;
     }
+    const cached = draftPreviewCache.current.get(pdfPreviewInputKey(draft));
+    if (cached) {
+      if (pdfUrl.startsWith("blob:")) URL.revokeObjectURL(pdfUrl);
+      setPdfUrl(URL.createObjectURL(cached));
+      setPreview(true);
+      setMessage("Opened the unchanged saved Draft preview.");
+      return;
+    }
     setPdfLoading(true);
     setErrors([]);
     setMessage("");
@@ -879,6 +889,7 @@ export function PurchaseOrderEditor({
     }
     try {
       const blob = await generatePurchaseOrderDraftPdf(savedDraft);
+      draftPreviewCache.current.set(pdfPreviewInputKey(savedDraft), blob);
       if (pdfUrl.startsWith("blob:")) URL.revokeObjectURL(pdfUrl);
       setPdfUrl(URL.createObjectURL(blob));
       setPreview(true);

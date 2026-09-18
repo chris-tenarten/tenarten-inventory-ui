@@ -1,6 +1,6 @@
 "use client";
 import { Settings2, X } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   applySupplierRatioDefault,
   applyFormulationProfile,
@@ -40,26 +40,39 @@ export default function SampleFormulationConfigurator({
   onChange: (state: SampleFormulationState) => void;
   onApplyAdjustment: (state: SampleFormulationState, targetFillerOz: string) => void;
 }) {
-  const result = calculateSampleFormulation(state, rows);
+  const result = useMemo(
+    () => calculateSampleFormulation(state, rows),
+    [state, rows],
+  );
   const isMassBalance =
     state.calculationVersion ===
     MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION;
   const isV4 = state.calculationVersion === SAMPLE_FORMULATION_CALCULATION_VERSION;
-  const calculatedTarget = calculateSampleFormulation(
-    { ...state, basis: "weight_per_sf", totalWeight: "" },
-    rows,
+  const calculatedTarget = useMemo(
+    () => calculateSampleFormulation(
+      { ...state, basis: "weight_per_sf", totalWeight: "" },
+      rows,
+    ),
+    [state, rows],
   );
   const [advanced, setAdvanced] = useState(false);
   const [defaultStatus, setDefaultStatus] = useState("");
   const [adjusting, setAdjusting] = useState(false);
   const [adjustmentFiller, setAdjustmentFiller] = useState("");
-  const adjustmentPreview = previewIncreasedFillerAdjustment(state, rows, adjustmentFiller);
-  const adjustmentRows = adjustmentPreview
-    ? rows.map((row) => row.componentRole === "filler" ? {...row,quantity:adjustmentPreview.targetFillerOz,quantityProvenance:"manual" as const} : row)
-    : rows;
-  const adjustmentResult = adjustmentPreview
-    ? calculateSampleFormulation({...state,materialDensity:adjustmentPreview.resultingChipDensityLbCft},adjustmentRows)
-    : null;
+  const adjustmentPreview = useMemo(
+    () => previewIncreasedFillerAdjustment(state, rows, adjustmentFiller),
+    [state, rows, adjustmentFiller],
+  );
+  const adjustmentResult = useMemo(() => {
+    if (!adjustmentPreview) return null;
+    const adjustmentRows = rows.map((row) => row.componentRole === "filler"
+      ? {...row,quantity:adjustmentPreview.targetFillerOz,quantityProvenance:"manual" as const}
+      : row);
+    return calculateSampleFormulation(
+      {...state,materialDensity:adjustmentPreview.resultingChipDensityLbCft},
+      adjustmentRows,
+    );
+  }, [adjustmentPreview, rows, state]);
   const patch = (changes: Partial<SampleFormulationState>) => {
     const breaksAdjustment = Boolean(state.adjustment) && ["length","width","thicknessIn","dimensionUnit"].some((key) => key in changes);
     onChange({

@@ -1,6 +1,7 @@
 "use client";
 import { Eye, History, RotateCcw, Save } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { pdfPreviewInputKey, SessionPdfPreviewCache } from "@/lib/pdf-preview-cache";
 import {
   formatSampleError,
   logSampleError,
@@ -28,6 +29,7 @@ export default function SampleVersionHistory({
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
+  const previewCache = useRef(new SessionPdfPreviewCache());
   const showError = (
     caught: unknown,
     operation:
@@ -74,6 +76,18 @@ export default function SampleVersionHistory({
     setBusy(versionId ?? "current");
     setError("");
     let target = sample;
+    const initialKey = versionId
+      ? `version:${sample.id}:${versionId}`
+      : `current:${pdfPreviewInputKey(sample)}`;
+    const cached = previewCache.current.get(initialKey);
+    if (cached) {
+      onPreview(
+        URL.createObjectURL(cached),
+        `${sample.colorPlateNumber || "Sample"}-${versionNumber ? `Version-${versionNumber}` : "Working"}.pdf`,
+      );
+      setBusy("");
+      return;
+    }
     if (!versionId) {
       const readiness = validateSampleForOutput(sample);
       if (readiness) {
@@ -96,6 +110,10 @@ export default function SampleVersionHistory({
     }
     try {
       const blob = await generateWorkingSamplePdf(target.id, versionId);
+      const cacheKey = versionId
+        ? initialKey
+        : `current:${pdfPreviewInputKey(target)}`;
+      previewCache.current.set(cacheKey, blob);
       onPreview(
         URL.createObjectURL(blob),
         `${target.colorPlateNumber || "Sample"}-${versionNumber ? `Version-${versionNumber}` : "Working"}.pdf`,

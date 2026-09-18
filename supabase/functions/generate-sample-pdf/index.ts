@@ -47,8 +47,16 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>) {
     { label: "UNIT", width: 52, characters: 6 },
     { label: "VENDOR", width: 120, characters: 15 },
   ];
+  const measurementCache = new Map<string, number>();
   const wrap = (value: unknown, width: number, size = 8.3, font = bold) =>
-    wrapMeasuredPdfText(normalizePdfText(value), width, size, (candidate, fontSize) => font.widthOfTextAtSize(candidate, fontSize));
+    wrapMeasuredPdfText(normalizePdfText(value), width, size, (candidate, fontSize) => {
+      const key = `${font === bold ? "b" : "r"}:${fontSize}:${candidate}`;
+      const cached = measurementCache.get(key);
+      if (cached !== undefined) return cached;
+      const measured = font.widthOfTextAtSize(candidate, fontSize);
+      measurementCache.set(key, measured);
+      return measured;
+    });
   const metadataRows = [
     [["Project Name",model.projectName],["Requested By",model.requestedBy]],
     [["Customer Name",model.customerName],["Date Requested",model.requestedDate]],
