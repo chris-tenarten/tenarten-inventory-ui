@@ -898,7 +898,7 @@ export default function SampleWorkspace() {
                     Chip Mix
                   </h2>
                   <p className="mt-1 text-xs text-slate-500">
-                    Aggregate percentages divide the available Chip Mix. Formula quantities are shown in ounces.
+                    Aggregate percentages divide the geometry-calculated Chip Mix. Filler and Resin are entered separately.
                   </p>
                   <p
                     className={`mt-2 text-sm font-bold ${formulationResult?.percentageReconciles ? "text-emerald-700" : "text-amber-700"}`}
@@ -970,6 +970,11 @@ export default function SampleWorkspace() {
                                 componentRole === "hardener"
                                   ? "calculated"
                                   : "manual",
+                              unit:
+                                componentRole === "resin" ||
+                                componentRole === "hardener"
+                                  ? "fl oz"
+                                  : "oz",
                             });
                           }}
                           className={field}
@@ -1124,14 +1129,16 @@ export default function SampleWorkspace() {
                           onChange={(e) =>
                             patchRow(index, { quantity: e.target.value })
                           }
-                          className={`${field} ${row.quantityProvenance === "calculated" ? "bg-slate-100" : ""}`}
+                          className={`${field} ${row.quantityProvenance === "calculated" ? "bg-slate-100" : row.componentRole === "aggregate" ? "border-amber-300 bg-amber-50/60 dark:border-amber-700 dark:bg-amber-950/20" : "border-emerald-300 bg-emerald-50/60 dark:border-emerald-700 dark:bg-emerald-950/20"}`}
                         />
                         <span className="mt-1 block text-[11px] font-normal text-slate-500">
-                          {row.componentRole === "aggregate"
-                            ? "oz · % of available Chip Mix"
-                            : row.componentRole === "hardener"
-                              ? `From ${draft.formulation.resinParts}:${draft.formulation.hardenerParts} Resin ratio`
-                              : "Authored amount"}
+                          {row.quantityProvenance === "manual"
+                            ? row.componentRole === "aggregate"
+                              ? "Modified · overrides the calculated Aggregate quantity"
+                              : "Authored · enter quantity"
+                            : row.componentRole === "aggregate"
+                              ? "Calculated · oz from Aggregate % × Chip Mix"
+                              : `Calculated · fl oz from Resin at ${draft.formulation.resinParts}:${draft.formulation.hardenerParts}`}
                         </span>
                       </label>
                       {row.quantityProvenance === "manual" && (
@@ -1150,7 +1157,7 @@ export default function SampleWorkspace() {
                           </label>
                         )}
                       {(row.componentRole === "aggregate" || row.componentRole === "hardener") && (
-                        <button type="button" onClick={()=>patchRow(index,{quantityProvenance:row.quantityProvenance==='calculated'?'manual':'calculated',calculationBasis:row.componentRole==='aggregate'&&row.quantityProvenance==='manual'?'target_total':null,quantity:row.quantityProvenance==='calculated'?(formulationResult?.rows[index]?.calculatedQuantity||''):row.quantity,unit:'oz'})} className="min-h-10 self-end border border-slate-300 bg-white px-2 text-xs font-bold">
+                        <button type="button" onClick={()=>patchRow(index,{quantityProvenance:row.quantityProvenance==='calculated'?'manual':'calculated',calculationBasis:row.componentRole==='aggregate'&&row.quantityProvenance==='manual'?'target_total':null,quantity:row.quantityProvenance==='calculated'?(formulationResult?.rows[index]?.calculatedQuantity||''):row.quantity,unit:row.componentRole==='hardener'?'fl oz':'oz'})} className="min-h-10 self-end border border-slate-300 bg-white px-2 text-xs font-bold">
                           {row.quantityProvenance==='calculated'?'Enter manually':'Use calculated'}
                         </button>
                       )}

@@ -12,7 +12,7 @@ export function blankSampleBlendRow(order:number):SampleBlendRow{return{id:crypt
 function standardFormulaRows():SampleBlendRow[]{return[
   blankSampleBlendRow(0),
   {...blankSampleBlendRow(1),color:'Filler',componentRole:'other',calculationBasis:null,quantityProvenance:'manual',quantity:'18'},
-  {...blankSampleBlendRow(2),color:'Resin',componentRole:'resin',calculationBasis:null,quantityProvenance:'manual',quantity:'15'},
-  {...blankSampleBlendRow(3),color:'Hardener',componentRole:'hardener',calculationBasis:null,quantityProvenance:'calculated'},
+  {...blankSampleBlendRow(2),color:'Resin',componentRole:'resin',calculationBasis:null,quantityProvenance:'manual',quantity:'15',unit:'fl oz'},
+  {...blankSampleBlendRow(3),color:'Hardener',componentRole:'hardener',calculationBasis:null,quantityProvenance:'calculated',unit:'fl oz'},
 ];}
 export function newLocalSample(input:{preparedBy:string;bidId?:string;projectName?:string;customerName?:string;formulation?:SampleFormulationState}):SampleRecord{const now=new Date().toISOString();return{id:'',sampleName:'',bidId:input.bidId??'',jobId:'',requestedBy:'',requestedDate:now.slice(0,10),projectName:input.projectName??'',preparedBy:input.preparedBy,customerName:input.customerName??'',colorPlateNumber:'',finishRequested:'',sampleSize:'',sampleQuantity:'',notes:'',filler:'',sealer:'',resinSupplier:'',resinColorNumber:'',moreNotes:'',approvedDate:'',createdByUserId:'',creatorName:input.preparedBy,createdAt:'',updatedAt:'',jobNumber:'',formulation:input.formulation??standardFormulationState(),blendRows:standardFormulaRows(),workingVersions:[],issuedDocuments:[]};}
