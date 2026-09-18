@@ -902,7 +902,7 @@ export default function SampleWorkspace() {
                     Chip Mix
                   </h2>
                   <p className="mt-1 text-xs text-slate-500">
-                    Aggregate percentages divide the profile-calculated Chip Mix. Filler substitutes within the dry-material pool; Resin remains separate.
+                    Aggregate percentages divide the profile-calculated Chip Mix. Filler is independent during normal editing. Use Adjust Formulation to preserve the profile dry-material balance when changing Filler.
                   </p>
                   <p
                     className={`mt-2 text-sm font-bold ${formulationResult?.percentageReconciles ? "text-emerald-700" : "text-amber-700"}`}
