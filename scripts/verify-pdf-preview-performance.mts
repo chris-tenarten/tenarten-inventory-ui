@@ -22,4 +22,10 @@ cache.set(largeKey,new Blob(['large']));
 assert.equal(cache.get(standardKey),undefined,'least-recent entry must be bounded');
 assert(cache.get(compactKey));
 assert(cache.get(largeKey));
+const poPresetCache = new SessionPdfPreviewCache(3);
+for (const preset of ['compact','standard','large'] as const) {
+  poPresetCache.set(pdfPreviewInputKey({...base,pdfTextSize:preset}),new Blob([preset]));
+}
+assert.equal(await poPresetCache.get(pdfPreviewInputKey({...base,pdfTextSize:'standard'}))?.text(),'standard');
+assert.equal(await poPresetCache.get(pdfPreviewInputKey({...base,pdfTextSize:'large'}))?.text(),'large');
 console.log('PDF preview cache verifier passed: exact repeats hit; edits, presets, and profile versions invalidate; cache is bounded.');

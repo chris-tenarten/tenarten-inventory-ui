@@ -596,7 +596,7 @@ export function PurchaseOrderEditor({
   const [vendorManagerOpen, setVendorManagerOpen] = useState(false);
   const original = useRef(JSON.stringify(initial));
   const issuanceInFlight = useRef(false);
-  const draftPreviewCache = useRef(new SessionPdfPreviewCache(1));
+  const draftPreviewCache = useRef(new SessionPdfPreviewCache(3));
   const dirty = JSON.stringify(draft) !== original.current;
   const readOnly = draft.status === "issued";
   const refreshPdfDocument = async (issuanceId = draft.issuanceId) => {

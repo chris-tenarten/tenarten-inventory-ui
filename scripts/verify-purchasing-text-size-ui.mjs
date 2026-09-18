@@ -43,6 +43,21 @@ try {
    await page.reload();
    assert.equal(await page.getByRole('button',{name:preset,exact:true}).getAttribute('aria-pressed'),'true');
   }
+  if(width===1440){
+   for(const preset of ['Compact','Large']){
+    await page.getByRole('button',{name:preset,exact:true}).click();
+    await page.getByRole('button',{name:'Preview Draft PDF',exact:true}).click();
+    await page.getByRole('dialog',{name:'PDF fixture'}).waitFor();
+    await page.getByRole('button',{name:'Close fixture preview'}).click();
+   }
+   const beforeReuse=await page.evaluate(()=>window.poEvents.length);
+   await page.getByRole('button',{name:'Compact',exact:true}).click();
+   await page.getByRole('button',{name:'Preview Draft PDF',exact:true}).click();
+   await page.getByRole('dialog',{name:'PDF fixture'}).waitFor();
+   const afterReuse=await page.evaluate(()=>window.poEvents.length);
+   assert.equal(afterReuse,beforeReuse,'Switching back to an unchanged preset must reuse its cached preview');
+   await page.getByRole('button',{name:'Close fixture preview'}).click();
+  }
   await page.screenshot({path:`tmp/pdfs/ui/editor-${width}.png`});
  }
  assert.deepEqual(errors,[]);
