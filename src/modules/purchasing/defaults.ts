@@ -83,6 +83,7 @@ export function createPurchaseOrderDraft(): PurchaseOrderDraft {
   return {
     poNumber:'',
     status:'draft',
+    pdfTextSize:'standard',
     documentTemplate:'tenops',
     revisionNumber:1,
     supersedesPurchaseOrderId:'',

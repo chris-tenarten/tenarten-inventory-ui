@@ -78,24 +78,53 @@ async function renderPdf(
     { key: "unitCost", label: "UNIT COST", x: 492, width: 44 },
     { key: "extendedCost", label: "EXTENDED", x: 536, width: 44 },
   ] as const;
-  const rowFontSize = 6.2;
-  const rowLineHeight = 8;
-  const vendorNameLines = wrap(bold, model.vendor.name || "-", 8.5, 284);
-  const vendorAddressLines = wrap(regular, model.vendor.address || "-", 7, 284);
-  const vendorContactLines = wrap(regular, model.vendor.contact || "-", 7, 234);
-  const vendorHeight = Math.max(60, 34 + vendorNameLines.length * 10 + vendorAddressLines.length * 9, 26 + vendorContactLines.length * 9);
-  const vendorBandY = 674;
+  const type = model.typography;
+  const rowFontSize = type.row;
+  const rowLineHeight = type.rowLeading;
+  // Exceptionally long identities continue on labeled detail pages. Ordinary
+  // documents retain the original form geometry; no authored tail is discarded.
+  const details: string[] = [];
+  const retain = (lines: string[], count: number, label: string) => {
+    if (lines.length <= count) return lines;
+    details.push(label, ...lines.slice(count - 1), "");
+    return [...lines.slice(0, count - 1), "(see details)"];
+  };
+  const metadata = [
+    { value: `PO # ${model.poNumber}`, size: type.metadataNumber, font: bold },
+    { value: `PO Date ${model.poDate || model.issueDate}`, size: type.emphasis, font: regular },
+    { value: `PO Originated By ${model.originatedBy || "-"}`, size: type.emphasis, font: regular },
+  ].map(field => ({...field, lines: retain(wrap(field.font, field.value, field.size, 190), 3, "PO METADATA CONTINUED")}));
+  const headerShift = metadata.reduce((extra, field) => extra + (field.lines.length - 1) * 14, 0);
+  const authorizedLines = retain(wrap(regular, model.authorizedBy || "-", type.emphasis, 230), 2, "AUTHORIZED BY CONTINUED");
+  const vendorNameLines = retain(wrap(bold, model.vendor.name || "-", type.name, 284), 3, "VENDOR NAME CONTINUED");
+  const vendorAddressLines = retain(wrap(regular, model.vendor.address || "-", type.body, 284), 8, "VENDOR ADDRESS CONTINUED");
+  const vendorContactLines = retain(wrap(regular, model.vendor.contact || "-", type.body, 234), 10, "VENDOR CONTACT CONTINUED");
+  const vendorHeight = Math.max(60, 34 + vendorNameLines.length * type.nameLeading + vendorAddressLines.length * type.bodyLeading, 26 + vendorContactLines.length * type.bodyLeading);
+  const vendorBandY = 674 - headerShift;
   const vendorBottom = vendorBandY - vendorHeight;
   const projectBandY = vendorBottom - 20;
-  const jobNameLines = wrap(bold, model.job.kind === "linked" ? model.job.name : "Stock Purchase", 8, 152);
-  const paymentLines = wrap(regular, model.paymentTerms || "-", 7, 74);
-  const jobNumberLines = wrap(bold, model.job.kind === "linked" ? model.job.number : "-", 8, 116);
-  const requestedDateLines = wrap(regular, model.requestedDate || "-", 7, 52);
-  const shipToLines = wrap(regular, model.shipTo || "-", 7, 234);
-  const projectHeight = Math.max(64, 42 + jobNameLines.length * 9 + paymentLines.length * 9, 42 + jobNumberLines.length * 9 + requestedDateLines.length * 9, 26 + shipToLines.length * 9);
+  const jobNameLines = retain(wrap(bold, model.job.kind === "linked" ? model.job.name : "Stock Purchase", type.emphasis, 152), 3, "JOB REFERENCE CONTINUED");
+  const paymentLines = retain(wrap(regular, model.paymentTerms || "-", type.body, 74), 3, "PAYMENT TERMS CONTINUED");
+  const jobNumberLines = retain(wrap(bold, model.job.kind === "linked" ? model.job.number : "-", type.emphasis, 116), 3, "JOB NUMBER CONTINUED");
+  const requestedDateLines = retain(wrap(regular, model.requestedDate || "-", type.body, 52), 3, "DATE REQUESTED CONTINUED");
+  const shipToLines = retain(wrap(regular, model.shipTo || "-", type.body, 234), 8, "SHIP TO CONTINUED");
+  const projectHeight = Math.max(64, (type.label > 6.2 ? 54 : 42) + jobNameLines.length * type.bodyLeading + paymentLines.length * type.bodyLeading, (type.label > 6.2 ? 54 : 42) + jobNumberLines.length * type.bodyLeading + requestedDateLines.length * type.bodyLeading, 26 + shipToLines.length * type.bodyLeading);
   const projectBottom = projectBandY - projectHeight;
   const tableHeaderY = projectBottom - 28;
-  const tableCapacity = Math.max(40, tableHeaderY - 208);
+  const totalRows = [
+    ["Subtotal", model.totals.subtotal],
+    [`Discount${model.totals.discountPercent ? ` @ ${model.totals.discountPercent}%` : ""}`, model.totals.discount],
+    [`Sales Tax${model.totals.taxPercent ? ` @ ${model.totals.taxPercent}%` : ""}`, model.totals.tax],
+    ["Freight", model.totals.freight], ["GRAND TOTAL", model.totals.grandTotal],
+  ].map(([label, amount], index) => {
+    const size = index === 4 ? type.total : type.emphasis;
+    const font = index === 4 ? bold : regular;
+    const labels = wrap(font, label, size, 108);
+    const amounts = wrap(font, amount, size, 70);
+    return { labels, amounts, size, font, height: Math.max(20, Math.max(labels.length, amounts.length) * (size + 2) + 4) };
+  });
+  const totalsHeight = 12 + totalRows.reduce((sum, row) => sum + row.height, 0);
+  const tableCapacity = Math.max(24, tableHeaderY - (96 + totalsHeight));
   const maxFragmentLines = Math.max(1, Math.floor((tableCapacity - 8) / rowLineHeight));
   const laidOutLines = model.lines.flatMap((line) => {
     const cells = columns.map((column) => wrap(regular, line[column.key], rowFontSize, column.width - 8));
@@ -117,11 +146,14 @@ async function renderPdf(
     }
     pageLines.push(laidOutLine);
   }
-  const noteLines = wrap(regular, model.vendorNotes || "-", 8, 325);
-  const firstNoteLines = noteLines.slice(0, 5);
-  const overflowNoteLines = noteLines.slice(5);
-  const noteChunks = overflowNoteLines.length ? chunkPdfLines(overflowNoteLines, 48) : [];
-  const totalPages = renderPages.length + noteChunks.length;
+  const noteLines = wrap(regular, model.vendorNotes || "-", type.notes, 325);
+  const firstNoteCapacity = Math.min(5, Math.floor(48 / type.notesLeading) + 1);
+  const firstNoteLines = noteLines.slice(0, firstNoteCapacity);
+  const overflowNoteLines = noteLines.slice(firstNoteCapacity);
+  const noteChunks = overflowNoteLines.length ? chunkPdfLines(overflowNoteLines, Math.min(48, Math.floor(588 / type.notesContinuationLeading))) : [];
+  const detailChunks = details.length ? chunkPdfLines(details.flatMap(line => wrap(regular, line, type.notes, 532)), Math.floor(588 / type.notesContinuationLeading)) : [];
+  const continuationChunks = [...detailChunks.map(lines => ({lines, kind: "DETAILS"})), ...noteChunks.map(lines => ({lines, kind: "NOTES & SPECIAL CONDITIONS"}))];
+  const totalPages = renderPages.length + continuationChunks.length;
 
   renderPages.forEach((pageLines, pageIndex) => {
     const page = pdf.addPage([pageWidth, pageHeight]);
@@ -134,7 +166,7 @@ async function renderPdf(
       const labelWidth = bold.widthOfTextAtSize(label, 7);
       drawText(label, margin + (548 - labelWidth) / 2, y + 5, 7, bold, accentText);
     };
-    const fieldLabel = (label: string, x: number, y: number) => drawText(label, x, y, 6.2, bold, slate);
+    const fieldLabel = (label: string, x: number, y: number) => drawText(label, x, y, type.label, bold, slate);
 
     const logoScale = Math.min(48 / logo.height, 54 / logo.width);
     page.drawImage(logo, { x: margin, y: pageHeight - margin - logo.height * logoScale, width: logo.width * logoScale, height: logo.height * logoScale });
@@ -143,21 +175,22 @@ async function renderPdf(
     drawText("2933 Eisenhower St., Suite 120", 94, 724, 7, regular, slate);
     drawText("Carrollton, TX 75007 | www.precasttz.com", 94, 713, 7, regular, slate);
     drawText("PURCHASE ORDER", 390, 750, 18, bold);
-    drawText(`PO # ${model.poNumber}`, 390, 730, 10, bold);
-    drawText(`PO Date ${model.poDate || model.issueDate}`, 390, 716, 8);
-    drawText(`PO Originated By ${model.originatedBy || "-"}`, 390, 702, 8);
-    page.drawLine({ start: { x: margin, y: 696 }, end: { x: pageWidth - margin, y: 696 }, thickness: 1.5, color: accent });
+    let metadataY = 730;
+    metadata.forEach(field => {
+      field.lines.forEach(line => { drawText(line, 390, metadataY, field.size, field.font); metadataY -= 14; });
+    });
+    page.drawLine({ start: { x: margin, y: 696 - headerShift }, end: { x: pageWidth - margin, y: 696 - headerShift }, thickness: 1.5, color: accent });
 
     // Both templates deliberately share the original form's grid. Only their
     // restrained color treatment differs.
-    sectionBand("VENDOR INFORMATION", 674);
+    sectionBand("VENDOR INFORMATION", vendorBandY);
     box(margin, vendorBottom, 300, vendorHeight, pale);
     box(332, vendorBottom, 248, vendorHeight, pale);
-    fieldLabel("VENDOR", 38, 663);
-    vendorNameLines.forEach((line, index) => drawText(line, 38, 649 - index * 10, 8.5, bold));
-    vendorAddressLines.forEach((line, index) => drawText(line, 38, 649 - vendorNameLines.length * 10 - index * 9, 7));
-    fieldLabel("CONTACT", 338, 663);
-    vendorContactLines.forEach((line, index) => drawText(line, 338, 649 - index * 9, 7));
+    fieldLabel("VENDOR", 38, vendorBandY - 11);
+    vendorNameLines.forEach((line, index) => drawText(line, 38, vendorBandY - 25 - index * type.nameLeading, type.name, bold));
+    vendorAddressLines.forEach((line, index) => drawText(line, 38, vendorBandY - 25 - vendorNameLines.length * type.nameLeading - index * type.bodyLeading, type.body));
+    fieldLabel("CONTACT", 338, vendorBandY - 11);
+    vendorContactLines.forEach((line, index) => drawText(line, 338, vendorBandY - 25 - index * type.bodyLeading, type.body));
 
     sectionBand("PROJECT INFORMATION", projectBandY);
     box(margin, projectBottom, 168, projectHeight, pale);
@@ -165,22 +198,22 @@ async function renderPdf(
     box(332, projectBottom, 248, projectHeight, pale);
     const projectLabelY = projectBandY - 11;
     fieldLabel(model.job.kind === "linked" ? "JOB REFERENCE" : "PURCHASE TYPE", 38, projectLabelY);
-    jobNameLines.forEach((line, index) => drawText(line, 38, projectLabelY - 15 - index * 9, 8, bold));
-    const paymentY = projectLabelY - 22 - jobNameLines.length * 9;
+    jobNameLines.forEach((line, index) => drawText(line, 38, projectLabelY - 15 - index * type.bodyLeading, type.emphasis, bold));
+    const paymentY = projectLabelY - 22 - jobNameLines.length * type.bodyLeading;
     fieldLabel("PAYMENT TERMS", 38, paymentY);
-    paymentLines.forEach((line, index) => drawText(line, 116, paymentY - index * 9, 7));
+    paymentLines.forEach((line, index) => drawText(line, 116, paymentY - (type.label > 6.2 ? 12 : 0) - index * type.bodyLeading, type.body));
     fieldLabel("JOB NUMBER", 206, projectLabelY);
-    jobNumberLines.forEach((line, index) => drawText(line, 206, projectLabelY - 15 - index * 9, 8, bold));
-    const requestedY = projectLabelY - 22 - jobNumberLines.length * 9;
+    jobNumberLines.forEach((line, index) => drawText(line, 206, projectLabelY - 15 - index * type.bodyLeading, type.emphasis, bold));
+    const requestedY = projectLabelY - 22 - jobNumberLines.length * type.bodyLeading;
     fieldLabel("DATE REQUESTED", 206, requestedY);
-    requestedDateLines.forEach((line, index) => drawText(line, 270, requestedY - index * 9, 7));
+    requestedDateLines.forEach((line, index) => drawText(line, 270, requestedY - (type.label > 6.2 ? 12 : 0) - index * type.bodyLeading, type.body));
     fieldLabel("SHIP TO", 338, projectLabelY);
-    shipToLines.forEach((line, index) => drawText(line, 338, projectLabelY - 15 - index * 9, 7));
+    shipToLines.forEach((line, index) => drawText(line, 338, projectLabelY - 15 - index * type.bodyLeading, type.body));
 
     page.drawRectangle({ x: margin, y: tableHeaderY, width: 548, height: 28, color: accent, borderColor: lineColor, borderWidth: 0.6 });
     columns.forEach((column) => {
-      const labels = wrap(bold, column.label, 5.2, column.width - 8);
-      labels.forEach((line, index) => drawText(line, column.x + 4, tableHeaderY + 17 - index * 7, 5.2, bold, accentText));
+      const labels = wrap(bold, column.label, type.header, column.width - 8);
+      labels.forEach((line, index) => drawText(line, column.x + 4, tableHeaderY + 17 - index * (type.header > 5.2 ? 8 : 7), type.header, bold, accentText));
     });
 
     let rowTop = tableHeaderY;
@@ -200,23 +233,17 @@ async function renderPdf(
       box(margin, 94, 342, 82);
       page.drawRectangle({ x: margin, y: 160, width: 342, height: 16, color: accent, borderColor: lineColor, borderWidth: 0.6 });
       drawText("NOTES & SPECIAL CONDITIONS", 40, 165, 7, bold, accentText);
-      firstNoteLines.forEach((line, index) => drawText(line, 40, 146 - index * 10, 8));
-      box(382, 94, 198, 112, pale);
-      const totals = [
-        ["Subtotal", model.totals.subtotal],
-        [`Discount${model.totals.discountPercent ? ` @ ${model.totals.discountPercent}%` : ""}`, model.totals.discount],
-        [`Sales Tax${model.totals.taxPercent ? ` @ ${model.totals.taxPercent}%` : ""}`, model.totals.tax],
-        ["Freight", model.totals.freight],
-        ["GRAND TOTAL", model.totals.grandTotal],
-      ];
-      totals.forEach(([label, amount], index) => {
-        const y = 189 - index * 20;
-        drawText(label, 392, y, index === 4 ? 9 : 8, index === 4 ? bold : regular);
-        drawText(amount, 510, y, index === 4 ? 9 : 8, index === 4 ? bold : regular);
+      firstNoteLines.forEach((line, index) => drawText(line, 40, 146 - index * type.notesLeading, type.notes));
+      box(382, 94, 198, totalsHeight, pale);
+      let totalY = 94 + totalsHeight - 17;
+      totalRows.forEach(row => {
+        row.labels.forEach((line, index) => drawText(line, 392, totalY - index * (row.size + 2), row.size, row.font));
+        row.amounts.forEach((line, index) => drawText(line, Math.min(510, 574 - row.font.widthOfTextAtSize(line, row.size)), totalY - index * (row.size + 2), row.size, row.font));
+        totalY -= row.height;
       });
       drawText("AUTHORIZED BY", 40, 78, 7, bold, slate);
-      drawText(model.authorizedBy || "-", 40, 62, 8);
-      page.drawLine({ start: { x: 38, y: 55 }, end: { x: 270, y: 55 }, thickness: 0.6, color: slate });
+      authorizedLines.forEach((line, index) => drawText(line, 40, 62 - index * 12, type.emphasis));
+      page.drawLine({ start: { x: 38, y: authorizedLines.length > 1 ? 43 : 55 }, end: { x: 270, y: authorizedLines.length > 1 ? 43 : 55 }, thickness: 0.6, color: slate });
     }
 
     drawText(`Generated ${generationLabel}`, margin, 22, 6, regular, slate);
@@ -235,18 +262,18 @@ async function renderPdf(
     }
   });
 
-  noteChunks.forEach((lines, noteIndex) => {
+  continuationChunks.forEach(({lines, kind}, noteIndex) => {
     const pageIndex = renderPages.length + noteIndex;
     const page = pdf.addPage([pageWidth, pageHeight]);
     const drawText = (value: unknown, x: number, y: number, size = 8, font = regular, color = ink) =>
       page.drawText(safeText(value), { x, y, size, font, color });
     drawText("TENARTEN TERRAZZO", margin, 750, 14, bold);
-    drawText(`PURCHASE ORDER ${model.poNumber} - NOTES CONTINUED`, 260, 750, 10, bold);
+    wrap(bold, `PURCHASE ORDER ${model.poNumber} - ${kind === "DETAILS" ? "DETAILS" : "NOTES"} CONTINUED`, 10, 320).forEach((line, index) => drawText(line, 260, 750 - index * 12, 10, bold));
     page.drawLine({ start: { x: margin, y: 730 }, end: { x: pageWidth - margin, y: 730 }, thickness: 1.5, color: accent });
     page.drawRectangle({ x: margin, y: 690, width: 548, height: 20, color: accent, borderColor: lineColor, borderWidth: 0.6 });
-    drawText("NOTES & SPECIAL CONDITIONS - CONTINUED", 40, 697, 7, bold, accentText);
+    drawText(`${kind} - CONTINUED`, 40, 697, 7, bold, accentText);
     page.drawRectangle({ x: margin, y: 70, width: 548, height: 620, color: rgb(1,1,1), borderColor: lineColor, borderWidth: 0.6 });
-    lines.forEach((line, index) => drawText(line, 40, 672 - index * 12, 8));
+    lines.forEach((line, index) => drawText(line, 40, 672 - index * type.notesContinuationLeading, type.notes));
     drawText(`Generated ${generationLabel}`, margin, 22, 6, regular, slate);
     drawText(`${model.templateName} v${model.templateVersion} | ${model.documentVersion}`, 218, 22, 6, regular, slate);
     drawText(`Page ${pageIndex + 1} of ${totalPages}`, 520, 22, 6, regular, slate);

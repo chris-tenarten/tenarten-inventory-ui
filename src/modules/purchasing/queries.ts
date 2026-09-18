@@ -1,3 +1,4 @@
+import { normalizePdfTextSize } from '../../../supabase/functions/_shared/pdf-text-size.mjs';
 import { supabase } from '@/lib/supabase';
 import type { PurchaseOrder, PurchaseOrderDocument, PurchaseOrderLine, PurchaseOrderPendingReceivalProjection, PurchaseOrderSummary, VendorContact, VendorOption } from './types';
 
@@ -66,7 +67,7 @@ export async function loadPurchaseOrder(id: string): Promise<PurchaseOrder> {
   return {
     id:text(row.id), poFamilyId:text(row.po_family_id), poNumber:row.po_number ? text(row.po_number) : null,
     poCategory:'chip', status:row.status as PurchaseOrder['status'],
-    documentTemplate:text(row.document_template) === 'classic' ? 'classic' : 'tenops',
+    pdfTextSize:normalizePdfTextSize(row.pdf_text_size), documentTemplate:text(row.document_template) === 'classic' ? 'classic' : 'tenops',
     productionJobId:text(row.production_job_id), jobNumberSnapshot:text(row.job_number_snapshot), jobNameSnapshot:text(row.job_name_snapshot),
     jobPoReferenceType:(text(row.job_po_reference_type) === 'resin' ? 'resin' : text(row.job_po_reference_type) === 'chip' ? 'chip' : ''),
     vendorId:text(row.vendor_id), vendorNameSnapshot:text(row.vendor_name_snapshot), vendorAddressSnapshot:text(row.vendor_address_snapshot),
