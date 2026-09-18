@@ -34,10 +34,10 @@ const calculated = calculateSampleFormulation(standard, rows);
 assert.equal(calculated.finishedAreaSf, "1");
 assert.equal(calculated.areaSf, "1");
 assert.equal(calculated.calculatedWeightPerSf, "4");
-assert.equal(calculated.availableChipMixOz, "100");
+assert.equal(calculated.availableChipMixOz, "64");
 assert.deepEqual(
   calculated.rows.map((row) => row.calculatedQuantityOz),
-  ["40", "30", "20", "5", "5"],
+  ["25.6", "19.2", "12.8", "3.2", "3.2"],
 );
 
 const custom = calculateSampleFormulation({ ...standard, width: "24" }, rows);
@@ -48,7 +48,7 @@ const overridden = calculateSampleFormulation(
   rows,
 );
 assert.equal(overridden.geometryChipMixWeight, "6");
-assert.equal(overridden.availableChipMixOz, "100");
+assert.equal(overridden.availableChipMixOz, "96");
 
 const local = newLocalSample({ preparedBy: "Gio", formulation: standard });
 assert.equal(local.id, "");
@@ -78,11 +78,19 @@ assert.doesNotMatch(configurator, />Weight \/ SF</);
 assert.match(configurator, /Sample Plate Quantities/);
 assert.match(configurator, /Adjust Sample Plate Calculation/);
 assert.match(configurator, /Reset to Calculated/);
-assert.match(configurator, /Total Formula Weight/);
+assert.match(configurator, /historical V2 mass-balance input/);
+assert.match(configurator, /Calculated from production pour area/);
 assert.match(configurator, /Geometry Chip Mix Reference/);
 assert.match(workspace, /Formula Role/);
 assert.match(workspace, /sampleRowsForDisplay/);
 assert.match(workspace, /Add Aggregate/);
+assert.match(workspace, /Authored · enter quantity/);
+assert.match(workspace, /Modified · overrides the calculated Aggregate quantity/);
+assert.match(workspace, /border-emerald-300/);
+assert.match(workspace, /dark:border-emerald-700/);
+assert.match(workspace, /border-amber-300/);
+assert.match(workspace, /bg-slate-100/);
+assert.match(workspace, /fl oz/);
 assert.match(workspace, /Aggregate total|Total \{/);
 assert.doesNotMatch(
   workspace,

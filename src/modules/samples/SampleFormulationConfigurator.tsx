@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   applySupplierRatioDefault,
   calculateSampleFormulation,
+  MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION,
   type SampleFormulationState,
 } from "./formulation";
 import type { SampleBlendRow } from "./types";
@@ -34,6 +35,9 @@ export default function SampleFormulationConfigurator({
   onChange: (state: SampleFormulationState) => void;
 }) {
   const result = calculateSampleFormulation(state, rows);
+  const isMassBalance =
+    state.calculationVersion ===
+    MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION;
   const calculatedTarget = calculateSampleFormulation(
     { ...state, basis: "weight_per_sf", totalWeight: "" },
     rows,
@@ -83,7 +87,9 @@ export default function SampleFormulationConfigurator({
             Chip Mix: {number(result.availableChipMixOz)} oz
           </p>
           <p className="mt-1 text-xs text-slate-600">
-            {number(result.totalFormulaWeightOz)} oz formula − {number(result.nonChipWeightOz)} oz filler/resin/hardener
+            {isMassBalance
+              ? `${number(result.totalFormulaWeightOz)} oz formula − ${number(result.nonChipWeightOz)} oz filler/resin/hardener`
+              : "Calculated from production pour area × Weight / SF. Filler and Resin are entered separately."}
           </p>
           {result.invalidMassBalance && <p className="mt-1 text-xs font-bold text-red-700">Non-chip ingredients exceed Total Formula Weight. Reduce them or increase the total.</p>}
         </div>
@@ -115,11 +121,11 @@ export default function SampleFormulationConfigurator({
             </button>
           </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <label className={label}>
+            {isMassBalance && <label className={label}>
               Total Formula Weight
               <input type="number" min="0" step="0.01" value={state.totalFormulaWeightOz} onChange={(event)=>patch({totalFormulaWeightOz:event.target.value})} className={input}/>
-              <span className={hint}>ounces · includes Chip Mix, Filler, Resin, and Hardener</span>
-            </label>
+              <span className={hint}>ounces · historical V2 mass-balance input</span>
+            </label>}
             <label className={label}>
               Finished Plate Width
               <input
