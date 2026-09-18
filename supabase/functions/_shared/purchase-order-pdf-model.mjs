@@ -1,3 +1,4 @@
+import { normalizePdfTextSize } from './pdf-text-size.mjs';
 export const PURCHASE_ORDER_PDF_VERSION = "po-pdf-v2";
 export const PURCHASE_ORDER_ROWS_PER_PAGE = 12;
 
@@ -77,6 +78,8 @@ export function buildPurchaseOrderPdfModel(orderSnapshot, linesSnapshot) {
   }
 
   return {
+    textSize: normalizePdfTextSize(orderSnapshot.pdf_text_size),
+    typography: PURCHASE_ORDER_TYPOGRAPHY[normalizePdfTextSize(orderSnapshot.pdf_text_size)],
     documentVersion: PURCHASE_ORDER_PDF_VERSION,
     templateName: text(orderSnapshot.template_name) === "classic" ? "classic" : "tenops",
     templateVersion: Number(orderSnapshot.template_version) || 1,
@@ -125,3 +128,10 @@ export function buildPurchaseOrderPdfModel(orderSnapshot, linesSnapshot) {
     },
   };
 }
+
+// Point sizes and leading are intentional, not a whole-document scale.
+export const PURCHASE_ORDER_TYPOGRAPHY = Object.freeze({
+  compact: { row: 5.6, rowLeading: 7.2, body: 6.3, bodyLeading: 8.1, emphasis: 7.2, name: 7.7, nameLeading: 9, label: 5.6, header: 4.8, notes: 7.2, notesLeading: 9, notesContinuationLeading: 10.8, total: 8.1, metadataNumber: 9 },
+  standard: { row: 6.2, rowLeading: 8, body: 7, bodyLeading: 9, emphasis: 8, name: 8.5, nameLeading: 10, label: 6.2, header: 5.2, notes: 8, notesLeading: 10, notesContinuationLeading: 12, total: 9, metadataNumber: 10 },
+  large: { row: 8, rowLeading: 10.5, body: 9, bodyLeading: 11.5, emphasis: 10, name: 10.5, nameLeading: 13, label: 7, header: 6.2, notes: 10, notesLeading: 13, notesContinuationLeading: 15, total: 11, metadataNumber: 11 },
+});

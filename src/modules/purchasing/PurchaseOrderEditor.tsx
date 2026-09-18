@@ -1024,7 +1024,17 @@ export function PurchaseOrderEditor({
               {!draft.poNumber && <span className="ml-2">{tr('Final suffix assigned on first save', 'El sufijo final se asigna al guardar por primera vez')}</span>}
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-end gap-2">
+            {!readOnly && <fieldset disabled={pdfLoading || saving || issuing} className="min-w-0">
+              <legend className="mb-1 text-xs font-bold text-slate-600">{tr('PDF Text Size', 'Tamaño de texto PDF')}</legend>
+              <div className="flex" role="group" aria-label="PDF Text Size">
+                {(['compact', 'standard', 'large'] as const).map(size => <button
+                  key={size} type="button" aria-pressed={(draft.pdfTextSize || 'standard') === size}
+                  onClick={() => setHeader('pdfTextSize', size)}
+                  className={`min-h-11 border px-3 text-sm font-bold disabled:opacity-50 ${(draft.pdfTextSize || 'standard') === size ? 'border-blue-700 bg-blue-700 text-white' : 'border-slate-300 bg-white text-slate-700'}`}
+                >{size === 'compact' ? tr('Compact', 'Compacto') : size === 'large' ? tr('Large', 'Grande') : tr('Standard', 'Estándar')}</button>)}
+              </div>
+            </fieldset>}
             <button
               type="button"
               onClick={() => readOnly ? void openGeneratedPdf() : void openDraftPdf()}

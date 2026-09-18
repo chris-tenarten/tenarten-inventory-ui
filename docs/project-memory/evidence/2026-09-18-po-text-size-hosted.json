@@ -1,0 +1,208 @@
+{
+  "hostedDatabase": {
+    "marker": "po-text-size-1789748384777",
+    "scope": "Hosted DB/auth/live renderer; candidate renderer runs locally against captured snapshots",
+    "directory": "output/pdf/hosted-po-text-size/po-text-size-1789748384777",
+    "hosted002": {
+      "column": true,
+      "constraint": true,
+      "save": true,
+      "captureBeforeHash": true,
+      "existingImplicitStandard": 8
+    },
+    "defaultsAndInvalid": {
+      "existingStandard": true,
+      "newOmittedStandard": true,
+      "newClientStandard": true,
+      "invalidRejected": true
+    },
+    "persistence": {
+      "compact": {
+        "savedAndReopened": true,
+        "numberStable": true,
+        "previewPayload": "compact"
+      },
+      "standard": {
+        "savedAndReopened": true,
+        "numberStable": true,
+        "previewPayload": "standard"
+      },
+      "large": {
+        "savedAndReopened": true,
+        "numberStable": true,
+        "previewPayload": "large"
+      }
+    },
+    "taxonomyAndNumbering": {
+      "fiveTypes": true,
+      "mixedPreview": true,
+      "stableOnResave": true,
+      "distinctNewNumbers": true
+    },
+    "issuance": {
+      "compact": {
+        "captured": true,
+        "hashIncludesPreset": true,
+        "issuedDraftEditDenied": true,
+        "snapshotUnchanged": true,
+        "storedArtifactUnchanged": true
+      },
+      "standard": {
+        "captured": true,
+        "hashIncludesPreset": true,
+        "issuedDraftEditDenied": true,
+        "snapshotUnchanged": true,
+        "storedArtifactUnchanged": true
+      },
+      "large": {
+        "captured": true,
+        "hashIncludesPreset": true,
+        "issuedDraftEditDenied": true,
+        "snapshotUnchanged": true,
+        "storedArtifactUnchanged": true
+      }
+    },
+    "recovery": {
+      "unnumbered": true,
+      "idempotent": true,
+      "conflictRejected": true,
+      "anthonyUntouched": true
+    },
+    "hostedDatabaseGate": "passed",
+    "historical": {
+      "issuances": 8,
+      "snapshotsAndHashesUnchanged": true,
+      "documentRecordsUnchanged": true,
+      "anthonyFingerprintUnchanged": true
+    },
+    "cleanup": {
+      "purchase_orders": 0,
+      "purchase_order_lines": 0,
+      "chip_purchase_order_line_details": 0,
+      "purchase_order_issuances": 0,
+      "purchase_order_documents": 0,
+      "pending_receivals": 0,
+      "app_users": 0,
+      "my_work_messages": 0,
+      "auth_users": 0,
+      "storage_objects": 0
+    }
+  },
+  "candidateRenderer": {
+    "hostedSourceSha256": "aa51caf41d516ecbacd86b51ed41b2fb9cc73dddb27e412ba0deebb23c90d822",
+    "candidateSourceSha256": "4ec84e24b43f8cb68b55b84f3b6f8de0c39b968372a1856a25902734e0b92056",
+    "fixtures": {
+      "issued-compact": {
+        "preset": "compact",
+        "pages": 1,
+        "rowFontSize": 5.6,
+        "pdfSha256": "82625ef16d6daff0357b8145f75d5e054efc7d22be02c971bebaa3756f00dd2a"
+      },
+      "issued-large": {
+        "preset": "large",
+        "pages": 1,
+        "rowFontSize": 8,
+        "pdfSha256": "b3d79f49dae91f94dcbb54a6f71306a41047d698e8195b79bf7c64d7c771fd4a"
+      },
+      "issued-standard": {
+        "preset": "standard",
+        "pages": 1,
+        "rowFontSize": 6.2,
+        "pdfSha256": "ef3c5ae94c0973f0f2f8237b9d8cb66d9b468f422e3d48c6881549660b53494b"
+      },
+      "long-mixed-compact": {
+        "preset": "compact",
+        "pages": 4,
+        "rowFontSize": 5.6,
+        "pdfSha256": "9e0a40999450109843eb417d8cb4bca414f77012693f544b2732f011df908796",
+        "liveRowFontSize": 6.2
+      },
+      "long-mixed-large": {
+        "preset": "large",
+        "pages": 7,
+        "rowFontSize": 8,
+        "pdfSha256": "26e06c895a8db252ea7dec09ea5e96a2cf64d0601e07f4425de2d029a26bccaa",
+        "liveRowFontSize": 6.2
+      },
+      "long-mixed-standard": {
+        "preset": "standard",
+        "pages": 5,
+        "rowFontSize": 6.2,
+        "pdfSha256": "4c7bd5a020212e74f4c0a7e74e54e3c6730ba5a43ee8c750bf0043b802d39c0f",
+        "liveRowFontSize": 6.2
+      },
+      "normal-compact": {
+        "preset": "compact",
+        "pages": 1,
+        "rowFontSize": 5.6,
+        "pdfSha256": "7aa994a9d4394b5181282e5cc2d2c526719692d3c6568191db59ed0cf555304c",
+        "liveRowFontSize": 6.2
+      },
+      "normal-large": {
+        "preset": "large",
+        "pages": 1,
+        "rowFontSize": 8,
+        "pdfSha256": "c06b86681ef826bbffcc62829e2c6a2a1c6cbced98a4b9bc4ece3afaed439f59",
+        "liveRowFontSize": 6.2
+      },
+      "normal-standard": {
+        "preset": "standard",
+        "pages": 1,
+        "rowFontSize": 6.2,
+        "pdfSha256": "3fea6d9dd551cde6202495c18148c72ff707e2db30d18a89bfb0c0f81e00f6e9",
+        "liveRowFontSize": 6.2,
+        "standardLiveGeometryIdentical": true,
+        "standardDownloadedBytesIdentical": true
+      }
+    }
+  },
+  "currentHostedFunction": {
+    "version": 15,
+    "status": "ACTIVE",
+    "verify_jwt": true,
+    "ezbr_sha256": "ce4688bf1085c63fe582f23cb90691cf15f5a806a79226d5b7ed613c763f45da",
+    "updated_at": 1789670121863
+  },
+  "allAttemptMarkersFinalCounts": {
+    "purchase_orders": 0,
+    "app_users": 0,
+    "auth_users": 0,
+    "marker_storage_objects": 0
+  },
+  "priorGuardedCleanup": {
+    "marker": "po-text-size-1789747636346",
+    "fixtureOrders": 4,
+    "fixtureLines": 20,
+    "fixtureIssuances": 3,
+    "cleanup": {
+      "purchase_orders": 0,
+      "purchase_order_lines": 0,
+      "chip_purchase_order_line_details": 0,
+      "purchase_order_issuances": 0,
+      "purchase_order_documents": 0,
+      "pending_receivals": 0,
+      "auth_users": 0,
+      "app_users": 0,
+      "messages": 0,
+      "storage_artifacts": 0
+    }
+  },
+  "candidateFilesSha256": {
+    "scripts/verify-purchasing-pdf-overflow.mjs": "b94484a449f17e472e99f11e375db2f8bea2b0bc9cac378124f8a2e7d8d5716a",
+    "scripts/verify-purchasing-text-size-migration.mjs": "fe5eb43d5fa3d5abc5b711182fad81b3950c2cff56412426a48df78e1f4e0dc7",
+    "scripts/verify-purchasing-text-size-ui.mjs": "377705145baf9588d5fd3f91c240a7c252afd77162807c38c5d4566c696977c4",
+    "scripts/verify-purchasing-text-size-hosted.mts": "73c90678da3bfb51f711538929d3f8b2fb96bade0d94c71a386fbb6cec028a9b",
+    "scripts/verify-purchasing-text-size-hosted-renderer.mjs": "b7dc718a0ac4cec9a372292c50a25b48a77d88f8e12ee7edffc77eb5f204f0f2",
+    "src/modules/purchasing/PurchaseOrderEditor.tsx": "0242de88fb6e96aaeda2def98f068385d15160e4f6789ade4255f76aa31d6ca0",
+    "src/modules/purchasing/PurchasingWorkspace.tsx": "78923f7a3d65c5cc0ec94819ae9b83f4821be1a095aa7374ba01604d6ac25ea8",
+    "src/modules/purchasing/defaults.ts": "4d95e54bcf3ee763ba863d37a1c55d2c6a9da6adb0ad43010ad1c5e6a0b7ba35",
+    "src/modules/purchasing/mutations.ts": "b1ea17b5608c0e28ff48aa13d0be92c3dd6365eefdf1405a1ca84eae55326506",
+    "src/modules/purchasing/queries.ts": "ccd7f9b3257d4cebb1ddfe90d9e4f95cc04e70658864fbad363b4e767065d8cd",
+    "src/modules/purchasing/types.ts": "ae49e2c078dbb478958ec98c3ad81414e0f606a0835e7e474856a9b12f6adf9e",
+    "supabase/functions/_shared/pdf-text-size.mjs": "b887ea8566d7bcfd21a694cc8b633aabd970090b7bc279f72621eae30629daef",
+    "supabase/functions/_shared/pdf-text-size.d.mts": "00ebe53af8055d6b9f64e4b206a783ccb95f9548b6aa032e912769875233b0dc",
+    "supabase/functions/_shared/purchase-order-pdf-model.mjs": "03a5e0d7752383a3e21f29c63549fd0ff8c7551b0f77aaf5bbc2255199f971f6",
+    "supabase/functions/generate-purchase-order-pdf/index.ts": "4ec84e24b43f8cb68b55b84f3b6f8de0c39b968372a1856a25902734e0b92056",
+    "supabase/migrations/20260918_002_purchase_order_pdf_text_size.sql": "fd04f494695854cc2ce445f17f22a0602c62ecb70cc15118e18288f3def2fe99"
+  }
+}
