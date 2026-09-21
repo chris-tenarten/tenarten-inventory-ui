@@ -990,7 +990,7 @@ export default function SampleWorkspace() {
                         <Trash2 className="mx-auto h-4 w-4" />
                       </button>
                     </div>
-                    <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="mt-2 grid items-start gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[minmax(7rem,0.85fr)_minmax(4.5rem,0.45fr)_minmax(10rem,1.35fr)_minmax(6rem,0.65fr)_minmax(7rem,0.8fr)_minmax(11rem,1.3fr)_minmax(9rem,1fr)]">
                       <label className={label}>
                         Formula Role
                         <select
@@ -1027,7 +1027,7 @@ export default function SampleWorkspace() {
                         </select>
                       </label>
                       {row.componentRole === "aggregate" && (
-                        <label className={`${label} text-left sm:text-center`}>
+                        <label className={`${label} text-left`}>
                           %
                           <input
                             type="number"
@@ -1042,8 +1042,11 @@ export default function SampleWorkspace() {
                           />
                         </label>
                       )}
+                      {row.componentRole !== "aggregate" && (
+                        <span aria-hidden="true" className="hidden xl:block" />
+                      )}
                       <label
-                        className={`${label} relative text-left sm:text-center`}
+                        className={`${label} relative text-left`}
                       >
                         Color
                         <div className="relative">
@@ -1132,7 +1135,7 @@ export default function SampleWorkspace() {
                           </div>
                         )}
                       </label>
-                      <label className={`${label} text-left sm:text-center`}>
+                      <label className={`${label} text-left`}>
                         Size
                         <input
                           value={row.size}
@@ -1142,7 +1145,7 @@ export default function SampleWorkspace() {
                           className={field}
                         />
                       </label>
-                      <label className={`${label} text-left sm:text-center`}>
+                      <label className={`${label} text-left`}>
                         Type
                         <input
                           value={row.materialType}
@@ -1152,61 +1155,95 @@ export default function SampleWorkspace() {
                           className={field}
                         />
                       </label>
-                      <label className={`${label} text-left sm:text-center`}>
-                        {row.quantityProvenance === "calculated"
-                          ? "Calculated Weight"
-                          : "Quantity"}
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.0001"
-                          readOnly={row.quantityProvenance === "calculated"}
-                          value={
-                            row.quantityProvenance === "calculated"
-                              ? formulationResult?.rows[index]
-                                  ?.calculatedQuantity || ""
-                              : row.quantity
-                          }
-                          onChange={(e) =>
-                            patchRow(index, { quantity: e.target.value })
-                          }
-                          className={`${field} ${row.quantityProvenance === "calculated" ? "bg-slate-100" : row.componentRole === "aggregate" ? "border-amber-300 bg-amber-50/60 dark:border-amber-700 dark:bg-amber-950/20" : "border-emerald-300 bg-emerald-50/60 dark:border-emerald-700 dark:bg-emerald-950/20"}`}
-                        />
-                        <span className="mt-1 block text-[11px] font-normal text-slate-500">
-                          {row.quantityProvenance === "manual"
-                            ? row.componentRole === "aggregate"
-                              ? "Modified · overrides the calculated Aggregate quantity"
-                              : "Authored · enter quantity"
-                            : row.componentRole === "aggregate"
-                              ? "Calculated · oz from Aggregate % × Chip Mix"
-                              : row.componentRole === "filler"
-                                ? "Profile default · oz within the dry-material pool"
-                                : row.componentRole === "resin"
-                                  ? "Profile default · fl oz from production volume"
-                                  : `Calculated · fl oz from Resin at ${normalizeSupportedSampleRatio(draft.formulation.resinParts,draft.formulation.hardenerParts)??`${draft.formulation.resinParts}:${draft.formulation.hardenerParts}`}`}
-                        </span>
-                      </label>
-                      {row.quantityProvenance === "manual" && (
-                          <label
-                            className={`${label} text-left sm:text-center`}
+                      <div className={`${label} text-left`}>
+                        <span>Quantity</span>
+                        <div className="relative mt-1">
+                          <input
+                            aria-label={`${row.componentRole} quantity`}
+                            type="number"
+                            min="0"
+                            step="0.0001"
+                            readOnly={row.quantityProvenance === "calculated"}
+                            value={
+                              row.quantityProvenance === "calculated"
+                                ? formulationResult?.rows[index]
+                                    ?.calculatedQuantity || ""
+                                : row.quantity
+                            }
+                            onChange={(e) =>
+                              patchRow(index, { quantity: e.target.value })
+                            }
+                            className={`${field} mt-0 pr-14 ${row.quantityProvenance === "calculated" ? "bg-slate-100" : row.componentRole === "aggregate" || row.componentRole === "hardener" ? "border-amber-300 bg-amber-50/60 dark:border-amber-700 dark:bg-amber-950/20" : "border-emerald-300 bg-emerald-50/60 dark:border-emerald-700 dark:bg-emerald-950/20"}`}
+                          />
+                          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">
+                            {row.componentRole === "resin" || row.componentRole === "hardener"
+                              ? "fl oz"
+                              : "oz"}
+                          </span>
+                        </div>
+                        <div className="mt-2 flex min-h-5 flex-wrap items-center gap-1.5">
+                          <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${row.quantityProvenance === "calculated" ? "bg-slate-200 text-slate-700" : row.componentRole === "aggregate" || row.componentRole === "hardener" ? "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"}`}>
+                            {row.quantityProvenance === "manual"
+                              ? row.componentRole === "aggregate" || row.componentRole === "hardener"
+                                ? "Modified"
+                                : "Authored"
+                              : row.componentRole === "filler" || row.componentRole === "resin"
+                                ? draft.formulation[row.componentRole === "filler" ? "fillerProvenance" : "resinProvenance"] === "restored"
+                                  ? "Restored"
+                                  : "Profile Default"
+                                : "Calculated"}
+                          </span>
+                        </div>
+                        <p className="mt-1 min-h-8 text-[11px] font-normal leading-4 text-slate-500">
+                          {row.componentRole === "aggregate"
+                            ? row.quantityProvenance === "manual"
+                              ? "Overrides the calculated Aggregate quantity"
+                              : `${row.percentage || "0"}% × ${formulationResult?.availableChipMixOz || "0"} oz Chip Mix`
+                            : row.componentRole === "filler"
+                              ? row.quantityProvenance === "manual"
+                                ? "Entered for this Sample"
+                                : "Profile default"
+                              : row.componentRole === "resin"
+                                ? row.quantityProvenance === "manual"
+                                  ? "Entered for this Sample"
+                                  : "Profile-derived from production volume"
+                                : row.componentRole === "hardener"
+                                  ? row.quantityProvenance === "manual"
+                                    ? "Overrides the calculated Hardener quantity"
+                                    : `Calculated from ${normalizeSupportedSampleRatio(draft.formulation.resinParts,draft.formulation.hardenerParts)??`${draft.formulation.resinParts}:${draft.formulation.hardenerParts}`}`
+                                  : "Entered for this Sample"}
+                        </p>
+                        {(row.componentRole === "aggregate" || row.componentRole === "filler" || row.componentRole === "resin" || row.componentRole === "hardener") && (
+                          <button
+                            type="button"
+                            onClick={() => patchRow(index, {
+                              quantityProvenance: row.quantityProvenance === "calculated" ? "manual" : "calculated",
+                              calculationBasis: row.componentRole === "aggregate" && row.quantityProvenance === "manual" ? "target_total" : null,
+                              quantity: row.quantityProvenance === "calculated" ? (formulationResult?.rows[index]?.calculatedQuantity || "") : row.quantity,
+                              unit: row.componentRole === "resin" || row.componentRole === "hardener" ? "fl oz" : "oz",
+                            })}
+                            className="mt-1 inline-flex min-h-11 items-center justify-center rounded-sm border border-slate-300 bg-white px-2.5 text-[11px] font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-700"
                           >
+                            {row.quantityProvenance === "calculated"
+                              ? "Enter manually"
+                              : row.componentRole === "filler" || row.componentRole === "resin"
+                                ? "Use profile default"
+                                : "Use calculated value"}
+                          </button>
+                        )}
+                        {row.componentRole === "other" && row.quantityProvenance === "manual" && (
+                          <label className="mt-2 block">
                             Unit
                             <PurchasingChoiceWithCustom
                               value={row.unit}
                               options={purchasingQuantityUnits}
-                              onChange={(value) =>
-                                patchRow(index, { unit: value })
-                              }
+                              onChange={(value) => patchRow(index, { unit: value })}
                               className={field}
                             />
                           </label>
                         )}
-                      {(row.componentRole === "aggregate" || row.componentRole === "filler" || row.componentRole === "resin" || row.componentRole === "hardener") && (
-                        <button type="button" onClick={()=>patchRow(index,{quantityProvenance:row.quantityProvenance==='calculated'?'manual':'calculated',calculationBasis:row.componentRole==='aggregate'&&row.quantityProvenance==='manual'?'target_total':null,quantity:row.quantityProvenance==='calculated'?(formulationResult?.rows[index]?.calculatedQuantity||''):row.quantity,unit:row.componentRole==='hardener'?'fl oz':'oz'})} className="min-h-10 self-end border border-slate-300 bg-white px-2 text-xs font-bold">
-                          {row.quantityProvenance==='calculated'?'Enter manually':'Use calculated'}
-                        </button>
-                      )}
-                      <label className={`${label} text-left sm:text-center`}>
+                      </div>
+                      <label className={`${label} text-left`}>
                         Vendor
                         <PurchasingVendorNameInput
                           id={`sample-material-vendor-${row.id}`}
