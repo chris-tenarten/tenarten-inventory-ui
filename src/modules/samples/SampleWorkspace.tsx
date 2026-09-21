@@ -54,6 +54,9 @@ import {
 import SampleRecentValueInput from "./SampleRecentValueInput";
 import SampleFormulationConfigurator from "./SampleFormulationConfigurator";
 import SampleVersionHistory from "./SampleVersionHistory";
+import SampleFormulationTutorial, {
+  type SampleTutorialStep,
+} from "./SampleFormulationTutorial";
 import {
   loadMySampleRecentValues,
   recordMySampleRecentValues,
@@ -101,6 +104,8 @@ export default function SampleWorkspace() {
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [tutorialActive, setTutorialActive] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState<SampleTutorialStep>("finished-pieces");
   const [catalogRow, setCatalogRow] = useState<number | null>(null);
   const [catalogQuery, setCatalogQuery] = useState("");
   const [catalogResults, setCatalogResults] = useState<
@@ -122,6 +127,18 @@ export default function SampleWorkspace() {
     const params = new URLSearchParams(window.location.search);
     return { bid: params.get("bid") ?? "", open: params.get("open") ?? "" };
   }, []);
+  const draftIdentity = draft?.id || (draft ? "unsaved" : "");
+  useEffect(() => {
+    setTutorialActive(false);
+    setTutorialStep("finished-pieces");
+  }, [draftIdentity]);
+  const changeTutorialStep = (next: SampleTutorialStep) => {
+    if (next === "finished-pieces" || next === "production-pour") {
+      const toggle = document.querySelector<HTMLButtonElement>('[data-sample-tutorial="calculation-settings-toggle"]');
+      if (toggle?.getAttribute("aria-expanded") !== "true") toggle?.click();
+    }
+    setTutorialStep(next);
+  };
   const reload = useCallback(async () => {
     setLoading(true);
     try {
@@ -673,6 +690,20 @@ export default function SampleWorkspace() {
                 {draft.id ? "Current Draft" : "New Sample · not saved yet"}
               </span>
               <div className="flex gap-2">
+                {draft.formulation.calculationVersion === SAMPLE_FORMULATION_CALCULATION_VERSION && (
+                  <button
+                    type="button"
+                    aria-label="Start Sample formulation tutorial"
+                    aria-pressed={tutorialActive}
+                    onClick={() => {
+                      changeTutorialStep("finished-pieces");
+                      setTutorialActive(true);
+                    }}
+                    className="inline-flex h-11 items-center border border-blue-800 bg-white px-3 text-xs font-bold text-blue-900 focus-visible:ring-2 focus-visible:ring-blue-700 sm:h-9"
+                  >
+                    Guide me
+                  </button>
+                )}
                 <button
                   type="button"
                   disabled={Boolean(busy) || !draft.id}
@@ -896,7 +927,7 @@ export default function SampleWorkspace() {
                 />
               </div>
             </section>
-            <section className="border border-slate-300 bg-white p-4">
+            <section data-sample-tutorial="aggregate-section" className="border border-slate-300 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-bold uppercase tracking-wide">
@@ -920,6 +951,7 @@ export default function SampleWorkspace() {
                 {displayRows.map(({row,sourceIndex:index},displayIndex) => (
                   <div key={row.id} className="space-y-3">
                   <article
+                    data-sample-tutorial={row.componentRole === "filler" ? "filler" : row.componentRole === "resin" || row.componentRole === "hardener" ? "resin-hardener" : undefined}
                     className="border border-slate-200 bg-slate-50 p-3"
                   >
                     <div className="flex items-center justify-between">
@@ -1364,6 +1396,18 @@ export default function SampleWorkspace() {
             if (preview.url.startsWith("blob:"))
               URL.revokeObjectURL(preview.url);
             setPreview(null);
+          }}
+        />
+      )}
+      {tutorialActive && draft?.formulation.calculationVersion === SAMPLE_FORMULATION_CALCULATION_VERSION && (
+        <SampleFormulationTutorial
+          step={tutorialStep}
+          onStepChange={changeTutorialStep}
+          onExit={() => setTutorialActive(false)}
+          onShowAdvanced={() => {
+            const toggle = document.querySelector<HTMLButtonElement>('[data-sample-tutorial="calculation-settings-toggle"]');
+            if (toggle?.getAttribute("aria-expanded") !== "true") toggle?.click();
+            window.requestAnimationFrame(() => document.querySelector<HTMLElement>('[data-sample-tutorial="advanced-settings"]')?.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
           }}
         />
       )}

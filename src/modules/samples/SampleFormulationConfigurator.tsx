@@ -1,6 +1,6 @@
 "use client";
 import { Settings2, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   applySupplierRatioDefault,
   applyFormulationProfile,
@@ -60,6 +60,16 @@ export default function SampleFormulationConfigurator({
   const [defaultStatus, setDefaultStatus] = useState("");
   const [adjusting, setAdjusting] = useState(false);
   const [adjustmentFiller, setAdjustmentFiller] = useState("");
+  useEffect(() => {
+    if (!adjusting) return;
+    const close = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      setAdjusting(false);
+    };
+    document.addEventListener("keydown", close);
+    return () => document.removeEventListener("keydown", close);
+  }, [adjusting]);
   const adjustmentPreview = useMemo(
     () => previewIncreasedFillerAdjustment(state, rows, adjustmentFiller),
     [state, rows, adjustmentFiller],
@@ -108,7 +118,7 @@ export default function SampleFormulationConfigurator({
   return (
     <section className="border border-slate-300 bg-white p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+        <div data-sample-tutorial="chip-summary">
           <h2 className="text-sm font-bold uppercase tracking-wide">
             Sample Plate Quantities
           </h2>
@@ -138,6 +148,7 @@ export default function SampleFormulationConfigurator({
           {isV4 && <button type="button" onClick={()=>{setAdjustmentFiller(result.effectiveFillerOz);setAdjusting(true);}} className="mt-3 min-h-10 border border-slate-400 bg-white px-3 text-xs font-bold">Adjust Formulation</button>}
         </div>
         <button
+          data-sample-tutorial="calculation-settings-toggle"
           type="button"
           aria-expanded={advanced}
           onClick={() => setAdvanced((value) => !value)}
@@ -150,7 +161,7 @@ export default function SampleFormulationConfigurator({
         </button>
       </div>
       {advanced && (
-        <div className="mt-4 border-t border-slate-200 pt-4">
+        <div data-sample-tutorial="advanced-settings" className="mt-4 border-t border-slate-200 pt-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wide text-slate-600">
               Custom Sample Calculation
@@ -183,7 +194,7 @@ export default function SampleFormulationConfigurator({
               <input type="number" min="0" step="0.01" value={state.totalFormulaWeightOz} onChange={(event)=>patch({totalFormulaWeightOz:event.target.value})} className={input}/>
               <span className={hint}>ounces · historical V2 mass-balance input</span>
             </label>}
-            <label className={label}>
+            <label data-sample-tutorial="finished-pieces" className={label}>
               Finished Plate Width
               <input
                 type="number"
@@ -197,7 +208,7 @@ export default function SampleFormulationConfigurator({
               />
               <span className={hint}>inches</span>
             </label>
-            <label className={label}>
+            <label data-sample-tutorial="finished-pieces" className={label}>
               Finished Plate Length
               <input
                 type="number"
@@ -211,7 +222,7 @@ export default function SampleFormulationConfigurator({
               />
               <span className={hint}>inches</span>
             </label>
-            <label className={label}>
+            <label data-sample-tutorial="finished-pieces" className={label}>
               Finished Pieces
               <input
                 type="number"
@@ -224,7 +235,7 @@ export default function SampleFormulationConfigurator({
                 className={input}
               />
             </label>
-            <label className={label}>
+            <label data-sample-tutorial="finished-pieces production-pour" className={label}>
               Thickness
               <input
                 type="number"
@@ -236,7 +247,7 @@ export default function SampleFormulationConfigurator({
               />
               <span className={hint}>inches · 0.375 = 3/8″</span>
             </label>
-            <label className={label}>
+            <label data-sample-tutorial="production-pour" className={label}>
               Production Pour Width
               <input
                 type="number"
@@ -247,7 +258,7 @@ export default function SampleFormulationConfigurator({
                 className={input}
               />
             </label>
-            <label className={label}>
+            <label data-sample-tutorial="production-pour" className={label}>
               Production Pour Length
               <input
                 type="number"
@@ -258,7 +269,7 @@ export default function SampleFormulationConfigurator({
                 className={input}
               />
             </label>
-            <label className={label}>
+            <label data-sample-tutorial="production-pour" className={label}>
               Dimension Unit
               <select
                 value={state.dimensionUnit}

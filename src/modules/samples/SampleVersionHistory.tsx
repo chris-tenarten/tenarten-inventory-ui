@@ -149,7 +149,7 @@ export default function SampleVersionHistory({
     }
   };
   return (
-    <section className="border border-slate-300 bg-white p-4">
+    <section data-sample-tutorial="working-sheet" className="border border-slate-300 bg-white p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide">
