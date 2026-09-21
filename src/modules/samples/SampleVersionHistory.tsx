@@ -1,7 +1,7 @@
 "use client";
 import { Eye, History, RotateCcw, Save } from "lucide-react";
 import { useRef, useState } from "react";
-import { pdfPreviewInputKey, SessionPdfPreviewCache } from "@/lib/pdf-preview-cache";
+import { sampleWorkingPreviewInputKey, SessionPdfPreviewCache } from "@/lib/pdf-preview-cache";
 import {
   formatSampleError,
   logSampleError,
@@ -78,7 +78,7 @@ export default function SampleVersionHistory({
     let target = sample;
     const initialKey = versionId
       ? `version:${sample.id}:${versionId}`
-      : `current:${pdfPreviewInputKey(sample)}`;
+      : `current:${sampleWorkingPreviewInputKey(sample)}`;
     const cached = previewCache.current.get(initialKey);
     if (cached) {
       onPreview(
@@ -112,7 +112,7 @@ export default function SampleVersionHistory({
       const blob = await generateWorkingSamplePdf(target.id, versionId);
       const cacheKey = versionId
         ? initialKey
-        : `current:${pdfPreviewInputKey(target)}`;
+        : `current:${sampleWorkingPreviewInputKey(target)}`;
       previewCache.current.set(cacheKey, blob);
       onPreview(
         URL.createObjectURL(blob),

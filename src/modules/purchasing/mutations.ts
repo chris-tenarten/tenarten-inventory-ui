@@ -113,7 +113,7 @@ export async function createPendingReceivalsFromPurchaseOrder(
   }));
 }
 
-export async function generatePurchaseOrderDraftPdf(draft: PurchaseOrderDraft): Promise<Blob> {
+export function purchaseOrderDraftPdfInput(draft: PurchaseOrderDraft) {
   const totals = calculatePurchaseOrderTotals(
     draft.lines.map(line => ({ quantityOrdered:line.details.quantityOrdered, unitPrice:line.details.unitPrice })),
     draft.discountPercent,
@@ -173,8 +173,12 @@ export async function generatePurchaseOrderDraftPdf(draft: PurchaseOrderDraft): 
       line_total:lineTotal === null ? null : centsToMoney(lineTotal),
     };
   });
+  return { action:'draft-preview' as const, orderSnapshot, linesSnapshot };
+}
+
+export async function generatePurchaseOrderDraftPdf(draft: PurchaseOrderDraft): Promise<Blob> {
   const { data,error } = await supabase.functions.invoke('generate-purchase-order-pdf', {
-    body:{ action:'draft-preview', orderSnapshot, linesSnapshot },
+    body:purchaseOrderDraftPdfInput(draft),
   });
   if (error) await throwPdfFunctionError(error);
   if (data instanceof Blob) return data;

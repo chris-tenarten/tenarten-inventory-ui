@@ -32,6 +32,7 @@ import {
   deletePurchaseOrderDraft,
   createPendingReceivalsFromPurchaseOrder,
   generatePurchaseOrderDraftPdf,
+  purchaseOrderDraftPdfInput,
   generatePurchaseOrderPdf,
   getPurchaseOrderPdfPreviewUrl,
   issuePurchaseOrder,
@@ -863,7 +864,7 @@ export function PurchaseOrderEditor({
       setErrors(found);
       return;
     }
-    const cached = draftPreviewCache.current.get(pdfPreviewInputKey(draft));
+    const cached = draftPreviewCache.current.get(pdfPreviewInputKey(purchaseOrderDraftPdfInput(draft)));
     if (cached) {
       if (pdfUrl.startsWith("blob:")) URL.revokeObjectURL(pdfUrl);
       setPdfUrl(URL.createObjectURL(cached));
@@ -889,7 +890,7 @@ export function PurchaseOrderEditor({
     }
     try {
       const blob = await generatePurchaseOrderDraftPdf(savedDraft);
-      draftPreviewCache.current.set(pdfPreviewInputKey(savedDraft), blob);
+      draftPreviewCache.current.set(pdfPreviewInputKey(purchaseOrderDraftPdfInput(savedDraft)), blob);
       if (pdfUrl.startsWith("blob:")) URL.revokeObjectURL(pdfUrl);
       setPdfUrl(URL.createObjectURL(blob));
       setPreview(true);

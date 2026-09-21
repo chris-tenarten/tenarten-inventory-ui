@@ -6,10 +6,10 @@ import {chromium} from '@playwright/test';
 import {createServer} from 'node:http';
 import {readFileSync, readdirSync, mkdirSync} from 'node:fs';
 const fake = `
-window.poEvents=[];
+window.poEvents=[];window.poSaveSequence=0;
 export const supabase={
  from(table){let single=false;const q=new Proxy({}, {get(_,key){if(key==='then')return resolve=>{const row=JSON.parse(localStorage.getItem('po-fixture')||'null');if(table==='purchase_orders')window.poEvents.push(['reload',row?.pdf_text_size]);resolve({data:table==='purchase_orders'&&single?row:[],error:null});};return()=>{if(key==='single')single=true;return q;};}});return q;},
- async rpc(name,args){window.poEvents.push([name,args]);if(name==='save_chip_purchase_order_draft_v2'){localStorage.setItem('po-fixture',JSON.stringify({...args.p_order,id:'fixture',po_number:'PO-FIXTURE',status:'draft',revision_number:1,created_by:args.p_actor,lines:args.p_lines.map(l=>({...l,details:[l]})),issuances:[]}));return {data:'fixture'};}return {data:null};},
+ async rpc(name,args){window.poEvents.push([name,args]);if(name==='save_chip_purchase_order_draft_v2'){window.poSaveSequence+=1;localStorage.setItem('po-fixture',JSON.stringify({...args.p_order,id:'fixture',po_number:'PO-FIXTURE',status:'draft',revision_number:1,created_by:args.p_actor,updated_at:'2026-09-21T10:00:0'+window.poSaveSequence+'Z',lines:args.p_lines.map(l=>({...l,details:[l]})),issuances:[]}));return {data:'fixture'};}return {data:null};},
  functions:{async invoke(name,{body}){window.poEvents.push(['preview',body.orderSnapshot.pdf_text_size]);return {data:new Blob(['fixture PDF'],{type:'application/pdf'})};}}
 };`;
 const result=await build({stdin:{contents:`import React from 'react';import {createRoot} from 'react-dom/client';import {PurchaseOrderEditor} from './src/modules/purchasing/PurchaseOrderEditor';import {createPurchaseOrderDraft} from './src/modules/purchasing/defaults';import {loadPurchaseOrder} from './src/modules/purchasing/queries';
@@ -61,5 +61,5 @@ try {
   await page.screenshot({path:`tmp/pdfs/ui/editor-${width}.png`});
  }
  assert.deepEqual(errors,[]);
- console.log('PO editor desktop/mobile selection, save-before-preview, payload, and reload passed (local fake Supabase; PDF renderer tested separately).');
+ console.log('PO editor desktop/mobile selection, save-before-preview, metadata-stable three-preset cache, payload, and reload passed (local fake Supabase; PDF renderer tested separately).');
 } finally {await browser.close();await new Promise(r=>server.close(r));}
