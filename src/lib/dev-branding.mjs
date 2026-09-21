@@ -10,7 +10,7 @@ const PRODUCTION_BRANDING = Object.freeze({
   subtitle: null,
   defaultAppearance: "light",
   showDeveloperArtwork: false,
-  allowEarlyAccessBadge: true,
+  allowEarlyAccessBadge: false,
 });
 
 const DEVELOPMENT_BRANDING = Object.freeze({

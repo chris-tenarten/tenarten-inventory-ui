@@ -55,7 +55,7 @@ Production Pipeline now presents three synchronized views over the same canonica
 
 When `NEXT_PUBLIC_ENABLE_PLANNING=true`, Planning appears as the second job Inspector tab. It does not add a top-level application or navigation route. With the flag absent or not exactly `true`, Production renders and loads exactly as before.
 
-`NEXT_PUBLIC_EARLY_ACCESS=true` enables the visual Early Access deployment badge. It is an exact-string, presentation-only flag: it does not enable Planning or alter application behavior. Planning remains independently controlled by `NEXT_PUBLIC_ENABLE_PLANNING=true`.
+`NEXT_PUBLIC_EARLY_ACCESS=true` is a legacy visual badge flag. TenOps Production branding now explicitly disallows that badge, even when this flag is present. It is an exact-string, presentation-only flag: it does not enable Planning or alter application behavior. Planning remains independently controlled by `NEXT_PUBLIC_ENABLE_PLANNING=true`.
 
 TenOps appearance is an application-wide Light or Dark preference managed from Settings. Light is the first-visit Production default, and authenticated selections follow the canonical account preference across TenDev and Production. Environment configuration controls branding, not theme availability: TenDev retains its Research & Development identity and developer artwork, while Production retains ordinary TenOps branding with no TenDev graffiti. The same reviewed application tree is promoted between environments; Dark Mode source is not stripped for Production. Appearance does not affect printed or generated documents.
 

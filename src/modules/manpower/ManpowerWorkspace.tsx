@@ -588,11 +588,25 @@ export default function ManpowerWorkspace() {
   const [linkingGroupId, setLinkingGroupId] = useState<string | null>(null);
   const collapseInitialized = useRef(false);
   const newGroupInputRef = useRef<HTMLInputElement | null>(null);
+  // Review may include archived Jobs represented in labor; entry-target choices stay unchanged.
+  const reviewJobs = useMemo(() => {
+    const byId = new Map(entries.flatMap((entry) => entry.job ? [[entry.job.id, entry.job] as const] : []));
+    for (const job of jobs) byId.set(job.id, job);
+    return [...byId.values()].sort((a, b) => manpowerJobLabel(a).localeCompare(manpowerJobLabel(b)));
+  }, [entries, jobs]);
   const targets = useMemo(() => buildManpowerWorkTargetOptions(jobs, entries), [entries, jobs]);
 
   useEffect(() => {
     if (showNewGroup) newGroupInputRef.current?.focus();
   }, [showNewGroup]);
+
+  const selectJob = (jobId: string) => {
+    const url = new URL(window.location.href);
+    if (jobId) url.searchParams.set('job', jobId); else url.searchParams.delete('job');
+    window.history.pushState(null, '', `${url.pathname}${url.search}`);
+    setLinkedJobId(jobId || null);
+    setProductFilter('');
+  };
 
   const refreshCategories = useCallback(async () => {
     try { setCategories(await loadProductCategories()); }
@@ -628,7 +642,7 @@ export default function ManpowerWorkspace() {
   useEffect(() => { void load(); }, [load]);
 
   useEffect(() => {
-    const syncJobFilter = () => setLinkedJobId(new URLSearchParams(window.location.search).get('job'));
+    const syncJobFilter = () => { setLinkedJobId(new URLSearchParams(window.location.search).get('job')); setProductFilter(''); };
     window.addEventListener('popstate', syncJobFilter);
     return () => window.removeEventListener('popstate', syncJobFilter);
   }, []);
@@ -918,8 +932,19 @@ export default function ManpowerWorkspace() {
       {error && <div className="mt-4 border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">{error}</div>}
 
       <div className="mt-5 space-y-3">
-        <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">Product Category filter<select aria-label="Product Category filter" className={`${inputClass} max-w-xs`} value={productFilter} onFocus={() => void refreshCategories().catch(() => {})} onChange={(event) => setProductFilter(event.target.value)}><option value="">All Products</option>{categories.filter((category) => category.is_active || entries.some((entry) => entry.product_category_id === category.id)).map((category) => <option key={category.id} value={category.id}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}<option value={UNCATEGORIZED}>Uncategorized</option></select></label>
-        {!loading && !loadError && <ProductLaborSummary entries={groups.flatMap((group) => group.entries)} totalEntries={entries.filter((entry) => !linkedJobId || entry.job_id === linkedJobId)} categories={categories} tasks={tasks} jobScoped={Boolean(linkedJobId)} />}
+        <div className="flex flex-wrap items-end gap-3">
+          <label className="min-w-0 text-xs font-semibold text-slate-600">Job labor review
+            <select aria-label="Job labor review" className={`${inputClass} mt-1 max-w-sm`} value={linkedJobId ?? ''} onChange={(event) => selectJob(event.target.value)}>
+              <option value="">All reporting groups</option>
+              {linkedJobId && !reviewJobs.some((job) => job.id === linkedJobId) && <option value={linkedJobId}>Selected Production job</option>}
+              {reviewJobs.map((job) => <option key={job.id} value={job.id}>{manpowerJobLabel(job)}{job.archived_at ? ' · Archived' : ''}</option>)}
+            </select>
+          </label>
+          {linkedJobId && <button type="button" onClick={() => selectJob('')} className="py-2 text-xs font-semibold text-slate-500 underline">Clear job filter</button>}
+        </div>
+        {linkedJobId && !loading && !loadError && <ProductLaborSummary key={linkedJobId} entries={groups.flatMap((group) => group.entries)} totalEntries={entries.filter((entry) => entry.job_id === linkedJobId)} categories={categories} tasks={tasks}>
+          <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">Product Category filter<select aria-label="Product Category filter" className={`${inputClass} max-w-xs`} value={productFilter} onFocus={() => void refreshCategories().catch(() => {})} onChange={(event) => setProductFilter(event.target.value)}><option value="">All Products</option>{categories.filter((category) => category.is_active || entries.some((entry) => entry.product_category_id === category.id)).map((category) => <option key={category.id} value={category.id}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}<option value={UNCATEGORIZED}>Uncategorized</option></select></label>
+        </ProductLaborSummary>}
         {(normalizedSearch || productFilter || linkedJobId) && <p className="text-xs text-slate-500">Clear filters to create an empty group or change a whole group’s Job.</p>}
         <p className="text-xs text-slate-500">Choose one Product Category per line. Split hours across separate lines when labor belongs to different products.</p>
         <div className="flex min-h-9 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -930,7 +955,7 @@ export default function ManpowerWorkspace() {
             <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr('Search manpower…','Buscar mano de obra…')} className={`${inputClass} pl-9`} />
           </label>
         </div>
-        {linkedJobId ? <div className="flex items-center gap-2 text-xs"><span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 font-semibold text-blue-800">Job: {jobs.find((job) => job.id === linkedJobId)?.name ?? 'Selected Production job'}</span><button type="button" onClick={() => { const url = new URL(window.location.href); url.searchParams.delete('job'); window.history.pushState(null, '', `${url.pathname}${url.search}`); setLinkedJobId(null); }} className="font-semibold text-slate-500 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">Clear job filter</button></div> : null}
+
         {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : loadError ? <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{loadError}</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{linkedJobId ? 'No manpower reporting groups are linked to this Production job.' : normalizedSearch || productFilter ? 'No manpower entries match your filters.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
           const identityEntries = entries.filter((entry) => (entry.reporting_group_id ?? '__ungrouped__') === group.key);
           const identityFiltered = Boolean(normalizedSearch || productFilter || linkedJobId);

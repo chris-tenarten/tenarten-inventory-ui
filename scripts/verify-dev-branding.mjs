@@ -19,7 +19,7 @@ const production = getBrandingConfig(false);
 const development = getBrandingConfig(true);
 assert.deepEqual(
   { name: production.productName, subtitle: production.subtitle, appearance: production.defaultAppearance, artwork: production.showDeveloperArtwork, earlyAccess: production.allowEarlyAccessBadge },
-  { name: "TenOps", subtitle: null, appearance: "light", artwork: false, earlyAccess: true },
+  { name: "TenOps", subtitle: null, appearance: "light", artwork: false, earlyAccess: false },
 );
 assert.deepEqual(
   { name: development.productName, subtitle: development.subtitle, appearance: development.defaultAppearance, artwork: development.showDeveloperArtwork, earlyAccess: development.allowEarlyAccessBadge },

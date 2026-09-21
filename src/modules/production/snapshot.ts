@@ -1,3 +1,4 @@
+import { summarizeProductLabor, type LaborBreakdown } from '../manpower/product-reporting';
 import { loadCompleteLabor } from '../manpower/pagination';
 import { supabase } from '@/lib/supabase';
 import type { ProductionJob } from './types';
@@ -14,6 +15,7 @@ export type SnapshotData = {
   transitionJobIds: { started: Set<string>; completed: Set<string>; shipped: Set<string> };
   jobsDeliveredLate: number;
   reportedHours: number;
+  productLabor: LaborBreakdown[];
   reportingDays: number;
   laborJobCount: number;
   laborJobIds: Set<string>;
@@ -49,7 +51,7 @@ export async function loadMonthlySnapshot(now = new Date()): Promise<SnapshotDat
   const [jobs, activity, labor, laborLinks, reports, materialLinks, transactions, completedReceivals, unresolved] = await Promise.all([
     loadProductionJobs(true),
     supabase.from('job_activity').select('job_id,event_type,metadata,occurred_at').gte('occurred_at', startInstant).lte('occurred_at', endInstant),
-    loadCompleteLabor((from, to) => supabase.from('manpower_entries').select('id,job_id,rework_cycle_id,work_date,am_hours,pm_hours,worker:manpower_workers(display_name),task:manpower_tasks(display_name),rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id,sequence_number)', { count: 'exact' }).gte('work_date', period.start).lte('work_date', period.end).order('id').range(from, to)),
+    loadCompleteLabor((from, to) => supabase.from('manpower_entries').select('id,job_id,rework_cycle_id,work_date,am_hours,pm_hours,task_id,product_category_id,product_category:manpower_product_categories(id,display_name,is_active),worker:manpower_workers(display_name),task:manpower_tasks(display_name),rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id,sequence_number)', { count: 'exact' }).gte('work_date', period.start).lte('work_date', period.end).order('id').range(from, to)),
     loadCompleteLabor((from, to) => supabase.from('manpower_entries').select('id,job_id', { count: 'exact' }).not('job_id', 'is', null).order('id').range(from, to)),
     supabase.from('material_usage_reports').select('id,job_id,report_date,material_usage_lines(material_name,quantity,unit)').gte('report_date', period.start).lte('report_date', period.end),
     supabase.from('material_usage_reports').select('job_id').not('job_id', 'is', null),
@@ -58,6 +60,14 @@ export async function loadMonthlySnapshot(now = new Date()): Promise<SnapshotDat
     supabase.from('pending_receivals').select('id,material_name,vendor,eta,created_at,status').in('status', ['pending', 'partially_received']).order('created_at', { ascending: true }).limit(8),
   ]);
   for (const result of [activity, reports, materialLinks, transactions, completedReceivals, unresolved]) if (result.error) throw result.error;
+
+  // Use the same complete, date-filtered labor as every other Snapshot labor metric.
+  const productCategories = labor.flatMap((row) => row.product_category ? (Array.isArray(row.product_category) ? row.product_category : [row.product_category]) : []);
+  const productLabor = summarizeProductLabor(labor.map((row) => ({
+    am_hours: Number(row.am_hours ?? 0), pm_hours: Number(row.pm_hours ?? 0),
+    product_category_id: row.product_category_id, task_id: row.task_id,
+    task: { display_name: (Array.isArray(row.task) ? row.task[0] : row.task)?.display_name ?? 'Unknown task' },
+  })), productCategories, [], 'product');
 
   const jobById = new Map(jobs.map((job) => [job.id, job]));
   const transitionJobIds = { started: new Set<string>(), completed: new Set<string>(), shipped: new Set<string>() };
@@ -124,7 +134,7 @@ export async function loadMonthlySnapshot(now = new Date()): Promise<SnapshotDat
   }
 
   return {
-    period, jobs, transitionJobIds, jobsDeliveredLate: jobsDeliveredLate.size, reportedHours, reportingDays: reportingDays.size, laborJobCount: laborJobIds.size, laborJobIds, linkedLaborJobIds,
+    period, jobs, productLabor, transitionJobIds, jobsDeliveredLate: jobsDeliveredLate.size, reportedHours, reportingDays: reportingDays.size, laborJobCount: laborJobIds.size, laborJobIds, linkedLaborJobIds,
     topLaborJobs: rank(laborJobs).map((row) => { const job = jobById.get(row.label); const lifecycle = lifecycleLabor.get(row.label); return { ...row, label: job ? `${job.job_number ? `${job.job_number} — ` : ''}${job.name}` : 'Unlinked job', jobId: job?.id, jobNumber: job?.job_number, lifecycleLabor: lifecycle ? { originalOrUnclassifiedHours: lifecycle.originalOrUnclassifiedHours, reworks: lifecycle.reworks } : undefined }; }), topWorkers: rank(workers), topTasks: rank(tasks),
     dailyLabor: Array.from({ length: 30 }, (_, index) => { const date = new Date(`${period.start}T12:00:00`); date.setDate(date.getDate() + index); const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`; return { date: key, hours: dailyLabor.get(key) ?? 0 }; }),
     materialReportCount: reports.data?.length ?? 0, materialJobIds, linkedMaterialJobIds, topMaterialsByFrequency: rank(materialFrequency), topMaterialsByQuantity: rank(materialQuantity),

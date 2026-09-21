@@ -2,6 +2,12 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { isEarlyAccessEnabled } from "../src/lib/early-access.mjs";
 
+import { getBrandingConfig } from "../src/lib/dev-branding.mjs";
+
+// A stale deployment flag must never opt Production into unapproved branding.
+assert.equal(getBrandingConfig(false).allowEarlyAccessBadge, false);
+assert.equal(getBrandingConfig(true).allowEarlyAccessBadge, false);
+
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 const [helper, badge, appBranding, transmittal, planning, manifest] = await Promise.all([
   read("src/lib/early-access.mjs"),

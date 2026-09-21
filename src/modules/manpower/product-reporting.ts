@@ -1,12 +1,15 @@
 import type { ManpowerEntry, ManpowerReference } from './types';
 
+export type ProductReference = Pick<ManpowerReference, 'id' | 'display_name' | 'is_active'>;
+export type ProductLaborEntry = Pick<ManpowerEntry, 'am_hours' | 'pm_hours' | 'product_category_id' | 'task_id'> & { task: { display_name: string } };
+
 export const UNCATEGORIZED = '__uncategorized__';
 export const entryHundredths = (entry: Pick<ManpowerEntry, 'am_hours' | 'pm_hours'>) =>
   Math.round(Number(entry.am_hours) * 100) + Math.round(Number(entry.pm_hours) * 100);
 export const laborHours = (entries: Pick<ManpowerEntry, 'am_hours' | 'pm_hours'>[]) =>
   entries.reduce((sum, entry) => sum + entryHundredths(entry), 0) / 100;
 export const productKey = (entry: Pick<ManpowerEntry, 'product_category_id'>) => entry.product_category_id ?? UNCATEGORIZED;
-export function productLabel(id: string, categories: ManpowerReference[]) {
+export function productLabel(id: string, categories: ProductReference[]) {
   if (id === UNCATEGORIZED) return 'Uncategorized';
   const category = categories.find((item) => item.id === id);
   return category ? `${category.display_name}${category.is_active ? '' : ' · Inactive'}` : 'Unavailable category';
@@ -17,7 +20,7 @@ export function validateProductSelection(value: string, categories: ManpowerRefe
   return categories.some((item) => item.id === value && item.is_active) ? '' : 'Choose an active Product Category; this selection is no longer active.';
 }
 export type LaborBreakdown = { id: string; label: string; hours: number; children: { id: string; label: string; hours: number }[] };
-export function summarizeProductLabor(entries: ManpowerEntry[], categories: ManpowerReference[], tasks: ManpowerReference[], orientation: 'task' | 'product'): LaborBreakdown[] {
+export function summarizeProductLabor(entries: ProductLaborEntry[], categories: ProductReference[], tasks: Pick<ManpowerReference, 'id' | 'display_name'>[], orientation: 'task' | 'product'): LaborBreakdown[] {
   const parents = new Map<string, { label: string; units: number; children: Map<string, { label: string; units: number }> }>();
   for (const entry of entries) {
     const product = productKey(entry);
