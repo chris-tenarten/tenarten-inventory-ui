@@ -14,6 +14,8 @@ import { openProductionJob } from '../production/job-options';
 import { productionStatusVisualByValue } from '../production/status-visuals';
 import {
   loadProductCategories,
+  updateManpowerProductCategory,
+  MAX_BULK_PRODUCT_ENTRIES,
   createManpowerEntry,
   createManpowerReference,
   createManpowerReportingGroup,
@@ -463,8 +465,14 @@ function BulkActionBar({
   onClear,
   onDelete,
   onApply,
+  onApplyCategory,
+  categorySelectedCount,
+  categoryBusy,
 }: {
   selectedCount: number;
+  categorySelectedCount: number;
+  categoryBusy: boolean;
+  onApplyCategory: (categoryId: string) => Promise<void>;
   targets: ManpowerWorkTargetOption[];
   reportingGroups: ManpowerReportingGroup[];
   workers: ManpowerReference[];
@@ -473,6 +481,9 @@ function BulkActionBar({
   onDelete: () => Promise<{ deleted: number; failed: number }>;
   onApply: (changes: Partial<ManpowerEntryInput>) => Promise<{ updated: number; failed: number }>;
 }) {
+  const { categories, refresh } = useContext(ProductContext);
+  const [categoryId, setCategoryId] = useState('');
+  const activeCategoryId = categories.some((category) => category.id === categoryId && category.is_active) ? categoryId : '';
   const [workDate, setWorkDate] = useState('');
   const [workerId, setWorkerId] = useState('');
   const [taskId, setTaskId] = useState('');
@@ -510,19 +521,27 @@ function BulkActionBar({
       <div className="flex flex-wrap items-center gap-2">
         <span className="mr-1 text-xs font-bold text-blue-950">{selectedCount} selected</span>
         <button type="button" onClick={onClear} className="h-8 px-2 text-xs font-bold text-blue-800 hover:bg-blue-100">Deselect all</button>
-        <button type="button" onClick={() => void removeSelected()} disabled={Boolean(busy)} className="h-8 border border-red-700 bg-red-700 px-2 text-xs font-bold text-white disabled:opacity-50">{busy === 'delete' ? 'Deleting…' : 'Delete selected'}</button>
+        <button type="button" onClick={() => void removeSelected()} disabled={(Boolean(busy) || categoryBusy)} className="h-8 border border-red-700 bg-red-700 px-2 text-xs font-bold text-white disabled:opacity-50">{busy === 'delete' ? 'Deleting…' : 'Delete selected'}</button>
 
         <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
           <select value={reportingGroupId} onChange={(event) => setReportingGroupId(event.target.value)} className={compactInput}>
             <option value="">Reporting Group</option>
             {reportingGroups.map((group) => <option key={group.id} value={group.id}>{group.display_name}</option>)}
           </select>
-          <button type="button" disabled={!reportingGroupId || Boolean(busy)} onClick={() => void apply('group', { reporting_group_id: reportingGroupId })} className={buttonClass}>{busy === 'group' ? 'Applying…' : 'Move to Group'}</button>
+          <button type="button" disabled={!reportingGroupId || (Boolean(busy) || categoryBusy)} onClick={() => void apply('group', { reporting_group_id: reportingGroupId })} className={buttonClass}>{busy === 'group' ? 'Applying…' : 'Move to Group'}</button>
         </div>
 
         <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
           <input type="date" value={workDate} onChange={(event) => setWorkDate(event.target.value)} className={compactInput} />
-          <button type="button" disabled={!workDate || Boolean(busy)} onClick={() => void apply('date', { work_date: workDate })} className={buttonClass}>{busy === 'date' ? 'Applying…' : 'Apply Date'}</button>
+          <button type="button" disabled={!workDate || (Boolean(busy) || categoryBusy)} onClick={() => void apply('date', { work_date: workDate })} className={buttonClass}>{busy === 'date' ? 'Applying…' : 'Apply Date'}</button>
+        </div>
+
+        <div className="flex max-w-full flex-wrap items-center gap-1 border-l border-blue-300 pl-2">
+          <select aria-label="Bulk Product Category" value={activeCategoryId} disabled={categoryBusy} onFocus={() => void refresh().catch(() => {})} onChange={(event) => setCategoryId(event.target.value)} className={`${compactInput} min-w-0 max-w-[180px]`}>
+            <option value="">Product Category</option>
+            {categories.filter((category) => category.is_active).map((category) => <option key={category.id} value={category.id}>{category.display_name}</option>)}
+          </select>
+          <button type="button" disabled={!activeCategoryId || Boolean(busy) || categoryBusy || categorySelectedCount > MAX_BULK_PRODUCT_ENTRIES} onClick={() => void onApplyCategory(activeCategoryId)} className={buttonClass}>{categoryBusy ? 'Applying…' : 'Apply Category'}</button>
         </div>
 
         <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
@@ -530,7 +549,7 @@ function BulkActionBar({
             <option value="">Worker</option>
             {workers.filter((worker) => worker.is_active).map((worker) => <option key={worker.id} value={worker.id}>{worker.display_name}</option>)}
           </select>
-          <button type="button" disabled={!workerId || Boolean(busy)} onClick={() => void apply('worker', { worker_id: workerId })} className={buttonClass}>{busy === 'worker' ? 'Applying…' : 'Apply Worker'}</button>
+          <button type="button" disabled={!workerId || (Boolean(busy) || categoryBusy)} onClick={() => void apply('worker', { worker_id: workerId })} className={buttonClass}>{busy === 'worker' ? 'Applying…' : 'Apply Worker'}</button>
         </div>
 
         <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
@@ -538,19 +557,20 @@ function BulkActionBar({
             <option value="">Task</option>
             {tasks.filter((task) => task.is_active).map((task) => <option key={task.id} value={task.id}>{task.display_name}</option>)}
           </select>
-          <button type="button" disabled={!taskId || Boolean(busy)} onClick={() => void apply('task', { task_id: taskId })} className={buttonClass}>{busy === 'task' ? 'Applying…' : 'Apply Task'}</button>
+          <button type="button" disabled={!taskId || (Boolean(busy) || categoryBusy)} onClick={() => void apply('task', { task_id: taskId })} className={buttonClass}>{busy === 'task' ? 'Applying…' : 'Apply Task'}</button>
         </div>
 
-        <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
+        <div className="flex max-w-full flex-wrap items-center gap-1 border-l border-blue-300 pl-2">
           <WorkIdentityControl compact value={workTarget} temporaryLabel={unlistedLabel} targets={targets} onChange={(value, label) => { setWorkTarget(value); setUnlistedLabel(label); }} />
           <button
             type="button"
-            disabled={!workTarget || (workTarget === UNLISTED_WORK_TARGET && !unlistedLabel.trim()) || Boolean(busy)}
+            disabled={!workTarget || (workTarget === UNLISTED_WORK_TARGET && !unlistedLabel.trim()) || (Boolean(busy) || categoryBusy)}
             onClick={() => void apply('identity', manpowerIdentityForTarget(workTarget, unlistedLabel, targets))}
-            className={buttonClass}
+            className={`${buttonClass} shrink-0 whitespace-nowrap`}
           >{busy === 'identity' ? 'Applying…' : 'Apply Job / Label'}</button>
         </div>
       </div>
+      <p className="mt-2 text-[10px] text-blue-900">Category applies to all {categorySelectedCount} selected rows across groups and filters. Other actions use this group’s {selectedCount} selected rows. Maximum {MAX_BULK_PRODUCT_ENTRIES} per category apply.</p>
       {message && <div className={`mt-2 text-xs font-semibold ${message.includes('failed') ? 'text-red-700' : 'text-emerald-700'}`}>{message}</div>}
     </div>
   );
@@ -580,6 +600,9 @@ export default function ManpowerWorkspace() {
   const [referenceEditors, setReferenceEditors] = useState<Set<'worker' | 'task'>>(() => new Set());
   const [referencePanelMessage, setReferencePanelMessage] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [categoryBusy, setCategoryBusy] = useState(false);
+  const categoryApplying = useRef(false);
+  const [categoryResult, setCategoryResult] = useState<{ error: boolean; message: string } | null>(null);
   const [selectedEmptyGroupIds, setSelectedEmptyGroupIds] = useState<Set<string>>(() => new Set());
   const [newGroupName, setNewGroupName] = useState('');
   const [creatingGroup, setCreatingGroup] = useState(false);
@@ -830,6 +853,35 @@ export default function ManpowerWorkspace() {
     });
   }
 
+  async function applyBulkCategory(categoryId: string) {
+    if (categoryApplying.current) return;
+    const ids = [...selectedIds];
+    const validation = validateProductSelection(categoryId, categories);
+    if (validation || ids.length > MAX_BULK_PRODUCT_ENTRIES) {
+      setCategoryResult({ error: true, message: validation || `Select at most ${MAX_BULK_PRODUCT_ENTRIES} rows. No rows were changed.` });
+      return;
+    }
+    categoryApplying.current = true;
+    setCategoryBusy(true); setCategoryResult(null);
+    try {
+      const updated = await updateManpowerProductCategory(ids, categoryId);
+      const byId = new Map(updated.map((entry) => [entry.id, entry]));
+      setEntries((items) => items.map((entry) => byId.get(entry.id) ?? entry));
+      setGroupSelected(ids, false);
+      setCategoryResult({ error: false, message: `Product Category applied to ${updated.length} ${updated.length === 1 ? 'row' : 'rows'}. Hours and other labor facts unchanged.` });
+    } catch (caught) {
+      // A rejected SQL statement rolls back. A lost response or omitted RLS row is
+      // ambiguous; reload authoritative values without retrying the write.
+      const [labor, choices] = await Promise.allSettled([loadManpowerEntries(), loadProductCategories()]);
+      if (labor.status === 'fulfilled') setEntries(labor.value);
+      else setLoadError('Unable to reconcile labor after the category request. Refresh before relying on totals.');
+      if (choices.status === 'fulfilled') setCategories(choices.value);
+      setCategoryResult({ error: true, message: `Category application was not confirmed: ${caughtMessage(caught, 'Request failed.')} Selection preserved. ${labor.status === 'fulfilled' ? 'Current labor values reloaded; review before retrying.' : 'Labor refresh failed.'} ${choices.status === 'rejected' ? 'Category refresh failed; refresh before retrying.' : 'Category choices refreshed.'}` });
+    } finally {
+      categoryApplying.current = false; setCategoryBusy(false);
+    }
+  }
+
   async function applyBulkUpdate(
     ids: string[],
     changes: Partial<ManpowerEntryInput>,
@@ -929,6 +981,7 @@ export default function ManpowerWorkspace() {
         <ReferenceManager noun="task" options={tasks} onCreate={(name, order) => createManagedReference('task', name, order)} onUpdate={(reference, changes) => updateReference('task', reference, changes)} onEditingChange={(editing) => setReferenceEditing('task', editing)} />
       </div>}
 
+      {categoryResult && <div role={categoryResult.error ? "alert" : "status"} className={`mt-4 border px-4 py-3 text-sm font-semibold ${categoryResult.error ? "border-red-300 bg-red-50 text-red-800" : "border-emerald-300 bg-emerald-50 text-emerald-800"}`}>{categoryResult.message}</div>}
       {error && <div className="mt-4 border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">{error}</div>}
 
       <div className="mt-5 space-y-3">
@@ -1019,7 +1072,7 @@ export default function ManpowerWorkspace() {
                 <span className="flex-1">{groupJob ? tr('This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.','Este grupo de mano de obra está vinculado al trabajo de Producción. Las horas registradas aquí se incluyen en las horas registradas del flujo de producción.') : tr('This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.','Este grupo de mano de obra no está vinculado a un trabajo de Producción. Las horas registradas aquí no aparecerán en Producción hasta que se vincule un trabajo.')}</span>
                 <ProductionJobLinkSelector groupLabel={group.label} targets={targets} value={groupTargetValue} selectedLabel={groupTargetLabel} disabled={linkingGroupId === group.key || identityFiltered} onChange={(workTarget) => void linkReportingGroup(group.key, identityEntries, workTarget, previousJobName)} />
               </div>}
-              {selectedGroupIds.length > 0 && <BulkActionBar selectedCount={selectedGroupIds.length} targets={targets} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
+              {selectedGroupIds.length > 0 && <BulkActionBar categorySelectedCount={selectedIds.size} categoryBusy={categoryBusy} onApplyCategory={applyBulkCategory} selectedCount={selectedGroupIds.length} targets={targets} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
               {emptyGroupSelected && group.group && <div className="flex items-center justify-between border-b border-blue-200 bg-blue-50 px-3 py-2 text-xs"><span className="font-semibold text-blue-900">Empty group selected</span><div className="flex items-center gap-3"><button type="button" onClick={() => setSelectedEmptyGroupIds((current) => { const next = new Set(current); next.delete(group.key); return next; })} className="font-bold text-slate-600 hover:underline">Clear selection</button><button type="button" onClick={() => void deleteSelectedEmptyGroup(group.group!)} className="h-8 border border-red-500 bg-white px-3 font-bold text-red-700 hover:bg-red-50">Delete Empty Group</button></div></div>}
               {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1480px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Product Category</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{addingToGroupId === group.key && group.group && <tr className="border-b-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly={Boolean(draft.workTarget)} jobControl={draft.workTarget ? newEntryJobCell : undefined} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={groupTargetValue === UNLISTED_WORK_TARGET ? temporaryGroupJobCell : <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === manpowerEntryTargetValue(entry))?.label ?? entry.unlisted_work_label ?? 'Unlinked'}</div>} />)}</tbody></table></div>}
             </section>

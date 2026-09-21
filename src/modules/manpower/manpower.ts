@@ -224,6 +224,28 @@ export async function updateManpowerEntries(
   );
 }
 
+// One PostgREST PATCH = one database statement/transaction. Never split into batches.
+// Bound UUID query length and keep returned rows below the hosted response limit.
+export const MAX_BULK_PRODUCT_ENTRIES = 100;
+export async function updateManpowerProductCategory(ids: string[], categoryId: string): Promise<ManpowerEntry[]> {
+  const uniqueIds = [...new Set(ids)];
+  if (!uniqueIds.length) throw new Error('Select at least one labor row.');
+  if (uniqueIds.length > MAX_BULK_PRODUCT_ENTRIES) throw new Error(`Select at most ${MAX_BULK_PRODUCT_ENTRIES} rows per category application. No request was sent.`);
+  if (!categoryId) throw new Error('Select an active Product Category.');
+  const { data, error, count } = await supabase.from('manpower_entries')
+    .update({ product_category_id: categoryId }, { count: 'exact' })
+    .in('id', uniqueIds).select(ENTRY_COLUMNS);
+  if (error) throw error;
+  const updated = (data ?? []) as unknown as ManpowerEntry[];
+  const returned = new Set(updated.map((entry) => entry.id));
+  // RLS/deletion can omit rows without a SQL error. Never call that complete success.
+  if (count !== uniqueIds.length || returned.size !== uniqueIds.length || updated.length !== uniqueIds.length ||
+      uniqueIds.some((id) => !returned.has(id)) || updated.some((entry) => entry.product_category_id !== categoryId)) {
+    throw new Error(`${updated.length} of ${uniqueIds.length} requested rows returned; complete category application was not confirmed. Some rows may have changed.`);
+  }
+  return updated;
+}
+
 export async function updateManpowerGroupIdentity(
   ids: string[],
   identity: Pick<ManpowerEntryInput, 'job_id' | 'rework_cycle_id' | 'unlisted_work_label'>,

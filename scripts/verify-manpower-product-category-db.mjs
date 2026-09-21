@@ -78,6 +78,13 @@ insert into manpower_entries(id,work_date,worker_id,task_id,job_id,reporting_gro
     assert.deepEqual(local.role_caps, hostedContract.role_caps, 'installed operational capabilities');
     console.log('Captured hosted labor columns/constraints, policies, grants, and capability contract matched in local replay.');
   }
+  // Additional historical fixtures for the category-only multi-row PATCH contract.
+  sql(`insert into jobs(id) values('${id(201)}');
+insert into manpower_reporting_groups(id,display_name) values('${id(202)}','Other group');
+insert into manpower_entries(id,work_date,worker_id,task_id,job_id,rework_cycle_id,reporting_group_id,unlisted_work_label,am_hours,pm_hours,notes) values
+('${id(106)}','2026-09-17','${id(100)}','${id(101)}','${id(102)}','${id(103)}','${id(104)}',null,2,0.5,'Rework facts'),
+('${id(107)}','2026-09-18','${id(100)}','${id(101)}','${id(201)}',null,'${id(202)}',null,3,1.25,'Other Job facts'),
+('${id(108)}','2026-09-19','${id(100)}','${id(101)}',null,null,'${id(202)}','Temporary labor',1,0.25,'Temporary facts');`);
   const beforeMigration = captureIntegrity();
   sql(read('supabase/migrations/20260921_001_manpower_product_categories.sql'));
   const afterMigration = captureIntegrity();
@@ -167,6 +174,40 @@ insert into manpower_entries(id,work_date,worker_id,task_id,job_id,reporting_gro
   const created=await request('manpower_entries',1,'POST',{...entryBody,product_category_id:activeCategory});
   assert.equal(created.status,201,JSON.stringify(created));
   assert.equal((await request(`manpower_entries?id=eq.${created.body[0].id}`,1,'PATCH',{product_category_id:null})).status,400);
+  const bulkIds=[id(106),id(107),id(108)];
+  const bulkPath=`manpower_entries?id=in.(${bulkIds.join(',')})`;
+  const beforeBulk=(await request(bulkPath,1)).body;
+  const facts=rows=>rows.map(({product_category_id,updated_at,...row})=>{void product_category_id;void updated_at;return row;}).sort((a,b)=>a.id.localeCompare(b.id));
+  const assigned=await request(bulkPath,1,'PATCH',{product_category_id:activeCategory});
+  assert.equal(assigned.status,200);assert.equal(assigned.body.length,3);
+  assert.ok(assigned.body.every(row=>row.product_category_id===activeCategory));
+  assert.deepEqual(facts(assigned.body),facts(beforeBulk),'Only category and server updated_at metadata change, including historical NULLs, multiple Jobs/groups and temporary/Rework labor');
+  // Reject one member after earlier eligible row updates: entire SQL PATCH rolls back.
+  const baseCategory=sql("select id from manpower_product_categories where display_name='Base'").trim();
+  sql(`create function public.test_bulk_reject() returns trigger language plpgsql as $$begin if new.id='${id(107)}' then raise exception 'Fixture row rejection' using errcode='23514';end if;return new;end$$;
+create trigger zz_test_bulk_reject before update on manpower_entries for each row execute function test_bulk_reject();`);
+  const beforeFailure=(await request(bulkPath,1)).body;
+  assert.equal((await request(bulkPath,1,'PATCH',{product_category_id:baseCategory})).status,400);
+  assert.deepEqual((await request(bulkPath,1)).body,beforeFailure,'Rejected batch rolls back category and timestamps for every row');
+  sql('drop trigger zz_test_bulk_reject on manpower_entries; drop function test_bulk_reject();');
+  // A concurrent category deactivation wins its lock before the bulk assignment.
+  const bulkHolder=spawn('docker',args,{stdio:['pipe','pipe','pipe']});let bulkOutput='';
+  bulkHolder.stdout.on('data',part=>bulkOutput+=part);
+  const bulkDone=new Promise((resolve,reject)=>bulkHolder.on('close',code=>code===0?resolve():reject(new Error('Bulk lock holder failed'))));
+  bulkHolder.stdin.end(`begin; ${asUser(3,`update manpower_product_categories set is_active=false where id='${baseCategory}';`)} select 'bulk-locked'; select pg_sleep(1); commit;`);
+  while(!bulkOutput.includes('bulk-locked'))await new Promise(r=>setTimeout(r,25));
+  const bulkStarted=Date.now();
+  const raced=await request(bulkPath,1,'PATCH',{product_category_id:baseCategory});
+  assert.equal(raced.status,400);assert.match(raced.body.message,/no longer active/);
+  assert.ok(Date.now()-bulkStarted>400,'bulk assignment waits for deactivation');await bulkDone;
+  assert.deepEqual((await request(bulkPath,1)).body,beforeFailure,'Concurrent rejection leaves every labor field unchanged');
+  // RLS omissions/deleted IDs are not SQL errors: the client must reconcile these counts.
+  const beforeInactive=(await request(bulkPath,1)).body;
+  assert.equal((await request(bulkPath,5,'PATCH',{product_category_id:slabs})).status,403);
+  assert.deepEqual((await request(bulkPath,1)).body,beforeInactive,'Inactive caller cannot change assignments');
+  const missing=await request(`manpower_entries?id=in.(${id(106)},${id(999)})`,1,'PATCH',{product_category_id:activeCategory});
+  assert.equal(missing.status,200);assert.equal(missing.body.length,1);
+  console.log('Bulk category API checks passed: historical classification, cross-Job/group/Rework/temporary facts, exact preservation, statement rollback, concurrent deactivation, inactive caller and omitted IDs.');
   console.log('Local PostgREST direct API tests passed: anonymous, inactive, Guest/Member/Developer/Lead/Admin management, entry enforcement and clear prevention.');
   console.log('Product Category database checks passed: full caller matrix, direct writes, CRUD lifecycle, audit, duplicates, historical edits, immutable assignment, restrictive FK, Job/Rework/group preservation, concurrent deactivation.');
 } finally { spawnSync('docker',['stop',`${name}-rest`],{stdio:'ignore'}); spawnSync('docker',['stop',name],{stdio:'ignore'}); }

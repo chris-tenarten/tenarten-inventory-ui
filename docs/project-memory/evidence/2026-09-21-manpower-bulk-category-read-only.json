@@ -1,0 +1,39 @@
+{
+  "mode": "SELECT only; no hosted mutation",
+  "before": {
+    "checked_at": "2026-09-21T21:01:52.582Z",
+    "entries": 1674,
+    "hours": 7200,
+    "linked_entries": 955,
+    "linked_hours": 4059,
+    "classified_entries": 0,
+    "general_shared": [
+      {
+        "id": "488e1620-8bb5-4404-a367-454a61a8a59f",
+        "display_name": "General / Shared",
+        "is_active": true,
+        "entry_references": 0
+      }
+    ],
+    "entry_rows_sha256": "9aa703c3c9531a430ad6052bc5a19120dab9a17a06411c6c2e1d91d462dea94f"
+  },
+  "after": {
+    "checked_at": "2026-09-21T21:09:03.895Z",
+    "entries": 1674,
+    "hours": 7200,
+    "linked_entries": 955,
+    "linked_hours": 4059,
+    "classified_entries": 0,
+    "general_shared": [
+      {
+        "id": "488e1620-8bb5-4404-a367-454a61a8a59f",
+        "display_name": "General / Shared",
+        "is_active": true,
+        "entry_references": 0
+      }
+    ],
+    "entry_rows_sha256": "9aa703c3c9531a430ad6052bc5a19120dab9a17a06411c6c2e1d91d462dea94f"
+  },
+  "entry_digest_unchanged": true,
+  "digest_method": "SHA-256 of JSON.stringify of all manpower_entries columns, ordered by id, fetched completely in 500-row pages with stable exact count. Not the SQL gate digest format."
+}
