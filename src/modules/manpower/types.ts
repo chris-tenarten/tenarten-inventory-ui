@@ -38,6 +38,7 @@ export type ManpowerEntry = {
   work_date: string;
   worker_id: string;
   task_id: string;
+  product_category_id: string | null;
   job_id: string | null;
   rework_cycle_id: string | null;
   reporting_group_id: string | null;
@@ -59,6 +60,7 @@ export type ManpowerEntryInput = {
   work_date: string;
   worker_id: string;
   task_id: string;
+  product_category_id: string | null;
   job_id: string | null;
   rework_cycle_id: string | null;
   reporting_group_id: string | null;

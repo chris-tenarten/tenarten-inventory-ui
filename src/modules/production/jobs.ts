@@ -1,3 +1,4 @@
+import { loadCompleteLabor } from '../manpower/pagination';
 import { supabase } from '../../lib/supabase';
 import { operationalFirstName } from '../../lib/identity-presentation';
 
@@ -222,11 +223,10 @@ export async function updateProductionReworkStatus(cycleId: string, status: Prod
 
 export type ProductionIntegrationSummary = { actualHours: number; laborEntryCount: number; materialReportDates: string[] };
 export async function loadProductionJobLaborLifecycleSummary(jobId: string): Promise<JobLaborLifecycleSummary> {
-  const { data, error } = await supabase
+  const data = await loadCompleteLabor((from, to) => supabase
     .from('manpower_entries')
-    .select('job_id,rework_cycle_id,am_hours,pm_hours,rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id,sequence_number)')
-    .eq('job_id', jobId);
-  if (error) throw error;
+    .select('id,job_id,rework_cycle_id,am_hours,pm_hours,rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id,sequence_number)', { count: 'exact' })
+    .eq('job_id', jobId).order('id').range(from, to));
   return summarizeLaborLifecycles(data ?? []).get(jobId) ?? {
     jobId,
     totalHours: 0,
@@ -270,13 +270,12 @@ export async function markJobUpdatesSeen(jobId: string) {
 
 export async function loadProductionIntegrationSummaries(): Promise<Record<string, ProductionIntegrationSummary>> {
   const [labor, materials] = await Promise.all([
-    supabase.from('manpower_entries').select('job_id,am_hours,pm_hours').not('job_id', 'is', null),
+    loadCompleteLabor((from, to) => supabase.from('manpower_entries').select('id,job_id,am_hours,pm_hours', { count: 'exact' }).not('job_id', 'is', null).order('id').range(from, to)),
     supabase.from('material_usage_reports').select('job_id,report_date').not('job_id', 'is', null),
   ]);
-  if (labor.error) throw labor.error;
   if (materials.error) throw materials.error;
   const summaries: Record<string, ProductionIntegrationSummary> = {};
-  for (const row of labor.data ?? []) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].actualHours += Number(row.am_hours ?? 0) + Number(row.pm_hours ?? 0); summaries[id].laborEntryCount += 1; }
+  for (const row of labor) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].actualHours += Number(row.am_hours ?? 0) + Number(row.pm_hours ?? 0); summaries[id].laborEntryCount += 1; }
   for (const row of materials.data ?? []) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].materialReportDates.push(String(row.report_date)); }
   return summaries;
 }

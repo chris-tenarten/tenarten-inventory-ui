@@ -8,6 +8,7 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: 'http://localhost:3000',
+    channel: process.env.PLAYWRIGHT_CHANNEL,
     storageState: {
       cookies: [],
       origins: [{ origin: 'http://localhost:3000', localStorage: [{ name: 'tenarten_internal_access', value: 'granted' }] }],

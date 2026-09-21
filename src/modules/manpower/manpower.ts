@@ -1,3 +1,4 @@
+import { loadCompleteLabor } from './pagination';
 import { supabase } from '../../lib/supabase';
 import { isActiveProductionRework } from '../production/rework';
 import type {
@@ -10,7 +11,7 @@ import type {
 } from './types';
 
 const ENTRY_COLUMNS = `
-  id, work_date, worker_id, task_id, job_id, rework_cycle_id, reporting_group_id, unlisted_work_label,
+  id, work_date, worker_id, task_id, product_category_id, job_id, rework_cycle_id, reporting_group_id, unlisted_work_label,
   am_hours, pm_hours, notes, entered_by, created_at, updated_at,
   worker:manpower_workers!worker_id(id, display_name),
   task:manpower_tasks!task_id(id, display_name),
@@ -20,13 +21,13 @@ const ENTRY_COLUMNS = `
 `;
 
 export async function loadManpowerEntries(): Promise<ManpowerEntry[]> {
-  const { data, error } = await supabase
+  return await loadCompleteLabor((from, to) => supabase
     .from('manpower_entries')
-    .select(ENTRY_COLUMNS)
+    .select(ENTRY_COLUMNS, { count: 'exact' })
     .order('work_date', { ascending: false })
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as unknown as ManpowerEntry[];
+    .order('created_at', { ascending: false })
+    .order('id')
+    .range(from, to)) as unknown as ManpowerEntry[];
 }
 
 export async function loadManpowerJobs(): Promise<ManpowerJob[]> {
@@ -236,4 +237,18 @@ export async function updateManpowerGroupIdentity(
   if (error) throw error;
   if ((data?.length ?? 0) !== ids.length) throw new Error('The manpower group identity update was not confirmed for every entry.');
   return (data ?? []) as unknown as ManpowerEntry[];
+}
+
+export async function loadProductCategories(): Promise<ManpowerReference[]> {
+  const { data, error } = await supabase.from('manpower_product_categories')
+    .select('id,display_name,sort_order,is_active,created_at,updated_at').order('sort_order').order('display_name').order('id');
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function saveProductCategory(id: string | null, changes: Pick<ManpowerReference, 'display_name' | 'sort_order' | 'is_active'>, expectedUpdatedAt?: string): Promise<void> {
+  const table = supabase.from('manpower_product_categories');
+  const payload = { display_name: changes.display_name.trim(), sort_order: changes.sort_order, is_active: changes.is_active };
+  const result = id ? await table.update(payload).eq('id', id).eq('updated_at', expectedUpdatedAt ?? '').select('id').single() : await table.insert(payload).select('id').single();
+  if (result.error) throw result.error;
 }

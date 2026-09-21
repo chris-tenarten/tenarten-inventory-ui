@@ -1,34 +1,36 @@
 import { expect, test, type Page } from '@playwright/test';
+import { mockManpowerAuth } from '../support/manpower-auth';
 
 const now = '2026-07-22T12:00:00.000Z';
 const group = { id: '10000000-0000-4000-8000-000000000001', display_name: 'July 22 Shop Labor', created_at: now, updated_at: now };
 const worker = { id: '20000000-0000-4000-8000-000000000001', display_name: 'Existing Worker', sort_order: 1, is_active: true, created_at: now, updated_at: now };
+const category = { id: '50000000-0000-4000-8000-000000000001', display_name: 'Slabs', sort_order: 1, is_active: true, created_at: now, updated_at: now };
 const task = { id: '30000000-0000-4000-8000-000000000001', display_name: 'Existing Task', sort_order: 1, is_active: true, created_at: now, updated_at: now };
-const entry = { id: '40000000-0000-4000-8000-000000000001', work_date: '2026-07-22', worker_id: worker.id, task_id: task.id, job_id: null, reporting_group_id: group.id, unlisted_work_label: 'General Operations', am_hours: 4, pm_hours: 2, notes: 'Existing entry', entered_by: 'Test', created_at: now, updated_at: now, worker, task, job: null, reporting_group: group };
+const entry = { id: '40000000-0000-4000-8000-000000000001', work_date: '2026-07-22', worker_id: worker.id, task_id: task.id, product_category_id: null, rework_cycle_id: null, job_id: null, reporting_group_id: group.id, unlisted_work_label: 'General Operations', am_hours: 4, pm_hours: 2, notes: 'Existing entry', entered_by: 'Test', created_at: now, updated_at: now, worker, task, job: null, reporting_group: group };
 
 async function mockManpower(page: Page) {
   await page.route('**/rest/v1/**', async route => {
     const table = new URL(route.request().url()).pathname.split('/').at(-1);
-    const rows = table === 'manpower_entries' ? [entry] : table === 'manpower_reporting_groups' ? [group] : table === 'manpower_workers' ? [worker] : table === 'manpower_tasks' ? [task] : [];
-    await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'content-range': `0-${Math.max(0, rows.length - 1)}/${rows.length}` }, body: JSON.stringify(rows) });
+    const rows = table === 'manpower_entries' ? [entry] : table === 'manpower_reporting_groups' ? [group] : table === 'manpower_workers' ? [worker] : table === 'manpower_tasks' ? [task] : table === 'manpower_product_categories' ? [category] : [];
+    await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-expose-headers': 'content-range', 'content-range': `0-${Math.max(0, rows.length - 1)}/${rows.length}` }, body: JSON.stringify(rows) });
   });
 }
 
 test('Add New Line stays directly below the group header and opens before existing entries', async ({ page }) => {
+  // Keep the taller Product summary and row selection visible; isolate Add New Line
+  // from the shell's scroll-triggered header compaction during checkbox auto-scroll.
+  await page.setViewportSize({ width: 1280, height: 1100 });
   await mockManpower(page);
+  await mockManpowerAuth(page);
   await page.goto('/manpower-reporting');
-  if (await page.getByRole('textbox', { name: 'Password' }).isVisible()) {
-    await page.getByRole('textbox', { name: 'Password' }).fill('tenarten123');
-    await page.getByRole('button', { name: 'Unlock Workspace' }).click();
-  }
   await page.getByRole('button', { name: `Expand ${group.display_name}` }).click();
 
   const addLine = page.getByRole('button', { name: 'Add New Line' });
-  const existingEntry = page.getByRole('textbox', { name: 'Notes' }).first();
+  const existingEntry = page.getByPlaceholder('Notes').first();
   await expect(addLine).toBeVisible();
   await expect(existingEntry).toBeVisible();
   await expect(existingEntry).toHaveValue('Existing entry');
-  await expect(page.getByText('TOTAL 6.0 hrs', { exact: true })).toBeVisible();
+  await expect(page.getByText('TOTAL 6.00 hrs', { exact: true })).toBeVisible();
   expect((await addLine.boundingBox())!.y).toBeLessThan((await existingEntry.boundingBox())!.y);
 
   const entrySelection = page.getByRole('checkbox', { name: 'Select Existing Worker entry on 2026-07-22' });
@@ -38,7 +40,7 @@ test('Add New Line stays directly below the group header and opens before existi
 
   await expect(page.getByText('New', { exact: true })).toBeVisible();
   await expect(entrySelection).toBeChecked();
-  await expect(page.getByText('TOTAL 6.0 hrs', { exact: true })).toBeVisible();
+  await expect(page.getByText('TOTAL 6.00 hrs', { exact: true })).toBeVisible();
   expect((await page.getByText('New', { exact: true }).boundingBox())!.y).toBeLessThan((await existingEntry.boundingBox())!.y);
   expect(await page.evaluate(() => window.scrollY)).toBe(scrollBefore);
   await expect(page.getByRole('button', { name: 'Add New Line' })).toHaveCount(0);
@@ -73,6 +75,7 @@ test('New Group opens the inline creator and keeps a newly created empty group v
         work_date: createdEntryPayload.work_date,
         worker_id: createdEntryPayload.worker_id,
         task_id: createdEntryPayload.task_id,
+        product_category_id: createdEntryPayload.product_category_id,
         job_id: createdEntryPayload.job_id,
         unlisted_work_label: createdEntryPayload.unlisted_work_label,
         am_hours: createdEntryPayload.am_hours,
@@ -93,14 +96,11 @@ test('New Group opens the inline creator and keeps a newly created empty group v
       await route.fulfill({ status: 204, body: '' });
       return;
     }
-    const rows = table === 'manpower_entries' ? [entry] : table === 'manpower_reporting_groups' ? reportingGroups : table === 'manpower_workers' ? [worker] : table === 'manpower_tasks' ? [task] : [];
-    await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'content-range': `0-${Math.max(0, rows.length - 1)}/${rows.length}` }, body: JSON.stringify(rows) });
+    const rows = table === 'manpower_entries' ? [entry] : table === 'manpower_reporting_groups' ? reportingGroups : table === 'manpower_workers' ? [worker] : table === 'manpower_tasks' ? [task] : table === 'manpower_product_categories' ? [category] : [];
+    await route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-expose-headers': 'content-range', 'content-range': `0-${Math.max(0, rows.length - 1)}/${rows.length}` }, body: JSON.stringify(rows) });
   });
+  await mockManpowerAuth(page);
   await page.goto('/manpower-reporting');
-  if (await page.getByRole('textbox', { name: 'Password' }).isVisible()) {
-    await page.getByRole('textbox', { name: 'Password' }).fill('tenarten123');
-    await page.getByRole('button', { name: 'Unlock Workspace' }).click();
-  }
 
   await page.getByRole('button', { name: 'New Group' }).click();
   const groupName = page.getByPlaceholder('Reporting group name');
@@ -108,12 +108,13 @@ test('New Group opens the inline creator and keeps a newly created empty group v
   await groupName.fill('July 24 Shop Labor');
   await page.getByRole('button', { name: 'Create', exact: true }).click();
 
-  await expect(page.getByText('July 24 Shop Labor', { exact: true })).toBeVisible();
+  await expect(page.getByText('July 24 Shop Labor', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('New', { exact: true })).toBeVisible();
 
-  const newEntryRow = page.getByRole('row', { name: /New .* Add Entry Cancel/ });
-  await newEntryRow.getByRole('combobox').nth(0).selectOption(worker.id);
-  await newEntryRow.getByRole('combobox').nth(1).selectOption(task.id);
+  const newEntryRow = page.locator('tr').filter({ has: page.getByRole('button', { name: 'Add Entry', exact: true }) });
+  await newEntryRow.getByLabel('Product Category', { exact: true }).selectOption(category.id);
+  await newEntryRow.getByRole('combobox').nth(1).selectOption(worker.id);
+  await newEntryRow.getByRole('combobox').nth(2).selectOption(task.id);
   await page.getByRole('button', { name: 'Add Entry' }).click();
   await expect.poll(() => createdEntryPayload).not.toBeNull();
   expect(createdEntryPayload).toMatchObject({
@@ -124,8 +125,8 @@ test('New Group opens the inline creator and keeps a newly created empty group v
     unlisted_work_label: 'July 24 Shop Labor',
   });
 
-  const newGroup = page.getByText('July 24 Shop Labor', { exact: true }).locator('xpath=ancestor::section');
-  await newGroup.getByRole('checkbox', { name: 'Select Existing Worker entry on 2026-07-24' }).check();
+  const newGroup = page.getByText('July 24 Shop Labor', { exact: true }).first().locator('xpath=ancestor::section');
+  await newGroup.getByRole('checkbox', { name: /Select Existing Worker entry on/ }).check();
   await page.once('dialog', dialog => dialog.accept());
   await newGroup.getByRole('button', { name: 'Delete Selected' }).click();
   await page.getByRole('checkbox', { name: 'Select empty group July 24 Shop Labor' }).check();

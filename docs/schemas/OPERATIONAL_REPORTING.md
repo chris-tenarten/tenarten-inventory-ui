@@ -83,6 +83,17 @@ The implemented MVP uses a direct labor-entry structure inside lightweight persi
 - created_at
 - updated_at
 
+### Product Category (approved local candidate; not hosted)
+
+See [the September 21 implementation record](../project-memory/2026-09-21-manpower-product-categories.md).
+`manpower_product_categories` manages stable IDs, display names, positive sort order,
+active state and server-owned creation/update audit fields. A nullable
+`manpower_entries.product_category_id` attributes each labor row to one category,
+independently of its Job, Rework and reporting group. New entries require an active
+category; historical nulls remain Uncategorized without a backfill. Names resolve
+through the current category record. Lead/Admin manage the vocabulary through the
+narrow `manageManpowerProductCategories` capability.
+
 ### manpower_entries
 
 - id

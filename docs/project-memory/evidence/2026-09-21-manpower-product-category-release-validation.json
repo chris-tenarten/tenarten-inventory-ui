@@ -1,0 +1,181 @@
+{
+  "status": "local gate; migration not applied; no push/deployment/hosted business writes",
+  "risk_tier": 3,
+  "base_sha": "2e9d472b957a461600623041550f797e35a73538",
+  "branch": "release/manpower-product-categories-20260921",
+  "project_ref": "vxdxjhazkqhpkwdqtobp",
+  "candidate_identity": "git commit containing this evidence; full SHA in delivery",
+  "migration": {
+    "path": "supabase/migrations/20260921_001_manpower_product_categories.sql",
+    "sha256": "b4df3ccd1f49cbfc32de91582e9b9bc00cd8325069aa4efa2cc4a98b682d0865"
+  },
+  "changed_paths": [
+    "docs/project-memory/2026-09-21-manpower-product-categories.md",
+    "docs/project-memory/2026-09-21-manpower-product-category-release-gate.md",
+    "docs/project-memory/evidence/2026-09-21-manpower-product-category-hosted-before.json",
+    "docs/project-memory/evidence/2026-09-21-manpower-product-category-release-validation.json",
+    "docs/schemas/OPERATIONAL_REPORTING.md",
+    "playwright.config.ts",
+    "scripts/verify-manpower-product-categories.mts",
+    "scripts/verify-manpower-product-category-db.mjs",
+    "scripts/verify-manpower-product-category-integrity.mjs",
+    "src/lib/rbac.ts",
+    "src/modules/manpower/ManpowerWorkspace.tsx",
+    "src/modules/manpower/ProductCategoryManager.tsx",
+    "src/modules/manpower/ProductLaborSummary.tsx",
+    "src/modules/manpower/manpower.ts",
+    "src/modules/manpower/pagination.ts",
+    "src/modules/manpower/product-reporting.ts",
+    "src/modules/manpower/types.ts",
+    "src/modules/production/jobs.ts",
+    "src/modules/production/snapshot.ts",
+    "supabase/inspection/20260921_001_manpower_product_categories_gate.sql",
+    "supabase/migrations/20260921_001_manpower_product_categories.sql",
+    "tests/e2e/manpower-add-line.spec.ts",
+    "tests/e2e/manpower-product-categories.spec.ts",
+    "tests/support/manpower-auth.ts"
+  ],
+  "hosted_collision_check": {
+    "candidate_function_collisions": null,
+    "candidate_ledger_rows": [],
+    "candidate_object_collisions": null,
+    "category_column_exists": false
+  },
+  "hosted_end_of_gate": {
+    "observed_at": "2026-09-21T19:48:04.213055+00:00",
+    "counts": {
+      "classified_entries": 0,
+      "entries": 1674,
+      "hours": 7200,
+      "jobs": 18,
+      "linked_entries": 955,
+      "linked_hours": 4059,
+      "max_date": "2026-09-17",
+      "min_date": "2026-03-05",
+      "rework_entries": 35,
+      "rework_hours": 119,
+      "unlinked_entries": 719,
+      "unlinked_hours": 3141
+    },
+    "integrity_sha256": "b8e1d2db88cd962f359c53bd1af59f8f39cf6261d8eebef35b7c591d7ae542f5",
+    "reporting_sha256": "167f00c5a8a37c60dc88bfa4916e8a5588e93c4c0ac6a213d7e6655a5082a2db",
+    "protected_relations": [
+      {
+        "relation": "jobs",
+        "rows": 40,
+        "sha256": "12e7220c2edd0b2b2f44d82573d229ea3d43aafe0fdad046e02ae21173ced5be"
+      },
+      {
+        "relation": "manpower_entries",
+        "rows": 1674,
+        "sha256": "6d0dd262c3c0f4bab10dffe566cbd20ce7257308f1e7ee053ce745398113a1d6"
+      },
+      {
+        "relation": "manpower_reporting_groups",
+        "rows": 38,
+        "sha256": "47daf9f947895619be782dd9d34a3353ffae965d06d26a9be2a5fd6b5ea1ea25"
+      },
+      {
+        "relation": "manpower_tasks",
+        "rows": 25,
+        "sha256": "06f68e65693010056477f91d9db1dc6a37e0d0ac2e5a8bb9c4e150f36d5054a2"
+      },
+      {
+        "relation": "manpower_workers",
+        "rows": 21,
+        "sha256": "3a4d99c0b59bdefbcdd977191ebdd526bb62122b31fd6ec40a65b4db91982785"
+      },
+      {
+        "relation": "production_rework_cycles",
+        "rows": 1,
+        "sha256": "99fc9041d722b396bb62ddeb46a294e65c6fa9a2bc206719cf62538b11c03b35"
+      }
+    ],
+    "category_table": null,
+    "new_capability_rows": 0
+  },
+  "hosted_end_of_gate_matches_before": true,
+  "hosted_loader": {
+    "command": "node --env-file=.env.local --import tsx scripts/verify-manpower-product-categories.mts --hosted-read-only",
+    "exit_code": 0,
+    "entries": 1674,
+    "hours": 7200,
+    "job_linked_hours": 4059,
+    "operations": "SELECT only"
+  },
+  "checks": {
+    "captured_hosted_contract_local_database_api": {
+      "exit_code": 0,
+      "output": "Captured hosted labor columns/constraints, policies, grants, and capability contract matched in local replay.\nBefore/after migration SHA-256 equality passed for all fixture labor, Jobs, Tasks, Workers, Rework, groups and reporting.\nRelease integrity comparator accepts unchanged migration and rejects a changed protected digest.\nLocal PostgREST direct API tests passed: anonymous, inactive, Guest/Member/Developer/Lead/Admin management, entry enforcement and clear prevention.\nProduct Category database checks passed: full caller matrix, direct writes, CRUD lifecycle, audit, duplicates, historical edits, immutable assignment, restrictive FK, Job/Rework/group preservation, concurrent deactivation.\n"
+    },
+    "production_build": {
+      "command": "NEXT_PUBLIC_DEV_BRANDING=false npm run build",
+      "exit_code": 0
+    },
+    "typescript": {
+      "command": "npx tsc --noEmit",
+      "exit_code": 0
+    },
+    "targeted_eslint": {
+      "exit_code": 0
+    },
+    "product_logic_pagination": {
+      "exit_code": 0
+    },
+    "manpower_rework": {
+      "exit_code": 0
+    },
+    "dashboard_monthly_snapshot": {
+      "exit_code": 0
+    },
+    "diff_check": {
+      "exit_code": 0
+    },
+    "browser": {
+      "command": "npx playwright test tests/e2e/manpower-product-categories.spec.ts tests/e2e/manpower-add-line.spec.ts --workers=1 --reporter=list",
+      "browser": "Playwright Chromium headless shell v1228",
+      "exit_code": 0,
+      "passed": 11,
+      "duration_seconds": 44.1,
+      "transport": "local mocked API only",
+      "desktop_and_390px_screenshots_inspected": true,
+      "prior_attempts": [
+        "System Chrome: 11 assertions passed but two-worker and single-worker runners exited 1 on worker-shutdown timeout.",
+        "Matching headless browser: exposed viewport-dependent Add New Line scroll baseline; diagnostic proved scrolling started before pointerdown during header compaction. Desktop test now uses 1280x1100 to isolate the action; exact scroll equality assertion retained.",
+        "Final application source matches original implementation; diagnostic CSS experiment removed."
+      ],
+      "output": "\nRunning 11 tests using 1 worker\n\n(node:37156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n  \u2713   1 [chromium] \u203a tests/e2e/manpower-add-line.spec.ts:19:5 \u203a Add New Line stays directly below the group header and opens before existing entries (7.1s)\n  \u2713   2 [chromium] \u203a tests/e2e/manpower-add-line.spec.ts:51:5 \u203a New Group opens the inline creator and keeps a newly created empty group visible (7.2s)\n  \u2713   3 [chromium] \u203a tests/e2e/manpower-product-categories.spec.ts:42:5 \u203a Job totals, pivots, inactive history, filters and safe group identity (6.9s)\n  \u2713   4 [chromium] \u203a tests/e2e/manpower-product-categories.spec.ts:62:5 \u203a required new selection, historical null edit and refresh retain drafts (7.4s)\n  \u2713   5 [chromium] \u203a tests/e2e/manpower-product-categories.spec.ts:87:5 \u203a manager lifecycle, historical rename and duplicate protection (7.0s)\n  \u2713   6 [chromium] \u203a tests/e2e/manpower-product-categories.spec.ts:111:62 \u203a management visibility: guest (234ms)\n  \u2713   7 [chromium] \u203a tests/e2e/manpower-product-categories.spec.ts:111:62 \u203a management visibility: member (229ms)\n  \u2713   8 [chromium] \u203a tests/e2e/manpower-product-categories.spec.ts:111:62 \u203a management visibility: developer (221ms)\n  \u2713   9 [chromium] \u203a tests/e2e/manpower-product-categories.spec.ts:111:62 \u203a management visibility: admin (189ms)\n  \u2713  10 [chromium] \u203a tests/e2e/manpower-product-categories.spec.ts:117:5 \u203a narrow layout keeps controls available and table locally scrollable (6.9s)\n  \u2713  11 [chromium] \u203a tests/e2e/manpower-product-categories.spec.ts:130:5 \u203a failed complete load does not publish zero or partial totals (227ms)\n\n  11 passed (44.1s)\nnpm notice\nnpm notice New major version of npm available! 11.16.0 -> 12.0.2\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2\nnpm notice To update run: npm install -g npm@12.0.2\nnpm notice\n"
+    }
+  },
+  "verification_limits": [
+    "Hosted post-migration DML behavior is pending application; actual hosted schema and authorization definitions were inspected read-only and replayed locally.",
+    "Backup recovery readiness and write pause still require confirmation.",
+    "Two legacy broad verifiers have known baseline-stale source assertions; no claim they pass.",
+    "Paginated reads are not a cross-request transaction snapshot."
+  ],
+  "implementation_file_sha256": {
+    "playwright.config.ts": "3e45f630806cdca14b8d30ee2cd1df92af04139c76bce7009d4f82452bb0a155",
+    "scripts/verify-manpower-product-categories.mts": "aa7b85c46b98c7c95e734f3facd2ddf846dff7005a34a6ee504f1b98565731a0",
+    "scripts/verify-manpower-product-category-db.mjs": "4f1ddb25fa4a5e34a786edea7d63e3a85ebade2ccfff3be5f6ff5b47dae3c994",
+    "scripts/verify-manpower-product-category-integrity.mjs": "79a7d0a131dcf042cf6c834c6686d465b7b2319ef2f50616fb759647ef171636",
+    "src/lib/rbac.ts": "30aeb9ac4b5f47d36ddd9b129ae961f30dfc53f7905f616b3fb1b3055fee163f",
+    "src/modules/manpower/ManpowerWorkspace.tsx": "a06d2b25f0560c06ef4118df2df940c5e31fc72b3198bdc9f90c363280fd7311",
+    "src/modules/manpower/ProductCategoryManager.tsx": "a21aaff94a84d40e3d7e8fd97073e3349a2b4e0d0c0cf1f722915560e03731f6",
+    "src/modules/manpower/ProductLaborSummary.tsx": "0e70bb28b34639038c72a349bf4e28cfaacd5f285a477518a67d88920ea47915",
+    "src/modules/manpower/manpower.ts": "a3e008df149f093e70452cd8b33d69a41620aaa2c502a1b7e0e6ca3e158e5724",
+    "src/modules/manpower/pagination.ts": "eaf14a2a66ec614ce418b97cf8e6911ed9588e45e72b4ff335a1919870e896f0",
+    "src/modules/manpower/product-reporting.ts": "eff2e6650317b5eec0602d1497d5fe25c99624b1dfde40b933fde6bb9c75deb9",
+    "src/modules/manpower/types.ts": "575a0c049a714788afc8937bc1258bbbadb38c0555804eb26b11b266881bfed4",
+    "src/modules/production/jobs.ts": "6d87a04c0a9b3acf4f398617a40b6c34cb27b1bff89be6f00b3a7a732c788876",
+    "src/modules/production/snapshot.ts": "4f75f34ba8f0758b597895a4dbe9b72dd110c4cc2935a7ca51d634962918b755",
+    "supabase/inspection/20260921_001_manpower_product_categories_gate.sql": "fa2c36e9af869d7c9b1f3d7a9f8e945893cdbe9c850752198434ef0e1af4b0f4",
+    "supabase/migrations/20260921_001_manpower_product_categories.sql": "b4df3ccd1f49cbfc32de91582e9b9bc00cd8325069aa4efa2cc4a98b682d0865",
+    "tests/e2e/manpower-add-line.spec.ts": "00cf8df85b737b5d2394ce87174ff812f81b215a2ed3aeeaf6a53d24db7c274e",
+    "tests/e2e/manpower-product-categories.spec.ts": "4d09cdd91d2bac14972616f39ec8ab7b69ea44ac3ec5c15afdd04385fa414c55",
+    "tests/support/manpower-auth.ts": "37c8807dcb6b7e058f2ad8aa0e709270d16e441f5e7f2051a4fab64b712aba09"
+  },
+  "screenshots": {
+    "manpower-product-categories-desktop.png": "04f58a7ccfbb03a62e3d00e7b0ebbb0ef6f6931c106bc0a13a5291cc2f187cfb",
+    "manpower-product-categories-narrow.png": "ffc551b233fafa6f0c66e2459e860c974808794e8d7cd830587f338a8d638e4e"
+  }
+}

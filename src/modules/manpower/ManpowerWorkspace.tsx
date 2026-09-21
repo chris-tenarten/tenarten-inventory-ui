@@ -1,14 +1,19 @@
 'use client';
 
 import { ChevronDown, ChevronRight, Pencil, Plus, RotateCw, Search, Settings2 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { useAuth } from '@/lib/auth';
+import ProductCategoryManager from './ProductCategoryManager';
+import ProductLaborSummary from './ProductLaborSummary';
+import { productKey, productLabel, UNCATEGORIZED, validateProductSelection } from './product-reporting';
 import { useLanguage } from '@/lib/language';
 import { JobTag } from '../production/components/JobTag';
 import ProductionStatusBadge from '../production/components/ProductionStatusBadge';
 import { openProductionJob } from '../production/job-options';
 import { productionStatusVisualByValue } from '../production/status-visuals';
 import {
+  loadProductCategories,
   createManpowerEntry,
   createManpowerReference,
   createManpowerReportingGroup,
@@ -40,11 +45,14 @@ import {
 } from './work-target';
 import type { ManpowerWorkTargetOption } from './work-target';
 
+const ProductContext = createContext<{ categories: ManpowerReference[]; refresh(): Promise<void> }>({ categories: [], refresh: async () => {} });
+
 type Draft = {
   reportingGroupId: string;
   workDate: string;
   workerId: string;
   taskId: string;
+  productCategoryId: string;
   workTarget: string;
   unlistedLabel: string;
   amHours: string;
@@ -63,7 +71,7 @@ function today() {
 
 function blankDraft(): Draft {
   return {
-    reportingGroupId: '', workDate: today(), workerId: '', taskId: '', workTarget: '', unlistedLabel: '',
+    reportingGroupId: '', workDate: today(), workerId: '', taskId: '', productCategoryId: '', workTarget: '', unlistedLabel: '',
     amHours: '', pmHours: '', notes: '',
   };
 }
@@ -74,6 +82,7 @@ function entryDraft(entry: ManpowerEntry): Draft {
     workDate: entry.work_date,
     workerId: entry.worker_id,
     taskId: entry.task_id,
+    productCategoryId: entry.product_category_id ?? '',
     workTarget: manpowerEntryTargetValue(entry),
     unlistedLabel: entry.unlisted_work_label ?? '',
     amHours: String(entry.am_hours),
@@ -88,6 +97,7 @@ function toInput(draft: Draft, targets: ManpowerWorkTargetOption[]): ManpowerEnt
     work_date: draft.workDate,
     worker_id: draft.workerId,
     task_id: draft.taskId,
+    product_category_id: draft.productCategoryId || null,
     ...manpowerIdentityForTarget(draft.workTarget, draft.unlistedLabel, targets),
     am_hours: Number(draft.amHours || 0),
     pm_hours: Number(draft.pmHours || 0),
@@ -109,12 +119,12 @@ function ProductionJobLinkSelector({ groupLabel, targets, value, selectedLabel, 
   const [open, setOpen] = useState(false);
   const selectedTarget = targets.find((target) => target.value === value);
 
-  return <div className="relative min-w-72" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false); }}>
+  return <div className="relative w-full min-w-0 sm:w-auto sm:min-w-72" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false); }}>
     <button type="button" aria-label={`Production job for ${groupLabel}`} aria-haspopup="listbox" aria-expanded={open} disabled={disabled} onClick={() => setOpen((current) => !current)} className="flex h-9 w-full items-center justify-between gap-3 rounded-sm border border-slate-300 bg-white px-2 text-left text-xs text-slate-800 outline-none transition hover:border-slate-500 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-wait disabled:opacity-60">
       <span className="min-w-0 truncate font-medium">{selectedLabel || 'Mixed lifecycle targets'}</span>
       <span className="flex shrink-0 items-center gap-2">{selectedTarget ? <ProductionStatusBadge status={selectedTarget.status} /> : null}<ChevronDown className={`h-3.5 w-3.5 transition ${open ? 'rotate-180' : ''}`} aria-hidden="true" /></span>
     </button>
-    {open ? <div role="listbox" aria-label={`Production jobs for ${groupLabel}`} className="absolute right-0 top-10 z-50 max-h-80 w-[28rem] overflow-y-auto rounded-sm border border-slate-300 bg-white p-1 shadow-xl">
+    {open ? <div role="listbox" aria-label={`Production jobs for ${groupLabel}`} className="absolute right-0 top-10 z-50 max-h-80 w-[min(28rem,calc(100vw-3rem))] overflow-y-auto rounded-sm border border-slate-300 bg-white p-1 shadow-xl">
       <button type="button" role="option" aria-selected={!value && !selectedLabel} onClick={() => { setOpen(false); onChange(''); }} className={`flex min-h-9 w-full items-center px-2 text-left text-xs font-medium hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none ${!value && !selectedLabel ? 'bg-blue-50 text-blue-900' : 'text-slate-700'}`}>Not Linked to Production</button>
       {targets.filter((target) => target.selectable || target.value === value).map((target) => <button key={target.value} type="button" role="option" aria-selected={target.value === value} onClick={() => { setOpen(false); onChange(target.value); }} className={`flex min-h-10 w-full items-center justify-between gap-3 px-2 text-left hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none ${target.value === value ? 'bg-blue-50' : ''}`}><span className="min-w-0 truncate text-xs font-semibold text-slate-900">{target.label}</span><ProductionStatusBadge status={target.status} /></button>)}
     </div> : null}
@@ -345,7 +355,7 @@ function WorkIdentityControl({ value, temporaryLabel, targets, onChange, compact
 }
 
 function EntryFields({
-  draft, setDraft, targets, workers, tasks, addWorker, addTask, actions, savedTemporaryLabel, jobReadOnly = false, jobControl,
+  draft, setDraft, targets, workers, tasks, addWorker, addTask, actions, savedTemporaryLabel, jobReadOnly = false, jobControl, allowUncategorized = false,
 }: {
   draft: Draft;
   setDraft: (next: Draft) => void;
@@ -358,12 +368,15 @@ function EntryFields({
   savedTemporaryLabel?: string | null;
   jobReadOnly?: boolean;
   jobControl?: ReactNode;
+  allowUncategorized?: boolean;
 }) {
+  const { categories, refresh } = useContext(ProductContext);
   const set = (field: keyof Draft, value: string) => setDraft({ ...draft, [field]: value });
   const total = Number(draft.amHours || 0) + Number(draft.pmHours || 0);
   return (
     <>
       <td className="border-r border-slate-300 p-1"><input type="date" value={draft.workDate} onChange={(e) => set('workDate', e.target.value)} className={inputClass} /></td>
+      <td className="border-r border-slate-300 p-1"><select aria-label="Product Category" value={draft.productCategoryId} onFocus={() => void refresh().catch(() => {})} onChange={(e) => set('productCategoryId', e.target.value)} className={`${inputClass} min-w-[180px]`}><option value="" disabled={!allowUncategorized}>{allowUncategorized ? 'Uncategorized' : 'Select Product Category'}</option>{categories.filter((category) => category.is_active || category.id === draft.productCategoryId).map((category) => <option key={category.id} value={category.id} disabled={!category.is_active}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}</select></td>
       <td className="border-r border-slate-300 p-1"><ReferenceSelect value={draft.workerId} options={workers} noun="worker" onChange={(value) => set('workerId', value)} onAdd={addWorker} /></td>
       <td className="border-r border-slate-300 p-1"><ReferenceSelect value={draft.taskId} options={tasks} noun="task" onChange={(value) => set('taskId', value)} onAdd={addTask} /></td>
       <td className="border-r border-slate-300 p-1">
@@ -389,6 +402,7 @@ function EditableEntryRow({ entry, targets, workers, tasks, addWorker, addTask, 
   onSelected: (selected: boolean) => void;
   jobControl?: ReactNode;
 }) {
+  const { categories, refresh } = useContext(ProductContext);
   const [draft, setDraft] = useState(() => entryDraft(entry));
   const [state, setState] = useState<'idle' | 'dirty' | 'saving' | 'saved' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -407,17 +421,21 @@ function EditableEntryRow({ entry, targets, workers, tasks, addWorker, addTask, 
 
   async function save() {
     if (state !== 'dirty' && state !== 'error') return;
-    const validation = validate(draft);
+    const validation = validate(draft) || validateProductSelection(draft.productCategoryId, categories, entry.product_category_id);
     if (validation) { setState('error'); setMessage(validation); return; }
     setState('saving');
     try {
-      const updated = await updateManpowerEntry(entry.id, toInput(draft, targets));
+      const changes: Partial<ManpowerEntryInput> = toInput(draft, targets);
+      // An unrelated edit must not overwrite a classification saved by another session.
+      if (draft.productCategoryId === (entry.product_category_id ?? '')) delete changes.product_category_id;
+      const updated = await updateManpowerEntry(entry.id, changes);
       onSaved(updated);
       setState('saved');
       setMessage('');
     } catch (caught) {
       setState('error');
-      setMessage(caught instanceof Error ? caught.message : 'Unable to save entry.');
+      setMessage(caughtMessage(caught, 'Unable to save entry.'));
+      void refresh().catch(() => {});
     }
   }
 
@@ -426,7 +444,7 @@ function EditableEntryRow({ entry, targets, workers, tasks, addWorker, addTask, 
       if (!event.currentTarget.contains(event.relatedTarget as Node | null)) void save();
     }}>
       <td className="border-r border-slate-300 px-3 pt-3 text-center"><SelectionCheckbox checked={selected} label={`Select ${entry.worker.display_name} entry on ${entry.work_date}`} onChange={onSelected} /></td>
-      <EntryFields draft={draft} setDraft={change} targets={targets} workers={workers} tasks={tasks} addWorker={addWorker} addTask={addTask} savedTemporaryLabel={entry.unlisted_work_label} jobReadOnly jobControl={jobControl} actions={<span className="shrink-0 text-center text-[10px] font-bold uppercase tracking-wide">
+      <EntryFields allowUncategorized={entry.product_category_id === null} draft={draft} setDraft={change} targets={targets} workers={workers} tasks={tasks} addWorker={addWorker} addTask={addTask} savedTemporaryLabel={entry.unlisted_work_label} jobReadOnly jobControl={jobControl} actions={<span className="shrink-0 text-center text-[10px] font-bold uppercase tracking-wide">
         {state === 'dirty' && <button type="button" onClick={() => void save()} className="text-blue-700">Save</button>}
         {state === 'saving' && <span className="text-slate-500">Saving…</span>}
         {state === 'saved' && <span className="text-emerald-700">Saved</span>}
@@ -540,6 +558,11 @@ function BulkActionBar({
 
 export default function ManpowerWorkspace() {
   const { tr } = useLanguage();
+  const auth = useAuth();
+  const canManageCategories = auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.can('manageManpowerProductCategories');
+  const [categories, setCategories] = useState<ManpowerReference[]>([]);
+  const [manageCategories, setManageCategories] = useState(false);
+  const [productFilter, setProductFilter] = useState('');
   const [entries, setEntries] = useState<ManpowerEntry[]>([]);
   const [jobs, setJobs] = useState<ManpowerJob[]>([]);
   const [reportingGroups, setReportingGroups] = useState<ManpowerReportingGroup[]>([]);
@@ -550,6 +573,7 @@ export default function ManpowerWorkspace() {
   const [linkedJobId, setLinkedJobId] = useState<string | null>(() => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('job'));
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [manageReferences, setManageReferences] = useState(false);
@@ -570,13 +594,23 @@ export default function ManpowerWorkspace() {
     if (showNewGroup) newGroupInputRef.current?.focus();
   }, [showNewGroup]);
 
+  const refreshCategories = useCallback(async () => {
+    try { setCategories(await loadProductCategories()); }
+    catch (caught) { setError(caughtMessage(caught, 'Unable to refresh Product Categories.')); throw caught; }
+  }, []);
+  useEffect(() => {
+    const refresh = () => { void refreshCategories().catch(() => {}); };
+    window.addEventListener('focus', refresh);
+    return () => window.removeEventListener('focus', refresh);
+  }, [refreshCategories]);
+
   const load = useCallback(async () => {
-    setLoading(true); setError('');
+    setLoading(true); setError(''); setLoadError('');
     try {
-      const [loadedEntries, loadedJobs, loadedGroups, loadedWorkers, loadedTasks] = await Promise.all([
-        loadManpowerEntries(), loadManpowerJobs(), loadManpowerReportingGroups(), loadManpowerReferences('manpower_workers'), loadManpowerReferences('manpower_tasks'),
+      const [loadedEntries, loadedJobs, loadedGroups, loadedWorkers, loadedTasks, loadedCategories] = await Promise.all([
+        loadManpowerEntries(), loadManpowerJobs(), loadManpowerReportingGroups(), loadManpowerReferences('manpower_workers'), loadManpowerReferences('manpower_tasks'), loadProductCategories(),
       ]);
-      setEntries(loadedEntries); setJobs(loadedJobs); setReportingGroups(loadedGroups); setWorkers(loadedWorkers); setTasks(loadedTasks);
+      setEntries(loadedEntries); setJobs(loadedJobs); setReportingGroups(loadedGroups); setWorkers(loadedWorkers); setTasks(loadedTasks); setCategories(loadedCategories);
       if (!collapseInitialized.current) {
         setCollapsed(new Set([
           ...loadedGroups.map((group) => group.id),
@@ -587,7 +621,7 @@ export default function ManpowerWorkspace() {
       const loadedIds = new Set(loadedEntries.map((entry) => entry.id));
       setSelectedIds((current) => new Set([...current].filter((id) => loadedIds.has(id))));
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Unable to load manpower reporting.');
+      setLoadError(caughtMessage(caught, 'Unable to load manpower reporting.'));
     } finally { setLoading(false); }
   }, []);
 
@@ -647,14 +681,14 @@ export default function ManpowerWorkspace() {
   }
 
   async function createEntry() {
-    const validation = validate(draft);
+    const validation = validate(draft) || validateProductSelection(draft.productCategoryId, categories);
     if (validation) { setError(validation); return; }
     setSaving(true); setError('');
     try {
       const created = await createManpowerEntry(toInput(draft, targets));
       setEntries((items) => [created, ...items]);
       setDraft({ ...blankDraft(), reportingGroupId: draft.reportingGroupId, workDate: draft.workDate, workTarget: draft.workTarget, unlistedLabel: draft.unlistedLabel });
-    } catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to add labor entry.'); }
+    } catch (caught) { setError(caughtMessage(caught, 'Unable to add labor entry.')); void refreshCategories().catch(() => {}); }
     finally { setSaving(false); }
   }
 
@@ -695,12 +729,13 @@ export default function ManpowerWorkspace() {
     }
     for (const entry of entries) {
       if (linkedJobId && entry.job_id !== linkedJobId) continue;
+      if (productFilter && productKey(entry) !== productFilter) continue;
       const key = entry.reporting_group_id ?? '__ungrouped__';
       const label = entry.reporting_group?.display_name ?? 'Ungrouped entries';
       const group = grouped.get(key) ?? { key, label, group: entry.reporting_group, entries: [] };
       group.entries.push(entry); grouped.set(key, group);
     }
-    const sortedGroups = [...grouped.values()].sort((a, b) => {
+    const sortedGroups = [...grouped.values()].filter((group) => (!linkedJobId && !productFilter) || group.entries.length > 0).sort((a, b) => {
       if (a.group && b.group) {
         const aDate = groupReportingDate(a.group);
         const bDate = groupReportingDate(b.group);
@@ -726,6 +761,7 @@ export default function ManpowerWorkspace() {
           entry.work_date,
           entry.worker.display_name,
           entry.task.display_name,
+          productLabel(productKey(entry), categories),
           entry.job?.name,
           entry.job?.job_number,
           entry.rework_cycle ? `REWORK #${entry.rework_cycle.sequence_number}` : null,
@@ -735,7 +771,7 @@ export default function ManpowerWorkspace() {
         ].some((value) => value?.toLocaleLowerCase().includes(normalizedSearch))),
       }))
       .filter((group) => group.entries.length > 0);
-  }, [entries, linkedJobId, normalizedSearch, reportingGroups]);
+  }, [entries, linkedJobId, productFilter, normalizedSearch, reportingGroups, categories]);
 
   function startAddingToGroup(groupId: string, groupEntries: ManpowerEntry[], groupLabel: string) {
     const identities = new Map<string, Pick<Draft, 'workTarget' | 'unlistedLabel'>>();
@@ -860,14 +896,17 @@ export default function ManpowerWorkspace() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7">
+    <ProductContext.Provider value={{ categories, refresh: refreshCategories }}><div className="mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7">
       <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Operations Reporting','Reportes de operaciones')}</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Manpower Reporting','Reporte de mano de obra')}</h1><p className="mt-1 text-sm text-slate-600">{tr('Record shop labor by job, worker, task, and work date.','Registre las horas del taller por trabajo, empleado, tarea y fecha de trabajo.')}</p></div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          {canManageCategories && <button type="button" onClick={() => setManageCategories(true)} className="h-9 border border-slate-300 bg-white px-3 text-xs font-bold">Product Categories</button>}
           <button type="button" onClick={toggleReferencePanel} className="inline-flex h-9 items-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"><Settings2 className="h-4 w-4" /> {tr('Workers & Tasks','Empleados y tareas')}</button>
           <button type="button" onClick={() => void load()} disabled={loading} className="inline-flex h-9 items-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"><RotateCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> {tr('Refresh','Actualizar')}</button>
         </div>
       </div>
+
+      {manageCategories && canManageCategories && <ProductCategoryManager categories={categories} onChanged={refreshCategories} onClose={() => setManageCategories(false)} />}
 
       {manageReferences && <div className="mt-4 grid gap-4 rounded-sm border border-slate-200 bg-white p-4 shadow-sm lg:grid-cols-2">
         <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-3 lg:col-span-2"><div><h2 className="text-sm font-bold text-slate-900">Workers & Tasks</h2><p className="text-xs text-slate-600">Maintain names, display order, and active status.</p></div><button type="button" onClick={closeReferencePanel} className="h-9 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">Close</button></div>
@@ -879,8 +918,12 @@ export default function ManpowerWorkspace() {
       {error && <div className="mt-4 border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">{error}</div>}
 
       <div className="mt-5 space-y-3">
+        <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">Product Category filter<select aria-label="Product Category filter" className={`${inputClass} max-w-xs`} value={productFilter} onFocus={() => void refreshCategories().catch(() => {})} onChange={(event) => setProductFilter(event.target.value)}><option value="">All Products</option>{categories.filter((category) => category.is_active || entries.some((entry) => entry.product_category_id === category.id)).map((category) => <option key={category.id} value={category.id}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}<option value={UNCATEGORIZED}>Uncategorized</option></select></label>
+        {!loading && !loadError && <ProductLaborSummary entries={groups.flatMap((group) => group.entries)} totalEntries={entries.filter((entry) => !linkedJobId || entry.job_id === linkedJobId)} categories={categories} tasks={tasks} jobScoped={Boolean(linkedJobId)} />}
+        {(normalizedSearch || productFilter || linkedJobId) && <p className="text-xs text-slate-500">Clear filters to create an empty group or change a whole group’s Job.</p>}
+        <p className="text-xs text-slate-500">Choose one Product Category per line. Split hours across separate lines when labor belongs to different products.</p>
         <div className="flex min-h-9 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          {!showNewGroup ? <button type="button" onClick={() => setShowNewGroup(true)} className="inline-flex h-9 items-center gap-1.5 border border-slate-500 bg-white px-3 text-xs font-bold uppercase tracking-wide text-slate-800 hover:bg-slate-100"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</button> : <div className="flex items-center gap-1 border border-slate-400 bg-white p-1"><input ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 px-2 text-sm outline-none" /><button type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim()} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</button><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
+          {!showNewGroup ? <button type="button" onClick={() => setShowNewGroup(true)} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || loading || Boolean(loadError)} title="Clear filters before creating an empty group" className="inline-flex h-9 items-center gap-1.5 border border-slate-500 bg-white px-3 text-xs font-bold uppercase tracking-wide text-slate-800 hover:bg-slate-100"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</button> : <div className="flex items-center gap-1 border border-slate-400 bg-white p-1"><input ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 px-2 text-sm outline-none" /><button type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</button><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
           <label className="relative block w-full sm:max-w-sm">
             <span className="sr-only">{tr('Search manpower','Buscar registros de mano de obra')}</span>
             <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
@@ -888,37 +931,39 @@ export default function ManpowerWorkspace() {
           </label>
         </div>
         {linkedJobId ? <div className="flex items-center gap-2 text-xs"><span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 font-semibold text-blue-800">Job: {jobs.find((job) => job.id === linkedJobId)?.name ?? 'Selected Production job'}</span><button type="button" onClick={() => { const url = new URL(window.location.href); url.searchParams.delete('job'); window.history.pushState(null, '', `${url.pathname}${url.search}`); setLinkedJobId(null); }} className="font-semibold text-slate-500 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">Clear job filter</button></div> : null}
-        {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{linkedJobId ? 'No manpower reporting groups are linked to this Production job.' : normalizedSearch ? 'No manpower entries match your search.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
-          const isCollapsed = normalizedSearch ? false : collapsed.has(group.key);
+        {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : loadError ? <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{loadError}</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{linkedJobId ? 'No manpower reporting groups are linked to this Production job.' : normalizedSearch || productFilter ? 'No manpower entries match your filters.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
+          const identityEntries = entries.filter((entry) => (entry.reporting_group_id ?? '__ungrouped__') === group.key);
+          const identityFiltered = Boolean(normalizedSearch || productFilter || linkedJobId);
+          const isCollapsed = normalizedSearch || productFilter ? false : collapsed.has(group.key);
           const am = group.entries.reduce((sum, entry) => sum + Number(entry.am_hours), 0);
           const pm = group.entries.reduce((sum, entry) => sum + Number(entry.pm_hours), 0);
           const groupIds = group.entries.map((entry) => entry.id);
-          const emptyGroupSelected = group.entries.length === 0 && selectedEmptyGroupIds.has(group.key);
+          const emptyGroupSelected = identityEntries.length === 0 && selectedEmptyGroupIds.has(group.key);
           const selectedGroupIds = groupIds.filter((id) => selectedIds.has(id));
           const allSelected = groupIds.length > 0 && selectedGroupIds.length === groupIds.length;
           const someSelected = selectedGroupIds.length > 0 && !allSelected;
-          const linkedJobIds = [...new Set(group.entries.map((entry) => entry.job_id).filter((id): id is string => Boolean(id)))];
-          const groupJobId = linkedJobIds.length === 1 && group.entries.every((entry) => entry.job_id === linkedJobIds[0]) ? linkedJobIds[0] : '';
+          const linkedJobIds = [...new Set(identityEntries.map((entry) => entry.job_id).filter((id): id is string => Boolean(id)))];
+          const groupJobId = linkedJobIds.length === 1 && identityEntries.every((entry) => entry.job_id === linkedJobIds[0]) ? linkedJobIds[0] : '';
           const groupJob = jobs.find((job) => job.id === groupJobId);
-          const lifecycleIdentities = new Set(group.entries.map((entry) => entry.job_id
+          const lifecycleIdentities = new Set(identityEntries.map((entry) => entry.job_id
             ? manpowerEntryTargetValue(entry)
             : `${UNLISTED_WORK_TARGET}:${entry.unlisted_work_label}`));
-          const groupTargetValue = lifecycleIdentities.size === 1 && group.entries.length > 0
-            ? manpowerEntryTargetValue(group.entries[0])
+          const groupTargetValue = lifecycleIdentities.size === 1 && identityEntries.length > 0
+            ? manpowerEntryTargetValue(identityEntries[0])
             : '';
-          const groupTargetLabel = lifecycleIdentities.size === 1 && group.entries.length > 0
-            ? targets.find((target) => target.value === groupTargetValue)?.label ?? group.entries[0].unlisted_work_label ?? ''
+          const groupTargetLabel = lifecycleIdentities.size === 1 && identityEntries.length > 0
+            ? targets.find((target) => target.value === groupTargetValue)?.label ?? identityEntries[0].unlisted_work_label ?? ''
             : group.entries.length > 0 ? 'Mixed lifecycle targets' : '';
-          const previousJobName = group.entries.find((entry) => entry.unlisted_work_label?.trim())?.unlisted_work_label?.trim() || group.label;
+          const previousJobName = identityEntries.find((entry) => entry.unlisted_work_label?.trim())?.unlisted_work_label?.trim() || group.label;
           const newEntryJobCell = <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === draft.workTarget)?.label ?? (draft.unlistedLabel || 'Choose a work target')}</div>;
-          const temporaryGroupJobCell = <input key={`${group.key}:${previousJobName}`} defaultValue={previousJobName} aria-label={`Job name for ${group.label}`} onBlur={(event) => { if (event.target.value.trim() !== previousJobName) void renameUnlinkedGroup(group.key, group.entries, event.target.value); }} className="h-8 min-w-[220px] w-full border border-slate-300 bg-white px-2 text-xs outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-200" />;
+          const temporaryGroupJobCell = <input key={`${group.key}:${previousJobName}`} disabled={identityFiltered} defaultValue={previousJobName} aria-label={`Job name for ${group.label}`} onBlur={(event) => { if (event.target.value.trim() !== previousJobName) void renameUnlinkedGroup(group.key, identityEntries, event.target.value); }} className="h-8 min-w-[220px] w-full border border-slate-300 bg-white px-2 text-xs outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-200" />;
           return (
             <section key={group.key} className={`overflow-hidden rounded-sm border bg-white ${selectedGroupIds.length > 0 || emptyGroupSelected ? 'border-blue-600' : 'border-slate-200'}`}>
-              <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800">
+              <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800">
                 <SelectionCheckbox
                   checked={emptyGroupSelected || allSelected}
                   indeterminate={someSelected}
-                  label={group.entries.length === 0 ? `Select empty group ${group.label}` : `Select all entries in ${group.label}`}
+                  label={identityEntries.length === 0 ? `Select empty group ${group.label}` : `Select all entries in ${group.label}`}
                   onChange={(checked) => {
                     if (group.entries.length > 0) {
                       setGroupSelected(groupIds, checked);
@@ -942,20 +987,20 @@ export default function ManpowerWorkspace() {
                 {isCollapsed && selectedGroupIds.length > 0 && <span className="shrink-0 rounded bg-blue-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">{selectedGroupIds.length} selected</span>}
                 <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">AM {am.toFixed(1)} hrs</span>
                 <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">PM {pm.toFixed(1)} hrs</span>
-                <span className="shrink-0 rounded-sm bg-slate-900 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">TOTAL {(am + pm).toFixed(1)} hrs</span>
+                <span className="shrink-0 rounded-sm bg-slate-900 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">{identityFiltered ? 'MATCHING' : 'TOTAL'} {(am + pm).toFixed(2)} hrs</span>
               </div>
-              {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><button type="button" onClick={() => startAddingToGroup(group.group!.id, group.entries, group.label)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</button></div>}
+              {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><button type="button" onClick={() => startAddingToGroup(group.group!.id, identityEntries, group.label)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</button></div>}
               {!isCollapsed && <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                 <span className="flex-1">{groupJob ? tr('This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.','Este grupo de mano de obra está vinculado al trabajo de Producción. Las horas registradas aquí se incluyen en las horas registradas del flujo de producción.') : tr('This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.','Este grupo de mano de obra no está vinculado a un trabajo de Producción. Las horas registradas aquí no aparecerán en Producción hasta que se vincule un trabajo.')}</span>
-                <ProductionJobLinkSelector groupLabel={group.label} targets={targets} value={groupTargetValue} selectedLabel={groupTargetLabel} disabled={linkingGroupId === group.key} onChange={(workTarget) => void linkReportingGroup(group.key, group.entries, workTarget, previousJobName)} />
+                <ProductionJobLinkSelector groupLabel={group.label} targets={targets} value={groupTargetValue} selectedLabel={groupTargetLabel} disabled={linkingGroupId === group.key || identityFiltered} onChange={(workTarget) => void linkReportingGroup(group.key, identityEntries, workTarget, previousJobName)} />
               </div>}
               {selectedGroupIds.length > 0 && <BulkActionBar selectedCount={selectedGroupIds.length} targets={targets} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
               {emptyGroupSelected && group.group && <div className="flex items-center justify-between border-b border-blue-200 bg-blue-50 px-3 py-2 text-xs"><span className="font-semibold text-blue-900">Empty group selected</span><div className="flex items-center gap-3"><button type="button" onClick={() => setSelectedEmptyGroupIds((current) => { const next = new Set(current); next.delete(group.key); return next; })} className="font-bold text-slate-600 hover:underline">Clear selection</button><button type="button" onClick={() => void deleteSelectedEmptyGroup(group.group!)} className="h-8 border border-red-500 bg-white px-3 font-bold text-red-700 hover:bg-red-50">Delete Empty Group</button></div></div>}
-              {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1300px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{addingToGroupId === group.key && group.group && <tr className="border-b-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly={Boolean(draft.workTarget)} jobControl={draft.workTarget ? newEntryJobCell : undefined} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={groupTargetValue === UNLISTED_WORK_TARGET ? temporaryGroupJobCell : <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === manpowerEntryTargetValue(entry))?.label ?? entry.unlisted_work_label ?? 'Unlinked'}</div>} />)}</tbody></table></div>}
+              {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1480px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Product Category</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{addingToGroupId === group.key && group.group && <tr className="border-b-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly={Boolean(draft.workTarget)} jobControl={draft.workTarget ? newEntryJobCell : undefined} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={groupTargetValue === UNLISTED_WORK_TARGET ? temporaryGroupJobCell : <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === manpowerEntryTargetValue(entry))?.label ?? entry.unlisted_work_label ?? 'Unlinked'}</div>} />)}</tbody></table></div>}
             </section>
           );
         })}
       </div>
-    </div>
+    </div></ProductContext.Provider>
   );
 }

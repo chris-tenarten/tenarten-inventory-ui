@@ -1,3 +1,4 @@
+import { loadCompleteLabor } from '../manpower/pagination';
 import { supabase } from '@/lib/supabase';
 import type { ProductionJob } from './types';
 import { loadProductionJobs } from './jobs';
@@ -48,15 +49,15 @@ export async function loadMonthlySnapshot(now = new Date()): Promise<SnapshotDat
   const [jobs, activity, labor, laborLinks, reports, materialLinks, transactions, completedReceivals, unresolved] = await Promise.all([
     loadProductionJobs(true),
     supabase.from('job_activity').select('job_id,event_type,metadata,occurred_at').gte('occurred_at', startInstant).lte('occurred_at', endInstant),
-    supabase.from('manpower_entries').select('job_id,rework_cycle_id,work_date,am_hours,pm_hours,worker:manpower_workers(display_name),task:manpower_tasks(display_name),rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id,sequence_number)').gte('work_date', period.start).lte('work_date', period.end),
-    supabase.from('manpower_entries').select('job_id').not('job_id', 'is', null),
+    loadCompleteLabor((from, to) => supabase.from('manpower_entries').select('id,job_id,rework_cycle_id,work_date,am_hours,pm_hours,worker:manpower_workers(display_name),task:manpower_tasks(display_name),rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id,sequence_number)', { count: 'exact' }).gte('work_date', period.start).lte('work_date', period.end).order('id').range(from, to)),
+    loadCompleteLabor((from, to) => supabase.from('manpower_entries').select('id,job_id', { count: 'exact' }).not('job_id', 'is', null).order('id').range(from, to)),
     supabase.from('material_usage_reports').select('id,job_id,report_date,material_usage_lines(material_name,quantity,unit)').gte('report_date', period.start).lte('report_date', period.end),
     supabase.from('material_usage_reports').select('job_id').not('job_id', 'is', null),
     supabase.from('inventory_transactions').select('transaction_type,item_name,created_at').gte('created_at', startInstant).lte('created_at', endInstant),
     supabase.from('pending_receivals').select('id,received_at').gte('received_at', startInstant).lte('received_at', endInstant),
     supabase.from('pending_receivals').select('id,material_name,vendor,eta,created_at,status').in('status', ['pending', 'partially_received']).order('created_at', { ascending: true }).limit(8),
   ]);
-  for (const result of [activity, labor, laborLinks, reports, materialLinks, transactions, completedReceivals, unresolved]) if (result.error) throw result.error;
+  for (const result of [activity, reports, materialLinks, transactions, completedReceivals, unresolved]) if (result.error) throw result.error;
 
   const jobById = new Map(jobs.map((job) => [job.id, job]));
   const transitionJobIds = { started: new Set<string>(), completed: new Set<string>(), shipped: new Set<string>() };
@@ -80,8 +81,8 @@ export async function loadMonthlySnapshot(now = new Date()): Promise<SnapshotDat
   const workers = new Map<string, number>();
   const tasks = new Map<string, number>();
   const dailyLabor = new Map<string, number>();
-  const lifecycleLabor = summarizeLaborLifecycles(labor.data ?? []);
-  for (const row of labor.data ?? []) {
+  const lifecycleLabor = summarizeLaborLifecycles(labor);
+  for (const row of labor) {
     const hours = Number(row.am_hours ?? 0) + Number(row.pm_hours ?? 0);
     reportedHours += hours;
     reportingDays.add(String(row.work_date));
@@ -100,7 +101,7 @@ export async function loadMonthlySnapshot(now = new Date()): Promise<SnapshotDat
 
   const materialJobIds = new Set<string>();
   const linkedMaterialJobIds = new Set((materialLinks.data ?? []).map((row) => String(row.job_id)));
-  const linkedLaborJobIds = new Set((laborLinks.data ?? []).map((row) => String(row.job_id)));
+  const linkedLaborJobIds = new Set(laborLinks.map((row) => String(row.job_id)));
   const materialFrequency = new Map<string, number>();
   const materialQuantity = new Map<string, number>();
   for (const report of reports.data ?? []) {
