@@ -1,3 +1,5 @@
+import { normalizeSupportedSampleRatio } from "./sample-ratio.mjs";
+
 export const SAMPLE_PDF_VERSION = "sample-work-order-pdf-v6-density-profile";
 
 const value = (source, camel, snake = camel) => String(source?.[camel] ?? source?.[snake] ?? "");
@@ -36,7 +38,7 @@ export function buildSamplePdfModel(snapshot) {
         !massBalance && !historicalParity && derived.targetWeight != null ? `Target ${derived.targetWeight} ${value(formulation, "weightUnit") || "lb"}` : "",
         !densityProfile && value(formulation, "materialDensity") ? `Density ${value(formulation, "materialDensity")} lb/CFT` : "",
         value(formulation, "thicknessIn") ? `Thickness ${value(formulation, "thicknessIn")} in` : "",
-        `Resin : Hardener ${value(formulation, "resinParts") || "5"}:${value(formulation, "hardenerParts") || "1"}`,
+        `Resin : Hardener ${normalizeSupportedSampleRatio(value(formulation, "resinParts"), value(formulation, "hardenerParts")) ?? `${value(formulation, "resinParts") || "5"}:${value(formulation, "hardenerParts") || "1"}`}`,
       ].filter(Boolean).join(" · ")
     : "";
   return {

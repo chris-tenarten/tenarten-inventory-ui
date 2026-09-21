@@ -77,6 +77,7 @@ import {
 import {
   applySupplierRatioDefault,
   calculateSampleFormulation,
+  normalizeSupportedSampleRatio,
   SAMPLE_FORMULATION_CALCULATION_VERSION,
 } from "./formulation";
 
@@ -1150,7 +1151,7 @@ export default function SampleWorkspace() {
                                 ? "Profile default · oz within the dry-material pool"
                                 : row.componentRole === "resin"
                                   ? "Profile default · fl oz from production volume"
-                                  : `Calculated · fl oz from Resin at ${draft.formulation.resinParts}:${draft.formulation.hardenerParts}`}
+                                  : `Calculated · fl oz from Resin at ${normalizeSupportedSampleRatio(draft.formulation.resinParts,draft.formulation.hardenerParts)??`${draft.formulation.resinParts}:${draft.formulation.hardenerParts}`}`}
                         </span>
                       </label>
                       {row.quantityProvenance === "manual" && (

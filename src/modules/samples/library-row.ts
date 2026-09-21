@@ -1,4 +1,5 @@
 import type {SampleRecord} from './types';
+import {normalizeSupportedSampleRatio} from './formulation';
 
 const clean=(value:string)=>value.trim();
 const plural=(count:number,word:string)=>`${count} ${word}${count===1?'':'s'}`;
@@ -14,7 +15,7 @@ export function sampleFormulationPreview(sample:SampleRecord){
  const materials=sample.blendRows.map(row=>[clean(row.color),clean(row.size)].filter(Boolean).join(' ')).filter(Boolean).slice(0,2);
  if(!materials.length)return'No materials added';
  const resin=clean(sample.resinColorNumber)||clean(sample.resinSupplier);if(resin&&!materials.some(value=>value.toLowerCase().includes(resin.toLowerCase())))materials.push(`${resin} resin`);
- const ratio=`${clean(sample.formulation.resinParts)}:${clean(sample.formulation.hardenerParts)}`;if(/^\d+(?:\.\d+)?:\d+(?:\.\d+)?$/.test(ratio))materials.push(`${ratio} resin`);
+ const ratio=normalizeSupportedSampleRatio(sample.formulation.resinParts,sample.formulation.hardenerParts);if(ratio)materials.push(`${ratio} resin`);
  return materials.slice(0,3).join(' · ');
 }
 

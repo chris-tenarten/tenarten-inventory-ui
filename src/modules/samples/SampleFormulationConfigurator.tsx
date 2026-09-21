@@ -6,6 +6,7 @@ import {
   applyFormulationProfile,
   calculateSampleFormulation,
   previewIncreasedFillerAdjustment,
+  normalizeSupportedSampleRatio,
   SAMPLE_FORMULATION_CALCULATION_VERSION,
   SAMPLE_FORMULATION_PROFILES,
   MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION,
@@ -369,7 +370,7 @@ export default function SampleFormulationConfigurator({
             <label className={label}>
               Resin : Hardener Ratio
               <select
-                value={`${state.resinParts}:${state.hardenerParts}`}
+                value={normalizeSupportedSampleRatio(state.resinParts,state.hardenerParts)??""}
                 onChange={(event) => {
                   const [resinParts, hardenerParts] =
                     event.target.value.split(":");

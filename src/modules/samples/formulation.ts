@@ -1,3 +1,5 @@
+import {normalizeSupportedSampleRatio,normalizedSampleRatioParts} from '../../../supabase/functions/_shared/sample-ratio.mjs';
+
 export const LEGACY_SAMPLE_FORMULATION_CALCULATION_VERSION='sample-formulation-v1';
 export const MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION='sample-formulation-v2-mass-balance';
 export const HISTORICAL_PARITY_SAMPLE_FORMULATION_CALCULATION_VERSION='sample-formulation-v3-historical-parity';
@@ -26,6 +28,7 @@ const display=(value:number|null)=>value===null?'':String(Math.round(value*10000
 export const normalizeSupplierKey=(value:string)=>value.trim().toLowerCase().replace(/\s+/g,' ');
 export function resolveSupplierRatio(supplier:string,state:Pick<SampleFormulationState,'supplierRatioDefaults'>){const key=normalizeSupplierKey(supplier);return state.supplierRatioDefaults[key]??(key.includes('sherwin')?'4:1':'5:1');}
 export function applySupplierRatioDefault(state:SampleFormulationState,supplier:string):SampleFormulationState{const ratio=resolveSupplierRatio(supplier,state);const[resinParts,hardenerParts]=ratio.split(':');return{...state,resinParts,hardenerParts,ratioProvenance:'default',ratioDefaultSource:normalizeSupplierKey(supplier)?supplier.trim():'General'};}
+export {normalizeSupportedSampleRatio,normalizedSampleRatioParts};
 export function applyFormulationProfile(state:SampleFormulationState,profile:SampleFormulationProfile,provenance:ProfileProvenance='selected'):SampleFormulationState{return{...state,calculationVersion:SAMPLE_FORMULATION_CALCULATION_VERSION,profile:{...profile},profileProvenance:provenance,materialDensity:state.chipDensityProvenance==='manual'?state.materialDensity:profile.defaultChipDensityLbCft,chipDensityProvenance:state.chipDensityProvenance==='manual'?'manual':'profile_default',adjustment:null,resinParts:state.ratioProvenance==='manual'?state.resinParts:profile.resinParts,hardenerParts:state.ratioProvenance==='manual'?state.hardenerParts:profile.hardenerParts,ratioDefaultSource:state.ratioProvenance==='manual'?state.ratioDefaultSource:profile.name};}
 const toOunces=(value:string,unit='oz')=>{const amount=positive(value);if(amount===null)return null;return unit.trim().toLowerCase()==='lb'?amount*16:amount;};
 const toFluidOunces=(value:string,unit='fl oz')=>{const amount=positive(value);if(amount===null)return null;const normalized=unit.trim().toLowerCase();if(['gal','gallon','gallons'].includes(normalized))return amount*128;return ['fl oz','fluid oz','fluid ounce','fluid ounces','oz'].includes(normalized)?amount:null;};
