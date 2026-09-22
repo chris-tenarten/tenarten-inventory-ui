@@ -1625,3 +1625,18 @@ html[data-appearance="dark"] .document-print-root .border-slate-400 { border-col
   .document-print-root, .document-print-root * { visibility: visible !important; }
   .document-print-root { position: absolute; inset: 0; width: 8.5in !important; transform: none !important; }
 }
+
+/* Keep disabled bulk actions legible without making them compete with enabled actions. */
+.manpower-bulk-action:disabled {
+  opacity: 1;
+  color: #475569;
+  background-color: #e2e8f0;
+  border-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+html[data-appearance="dark"] .manpower-bulk-action:disabled {
+  color: #cbd5e1;
+  background-color: #263448;
+  border-color: #52647b;
+}

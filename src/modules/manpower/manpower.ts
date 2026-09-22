@@ -274,3 +274,31 @@ export async function saveProductCategory(id: string | null, changes: Pick<Manpo
   const result = id ? await table.update(payload).eq('id', id).eq('updated_at', expectedUpdatedAt ?? '').select('id').single() : await table.insert(payload).select('id').single();
   if (result.error) throw result.error;
 }
+
+// Existing guarded category UPDATE path, deliberately without upsert or labor writes.
+// Multiple requests are not atomic: callers must refresh after any failure.
+export async function saveProductCategoryOrder(before: ManpowerReference[], desired: ManpowerReference[], addedName?: string): Promise<void> {
+  const fingerprint = (rows: ManpowerReference[]) => JSON.stringify([...rows].sort((a, b) => a.id.localeCompare(b.id)).map(c => [c.id, c.updated_at]));
+  if (fingerprint(await loadProductCategories()) !== fingerprint(before)) throw new Error('Categories changed. Refresh and try again.');
+  if (desired.length !== before.length || new Set(desired.map(c => c.id)).size !== before.length) throw new Error('Category identity cannot change.');
+  for (const next of desired) {
+    const previous = before.find(c => c.id === next.id);
+    if (!previous) throw new Error('Category identity cannot change.');
+    const changes: Partial<Pick<ManpowerReference, 'display_name' | 'sort_order' | 'is_active'>> = {};
+    for (const key of ['display_name', 'sort_order', 'is_active'] as const) {
+      if (next[key] !== previous[key]) Object.assign(changes, { [key]: next[key] });
+    }
+    if (!Object.keys(changes).length) continue;
+    const { error } = await supabase.from('manpower_product_categories').update(changes)
+      .eq('id', next.id).eq('updated_at', previous.updated_at).select('id').single();
+    if (error) throw error;
+  }
+  if (addedName) await saveProductCategory(null, { display_name: addedName, sort_order: desired.filter(c => c.is_active).length + 1, is_active: true });
+  const verified = await loadProductCategories();
+  if (verified.length !== desired.length + (addedName ? 1 : 0) || desired.some(c => {
+    const row = verified.find(v => v.id === c.id);
+    return !row || row.display_name !== c.display_name || row.sort_order !== c.sort_order || row.is_active !== c.is_active;
+  }) || (addedName && !verified.some(c => !before.some(b => b.id === c.id) && c.display_name === addedName && c.is_active && c.sort_order === desired.filter(d => d.is_active).length + 1))) {
+    throw new Error('The saved category list could not be confirmed.');
+  }
+}

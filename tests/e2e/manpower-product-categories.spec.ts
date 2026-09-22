@@ -1,44 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
-import { mockManpowerAuth } from '../support/manpower-auth';
-
-const stamp = '2026-09-21T00:00:00Z';
-const reference = (id: string, name: string, order = 1) => ({ id, display_name: name, sort_order: order, is_active: true, created_at: stamp, updated_at: stamp });
-async function fixture(page: Page, role = 'lead') {
-  let categories = [reference('slabs','Slabs'), reference('stairs','Stairs',2), {...reference('base','Base',3),is_active:false}];
-  const group = { id:'group',display_name:'Shop labor',created_at:stamp,updated_at:stamp };
-  const job = { id:'job',name:'Test Job',job_number:'26-001',production_status:'in_production',archived_at:null as string | null };
-  const worker=reference('worker','Test Worker');
-  const tasks=[reference('wizard','Rough Grind on Wizard'),reference('polisher','Rough Grind on Polisher')];
-  let entries = [
-    {id:'a',product_category_id:'slabs',am_hours:2,pm_hours:1,task_id:'wizard',rework_cycle_id:null},
-    {id:'b',product_category_id:'stairs',am_hours:4,pm_hours:0,task_id:'polisher',rework_cycle_id:'rework'},
-    {id:'c',product_category_id:null,am_hours:1,pm_hours:1,task_id:'wizard',rework_cycle_id:null},
-    {id:'d',product_category_id:'base',am_hours:1,pm_hours:0,task_id:'wizard',rework_cycle_id:null},
-  ].map(row=>({...row,work_date:'2026-09-17',worker_id:worker.id,job_id:job.id,reporting_group_id:group.id,unlisted_work_label:null,notes:'',entered_by:null,created_at:stamp,updated_at:stamp,worker,task:tasks.find(t=>t.id===row.task_id)!,job,reporting_group:group,rework_cycle:row.rework_cycle_id?{id:'rework',job_id:job.id,sequence_number:1,production_status:'in_production'}:null}));
-  entries.push({...entries[0],id:'other-job-row',job_id:'other-job',job:{...job,id:'other-job',name:'Archived Job',archived_at:stamp}});
-  const writes: {table:string;body:Record<string,unknown>}[]=[];
-  await page.route('**/rest/v1/**', async route=>{
-    const request=route.request(),url=new URL(request.url()),table=url.pathname.split('/').at(-1)!;
-    if(request.method()==='POST'||request.method()==='PATCH') {
-      const body=request.postDataJSON();writes.push({table,body});
-      const id=url.searchParams.get('id')?.replace('eq.','');
-      if(table==='manpower_product_categories') {
-        if(request.method()==='POST')categories.push({...reference('added',body.display_name,body.sort_order),is_active:body.is_active});
-        else categories=categories.map(c=>c.id===id?{...c,...body,updated_at:new Date().toISOString()}:c);
-        return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({id:id??'added'})});
-      }
-      if(table==='manpower_entries') {
-        if(request.method()==='PATCH') entries=entries.map(e=>e.id===id?{...e,...body,updated_at:new Date().toISOString()}:e);
-        else entries.push({...entries[0],...body,id:'new',updated_at:new Date().toISOString()});
-        return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(entries.find(e=>e.id===(id??'new')))});
-      }
-    }
-    const rows=table==='manpower_entries'?entries:table==='manpower_product_categories'?categories:table==='manpower_reporting_groups'?[group]:table==='manpower_workers'?[worker]:table==='manpower_tasks'?tasks:table==='jobs'?[job]:table==='production_rework_cycles'?[{id:'rework',job_id:'job',sequence_number:1,production_status:'in_production'}]:[];
-    await route.fulfill({status:200,contentType:'application/json',headers:{'access-control-expose-headers':'content-range','content-range':`0-${Math.max(0,rows.length-1)}/${rows.length}`},body:JSON.stringify(rows)});
-  });
-  await mockManpowerAuth(page,role);
-  return {writes, addRemote:()=>categories.push(reference('remote','Remote category',9))};
-}
+import { expect, test } from '@playwright/test';
+import { fixture } from '../support/manpower-settings-fixture';
 
 test('Job totals, pivots, inactive history, filters and safe group identity', async ({page})=>{
   await fixture(page);await page.goto('/manpower-reporting?job=job');
@@ -88,20 +49,21 @@ test('required new selection, historical null edit and refresh retain drafts', a
 
 test('manager lifecycle, historical rename and duplicate protection',async({page})=>{
   await fixture(page);await page.goto('/manpower-reporting?job=job');
-  await page.getByRole('button',{name:'Product Categories',exact:true}).click();
+  await page.getByRole('button',{name:'Manpower Settings',exact:true}).click();
+  await page.getByRole('tab',{name:'Product Categories',exact:true}).click();
   const manager=page.getByRole('region',{name:'Product Categories management'});
   await manager.getByRole('button',{name:'Edit Slabs',exact:true}).click();
   await manager.getByLabel('Category name').fill('Slabs renamed');
-  await manager.getByLabel('Display order').fill('8');
   await manager.getByRole('button',{name:'Save category',exact:true}).click();
   await page.getByText('Product / Task breakdown',{exact:true}).click();
   await expect(page.locator('summary').filter({hasText:'Slabs renamed'})).toContainText('3.00 h');
+  await manager.getByRole('button',{name:'Actions for Slabs renamed',exact:true}).click();
   await manager.getByRole('button',{name:'Deactivate Slabs renamed',exact:true}).click();
   await manager.getByLabel('Show inactive').check();
   await expect(manager.getByRole('button',{name:'Reactivate Slabs renamed',exact:true})).toBeVisible();
   await expect(page.locator('summary').filter({hasText:'Slabs renamed'})).toContainText('Inactive');
   await manager.getByRole('button',{name:'Reactivate Slabs renamed',exact:true}).click();
-  await manager.getByRole('button',{name:'Add category',exact:true}).click();
+  await manager.getByRole('button',{name:'Add Category',exact:true}).click();
   await manager.getByLabel('Category name').fill(' stairs ');
   await manager.getByRole('button',{name:'Save category',exact:true}).click();
   await expect(manager.getByRole('alert')).toHaveText('A category with that name already exists.');
@@ -114,7 +76,8 @@ for(const role of ['guest','member','developer','admin'])test(`management visibi
   await fixture(page,role);await page.goto('/manpower-reporting');
   await expect(page.getByLabel('Job labor review')).toBeVisible();
   await expect(page.getByTestId('labor-total')).toHaveCount(0);
-  await expect(page.getByRole('button',{name:'Product Categories',exact:true})).toHaveCount(role==='admin'?1:0);
+  await page.getByRole('button',{name:'Manpower Settings',exact:true}).click();
+  await expect(page.getByRole('tab',{name:'Product Categories',exact:true})).toHaveCount(role==='admin'?1:0);
 });
 
 test('narrow layout keeps controls available and table locally scrollable',async({page})=>{
@@ -124,8 +87,9 @@ test('narrow layout keeps controls available and table locally scrollable',async
   await page.getByRole('button',{name:'Expand Shop labor'}).click();
   await expect(page.getByLabel('Product Category',{exact:true}).first()).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
-  await page.getByRole('button',{name:'Product Categories',exact:true}).click();
-  await expect(page.getByRole('button',{name:'Add category',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Manpower Settings',exact:true}).click();
+  await page.getByRole('tab',{name:'Product Categories',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Add Category',exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
   await page.screenshot({path:'tmp/manpower-product-categories-narrow.png',fullPage:true});
 });

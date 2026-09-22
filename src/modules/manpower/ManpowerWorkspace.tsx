@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronDown, ChevronRight, Pencil, Plus, RotateCw, Search, Settings2 } from 'lucide-react';
-import { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useContext, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useAuth } from '@/lib/auth';
 import ProductCategoryManager from './ProductCategoryManager';
@@ -319,11 +319,11 @@ function ReferenceManager({ noun, options, onCreate, onUpdate, onEditingChange }
     catch (caught) { setError(caughtMessage(caught, `Unable to update ${noun}.`)); }
   }
 
-  return <section className="min-w-0"><div className="flex items-center justify-between gap-3"><h2 className="text-xs font-bold uppercase tracking-[0.12em] text-slate-700">{title}</h2><button type="button" onClick={beginAdd} className="inline-flex h-8 items-center gap-1 border border-slate-400 bg-white px-2 text-xs font-bold text-slate-800"><Plus className="h-3.5 w-3.5" /> Add {noun}</button></div>
-    <div className="mt-2 max-h-80 overflow-auto border border-slate-300"><table className="w-full border-collapse text-sm"><thead className="sticky top-0 z-10"><tr><th className={headerClass}>Name</th><th className={`${headerClass} w-20`}>Order</th><th className={`${headerClass} w-20`}>Status</th><th className={`${headerClass} w-40`}>Actions</th></tr></thead><tbody>
+  return <section className="flex min-h-0 min-w-0 flex-col"><div className="flex shrink-0 items-center justify-between gap-3"><h2 className="text-xs font-bold uppercase tracking-[0.12em] text-slate-700">{title}</h2><button type="button" onClick={beginAdd} className="inline-flex h-8 items-center gap-1 border border-slate-400 bg-white px-2 text-xs font-bold text-slate-800"><Plus className="h-3.5 w-3.5" /> Add {noun}</button></div>
+    <div data-settings-list className="mt-2 min-h-0 overflow-auto overscroll-contain border border-slate-300"><table className="w-full border-collapse text-sm"><thead className="sticky top-0 z-10"><tr><th className={headerClass}>Name</th><th className={`${headerClass} w-20`}>Order</th><th className={`${headerClass} w-20`}>Status</th><th className={`${headerClass} w-40`}>Actions</th></tr></thead><tbody>
       {adding && <tr className="bg-blue-50"><td className="p-1"><input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void save(); if (event.key === 'Escape') cancel(); }} className={inputClass} placeholder={`${title.slice(0, -1)} name`} /></td><td className="p-1"><input type="number" step="1" value={order} onChange={(event) => setOrder(event.target.value)} className={inputClass} /></td><td className="px-2 text-xs font-semibold text-emerald-700">Active</td><td className="p-1"><button type="button" onClick={() => void save()} disabled={saving} className="h-8 bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</button><button type="button" onClick={cancel} className="h-8 px-2 text-xs font-bold text-slate-600">Cancel</button></td></tr>}
       {options.map((option) => editingId === option.id ? <tr key={option.id} className="bg-blue-50"><td className="p-1"><input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void save(option); if (event.key === 'Escape') cancel(); }} className={inputClass} /></td><td className="p-1"><input type="number" step="1" value={order} onChange={(event) => setOrder(event.target.value)} className={inputClass} /></td><td className="px-2 text-xs font-semibold">{option.is_active ? 'Active' : 'Inactive'}</td><td className="p-1"><button type="button" onClick={() => void save(option)} disabled={saving} className="h-8 bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</button><button type="button" onClick={cancel} className="h-8 px-2 text-xs font-bold text-slate-600">Cancel</button></td></tr> : <tr key={option.id} className="border-t border-slate-200"><td className={`px-2 py-2 ${option.is_active ? 'font-medium' : 'text-slate-500'}`}>{option.display_name}</td><td className="px-2 py-2 tabular-nums text-slate-600">{option.sort_order}</td><td className={`px-2 py-2 text-xs font-semibold ${option.is_active ? 'text-emerald-700' : 'text-slate-500'}`}>{option.is_active ? 'Active' : 'Inactive'}</td><td className="whitespace-nowrap px-1 py-1"><button type="button" onClick={() => beginEdit(option)} className="h-8 px-2 text-xs font-bold text-blue-700">Edit</button><button type="button" onClick={() => void toggle(option)} className="h-8 px-2 text-xs font-bold text-blue-700">{option.is_active ? 'Deactivate' : 'Reactivate'}</button></td></tr>)}
-    </tbody></table></div>{error && <div className="mt-1 text-xs font-semibold text-red-700">{error}</div>}</section>;
+    </tbody></table></div>{error && <div className="mt-1 shrink-0 text-xs font-semibold text-red-700">{error}</div>}</section>;
 }
 
 function WorkIdentityControl({ value, temporaryLabel, targets, onChange, compact = false, savedTemporaryLabel }: {
@@ -513,7 +513,7 @@ function BulkActionBar({
     setMessage(result.failed > 0 ? `${result.deleted} deleted; ${result.failed} failed. Failed rows remain selected.` : `${result.deleted} ${result.deleted === 1 ? 'entry' : 'entries'} deleted.`);
   }
 
-  const buttonClass = 'h-8 border border-blue-800 bg-blue-800 px-2 text-[10px] font-bold uppercase tracking-wide text-white disabled:cursor-not-allowed disabled:opacity-40';
+  const buttonClass = 'manpower-bulk-action h-8 border border-blue-800 bg-blue-800 px-2 text-[10px] font-bold uppercase tracking-wide text-white enabled:hover:bg-blue-900 enabled:focus-visible:outline-2 enabled:focus-visible:outline-offset-2 enabled:focus-visible:outline-blue-600';
   const compactInput = 'h-8 border border-slate-400 bg-white px-2 text-xs text-slate-950 outline-none focus:border-blue-700';
 
   return (
@@ -581,7 +581,10 @@ export default function ManpowerWorkspace() {
   const auth = useAuth();
   const canManageCategories = auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.can('manageManpowerProductCategories');
   const [categories, setCategories] = useState<ManpowerReference[]>([]);
-  const [manageCategories, setManageCategories] = useState(false);
+  const [settingsTab, setSettingsTab] = useState<'workers' | 'tasks' | 'products'>('workers');
+  const [categoryEditing, setCategoryEditing] = useState(false);
+  const settingsButton = useRef<HTMLButtonElement>(null);
+  const settingsPanel = useRef<HTMLElement>(null);
   const [productFilter, setProductFilter] = useState('');
   const [entries, setEntries] = useState<ManpowerEntry[]>([]);
   const [jobs, setJobs] = useState<ManpowerJob[]>([]);
@@ -670,6 +673,30 @@ export default function ManpowerWorkspace() {
     return () => window.removeEventListener('popstate', syncJobFilter);
   }, []);
 
+  useLayoutEffect(() => {
+    if (!manageReferences || !settingsPanel.current) return;
+    const panel = settingsPanel.current;
+    const sizePanel = () => {
+      const viewport = window.visualViewport;
+      const bottom = viewport ? viewport.offsetTop + viewport.height : window.innerHeight;
+      const margin = window.innerWidth < 640 ? 24 : 48;
+      // Measure the space below the actual panel top, not below the viewport top.
+      const available = bottom - panel.getBoundingClientRect().top - margin;
+      panel.style.maxHeight = `${Math.max(180, available)}px`;
+    };
+    sizePanel();
+    const heading = panel.previousElementSibling;
+    const observer = new ResizeObserver(sizePanel);
+    if (heading) observer.observe(heading);
+    window.addEventListener('resize', sizePanel);
+    window.visualViewport?.addEventListener('resize', sizePanel);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', sizePanel);
+      window.visualViewport?.removeEventListener('resize', sizePanel);
+    };
+  }, [manageReferences]);
+
   const setReferenceEditing = useCallback((kind: 'worker' | 'task', editing: boolean) => {
     setReferenceEditors((current) => {
       if (current.has(kind) === editing) return current;
@@ -680,12 +707,13 @@ export default function ManpowerWorkspace() {
   }, []);
 
   function closeReferencePanel() {
-    if (referenceEditors.size > 0) {
-      setReferencePanelMessage('Save or cancel the active Worker or Task edit before closing.');
+    if (referenceEditors.size > 0 || categoryEditing) {
+      setReferencePanelMessage('Save or cancel the active edit before closing or switching tabs.');
       return;
     }
     setReferencePanelMessage('');
     setManageReferences(false);
+    settingsButton.current?.focus();
   }
 
   function toggleReferencePanel() {
@@ -966,20 +994,35 @@ export default function ManpowerWorkspace() {
       <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Operations Reporting','Reportes de operaciones')}</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Manpower Reporting','Reporte de mano de obra')}</h1><p className="mt-1 text-sm text-slate-600">{tr('Record shop labor by job, worker, task, and work date.','Registre las horas del taller por trabajo, empleado, tarea y fecha de trabajo.')}</p></div>
         <div className="flex flex-wrap gap-2">
-          {canManageCategories && <button type="button" onClick={() => setManageCategories(true)} className="h-9 border border-slate-300 bg-white px-3 text-xs font-bold">Product Categories</button>}
-          <button type="button" onClick={toggleReferencePanel} className="inline-flex h-9 items-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"><Settings2 className="h-4 w-4" /> {tr('Workers & Tasks','Empleados y tareas')}</button>
+          <button type="button" ref={settingsButton} aria-expanded={manageReferences} aria-controls="manpower-settings" onClick={toggleReferencePanel} className="inline-flex h-9 items-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"><Settings2 className="h-4 w-4" /> {tr('Manpower Settings','Configuración de mano de obra')}</button>
           <button type="button" onClick={() => void load()} disabled={loading} className="inline-flex h-9 items-center gap-2 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60"><RotateCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> {tr('Refresh','Actualizar')}</button>
         </div>
       </div>
 
-      {manageCategories && canManageCategories && <ProductCategoryManager categories={categories} onChanged={refreshCategories} onClose={() => setManageCategories(false)} />}
 
-      {manageReferences && <div className="mt-4 grid gap-4 rounded-sm border border-slate-200 bg-white p-4 shadow-sm lg:grid-cols-2">
-        <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-3 lg:col-span-2"><div><h2 className="text-sm font-bold text-slate-900">Workers & Tasks</h2><p className="text-xs text-slate-600">Maintain names, display order, and active status.</p></div><button type="button" onClick={closeReferencePanel} className="h-9 border border-slate-300 bg-white px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">Close</button></div>
-        {referencePanelMessage && <div className="border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900 lg:col-span-2">{referencePanelMessage}</div>}
-        <ReferenceManager noun="worker" options={workers} onCreate={(name, order) => createManagedReference('worker', name, order)} onUpdate={(reference, changes) => updateReference('worker', reference, changes)} onEditingChange={(editing) => setReferenceEditing('worker', editing)} />
-        <ReferenceManager noun="task" options={tasks} onCreate={(name, order) => createManagedReference('task', name, order)} onUpdate={(reference, changes) => updateReference('task', reference, changes)} onEditingChange={(editing) => setReferenceEditing('task', editing)} />
-      </div>}
+      {manageReferences && <section ref={settingsPanel} id="manpower-settings" aria-label="Manpower Settings" className="mx-auto mt-4 flex max-h-[calc(100svh-4rem)] w-full max-w-[1080px] flex-col rounded-sm border border-slate-200 bg-white p-3 shadow-sm sm:w-[calc(100%-1rem)] sm:p-4">
+        <div className="flex shrink-0 items-center justify-between gap-3"><h2 className="text-sm font-bold text-slate-900">Manpower Settings</h2><button type="button" onClick={closeReferencePanel} className="h-9 border border-slate-300 bg-white px-3 text-xs font-bold focus-visible:ring-2 focus-visible:ring-blue-600">Close settings</button></div>
+        <div role="tablist" aria-label="Manpower vocabularies" className="my-3 flex shrink-0 border-b border-slate-200">
+          {(['workers', 'tasks', ...(canManageCategories ? ['products'] : [])] as ('workers' | 'tasks' | 'products')[]).map(tab => <button key={tab} id={`settings-tab-${tab}`} type="button" role="tab" aria-selected={settingsTab === tab} aria-controls={`settings-panel-${tab}`} tabIndex={settingsTab === tab ? 0 : -1} onClick={() => {
+            if (referenceEditors.size || categoryEditing) { setReferencePanelMessage('Save or cancel the active edit before closing or switching tabs.'); return; }
+            setReferencePanelMessage(''); setSettingsTab(tab);
+          }} onKeyDown={event => {
+            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+            event.preventDefault();
+            if (referenceEditors.size || categoryEditing) { setReferencePanelMessage('Save or cancel the active edit before closing or switching tabs.'); return; }
+            const tabs = canManageCategories ? ['workers', 'tasks', 'products'] as const : ['workers', 'tasks'] as const;
+            const index = tabs.indexOf(tab as 'workers' | 'tasks');
+            const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+            setSettingsTab(tabs[next]); document.getElementById(`settings-tab-${tabs[next]}`)?.focus();
+          }} className={`min-h-11 min-w-0 px-3 text-xs font-semibold focus-visible:ring-2 focus-visible:ring-blue-600 ${settingsTab === tab ? 'border-b-2 border-blue-700 text-blue-800' : 'text-slate-600'}`}>{tab === 'products' ? 'Product Categories' : tab === 'workers' ? 'Workers' : 'Tasks'}</button>)}
+        </div>
+        {referencePanelMessage && <p role="alert" className="mb-3 text-xs text-amber-900">{referencePanelMessage}</p>}
+        <div data-settings-content className="flex min-h-0 flex-col">
+        <div role="tabpanel" className={`min-h-0 flex-col ${settingsTab === 'workers' ? 'flex' : 'hidden'}`} id="settings-panel-workers" aria-labelledby="settings-tab-workers" hidden={settingsTab !== 'workers'}><ReferenceManager noun="worker" options={workers} onCreate={(name, order) => createManagedReference('worker', name, order)} onUpdate={(reference, changes) => updateReference('worker', reference, changes)} onEditingChange={(editing) => setReferenceEditing('worker', editing)} /></div>
+        <div role="tabpanel" className={`min-h-0 flex-col ${settingsTab === 'tasks' ? 'flex' : 'hidden'}`} id="settings-panel-tasks" aria-labelledby="settings-tab-tasks" hidden={settingsTab !== 'tasks'}><ReferenceManager noun="task" options={tasks} onCreate={(name, order) => createManagedReference('task', name, order)} onUpdate={(reference, changes) => updateReference('task', reference, changes)} onEditingChange={(editing) => setReferenceEditing('task', editing)} /></div>
+        {canManageCategories && <div role="tabpanel" className={`min-h-0 flex-col ${settingsTab === 'products' ? 'flex' : 'hidden'}`} id="settings-panel-products" aria-labelledby="settings-tab-products" hidden={settingsTab !== 'products'}><ProductCategoryManager categories={categories} onChanged={refreshCategories} onEditingChange={setCategoryEditing} /></div>}
+        </div>
+      </section>}
 
       {categoryResult && <div role={categoryResult.error ? "alert" : "status"} className={`mt-4 border px-4 py-3 text-sm font-semibold ${categoryResult.error ? "border-red-300 bg-red-50 text-red-800" : "border-emerald-300 bg-emerald-50 text-emerald-800"}`}>{categoryResult.message}</div>}
       {error && <div className="mt-4 border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">{error}</div>}
