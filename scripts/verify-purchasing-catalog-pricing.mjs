@@ -88,9 +88,9 @@ const records = combinePurchasingCatalogRecords(
 );
 assert.equal(records.some((record) => record.id === 'inactive'), false);
 assert.equal(records.some((record) => record.id === 'blank'), false);
-assert.equal(records.filter((record) => record.materialName === 'Arabian Black' && record.chipSize === '#1').length, 1);
-assert.equal(records.find((record) => record.chipSize === '#1')?.source, 'specialty');
-assert.equal(records.find((record) => record.chipSize === '#1')?.orderUnit, 'Bag');
+assert.equal(records.filter((record) => record.materialName === 'Arabian Black' && record.chipSize === '#1').length, 2);
+assert.equal(records.find((record) => record.id === 'maintained')?.source, 'specialty');
+assert.equal(records.find((record) => record.id === 'maintained')?.orderUnit, 'Bag');
 assert.equal(records.find((record) => record.id === 'legacy-nullable')?.referencePrice, '');
 assert.equal(records.find((record) => record.id === 'legacy-nullable')?.packageQuantity, '');
 assert.equal(samePurchasingVendor('T&M Supply', 'Terrazzo & Marble Supply, Inc.'), true);

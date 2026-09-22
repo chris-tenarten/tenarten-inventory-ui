@@ -12,8 +12,8 @@ import {
 import { useAccountPreferences } from "@/lib/account-preferences";
 import { BRANDING } from "@/lib/dev-branding.mjs";
 
-export const APPEARANCE_STORAGE_KEY = "tenops_appearance";
-export const TENDEV_APPEARANCE_STORAGE_KEY = "tenops:tendev:appearance";
+import { APPEARANCE_STORAGE_KEY, TENDEV_APPEARANCE_STORAGE_KEY } from "./appearance-storage";
+export { APPEARANCE_STORAGE_KEY, TENDEV_APPEARANCE_STORAGE_KEY } from "./appearance-storage";
 export const APPEARANCES = ["light", "dark"] as const;
 export type Appearance = (typeof APPEARANCES)[number];
 

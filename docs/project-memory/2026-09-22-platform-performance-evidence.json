@@ -1,0 +1,614 @@
+{
+  "baselineHead": "5bdbb6e5f831f26565f124ed1ab9e4d88dc9d28a",
+  "environment": {
+    "root": "/Users/chrisngo/source/repos/tenarten-inventory-ui/out",
+    "headless": true,
+    "apiDelayMs": 20,
+    "fixtures": {
+      "jobs": 120,
+      "labor": 1674,
+      "inventory": 1000,
+      "bids": 100,
+      "tasks": 200,
+      "catalog": 218
+    },
+    "note": "20ms synthetic request delay; cold isolated headless contexts. All business/auth HTTP and Realtime mocked. Empty document/message libraries. Observed JS includes Next Link prefetch. Single-run CPU is descriptive, not reliable speedup evidence. Fixture labor = 1674 entries / 5022 hours, not hosted historical totals."
+  },
+  "initialHtmlScriptBytes": {
+    "before": {
+      "index": {
+        "raw": 1885306,
+        "gzip": 532058
+      },
+      "purchasing": {
+        "raw": 1084108,
+        "gzip": 309847
+      },
+      "samples": {
+        "raw": 1098015,
+        "gzip": 314806
+      },
+      "pre-production": {
+        "raw": 1047009,
+        "gzip": 299613
+      }
+    },
+    "after": {
+      "index": {
+        "raw": 1401764,
+        "gzip": 386882
+      },
+      "purchasing": {
+        "raw": 1084486,
+        "gzip": 310077
+      },
+      "samples": {
+        "raw": 1098393,
+        "gzip": 315036
+      },
+      "pre-production": {
+        "raw": 1047387,
+        "gzip": 299843
+      }
+    }
+  },
+  "before": [
+    {
+      "surface": "startup",
+      "requests": 20,
+      "rows": 1794,
+      "requestCounts": {
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "job_attachments": 1,
+        "manpower_entries": 4,
+        "material_usage_reports": 1,
+        "job_updates": 1,
+        "jobs": 1,
+        "list_my_account_notification_history": 7,
+        "production_rework_cycles": 1,
+        "list_my_unseen_job_update_jobs": 1,
+        "planning_phases": 1
+      },
+      "domNodes": 10659,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 250.7,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Intake",
+      "requests": 11,
+      "rows": 101,
+      "requestCounts": {
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_bids": 1,
+        "list_bid_owners": 1,
+        "list_my_account_notification_history": 7
+      },
+      "domNodes": 1486,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 130.7,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Production",
+      "requests": 22,
+      "rows": 1794,
+      "requestCounts": {
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9,
+        "job_attachments": 1,
+        "manpower_entries": 4,
+        "material_usage_reports": 1,
+        "job_updates": 1,
+        "jobs": 1,
+        "production_rework_cycles": 1,
+        "list_my_unseen_job_update_jobs": 1,
+        "planning_phases": 1
+      },
+      "domNodes": 10675,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 183.4,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Snapshot",
+      "requests": 36,
+      "rows": 5262,
+      "requestCounts": {
+        "jobs": 2,
+        "production_rework_cycles": 2,
+        "manpower_entries": 12,
+        "job_activity": 1,
+        "material_usage_reports": 3,
+        "inventory_transactions": 1,
+        "pending_receivals": 2,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "job_attachments": 1,
+        "job_updates": 1,
+        "list_my_account_notification_history": 7,
+        "list_my_unseen_job_update_jobs": 1,
+        "planning_phases": 1
+      },
+      "domNodes": 621,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 182.5,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Manpower",
+      "requests": 19,
+      "rows": 1798,
+      "requestCounts": {
+        "manpower_entries": 4,
+        "jobs": 1,
+        "production_rework_cycles": 1,
+        "manpower_reporting_groups": 1,
+        "manpower_workers": 1,
+        "manpower_tasks": 1,
+        "manpower_product_categories": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 7
+      },
+      "domNodes": 434,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 162.2,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Inventory",
+      "requests": 12,
+      "rows": 1120,
+      "requestCounts": {
+        "inventory_items": 1,
+        "pending_receivals": 1,
+        "jobs": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 7
+      },
+      "domNodes": 31319,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 231.0,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "My Work",
+      "requests": 17,
+      "rows": 321,
+      "requestCounts": {
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_work_task_groups": 1,
+        "list_my_work_tasks": 1,
+        "list_my_work_task_group_memberships": 1,
+        "list_my_work_inbox_recipients": 1,
+        "jobs": 1,
+        "work_task_attachments": 1,
+        "list_my_account_notification_history": 9
+      },
+      "domNodes": 5342,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 153.3,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Purchasing",
+      "requests": 13,
+      "rows": 0,
+      "requestCounts": {
+        "purchase_orders": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 10
+      },
+      "domNodes": 287,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 126.2,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Samples",
+      "requests": 15,
+      "rows": 220,
+      "requestCounts": {
+        "list_samples": 1,
+        "list_bids": 1,
+        "jobs": 1,
+        "vendors": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9
+      },
+      "domNodes": 276,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 121.9,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Proposals",
+      "requests": 15,
+      "rows": 0,
+      "requestCounts": {
+        "has_proposal_access": 2,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 10,
+        "proposals": 1
+      },
+      "domNodes": 297,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 103.7,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Transmittals",
+      "requests": 12,
+      "rows": 120,
+      "requestCounts": {
+        "jobs": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9
+      },
+      "domNodes": 401,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 147.4,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Messaging",
+      "requests": 21,
+      "rows": 122,
+      "requestCounts": {
+        "purchase_orders": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 3,
+        "list_my_account_notification_history": 9,
+        "list_my_work_inbox_recipients": 2,
+        "jobs": 1,
+        "list_my_work_inbox_messages_v2": 4
+      },
+      "domNodes": 320,
+      "scriptBytes": 2602174,
+      "scriptGzipBytes": 710282,
+      "scriptCpuMs": 202.8,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    },
+    {
+      "surface": "Catalog search",
+      "requests": 16,
+      "rows": 438,
+      "requestCounts": {
+        "list_samples": 1,
+        "list_bids": 1,
+        "jobs": 1,
+        "vendors": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 7,
+        "get_sample_formulation_default": 1,
+        "vendor_catalog": 1,
+        "vendor_catalog_v2": 1
+      },
+      "domNodes": 934,
+      "scriptBytes": 2576091,
+      "scriptGzipBytes": 702316,
+      "scriptCpuMs": 325.2,
+      "errors": [
+        "missing ) after argument list"
+      ]
+    }
+  ],
+  "after": [
+    {
+      "surface": "startup",
+      "requests": 20,
+      "rows": 1794,
+      "requestCounts": {
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "job_attachments": 1,
+        "manpower_entries": 4,
+        "material_usage_reports": 1,
+        "job_updates": 1,
+        "jobs": 1,
+        "production_rework_cycles": 1,
+        "list_my_account_notification_history": 7,
+        "list_my_unseen_job_update_jobs": 1,
+        "planning_phases": 1
+      },
+      "domNodes": 10659,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 190.0,
+      "errors": []
+    },
+    {
+      "surface": "Intake",
+      "requests": 14,
+      "rows": 101,
+      "requestCounts": {
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_bids": 1,
+        "list_bid_owners": 1,
+        "list_my_account_notification_history": 10
+      },
+      "domNodes": 1486,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 93.1,
+      "errors": []
+    },
+    {
+      "surface": "Production",
+      "requests": 21,
+      "rows": 1794,
+      "requestCounts": {
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "job_attachments": 1,
+        "manpower_entries": 4,
+        "material_usage_reports": 1,
+        "job_updates": 1,
+        "jobs": 1,
+        "production_rework_cycles": 1,
+        "list_my_account_notification_history": 8,
+        "list_my_unseen_job_update_jobs": 1,
+        "planning_phases": 1
+      },
+      "domNodes": 10675,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 165.0,
+      "errors": []
+    },
+    {
+      "surface": "Snapshot",
+      "requests": 27,
+      "rows": 3468,
+      "requestCounts": {
+        "jobs": 1,
+        "production_rework_cycles": 1,
+        "manpower_entries": 8,
+        "job_activity": 1,
+        "material_usage_reports": 2,
+        "inventory_transactions": 1,
+        "pending_receivals": 2,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9
+      },
+      "domNodes": 620,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 137.5,
+      "errors": []
+    },
+    {
+      "surface": "Manpower",
+      "requests": 21,
+      "rows": 1798,
+      "requestCounts": {
+        "manpower_entries": 4,
+        "jobs": 1,
+        "production_rework_cycles": 1,
+        "manpower_reporting_groups": 1,
+        "manpower_workers": 1,
+        "manpower_tasks": 1,
+        "manpower_product_categories": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9
+      },
+      "domNodes": 434,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 142.2,
+      "errors": []
+    },
+    {
+      "surface": "Inventory",
+      "requests": 12,
+      "rows": 1120,
+      "requestCounts": {
+        "inventory_items": 1,
+        "pending_receivals": 1,
+        "jobs": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 7
+      },
+      "domNodes": 14317,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 182.5,
+      "errors": []
+    },
+    {
+      "surface": "My Work",
+      "requests": 15,
+      "rows": 321,
+      "requestCounts": {
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_work_task_groups": 1,
+        "list_my_work_tasks": 1,
+        "list_my_work_task_group_memberships": 1,
+        "list_my_work_inbox_recipients": 1,
+        "jobs": 1,
+        "work_task_attachments": 1,
+        "list_my_account_notification_history": 7
+      },
+      "domNodes": 5342,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 131.2,
+      "errors": []
+    },
+    {
+      "surface": "Purchasing",
+      "requests": 12,
+      "rows": 0,
+      "requestCounts": {
+        "purchase_orders": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9
+      },
+      "domNodes": 287,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 81.1,
+      "errors": []
+    },
+    {
+      "surface": "Samples",
+      "requests": 15,
+      "rows": 220,
+      "requestCounts": {
+        "list_samples": 1,
+        "list_bids": 1,
+        "jobs": 1,
+        "vendors": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9
+      },
+      "domNodes": 276,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 109.7,
+      "errors": []
+    },
+    {
+      "surface": "Proposals",
+      "requests": 14,
+      "rows": 0,
+      "requestCounts": {
+        "has_proposal_access": 2,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9,
+        "proposals": 1
+      },
+      "domNodes": 297,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 125.3,
+      "errors": []
+    },
+    {
+      "surface": "Transmittals",
+      "requests": 12,
+      "rows": 120,
+      "requestCounts": {
+        "jobs": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9
+      },
+      "domNodes": 401,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 123.6,
+      "errors": []
+    },
+    {
+      "surface": "Messaging",
+      "requests": 18,
+      "rows": 122,
+      "requestCounts": {
+        "purchase_orders": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 2,
+        "list_my_account_notification_history": 10,
+        "list_my_work_inbox_recipients": 2,
+        "jobs": 1,
+        "list_my_work_inbox_messages_v2": 1
+      },
+      "domNodes": 320,
+      "scriptBytes": 2118933,
+      "scriptGzipBytes": 564754,
+      "scriptCpuMs": 202.2,
+      "errors": []
+    },
+    {
+      "surface": "Catalog search",
+      "requests": 18,
+      "rows": 438,
+      "requestCounts": {
+        "list_samples": 1,
+        "list_bids": 1,
+        "jobs": 1,
+        "vendors": 1,
+        "get_my_account_preferences": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 9,
+        "get_sample_formulation_default": 1,
+        "vendor_catalog": 1,
+        "vendor_catalog_v2": 1
+      },
+      "domNodes": 934,
+      "scriptBytes": 2092850,
+      "scriptGzipBytes": 556788,
+      "scriptCpuMs": 298.4,
+      "errors": []
+    }
+  ],
+  "acceptedCatalogHashes": {
+    "scripts/verify-purchasing-catalog-pricing.mjs": "c8ef1fd69dbaa86542a3552377f8ffd12cb3af9b618ba19714ffeb407b948b59",
+    "src/modules/purchasing/PurchaseOrderEditor.tsx": "cf210f0974b9c58c0bb6b4894cea9612e9e2cde5e92633d80578ce83ed013ff6",
+    "src/modules/purchasing/catalog-pricing.ts": "093f806d600aae351a280f29fd31aafb613adf7868e54c20750412e0c0a9eb13",
+    "src/modules/purchasing/catalog-records.ts": "0cd9f2b2788a36c2201921ffa17095b652573de4057c9479280fcf586daf9df5",
+    "src/modules/purchasing/catalog.ts": "b70b7a4f5247878b9db927bb12bca3787471c7d574fefa663ca277f438806456",
+    "src/modules/purchasing/types.ts": "2efc966d87bab8fd482da196005130e1c57e06b2f67d42d88b6568860772cd9b",
+    "src/modules/samples/SampleWorkspace.tsx": "38b8a162b7e8f84e75c8f963902b255a66a0563dfbd2e16001d6b6b68cb51d1d",
+    "src/modules/samples/material-autofill.ts": "95b86a7091ecb11205bd773db545c384ec0454d2707f0d0684c5f3a4907a666e",
+    "docs/project-memory/2026-09-22-unified-material-catalog-localhost-review.md": "f693f7954fc08c72a28fd21a22985c2ff3007a22d1eb8e4e930c5288b88953b4",
+    "scripts/verify-unified-material-catalog.mjs": "b404335db69d935bb978f0e510ed7f88fd49978ca9677d2e41d7e4894114d34a",
+    "src/modules/purchasing/CatalogSearchResults.tsx": "332697f8de655d2761072f71c9ab4ba54fa1fd4f3bd4a048bde7b27a36fea216",
+    "src/modules/samples/catalog.ts": "6528c3eb37f4dbb832c309ef629e98e75a49c98ea77a69987eb816870d1a7f5d",
+    "tests/e2e/unified-material-catalog.spec.ts": "03e1cedd3daaad943ab6c5395938782cc9faa164cababa13cf75f102e5260c4a"
+  }
+}

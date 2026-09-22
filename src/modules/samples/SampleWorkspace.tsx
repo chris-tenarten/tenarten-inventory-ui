@@ -1,5 +1,6 @@
 "use client";
 
+import CatalogSearchResults from "@/modules/purchasing/CatalogSearchResults";
 import {
   Copy,
   FileText,
@@ -18,7 +19,7 @@ import {
   loadProductionJobOptions,
   type ProductionJobOption,
 } from "@/modules/production/job-options";
-import { searchPurchasingCatalog } from "@/modules/purchasing/catalog";
+import { sampleCatalogEligible, searchSampleCatalog } from "./catalog";
 import {
   PurchasingChoiceWithCustom,
   PurchasingVendorNameInput,
@@ -36,7 +37,7 @@ import {
   type SampleBlendRow,
   type SampleRecord,
 } from "./types";
-import { sampleBlendCatalogAutofill } from "./material-autofill";
+import { clearSampleCatalogSelection, sampleBlendCatalogAutofill } from "./material-autofill";
 import {
   adminPermanentlyDeleteSampleDraft,
   createSample,
@@ -108,6 +109,8 @@ export default function SampleWorkspace() {
   const [tutorialStep, setTutorialStep] = useState<SampleTutorialStep>("finished-pieces");
   const [catalogRow, setCatalogRow] = useState<number | null>(null);
   const [catalogQuery, setCatalogQuery] = useState("");
+  const [catalogSelectionWarnings, setCatalogSelectionWarnings] = useState<Record<string, { role: SampleBlendRow["componentRole"]; itemId: string }>>({});
+  const [catalogSearchError, setCatalogSearchError] = useState("");
   const [catalogResults, setCatalogResults] = useState<
     PurchasingCatalogSuggestion[]
   >([]);
@@ -183,32 +186,36 @@ export default function SampleWorkspace() {
       })
       .catch((caught) => showOperationError(caught, "load"));
   }, [initialContext.open, reload, showOperationError]);
+  const catalogRole = catalogRow === null ? undefined : draft?.blendRows[catalogRow]?.componentRole;
+  const catalogSearchKey = JSON.stringify([catalogRow, catalogRole, catalogQuery]);
+  const [catalogResultKey, setCatalogResultKey] = useState("");
   useEffect(() => {
     const query = catalogQuery.trim();
-    if (catalogRow === null || query.length < 2) {
-      setCatalogResults([]);
+    setCatalogResults([]);
+    setCatalogSearchError("");
+    if (catalogRow === null || !catalogRole) {
       setCatalogSearching(false);
       return;
     }
     let active = true;
     setCatalogSearching(true);
     const timer = window.setTimeout(() => {
-      void searchPurchasingCatalog(query)
+      void searchSampleCatalog(query, catalogRole)
         .then((results) => {
           if (active) setCatalogResults(results);
         })
         .catch((caught) => {
-          if (active) showOperationError(caught, "catalog");
+          if (active) setCatalogSearchError(caught instanceof Error ? caught.message : "Catalog search is incomplete. Retry your search.");
         })
         .finally(() => {
-          if (active) setCatalogSearching(false);
+          if (active) { setCatalogSearching(false); setCatalogResultKey(catalogSearchKey); }
         });
     }, 200);
     return () => {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [catalogQuery, catalogRow, showOperationError]);
+  }, [catalogQuery, catalogRow, catalogRole, catalogSearchKey]);
   function patch<K extends keyof SampleRecord>(key: K, value: SampleRecord[K]) {
     setDraft((current) => (current ? { ...current, [key]: value } : current));
     setMessage("");
@@ -522,6 +529,13 @@ export default function SampleWorkspace() {
   function selectCatalog(item: PurchasingCatalogSuggestion) {
     if (catalogRow === null || !draft) return;
     const current = draft.blendRows[catalogRow];
+    if (catalogResultKey !== catalogSearchKey) return;
+    setCatalogSelectionWarnings((warnings) => {
+      const next = { ...warnings };
+      if (sampleCatalogEligible(item, current.componentRole)) delete next[current.id];
+      else next[current.id] = { role: current.componentRole, itemId: item.id };
+      return next;
+    });
     patchRow(catalogRow, sampleBlendCatalogAutofill(current, item));
     setCatalogRow(null);
     setCatalogResults([]);
@@ -951,6 +965,7 @@ export default function SampleWorkspace() {
                 {displayRows.map(({row,sourceIndex:index},displayIndex) => (
                   <div key={row.id} className="space-y-3">
                   <article
+                    data-sample-material-row={row.id}
                     data-sample-tutorial={row.componentRole === "filler" ? "filler" : row.componentRole === "resin" || row.componentRole === "hardener" ? "resin-hardener" : undefined}
                     className="border border-slate-200 bg-slate-50 p-3"
                   >
@@ -969,6 +984,7 @@ export default function SampleWorkspace() {
                         {row.catalogItemId
                           ? " · Catalog-assisted"
                           : " · Manual"}
+                        {row.catalogItemId && catalogSelectionWarnings[row.id]?.itemId === row.catalogItemId && catalogSelectionWarnings[row.id]?.role === row.componentRole && <span className="ml-2 font-normal text-amber-700">Not classified for {row.componentRole.replace(/^./, (letter) => letter.toUpperCase())}. Selected manually; compatibility is not established.</span>}
                       </span>
                       <button
                         type="button"
@@ -999,6 +1015,8 @@ export default function SampleWorkspace() {
                             const componentRole = event.target
                               .value as SampleBlendRow["componentRole"];
                             patchRow(index, {
+                              ...clearSampleCatalogSelection(row),
+                              ...(row.catalogItemId ? { color: "" } : {}),
                               componentRole,
                               calculationBasis:
                                 componentRole === "aggregate"
@@ -1016,6 +1034,8 @@ export default function SampleWorkspace() {
                                   ? "fl oz"
                                   : "oz",
                             });
+                            setCatalogRow(index);
+                            setCatalogQuery(row.catalogItemId ? "" : row.color);
                           }}
                           className={field}
                         >
@@ -1060,17 +1080,12 @@ export default function SampleWorkspace() {
                               setCatalogRow(index);
                               setCatalogQuery(row.color);
                             }}
-                            onBlur={() =>
-                              window.setTimeout(
-                                () =>
-                                  setCatalogRow((current) =>
-                                    current === index ? null : current,
-                                  ),
-                                100,
-                              )
-                            }
+                            onBlur={(event) => {
+                              if (event.relatedTarget instanceof Element && event.relatedTarget.closest("article") === event.currentTarget.closest("article")) return;
+                              setCatalogRow((current) => current === index ? null : current);
+                            }}
                             onChange={(e) => {
-                              patchRow(index, { color: e.target.value });
+                              patchRow(index, { ...clearSampleCatalogSelection(row), color: e.target.value });
                               setCatalogRow(index);
                               setCatalogQuery(e.target.value);
                             }}
@@ -1087,45 +1102,22 @@ export default function SampleWorkspace() {
                         </div>
                         {catalogRow === index && (
                           <div
-                            id={`sample-catalog-results-${row.id}`}
-                            role="listbox"
-                            className="absolute left-0 right-0 z-30 mt-1 max-h-64 overflow-y-auto border border-slate-300 bg-white text-left shadow-xl"
+                            id={catalogResults.length ? undefined : `sample-catalog-results-${row.id}`}
+                            className="absolute left-0 right-0 z-30 mt-1 border border-slate-300 bg-white text-left shadow-xl"
                           >
-                            {catalogSearching ? (
+                            {catalogSearching || catalogResultKey !== catalogSearchKey ? (
                               <p className="px-3 py-3 text-xs text-slate-500">
                                 Searching Catalog…
                               </p>
-                            ) : catalogQuery.trim().length < 2 ? (
-                              <p className="px-3 py-3 text-xs text-slate-500">
-                                Type at least two characters, or continue with
-                                manual entry.
-                              </p>
+                            ) : catalogSearchError ? (
+                              <p role="alert" className="px-3 py-3 text-xs text-red-700">{catalogSearchError}</p>
                             ) : catalogResults.length ? (
-                              catalogResults.map((item) => (
-                                <button
-                                  key={`${item.source}:${item.id}`}
-                                  type="button"
-                                  role="option"
-                                  aria-selected="false"
-                                  onMouseDown={(e) => e.preventDefault()}
-                                  onClick={() => selectCatalog(item)}
-                                  className="block w-full border-b border-slate-200 px-3 py-2 text-left last:border-0 hover:bg-slate-50"
-                                >
-                                  <strong className="block text-sm">
-                                    {item.materialName}
-                                  </strong>
-                                  <span className="text-xs font-normal text-slate-500">
-                                    {[
-                                      item.vendor,
-                                      item.chipSize,
-                                      item.materialType,
-                                      item.vendorSku,
-                                    ]
-                                      .filter(Boolean)
-                                      .join(" · ")}
-                                  </span>
-                                </button>
-                              ))
+                              <>
+                                {!catalogResults.some((item) => sampleCatalogEligible(item, row.componentRole)) && <p className="px-3 py-2 text-xs text-slate-500">No role-matching results.</p>}
+                                <CatalogSearchResults key={catalogSearchKey} items={catalogResults} onSelect={selectCatalog} listbox listboxId={`sample-catalog-results-${row.id}`}
+                                  resultGroup={(item) => sampleCatalogEligible(item, row.componentRole) ? "Role-matching results" : "Other Catalog matches"}
+                                  resultNote={(item) => sampleCatalogEligible(item, row.componentRole) ? "" : `Not classified for ${row.componentRole.replace(/^./, (letter) => letter.toUpperCase())}. Compatibility is not established.`} />
+                              </>
                             ) : (
                               <p className="px-3 py-3 text-xs text-slate-500">
                                 No Catalog match. Keep the authored Color as a

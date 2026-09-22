@@ -43,7 +43,7 @@ export default function MonthlySnapshot() {
   const [actionError, setActionError] = useState('');
   const [archivingId, setArchivingId] = useState<string | null>(null);
   const [restoringId, setRestoringId] = useState<string | null>(null);
-  const load = useCallback(async () => { setLoading(true); setError(''); try { setData(await loadMonthlySnapshot()); } catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to load the Monthly Snapshot.'); } finally { setLoading(false); } }, []);
+  const load = useCallback(async () => { setLoading(true); setError(''); try { setData(await loadMonthlySnapshot()); } catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to load the Monthly Snapshot.'); } finally { setLoading(false); window.requestAnimationFrame(() => window.dispatchEvent(new Event('tenops:critical-app-ready'))); } }, []);
   useEffect(() => { void load(); }, [load]);
 
   const derived = useMemo(() => {

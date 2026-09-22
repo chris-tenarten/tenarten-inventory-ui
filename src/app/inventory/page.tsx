@@ -12,6 +12,7 @@ import type { ProductionJobOption } from '@/modules/production/job-options';
 import { JobTag } from '@/modules/production/components/JobTag';
 import { useLanguage } from '@/lib/language';
 import { useAuth } from '@/lib/auth';
+import { useMediaQuery } from '@/lib/use-media-query';
 
 type ReservationMode = 'none' | 'canonical' | 'temporary';
 type BulkReservationMode = 'unchanged' | ReservationMode;
@@ -420,6 +421,7 @@ function stockLineStatusClass(tone: 'neutral' | 'good' | 'warning' | 'bad') {
 }
 
 export default function InventoryPage() {
+  const narrowLayout = useMediaQuery('(max-width: 767px)');
   const { tr } = useLanguage();
   const auth = useAuth();
   const canAdjustPendingReceivals = auth.can('adjustInventory');
@@ -686,7 +688,7 @@ export default function InventoryPage() {
 
   useEffect(() => {
     if (reservedSelectAllRef.current) reservedSelectAllRef.current.indeterminate = selectedVisibleReservedCount > 0 && !allVisibleReservedSelected;
-  }, [allVisibleReservedSelected, selectedVisibleReservedCount]);
+  }, [allVisibleReservedSelected, selectedVisibleReservedCount, narrowLayout]);
 
   const selectedGroup = useMemo(() => {
     if (!selectedGroupKey) return null;
@@ -3605,7 +3607,7 @@ export default function InventoryPage() {
             <div className="py-12 text-center text-sm font-semibold text-slate-500">Loading inventory...</div>
           ) : (
             <>
-              <div className="md:hidden">
+              {narrowLayout ? <div className="md:hidden">
                 <div className="divide-y divide-slate-300">
                   {filteredGroups.map((group) => {
                     const row = group.primary;
@@ -3672,9 +3674,7 @@ export default function InventoryPage() {
                     </div>
                   )}
                 </div>
-              </div>
-
-              <div className="hidden md:block">
+              </div> : <div className="hidden md:block">
                 <table className="w-full border-collapse text-left text-sm">
                   <thead className="bg-slate-50 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600">
                     <tr className="border-b border-slate-300">
@@ -3749,7 +3749,7 @@ export default function InventoryPage() {
                     )}
                   </tbody>
                 </table>
-              </div>
+              </div>}
             </>
           )}
         </div>

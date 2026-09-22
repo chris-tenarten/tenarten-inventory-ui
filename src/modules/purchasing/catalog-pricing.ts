@@ -16,5 +16,5 @@ export function getCatalogPricingMode(item: PurchasingCatalogSuggestion, quantit
 
 export function getApplicableCatalogPrice(item: PurchasingCatalogSuggestion, quantity: string, orderUnit: string) {
   const mode = getCatalogPricingMode(item, quantity, orderUnit);
-  return { mode, price: mode === 'truckload' ? item.truckloadPrice : mode === 'bulk' ? item.bulkPrice : item.referencePrice };
+  return { mode, price: item.quoteRequired ? "" : mode === 'truckload' ? item.truckloadPrice : mode === 'bulk' ? item.bulkPrice : item.referencePrice };
 }

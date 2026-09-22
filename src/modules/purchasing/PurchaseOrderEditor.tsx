@@ -11,6 +11,7 @@ import {
   openProductionJob,
   type ProductionJobOption,
 } from "@/modules/production/job-options";
+import CatalogSearchResults from "./CatalogSearchResults";
 import CatalogItemEditor from "./CatalogItemEditor";
 import PendingReceivalsReviewDialog from "./PendingReceivalsReviewDialog";
 import VendorManager from "./VendorManager";
@@ -102,6 +103,8 @@ function LineEditor({
   const [results, setResults] = useState<PurchasingCatalogSuggestion[]>([]);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState("");
+  const [resultKey, setResultKey] = useState("");
+  const searchKey = JSON.stringify([query, vendorName, line.materialType]);
   const [catalogContainerSizes, setCatalogContainerSizes] = useState<string[]>([]);
   const [reference, setReference] =
     useState<PurchasingCatalogSuggestion | null>(null);
@@ -146,13 +149,13 @@ function LineEditor({
   useEffect(() => {
     const request = ++searchRequest.current;
     const timer = setTimeout(() => {
+      setResults([]);
+      setSearchError("");
       if (query.trim().length < 2) {
-        setResults([]);
-        setSearchError("");
+        setSearching(false);
         return;
       }
       setSearching(true);
-      setSearchError("");
       searchPurchasingCatalog(query, vendorName, line.materialType)
         .then((items) => {
           if (request === searchRequest.current) setResults(items);
@@ -164,11 +167,14 @@ function LineEditor({
             );
         })
         .finally(() => {
-          if (request === searchRequest.current) setSearching(false);
+          if (request === searchRequest.current) {
+            setSearching(false);
+            setResultKey(searchKey);
+          }
         });
     }, 250);
     return () => clearTimeout(timer);
-  }, [query, vendorName, line.materialType]);
+  }, [query, vendorName, line.materialType, searchKey]);
   useEffect(() => {
     let active = true;
     loadPurchasingContainerSizeOptions(line.materialType, vendorName)
@@ -177,7 +183,7 @@ function LineEditor({
     return () => { active = false; };
   }, [line.materialType, vendorName]);
   const select = (item: PurchasingCatalogSuggestion) => {
-    const orderUnit = getPurchaseOrderCatalogOrderUnit(line.materialType, item, details.orderUnit);
+    const orderUnit = getPurchaseOrderCatalogOrderUnit(line.materialType, item);
     const suggestion = getApplicableCatalogPrice(
       item,
       details.quantityOrdered,
@@ -191,15 +197,15 @@ function LineEditor({
         catalogItemId: item.id,
         vendorSkuSnapshot: item.vendorSku,
         materialNameSnapshot: item.materialName,
-        chipSize: item.chipSize || details.chipSize,
-        resinColor: item.resinColor || details.resinColor,
-        componentType: item.componentType || details.componentType,
-        packageQuantity: item.packageQuantity || details.packageQuantity,
-        packageMeasure: item.packageMeasure || details.packageMeasure,
-        containerType: item.containerType || details.containerType,
+        chipSize: item.chipSize || "",
+        resinColor: item.resinColor || "",
+        componentType: item.componentType || "",
+        packageQuantity: item.packageQuantity || "",
+        packageMeasure: item.packageMeasure || "",
+        containerType: item.containerType || "",
         orderUnit,
-        unitPrice: suggestion.price || details.unitPrice,
-        priceBasis: item.priceBasis || details.priceBasis,
+        unitPrice: suggestion.price,
+        priceBasis: item.priceBasis || "",
       },
     });
     setReference(item);
@@ -316,29 +322,15 @@ function LineEditor({
         <p className="mt-1 text-xs text-slate-500">
           {tr('Search to populate this line from the catalog.', 'Busque para completar esta partida desde el catálogo.')}
         </p>
-        {searching && <div className="mt-2 text-xs">Searching…</div>}
-        {searchError && (
+        {query.trim().length >= 2 && (searching || resultKey !== searchKey) && <div className="mt-2 text-xs">Searching…</div>}
+        {resultKey === searchKey && searchError && (
           <div role="alert" className="mt-2 text-xs font-bold text-red-700">
             {searchError}
           </div>
         )}
-        {query.trim().length >= 2 && !searching && (
+        {query.trim().length >= 2 && resultKey === searchKey && !searching && !searchError && (
           <div className="mt-2 overflow-hidden border border-slate-200 bg-white">
-            {results.map((item) => (
-              <button
-                key={`${item.source}-${item.id}`}
-                type="button"
-                onClick={() => select(item)}
-                className="block w-full border-b border-slate-100 px-3 py-2 text-left text-xs hover:bg-slate-50"
-              >
-                <b>{item.materialName}</b>{line.materialType === 'chip' ? ` · ${item.chipSize || "No size"}` : item.componentType ? ` · ${item.componentType}` : ''}
-                <span className="block text-slate-500">
-                  {item.vendor}
-                  {item.vendorSku ? ` · ${item.vendorSku}` : ""}
-                  {item.referencePrice ? ` · $${item.referencePrice}` : ""}
-                </span>
-              </button>
-            ))}
+            {results.length > 0 && <CatalogSearchResults key={`${query}:${vendorName}:${line.materialType}`} items={results} onSelect={select} />}
             {results.length === 0 && (
               <div className="p-3 text-xs text-slate-500">
                 No matching catalog items. You can continue with freeform
@@ -473,6 +465,7 @@ function LineEditor({
         </label>
       </div>
       <div className="flex flex-wrap items-center gap-2 border-t border-slate-200 px-3 py-2 text-xs">
+        {reference?.quoteRequired && <p className="mx-3 text-xs font-semibold text-amber-700">Specialty · Quote required. Enter the vendor’s quoted price manually.</p>}
         {activeReference && (
           <>
             <span>

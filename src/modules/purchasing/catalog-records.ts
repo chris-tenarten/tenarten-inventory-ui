@@ -72,6 +72,7 @@ function mapStandard(row: CatalogRecord): PurchasingCatalogSuggestion | null {
   const pkg = parsePurchasingPackage(text(row.unit));
   return {
     source: "standard",
+    classification: { category: text(row.category), materialClass: text(row.material_class), materialType: "", componentType: "" },
     id: text(row.id),
     vendor: text(row.vendor),
     vendorSku: text(row.vendor_sku),
@@ -105,8 +106,11 @@ function mapSpecialty(row: CatalogRecord): PurchasingCatalogSuggestion | null {
   ).trim();
   if (!materialName) return null;
   const pkg = parsePurchasingPackage(text(row.packaging));
+  const quoteRequired = row.quote_required === true || /^(quote|call)$/i.test(text(row.price_unit).trim());
   return {
     source: "specialty",
+    classification: { category: text(row.category), materialClass: "", materialType: text(row.material_type), componentType: text(row.component_type) },
+    quoteRequired,
     id: text(row.id),
     vendor: text(row.vendor_name),
     vendorSku: text(row.vendor_sku),
@@ -116,7 +120,7 @@ function mapSpecialty(row: CatalogRecord): PurchasingCatalogSuggestion | null {
       row.unit_size == null ? pkg.quantity : text(row.unit_size),
     packageMeasure: text(row.unit_size_uom) || pkg.measure,
     containerType: pkg.container || text(row.packaging),
-    orderUnit: text(row.price_unit) || pkg.container,
+    orderUnit: /^(quote|call)$/i.test(text(row.price_unit).trim()) ? pkg.container : text(row.price_unit) || pkg.container,
     materialType: text(row.material_type) || text(row.category),
     resinColor: text(row.color),
     componentType: text(row.component_type),
@@ -144,33 +148,19 @@ function mapSpecialty(row: CatalogRecord): PurchasingCatalogSuggestion | null {
   };
 }
 
-function identity(item: PurchasingCatalogSuggestion) {
-  const normalize = (value: string) =>
-    value.toLowerCase().replace(/[^a-z0-9.]/g, "");
-  return [
-    normalizeVendor(item.vendor),
-    normalize(item.materialName),
-    normalize(item.chipSize),
-    normalize(item.packageQuantity),
-    normalize(item.packageMeasure),
-    normalize(item.containerType.replace(/s$/i, "")),
-  ].join("|");
-}
-
 export function combinePurchasingCatalogRecords(
   standardRecords: CatalogRecord[],
   specialtyRecords: CatalogRecord[],
   vendor = "",
   materialType: "" | "chip" | "resin" | "pigment" | "filler" | "other" = "",
 ) {
+  // Without an explicit identity link, matching names/packages are still distinct offers.
   const maintained = specialtyRecords
     .map(mapSpecialty)
     .filter((item): item is PurchasingCatalogSuggestion => Boolean(item));
-  const maintainedIdentities = new Set(maintained.map(identity));
   const legacy = standardRecords
     .map(mapStandard)
-    .filter((item): item is PurchasingCatalogSuggestion => Boolean(item))
-    .filter((item) => !maintainedIdentities.has(identity(item)));
+    .filter((item): item is PurchasingCatalogSuggestion => Boolean(item));
 
   const candidates = [...maintained, ...legacy].filter((item) => {
     if (!materialType) return true;
@@ -189,6 +179,5 @@ export function combinePurchasingCatalogRecords(
         b.score - a.score ||
         a.vendor.localeCompare(b.vendor) ||
         a.materialName.localeCompare(b.materialName),
-    )
-    .slice(0, 30);
+    );
 }

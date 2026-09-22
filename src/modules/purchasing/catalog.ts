@@ -56,39 +56,44 @@ export async function searchPurchasingCatalog(
   term: string,
   vendor = "",
   materialType: PurchaseOrderLineMaterialType = "",
+  options: { allowShortQuery?: boolean } = {},
 ): Promise<PurchasingCatalogSuggestion[]> {
   const q = term.trim();
-  if (q.length < 2) return [];
-  const standardQuery = supabase
-    .from("vendor_catalog")
-    .select(
-      "id,vendor,vendor_sku,item_name,size,category,material_class,unit,price,price_basis",
-    )
-    .or(
-      `item_name.ilike.%${q}%,vendor_sku.ilike.%${q}%,vendor.ilike.%${q}%,size.ilike.%${q}%`,
-    )
-    .limit(250);
-  const specialtyQuery = supabase
-    .from("vendor_catalog_v2")
-    .select(
-      "id,vendor_name,vendor_sku,item_name,canonical_item_name,size,canonical_size,color,component_type,category,material_type,packaging,unit_size,unit_size_uom,price,bulk_price,bulk_minimum_quantity,bulk_minimum_uom,truckload_price,truckload_minimum_quantity,truckload_minimum_uom,price_unit,minimum_order_qty,minimum_order_uom,lead_time_days,is_active",
-    )
-    .eq("is_active", true)
-    .or(
-      `item_name.ilike.%${q}%,canonical_item_name.ilike.%${q}%,vendor_sku.ilike.%${q}%,vendor_name.ilike.%${q}%,size.ilike.%${q}%,canonical_size.ilike.%${q}%`,
-    )
-    .limit(250);
-  const [standard, specialty] = await Promise.all([
-    standardQuery,
-    specialtyQuery,
-  ]);
-  if (standard.error && specialty.error) {
-    throw new Error("Catalog search is temporarily unavailable.");
-  }
-  return combinePurchasingCatalogRecords(
-    (standard.error ? [] : standard.data ?? []) as CatalogRecord[],
-    (specialty.error ? [] : specialty.data ?? []) as CatalogRecord[],
-    vendor,
-    materialType,
-  );
+  if (q.length < 2 && !options.allowShortQuery) return [];
+  // Quote PostgREST grammar and escape LIKE wildcards in user-authored terms.
+  const pattern = JSON.stringify(`%${q.replace(/[\\%_]/g, "\\$&")}%`);
+  const readSource = async (specialty: boolean): Promise<CatalogRecord[]> => {
+    const rows: CatalogRecord[] = [];
+    const seen = new Set<string>();
+    let expected: number | null = null;
+    for (;;) {
+      const columns = specialty
+        ? ["item_name", "canonical_item_name", "vendor_sku", "vendor_name", "size", "canonical_size"]
+        : ["item_name", "vendor_sku", "vendor", "size"];
+      let query = supabase.from(specialty ? "vendor_catalog_v2" : "vendor_catalog").select(
+        specialty
+          ? "id,vendor_name,vendor_sku,item_name,canonical_item_name,size,canonical_size,color,component_type,category,material_type,packaging,unit_size,unit_size_uom,price,bulk_price,bulk_minimum_quantity,bulk_minimum_uom,truckload_price,truckload_minimum_quantity,truckload_minimum_uom,price_unit,quote_required,minimum_order_qty,minimum_order_uom,lead_time_days,is_active"
+          : "id,vendor,vendor_sku,item_name,size,category,material_class,unit,price,price_basis",
+        { count: "exact" },
+      );
+      if (specialty) query = query.eq("is_active", true);
+      const { data, error, count } = await query
+        .or(columns.map((column) => `${column}.ilike.${pattern}`).join(","))
+        .order("id").range(rows.length, rows.length + 249).returns<CatalogRecord[]>();
+      const fail = () => new Error(`${specialty ? "Specialty" : "Regular"} Catalog search is incomplete. Retry your search to load both catalogs. Your draft is unchanged.`);
+      if (error || count === null || (expected !== null && count !== expected)) throw fail();
+      expected = count;
+      const page = data ?? [];
+      for (const row of page) {
+        const id = String(row.id);
+        if (seen.has(id)) throw fail();
+        seen.add(id);
+      }
+      rows.push(...page);
+      if (rows.length === count) return rows;
+      if (!page.length || rows.length > count) throw fail();
+    }
+  };
+  const [standard, specialty] = await Promise.all([readSource(false), readSource(true)]);
+  return combinePurchasingCatalogRecords(standard, specialty, vendor, materialType);
 }

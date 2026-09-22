@@ -310,8 +310,8 @@ export default function ProductionWorkspace() {
   }, [auth.ready, includeArchived, productionProfileResolved, productionProfileRole, productionProfileUserId, setActiveView]);
 
   useEffect(() => {
-    void loadJobs();
-  }, [loadJobs]);
+    if (dashboardMode !== 'snapshot') void loadJobs();
+  }, [dashboardMode, loadJobs]);
 
   useEffect(() => {
     planningPhasesRef.current = planningPhases;

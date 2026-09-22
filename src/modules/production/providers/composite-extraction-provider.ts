@@ -5,7 +5,6 @@ import { parseEstimate } from './estimate-parser';
 import { extractGenericIdentifiers, extractGenericPlateNumbers } from './generic-identifier-parser';
 import { parseMaterialQuantitySheet } from './material-quantity-parser';
 import { parsePurchaseOrder } from './purchase-order-parser';
-import { extractEmbeddedPdfText } from './pdf-text';
 import type { ExtractedCandidate, ParsedFields } from './parser-utils';
 import { parseSampleWorkOrder } from './sample-work-order-parser';
 import { parseShopDrawing } from './shop-drawing-parser';
@@ -202,6 +201,7 @@ export const compositeExtractionProvider: JobMetadataExtractionProvider = {
     for (const file of files) {
       if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) continue;
       try {
+        const { extractEmbeddedPdfText } = await import('./pdf-text');
         const text = await extractEmbeddedPdfText(file);
         documents.push({ name: file.name, text });
       } catch (error) {
