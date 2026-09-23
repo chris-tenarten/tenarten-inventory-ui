@@ -57,3 +57,144 @@ test('partial receipt sends explicit quantity and reuses its retry identity',asy
  await page.getByRole('button',{name:'Confirm Receive',exact:true}).click();await expect(page.getByText(/TEST uncertain response/).last()).toBeVisible();await page.getByRole('button',{name:'Confirm Receive',exact:true}).click();
  await expect(page.getByText('Received 3 · Remaining 7',{exact:true})).toBeVisible();expect(f.writes).toHaveLength(2);expect(f.writes[0].body.p_request_id).toBe(f.writes[1].body.p_request_id);expect(f.writes[1].body.p_quantity).toBe(3);expect(f.errors).toEqual([]);
 });
+
+test('batch-created Pending Receivals retain their order after receive and undo', async ({ page }) => {
+  const f = await fixture(page);
+  const shipment = [
+    ['Blanco Mexicano', '#0', 10], ['Blanco Mexicano', '#1', 290],
+    ['Blanco Mexicano', '#2', 180], ['CC Rose Botticino', '#0', 10],
+    ['CC Rose Botticino', '#2', 5], ['True Grey', '#1', 30], ['True Grey', '#2', 30],
+  ] as const;
+  const records: Record<string, string | number | boolean | null>[] = shipment.map(([material, size, quantity], i) => ({
+    id: `line-${i}`, material_name: material, size, quantity_expected: quantity,
+    quantity_received: 0, unit: 'Bags', vendor: 'Klein & Co. Inc.',
+    status: 'pending', is_earmarked: false, eta: null,
+    created_at: '2026-09-23T20:21:54.726712Z',
+    receipt_inventory_item_id: null, receipt_transaction_id: null,
+  }));
+  let touched = false;
+  await page.route('**/rest/v1/pending_receivals?**', async route => {
+    // Emulate PostgREST ordering with changed physical row order after an UPDATE.
+    const physical = touched ? [...records.slice(1), records[0]] : [...records];
+    const orders = new URL(route.request().url()).searchParams.get('order')?.split(',') ?? [];
+    physical.sort((a, b) => {
+      for (const order of orders) {
+        const [key, direction, nulls] = order.split('.');
+        const av = a[key], bv = b[key];
+        if (av === bv) continue;
+        if (av == null) return nulls === 'nullsfirst' ? -1 : 1;
+        if (bv == null) return nulls === 'nullsfirst' ? 1 : -1;
+        const comparison = String(av).localeCompare(String(bv));
+        if (comparison) return direction === 'desc' ? -comparison : comparison;
+      }
+      return 0;
+    });
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(physical) });
+  });
+  await page.route('**/rest/v1/rpc/receive_pending_receival_quantity', async route => {
+    f.writes.push({ name: 'receive', body: route.request().postDataJSON() });
+    touched = true;
+    Object.assign(records[0], { status: 'received', quantity_received: 10, receipt_inventory_item_id: 1, receipt_transaction_id: 'transaction' });
+    await route.fulfill({ status: 200, contentType: 'application/json', body: 'null' });
+  });
+  await page.route('**/rest/v1/rpc/undo_pending_receival_receipt', async route => {
+    f.writes.push({ name: 'undo', body: route.request().postDataJSON() });
+    Object.assign(records[0], { status: 'pending', quantity_received: 0, receipt_inventory_item_id: null, receipt_transaction_id: null });
+    await route.fulfill({ status: 200, contentType: 'application/json', body: 'null' });
+  });
+  await page.goto('/inventory');
+  const queue = page.getByRole('button', { name: /Pending Receivals \(/ });
+  if (await queue.getAttribute('aria-expanded') === 'false') await queue.click();
+  const rows = page.locator('tbody tr').filter({ hasText: /Blanco Mexicano|CC Rose Botticino|True Grey/ });
+  const labels = () => rows.evaluateAll(elements => elements.map(row => {
+    const cells = row.querySelectorAll('td');
+    return `${cells[2].textContent?.trim()} ${cells[3].textContent?.trim()}`;
+  }));
+  const expected = shipment.map(([name, grade]) => `${name} ${grade}`);
+  await expect.poll(labels).toEqual(expected);
+  await rows.first().getByRole('button', { name: 'Receive', exact: true }).click();
+  await page.getByPlaceholder('Name', { exact: true }).fill('Gio');
+  await page.getByRole('button', { name: 'Confirm Receive', exact: true }).click();
+  await expect(rows.first().getByRole('button', { name: 'Undo Receive', exact: true })).toBeVisible();
+  await expect.poll(labels).toEqual(expected);
+  await rows.first().getByRole('button', { name: 'Undo Receive', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Undo pending receival receipt' });
+  await dialog.getByPlaceholder('Name', { exact: true }).fill('Gio');
+  await dialog.getByRole('button', { name: 'Confirm Undo', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect.poll(labels).toEqual(expected);
+  await expect(rows.first().getByRole('button', { name: 'Receive', exact: true })).toBeVisible();
+  expect(f.writes.map(write => write.name)).toEqual(['receive', 'undo']);
+  expect(records.map(row => row.quantity_received)).toEqual([0, 0, 0, 0, 0, 0, 0]);
+  expect(f.errors).toEqual([]);
+});
+
+for (const appearance of ['light', 'dark']) {
+  for (const viewport of [{ width: 1440, height: 1000 }, { width: 1280, height: 540 }, { width: 390, height: 700 }]) {
+    test(`Pending editor layout: ${appearance} ${viewport.width}x${viewport.height}`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await page.addInitScript(mode => {
+        localStorage.setItem('tenops_appearance', mode);
+        localStorage.setItem('tenops:tendev:appearance', mode);
+      }, appearance);
+      const f = await fixture(page);
+      await page.route('**/rest/v1/pending_receivals?**', route => route.fulfill({
+        status: 200, contentType: 'application/json', body: JSON.stringify([{
+          id: 'layout-row', vendor: 'Klein & Co. Inc.', material_name: 'Blanco Mexicano',
+          size: '#0', quantity_expected: 10, quantity_received: 0, unit: 'Bags',
+          status: 'pending', ordered_by: 'Gio', order_date: '2026-09-22', location: 'Denton',
+          created_at: '2026-09-23T20:21:54Z', is_earmarked: false,
+        }]),
+      }));
+      await page.goto('/inventory');
+      await page.evaluate(mode => { document.documentElement.dataset.appearance = mode; }, appearance);
+      const queue = page.getByRole('button', { name: /Pending Receivals \(/ });
+      if (await queue.getAttribute('aria-expanded') === 'false') await queue.click();
+      page.on('dialog', dialog => dialog.accept());
+      for (const mode of ['Edit', 'Add']) {
+        if (mode === 'Edit') {
+          await page.locator('tbody tr').filter({ hasText: 'Blanco Mexicano' }).getByRole('button', { name: 'Edit', exact: true }).click();
+        } else {
+          await page.getByRole('button', { name: '+ Pending Receival', exact: true }).click();
+        }
+        const dialog = page.getByRole('dialog', { name: 'Pending receival', exact: true });
+        const title = dialog.getByRole('heading', { name: `${mode} Expected Material`, exact: true });
+        const close = dialog.getByRole('button', { name: 'Close', exact: true });
+        const body = dialog.locator('[data-pending-editor-body]');
+        if (mode === 'Add') {
+          for (let i = 0; i < 3; i++) await dialog.getByRole('button', { name: '+ Add Another Material', exact: true }).click();
+        }
+        const check = async () => {
+          await expect(page.locator('html')).toHaveAttribute('data-appearance', appearance);
+          const shell = await page.locator('[data-shell-header]').boundingBox();
+          const panel = await dialog.locator(':scope > div').boundingBox();
+          const heading = await title.boundingBox();
+          const button = await close.boundingBox();
+          expect(shell).not.toBeNull(); expect(panel).not.toBeNull();
+          expect(heading!.y).toBeGreaterThanOrEqual(shell!.y + shell!.height + 10);
+          expect(button!.y).toBeGreaterThanOrEqual(shell!.y + shell!.height + 10);
+          expect(panel!.y + panel!.height).toBeLessThanOrEqual(viewport.height - 10);
+          expect(button!.height).toBeGreaterThanOrEqual(44);
+          expect(await close.evaluate(el => {
+            const r = el.getBoundingClientRect();
+            return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
+          })).toBe(true);
+          expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+          expect(await body.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+          expect(await page.evaluate(() => getComputedStyle(document.body).overflowY)).toBe('hidden');
+        };
+        await check();
+        const initialClose = await close.boundingBox();
+        await body.evaluate(el => { el.scrollTop = el.scrollHeight; });
+        if (mode === 'Add' || viewport.height < 800) expect(await body.evaluate(el => el.scrollTop)).toBeGreaterThan(0);
+        await check();
+        expect((await close.boundingBox())!.y).toBe(initialClose!.y);
+        await page.screenshot({ path: `/tmp/tenops-pending-editor-${appearance}-${viewport.width}-${mode}.png` });
+        await close.click();
+        await expect(dialog).toHaveCount(0);
+      }
+      expect(f.writes).toEqual([]);
+      expect(f.errors).toEqual([]);
+    });
+  }
+}
