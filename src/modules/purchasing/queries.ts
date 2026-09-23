@@ -43,12 +43,13 @@ export async function loadPurchaseOrderSummaries(): Promise<PurchaseOrderSummary
 }
 
 export async function loadPurchaseOrder(id: string): Promise<PurchaseOrder> {
-  const { data, error } = await supabase.from('purchase_orders').select('*,issuances:purchase_order_issuances(id,revision_number,issued_at,issued_by,snapshot_hash),lines:purchase_order_lines(*,details:chip_purchase_order_line_details(*))').eq('id',id).single();
+  const { data, error } = await supabase.from('purchase_orders').select('*,issuances:purchase_order_issuances(id,revision_number,issued_at,issued_by,snapshot_hash),lines:purchase_order_lines(*,details:chip_purchase_order_line_details(*),allocations:purchase_order_line_allocations(*))').eq('id',id).single();
   if (error) throw error;
   const row = data as DbOrder;
   const lines = ((row.lines as Array<Record<string,unknown>>) || []).sort((a,b) => Number(a.line_number)-Number(b.line_number)).map((line): PurchaseOrderLine => {
     const detail = (Array.isArray(line.details) ? line.details[0] : line.details) as Record<string,unknown>;
     return {
+      allocations:((line.allocations as Array<Record<string,unknown>>)??[]).map(a=>({productionJobId:text(a.production_job_id),quantity:text(a.quantity)})),
       id:text(line.id), lineNumber:Number(line.line_number), lineCategory:'chip', materialType:(purchaseOrderMaterialTypes.has(text(line.material_type)) ? text(line.material_type) : '') as PurchaseOrderLine['materialType'], status:'active',
       details:{
         productionJobId:text(detail.production_job_id), catalogSource:text(detail.catalog_source) as PurchaseOrderLine['details']['catalogSource'],
@@ -144,6 +145,8 @@ export async function loadPurchaseOrderPendingReceivalProjection(
       else if (!sourceLineId) exclusionReason = 'Immutable source identity is missing.';
       const pendingReceivalId = existingByLineId.get(sourceLineId) ?? '';
       return {
+        allocationIntentCaptured:order.reservation_allocation_version===1,
+        allocationSummary:order.reservation_allocation_version===1 ? [...((line.reservation_allocations as Array<Record<string,unknown>>)??[]).map(a=>`${text(a.quantity)} ${unit} → ${text(a.job_number)} ${text(a.job_name)}`), `${quantity-((line.reservation_allocations as Array<Record<string,unknown>>)??[]).reduce((sum,a)=>sum+Number(a.quantity),0)} ${unit} general stock`].join(' · ') : undefined,
         sourceLineId,
         sourceLineNumber:Number(line.line_number),
         eligible:!exclusionReason,

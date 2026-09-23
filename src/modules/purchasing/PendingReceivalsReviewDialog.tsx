@@ -72,13 +72,14 @@ export default function PendingReceivalsReviewDialog({
                     onChange={event => update(line.sourceLineId, { selected:event.target.checked })}
                   />
                   <b>Line {line.sourceLineNumber}</b>
+                  {line.allocationSummary && <span className="block text-xs text-slate-600">{line.allocationSummary}</span>}
                   {line.vendorSku && <span className="text-xs text-slate-500">SKU {line.vendorSku}</span>}
                   {line.alreadyCreated && <span className="border border-emerald-300 bg-white px-2 py-1 text-[10px] font-bold uppercase text-emerald-800">Previously created</span>}
                   {!line.eligible && <span className="text-xs font-bold text-slate-600">Excluded: {line.exclusionReason}</span>}
                 </div>
                 <div className="grid gap-3 md:grid-cols-4">
                   <label className={label}>Material
-                    <input className={input} value={line.materialName} disabled={locked || saving} onChange={event => update(line.sourceLineId, { materialName:event.target.value })} />
+                    <input className={input} readOnly={line.allocationIntentCaptured} value={line.materialName} disabled={locked || saving} onChange={event => update(line.sourceLineId, { materialName:event.target.value })} />
                   </label>
                   <label className={label}>Size
                     <input className={input} value={line.size} disabled={locked || saving} onChange={event => update(line.sourceLineId, { size:event.target.value })} />
@@ -87,10 +88,10 @@ export default function PendingReceivalsReviewDialog({
                     <input className={input} value={line.category} disabled={locked || saving} onChange={event => update(line.sourceLineId, { category:event.target.value })} />
                   </label>
                   <label className={label}>Quantity
-                    <input className={input} type="number" min="0.0001" step="any" value={line.quantityExpected} disabled={locked || saving} onChange={event => update(line.sourceLineId, { quantityExpected:event.target.value })} />
+                    <input className={input} type="number" min="0.0001" step="any" readOnly={line.allocationIntentCaptured} value={line.quantityExpected} disabled={locked || saving} onChange={event => update(line.sourceLineId, { quantityExpected:event.target.value })} />
                   </label>
                   <label className={label}>Unit
-                    <input className={input} value={line.unit} disabled={locked || saving} onChange={event => update(line.sourceLineId, { unit:event.target.value })} />
+                    <input className={input} readOnly={line.allocationIntentCaptured} value={line.unit} disabled={locked || saving} onChange={event => update(line.sourceLineId, { unit:event.target.value })} />
                   </label>
                   <label className={label}>ETA
                     <input className={input} type="date" value={line.eta} disabled={locked || saving} onChange={event => update(line.sourceLineId, { eta:event.target.value })} />

@@ -201,12 +201,12 @@ try {
   run(['run','--rm','-d','--name',name,'-e','POSTGRES_PASSWORD=postgres',image]);
   let ready = false;
   for (let attempt = 0; attempt < 60; attempt += 1) {
-    if (spawnSync('docker',['exec',name,'pg_isready','-U','postgres']).status === 0) { ready = true; break; }
+    if (spawnSync('docker',['exec',name,'pg_isready','-h','127.0.0.1','-U','postgres']).status === 0) { ready = true; break; }
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,500);
   }
   if (!ready) throw new Error('PostgreSQL did not become ready');
-  run(['exec','-i',name,'psql','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1'],bootstrap+migrations+tests);
-  console.log('Sample density-profile migration checks passed.');
+  run(['exec','-i',name,'psql','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1'],bootstrap+migrations+tests+readFileSync('supabase/migrations/20260923160000_sample_operational_profiles.sql','utf8')+readFileSync('scripts/fixtures/sample-operational-profiles.sql','utf8'));
+  console.log('Sample density-profile and managed operational-profile lifecycle checks passed.');
 } finally {
   spawnSync('docker',['stop',name]);
 }

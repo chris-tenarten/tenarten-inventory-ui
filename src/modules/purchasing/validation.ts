@@ -1,3 +1,4 @@
+import { allocationError } from './allocation-model';
 import { moneyToCents } from './calculations';
 import type { PurchaseOrderDraft } from './types';
 
@@ -10,6 +11,7 @@ export function validatePurchaseOrderDraft(draft: PurchaseOrderDraft): string[] 
   if (!draft.lines.length) errors.push('Add at least one line.');
   draft.lines.forEach((line,index) => {
     const label = `Line ${index + 1}`;
+    if (allocationError(line)) errors.push(`${label}: ${allocationError(line)}`);
     if (!line.materialType) errors.push(`${label}: choose a material type.`);
     if (!line.details.materialNameSnapshot.trim()) errors.push(`${label}: material is required.`);
     if (line.materialType === 'chip' && !line.details.chipSize.trim()) errors.push(`${label}: size is required for a Chip line.`);

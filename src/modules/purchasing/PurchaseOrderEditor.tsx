@@ -27,6 +27,7 @@ import {
   searchPurchasingCatalog,
 } from "./catalog";
 import { getApplicableCatalogPrice } from "./catalog-pricing";
+import LineAllocations from './LineAllocations';
 import { applyPurchaseOrderMaterialDefaults, createPurchaseOrderMaterialLine } from "./defaults";
 import { suggestedPartBQuantity } from "./resin-assist";
 import {
@@ -78,6 +79,7 @@ function parseContainerSize(value: string) {
 }
 
 function LineEditor({
+  jobs,
   line,
   index,
   vendorName,
@@ -88,6 +90,7 @@ function LineEditor({
   onRemove,
   onDuplicate,
 }: {
+  jobs: ProductionJobOption[];
   line: PurchaseOrderLine;
   index: number;
   vendorName: string;
@@ -296,6 +299,7 @@ function LineEditor({
           </button>
         </div>
       </div>
+      <LineAllocations line={line} jobs={jobs} onChange={onChange}/>
       <div className="m-3 border border-blue-200 bg-blue-50/60 p-3">
         <div className="mb-3">
           <div className={label}>{tr('Material Type', 'Tipo de material')}</div>
@@ -1272,6 +1276,7 @@ export function PurchaseOrderEditor({
               <LineEditor
                 key={line.id || index}
                 line={line}
+                jobs={jobs}
                 index={index}
                 vendorName={draft.vendorNameSnapshot}
                 vendorId={draft.vendorId}
@@ -1281,7 +1286,7 @@ export function PurchaseOrderEditor({
                   setDraft((current) => ({
                     ...current,
                     lines: current.lines.map((candidate, i) =>
-                      i === index ? next : candidate,
+                      i === index ? { ...next, allocations: next.materialType !== candidate.materialType || ['catalogItemId','catalogSource','vendorSkuSnapshot','materialNameSnapshot','chipSize','orderUnit','packageQuantity','packageMeasure'].some(key => next.details[key as keyof typeof next.details] !== candidate.details[key as keyof typeof candidate.details]) ? [] : next.allocations } : candidate,
                     ),
                   }))
                 }

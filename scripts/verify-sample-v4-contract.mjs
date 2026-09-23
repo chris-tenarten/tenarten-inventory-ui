@@ -11,7 +11,8 @@ for(const token of ['dryPoolOzPerCft','defaultChipDensityLbCft','defaultFillerOz
 assert.match(migration,/operational 003-V4 records exist/);
 assert.match(migration,/volume_cft\*density\*16/);
 assert.match(migration,/actual_dry:=chip_oz\+filler_effective/);
-assert.match(workspace,/Profile default · oz within the dry-material pool/);
+assert.match(workspace,/Profile Default/);
+assert.match(workspace,/Profile-derived from production volume/);
 assert.match(workspace,/Adjust Formulation/);
 assert.match(workspace,/ordinary|This formula differs/);
 assert.match(pdf,/Profile \$\{value\(profile, "name"\)\}/);

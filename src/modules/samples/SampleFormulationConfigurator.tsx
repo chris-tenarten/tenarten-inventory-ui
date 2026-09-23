@@ -1,14 +1,16 @@
 "use client";
+import dynamic from 'next/dynamic';
+import { useAuth } from '@/lib/auth';
+import { applyOperationalProfile, loadOperationalProfiles, missingProfileInputs, operationalProfileLabel, type OperationalProfile } from './operational-profiles';
+const OperationalProfileManager = dynamic(() => import('./OperationalProfileManager'));
 import { Settings2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   applySupplierRatioDefault,
-  applyFormulationProfile,
   calculateSampleFormulation,
   previewIncreasedFillerAdjustment,
   normalizeSupportedSampleRatio,
   SAMPLE_FORMULATION_CALCULATION_VERSION,
-  SAMPLE_FORMULATION_PROFILES,
   MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION,
   type SampleFormulationState,
 } from "./formulation";
@@ -41,6 +43,19 @@ export default function SampleFormulationConfigurator({
   onChange: (state: SampleFormulationState) => void;
   onApplyAdjustment: (state: SampleFormulationState, targetFillerOz: string) => void;
 }) {
+  const auth = useAuth();
+  const canManageProfiles = Boolean(auth.profile?.isActive && ['admin', 'developer'].includes(auth.profile.role));
+  const [profiles, setProfiles] = useState<OperationalProfile[]>([]);
+  const [profilesError, setProfilesError] = useState('');
+  const [manageProfiles, setManageProfiles] = useState(false);
+  const [pendingProfileId, setPendingProfileId] = useState('');
+  const refreshProfiles = async () => { setProfiles(await loadOperationalProfiles()); setProfilesError(''); };
+  useEffect(() => { let live = true; void loadOperationalProfiles().then(rows => { if (live) setProfiles(rows); }).catch(error => { if (live) setProfilesError(error.message); }); return () => { live = false; }; }, []);
+  const pendingProfile = profiles.find(p => p.id === pendingProfileId);
+  function chooseProfile(profile: OperationalProfile) {
+    if (missingProfileInputs(profile).length) { setPendingProfileId(profile.id); return; }
+    onChange(applyOperationalProfile(state, profile)); setPendingProfileId('');
+  }
   const result = useMemo(
     () => calculateSampleFormulation(state, rows),
     [state, rows],
@@ -175,14 +190,20 @@ export default function SampleFormulationConfigurator({
               <X className="mx-auto h-4 w-4" />
             </button>
           </div>
+          {manageProfiles && canManageProfiles && <OperationalProfileManager profiles={profiles} onChanged={refreshProfiles} onClose={() => setManageProfiles(false)}/>}
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {isV4 && <label className={`${label} sm:col-span-2`}>
               Formulation Profile
-              <select value={state.profile?.id??''} onChange={(event)=>{const profile=SAMPLE_FORMULATION_PROFILES.find(candidate=>candidate.id===event.target.value);if(profile)onChange(applyFormulationProfile(state,profile));}} className={input}>
-                {state.profile&&!SAMPLE_FORMULATION_PROFILES.some(profile=>profile.id===state.profile?.id)&&<option value={state.profile.id}>{state.profile.name}</option>}
-                {SAMPLE_FORMULATION_PROFILES.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}
+              <select aria-label="Formulation Profile" value={pendingProfileId || (state.profile ? `${state.profile.id}:${state.profile.version}` : '')} onChange={event => { const profile = profiles.find(p => `${`operational:${p.id}`}:${p.revision}` === event.target.value); if (profile) chooseProfile(profile); }} className={input}>
+                {state.profile && <option value={`${state.profile.id}:${state.profile.version}`}>{profiles.some(p=>`operational:${p.id}`===state.profile?.id && p.revision===state.profile?.version && p.is_active) ? '' : 'Captured: '}{state.profile.name}</option>}
+                {!state.profile && <option value="">Choose profile</option>}
+                {pendingProfile && <option value={pendingProfile.id}>{operationalProfileLabel(pendingProfile)} — not applied</option>}
+                {profiles.filter(p => p.is_active && `${`operational:${p.id}`}:${p.revision}` !== `${state.profile?.id}:${state.profile?.version}`).map(p => <option key={p.id} value={`${`operational:${p.id}`}:${p.revision}`}>{operationalProfileLabel(p)}{missingProfileInputs(p).length ? ' · Incomplete' : ''}</option>)}
               </select>
               <span className={hint}>Captured with this Sample. Changing supplier alone does not change the profile.</span>
+              {profilesError && <span role="alert" className="block text-xs text-red-700">{profilesError}</span>}
+              {pendingProfile && <span role="status" className="mt-2 block border border-amber-300 p-2 text-xs">{operationalProfileLabel(pendingProfile)} has not been applied. {missingProfileInputs(pendingProfile).length ? `Missing: ${missingProfileInputs(pendingProfile).join(', ')}. Current Draft calculations remain on the captured profile.` : 'Configuration is ready. Apply explicitly to update this Draft.'}<button type="button" disabled={missingProfileInputs(pendingProfile).length > 0} onClick={() => chooseProfile(pendingProfile)} className="m-1 min-h-9 border px-2 disabled:opacity-50">Apply configured profile</button><button type="button" onClick={() => setPendingProfileId('')} className="m-1 underline">Cancel selection</button></span>}
+              {canManageProfiles && <button type="button" onClick={() => setManageProfiles(true)} className="mt-2 min-h-10 border px-3 text-xs">Configure profiles</button>}
             </label>}
             {isV4 && <>
               <label className={label}>Dry-material Rate<input type="number" min="0" step="0.000001" value={state.profile?.dryPoolOzPerCft??''} onChange={(event)=>patchProfile({dryPoolOzPerCft:event.target.value})} className={input}/><span className={hint}>oz/CFT · advanced custom profile</span></label>

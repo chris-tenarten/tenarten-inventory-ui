@@ -16,7 +16,7 @@ export type ChipPurchaseOrderLineDetails = {
   containerType: string; moistureCondition: MoistureCondition; quantityOrdered: string; orderUnit: string;
   unitPrice: string; priceBasis: string; notes: string;
 };
-export type PurchaseOrderLine = { id?: string; lineNumber: number; lineCategory: 'chip'; materialType: PurchaseOrderLineMaterialType; status: 'active'; details: ChipPurchaseOrderLineDetails };
+export type PurchaseOrderLine = { allocations?: Array<{productionJobId:string;quantity:string}>; id?: string; lineNumber: number; lineCategory: 'chip'; materialType: PurchaseOrderLineMaterialType; status: 'active'; details: ChipPurchaseOrderLineDetails };
 export type PurchaseOrder = {
   id: string; poFamilyId: string; poNumber: string | null; poCategory: PurchaseOrderCategory; status: PurchaseOrderStatus; documentTemplate?: PurchaseOrderTemplate; pdfTextSize?: PdfTextSize;
   productionJobId: string; jobNumberSnapshot: string; jobNameSnapshot: string; jobPoReferenceType: JobPurchaseOrderReferenceType;
@@ -42,7 +42,7 @@ export type PurchaseOrderDocument = {
   storageBucket: string; storagePath: string; documentVersion: string; templateName: PurchaseOrderTemplate; templateVersion: number;
   generationStartedAt: string; generatedAt: string; failedAt: string; lastError: string; attemptCount: number;
 };
-export type PendingReceivalProposalLine = {
+export type PendingReceivalProposalLine = { allocationSummary?: string; allocationIntentCaptured?: boolean;
   sourceLineId: string; sourceLineNumber: number; eligible: boolean; exclusionReason: string;
   alreadyCreated: boolean; pendingReceivalId: string; selected: boolean;
   materialName: string; size: string; category: string; quantityExpected: string;

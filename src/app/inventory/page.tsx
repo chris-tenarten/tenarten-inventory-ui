@@ -510,6 +510,8 @@ export default function InventoryPage() {
   const [clearingReceivedPending, setClearingReceivedPending] = useState(false);
   const [receivePendingTargetId, setReceivePendingTargetId] = useState<string | null>(null);
   const [receivePendingByInput, setReceivePendingByInput] = useState('');
+  const [receivePendingQuantity, setReceivePendingQuantity] = useState('');
+  const receiptRequest = useRef('');
   const [receivePendingMessage, setReceivePendingMessage] = useState('');
   const [isBulkReceivePendingOpen, setIsBulkReceivePendingOpen] = useState(false);
   const [bulkReceivePendingByInput, setBulkReceivePendingByInput] = useState('');
@@ -1939,6 +1941,8 @@ export default function InventoryPage() {
       return;
     }
     setReceivePendingTargetId(receival.id);
+    setReceivePendingQuantity(String(getNumericQuantity(receival.quantity_expected)-getNumericQuantity(receival.quantity_received)));
+    receiptRequest.current=crypto.randomUUID();
     setReceivePendingByInput(editEnteredBy && editEnteredBy !== 'chris_test' ? editEnteredBy : '');
     setReceivePendingMessage('');
     setPendingReceivalsError('');
@@ -1965,10 +1969,12 @@ export default function InventoryPage() {
       return;
     }
 
-    await handleReceivePendingReceival(receival, receivedBy);
+    const quantity=Number(receivePendingQuantity);
+    if (!Number.isFinite(quantity) || quantity<=0 || quantity>getNumericQuantity(receival.quantity_expected)-getNumericQuantity(receival.quantity_received)) { setReceivePendingMessage('Enter a positive quantity no greater than the remaining amount.'); return; }
+    await handleReceivePendingReceival(receival, receivedBy, quantity);
   }
 
-  async function handleReceivePendingReceival(receival: PendingReceival, receivedBy: string) {
+  async function handleReceivePendingReceival(receival: PendingReceival, receivedBy: string, quantity?: number) {
     const expectedQty = getNumericQuantity(receival.quantity_expected);
     const receivedQty = getNumericQuantity(receival.quantity_received);
     const remainingQty = expectedQty - receivedQty;
@@ -1984,7 +1990,10 @@ export default function InventoryPage() {
     setPendingReceivalsError('');
 
     try {
-      await receivePendingReceival(receival.id, receivedBy);
+      if (quantity !== undefined) {
+        const {error}=await supabase.rpc('receive_pending_receival_quantity',{p_receival_id:receival.id,p_received_by:receivedBy,p_quantity:quantity,p_request_id:receiptRequest.current});
+        if(error) throw new Error(getSupabaseErrorMessage(error,'Receipt result is uncertain. Keep this dialog open and retry the same quantity to reconcile safely.'));
+      } else await receivePendingReceival(receival.id, receivedBy);
 
       await Promise.all([loadData(), loadPendingReceivals()]);
       closeReceivePendingDialog();
@@ -1994,6 +2003,7 @@ export default function InventoryPage() {
         'Failed to receive pending material. Run the pending receival safety SQL migration, then try again.',
       );
       setPendingReceivalsError(message);
+      setReceivePendingMessage(`${message} If the result is uncertain, retry the same quantity in this dialog.`);
     } finally {
       setReceivingPendingId(null);
     }
@@ -2470,6 +2480,7 @@ export default function InventoryPage() {
                         <td className="px-3 py-2 font-semibold text-slate-800">{receival.size || '—'}</td>
                         <td className="px-3 py-2 text-right font-bold tabular-nums text-slate-950">
                           {formatQuantity(receival.quantity_expected)} {receival.unit || ''}
+                          {getNumericQuantity(receival.quantity_received)>0 && getNumericQuantity(receival.quantity_received)<getNumericQuantity(receival.quantity_expected) && <div className="text-[10px] text-slate-600">Received {formatQuantity(receival.quantity_received)} · Remaining {formatQuantity(getNumericQuantity(receival.quantity_expected)-getNumericQuantity(receival.quantity_received))}</div>}
                         </td>
                         <td className="px-3 py-2 text-slate-700">{formatDateOnly(receival.order_date || receival.created_at)}</td>
                         <td className="px-3 py-2 text-slate-700">{formatDateOnly(receival.eta)}</td>
@@ -2505,6 +2516,7 @@ export default function InventoryPage() {
                                 {receivingPendingId === receival.id ? 'Receiving...' : 'Receive'}
                               </button>
                             ) : null}
+                            {!isReceived && canUndoReceipt && canAdjustPendingReceivals && <button type="button" onClick={()=>openUndoReceiveDialog(receival)} disabled={undoingPendingId===receival.id} className="min-h-8 border px-2 text-xs">Undo latest receipt</button>}
                             {!isReceived && canAdjustPendingReceivals && (
                               <button
                                 type="button"
@@ -2812,6 +2824,8 @@ export default function InventoryPage() {
               </div>
             </div>
 
+            <label className="mt-3 block text-xs font-bold">Quantity received now ({receival.unit})<input type="number" min="0" step="0.000001" max={getNumericQuantity(receival.quantity_expected)-getNumericQuantity(receival.quantity_received)} value={receivePendingQuantity} onChange={event=>setReceivePendingQuantity(event.target.value)} disabled={receivingPendingId===receival.id} className={fieldClass}/></label>
+            <p className="mt-2 text-xs text-slate-600">Only this quantity enters Inventory. The balance stays pending; cancel an undelivered balance separately. If the result is uncertain, retry here with the same quantity before starting another receipt.</p>
             {receivePendingMessage && (
               <div className="mt-3 border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-700">{receivePendingMessage}</div>
             )}

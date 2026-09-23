@@ -53,6 +53,7 @@ import {
   saveSample,
 } from "./queries";
 import SampleRecentValueInput from "./SampleRecentValueInput";
+import OperationalProfilesSettings from './OperationalProfilesSettings';
 import SampleFormulationConfigurator from "./SampleFormulationConfigurator";
 import SampleVersionHistory from "./SampleVersionHistory";
 import SampleFormulationTutorial, {
@@ -578,6 +579,7 @@ export default function SampleWorkspace() {
             New Sample
           </button>
         </div>
+        <OperationalProfilesSettings/>
         {error && (
           <div
             role="alert"
