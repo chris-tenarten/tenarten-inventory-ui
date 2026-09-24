@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import UnderDevelopmentBadge from '@/components/UnderDevelopmentBadge';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { BookOpen, Factory, Hammer } from 'lucide-react';
@@ -239,7 +240,7 @@ function DomainNav({
                 }}
                 className={`${ItemIcon ? 'flex items-start gap-3' : 'block'} px-4 py-3 transition ${dropdownItemClass(itemActive)}`}
               >
-                {ItemIcon ? <><span className="mt-0.5 shrink-0"><ItemIcon /></span><span className="min-w-0"><span className="block text-sm font-bold">{t(item.labelKey)}</span><span className="mt-0.5 block text-xs font-medium text-slate-500">{t(item.descriptionKey)}</span></span></> : <><div className="text-sm font-bold">{t(item.labelKey)}</div><div className="mt-0.5 text-xs font-medium text-slate-500">{t(item.descriptionKey)}</div></>}
+                {ItemIcon ? <><span className="mt-0.5 shrink-0"><ItemIcon /></span><span className="min-w-0"><span className="flex flex-wrap items-center gap-2 text-sm font-bold">{t(item.labelKey)}{item.href === '/pre-production' && <UnderDevelopmentBadge/>}</span><span className="mt-0.5 block text-xs font-medium text-slate-500">{t(item.descriptionKey)}</span></span></> : <><div className="text-sm font-bold">{t(item.labelKey)}</div><div className="mt-0.5 text-xs font-medium text-slate-500">{t(item.descriptionKey)}</div></>}
               </Link>
             );
           })}
@@ -476,7 +477,7 @@ export default function ClientLayoutShell({
                 className="flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none"
                 aria-label="Primary navigation"
               >
-                <DomainNav pathname={pathname} labelKey="nav.dashboard" href="/" icon={HomeIcon} items={dashboardNavItems.filter(item => item.href !== "/pre-production" || Boolean(auth.profile?.isActive && auth.can("accessIntake")))} />
+                <DomainNav pathname={pathname} labelKey="nav.dashboard" href="/" icon={HomeIcon} items={dashboardNavItems.filter(item => item.href !== "/pre-production" || Boolean(auth.profile?.isActive && auth.can("viewIntake")))} />
                 <DomainNav pathname={pathname} labelKey="nav.reporting" href="/manpower-reporting" icon={LaborIcon} items={reportingNavItems} />
                 <DomainNav pathname={pathname} labelKey="nav.inventory" href="/inventory" icon={PackageIcon} items={inventoryNavItems} />
                 <div className="flex shrink-0 items-center">

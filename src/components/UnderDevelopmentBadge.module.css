@@ -1,0 +1,20 @@
+.badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  border: 1px solid var(--color-violet-300, #c4b5fd);
+  border-radius: 9999px;
+  background: var(--color-violet-50, #f5f3ff);
+  color: var(--color-violet-800, #5b21b6);
+  padding: 0.125rem 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+:global(html[data-appearance='dark']) .badge {
+  border-color: var(--color-violet-700, #6d28d9);
+  background: var(--color-violet-950, #2e1065);
+  color: var(--color-violet-200, #ddd6fe);
+}

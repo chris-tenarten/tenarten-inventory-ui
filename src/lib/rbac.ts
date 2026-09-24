@@ -4,6 +4,7 @@ export type AppRole = (typeof APP_ROLES)[number];
 export const CAPABILITIES = [
   "readOperationalData",
   "accessIntake",
+  "viewIntake",
   "createProductionJob",
   "editProductionJobRoutine",
   "editProductionJobDetails",
@@ -34,7 +35,7 @@ export const CAPABILITIES = [
 
 export type Capability = (typeof CAPABILITIES)[number];
 
-const guest = ["readOperationalData", "previewOperationalDocuments"] as const;
+const guest = ["viewIntake", "readOperationalData", "previewOperationalDocuments"] as const;
 const member = [
   ...guest,
   "createProductionJob",
@@ -82,7 +83,8 @@ export const ROLE_LABELS: Record<AppRole, string> = {
 
 export const CAPABILITY_LABELS: Record<Capability, string> = {
   readOperationalData: "View operational data",
-  accessIntake: "Access Intake (early access)",
+  accessIntake: "Manage Intake",
+  viewIntake: "View Intake",
   createProductionJob: "Create Production Jobs",
   editProductionJobRoutine: "Update routine Production details",
   editProductionJobDetails: "Edit elevated Production Job details",

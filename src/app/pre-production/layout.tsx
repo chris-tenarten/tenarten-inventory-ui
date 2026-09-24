@@ -7,8 +7,8 @@ import { useAuth } from '@/lib/auth';
 export default function IntakeAccessBoundary({ children }: { children: ReactNode }) {
   const auth = useAuth();
   if (!auth.ready) return <p className="p-6">Loading access…</p>;
-  if (!auth.profile?.isActive || !auth.can('accessIntake')) {
-    return <section className="p-6" role="alert"><h1 className="text-xl font-semibold">Intake access restricted</h1><p>Intake is temporarily available to Admin and Developer during early access.</p></section>;
+  if (!auth.profile?.isActive || !auth.can('viewIntake')) {
+    return <section className="p-6" role="alert"><h1 className="text-xl font-semibold">Intake access restricted</h1><p>An active authenticated account with Intake view access is required.</p></section>;
   }
   return children;
 }

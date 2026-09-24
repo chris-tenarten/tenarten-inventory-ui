@@ -42,3 +42,34 @@ This file separates confirmed Product direction from unresolved semantics. Unres
 ## September 23 scoped Intake Planning acceptance
 
 Chris explicitly authorized reconciling `181ab83c` onto `85708a5` locally, including the conservative Won + recorded deposit + existing createProductionJob conversion gate. This overrides the general lifecycle implementation hold only for the bounded Planning contract. Temporary `accessIntake` is Admin/Developer only; Lead/Member/Guest must be denied by route, navigation, RPC, table and file access. Production capabilities and independent document permissions remain unchanged. See [current reconciliation](2026-09-23-intake-planning-reconciliation.md). No hosted migration, demo insert, commit, push or deployment is authorized by this implementation request.
+
+
+## HIGH PRIORITY backlog — Intake Planning — graphical contextual warnings
+
+Chris requested this backlog item on 2026-09-24. **Not implemented or authorized for implementation in the current viewport-polish pass.**
+
+Future warnings should be non-blocking, graphical and contextual to timeline rows/projected blocks. Initial deterministic candidates:
+
+- Projected window in the past.
+- Late-stage/Won opportunity missing a projected Production window (define late-stage against authoritative lifecycle fields).
+- Significant overlap between projected Intake and committed Production.
+- Significant clustering/overlap among projected opportunities.
+- Lifecycle/conversion inconsistencies where deterministically detectable.
+
+Product must define significance thresholds and presentation before implementation. Date overlap alone must not be represented as a capacity failure. Do not invent capacity percentages, overload scores, staffing predictions or automatic rescheduling without an authoritative TenOps capacity model. Preserve existing persistence, history, access and conversion semantics.
+
+
+## Intake authorization decomposition — Product backlog
+
+Approved Under Development rollout (2026-09-24): `viewIntake` grants active Admin, Developer, Lead, Member and Guest read/discovery access. Existing `accessIntake` remains Admin/Developer management authority. New viewers cannot mutate Bids, Updates, attachments, projected windows or conversions. Anonymous/inactive accounts remain denied. Conversion also requires existing Production Job-create/scheduling authority; destructive cleanup requires existing Admin authority.
+
+Later decompose authorization deliberately: Intake read/view; management/edit; **financial visibility** (currently no field-level separation—deposit date and financial information in Notes inherit Bid read access); conversion; destructive actions. Do not infer new role grants from module visibility. Proposal/Sample access retains its separate existing authorization. A broader decomposition requires Product approval rather than implicit grants in UI work.
+
+## Personal Intake TEST training — revised acceptance, September 24
+
+Chris authorized an exception to the read-only viewer matrix for Patrick Soldow, Giovanni Coppola and Anthony Iorio: one personal TEST workflow per explicitly granted active user, including own Bid editing/files/Planning, Won+deposit conversion, and guarded own TEST cleanup. This does not grant normal Intake management or additional real Production authority. The eight Chris-owned reference demos are excluded. Explicit protected lineage, not names, controls authority. Chris subsequently authorized narrow Production authorization hardening after current hosted Jobs grants/policies exposed direct anonymous/authenticated mutations. No hosted application, commit, push or deployment is authorized. See [training implementation review](2026-09-24-intake-personal-training-review.md).
+
+
+### Production authorization composition correction
+
+Chris rejected the training migration's new normal-Job capability enforcement after the gate reproduced a Member Requested delivery regression. Preserve current Production normal-Job INSERT/UPDATE authorization and UI, without adding role grants. Existing Production editing authority also remains valid on TEST Jobs alongside explicitly scoped owner training APIs; TEST lineage/identity and owner/Admin-only cleanup stay protected. Anonymous direct Jobs denial and raw authenticated DELETE denial remain the separately approved exceptions. The unapplied migration was corrected and focused before/after compatibility checks pass; no hosted application/release is authorized.
