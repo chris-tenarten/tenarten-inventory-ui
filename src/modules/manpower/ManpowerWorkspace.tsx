@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import { useAuth } from '@/lib/auth';
 import ProductCategoryManager from './ProductCategoryManager';
 import ProductLaborSummary from './ProductLaborSummary';
+import ManpowerAnalytics from './ManpowerAnalytics';
 import { productKey, productLabel, UNCATEGORIZED, validateProductSelection } from './product-reporting';
 import { useLanguage } from '@/lib/language';
 import { JobTag } from '../production/components/JobTag';
@@ -1028,29 +1029,29 @@ export default function ManpowerWorkspace() {
       {error && <div className="mt-4 border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">{error}</div>}
 
       <div className="mt-5 space-y-3">
-        <div className="flex flex-wrap items-end gap-3">
-          <label className="min-w-0 text-xs font-semibold text-slate-600">Job labor review
-            <select aria-label="Job labor review" className={`${inputClass} mt-1 max-w-sm`} value={linkedJobId ?? ''} onChange={(event) => selectJob(event.target.value)}>
+        <div className="grid grid-cols-1 items-center gap-3 lg:grid-cols-[max-content_minmax(0,1fr)_max-content]">
+          <label className="flex min-w-0 flex-wrap items-center gap-2 text-xs font-semibold text-slate-600 sm:flex-nowrap"><span className="shrink-0 whitespace-nowrap">Job labor review</span>
+            <select aria-label="Job labor review" className={`${inputClass} sm:flex-1 lg:w-auto lg:max-w-xs lg:flex-none`} value={linkedJobId ?? ''} onChange={(event) => selectJob(event.target.value)}>
               <option value="">All reporting groups</option>
               {linkedJobId && !reviewJobs.some((job) => job.id === linkedJobId) && <option value={linkedJobId}>Selected Production job</option>}
               {reviewJobs.map((job) => <option key={job.id} value={job.id}>{manpowerJobLabel(job)}{job.archived_at ? ' · Archived' : ''}</option>)}
             </select>
           </label>
-          {linkedJobId && <button type="button" onClick={() => selectJob('')} className="py-2 text-xs font-semibold text-slate-500 underline">Clear job filter</button>}
+          <label className="relative block w-full min-w-0">
+            <span className="sr-only">{tr('Search manpower','Buscar registros de mano de obra')}</span>
+            <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr('Search manpower…','Buscar mano de obra…')} className={`${inputClass} pl-9 placeholder:font-semibold`} />
+          </label>
+          {!showNewGroup ? <button type="button" onClick={() => setShowNewGroup(true)} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || loading || Boolean(loadError)} title="Clear filters before creating an empty group" className="inline-flex h-9 w-max shrink-0 items-center gap-1.5 whitespace-nowrap border border-blue-400 bg-blue-50 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 enabled:hover:bg-blue-100 enabled:active:bg-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:saturate-0"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</button> : <div className="flex min-w-0 flex-wrap items-center gap-1 border border-slate-400 bg-white p-1 lg:col-span-3"><input ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 min-w-0 max-w-full px-2 text-sm outline-none" /><button type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</button><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
+          {linkedJobId && <button type="button" onClick={() => selectJob('')} className="justify-self-start py-2 text-xs font-semibold text-slate-500 underline">Clear job filter</button>}
         </div>
+        <ManpowerAnalytics entries={entries} categories={categories} tasks={tasks} jobId={linkedJobId} productFocus={productFilter} loading={loading} error={loadError} />
         {linkedJobId && !loading && !loadError && <ProductLaborSummary key={linkedJobId} entries={groups.flatMap((group) => group.entries)} totalEntries={entries.filter((entry) => entry.job_id === linkedJobId)} categories={categories} tasks={tasks}>
           <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">Product Category filter<select aria-label="Product Category filter" className={`${inputClass} max-w-xs`} value={productFilter} onFocus={() => void refreshCategories().catch(() => {})} onChange={(event) => setProductFilter(event.target.value)}><option value="">All Products</option>{categories.filter((category) => category.is_active || entries.some((entry) => entry.product_category_id === category.id)).map((category) => <option key={category.id} value={category.id}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}<option value={UNCATEGORIZED}>Uncategorized</option></select></label>
         </ProductLaborSummary>}
         {(normalizedSearch || productFilter || linkedJobId) && <p className="text-xs text-slate-500">Clear filters to create an empty group or change a whole group’s Job.</p>}
         <p className="text-xs text-slate-500">Choose one Product Category per line. Split hours across separate lines when labor belongs to different products.</p>
-        <div className="flex min-h-9 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          {!showNewGroup ? <button type="button" onClick={() => setShowNewGroup(true)} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || loading || Boolean(loadError)} title="Clear filters before creating an empty group" className="inline-flex h-9 items-center gap-1.5 border border-slate-500 bg-white px-3 text-xs font-bold uppercase tracking-wide text-slate-800 hover:bg-slate-100"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</button> : <div className="flex items-center gap-1 border border-slate-400 bg-white p-1"><input ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 px-2 text-sm outline-none" /><button type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</button><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
-          <label className="relative block w-full sm:max-w-sm">
-            <span className="sr-only">{tr('Search manpower','Buscar registros de mano de obra')}</span>
-            <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-            <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr('Search manpower…','Buscar mano de obra…')} className={`${inputClass} pl-9`} />
-          </label>
-        </div>
+
 
         {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : loadError ? <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{loadError}</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{linkedJobId ? 'No manpower reporting groups are linked to this Production job.' : normalizedSearch || productFilter ? 'No manpower entries match your filters.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
           const identityEntries = entries.filter((entry) => (entry.reporting_group_id ?? '__ungrouped__') === group.key);

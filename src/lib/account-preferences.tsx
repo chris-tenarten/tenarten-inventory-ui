@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
 export type AccountPreferences = {
+  manpower_recent_labor_expanded?: boolean;
   appearance?: "light" | "dark";
   language?: "en" | "es";
   display_size?: "compact" | "default" | "large";

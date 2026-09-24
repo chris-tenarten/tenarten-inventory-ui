@@ -73,3 +73,7 @@ Chris authorized an exception to the read-only viewer matrix for Patrick Soldow,
 ### Production authorization composition correction
 
 Chris rejected the training migration's new normal-Job capability enforcement after the gate reproduced a Member Requested delivery regression. Preserve current Production normal-Job INSERT/UPDATE authorization and UI, without adding role grants. Existing Production editing authority also remains valid on TEST Jobs alongside explicitly scoped owner training APIs; TEST lineage/identity and owner/Admin-only cleanup stay protected. Anonymous direct Jobs denial and raw authenticated DELETE denial remain the separately approved exceptions. The unapplied migration was corrected and focused before/after compatibility checks pass; no hosted application/release is authorized.
+
+## Security review backlog — anonymous Manpower data access
+
+Read-only Production discovery on 2026-09-24 found anonymous SELECT grants and permissive policies on `manpower_entries`, `manpower_workers` and `manpower_tasks`, despite the authenticated application shell. Product Categories use a narrower authenticated capability policy. Chris requested a separate security audit; do not broaden or modify these permissions in the Recent labor analytics feature. Review grants, RLS, existing integrations and legitimate workflows under a separately approved security contract. The dashboard must reuse current authorized loaded data and must not add an anonymous aggregate endpoint.
