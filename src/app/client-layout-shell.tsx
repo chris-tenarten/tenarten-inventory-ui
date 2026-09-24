@@ -476,7 +476,7 @@ export default function ClientLayoutShell({
                 className="flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none"
                 aria-label="Primary navigation"
               >
-                <DomainNav pathname={pathname} labelKey="nav.dashboard" href="/" icon={HomeIcon} items={dashboardNavItems} />
+                <DomainNav pathname={pathname} labelKey="nav.dashboard" href="/" icon={HomeIcon} items={dashboardNavItems.filter(item => item.href !== "/pre-production" || Boolean(auth.profile?.isActive && auth.can("accessIntake")))} />
                 <DomainNav pathname={pathname} labelKey="nav.reporting" href="/manpower-reporting" icon={LaborIcon} items={reportingNavItems} />
                 <DomainNav pathname={pathname} labelKey="nav.inventory" href="/inventory" icon={PackageIcon} items={inventoryNavItems} />
                 <div className="flex shrink-0 items-center">

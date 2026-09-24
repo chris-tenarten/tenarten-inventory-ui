@@ -38,3 +38,7 @@ This file separates confirmed Product direction from unresolved semantics. Unres
 - Material Usage: entry timing, required legacy-form fields, inventory expectations, and custom/unmatched mix handling.
 - Daily Production: reporting cadence, meaningful throughput metrics, and live versus retrospective entry.
 - Access control: final role definitions, financial-field visibility, reference-data administration, and historical-report editing.
+
+## September 23 scoped Intake Planning acceptance
+
+Chris explicitly authorized reconciling `181ab83c` onto `85708a5` locally, including the conservative Won + recorded deposit + existing createProductionJob conversion gate. This overrides the general lifecycle implementation hold only for the bounded Planning contract. Temporary `accessIntake` is Admin/Developer only; Lead/Member/Guest must be denied by route, navigation, RPC, table and file access. Production capabilities and independent document permissions remain unchanged. See [current reconciliation](2026-09-23-intake-planning-reconciliation.md). No hosted migration, demo insert, commit, push or deployment is authorized by this implementation request.
