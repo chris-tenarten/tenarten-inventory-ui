@@ -1,0 +1,633 @@
+{
+  "format_version": 1,
+  "status": "PROPOSED — NOT AUTHORIZED FOR HOSTED EXECUTION",
+  "baseline": "1aa6e27dfc3e26ee3c8f3c9ee7e7e082d76846ad",
+  "marker": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1",
+  "owner": {
+    "user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+    "display_name": "Chris Ngo",
+    "role": "admin"
+  },
+  "seed_scope": {
+    "bids": 8,
+    "base_activity_rows": 15,
+    "updates": 16,
+    "canonical_files": 8,
+    "file_relationships": 8,
+    "storage_objects": 8,
+    "file_added_activities_on_finalize": 8,
+    "jobs": 0,
+    "proposals": 0,
+    "samples": 0,
+    "notifications": 0
+  },
+  "timestamp_policy": "Actual seed/finalize time for record provenance. Fictional business dates are explicitly labeled in Notes; no backdated user actions.",
+  "storage_policy": "Per-example objects at normal bid-id/file-id paths; no sharing. Duplicate labels reuse generated page design, not a canonical object.",
+  "records": [
+    {
+      "scenario": 1,
+      "fields": {
+        "id": "de000000-0000-4000-8000-000000000001",
+        "project_name": "TEST — Website Lead — Downtown Restaurant",
+        "customer": "TEST CUSTOMER — Juniper Lantern Hospitality (Fictional)",
+        "creator_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "status": "active",
+        "deposit_received_date": null,
+        "contact_name": "TEST CONTACT — Lena Mercer / Owner Representative",
+        "contact_email": "lena.mercer@example.invalid",
+        "contact_phone": "202-555-0101",
+        "notes": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1\nFICTIONAL DEMONSTRATION ONLY — NOT A REAL CUSTOMER, ORDER, QUOTE, AWARD OR PAYMENT.\nWorkflow context: Early inquiry / qualification.\nFictional inquiry date: 2026-09-18.\nIllustrative scope value: USD 18,500. Notes only; not a structured Bid value or issued commercial document.\nFictional bid/estimate due date: not established. Notes only; independent of projected manufacture dates.\nScope: Approximately 240 SF of precast terrazzo bar-front panels and 80 LF of base. Color, thickness and field dimensions remain unconfirmed.\nNext action: Qualify the scope and request dimensioned sketches on 2026-09-28.",
+        "projected_production_start": null,
+        "projected_production_end": null,
+        "projected_window_updated_by": null,
+        "production_job_id": null,
+        "converted_by_user_id": null,
+        "converted_at": null
+      },
+      "display_context": {
+        "illustrative_value_usd": 18500,
+        "workflow_context": "Early inquiry / qualification",
+        "inquiry_date": "2026-09-18",
+        "bid_due_date_in_notes": null,
+        "scope": "Approximately 240 SF of precast terrazzo bar-front panels and 80 LF of base. Color, thickness and field dimensions remain unconfirmed.",
+        "next_action": "Qualify the scope and request dimensioned sketches on 2026-09-28."
+      },
+      "activities": [
+        {
+          "id": "fce4be2e-cd84-54c9-b3f1-3c635eedebd7",
+          "activity_type": "created",
+          "details": {
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1",
+            "customer": "TEST CUSTOMER — Juniper Lantern Hospitality (Fictional)",
+            "project_name": "TEST — Website Lead — Downtown Restaurant",
+            "status": "active",
+            "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+            "deposit_received_date": null
+          }
+        }
+      ],
+      "updates": [
+        {
+          "id": "d3e61251-af47-5d7b-a30c-173fb8c67a1c",
+          "body": "FICTIONAL DEMO UPDATE — Fictional website inquiry received; budget is a preliminary allowance, not a quotation."
+        },
+        {
+          "id": "99e2326c-92d2-5204-9e30-fbc3988f30ac",
+          "body": "FICTIONAL DEMO UPDATE — Fictional discovery call identified bar-front panels and base. No shop capacity is committed."
+        }
+      ],
+      "attachment": {
+        "id": "f9c9bfba-472f-5b40-bbfd-91eae09e2d69",
+        "filename": "01_Juniper_Lantern_Bid_Invitation.pdf",
+        "label": "[BID INVITATION EXAMPLE]",
+        "local_path": "output/pdf/01_Juniper_Lantern_Bid_Invitation.pdf",
+        "bucket": "bid-files",
+        "storage_path": "de000000-0000-4000-8000-000000000001/f9c9bfba-472f-5b40-bbfd-91eae09e2d69",
+        "content_type": "application/pdf",
+        "shared_with": [],
+        "sha256": "c3a843f79f1a0d048c8e30eef64327f96cf38384da74abf89e68ae4a52af66a0",
+        "byte_size": 1583
+      }
+    },
+    {
+      "scenario": 2,
+      "fields": {
+        "id": "de000000-0000-4000-8000-000000000002",
+        "project_name": "TEST — Hotel Lobby Terrazzo",
+        "customer": "TEST CUSTOMER — Willow Meridian Development (Fictional)",
+        "creator_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "status": "active",
+        "deposit_received_date": null,
+        "contact_name": "TEST CONTACT — Owen Vale / GC Estimator",
+        "contact_email": "owen.vale@example.invalid",
+        "contact_phone": "202-555-0102",
+        "notes": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1\nFICTIONAL DEMONSTRATION ONLY — NOT A REAL CUSTOMER, ORDER, QUOTE, AWARD OR PAYMENT.\nWorkflow context: Estimating / proposal preparation.\nFictional inquiry date: 2026-09-14.\nIllustrative scope value: USD 148,500. Notes only; not a structured Bid value or issued commercial document.\nFictional bid/estimate due date: 2026-09-30. Notes only; independent of projected manufacture dates.\nScope: Approximately 1,850 SF of precast lobby slabs, 220 LF of cove base and four elevator thresholds. Two color mixes; shop drawings and freight assumed.\nNext action: Confirm edge profiles and submit the fictional estimate by 2026-09-30.",
+        "projected_production_start": "2026-10-05",
+        "projected_production_end": "2026-10-23",
+        "projected_window_updated_by": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "production_job_id": null,
+        "converted_by_user_id": null,
+        "converted_at": null
+      },
+      "display_context": {
+        "illustrative_value_usd": 148500,
+        "workflow_context": "Estimating / proposal preparation",
+        "inquiry_date": "2026-09-14",
+        "bid_due_date_in_notes": "2026-09-30",
+        "scope": "Approximately 1,850 SF of precast lobby slabs, 220 LF of cove base and four elevator thresholds. Two color mixes; shop drawings and freight assumed.",
+        "next_action": "Confirm edge profiles and submit the fictional estimate by 2026-09-30."
+      },
+      "activities": [
+        {
+          "id": "76b9a422-4ad3-5531-acb8-0f3fb458a30a",
+          "activity_type": "created",
+          "details": {
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1",
+            "customer": "TEST CUSTOMER — Willow Meridian Development (Fictional)",
+            "project_name": "TEST — Hotel Lobby Terrazzo",
+            "status": "active",
+            "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+            "deposit_received_date": null
+          }
+        },
+        {
+          "id": "9b67c172-e493-5351-8d6c-f94ba718f34f",
+          "activity_type": "projected_window_changed",
+          "details": {
+            "from_start": null,
+            "from_end": null,
+            "to_start": "2026-10-05",
+            "to_end": "2026-10-23",
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1"
+          }
+        }
+      ],
+      "updates": [
+        {
+          "id": "01193d80-0468-5a28-acf0-a8aac8e97311",
+          "body": "FICTIONAL DEMO UPDATE — Fictional drawing package received; lobby slabs and cove base are in scope."
+        },
+        {
+          "id": "9dae391b-40b6-5228-810e-559566c3b1d8",
+          "body": "FICTIONAL DEMO UPDATE — Fictional takeoff review found four thresholds; October dates remain tentative pending award."
+        }
+      ],
+      "attachment": {
+        "id": "1eac3e18-e4cc-5c13-923d-43e521faa169",
+        "filename": "02_Willow_Meridian_Lobby_Drawings.pdf",
+        "label": "[ARCHITECTURAL DRAWINGS EXAMPLE]",
+        "local_path": "output/pdf/02_Willow_Meridian_Lobby_Drawings.pdf",
+        "bucket": "bid-files",
+        "storage_path": "de000000-0000-4000-8000-000000000002/1eac3e18-e4cc-5c13-923d-43e521faa169",
+        "content_type": "application/pdf",
+        "shared_with": [],
+        "sha256": "d0bc366cfa275ba9fd07b60a00e28abe2bdc2ee96b0fc8b441b1e5adf22382d1",
+        "byte_size": 1591
+      }
+    },
+    {
+      "scenario": 3,
+      "fields": {
+        "id": "de000000-0000-4000-8000-000000000003",
+        "project_name": "TEST — University Stair Package",
+        "customer": "TEST CUSTOMER — Cedar Quill Campus Builders (Fictional)",
+        "creator_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "status": "active",
+        "deposit_received_date": null,
+        "contact_name": "TEST CONTACT — Maya Rowan / Project Engineer",
+        "contact_email": "maya.rowan@example.invalid",
+        "contact_phone": "202-555-0103",
+        "notes": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1\nFICTIONAL DEMONSTRATION ONLY — NOT A REAL CUSTOMER, ORDER, QUOTE, AWARD OR PAYMENT.\nWorkflow context: Sample coordination requested.\nFictional inquiry date: 2026-09-10.\nIllustrative scope value: USD 86,500. Notes only; not a structured Bid value or issued commercial document.\nFictional bid/estimate due date: 2026-10-02. Notes only; independent of projected manufacture dates.\nScope: 48 stair treads, 48 risers, six landings and 160 LF of stringer base. One aggregate blend; nosing profile and slip-resistant strip require confirmation.\nNext action: Use the existing Samples action manually if Chris wants a separate Sample demonstration.",
+        "projected_production_start": "2026-10-19",
+        "projected_production_end": "2026-11-06",
+        "projected_window_updated_by": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "production_job_id": null,
+        "converted_by_user_id": null,
+        "converted_at": null
+      },
+      "display_context": {
+        "illustrative_value_usd": 86500,
+        "workflow_context": "Sample coordination requested",
+        "inquiry_date": "2026-09-10",
+        "bid_due_date_in_notes": "2026-10-02",
+        "scope": "48 stair treads, 48 risers, six landings and 160 LF of stringer base. One aggregate blend; nosing profile and slip-resistant strip require confirmation.",
+        "next_action": "Use the existing Samples action manually if Chris wants a separate Sample demonstration."
+      },
+      "activities": [
+        {
+          "id": "b8cb8741-f444-5193-882e-b9434566b0a4",
+          "activity_type": "created",
+          "details": {
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1",
+            "customer": "TEST CUSTOMER — Cedar Quill Campus Builders (Fictional)",
+            "project_name": "TEST — University Stair Package",
+            "status": "active",
+            "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+            "deposit_received_date": null
+          }
+        },
+        {
+          "id": "f47b7348-8c22-5e30-9041-53e4bada8fe9",
+          "activity_type": "projected_window_changed",
+          "details": {
+            "from_start": null,
+            "from_end": null,
+            "to_start": "2026-10-19",
+            "to_end": "2026-11-06",
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1"
+          }
+        }
+      ],
+      "updates": [
+        {
+          "id": "562d623e-3746-520b-ad58-1e4a3be7d951",
+          "body": "FICTIONAL DEMO UPDATE — Fictional architect requested one blend review and a nosing detail. No Sample record or approval exists yet."
+        },
+        {
+          "id": "9f084c0a-08c3-5f74-bc9e-f1e0496502d0",
+          "body": "FICTIONAL DEMO UPDATE — Fictional takeoff confirmed six landings; keep the projected window tentative until detail approval."
+        }
+      ],
+      "attachment": {
+        "id": "052dd605-8970-5e6f-8f0f-6c3de32f19e6",
+        "filename": "03_Cedar_Quill_Stair_Details.pdf",
+        "label": "[STAIR DETAIL EXAMPLE]",
+        "local_path": "output/pdf/03_Cedar_Quill_Stair_Details.pdf",
+        "bucket": "bid-files",
+        "storage_path": "de000000-0000-4000-8000-000000000003/052dd605-8970-5e6f-8f0f-6c3de32f19e6",
+        "content_type": "application/pdf",
+        "shared_with": [],
+        "sha256": "4a50750cc30e81e62db106df8a5265e2027325d796e337ec16434b3438443adc",
+        "byte_size": 1573
+      }
+    },
+    {
+      "scenario": 4,
+      "fields": {
+        "id": "de000000-0000-4000-8000-000000000004",
+        "project_name": "TEST — Airport Concourse",
+        "customer": "TEST CUSTOMER — Silver Kite Terminal Partners (Fictional)",
+        "creator_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "status": "active",
+        "deposit_received_date": null,
+        "contact_name": "TEST CONTACT — Elliot Finch / Senior Estimator",
+        "contact_email": "elliot.finch@example.invalid",
+        "contact_phone": "202-555-0104",
+        "notes": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1\nFICTIONAL DEMONSTRATION ONLY — NOT A REAL CUSTOMER, ORDER, QUOTE, AWARD OR PAYMENT.\nWorkflow context: Tender invitation / specification review.\nFictional inquiry date: 2026-09-15.\nIllustrative scope value: USD 425,000. Notes only; not a structured Bid value or issued commercial document.\nFictional bid/estimate due date: 2026-10-09. Notes only; independent of projected manufacture dates.\nScope: Approximately 5,400 SF of terrazzo slabs, 760 LF of base and 18 column surrounds. Three color zones; phased deliveries and mock-up requirements remain to be resolved.\nNext action: Clarify mock-up requirements and delivery phasing before 2026-10-09.",
+        "projected_production_start": "2026-11-02",
+        "projected_production_end": "2026-12-18",
+        "projected_window_updated_by": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "production_job_id": null,
+        "converted_by_user_id": null,
+        "converted_at": null
+      },
+      "display_context": {
+        "illustrative_value_usd": 425000,
+        "workflow_context": "Tender invitation / specification review",
+        "inquiry_date": "2026-09-15",
+        "bid_due_date_in_notes": "2026-10-09",
+        "scope": "Approximately 5,400 SF of terrazzo slabs, 760 LF of base and 18 column surrounds. Three color zones; phased deliveries and mock-up requirements remain to be resolved.",
+        "next_action": "Clarify mock-up requirements and delivery phasing before 2026-10-09."
+      },
+      "activities": [
+        {
+          "id": "2d897c4e-41d9-58c5-90d8-176c7838bf4a",
+          "activity_type": "created",
+          "details": {
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1",
+            "customer": "TEST CUSTOMER — Silver Kite Terminal Partners (Fictional)",
+            "project_name": "TEST — Airport Concourse",
+            "status": "active",
+            "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+            "deposit_received_date": null
+          }
+        },
+        {
+          "id": "7d8e15fc-1120-5780-a896-32f2f604a3cf",
+          "activity_type": "projected_window_changed",
+          "details": {
+            "from_start": null,
+            "from_end": null,
+            "to_start": "2026-11-02",
+            "to_end": "2026-12-18",
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1"
+          }
+        }
+      ],
+      "updates": [
+        {
+          "id": "857d7ad3-7a99-5200-8412-7e80c870f27c",
+          "body": "FICTIONAL DEMO UPDATE — Fictional tender invitation requests three color zones with phased deliveries."
+        },
+        {
+          "id": "0ee303d9-d7e5-5079-b0da-f09fea0d8b33",
+          "body": "FICTIONAL DEMO UPDATE — Fictional specification review flags mock-up and protection requirements; no probability or capacity reservation assigned."
+        }
+      ],
+      "attachment": {
+        "id": "a029e8ac-3b42-5707-bcac-e0fd711bfbd9",
+        "filename": "04_Silver_Kite_Terrazzo_Specification.pdf",
+        "label": "[TERRAZZO SPECIFICATION EXAMPLE]",
+        "local_path": "output/pdf/04_Silver_Kite_Terrazzo_Specification.pdf",
+        "bucket": "bid-files",
+        "storage_path": "de000000-0000-4000-8000-000000000004/a029e8ac-3b42-5707-bcac-e0fd711bfbd9",
+        "content_type": "application/pdf",
+        "shared_with": [],
+        "sha256": "24678b64cd6cd2b67cbc5900c889416d307d744bb4694bff0892975b9065ece2",
+        "byte_size": 1595
+      }
+    },
+    {
+      "scenario": 5,
+      "fields": {
+        "id": "de000000-0000-4000-8000-000000000005",
+        "project_name": "TEST — Retail Cove Base Package",
+        "customer": "TEST CUSTOMER — Copper Wren Retail Works (Fictional)",
+        "creator_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "status": "active",
+        "deposit_received_date": null,
+        "contact_name": "TEST CONTACT — Nora Ellis / GC Project Manager",
+        "contact_email": "nora.ellis@example.invalid",
+        "contact_phone": "202-555-0105",
+        "notes": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1\nFICTIONAL DEMONSTRATION ONLY — NOT A REAL CUSTOMER, ORDER, QUOTE, AWARD OR PAYMENT.\nWorkflow context: Quoted / customer review.\nFictional inquiry date: 2026-09-08.\nIllustrative scope value: USD 24,900. Notes only; not a structured Bid value or issued commercial document.\nFictional bid/estimate due date: 2026-09-23. Notes only; independent of projected manufacture dates.\nScope: Approximately 420 LF of 6-inch cove base, 24 outside corners and 12 inside corners. Single standard color; final field lengths pending.\nNext action: Follow up on the fictional quoted allowance on 2026-09-29.",
+        "projected_production_start": "2026-10-26",
+        "projected_production_end": "2026-10-30",
+        "projected_window_updated_by": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "production_job_id": null,
+        "converted_by_user_id": null,
+        "converted_at": null
+      },
+      "display_context": {
+        "illustrative_value_usd": 24900,
+        "workflow_context": "Quoted / customer review",
+        "inquiry_date": "2026-09-08",
+        "bid_due_date_in_notes": "2026-09-23",
+        "scope": "Approximately 420 LF of 6-inch cove base, 24 outside corners and 12 inside corners. Single standard color; final field lengths pending.",
+        "next_action": "Follow up on the fictional quoted allowance on 2026-09-29."
+      },
+      "activities": [
+        {
+          "id": "bffef150-99b4-5818-9353-c82c16634cc1",
+          "activity_type": "created",
+          "details": {
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1",
+            "customer": "TEST CUSTOMER — Copper Wren Retail Works (Fictional)",
+            "project_name": "TEST — Retail Cove Base Package",
+            "status": "active",
+            "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+            "deposit_received_date": null
+          }
+        },
+        {
+          "id": "787b4645-8ded-5741-8b00-26394c158cd0",
+          "activity_type": "projected_window_changed",
+          "details": {
+            "from_start": null,
+            "from_end": null,
+            "to_start": "2026-10-26",
+            "to_end": "2026-10-30",
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1"
+          }
+        }
+      ],
+      "updates": [
+        {
+          "id": "4b8f34c5-2cfc-51be-ace6-0fa8f6cdf378",
+          "body": "FICTIONAL DEMO UPDATE — Fictional takeoff separates straight lengths from inside/outside corners."
+        },
+        {
+          "id": "688a44fb-c66c-59da-af6a-5b4665725cfd",
+          "body": "FICTIONAL DEMO UPDATE — Fictional commercial review is pending. The note describes a quote scenario; no issued TenOps Proposal is fabricated."
+        }
+      ],
+      "attachment": {
+        "id": "3f84253c-1d12-54d7-917d-0bc041718d1e",
+        "filename": "05_Copper_Wren_Cove_Base_Scope.pdf",
+        "label": "[SCOPE SCHEDULE EXAMPLE]",
+        "local_path": "output/pdf/05_Copper_Wren_Cove_Base_Scope.pdf",
+        "bucket": "bid-files",
+        "storage_path": "de000000-0000-4000-8000-000000000005/3f84253c-1d12-54d7-917d-0bc041718d1e",
+        "content_type": "application/pdf",
+        "shared_with": [],
+        "sha256": "09dd3bc9258aa3ddfeb9e0fb5cf51e964a9b4788d37099a35366c0b153ff0dcf",
+        "byte_size": 1579
+      }
+    },
+    {
+      "scenario": 6,
+      "fields": {
+        "id": "de000000-0000-4000-8000-000000000006",
+        "project_name": "TEST — Corporate HQ Slabs",
+        "customer": "TEST CUSTOMER — North Orchard Workplace Group (Fictional)",
+        "creator_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "status": "active",
+        "deposit_received_date": null,
+        "contact_name": "TEST CONTACT — Adrian Brooks / Design Coordinator",
+        "contact_email": "adrian.brooks@example.invalid",
+        "contact_phone": "202-555-0106",
+        "notes": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1\nFICTIONAL DEMONSTRATION ONLY — NOT A REAL CUSTOMER, ORDER, QUOTE, AWARD OR PAYMENT.\nWorkflow context: Design coordination / details pending.\nFictional inquiry date: 2026-09-11.\nIllustrative scope value: USD 172,000. Notes only; not a structured Bid value or issued commercial document.\nFictional bid/estimate due date: 2026-10-02. Notes only; independent of projected manufacture dates.\nScope: Approximately 2,100 SF of large-format slabs, 12 reception-counter panels and eight thresholds. Two finishes; seam layout and lifting constraints need review.\nNext action: Resolve panel sizes and lifting access on 2026-09-30.",
+        "projected_production_start": "2026-11-09",
+        "projected_production_end": "2026-11-27",
+        "projected_window_updated_by": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "production_job_id": null,
+        "converted_by_user_id": null,
+        "converted_at": null
+      },
+      "display_context": {
+        "illustrative_value_usd": 172000,
+        "workflow_context": "Design coordination / details pending",
+        "inquiry_date": "2026-09-11",
+        "bid_due_date_in_notes": "2026-10-02",
+        "scope": "Approximately 2,100 SF of large-format slabs, 12 reception-counter panels and eight thresholds. Two finishes; seam layout and lifting constraints need review.",
+        "next_action": "Resolve panel sizes and lifting access on 2026-09-30."
+      },
+      "activities": [
+        {
+          "id": "307fae4a-6095-5307-9880-d2c0385c4557",
+          "activity_type": "created",
+          "details": {
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1",
+            "customer": "TEST CUSTOMER — North Orchard Workplace Group (Fictional)",
+            "project_name": "TEST — Corporate HQ Slabs",
+            "status": "active",
+            "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+            "deposit_received_date": null
+          }
+        },
+        {
+          "id": "b06ff82e-6dec-5506-883d-9c7c16c1a0b0",
+          "activity_type": "projected_window_changed",
+          "details": {
+            "from_start": null,
+            "from_end": null,
+            "to_start": "2026-11-09",
+            "to_end": "2026-11-27",
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1"
+          }
+        }
+      ],
+      "updates": [
+        {
+          "id": "33de209c-3744-513b-876a-ee6b002d7e1b",
+          "body": "FICTIONAL DEMO UPDATE — Fictional design set identifies two finishes and a reception-counter package."
+        },
+        {
+          "id": "6ac7c492-7dc7-5b1a-ae8c-7ba03193cb2f",
+          "body": "FICTIONAL DEMO UPDATE — Fictional coordination review requests seam-layout confirmation before pricing is finalized."
+        }
+      ],
+      "attachment": {
+        "id": "c2f72cb2-c457-58cc-ab01-3010c17a931c",
+        "filename": "06_North_Orchard_Slab_Drawings.pdf",
+        "label": "[ARCHITECTURAL DRAWINGS EXAMPLE]",
+        "local_path": "output/pdf/06_North_Orchard_Slab_Drawings.pdf",
+        "bucket": "bid-files",
+        "storage_path": "de000000-0000-4000-8000-000000000006/c2f72cb2-c457-58cc-ab01-3010c17a931c",
+        "content_type": "application/pdf",
+        "shared_with": [],
+        "sha256": "1a4432d98bc2557b67fdf51e7ebe682c3b2224abf14e377a7721c53466d7ab99",
+        "byte_size": 1588
+      }
+    },
+    {
+      "scenario": 7,
+      "fields": {
+        "id": "de000000-0000-4000-8000-000000000007",
+        "project_name": "TEST — Mixed Terrazzo Package",
+        "customer": "TEST CUSTOMER — Maple Harbor Construction (Fictional)",
+        "creator_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "status": "active",
+        "deposit_received_date": null,
+        "contact_name": "TEST CONTACT — Sofia Reed / Preconstruction Manager",
+        "contact_email": "sofia.reed@example.invalid",
+        "contact_phone": "202-555-0107",
+        "notes": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1\nFICTIONAL DEMONSTRATION ONLY — NOT A REAL CUSTOMER, ORDER, QUOTE, AWARD OR PAYMENT.\nWorkflow context: Scope reconciliation / estimating.\nFictional inquiry date: 2026-09-16.\nIllustrative scope value: USD 238,000. Notes only; not a structured Bid value or issued commercial document.\nFictional bid/estimate due date: 2026-10-06. Notes only; independent of projected manufacture dates.\nScope: Approximately 2,600 SF of slabs, 32 stair treads, four landings and 310 LF of cove base. Three product types; alternates and installation exclusions need alignment.\nNext action: Confirm alternates and exclusions before the fictional 2026-10-06 due date.",
+        "projected_production_start": "2026-11-16",
+        "projected_production_end": "2026-12-04",
+        "projected_window_updated_by": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "production_job_id": null,
+        "converted_by_user_id": null,
+        "converted_at": null
+      },
+      "display_context": {
+        "illustrative_value_usd": 238000,
+        "workflow_context": "Scope reconciliation / estimating",
+        "inquiry_date": "2026-09-16",
+        "bid_due_date_in_notes": "2026-10-06",
+        "scope": "Approximately 2,600 SF of slabs, 32 stair treads, four landings and 310 LF of cove base. Three product types; alternates and installation exclusions need alignment.",
+        "next_action": "Confirm alternates and exclusions before the fictional 2026-10-06 due date."
+      },
+      "activities": [
+        {
+          "id": "3807675e-e8c4-576c-9dfe-f34f3f6f9445",
+          "activity_type": "created",
+          "details": {
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1",
+            "customer": "TEST CUSTOMER — Maple Harbor Construction (Fictional)",
+            "project_name": "TEST — Mixed Terrazzo Package",
+            "status": "active",
+            "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+            "deposit_received_date": null
+          }
+        },
+        {
+          "id": "43473e83-70a2-52ac-bdfc-dac2e62c324a",
+          "activity_type": "projected_window_changed",
+          "details": {
+            "from_start": null,
+            "from_end": null,
+            "to_start": "2026-11-16",
+            "to_end": "2026-12-04",
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1"
+          }
+        }
+      ],
+      "updates": [
+        {
+          "id": "12c097c8-cdc3-5656-a05f-aff64f847597",
+          "body": "FICTIONAL DEMO UPDATE — Fictional bid invitation combines slabs, stairs and cove base."
+        },
+        {
+          "id": "4d7c60bc-ae68-5f97-aa92-c387f8ec1f04",
+          "body": "FICTIONAL DEMO UPDATE — Fictional clarification log separates base scope from alternates; dates intentionally overlap other projected opportunities."
+        }
+      ],
+      "attachment": {
+        "id": "a9049fa3-8ff0-5ef6-a668-a81cfe7c9603",
+        "filename": "07_Maple_Harbor_Bid_Invitation.pdf",
+        "label": "[BID INVITATION EXAMPLE]",
+        "local_path": "output/pdf/07_Maple_Harbor_Bid_Invitation.pdf",
+        "bucket": "bid-files",
+        "storage_path": "de000000-0000-4000-8000-000000000007/a9049fa3-8ff0-5ef6-a668-a81cfe7c9603",
+        "content_type": "application/pdf",
+        "shared_with": [],
+        "sha256": "258b9a338deceb59cd7ff7c69f94b0dc3bde0e8a5e1fd393fe6c6c6d6459df58",
+        "byte_size": 1580
+      }
+    },
+    {
+      "scenario": 8,
+      "fields": {
+        "id": "de000000-0000-4000-8000-000000000008",
+        "project_name": "TEST — Award / Ready-to-Convert Example",
+        "customer": "TEST CUSTOMER — Amber Loom Civic Interiors (Fictional)",
+        "creator_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "status": "won",
+        "deposit_received_date": "2026-09-22",
+        "contact_name": "TEST CONTACT — Theo Lane / GC Project Manager",
+        "contact_email": "theo.lane@example.invalid",
+        "contact_phone": "202-555-0108",
+        "notes": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1\nFICTIONAL DEMONSTRATION ONLY — NOT A REAL CUSTOMER, ORDER, QUOTE, AWARD OR PAYMENT.\nWorkflow context: Awarded / ready for manual conversion.\nFictional inquiry date: 2026-09-04.\nIllustrative scope value: USD 68,400. Notes only; not a structured Bid value or issued commercial document.\nFictional bid/estimate due date: 2026-09-18. Notes only; independent of projected manufacture dates.\nScope: Approximately 680 SF of precast slabs, 96 LF of cove base and two reception panels. Single approved-for-demo color; no real approval or payment is represented.\nNext action: Chris may manually demonstrate Convert to Production: Carry Forward Oct 12–23, Set New Dates, or Plan Later. Leave Job Number blank unless separately approved.\nFictional award: 2026-09-21. Fictional deposit: USD 20,520 on 2026-09-22. No payment transaction is created.\nMANUAL CONVERSION DEMO: no conversion during seeding. After conversion, Production owns scheduling and automatic demo cleanup must refuse this record.",
+        "projected_production_start": "2026-10-12",
+        "projected_production_end": "2026-10-23",
+        "projected_window_updated_by": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "production_job_id": null,
+        "converted_by_user_id": null,
+        "converted_at": null
+      },
+      "display_context": {
+        "illustrative_value_usd": 68400,
+        "workflow_context": "Awarded / ready for manual conversion",
+        "inquiry_date": "2026-09-04",
+        "bid_due_date_in_notes": "2026-09-18",
+        "scope": "Approximately 680 SF of precast slabs, 96 LF of cove base and two reception panels. Single approved-for-demo color; no real approval or payment is represented.",
+        "next_action": "Chris may manually demonstrate Convert to Production: Carry Forward Oct 12–23, Set New Dates, or Plan Later. Leave Job Number blank unless separately approved."
+      },
+      "activities": [
+        {
+          "id": "05111a85-fbd1-5983-b81f-5646863327b1",
+          "activity_type": "created",
+          "details": {
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1",
+            "customer": "TEST CUSTOMER — Amber Loom Civic Interiors (Fictional)",
+            "project_name": "TEST — Award / Ready-to-Convert Example",
+            "status": "won",
+            "owner_user_id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+            "deposit_received_date": "2026-09-22"
+          }
+        },
+        {
+          "id": "2f3e92d6-9223-58b7-b467-054d2c43cd32",
+          "activity_type": "projected_window_changed",
+          "details": {
+            "from_start": null,
+            "from_end": null,
+            "to_start": "2026-10-12",
+            "to_end": "2026-10-23",
+            "demonstration": "TENOPS-INTAKE-PLANNING-DEMO-2026-09 / FINAL-V1"
+          }
+        }
+      ],
+      "updates": [
+        {
+          "id": "a26c30d9-32bc-5a65-ae1c-e9399898fdad",
+          "body": "FICTIONAL DEMO UPDATE — Fictional award received on 2026-09-21 for USD 68,400. This is demonstration context, not an issued Proposal."
+        },
+        {
+          "id": "c98ea224-5c2d-5e1e-8a0e-318ff9d940de",
+          "body": "FICTIONAL DEMO UPDATE — Fictional deposit of USD 20,520 (30%) dated 2026-09-22. Won + recorded date enables the manual conversion gate; no Job exists before Chris converts it."
+        }
+      ],
+      "attachment": {
+        "id": "800fbbe2-fef4-54f0-9a08-8c23b271d209",
+        "filename": "08_Amber_Loom_Award_Letter.pdf",
+        "label": "[AWARD LETTER EXAMPLE]",
+        "local_path": "output/pdf/08_Amber_Loom_Award_Letter.pdf",
+        "bucket": "bid-files",
+        "storage_path": "de000000-0000-4000-8000-000000000008/800fbbe2-fef4-54f0-9a08-8c23b271d209",
+        "content_type": "application/pdf",
+        "shared_with": [],
+        "sha256": "4cfb4c4aa8d3d9651d08a50e164ec478f06fc30ac4729ca800b795ed92265fb8",
+        "byte_size": 1573
+      }
+    }
+  ]
+}
