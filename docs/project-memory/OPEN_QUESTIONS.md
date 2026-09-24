@@ -77,3 +77,5 @@ Chris rejected the training migration's new normal-Job capability enforcement af
 ## Security review backlog — anonymous Manpower data access
 
 Read-only Production discovery on 2026-09-24 found anonymous SELECT grants and permissive policies on `manpower_entries`, `manpower_workers` and `manpower_tasks`, despite the authenticated application shell. Product Categories use a narrower authenticated capability policy. Chris requested a separate security audit; do not broaden or modify these permissions in the Recent labor analytics feature. Review grants, RLS, existing integrations and legitimate workflows under a separately approved security contract. The dashboard must reuse current authorized loaded data and must not add an anonymous aggregate endpoint.
+
+The separately authorized core Manpower + connected Rework correction is now implemented and validated **locally only**. Hosted exposure remains until separately authorized migration application. See [hardening scope, compatibility evidence and recovery](2026-09-24-manpower-anonymous-hardening.md). Authenticated permissions are intentionally unchanged.
