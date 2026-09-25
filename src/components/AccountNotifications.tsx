@@ -53,7 +53,13 @@ function relativeTime(value: string) {
   return new Date(value).toLocaleDateString();
 }
 
-export default function AccountNotifications({ onOpen }: { onOpen(notification: AccountNotification): void }) {
+// Only this small projection leaves the notification owner; history stays here.
+export type WelcomeNotificationStatus = { userId: string; id: string | null; unread: boolean };
+
+export default function AccountNotifications({ onOpen, onWelcomeChange }: {
+  onOpen(notification: AccountNotification): void;
+  onWelcomeChange(status: WelcomeNotificationStatus): void;
+}) {
   const router = useRouter();
   const auth = useAuth();
   const isAuthenticated = auth.isAuthenticated;
@@ -186,6 +192,15 @@ export default function AccountNotifications({ onOpen }: { onOpen(notification: 
       window.removeEventListener("keydown", cancel);
     };
   }, [spotlight, arrivalNotificationId, dismissArrival]);
+
+  const welcome = items.find((item) => item.notification_type === "welcome");
+  const welcomeId = welcome?.id ?? null;
+  const welcomeUnread = Boolean(welcome && welcome.read_at === null);
+  useEffect(() => {
+    if (isAuthenticated && profileIsActive && profileUserId) {
+      onWelcomeChange({ userId: profileUserId, id: welcomeId, unread: welcomeUnread });
+    }
+  }, [isAuthenticated, profileIsActive, profileUserId, welcomeId, welcomeUnread, onWelcomeChange]);
 
   const unreadCount = useMemo(() => items.filter((item) => item.read_at === null).length, [items]);
   const visibleItems = useMemo(() => tab === "unread" ? items.filter((item) => item.read_at === null) : items, [items, tab]);

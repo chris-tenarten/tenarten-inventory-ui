@@ -27,7 +27,7 @@ import { ROLE_LABELS } from '@/lib/rbac';
 import { accountInitials } from '@/lib/identity-presentation';
 import { useAccountPreferences } from '@/lib/account-preferences';
 import AccountAccessPanel from '@/components/AccountAccessPanel';
-import AccountNotifications from '@/components/AccountNotifications';
+import AccountNotifications, { type WelcomeNotificationStatus } from '@/components/AccountNotifications';
 import GlobalMessaging from '@/components/GlobalMessaging';
 import WelcomeHero from '@/components/WelcomeHero';
 import { toolboxMenuSections } from '@/components/ToolboxLauncher';
@@ -290,6 +290,7 @@ export default function ClientLayoutShell({
   const auth = useAuth();
   const accountPreferences = useAccountPreferences();
 
+  const [welcomeStatus, setWelcomeStatus] = useState<WelcomeNotificationStatus | null>(null);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const shellRef = useRef<HTMLDivElement | null>(null);
@@ -398,7 +399,7 @@ export default function ClientLayoutShell({
 
   return (
     <div ref={shellRef} data-app-shell>
-      <WelcomeHero />
+      <WelcomeHero welcomeStatus={welcomeStatus} />
       <header ref={shellHeaderRef} data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} data-compact-header={hasScrolled ? 'true' : undefined} className="sticky top-0 z-[100] border-b border-slate-200 bg-[#f2f5f8] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200">
         <div
           data-shell-header-inner
@@ -484,7 +485,7 @@ export default function ClientLayoutShell({
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
                   <MyWorkNav pathname={pathname} />
                   <GlobalMessaging key={auth.profile?.userId??'signed-out'} />
-                  <AccountNotifications onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
+                  <AccountNotifications key={auth.profile?.userId} onWelcomeChange={setWelcomeStatus} onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   {auth.isAuthenticated && auth.profile?.isActive ? <div ref={accountMenuRef} data-account-identity className="relative">
                     <button
                       type="button"

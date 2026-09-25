@@ -1,0 +1,310 @@
+{
+  "baseline": "1ff0a134a1389aa2a7fa0a2f91ef3d1a284a74fe",
+  "hosted": {
+    "measuredAt": "2026-09-25T18:48:35.272Z",
+    "note": "Privileged read-only counts; not RLS/user latency proof. No names, messages, file bytes, or private task contents retrieved.",
+    "counts": [
+      {
+        "table": "jobs",
+        "status": 200,
+        "count": "0-38/39",
+        "elapsedMs": 727
+      },
+      {
+        "table": "manpower_entries",
+        "status": 206,
+        "count": "0-999/1868",
+        "elapsedMs": 466
+      },
+      {
+        "table": "manpower_reporting_groups",
+        "status": 200,
+        "count": "0-37/38",
+        "elapsedMs": 317
+      },
+      {
+        "table": "inventory_items",
+        "status": 200,
+        "count": "0-169/170",
+        "elapsedMs": 264
+      },
+      {
+        "table": "pending_receivals",
+        "status": 200,
+        "count": "0-75/76",
+        "elapsedMs": 247
+      },
+      {
+        "table": "inventory_transactions",
+        "status": 200,
+        "count": "0-90/91",
+        "elapsedMs": 250
+      },
+      {
+        "table": "vendor_catalog_v2",
+        "status": 200,
+        "count": "0-300/301",
+        "elapsedMs": 290
+      },
+      {
+        "table": "bids",
+        "status": 200,
+        "count": "0-7/8",
+        "elapsedMs": 283
+      },
+      {
+        "table": "planning_phases",
+        "status": 200,
+        "count": "0-4/5",
+        "elapsedMs": 289
+      },
+      {
+        "table": "planning_items",
+        "status": 200,
+        "count": "0-15/16",
+        "elapsedMs": 2237
+      },
+      {
+        "table": "job_updates",
+        "status": 200,
+        "count": "0-10/11",
+        "elapsedMs": 586
+      },
+      {
+        "table": "job_attachments",
+        "status": 200,
+        "count": "0-157/158",
+        "elapsedMs": 307
+      },
+      {
+        "table": "material_usage_reports",
+        "status": 200,
+        "count": "0-24/25",
+        "elapsedMs": 625
+      }
+    ],
+    "production": {
+      "jobs": 39,
+      "currentJobs": 39,
+      "statusCounts": {
+        "complete": 20,
+        "not_started": 9,
+        "on_deck": 5,
+        "in_production": 3,
+        "shipped": 1,
+        "cancelled": 1
+      },
+      "laborRows": 1168,
+      "laborBytes": 150666,
+      "laborRequests": 3,
+      "laborElapsedMs": 2722,
+      "currentJobLaborRows": 1168,
+      "currentJobLaborJsonBytes": 140161
+    }
+  },
+  "browserEnvironment": {
+    "root": "out (isolated canonical and candidate Production builds)",
+    "headless": true,
+    "apiDelayMs": 20,
+    "fixtures": {
+      "jobs": 120,
+      "labor": 1674,
+      "inventory": 1000,
+      "bids": 100,
+      "tasks": 200,
+      "catalog": 218
+    },
+    "note": "Synthetic client fixture costs, not Production network or DB latency. Unspecified tables/RPCs empty. Auth requests excluded from recorded data calls."
+  },
+  "routeComparison": [
+    {
+      "route": "startup",
+      "before": {
+        "requests": 22,
+        "notificationRequests": 9,
+        "rows": 1794,
+        "jsonBytes": 2588163,
+        "domNodes": 10662,
+        "errors": [],
+        "alerts": []
+      },
+      "after": {
+        "requests": 17,
+        "notificationRequests": 4,
+        "rows": 1794,
+        "jsonBytes": 2588153,
+        "domNodes": 10662,
+        "errors": [],
+        "alerts": []
+      }
+    },
+    {
+      "route": "Intake",
+      "before": {
+        "requests": 11,
+        "notificationRequests": 7,
+        "rows": 101,
+        "jsonBytes": 32876,
+        "domNodes": 1595,
+        "errors": [],
+        "alerts": []
+      },
+      "after": {
+        "requests": 7,
+        "notificationRequests": 3,
+        "rows": 101,
+        "jsonBytes": 32868,
+        "domNodes": 1595,
+        "errors": [],
+        "alerts": []
+      }
+    },
+    {
+      "route": "Production",
+      "before": {
+        "requests": 21,
+        "notificationRequests": 8,
+        "rows": 1794,
+        "jsonBytes": 2588161,
+        "domNodes": 10677,
+        "errors": [],
+        "alerts": []
+      },
+      "after": {
+        "requests": 17,
+        "notificationRequests": 4,
+        "rows": 1794,
+        "jsonBytes": 2588153,
+        "domNodes": 10677,
+        "errors": [],
+        "alerts": []
+      }
+    },
+    {
+      "route": "Snapshot",
+      "before": {
+        "requests": 27,
+        "notificationRequests": 9,
+        "rows": 3468,
+        "jsonBytes": 5116043,
+        "domNodes": 623,
+        "errors": [],
+        "alerts": []
+      },
+      "after": {
+        "requests": 21,
+        "notificationRequests": 3,
+        "rows": 3468,
+        "jsonBytes": 5116031,
+        "domNodes": 623,
+        "errors": [],
+        "alerts": []
+      }
+    },
+    {
+      "route": "Manpower",
+      "before": {
+        "requests": 21,
+        "notificationRequests": 9,
+        "rows": 1798,
+        "jsonBytes": 2588745,
+        "domNodes": 564,
+        "errors": [],
+        "alerts": []
+      },
+      "after": {
+        "requests": 16,
+        "notificationRequests": 4,
+        "rows": 1798,
+        "jsonBytes": 2588735,
+        "domNodes": 564,
+        "errors": [],
+        "alerts": []
+      }
+    },
+    {
+      "route": "Inventory",
+      "before": {
+        "requests": 12,
+        "notificationRequests": 7,
+        "rows": 1120,
+        "jsonBytes": 329942,
+        "domNodes": 14320,
+        "errors": [],
+        "alerts": []
+      },
+      "after": {
+        "requests": 8,
+        "notificationRequests": 3,
+        "rows": 1120,
+        "jsonBytes": 329934,
+        "domNodes": 14320,
+        "errors": [],
+        "alerts": []
+      }
+    },
+    {
+      "route": "My Work",
+      "before": {
+        "requests": 18,
+        "notificationRequests": 10,
+        "rows": 321,
+        "jsonBytes": 147328,
+        "domNodes": 5345,
+        "errors": [],
+        "alerts": []
+      },
+      "after": {
+        "requests": 12,
+        "notificationRequests": 4,
+        "rows": 321,
+        "jsonBytes": 147316,
+        "domNodes": 5345,
+        "errors": [],
+        "alerts": []
+      }
+    }
+  ],
+  "planProbe": {
+    "status": 406,
+    "code": "PGRST107",
+    "finding": "EXPLAIN media type unavailable; no configuration changed and no index recommendation justified"
+  },
+  "shellComparison": {
+    "before": {
+      "accountSwitchVerified": false,
+      "firstUseful": {
+        "ms": 165,
+        "dataRequests": 17,
+        "notificationRequests": 9
+      },
+      "cold": {
+        "requests": 9,
+        "rows": 900,
+        "bytes": 438930
+      },
+      "changeRequests": 2,
+      "focusRequests": 1,
+      "assertions": "unread welcome onboarding, 100-row history, mark-all-read, focus freshness, failed refresh recovery, no client errors",
+      "synthetic": true
+    },
+    "after": {
+      "accountSwitchVerified": true,
+      "firstUseful": {
+        "ms": 250,
+        "dataRequests": 12,
+        "notificationRequests": 3
+      },
+      "cold": {
+        "requests": 3,
+        "rows": 300,
+        "bytes": 146310
+      },
+      "changeRequests": 1,
+      "focusRequests": 1,
+      "assertions": "unread welcome onboarding, 100-row history, mark-all-read, focus freshness, failed refresh recovery, no client errors",
+      "synthetic": true
+    }
+  },
+  "timingInterpretation": "Single synthetic first-useful samples 165ms before and 250ms after do not demonstrate a latency improvement; data requests issued before useful screen fall 17 to 12. Payload/request elimination is the demonstrated benefit."
+}

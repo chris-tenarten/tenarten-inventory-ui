@@ -6,10 +6,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { BRANDING } from "@/lib/dev-branding.mjs";
 import { ROLE_LABELS } from "@/lib/rbac";
-import { supabase } from "@/lib/supabase";
+import type { WelcomeNotificationStatus } from "./AccountNotifications";
 import { productionTagClassName } from "@/modules/production/components/production-tag";
 
-type WelcomeRecord = { id: string; notification_type: string; read_at: string | null };
 type WelcomeMode = "boot" | "replay";
 
 const BOOT_PLAYED_KEY_PREFIX = "tenops.welcomeHeroPlayed:";
@@ -41,7 +40,7 @@ function diagonalRevealCoverage(progress: number) {
     : 1 - 2 * (1 - clamped) * (1 - clamped);
 }
 
-export default function WelcomeHero() {
+export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeNotificationStatus | null }) {
   const auth = useAuth();
   const coverRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<number | null>(null);
@@ -89,18 +88,14 @@ export default function WelcomeHero() {
     }
   }, []);
 
-  const loadWelcome = useCallback(async () => {
-    if (!auth.isAuthenticated || !auth.profile?.isActive) {
-      welcomeIdRef.current = null;
-      welcomeUnreadRef.current = false;
-      return;
-    }
-    const { data, error } = await supabase.rpc("list_my_account_notification_history", { p_limit: 100 });
-    if (error) return;
-    const welcome = ((data ?? []) as WelcomeRecord[]).find((item) => item.notification_type === "welcome") ?? null;
-    welcomeIdRef.current = welcome?.id ?? null;
-    welcomeUnreadRef.current = Boolean(welcome && welcome.read_at === null);
-  }, [auth.isAuthenticated, auth.profile?.isActive]);
+  useEffect(() => {
+    // AccountNotifications owns the authoritative history and refresh paths.
+    // Never carry welcome state across account changes or inactive sessions.
+    const current = auth.isAuthenticated && auth.profile?.isActive
+      && welcomeStatus?.userId === auth.profile.userId ? welcomeStatus : null;
+    welcomeIdRef.current = current?.id ?? null;
+    welcomeUnreadRef.current = current?.unread ?? false;
+  }, [auth.isAuthenticated, auth.profile?.isActive, auth.profile?.userId, welcomeStatus]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -150,7 +145,6 @@ export default function WelcomeHero() {
 
       const userId = auth.user.id;
       lastAuthenticatedUserRef.current = userId;
-      void loadWelcome();
       const playedKey = `${BOOT_PLAYED_KEY_PREFIX}${userId}`;
       if (window.sessionStorage.getItem(playedKey) && !preparingBootRef.current) {
         setBootClaimed(true);
@@ -166,10 +160,9 @@ export default function WelcomeHero() {
       setVisible(true);
     }, 0);
     return () => window.clearTimeout(timeout);
-  }, [auth.accessAllowed, auth.isAuthenticated, auth.profile, auth.profileError, auth.ready, auth.requiresPasswordSetup, auth.user, loadWelcome, resetTimeline]);
+  }, [auth.accessAllowed, auth.isAuthenticated, auth.profile, auth.profileError, auth.ready, auth.requiresPasswordSetup, auth.user, resetTimeline]);
 
   useEffect(() => {
-    const refresh = () => void loadWelcome();
     const replay = () => {
       if (auth.requiresPasswordSetup || !auth.isAuthenticated || !auth.profile?.isActive || !auth.accessAllowed) return;
       modeRef.current = "replay";
@@ -177,13 +170,11 @@ export default function WelcomeHero() {
       resetTimeline();
       setVisible(true);
     };
-    window.addEventListener("tenops:notifications-changed", refresh);
     window.addEventListener("tenops:replay-welcome-hero", replay);
     return () => {
-      window.removeEventListener("tenops:notifications-changed", refresh);
       window.removeEventListener("tenops:replay-welcome-hero", replay);
     };
-  }, [auth.accessAllowed, auth.isAuthenticated, auth.profile?.isActive, auth.requiresPasswordSetup, loadWelcome, resetTimeline]);
+  }, [auth.accessAllowed, auth.isAuthenticated, auth.profile?.isActive, auth.requiresPasswordSetup, resetTimeline]);
 
   useEffect(() => {
     const markReady = () => {
