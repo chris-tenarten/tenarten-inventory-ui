@@ -4,11 +4,10 @@ import { fileSize } from './files';
 import { dismissTransfer } from './client';
 import type { MessageTransfer } from './transfer';
 
-export default function TransferPanel({transfer,onSent}:{transfer:MessageTransfer;onSent:()=>void}) {
+export default function TransferPanel({transfer}:{transfer:MessageTransfer}) {
   const [selectionError,setSelectionError]=useState('');
   const state=useSyncExternalStore(transfer.subscribe,transfer.snapshot,transfer.snapshot);
   const active=!['sent','canceled','failed'].includes(state.phase);
-  useEffect(()=>{if(state.phase==='sent')onSent();},[state.phase,onSent]);
   useEffect(()=>{
     if(!active)return;
     const prevent=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue='';};

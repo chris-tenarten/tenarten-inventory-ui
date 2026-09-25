@@ -33,6 +33,14 @@ export const transport: Transport = {
 };
 let current: MessageTransfer|null=null;
 let actor='';
+let unsubscribeCompletion: (()=>void)|undefined;
+export const transferPending=(transfer:MessageTransfer|null)=>!!transfer&&!['sent','canceled'].includes(transfer.state.phase);
+function trackCompletion(transfer:MessageTransfer) {
+  unsubscribeCompletion?.();
+  unsubscribeCompletion=transfer.subscribe(()=>{
+    if(current===transfer&&!transferPending(transfer))saveRecovery(actor,null);
+  });
+}
 const recoveryKey=(id:string)=>`tenops-messaging-transfer:${id}`;
 const saveRecovery=(id:string,value:string|null)=>{try{if(value)sessionStorage.setItem(recoveryKey(id),value);else sessionStorage.removeItem(recoveryKey(id));}catch{/* Session recovery is best-effort; transfer itself remains available. */}};
 const listeners=new Set<()=>void>();
@@ -41,18 +49,20 @@ export const subscribeTransfer=(listener:()=>void)=>{listeners.add(listener);ret
 export const getTransfer=()=>current;
 export const serverTransfer=()=>null;
 export function startTransfer(userId:string,recipient:string,body:string,job:string,files:File[]) {
-  if(current)throw new Error('Finish or dismiss the existing attachment transfer first.');
+  if(transferPending(current))throw new Error('Finish or cancel the existing attachment transfer first.');
   actor=userId;
   let previous:string|null=null;try{previous=sessionStorage.getItem(recoveryKey(userId));}catch{/* unavailable */}
   if(previous){void recoverTransfer(userId);throw new Error('Checking the previous attachment transfer. Retry shortly; no new message was created.');}
   current=new MessageTransfer(files,recipient,body,job,transport);
   saveRecovery(actor,current.draft.id);
+  trackCompletion(current);
   emit();
   void current.start();
   return current;
 }
 export function dismissTransfer() {
-  if(current&&!['sent','canceled'].includes(current.state.phase))return;
+  if(transferPending(current))return;
+  unsubscribeCompletion?.();
   saveRecovery(actor,null);current=null;emit();
 }
 async function recoverTransfer(userId:string) {
@@ -63,14 +73,14 @@ async function recoverTransfer(userId:string) {
     const draft=await rpc<Draft|null>('recover_my_work_attachment_transfer',{p_id:id});
     if(actor!==userId||current)return;
     if(!draft){saveRecovery(userId,null);return;}
-    current=new MessageTransfer([],draft.recipient,draft.body,draft.job,transport,draft);emit();
+    current=new MessageTransfer([],draft.recipient,draft.body,draft.job,transport,draft);trackCompletion(current);emit();
     // Checking the durable result does not require File handles or reupload bytes.
     void current.start();
   }catch{/* Leave the identifier for recovery on the next session event; no new send is created. */}
 }
 supabase.auth.onAuthStateChange((_event,session)=>{
   const next= session?.user.id??'';
-  if(actor&&next!==actor){current?.stopForSignOut();saveRecovery(actor,null);current=null;clearUploadUrls();emit();}
+  if(actor&&next!==actor){unsubscribeCompletion?.();current?.stopForSignOut();saveRecovery(actor,null);current=null;clearUploadUrls();emit();}
   actor=next;
   if(next)setTimeout(()=>void recoverTransfer(next),0);
 });
