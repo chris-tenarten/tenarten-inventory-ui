@@ -1,3 +1,4 @@
+import { loadCompleteRows } from '@/lib/complete-rows';
 import { loadCompleteLabor } from '../manpower/pagination';
 import { supabase } from '../../lib/supabase';
 import { operationalFirstName } from '../../lib/identity-presentation';
@@ -124,21 +125,19 @@ export type ProductionJobUpdate = Partial<
 >;
 
 export async function loadProductionJobs(includeArchived = false): Promise<ProductionJob[]> {
-  let query = supabase
+  const page = (from: number, to: number) => { let query = supabase
     .from('jobs')
-    .select(JOB_COLUMNS)
+    .select(JOB_COLUMNS, { count: 'exact' })
     .order('planned_start', { ascending: true, nullsFirst: false })
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }).order('id').range(from,to);
   if (!includeArchived) query = query.is('archived_at', null);
-  const [{ data, error }, reworks] = await Promise.all([
-    query,
-    supabase.from('production_rework_cycles').select(ACTIVE_REWORK_COLUMNS).not('production_status', 'in', '(complete,cancelled)').order('sequence_number', { ascending: false }),
+  return query.returns<ProductionJob[]>(); };
+  const [data, reworks] = await Promise.all([
+    loadCompleteRows(page),
+    loadCompleteRows((from,to)=>supabase.from('production_rework_cycles').select(ACTIVE_REWORK_COLUMNS, { count: 'exact' }).not('production_status', 'in', '(complete,cancelled)').order('sequence_number', { ascending: false }).order('id').range(from,to).returns<ProductionReworkCycle[]>()),
   ]);
-
-  if (error) throw error;
-  if (reworks.error) throw reworks.error;
   const activeByJob = new Map<string, ProductionReworkCycle>();
-  for (const cycle of (reworks.data ?? []) as unknown as ProductionReworkCycle[]) {
+  for (const cycle of reworks as unknown as ProductionReworkCycle[]) {
     if (isActiveProductionRework(cycle) && !activeByJob.has(cycle.job_id)) {
       activeByJob.set(cycle.job_id, cycle);
     }

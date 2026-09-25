@@ -1,3 +1,4 @@
+import { loadCompleteRows } from '@/lib/complete-rows';
 import { supabase } from "@/lib/supabase";
 import { addCalendarDays, formatScheduleDate } from "@/modules/production/schedule";
 import type {
@@ -17,17 +18,19 @@ const PHASE_COLUMNS = "id,job_id,title,description,owner,category,status,start_d
 const ITEM_COLUMNS = "id,phase_id,title,notes,owner,is_complete,estimated_hours,due_date,sort_order,created_by,created_at,updated_at";
 
 export async function loadPlanningPhases(jobScope?: string | string[]) {
-  let query = supabase.from("planning_phases").select(PHASE_COLUMNS).order("updated_at", { ascending: false });
-  if (Array.isArray(jobScope)) {
-    const jobIds = normalizeLoadedJobIds(jobScope);
-    if (jobIds.length === 0) return [];
-    query = query.in("job_id", jobIds);
-  } else if (jobScope) {
-    query = query.eq("job_id", jobScope);
+  const ids=Array.isArray(jobScope)?normalizeLoadedJobIds(jobScope):typeof jobScope==='string'?[jobScope]:undefined;
+  if(ids?.length===0)return [];
+  const scopes: Array<string[]|undefined>=ids?Array.from({length:Math.ceil(ids.length/200)},(_,i)=>ids.slice(i*200,i*200+200)):[undefined];
+  const rows:PlanningPhase[]=[];
+  for(const scope of scopes){
+    const batch=await loadCompleteRows((from,to)=>{
+      let query=supabase.from("planning_phases").select(PHASE_COLUMNS,{count:'exact'}).order("updated_at",{ascending:false}).order('id').range(from,to);
+      if(scope)query=query.in('job_id',scope);
+      return query;
+    });
+    rows.push(...batch as PlanningPhase[]);
   }
-  const { data, error } = await query;
-  if (error) throw error;
-  return (data ?? []) as PlanningPhase[];
+  return rows.sort((a,b)=>b.updated_at.localeCompare(a.updated_at)||a.id.localeCompare(b.id));
 }
 
 export async function loadPlanningItems(phaseIds: string[]) {

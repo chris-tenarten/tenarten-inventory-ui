@@ -1,10 +1,11 @@
+import { loadCompleteRows } from '@/lib/complete-rows';
 import { supabase } from '@/lib/supabase';
 import type { Bid, BidActivity, BidFile, BidOwner, BidStatus, BidUpdate } from './types';
 
 type BidRow={id:string;customer:string;project_name:string;creator_user_id:string;creator_name:string;owner_user_id:string;owner_name:string;status:BidStatus;deposit_received_date:string|null;contact_name:string|null;contact_email:string|null;contact_phone:string|null;notes:string|null;created_at:string;updated_at:string};
 const mapBid=(row:BidRow):Bid=>({id:row.id,customer:row.customer,projectName:row.project_name,creatorUserId:row.creator_user_id,creatorName:row.creator_name,ownerUserId:row.owner_user_id,ownerName:row.owner_name,status:row.status,depositReceivedDate:row.deposit_received_date??'',contactName:row.contact_name??'',contactEmail:row.contact_email??'',contactPhone:row.contact_phone??'',notes:row.notes??'',createdAt:row.created_at,updatedAt:row.updated_at});
 
-export async function loadBids(){const{data,error}=await supabase.rpc('list_bids');if(error)throw error;return((data??[]) as BidRow[]).map(mapBid);}
+export async function loadBids(){const data=await loadCompleteRows((from,to)=>supabase.rpc('list_bids',{}, { count: 'exact' }).order('updated_at',{ascending:false}).order('id').range(from,to));return(data as BidRow[]).map(mapBid);}
 export async function loadBidOwners(){const{data,error}=await supabase.rpc('list_bid_owners');if(error)throw error;return((data??[]) as Array<{user_id:string;display_name:string}>).map((row):BidOwner=>({userId:row.user_id,displayName:row.display_name}));}
 export async function loadBidActivity(bidId:string){const{data,error}=await supabase.rpc('list_bid_activity',{p_bid_id:bidId});if(error)throw error;return((data??[]) as Array<{id:string;activity_type:string;actor_user_id:string;actor_name:string;occurred_at:string;details:Record<string,unknown>}>).map((row):BidActivity=>({id:row.id,activityType:row.activity_type,actorUserId:row.actor_user_id,actorName:row.actor_name,occurredAt:row.occurred_at,details:row.details??{}}));}
 export async function loadBidUpdates(bidId:string){const{data,error}=await supabase.rpc('list_bid_updates',{p_bid_id:bidId});if(error)throw error;return((data??[]) as Array<{id:string;bid_id:string;author_user_id:string;author_name:string;body:string;created_at:string}>).map((row):BidUpdate=>({id:row.id,bidId:row.bid_id,authorUserId:row.author_user_id,authorName:row.author_name,body:row.body,createdAt:row.created_at}));}

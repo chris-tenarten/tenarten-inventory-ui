@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { roleHasCapability, APP_ROLES } from '../src/lib/rbac';
-for (const role of APP_ROLES) assert.equal(roleHasCapability(role, 'accessIntake'), ['admin','developer'].includes(role));
+for (const role of APP_ROLES) assert.equal(roleHasCapability(role, 'accessIntake'), true);
 const read=(name:string)=>readFileSync(`supabase/migrations/${name}.sql`,'utf8');
 const migration=read('20260923215900_intake_early_access');
 // The migration embeds the narrowly captured hosted bodies with exact drift guards.

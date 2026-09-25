@@ -48,7 +48,7 @@ Chris explicitly authorized reconciling `181ab83c` onto `85708a5` locally, inclu
 
 Chris requested this backlog item on 2026-09-24. **Not implemented or authorized for implementation in the current viewport-polish pass.**
 
-Future warnings should be non-blocking, graphical and contextual to timeline rows/projected blocks. Initial deterministic candidates:
+Chris discontinued the Calendar experiment on 2026-09-25. Timeline is the sole graphical Intake Planning surface. Future warnings should target Timeline only and remain non-blocking, graphical and contextual to timeline rows/projected blocks. Initial deterministic candidates:
 
 - Projected window in the past.
 - Late-stage/Won opportunity missing a projected Production window (define late-stage against authoritative lifecycle fields).
@@ -61,18 +61,15 @@ Product must define significance thresholds and presentation before implementati
 
 ## Intake authorization decomposition — Product backlog
 
-Approved Under Development rollout (2026-09-24): `viewIntake` grants active Admin, Developer, Lead, Member and Guest read/discovery access. Existing `accessIntake` remains Admin/Developer management authority. New viewers cannot mutate Bids, Updates, attachments, projected windows or conversions. Anonymous/inactive accounts remain denied. Conversion also requires existing Production Job-create/scheduling authority; destructive cleanup requires existing Admin authority.
+Approved Early Access revision (2026-09-25, prepared locally): all five active roles retain `viewIntake` and gain ordinary `accessIntake` editing. Anonymous/inactive remain denied. Conversion still requires separate Production creation/scheduling capabilities; Bid/Job destructive cleanup remains Admin-only and guarded. Hosted authorization stays on the released model until the reviewed forward migration is applied.
 
 Later decompose authorization deliberately: Intake read/view; management/edit; **financial visibility** (currently no field-level separation—deposit date and financial information in Notes inherit Bid read access); conversion; destructive actions. Do not infer new role grants from module visibility. Proposal/Sample access retains its separate existing authorization. A broader decomposition requires Product approval rather than implicit grants in UI work.
 
-## Personal Intake TEST training — revised acceptance, September 24
+## Personal Intake TEST training — retirement approved September 25
 
-Chris authorized an exception to the read-only viewer matrix for Patrick Soldow, Giovanni Coppola and Anthony Iorio: one personal TEST workflow per explicitly granted active user, including own Bid editing/files/Planning, Won+deposit conversion, and guarded own TEST cleanup. This does not grant normal Intake management or additional real Production authority. The eight Chris-owned reference demos are excluded. Explicit protected lineage, not names, controls authority. Chris subsequently authorized narrow Production authorization hardening after current hosted Jobs grants/policies exposed direct anonymous/authenticated mutations. No hosted application, commit, push or deployment is authorized. See [training implementation review](2026-09-24-intake-personal-training-review.md).
+Chris discontinued the personal-training exception in favor of ordinary Early Access editing. Retire its client controls, grants, registry, identity triggers, conversion bypass and owner cleanup RPCs through a guarded forward migration. The eight curated shared demo UUIDs remain examples only, with zero name-based or badge-based authority. Chris requested removal of the one existing unconverted personal-training Bid; exact-record cleanup is prepared separately and has not been executed.
 
-
-### Production authorization composition correction
-
-Chris rejected the training migration's new normal-Job capability enforcement after the gate reproduced a Member Requested delivery regression. Preserve current Production normal-Job INSERT/UPDATE authorization and UI, without adding role grants. Existing Production editing authority also remains valid on TEST Jobs alongside explicitly scoped owner training APIs; TEST lineage/identity and owner/Admin-only cleanup stay protected. Anonymous direct Jobs denial and raw authenticated DELETE denial remain the separately approved exceptions. The unapplied migration was corrected and focused before/after compatibility checks pass; no hosted application/release is authorized.
+Preserve normal Production Job INSERT/UPDATE behavior, including Member Requested delivery. Preserve released anonymous Jobs denial and raw authenticated DELETE denial. See [Early Access review](2026-09-25-intake-early-access-review.md) and [proposed curated-demo names](2026-09-25-intake-demo-rename-proposal.md).
 
 ## Security review backlog — anonymous Manpower data access
 

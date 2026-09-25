@@ -35,7 +35,7 @@ export const CAPABILITIES = [
 
 export type Capability = (typeof CAPABILITIES)[number];
 
-const guest = ["viewIntake", "readOperationalData", "previewOperationalDocuments"] as const;
+const guest = ["accessIntake", "viewIntake", "readOperationalData", "previewOperationalDocuments"] as const;
 const member = [
   ...guest,
   "createProductionJob",
@@ -63,7 +63,7 @@ const lead = [
   "adjustInventory",
   "manageVendorsCatalog",
 ] as const;
-const developer = [...guest, "accessDevelopmentEnvironment", "accessIntake"] as const;
+const developer = [...guest, "accessDevelopmentEnvironment"] as const;
 
 export const ROLE_CAPABILITIES: Record<AppRole, readonly Capability[]> = {
   guest,

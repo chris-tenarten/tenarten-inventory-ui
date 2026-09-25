@@ -5,12 +5,13 @@ import { intakePlanningDemo } from '../../src/modules/pre-production/planning-de
 
 const actor = '00000000-0000-0000-0000-000000000004';
 const stamp = '2026-09-22T12:00:00Z';
-async function fixture(page: Page, role = 'admin', personalTraining = false) {
+async function fixture(page: Page, role = 'admin') {
   await page.clock.setFixedTime(new Date('2026-09-22T12:00:00Z'));
   const bids = intakePlanningDemo.map(row => ({ ...row, creator_user_id: actor, creator_name: 'TEST Admin', owner_user_id: actor, owner_name: 'TEST Admin', created_at: stamp, updated_at: stamp, production_job_id: null as string | null, converted_at: null as string | null, converted_by_user_id: null as string | null, projected_window_updated_by: actor, projected_window_updated_at: stamp }));
   const jobs = [{ id: 'fixture-job', name: 'TEST — Committed Production', job_number: 'TEST-ONLY', customer: 'TEST CUSTOMER', production_status: 'not_started', planned_start: '2026-10-05', planned_end: '2026-10-16', archived_at: null, created_at: stamp, updated_at: stamp }];
+  const phases = [{ id: 'phase', job_id: jobs[0].id, title: 'TEST Pause', timeline_behavior: 'pause', start_date: '2026-10-08', end_date: '2026-10-09', created_at: stamp, updated_at: stamp }];
+  const reworks: Array<Record<string,unknown>>=[];
   const calls: string[] = [], writes: Array<{ name: string; body: Record<string, unknown> }> = [];
-  const workflows: Array<{owner_user_id:string;bid_id:string;job_id:string|null}> = personalTraining ? [{owner_user_id:actor,bid_id:bids[1].id,job_id:null}] : [];
   let failSave = false;
   let tick = 1;
   await page.routeWebSocket('**/realtime/v1/**', () => {});
@@ -19,15 +20,14 @@ async function fixture(page: Page, role = 'admin', personalTraining = false) {
     calls.push(name);
     let body: unknown = [];
     const args = request.method() === 'POST' ? request.postDataJSON() : {};
-    if (name === 'has_intake_training_access') body = personalTraining;
-    else if (name === 'intake_training_workflows') body = workflows;
-    else if (name === 'list_bids') body = bids;
+    if (name === 'list_bids') body = bids;
     else if (name === 'list_bid_updates') body = [{ id: 'fixture-update', bid_id: args.p_bid_id, author_user_id: actor, author_name: 'TEST Admin', body: 'TEST visible Update', created_at: stamp }];
     else if (name === 'list_bid_files') body = [{ id: 'fixture-file', bid_id: args.p_bid_id, uploader_user_id: actor, uploader_name: 'TEST Admin', storage_path: 'fixture/test.png', original_filename: 'TEST-preview.png', content_type: 'image/png', byte_size: 68, created_at: stamp }];
     else if (name === 'list_bid_owners') body = [{ user_id: actor, display_name: 'TEST Admin' }];
     else if (name === 'bids') body = url.searchParams.has('id') ? bids.filter(row => row.id === url.searchParams.get('id')?.slice(3)) : bids;
     else if (name === 'jobs') body = jobs;
-    else if (name === 'planning_phases') body = [{ id: 'phase', job_id: jobs[0].id, title: 'TEST Pause', timeline_behavior: 'pause', start_date: '2026-10-08', end_date: '2026-10-09', created_at: stamp, updated_at: stamp }];
+    else if (name === 'planning_phases') body = phases;
+    else if (name === 'production_rework_cycles') body = reworks;
     else if (name === 'set_bid_projected_window') {
       writes.push({ name, body: args });
       if (failSave) return route.fulfill({ status: 409, contentType: 'application/json', body: JSON.stringify({ message: 'This Bid changed. Refresh before changing its projected window.', code: '40001' }) });
@@ -39,7 +39,6 @@ async function fixture(page: Page, role = 'admin', personalTraining = false) {
         bid.production_job_id = `job-${bid.id}`; bid.updated_at = `2026-09-22T13:00:${String(tick++).padStart(2, '0')}Z`;
         jobs.push({ ...jobs[0], id: bid.production_job_id, name: bid.project_name, planned_start: args.p_window_choice === 'carry' ? bid.projected_production_start! : String(args.p_start), planned_end: args.p_window_choice === 'carry' ? bid.projected_production_end! : String(args.p_end) });
       }
-      const workflow=workflows.find(w=>w.bid_id===bid.id);if(workflow)workflow.job_id=bid.production_job_id;
       body = bid.production_job_id;
     } else if (name === 'update_bid') {
       writes.push({ name, body: args }); const bid = bids.find(row => row.id === args.p_bid_id)!;
@@ -50,7 +49,7 @@ async function fixture(page: Page, role = 'admin', personalTraining = false) {
   await page.route('**/storage/v1/**', route => route.request().method() === 'POST' ? route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ signedURL: '/object/sign/bid-files/fixture/test.png?token=fixture' }) }) : route.fulfill({ status: 200, contentType: 'image/png', body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aL1kAAAAASUVORK5CYII=', 'base64') }));
   await mockManpowerAuth(page, role);
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
-  return { bids, jobs, calls, writes, errors, fail: () => { failSave = true; } };
+  return { bids, jobs, phases, reworks, calls, writes, errors, fail: () => { failSave = true; } };
 }
 const projection = (page: Page, number = 2) => page.locator(`[data-intake-planning-row="${intakePlanningDemo[number - 1].id}"]`);
 async function dragBy(page: Page, target: ReturnType<Page['locator']>, delta: number) {
@@ -136,42 +135,27 @@ test('narrow layout retains local scrolling, Inspector date editing and clear st
 });
 
 for (const role of ['admin', 'developer', 'lead', 'member', 'guest']) {
-  test(`Intake view/write separation: ${role}`, async ({ page }) => {
-    const f = await fixture(page, role); const writer = ['admin', 'developer'].includes(role);
+  test(`Early Access ordinary editing and separate conversion/deletion: ${role}`, async ({ page }) => {
+    const f = await fixture(page, role);
     await page.goto('/pre-production');
-    await expect(page.getByRole('heading', { name: 'Bids', exact: true })).toBeVisible();
-    await expect(page.locator('a[href="/pre-production"]')).toHaveCount(1);
-    await expect(page.getByRole('button', { name: 'New Bid', exact: true })).toBeEnabled({ enabled: writer });
+    await expect(page.getByRole('button', { name: 'New Bid', exact: true })).toBeEnabled();
+    await expect(page.getByRole('button', { name: /My Test|Create Test|Reset Test/ })).toHaveCount(0);
     await page.getByRole('button', { name: 'Planning', exact: true }).click();
-    await expect(page.locator('[data-intake-planning-row]')).toHaveCount(8);
-    await expect(projection(page).locator('[data-window-edge]')).toHaveCount(writer ? 2 : 0);
-    await page.getByRole('button', { name: 'Combined', exact: true }).click();
-    await expect(page.locator('[data-production-planning-row]')).toHaveCount(1);
-    await page.getByRole('button', { name: 'Today', exact: true }).click();
-    await page.getByRole('button', { name: 'Fit', exact: true }).click();
-    if (!writer) {
-      await dragBy(page, projection(page).getByRole('button', { name: 'PROJECTED', exact: true }), 40);
-      expect(f.writes).toEqual([]);
-      if (await page.getByRole('button', { name: 'Close Bid workspace', exact: true }).isVisible()) await page.getByRole('button', { name: 'Close Bid workspace', exact: true }).click();
-      await projection(page).getByRole('button', { name: /TEST — Hotel/ }).first().click();
-      await expect(page.getByLabel('Projected start', { exact: true })).toBeDisabled();
-      await expect(page.getByLabel('Deposit Received Date', { exact: true })).toBeDisabled();
-      await expect(page.getByRole('button', { name: 'Save Bid', exact: true })).toBeDisabled();
-      await expect(page.getByRole('button', { name: 'Save projected window', exact: true })).toBeDisabled();
-      await expect(page.getByRole('button', { name: 'Convert to Production', exact: true })).toHaveCount(0);
-      await expect(page.getByRole('button', { name: 'Permanently delete Bid', exact: true })).toHaveCount(0);
-      await expect(page.getByRole('button', { name: /Samples \/ Color Plates/ })).toBeDisabled();
-      await expect(page.getByRole('button', { name: /Proposal & Estimate/ })).toBeDisabled();
-      await page.getByRole('tab', { name: 'Updates', exact: true }).click();
-      await expect(page.getByText('TEST visible Update', { exact: true })).toBeVisible();
-      await expect(page.getByRole('button', { name: 'Add Update', exact: true })).toBeDisabled();
-      await page.getByRole('tab', { name: /^Files/ }).click();
-      for (const input of await page.locator('input[type="file"]').all()) await expect(input).toBeDisabled();
-      await expect(page.getByRole('button', { name: 'Remove TEST-preview.png', exact: true })).toBeDisabled();
-      await page.getByRole('button', { name: /TEST-preview.png image\/png/ }).click();
-      await expect(page.getByRole('img', { name: 'TEST-preview.png', exact: true })).toBeVisible();
-    }
-    expect(f.writes).toEqual([]); expect(f.errors).toEqual([]);
+    await expect(projection(page).locator('[data-window-edge]')).toHaveCount(2);
+    await dragBy(page, projection(page).getByRole('button', { name: 'PROJECTED', exact: true }), 20);
+    await expect.poll(() => f.writes.some(w => w.name === 'set_bid_projected_window')).toBe(true);
+    await projection(page).getByRole('button', { name: /TEST — Hotel/ }).first().click();
+    for (const name of ['Projected start', 'Deposit Received Date']) await expect(page.getByLabel(name,{exact:true})).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Save Bid', exact: true })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Convert to Production', exact: true })).toHaveCount(['admin','lead','member'].includes(role)?1:0);
+    await expect(page.getByRole('button', { name: 'Permanently delete Bid', exact: true })).toHaveCount(role==='admin'?1:0);
+    await page.getByRole('tab', { name: 'Updates', exact: true }).click();
+    await expect(page.getByLabel('Add Update',{exact:true})).toBeEnabled();
+    await page.getByRole('tab', { name: /^Files/ }).click();
+    for (const input of await page.locator('input[type="file"]').all()) await expect(input).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Remove TEST-preview.png', exact: true })).toBeEnabled();
+    expect(f.calls.some(c=>/training|personal_test/.test(c))).toBe(false);
+    expect(f.errors).toEqual([]);
   });
 }
 
@@ -302,7 +286,7 @@ test('Intake module badge is scoped, readable and responsive in light/dark', asy
   await page.getByRole('button', { name: 'Pipeline', exact: true }).click();
   const heading = page.getByRole('heading', { name: 'Bids', exact: true });
   await expect(heading).toBeVisible();
-  const badge = heading.locator('..').getByText('Under Development', { exact: true });
+  const badge = heading.locator('..').getByText('Early Access', { exact: true });
   for (const width of [1440, 390]) for (const appearance of ['light', 'dark']) {
     await page.setViewportSize({ width, height: 844 });
     await page.evaluate(mode => { document.documentElement.dataset.appearance = mode; }, appearance);
@@ -311,13 +295,13 @@ test('Intake module badge is scoped, readable and responsive in light/dark', asy
     expect(style.fg).not.toBe(style.bg); expect(style.border).toBe('solid');
     const nav = page.locator('a[href="/"][aria-haspopup="menu"]');
     await nav.focus();
-    await expect(page.locator('a[href="/pre-production"]').getByText('Under Development', { exact: true })).toBeVisible();
+    await expect(page.locator('a[href="/pre-production"]').getByText('Early Access', { exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await nav.evaluate(el => (el as HTMLElement).blur());
     await page.mouse.move(0, 500);
   }
   await page.getByRole('button', { name: 'Planning', exact: true }).click();
-  await expect(page.locator('[data-intake-planning-row]').getByText('Under Development', { exact: true })).toHaveCount(0);
+  await expect(page.locator('[data-intake-planning-row]').getByText('Early Access', { exact: true })).toHaveCount(0);
 });
 
 
@@ -344,7 +328,8 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1920, height: 100
       if (mode !== 'Projected Intake') {
         expect(await timeline.evaluate(el => el.scrollHeight > el.clientHeight)).toBe(true);
         await timeline.evaluate(el => { el.scrollTop = el.scrollHeight; });
-        await expect(page.locator('[data-production-planning-row]').last()).toBeInViewport();
+        // Combined is chronologically interleaved; its final row may be projected.
+        await expect(page.locator('[data-intake-planning-row], [data-production-planning-row]').last()).toBeInViewport();
       }
       await fit.click();
       const once = await timeline.evaluate(el => ({ left: el.scrollLeft, top: el.scrollTop, height: el.clientHeight, page: scrollY }));
@@ -380,32 +365,84 @@ test('anonymous cannot discover or load Intake', async ({ page }) => {
 });
 
 
-test('personal training authorizes only its own Bid and preserves normal read-only Intake', async ({ page }) => {
-  const f=await fixture(page,'lead',true);
-  await page.goto('/pre-production');
-  await expect(page.getByRole('button',{name:'New Bid',exact:true})).toBeDisabled();
-  await expect(page.getByRole('button',{name:'Open My Test Bid',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'Planning',exact:true}).click();
-  await expect(projection(page,2).locator('[data-window-edge]')).toHaveCount(2);
-  await expect(projection(page,8).locator('[data-window-edge]')).toHaveCount(0);
-  await dragBy(page,projection(page,2).getByRole('button',{name:'PROJECTED',exact:true}),20);
-  await expect.poll(()=>f.bids[1].projected_production_start).toBe('2026-10-06');
-  await page.getByRole('button',{name:'Open My Test Bid',exact:true}).click();
-  await expect(page.getByLabel('Projected start',{exact:true})).toBeEnabled();
-  await expect(page.getByRole('button',{name:'Save Bid',exact:true})).toBeEnabled();
-  await expect(page.getByRole('combobox',{name:'Owner',exact:true})).toBeDisabled();
-  await expect(page.getByRole('button',{name:'Delete / Reset Test Bid',exact:true})).toBeVisible();
-  await page.getByRole('combobox').filter({has:page.locator('option[value=won]')}).selectOption('won');
-  await page.getByLabel('Deposit Received Date',{exact:true}).fill('2026-09-22');
-  await page.getByRole('button',{name:'Save Bid',exact:true}).click();
-  await page.getByRole('button',{name:'Convert to Production',exact:true}).click();
-  await expect(page.getByText('A separate TEST identifier is assigned automatically.',{exact:false})).toBeVisible();
-  await page.getByRole('button',{name:'Confirm conversion',exact:true}).click();
-  await expect(page.getByRole('button',{name:'Delete My Test Production Job',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'Close Bid workspace',exact:true}).click();
-  await projection(page,8).getByRole('button',{name:/TEST — Award/}).first().click();
-  await expect(page.getByRole('button',{name:'Save Bid',exact:true})).toBeDisabled();
-  await expect(page.getByRole('button',{name:'Convert to Production',exact:true})).toHaveCount(0);
-  expect(f.writes.every(w=>w.body.p_bid_id===f.bids[1].id)).toBe(true);
-  expect(f.errors).toEqual([]);
+test('Timeline-only controls, chronological Rework interleaving and continuous Today marker',async({page})=>{
+ const f=await fixture(page);
+ f.reworks.push({id:'active-cycle',job_id:'fixture-job',sequence_number:2,production_status:'in_progress',planned_start:'2026-10-10',planned_end:'2026-10-11',updated_at:stamp});
+ f.phases.push({...f.phases[0],id:'earlier-phase',title:'Earlier phase',start_date:'2026-10-06',end_date:'2026-10-07'});
+ await page.goto('/pre-production');await page.getByRole('button',{name:'Planning',exact:true}).click();
+ await expect(page.getByRole('combobox',{name:'Planning view'})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:'Calendar',exact:true})).toHaveCount(0);
+ const scope=page.getByRole('group',{name:'Planning sources'});
+ await scope.getByRole('button',{name:'Combined',exact:true}).click();await expect(page.locator('[data-production-planning-row]')).toHaveCount(1);
+ const ids=await page.locator('[data-intake-planning-row], [data-production-planning-row]').evaluateAll(rows=>rows.map(r=>r.getAttribute('data-intake-planning-row')??r.getAttribute('data-production-planning-row')));
+ expect(ids.indexOf(f.bids[1].id)).toBeLessThan(ids.indexOf('fixture-job'));
+ expect(ids.indexOf('fixture-job')).toBeLessThan(ids.indexOf(f.bids[7].id));
+ const job=page.locator('[data-production-planning-row="fixture-job"]');await expect(job).toContainText('REWORK');
+ await expect(job.getByRole('button',{name:'PRODUCTION',exact:true})).toHaveAttribute('title',/2026-10-10 – 2026-10-11/);
+ const phases=await job.locator('button[title*="pause"]').allTextContents();expect(phases.join('|')).toMatch(/Earlier phase.*TEST Pause/);
+ const marker=page.locator('[data-continuous-today]');await expect(marker).toHaveCount(1);
+ const geometry=await marker.evaluate(el=>({height:el.getBoundingClientRect().height,parent:el.parentElement!.getBoundingClientRect().height,pointer:getComputedStyle(el).pointerEvents,style:getComputedStyle(el).borderLeftStyle}));
+ expect(geometry.height).toBe(geometry.parent);expect(geometry.pointer).toBe('none');expect(geometry.style).toBe('solid');
+ for(const name of ['Production','Projected Intake','Combined'])await scope.getByRole('button',{name,exact:true}).click();
+ expect(f.calls.filter(n=>n==='jobs')).toHaveLength(1);expect(f.calls.filter(n=>n==='planning_phases')).toHaveLength(1);
+ expect(f.writes).toEqual([]);expect(f.errors).toEqual([]);
+});
+
+
+test('Planning segmented sources switch immediately and reflow without changing data',async({page})=>{
+ const f=await fixture(page);await page.goto('/pre-production');await page.getByRole('button',{name:'Planning',exact:true}).click();
+ const sources=page.getByRole('group',{name:'Planning sources'});
+ await expect(sources.getByRole('button',{name:'Projected Intake',exact:true})).toHaveAttribute('aria-pressed','true');
+ await expect(page.getByRole('combobox',{name:'Planning source scope'})).toHaveCount(0);
+ for(const width of [1440,390])for(const appearance of ['light','dark']){
+  await page.setViewportSize({width,height:844});await page.evaluate(value=>document.documentElement.dataset.appearance=value,appearance);
+  for(const name of ['Combined','Production','Projected Intake']){
+   const button=sources.getByRole('button',{name,exact:true});await button.click();await expect(button).toHaveAttribute('aria-pressed','true');
+   await expect(sources.locator('[aria-pressed="true"]')).toHaveCount(1);
+   await expect(page.locator('[data-intake-planning-row]')).toHaveCount(name==='Production'?0:8);
+   await expect(page.locator('[data-production-planning-row]')).toHaveCount(name==='Projected Intake'?0:1);
+  }
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  for(const name of ['Zoom out','Zoom in','Today','Fit'])await expect(page.getByRole('button',{name,exact:true})).toBeVisible();
+ }
+ await sources.getByRole('button',{name:'Combined',exact:true}).focus();await page.keyboard.press('Enter');
+ await expect(sources.getByRole('button',{name:'Combined',exact:true})).toHaveAttribute('aria-pressed','true');
+ expect(f.calls.filter(n=>n==='jobs')).toHaveLength(1);expect(f.calls.filter(n=>n==='planning_phases')).toHaveLength(1);
+ expect(f.writes).toEqual([]);expect(f.errors).toEqual([]);
+});
+
+test('Early Access demo badges are UUID-only and Admin deletion is readable in both themes', async ({page}) => {
+ const f=await fixture(page);
+ f.bids[0].id='11000000-0000-4000-8000-000000000001'; // TEST-prefixed name cannot earn a badge.
+ f.bids[1].project_name='Hotel Lobby Terrazzo'; // Removing TEST from a known ID keeps its badge.
+ await page.goto('/pre-production');
+ await page.getByRole('tab',{name:'All',exact:true}).click();
+ await expect(page.getByText('TEST',{exact:true})).toHaveCount(7);
+ await page.getByRole('button',{name:/Hotel Lobby Terrazzo/}).first().click();
+ const dialog=page.getByRole('dialog',{name:/Hotel Lobby Terrazzo/});
+ await expect(dialog.getByText('TEST',{exact:true})).toHaveCount(1);
+ const remove=page.getByRole('button',{name:'Permanently delete Bid',exact:true});
+ for(const appearance of ['light','dark']) {
+  await page.evaluate(mode=>{document.documentElement.dataset.appearance=mode;},appearance);
+  for(const state of ['normal','hover','focus']) {
+   if(state==='hover')await remove.hover();
+   else if(state==='focus'){await remove.focus();await page.keyboard.press('Tab');await page.keyboard.press('Shift+Tab');await expect(remove).toBeFocused();}
+   const ratios=await remove.evaluate(el=>{
+    const rgb=(s:string)=>s.match(/[\d.]+/g)!.slice(0,3).map(Number).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
+    const lum=(s:string)=>rgb(s).reduce((v,c,i)=>v+c*[.2126,.7152,.0722][i],0);
+    const contrast=(a:string,b:string)=>(Math.max(lum(a),lum(b))+.05)/(Math.min(lum(a),lum(b))+.05);
+    const s=getComputedStyle(el);return {text:contrast(s.color,s.backgroundColor),border:contrast(s.borderTopColor,s.backgroundColor),outline:s.outlineStyle};
+   });
+   expect(ratios.text).toBeGreaterThanOrEqual(4.5);expect(ratios.border).toBeGreaterThanOrEqual(3);
+   if(state==='focus')expect(ratios.outline).toBe('solid');
+  }
+  await page.screenshot({path:`/tmp/intake-early-destructive-${appearance}.png`});
+ }
+ const prompt=page.waitForEvent('dialog');const clicking=remove.click();const confirmation=await prompt;
+ expect(confirmation.type()).toBe('prompt');expect(confirmation.message()).toContain('Hotel Lobby Terrazzo');
+ await confirmation.dismiss();await clicking;expect(f.writes).toEqual([]);
+ await page.getByRole('button',{name:'Close Bid workspace',exact:true}).click();
+ await page.getByRole('button',{name:'Planning',exact:true}).click();
+ await expect(page.locator('[data-intake-planning-row]').getByText('TEST',{exact:true})).toHaveCount(7);
+ expect(f.calls.some(c=>/training|personal_test/.test(c))).toBe(false);
 });
