@@ -34,7 +34,8 @@
     "papaparse": "^5.5.3",
     "pdfjs-dist": "^6.2.108",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

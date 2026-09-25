@@ -1,3 +1,4 @@
+import { INBOX_ATTACHMENT_BUCKET, downloadUrl } from "./messaging/files";
 import { supabase } from "@/lib/supabase";
 import type { WorkCollaborator } from "./types";
 
@@ -48,7 +49,18 @@ export async function loadRecentInboxMessages(limit=40):Promise<RecentInboxMessa
   return((data??[]) as Array<{id:string;sender_user_id:string;recipient_user_id:string;body:string;read_at:string|null;created_at:string}>).map(row=>({id:row.id,senderUserId:row.sender_user_id,recipientUserId:row.recipient_user_id,body:row.body,readAt:row.read_at??"",createdAt:row.created_at}));
 }
 
-export async function loadInboxAttachments(messageIds:string[]):Promise<InboxAttachment[]>{if(!messageIds.length)return[];const{data,error}=await supabase.from("my_work_message_attachments").select("id,message_id,storage_path,original_filename,content_type,byte_size,created_at").in("message_id",messageIds).order("created_at").order("id");if(error)throw error;return((data??[]) as Array<{id:string;message_id:string;storage_path:string;original_filename:string;content_type:string;byte_size:number;created_at:string}>).map(row=>({id:row.id,messageId:row.message_id,storagePath:row.storage_path,originalFilename:row.original_filename,contentType:row.content_type,byteSize:Number(row.byte_size),createdAt:row.created_at,previewUrl:""}));}
+export async function loadInboxAttachments(messageIds:string[]):Promise<InboxAttachment[]>{
+  const result:InboxAttachment[]=[];
+  for(let batch=0;batch<messageIds.length;batch+=50){
+    for(let offset=0;;offset+=500){
+      const{data,error}=await supabase.from("my_work_message_attachments").select("id,message_id,storage_path,original_filename,content_type,byte_size,created_at").in("message_id",messageIds.slice(batch,batch+50)).order("created_at").order("id").range(offset,offset+499);
+      if(error)throw error;
+      for(const row of data??[])result.push({id:row.id,messageId:row.message_id,storagePath:row.storage_path,originalFilename:row.original_filename,contentType:row.content_type,byteSize:Number(row.byte_size),createdAt:row.created_at,previewUrl:""});
+      if((data?.length??0)<500)break;
+    }
+  }
+  return result;
+}
 
 export async function loadInboxRecipients(): Promise<WorkCollaborator[]> {
   const { data, error } = await supabase.rpc("list_my_work_inbox_recipients");
@@ -62,33 +74,12 @@ export async function sendInboxMessage(recipientUserId: string, body: string, jo
   return String(data);
 }
 
-const INBOX_ATTACHMENT_BUCKET="my-work-inbox-attachments";
-const safeFilename=(name:string)=>name.normalize("NFKC").replace(/[^a-zA-Z0-9._ -]+/g,"_").replace(/\s+/g," ").trim().slice(0,180)||"attachment";
-
-export async function sendInboxMessageWithAttachments(recipientUserId:string,body:string,jobId:string,files:File[],onStage?:(stage:'uploading'|'associating'|'finalizing')=>void){
-  const user=await supabase.auth.getUser();if(user.error||!user.data.user)throw user.error??new Error("Sign in is required to attach files.");
-  const draft=await supabase.rpc("create_my_work_inbox_message_draft",{p_recipient_user_id:recipientUserId,p_body:body,p_job_id:jobId||null});if(draft.error)throw draft.error;
-  const messageId=String(draft.data);const uploaded:string[]=[];
-  try{
-    for(const file of files){
-      if(file.size>26214400)throw new Error(`${file.name} exceeds the 25 MB attachment limit.`);
-      const id=crypto.randomUUID();const storagePath=`${messageId}/${id}/${safeFilename(file.name)}`;const contentType=file.type||"application/octet-stream";
-      onStage?.('uploading');const stored=await supabase.storage.from(INBOX_ATTACHMENT_BUCKET).upload(storagePath,file,{contentType,upsert:false});if(stored.error)throw stored.error;uploaded.push(storagePath);
-      onStage?.('associating');
-      const metadata=await supabase.from("my_work_message_attachments").insert({id,message_id:messageId,uploader_user_id:user.data.user.id,storage_path:storagePath,original_filename:file.name,content_type:contentType,byte_size:file.size});if(metadata.error)throw metadata.error;
-    }
-    onStage?.('finalizing');const finalized=await supabase.rpc("finalize_my_work_inbox_message",{p_message_id:messageId,p_expected_attachment_count:files.length});if(finalized.error)throw finalized.error;
-    return messageId;
-  }catch(caught){
-    const removed=uploaded.length?await supabase.storage.from(INBOX_ATTACHMENT_BUCKET).remove(uploaded):{error:null};
-    if(!removed.error)await supabase.rpc("discard_my_work_inbox_message_draft",{p_message_id:messageId});
-    if(removed.error)throw new Error(`${caught instanceof Error?caught.message:"Unable to send message."} The private draft was retained because attachment cleanup did not complete.`);
-    throw caught;
-  }
-}
-
 export async function createInboxAttachmentUrl(attachment:InboxAttachment){const signed=await supabase.storage.from(INBOX_ATTACHMENT_BUCKET).createSignedUrl(attachment.storagePath,600);if(signed.error)throw signed.error;return signed.data.signedUrl;}
-export async function openInboxAttachment(attachment:InboxAttachment){window.open(await createInboxAttachmentUrl(attachment),"_blank","noopener,noreferrer");}
+export async function openInboxAttachment(attachment:InboxAttachment){
+  const url=downloadUrl(await createInboxAttachmentUrl(attachment),attachment.originalFilename);
+  const link=document.createElement('a');link.href=url;link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';link.target='_blank';
+  document.body.appendChild(link);link.click();link.remove();
+}
 
 export async function markInboxConversationRead(otherUserId: string) {
   const { error } = await supabase.rpc("mark_my_work_inbox_conversation_read", { p_other_user_id: otherUserId });

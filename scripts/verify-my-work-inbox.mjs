@@ -53,11 +53,12 @@ assert.match(dialog, /event:"UPDATE"[\s\S]*recipient_user_id=eq\.\$\{currentUser
 assert.match(dialog, /removeChannel\(channel\)/);
 assert.match(dialog, /event\.key!=="Escape"/);
 assert.match(dialog, /event\.key==="Enter"&&!event\.shiftKey/);
-assert.match(dialog, /<AttachmentFileInput/);
+assert.match(dialog, /useAttachmentQueue/);
+assert.match(dialog, /type="file" multiple/);
 assert.match(attachmentInput, /type="file" multiple accept=\{attachmentAccept\}/);
 assert.match(attachmentInput, /new File\(\[await file\.arrayBuffer\(\)\]/);
 assert.match(attachmentInput, /onFiles\(owned\)[\s\S]*finally[\s\S]*input\.value=""/, "camera files must be owned by application state before the native input resets");
-assert.match(dialog, /sendInboxMessageWithAttachments/);
+assert.match(dialog, /startTransfer/);
 assert.match(dialog, /AttachmentView/);
 assert.match(dialog, /preview\?\.previewUrl/);
 assert.match(dialog, /pb-\[max\(\.75rem,env\(safe-area-inset-bottom\)\)\]/);
@@ -75,9 +76,10 @@ assert.doesNotMatch(inbox, /typing/, "typing state must remain ephemeral and out
 assert.match(inbox, /list_my_work_inbox_messages_v2/);
 assert.match(inbox, /editedAt/);
 assert.match(inbox, /send_my_work_inbox_message/);
-assert.match(inbox, /create_my_work_inbox_message_draft/);
-assert.match(inbox, /finalize_my_work_inbox_message/);
-assert.match(inbox, /discard_my_work_inbox_message_draft/);
+const transferClient=await read("src/modules/my-work/messaging/client.ts");
+assert.match(transferClient, /begin_my_work_attachment_transfer/);
+assert.match(transferClient, /finalize_my_work_inbox_message/);
+assert.match(transferClient, /discard_my_work_inbox_message_draft/);
 assert.match(inbox, /createSignedUrl/);
 assert.match(inbox, /mark_my_work_inbox_conversation_read/);
 assert.match(page, /<ToolboxLauncher \/>/);
