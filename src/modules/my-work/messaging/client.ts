@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { generatePreview } from './preview';
 import { INBOX_ATTACHMENT_BUCKET } from './files';
 import { MessageTransfer, clearUploadUrls, uploadResumable, type Draft, type Transport } from './transfer';
 
@@ -11,6 +12,16 @@ export const transport: Transport = {
   begin: draft=>rpc('begin_my_work_attachment_transfer',{p_id:draft.id,p_recipient:draft.recipient,p_body:draft.body,p_job:draft.job||null,p_files:draft.entries}),
   status: id=>rpc('my_work_attachment_transfer_status',{p_id:id}),
   heartbeat:id=>rpc('heartbeat_my_work_attachment_transfer',{p_id:id}),
+  preview:async(_id,entry,file,signal)=>{
+    const preview=await generatePreview(file,entry.contentType,signal);if(!preview||signal.aborted)return;
+    const bounded=AbortSignal.any([signal,AbortSignal.timeout(15000)]);
+    const {data:path,error:reservationError}=await supabase.rpc('reserve_my_work_attachment_preview',{p_attachment:entry.id,p_bytes:preview.blob.size,p_width:preview.width,p_height:preview.height}).abortSignal(bounded);
+    if(reservationError)throw reservationError;if(bounded.aborted)return;
+    const {data:{session}}=await supabase.auth.getSession();if(!session)return;
+    // Raw bounded body avoids multipart MIME inference. No upsert; retry cannot overwrite.
+    const response=await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/${INBOX_ATTACHMENT_BUCKET}/${path}`,{method:'POST',signal:bounded,headers:{Authorization:`Bearer ${session.access_token}`,apikey:process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,'Content-Type':'application/octet-stream','Cache-Control':'max-age=0','x-upsert':'false'},body:preview.blob});
+    if(!response.ok&&response.status!==409)throw Error('Preview unavailable.');
+  },
   finalize:(id,count)=>rpc('finalize_my_work_inbox_message',{p_message_id:id,p_expected_attachment_count:count}),
   cancel:id=>rpc('cancel_my_work_attachment_transfer',{p_id:id}),
   discard:id=>rpc('discard_my_work_inbox_message_draft',{p_message_id:id}),

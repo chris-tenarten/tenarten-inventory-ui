@@ -1,3 +1,4 @@
+import type { PreviewMetadata } from "./messaging/preview";
 import { INBOX_ATTACHMENT_BUCKET, downloadUrl } from "./messaging/files";
 import { supabase } from "@/lib/supabase";
 import type { WorkCollaborator } from "./types";
@@ -21,46 +22,29 @@ export type InboxMessage = {
   attachments: InboxAttachment[];
 };
 
-export type InboxAttachment = { id: string; messageId: string; storagePath: string; originalFilename: string; contentType: string; byteSize: number; createdAt: string; previewUrl: string };
+export type InboxAttachment = { id: string; messageId: string; storagePath: string; originalFilename: string; contentType: string; byteSize: number; createdAt: string; previewUrl: string; preview?: PreviewMetadata | null };
 
 type InboxMessageRow = {
   id: string; sender_user_id: string; sender_name: string; recipient_user_id: string; recipient_name: string;
   body: string; job_id: string | null; job_number: string | null; job_name: string | null; read_at: string | null; created_at: string; edited_at: string | null;
 };
 
-export async function loadInboxMessages(): Promise<InboxMessage[]> {
-  const { data, error } = await supabase.rpc("list_my_work_inbox_messages_v2");
-  if (error) throw error;
-  const messages = ((data ?? []) as InboxMessageRow[]).map((row): InboxMessage => ({
-    id: row.id, senderUserId: row.sender_user_id, senderName: row.sender_name,
-    recipientUserId: row.recipient_user_id, recipientName: row.recipient_name,
-    body: row.body, jobId: row.job_id ?? "", jobNumber: row.job_number ?? "", jobName: row.job_name ?? "",
-    readAt: row.read_at ?? "", createdAt: row.created_at, editedAt: row.edited_at ?? "", attachments: [],
+export type ConversationSummary={userId:string;name:string;role:string;unread:number;latest:{id:string;createdAt:string;body:string}};
+export async function loadConversationSummaries():Promise<ConversationSummary[]>{
+  const {data,error}=await supabase.rpc("list_my_work_conversations_v11");if(error)throw error;return data??[];
+}
+export type MessageCursor={createdAt:string;id:string};
+export async function loadMessagePage(peer:string,before?:MessageCursor,ids?:string[]):Promise<InboxMessage[]>{
+  const {data,error}=await supabase.rpc("list_my_work_message_page_v11",{p_peer:peer,p_before_time:before?.createdAt??null,p_before_id:before?.id??null,p_ids:ids??null});
+  if(error)throw error;
+  return (data??[]).map((row:InboxMessageRow&{attachments:Array<{id:string;message_id:string;storage_path:string;original_filename:string;content_type:string;byte_size:number;created_at:string;preview:PreviewMetadata|null}>}):InboxMessage=>({
+    id:row.id,senderUserId:row.sender_user_id,senderName:row.sender_name,recipientUserId:row.recipient_user_id,recipientName:row.recipient_name,
+    body:row.body,jobId:row.job_id??"",jobNumber:row.job_number??"",jobName:row.job_name??"",readAt:row.read_at??"",createdAt:row.created_at,editedAt:row.edited_at??"",
+    attachments:row.attachments.map(a=>({id:a.id,messageId:a.message_id,storagePath:a.storage_path,originalFilename:a.original_filename,contentType:a.content_type,byteSize:Number(a.byte_size),createdAt:a.created_at,previewUrl:"",preview:a.preview})),
   }));
-  return messages;
 }
 
 export async function loadInboxUnreadCount(recipientUserId:string){const{count,error}=await supabase.from("my_work_messages").select("id",{count:"exact",head:true}).eq("recipient_user_id",recipientUserId).eq("delivery_status","ready").is("read_at",null);if(error)throw error;return count??0;}
-
-export type RecentInboxMessage={id:string;senderUserId:string;recipientUserId:string;body:string;readAt:string;createdAt:string};
-export async function loadRecentInboxMessages(limit=40):Promise<RecentInboxMessage[]>{
-  const{data,error}=await supabase.from("my_work_messages").select("id,sender_user_id,recipient_user_id,body,read_at,created_at").eq("delivery_status","ready").order("created_at",{ascending:false}).order("id",{ascending:false}).limit(limit);
-  if(error)throw error;
-  return((data??[]) as Array<{id:string;sender_user_id:string;recipient_user_id:string;body:string;read_at:string|null;created_at:string}>).map(row=>({id:row.id,senderUserId:row.sender_user_id,recipientUserId:row.recipient_user_id,body:row.body,readAt:row.read_at??"",createdAt:row.created_at}));
-}
-
-export async function loadInboxAttachments(messageIds:string[]):Promise<InboxAttachment[]>{
-  const result:InboxAttachment[]=[];
-  for(let batch=0;batch<messageIds.length;batch+=50){
-    for(let offset=0;;offset+=500){
-      const{data,error}=await supabase.from("my_work_message_attachments").select("id,message_id,storage_path,original_filename,content_type,byte_size,created_at").in("message_id",messageIds.slice(batch,batch+50)).order("created_at").order("id").range(offset,offset+499);
-      if(error)throw error;
-      for(const row of data??[])result.push({id:row.id,messageId:row.message_id,storagePath:row.storage_path,originalFilename:row.original_filename,contentType:row.content_type,byteSize:Number(row.byte_size),createdAt:row.created_at,previewUrl:""});
-      if((data?.length??0)<500)break;
-    }
-  }
-  return result;
-}
 
 export async function loadInboxRecipients(): Promise<WorkCollaborator[]> {
   const { data, error } = await supabase.rpc("list_my_work_inbox_recipients");
@@ -68,8 +52,8 @@ export async function loadInboxRecipients(): Promise<WorkCollaborator[]> {
   return ((data ?? []) as Array<{ user_id: string; display_name: string; role: string }>).map((row) => ({ userId: row.user_id, displayName: row.display_name, role: row.role }));
 }
 
-export async function sendInboxMessage(recipientUserId: string, body: string, jobId: string) {
-  const { data, error } = await supabase.rpc("send_my_work_inbox_message", { p_recipient_user_id: recipientUserId, p_body: body, p_job_id: jobId || null });
+export async function sendInboxMessage(recipientUserId: string, body: string) {
+  const { data, error } = await supabase.rpc("send_my_work_inbox_message", { p_recipient_user_id: recipientUserId, p_body: body, p_job_id: null });
   if (error) throw error;
   return String(data);
 }

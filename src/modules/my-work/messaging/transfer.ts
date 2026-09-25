@@ -8,6 +8,7 @@ export type Transport = {
   status(id: string): Promise<{ status: string; completed: string[] }>;
   heartbeat(id: string): Promise<void>;
   upload(id: string, entry: Entry, file: File, signal: AbortSignal, progress: (bytes:number, retrying?:boolean)=>void): Promise<void>;
+  preview?(id:string,entry:Entry,file:File,signal:AbortSignal):Promise<void>;
   finalize(id: string, count: number): Promise<void>;
   cancel(id: string): Promise<string[]>;
   remove(paths: string[]): Promise<void>;
@@ -85,6 +86,10 @@ export class MessageTransfer {
             const recovered = await this.transport.status(this.draft.id);
             if (!recovered.completed.includes(entry.id)) throw error;
           }
+        }
+        // Optional bounded derivative. Original transfer/finalization never depends on it.
+        if (!this.cancelRequested && this.transport.preview) {
+          try { await this.transport.preview(this.draft.id,entry,this.files[i],this.abort.signal); } catch { /* Download remains available without a preview. */ }
         }
         completed += entry.size;
         this.set({uploaded:completed,fileUploaded:entry.size});

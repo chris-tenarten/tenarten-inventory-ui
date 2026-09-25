@@ -56,3 +56,7 @@ Pre-Production/Bid pipeline and generic Sample Form generation are next in Produ
 - Durable product principles: `docs/project-memory/BLUEPRINT.md`
 - Current unresolved decisions: `docs/project-memory/OPEN_QUESTIONS.md`
 - Workflow-specific documentation: `docs/workflows/`
+
+## Pending isolated Messaging V1.1 candidate — 2026-09-25
+
+[Messaging V1.1 candidate and release requirements](2026-09-25-messaging-v11-candidate.md) records the local-only recipient reconciliation fix, bounded private lazy image previews, 40-message pagination, and retirement of new private Messaging Job links. Production has not received this migration/client. The approved 50 MB/file and 200 MB/message transfer limits remain unchanged. Job-context coordination belongs in Job Updates and My Work shared tasks.
