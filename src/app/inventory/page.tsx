@@ -1,5 +1,6 @@
 'use client';
 
+import { loadCompleteRows } from '@/lib/complete-rows';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import {
@@ -530,14 +531,15 @@ export default function InventoryPage() {
     setLoading(true);
     setLoadError('');
 
-    const { data, error } = await supabase
+    const { data, error } = await loadCompleteRows((from, to) => supabase
       .from('inventory_items')
       .select(
-        'id, vendor, color, size, category, quantity, unit, location, pallet_number, notes, earmarked_for_job, earmarked_job, earmark_notes, production_job_id, temporary_job_label, production_job:jobs!production_job_id(id,name,job_number,production_status,archived_at), updated_at, last_counted_at, last_counted_by',
+        'id, vendor, color, size, category, quantity, unit, location, pallet_number, notes, earmarked_for_job, earmarked_job, earmark_notes, production_job_id, temporary_job_label, production_job:jobs!production_job_id(id,name,job_number,production_status,archived_at), updated_at, last_counted_at, last_counted_by', { count: 'exact' },
       )
       .order('vendor', { ascending: true })
       .order('color', { ascending: true })
-      .order('size', { ascending: true });
+      .order('size', { ascending: true }).order('id').range(from, to))
+      .then(data => ({ data, error: null })).catch(error => ({ data: null, error }));
 
     if (error) {
       console.error('Failed to load inventory:', error);
@@ -554,10 +556,10 @@ export default function InventoryPage() {
     setPendingReceivalsLoading(true);
     setPendingReceivalsError('');
 
-    const { data, error } = await supabase
+    const { data, error } = await loadCompleteRows((from, to) => supabase
       .from('pending_receivals')
       .select(
-        'id, vendor, material_name, size, category, quantity_expected, quantity_received, unit, location, pallet_number, status, ordered_by, order_date, received_by, eta, notes, created_at, received_at, is_earmarked, earmarked_job_name, earmark_notes, production_job_id, temporary_job_label, receipt_inventory_item_id, receipt_transaction_id, receipt_created_inventory_item, production_job:jobs!production_job_id(id,name,job_number,production_status,archived_at)',
+        'id, vendor, material_name, size, category, quantity_expected, quantity_received, unit, location, pallet_number, status, ordered_by, order_date, received_by, eta, notes, created_at, received_at, is_earmarked, earmarked_job_name, earmark_notes, production_job_id, temporary_job_label, receipt_inventory_item_id, receipt_transaction_id, receipt_created_inventory_item, production_job:jobs!production_job_id(id,name,job_number,production_status,archived_at)', { count: 'exact' },
       )
       .in('status', ['pending', 'partially_received', 'received'])
       .order('eta', { ascending: true, nullsFirst: false })
@@ -565,7 +567,8 @@ export default function InventoryPage() {
       // Batch-created rows can share timestamps; receive/undo must not reshuffle ties.
       .order('material_name', { ascending: true })
       .order('size', { ascending: true, nullsFirst: false })
-      .order('id', { ascending: true });
+      .order('id', { ascending: true }).range(from, to))
+      .then(data => ({ data, error: null })).catch(error => ({ data: null, error }));
 
     if (error) {
       console.error('Failed to load pending receivals:', error);
@@ -2332,6 +2335,7 @@ export default function InventoryPage() {
           inert={!pendingReceivalsExpanded}
           className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${pendingReceivalsExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
         >
+          {pendingReceivalsExpanded && (
           <div className="min-h-0 overflow-hidden">
             <div className="flex flex-wrap items-center justify-end gap-2 border-b border-slate-200 bg-white px-5 py-3">
             {pendingReceivals.some((item) => item.status === 'received') && (
@@ -2551,7 +2555,7 @@ export default function InventoryPage() {
             </div>
           )}
         </div>
-          </div>
+          </div>)}
         </div>
       </section>
     );

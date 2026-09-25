@@ -53,7 +53,7 @@ import type { PlanningScheduleIssue } from '@/modules/planning/schedule-model.mj
 import SchedulingFeedbackPanel from '@/modules/planning/SchedulingFeedbackPanel';
 import type { ProductionIntegrationSummary } from './jobs';
 import { useLanguage } from '@/lib/language';
-import { loadPlanningItems, loadPlanningPhases } from '@/modules/planning/data';
+import { loadPlanningProgressItems, loadPlanningPhases, type PlanningProgressItem } from '@/modules/planning/data';
 import type { PlanningItem, PlanningPhase } from '@/modules/planning/types';
 import { isPlanningEnabled } from '@/modules/planning/timeline-model.mjs';
 import { useAuth } from '@/lib/auth';
@@ -110,7 +110,9 @@ export default function ProductionWorkspace() {
   const [jobUpdateSummaries, setJobUpdateSummaries] = useState<Record<string, JobUpdateSummary>>({});
   const [integrationSummaries, setIntegrationSummaries] = useState<Record<string, ProductionIntegrationSummary>>({});
   const [planningPhases, setPlanningPhases] = useState<PlanningPhase[]>([]);
-  const [planningItems, setPlanningItems] = useState<PlanningItem[]>([]);
+  const [progressError, setProgressError] = useState('');
+  const [progressLoading, setProgressLoading] = useState(false);
+  const [planningItems, setPlanningItems] = useState<PlanningProgressItem[]>([]);
   const planningPhasesRef = useRef<PlanningPhase[]>([]);
   const jobLoadRequestRef = useRef(0);
   const jobLoadInFlightRef = useRef<{ key: string; promise: Promise<void> } | null>(null);
@@ -272,11 +274,8 @@ export default function ProductionWorkspace() {
         }
 
         const planningDataPromise = planningEnabled
-          ? loadPlanningPhases(visibleJobs.map((job) => job.id)).then(async (loadedPlanningPhases) => ({
-            phases: loadedPlanningPhases,
-            items: await loadPlanningItems(loadedPlanningPhases.map((phase) => phase.id)),
-          }))
-          : Promise.resolve({ phases: [] as PlanningPhase[], items: [] as PlanningItem[] });
+          ? loadPlanningPhases(visibleJobs.map((job) => job.id)).then((phases) => ({ phases }))
+          : Promise.resolve({ phases: [] as PlanningPhase[] });
         const [[loadedCounts, summaries, updateSummaries], planningData] = await Promise.all([
           supportingDataPromise,
           planningDataPromise,
@@ -286,7 +285,6 @@ export default function ProductionWorkspace() {
         setIntegrationSummaries(summaries);
         setJobUpdateSummaries(updateSummaries);
         setPlanningPhases(planningData.phases);
-        setPlanningItems(planningData.items);
       } catch (error) {
         if (requestId !== jobLoadRequestRef.current) return;
         console.error(error);
@@ -312,6 +310,19 @@ export default function ProductionWorkspace() {
   useEffect(() => {
     if (dashboardMode !== 'snapshot') void loadJobs();
   }, [dashboardMode, loadJobs]);
+
+  useEffect(() => {
+    if (!planningEnabled || dashboardMode === 'snapshot' || activeView !== 'timeline') return;
+    let live = true;
+    setPlanningItems([]);
+    setProgressLoading(true);
+    setProgressError('');
+    void loadPlanningProgressItems(planningPhases.map((phase) => phase.id))
+      .then((items) => { if (live) setPlanningItems(items); })
+      .catch((error: unknown) => { if (live) setProgressError(error instanceof Error ? error.message : 'Unable to load Timeline progress.'); })
+      .finally(() => { if (live) setProgressLoading(false); });
+    return () => { live = false; };
+  }, [activeView, dashboardMode, planningPhases]);
 
   useEffect(() => {
     planningPhasesRef.current = planningPhases;
@@ -992,7 +1003,7 @@ export default function ProductionWorkspace() {
               onSelectJob={selectJob}
             />
           ) : (
-            <ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} planningPhases={planningPhases} planningItems={planningItems} stagedPlanningSchedules={stagedPlanningSchedules} onStagePlanningSchedules={stagePlanningSchedules} planningEnabled={planningEnabled} onSelectPlanningPhase={(job, phase) => selectJob(job, `planning:${phase.id}`)} planningIssues={activePlanningIssues} onPreviewPlanningIssuesChange={setPreviewPlanningIssues} onDependencyIssueFocus={setFocusedPlanningIssueId} />
+            <><p role={progressError ? 'alert' : 'status'} className="text-xs text-slate-600">{progressError || (progressLoading ? 'Loading Timeline progress…' : '')}</p><ProductionGantt jobs={filteredJobs} stagedSchedules={stagedSchedules} onStageSchedule={stageSchedule} onSelectJob={selectJob} planningPhases={planningPhases} planningItems={planningItems} stagedPlanningSchedules={stagedPlanningSchedules} onStagePlanningSchedules={stagePlanningSchedules} planningEnabled={planningEnabled} onSelectPlanningPhase={(job, phase) => selectJob(job, `planning:${phase.id}`)} planningIssues={activePlanningIssues} onPreviewPlanningIssuesChange={setPreviewPlanningIssues} onDependencyIssueFocus={setFocusedPlanningIssueId} /></>
           )}
         </div>
       </div>}
@@ -1063,6 +1074,7 @@ export default function ProductionWorkspace() {
         key={`${selectedJob.id}:${inspectorFocus ?? ''}`}
         job={stagedSchedules[selectedJob.id] ? { ...selectedJob, planned_start: stagedSchedules[selectedJob.id].proposed_planned_start, planned_end: stagedSchedules[selectedJob.id].proposed_planned_end } : selectedJob}
         jobNumberOwners={jobs}
+        attachmentCount={attachmentCounts[selectedJob.id] ?? 0}
         jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? EMPTY_JOB_UPDATE_SUMMARY}
         onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged}
         onClose={closeInspector}

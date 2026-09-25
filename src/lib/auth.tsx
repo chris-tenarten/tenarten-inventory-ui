@@ -87,6 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let live = true;
+    let initialAuthSnapshotReceived = false;
     let authChangeProfileTimer: number | null = null;
     void supabase.auth.getSession().then(async ({ data }) => {
       if (!live) return;
@@ -97,6 +98,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (live) setReady(true);
     });
     const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      // getSession above owns bootstrap. Supabase also emits INITIAL_SESSION
+      // for that same snapshot; it must not repeat profile/welcome requests.
+      if (event === "INITIAL_SESSION") { initialAuthSnapshotReceived = true; return; }
+      // Session recovery emits SIGNED_IN before INITIAL_SESSION. getSession
+      // resolves that recovered session too. Later sign-ins still refresh.
+      if (event === "SIGNED_IN" && !initialAuthSnapshotReceived) return;
       const accountFlow = new URLSearchParams(window.location.search).get("account");
       const callbackFlow = accountFlow === "setup" || accountFlow === "recovery";
       setRequiresPasswordSetup(Boolean(nextSession) && (event === "PASSWORD_RECOVERY" || callbackFlow));

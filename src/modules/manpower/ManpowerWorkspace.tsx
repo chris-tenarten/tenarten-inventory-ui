@@ -23,6 +23,8 @@ import {
   deleteManpowerEntries,
   deleteEmptyManpowerReportingGroup,
   loadManpowerEntries,
+  loadManpowerEntryFacts,
+  hydrateManpowerEntries,
   loadManpowerJobs,
   loadManpowerReferences,
   loadManpowerReportingGroups,
@@ -648,9 +650,10 @@ export default function ManpowerWorkspace() {
   const load = useCallback(async () => {
     setLoading(true); setError(''); setLoadError('');
     try {
-      const [loadedEntries, loadedJobs, loadedGroups, loadedWorkers, loadedTasks, loadedCategories] = await Promise.all([
-        loadManpowerEntries(), loadManpowerJobs(), loadManpowerReportingGroups(), loadManpowerReferences('manpower_workers'), loadManpowerReferences('manpower_tasks'), loadProductCategories(),
+      const [entryFacts, loadedJobs, loadedGroups, loadedWorkers, loadedTasks, loadedCategories] = await Promise.all([
+        loadManpowerEntryFacts(), loadManpowerJobs(), loadManpowerReportingGroups(), loadManpowerReferences('manpower_workers'), loadManpowerReferences('manpower_tasks'), loadProductCategories(),
       ]);
+      const loadedEntries = hydrateManpowerEntries(entryFacts, loadedWorkers, loadedTasks, loadedGroups);
       setEntries(loadedEntries); setJobs(loadedJobs); setReportingGroups(loadedGroups); setWorkers(loadedWorkers); setTasks(loadedTasks); setCategories(loadedCategories);
       if (!collapseInitialized.current) {
         setCollapsed(new Set([

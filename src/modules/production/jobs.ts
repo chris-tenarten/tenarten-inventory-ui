@@ -550,8 +550,8 @@ export async function loadJobUpdateMentions(jobId: string) {
 export async function loadJobAttachmentCounts(): Promise<
   Record<string, number>
 > {
-  const { data, error } = await supabase.from('job_attachments').select('job_id');
-  if (error) throw error;
+  const data = await loadCompleteRows((from, to) => supabase.from('job_attachments')
+    .select('id,job_id', { count: 'exact' }).order('id').range(from, to));
 
   return (data ?? []).reduce<Record<string, number>>((counts, row) => {
     const jobId = String(row.job_id);
@@ -563,14 +563,13 @@ export async function loadJobAttachmentCounts(): Promise<
 export async function loadJobAttachments(
   jobId: string,
 ): Promise<JobAttachment[]> {
-  const { data, error } = await supabase
+  return await loadCompleteRows((from, to) => supabase
     .from('job_attachments')
-    .select(ATTACHMENT_COLUMNS)
+    .select(ATTACHMENT_COLUMNS, { count: 'exact' })
     .eq('job_id', jobId)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }).order('id').range(from, to)
+    .returns<JobAttachment[]>());
 
-  if (error) throw error;
-  return (data ?? []) as unknown as JobAttachment[];
 }
 
 function safeFileName(fileName: string) {

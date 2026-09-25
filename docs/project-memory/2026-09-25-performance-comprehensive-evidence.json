@@ -1,0 +1,1223 @@
+{
+  "canonical": "1ff0a134a1389aa2a7fa0a2f91ef3d1a284a74fe",
+  "acceptedBatch1": "662fce1c9f17c5e4286c133922d80cc40778a448",
+  "method": "Production static exports; mocked APIs/auth; same deterministic fixtures; counts/JSON bytes, not claimed wall-clock speedups. Separate read-only privileged hosted payload measurements.",
+  "routes": [
+    {
+      "name": "Production detail",
+      "before": {
+        "dataRequests": 23,
+        "rows": 3829,
+        "jsonBytes": 579346,
+        "domNodes": 10778,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": null,
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_activity": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_attachments": {
+            "requests": 2,
+            "rows": 2000,
+            "jsonBytes": 304782
+          },
+          "job_updates": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 60251
+          },
+          "list_my_account_notification_history": {
+            "requests": 4,
+            "rows": 0,
+            "jsonBytes": 8
+          },
+          "list_my_unseen_job_update_jobs": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "manpower_entries": {
+            "requests": 5,
+            "rows": 1688,
+            "jsonBytes": 180203
+          },
+          "material_usage_reports": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "planning_items": {
+            "requests": 1,
+            "rows": 16,
+            "jsonBytes": 32373
+          },
+          "planning_phases": {
+            "requests": 1,
+            "rows": 5,
+            "jsonBytes": 1711
+          },
+          "production_rework_cycles": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "work_tasks": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      },
+      "after": {
+        "dataRequests": 21,
+        "rows": 3014,
+        "jsonBytes": 331064,
+        "domNodes": 10766,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_activity": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_attachments": {
+            "requests": 3,
+            "rows": 1201,
+            "jsonBytes": 88877
+          },
+          "job_updates": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 60251
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "list_my_unseen_job_update_jobs": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "manpower_entries": {
+            "requests": 5,
+            "rows": 1688,
+            "jsonBytes": 180203
+          },
+          "material_usage_reports": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "planning_phases": {
+            "requests": 1,
+            "rows": 5,
+            "jsonBytes": 1711
+          },
+          "production_rework_cycles": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "work_tasks": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      }
+    },
+    {
+      "name": "Production files",
+      "before": {
+        "dataRequests": 23,
+        "rows": 3829,
+        "jsonBytes": 579346,
+        "domNodes": 26711,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": null,
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_activity": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_attachments": {
+            "requests": 2,
+            "rows": 2000,
+            "jsonBytes": 304782
+          },
+          "job_updates": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 60251
+          },
+          "list_my_account_notification_history": {
+            "requests": 4,
+            "rows": 0,
+            "jsonBytes": 8
+          },
+          "list_my_unseen_job_update_jobs": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "manpower_entries": {
+            "requests": 5,
+            "rows": 1688,
+            "jsonBytes": 180203
+          },
+          "material_usage_reports": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "planning_items": {
+            "requests": 1,
+            "rows": 16,
+            "jsonBytes": 32373
+          },
+          "planning_phases": {
+            "requests": 1,
+            "rows": 5,
+            "jsonBytes": 1711
+          },
+          "production_rework_cycles": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "work_tasks": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      },
+      "after": {
+        "dataRequests": 24,
+        "rows": 4215,
+        "jsonBytes": 637504,
+        "domNodes": 29915,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_activity": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_attachments": {
+            "requests": 6,
+            "rows": 2402,
+            "jsonBytes": 395317
+          },
+          "job_updates": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 60251
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "list_my_unseen_job_update_jobs": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "manpower_entries": {
+            "requests": 5,
+            "rows": 1688,
+            "jsonBytes": 180203
+          },
+          "material_usage_reports": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "planning_phases": {
+            "requests": 1,
+            "rows": 5,
+            "jsonBytes": 1711
+          },
+          "production_rework_cycles": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "work_tasks": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      }
+    },
+    {
+      "name": "Production timeline",
+      "before": {
+        "dataRequests": 19,
+        "rows": 2815,
+        "jsonBytes": 303392,
+        "domNodes": 9003,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": null,
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_attachments": {
+            "requests": 1,
+            "rows": 1000,
+            "jsonBytes": 50001
+          },
+          "job_updates": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 60251
+          },
+          "list_my_account_notification_history": {
+            "requests": 4,
+            "rows": 0,
+            "jsonBytes": 8
+          },
+          "list_my_unseen_job_update_jobs": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "manpower_entries": {
+            "requests": 4,
+            "rows": 1674,
+            "jsonBytes": 159034
+          },
+          "material_usage_reports": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "planning_items": {
+            "requests": 1,
+            "rows": 16,
+            "jsonBytes": 32373
+          },
+          "planning_phases": {
+            "requests": 1,
+            "rows": 5,
+            "jsonBytes": 1711
+          },
+          "production_rework_cycles": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "set_my_account_preference": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      },
+      "after": {
+        "dataRequests": 19,
+        "rows": 3016,
+        "jsonBytes": 311180,
+        "domNodes": 8992,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "job_attachments": {
+            "requests": 3,
+            "rows": 1201,
+            "jsonBytes": 88877
+          },
+          "job_updates": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 60251
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "list_my_unseen_job_update_jobs": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "manpower_entries": {
+            "requests": 4,
+            "rows": 1674,
+            "jsonBytes": 159034
+          },
+          "material_usage_reports": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "planning_items": {
+            "requests": 1,
+            "rows": 16,
+            "jsonBytes": 1289
+          },
+          "planning_phases": {
+            "requests": 1,
+            "rows": 5,
+            "jsonBytes": 1711
+          },
+          "production_rework_cycles": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "set_my_account_preference": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      }
+    },
+    {
+      "name": "Inventory collapsed",
+      "before": {
+        "dataRequests": 8,
+        "rows": 1196,
+        "jsonBytes": 318193,
+        "domNodes": 15531,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": null,
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "inventory_items": {
+            "requests": 1,
+            "rows": 1000,
+            "jsonBytes": 269671
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 29531
+          },
+          "list_my_account_notification_history": {
+            "requests": 3,
+            "rows": 0,
+            "jsonBytes": 6
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "pending_receivals": {
+            "requests": 1,
+            "rows": 76,
+            "jsonBytes": 18981
+          }
+        }
+      },
+      "after": {
+        "dataRequests": 8,
+        "rows": 1196,
+        "jsonBytes": 318192,
+        "domNodes": 14296,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "inventory_items": {
+            "requests": 2,
+            "rows": 1000,
+            "jsonBytes": 269672
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 29531
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "pending_receivals": {
+            "requests": 1,
+            "rows": 76,
+            "jsonBytes": 18981
+          }
+        }
+      }
+    },
+    {
+      "name": "Inventory expanded",
+      "before": {
+        "dataRequests": 8,
+        "rows": 1196,
+        "jsonBytes": 318193,
+        "domNodes": 15531,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": null,
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "inventory_items": {
+            "requests": 1,
+            "rows": 1000,
+            "jsonBytes": 269671
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 29531
+          },
+          "list_my_account_notification_history": {
+            "requests": 3,
+            "rows": 0,
+            "jsonBytes": 6
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "pending_receivals": {
+            "requests": 1,
+            "rows": 76,
+            "jsonBytes": 18981
+          }
+        }
+      },
+      "after": {
+        "dataRequests": 8,
+        "rows": 1196,
+        "jsonBytes": 318192,
+        "domNodes": 15555,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "inventory_items": {
+            "requests": 2,
+            "rows": 1000,
+            "jsonBytes": 269672
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 29531
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "pending_receivals": {
+            "requests": 1,
+            "rows": 76,
+            "jsonBytes": 18981
+          }
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "before": {
+        "dataRequests": 12,
+        "rows": 101,
+        "jsonBytes": 32882,
+        "domNodes": 1577,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": null,
+        "byQuery": {
+          "bid_proposal_relationships": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "bids": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "has_proposal_access": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "list_bid_activity": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "list_bid_owners": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 77
+          },
+          "list_bids": {
+            "requests": 1,
+            "rows": 100,
+            "jsonBytes": 32781
+          },
+          "list_my_account_notification_history": {
+            "requests": 3,
+            "rows": 0,
+            "jsonBytes": 6
+          },
+          "list_samples": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      },
+      "after": {
+        "dataRequests": 11,
+        "rows": 101,
+        "jsonBytes": 32880,
+        "domNodes": 1577,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "bid_proposal_relationships": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "bids": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "has_proposal_access": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "list_bid_activity": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "list_bid_owners": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 77
+          },
+          "list_bids": {
+            "requests": 1,
+            "rows": 100,
+            "jsonBytes": 32781
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "list_samples": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      }
+    },
+    {
+      "name": "Intake Planning",
+      "before": null,
+      "after": {
+        "dataRequests": 10,
+        "rows": 226,
+        "jsonBytes": 94832,
+        "domNodes": 2068,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "bids": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 60251
+          },
+          "list_bid_owners": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 77
+          },
+          "list_bids": {
+            "requests": 1,
+            "rows": 100,
+            "jsonBytes": 32781
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "planning_phases": {
+            "requests": 1,
+            "rows": 5,
+            "jsonBytes": 1711
+          },
+          "production_rework_cycles": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      }
+    },
+    {
+      "name": "Messaging",
+      "before": null,
+      "after": {
+        "dataRequests": 15,
+        "rows": 323,
+        "jsonBytes": 116730,
+        "domNodes": 5328,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 29531
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "list_my_work_conversations_v11": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "list_my_work_inbox_recipients": {
+            "requests": 3,
+            "rows": 3,
+            "jsonBytes": 198
+          },
+          "list_my_work_task_group_memberships": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "list_my_work_task_groups": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "list_my_work_tasks": {
+            "requests": 1,
+            "rows": 200,
+            "jsonBytes": 86981
+          },
+          "my_work_messages": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "work_task_attachments": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      }
+    },
+    {
+      "name": "Manpower",
+      "before": {
+        "dataRequests": 16,
+        "rows": 1798,
+        "jsonBytes": 2546223,
+        "domNodes": 545,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": null,
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 17771
+          },
+          "list_my_account_notification_history": {
+            "requests": 4,
+            "rows": 0,
+            "jsonBytes": 8
+          },
+          "manpower_entries": {
+            "requests": 4,
+            "rows": 1674,
+            "jsonBytes": 2527878
+          },
+          "manpower_product_categories": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 146
+          },
+          "manpower_reporting_groups": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 110
+          },
+          "manpower_tasks": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 151
+          },
+          "manpower_workers": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 153
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "production_rework_cycles": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      },
+      "after": {
+        "dataRequests": 14,
+        "rows": 1798,
+        "jsonBytes": 1747721,
+        "domNodes": 545,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 17771
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "manpower_entries": {
+            "requests": 4,
+            "rows": 1674,
+            "jsonBytes": 1729380
+          },
+          "manpower_product_categories": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 146
+          },
+          "manpower_reporting_groups": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 110
+          },
+          "manpower_tasks": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 151
+          },
+          "manpower_workers": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 153
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "production_rework_cycles": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      }
+    },
+    {
+      "name": "My Work",
+      "before": {
+        "dataRequests": 12,
+        "rows": 321,
+        "jsonBytes": 116596,
+        "domNodes": 5326,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": null,
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 29531
+          },
+          "list_my_account_notification_history": {
+            "requests": 4,
+            "rows": 0,
+            "jsonBytes": 8
+          },
+          "list_my_work_inbox_recipients": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 66
+          },
+          "list_my_work_task_group_memberships": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "list_my_work_task_groups": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "list_my_work_tasks": {
+            "requests": 1,
+            "rows": 200,
+            "jsonBytes": 86981
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "work_task_attachments": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      },
+      "after": {
+        "dataRequests": 10,
+        "rows": 321,
+        "jsonBytes": 116592,
+        "domNodes": 5326,
+        "errors": [],
+        "alerts": [],
+        "initialAuthCalls": [
+          "/rest/v1/rpc/get_my_app_user",
+          "/rest/v1/rpc/ensure_my_welcome_notification"
+        ],
+        "byQuery": {
+          "get_my_account_preferences": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "jobs": {
+            "requests": 1,
+            "rows": 120,
+            "jsonBytes": 29531
+          },
+          "list_my_account_notification_history": {
+            "requests": 2,
+            "rows": 0,
+            "jsonBytes": 4
+          },
+          "list_my_work_inbox_recipients": {
+            "requests": 1,
+            "rows": 1,
+            "jsonBytes": 66
+          },
+          "list_my_work_task_group_memberships": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "list_my_work_task_groups": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "list_my_work_tasks": {
+            "requests": 1,
+            "rows": 200,
+            "jsonBytes": 86981
+          },
+          "my_work_messages": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          },
+          "work_task_attachments": {
+            "requests": 1,
+            "rows": 0,
+            "jsonBytes": 2
+          }
+        }
+      }
+    }
+  ],
+  "shell": {
+    "accountSwitchVerified": true,
+    "firstUseful": {
+      "ms": 159,
+      "dataRequests": 11,
+      "notificationRequests": 2
+    },
+    "cold": {
+      "requests": 2,
+      "rows": 200,
+      "bytes": 97540
+    },
+    "changeRequests": 1,
+    "focusRequests": 1,
+    "assertions": "unread welcome onboarding, 100-row history, mark-all-read, focus freshness, failed refresh recovery, no client errors",
+    "synthetic": true
+  },
+  "hostedManpowerBefore": {
+    "rows": 1878,
+    "jsonBytes": 1961322,
+    "requests": 4,
+    "networkMs": 5642,
+    "aggregationMs": {
+      "p50": 0.5172499999998763,
+      "p95": 0.8457500000004075
+    },
+    "note": "One privileged read-only network sample; 50 warm local CPU samples. No rows retained. Empty label vocabularies; real operational entry distribution."
+  },
+  "hostedManpowerFacts": {
+    "rows": 1885,
+    "jsonBytes": 1233624,
+    "requests": 4,
+    "networkMs": 2593,
+    "aggregationMs": {},
+    "note": "One privileged read-only network sample. No rows retained. Reduced facts projection; aggregation CPU not measured before hydration."
+  },
+  "hostedCaveat": "Live row counts changed 1878 to 1885 between samples. Do not treat sequential HTTP times as a speed benchmark. Facts CPU not measured before hydration; original aggregate CPU is small.",
+  "gates": [
+    "TypeScript",
+    "targeted ESLint",
+    "Production build",
+    "diff check",
+    "137-row provider cap / 1201 records / 205 phase scopes",
+    "1101-item Inventory browser case",
+    "1201-file Inspector browser case",
+    "two synthetic authenticated users: group rename then refresh and historical entries",
+    "shell stale-account response",
+    "bootstrap plus later sign-in/token refresh/user-update; password setup/recovery",
+    "Inventory newest historical transaction detail opens",
+    "deferred Files metadata loading disables upload until complete"
+  ]
+}

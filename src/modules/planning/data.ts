@@ -33,16 +33,28 @@ export async function loadPlanningPhases(jobScope?: string | string[]) {
   return rows.sort((a,b)=>b.updated_at.localeCompare(a.updated_at)||a.id.localeCompare(b.id));
 }
 
+export type PlanningProgressItem = Pick<PlanningItem, 'id' | 'phase_id' | 'is_complete' | 'estimated_hours'>;
+
+async function loadScopedItems<T extends { id: string }>(phaseIds: string[], columns: string): Promise<T[]> {
+  const ids = [...new Set(phaseIds)];
+  const rows: T[] = [];
+  for (let offset = 0; offset < ids.length; offset += 200) {
+    rows.push(...await loadCompleteRows((from, to) => supabase
+      .from("planning_items").select(columns, { count: 'exact' })
+      .in("phase_id", ids.slice(offset, offset + 200))
+      .order("sort_order").order("created_at").order('id').range(from, to).returns<T[]>()));
+  }
+  return rows;
+}
+
 export async function loadPlanningItems(phaseIds: string[]) {
-  if (phaseIds.length === 0) return [];
-  const { data, error } = await supabase
-    .from("planning_items")
-    .select(ITEM_COLUMNS)
-    .in("phase_id", phaseIds)
-    .order("sort_order")
-    .order("created_at");
-  if (error) throw error;
-  return (data ?? []) as PlanningItem[];
+  const rows = await loadScopedItems<PlanningItem>(phaseIds, ITEM_COLUMNS);
+  return rows.sort((a, b) => a.sort_order - b.sort_order || a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id));
+}
+
+/** Timeline progress does not consume titles, notes, owners, or audit fields. */
+export function loadPlanningProgressItems(phaseIds: string[]) {
+  return loadScopedItems<PlanningProgressItem>(phaseIds, 'id,phase_id,is_complete,estimated_hours');
 }
 
 export async function createPlanningPhase(input: PlanningPhaseInput) {

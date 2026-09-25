@@ -59,6 +59,7 @@ const documentActionClass =
 type Props = {
   job: ProductionJob;
   jobNumberOwners: JobNumberOwner[];
+  attachmentCount: number;
   onClose: () => void;
   onUpdateJob: (
     id: string,
@@ -269,6 +270,7 @@ function activityDescription(change: ProductionJobActivity) {
 export default function ProductionJobInspector({
   job,
   jobNumberOwners,
+  attachmentCount,
   onClose,
   onUpdateJob,
   onArchive,
@@ -302,6 +304,10 @@ export default function ProductionJobInspector({
           ? "recent-changes"
           : "details",
   );
+  const attachmentCountChangedRef = useRef(onAttachmentsChanged);
+  useEffect(() => { attachmentCountChangedRef.current = onAttachmentsChanged; }, [onAttachmentsChanged]);
+  const attachmentsVisible = activeSection === "files" || activeSection === "updates";
+  const detailsVisible = activeSection === "details";
   const [activity, setActivity] = useState<ProductionJobActivity[]>([]);
   const [activityError, setActivityError] = useState("");
   const [activityLoading, setActivityLoading] = useState(true);
@@ -356,6 +362,7 @@ export default function ProductionJobInspector({
   );
   useEffect(() => {
     let live = true;
+    if (!detailsVisible) return;
     Promise.allSettled([
       loadProductionReworkCycles(job.id),
       loadProductionJobLaborLifecycleSummary(job.id),
@@ -366,7 +373,7 @@ export default function ProductionJobInspector({
         setLaborLifecycle(labor.status === "fulfilled" ? labor.value : null);
       });
     return () => { live = false; };
-  }, [job.id, job.rework_cycle?.updated_at]);
+  }, [detailsVisible, job.id, job.rework_cycle?.updated_at]);
 
   useEffect(() => {
     let live = true;
@@ -400,9 +407,12 @@ export default function ProductionJobInspector({
 
   useEffect(() => {
     let live = true;
+    if (!attachmentsVisible) return;
+    setAttachmentsLoading(true);
+    setAttachmentError("");
     loadJobAttachments(job.id)
       .then((files) => {
-        if (live) setAttachments(files);
+        if (live) { setAttachments(files); attachmentCountChangedRef.current(job.id, files.length); }
       })
       .catch((loadError: unknown) => {
         if (live)
@@ -415,6 +425,10 @@ export default function ProductionJobInspector({
       .finally(() => {
         if (live) setAttachmentsLoading(false);
       });
+    return () => { live = false; };
+  }, [attachmentsVisible, job.id]);
+
+  useEffect(() => {
     requestAnimationFrame(() => {
       if (initialFocus?.startsWith("planning")) return;
       const target =
@@ -427,9 +441,6 @@ export default function ProductionJobInspector({
         target.focus();
       } else closeRef.current?.focus();
     });
-    return () => {
-      live = false;
-    };
   }, [initialFocus, job.id]);
 
   useEffect(() => {
@@ -610,7 +621,7 @@ export default function ProductionJobInspector({
   };
 
   async function upload(files: FileList | null) {
-    if (!files?.length || uploadInFlightRef.current) return;
+    if (!files?.length || attachmentsLoading || uploadInFlightRef.current) return;
     uploadInFlightRef.current = true;
     setUploading(true);
     setAttachmentError("");
@@ -713,7 +724,7 @@ export default function ProductionJobInspector({
     { id: "updates", label: `Job Updates (${jobUpdateCount})` },
     {
       id: "files",
-      label: `Files${attachments.length ? ` (${attachments.length})` : ""}`,
+      label: `Files${attachmentCount ? ` (${attachmentCount})` : ""}`,
     },
     {
       id: "recent-changes",
@@ -839,6 +850,7 @@ export default function ProductionJobInspector({
               key={tab.id}
               type="button"
               role="tab"
+              disabled={uploading || Boolean(deletingId)}
               aria-selected={activeSection === tab.id}
               aria-controls={`inspector-${tab.id}`}
               id={`inspector-tab-${tab.id}`}
@@ -1275,7 +1287,7 @@ export default function ProductionJobInspector({
                     ref={fileRef}
                     type="file"
                     multiple
-                    disabled={uploading}
+                    disabled={uploading || attachmentsLoading}
                     onChange={(event) => void upload(event.target.files)}
                     className="sr-only"
                   />
@@ -1410,7 +1422,7 @@ export default function ProductionJobInspector({
             </section>
           )}
 
-          {activeSection === "updates" && (
+          {activeSection === "updates" && (attachmentsLoading ? <p className="py-5 text-sm">Loading Job Update attachments…</p> : attachmentError ? <p role="alert" className="py-5 text-sm text-red-700">{attachmentError}</p> :
             <JobUpdatesPanel
               job={job}
               attachments={attachments}

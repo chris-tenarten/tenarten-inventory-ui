@@ -52,7 +52,7 @@ type ProductionGanttProps = {
   onStageSchedule: (job: ProductionJob, start: string, end: string) => void;
   onSelectJob: (job: ProductionJob, focus?: string) => void;
   planningPhases?: PlanningPhase[];
-  planningItems?: PlanningItem[];
+  planningItems?: Pick<PlanningItem, 'id' | 'phase_id' | 'is_complete' | 'estimated_hours'>[];
   stagedPlanningSchedules?: StagedPlanningSchedules;
   onStagePlanningSchedules?: (changes: Array<{ phase: PlanningPhase; start: string; end: string }>) => void;
   planningEnabled?: boolean;

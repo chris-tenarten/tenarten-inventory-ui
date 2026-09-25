@@ -1,3 +1,4 @@
+import { loadCompleteRows } from '@/lib/complete-rows';
 import { loadCompleteLabor } from './pagination';
 import { supabase } from '../../lib/supabase';
 import { isActiveProductionRework } from '../production/rework';
@@ -30,6 +31,32 @@ export async function loadManpowerEntries(): Promise<ManpowerEntry[]> {
     .range(from, to)) as unknown as ManpowerEntry[];
 }
 
+export type ManpowerEntryFacts = Omit<ManpowerEntry, 'worker' | 'task' | 'reporting_group'>;
+export const ENTRY_FACT_COLUMNS = ENTRY_COLUMNS
+  .replace(/worker:manpower_workers!worker_id\(id, display_name\),/, '')
+  .replace(/task:manpower_tasks!task_id\(id, display_name\),/, '')
+  .replace(/,\s*reporting_group:manpower_reporting_groups\(id, display_name, created_at, updated_at\)/, '');
+
+/** Reporting already reads these reference tables; transfer their labels once. */
+export async function loadManpowerEntryFacts(): Promise<ManpowerEntryFacts[]> {
+  return await loadCompleteRows((from, to) => supabase.from('manpower_entries')
+    .select(ENTRY_FACT_COLUMNS, { count: 'exact' })
+    .order('work_date', { ascending: false }).order('created_at', { ascending: false }).order('id')
+    .range(from, to).returns<ManpowerEntryFacts[]>());
+}
+
+export function hydrateManpowerEntries(facts: ManpowerEntryFacts[], workers: ManpowerReference[], tasks: ManpowerReference[], groups: ManpowerReportingGroup[]): ManpowerEntry[] {
+  const workerById = new Map(workers.map(row => [row.id, row]));
+  const taskById = new Map(tasks.map(row => [row.id, row]));
+  const groupById = new Map(groups.map(row => [row.id, row]));
+  return facts.map(row => {
+    const worker = workerById.get(row.worker_id), task = taskById.get(row.task_id);
+    const group = row.reporting_group_id ? groupById.get(row.reporting_group_id) : null;
+    if (!worker || !task || (row.reporting_group_id && !group)) throw new Error('Manpower references changed or are unavailable. Refresh and retry.');
+    return { ...row, worker: { id: worker.id, display_name: worker.display_name }, task: { id: task.id, display_name: task.display_name }, reporting_group: group ?? null };
+  });
+}
+
 export async function loadManpowerJobs(): Promise<ManpowerJob[]> {
   const [jobs, reworks] = await Promise.all([
     supabase.from('jobs').select('id,name,job_number,production_status,archived_at').is('archived_at', null).order('name'),
@@ -48,12 +75,9 @@ export async function loadManpowerJobs(): Promise<ManpowerJob[]> {
 }
 
 export async function loadManpowerReportingGroups(): Promise<ManpowerReportingGroup[]> {
-  const { data, error } = await supabase
-    .from('manpower_reporting_groups')
-    .select('id,display_name,created_at,updated_at')
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as ManpowerReportingGroup[];
+  return await loadCompleteRows((from, to) => supabase.from('manpower_reporting_groups')
+    .select('id,display_name,created_at,updated_at', { count: 'exact' })
+    .order('created_at', { ascending: false }).order('id').range(from, to)) as ManpowerReportingGroup[];
 }
 
 export async function createManpowerReportingGroup(
@@ -92,13 +116,9 @@ export async function deleteEmptyManpowerReportingGroup(id: string): Promise<voi
 export async function loadManpowerReferences(
   table: 'manpower_workers' | 'manpower_tasks',
 ): Promise<ManpowerReference[]> {
-  const { data, error } = await supabase
-    .from(table)
-    .select('id,display_name,sort_order,is_active,created_at,updated_at')
-    .order('sort_order')
-    .order('display_name');
-  if (error) throw error;
-  return (data ?? []) as ManpowerReference[];
+  return await loadCompleteRows((from, to) => supabase.from(table)
+    .select('id,display_name,sort_order,is_active,created_at,updated_at', { count: 'exact' })
+    .order('sort_order').order('display_name').order('id').range(from, to)) as ManpowerReference[];
 }
 
 export async function createManpowerReference(
