@@ -2,8 +2,11 @@ import assert from 'node:assert/strict';
 import {BINARY_TYPE,canPreview,downloadUrl,previewType,resumableEndpoint,validateFiles} from '../src/modules/my-work/messaging/files';
 import {MessageTransfer,type Draft,type Transport} from '../src/modules/my-work/messaging/transfer';
 
-assert.equal(validateFiles([{name:'a.exe',size:250_000_000},{name:'a.7z',size:250_000_000}]),500_000_000);
-for(const files of [[{name:'a',size:250_000_001}],[{name:'a',size:250_000_000},{name:'b',size:250_000_000},{name:'c',size:1}],[{name:'a',size:-1}]])assert.throws(()=>validateFiles(files));
+assert.equal(validateFiles([{name:'one.exe',size:50_000_000}]),50_000_000);
+const four=Array.from({length:4},(_,i)=>({name:`file-${i}.unknown`,size:50_000_000}));
+assert.equal(validateFiles(four),200_000_000);
+assert(50_000_000<52_428_800,'TenOps cap remains below unchanged provider ceiling');
+for(const files of [[{name:'a',size:50_000_001}],[...four,{name:'extra',size:1}],[...four,four[0]],[{name:'a',size:-1}]])assert.throws(()=>validateFiles(files));
 for(const name of ['a.html','a.svg','a.exe','a.dwg','a.dxf','a.zip','a.7z','a','😀 & #?.xyz']){
   const file=new File(['<script>alert(1)</script>'],name,{type:'image/png'});
   assert.equal(await previewType(file),BINARY_TYPE);
@@ -64,10 +67,10 @@ const dt={items:[{kind:'file',getAsFile:()=>clipboard}],files:[clipboard]} as un
 assert.equal(exposedFiles(dt).length,1);
 assert.equal(exposedFiles({items:[{kind:'file',getAsFile:()=>null}],files:[]} as unknown as DataTransfer).length,0);
 // Metadata-only stand-ins ensure validation happens without reading/allocating huge bodies.
-const large={name:'large.bin',size:250_000_000} as File;
-const limits=new AttachmentQueue();limits.add([large],'picker');limits.add([large],'drop');
+const large={name:'large.bin',size:50_000_000} as File;
+const limits=new AttachmentQueue();limits.add([large],'picker');limits.add([large],'drop');limits.add([large,large],'paste');
 assert.throws(()=>limits.add([new File(['x'],'extra.txt')],'paste'));
-assert.equal(limits.files.length,2);assert.throws(()=>limits.add([{name:'too-large',size:250_000_001} as File],'drop'));
+assert.equal(limits.files.length,4);assert.throws(()=>limits.add([{name:'too-large',size:50_000_001} as File],'drop'));
 console.log('PASS: shared picker/paste/drop queue, combined aggregate limit, atomic rejected additions, screenshot naming, multiple clipboard files, unsupported file fallback, duplicate-event protection.');
 {
  const f=fixture();f.loseFinalize=true;const t=new MessageTransfer(files,'recipient','body','',f.api);await t.start();

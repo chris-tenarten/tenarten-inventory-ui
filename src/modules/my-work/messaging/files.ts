@@ -1,5 +1,5 @@
-export const MAX_FILE_BYTES = 250_000_000;
-export const MAX_MESSAGE_BYTES = 500_000_000;
+export const MAX_FILE_BYTES = 50_000_000;
+export const MAX_MESSAGE_BYTES = 200_000_000;
 export const MAX_PREVIEW_BYTES = 20_000_000;
 export const INBOX_ATTACHMENT_BUCKET = 'my-work-inbox-attachments';
 export const BINARY_TYPE = 'application/octet-stream';
@@ -9,10 +9,10 @@ export function validateFiles(files: FileDescriptor[]) {
   let total = 0;
   for (const file of files) {
     if (!file.name || [...file.name].length > 500 || file.name.includes('\0')) throw new Error('Filenames must contain 1–500 characters without null characters.');
-    if (!Number.isSafeInteger(file.size) || file.size < 0 || file.size > MAX_FILE_BYTES) throw new Error(`${file.name} exceeds the 250 MB file limit.`);
+    if (!Number.isSafeInteger(file.size) || file.size < 0 || file.size > MAX_FILE_BYTES) throw new Error(`${file.name} exceeds the 50 MB file limit.`);
     total += file.size;
   }
-  if (total > MAX_MESSAGE_BYTES) throw new Error('Attachments exceed the 500 MB message limit.');
+  if (total > MAX_MESSAGE_BYTES) throw new Error('Attachments exceed the 200 MB message limit.');
   return total;
 }
 export const fileSize = (bytes: number) => bytes < 1000 ? `${bytes} B` : bytes < 1_000_000 ? `${(bytes / 1000).toFixed(1)} KB` : `${(bytes / 1_000_000).toFixed(1)} MB`;

@@ -45,36 +45,43 @@ sql(read('supabase/migrations/20260925120000_messaging_large_attachments.sql'));
 // Compare all existing fields (new nullable columns intentionally excluded).
 assert.equal(sql(`select body||':'||delivery_status from my_work_messages; select original_filename||':'||byte_size from my_work_message_attachments; select metadata from storage.objects;`),'Historical message:ready\nold.png:5\n{"size": 5, "mimetype": "image/png"}');
 assert(history.includes('Historical message'));
+sql("insert into storage.buckets(id,name,public,file_size_limit) values('project-task-attachments','project-task-attachments',false,null);");
+const unrelatedBefore=sql("select row_to_json(b) from storage.buckets b where id<>'my-work-inbox-attachments';");
 sql(read('supabase/config-changes/20260925_messaging_attachment_bucket.sql'));
-assert.equal(sql(`select public||':'||file_size_limit||':'||(allowed_mime_types is null) from storage.buckets;`),'false:250000000:true');
+assert.equal(sql("select row_to_json(b) from storage.buckets b where id<>'my-work-inbox-attachments';"),unrelatedBefore);
+assert.equal(sql(`select public||':'||file_size_limit||':'||(allowed_mime_types is null) from storage.buckets where id='my-work-inbox-attachments';`),'false:50000000:true');
+// Unrelated bucket stays inherited; no global configuration is present in either artifact.
+const bucketConfig=read('supabase/config-changes/20260925_messaging_attachment_bucket.sql');
+assert(!/project-task-attachments|update[^;]*config/si.test(bucketConfig));
+assert.equal(sql("select file_size_limit is null from storage.buckets where id='project-task-attachments';"),'t');
 const uid=n=>`10000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
 const mid=n=>`20000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
 const aid=n=>`30000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
 const actor=(n,q,fail=false)=>sql(`set role authenticated; select set_config('request.jwt.claim.sub','${uid(n)}',false); ${q}`,fail).split('\n').slice(1).join('\n');
-const file=(n,size=250000000)=>({id:aid(n),name:`drawing & #${n}.dwg`,size,contentType:'application/octet-stream'});
+const file=(n,size=50000000)=>({id:aid(n),name:`drawing & #${n}.dwg`,size,contentType:'application/octet-stream'});
 const begin=(n,files)=>`select begin_my_work_attachment_transfer('${mid(n)}','${uid(2)}','Fixture',null,'${JSON.stringify(files)}');`;
-actor(1,begin(1,[file(1),file(2)]));
-actor(1,begin(1,[file(1),file(2)])); // duplicate create
+actor(1,begin(1,[file(1),file(2),file(21),file(22)]));
+actor(1,begin(1,[file(1),file(2),file(21),file(22)])); // duplicate create
 assert.equal(sql(`select count(*) from my_work_messages where id='${mid(1)}';`),'1');
-actor(1,begin(2,[file(3,250000001)]),true);
-actor(1,begin(2,[file(3),file(4),file(5,1)]),true);
+actor(1,begin(2,[file(3,50000001)]),true);
+actor(1,begin(2,[file(3),file(4),file(23),file(24),file(5,1)]),true);
 actor(1,begin(2,[file(3,-1)]),true);
-actor(3,begin(1,[file(1),file(2)]),true);
+actor(3,begin(1,[file(1),file(2),file(21),file(22)]),true);
 actor(5,begin(2,[file(3)]),true);
-actor(1,`select finalize_my_work_inbox_message('${mid(1)}',2);`,true);
+actor(1,`select finalize_my_work_inbox_message('${mid(1)}',4);`,true);
 actor(1,`select finalize_my_work_inbox_message('${mid(1)}',null);`,true);
 actor(1,`insert into my_work_message_attachments(message_id,uploader_user_id,storage_path,original_filename,byte_size) values('${mid(1)}','${uid(1)}','bad','bad',1);`,true);
-const object=(m,a,size=250000000,mime='application/octet-stream')=>`insert into storage.objects(bucket_id,name,metadata) values('my-work-inbox-attachments','${mid(m)}/${aid(a)}/file','{"size":${size},"mimetype":"${mime}"}');`;
-actor(1,object(1,1,249999999),true);
-actor(1,object(1,1,250000000,'text/html'),true);
+const object=(m,a,size=50000000,mime='application/octet-stream')=>`insert into storage.objects(bucket_id,name,metadata) values('my-work-inbox-attachments','${mid(m)}/${aid(a)}/file','{"size":${size},"mimetype":"${mime}"}');`;
+actor(1,object(1,1,49999999),true);
+actor(1,object(1,1,50000000,'text/html'),true);
 actor(3,object(1,1),true);
 actor(1,object(1,99),true);
-actor(1,object(1,1));actor(1,object(1,2));
+actor(1,object(1,1));actor(1,object(1,2));actor(1,object(1,21));actor(1,object(1,22));
 for(const n of [2,3,4,5])assert.equal(actor(n,`select count(*) from storage.objects where name like '${mid(1)}/%';`),'0');
-assert.equal(actor(1,`select count(*) from storage.objects where name like '${mid(1)}/%';`),'2');
-actor(1,`select finalize_my_work_inbox_message('${mid(1)}',2); select finalize_my_work_inbox_message('${mid(1)}',2);`);
+assert.equal(actor(1,`select count(*) from storage.objects where name like '${mid(1)}/%';`),'4');
+actor(1,`select finalize_my_work_inbox_message('${mid(1)}',4); select finalize_my_work_inbox_message('${mid(1)}',4);`);
 assert.equal(sql(`select count(*) from account_notifications where notification_key='inbox-message:${mid(1)}';`),'1');
-assert.equal(actor(2,`select count(*) from storage.objects where name like '${mid(1)}/%';`),'2');
+assert.equal(actor(2,`select count(*) from storage.objects where name like '${mid(1)}/%';`),'4');
 for(const n of [3,4,5])assert.equal(actor(n,`select count(*) from storage.objects where name like '${mid(1)}/%';`),'0');
 sql(`set role anon; select * from storage.objects;`,true);
 actor(1,`select cancel_my_work_attachment_transfer('${mid(1)}');`,true);
@@ -99,7 +106,7 @@ assert.equal(actor(3,`select recover_my_work_attachment_transfer('${mid(1)}') is
 assert(actor(1,`select recover_my_work_attachment_transfer('${mid(1)}')->>'id';`).includes(mid(1)));
 actor(5,`select recover_my_work_attachment_transfer('${mid(1)}');`,true);
 sql(`update app_users set is_active=false where user_id='${uid(2)}';`);
-actor(1,begin(1,[file(1),file(2)])); // lost response still reconciles after recipient is deactivated
+actor(1,begin(1,[file(1),file(2),file(21),file(22)])); // lost response still reconciles after recipient is deactivated
 sql(`update app_users set is_active=true where user_id='${uid(2)}'; insert into my_work_message_deletion_audit values('${mid(99)}');`);
 actor(1,begin(99,[file(99,1)]),true); // cannot recreate an Admin-deleted message
 // Independent connections exercise the locks, rather than asserting source patterns.

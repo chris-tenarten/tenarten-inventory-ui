@@ -13,6 +13,8 @@ import {build} from 'esbuild';
 const status=spawnSync('npx',['--yes','supabase@2.110.0','status','--workdir','.tmp-messaging-supabase','-o','json'],{encoding:'utf8'});
 assert.equal(status.status,0,'Local stack must be running');const config=JSON.parse(status.stdout);
 const base=config.API_URL;assert.equal(new URL(base).hostname,'127.0.0.1');assert.equal(new URL(base).port,'55431');
+const ceiling=spawnSync('docker',['exec','supabase_storage_tenops-messaging-isolated','printenv','FILE_SIZE_LIMIT'],{encoding:'utf8'});
+assert.equal(ceiling.status,0);assert.equal(Number(ceiling.stdout.trim()),52428800,'Mirror unchanged hosted Free-plan ceiling');
 const key=config.ANON_KEY,service=createClient(base,config.SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
 const db='supabase_db_tenops-messaging-isolated';
 const sql=input=>{const r=spawnSync('docker',['exec','-i',db,'psql','-X','-qAt','-v','ON_ERROR_STOP=1','-U','postgres','-d','postgres'],{input,encoding:'utf8'});assert.equal(r.status,0,r.stderr);return r.stdout;};
@@ -58,12 +60,13 @@ const lifecycle=await read('supabase/migrations/20260831_020_my_work_lifecycle_a
 sql(lifecycle.match(/create policy my_work_inbox_attachment_object_admin_delete[\s\S]*?\n\);/)[0]);
 sql("notify pgrst,'reload schema';");
 await new Promise(r=>setTimeout(r,1000));
-const mid=randomUUID(),entries=[{id:randomUUID(),name:'drawing & #.dwg',size:250000000,contentType:'application/octet-stream'},{id:randomUUID(),name:'installer.exe',size:250000000,contentType:'application/octet-stream'}];
+const mid=randomUUID(),entries=[{id:randomUUID(),name:'drawing & #.dwg',size:50000000,contentType:'application/octet-stream'},{id:randomUUID(),name:'installer.exe',size:50000000,contentType:'application/octet-stream'}];
+entries.push(...['archive.unknown','model.bin'].map(name=>({id:randomUUID(),name,size:50000000,contentType:'application/octet-stream'})));
 const beginArgs={p_id:mid,p_recipient:recipient.id,p_body:'Large local fixture',p_job:null,p_files:entries};
 assert.ifError((await sender.client.rpc('begin_my_work_attachment_transfer',beginArgs)).error);
-const wrong=await sender.client.rpc('begin_my_work_attachment_transfer',{...beginArgs,p_id:randomUUID(),p_files:[{...entries[0],id:randomUUID(),size:250000001}]});assert(wrong.error);
+const wrong=await sender.client.rpc('begin_my_work_attachment_transfer',{...beginArgs,p_id:randomUUID(),p_files:[{...entries[0],id:randomUUID(),size:50000001}]});assert(wrong.error);
 assert((await sender.client.rpc('begin_my_work_attachment_transfer',{...beginArgs,p_id:randomUUID(),p_files:[...entries,{id:randomUUID(),name:'extra',size:1,contentType:'application/octet-stream'}]})).error);
-assert((await sender.client.rpc('finalize_my_work_inbox_message',{p_message_id:mid,p_expected_attachment_count:2})).error);
+assert((await sender.client.rpc('finalize_my_work_inbox_message',{p_message_id:mid,p_expected_attachment_count:4})).error);
 await mkdir('.tmp-messaging',{recursive:true});
 await build({stdin:{contents:"import * as transfer from './src/modules/my-work/messaging/transfer'; window.messaging=transfer;",resolveDir:process.cwd()},bundle:true,platform:'browser',format:'iife',outfile:'.tmp-messaging/transfer.js'});
 const script=await readFile('.tmp-messaging/transfer.js');
@@ -72,19 +75,19 @@ await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromiu
 try{
  const page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}`);
  const uploadResult=await page.evaluate(async({base,key,token,mid,entries})=>{
-  let maxProgress=0;for(const entry of entries){const file=new File(Array(250).fill(new Uint8Array(1000000)),entry.name);await window.messaging.uploadResumable({baseUrl:base,id:mid,entry,file,signal:new AbortController().signal,credentials:async()=>({token,key}),progress:bytes=>{maxProgress=Math.max(maxProgress,bytes);}});}return{maxProgress};
- },{base,key,token:sender.token,mid,entries});assert.equal(uploadResult.maxProgress,250000000);
+  let maxProgress=0;for(const entry of entries){const file=new File(Array(50).fill(new Uint8Array(1000000)),entry.name);await window.messaging.uploadResumable({baseUrl:base,id:mid,entry,file,signal:new AbortController().signal,credentials:async()=>({token,key}),progress:bytes=>{maxProgress=Math.max(maxProgress,bytes);}});}return{maxProgress};
+ },{base,key,token:sender.token,mid,entries});assert.equal(uploadResult.maxProgress,50000000);
  const path=`${mid}/${entries[0].id}/file`;
  for(const a of [recipient,unrelated,admin,inactive])assert((await a.client.storage.from(bucket).createSignedUrl(path,600)).error,'draft must remain sender-private');
- assert.ifError((await sender.client.rpc('finalize_my_work_inbox_message',{p_message_id:mid,p_expected_attachment_count:2})).error);
- assert.ifError((await sender.client.rpc('finalize_my_work_inbox_message',{p_message_id:mid,p_expected_attachment_count:2})).error);
+ assert.ifError((await sender.client.rpc('finalize_my_work_inbox_message',{p_message_id:mid,p_expected_attachment_count:4})).error);
+ assert.ifError((await sender.client.rpc('finalize_my_work_inbox_message',{p_message_id:mid,p_expected_attachment_count:4})).error);
  for(const a of [unrelated,admin,inactive])assert((await a.client.storage.from(bucket).createSignedUrl(path,600)).error,'nonparticipant signing denied');
  const anonymous=createClient(base,key,{auth:{persistSession:false}});assert((await anonymous.storage.from(bucket).createSignedUrl(path,600)).error);
  const signed=await recipient.client.storage.from(bucket).createSignedUrl(path,600);assert.ifError(signed.error);
  const download=new URL(signed.data.signedUrl);download.searchParams.set('download',entries[0].name);
  const response=await fetch(download);assert.equal(response.status,200);assert.match(response.headers.get('content-disposition'),/attachment/);assert.match(response.headers.get('content-type'),/application\/octet-stream/);
- let size=0;const hash=createHash('sha256');for await(const chunk of response.body){size+=chunk.length;hash.update(chunk);}assert.equal(size,250000000);
- const expected=createHash('sha256');const part=Buffer.alloc(1000000);for(let i=0;i<250;i++)expected.update(part);assert.equal(hash.digest('hex'),expected.digest('hex'));
+ let size=0;const hash=createHash('sha256');for await(const chunk of response.body){size+=chunk.length;hash.update(chunk);}assert.equal(size,50000000);
+ const expected=createHash('sha256');const part=Buffer.alloc(1000000);for(let i=0;i<50;i++)expected.update(part);assert.equal(hash.digest('hex'),expected.digest('hex'));
  const guessed=await fetch(`${base}/storage/v1/object/authenticated/${bucket}/${path}`,{headers:{apikey:key,Authorization:`Bearer ${unrelated.token}`}});assert.notEqual(guessed.status,200);
  assert.notEqual((await fetch(`${base}/storage/v1/object/public/${bucket}/${path}`)).status,200);
  assert.equal(sql(`select count(*) from account_notifications where notification_key='inbox-message:${mid}';`).trim(),'1');
@@ -119,7 +122,7 @@ try{
  assert.ifError((await sender.client.storage.from(bucket).upload(abandonedPath,Buffer.from('test'),{contentType:'application/octet-stream'})).error);
  sql(`update my_work_messages set upload_touched_at=now()-interval '8 days' where id='${abandoned}';`);
  const cleaned=spawnSync(process.execPath,['scripts/cleanup-messaging-drafts.mjs','--execute'],{env:{...process.env,SUPABASE_URL:base,SUPABASE_SERVICE_ROLE_KEY:config.SERVICE_ROLE_KEY},encoding:'utf8'});assert.equal(cleaned.status,0,cleaned.stderr);assert.equal(sql(`select count(*) from my_work_messages where id='${abandoned}';`).trim(),'0');assert((await sender.client.storage.from(bucket).createSignedUrl(abandonedPath,600)).error);
- const result={smallTusImagePreview:true,actualAbandonedWorker:true,signedExpiryDenied:true,renewedAfterExpiry:true,senderOnlyRecovery:true,activeMimeRejected:true,actualSupabaseStorage:true,uploadedBytes:500000000,downloadedBytes:size,sha256Matches:true,contentDisposition:response.headers.get('content-disposition'),contentType:response.headers.get('content-type'),nosniff:response.headers.get('x-content-type-options'),draftRecipientDenied:true,unrelatedAdminDenied:true,inactiveAnonymousDenied:true,guessedPublicPathDenied:true,idempotentFinalize:true,actualCancelCleanup:true,historicalBytesUnchanged:true,scope:'Disposable LOCAL Supabase only; hosted capacity unverified'};
+ const result={smallTusImagePreview:true,actualAbandonedWorker:true,signedExpiryDenied:true,renewedAfterExpiry:true,senderOnlyRecovery:true,activeMimeRejected:true,actualSupabaseStorage:true,uploadedBytes:200000000,downloadedBytes:size,sha256Matches:true,contentDisposition:response.headers.get('content-disposition'),contentType:response.headers.get('content-type'),nosniff:response.headers.get('x-content-type-options'),draftRecipientDenied:true,unrelatedAdminDenied:true,inactiveAnonymousDenied:true,guessedPublicPathDenied:true,idempotentFinalize:true,actualCancelCleanup:true,historicalBytesUnchanged:true,scope:'Disposable LOCAL Supabase only; hosted capacity unverified'};
  await mkdir('.tmp-messaging',{recursive:true});await writeFile('.tmp-messaging/storage-results.json',JSON.stringify(result,null,2));
- console.log('PASS: actual local Supabase TUS 500 MB aggregate; byte-identical 250 MB download; forced disposition; sender/recipient/unrelated/Admin/inactive/anonymous authorization; finalize idempotency; cleanup; historical bytes.');
+ console.log('PASS: actual local Supabase TUS 200 MB aggregate; byte-identical 50 MB download; forced disposition; sender/recipient/unrelated/Admin/inactive/anonymous authorization; finalize idempotency; cleanup; historical bytes.');
 }finally{await browser.close();await new Promise(r=>server.close(r));}

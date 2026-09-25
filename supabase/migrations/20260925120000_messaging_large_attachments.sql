@@ -1,8 +1,8 @@
 -- Forward-only candidate. DO NOT APPLY HOSTED without Chris's release authorization.
--- Decimal MB: 250 MB/file, 500 MB/message. Existing ready rows remain unchanged.
+-- Decimal MB: 50 MB/file, 200 MB/message. Existing ready rows remain unchanged.
 begin;
 alter table public.my_work_message_attachments drop constraint my_work_message_attachments_byte_size_check;
-alter table public.my_work_message_attachments add constraint my_work_message_attachments_byte_size_check check(byte_size between 0 and 250000000);
+alter table public.my_work_message_attachments add constraint my_work_message_attachments_byte_size_check check(byte_size between 0 and 50000000);
 alter table public.my_work_messages
   add column upload_request jsonb,
   add column upload_state text check(upload_state in ('active','canceling')),
@@ -32,7 +32,7 @@ begin
   if p_job is not null and not exists(select 1 from public.jobs where id=p_job) then raise exception 'Job unavailable.'; end if;
   if jsonb_typeof(p_files)<>'array' or jsonb_array_length(p_files)<1 or p_files is null then raise exception 'Attachments required.'; end if;
   select sum((x->>'size')::bigint) into total from jsonb_array_elements(p_files) x;
-  if total is null or total>500000000 then raise exception 'Attachments exceed 500 MB/message.'; end if;
+  if total is null or total>200000000 then raise exception 'Attachments exceed 200 MB/message.'; end if;
   if exists(select 1 from public.my_work_message_deletion_audit where deleted_message_id=p_id) then raise exception 'This message was permanently deleted.'; end if;
   insert into public.my_work_messages(id,sender_user_id,recipient_user_id,body,job_id,delivery_status,upload_request,upload_state,upload_touched_at)
   values(p_id,auth.uid(),p_recipient,btrim(p_body),p_job,'draft',request,'active',clock_timestamp());
@@ -110,7 +110,7 @@ begin
   select * into strict m from public.my_work_messages where id=p_message_id and sender_user_id=auth.uid() for update;
   if m.upload_request is null then raise exception 'Refresh Messaging before sending attachments.'; end if;
   select count(*),sum(byte_size) into n,total from public.my_work_message_attachments where message_id=m.id;
-  if p_expected_attachment_count is null or p_expected_attachment_count<1 or n<>p_expected_attachment_count or total>500000000 then raise exception 'Attachment manifest incomplete or too large.'; end if;
+  if p_expected_attachment_count is null or p_expected_attachment_count<1 or n<>p_expected_attachment_count or total>200000000 then raise exception 'Attachment manifest incomplete or too large.'; end if;
   if m.delivery_status='ready' then return; end if;
   if m.upload_state is distinct from 'active' then raise exception 'Transfer canceled.'; end if;
   if exists(select 1 from public.my_work_message_attachments a left join storage.objects o on o.bucket_id='my-work-inbox-attachments' and o.name=a.storage_path

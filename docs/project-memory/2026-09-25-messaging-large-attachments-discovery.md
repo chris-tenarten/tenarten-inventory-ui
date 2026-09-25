@@ -1,3 +1,5 @@
+> **Historical / superseded size contract.** This document records the original candidate and its original validation. The current approved contract, revised validation and release blockers are in [Messaging Free-plan candidate](2026-09-25-messaging-free-plan-candidate.md). Old size targets and capacity blockers below are not current requirements.
+
 # Messaging universal and large attachments — discovery and proposed acceptance contract
 
 Date: 2026-09-25. Historical discovery record. Chris subsequently approved isolated implementation and paste/drop support; see [the candidate report](2026-09-25-messaging-large-attachments-candidate.md) for final behavior and evidence. Hosted release remains unapproved. Risk Tier 3 / intended Testing Level 3 because Storage restrictions, persistence, private access, retries and cleanup are involved.

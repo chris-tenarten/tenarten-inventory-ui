@@ -1,3 +1,5 @@
+> **Historical / superseded size contract.** This document records the original candidate and its original validation. The current approved contract, revised validation and release blockers are in [Messaging Free-plan candidate](2026-09-25-messaging-free-plan-candidate.md). Old size targets and capacity blockers below are not current requirements.
+
 # Messaging large/universal attachments — isolated local candidate
 
 Date: 2026-09-25. Implementation approved by Chris, including the follow-up paste/drop contract. Tier 3 / Testing Level 3. This is a local candidate, not a hosted release.

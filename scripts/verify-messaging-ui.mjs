@@ -22,7 +22,7 @@ try{
   else if(url.pathname.endsWith('/get_my_app_user'))data=[{user_id:uid,display_name:'Fixture Sender',role:'admin',is_active:true}];
   else if(url.pathname.endsWith('/list_my_work_inbox_recipients'))data=[{user_id:peer,display_name:'Fixture Recipient',role:'lead'}];
   else if(url.pathname.endsWith('/list_my_work_inbox_messages_v2'))data=[{id:mid,sender_user_id:peer,sender_name:'Fixture Recipient',recipient_user_id:uid,recipient_name:'Fixture Sender',body:'Historical attachment message',job_id:null,job_number:null,job_name:null,read_at:'2026-09-25T00:00:00Z',created_at:'2026-09-25T00:00:00Z',edited_at:null}];
-  else if(url.pathname.endsWith('/my_work_message_attachments'))data=[{id:'a',message_id:mid,storage_path:'historical/image.png',original_filename:'image.png',content_type:'image/png',byte_size:70,created_at:'2026-09-25T00:00:00Z'},{id:'b',message_id:mid,storage_path:'historical/file',original_filename:'project & #.dwg',content_type:'application/octet-stream',byte_size:250000000,created_at:'2026-09-25T00:00:00Z'}];
+  else if(url.pathname.endsWith('/my_work_message_attachments'))data=[{id:'a',message_id:mid,storage_path:'historical/image.png',original_filename:'image.png',content_type:'image/png',byte_size:70,created_at:'2026-09-25T00:00:00Z'},{id:'b',message_id:mid,storage_path:'historical/file',original_filename:'project & #.dwg',content_type:'application/octet-stream',byte_size:50000000,created_at:'2026-09-25T00:00:00Z'}];
   else if(url.pathname.includes('/object/sign/')&&req.method()==='POST'){signs++;data={signedURL:url.pathname.replace('/storage/v1','')+'?token=fixture'};}
   else if(url.pathname.includes('/object/')){bytes++;return route.fulfill({status:200,contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a7l8AAAAASUVORK5CYII=','base64')});}
   else if(url.pathname.endsWith('/recover_my_work_attachment_transfer'))data=pending;
@@ -38,6 +38,7 @@ try{
  const conversation=page.getByRole('button').filter({hasText:'Historical attachment message'});if(await conversation.count())await conversation.first().click();
  await page.getByRole('button',{name:'Download',exact:true}).first().waitFor();assert.equal(await page.getByRole('button',{name:'Download',exact:true}).count(),2);assert.equal(signs,0);assert.equal(bytes,0);
  await page.getByRole('button',{name:'Preview image',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[aria-label="Preview image.png"]'));assert.equal(signs,1);await page.getByRole('button',{name:'Close image preview'}).click();
+ assert.match(await page.locator('#messaging-attachment-help').innerText(),/50 MB per file · 200 MB per message/);
  await page.getByLabel('Message',{exact:true}).fill('Send arbitrary files');
  await page.getByLabel('Attach files').setInputFiles({name:'arbitrary.exe',mimeType:'application/x-msdownload',buffer:Buffer.from('binary')});assert.equal(begins,0);
  await page.getByLabel('Message',{exact:true}).evaluate(el=>{const data=new DataTransfer();data.items.add(new File(['clip'],'clipboard.bin'));el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:data,bubbles:true,cancelable:true}));});
