@@ -89,8 +89,7 @@ export async function markInboxConversationRead(otherUserId: string) {
 export async function editInboxMessage(messageId:string,body:string){const{error}=await supabase.rpc("edit_my_work_inbox_message",{p_message_id:messageId,p_body:body});if(error)throw error;}
 
 export async function permanentlyDeleteInboxMessage(messageId:string){
-  const prepared=await supabase.rpc("prepare_admin_delete_my_work_message",{p_message_id:messageId});if(prepared.error)throw prepared.error;
-  const paths=((prepared.data??[]) as Array<{storage_path:string}>).map((row)=>row.storage_path);
-  if(paths.length){const removed=await supabase.storage.from(INBOX_ATTACHMENT_BUCKET).remove(paths);if(removed.error)throw removed.error;}
-  const deleted=await supabase.rpc("admin_permanently_delete_my_work_message",{p_message_id:messageId,p_confirmation:"PERMANENTLY_DELETE_MESSAGE"});if(deleted.error)throw deleted.error;
+  const {data,error}=await supabase.functions.invoke("admin-delete-messaging-message",{body:{messageId,confirmation:"PERMANENTLY_DELETE_MESSAGE"}});
+  if(error)throw new Error("Message deletion did not complete. Retry to reconcile its attachment cleanup.");
+  if(!data||!["deleted","already_deleted"].includes(data.status))throw new Error("Message deletion was not confirmed.");
 }
