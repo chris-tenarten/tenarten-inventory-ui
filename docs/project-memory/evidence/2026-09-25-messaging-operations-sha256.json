@@ -1,0 +1,31 @@
+{
+  "applicationSHA": "5cbc69dd67d380baa0bf03b01ae65c9318f7889a",
+  "artifacts": {
+    "docs/project-memory/2026-09-25-messaging-operations-candidate.md": "2ded19d8e61f2859bc3fb1442a6526d660c93adb3e8cf692ab65e2375b191a61",
+    "scripts/prepare-messaging-cleanup-deployment.mjs": "8d164be57561685bf59d06f07101cf76711a891ff5469248b5c4d0541dbb4557",
+    "scripts/prepare-messaging-transition.mjs": "fd31ff9f9e89e0b95ff841423b7bb6acf2b0f079285e59e9305fec09d13cbede",
+    "scripts/verify-messaging-cleanup-adapter.mjs": "fc20b725ffda9c78bc7a6f29a30cc607a9eda2068bc1c657e49d4b03ae5a84fa",
+    "scripts/verify-messaging-operations-db.mjs": "44597475847ac2682868ee7848ddf2062b15ab0a9e93b1e9809a03fa41dfdd2b",
+    "scripts/verify-messaging-operations-local.mjs": "4eba0f6795cb354aebd7d80437c6ed2d41899a478dc487c688a9460d98371922",
+    "supabase/functions/cleanup-messaging-drafts/core.mjs": "460d84f48cd930f17a2b2ccd11e2b800674a11baa7922d0c35a67130e6526126",
+    "supabase/functions/cleanup-messaging-drafts/deno.json": "a59a0d5ff03d723de114c7b2083cb636af10e6436131bafe2a339fa9dc0ea4c0",
+    "supabase/functions/cleanup-messaging-drafts/index.ts": "5cb4dba8fd89ab9937e5582433860eaf9199e947eb40fefef99e91c60e09180a",
+    "supabase/operations/messaging/README.md": "feba71bef4c5c77f408bb07c0686981c0d62c93894935907f2bebe2d34df32ec",
+    "supabase/operations/messaging/abort-before-migration.sql": "9ef99079821250c7464fc923a5eda7b2ffe3518927fed7a162f62b8d4616cc56",
+    "supabase/operations/messaging/attest-client.sql": "1f661e55fdc4e602a9d180d03d059295462204afb359ba4fcd9fcd4ea5831308",
+    "supabase/operations/messaging/cleanup-disable.sql": "b46fda1e2bb42242ec3da5e22cedaae6c527bb7e7f39ac0f32891c17c1c6e4a7",
+    "supabase/operations/messaging/cleanup-enable.sql": "002a99f0ca2a10b37cf51594777be96adb200926aeabfd239e9e40455e1f25cb",
+    "supabase/operations/messaging/cleanup-inspect.sql": "50c50b14c8d651ae930c7fa5a2284670c7e323adb53f5a56ede06d2dcb790a2c",
+    "supabase/operations/messaging/cleanup-setup.sql": "0bc416d50d67f383a07a17a8fcfe8ab468391df89ac1de0c8c3d83f1ab287f1f",
+    "supabase/operations/messaging/drain-barrier.sql": "c6ada882cb81a6b8e25d96474cdd739fb4ab1ed7b51870f45b5907e77ccab312",
+    "supabase/operations/messaging/edge-config.toml": "ca3e706ada19878e7912e08d28d8f7dcbd2d9796ac3341c2f45b9f73c4c82776",
+    "supabase/operations/messaging/hold-new-uploads.sql": "de5be89e062824f0e20dabbb0d19070ab7ec7baadcab89c7e8a8d8bd57b63a90",
+    "supabase/operations/messaging/pause.sql": "d1644a870eb08fb56f1478a11e8b6b481003d7d36f6a501abe2da370aa1528b8",
+    "supabase/operations/messaging/reopen.sql": "83c5f533a9a660459acd47f3b065e6e857b6627a44a4170a894fdb7a1d3b275d",
+    "supabase/operations/messaging/transition-setup.sql": "94d257ae041d9d57848eb63b1979d04e2c2b8985a094337d6f1eba3301f7aca4",
+    "supabase/migrations/20260925120000_messaging_large_attachments.sql": "eaab161c58a55efeee161d9252ef984acc013bf53b1eb5a8a00635cacc7328d2",
+    "supabase/config-changes/20260925_messaging_attachment_bucket.sql": "c04c55c040a4c58fdeb860a368c085e589e60fa8f022a947cbdf5d314750b9f6",
+    "scripts/cleanup-messaging-drafts.mjs": "6144c8b49de1b85589cfe26494adf63b6f011fc4d8de1feed6d1593c9f201e31"
+  },
+  "generatedPausedMigration": "51447e534d536c623b148ebc62d58e60133ebb211dad4bea81e9c0be3f07eddd"
+}

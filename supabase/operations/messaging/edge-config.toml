@@ -1,0 +1,4 @@
+# Copy to the isolated deployment directory's supabase/config.toml; never change app config.
+project_id = "tenops-messaging-cleanup-operations"
+[functions.cleanup-messaging-drafts]
+verify_jwt = true
