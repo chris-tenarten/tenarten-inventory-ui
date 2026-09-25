@@ -1,9 +1,8 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '@/lib/auth';
-import { loadProductionJobs } from '@/modules/production/jobs';
+import { loadProductionScheduleJobs, type ProductionScheduleJob } from '@/modules/production/jobs';
 import { productionJobsVisibleToRole } from '@/modules/production/fixture-visibility';
-import type { ProductionJob } from '@/modules/production/types';
 import { loadPlanningPhases } from '@/modules/planning/data';
 import type { PlanningPhase } from '@/modules/planning/types';
 import { isPlanningEnabled } from '@/modules/planning/timeline-model.mjs';
@@ -17,21 +16,21 @@ export default function IntakePlanning({ bids, onSelectBid, onChanged }: { bids:
   const auth=useAuth();
   const [mode,setMode]=useState<PlanningMode>('intake');
   const [records,setRecords]=useState<BidPlanning[]>([]);
-  const [jobs,setJobs]=useState<ProductionJob[]>([]);
+  const [jobs,setJobs]=useState<ProductionScheduleJob[]>([]);
   const [phases,setPhases]=useState<PlanningPhase[]>([]);
   const [loaded,setLoaded]=useState(false);
   const [loadedFor,setLoadedFor]=useState<{bids:Bid[];revision:number;role:string|undefined}|null>(null);
   const [error,setError]=useState(''),[revision,setRevision]=useState(0);
-  const request=useRef<{bids: Bid[];revision:number;role: string | undefined;promise:Promise<[ProductionJob[],PlanningPhase[]]>}|null>(null);
+  const request=useRef<{bids: Bid[];revision:number;role: string | undefined;promise:Promise<[ProductionScheduleJob[],PlanningPhase[]]>}|null>(null);
   useEffect(()=>{let live=true;void loadBidPlanning().then(rows=>{if(live){setRecords(rows);setLoaded(true);}}).catch(e=>{if(live)setError(e.message);});return()=>{live=false;};},[bids,revision]);
   useEffect(()=>{
     if(mode==='intake')return;
     let live=true;
     if(!request.current||request.current.bids!==bids||request.current.revision!==revision||request.current.role!==auth.profile?.role){
-      request.current={bids,revision,role:auth.profile?.role,promise:loadProductionJobs().then(async loadedJobs=>{
+      request.current={bids,revision,role:auth.profile?.role,promise:loadProductionScheduleJobs().then(async loadedJobs=>{
         const visible=productionJobsVisibleToRole(loadedJobs,auth.profile?.role);
         const loadedPhases=isPlanningEnabled(process.env.NEXT_PUBLIC_ENABLE_PLANNING)?await loadPlanningPhases(visible.map(j=>j.id)):[];
-        return [visible,loadedPhases] as [ProductionJob[],PlanningPhase[]];
+        return [visible,loadedPhases] as [ProductionScheduleJob[],PlanningPhase[]];
       })};
     }
     void request.current.promise.then(([nextJobs,nextPhases])=>{if(live){setJobs(nextJobs);setPhases(nextPhases);setLoadedFor({bids,revision,role:auth.profile?.role});}}).catch(e=>{request.current=null;if(live)setError(e.message);});

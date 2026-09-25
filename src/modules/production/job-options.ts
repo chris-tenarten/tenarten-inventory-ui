@@ -1,3 +1,4 @@
+import { loadCompleteRows } from '@/lib/complete-rows';
 import { supabase } from '../../lib/supabase';
 import {
   formatProductionJobSelectorLabel,
@@ -32,23 +33,22 @@ export async function loadProductionJobOptions(options?: {
   orderBy?: 'identity' | 'schedule';
   includeArchived?: boolean;
 }): Promise<ProductionJobOption[]> {
-  let query = supabase
-    .from('jobs')
-    .select('id,name,job_number,customer,work_order_number,color_plate_number,production_status,archived_at,planned_start,requested_delivery_date');
-  if (!options?.includeArchived) query = query.is('archived_at', null);
+  return loadCompleteRows((from, to) => {
+    let query = supabase
+      .from('jobs')
+      .select('id,name,job_number,customer,work_order_number,color_plate_number,production_status,archived_at,planned_start,requested_delivery_date', { count: 'exact' });
+    if (!options?.includeArchived) query = query.is('archived_at', null);
 
-  query = options?.orderBy === 'schedule'
-    ? query
-        .order('planned_start', { ascending: true, nullsFirst: false })
-        .order('name')
-    : query
-        .order('job_number', { ascending: true, nullsFirst: false })
-        .order('name');
+    query = options?.orderBy === 'schedule'
+      ? query
+          .order('planned_start', { ascending: true, nullsFirst: false })
+          .order('name')
+      : query
+          .order('job_number', { ascending: true, nullsFirst: false })
+          .order('name');
 
-  const { data, error } = await query;
-
-  if (error) throw error;
-  return (data ?? []) as ProductionJobOption[];
+    return query.order('id').range(from, to).returns<ProductionJobOption[]>();
+  });
 }
 
 export async function loadProductionJobOption(jobId: string): Promise<ProductionJobOption | null> {

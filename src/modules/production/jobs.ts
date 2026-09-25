@@ -161,6 +161,33 @@ export async function loadProductionJobs(includeArchived = false): Promise<Produ
   });
 }
 
+/** Read-only Intake schedule projection; full editable Jobs retain their own loader. */
+export type ProductionScheduleJob = Pick<ProductionJob,
+  'id' | 'name' | 'job_number' | 'production_status' | 'planned_start' | 'planned_end' | 'lifecycle_key'> & {
+  rework_cycle?: Pick<ProductionReworkCycle, 'id'> | null;
+};
+export async function loadProductionScheduleJobs(): Promise<ProductionScheduleJob[]> {
+  type ScheduleCycle = Pick<ProductionReworkCycle, 'id' | 'job_id' | 'production_status' | 'planned_start' | 'planned_end' | 'sequence_number'>;
+  const [jobs, cycles] = await Promise.all([
+    loadCompleteRows((from, to) => supabase.from('jobs')
+      .select('id,name,job_number,production_status,planned_start,planned_end', { count: 'exact' })
+      .is('archived_at', null).order('planned_start', { ascending: true, nullsFirst: false })
+      .order('created_at', { ascending: false }).order('id').range(from, to).returns<ProductionScheduleJob[]>()),
+    loadCompleteRows((from, to) => supabase.from('production_rework_cycles')
+      .select('id,job_id,sequence_number,production_status,planned_start,planned_end', { count: 'exact' })
+      .not('production_status', 'in', '(complete,cancelled)').order('sequence_number', { ascending: false })
+      .order('id').range(from, to).returns<ScheduleCycle[]>()),
+  ]);
+  const active = new Map<string, ScheduleCycle>();
+  for (const cycle of cycles) if (isActiveProductionRework(cycle) && !active.has(cycle.job_id)) active.set(cycle.job_id, cycle);
+  return jobs.map(job => {
+    const cycle = active.get(job.id);
+    return cycle ? { ...job, lifecycle_key: `rework:${cycle.id}`, rework_cycle: { id: cycle.id },
+      production_status: cycle.production_status, planned_start: cycle.planned_start, planned_end: cycle.planned_end }
+      : { ...job, lifecycle_key: `original:${job.id}`, rework_cycle: null };
+  });
+}
+
 export async function loadProductionReworkCycles(jobId: string): Promise<ProductionReworkCycle[]> {
   const { data, error } = await supabase.from('production_rework_cycles').select('*').eq('job_id', jobId).order('sequence_number', { ascending: false });
   if (error) throw error;

@@ -36,7 +36,6 @@ import {
   loadWorkTaskAttachments,
   loadWorkCollaborators,
   loadWorkJobs,
-  loadWorkTaskGroups,
   openWorkTaskAttachment,
   permanentlyDeleteWorkTask,
   removeWorkTaskAttachment,
@@ -115,7 +114,7 @@ function AttachmentList({attachments,currentUserId,creatorUserId,onChanged,setEr
   return attachments.length?<div className="space-y-1">{attachments.map(attachment=><div key={attachment.id} className="flex min-w-0 items-center gap-2 rounded border border-slate-200 px-2 py-1.5 text-sm"><Paperclip className="h-4 w-4 shrink-0 text-slate-500" /><button type="button" onClick={()=>void openWorkTaskAttachment(attachment).catch((caught)=>setError(caught instanceof Error?caught.message:"Unable to open attachment."))} className="min-w-0 flex-1 truncate text-left font-medium text-blue-800 hover:underline">{attachment.originalFilename}</button><span className="shrink-0 text-xs text-slate-400">{attachmentSize(attachment.byteSize)}</span>{(attachment.uploaderUserId===currentUserId||creatorUserId===currentUserId)&&<button type="button" disabled={busyId===attachment.id} onClick={()=>void(async()=>{setBusyId(attachment.id);try{await removeWorkTaskAttachment(attachment);await onChanged();}catch(caught){setError(caught instanceof Error?caught.message:"Unable to remove attachment.");}finally{setBusyId("");}})()} aria-label={`Delete ${attachment.originalFilename}`} className="flex h-10 w-10 shrink-0 items-center justify-center text-red-700 disabled:opacity-50"><Trash2 className="h-4 w-4" /></button>}</div>)}</div>:null;
 }
 
-function JobCombobox({ jobs, value, onChange, label }: { jobs: WorkJob[]; value: string; onChange: (value: string) => void; label: string }) {
+function JobCombobox({ jobs, value, onChange, label, loading = false }: { jobs: WorkJob[]; value: string; onChange: (value: string) => void; label: string; loading?: boolean }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -128,7 +127,7 @@ function JobCombobox({ jobs, value, onChange, label }: { jobs: WorkJob[]; value:
   return <div className="relative" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) { setOpen(false); setQuery(""); } }}>
     <div className="relative flex items-center">
       <Search className="pointer-events-none absolute left-3 h-4 w-4 text-slate-400" />
-      <input role="combobox" aria-label={label} aria-expanded={open} aria-controls={`${label.replaceAll(" ", "-").toLowerCase()}-results`} aria-autocomplete="list" value={open ? query : selected ? jobLabel(selected) : ""} placeholder="Search number, project, or customer" onFocus={() => { setOpen(true); setQuery(""); setActiveIndex(0); }} onClick={() => setOpen(true)} onChange={(event) => { setQuery(event.target.value); setOpen(true); setActiveIndex(0); }} onKeyDown={(event) => {
+      <input disabled={loading} role="combobox" aria-label={label} aria-expanded={open} aria-controls={`${label.replaceAll(" ", "-").toLowerCase()}-results`} aria-autocomplete="list" value={open ? query : selected ? jobLabel(selected) : ""} placeholder={loading ? "Loading Jobs…" : "Search number, project, or customer"} onFocus={() => { setOpen(true); setQuery(""); setActiveIndex(0); }} onClick={() => setOpen(true)} onChange={(event) => { setQuery(event.target.value); setOpen(true); setActiveIndex(0); }} onKeyDown={(event) => {
         if (event.key === "ArrowDown") { event.preventDefault(); setOpen(true); setActiveIndex((current) => Math.min(current + 1, Math.max(0, matches.length - 1))); }
         else if (event.key === "ArrowUp") { event.preventDefault(); setActiveIndex((current) => Math.max(0, current - 1)); }
         else if (event.key === "Enter" && open && matches[activeIndex]) { event.preventDefault(); select(matches[activeIndex]); }
@@ -146,6 +145,7 @@ export default function MyWorkPage() {
   const [tasks, setTasks] = useState<WorkTask[]>([]);
   const [collaborators, setCollaborators] = useState<WorkCollaborator[]>([]);
   const [jobs, setJobs] = useState<WorkJob[]>([]);
+  const [optionsLoading, setOptionsLoading] = useState(true);
   const [taskGroups,setTaskGroups]=useState<WorkTaskGroup[]>([]);
   const [groupsOpen,setGroupsOpen]=useState(false);
   const [groupName,setGroupName]=useState("");
@@ -216,7 +216,34 @@ export default function MyWorkPage() {
     }
     void load();
   }, [load]);
-  useEffect(()=>{if(!auth.profile?.isActive)return;void Promise.all([loadWorkCollaborators(),loadWorkJobs(),refreshAttachmentCounts()]).then(([nextUsers,nextJobs])=>{setCollaborators(nextUsers.filter((user)=>user.userId!==auth.profile?.userId));setJobs(nextJobs);}).catch((caught)=>setError(caught instanceof Error?caught.message:"Some My Work options could not be loaded."));},[auth.profile?.isActive,auth.profile?.userId,refreshAttachmentCounts]);
+  useEffect(() => {
+    if (!auth.profile?.isActive) return;
+    void refreshAttachmentCounts().catch(caught => setError(caught instanceof Error ? caught.message : "Unable to load attachment counts."));
+  }, [auth.profile?.isActive, auth.profile?.userId, refreshAttachmentCounts]);
+  const optionsVisible = composerOpen || Boolean(selectedTask) || Boolean(filterJobId);
+  useEffect(() => {
+    if (!auth.profile?.isActive || !optionsVisible) return;
+    let live = true;
+    setOptionsLoading(true);
+    setJobs([]);
+    setCollaborators([]);
+    void Promise.all([loadWorkCollaborators(), loadWorkJobs()]).then(([nextUsers, nextJobs]) => {
+      if (!live) return;
+      setCollaborators(nextUsers.filter(user => user.userId !== auth.profile?.userId));
+      setJobs(nextJobs);
+    }).catch(caught => { if (live) setError(caught instanceof Error ? caught.message : "Some My Work options could not be loaded."); })
+      .finally(() => { if (live) setOptionsLoading(false); });
+    return () => { live = false; };
+  }, [auth.profile?.isActive, auth.profile?.userId, optionsVisible, selectedTask?.id]);
+  const selectedTaskId = selectedTask?.id;
+  useEffect(() => {
+    if (!selectedTaskId) return;
+    let live = true;
+    setDetailAttachments([]);
+    void loadWorkTaskAttachments(selectedTaskId).then(rows => { if (live) setDetailAttachments(rows); })
+      .catch(caught => { if (live) setError(caught instanceof Error ? caught.message : "Unable to load attachments."); });
+    return () => { live = false; };
+  }, [selectedTaskId]);
   useEffect(()=>{if(!quickTaskId)return;const dismissPointer=(event:PointerEvent)=>{const target=event.target as Element|null;if(target?.closest('[role="menu"]')||target?.closest('button[aria-expanded="true"][aria-label^="Quick actions"]'))return;setQuickTaskId("");setQuickAction("");};const dismissKey=(event:KeyboardEvent)=>{if(event.key==='Escape'){setQuickTaskId("");setQuickAction("");}};document.addEventListener('pointerdown',dismissPointer);document.addEventListener('keydown',dismissKey);return()=>{document.removeEventListener('pointerdown',dismissPointer);document.removeEventListener('keydown',dismissKey);};},[quickTaskId]);
   useEffect(() => { if (!focusTaskId || loading) return; window.setTimeout(() => document.querySelector(`[data-work-task-id="${focusTaskId}"]`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 0); }, [focusTaskId, loading]);
   useEffect(() => {
@@ -255,7 +282,7 @@ export default function MyWorkPage() {
   const selectedJob = jobs.find((job) => job.id === filterJobId);
   const changeSort = (next: SortMode) => { setSortMode(next); if (auth.profile?.userId) window.localStorage.setItem(`tenops_my_work_sort:${auth.profile.userId}`, next); };
 
-  async function refreshGroups(){setTaskGroups(await loadWorkTaskGroups());await load();}
+  async function refreshGroups(){await load();}
   async function addGroup(){if(!groupName.trim()||groupSaving)return;setGroupSaving(true);setError("");try{await createWorkTaskGroup(groupName.trim(),groupColor);setGroupName("");setGroupColor("blue");await refreshGroups();}catch(caught){setError(caught instanceof Error?caught.message:"Unable to create Task Group.");}finally{setGroupSaving(false);}}
   async function editGroup(group:WorkTaskGroup,changes:{name?:string;color?:WorkTaskColor}){setGroupSaving(true);setError("");try{await updateWorkTaskGroup(group.id,changes.name??group.name,changes.color??group.color);await refreshGroups();}catch(caught){setError(caught instanceof Error?caught.message:"Unable to update Task Group.");}finally{setGroupSaving(false);}}
   async function removeGroup(group:WorkTaskGroup){const count=tasks.filter(task=>task.groupId===group.id).length;if(!window.confirm(count?`Delete “${group.name}” and remove ${count} task ${count===1?'membership':'memberships'}? Tasks will remain intact.`:`Delete empty Task Group “${group.name}”?`))return;setGroupSaving(true);setError("");try{await deleteWorkTaskGroup(group.id);await refreshGroups();}catch(caught){setError(caught instanceof Error?caught.message:"Unable to delete Task Group.");}finally{setGroupSaving(false);}}
@@ -294,7 +321,7 @@ export default function MyWorkPage() {
     }
   }
 
-  function openDetails(task: WorkTask) { setSelectedTask(task); setDetail(detailFromTask(task));setDetailFiles([]);setDetailAttachments([]);void loadWorkTaskAttachments(task.id).then(setDetailAttachments).catch((caught)=>setError(caught instanceof Error?caught.message:"Unable to load attachments.")); }
+  function openDetails(task: WorkTask) { setSelectedTask(task); setDetail(detailFromTask(task));setDetailFiles([]);setDetailAttachments([]); }
   function closeDetails() { if (!detailSaving&&!taskDeleting) { setSelectedTask(null); setDetail(null); setDetailFiles([]);setDetailAttachments([]); } }
   async function saveDetails() {
     if (!selectedTask || !detail || !detail.title.trim() || detailSaving) return;
@@ -312,7 +339,7 @@ export default function MyWorkPage() {
   }
   async function applyQuickTaskUpdate(task:WorkTask,changes:{color?:WorkTaskColor;dueDate?:string;estimatedMinutes?:number|null}){
     if(quickSaving)return;setQuickSaving(true);setError("");
-    try{if(changes.color&&task.groupId){const group=taskGroups.find(candidate=>candidate.id===task.groupId);if(group)await updateWorkTaskGroup(group.id,group.name,changes.color);}else await updateWorkTask({id:task.id,title:task.title,notes:task.notes,assigneeUserId:task.assigneeUserId,dueDate:changes.dueDate??task.dueDate,estimatedMinutes:changes.estimatedMinutes===undefined?task.estimatedMinutes:changes.estimatedMinutes,jobId:task.contextType==='job'?task.contextId:'',color:changes.color??task.color});if(changes.color&&task.groupId)setTaskGroups(await loadWorkTaskGroups());await load();setQuickTaskId("");setQuickAction("");}
+    try{if(changes.color&&task.groupId){const group=taskGroups.find(candidate=>candidate.id===task.groupId);if(group)await updateWorkTaskGroup(group.id,group.name,changes.color);}else await updateWorkTask({id:task.id,title:task.title,notes:task.notes,assigneeUserId:task.assigneeUserId,dueDate:changes.dueDate??task.dueDate,estimatedMinutes:changes.estimatedMinutes===undefined?task.estimatedMinutes:changes.estimatedMinutes,jobId:task.contextType==='job'?task.contextId:'',color:changes.color??task.color});await load();setQuickTaskId("");setQuickAction("");}
     catch(caught){setError(caught instanceof Error?caught.message:"Unable to update task.");}
     finally{setQuickSaving(false);}
   }
@@ -370,13 +397,14 @@ export default function MyWorkPage() {
 
     <section className="mt-4 rounded-lg border border-slate-300 bg-white p-2 sm:p-3" onFocus={() => setComposerOpen(true)}>
       <div className="flex items-center gap-2"><Plus className="h-5 w-5 shrink-0 text-slate-500" aria-hidden="true" /><input ref={titleInputRef} value={title} onChange={(event) => setTitle(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void add(); } }} placeholder="What needs to get done?" aria-label="Task title" className="h-11 min-w-0 flex-1 border-0 bg-transparent px-1 text-base font-normal text-slate-950 outline-none" /><button type="button" onClick={() => void add()} disabled={!title.trim() || saving} className="tenops-selected-surface hidden h-10 shrink-0 rounded-md border px-4 text-sm font-medium disabled:opacity-40 sm:block">{saving ? attachmentActivity||"Adding…" : "Add task"}</button></div>
+      {optionsVisible && optionsLoading && <p role="status" className="text-xs text-slate-500">Loading task options…</p>}
       {composerOpen && <div className="mt-2 space-y-2 border-t border-slate-200 pt-2">
         <label className="block text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><NotebookPen className="h-3.5 w-3.5" />Notes</span><textarea value={notes} onChange={(event)=>setNotes(event.target.value)} rows={2} className="w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 text-sm" /></label>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[160px_238px_minmax(0,1fr)_220px]">
           <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" />Due</span><input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} className="h-11 w-full rounded-md border border-slate-300 bg-white px-2 text-sm" /></label>
           <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><Clock3 className="h-3.5 w-3.5" />Estimated time</span><EstimatedTimeInput value={estimatedMinutes} onChange={setEstimatedMinutes} label="Composer estimated time" /></label>
-          <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><BriefcaseBusiness className="h-3.5 w-3.5" />Job</span><JobCombobox jobs={jobs} value={jobId} onChange={setJobId} label="Composer Job" /></label>
-          <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><UserRound className="h-3.5 w-3.5" />Share</span><select value={assignee} onChange={(event) => setAssignee(event.target.value)} className="h-11 w-full rounded-md border border-slate-300 bg-white px-2 text-sm"><option value="">Keep private</option>{collaborators.map((user) => <option key={user.userId} value={user.userId}>{user.displayName}</option>)}</select></label>
+          <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><BriefcaseBusiness className="h-3.5 w-3.5" />Job</span><JobCombobox loading={optionsLoading} jobs={jobs} value={jobId} onChange={setJobId} label="Composer Job" /></label>
+          <label className="text-xs text-slate-600"><span className="mb-1 flex items-center gap-1"><UserRound className="h-3.5 w-3.5" />Share</span><select disabled={optionsLoading} value={assignee} onChange={(event) => setAssignee(event.target.value)} className="h-11 w-full rounded-md border border-slate-300 bg-white px-2 text-sm"><option value="">Keep private</option>{collaborators.map((user) => <option key={user.userId} value={user.userId}>{user.displayName}</option>)}</select></label>
         </div>
         <div><div className="mb-2 text-xs text-slate-600">Task color</div><ColorPicker value={color} onChange={setColor} /></div>
         <StagedAttachments files={stagedFiles} onAdd={(files)=>setStagedFiles((current)=>[...current,...files])} onRemove={(index)=>setStagedFiles((current)=>current.filter((_,candidate)=>candidate!==index))} onError={setError} onPreparing={(preparing)=>setAttachmentActivity(preparing?"Preparing preview…":"")} disabled={saving} />
@@ -399,8 +427,8 @@ export default function MyWorkPage() {
       <div className="flex-1 space-y-5 overflow-y-auto px-4 py-5 sm:px-6">
         <label className="block text-sm font-medium text-slate-700">Title<input value={detail.title} onChange={(event) => setDetail({ ...detail, title: event.target.value })} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-base font-normal" /></label>
         <label className="block text-sm font-medium text-slate-700">Notes<textarea value={detail.notes} onChange={(event) => setDetail({ ...detail, notes: event.target.value })} rows={6} placeholder="What do you need to remember?" className="mt-1 w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-normal" /></label>
-        <div className="grid gap-4 sm:grid-cols-2"><label className="text-sm font-medium text-slate-700">Due date<input type="date" value={detail.dueDate} onChange={(event) => setDetail({ ...detail, dueDate: event.target.value })} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 font-normal" /></label><label className="text-sm font-medium text-slate-700">Estimated time<span className="mt-1 block"><EstimatedTimeInput value={detail.estimatedMinutes} onChange={(next)=>setDetail({...detail,estimatedMinutes:next})} label="Task estimated time" /></span></label><label className="text-sm font-medium text-slate-700">Share with<select value={detail.assigneeUserId} disabled={selectedTask.creatorUserId !== auth.profile?.userId} onChange={(event) => setDetail({ ...detail, assigneeUserId: event.target.value })} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 font-normal disabled:opacity-60"><option value={selectedTask.creatorUserId}>Keep private</option>{collaborators.map((user) => <option key={user.userId} value={user.userId}>{user.displayName}</option>)}</select></label></div>
-        <label className="block text-sm font-medium text-slate-700">Job<span className="mt-1 block"><JobCombobox jobs={jobs} value={detail.jobId} onChange={(nextJobId) => setDetail({ ...detail, jobId: nextJobId })} label="Task detail Job" /></span></label>
+        <div className="grid gap-4 sm:grid-cols-2"><label className="text-sm font-medium text-slate-700">Due date<input type="date" value={detail.dueDate} onChange={(event) => setDetail({ ...detail, dueDate: event.target.value })} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 font-normal" /></label><label className="text-sm font-medium text-slate-700">Estimated time<span className="mt-1 block"><EstimatedTimeInput value={detail.estimatedMinutes} onChange={(next)=>setDetail({...detail,estimatedMinutes:next})} label="Task estimated time" /></span></label><label className="text-sm font-medium text-slate-700">Share with<select value={detail.assigneeUserId} disabled={optionsLoading || selectedTask.creatorUserId !== auth.profile?.userId} onChange={(event) => setDetail({ ...detail, assigneeUserId: event.target.value })} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 font-normal disabled:opacity-60"><option value={selectedTask.creatorUserId}>Keep private</option>{collaborators.map((user) => <option key={user.userId} value={user.userId}>{user.displayName}</option>)}</select></label></div>
+        <label className="block text-sm font-medium text-slate-700">Job<span className="mt-1 block"><JobCombobox loading={optionsLoading} jobs={jobs} value={detail.jobId} onChange={(nextJobId) => setDetail({ ...detail, jobId: nextJobId })} label="Task detail Job" /></span></label>
         {detail.jobId && <button type="button" onClick={() => openProductionJob(detail.jobId)} className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-blue-800"><BriefcaseBusiness className="h-4 w-4" />Open linked Job</button>}
         <label className="block text-sm font-medium text-slate-700">Task Group<select value={detail.groupId} onChange={(event)=>setDetail({...detail,groupId:event.target.value})} className="mt-1 h-11 w-full rounded-md border border-slate-300 bg-white px-3 font-normal"><option value="">Ungrouped</option>{taskGroups.map(group=><option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
         <div><div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-700">Task color<span title={detail.groupId?"This stored Task color returns when the task is removed from its Group. Group color is currently displayed.":"Task color is personal to your workspace and does not change another participant’s view."} aria-label="About task color" tabIndex={0} className="inline-flex text-slate-400"><Info className="h-3.5 w-3.5" /></span></div>{detail.groupId&&<p className="mb-2 text-xs text-slate-500">Group color is currently displayed.</p>}<ColorPicker value={detail.color} onChange={(color) => setDetail({ ...detail, color })} /></div>

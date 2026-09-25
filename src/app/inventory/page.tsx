@@ -586,12 +586,20 @@ export default function InventoryPage() {
     loadPendingReceivals();
   }, [loadData, loadPendingReceivals]);
 
+  const jobChoicesVisible = Boolean(selectedLotId || isPendingReceivalFormOpen ||
+    (pendingReceivalsExpanded && selectedPendingReceivalIds.size > 0));
   useEffect(() => {
-    loadProductionJobOptions()
-      .then(setProductionJobs)
-      .catch((error) => setProductionJobsError(getSupabaseErrorMessage(error, 'Unable to load Production jobs.')))
-      .finally(() => setProductionJobsLoading(false));
-  }, []);
+    if (!jobChoicesVisible) return;
+    let live = true;
+    setProductionJobs([]);
+    setProductionJobsLoading(true);
+    setProductionJobsError('');
+    void loadProductionJobOptions()
+      .then((jobs) => { if (live) setProductionJobs(jobs); })
+      .catch((error) => { if (live) setProductionJobsError(getSupabaseErrorMessage(error, 'Unable to load Production jobs.')); })
+      .finally(() => { if (live) setProductionJobsLoading(false); });
+    return () => { live = false; };
+  }, [jobChoicesVisible, selectedLotId, isPendingReceivalFormOpen]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -2387,8 +2395,8 @@ export default function InventoryPage() {
                   <option value="none">{tr('Remove reservation', 'Quitar reserva')}</option>
                 </select>
                 {bulkPendingReservationMode === 'canonical' && (
-                  <select value={bulkPendingProductionJobId} onChange={(event) => setBulkPendingProductionJobId(event.target.value)} className={`${fieldClass} mt-2`}>
-                    <option value="">Select Production job...</option>
+                  <select disabled={productionJobsLoading} value={bulkPendingProductionJobId} onChange={(event) => setBulkPendingProductionJobId(event.target.value)} className={`${fieldClass} mt-2`}>
+                    <option value="">{productionJobsLoading ? 'Loading Production jobs…' : 'Select Production job...'}</option>
                     {productionJobs.map((job) => <option key={job.id} value={job.id}>{formatProductionJobOptionWithStatus(job)}</option>)}
                   </select>
                 )}
@@ -3075,8 +3083,8 @@ export default function InventoryPage() {
                       {editReservationMode === 'canonical' ? (
                         <div>
                           <label className={labelClass}>Production Job *</label>
-                          <select value={editProductionJobId} onChange={(event) => setEditProductionJobId(event.target.value)} className={fieldClass}>
-                            <option value="">Select a Production job</option>
+                          <select disabled={productionJobsLoading} value={editProductionJobId} onChange={(event) => setEditProductionJobId(event.target.value)} className={fieldClass}>
+                            <option value="">{productionJobsLoading ? 'Loading Production jobs…' : 'Select a Production job'}</option>
                             {row.production_job && !productionJobs.some((job) => job.id === row.production_job!.id) && (
                               <option value={row.production_job.id}>{formatProductionJobOptionWithStatus(row.production_job)}</option>
                             )}
@@ -3619,6 +3627,7 @@ export default function InventoryPage() {
           </div>
         )}
 
+        {jobChoicesVisible && productionJobsError && <p role="alert" className="text-sm text-red-700">{productionJobsError}</p>}
         {loadError && (
           <div className="border-b border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
             {loadError}

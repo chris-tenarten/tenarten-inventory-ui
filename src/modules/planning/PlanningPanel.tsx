@@ -10,7 +10,8 @@ import {
   createPlanningPhase,
   deletePlanningItem,
   deletePlanningPhase,
-  loadPhaseLibrary,
+  loadPhaseLibraryEntries,
+  loadPhaseLibraryItems,
   loadPlanningItems,
   loadPlanningPhases,
   updatePlanningItem,
@@ -70,6 +71,8 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
   const [itemEditor, setItemEditor] = useState<ItemEditorState | null>(null);
   const [creationTemplate, setCreationTemplate] = useState<PhaseLibraryEntry | null>(null);
   const [creationBusy, setCreationBusy] = useState(false);
+  const [templateLoading, setTemplateLoading] = useState(false);
+  const templateRequest = useRef(0);
   const [creationError, setCreationError] = useState("");
   const [ownerFilter, setOwnerFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<PlanningStatus | "">("");
@@ -80,9 +83,11 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
   const savingCompletionIdsRef = useRef<Set<string>>(new Set());
   const [savingCompletionIds, setSavingCompletionIds] = useState<Set<string>>(new Set());
 
+  useEffect(() => () => { ++templateRequest.current; }, [job.id]);
+
   useEffect(() => {
     let active = true;
-    Promise.all([loadPlanningPhases(job.id), loadPhaseLibrary()])
+    Promise.all([loadPlanningPhases(job.id), loadPhaseLibraryEntries()])
       .then(async ([loadedPhases, templates]) => {
         const loadedItems = await loadPlanningItems(loadedPhases.map((phase) => phase.id));
         if (!active) return;
@@ -90,8 +95,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
         itemsRef.current = loadedItems;
         setItems(loadedItems);
         onItemsChanged?.(job.id, loadedItems);
-        setLibrary(templates.entries.filter((entry) => entry.active));
-        setLibraryItems(templates.items);
+        setLibrary(templates.filter((entry) => entry.active));
         onPhasesChanged?.(job.id, loadedPhases);
         if (initialPhaseId) {
           const target = loadedPhases.find((phase) => phase.id === initialPhaseId);
@@ -231,7 +235,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
     }
   }
 
-  function openPhaseCreation(entryId: string, opener: HTMLElement) {
+  async function openPhaseCreation(entryId: string, opener: HTMLElement) {
     const entry = library.find((candidate) => candidate.id === entryId);
     if (!entry) return;
     if (countsTowardPlanningPhaseLimit(entry.default_timeline_behavior) && planningPhaseCount >= MAX_PLANNING_PHASES) {
@@ -240,11 +244,25 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
     }
     openerRef.current = opener;
     setCreationError("");
-    setCreationTemplate(entry);
-    onEditorOpenChanged?.(true);
+    const request = ++templateRequest.current;
+    setTemplateLoading(true);
+    setError("");
+    setLibraryItems([]);
+    try {
+      const rows = await loadPhaseLibraryItems(entry.id);
+      if (request !== templateRequest.current) return;
+      setLibraryItems(rows);
+      setCreationTemplate(entry);
+      onEditorOpenChanged?.(true);
+    } catch (caught) {
+      if (request === templateRequest.current) setError(caught instanceof Error ? caught.message : "Unable to load template Items.");
+    } finally {
+      if (request === templateRequest.current) setTemplateLoading(false);
+    }
   }
 
   function closePhaseCreation() {
+    ++templateRequest.current;
     setCreationTemplate(null);
     setCreationError("");
     onEditorOpenChanged?.(false);
@@ -283,7 +301,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
           <CollapsedPhaseDisplayToggle />
           <Link href={`/settings?returnJobId=${encodeURIComponent(job.id)}&returnJobName=${encodeURIComponent(job.name)}#phase-library`} className="inline-flex h-9 items-center gap-1.5 border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600"><Settings2 className="h-4 w-4" aria-hidden="true" />Phase Library</Link>
           {library.length > 0 && (
-            <select aria-label="Add from Phase Library" defaultValue="" onChange={(event) => { const value = event.target.value; event.target.value = ""; if (value) openPhaseCreation(value, event.currentTarget); }} className="h-9 border border-slate-300 bg-white px-2 text-xs font-bold">
+            <select disabled={templateLoading} aria-label="Add from Phase Library" defaultValue="" onChange={(event) => { const value = event.target.value; event.target.value = ""; if (value) void openPhaseCreation(value, event.currentTarget); }} className="h-9 border border-slate-300 bg-white px-2 text-xs font-bold">
               <option value="">Add from Phase Library…</option>
               {library.map((entry) => <option key={entry.id} value={entry.id} disabled={planningPhaseCount >= MAX_PLANNING_PHASES && countsTowardPlanningPhaseLimit(entry.default_timeline_behavior)}>{entry.name}{planningPhaseCount >= MAX_PLANNING_PHASES && countsTowardPlanningPhaseLimit(entry.default_timeline_behavior) ? " — limit reached" : ""}</option>)}
             </select>
@@ -292,6 +310,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
         </div>
       </div>
 
+      {templateLoading && <p role="status" className="mt-2 text-sm">Loading template Items…</p>}
       {!loading && phases.length > 0 && <div className="mt-3 grid gap-2 sm:grid-cols-2">
         <section className="border border-slate-200 bg-white p-3" aria-label="Execution Progress">
           <div className="flex items-center justify-between gap-3"><div className="flex items-center gap-1"><h3 className="text-xs font-bold uppercase tracking-[0.1em] text-slate-600">Execution Progress</h3><span tabIndex={0} aria-label="About Execution Progress" className="group relative inline-flex rounded-full text-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-600"><Info className="h-3.5 w-3.5" aria-hidden="true" /><span role="tooltip" className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1 hidden w-56 -translate-x-1/2 border border-slate-300 bg-slate-950 px-2 py-1.5 text-[11px] font-normal normal-case tracking-normal text-white shadow-lg group-hover:block group-focus:block">Weighted completion of all modeled Planning Items for this job.</span></span></div><strong className="text-sm text-slate-900">{progress.percent}%</strong></div>

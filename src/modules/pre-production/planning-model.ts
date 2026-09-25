@@ -1,4 +1,4 @@
-import type { ProductionJob } from '@/modules/production/types';
+import type { ProductionScheduleJob } from '@/modules/production/jobs';
 import type { PlanningPhase } from '@/modules/planning/types';
 import type { Bid } from './types';
 import { projectedWindowEligible, type BidPlanning } from './planning';
@@ -7,7 +7,7 @@ export type PlanningMode = 'intake' | 'production' | 'combined';
 type Common = { key: string; title: string; start: string | null; end: string | null };
 export type PlanningRecord = Common & (
   { source: 'intake'; bid: Bid; planning: BidPlanning } |
-  { source: 'production'; job: ProductionJob; phases: PlanningPhase[] }
+  { source: 'production'; job: ProductionScheduleJob; phases: PlanningPhase[] }
 );
 const compare = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0;
 export const planningLabel = (s: string) => s.trim().toLocaleLowerCase('en-US');
@@ -16,7 +16,7 @@ export function chronologicalPlanning(a: PlanningRecord, b: PlanningRecord) {
     (a.source === b.source ? 0 : a.source === 'production' ? -1 : 1) ||
     compare(a.end ?? '9999-12-31', b.end ?? '9999-12-31') || compare(planningLabel(a.title), planningLabel(b.title)) || compare(a.key, b.key);
 }
-export function normalizePlanning(bids: Bid[], windows: BidPlanning[], jobs: ProductionJob[], phases: PlanningPhase[]): PlanningRecord[] {
+export function normalizePlanning(bids: Bid[], windows: BidPlanning[], jobs: ProductionScheduleJob[], phases: PlanningPhase[]): PlanningRecord[] {
   const windowsById = new Map(windows.map(w => [w.id, w]));
   const phasesByJob = new Map<string, PlanningPhase[]>();
   for (const phase of phases) { const list = phasesByJob.get(phase.job_id) ?? []; list.push(phase); phasesByJob.set(phase.job_id, list); }

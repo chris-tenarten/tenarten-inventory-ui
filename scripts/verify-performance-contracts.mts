@@ -6,22 +6,28 @@ const refs=Array.from({length:1201},(_,i)=>({id:`r-${String(i).padStart(5,'0')}`
 const facts=Array.from({length:1201},(_,i)=>({id:`e-${String(i).padStart(5,'0')}`,work_date:'2026-09-24',worker_id:refs[1200].id,task_id:refs[i].id,reporting_group_id:i%2?null:refs[1200].id,product_category_id:null,job_id:null,rework_cycle_id:null,unlisted_work_label:'Historical work',am_hours:2,pm_hours:1,notes:'Retain searchable history',entered_by:'Fixture',created_at:stamp,updated_at:stamp,job:null,rework_cycle:null}));
 const items=Array.from({length:1201},(_,i)=>({id:`i-${String(i).padStart(5,'0')}`,phase_id:`phase-${i%205}`,title:`Item ${i}`,notes:'Detail retained',is_complete:i%2===0,estimated_hours:2,sort_order:i,created_at:stamp,updated_at:stamp}));
 const attachments=Array.from({length:1201},(_,i)=>({id:`a-${String(i).padStart(5,'0')}`,job_id:'job-1',created_at:stamp,file_name:`File ${i}`}));
-const tables:Record<string,unknown[]>={manpower_entries:facts,manpower_workers:refs,manpower_tasks:refs,manpower_reporting_groups:refs,planning_items:items,job_attachments:attachments};
+const library=refs.map(r=>({...r,name:r.display_name,active:r.is_active}));
+const libraryItems=items.map(r=>({...r,library_phase_id:r.phase_id}));
+const taskFiles=attachments.map(r=>({...r,task_id:'task-1',original_filename:r.file_name,byte_size:1}));
+const recipients=refs.map(r=>({user_id:r.id,display_name:r.display_name,role:'lead'}));
+const bidDetails=refs.map(r=>({...r,bid_id:'bid-1',activity_type:'created',actor_name:'Fixture',occurred_at:stamp,details:{},body:r.display_name,original_filename:r.display_name,byte_size:1}));
+const tables:Record<string,unknown[]>={list_bid_activity:bidDetails,list_bid_updates:bidDetails,list_bid_files:bidDetails,work_task_attachments:taskFiles,list_my_work_inbox_recipients:recipients,planning_phase_library:library,planning_phase_library_items:libraryItems,manpower_entries:facts,manpower_workers:refs,manpower_tasks:refs,manpower_reporting_groups:refs,planning_items:items,job_attachments:attachments};
 const calls:URL[]=[];
 globalThis.fetch=async(input)=>{
  const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);assert.equal(url.hostname,'performance-fixture.invalid');calls.push(url);
  const table=url.pathname.split('/').at(-1)!;
  let data=(tables[table]??[]) as Record<string,unknown>[];
  if(url.searchParams.has('phase_id')){const ids=url.searchParams.get('phase_id')!.slice(4,-1).split(',');data=data.filter(r=>ids.includes(String(r.phase_id)));}
+ if(url.searchParams.get('library_phase_id')?.startsWith('eq.'))data=data.filter(r=>r.library_phase_id===url.searchParams.get('library_phase_id')!.slice(3));
  const count=data.length;const offset=Number(url.searchParams.get('offset')||0);const limit=Math.min(137,Number(url.searchParams.get('limit')||1000));
  data=data.slice(offset,offset+limit);
- const select=url.searchParams.get('select')!;
- if(!select.includes('('))data=data.map(row=>Object.fromEntries(select.split(',').map(key=>[key,row[key]])));
+ const select=url.searchParams.get('select')||'*';
+ if(select!=='*'&&!select.includes('('))data=data.map(row=>Object.fromEntries(select.split(',').map(key=>[key,row[key]])));
  return new Response(JSON.stringify(data),{status:200,headers:{'content-type':'application/json','content-range':`${offset}-${offset+data.length-1}/${count}`}});
 };
 const {loadCompleteRows}=await import('../src/lib/complete-rows');
 const {loadManpowerEntryFacts,loadManpowerReferences,loadManpowerReportingGroups,hydrateManpowerEntries}=await import('../src/modules/manpower/manpower');
-const {loadPlanningProgressItems,loadPlanningItems}=await import('../src/modules/planning/data');
+const {loadPlanningProgressItems,loadPlanningItems,loadPhaseLibrary,loadPhaseLibraryItems}=await import('../src/modules/planning/data');
 const {loadJobAttachments,loadJobAttachmentCounts}=await import('../src/modules/production/jobs');
 const [entries,workers,tasks,groups]=await Promise.all([loadManpowerEntryFacts(),loadManpowerReferences('manpower_workers'),loadManpowerReferences('manpower_tasks'),loadManpowerReportingGroups()]);
 assert.equal(entries.length,1201);assert.equal(workers.length,1201);assert.equal(groups.length,1201);
@@ -43,3 +49,15 @@ await assert.rejects(loadCompleteRows(async(from)=>({data:from?[{id:'a'}]:[{id:'
 await assert.rejects(loadCompleteRows(async(from)=>({data:from?[]:[{id:'a'}],error:null,count:2})),/incomplete/);
 await assert.rejects(loadCompleteRows(async(from)=>({data:[{id:String(from)}],error:null,count:from?3:2})),/changed/);
 console.log('PASS: 1,201 rows through 137-row provider cap, 205 phase scopes, stable ordering, exact hydration, historical/null/inactive references, fresh cross-user labels, missing/duplicate/count-drift rejection, complete attachments/counts.');
+
+const completeLibrary=await loadPhaseLibrary();assert.equal(completeLibrary.entries.length,1201);assert.equal(completeLibrary.items.length,1201);
+const scopedTemplate=await loadPhaseLibraryItems('phase-0');assert.deepEqual(scopedTemplate,libraryItems.filter(r=>r.library_phase_id==='phase-0'));
+console.log('PASS: complete Phase Library management and selected-template item scope.');
+
+const {loadWorkCollaborators,loadWorkTaskAttachmentCounts,loadWorkTaskAttachments}=await import('../src/modules/my-work/queries');
+const {loadBidActivity,loadBidUpdates,loadBidFiles}=await import('../src/modules/pre-production/queries');
+const [people,taskCounts,taskAttachments,activity,updates,bidFiles]=await Promise.all([loadWorkCollaborators(),loadWorkTaskAttachmentCounts(),loadWorkTaskAttachments('task-1'),loadBidActivity('bid-1'),loadBidUpdates('bid-1'),loadBidFiles('bid-1')]);
+for(const rows of [people,taskAttachments,activity,updates,bidFiles])assert.equal(rows.length,1201);
+assert.equal(taskCounts.get('task-1'),1201);assert.equal(people.at(-1)?.userId,refs[1200].id);
+assert(calls.filter(u=>/list_bid_(activity|updates|files)$/.test(u.pathname)).every(u=>u.searchParams.get('order')?.endsWith('id.desc')));
+console.log('PASS: complete authorized collaborator RPC, Task attachment counts/details, and Bid activity/updates/files under provider cap.');

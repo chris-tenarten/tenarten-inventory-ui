@@ -3,8 +3,8 @@ import type { ProductionJob } from './types';
 
 export const ADMIN_ONLY_PRODUCTION_FIXTURE_ID = 'cba79566-3fde-4910-9cf6-45687db70b01';
 
-export function productionJobsVisibleToRole(
-  jobs: ProductionJob[],
+export function productionJobsVisibleToRole<T extends Pick<ProductionJob, 'id'>>(
+  jobs: T[],
   role: AppRole | null | undefined,
 ) {
   if (role === 'admin') return jobs;

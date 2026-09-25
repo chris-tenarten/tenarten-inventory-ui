@@ -113,17 +113,24 @@ export async function deletePlanningItem(id: string) {
   if (error) throw error;
 }
 
+export function loadPhaseLibraryEntries() {
+  return loadCompleteRows((from, to) => supabase.from("planning_phase_library")
+    .select("*", { count: 'exact' }).order("sort_order").order("name").order('id')
+    .range(from, to).returns<PhaseLibraryEntry[]>());
+}
+
+export function loadPhaseLibraryItems(libraryPhaseId?: string) {
+  return loadCompleteRows((from, to) => {
+    let query = supabase.from("planning_phase_library_items").select("*", { count: 'exact' });
+    if (libraryPhaseId) query = query.eq('library_phase_id', libraryPhaseId);
+    return query.order("sort_order").order("created_at").order('id')
+      .range(from, to).returns<PhaseLibraryItem[]>();
+  });
+}
+
 export async function loadPhaseLibrary() {
-  const [entriesResult, itemsResult] = await Promise.all([
-    supabase.from("planning_phase_library").select("*").order("sort_order").order("name"),
-    supabase.from("planning_phase_library_items").select("*").order("sort_order").order("created_at"),
-  ]);
-  if (entriesResult.error) throw entriesResult.error;
-  if (itemsResult.error) throw itemsResult.error;
-  return {
-    entries: (entriesResult.data ?? []) as PhaseLibraryEntry[],
-    items: (itemsResult.data ?? []) as PhaseLibraryItem[],
-  };
+  const [entries, items] = await Promise.all([loadPhaseLibraryEntries(), loadPhaseLibraryItems()]);
+  return { entries, items };
 }
 
 export async function createPhaseLibraryEntry(input: PhaseLibraryEntryInput) {
