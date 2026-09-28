@@ -1,0 +1,216 @@
+{
+  "verifiedDate": "2026-09-28",
+  "canonicalBase": "c3df23d1220b997e2c118a41bb103463ee92231c",
+  "acceptedPriorCandidate": "54aefe10249ebd7b2e594cf8daf0d04f28b6e0e3",
+  "method": "Local production export, Chromium, mocked authorized HTTP/WebSocket data. 20ms synthetic API delay; late-response tests injected longer delays. Work-count/payload evidence only; no wall-clock speed claim.",
+  "newComparisons": {
+    "Inventory collapsed": {
+      "query": "jobs",
+      "before": {
+        "requests": 1,
+        "rows": 120,
+        "jsonBytes": 29531
+      },
+      "after": {
+        "requests": 0,
+        "rows": 0,
+        "jsonBytes": 0
+      }
+    },
+    "My Work": {
+      "query": "jobs",
+      "before": {
+        "requests": 1,
+        "rows": 120,
+        "jsonBytes": 29531
+      },
+      "after": {
+        "requests": 0,
+        "rows": 0,
+        "jsonBytes": 0
+      }
+    },
+    "Intake Planning": {
+      "query": "jobs",
+      "before": {
+        "requests": 1,
+        "rows": 120,
+        "jsonBytes": 60251
+      },
+      "after": {
+        "requests": 1,
+        "rows": 120,
+        "jsonBytes": 22211
+      }
+    },
+    "Production templates": {
+      "query": "planning_phase_library_items",
+      "before": {
+        "requests": 1,
+        "rows": 120
+      },
+      "after": {
+        "requests": 1,
+        "rows": 12
+      }
+    },
+    "My Work groups": {
+      "query": "list_my_work_task_groups",
+      "beforeReadsAfterMutation": 2,
+      "afterReadsAfterMutation": 1,
+      "beforeTotalGroupReads": 3,
+      "afterTotalGroupReads": 2
+    }
+  },
+  "coldDataRequests": {
+    "Inventory": {
+      "before": 8,
+      "after": 7
+    },
+    "My Work": {
+      "before": 10,
+      "after": 8
+    }
+  },
+  "retainedComparisons": {
+    "notificationHistory": {
+      "reads": [
+        9,
+        2
+      ],
+      "rows": [
+        900,
+        200
+      ],
+      "jsonBytes": [
+        438930,
+        97540
+      ],
+      "changeEventReads": [
+        2,
+        1
+      ]
+    },
+    "productionOverviewItemReads": [
+      1,
+      0
+    ],
+    "timelineProgressJsonBytes": [
+      32373,
+      1289
+    ],
+    "manpowerEntryJsonBytes": [
+      2527878,
+      1729380
+    ],
+    "manpowerRows": 1674,
+    "collapsedPendingDomNodesAvoided": 1235
+  },
+  "completeness": {
+    "records": 1201,
+    "providerCap": 137,
+    "phaseScopes": 205,
+    "checks": [
+      "exact counts",
+      "deterministic ordering",
+      "final page",
+      "duplicate boundaries",
+      "missing page",
+      "count drift",
+      "same schedule display including active Rework",
+      "archived options",
+      "inactive/null/historical labels",
+      "complete scoped template",
+      "authorized collaborator RPC",
+      "Task attachment counts/details",
+      "Bid activity/Updates/Files"
+    ]
+  },
+  "passedWorkflowScenarios": [
+    "Intake",
+    "Intake Planning",
+    "Intake deferred switch",
+    "Intake switch",
+    "Inventory collapsed",
+    "Inventory expanded",
+    "Inventory history",
+    "Inventory options",
+    "Manpower",
+    "Messaging",
+    "My Work",
+    "My Work groups",
+    "My Work options",
+    "My Work switch",
+    "Production detail",
+    "Production files",
+    "Production switch",
+    "Production templates",
+    "Production timeline"
+  ],
+  "twoUserVerification": "Final export: A edits Job through Production UI; B reopens Inventory chooser and My Work composer, sees current label. Existing Manpower A-rename/B-refresh evidence reused. All synthetic sessions and mutations.",
+  "validation": [
+    "TypeScript",
+    "targeted ESLint",
+    "Production build",
+    "cumulative diff check",
+    "focused complete-reader contracts",
+    "schedule projection/options contracts",
+    "Intake planning model",
+    "representative browser workflows",
+    "two-user reference freshness"
+  ],
+  "reconciliation": {
+    "conflicts": false,
+    "contentEquivalent": true,
+    "cumulativeBinaryPatchSha256": "f8450035e6b6c63b904c160411d3145cff17fe7c64d91b94b4bd7f088252ad61",
+    "note": "Patch identity verified at the reconciliation checkpoint. Later changes are browser fixture corrections and this final evidence/report only."
+  },
+  "limitations": [
+    "Synthetic client tests do not prove hosted RLS or Realtime delivery.",
+    "No live Gio exercise completed.",
+    "Prior hosted Manpower payload samples have different live counts; directional only.",
+    "Template byte comparison omitted because fixture estimated-hours property was corrected; 120-to-12 row comparison remains valid.",
+    "Added Bid planning rows improve fixture fidelity; compare Intake Job projection bytes, not whole-route byte totals.",
+    "Existing explicit history caps and untouched set RPCs are not claimed fixed.",
+    "Exact-count pagination detects count/membership drift, not all same-count concurrent edits."
+  ],
+  "realtimeChanges": [],
+  "databaseArtifacts": [],
+  "changedFiles": [
+    "docs/project-memory/2026-09-25-performance-comprehensive-evidence.json",
+    "docs/project-memory/2026-09-25-performance-comprehensive.md",
+    "docs/project-memory/2026-09-25-performance-first-batch-evidence.json",
+    "docs/project-memory/2026-09-25-performance-first-batch.md",
+    "docs/project-memory/2026-09-28-performance-completion-evidence.json",
+    "docs/project-memory/2026-09-28-performance-completion.md",
+    "scripts/measure-manpower-performance.mts",
+    "scripts/measure-performance-readonly.mjs",
+    "scripts/verify-performance-auth.mts",
+    "scripts/verify-performance-contracts.mts",
+    "scripts/verify-performance-schedule-options.mts",
+    "scripts/verify-performance-two-user.mts",
+    "scripts/verify-performance-workflows.mts",
+    "scripts/verify-shell-notification-loading.mts",
+    "src/app/client-layout-shell.tsx",
+    "src/app/inventory/page.tsx",
+    "src/components/AccountNotifications.tsx",
+    "src/components/WelcomeHero.tsx",
+    "src/lib/auth.tsx",
+    "src/modules/manpower/ManpowerWorkspace.tsx",
+    "src/modules/manpower/manpower.ts",
+    "src/modules/my-work/MyWorkPage.tsx",
+    "src/modules/my-work/queries.ts",
+    "src/modules/planning/PlanningPanel.tsx",
+    "src/modules/planning/data.ts",
+    "src/modules/pre-production/BidWorkspace.tsx",
+    "src/modules/pre-production/IntakePlanning.tsx",
+    "src/modules/pre-production/planning-model.ts",
+    "src/modules/pre-production/queries.ts",
+    "src/modules/production/ProductionWorkspace.tsx",
+    "src/modules/production/components/ProductionGantt.tsx",
+    "src/modules/production/components/ProductionJobInspector.tsx",
+    "src/modules/production/fixture-visibility.ts",
+    "src/modules/production/job-options.ts",
+    "src/modules/production/jobs.ts"
+  ]
+}

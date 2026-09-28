@@ -149,16 +149,33 @@ try{
     await page.getByRole('button',{name:'Close Bid workspace',exact:true}).click();
   });
   await profile('Intake switch','/pre-production',async page=>{
-    await page.route('**/rest/v1/rpc/list_bid_activity',async route=>{
+    await page.route('**/rest/v1/rpc/list_bid_activity*',async route=>{
       const id=route.request().postDataJSON().p_bid_id;
       await new Promise(done=>setTimeout(done,id==='bid-0'?800:20));
-      await route.fulfill({headers:{'content-range':'0-0/1'},json:[{id:'activity-'+id,activity_type:'created',actor_user_id:user,actor_name:'Actor '+id,occurred_at:stamp,details:{}}]});
+      await route.fulfill({headers:{'content-range':'0-0/1','access-control-expose-headers':'content-range'},json:[{id:'activity-'+id,activity_type:'created',actor_user_id:user,actor_name:'Actor '+id,occurred_at:stamp,details:{}}]});
     });
     await page.getByText('Fixture Bid 0',{exact:true}).filter({visible:true}).first().click();
     await page.getByRole('button',{name:'Close Bid workspace',exact:true}).click();
     await page.getByText('Fixture Bid 1',{exact:true}).filter({visible:true}).first().click();
     await expect(page.getByText('Actor bid-1',{exact:true})).toBeVisible();
     await page.waitForTimeout(950);await expect(page.getByText('Actor bid-0',{exact:true})).toHaveCount(0);
+  });
+  await profile('Intake deferred switch','/pre-production',async page=>{
+    await page.route(/\/rest\/v1\/rpc\/list_bid_(files|updates)/,async route=>{
+      const id=route.request().postDataJSON().p_bid_id;
+      const files=route.request().url().includes('list_bid_files');
+      await new Promise(done=>setTimeout(done,id==='bid-0'?800:20));
+      const row={id:(files?'file-':'update-')+id,bid_id:id,body:'Update '+id,author_name:'Fixture',original_filename:id+'.txt',content_type:'text/plain',byte_size:1,created_at:stamp};
+      await route.fulfill({headers:{'content-range':'0-0/1','access-control-expose-headers':'content-range'},json:[row]});
+    });
+    await page.getByText('Fixture Bid 0',{exact:true}).filter({visible:true}).first().click();
+    await page.getByRole('tab',{name:'Files',exact:true}).click();await page.getByRole('tab',{name:'Updates',exact:true}).click();
+    await page.getByRole('button',{name:'Close Bid workspace',exact:true}).click();
+    await page.getByText('Fixture Bid 1',{exact:true}).filter({visible:true}).first().click();
+    await page.getByRole('tab',{name:'Files',exact:true}).click();await expect(page.getByText('bid-1.txt',{exact:true})).toBeVisible();
+    await page.waitForTimeout(950);await expect(page.getByText('bid-0.txt',{exact:true})).toHaveCount(0);
+    await page.getByRole('tab',{name:'Updates',exact:true}).click();await expect(page.getByText('Update bid-1',{exact:true})).toBeVisible();
+    await expect(page.getByText('Update bid-0',{exact:true})).toHaveCount(0);
   });
   await profile('Inventory history','/inventory',async page=>{
     await page.goto(base+'/activity');
@@ -197,7 +214,7 @@ try{
     await page.route('**/rest/v1/work_task_attachments?*',async route=>{
       const id=new URL(route.request().url()).searchParams.get('task_id')?.slice(3);if(!id)return route.fallback();
       await new Promise(done=>setTimeout(done,id==='task-0'?800:20));
-      await route.fulfill({headers:{'content-range':'0-0/1'},json:[{id:'file-'+id,task_id:id,uploader_user_id:user,original_filename:id+'.txt',storage_path:'fixture',content_type:'text/plain',byte_size:2,created_at:stamp}]});
+      await route.fulfill({headers:{'content-range':'0-0/1','access-control-expose-headers':'content-range'},json:[{id:'file-'+id,task_id:id,uploader_user_id:user,original_filename:id+'.txt',storage_path:'fixture',content_type:'text/plain',byte_size:2,created_at:stamp}]});
     });
     await page.locator('[data-work-task-id="task-0"]').click();
     await page.getByRole('button',{name:'Close task details'}).click();
