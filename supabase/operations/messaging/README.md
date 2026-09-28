@@ -79,3 +79,31 @@ Focused Tier 3 verifiers:
 - `node scripts/verify-messaging-operations-local.mjs`: dedicated ignored local Supabase project; tiny objects, real Edge JWT/secret/runtime, Storage cleanup, Vault/pg_net dispatch and real duplicate-safe Cron setup/enable/disable. Hardcoded localhost/port guard inherited from frozen fixture. Local reset never accepts hosted URLs.
 
 No application build or large-transfer suite is needed for added operational files; frozen application Level 3/build evidence remains valid. Final results and operational hashes are recorded in the operations project-memory report/manifest.
+
+## Disposable release accounts: cleanup acceptance
+
+Record every Auth UUID immediately after creation, before creating its `app_users`
+row or attempting sign-in. The fixture registry must include the run identifier,
+creation timestamp, exact email, purpose/disposable authorization, and all retries
+or abandoned attempts. Never discover deletion targets from display-name patterns.
+
+Cleanup success requires separate evidence for messages/drafts, attachments and
+preview/original Storage objects, directory identities, and Auth identities. A
+successful delete call or zero message count is not sufficient. Read back every
+registered UUID after cleanup; verify absence from the actual recipient RPC,
+absence from `app_users` and Auth (or approved inactive/deprovisioned state), and
+that fixture credentials/refresh sessions cannot restore application access.
+Account for still-valid access tokens when deprovisioning: active-account guards
+must deny access immediately, not merely wait for token expiration.
+
+Before account deletion, audit foreign-key and non-FK/JSON references across
+business, notification, preference, activity/audit and Storage records. Preserve
+required audit evidence. Stop on unexpected dependencies; use the existing
+authorized deprovisioning lifecycle where deletion would violate audit integrity.
+Never weaken account safeguards or use cascading business deletion for fixtures.
+Compare legitimate-account identities and protected business-data fingerprints
+before/after. Do not mark `cleanupVerified` until all separate checks pass.
+
+A clean run registry proves only that run's cleanup. Unexpected users already
+present in the baseline are a separate investigation, not implicitly disposable
+Messaging fixtures. Record and report them without broadening deletion scope.

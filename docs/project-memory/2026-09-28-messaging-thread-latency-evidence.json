@@ -1,0 +1,131 @@
+{
+  "baseline": "c22d2980597f9129e40e3755f4268701350cc996",
+  "method": "Actual Inbox + real disposable Auth/PostgREST/Realtime, 120ms injected message RPC delay; browser polling timing, not Production latency",
+  "scope": "Actual Inbox and canonical RPCs; remount on close. Shell recipient/bootstrap and lazy bundle time excluded. Timings are local browser observations, not Production percentiles. Image scenario uses three PNG attachment rows; lazy JPEG bytes covered separately by V1.1 verifier.",
+  "before": [
+    {
+      "scenario": "first-B",
+      "visibleMs": 159,
+      "historyReads": 2,
+      "historyRows": 2,
+      "historyJsonBytes": 844,
+      "completedReadsBeforeVisible": 1,
+      "requestsBeforeVisible": 2
+    },
+    {
+      "scenario": "return-A",
+      "visibleMs": 155,
+      "historyReads": 2,
+      "historyRows": 80,
+      "historyJsonBytes": 36634,
+      "completedReadsBeforeVisible": 1,
+      "requestsBeforeVisible": 1
+    },
+    {
+      "scenario": "return-B",
+      "visibleMs": 150,
+      "historyReads": 2,
+      "historyRows": 2,
+      "historyJsonBytes": 844,
+      "completedReadsBeforeVisible": 1,
+      "requestsBeforeVisible": 2
+    },
+    {
+      "scenario": "return-A-again",
+      "visibleMs": 156,
+      "historyReads": 2,
+      "historyRows": 80,
+      "historyJsonBytes": 36634,
+      "completedReadsBeforeVisible": 1,
+      "requestsBeforeVisible": 2
+    },
+    {
+      "scenario": "close-reopen-A",
+      "visibleMs": 157,
+      "historyReads": 2,
+      "historyRows": 80,
+      "historyJsonBytes": 36634,
+      "completedReadsBeforeVisible": null,
+      "requestsBeforeVisible": null
+    },
+    {
+      "scenario": "return-A-images",
+      "visibleMs": 186,
+      "historyReads": 2,
+      "historyRows": 80,
+      "historyJsonBytes": 38782,
+      "completedReadsBeforeVisible": 1,
+      "requestsBeforeVisible": 2
+    }
+  ],
+  "after": [
+    {
+      "scenario": "first-B",
+      "visibleMs": 147,
+      "historyReads": 2,
+      "historyRows": 2,
+      "historyJsonBytes": 844,
+      "completedReadsBeforeVisible": 1,
+      "requestsBeforeVisible": 1
+    },
+    {
+      "scenario": "return-A",
+      "visibleMs": 16,
+      "historyReads": 1,
+      "historyRows": 40,
+      "historyJsonBytes": 18317,
+      "completedReadsBeforeVisible": 0,
+      "requestsBeforeVisible": 0
+    },
+    {
+      "scenario": "return-B",
+      "visibleMs": 20,
+      "historyReads": 1,
+      "historyRows": 1,
+      "historyJsonBytes": 422,
+      "completedReadsBeforeVisible": 0,
+      "requestsBeforeVisible": 0
+    },
+    {
+      "scenario": "return-A-again",
+      "visibleMs": 16,
+      "historyReads": 1,
+      "historyRows": 40,
+      "historyJsonBytes": 18317,
+      "completedReadsBeforeVisible": 0,
+      "requestsBeforeVisible": 0
+    },
+    {
+      "scenario": "close-reopen-A",
+      "visibleMs": 15,
+      "historyReads": 1,
+      "historyRows": 40,
+      "historyJsonBytes": 18317,
+      "completedReadsBeforeVisible": null,
+      "requestsBeforeVisible": null
+    },
+    {
+      "scenario": "return-A-images",
+      "visibleMs": 31,
+      "historyReads": 1,
+      "historyRows": 40,
+      "historyJsonBytes": 19390,
+      "completedReadsBeforeVisible": 0,
+      "requestsBeforeVisible": 1
+    }
+  ],
+  "cacheRegression": {
+    "cachedTextArrival": true,
+    "cachedAttachmentArrival": true,
+    "cachedEdit": true,
+    "cachedDeletion": true,
+    "completeUpwardHistory": true,
+    "guessedPeerEmpty": true,
+    "accountSwitchClears": true,
+    "logoutClears": true
+  },
+  "coldInboxRequestsBefore": 10,
+  "coldInboxRequestsAfter": 10,
+  "coldHistoryReadsBefore": 3,
+  "coldHistoryReadsAfter": 3
+}
