@@ -15,7 +15,7 @@ const server=createServer((req,res)=>{
   res.writeHead(200,{'content-type':({'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.txt':'text/plain'} as Record<string,string>)[extname(file)]||'application/octet-stream'}).end(readFileSync(file));
 });
 await new Promise<void>(done=>server.listen(0,'127.0.0.1',done));
-const address=server.address() as {port:number};const base=`http://127.0.0.1:${address.port}`;
+const address=server.address() as {port:number};const base=process.env.SHELL_TEST_URL||`http://127.0.0.1:${address.port}`;
 const browser=await chromium.launch({headless:true});
 
 const context=await browser.newContext({reducedMotion:'reduce'});
@@ -28,6 +28,8 @@ let holdNextHistory=false;
 let releaseHistory:(()=>void)|undefined;
 let rows=Array.from({length:100},(_,i)=>({id:`notification-${i}`,notification_type:i===0?'welcome':'fixture',title:i===0?'Welcome fixture':`Notice ${i}`,body:'Fixture content '.repeat(20),metadata:{},read_at:i===0?null:'2026-09-01T00:00:00Z',created_at:'2026-09-25T00:00:00Z'}));
 page.on('pageerror',e=>errors.push(e.message));
+// React reconciliation warnings are console errors, not uncaught page errors.
+page.on('console',message=>{if(message.type()==='error'&&/same key|unique.*key/i.test(message.text()))errors.push(message.text());});
 await page.route('**/*',route=>new URL(route.request().url()).origin===base?route.continue():route.fulfill({status:200,contentType:'application/json',body:'[]'}));
 await page.routeWebSocket('**/realtime/v1/**',()=>{});
 await page.route('**/rest/v1/**',async route=>{
@@ -51,6 +53,7 @@ try{
  const ready=await page.evaluate(()=>({at:Number(document.documentElement.dataset.firstUsefulAt),ms:Number(document.documentElement.dataset.firstUsefulMs)}));
  const toUseful=calls.filter(c=>c.at<=ready.at);
  const firstUseful={ms:Math.round(ready.ms),dataRequests:toUseful.length,notificationRequests:toUseful.filter(c=>c.name==='list_my_account_notification_history').length};
+ assert.deepEqual(errors,[],'shell sibling keys must be unique after sign-in');
  const cold={requests:count(),rows:calls.filter(c=>c.name==='list_my_account_notification_history').reduce((n,c)=>n+c.rows,0),bytes:calls.filter(c=>c.name==='list_my_account_notification_history').reduce((n,c)=>n+c.bytes,0)};
  await page.keyboard.press('Escape');
  let before=count();
@@ -68,6 +71,7 @@ try{
  await expect(page.getByLabel('1 unread notifications',{exact:true})).toHaveCount(0);
  await page.getByRole('tab',{name:'all',exact:true}).click();
  await expect(page.getByText('Notice 99',{exact:true})).toBeVisible();
+ await expect(page.locator('[data-notification-scroll-region] > div')).toHaveCount(100);
  await expect(page.getByText('Unable to verify complete planning data. Refresh and retry.',{exact:true})).toHaveCount(0);
  await page.screenshot({path:output.replace(/\.json$/,'.png')});
  failHistory=true;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));

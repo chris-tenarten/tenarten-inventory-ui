@@ -485,7 +485,7 @@ export default function ClientLayoutShell({
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
                   <MyWorkNav pathname={pathname} />
                   <GlobalMessaging key={auth.profile?.userId??'signed-out'} />
-                  <AccountNotifications key={auth.profile?.userId} onWelcomeChange={setWelcomeStatus} onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
+                  <AccountNotifications key={`notifications:${auth.profile?.userId ?? "signed-out"}`} onWelcomeChange={setWelcomeStatus} onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   {auth.isAuthenticated && auth.profile?.isActive ? <div ref={accountMenuRef} data-account-identity className="relative">
                     <button
                       type="button"
