@@ -2,11 +2,16 @@ import { useCallback, useEffect, useRef, useState, type SetStateAction } from 'r
 import { supabase } from '@/lib/supabase';
 import { loadMessagePage, type InboxMessage, type MessageCursor } from '../inbox';
 import { RecentThreads } from './recentThreads';
+import { IntentPrefetch } from './intentPrefetch';
 
 // GlobalMessaging remounts its error boundary on close/presentation changes.
 // Keep only this bounded account-owned cache across those mounts.
 const recentThreads = new RecentThreads();
-supabase.auth.onAuthStateChange((_event, session) => recentThreads.reset(session?.user.id ?? ''));
+const intentPrefetch = new IntentPrefetch(recentThreads, loadMessagePage);
+supabase.auth.onAuthStateChange((_event, session) => {
+  const owner = session?.user.id ?? '';
+  recentThreads.reset(owner); intentPrefetch.reset(owner);
+});
 
 export function mergeMessages(current: InboxMessage[], rows: InboxMessage[], removed: string[] = []) {
   const map = new Map(current.filter(row => !removed.includes(row.id)).map(row => [row.id, row]));
@@ -45,7 +50,8 @@ export function useConversation(peer: string, owner: string, onError: (message: 
     return enqueue(async s => {
       publish(s, true);
       try {
-        const rows = await loadMessagePage(s.peer);
+        const prefetched = !s.authoritative ? intentPrefetch.take(s.owner, s.peer) : undefined;
+        const rows = await (prefetched ?? loadMessagePage(s.peer));
         if (!s.alive) return;
         // Replace the authoritative recent interval, retaining loaded older pages.
         const boundary = rows[0];
@@ -80,7 +86,8 @@ export function useConversation(peer: string, owner: string, onError: (message: 
   }, []);
   useEffect(() => {
     // Cache ownership follows Auth events, never a possibly stale component prop.
-    if (!owner) cache.current.clear();
+    intentPrefetch.cancel();
+    if (!owner) { cache.current.clear(); intentPrefetch.reset(''); }
     const s = stream(owner, peer); state.current = s;
     const cached = cache.current.get(owner, peer);
     if (cached) { s.authoritative = true; s.messages = cached.messages; s.older = cached.hasOlder; s.cursor = s.messages[0]; }
@@ -91,7 +98,7 @@ export function useConversation(peer: string, owner: string, onError: (message: 
       if (cached) s.fallback = setTimeout(() => { if (s.alive) void refresh(); }, 750);
       else void refresh();
     }
-    return () => { s.alive = false; s.pending.clear(); clearTimeout(s.timer); clearTimeout(s.fallback); };
+    return () => { intentPrefetch.cancel(); s.alive = false; s.pending.clear(); clearTimeout(s.timer); clearTimeout(s.fallback); };
   }, [owner, peer, refresh]);
   const setMessages = useCallback((update: SetStateAction<InboxMessage[]>) => {
     const s = state.current;
@@ -132,7 +139,11 @@ export function useConversation(peer: string, owner: string, onError: (message: 
       s.messages = mergeMessages(s.messages, rows); publish(s);
     } finally { publish(s, false); }
   }), [enqueue, publish]);
+  const prefetch = useCallback((target: string) => {
+    if (target !== peer) intentPrefetch.intent(owner, target);
+  }, [owner, peer]);
+  const cancelPrefetch = useCallback(() => intentPrefetch.cancel(), []);
   const matches = view.owner === owner && view.peer === peer;
-  return { messages: matches ? view.messages : [], setMessages,
+  return { prefetch, cancelPrefetch, messages: matches ? view.messages : [], setMessages,
     loading: !matches ? !!peer && !!owner : view.loading, hasOlder: matches && view.hasOlder, older, refresh, reconcile };
 }
