@@ -1,0 +1,28 @@
+{
+  "baseCandidate": "c290864186800146eb287ab62cab482e8e59d819",
+  "riskTier": 1,
+  "scope": "Row-heading presentation and disposable fixture strings only",
+  "colorRootCause": "Ignored output/verify-manual-new-sample.mjs explicitly saved Operator-authored local chip into three local browser-test drafts. blankSampleBlendRow already initializes color to empty.",
+  "localCleanup": {
+    "testDraftIds": [
+      "2725641a-6e21-4da1-ac65-48855ccf52d6",
+      "f4a20e29-02b6-482c-9641-27fad69ea819",
+      "23d59408-6b2d-4ae6-9e89-63f15bbb4804"
+    ],
+    "testDraftFields": "Cleared exact known helper Color and test-title strings, guarded by record ID and previous value.",
+    "representativeId": "55dbbe24-ae74-4066-a7ab-5866d51c8669",
+    "representativeFields": "Removed Local fixture vendor placeholders, local fixture suffix from Marcos, and synthetic LOCAL REVIEW project text. Preserved all operational Color values. Seed script now matches."
+  },
+  "rowHeadings": [
+    "Aggregate 1 \u00b7 Manual",
+    "Aggregate 2 \u00b7 Manual",
+    "Filler \u00b7 Manual",
+    "Resin \u00b7 Manual",
+    "Hardener \u00b7 Manual",
+    "Aggregate 1 \u00b7 Catalog-assisted"
+  ],
+  "preserved": "Calculated/profile-default badges, aggregate percentage \u00d7 Chip Mix and ratio provenance; all calculation, validation, catalog/manual-entry, persistence, PDF and snapshot behavior.",
+  "reviewURL": "http://localhost:3000/samples",
+  "hostedChanges": false,
+  "released": false
+}

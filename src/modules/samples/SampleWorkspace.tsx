@@ -995,15 +995,14 @@ export default function SampleWorkspace() {
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-600">
                         {row.componentRole === "aggregate"
-                          ? "Aggregate"
+                          ? `Aggregate ${displayIndex + 1}`
                           : row.componentRole === "filler"
                             ? "Filler"
                           : row.componentRole === "resin"
                             ? "Resin"
                             : row.componentRole === "hardener"
                               ? "Hardener"
-                              : "Filler / Other"}{" "}
-                        · row {displayIndex + 1}
+                              : "Filler / Other"}
                         {row.catalogItemId
                           ? " · Catalog-assisted"
                           : " · Manual"}
