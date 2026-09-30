@@ -1,0 +1,139 @@
+{
+  "baseCandidate": "683badd53f92596416700dc6d204900e0796fa3a",
+  "readiness": "READY",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "authorization": "Chris supplied Production Batch Blend Sheet contract; implement only after all required captured component quantities are authoritative. No hosted writes, migration application, push or deployment.",
+  "authoritativeComponents": {
+    "aggregate": {
+      "status": "AUTHORITATIVE",
+      "basis": "Captured batchChipTargetLb 180 \u00d7 operator-authored percentage / 100; calculated aggregate rows must reconcile to 100%.",
+      "examples": [
+        "40/30/20/5/5 => 72/54/36/9/9 lb",
+        "50/25/25 => 90/45/45 lb",
+        "30/40/30 => 54/72/54 lb"
+      ]
+    },
+    "filler": {
+      "status": "AUTHORITATIVE",
+      "derivation": "180/128 = 1.40625 CFT; captured 512 oz/CFT \u00d7 1.40625 /16 = 45 lb. Manual captured Working Pour overrides project proportionally; 32 oz =>90 lb without changing chips."
+    },
+    "resin": {
+      "status": "AUTHORITATIVE",
+      "derivation": "Captured MTT 480 fl oz/CFT \u00d71.40625 =675 fl oz =5.2734375 US gal."
+    },
+    "hardener": {
+      "status": "AUTHORITATIVE",
+      "derivation": "Captured 5:1 ratio:675/5=135 fl oz =1.0546875 US gal. Other captured rates/4:1 ratios remain distinct."
+    },
+    "other": "Every additional row must have an explicit supported role/quantity/unit; unavailable rows block the whole Production output. All supported profiles require aggregate, filler, resin and hardener rows."
+  },
+  "acceptedProvenance": "Existing 180-lb captured target, 128-lb/CFT captured density and .375-inch reference derive 45 SF/4 lbSF. No formulation math changed. Shared projection compared byte-for-byte to transpiled base candidate.",
+  "catalogPackageSource": {
+    "regular": "vendor_catalog.unit; strict unambiguous amount/mass-unit/package label",
+    "specialty": "vendor_catalog_v2.unit_size/unit_size_uom/packaging; reject partial or contradictory descriptions",
+    "identity": [
+      "catalog source",
+      "catalog item id",
+      "vendor",
+      "vendor SKU",
+      "material name",
+      "size"
+    ],
+    "reviewCatalog": "Existing read-only local snapshot, 1951 Regular +301 active Specialty entries; no hosted reads or writes needed in this task."
+  },
+  "packageCapture": {
+    "field": "sample_blend_rows.catalog_snapshot.package_context",
+    "schema": [
+      "version",
+      "amount",
+      "unit",
+      "container",
+      "label",
+      "catalog_source",
+      "catalog_item_id",
+      "vendor",
+      "vendor_sku"
+    ],
+    "timing": "New/reselected catalog material; existing save/version/issue snapshot infrastructure preserves it. No historical backfill or live reinterpretation.",
+    "conversion": "Batch lb / captured package mass; lb, oz and kg supported; two decimals with approximation marker in model. Exact Batch quantity remains primary. No default package weight.",
+    "missing": "Batch output remains available; Package Eq. reads Unavailable. Unknown container type is package, never assumed bag."
+  },
+  "lifecycle": {
+    "working": "Current Draft is saved using existing convention, then server fetches its Working snapshot; prominent WORKING BATCH BLEND - NOT ISSUED on every PDF page.",
+    "issued": "Explicit issue selector; server reads immutable issued_snapshot under existing operational access/RLS; draft edits and catalog/profile changes ignored. No separate issuance or stored artifact lifecycle.",
+    "pdfVersion": "production-batch-blend-v1; read-only export of selected source issue, not a new approval.",
+    "legacy": "Missing captured Batch target or required component semantics disables output and server rejects generation. Missing reference thickness only suppresses yield; missing packages only suppress equivalents.",
+    "scope": "One Batch only. Multi-Batch deferred."
+  },
+  "inventoryBoundary": "No lot/on-hand/consumption/reservation/stock/Inventory calls or writes. Issued export also has no Sample, Storage or service-client mutation.",
+  "implementation": {
+    "reuse": "Accepted Batch projection extracted to shared MJS unchanged; dedicated compact renderer reuses PDF fonts, text normalization, measured wrapping, existing edge endpoint and document viewer. Working Sample renderer/model unchanged.",
+    "ui": "Production Batch Blend Sheet card with Source formulation selector for Current Draft or a specific Issue. Generate Production Batch Blend Sheet button; current Working Sheet action retained.",
+    "migration": "None. Existing catalog_snapshot JSON and immutable issue snapshots are sufficient.",
+    "priorMigrationHashUnchanged": "ed4bca4337b17dddc741852039353ab15607f6e579ca06d2fad68d180030925c"
+  },
+  "validation": {
+    "scripts/verify-production-batch.mts": "passed: three blends; profile rates/ratios; exact filler/binder; manual double filler; other components; incomplete/legacy/ambiguous gating; 50/non50/lb/oz/kg/missing/conflicting packages; frozen issue",
+    "scripts/verify-production-batch-lifecycle.mjs": "passed disposable PostgreSQL: package capture through save/issue, changed draft package and filler, changed managed profile; issued snapshot/model unchanged; no generation-model writes",
+    "scripts/verify-production-batch-handler.mjs": "passed: missing auth401, capability403, invalid400, missing404, unready422; caller body cannot masquerade as issued source; no service client/catalog/profile/Storage/Inventory writes",
+    "scripts/verify-production-batch-pdf.mts": "passed: working/issued one-page fixtures; 60-row long-text 19-page stress; all rows exactly once, semantic ordering, bounded text, source status every page; PDF.js/@napi-rs canvas rendered PNGs and representative visual inspection",
+    "scripts/verify-production-batch-browser.mjs": "passed actual localhost:3000: 1440/390/320px after welcome overlay, untruncated controls, catalog selection captures 50-lb metadata, working/issued PDF downloads, same percentages, issue generation does not save current draft, existing Working Sample output, incomplete and legacy availability; no Inventory requests",
+    "scripts/verify-sample-batch.mts": "passed unchanged accepted Batch and Working Pour calculation regression",
+    "scripts/verify-sample-batch-pdf.mjs": "passed unchanged Working Sample component rows, baseline legacy PDF text/pagination, immutable generated-history retry; existing PDF.js font-data warnings only",
+    "scripts/verify-sample-material-autofill.mts": "passed",
+    "scripts/verify-unified-material-catalog.mjs": "passed search completeness/classification/selection/manual identity and purchase-order regressions; updated harness dependency for package capture",
+    "scripts/verify-purchasing-catalog-pricing.mjs": "passed unchanged pricing/package mapping behavior",
+    "typescript": "passed",
+    "targetedLint": "passed; shared edge files ignored by repository ESLint configuration, validated by executable tests",
+    "productionBuild": "passed",
+    "diffCheck": "passed",
+    "visualReview": "Actual MTT issued and working PDFs each one page; production actions verified readable at320px; stress pagination inspected. Poppler unavailable; used installed PDF.js and canvas renderer."
+  },
+  "review": {
+    "url": "http://localhost:3000/samples?open=1c3b6a33-4126-4b03-bb4b-eefb363b9e64",
+    "sampleId": "1c3b6a33-4126-4b03-bb4b-eefb363b9e64",
+    "issueId": "8f3006b5-8b7d-400b-a3b1-1d8885d40444",
+    "catalogIds": [
+      "8010ed0c-ec69-4599-b010-ac178edc8949",
+      "10b41bf6-8657-436a-8efe-38edd62be4bf",
+      "a890d57a-3b53-476a-8659-80914cf8f6d8",
+      "3e982130-3bac-49f3-93ec-4e8d18c5ba1a",
+      "dddf58ba-be86-43cc-b8f4-ce327cdff0cb"
+    ],
+    "sampleName": "MTT Production Batch \u2014 Blanco / Grey",
+    "localOnly": true,
+    "originalSamplePreserved": "55dbbe24-ae74-4066-a7ab-5866d51c8669",
+    "issuedPdf": "output/pdf/production-batch/MTT-Production-Batch.pdf",
+    "workingBatchPdf": "output/pdf/production-batch/MTT-Working-Batch.pdf"
+  },
+  "changedFiles": [
+    "docs/project-memory/evidence/2026-09-30-production-batch-blend-sheet.json",
+    "scripts/start-sample-batch-review.mjs",
+    "scripts/verify-production-batch-browser.mjs",
+    "scripts/verify-production-batch-handler.mjs",
+    "scripts/verify-production-batch-lifecycle.mjs",
+    "scripts/verify-production-batch-pdf.mts",
+    "scripts/verify-production-batch.mts",
+    "scripts/verify-unified-material-catalog.mjs",
+    "src/modules/purchasing/catalog-records.ts",
+    "src/modules/purchasing/types.ts",
+    "src/modules/samples/ProductionBatchOutput.tsx",
+    "src/modules/samples/SampleWorkspace.tsx",
+    "src/modules/samples/batch-projection.ts",
+    "src/modules/samples/material-autofill.ts",
+    "src/modules/samples/queries.ts",
+    "src/modules/samples/types.ts",
+    "supabase/functions/_shared/production-batch-pdf.ts",
+    "supabase/functions/_shared/sample-batch-projection.d.mts",
+    "supabase/functions/_shared/sample-batch-projection.mjs",
+    "supabase/functions/_shared/sample-production-batch.mjs",
+    "supabase/functions/generate-sample-pdf/index.ts"
+  ],
+  "deferred": [
+    "Multi-Batch totals",
+    "Approved formulation -> Batch requirements -> package requirements -> reserved/on-hand comparison -> lot allocation/consumption",
+    "Separate persisted Production document artifact/version lifecycle if later required"
+  ],
+  "release": "No new migration, hosted mutation, push or deployment. Candidate local only."
+}

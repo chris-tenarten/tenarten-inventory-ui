@@ -1,3 +1,4 @@
+import { captureBatchPackage } from '../../../supabase/functions/_shared/sample-production-batch.mjs';
 import type { PurchasingCatalogSuggestion } from "@/modules/purchasing/types";
 import type { SampleBlendRow } from "./types";
 
@@ -14,6 +15,7 @@ export function sampleBlendCatalogAutofill(
     catalogSource: item.source,
     catalogItemId: item.id,
     catalogSnapshot: {
+      package_context: captureBatchPackage(item),
       material_name: item.materialName,
       size: item.chipSize,
       material_type: item.materialType,

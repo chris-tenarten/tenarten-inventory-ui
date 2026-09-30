@@ -1,6 +1,7 @@
 // Permanent read-only regression: actual search, mapping, pricing and editor
 // selection callbacks with deterministic Catalog fixtures. No network or writes.
 import assert from 'node:assert/strict';
+import {captureBatchPackage} from '../supabase/functions/_shared/sample-production-batch.mjs';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
@@ -17,7 +18,7 @@ function load(file, imports = {}) {
 }
 const records = load('src/modules/purchasing/catalog-records.ts');
 const pricing = load('src/modules/purchasing/catalog-pricing.ts');
-const sample = load('src/modules/samples/material-autofill.ts');
+const sample = load('src/modules/samples/material-autofill.ts', {'../../../supabase/functions/_shared/sample-production-batch.mjs':{captureBatchPackage}});
 // Authoritative identity/metadata observed in the read-only 2026-09-22 read-only reconfirmation.
 const plex = { id: '2ad03b7e-7515-4a5a-aa73-0c662e50dc63', vendor_name: 'Klein & Co / KCI', item_name: 'Plex-A-Bond', category: 'resin', material_type: 'Resin / chemical system', component_type: 'Polyacrylate additive', price_unit: 'quote', quote_required: true, is_active: true };
 const specialty = [plex,

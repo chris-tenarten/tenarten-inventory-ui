@@ -59,6 +59,7 @@ export type PendingReceivalCreationResult = {
 export type PurchaseOrderSummary = Pick<PurchaseOrder,'id'|'poNumber'|'status'|'vendorNameSnapshot'|'orderDate'|'requestedDate'|'currency'|'total'|'revisionNumber'|'updatedAt'> & { lineCount: number };
 export type PriceSuggestion = { source: 'prior_exact'|'prior_partial'|'catalog'; amount: string; label: string; detail: string; purchaseOrderId?: string };
 export type PurchasingCatalogSuggestion = {
+  packageEvidence?: { label: string; amount: string; unit: string };
   quoteRequired?: boolean;
   classification?: { category: string; materialClass: string; materialType: string; componentType: string };
   source: CatalogSource; id: string; vendor: string; vendorSku: string; materialName: string; chipSize: string;

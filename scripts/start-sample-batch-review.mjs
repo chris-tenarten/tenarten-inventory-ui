@@ -3,6 +3,7 @@ import {createServer} from 'node:http';
 import {readFileSync,existsSync,statSync,writeFileSync,mkdirSync} from 'node:fs';
 import path from 'node:path';
 import {startDatabase,sql,docker,asUser,json,literal,admin,provision,provisionReference} from './support/sample-batch-database.mjs';
+import {renderProductionBatch} from '../supabase/functions/_shared/production-batch-pdf.ts';
 import {renderSampleWorkOrder} from '../supabase/functions/generate-sample-pdf/index.ts';
 const port=4207, host='127.0.0.1', origin=`http://${host}:${port}`,container=`tenops-sample-batch-review-${process.pid}`;
 const output='/private/tmp/tenops-sample-batch-review';mkdirSync(output,{recursive:true});
@@ -32,6 +33,11 @@ try{
    if(url.pathname.startsWith('/auth/v1/'))result=name==='token'?session:user;
    else if(url.pathname==='/review/evidence')result={writes,sampleId,container};
    else if(url.pathname==='/functions/v1/generate-sample-pdf'){
+    if(['batch-working','batch-issued'].includes(body.action)){
+     const snapshot=body.action==='batch-working'?parsed(`public.get_sample_working_pdf_snapshot(${uuid(body.sampleId)},null)`):parsed(`issued_snapshot from sample_issued_documents where id=${uuid(body.documentId)}`);
+     const bytes=await renderProductionBatch(snapshot,body.action==='batch-issued'?'issued':'working');
+     writeFileSync(path.join(output,body.action+'.pdf'),bytes);res.writeHead(200,{'Content-Type':'application/pdf','Cache-Control':'no-store'}).end(bytes);return;
+    }
     let snapshot,version;
     if(body.action==='preview')snapshot=body.snapshot;
     else if(body.action==='working')snapshot=parsed(`public.get_sample_working_pdf_snapshot(${uuid(body.sampleId)},${body.versionId?uuid(body.versionId):'null'})`);

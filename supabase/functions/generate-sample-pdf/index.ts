@@ -1,4 +1,5 @@
 // @ts-nocheck -- Deno Edge Function; validated through its local renderer fixture.
+import { renderProductionBatch } from "../_shared/production-batch-pdf.ts";
 import { createClient } from "@supabase/supabase-js";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import {
@@ -228,6 +229,30 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
       const { error: deleteError } = await user.rpc("admin_permanently_delete_sample", { p_sample_id: sampleId, p_confirmation: "PERMANENTLY_DELETE_ISSUED_SAMPLE" });
       if (deleteError) return json({ error: `Stored PDFs were cleaned up, but Sample record deletion failed: ${deleteError.message}` }, 500, headers);
       return json({ deleted: true }, 200, headers);
+    }
+    if (action === "batch-working" || action === "batch-issued") {
+      let snapshot;
+      if (action === "batch-working") {
+        const sampleId = String(body.sampleId || "");
+        if (!/^[0-9a-f-]{36}$/i.test(sampleId)) return json({ error: "Invalid Batch Sample." }, 400, headers);
+        const result = await user.rpc("get_sample_working_pdf_snapshot", { p_sample_id: sampleId, p_version_id: null });
+        if (result.error || !result.data) return json({ error: result.error?.message || "Sample not found." }, 404, headers);
+        snapshot = result.data;
+      } else {
+        const documentId = String(body.documentId || "");
+        if (!/^[0-9a-f-]{36}$/i.test(documentId)) return json({ error: "Invalid issued formulation." }, 400, headers);
+        // Existing operational access and RLS protect the immutable source. No service writes,
+        // catalog/profile lookups, separate issue, Storage or Inventory mutation occur here.
+        const result = await user.from("sample_issued_documents").select("issued_snapshot,issue_number").eq("id", documentId).single();
+        if (result.error || !result.data) return json({ error: "Issued formulation not found." }, 404, headers);
+        snapshot = { ...result.data.issued_snapshot, issue_number: result.data.issue_number };
+      }
+      try {
+        const bytes = await renderProductionBatch(snapshot, action === "batch-issued" ? "issued" : "working");
+        return new Response(bytes, { headers: { ...headers, "Content-Type": "application/pdf", "Cache-Control": "no-store", "Content-Disposition": 'inline; filename="Production-Batch-Blend-Sheet.pdf"' } });
+      } catch (cause) {
+        return json({ error: cause instanceof Error ? cause.message : "Production Batch unavailable." }, 422, headers);
+      }
     }
     if (action === "preview") {
       const bytes = await renderSampleWorkOrder(body.snapshot);

@@ -56,6 +56,7 @@ import {
 import SampleRecentValueInput from "./SampleRecentValueInput";
 import OperationalProfilesSettings from './OperationalProfilesSettings';
 import SampleFormulationConfigurator from "./SampleFormulationConfigurator";
+import ProductionBatchOutput from "./ProductionBatchOutput";
 import SampleVersionHistory from "./SampleVersionHistory";
 import SampleFormulationTutorial, {
   type SampleTutorialStep,
@@ -1305,6 +1306,7 @@ export default function SampleWorkspace() {
                 className={area}
               />
             </label>
+            <ProductionBatchOutput key={`batch-output:${draft.id}`} sample={draft} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
             <SampleVersionHistory
               sample={draft}
               onSave={() => persistDraft(draft)}

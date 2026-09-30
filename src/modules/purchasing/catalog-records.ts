@@ -72,6 +72,7 @@ function mapStandard(row: CatalogRecord): PurchasingCatalogSuggestion | null {
   const pkg = parsePurchasingPackage(text(row.unit));
   return {
     source: "standard",
+    packageEvidence: { label: text(row.unit), amount: "", unit: "" },
     classification: { category: text(row.category), materialClass: text(row.material_class), materialType: "", componentType: "" },
     id: text(row.id),
     vendor: text(row.vendor),
@@ -109,6 +110,7 @@ function mapSpecialty(row: CatalogRecord): PurchasingCatalogSuggestion | null {
   const quoteRequired = row.quote_required === true || /^(quote|call)$/i.test(text(row.price_unit).trim());
   return {
     source: "specialty",
+    packageEvidence: { label: text(row.packaging), amount: text(row.unit_size), unit: text(row.unit_size_uom) },
     classification: { category: text(row.category), materialClass: "", materialType: text(row.material_type), componentType: text(row.component_type) },
     quoteRequired,
     id: text(row.id),
