@@ -56,7 +56,7 @@ for (const test of cases) {
   if(['one','two'].includes(test.name))assert.equal(extracted.pages.length,1);
   if(['cross-page','long'].includes(test.name)){
     assert.ok(extracted.pages.length>1);
-    assert.match(extracted.pages[1],/CHIP BLEND - CONTINUATION/);
+    assert.match(extracted.pages[1],/WORKING POUR - CONTINUATION/);
     assert.ok(!extracted.pages[0].includes('ATF-20'),'tail is not forced onto page one');
   }
   console.log(`${test.name}: ${test.expectedModel.length} rows, ${extracted.pages.length} pages; all fields/order/uniqueness passed`);

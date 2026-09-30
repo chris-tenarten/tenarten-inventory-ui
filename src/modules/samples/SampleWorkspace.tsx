@@ -1,4 +1,5 @@
 "use client";
+import { projectSampleBatch, formatBatchQuantity } from "./batch-projection";
 
 import CatalogSearchResults from "@/modules/purchasing/CatalogSearchResults";
 import {
@@ -101,6 +102,9 @@ export default function SampleWorkspace() {
   const [linkSelection, setLinkSelection] = useState("");
   const [draft, setDraft] = useState<SampleRecord | null>(null);
   const [draftBaseline, setDraftBaseline] = useState("");
+  const [quantityViewState, setQuantityViewState] = useState<{record: string | null; view: "batch" | "working"}>({record:null,view:"working"});
+  const quantityView = quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "working";
+  const batch = useMemo(() => draft ? projectSampleBatch(draft.formulation,draft.blendRows) : null,[draft]);
   const [closePrompt, setClosePrompt] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState("");
@@ -281,6 +285,7 @@ export default function SampleWorkspace() {
         customerName: bid?.customer,
         formulation,
       });
+      setQuantityViewState({record:null,view:"working"});
       setDraft(local);
       setDraftBaseline(JSON.stringify(local));
     } catch (caught) {
@@ -829,7 +834,7 @@ export default function SampleWorkspace() {
                   className={field}
                 />
                 <SampleRecentValueInput
-                  label="Sample Size"
+                  label="Sample Size (document metadata)"
                   value={draft.sampleSize}
                   fieldKey={sampleRecentFieldKeys.sampleSize}
                   suggestions={recentValues.sample_size ?? []}
@@ -838,7 +843,7 @@ export default function SampleWorkspace() {
                   className={field}
                 />
                 <SampleRecentValueInput
-                  label="Sample Quantity"
+                  label="Sample Quantity (document metadata)"
                   value={draft.sampleQuantity}
                   fieldKey={sampleRecentFieldKeys.sampleQuantity}
                   suggestions={recentValues.sample_quantity ?? []}
@@ -893,6 +898,7 @@ export default function SampleWorkspace() {
                 />
               </label>
             </section>
+            <p className="text-xs text-slate-500">Sample Size / Quantity are printed document metadata only; they do not set Finished Plates or Working Pour.</p>
             <SampleFormulationConfigurator
               state={draft.formulation}
               rows={draft.blendRows}
@@ -943,11 +949,25 @@ export default function SampleWorkspace() {
                 />
               </div>
             </section>
+            <section aria-label="Quantity view" className="border border-slate-300 bg-white p-4">
+              <p className="text-sm font-bold">View quantities as</p>
+              <div role="group" aria-label="View quantities as" className="mt-2 inline-flex gap-1">
+                {([['batch','Batch'],['working','Working Pour']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
+              </div>
+              {quantityView==='batch' && batch && <div className="mt-4" data-testid="batch-summary">
+                <p className="text-xl font-bold">Batch chip target: {batch.target===null?'not captured':`${formatBatchQuantity(batch.target,'lb')} lb = 100%`}</p>
+                <p className="mt-1 text-sm">{draft.formulation.profile?.name} · Operator-authored percentages define this chip blend.</p>
+                <p className="mt-2 font-bold">{batch.complete?'TOTAL':'Calculated chip subtotal'}: {batch.totalPercent}% · {formatBatchQuantity(batch.subtotalLb,'lb')} lb</p>
+                {batch.fraction!==null && <p className="text-sm">Working Pour fraction of Batch: {formatBatchQuantity(batch.fraction,'gal')}</p>}
+                {batch.issues.map(issue=><p role="status" className="mt-1 text-sm text-amber-800" key={issue}>{issue}</p>)}
+                <p className="mt-2 text-xs text-slate-600">Filler, Resin and Hardener are projected from this formulation. These equivalents do not prescribe whole-package rounding.</p>
+              </div>}
+            </section>
             <section data-sample-tutorial="aggregate-section" className="border border-slate-300 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-bold uppercase tracking-wide">
-                    Chip Mix
+                    {quantityView === "batch" ? "Batch composition" : "Working Pour quantities"}
                   </h2>
                   <p className="mt-1 text-xs text-slate-500">
                     Aggregate percentages divide the profile-calculated Chip Mix. Filler is independent during normal editing. Use Adjust Formulation to preserve the profile dry-material balance when changing Filler.
@@ -955,7 +975,7 @@ export default function SampleWorkspace() {
                   <p
                     className={`mt-2 text-sm font-bold ${formulationResult?.percentageReconciles ? "text-emerald-700" : "text-amber-700"}`}
                   >
-                    Total {formulationResult?.percentageTotal || "0"}% ·{" "}
+                    Working Pour: {formulationResult?.percentageTotal || "0"}% ·{" "}
                     {formulationResult?.availableChipMixOz || "0"} oz Chip Mix
                   </p>
                 </div>
@@ -1149,6 +1169,14 @@ export default function SampleWorkspace() {
                           className={field}
                         />
                       </label>
+                      {quantityView==='batch' ? <div className={`${label} text-left`}>
+                        <span>Batch quantity</span>
+                        <output aria-label={`${row.componentRole} Batch quantity`} title={batch?.rows[index]?.quantity===null?undefined:String(batch?.rows[index]?.quantity)} className="mt-1 block border border-slate-300 bg-slate-100 px-3 py-3 text-base font-bold">
+                          {formatBatchQuantity(batch?.rows[index]?.quantity??null,batch?.rows[index]?.unit??'')} {batch?.rows[index]?.unit}
+                        </output>
+                        <p className="mt-2 text-xs font-normal text-slate-600">{batch?.rows[index]?.note}</p>
+                        {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit quantity in Working Pour.</p>}
+                      </div> : <>
                       <div className={`${label} text-left`}>
                         <span>Quantity</span>
                         <div className="relative mt-1">
@@ -1237,6 +1265,7 @@ export default function SampleWorkspace() {
                           </label>
                         )}
                       </div>
+                      </>}
                       <label className={`${label} text-left`}>
                         Vendor
                         <PurchasingVendorNameInput

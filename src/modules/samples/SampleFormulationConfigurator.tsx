@@ -53,7 +53,10 @@ export default function SampleFormulationConfigurator({
   useEffect(() => { let live = true; void loadOperationalProfiles().then(rows => { if (live) setProfiles(rows); }).catch(error => { if (live) setProfilesError(error.message); }); return () => { live = false; }; }, []);
   const pendingProfile = profiles.find(p => p.id === pendingProfileId);
   function chooseProfile(profile: OperationalProfile) {
-    if (missingProfileInputs(profile).length) { setPendingProfileId(profile.id); return; }
+    setPendingProfileId(profile.id);
+  }
+  function confirmProfile(profile: OperationalProfile) {
+    if (missingProfileInputs(profile).length) return;
     onChange(applyOperationalProfile(state, profile)); setPendingProfileId('');
   }
   const result = useMemo(
@@ -135,7 +138,7 @@ export default function SampleFormulationConfigurator({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div data-sample-tutorial="chip-summary">
           <h2 className="text-sm font-bold uppercase tracking-wide">
-            Sample Plate Quantities
+            Finished Plates and Working Pour
           </h2>
           <p className="mt-2 text-base font-semibold">
             {state.finishedPlateQuantity || "—"} pcs ·{" "}
@@ -143,11 +146,12 @@ export default function SampleFormulationConfigurator({
             {inches(state.finishedPlateLength)} · {inches(state.thicknessIn)}
           </p>
           <p className="mt-1 text-sm text-slate-600">
-            Production pour: {inches(state.width)} × {inches(state.length)}
+            Working Pour: {state.width || "—"} × {state.length || "—"} {state.dimensionUnit} × {inches(state.thicknessIn)} · Working Pour area: {number(result.areaSf)} SF
           </p>
           <p className="mt-1 text-sm text-slate-600">
-            Total area: {number(result.finishedAreaSf)} SF
+            Finished plate area: {number(result.finishedAreaSf)} SF
           </p>
+          <p className="mt-1 text-xs text-slate-500">Finished Plates: intended pieces from the pour. Changing these does not resize the Working Pour.</p>
           <p className="mt-1 text-sm font-bold">
             Chip Mix: {number(result.availableChipMixOz)} oz
           </p>
@@ -156,7 +160,7 @@ export default function SampleFormulationConfigurator({
               ? `${number(result.totalFormulaWeightOz)} oz formula − ${number(result.nonChipWeightOz)} oz filler/resin/hardener`
               : isV4
                 ? `${number(result.availableChipMixOz)} oz from ${number(result.effectiveChipDensityLbCft)} lb/CFT. Expected dry pool ${number(result.dryPoolOz)} oz; actual ${number(result.actualDryTotalOz)} oz.`
-                : "Calculated from production pour area × Weight / SF. Filler and Resin are entered separately."}
+                : "Calculated from working pour area × Weight / SF. Filler and Resin are entered separately."}
           </p>
           {result.invalidMassBalance && <p className="mt-1 text-xs font-bold text-red-700">Non-chip ingredients exceed Total Formula Weight. Reduce them or increase the total.</p>}
           {isV4 && Math.abs(Number(result.dryPoolVarianceOz||0))>0.005 && <div className="mt-3 border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950"><p className="font-bold">This formula differs from the selected profile&apos;s expected dry-material balance by {Number(result.dryPoolVarianceOz)>0?'+':''}{number(result.dryPoolVarianceOz)} oz.</p><p className="mt-1">This is allowed. Use Adjust Formulation only when you intend to preserve the profile relationship.</p></div>}
@@ -202,7 +206,7 @@ export default function SampleFormulationConfigurator({
               </select>
               <span className={hint}>Captured with this Sample. Changing supplier alone does not change the profile.</span>
               {profilesError && <span role="alert" className="block text-xs text-red-700">{profilesError}</span>}
-              {pendingProfile && <span role="status" className="mt-2 block border border-amber-300 p-2 text-xs">{operationalProfileLabel(pendingProfile)} has not been applied. {missingProfileInputs(pendingProfile).length ? `Missing: ${missingProfileInputs(pendingProfile).join(', ')}. Current Draft calculations remain on the captured profile.` : 'Configuration is ready. Apply explicitly to update this Draft.'}<button type="button" disabled={missingProfileInputs(pendingProfile).length > 0} onClick={() => chooseProfile(pendingProfile)} className="m-1 min-h-9 border px-2 disabled:opacity-50">Apply configured profile</button><button type="button" onClick={() => setPendingProfileId('')} className="m-1 underline">Cancel selection</button></span>}
+              {pendingProfile && <span role="status" className="mt-2 block border border-amber-300 p-2 text-xs">{operationalProfileLabel(pendingProfile)} has not been applied. {missingProfileInputs(pendingProfile).length ? `Missing: ${missingProfileInputs(pendingProfile).join(', ')}. Current Draft calculations remain on the captured profile.` : 'Review this profile before applying. Existing manual overrides remain unchanged.'}<span className="mt-2 block">Revision {pendingProfile.revision} · Batch chip target {pendingProfile.batch_chip_target_lb ?? "not configured"} lb · Density {pendingProfile.chip_density ?? "—"} lb/CFT · Filler rate {pendingProfile.filler_rate ?? "—"} oz/CFT · Resin rate {pendingProfile.resin_rate ?? "—"} fl oz/CFT. Working quantities after applying: {(() => { if(missingProfileInputs(pendingProfile).length) return "unavailable"; const next=calculateSampleFormulation(applyOperationalProfile(state,pendingProfile),rows); return `${next.availableChipMixOz} oz chips / ${next.effectiveFillerOz} oz filler / ${next.effectiveResinFlOz} fl oz resin / ${next.rows[rows.findIndex(r=>r.componentRole==='hardener')]?.effectiveQuantity ?? "—"} fl oz hardener`; })()}</span><button type="button" disabled={missingProfileInputs(pendingProfile).length > 0} onClick={() => confirmProfile(pendingProfile)} className="m-1 min-h-9 border px-2 disabled:opacity-50">Apply configured profile</button><button type="button" onClick={() => setPendingProfileId('')} className="m-1 underline">Cancel selection</button></span>}
               {canManageProfiles && <button type="button" onClick={() => setManageProfiles(true)} className="mt-2 min-h-10 border px-3 text-xs">Configure profiles</button>}
             </label>}
             {isV4 && <>
@@ -269,7 +273,7 @@ export default function SampleFormulationConfigurator({
               <span className={hint}>inches · 0.375 = 3/8″</span>
             </label>
             <label data-sample-tutorial="production-pour" className={label}>
-              Production Pour Width
+              Working Pour Width
               <input
                 type="number"
                 min="0"
@@ -280,7 +284,7 @@ export default function SampleFormulationConfigurator({
               />
             </label>
             <label data-sample-tutorial="production-pour" className={label}>
-              Production Pour Length
+              Working Pour Length
               <input
                 type="number"
                 min="0"

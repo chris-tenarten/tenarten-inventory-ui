@@ -27,7 +27,7 @@ assert.equal(readiness?.kind,'calculation-incomplete');assert.match(readiness?.m
 readiness=validateSampleForOutput(sample({formulation:blankFormulationState()}));
 assert.match(readiness?.message??'',/Total Weight/);
 readiness=validateSampleForOutput(sample({formulation:{...blankFormulationState(),basis:'weight_per_sf'}}));
-assert.match(readiness?.message??'',/Production Pour Width and Length, Material Density, and Thickness/);
+assert.match(readiness?.message??'',/Working Pour Width and Length, Material Density, and Thickness/);
 readiness=validateSampleForOutput(sample({blendRows:[row({componentRole:'hardener',calculationBasis:null,quantityProvenance:'calculated'})]}));
 assert.match(readiness?.message??'',/Resin quantity/);
 readiness=validateSampleForOutput(sample({preparedBy:'Gio',formulation:{...blankFormulationState(),totalWeight:'10',resinParts:'3'}}),'formal-issue');

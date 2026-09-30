@@ -1,0 +1,64 @@
+{
+  "canonicalBase": "af334e42076311501fbab464180fa6d799cbcc4b",
+  "candidateBranch": "feature/sample-batch-working-pour-v1",
+  "changedFiles": [
+    "docs/project-memory/2026-09-30-sample-batch-working-pour-candidate.md",
+    "docs/project-memory/2026-09-30-sample-batch-working-pour-contract.md",
+    "docs/project-memory/evidence/2026-09-30-sample-batch-candidate.json",
+    "scripts/start-sample-batch-review.mjs",
+    "scripts/support/sample-batch-database.mjs",
+    "scripts/verify-sample-batch-browser.mjs",
+    "scripts/verify-sample-batch-database.mjs",
+    "scripts/verify-sample-batch-pdf.mjs",
+    "scripts/verify-sample-batch.mts",
+    "scripts/verify-sample-error-handling.mts",
+    "scripts/verify-sample-formulation-tutorial.mts",
+    "scripts/verify-sample-pdf-row-order.mjs",
+    "src/modules/samples/OperationalProfileManager.tsx",
+    "src/modules/samples/SampleFormulationConfigurator.tsx",
+    "src/modules/samples/SampleFormulationTutorial.tsx",
+    "src/modules/samples/SampleWorkspace.tsx",
+    "src/modules/samples/batch-projection.ts",
+    "src/modules/samples/formulation.ts",
+    "src/modules/samples/operational-profile-model.ts",
+    "src/modules/samples/operational-profiles.ts",
+    "src/modules/samples/sample-errors.ts",
+    "supabase/functions/_shared/sample-work-order-pdf-model.mjs",
+    "supabase/functions/generate-sample-pdf/index.ts",
+    "supabase/migrations/20260930170000_sample_batch_chip_basis.sql",
+    "supabase/operations/sample-batch/provision-mtt.sql"
+  ],
+  "riskTier": 3,
+  "testingLevel": 3,
+  "browser": {
+    "route": "http://127.0.0.1:4207/samples?open=55dbbe24-ae74-4066-a7ab-5866d51c8669",
+    "toggleCycles": 10,
+    "toggleMs": 337.0569169999999,
+    "additionalToggleRequests": 0,
+    "additionalToggleWrites": 0,
+    "blends": [
+      "40/30/20/5/5",
+      "50/25/25",
+      "30/40/30"
+    ],
+    "incompleteDraftSaved": true,
+    "issueRejected": true,
+    "geometryAndMetadataSeparated": true,
+    "profilePreviewAndFallback": true,
+    "phoneOverflow": false,
+    "pageErrors": []
+  },
+  "review": {
+    "container": "tenops-sample-batch-review-10139",
+    "route": "http://127.0.0.1:4207/samples?open=55dbbe24-ae74-4066-a7ab-5866d51c8669",
+    "sampleId": "55dbbe24-ae74-4066-a7ab-5866d51c8669"
+  },
+  "migration": {
+    "file": "supabase/migrations/20260930170000_sample_batch_chip_basis.sql",
+    "sha256": "0fee212f36875a876c5888262e906f43bd3d0e07425d49a98882a51b5a3214a9"
+  },
+  "hostedWrites": false,
+  "pushed": false,
+  "deployed": false,
+  "blockers": []
+}

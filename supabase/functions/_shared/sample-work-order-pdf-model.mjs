@@ -1,10 +1,10 @@
 import { normalizeSupportedSampleRatio } from "./sample-ratio.mjs";
 
-export const SAMPLE_PDF_VERSION = "sample-work-order-pdf-v6-density-profile";
+export const SAMPLE_PDF_VERSION = "sample-work-order-pdf-v7-batch-basis";
 
 const value = (source, camel, snake = camel) => String(source?.[camel] ?? source?.[snake] ?? "");
 
-export function buildSamplePdfModel(snapshot) {
+export function buildSamplePdfModel(snapshot, documentVersion = SAMPLE_PDF_VERSION) {
   if (!snapshot || typeof snapshot !== "object") throw new Error("Sample snapshot is required.");
   const rows = Array.isArray(snapshot.blendRows)
     ? snapshot.blendRows
@@ -50,7 +50,16 @@ export function buildSamplePdfModel(snapshot) {
         `Resin : Hardener ${normalizeSupportedSampleRatio(value(formulation, "resinParts"), value(formulation, "hardenerParts")) ?? `${value(formulation, "resinParts") || "5"}:${value(formulation, "hardenerParts") || "1"}`}`,
       ].filter(Boolean).join(" · ")
     : "";
+  const hasBatchLayout = documentVersion === SAMPLE_PDF_VERSION;
+  const target = Number(profile.batchChipTargetLb);
+  const dimension = (v) => v == null || v === '' ? 'Not recorded' : String(v);
+  const thickness = Number(formulation.thicknessIn) === .375 ? '3/8' : dimension(formulation.thicknessIn);
   return {
+    documentVersion,
+    hasBatchLayout,
+    finishedOutput: formulation.finishedPlateWidth && formulation.finishedPlateLength && formulation.finishedPlateQuantity ? `${dimension(formulation.finishedPlateWidth)} x ${dimension(formulation.finishedPlateLength)} in · Qty ${dimension(formulation.finishedPlateQuantity)}` : 'Not recorded',
+    workingPour: formulation.width && formulation.length && formulation.thicknessIn ? `${dimension(formulation.width)} x ${dimension(formulation.length)} ${formulation.dimensionUnit || 'in'} x ${thickness} in · Area ${dimension(derived.areaSf)} SF` : 'Not recorded',
+    batchBasis: `${value(profile,'name') || 'Captured formulation'} · ${Number.isFinite(target) && target > 0 ? `Batch chip target ${target} lb = 100%` : 'Batch basis not captured'}`,
     requestedBy: value(snapshot, "requestedBy", "requested_by"),
     requestedDate: value(snapshot, "requestedDate", "requested_date"),
     projectName: value(snapshot, "projectName", "project_name"),

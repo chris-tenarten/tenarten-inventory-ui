@@ -10,7 +10,7 @@ const steps = ["finished-pieces", "production-pour", "chip-mix", "aggregates", "
 for (const step of steps) assert.match(tutorial, new RegExp(`"${step}"`), `missing ${step} tutorial step`);
 assert.match(tutorial, /Step \{index \+ 1\} of \{sampleTutorialSteps\.length\}/);
 assert.match(tutorial, /Changing a quantity and changing the formulation are not the same thing\./);
-assert.match(tutorial, /The Production Pour—not the finished-piece area—is what TenOps uses to calculate material quantities\./);
+assert.match(tutorial, /The Working Pour—not the finished-piece area—is what TenOps uses to calculate material quantities\./);
 assert.match(tutorial, /Filler is independent during normal editing\./);
 assert.match(tutorial, /Use Adjust Formulation only when you intend to coordinate Filler, effective Chip density, and Chip Mix/);
 assert.match(tutorial, /WORKING SAMPLE - NOT ISSUED/);

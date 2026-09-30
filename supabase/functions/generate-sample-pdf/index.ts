@@ -24,12 +24,12 @@ const cors = (origin: string) => ({
 });
 const json = (body: unknown, status: number, headers: Record<string, string>) =>
   new Response(JSON.stringify(body), { status, headers: { ...headers, "Content-Type": "application/json" } });
-export async function renderSampleWorkOrder(snapshot: Record<string, unknown>) {
-  const model = buildSamplePdfModel(snapshot);
+export async function renderSampleWorkOrder(snapshot: Record<string, unknown>, documentVersion = SAMPLE_PDF_VERSION) {
+  const model = buildSamplePdfModel(snapshot, documentVersion);
   const pdf = await PDFDocument.create();
   pdf.setTitle(`Sample Work Order ${model.colorPlateNumber || ""}`.trim());
   pdf.setAuthor("Tenarten Terrazzo");
-  pdf.setProducer(`TenOps ${SAMPLE_PDF_VERSION}`);
+  pdf.setProducer(`TenOps ${documentVersion}`);
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
   const navy = rgb(0.05, 0.12, 0.22);
@@ -61,9 +61,12 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>) {
     [["Project Name",model.projectName],["Requested By",model.requestedBy]],
     [["Customer Name",model.customerName],["Date Requested",model.requestedDate]],
     [["Color Plate #",model.colorPlateNumber],["Prepared By",model.preparedBy]],
-    [["Sample Size",model.sampleSize],["Sample Quantity",model.sampleQuantity],["Job #",model.jobNumber],["Approved Date",model.approvedDate]],
+    ...(model.hasBatchLayout ? [
+      [["Finished output",model.finishedOutput],["Working Pour",model.workingPour]],
+      [["Document metadata",[model.sampleSize ? `Sample size reference: ${model.sampleSize}` : '',model.sampleQuantity ? `Sample quantity reference: ${model.sampleQuantity}` : '',model.jobNumber ? `Job: ${model.jobNumber}` : '',model.approvedDate ? `Approved: ${model.approvedDate}` : ''].filter(Boolean).join(' · ')]],
+    ] : [[["Sample Size",model.sampleSize],["Sample Quantity",model.sampleQuantity],["Job #",model.jobNumber],["Approved Date",model.approvedDate]]]),
     [["Finish Requested",model.finishRequested]],
-    ...(model.formulationSummary?[[["Formulation",model.formulationSummary]]]:[]),
+    ...(model.formulationSummary || model.hasBatchLayout ? [[[model.hasBatchLayout ? "Formulation basis" : "Formulation", model.hasBatchLayout ? `${model.batchBasis} · ${model.formulationSummary}` : model.formulationSummary]]] : []),
   ].map((fields) => ({ fields:fields.map(([label,value])=>({label,value,lines:wrap(value,fields.length===4?112:fields.length===1?524:242)})) }))
     .map((row)=>({...row,height:Math.max(23,18+Math.max(...row.fields.map((field)=>field.lines.length))*9)}));
   const notesLines = wrap(model.notes,520,8,bold);
@@ -111,7 +114,7 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>) {
     page.drawRectangle({ x: 28, y: 735, width: 556, height: 34, color: navy });
     text("TENARTEN TERRAZZO", 40, 750, 16, bold, white);
     text("SAMPLE WORK ORDER", 404, 751, 10, bold, white);
-    text(layout.continuation ? "CHIP BLEND CONTINUATION" : "FORMULATION + SAMPLE DEVELOPMENT", 405, 741, 5.8, regular, white);
+    text(layout.continuation ? (model.hasBatchLayout ? "WORKING POUR CONTINUATION" : "CHIP BLEND CONTINUATION") : "FORMULATION + SAMPLE DEVELOPMENT", 405, 741, 5.8, regular, white);
     text(`Page ${layout.pageNumber} of ${layout.pageCount}`, 535, 776, 6, regular, gray);
 
     if (layout.noteContinuation) {
@@ -119,7 +122,7 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>) {
       rect(40,70,532,612,pale);
       layout.noteLines.forEach((part,index)=>text(part,46,662-index*11,8,bold,navy));
       text(model.issueNumber ? `ISSUED FORM - ISSUE ${model.issueNumber}` : model.renderContext === "working" ? "WORKING SAMPLE - NOT ISSUED" : "DRAFT PREVIEW", 40, 22, 6, bold, model.issueNumber ? blue : gray);
-      text(SAMPLE_PDF_VERSION, 450, 22, 5.5, regular, gray);
+      text(documentVersion, 450, 22, 5.5, regular, gray);
       continue;
     }
 
@@ -137,14 +140,14 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>) {
 
     if (layout.metadataOnly) {
       text(model.issueNumber ? `ISSUED FORM - ISSUE ${model.issueNumber}` : model.renderContext === "working" ? "WORKING SAMPLE - NOT ISSUED" : "DRAFT PREVIEW", 40, 22, 6, bold, model.issueNumber ? blue : gray);
-      text(SAMPLE_PDF_VERSION, 450, 22, 5.5, regular, gray);
+      text(documentVersion, 450, 22, 5.5, regular, gray);
       continue;
     }
 
     const headingY = layout.continuation ? 692 : firstHeadingY;
     const headingHeight = 30;
     page.drawRectangle({ x: 40, y: headingY, width: 532, height: headingHeight, borderColor: navy, borderWidth: 1.1, color: pale });
-    centeredText(layout.continuation ? "CHIP BLEND - CONTINUATION" : "CHIP BLEND", 40, headingY, 532, headingHeight, 12, bold, blue);
+    centeredText(model.hasBatchLayout ? (layout.continuation ? "WORKING POUR - CONTINUATION" : "WORKING POUR QUANTITIES") : (layout.continuation ? "CHIP BLEND - CONTINUATION" : "CHIP BLEND"), 40, headingY, 532, headingHeight, 12, bold, blue);
     const headerY = headingY - 36;
     const headerHeight = 28;
     let x = 40;
@@ -185,7 +188,7 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>) {
       firstMoreLines.forEach((part, index) => text(part, 46, noteTop - 28 - index * 10, 8, bold, navy));
     }
     text(model.issueNumber ? `ISSUED FORM - ISSUE ${model.issueNumber}` : model.renderContext === "working" ? "WORKING SAMPLE - NOT ISSUED" : "DRAFT PREVIEW", 40, 22, 6, bold, model.issueNumber ? blue : gray);
-    text(SAMPLE_PDF_VERSION, 450, 22, 5.5, regular, gray);
+    text(documentVersion, 450, 22, 5.5, regular, gray);
   }
   return new Uint8Array(await pdf.save());
 }
@@ -244,15 +247,15 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
     const service = createClient(url, serviceKey);
     const { data: document, error } = await service
       .from("sample_issued_documents")
-      .select("id,sample_id,issue_number,issued_snapshot,storage_bucket,storage_path,generation_status")
+      .select("id,sample_id,issue_number,issued_snapshot,storage_bucket,storage_path,generation_status,document_version")
       .eq("id", documentId)
       .single();
     if (error || !document) return json({ error: "Issued Sample Form not found." }, 404, headers);
     const path = `${document.sample_id}/${document.id}.pdf`;
-    if (action === "generate") {
+    if (action === "generate" && !(document.generation_status === "generated" && document.storage_path)) {
       await service.from("sample_issued_documents").update({ generation_status: "generating", last_error: null }).eq("id", documentId);
       try {
-        const bytes = await renderSampleWorkOrder(document.issued_snapshot);
+        const bytes = await renderSampleWorkOrder(document.issued_snapshot, document.document_version || "sample-work-order-pdf-v6-density-profile");
         const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)))
           .map((part) => part.toString(16).padStart(2, "0"))
           .join("");
@@ -271,7 +274,7 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
         throw cause;
       }
     }
-    const signed = await service.storage.from("sample-documents").createSignedUrl(path, 3600);
+    const signed = await service.storage.from("sample-documents").createSignedUrl(document.storage_path || path, 3600);
     if (signed.error) return json({ error: "Sample PDF is unavailable." }, 404, headers);
     return json({ url: signed.data.signedUrl }, 200, headers);
   } catch (cause) {
