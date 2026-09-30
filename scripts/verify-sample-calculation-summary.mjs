@@ -13,7 +13,7 @@ try {
  await expect(summary.getByText('180 lb chips = 100%',{exact:true})).toBeVisible();
  await expect(summary.getByText('4 lb chips/SF at this pour thickness',{exact:true})).toBeVisible();
  await expect(summary.getByTestId('working-pour-chip-mix')).toHaveText('64 oz');
- assert.ok(!(await summary.innerText()).includes('45 SF'),'no unsupported reference yield');
+ await expect(summary.getByTestId('batch-reference-yield')).toHaveText('45 SF @ 3/8″ · 4 lb chips/SF');
  await page.getByRole('button',{name:'Working Pour',exact:true}).click();
  await expect(page.locator('[data-welcome-hero]')).toBeHidden({timeout:20000});
  for(const width of [1440,768,390,320]) {
@@ -27,9 +27,22 @@ try {
  await page.getByLabel('Working Pour Width',{exact:true}).fill('6');await page.getByLabel('Working Pour Length',{exact:true}).fill('6');
  await expect(summary.getByTestId('working-pour-chip-mix')).toHaveText('16 oz');await expect(summary.getByText('180 lb chips = 100%',{exact:true})).toBeVisible();
  await page.getByLabel(/^Thickness/).fill('0.5');await expect(summary.getByText('5.3333 lb chips/SF at this pour thickness',{exact:true})).toBeVisible();await expect(summary.getByTestId('working-pour-chip-mix')).toHaveText('21.3333 oz');
+ await expect(summary.getByTestId('batch-reference-yield')).toHaveText('45 SF @ 3/8″ · 4 lb chips/SF');
  const select=page.getByLabel('Formulation Profile',{exact:true});await select.selectOption(await select.locator('option').evaluateAll(es=>es.find(e=>e.textContent.includes('Sherwin')).value));await page.getByRole('button',{name:'Apply configured profile',exact:true}).click();await expect(summary.getByText('Batch basis not captured',{exact:true})).toBeVisible();assert.ok(!(await summary.innerText()).includes('180'));assert.ok(!(await summary.innerText()).includes('45 SF'));
+ // Applying the configured profile captures reference thickness through the real UI.
+ await select.selectOption(await select.locator('option').evaluateAll(es=>es.find(e=>/^MTT —/.test(e.textContent)).value));
+ await expect(page.getByRole('status').filter({hasText:'has not been applied'})).toContainText('Batch reference thickness 3/8″');
+ await page.getByRole('button',{name:'Apply configured profile',exact:true}).click();
+ await expect(summary.getByTestId('batch-reference-yield')).toHaveText('45 SF @ 3/8″ · 4 lb chips/SF');
+ await page.getByRole('button',{name:'Configure profiles',exact:true}).click();
+ await page.getByRole('button',{name:'Edit MTT',exact:true}).click();
+ await expect(page.getByLabel('Batch reference thickness (in)',{exact:true})).toHaveValue('0.375');
+ // Missing reference thickness must retain the captured target without claiming yield.
+ await page.route('**/rest/v1/rpc/list_samples',async r=>{const response=await r.fetch();const body=await response.json();for(const item of body){delete item.sample.formulation_state.profile.batchReferenceThicknessIn;}await r.fulfill({response,json:body});});
+ await page.reload();await expect(summary.getByText('180 lb chips = 100%',{exact:true})).toBeVisible();await expect(summary.getByTestId('batch-reference-yield')).toHaveCount(0);
+ await page.unroute('**/rest/v1/rpc/list_samples');
  // Read-only legacy fixture response; no persisted data or product behavior changes.
  await page.route('**/rest/v1/rpc/list_samples',async r=>{const response=await r.fetch();const body=await response.json();for(const item of body){delete item.sample.formulation_state.profile.batchChipTargetLb;item.sample.formulation_state.calculationVersion='sample-formulation-v1';}await r.fulfill({response,json:body});});
  await page.reload();await expect(summary.getByText('Batch basis not captured',{exact:true})).toBeVisible();assert.ok(!(await summary.innerText()).includes('lb chips/SF at this pour thickness'));
- console.log('Summary browser checks passed: captured Batch basis, no assumed reference yield, current-thickness rate, geometry-only quantity change, Sherwin/legacy fallbacks, 1440/768/390/320px. No data saved.');
+ console.log('Summary browser checks passed: captured Batch basis, derived reference coverage/rate, missing reference fallback, current-thickness rate, geometry-only quantity change, Sherwin/legacy fallbacks, 1440/768/390/320px. No data saved.');
 }finally{await browser.close();}

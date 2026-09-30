@@ -6,7 +6,7 @@ import {buildSamplePdfModel,SAMPLE_PDF_VERSION} from '../supabase/functions/_sha
 import {createEdgeHarness,extractPdfText,fileImport,outputDirectory,repoRoot} from './pdf-overflow-stress-utils.mjs';
 const snapshot=JSON.parse(readFileSync(`${outputDirectory}/sample-row-order-fixture.json`));
 Object.assign(snapshot,{sample_quantity:'1',sample_size:'6x6'});
-Object.assign(snapshot.formulation_state,{finishedPlateWidth:'6',finishedPlateLength:'6',finishedPlateQuantity:'4',width:'12',length:'12',dimensionUnit:'in'});snapshot.formulation_state.profile.batchChipTargetLb='180';
+Object.assign(snapshot.formulation_state,{finishedPlateWidth:'6',finishedPlateLength:'6',finishedPlateQuantity:'4',width:'12',length:'12',dimensionUnit:'in'});snapshot.formulation_state.profile.batchChipTargetLb='180';snapshot.formulation_state.profile.batchReferenceThicknessIn='0.375';
 const legacyVersion='sample-work-order-pdf-v6-density-profile';
 const oldPath=`${outputDirectory}/sample-baseline-renderer.ts`;
 writeFileSync(oldPath,execFileSync('git',['show','af334e42076311501fbab464180fa6d799cbcc4b:supabase/functions/generate-sample-pdf/index.ts'],{encoding:'utf8'}));

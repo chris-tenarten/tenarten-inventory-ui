@@ -5,6 +5,7 @@ export type OperationalProfile = {
   chip_density: number | null; dry_pool_rate: number | null; filler_rate: number | null;
   resin_rate: number | null; resin_parts: number | null; hardener_parts: number | null;
   batch_chip_target_lb?: number | null;
+  batch_reference_thickness_in?: number | null;
   description: string;
 };
 export const operationalProfileLabel = (p: OperationalProfile) => `${p.name} — ${p.resin_parts && p.hardener_parts ? `${p.resin_parts}:${p.hardener_parts}` : '?'}`;
@@ -24,6 +25,7 @@ export function captureOperationalProfile(p: OperationalProfile): SampleFormulat
   return { id: `operational:${p.id}`, version: p.revision, name: operationalProfileLabel(p),
     defaultChipDensityLbCft: String(p.chip_density), dryPoolOzPerCft: String(p.dry_pool_rate),
     defaultFillerOzPerCft: String(p.filler_rate), resinFlOzPerCft: String(p.resin_rate),
+    batchReferenceThicknessIn: p.batch_reference_thickness_in == null ? null : String(p.batch_reference_thickness_in),
     batchChipTargetLb: p.batch_chip_target_lb == null ? null : String(p.batch_chip_target_lb),
     resinParts: String(p.resin_parts), hardenerParts: String(p.hardener_parts), evidence: p.description };
 }

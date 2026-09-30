@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {startDatabase,sql,docker,asUser,json,provision,admin,member,migration} from './support/sample-batch-database.mjs';
+import {startDatabase,sql,docker,asUser,json,provision,admin,member,migration,referenceMigration} from './support/sample-batch-database.mjs';
 const name=`tenops-batch-gate-${process.pid}`;
 const rows=(percent)=>[...percent.map((p,i)=>({color:`Chip ${i}`,percentage:String(p),component_role:'aggregate',calculation_basis:'target_total',quantity_provenance:'calculated',unit:'oz'})),...['filler','resin','hardener'].map(component_role=>({color:component_role,component_role,quantity_provenance:'calculated',unit:component_role==='filler'?'oz':'fl oz'}))];
 const expectFailure=(statement,contains)=>{assert.throws(()=>sql(name,statement),e=>String(e).includes(contains));};
@@ -11,6 +11,7 @@ try{
  sql(name,asUser(`select save_sample_draft(${json({id:sid,prepared_by:'Historical QA',formulation_state:oldState})},${json(rows([100]))},'Historical fixture');select save_sample_working_version('${sid}','Before migration');select issue_sample_form('${sid}')`));
  const before=sql(name,`select jsonb_build_object('samples',(select jsonb_agg(to_jsonb(s)) from samples s),'versions',(select jsonb_agg(to_jsonb(v)) from sample_working_versions v),'issued',(select jsonb_agg(to_jsonb(i)) from sample_issued_documents i))`);
  sql(name,readFileSync('supabase/migrations/'+migration,'utf8'));
+ sql(name,readFileSync('supabase/migrations/'+referenceMigration,'utf8'));
  assert.equal(sql(name,`select jsonb_build_object('samples',(select jsonb_agg(to_jsonb(s)) from samples s),'versions',(select jsonb_agg(to_jsonb(v)) from sample_working_versions v),'issued',(select jsonb_agg(to_jsonb(i)) from sample_issued_documents i))`),before);
  const pid=provision(name);expectFailure(asUser(readFileSync('supabase/operations/sample-batch/provision-mtt.sql','utf8').replaceAll(":'mtt_id'",`'${pid}'`).replaceAll(":'expected_revision'","'1'")),'ERROR');assert.equal(sql(name,'select count(*) from sample_operational_profiles where batch_chip_target_lb is not null'),'1');
  expectFailure(asUser(`select save_sample_operational_profile('${pid}',1,(select to_jsonb(p) from sample_operational_profiles p where id='${pid}'))`),'Profile changed');

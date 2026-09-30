@@ -14,7 +14,7 @@ import {
   MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION,
   type SampleFormulationState,
 } from "./formulation";
-import { validBatchTarget, formatBatchQuantity } from "./batch-projection";
+import { deriveBatchReference, validBatchTarget, formatBatchQuantity } from "./batch-projection";
 import type { SampleBlendRow } from "./types";
 import { setSampleFormulationDefault } from "./queries";
 const input =
@@ -68,6 +68,7 @@ export default function SampleFormulationConfigurator({
     state.calculationVersion ===
     MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION;
   const isV4 = state.calculationVersion === SAMPLE_FORMULATION_CALCULATION_VERSION;
+  const batchReference = deriveBatchReference(state);
   const batchTarget = isV4 ? validBatchTarget(state.profile?.batchChipTargetLb) : null;
   const compact = (value: string) => value !== "" && Number.isFinite(Number(value)) ? Number(value).toLocaleString("en-US", { maximumFractionDigits: 4 }) : "—";
   const pourDimension = (value: string) => state.dimensionUnit === "in" ? inches(value) : `${compact(value)}′`;
@@ -152,14 +153,15 @@ export default function SampleFormulationConfigurator({
               <dd className="mt-1 text-xs text-slate-500">Intended pieces from the pour. Changing these does not resize the Working Pour.</dd>
             </div>
             <div className="min-w-0">
+              <dt className="font-bold text-slate-600">Batch Basis</dt>
+              <dd className="mt-1 font-semibold">{batchTarget === null ? "Batch basis not captured" : `${formatBatchQuantity(batchTarget, "lb")} lb chips = 100%`}</dd>
+              {batchReference && <dd data-testid="batch-reference-yield" className="mt-1 text-xs text-slate-600">{formatBatchQuantity(batchReference.coverageSf, "SF")} SF @ {inches(String(batchReference.referenceThicknessIn))} · {formatBatchQuantity(batchReference.chipRateLbSf, "lb")} lb chips/SF</dd>}
+              {batchTarget !== null && <dd className="mt-1 text-xs text-slate-500">{state.profile?.name}</dd>}
+            </div>
+            <div className="min-w-0">
               <dt className="font-bold text-slate-600">Working Pour</dt>
               <dd className="mt-1 font-semibold">{pourDimension(state.width)} × {pourDimension(state.length)} × {inches(state.thicknessIn)} · {number(result.areaSf)} SF</dd>
               {isV4 && result.effectiveWeightPerSf && <dd className="mt-1 text-xs text-slate-500">{compact(result.effectiveWeightPerSf)} lb chips/SF at this pour thickness</dd>}
-            </div>
-            <div className="min-w-0">
-              <dt className="font-bold text-slate-600">Batch Basis</dt>
-              <dd className="mt-1 font-semibold">{batchTarget === null ? "Batch basis not captured" : `${formatBatchQuantity(batchTarget, "lb")} lb chips = 100%`}</dd>
-              {batchTarget !== null && <dd className="mt-1 text-xs text-slate-500">{state.profile?.name}</dd>}
             </div>
             <div className="min-w-0">
               <dt className="font-bold text-slate-600">Working Pour Chip Mix</dt>
@@ -217,7 +219,7 @@ export default function SampleFormulationConfigurator({
               </select>
               <span className={hint}>Captured with this Sample. Changing supplier alone does not change the profile.</span>
               {profilesError && <span role="alert" className="block text-xs text-red-700">{profilesError}</span>}
-              {pendingProfile && <span role="status" className="mt-2 block border border-amber-300 p-2 text-xs">{operationalProfileLabel(pendingProfile)} has not been applied. {missingProfileInputs(pendingProfile).length ? `Missing: ${missingProfileInputs(pendingProfile).join(', ')}. Current Draft calculations remain on the captured profile.` : 'Review this profile before applying. Existing manual overrides remain unchanged.'}<span className="mt-2 block">Revision {pendingProfile.revision} · Batch chip target {pendingProfile.batch_chip_target_lb ?? "not configured"} lb · Density {pendingProfile.chip_density ?? "—"} lb/CFT · Filler rate {pendingProfile.filler_rate ?? "—"} oz/CFT · Resin rate {pendingProfile.resin_rate ?? "—"} fl oz/CFT. Working quantities after applying: {(() => { if(missingProfileInputs(pendingProfile).length) return "unavailable"; const next=calculateSampleFormulation(applyOperationalProfile(state,pendingProfile),rows); return `${next.availableChipMixOz} oz chips / ${next.effectiveFillerOz} oz filler / ${next.effectiveResinFlOz} fl oz resin / ${next.rows[rows.findIndex(r=>r.componentRole==='hardener')]?.effectiveQuantity ?? "—"} fl oz hardener`; })()}</span><button type="button" disabled={missingProfileInputs(pendingProfile).length > 0} onClick={() => confirmProfile(pendingProfile)} className="m-1 min-h-9 border px-2 disabled:opacity-50">Apply configured profile</button><button type="button" onClick={() => setPendingProfileId('')} className="m-1 underline">Cancel selection</button></span>}
+              {pendingProfile && <span role="status" className="mt-2 block border border-amber-300 p-2 text-xs">{operationalProfileLabel(pendingProfile)} has not been applied. {missingProfileInputs(pendingProfile).length ? `Missing: ${missingProfileInputs(pendingProfile).join(', ')}. Current Draft calculations remain on the captured profile.` : 'Review this profile before applying. Existing manual overrides remain unchanged.'}<span className="mt-2 block">Revision {pendingProfile.revision} · Batch chip target {pendingProfile.batch_chip_target_lb ?? "not configured"} lb · Batch reference thickness {pendingProfile.batch_reference_thickness_in == null ? "not configured" : inches(String(pendingProfile.batch_reference_thickness_in))} · Density {pendingProfile.chip_density ?? "—"} lb/CFT · Filler rate {pendingProfile.filler_rate ?? "—"} oz/CFT · Resin rate {pendingProfile.resin_rate ?? "—"} fl oz/CFT. Working quantities after applying: {(() => { if(missingProfileInputs(pendingProfile).length) return "unavailable"; const next=calculateSampleFormulation(applyOperationalProfile(state,pendingProfile),rows); return `${next.availableChipMixOz} oz chips / ${next.effectiveFillerOz} oz filler / ${next.effectiveResinFlOz} fl oz resin / ${next.rows[rows.findIndex(r=>r.componentRole==='hardener')]?.effectiveQuantity ?? "—"} fl oz hardener`; })()}</span><button type="button" disabled={missingProfileInputs(pendingProfile).length > 0} onClick={() => confirmProfile(pendingProfile)} className="m-1 min-h-9 border px-2 disabled:opacity-50">Apply configured profile</button><button type="button" onClick={() => setPendingProfileId('')} className="m-1 underline">Cancel selection</button></span>}
               {canManageProfiles && <button type="button" onClick={() => setManageProfiles(true)} className="mt-2 min-h-10 border px-3 text-xs">Configure profiles</button>}
             </label>}
             {isV4 && <>

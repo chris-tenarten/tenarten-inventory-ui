@@ -1,0 +1,64 @@
+{
+  "baseCandidate": "7adb812a221a4dc821b19eddb659ed477e68b0c1",
+  "acceptedPreviousCandidate": "bdfdf78e69ae03067f926ff9dc5a62e2c8a2d576",
+  "decision": "Chris authorized captured profile-specific Batch reference thickness; preserve subsequently accepted Batch default. No Working Pour math changes.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "contract": {
+    "managedField": "batch_reference_thickness_in numeric(14,6), optional finite positive inches",
+    "capturedField": "profile.batchReferenceThicknessIn optional decimal string/null",
+    "derivedOnly": [
+      "volumeCft",
+      "referenceThicknessFt",
+      "coverageSf",
+      "chipRateLbSf"
+    ],
+    "densityAuthority": "captured profile.defaultChipDensityLbCft, not mutable Working Pour materialDensity",
+    "legacy": "No backfill. Missing/invalid target, density or reference thickness suppress yield/rate. Known target remains visible. Old-client omissions retained only for same profile id/revision; explicit null clears; history restore retains exact capture."
+  },
+  "configuration": "Separate identity/revision/rate-guarded common MTT operation sets .375 inches only after existing 180-lb target; no global defaults or blend permutations.",
+  "migration": {
+    "path": "supabase/migrations/20260930220000_sample_batch_reference_thickness.sql",
+    "sha256": "ed4bca4337b17dddc741852039353ab15607f6e579ca06d2fad68d180030925c",
+    "applied": "Disposable local databases only"
+  },
+  "provisioning": {
+    "path": "supabase/operations/sample-batch/provision-mtt-reference-thickness.sql",
+    "sha256": "3f2ca8ae631c73e83bb7b1f442922a160d7a6e5bf2da72142707cac69797807f"
+  },
+  "presentation": [
+    "Finished Plates: 4 pcs \u00b7 6\u2033 \u00d7 6\u2033 \u00d7 3/8\u2033",
+    "Batch Basis: 180 lb chips = 100%",
+    "45 SF @ 3/8\u2033 \u00b7 4 lb chips/SF",
+    "Working Pour: 12\u2033 \u00d7 12\u2033 \u00d7 3/8\u2033 \u00b7 1.00 SF",
+    "Working Pour Chip Mix: 64 oz"
+  ],
+  "mathematicalAcceptance": [
+    "180/128 = 1.40625 CFT",
+    ".375/12 = .03125 ft",
+    "1.40625/.03125 = 45 SF",
+    "180/45 = 4 lb/SF",
+    "1*4 = 4 lb",
+    "4*16 = 64 oz",
+    "40/30/20/5/5 => 72/54/36/9/9 lb = 180 lb; 25.6/19.2/12.8/3.2/3.2 oz = 64 oz"
+  ],
+  "validation": {
+    "verify-sample-batch.mts": "passed: exact derived values; 3 blends; unchanged 16/15/3 defaults; incomplete/issue gates; custom 240lb/120density/.5inch =>48SF/5lbSF; legacy/missing/invalid; Working geometry/density independence",
+    "verify-sample-batch-database.mjs": "passed with new migration: existing lifecycle, issue reconciliation, no historical mutation across migrations",
+    "verify-sample-batch-reference-database.mjs": "passed: provisioning guards, positive finite validation, RBAC/revisions, omission/null/replacement, duplicate/restore/issued immutability, wrapper privileges",
+    "verify-sample-calculation-summary.mjs": "passed actual localhost:3000; 1440/768/390/320; geometry and thickness changes retain reference; Sherwin/legacy/missing-reference fallbacks; configured MTT selection and manager field",
+    "verify-sample-batch-pdf.mjs": "passed unchanged component rows, baseline legacy text/pagination and immutable generated PDF retry; PDF.js standard-font warning only",
+    "catalog": "actual UI blue 199, green 157, red 111; Texas Blue/CCQ selection retained across Batch/Working Pour",
+    "productionBuildIncludingTypeScript": "passed",
+    "targetedEslint": "passed",
+    "diffCheck": "passed",
+    "review": "Self-reviewed schema/privilege/history diff and desktop/mobile screenshots; no changes to calculation implementation or PDF renderer."
+  },
+  "localReview": {
+    "url": "http://localhost:3000/samples",
+    "sampleUrl": "http://localhost:3000/samples?open=55dbbe24-ae74-4066-a7ab-5866d51c8669",
+    "container": "tenops-sample-batch-review-10139",
+    "fixture": "Only representative disposable MTT draft explicitly recaptured after guarded profile configuration; existing versions/issued records compared unchanged; other drafts untouched."
+  },
+  "release": "No push, hosted migration, hosted mutation, or deployment."
+}

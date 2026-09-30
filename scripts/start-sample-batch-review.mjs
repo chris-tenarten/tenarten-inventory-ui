@@ -2,7 +2,7 @@
 import {createServer} from 'node:http';
 import {readFileSync,existsSync,statSync,writeFileSync,mkdirSync} from 'node:fs';
 import path from 'node:path';
-import {startDatabase,sql,docker,asUser,json,literal,admin,provision} from './support/sample-batch-database.mjs';
+import {startDatabase,sql,docker,asUser,json,literal,admin,provision,provisionReference} from './support/sample-batch-database.mjs';
 import {renderSampleWorkOrder} from '../supabase/functions/generate-sample-pdf/index.ts';
 const port=4207, host='127.0.0.1', origin=`http://${host}:${port}`,container=`tenops-sample-batch-review-${process.pid}`;
 const output='/private/tmp/tenops-sample-batch-review';mkdirSync(output,{recursive:true});
@@ -14,11 +14,11 @@ const session={access_token:token,refresh_token:'local-review',expires_at:410244
 const uuid=value=>{if(!/^[0-9a-f-]{36}$/i.test(value??''))throw new Error('Invalid local fixture identifier');return literal(value)+'::uuid';};
 const writes=[];let sampleId;
 try{
- startDatabase(container);const pid=provision(container);
+ startDatabase(container);const pid=provision(container);provisionReference(container,pid);
  sampleId=call('public.create_sample()');
  const state=parsed(`formulation_state from samples where id=${uuid(sampleId)}`);
  const profile=parsed(`to_jsonb(p) from sample_operational_profiles p where id=${uuid(pid)}`);
- state.profile={...state.profile,id:'operational:'+pid,version:profile.revision,name:'MTT — 5:1',dryPoolOzPerCft:'2560',defaultFillerOzPerCft:'512',batchChipTargetLb:'180',evidence:profile.description};
+ state.profile={...state.profile,id:'operational:'+pid,version:profile.revision,name:'MTT — 5:1',dryPoolOzPerCft:'2560',defaultFillerOzPerCft:'512',batchChipTargetLb:'180',batchReferenceThicknessIn:String(profile.batch_reference_thickness_in),evidence:profile.description};
  const blend=[...[[40,'Blanco #1'],[30,'Blanco #2'],[20,'MOP'],[5,'True Grey #1'],[5,'True Grey #2']].map(([p,color])=>({percentage:String(p),color,component_role:'aggregate',calculation_basis:'target_total',quantity_provenance:'calculated',unit:'oz',vendor:''})),...['filler','resin','hardener'].map(component_role=>({color:component_role==='filler'?'ATF-20':component_role==='resin'?'Resin':'Hardener',component_role,quantity_provenance:'calculated',unit:component_role==='filler'?'oz':'fl oz',vendor:''}))];
  call(`public.save_sample_draft(${json({id:sampleId,prepared_by:'Marcos',project_name:'',sample_size:'6x6',sample_quantity:'1',formulation_state:state})},${json(blend)},'MTT Batch review')`);
  const route=`${origin}/samples?open=${sampleId}`;writeFileSync(path.join(output,'server.json'),JSON.stringify({container,route,sampleId}));

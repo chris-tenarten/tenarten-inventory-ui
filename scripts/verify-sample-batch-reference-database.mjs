@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {startDatabase,sql,docker,asUser,json,provision,provisionReference,referenceMigration,member} from './support/sample-batch-database.mjs';
+const name=`tenops-reference-gate-${process.pid}`;
+try {
+ startDatabase(name);
+ const pid=provision(name);provisionReference(name,pid);
+ const profile=()=>JSON.parse(sql(name,`select to_jsonb(p) from sample_operational_profiles p where id='${pid}'`));
+ assert.equal(profile().batch_reference_thickness_in,.375);assert.equal(profile().revision,3);
+ assert.throws(()=>provisionReference(name,pid),/mismatch/);
+ const p=profile();
+ const saveProfile=(values,revision=p.revision)=>sql(name,asUser(`select save_sample_operational_profile('${pid}',${revision},${json(values)})`));
+ for(const value of [0,-1,'NaN','Infinity','bad',100000000])assert.throws(()=>saveProfile({...p,batch_reference_thickness_in:value}),/ERROR/);
+ assert.throws(()=>sql(name,asUser(`select save_sample_operational_profile('${pid}',3,${json(p)})`,member)),/active Admin/);
+ assert.throws(()=>saveProfile(p,2),/Profile changed/);
+ const omitted={...p};delete omitted.batch_reference_thickness_in;saveProfile(omitted);assert.equal(profile().batch_reference_thickness_in,.375);
+ const sid=sql(name,asUser('select create_sample()'));
+ const base=JSON.parse(sql(name,`select formulation_state from samples where id='${sid}'`));
+ base.profile={...base.profile,id:'operational:'+pid,version:4,batchChipTargetLb:'180',batchReferenceThicknessIn:'0.375',defaultChipDensityLbCft:'128',defaultFillerOzPerCft:'512',resinFlOzPerCft:'480'};
+ const rows=[{color:'Blanco',percentage:'100',component_role:'aggregate',quantity_provenance:'calculated',calculation_basis:'target_total',unit:'oz'},...['filler','resin','hardener'].map(component_role=>({color:component_role,component_role,quantity_provenance:'calculated',unit:component_role==='filler'?'oz':'fl oz'}))];
+ const save=state=>sql(name,asUser(`select save_sample_draft(${json({id:sid,prepared_by:'QA',formulation_state:state})},${json(rows)})`));
+ const captured=()=>JSON.parse(sql(name,`select formulation_state->'profile' from samples where id='${sid}'`));
+ save(base);assert.equal(Number(captured().batchReferenceThicknessIn),.375);
+ const version=sql(name,asUser(`select save_sample_working_version('${sid}','Captured reference')`));
+ const issue=sql(name,asUser(`select issue_sample_form('${sid}')`));const historical=sql(name,`select to_jsonb(i) from sample_issued_documents i where id='${issue}'`);
+ const without=structuredClone(base);delete without.profile.batchReferenceThicknessIn;save(without);assert.equal(Number(captured().batchReferenceThicknessIn),.375);
+ for(const value of ['0','-1','NaN','Infinity','bad','100000000',{},true]){const state=structuredClone(base);state.profile.batchReferenceThicknessIn=value;assert.throws(()=>save(state),/ERROR/);}
+ const cleared=structuredClone(base);cleared.profile.batchReferenceThicknessIn=null;save(cleared);assert.equal(captured().batchReferenceThicknessIn,null);
+ const nullVersion=sql(name,asUser(`select save_sample_working_version('${sid}','No reference')`));
+ save(base);sql(name,asUser(`select restore_sample_working_version('${sid}','${nullVersion}')`));assert.equal(captured().batchReferenceThicknessIn,null);
+ sql(name,asUser(`select restore_sample_working_version('${sid}','${version}')`));assert.equal(Number(captured().batchReferenceThicknessIn),.375);
+ const duplicate=sql(name,asUser(`select duplicate_sample('${sid}',true)`));assert.equal(Number(sql(name,`select formulation_state#>>'{profile,batchReferenceThicknessIn}' from samples where id='${duplicate}'`)),.375);
+ without.profile.version=5;save(without);assert.equal(Object.hasOwn(captured(),'batchReferenceThicknessIn'),false);
+ const absent=sql(name,asUser(`select save_sample_working_version('${sid}','Legacy missing reference')`));save(base);sql(name,asUser(`select restore_sample_working_version('${sid}','${absent}')`));assert.equal(Object.hasOwn(captured(),'batchReferenceThicknessIn'),false);
+ saveProfile({...profile(),batch_reference_thickness_in:.5},4);assert.equal(sql(name,`select to_jsonb(i) from sample_issued_documents i where id='${issue}'`),historical);
+ saveProfile({...profile(),batch_reference_thickness_in:null},5);assert.equal(profile().batch_reference_thickness_in,null);
+ for(const signature of ['save_sample_draft_before_batch_reference(jsonb,jsonb)','save_sample_operational_profile_before_batch_reference(uuid,integer,jsonb)','normalize_sample_formulation_before_batch_reference(jsonb)'])for(const role of ['anon','authenticated','service_role'])assert.equal(sql(name,`select has_function_privilege('${role}','public.${signature}','execute')`),'f');
+ assert.ok(!/update public.samples|update public.sample_issued_documents/i.test(readFileSync('supabase/migrations/'+referenceMigration,'utf8')));
+ console.log('Batch reference database passed: guarded MTT provisioning, revisions/access, finite positive values, omitted/null/replacement captures, exact restore/duplicate, issued immutability, private wrappers.');
+} finally {docker(['stop',name]);}

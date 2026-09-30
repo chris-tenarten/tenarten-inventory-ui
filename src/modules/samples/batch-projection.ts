@@ -2,6 +2,20 @@ import { SAMPLE_FORMULATION_CALCULATION_VERSION, type SampleFormulationState, ty
 
 const numeric = (value: string | null | undefined) => value != null && value.trim() !== '' && Number.isFinite(Number(value)) && Number(value) >= 0 ? Number(value) : null;
 export const validBatchTarget = (value: string | null | undefined) => { const n = numeric(value); return n !== null && n > 0 && n <= 99999999.999999 ? n : null; };
+// Captured Batch reference only. Never infer reference thickness from the current pour
+// or substitute its potentially overridden density for the captured profile density.
+export function deriveBatchReference(state: SampleFormulationState) {
+  if (state.calculationVersion !== SAMPLE_FORMULATION_CALCULATION_VERSION) return null;
+  const chipTargetLb = validBatchTarget(state.profile?.batchChipTargetLb);
+  const referenceThicknessIn = validBatchTarget(state.profile?.batchReferenceThicknessIn);
+  const chipDensityLbCft = validBatchTarget(state.profile?.defaultChipDensityLbCft);
+  if (chipTargetLb === null || referenceThicknessIn === null || chipDensityLbCft === null) return null;
+  const volumeCft = chipTargetLb / chipDensityLbCft;
+  const referenceThicknessFt = referenceThicknessIn / 12;
+  const coverageSf = volumeCft / referenceThicknessFt;
+  const chipRateLbSf = chipTargetLb / coverageSf;
+  return { chipTargetLb, chipDensityLbCft, referenceThicknessIn, referenceThicknessFt, volumeCft, coverageSf, chipRateLbSf };
+}
 type ProjectionRow = { quantity: number | null; unit: 'lb' | 'gal' | ''; note: string };
 export function formatBatchQuantity(value: number | null, unit: string) {
   if (value === null) return '—';
