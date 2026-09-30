@@ -965,18 +965,19 @@ export default function SampleWorkspace() {
             </section>
             <section data-sample-tutorial="aggregate-section" className="border border-slate-300 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
+                <div className="min-w-0 w-full">
                   <h2 className="text-sm font-bold uppercase tracking-wide">
-                    {quantityView === "batch" ? "Batch composition" : "Working Pour quantities"}
+                    Chip Blend
                   </h2>
-                  <p className="mt-1 text-xs text-slate-500">
-                    Aggregate percentages divide the profile-calculated Chip Mix. Filler is independent during normal editing. Use Adjust Formulation to preserve the profile dry-material balance when changing Filler.
+                  <p className="mt-1 whitespace-normal break-words text-xs text-slate-500">
+                    Set the aggregate percentages. The blend must total 100%.
                   </p>
                   <p
                     className={`mt-2 text-sm font-bold ${formulationResult?.percentageReconciles ? "text-emerald-700" : "text-amber-700"}`}
                   >
-                    Working Pour: {formulationResult?.percentageTotal || "0"}% ·{" "}
-                    {formulationResult?.availableChipMixOz || "0"} oz Chip Mix
+                    {quantityView === "batch"
+                      ? `Batch: ${batch?.totalPercent ?? 0}% = ${formatBatchQuantity(batch?.subtotalLb ?? null, "lb")} lb Chip Mix`
+                      : `Working Pour: ${formulationResult?.percentageTotal || "0"}% = ${formulationResult?.availableChipMixOz || "0"} oz Chip Mix`}
                   </p>
                 </div>
               </div>
