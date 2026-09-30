@@ -1,0 +1,628 @@
+{
+  "source": {
+    "path": "/Users/chrisngo/my stuff/Jobs/2026 Sample Plate Formulations.pdf",
+    "sha256": "e761f2cf92d5cd9ac2d616464d23ff7505bbe82615b578fd0fc125c1cd10432b",
+    "pageCount": 83,
+    "selectedPages": [
+      {
+        "page": 1,
+        "text": "Project Name:   Project #  Location:   Houston, TX   18.00   cft   128.00   lbs. / cft  Custiomer   Camarata   10.00   (6 gal) batches   36.00   3/8   \" thick   4.0   lbs. / sf @3/8\"  FORMULA #  MATRIX COLOR:   #001 WHITE   KEY RESIN   FILLER:   ATF-20  FINISH:   200 Grit   SEALER:   TerraGlaze  Chip Mix:   COLOR   %   SIZE   TYPE   VENDOR  LBS / 200 lb. BATCH  50# Bags / 1000 lbs   TOTAL BAGS   #REF!  Blanco Mexicano   40%   #1   Marble   KCI   80.0   8.00   14.40  Blanco Mexicano   30%   #2   Marble   KCI   60.0   6.00   10.80  MOP   20%   #1   Shell   KCI   40.0   4.00   7.20  True Grey   5%   #1   Marble   KCI   10.0   1.00   1.80  True Grey   5%   #2   Marble   KCI   10.0   1.00   1.80  100%   200.0   20.0   36.0   #REF!  SAMPLE PLATE QUANTITIES:  Blanco Mexicano   40%   #1   25.60   ounces   1.60   lbs.   1.60  Blanco Mexicano   30%   #2   19.20   ounces   1.20   lbs.   1.20  MOP   20%   #1   12.80   ounces   0.80   lbs.   0.80  True Grey   5%   #1   3.20   ounces   0.20   lbs.   0.20  True Grey   5%   #2   3.20   ounces   0.20   lbs.   0.20  TOTAL   100%   64.00   ounces   4.00   lbs.   177.76  ATF-20   Filler   18.00   ounces   1.13   lbs.   50.00  #001 WHITE   Resin   15.00   ounces   0.12   gal.   5.00  Hardener   3.00   ounces   0.02   gal.   1.00  FIN. PCS  4   6\" x 6\"   3/8   1.00   sf   0.031  CFT  3/8   \" thick  12  12  Color Sample Match  LBJ HOPS #1590  Project Info:  T26-271-A  TENARTEN TERRAZZO   KEY RESIN CO.   Requested by:   Anthony  SAMPLE WORK ORDER   Date Initiated:   8/10/2026"
+      },
+      {
+        "page": 2,
+        "text": "Project Name:   Project #  Location:   27.15   cft   128.00   lbs. / cft  Custiomer   15.00   (6 gal) batches   54.00   3/8   \" thick   4.0   lbs. / sf @3/8\"  FORMULA #  MATRIX COLOR:   7018 DoveTail Order # 9684   FILLER:   Glass Fines  FINISH:   200 Grit   SEALER:   TerraGlaze  Chip Mix:   COLOR   %   SIZE   TYPE   VENDOR  LBS / 200 lb. BATCH  50# Bags / 1000 lbs   TOTAL BAGS   - $  Auto Glass   15%   1   Glass   Enviro   30.0   3.00   8.10   -  Clear Glass   50%   1   Glass   Enviro   100.0   10.00   27.00   -  Blanco Mex   25%   1   Marble   KCI   50.0   5.00   13.50   -  Canadian Royal Green   10%   1   Marble   T&M   20.0   2.00   5.40   -  -   -   -   -  -   -   -   -  -   -   -  100%   200.0   20.0   54.0   -  SAMPLE PLATE QUANTITIES:  Auto Glass   15%   1   9.60   ounces   0.60   lbs.   27.00  Clear Glass   50%   1   32.00   ounces   2.00   lbs.   90.00  Blanco Mex   25%   1   16.00   ounces   1.00   lbs.   45.00  Canadian Royal Green   10%   1   6.40   ounces   0.40   lbs.   18.00  0   0%   0%   -   ounces   -   lbs.   -  0   0%   0%   -   ounces   -   lbs.   -  -  TOTAL   100%   64.00   ounces   4.00   lbs.   180.00  Glass Fines   Filler   18.00   ounces   1.13   lbs.   50.00  7018 DoveTail Order # 9684   Resin   15.00   ounces   0.12   gal.   5.00  Hardener   3.00   ounces   0.02   gal.   1.00  FIN. PCS  4   6\" x 6\"   3/8   1.00   sf   0.031  CFT  3/8   \" thick  T26-270-F  TENARTEN TERRAZZO   SHERWIN-WILLIAMS   Requested by:   Giovanni  SAMPLE WORK ORDER   Date Initiated:   8/6/2026  VA HOSP - MAINE   TBD  Sherwin Williams  12  12"
+      },
+      {
+        "page": 19,
+        "text": "Project Name:   Project #  Location:   Houston, TX   7.13   cft   128.00   lbs. / cft  Custiomer   MTT IG   4.01   (6 gal) batches   15.00   3/4   \" thick   4.0   lbs. / sf @3/8\"  FORMULA #  MATRIX COLOR:   #6803 CAVIAR   FILLER:   AFT-20  FINISH:   400 Grit   SEALER:   TerraGlaze  Chip Mix:   COLOR   %   SIZE   TYPE   VENDOR  LBS / 200 lb. BATCH  50# Bags / 1000 lbs   TOTAL BAGS   #REF!  Toros Black   10%   0   Marble   ARIM   20.0   2.00   1.50  Toros Black   10%   1   Marble   ARIM   20.0   2.00   1.50  Toros Black   5%   2   Marble   ARIM   10.0   1.00   0.75  Toros Black   5%   3   Marble   ARIM   10.0   1.00   0.75  Toros Black   35%   5-7   Marble   ARIM   70.0   7.00   5.25  NC Blue Grey   5%   0   Marble   ARIM   10.0   1.00   0.75  NC Blue Grey   5%   1   Marble   ARIM   10.0   1.00   0.75  NC Blue Grey   15%   2   Marble   ARIM   30.0   3.00   2.25  Dolphin Grey   10%   4   Marble   ARIM   20.0   2.00   1.50  100%   200.0   20.0   15.0   #REF!  SAMPLE PLATE QUANTITIES:  Toros Black   10%   0   6.40   ounces   0.40   lbs.   0.40  Toros Black   10%   1   6.40   ounces   0.40   lbs.   0.40  Toros Black   5%   2   3.20   ounces   0.20   lbs.   0.20  Toros Black   5%   3   3.20   ounces   0.20   lbs.   0.20  Toros Black   35%   5-7   22.40   ounces   1.40   lbs.   1.40  NC Blue Grey   5%   0   3.20   ounces   0.20   lbs.   0.20  NC Blue Grey   5%   1   3.20   ounces   0.20   lbs.   0.20  NC Blue Grey   15%   2   9.60   ounces   0.60   lbs.   0.60  Dolphin Grey   10%   4   6.40   ounces   0.40   lbs.   0.40  TOTAL   100%   64.00   ounces   4.0   lbs.   177.76  AFT-20   Filler   16.00   ounces   1.00   lbs.   44.44  #6803 CAVIAR   Resin   15.00   ounces   0.12   gal.   5.00  Hardener   3.00   ounces   0.02   gal.   1.00  FIN. PCS  2   6\" x 6\"   3/4   0.50   sf   0.031  CFT  3/4   \" thick  TENARTEN TERRAZZO   MTT   Requested by:   Anthony  SAMPLE WORK ORDER   Date Initiated:   5/25/2026  Color Sample Match  Gessner Metronational   26-0324  MTT  Project Info:  T26-259-A (MTT #80317M-V)  6  12"
+      },
+      {
+        "page": 26,
+        "text": "Project Name:   Project #  Location:   Houston, TX   1.00   cft   128.00   lbs. / cft  Customer   Camarata   0.67   (5 gal) batches   3.00   3/8   \" thick   4.00   lbs. / sf @3/8\"  FORMULA #  MATRIX COLOR:   SW   12.375   FILLER:   ATF-20  FINISH:   200g   SEALER:   TerraGlaze  Chip Mix:   %   SIZE   TYPE   VENDOR  LBS / 150 lb. BATCH  50# Bags / 1000 lbs   TOTAL BAGS   #REF!  Blanco Mex   20%   0   Marble   CCQ   30.0   4.00   0.60  Blanco Mex   10%   1   Marble   CCQ   15.0   2.00   0.30  Imperial White   20%   0   Marble   CCQ   30.0   4.00   0.60  Imperial White   10%   1   Marble   CCQ   15.0   2.00   0.30  Glacier Grey   20%   0   Marble   CCQ   30.0   4.00   0.60  Oxblood Red   20%   0   Marble   CCQ   30.0   4.00   0.60  100%   150.0   20.0   3.0   #REF!  SAMPLE PLATE QUANTITIES:  Blanco Mex   20%   0   6.40   ounces   0.4   lbs.   0.40  Blanco Mex   10%   1   3.20   ounces   0.2   lbs.   0.20  Imperial White   20%   0   6.40   ounces   0.4   lbs.   0.40  Imperial White   10%   1   3.20   ounces   0.2   lbs.   0.20  Glacier Grey   20%   0   6.40   ounces   0.4   lbs.   0.40  Oxblood Red   20%   0   6.40   ounces   0.4   lbs.  TOTAL   100%   32.00   ounces   2.0   lbs.   2.00  ATF-20   Filler   8.00   ounces   0.5   lbs.   0.50  Match BM 1464 Light Pewter   Resin   8.00   ounces   0.06   gal.   0.06  Hardener   2.00   ounces   0.02   gal.  FIN. PCS  2   6\" x 6\"   3/8   0.50   sf   0.016  CFT  3/8   \" thick  T26-252-A  TENARTEN TERRAZZO   SHERWIN-WILLIAMS   Requested by:   Anthony  SAMPLE WORK ORDER   Date Initiated:   4/21/2026  Color Sample Match  RICE UNIV McNair Hall #5176   26-0325  Project Info:  Match BM 1464 Light Pewter  6  12"
+      },
+      {
+        "page": 49,
+        "text": "Project Name:   Project #  Location:   NYC, NY   7.13   cft   128.00   lbs. / cft  Custiomer   MTT IG   4.01   (6 gal) batches   15.00   3/4   \" thick   4.0   lbs. / sf @3/8\"  FORMULA #  MATRIX COLOR:   #1661 Stonington Gray   FILLER:   SF-20  FINISH:   200 Grit   SEALER:   TerraGlaze  Chip Mix:   COLOR   %   SIZE   TYPE   VENDOR  LBS / 200 lb. BATCH  50# Bags / 1000 lbs   TOTAL BAGS   #REF!  China White   50%   #2   Marble   ARIM   100.0   10.00   7.50  China White   50%   #4-7   Marble   ARIM   100.0   10.00   7.50  -   -   -  -   -   -  100%   200.0   20.0   15.0   #REF!  SAMPLE PLATE QUANTITIES:  China White   50%   #2   32.00   ounces   2.00   lbs.   2.00  China White   50%   #4-7   32.00   ounces   2.00   lbs.   2.00  0   0%   0   -   ounces   -   lbs.   -  0   0%   0%   -   ounces   -   lbs.   -  TOTAL   100%   64.00   ounces   4.0   lbs.   177.76  SF-20   Filler   16.00   ounces   1.00   lbs.   44.44  #1661 Stonington Gray   Resin   15.00   ounces   0.12   gal.   5.00  Hardener   3.00   ounces   0.02   gal.   1.00  FIN. PCS  2   6\" x 6\"   3/4   0.50   sf   0.031  CFT  3/4   \" thick  6  12  Color Sample Match  Bank of America - BP   25-1218  MTT  Project Info:  T26-237-A  TENARTEN TERRAZZO   MTT   Requested by:   Anthony  SAMPLE WORK ORDER   Date Initiated:   3/12/2026"
+      },
+      {
+        "page": 82,
+        "text": "Project Name:   Project #  Location:   Texarkana   4.50   cft   128.00   lbs. / cft  Customer   Superior   3.00   (5 gal) batches   11.00   3/8   \" thick   4.00   lbs. / sf @3/8\"  FORMULA #  MATRIX COLOR:   12.375   FILLER:   SF-20  FINISH:   3000 Grit   SEALER:   TerraGlaze  Chip Mix:   %   SIZE   TYPE   VENDOR  LBS / 150 lb. BATCH  50# Bags / 1000 lbs   TOTAL BAGS   #REF!  RC50 Clear Glass   10%   #00   Glass   ARIM   15.0   2.00   1.10  RC50 Clear Glass   30%   #0   Glass   ARIM   45.0   6.00   3.30  True Grey   20%   #0   Marble   CCQ   30.0   4.00   2.20  True Grey   20%   #1   Marble   CCQ   30.0   4.00   2.20  OSM (EnviroFLECT)   20%   #1   Glass   ENVR   30.0   4.00   2.20  -   -   -  -   -   -  100%   150.0   20.0   11.0   #REF!  SAMPLE PLATE QUANTITIES:  RC50 Clear Glass   10%   #00   9.60   ounces   0.6   lbs.   0.60  RC50 Clear Glass   30%   #0   28.80   ounces   1.8   lbs.   1.80  True Grey   20%   #0   19.20   ounces   1.2   lbs.   1.20  True Grey   20%   #1   19.20   ounces   1.2   lbs.   1.20  OSM (EnviroFLECT)   20%   #1   19.20   ounces   1.2   lbs.   1.20  0   0%   0%   -   ounces   -   lbs.   -  0   0%   0%   -   ounces   -   lbs.   -  TOTAL   100%   96.00   ounces   6.0   lbs.   6.00  SF-20   Filler   24.00   ounces   1.5   lbs.   1.50  0   Resin   24.00   ounces   0.19   gal.   0.19  Hardener   6.00   ounces   0.05   gal.  FIN. PCS  6   6\" x 6\"   3/8   1.50   sf   0.047  CFT  3/8   \" thick  T25-216-B  TENARTEN TERRAZZO   SHERWIN-WILLIAMS   Requested by:   Mike  SAMPLE WORK ORDER   Date Initiated:   1/9/2026  Color Sample Match  TAMU Texarkana   25-0317  Project Info:  SW  12  18"
+      }
+    ],
+    "visuallyInspectedPages": [
+      19,
+      2
+    ]
+  },
+  "executedReplaySource": "import assert from 'node:assert/strict';\nimport {writeFileSync} from 'node:fs';\nimport {standardFormulationState,SAMPLE_FORMULATION_PROFILES,calculateSampleFormulation,previewIncreasedFillerAdjustment} from '/private/tmp/tenops-sample-batch-v1/src/modules/samples/formulation.ts';\nimport {projectSampleBatch,deriveBatchReference} from '/private/tmp/tenops-sample-batch-v1/supabase/functions/_shared/sample-batch-projection.mjs';\nconst rows:any[]=[...[40,30,20,5,5].map(percentage=>({componentRole:'aggregate',percentage:String(percentage),quantity:'',unit:'oz',quantityProvenance:'calculated',calculationBasis:'target_total'})),...['filler','resin','hardener'].map(componentRole=>({componentRole,percentage:'',quantity:'',unit:componentRole==='filler'?'oz':'fl oz',quantityProvenance:'calculated',calculationBasis:null}))];\nconst profile={...SAMPLE_FORMULATION_PROFILES.find(p=>p.id==='mtt-2560-standard-5to1')!,batchChipTargetLb:'180',batchReferenceThicknessIn:'0.375'};\nconst state={...standardFormulationState(),profile,materialDensity:'128'};\nconst original=calculateSampleFormulation(state,rows),batch=projectSampleBatch(state,rows),reference=deriveBatchReference(state);\nassert.equal(reference.volumeCft,1.40625);assert.equal(reference.referenceThicknessFt,.03125);assert.equal(reference.coverageSf,45);assert.equal(reference.chipRateLbSf,4);\nassert.deepEqual(original.rows.map(r=>Number(r.effectiveQuantity)),[25.6,19.2,12.8,3.2,3.2,16,15,3]);assert.deepEqual(batch.rows.map(r=>r.quantity),[72,54,36,9,9,45,5.2734375,1.0546875]);\nconst preview=previewIncreasedFillerAdjustment(state,rows,'64')!;const adjustedState={...state,materialDensity:preview.resultingChipDensityLbCft,adjustment:preview.adjustment,chipDensityProvenance:'increased_filler_adjustment' as const};const adjustedRows=rows.map(r=>r.componentRole==='filler'?{...r,quantity:'64',quantityProvenance:'manual'}:r);const adjusted=calculateSampleFormulation(adjustedState,adjustedRows),adjustedBatch=projectSampleBatch(adjustedState,adjustedRows);\nassert.equal(adjusted.availableChipMixOz,'16');assert.equal(adjusted.effectiveChipDensityLbCft,'32');assert.equal(adjusted.dryPoolOz,'80');assert.equal(adjusted.effectiveResinFlOz,'15');assert.equal(adjusted.rows[7].effectiveQuantity,'3');assert.deepEqual(adjustedBatch.rows.slice(5).map(r=>r.quantity),[720,21.09375,4.21875]);\nconst ordinary=calculateSampleFormulation(state,rows.map(r=>r.componentRole==='filler'?{...r,quantity:'32',quantityProvenance:'manual'}:r));assert.equal(ordinary.availableChipMixOz,'64');assert.equal(ordinary.actualDryTotalOz,'96');\nconst sherwinProfile={...SAMPLE_FORMULATION_PROFILES.find(p=>p.id==='sherwin-150-standard-4to1')!};const sherwinState={...state,profile:sherwinProfile,resinParts:'4'};const sherwin=calculateSampleFormulation(sherwinState,rows);assert.deepEqual(sherwin.rows.slice(5).map(r=>Number(r.effectiveQuantity)),[16,16,4]);\nconst doubled=calculateSampleFormulation({...state,width:'24'},rows);assert.equal(doubled.availableChipMixOz,'128');assert.equal(doubled.effectiveResinFlOz,'30');assert.deepEqual(projectSampleBatch({...state,width:'24'},rows).rows,batch.rows);\nconst evidence={candidate:'a5f5bb9cc3ab9ad7e3a6b520a6cfb5476671ce79',reference,original,batch,preview,adjusted,adjustedBatch,ordinaryFillerEdit:ordinary,sherwin,doubled,assertions:'PASS',limits:'Arithmetic and current code replay only. No claim of physical or operational recipe validation.'};writeFileSync('/private/tmp/tenops-full-formulation-reconciliation/replay.json',JSON.stringify(evidence,null,2));console.log(JSON.stringify({assertions:'PASS',reference,originalBatch:batch.rows,adjustedBatch:adjustedBatch.rows.slice(5)},null,2));\n",
+  "supersedesReadinessAssessment": "evidence/2026-09-30-production-batch-blend-sheet.json",
+  "productDirectionUpdate": "/Users/chrisngo/.codex/attachments/caf26f40-2d1f-4375-ae01-dc6ab33afc4f/Pasted text.txt",
+  "contractStatus": "V5 canonical operational Batch \u2192 exact Working projection \u2192 shop preparation; MTT complete, other profiles gated by authority",
+  "finalDirectionUpdate": "/Users/chrisngo/.codex/attachments/9d14c801-4106-44bf-9094-73eaa90f6080/Pasted text.txt",
+  "confirmedOperationalFacts": {
+    "mttShopFillerOz": 18,
+    "representativeShopChipsOz": 64,
+    "representativeShopDryOz": 82,
+    "historicalShopRounding": true,
+    "generalBinderRoundingAlgorithm": null,
+    "batchChipsLb": 180,
+    "batchFillerLb": 50,
+    "batchPartAGal": 5,
+    "batchPartBGal": 1,
+    "filler51xCanonical": false
+  },
+  "implementationBlocker": null,
+  "finalDirectionSecondHalf": "/Users/chrisngo/.codex/attachments/c9fcd4f8-9184-44d2-90de-6a68253c67dc/Pasted text.txt",
+  "newImplementationValidation": "PASS: focused Tier 3 calculation, database lifecycle, authority rejection, legacy, catalog, package history, PDF/overflow, actual-app browser, TypeScript, targeted ESLint, diff and webpack Production build.",
+  "newMigrations": [
+    "20261001010000_sample_batch_first_authority.sql",
+    "20261001013000_sample_batch_first_history.sql"
+  ],
+  "newPdfArtifacts": [
+    "output/pdf/batch-first/MTT-Working-Sample-review.pdf",
+    "output/pdf/batch-first/MTT-Production-Batch-review.pdf",
+    "output/pdf/batch-first/MTT-Production-Batch-issued-review.pdf",
+    "output/pdf/batch-first/Sherwin-Working-Sample-review.pdf"
+  ],
+  "historicalInvestigationClassification": {
+    "implementation": "C hybrid",
+    "historicalEvidence": "D geometry-based Sample recipes plus unresolved Batch/reference columns",
+    "productionReadiness": "NOT SAFE as authoritative operational recipe; arithmetic valid, authority unestablished",
+    "productArchitecture": "A Batch-first, explicit Chris direction; no longer open"
+  },
+  "classification": {
+    "productArchitecture": "A Batch-first",
+    "canonicalAuthority": "Chris latest operational clarification: 180 lb chips / 50 lb filler / 5 US gal A / 1 US gal B",
+    "status": "Implemented locally; no release"
+  },
+  "migrations": [
+    {
+      "file": "20260930170000_sample_batch_chip_basis.sql",
+      "sha256": "0fee212f36875a876c5888262e906f43bd3d0e07425d49a98882a51b5a3214a9"
+    },
+    {
+      "file": "20260930220000_sample_batch_reference_thickness.sql",
+      "sha256": "ed4bca4337b17dddc741852039353ab15607f6e579ca06d2fad68d180030925c"
+    },
+    {
+      "file": "20261001010000_sample_batch_first_authority.sql",
+      "sha256": "2b97dc567be6e3c270ab3c81c82fcc87eac36c90c746582b5cad134bfa8b4435"
+    },
+    {
+      "file": "20261001013000_sample_batch_first_history.sql",
+      "sha256": "acb2278ab115b30136487a4d781112b610d41ad772f8fc62b96aeabbc00a471b"
+    }
+  ],
+  "changedFiles": [
+    "docs/project-memory/2026-09-30-full-formulation-batch-reconciliation.md",
+    "docs/project-memory/evidence/2026-09-30-full-formulation-reconciliation.json",
+    "scripts/support/sample-batch-first-fixture.ts",
+    "scripts/verify-sample-batch-first-browser.mjs",
+    "scripts/verify-sample-batch-first-lifecycle.mjs",
+    "scripts/verify-sample-batch-first.mts",
+    "supabase/functions/_shared/sample-batch-first.d.mts",
+    "supabase/functions/_shared/sample-batch-first.mjs",
+    "supabase/migrations/20261001010000_sample_batch_first_authority.sql",
+    "supabase/migrations/20261001013000_sample_batch_first_history.sql",
+    "scripts/verify-production-batch-lifecycle.mjs",
+    "scripts/verify-production-batch-pdf.mts",
+    "scripts/verify-production-batch.mts",
+    "src/modules/samples/OperationalProfileManager.tsx",
+    "src/modules/samples/SampleFormulationConfigurator.tsx",
+    "src/modules/samples/SampleWorkspace.tsx",
+    "src/modules/samples/formulation.ts",
+    "src/modules/samples/operational-profile-model.ts",
+    "src/modules/samples/operational-profiles.ts",
+    "src/modules/samples/queries.ts",
+    "src/modules/samples/sample-errors.ts",
+    "supabase/functions/_shared/sample-batch-projection.mjs",
+    "supabase/functions/_shared/sample-production-batch.mjs",
+    "supabase/functions/_shared/sample-work-order-pdf-model.mjs",
+    "supabase/functions/generate-sample-pdf/index.ts"
+  ],
+  "legacyReplay": {
+    "candidate": "a5f5bb9cc3ab9ad7e3a6b520a6cfb5476671ce79",
+    "reference": {
+      "chipTargetLb": 180,
+      "chipDensityLbCft": 128,
+      "referenceThicknessIn": 0.375,
+      "referenceThicknessFt": 0.03125,
+      "volumeCft": 1.40625,
+      "coverageSf": 45,
+      "chipRateLbSf": 4
+    },
+    "original": {
+      "areaSf": "1",
+      "finishedAreaSf": "1",
+      "productionVolumeCft": "0.03125",
+      "calculatedWeightPerSf": "4",
+      "effectiveWeightPerSf": "4",
+      "geometryChipMixWeight": "4",
+      "geometryChipMixOz": "64",
+      "dryPoolOz": "80",
+      "actualDryTotalOz": "80",
+      "dryPoolVarianceOz": "0",
+      "defaultFillerOz": "16",
+      "effectiveFillerOz": "16",
+      "defaultResinFlOz": "15",
+      "effectiveResinFlOz": "15",
+      "effectiveChipDensityLbCft": "128",
+      "totalFormulaWeightOz": "",
+      "nonChipWeightOz": "",
+      "availableChipMixOz": "64",
+      "invalidMassBalance": false,
+      "targetWeight": "4",
+      "targetWeightOz": "64",
+      "percentageTotal": "100",
+      "percentageReconciles": true,
+      "rows": [
+        {
+          "calculatedQuantity": "25.6",
+          "calculatedQuantityOz": "25.6",
+          "effectiveQuantity": "25.6"
+        },
+        {
+          "calculatedQuantity": "19.2",
+          "calculatedQuantityOz": "19.2",
+          "effectiveQuantity": "19.2"
+        },
+        {
+          "calculatedQuantity": "12.8",
+          "calculatedQuantityOz": "12.8",
+          "effectiveQuantity": "12.8"
+        },
+        {
+          "calculatedQuantity": "3.2",
+          "calculatedQuantityOz": "3.2",
+          "effectiveQuantity": "3.2"
+        },
+        {
+          "calculatedQuantity": "3.2",
+          "calculatedQuantityOz": "3.2",
+          "effectiveQuantity": "3.2"
+        },
+        {
+          "calculatedQuantity": "16",
+          "calculatedQuantityOz": "16",
+          "effectiveQuantity": "16"
+        },
+        {
+          "calculatedQuantity": "15",
+          "calculatedQuantityOz": "15",
+          "effectiveQuantity": "15"
+        },
+        {
+          "calculatedQuantity": "3",
+          "calculatedQuantityOz": "3",
+          "effectiveQuantity": "3"
+        }
+      ]
+    },
+    "batch": {
+      "target": 180,
+      "totalPercent": 100,
+      "subtotalLb": 180,
+      "rows": [
+        {
+          "quantity": 72,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 54,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 36,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 9,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 9,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 45,
+          "unit": "lb",
+          "note": "Projected from this formulation"
+        },
+        {
+          "quantity": 5.2734375,
+          "unit": "gal",
+          "note": "Projected from this formulation"
+        },
+        {
+          "quantity": 1.0546875,
+          "unit": "gal",
+          "note": "Projected from this formulation"
+        }
+      ],
+      "issues": [],
+      "complete": true,
+      "fraction": 0.022222222222222223
+    },
+    "preview": {
+      "targetFillerOz": "64",
+      "resultingChipMixOz": "16",
+      "resultingChipDensityLbCft": "32",
+      "adjustment": {
+        "kind": "increased_filler_preserve_dry_pool",
+        "baseProfileId": "mtt-2560-standard-5to1",
+        "baseProfileVersion": 2,
+        "expectedDryPoolOz": "80",
+        "priorFillerOz": "16",
+        "targetFillerOz": "64",
+        "priorChipDensityLbCft": "128",
+        "resultingChipDensityLbCft": "32"
+      }
+    },
+    "adjusted": {
+      "areaSf": "1",
+      "finishedAreaSf": "1",
+      "productionVolumeCft": "0.03125",
+      "calculatedWeightPerSf": "1",
+      "effectiveWeightPerSf": "1",
+      "geometryChipMixWeight": "1",
+      "geometryChipMixOz": "16",
+      "dryPoolOz": "80",
+      "actualDryTotalOz": "80",
+      "dryPoolVarianceOz": "0",
+      "defaultFillerOz": "16",
+      "effectiveFillerOz": "64",
+      "defaultResinFlOz": "15",
+      "effectiveResinFlOz": "15",
+      "effectiveChipDensityLbCft": "32",
+      "totalFormulaWeightOz": "",
+      "nonChipWeightOz": "",
+      "availableChipMixOz": "16",
+      "invalidMassBalance": false,
+      "targetWeight": "1",
+      "targetWeightOz": "16",
+      "percentageTotal": "100",
+      "percentageReconciles": true,
+      "rows": [
+        {
+          "calculatedQuantity": "6.4",
+          "calculatedQuantityOz": "6.4",
+          "effectiveQuantity": "6.4"
+        },
+        {
+          "calculatedQuantity": "4.8",
+          "calculatedQuantityOz": "4.8",
+          "effectiveQuantity": "4.8"
+        },
+        {
+          "calculatedQuantity": "3.2",
+          "calculatedQuantityOz": "3.2",
+          "effectiveQuantity": "3.2"
+        },
+        {
+          "calculatedQuantity": "0.8",
+          "calculatedQuantityOz": "0.8",
+          "effectiveQuantity": "0.8"
+        },
+        {
+          "calculatedQuantity": "0.8",
+          "calculatedQuantityOz": "0.8",
+          "effectiveQuantity": "0.8"
+        },
+        {
+          "calculatedQuantity": "",
+          "calculatedQuantityOz": "",
+          "effectiveQuantity": "64"
+        },
+        {
+          "calculatedQuantity": "15",
+          "calculatedQuantityOz": "15",
+          "effectiveQuantity": "15"
+        },
+        {
+          "calculatedQuantity": "3",
+          "calculatedQuantityOz": "3",
+          "effectiveQuantity": "3"
+        }
+      ]
+    },
+    "adjustedBatch": {
+      "target": 180,
+      "totalPercent": 100,
+      "subtotalLb": 180,
+      "rows": [
+        {
+          "quantity": 72,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 54,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 36,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 9,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 9,
+          "unit": "lb",
+          "note": "Authored percentage \u00d7 Batch chip target"
+        },
+        {
+          "quantity": 720,
+          "unit": "lb",
+          "note": "From Working Pour override"
+        },
+        {
+          "quantity": 21.09375,
+          "unit": "gal",
+          "note": "Projected from this formulation"
+        },
+        {
+          "quantity": 4.21875,
+          "unit": "gal",
+          "note": "Projected from this formulation"
+        }
+      ],
+      "issues": [],
+      "complete": true,
+      "fraction": 0.005555555555555556
+    },
+    "ordinaryFillerEdit": {
+      "areaSf": "1",
+      "finishedAreaSf": "1",
+      "productionVolumeCft": "0.03125",
+      "calculatedWeightPerSf": "4",
+      "effectiveWeightPerSf": "4",
+      "geometryChipMixWeight": "4",
+      "geometryChipMixOz": "64",
+      "dryPoolOz": "80",
+      "actualDryTotalOz": "96",
+      "dryPoolVarianceOz": "16",
+      "defaultFillerOz": "16",
+      "effectiveFillerOz": "32",
+      "defaultResinFlOz": "15",
+      "effectiveResinFlOz": "15",
+      "effectiveChipDensityLbCft": "128",
+      "totalFormulaWeightOz": "",
+      "nonChipWeightOz": "",
+      "availableChipMixOz": "64",
+      "invalidMassBalance": false,
+      "targetWeight": "4",
+      "targetWeightOz": "64",
+      "percentageTotal": "100",
+      "percentageReconciles": true,
+      "rows": [
+        {
+          "calculatedQuantity": "25.6",
+          "calculatedQuantityOz": "25.6",
+          "effectiveQuantity": "25.6"
+        },
+        {
+          "calculatedQuantity": "19.2",
+          "calculatedQuantityOz": "19.2",
+          "effectiveQuantity": "19.2"
+        },
+        {
+          "calculatedQuantity": "12.8",
+          "calculatedQuantityOz": "12.8",
+          "effectiveQuantity": "12.8"
+        },
+        {
+          "calculatedQuantity": "3.2",
+          "calculatedQuantityOz": "3.2",
+          "effectiveQuantity": "3.2"
+        },
+        {
+          "calculatedQuantity": "3.2",
+          "calculatedQuantityOz": "3.2",
+          "effectiveQuantity": "3.2"
+        },
+        {
+          "calculatedQuantity": "",
+          "calculatedQuantityOz": "",
+          "effectiveQuantity": "32"
+        },
+        {
+          "calculatedQuantity": "15",
+          "calculatedQuantityOz": "15",
+          "effectiveQuantity": "15"
+        },
+        {
+          "calculatedQuantity": "3",
+          "calculatedQuantityOz": "3",
+          "effectiveQuantity": "3"
+        }
+      ]
+    },
+    "sherwin": {
+      "areaSf": "1",
+      "finishedAreaSf": "1",
+      "productionVolumeCft": "0.03125",
+      "calculatedWeightPerSf": "4",
+      "effectiveWeightPerSf": "4",
+      "geometryChipMixWeight": "4",
+      "geometryChipMixOz": "64",
+      "dryPoolOz": "80",
+      "actualDryTotalOz": "80",
+      "dryPoolVarianceOz": "0",
+      "defaultFillerOz": "16",
+      "effectiveFillerOz": "16",
+      "defaultResinFlOz": "16",
+      "effectiveResinFlOz": "16",
+      "effectiveChipDensityLbCft": "128",
+      "totalFormulaWeightOz": "",
+      "nonChipWeightOz": "",
+      "availableChipMixOz": "64",
+      "invalidMassBalance": false,
+      "targetWeight": "4",
+      "targetWeightOz": "64",
+      "percentageTotal": "100",
+      "percentageReconciles": true,
+      "rows": [
+        {
+          "calculatedQuantity": "25.6",
+          "calculatedQuantityOz": "25.6",
+          "effectiveQuantity": "25.6"
+        },
+        {
+          "calculatedQuantity": "19.2",
+          "calculatedQuantityOz": "19.2",
+          "effectiveQuantity": "19.2"
+        },
+        {
+          "calculatedQuantity": "12.8",
+          "calculatedQuantityOz": "12.8",
+          "effectiveQuantity": "12.8"
+        },
+        {
+          "calculatedQuantity": "3.2",
+          "calculatedQuantityOz": "3.2",
+          "effectiveQuantity": "3.2"
+        },
+        {
+          "calculatedQuantity": "3.2",
+          "calculatedQuantityOz": "3.2",
+          "effectiveQuantity": "3.2"
+        },
+        {
+          "calculatedQuantity": "16",
+          "calculatedQuantityOz": "16",
+          "effectiveQuantity": "16"
+        },
+        {
+          "calculatedQuantity": "16",
+          "calculatedQuantityOz": "16",
+          "effectiveQuantity": "16"
+        },
+        {
+          "calculatedQuantity": "4",
+          "calculatedQuantityOz": "4",
+          "effectiveQuantity": "4"
+        }
+      ]
+    },
+    "doubled": {
+      "areaSf": "2",
+      "finishedAreaSf": "1",
+      "productionVolumeCft": "0.0625",
+      "calculatedWeightPerSf": "4",
+      "effectiveWeightPerSf": "4",
+      "geometryChipMixWeight": "8",
+      "geometryChipMixOz": "128",
+      "dryPoolOz": "160",
+      "actualDryTotalOz": "160",
+      "dryPoolVarianceOz": "0",
+      "defaultFillerOz": "32",
+      "effectiveFillerOz": "32",
+      "defaultResinFlOz": "30",
+      "effectiveResinFlOz": "30",
+      "effectiveChipDensityLbCft": "128",
+      "totalFormulaWeightOz": "",
+      "nonChipWeightOz": "",
+      "availableChipMixOz": "128",
+      "invalidMassBalance": false,
+      "targetWeight": "8",
+      "targetWeightOz": "128",
+      "percentageTotal": "100",
+      "percentageReconciles": true,
+      "rows": [
+        {
+          "calculatedQuantity": "51.2",
+          "calculatedQuantityOz": "51.2",
+          "effectiveQuantity": "51.2"
+        },
+        {
+          "calculatedQuantity": "38.4",
+          "calculatedQuantityOz": "38.4",
+          "effectiveQuantity": "38.4"
+        },
+        {
+          "calculatedQuantity": "25.6",
+          "calculatedQuantityOz": "25.6",
+          "effectiveQuantity": "25.6"
+        },
+        {
+          "calculatedQuantity": "6.4",
+          "calculatedQuantityOz": "6.4",
+          "effectiveQuantity": "6.4"
+        },
+        {
+          "calculatedQuantity": "6.4",
+          "calculatedQuantityOz": "6.4",
+          "effectiveQuantity": "6.4"
+        },
+        {
+          "calculatedQuantity": "32",
+          "calculatedQuantityOz": "32",
+          "effectiveQuantity": "32"
+        },
+        {
+          "calculatedQuantity": "30",
+          "calculatedQuantityOz": "30",
+          "effectiveQuantity": "30"
+        },
+        {
+          "calculatedQuantity": "6",
+          "calculatedQuantityOz": "6",
+          "effectiveQuantity": "6"
+        }
+      ]
+    },
+    "assertions": "PASS",
+    "limits": "Arithmetic and current code replay only. No claim of physical or operational recipe validation."
+  },
+  "validationCommands": [
+    "node --import tsx scripts/verify-sample-batch-first.mts",
+    "node scripts/verify-sample-batch-first-lifecycle.mjs",
+    "node --import tsx scripts/verify-production-batch.mts",
+    "node scripts/verify-production-batch-lifecycle.mjs",
+    "node --import tsx scripts/verify-production-batch-pdf.mts",
+    "node scripts/verify-production-batch-handler.mjs",
+    "node scripts/verify-sample-batch-pdf.mjs",
+    "node --import tsx scripts/verify-sample-formulation-calculations.mts",
+    "node --import tsx scripts/verify-sample-batch.mts",
+    "node --import tsx scripts/verify-sample-material-autofill.mts",
+    "node scripts/verify-unified-material-catalog.mjs",
+    "node scripts/verify-sample-batch-first-browser.mjs",
+    "npx tsc --noEmit",
+    "npx eslint [changed Sample TS/TSX paths]",
+    "git diff --check",
+    "npm run build -- --webpack"
+  ],
+  "reviewUrl": "http://localhost:3000/samples?open=2199209e-27b9-4a21-8b9b-475674101f60",
+  "artifacts": [
+    {
+      "path": "output/pdf/batch-first/MTT-Working-Sample-review.pdf",
+      "bytes": 6246,
+      "sha256": "10f81f7b0aa0e4fd00e79d88e0d3f66079c6c65025593387b61d7c8d6f67cb1b"
+    },
+    {
+      "path": "output/pdf/batch-first/MTT-Production-Batch-review.pdf",
+      "bytes": 3993,
+      "sha256": "3c645238b44a0253bda607569e070087204f85bc48bed27d76d2609aa2833dc1"
+    },
+    {
+      "path": "output/pdf/batch-first/MTT-Production-Batch-issued-review.pdf",
+      "bytes": 3970,
+      "sha256": "e7dd5719cd72907b16904807581823ad88d39ee0c735cc9e328e10d6b779572c"
+    },
+    {
+      "path": "output/pdf/batch-first/Sherwin-Working-Sample-review.pdf",
+      "bytes": 3857,
+      "sha256": "9ead7f242f1b9923e26ca5b74c7d5e388af3e89d9f277096bbc75331d1c8e2ad"
+    }
+  ]
+}

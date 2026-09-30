@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {startDatabase,sql,docker,asUser,json,literal} from './support/sample-batch-database.mjs';
+const container=`tenops-batch-first-gate-${process.pid}`;
+const call=q=>sql(container,asUser(`select ${q}`));
+const parse=q=>JSON.parse(call(q));
+try{
+ startDatabase(container);
+ const legacyId=call('public.create_sample()');const legacyBefore=parse(`formulation_state from samples where id=${literal(legacyId)}`);
+ sql(container,readFileSync('supabase/migrations/20261001010000_sample_batch_first_authority.sql','utf8'));
+ assert.deepEqual(parse(`formulation_state from samples where id=${literal(legacyId)}`),legacyBefore);
+ sql(container,readFileSync('supabase/migrations/20261001013000_sample_batch_first_history.sql','utf8'));
+ const id=call('public.create_sample()');const state=parse(`formulation_state from samples where id=${literal(id)}`);
+ assert.equal(state.calculationVersion,'sample-formulation-v5-batch-first');assert.equal(state.profile.batchContract.components.filler.exact,'50');
+ const rows=[...[40,30,20,5,5].map(p=>({percentage:String(p),color:'Blanco Mexicano',component_role:'aggregate',calculation_basis:'target_total',quantity_provenance:'calculated',unit:'oz'})),...['filler','resin','hardener'].map(component_role=>({color:component_role,component_role,quantity_provenance:'calculated',unit:component_role==='filler'?'oz':'fl oz'}))];
+ const save=(st=state,rs=rows)=>call(`public.save_sample_draft(${json({id,prepared_by:'Marcos',formulation_state:st})},${json(rs)},'MTT Batch-first validation')`);
+ save();let saved=parse(`public.get_sample_working_pdf_snapshot(${literal(id)},null)`);
+ assert.deepEqual(saved.blend_rows.map(r=>Number(r.quantity)),[25.6,19.2,12.8,3.2,3.2,18,15,3]);assert.equal(Number(saved.formulation_state.derived.actualDryTotalOz),82);
+ const alteredChip=rows.map((r,i)=>i===0?{...r,quantity:'30',quantity_provenance:'manual',calculation_basis:null}:r);save(state,alteredChip);const manualChipState=parse(`formulation_state from samples where id=${literal(id)}`);assert.ok(Math.abs(Number(manualChipState.derived.actualDryTotalOz)-86.4)<.0001);save();
+ const version=call(`public.save_sample_working_version(${literal(id)},'Captured baseline')`);
+ const issue=call(`public.issue_sample_form(${literal(id)})`);const issued=parse(`issued_snapshot from sample_issued_documents where id=${literal(issue)}`);
+ assert.equal(call(`document_version from sample_issued_documents where id=${literal(issue)}`),'sample-work-order-pdf-v8-batch-first');
+ const manual=rows.map(r=>r.component_role==='filler'?{...r,quantity:'64',quantity_provenance:'manual'}:r);save({...state,materialDensity:'32'},manual);saved=parse(`public.get_sample_working_pdf_snapshot(${literal(id)},null)`);assert.equal(Number(saved.formulation_state.materialDensity),128);assert.equal(Number(saved.formulation_state.derived.availableChipMixOz),64);assert.equal(Number(saved.formulation_state.derived.actualDryTotalOz),128);
+ assert.deepEqual(parse(`issued_snapshot from sample_issued_documents where id=${literal(issue)}`),issued);
+ save(state,rows.map((r,i)=>i===0?{...r,percentage:'1'}:r));assert.throws(()=>call(`public.issue_sample_form(${literal(id)})`),/100/);
+ save({...state,width:'24'});saved=parse(`public.get_sample_working_pdf_snapshot(${literal(id)},null)`);assert.ok(Math.abs(Number(saved.blend_rows.at(-3).quantity)-1600/45)<.0001);assert.ok(Math.abs(Number(saved.blend_rows.at(-2).quantity)-1280/45)<.0001);
+ const forged=structuredClone(state);forged.profile.batchContract.components.filler.exact='99';assert.throws(()=>save(forged),/authority/);
+ const changedProfile=structuredClone(state);changedProfile.profile.name='Captured variant';save(changedProfile);
+ call(`public.restore_sample_working_version(${literal(id)},${literal(version)})`);saved=parse(`public.get_sample_working_pdf_snapshot(${literal(id)},null)`);assert.equal(Number(saved.blend_rows.at(-3).quantity),18);
+ const pid=state.profile.id.replace('operational:','');sql(container,`update sample_operational_profiles set description='Later profile metadata',revision=revision+1 where id=${literal(pid)};`);assert.deepEqual(parse(`issued_snapshot from sample_issued_documents where id=${literal(issue)}`),issued);
+ mkdirSync('output/pdf/batch-first',{recursive:true});writeFileSync('output/pdf/batch-first/db-issued.json',JSON.stringify(issued,null,2));
+ console.log('PASS disposable complete migration chain, new Sample, save, immutable issue/version/restore, profile drift, legacy preservation, shop isolation, fractions, reconciliation and forged-authority rejection');
+}finally{docker(['stop',container]);}

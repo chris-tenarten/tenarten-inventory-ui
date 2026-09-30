@@ -1,4 +1,4 @@
-import {calculateSampleFormulation,normalizeSupportedSampleRatio,VOLUMETRIC_PROFILE_SAMPLE_FORMULATION_CALCULATION_VERSION,SAMPLE_FORMULATION_CALCULATION_VERSION} from './formulation';
+import {BATCH_FIRST_VERSION,batchFirstQuantities,calculateSampleFormulation,normalizeSupportedSampleRatio,VOLUMETRIC_PROFILE_SAMPLE_FORMULATION_CALCULATION_VERSION,SAMPLE_FORMULATION_CALCULATION_VERSION} from './formulation';
 import type {SampleRecord} from './types';
 
 export type SampleOperation='save-draft'|'save-version'|'working-pdf'|'issued-pdf'|'restore-version'|'duplicate'|'delete-draft'|'delete-issued'|'formal-issue'|'catalog'|'load';
@@ -30,6 +30,11 @@ export function formatSampleError(error:SampleActionError){return `${error.title
 export function logSampleError(error:SampleActionError){console.error('[Sample operation failed]',error.diagnostic);}
 
 export function validateSampleForOutput(sample:SampleRecord,operation:'working-pdf'|'formal-issue'='working-pdf'):SampleActionError|null{
+ if(sample.formulation.calculationVersion===BATCH_FIRST_VERSION){
+  const q=batchFirstQuantities(sample.formulation,sample.blendRows);
+  const roles=['aggregate','filler','resin','hardener'];
+  if(q.shopIssues.length || roles.some(role=>!sample.blendRows.some(r=>r.componentRole===role)))return result(operation,{code:'SHOP_QUANTITY_REQUIRED'},'calculation-incomplete',q.shopIssues[0]||'Required preparation components are missing.','Complete shop quantities for this Working Pour.');
+ }
  const calculated=calculateSampleFormulation(sample.formulation,sample.blendRows);const participating=sample.blendRows.filter(row=>row.componentRole==='aggregate'&&row.quantityProvenance==='calculated');
  if(operation==='formal-issue'&&!sample.preparedBy.trim())return result(operation,{code:'SAMPLE_PREPARED_BY_REQUIRED'},'validation','Prepared By is required for formal issuance.','Select or confirm Prepared By, then try again.');
  if(!normalizeSupportedSampleRatio(sample.formulation.resinParts,sample.formulation.hardenerParts))return result(operation,{code:'SAMPLE_INVALID_RATIO'},'validation','Choose a valid Resin : Hardener ratio.','Select 5:1 or 4:1, then try again.');

@@ -1,4 +1,5 @@
 "use client";
+import {BATCH_FIRST_VERSION,batchFirstQuantities} from "./formulation";
 import { projectSampleBatch, formatBatchQuantity } from "./batch-projection";
 
 import CatalogSearchResults from "@/modules/purchasing/CatalogSearchResults";
@@ -105,6 +106,8 @@ export default function SampleWorkspace() {
   const [draftBaseline, setDraftBaseline] = useState("");
   const [quantityViewState, setQuantityViewState] = useState<{record: string | null; view: "batch" | "working"}>({record:null,view:"batch"});
   const quantityView = quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "batch";
+  const batchFirst = draft?.formulation.calculationVersion === BATCH_FIRST_VERSION;
+  const shopProjection = draft && batchFirst ? batchFirstQuantities(draft.formulation,draft.blendRows) : null;
   const batch = useMemo(() => draft ? projectSampleBatch(draft.formulation,draft.blendRows) : null,[draft]);
   const [closePrompt, setClosePrompt] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -265,7 +268,7 @@ export default function SampleWorkspace() {
             ...current,
             resinSupplier: value,
             formulation:
-              current.formulation.ratioProvenance === "manual" || current.formulation.calculationVersion === SAMPLE_FORMULATION_CALCULATION_VERSION
+              current.formulation.ratioProvenance === "manual" || [SAMPLE_FORMULATION_CALCULATION_VERSION,BATCH_FIRST_VERSION].includes(current.formulation.calculationVersion)
                 ? current.formulation
                 : applySupplierRatioDefault(current.formulation, value),
           }
@@ -904,7 +907,11 @@ export default function SampleWorkspace() {
               state={draft.formulation}
               rows={draft.blendRows}
               resinSupplier={draft.resinSupplier}
-              onChange={(formulation) => patch("formulation", formulation)}
+              onChange={(formulation) => {
+                const changed = batchFirst && ['length','width','thicknessIn','dimensionUnit','profile'].some(key=>JSON.stringify(formulation[key as keyof typeof formulation])!==JSON.stringify(draft.formulation[key as keyof typeof formulation]));
+                if(changed) {setDraft({...draft,formulation,blendRows:draft.blendRows.map(row=>row.quantityProvenance==='manual'?{...row,quantity:'',quantityProvenance:row.componentRole==='other'?'manual':'calculated'}:row)});setMessage('Shop overrides reset for the new Working Pour or profile. Review preparation quantities before use.');}
+                else patch("formulation", formulation);
+              }}
               onApplyAdjustment={(formulation,targetFillerOz)=>setDraft(current=>current?{...current,formulation,blendRows:current.blendRows.map(row=>row.componentRole==='filler'?{...row,quantity:targetFillerOz,quantityProvenance:'manual'}:row)}:current)}
             />
             <section className="border border-slate-300 bg-white p-4">
@@ -961,7 +968,7 @@ export default function SampleWorkspace() {
                 <p className="mt-2 font-bold">{batch.complete?'TOTAL':'Calculated chip subtotal'}: {batch.totalPercent}% · {formatBatchQuantity(batch.subtotalLb,'lb')} lb</p>
                 {batch.fraction!==null && <p className="text-sm">Working Pour fraction of Batch: {formatBatchQuantity(batch.fraction,'gal')}</p>}
                 {batch.issues.map(issue=><p role="status" className="mt-1 text-sm text-amber-800" key={issue}>{issue}</p>)}
-                <p className="mt-2 text-xs text-slate-600">Filler, Resin and Hardener are projected from this formulation. These equivalents do not prescribe whole-package rounding.</p>
+                <p className="mt-2 text-xs text-slate-600">{batchFirst ? "Canonical Batch quantities define Production. Working Pour and shop preparation quantities are downstream." : "Filler, Resin and Hardener are projected from this formulation. These equivalents do not prescribe whole-package rounding."}</p>
               </div>}
             </section>
             <section data-sample-tutorial="aggregate-section" className="border border-slate-300 bg-white p-4">
@@ -1179,7 +1186,7 @@ export default function SampleWorkspace() {
                         {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit quantity in Working Pour.</p>}
                       </div> : <>
                       <div className={`${label} text-left`}>
-                        <span>Quantity</span>
+                        <span>{batchFirst ? "Shop preparation quantity" : "Quantity"}</span>
                         <div className="relative mt-1">
                           <input
                             aria-label={`${row.componentRole} quantity`}
@@ -1204,6 +1211,7 @@ export default function SampleWorkspace() {
                               : "oz"}
                           </span>
                         </div>
+                        {batchFirst && <p className="mt-2 text-xs font-normal text-slate-600">Exact Working projection: {shopProjection?.rows[index]?.exact == null ? 'unavailable — canonical Batch requirement unresolved' : `${formatBatchQuantity(shopProjection.rows[index].exact,'oz')} ${row.componentRole==='resin'||row.componentRole==='hardener'?'fl oz':'oz'}`}. {shopProjection?.rows[index]?.source}.</p>}
                         <div className="mt-2 flex min-h-5 flex-wrap items-center gap-1.5">
                           <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${row.quantityProvenance === "calculated" ? "bg-slate-200 text-slate-700" : row.componentRole === "aggregate" || row.componentRole === "hardener" ? "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"}`}>
                             {row.quantityProvenance === "manual"
@@ -1218,7 +1226,7 @@ export default function SampleWorkspace() {
                           </span>
                         </div>
                         <p className="mt-1 min-h-8 text-[11px] font-normal leading-4 text-slate-500">
-                          {row.componentRole === "aggregate"
+                          {batchFirst && row.componentRole !== "aggregate" ? "Shop preparation only. Canonical Batch quantities remain unchanged." : row.componentRole === "aggregate"
                             ? row.quantityProvenance === "manual"
                               ? "Overrides the calculated Aggregate quantity"
                               : `${row.percentage || "0"}% × ${formulationResult?.availableChipMixOz || "0"} oz Chip Mix`
@@ -1236,7 +1244,7 @@ export default function SampleWorkspace() {
                                     : `Calculated from ${normalizeSupportedSampleRatio(draft.formulation.resinParts,draft.formulation.hardenerParts)??`${draft.formulation.resinParts}:${draft.formulation.hardenerParts}`}`
                                   : "Entered for this Sample"}
                         </p>
-                        {(row.componentRole === "aggregate" || row.componentRole === "filler" || row.componentRole === "resin" || row.componentRole === "hardener") && (
+                        {(row.componentRole === "aggregate" || row.componentRole === "filler" || row.componentRole === "resin" || row.componentRole === "hardener") && !(batchFirst && row.componentRole === "hardener") && (
                           <button
                             type="button"
                             onClick={() => patchRow(index, {

@@ -1,3 +1,4 @@
+import {BATCH_FIRST_VERSION,batchFirstQuantities} from './sample-batch-first.mjs';
 // Shared read-only Batch projection. Extracted without math changes from the accepted Sample projection.
 const SAMPLE_FORMULATION_CALCULATION_VERSION = "sample-formulation-v4-density-profile";
 const numeric = (value) => value != null && value.trim() !== "" && Number.isFinite(Number(value)) && Number(value) >= 0 ? Number(value) : null;
@@ -6,7 +7,7 @@ const validBatchTarget = (value) => {
   return n !== null && n > 0 && n <= 99999999999999e-6 ? n : null;
 };
 function deriveBatchReference(state) {
-  if (state.calculationVersion !== SAMPLE_FORMULATION_CALCULATION_VERSION) return null;
+  if (![SAMPLE_FORMULATION_CALCULATION_VERSION,BATCH_FIRST_VERSION].includes(state.calculationVersion)) return null;
   const chipTargetLb = validBatchTarget(state.profile?.batchChipTargetLb);
   const referenceThicknessIn = validBatchTarget(state.profile?.batchReferenceThicknessIn);
   const chipDensityLbCft = validBatchTarget(state.profile?.defaultChipDensityLbCft);
@@ -23,6 +24,15 @@ function formatBatchQuantity(value, unit) {
   return `${Math.abs(value - rounded) > 1e-10 ? "\u2248 " : ""}${rounded.toLocaleString("en-US", { maximumFractionDigits: unit === "gal" ? 6 : 4 })}`;
 }
 function projectSampleBatch(state, rows) {
+  if(state.calculationVersion===BATCH_FIRST_VERSION){
+    const q=batchFirstQuantities(state,rows),target=validBatchTarget(state.profile?.batchChipTargetLb);
+    const issues=[...q.productionIssues];
+    if(!target)issues.push('Batch chip basis is not captured');
+    if(!q.percentageReconciles)issues.push('Chip blend must total 100%');
+    const projected=rows.map(r=>r.componentRole==='aggregate'?{quantity:target===null||numeric(r.percentage)===null?null:target*Number(r.percentage)/100,unit:'lb',note:'Authored percentage × canonical Batch chip target'}:{quantity:q.canonical[r.componentRole]??null,unit:r.componentRole==='filler'?'lb':'gal',note:q.canonical[r.componentRole]==null?'Canonical Batch requirement unresolved — shop quantities are separate':'Canonical Batch requirement'});
+    if(projected.some(r=>r.quantity===null))issues.push('Complete canonical component authority is required');
+    return {target,totalPercent:Number(q.percentageTotal),subtotalLb:target===null?null:target*Number(q.percentageTotal)/100,rows:projected,issues,complete:!issues.length,fraction:q.fraction};
+  }
   const target = validBatchTarget(state.profile?.batchChipTargetLb);
   const supported = state.calculationVersion === SAMPLE_FORMULATION_CALCULATION_VERSION;
   const length = numeric(state.length), width = numeric(state.width), thickness = numeric(state.thicknessIn), density = numeric(state.materialDensity);

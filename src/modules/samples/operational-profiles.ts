@@ -4,7 +4,7 @@ export * from './operational-profile-model';
 export async function loadOperationalProfiles(): Promise<OperationalProfile[]> {
   const rows: OperationalProfile[] = [];
   for (let from = 0; ; from += 500) {
-    const { data, error } = await supabase.from('sample_operational_profiles').select('id,revision,name,sort_order,is_active,chip_density,dry_pool_rate,filler_rate,resin_rate,resin_parts,hardener_parts,description,batch_chip_target_lb,batch_reference_thickness_in').order('sort_order').order('id').range(from, from + 499);
+    const { data, error } = await supabase.from('sample_operational_profiles').select('id,revision,name,sort_order,is_active,chip_density,dry_pool_rate,filler_rate,resin_rate,resin_parts,hardener_parts,description,batch_contract,batch_chip_target_lb,batch_reference_thickness_in').order('sort_order').order('id').range(from, from + 499);
     if (error) throw new Error(error.message);
     rows.push(...(data ?? []) as OperationalProfile[]);
     if ((data?.length ?? 0) < 500) return rows;

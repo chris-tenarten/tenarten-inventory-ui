@@ -1,15 +1,16 @@
+import {batchFirstProfile} from './support/sample-batch-first-fixture';
 import assert from 'node:assert/strict';
 import {mkdirSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {createCanvas} from '@napi-rs/canvas';
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
 import {renderProductionBatch} from '../supabase/functions/_shared/production-batch-pdf';
-import {standardFormulationState,SAMPLE_FORMULATION_PROFILES,applyFormulationProfile} from '../src/modules/samples/formulation';
+import {standardFormulationState,applyFormulationProfile} from '../src/modules/samples/formulation';
 import {newLocalSample} from '../src/modules/samples/types';
 import {sampleBlendCatalogAutofill} from '../src/modules/samples/material-autofill';
 import {combinePurchasingCatalogRecords} from '../src/modules/purchasing/catalog-records';
 const output=path.resolve('output/pdf/production-batch');mkdirSync(output,{recursive:true});
-const state=applyFormulationProfile(standardFormulationState(),{...SAMPLE_FORMULATION_PROFILES[2],batchChipTargetLb:'180',batchReferenceThicknessIn:'.375'});
+const state=applyFormulationProfile(standardFormulationState(),batchFirstProfile);
 const sample=newLocalSample({preparedBy:'Marcos',formulation:state});sample.id='fixture-captured-source';sample.sampleName='MTT Blanco / Grey';sample.colorPlateNumber='T26-123A';
 const item=combinePurchasingCatalogRecords([{id:'one',item_name:'Blanco Mexicano',vendor:'T&M',size:'#1',unit:'50lb bag'}],[])[0];
 sample.blendRows=[...[40,30,20,5,5].map((p,i)=>({...sample.blendRows[0],...sampleBlendCatalogAutofill(sample.blendRows[0],{...item,id:'material-'+i,materialName:['Blanco #1','Blanco #2','MOP','True Grey #1','True Grey #2'][i]}),percentage:String(p)})),...sample.blendRows.slice(1)];
@@ -26,7 +27,7 @@ async function check(snapshot:unknown,source:string,name:string){
  return {text,pages:doc.numPages};
 }
 const working=await check(sample,'working','working');const controlled=await check(issued,'issued','issued');
-for(const label of ['72 lb','54 lb','36 lb','9 lb','45 lb','675 fl oz','135 fl oz','1.44 × 50-lb bags','45 SF @ 3/8 in'])assert.ok(controlled.text.includes(label),label);
+for(const label of ['72 lb','54 lb','36 lb','9 lb','50 lb','640 fl oz','128 fl oz','1.44 × 50-lb bags','45 SF @ 3/8 in'])assert.ok(controlled.text.includes(label),label);
 assert.ok(!working.text.includes('ISSUED FORMULATION'));assert.ok(!controlled.text.includes('NOT ISSUED'));
 assert.ok(controlled.text.indexOf('True Grey #2')<controlled.text.indexOf('Filler'));assert.ok(controlled.text.indexOf('Filler')<controlled.text.indexOf('Resin / Part A'));assert.ok(controlled.text.indexOf('Resin / Part A')<controlled.text.indexOf('Hardener / Part B'));
 const stress=structuredClone(issued);stress.notes='Long operational note. '.repeat(160);stress.blendRows=[...Array.from({length:60},(_,i)=>({...sample.blendRows[0],percentage:String(100/60),color:`Material-${String(i).padStart(3,'0')} `+'Long descriptive chip '.repeat(10),vendor:'Supplier name '.repeat(8),size:'Large #1'})),...sample.blendRows.slice(-3)];

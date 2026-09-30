@@ -1,3 +1,4 @@
+import {BATCH_FIRST_VERSION,batchFirstQuantities} from './sample-batch-first.mjs';
 import { normalizeSupportedSampleRatio } from "./sample-ratio.mjs";
 
 export const SAMPLE_PDF_VERSION = "sample-work-order-pdf-v7-batch-basis";
@@ -21,7 +22,10 @@ export function buildSamplePdfModel(snapshot, documentVersion = SAMPLE_PDF_VERSI
     (roleOrder[value(right.row, "componentRole", "component_role")] ?? 2) || left.index - right.index,
   ).map(({ row }) => row);
   const formulation = snapshot.formulation ?? snapshot.formulation_state ?? {};
-  const derived = formulation.derived ?? {};
+  const batchFirst=formulation.calculationVersion===BATCH_FIRST_VERSION;
+  const preparation=batchFirst?batchFirstQuantities(formulation,orderedRows.map(r=>({componentRole:value(r,'componentRole','component_role'),quantityProvenance:value(r,'quantityProvenance','quantity_provenance'),percentage:value(r,'percentage'),quantity:value(r,'quantity'),unit:value(r,'unit')}))):null;
+  if(preparation?.shopIssues.length)throw new Error(preparation.shopIssues.join('; '));
+  const derived = preparation ?? formulation.derived ?? {};
   const formulationBasis = value(formulation, "basis");
   const massBalance = value(formulation, "calculationVersion") === "sample-formulation-v2-mass-balance";
   const historicalParity = value(formulation, "calculationVersion") === "sample-formulation-v3-historical-parity";
@@ -29,7 +33,7 @@ export function buildSamplePdfModel(snapshot, documentVersion = SAMPLE_PDF_VERSI
   const densityProfile = value(formulation, "calculationVersion") === "sample-formulation-v4-density-profile";
   const capturedProfile = volumetricProfile || densityProfile;
   const profile = formulation.profile ?? {};
-  const formulationSummary = formulationBasis
+  const formulationSummary = batchFirst ? `Working fraction ${preparation.fraction==null?"unavailable":Math.abs(1/preparation.fraction-Math.round(1/preparation.fraction))<1e-8?`1/${Math.round(1/preparation.fraction)}`:Number(preparation.fraction.toFixed(8))} Batch. ${preparation.fraction===null?"Historical shop chips":"Exact chips"} ${preparation.availableChipMixOz} oz. ` + orderedRows.map((r,i)=>({role:value(r,"componentRole","component_role"),q:preparation.rows[i].exact,unit:value(r,"unit")})).filter(r=>r.role!=='aggregate').map(r=>`${r.role==='resin'?'Part A':r.role==='hardener'?'Part B':'Filler'} exact ${r.q==null?'unavailable':Number(r.q.toFixed(4))} ${r.unit}`).join('; ') + `. Shop dry: ${preparation.actualDryTotalOz||"unavailable"} oz. Shop instructions below; Batch unchanged.` : formulationBasis
     ? [
         massBalance ? `Total Formula ${derived.totalFormulaWeightOz ?? value(formulation, "totalFormulaWeightOz")} oz` : capturedProfile ? "Captured formulation profile" : formulationBasis === "weight_per_sf" ? "Weight / SF" : "Total Weight",
         (massBalance || historicalParity || capturedProfile) && derived.availableChipMixOz != null ? `Chip Mix ${derived.availableChipMixOz} oz` : "",
@@ -50,12 +54,13 @@ export function buildSamplePdfModel(snapshot, documentVersion = SAMPLE_PDF_VERSI
         `Resin : Hardener ${normalizeSupportedSampleRatio(value(formulation, "resinParts"), value(formulation, "hardenerParts")) ?? `${value(formulation, "resinParts") || "5"}:${value(formulation, "hardenerParts") || "1"}`}`,
       ].filter(Boolean).join(" · ")
     : "";
-  const hasBatchLayout = documentVersion === SAMPLE_PDF_VERSION;
+  const hasBatchLayout = documentVersion === SAMPLE_PDF_VERSION || batchFirst;
   const target = Number(profile.batchChipTargetLb);
   const dimension = (v) => v == null || v === '' ? 'Not recorded' : String(v);
   const thickness = Number(formulation.thicknessIn) === .375 ? '3/8' : dimension(formulation.thicknessIn);
   return {
     documentVersion,
+    batchFirst,
     hasBatchLayout,
     finishedOutput: formulation.finishedPlateWidth && formulation.finishedPlateLength && formulation.finishedPlateQuantity ? `${dimension(formulation.finishedPlateWidth)} x ${dimension(formulation.finishedPlateLength)} in · Qty ${dimension(formulation.finishedPlateQuantity)}` : 'Not recorded',
     workingPour: formulation.width && formulation.length && formulation.thicknessIn ? `${dimension(formulation.width)} x ${dimension(formulation.length)} ${formulation.dimensionUnit || 'in'} x ${thickness} in · Area ${dimension(derived.areaSf)} SF` : 'Not recorded',
@@ -81,12 +86,12 @@ export function buildSamplePdfModel(snapshot, documentVersion = SAMPLE_PDF_VERSI
     renderContext: value(snapshot, "renderContext", "render_context"),
     formulationSummary,
     calculationVersion: value(formulation, "calculationVersion"),
-    rows: orderedRows.map((row) => ({
+    rows: orderedRows.map((row,index) => ({
       percentage: value(row, "percentage"),
       color: value(row, "color"),
       size: value(row, "size"),
       materialType: value(row, "materialType", "material_type"),
-      quantity: value(row, "quantityProvenance", "quantity_provenance") === "calculated"
+      quantity: batchFirst ? preparation.rows[index].effectiveQuantity : value(row, "quantityProvenance", "quantity_provenance") === "calculated"
         ? value(row, "calculatedQuantity", "calculated_quantity") || value(row, "quantity")
         : value(row, "quantity"),
       calculatedQuantity: value(row, "calculatedQuantity", "calculated_quantity"),

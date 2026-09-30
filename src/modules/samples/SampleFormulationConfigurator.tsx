@@ -6,6 +6,7 @@ const OperationalProfileManager = dynamic(() => import('./OperationalProfileMana
 import { Settings2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
+  BATCH_FIRST_VERSION,
   applySupplierRatioDefault,
   calculateSampleFormulation,
   previewIncreasedFillerAdjustment,
@@ -67,9 +68,10 @@ export default function SampleFormulationConfigurator({
   const isMassBalance =
     state.calculationVersion ===
     MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION;
+  const isBatchFirst = state.calculationVersion === BATCH_FIRST_VERSION;
   const isV4 = state.calculationVersion === SAMPLE_FORMULATION_CALCULATION_VERSION;
   const batchReference = deriveBatchReference(state);
-  const batchTarget = isV4 ? validBatchTarget(state.profile?.batchChipTargetLb) : null;
+  const batchTarget = (isV4 || isBatchFirst) ? validBatchTarget(state.profile?.batchChipTargetLb) : null;
   const compact = (value: string) => value !== "" && Number.isFinite(Number(value)) ? Number(value).toLocaleString("en-US", { maximumFractionDigits: 4 }) : "—";
   const pourDimension = (value: string) => state.dimensionUnit === "in" ? inches(value) : `${compact(value)}′`;
   const calculatedTarget = useMemo(
@@ -161,7 +163,7 @@ export default function SampleFormulationConfigurator({
             <div className="min-w-0">
               <dt className="font-bold text-slate-600">Working Pour</dt>
               <dd className="mt-1 font-semibold">{pourDimension(state.width)} × {pourDimension(state.length)} × {inches(state.thicknessIn)} · {number(result.areaSf)} SF</dd>
-              {isV4 && result.effectiveWeightPerSf && <dd className="mt-1 text-xs text-slate-500">{compact(result.effectiveWeightPerSf)} lb chips/SF at this pour thickness</dd>}
+              {(isV4 || isBatchFirst) && result.effectiveWeightPerSf && <dd className="mt-1 text-xs text-slate-500">{compact(result.effectiveWeightPerSf)} lb chips/SF at this pour thickness</dd>}
             </div>
             <div className="min-w-0">
               <dt className="font-bold text-slate-600">Working Pour Chip Mix</dt>
@@ -169,7 +171,7 @@ export default function SampleFormulationConfigurator({
             </div>
           </dl>
           <p className="mt-1 text-xs text-slate-600">
-            {isMassBalance
+            {isBatchFirst ? `Batch reference chip loading ${number(result.effectiveChipDensityLbCft)} lb/CFT. Exact projected dry quantity: ${number(result.dryPoolOz)} oz. Shop preparation dry quantity: ${number(result.actualDryTotalOz)} oz.` : isMassBalance
               ? `${number(result.totalFormulaWeightOz)} oz formula − ${number(result.nonChipWeightOz)} oz filler/resin/hardener`
               : isV4
                 ? `${number(result.availableChipMixOz)} oz from ${number(result.effectiveChipDensityLbCft)} lb/CFT. Expected dry pool ${number(result.dryPoolOz)} oz; actual ${number(result.actualDryTotalOz)} oz.`
@@ -209,7 +211,7 @@ export default function SampleFormulationConfigurator({
           </div>
           {manageProfiles && canManageProfiles && <OperationalProfileManager profiles={profiles} onChanged={refreshProfiles} onClose={() => setManageProfiles(false)}/>}
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {isV4 && <label className={`${label} sm:col-span-2`}>
+            {(isV4 || isBatchFirst) && <label className={`${label} sm:col-span-2`}>
               Formulation Profile
               <select aria-label="Formulation Profile" value={pendingProfileId || (state.profile ? `${state.profile.id}:${state.profile.version}` : '')} onChange={event => { const profile = profiles.find(p => `${`operational:${p.id}`}:${p.revision}` === event.target.value); if (profile) chooseProfile(profile); }} className={input}>
                 {state.profile && <option value={`${state.profile.id}:${state.profile.version}`}>{profiles.some(p=>`operational:${p.id}`===state.profile?.id && p.revision===state.profile?.version && p.is_active) ? '' : 'Captured: '}{state.profile.name}</option>}
@@ -219,7 +221,7 @@ export default function SampleFormulationConfigurator({
               </select>
               <span className={hint}>Captured with this Sample. Changing supplier alone does not change the profile.</span>
               {profilesError && <span role="alert" className="block text-xs text-red-700">{profilesError}</span>}
-              {pendingProfile && <span role="status" className="mt-2 block border border-amber-300 p-2 text-xs">{operationalProfileLabel(pendingProfile)} has not been applied. {missingProfileInputs(pendingProfile).length ? `Missing: ${missingProfileInputs(pendingProfile).join(', ')}. Current Draft calculations remain on the captured profile.` : 'Review this profile before applying. Existing manual overrides remain unchanged.'}<span className="mt-2 block">Revision {pendingProfile.revision} · Batch chip target {pendingProfile.batch_chip_target_lb ?? "not configured"} lb · Batch reference thickness {pendingProfile.batch_reference_thickness_in == null ? "not configured" : inches(String(pendingProfile.batch_reference_thickness_in))} · Density {pendingProfile.chip_density ?? "—"} lb/CFT · Filler rate {pendingProfile.filler_rate ?? "—"} oz/CFT · Resin rate {pendingProfile.resin_rate ?? "—"} fl oz/CFT. Working quantities after applying: {(() => { if(missingProfileInputs(pendingProfile).length) return "unavailable"; const next=calculateSampleFormulation(applyOperationalProfile(state,pendingProfile),rows); return `${next.availableChipMixOz} oz chips / ${next.effectiveFillerOz} oz filler / ${next.effectiveResinFlOz} fl oz resin / ${next.rows[rows.findIndex(r=>r.componentRole==='hardener')]?.effectiveQuantity ?? "—"} fl oz hardener`; })()}</span><button type="button" disabled={missingProfileInputs(pendingProfile).length > 0} onClick={() => confirmProfile(pendingProfile)} className="m-1 min-h-9 border px-2 disabled:opacity-50">Apply configured profile</button><button type="button" onClick={() => setPendingProfileId('')} className="m-1 underline">Cancel selection</button></span>}
+              {pendingProfile && <span role="status" className="mt-2 block border border-amber-300 p-2 text-xs">{operationalProfileLabel(pendingProfile)} has not been applied. {missingProfileInputs(pendingProfile).length ? `Missing: ${missingProfileInputs(pendingProfile).join(', ')}. Current Draft calculations remain on the captured profile.` : isBatchFirst ? 'Review this profile before applying. Shop overrides reset to this profile’s preparation quantities.' : 'Review this profile before applying. Existing manual overrides remain unchanged.'}<span className="mt-2 block">Revision {pendingProfile.revision} · Batch chip target {pendingProfile.batch_chip_target_lb ?? "not configured"} lb · Batch reference thickness {pendingProfile.batch_reference_thickness_in == null ? "not configured" : inches(String(pendingProfile.batch_reference_thickness_in))} · Density {pendingProfile.chip_density ?? "—"} lb/CFT · {pendingProfile.batch_contract ? `Canonical Batch filler ${pendingProfile.batch_contract.components.filler?.exact ?? "unresolved"} lb · Part A ${pendingProfile.batch_contract.components.resin?.exact ?? "unresolved"} US gal.` : `Filler rate ${pendingProfile.filler_rate ?? "—"} oz/CFT · Resin rate ${pendingProfile.resin_rate ?? "—"} fl oz/CFT.`} Working quantities after applying: {(() => { if(missingProfileInputs(pendingProfile).length) return "unavailable"; const next=calculateSampleFormulation(applyOperationalProfile(state,pendingProfile),rows); return `${next.availableChipMixOz} oz chips / ${next.effectiveFillerOz} oz filler / ${next.effectiveResinFlOz} fl oz resin / ${next.rows[rows.findIndex(r=>r.componentRole==='hardener')]?.effectiveQuantity ?? "—"} fl oz hardener`; })()}</span><button type="button" disabled={missingProfileInputs(pendingProfile).length > 0} onClick={() => confirmProfile(pendingProfile)} className="m-1 min-h-9 border px-2 disabled:opacity-50">Apply configured profile</button><button type="button" onClick={() => setPendingProfileId('')} className="m-1 underline">Cancel selection</button></span>}
               {canManageProfiles && <button type="button" onClick={() => setManageProfiles(true)} className="mt-2 min-h-10 border px-3 text-xs">Configure profiles</button>}
             </label>}
             {isV4 && <>
@@ -321,20 +323,21 @@ export default function SampleFormulationConfigurator({
               </select>
             </label>
             <label className={label}>
-              Material Density
+              {isBatchFirst ? "Batch reference chip loading" : "Material Density"}
               <input
                 type="number"
                 min="0"
                 step="0.001"
-                value={state.materialDensity}
+                readOnly={isBatchFirst}
+                value={isBatchFirst ? state.profile?.defaultChipDensityLbCft : state.materialDensity}
                 onChange={(event) =>
                   patch({ materialDensity: event.target.value,chipDensityProvenance:'manual',fillerProvenance:state.fillerProvenance==='increased_filler_adjustment'?'manual':state.fillerProvenance,adjustment:null })
                 }
                 className={input}
               />
-              <span className={hint}>{isV4?`lb/CFT · ${state.chipDensityProvenance.replaceAll('_',' ')} · authoritative Chip Mix input`:'lb/CFT'}</span>
+              <span className={hint}>{isBatchFirst?'lb/CFT · captured Batch reference, unaffected by shop quantities':isV4?`lb/CFT · ${state.chipDensityProvenance.replaceAll('_',' ')} · authoritative Chip Mix input`:'lb/CFT'}</span>
             </label>
-            {!isV4 && <label className={label}>
+            {!isV4 && !isBatchFirst && <label className={label}>
               Weight / SF
               <input
                 type="number"
@@ -382,7 +385,7 @@ export default function SampleFormulationConfigurator({
                 </button>
               )}
             </label>}
-            {!isV4 && <label className={label}>
+            {!isV4 && !isBatchFirst && <label className={label}>
               Geometry Chip Mix Reference
               <input
                 type="number"
@@ -419,6 +422,7 @@ export default function SampleFormulationConfigurator({
             <label className={label}>
               Resin : Hardener Ratio
               <select
+                disabled={isBatchFirst}
                 value={normalizeSupportedSampleRatio(state.resinParts,state.hardenerParts)??""}
                 onChange={(event) => {
                   const [resinParts, hardenerParts] =
@@ -464,7 +468,7 @@ export default function SampleFormulationConfigurator({
           )}
         </div>
       )}
-      {adjusting && <div role="dialog" aria-modal="true" aria-label="Adjust Formulation" className="mt-4 border-2 border-blue-800 bg-blue-50 p-4">
+      {adjusting && !isBatchFirst && <div role="dialog" aria-modal="true" aria-label="Adjust Formulation" className="mt-4 border-2 border-blue-800 bg-blue-50 p-4">
         <div className="flex items-start justify-between gap-3"><div><h3 className="text-sm font-bold">Increase Filler while preserving dry-material profile</h3><p className="mt-1 text-xs text-slate-700">This intentionally coordinates Filler, effective Chip density, Chip Mix, and calculated Aggregate ounces.</p></div><button type="button" onClick={()=>setAdjusting(false)} aria-label="Close formulation adjustment" className="h-10 w-10 border border-slate-400 bg-white"><X className="mx-auto h-4 w-4"/></button></div>
         <label className={`${label} mt-3 block max-w-xs`}>Target Filler<input type="number" min="0" step="0.01" value={adjustmentFiller} onChange={event=>setAdjustmentFiller(event.target.value)} className={input}/><span className={hint}>oz at the current production geometry</span></label>
         {adjustmentPreview?<div className="mt-3 grid gap-2 text-xs sm:grid-cols-2"><p>Filler: <strong>{number(result.effectiveFillerOz)} → {number(adjustmentPreview.targetFillerOz)} oz</strong></p><p>Density: <strong>{number(result.effectiveChipDensityLbCft)} → {number(adjustmentPreview.resultingChipDensityLbCft)} lb/CFT</strong></p><p>Chip Mix: <strong>{number(result.availableChipMixOz)} → {number(adjustmentPreview.resultingChipMixOz)} oz</strong></p><p>Expected dry pool: <strong>{number(result.dryPoolOz)} oz unchanged</strong></p><p className="sm:col-span-2">Aggregate ounces: <strong>{rows.map((row,index)=>row.componentRole==='aggregate'?`${row.percentage||0}% → ${number(adjustmentResult?.rows[index]?.effectiveQuantity??'')} oz`:null).filter(Boolean).join(' · ')}</strong></p><p>Resin / Hardener: <strong>{number(result.effectiveResinFlOz)} / {number(result.rows[rows.findIndex(row=>row.componentRole==='hardener')]?.effectiveQuantity??'')} fl oz unchanged</strong></p></div>:<p className="mt-3 text-xs font-bold text-red-700">Enter a Filler quantity that does not exceed the expected dry pool.</p>}

@@ -1,3 +1,4 @@
+import {BATCH_FIRST_VERSION} from './sample-batch-first.mjs';
 import {projectSampleBatch,deriveBatchReference,formatBatchQuantity} from './sample-batch-projection.mjs';
 import {normalizeSupportedSampleRatio} from './sample-ratio.mjs';
 export const PRODUCTION_BATCH_PDF_VERSION='production-batch-blend-v1';
@@ -36,7 +37,8 @@ export function productionBatchReadiness(snapshot) {
  const source=pick(snapshot,'blendRows','blend_rows')||[];
  const rows=Array.isArray(source)?source.map(r=>({...r,color:text(r.color),percentage:text(r.percentage),quantity:text(r.quantity),unit:text(r.unit),componentRole:pick(r,'componentRole','component_role'),quantityProvenance:pick(r,'quantityProvenance','quantity_provenance'),calculationBasis:pick(r,'calculationBasis','calculation_basis')})):[];
  const projection=projectSampleBatch(state,rows);const reasons=[...projection.issues];
- if(!['in','ft'].includes(state.dimensionUnit))reasons.push('Working Pour dimension unit is missing.');
+ if(state.calculationVersion!==BATCH_FIRST_VERSION)reasons.unshift('Legacy Sample capture has no complete canonical Batch authority.');
+ if(state.calculationVersion!==BATCH_FIRST_VERSION&&!['in','ft'].includes(state.dimensionUnit))reasons.push('Working Pour dimension unit is missing.');
  if(!state.profile)reasons.push('Captured formulation profile is missing.');
  if(!normalizeSupportedSampleRatio(state.resinParts,state.hardenerParts))reasons.push('Captured binder ratio is unsupported.');
  for(const role of ['aggregate','filler','resin','hardener'])if(!rows.some(r=>r.componentRole===role))reasons.push(`Required ${role} component is missing.`);

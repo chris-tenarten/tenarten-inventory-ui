@@ -6,11 +6,13 @@ export type OperationalProfile = {
   resin_rate: number | null; resin_parts: number | null; hardener_parts: number | null;
   batch_chip_target_lb?: number | null;
   batch_reference_thickness_in?: number | null;
+  batch_contract?: import('../../../supabase/functions/_shared/sample-batch-first.mjs').BatchContract | null;
   description: string;
 };
 export const operationalProfileLabel = (p: OperationalProfile) => `${p.name} — ${p.resin_parts && p.hardener_parts ? `${p.resin_parts}:${p.hardener_parts}` : '?'}`;
 export function missingProfileInputs(p: OperationalProfile): string[] {
   const missing: string[] = [];
+  if(p.batch_contract) return p.chip_density && [4,5].includes(p.resin_parts??0) && p.hardener_parts===1 ? [] : ['Batch reference loading and binder relationship'];
   if (!(p.chip_density !== null && p.chip_density > 0)) missing.push('Chip density');
   if (!(p.dry_pool_rate !== null && p.dry_pool_rate > 0)) missing.push('expected dry-material rate');
   if (!(p.filler_rate !== null && p.filler_rate >= 0)) missing.push('Filler rate');
@@ -22,7 +24,7 @@ export function missingProfileInputs(p: OperationalProfile): string[] {
 export function captureOperationalProfile(p: OperationalProfile): SampleFormulationProfile {
   const missing = missingProfileInputs(p);
   if (missing.length) throw new Error(`${operationalProfileLabel(p)} needs ${missing.join(', ')}. The current Draft has not been changed.`);
-  return { id: `operational:${p.id}`, version: p.revision, name: operationalProfileLabel(p),
+  return { ...(p.batch_contract?{batchContract:p.batch_contract}:{}), id: `operational:${p.id}`, version: p.revision, name: operationalProfileLabel(p),
     defaultChipDensityLbCft: String(p.chip_density), dryPoolOzPerCft: String(p.dry_pool_rate),
     defaultFillerOzPerCft: String(p.filler_rate), resinFlOzPerCft: String(p.resin_rate),
     batchReferenceThicknessIn: p.batch_reference_thickness_in == null ? null : String(p.batch_reference_thickness_in),

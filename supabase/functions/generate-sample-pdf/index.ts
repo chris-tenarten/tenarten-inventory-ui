@@ -26,6 +26,7 @@ const cors = (origin: string) => ({
 const json = (body: unknown, status: number, headers: Record<string, string>) =>
   new Response(JSON.stringify(body), { status, headers: { ...headers, "Content-Type": "application/json" } });
 export async function renderSampleWorkOrder(snapshot: Record<string, unknown>, documentVersion = SAMPLE_PDF_VERSION) {
+  if ((snapshot.formulation ?? snapshot.formulation_state)?.calculationVersion === 'sample-formulation-v5-batch-first' && documentVersion === SAMPLE_PDF_VERSION) documentVersion = 'sample-work-order-pdf-v8-batch-first';
   const model = buildSamplePdfModel(snapshot, documentVersion);
   const pdf = await PDFDocument.create();
   pdf.setTitle(`Sample Work Order ${model.colorPlateNumber || ""}`.trim());
@@ -148,7 +149,7 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>, d
     const headingY = layout.continuation ? 692 : firstHeadingY;
     const headingHeight = 30;
     page.drawRectangle({ x: 40, y: headingY, width: 532, height: headingHeight, borderColor: navy, borderWidth: 1.1, color: pale });
-    centeredText(model.hasBatchLayout ? (layout.continuation ? "WORKING POUR - CONTINUATION" : "WORKING POUR QUANTITIES") : (layout.continuation ? "CHIP BLEND - CONTINUATION" : "CHIP BLEND"), 40, headingY, 532, headingHeight, 12, bold, blue);
+    centeredText(model.batchFirst ? (layout.continuation ? "SHOP PREPARATION - CONTINUATION" : "SHOP PREPARATION QUANTITIES") : model.hasBatchLayout ? (layout.continuation ? "WORKING POUR - CONTINUATION" : "WORKING POUR QUANTITIES") : (layout.continuation ? "CHIP BLEND - CONTINUATION" : "CHIP BLEND"), 40, headingY, 532, headingHeight, 12, bold, blue);
     const headerY = headingY - 36;
     const headerHeight = 28;
     let x = 40;
