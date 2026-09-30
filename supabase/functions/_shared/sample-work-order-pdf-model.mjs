@@ -11,6 +11,15 @@ export function buildSamplePdfModel(snapshot) {
     : Array.isArray(snapshot.blend_rows)
       ? snapshot.blend_rows
       : [];
+  // Draft rows are appended in editing order; group the rendered copy before
+  // pagination, matching the editor. Preserve authored order within each role.
+  // Other/untyped legacy rows stay between Filler and Resin; never infer a role
+  // from a material name or its catalog classification.
+  const roleOrder = { aggregate: 0, filler: 1, other: 2, resin: 3, hardener: 4 };
+  const orderedRows = rows.map((row, index) => ({ row, index })).sort((left, right) =>
+    (roleOrder[value(left.row, "componentRole", "component_role")] ?? 2) -
+    (roleOrder[value(right.row, "componentRole", "component_role")] ?? 2) || left.index - right.index,
+  ).map(({ row }) => row);
   const formulation = snapshot.formulation ?? snapshot.formulation_state ?? {};
   const derived = formulation.derived ?? {};
   const formulationBasis = value(formulation, "basis");
@@ -63,7 +72,7 @@ export function buildSamplePdfModel(snapshot) {
     renderContext: value(snapshot, "renderContext", "render_context"),
     formulationSummary,
     calculationVersion: value(formulation, "calculationVersion"),
-    rows: rows.map((row) => ({
+    rows: orderedRows.map((row) => ({
       percentage: value(row, "percentage"),
       color: value(row, "color"),
       size: value(row, "size"),
