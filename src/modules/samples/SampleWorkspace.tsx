@@ -102,8 +102,8 @@ export default function SampleWorkspace() {
   const [linkSelection, setLinkSelection] = useState("");
   const [draft, setDraft] = useState<SampleRecord | null>(null);
   const [draftBaseline, setDraftBaseline] = useState("");
-  const [quantityViewState, setQuantityViewState] = useState<{record: string | null; view: "batch" | "working"}>({record:null,view:"working"});
-  const quantityView = quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "working";
+  const [quantityViewState, setQuantityViewState] = useState<{record: string | null; view: "batch" | "working"}>({record:null,view:"batch"});
+  const quantityView = quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "batch";
   const batch = useMemo(() => draft ? projectSampleBatch(draft.formulation,draft.blendRows) : null,[draft]);
   const [closePrompt, setClosePrompt] = useState(false);
   const [loading, setLoading] = useState(true);

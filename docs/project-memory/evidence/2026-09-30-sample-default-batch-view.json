@@ -1,0 +1,15 @@
+{
+  "baseCandidate": "bdfdf78e69ae03067f926ff9dc5a62e2c8a2d576",
+  "decision": "Chris requested Batch as the default quantity view when opening the Sample generator.",
+  "scope": "Initial local view state and record-change fallback only; no calculation, persistence, catalog, or PDF changes.",
+  "riskTier": 1,
+  "testingLevel": 1,
+  "reviewUrl": "http://localhost:3000/samples",
+  "validation": {
+    "productionBuildIncludingTypeScript": "passed",
+    "targetedEslint": "passed",
+    "diffCheck": "passed",
+    "browser": "verify-sample-chip-blend-copy.mjs passed: existing, reloaded, and new Samples default to Batch; toggle and accepted Chip Blend labels/wrapping verified at 1440/768/390/320px."
+  },
+  "release": "None; local candidate only."
+}

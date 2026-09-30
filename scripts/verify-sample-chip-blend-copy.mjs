@@ -8,6 +8,7 @@ const browser=await chromium.launch();
 try {
  const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(route);
+ await expect(page.getByRole('button',{name:'Batch',exact:true})).toHaveAttribute('aria-pressed','true');
  const section=page.locator('[data-sample-tutorial="aggregate-section"]');
  const helper=section.getByText('Set the aggregate percentages. The blend must total 100%.',{exact:true});
  mkdirSync(`${output}/chip-blend-copy`,{recursive:true});
@@ -24,5 +25,11 @@ try {
    await section.locator(':scope > div').first().screenshot({path:`${output}/chip-blend-copy/${width}-${view.replaceAll(' ','-')}.png`});
   }
  }
- assert.deepEqual(errors,[]);console.log('Chip Blend copy, scale labels and untruncated wrapping passed at 1440/768/390/320px on localhost:3000.');
+ await page.getByRole('button',{name:'Working Pour',exact:true}).click();
+ await page.reload();
+ await expect(page.getByRole('button',{name:'Batch',exact:true})).toHaveAttribute('aria-pressed','true');
+ await page.goto('http://localhost:3000/samples');
+ await page.getByRole('button',{name:'New Sample',exact:false}).click();
+ await expect(page.getByRole('button',{name:'Batch',exact:true})).toHaveAttribute('aria-pressed','true');
+ assert.deepEqual(errors,[]);console.log('Batch defaults for existing/reloaded/new Samples; toggle, Chip Blend scale labels and wrapping passed at 1440/768/390/320px on localhost:3000.');
 }finally{await browser.close();}
