@@ -1,0 +1,36 @@
+{
+  "baseCandidate": "15988712c0c2752b7dc37628bcc27593f401f5d0",
+  "scope": "Calculation summary display only; accepted CHIP BLEND unchanged",
+  "riskTier": 2,
+  "referenceThicknessFinding": {
+    "managedProfileHasReferenceThickness": false,
+    "capturedProfileHasReferenceThickness": false,
+    "snapshotThicknessIn": "Current shared Working Pour/Finished Plates thickness; not a separate Batch reference thickness",
+    "decision": "Show captured Batch target only. Do not display 45 SF as established Batch yield.",
+    "futureRequirement": "An explicitly approved Batch reference thickness and its provenance, captured with the formulation/profile revision, would be required to label a reference yield."
+  },
+  "presentation": {
+    "heading": "SAMPLE PLATE CALCULATION",
+    "Finished Plates": "4 pcs \u00b7 6\u2033 \u00d7 6\u2033 \u00d7 3/8\u2033",
+    "Working Pour": "12\u2033 \u00d7 12\u2033 \u00d7 3/8\u2033 \u00b7 1.00 SF",
+    "Working Pour rate": "4 lb chips/SF at this pour thickness",
+    "Batch Basis": "180 lb chips = 100%",
+    "Working Pour Chip Mix": "64 oz",
+    "context": "Existing finished plate area, intended-output explanation and dry-pool/formulation context retained"
+  },
+  "rateSource": "Existing calculateSampleFormulation result.effectiveWeightPerSf; no new formulation equations",
+  "checksPassed": [
+    "Existing formulation calculations",
+    "Existing Batch projection parity and variants",
+    "Existing historical parity",
+    "Focused summary browser: dynamic geometry/thickness, Sherwin and legacy fallback, 1440/768/390/320px",
+    "Accepted CHIP BLEND browser checks",
+    "TypeScript",
+    "Targeted ESLint",
+    "Production build for localhost review",
+    "Diff check"
+  ],
+  "reviewURL": "http://localhost:3000/samples",
+  "hostedChanges": false,
+  "released": false
+}

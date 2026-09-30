@@ -14,6 +14,7 @@ import {
   MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION,
   type SampleFormulationState,
 } from "./formulation";
+import { validBatchTarget, formatBatchQuantity } from "./batch-projection";
 import type { SampleBlendRow } from "./types";
 import { setSampleFormulationDefault } from "./queries";
 const input =
@@ -67,6 +68,9 @@ export default function SampleFormulationConfigurator({
     state.calculationVersion ===
     MASS_BALANCE_SAMPLE_FORMULATION_CALCULATION_VERSION;
   const isV4 = state.calculationVersion === SAMPLE_FORMULATION_CALCULATION_VERSION;
+  const batchTarget = isV4 ? validBatchTarget(state.profile?.batchChipTargetLb) : null;
+  const compact = (value: string) => value !== "" && Number.isFinite(Number(value)) ? Number(value).toLocaleString("en-US", { maximumFractionDigits: 4 }) : "—";
+  const pourDimension = (value: string) => state.dimensionUnit === "in" ? inches(value) : `${compact(value)}′`;
   const calculatedTarget = useMemo(
     () => calculateSampleFormulation(
       { ...state, basis: "weight_per_sf", totalWeight: "" },
@@ -136,25 +140,32 @@ export default function SampleFormulationConfigurator({
   return (
     <section className="border border-slate-300 bg-white p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div data-sample-tutorial="chip-summary">
+        <div data-sample-tutorial="chip-summary" className="min-w-0 w-full lg:flex-1">
           <h2 className="text-sm font-bold uppercase tracking-wide">
-            Finished Plates and Working Pour
+            Sample Plate Calculation
           </h2>
-          <p className="mt-2 text-base font-semibold">
-            {state.finishedPlateQuantity || "—"} pcs ·{" "}
-            {inches(state.finishedPlateWidth)} ×{" "}
-            {inches(state.finishedPlateLength)} · {inches(state.thicknessIn)}
-          </p>
-          <p className="mt-1 text-sm text-slate-600">
-            Working Pour: {state.width || "—"} × {state.length || "—"} {state.dimensionUnit} × {inches(state.thicknessIn)} · Working Pour area: {number(result.areaSf)} SF
-          </p>
-          <p className="mt-1 text-sm text-slate-600">
-            Finished plate area: {number(result.finishedAreaSf)} SF
-          </p>
-          <p className="mt-1 text-xs text-slate-500">Finished Plates: intended pieces from the pour. Changing these does not resize the Working Pour.</p>
-          <p className="mt-1 text-sm font-bold">
-            Chip Mix: {number(result.availableChipMixOz)} oz
-          </p>
+          <dl className="mt-3 grid gap-4 text-sm sm:grid-cols-2">
+            <div className="min-w-0">
+              <dt className="font-bold text-slate-600">Finished Plates</dt>
+              <dd className="mt-1 font-semibold">{state.finishedPlateQuantity || "—"} pcs · {inches(state.finishedPlateWidth)} × {inches(state.finishedPlateLength)} × {inches(state.thicknessIn)}</dd>
+              <dd className="mt-1 text-xs text-slate-500">Finished plate area: {number(result.finishedAreaSf)} SF</dd>
+              <dd className="mt-1 text-xs text-slate-500">Intended pieces from the pour. Changing these does not resize the Working Pour.</dd>
+            </div>
+            <div className="min-w-0">
+              <dt className="font-bold text-slate-600">Working Pour</dt>
+              <dd className="mt-1 font-semibold">{pourDimension(state.width)} × {pourDimension(state.length)} × {inches(state.thicknessIn)} · {number(result.areaSf)} SF</dd>
+              {isV4 && result.effectiveWeightPerSf && <dd className="mt-1 text-xs text-slate-500">{compact(result.effectiveWeightPerSf)} lb chips/SF at this pour thickness</dd>}
+            </div>
+            <div className="min-w-0">
+              <dt className="font-bold text-slate-600">Batch Basis</dt>
+              <dd className="mt-1 font-semibold">{batchTarget === null ? "Batch basis not captured" : `${formatBatchQuantity(batchTarget, "lb")} lb chips = 100%`}</dd>
+              {batchTarget !== null && <dd className="mt-1 text-xs text-slate-500">{state.profile?.name}</dd>}
+            </div>
+            <div className="min-w-0">
+              <dt className="font-bold text-slate-600">Working Pour Chip Mix</dt>
+              <dd data-testid="working-pour-chip-mix" className="mt-1 text-xl font-bold">{compact(result.availableChipMixOz)} oz</dd>
+            </div>
+          </dl>
           <p className="mt-1 text-xs text-slate-600">
             {isMassBalance
               ? `${number(result.totalFormulaWeightOz)} oz formula − ${number(result.nonChipWeightOz)} oz filler/resin/hardener`
