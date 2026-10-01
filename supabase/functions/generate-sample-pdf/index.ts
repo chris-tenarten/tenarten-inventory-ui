@@ -167,9 +167,12 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>, d
       const values = [row.percentage, row.color, row.size, row.materialType, row.quantity, row.unit, row.vendor];
       columns.forEach((column, index) => {
         tableRect(x, y, column.width, height);
-        const lines = wrapSampleText(values[index], column.characters);
+        // Keep fractional Batch projections readable as one number, not split digits.
+        const numericQuantity = model.batchFirst && index === 4 && /^\d+(\.\d+)?$/.test(values[index]);
+        const quantitySize = numericQuantity ? Math.min(9.3, (column.width-12)/bold.widthOfTextAtSize(values[index],1)) : 9.3;
+        const lines = numericQuantity ? [values[index]] : wrapSampleText(values[index], column.characters);
         lines.forEach((part, lineIndex) =>
-          text(part, x + 6, y + height - 15 - lineIndex * 11, 9.3, bold, navy));
+          text(part, x + 6, y + height - 15 - lineIndex * 11, quantitySize, bold, navy));
         x += column.width;
       });
     }

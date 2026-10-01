@@ -1,4 +1,5 @@
 "use client";
+import SampleResinSystemSelector from './SampleResinSystemSelector';
 import {BATCH_FIRST_VERSION,batchFirstQuantities} from "./formulation";
 import { projectSampleBatch, formatBatchQuantity } from "./batch-projection";
 
@@ -108,6 +109,12 @@ export default function SampleWorkspace() {
   const quantityView = quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "batch";
   const batchFirst = draft?.formulation.calculationVersion === BATCH_FIRST_VERSION;
   const shopProjection = draft && batchFirst ? batchFirstQuantities(draft.formulation,draft.blendRows) : null;
+  function changeBatchFiller(value: string | null) {
+    setDraft(current => current ? {...current,formulation:{...current.formulation,batchFillerOverrideLb:value},
+      blendRows:current.blendRows.map(row=>row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})} : current);
+    setMessage('Batch formulation updated. Shop quantities reset; review preparation quantities before use.');
+  }
+
   const batch = useMemo(() => draft ? projectSampleBatch(draft.formulation,draft.blendRows) : null,[draft]);
   const [closePrompt, setClosePrompt] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -958,6 +965,10 @@ export default function SampleWorkspace() {
               </div>
             </section>
             <section aria-label="Quantity view" className="border border-slate-300 bg-white p-4">
+              <SampleResinSystemSelector state={draft.formulation} rows={draft.blendRows} onChange={formulation=>{
+                setDraft({...draft,formulation,blendRows:draft.blendRows.map(row=>row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})});
+                setMessage('Resin System applied. Batch Filler and shop quantities reset to this profile; materials and percentages are preserved.');
+              }}/>
               <p className="text-sm font-bold">View quantities as</p>
               <div role="group" aria-label="View quantities as" className="mt-2 inline-flex gap-1">
                 {([['batch','Batch'],['working','Working Pour']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
@@ -1178,7 +1189,15 @@ export default function SampleWorkspace() {
                         />
                       </label>
                       {quantityView==='batch' ? <div className={`${label} text-left`}>
-                        <span>Batch quantity</span>
+                        {row.componentRole==='filler' && shopProjection?.resolvedBatch.enabled ? <>
+                          <label className="block">Current formulation Filler (lb)
+                            <input aria-label="Batch Filler (lb)" type="number" min="0" step="0.000001" value={draft.formulation.batchFillerOverrideLb ?? String(shopProjection.resolvedBatch.baselineFiller ?? '')} onChange={e=>changeBatchFiller(e.target.value)} className={field}/>
+                          </label>
+                          <p className="mt-2 text-xs font-normal">Profile default: {shopProjection.resolvedBatch.baselineFiller} lb · {shopProjection.resolvedBatch.modified ? 'Modified' : 'Profile default'}</p>
+                          <p className="mt-1 text-xs font-normal">Profile Chip Mix: {shopProjection.resolvedBatch.baselineChip} lb · Current Chip Mix: {shopProjection.resolvedBatch.target ?? '—'} lb</p>
+                          {!shopProjection.resolvedBatch.valid && <p role="alert" className="text-xs text-red-700">Enter a nonnegative Filler quantity that leaves a positive Chip Mix.</p>}
+                          {draft.formulation.batchFillerOverrideLb != null && <button type="button" className="mt-2 min-h-10 border px-2 text-xs" onClick={()=>changeBatchFiller(null)}>Restore Profile Default</button>}
+                        </> : <span>Batch quantity</span>}
                         <output aria-label={`${row.componentRole} Batch quantity`} title={batch?.rows[index]?.quantity===null?undefined:String(batch?.rows[index]?.quantity)} className="mt-1 block border border-slate-300 bg-slate-100 px-3 py-3 text-base font-bold">
                           {formatBatchQuantity(batch?.rows[index]?.quantity??null,batch?.rows[index]?.unit??'')} {batch?.rows[index]?.unit}
                         </output>

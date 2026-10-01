@@ -55,7 +55,7 @@ export function buildSamplePdfModel(snapshot, documentVersion = SAMPLE_PDF_VERSI
       ].filter(Boolean).join(" · ")
     : "";
   const hasBatchLayout = documentVersion === SAMPLE_PDF_VERSION || batchFirst;
-  const target = Number(profile.batchChipTargetLb);
+  const target = batchFirst ? preparation.resolvedBatch.target : Number(profile.batchChipTargetLb);
   const dimension = (v) => v == null || v === '' ? 'Not recorded' : String(v);
   const thickness = Number(formulation.thicknessIn) === .375 ? '3/8' : dimension(formulation.thicknessIn);
   return {
@@ -64,7 +64,7 @@ export function buildSamplePdfModel(snapshot, documentVersion = SAMPLE_PDF_VERSI
     hasBatchLayout,
     finishedOutput: formulation.finishedPlateWidth && formulation.finishedPlateLength && formulation.finishedPlateQuantity ? `${dimension(formulation.finishedPlateWidth)} x ${dimension(formulation.finishedPlateLength)} in · Qty ${dimension(formulation.finishedPlateQuantity)}` : 'Not recorded',
     workingPour: formulation.width && formulation.length && formulation.thicknessIn ? `${dimension(formulation.width)} x ${dimension(formulation.length)} ${formulation.dimensionUnit || 'in'} x ${thickness} in · Area ${dimension(derived.areaSf)} SF` : 'Not recorded',
-    batchBasis: `${value(profile,'name') || 'Captured formulation'} · ${Number.isFinite(target) && target > 0 ? `Batch chip target ${target} lb = 100%` : 'Batch basis not captured'}`,
+    batchBasis: `${value(profile,'name') || 'Captured formulation'} · ${Number.isFinite(target) && target > 0 ? `${preparation?.resolvedBatch.modified ? "Current Batch Chip Mix" : "Batch chip target"} ${target} lb = 100%` : 'Batch basis not captured'}`,
     requestedBy: value(snapshot, "requestedBy", "requested_by"),
     requestedDate: value(snapshot, "requestedDate", "requested_date"),
     projectName: value(snapshot, "projectName", "project_name"),

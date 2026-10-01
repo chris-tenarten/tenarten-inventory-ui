@@ -18,6 +18,7 @@ export async function renderProductionBatch(snapshot,source) {
  block('Source',model.source==='issued'?`Issue ${model.issueNumber} · ${model.sourceDate}${model.approvedDate?' · Approval recorded '+model.approvedDate:''}`:`Current saved draft · ${model.sourceDate}`);
  if(model.project||model.job)block('Project / Job',[model.project,model.job?'Job '+model.job:''].filter(Boolean).join(' · '));
  let basis=`${model.batchTarget} lb chips = 100%`;
+ if(model.resolvedBatch.modified)basis+=`\nModified Filler: ${model.resolvedBatch.filler} lb (profile ${model.resolvedBatch.baselineFiller} lb). Profile Chip Mix: ${model.resolvedBatch.baselineChip} lb.`;
  if(model.reference){const r=model.reference;const n=v=>Number(v.toFixed(6)).toLocaleString('en-US',{maximumFractionDigits:6});basis+=`\n${n(r.coverageSf)} SF @ ${r.referenceThicknessIn===.375?'3/8':n(r.referenceThicknessIn)} in · ${n(r.chipRateLbSf)} lb chips/SF`;}
  if(model.reference && model.effectiveChipDensityLbCft!==model.reference.chipDensityLbCft)basis+=`\nProfile reference yield above; formulation chip density ${model.effectiveChipDensityLbCft} lb/CFT differs from profile ${model.reference.chipDensityLbCft} lb/CFT.`;
  block('Batch basis',basis);
@@ -28,8 +29,9 @@ export async function renderProductionBatch(snapshot,source) {
   const group=row.role==='aggregate'?'CHIP BLEND':'OTHER COMPONENTS';if(group!==currentGroup){y-=20;tableHeader(group);currentGroup=group;}
   const roleName={filler:'Filler',resin:'Resin / Part A',hardener:'Hardener / Part B',other:'Other'}[row.role];
   const material=[roleName,roleName===row.color?null:row.color,row.vendor].filter(Boolean).join('\n');
-  const fields=[material,row.size,row.role==='aggregate'?`${row.percentage}%`:'',row.quantityLabel.replace('≈','~')+(row.exactLiquid?'\n('+row.exactLiquid+')':''),row.role==='aggregate'?(row.package?.label||'Unavailable'):''];
+  const fields=[material,row.size,row.role==='aggregate'?`${row.percentage}%`:'',row.quantityLabel.replace('≈','~')+(row.exactLiquid?'\n('+row.exactLiquid+')':''),['aggregate','filler'].includes(row.role)?(row.package?.label||'Unavailable'):''];
   const cells=fields.map((v,i)=>wrap(v,widths[i]-10,10,i===3?bold:regular));let offset=0;const length=Math.max(...cells.map(c=>c.length),1);
+  if(y-(length*13+12)<66 && length*13+12<540){newPage();tableHeader(group+' - CONTINUED');}
   while(offset<length){
    if(y-34<66){newPage();tableHeader(group+' - CONTINUED');}
    const count=Math.min(length-offset,Math.floor((y-66-12)/13));const height=count*13+12;let x=36;

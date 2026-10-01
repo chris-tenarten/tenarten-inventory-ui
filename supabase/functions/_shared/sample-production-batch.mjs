@@ -1,4 +1,4 @@
-import {BATCH_FIRST_VERSION} from './sample-batch-first.mjs';
+import {BATCH_FIRST_VERSION,resolveBatchFiller} from './sample-batch-first.mjs';
 import {projectSampleBatch,deriveBatchReference,formatBatchQuantity} from './sample-batch-projection.mjs';
 import {normalizeSupportedSampleRatio} from './sample-ratio.mjs';
 export const PRODUCTION_BATCH_PDF_VERSION='production-batch-blend-v1';
@@ -65,10 +65,10 @@ export function buildProductionBatchModel(snapshot,source) {
   profile:text(state.profile.name),profileRevision:state.profile.version,
   sourceDate:text(source==='issued'?pick(snapshot,'issuedAt','issued_at'):pick(snapshot,'updatedAt','updated_at')),
   approvedDate:source==='issued'?text(pick(snapshot,'approvedDate','approved_date')):'',
-  batchTarget:projection.target,reference:deriveBatchReference(state),binderRatio:normalizeSupportedSampleRatio(state.resinParts,state.hardenerParts),effectiveChipDensityLbCft:Number(state.materialDensity),
+  resolvedBatch:resolveBatchFiller(state),batchTarget:projection.target,reference:deriveBatchReference(state),binderRatio:normalizeSupportedSampleRatio(state.resinParts,state.hardenerParts),effectiveChipDensityLbCft:Number(state.materialDensity),
   rows:rows.map((r,i)=>({...r,role:r.componentRole,batchQuantity:projection.rows[i].quantity,batchUnit:projection.rows[i].unit,quantityLabel:`${formatBatchQuantity(projection.rows[i].quantity,projection.rows[i].unit)} ${projection.rows[i].unit==='gal'?'US gal':projection.rows[i].unit}`,
    // Exact fl oz alongside rounded gallons preserves the captured binder recipe.
    exactLiquid:projection.rows[i].unit==='gal'?`${formatBatchQuantity(projection.rows[i].quantity*128,'fl oz')} fl oz`:'',
-   size:text(r.size),vendor:text(r.vendor),package:r.componentRole==='aggregate'?packageEquivalent(r,projection.rows[i].quantity):null,sourceIndex:i})).sort((a,b)=>order[a.role]-order[b.role]||a.sourceIndex-b.sourceIndex)
+   size:text(r.size),vendor:text(r.vendor),package:['aggregate','filler'].includes(r.componentRole)?packageEquivalent(r,projection.rows[i].quantity):null,sourceIndex:i})).sort((a,b)=>order[a.role]-order[b.role]||a.sourceIndex-b.sourceIndex)
  };
 }
