@@ -1,0 +1,62 @@
+{
+  "_projectMemory": {
+    "classification": "KEEP — historical evidence, but superseded for Product behavior",
+    "noticeAdded": "2026-10-01",
+    "currentProductAuthority": "../2026-10-01-sample-batch-first-authority.md",
+    "payloadPreserved": true,
+    "notice": "Dated local environment/test evidence only, not current Product authority or proof of current localhost/hosted state. Temporary fixture IDs, URLs and catalog results belong to that run. Consult the current authority and the October 1 review report before reusing environment claims.",
+    "latestLocalReview": "../2026-10-01-sample-admin-delete-local-review.md"
+  },
+  "candidate": "81968d8a8a830d67667928dad799043758822239",
+  "candidateTrackedChanges": false,
+  "manualReviewURL": "http://localhost:3000/samples",
+  "representativeURL": "http://localhost:3000/samples?open=55dbbe24-ae74-4066-a7ab-5866d51c8669",
+  "rootCause": "Build used 127.0.0.1:4207. Opening localhost:4207 made requests cross-origin; fixture CORS omitted content-profile, accept-profile and prefer. Sample list and profile/default fetches were blocked. Previous checks used same-origin 127.0.0.1 and missed the problem.",
+  "originalSampleStillPresent": true,
+  "port3000PreviousOwner": {
+    "pid": 99765,
+    "command": "next dev --webpack in canonical TenOps checkout",
+    "started": "2026-09-25",
+    "action": "Stopped confirmed obsolete process"
+  },
+  "repair": {
+    "buildEnv": "Ignored local .env.local points to http://localhost:3000",
+    "adapter": "/private/tmp/tenops-sample-batch-review/manual-review-server.mjs",
+    "source": "Actual candidate production export, existing disposable PostgreSQL and actual PDF renderer",
+    "localhostSessionKey": "sb-localhost-auth-token",
+    "sameOrigin": true
+  },
+  "validation": {
+    "build": "passed",
+    "actualUi": {
+      "route": "http://localhost:3000/samples?open=55dbbe24-ae74-4066-a7ab-5866d51c8669",
+      "toggleCycles": 10,
+      "toggleMs": 324.8861249999991,
+      "additionalToggleRequests": 0,
+      "additionalToggleWrites": 0,
+      "blends": [
+        "40/30/20/5/5",
+        "50/25/25",
+        "30/40/30"
+      ],
+      "incompleteDraftSaved": true,
+      "issueRejected": true,
+      "geometryAndMetadataSeparated": true,
+      "profilePreviewAndFallback": true,
+      "phoneOverflow": false,
+      "pageErrors": []
+    },
+    "newSample": {
+      "origin": "http://localhost:3000",
+      "libraryHasOriginal": true,
+      "newSampleCreatedSavedReloaded": true,
+      "percentAuthored": 100,
+      "batchLb": 180,
+      "pdfStatus": 200,
+      "apiFailures": []
+    }
+  },
+  "hostedMutation": false,
+  "release": false,
+  "manualReviewConvention": "Actual TenOps shell at localhost:3000; arbitrary ports for internal automated validation only"
+}
