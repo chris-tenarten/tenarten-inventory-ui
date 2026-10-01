@@ -1,14 +1,12 @@
 # Sample Batch and Working Pour contract
 
-Status: local implementation authorized by Chris on September 30, 2026. The subsequent “Batch ↔ Working Pour V1 — Implementation Authorization” accepts this contract. Hosted migrations, hosted data changes, push and deployment remain unauthorized.
+> **SUPERSEDED FOR PRODUCT BEHAVIOR — October 1, 2026.** Retain this report as historical evidence; the body records the assumptions and decisions at its original date. Consult the [current Batch-first authority and final reconciliation](2026-10-01-sample-batch-first-authority.md) first. Common MTT now uses canonical Batch **180 lb chips / 50 lb filler / 5 US gal A / 1 US gal B**; its representative shop Sample filler is **18 oz**. References below to 16-oz MTT filler, a fixed 80-oz dry pool, Sample-first authority, Production reverse-scaled from Sample constants, or coordinated filler→chip/density substitution describe superseded/legacy behavior, not the new workflow. Original source quantities and findings are not rewritten.
+
+Status: final design contract for implementation planning, September 30, 2026. **Implementation is not authorized by this document or the current request.** Chris's attached final Product/Architecture direction is the authority. This contract resolves the bounded design; later implementation, migration application and release require their applicable authorization.
 
 The common MTT formulation has **100% Batch chip weight = 180 lb**. This is now an explicit Product decision, not an inferred historical constant. One captured formulation has two quantity views: **Batch** and **Working Pour**. Existing geometry, component calculations and historical profile quantities remain authoritative. Batch projects that same formulation to its captured profile's chip target.
 
-This contract supersedes unresolved design recommendations in the Batch reconstruction investigation and Working Pour investigation. Their source findings remain valid. In particular, 180 lb is approved for the common MTT basis; 51.x filler is not a prerequisite; three geometry/header concepts remain separate without another Product question about merging them.
-
-## Operator-authored composition
-
-Chris clarified that material selection, Formula Role and aggregate blend percentages are operator-authored. The 40/30/20/5/5 blend is only an acceptance fixture, never a profile default. Every supported composition totaling 100% maps to the profile chip target; 50/25/25 maps to 90/45/45 lb and 30/40/30 maps to 54/72/54 lb for MTT. Both quantity views derive weights from those same percentages. Incomplete/overfull drafts remain editable; existing issue reconciliation still requires 100%.
+This contract supersedes unresolved design recommendations in the [Batch reconstruction](2026-09-30-sample-batch-formulation-reconstruction.md) and [Working Pour investigation](2026-09-30-sample-working-pour-semantics.md). Their source findings remain valid. In particular, 180 lb is approved for the common MTT basis; 51.x filler is not a prerequisite; three geometry/header concepts remain separate without another Product question about merging them.
 
 ## Canonical input and ownership
 
@@ -201,12 +199,12 @@ Future implementation is **Tier 3 / Testing Level 3** because the delta touches 
 - PDF model and rendered-page checks: new layout, legacy document-version dispatch, immutable existing documents, correct captured basis after profile edits, header/finished/pour disagreement, long labels/overflow, and released row ordering. Use existing Sample PDF verifiers as the base; inspect actual rendered outputs.
 - TypeScript, targeted ESLint, `git diff --check`, Production build, and focused EM diff/evidence review. Before separately authorized release, narrowly verify hosted schema/functions/grants and exact profile provisioning; do not infer hosted readiness from migration files.
 
-The original design pass inspected source and Git without implementation. Subsequent implementation evidence is recorded separately in the local candidate report.
+For this design-only pass, source and current Git were inspected and existing arithmetic evidence was reused. No implementation tests, browser checks, hosted changes or migration applications are claimed. Documentation links, arithmetic and changed-file scope are checked separately.
 
 ## Non-goals and remaining questions
 
 Exclude Pool Mix handling, 51.x filler reconstruction, global 180-lb assumptions, operational bag rounding, a replacement geometry engine, automatic Finished Plates-to-pour sizing, separate recipes, arbitrary new roles, unrelated generator redesign, broad lifecycle changes, supplier compatibility inference, historical-data cleanup and old-unit repair.
 
-**No blocking Product questions remain for this bounded V1 design.** Chris supplied the common MTT target, preservation rules and separation of fields. Other profiles can remain without a Batch basis; unavailable provenance has an explicit fallback. Exact hosted MTT identity/revision is a later engineering verification prerequisite. Local implementation is now authorized; hosted release remains unapproved.
+**No blocking Product questions remain for this bounded V1 design.** Chris supplied the common MTT target, preservation rules and separation of fields. Other profiles can remain without a Batch basis; unavailable provenance has an explicit fallback. Exact hosted MTT identity/revision is a later engineering verification prerequisite. Implementation and release remain unapproved because the current request explicitly says “Do not implement yet.”
 
 Repository boundary inspected: dev `af334e42076311501fbab464180fa6d799cbcc4b`; all pre-existing investigation files preserved. Primary implementation references: [profile model](../../src/modules/samples/operational-profile-model.ts), [managed profile migration](../../supabase/migrations/20260923160000_sample_operational_profiles.sql), [current calculator](../../src/modules/samples/formulation.ts), [density-profile SQL](../../supabase/migrations/20260918_004_sample_formula_density_profiles.sql), [PDF model](../../supabase/functions/_shared/sample-work-order-pdf-model.mjs), and [Edge renderer](../../supabase/functions/generate-sample-pdf/index.ts).

@@ -1,0 +1,47 @@
+{
+  "candidate": "674347b589e350cbe4dac07ede64654465a6c29a",
+  "reviewUrl": "http://localhost:3000/samples",
+  "disposableDatabase": "tenops-sample-batch-review-11620",
+  "draft": {
+    "candidate": "674347b589e350cbe4dac07ede64654465a6c29a",
+    "origin": "http://localhost:3000",
+    "target": "470f2a6b-00ab-44f4-8e98-58b78126a95f",
+    "createdAndSavedViaActualUI": true,
+    "appearedInLibrary": true,
+    "deletedViaActualUI": true,
+    "immediatelyAbsent": true,
+    "absentAfterBrowserRefresh": true,
+    "deleteRpc": "admin_permanently_delete_sample_draft",
+    "deleteResult": {
+      "sample_id": "470f2a6b-00ab-44f4-8e98-58b78126a95f",
+      "material_rows_deleted": 4,
+      "working_versions_deleted": 1
+    },
+    "remainingOwnedRows": {
+      "samples": 0,
+      "materialRows": 0,
+      "issuedDocuments": 0,
+      "workingVersions": 0
+    },
+    "unrelatedSample": "81fd46ea-5f18-46ad-aa2d-a5549274efb9",
+    "unrelatedSnapshotExactlyUnchanged": true
+  },
+  "issued": {
+    "action": "delete",
+    "result": {
+      "sample_id": "225395b0-0839-4c37-9af3-34cd03b32b65",
+      "material_rows_deleted": 8,
+      "issued_documents_deleted": 1,
+      "working_versions_deleted": 0
+    },
+    "actualUI": true,
+    "refreshAbsent": true,
+    "ownedPdfRemoved": true,
+    "noOwnedDatabaseResidue": true,
+    "unrelatedSampleUnchanged": true
+  },
+  "applicationCodeChanged": false,
+  "hostedMutation": false,
+  "release": false,
+  "fixtureRowsInProductionMigrationSeedsOrArtifacts": false
+}

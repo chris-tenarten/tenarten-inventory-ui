@@ -16,6 +16,7 @@ Chris alone approves material product/UX decisions, migration application, Produ
 - Preserve unrelated dirty work. Do not discard, rewrite, stage, or commit it.
 - Dev may intentionally contain unreleased work. Promote only an approved boundary; selective cherry-pick is valid. Never merge `dev` wholesale merely because it is ahead.
 - Do not commit, push, deploy, apply migrations, or mutate hosted data without the applicable authorization.
+- Chris's manual candidate review uses the actual TenOps application at `http://localhost:3000`. Reserve arbitrary ports for internal validation. Inspect port 3000 ownership before replacing a process; stop only a confirmed obsolete TenOps process. Use a safe functional review data source and validate the exact `localhost` origin, including library loading, creation and document generation. Explain any necessary port exception.
 
 ## Domain, privacy, and migrations
 

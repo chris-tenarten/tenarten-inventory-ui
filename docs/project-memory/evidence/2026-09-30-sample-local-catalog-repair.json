@@ -1,0 +1,164 @@
+{
+  "_projectMemory": {
+    "classification": "KEEP — historical evidence, but superseded for Product behavior",
+    "noticeAdded": "2026-10-01",
+    "currentProductAuthority": "../2026-10-01-sample-batch-first-authority.md",
+    "payloadPreserved": true,
+    "notice": "Dated local environment/test evidence only, not current Product authority or proof of current localhost/hosted state. Temporary fixture IDs, URLs and catalog results belong to that run. Consult the current authority and the October 1 review report before reusing environment claims.",
+    "latestLocalReview": "../2026-10-01-sample-admin-delete-local-review.md",
+    "environmentSupersededBy": "2026-09-30-sample-full-catalog-review.json"
+  },
+  "candidate": "bdfdf78e69ae03067f926ff9dc5a62e2c8a2d576",
+  "origin": "http://localhost:3000",
+  "savedSampleId": "47ceed19-aa12-4e18-8756-6034979f9194",
+  "searches": [
+    {
+      "query": "Blanco",
+      "resultText": "Blanco Mexicano\nRegular \u00b7 Arim \u00b7 BM-1 \u00b7 #1 \u00b7 Aggregate Marble \u00b7 50 LB bag"
+    },
+    {
+      "query": "True Grey",
+      "resultText": "True Grey\nRegular \u00b7 CCQ \u00b7 TG-2 \u00b7 #2 \u00b7 Aggregate Marble \u00b7 50 LB bag"
+    },
+    {
+      "query": "ATF-20",
+      "resultText": "ATF-20\nRegular \u00b7 T&M Supply \u00b7 ATF-20 \u00b7 Filler \u00b7 50 LB bag"
+    },
+    {
+      "query": "Standard 200 Resin",
+      "resultText": "MTT Standard 200 Resin\nSpecialty \u00b7 Tenarten \u00b7 MTT-200-A \u00b7 Resin \u00b7 Part A \u00b7 5 GAL pail"
+    },
+    {
+      "query": "Standard 200 Hardener",
+      "resultText": "MTT Standard 200 Hardener\nSpecialty \u00b7 Tenarten \u00b7 MTT-200-B \u00b7 Hardener \u00b7 Part B \u00b7 1 GAL pail"
+    },
+    {
+      "query": "Mother Of Pearl",
+      "resultText": "Mother Of Pearl\nSpecialty \u00b7 Arim \u00b7 MOP-2 \u00b7 #2 \u00b7 Shell chips \u00b7 Aggregate \u00b7 50 LB bag"
+    },
+    {
+      "query": "TG-2",
+      "resultText": "True Grey\nRegular \u00b7 CCQ \u00b7 TG-2 \u00b7 #2 \u00b7 Aggregate Marble \u00b7 50 LB bag"
+    }
+  ],
+  "blankAggregateResults": 5,
+  "manualEntry": true,
+  "independentRows": true,
+  "snapshotRoundTrip": true,
+  "toggleAndPercentageIdentityPreserved": true,
+  "requests": [
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25%25%22%2Cvendor_sku.ilike.%22%25%25%22%2Cvendor.ilike.%22%25%25%22%2Csize.ilike.%22%25%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-4/5"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25%25%22%2Ccanonical_item_name.ilike.%22%25%25%22%2Cvendor_sku.ilike.%22%25%25%22%2Cvendor_name.ilike.%22%25%25%22%2Csize.ilike.%22%25%25%22%2Ccanonical_size.ilike.%22%25%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-2/3"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25Hand+mixed+grey%25%22%2Cvendor_sku.ilike.%22%25Hand+mixed+grey%25%22%2Cvendor.ilike.%22%25Hand+mixed+grey%25%22%2Csize.ilike.%22%25Hand+mixed+grey%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25Hand+mixed+grey%25%22%2Ccanonical_item_name.ilike.%22%25Hand+mixed+grey%25%22%2Cvendor_sku.ilike.%22%25Hand+mixed+grey%25%22%2Cvendor_name.ilike.%22%25Hand+mixed+grey%25%22%2Csize.ilike.%22%25Hand+mixed+grey%25%22%2Ccanonical_size.ilike.%22%25Hand+mixed+grey%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25Blanco%25%22%2Cvendor_sku.ilike.%22%25Blanco%25%22%2Cvendor.ilike.%22%25Blanco%25%22%2Csize.ilike.%22%25Blanco%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-1/2"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25Blanco%25%22%2Ccanonical_item_name.ilike.%22%25Blanco%25%22%2Cvendor_sku.ilike.%22%25Blanco%25%22%2Cvendor_name.ilike.%22%25Blanco%25%22%2Csize.ilike.%22%25Blanco%25%22%2Ccanonical_size.ilike.%22%25Blanco%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25True+Grey%25%22%2Cvendor_sku.ilike.%22%25True+Grey%25%22%2Cvendor.ilike.%22%25True+Grey%25%22%2Csize.ilike.%22%25True+Grey%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-1/2"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25True+Grey%25%22%2Ccanonical_item_name.ilike.%22%25True+Grey%25%22%2Cvendor_sku.ilike.%22%25True+Grey%25%22%2Cvendor_name.ilike.%22%25True+Grey%25%22%2Csize.ilike.%22%25True+Grey%25%22%2Ccanonical_size.ilike.%22%25True+Grey%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25ATF-20%25%22%2Cvendor_sku.ilike.%22%25ATF-20%25%22%2Cvendor.ilike.%22%25ATF-20%25%22%2Csize.ilike.%22%25ATF-20%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-0/1"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25ATF-20%25%22%2Ccanonical_item_name.ilike.%22%25ATF-20%25%22%2Cvendor_sku.ilike.%22%25ATF-20%25%22%2Cvendor_name.ilike.%22%25ATF-20%25%22%2Csize.ilike.%22%25ATF-20%25%22%2Ccanonical_size.ilike.%22%25ATF-20%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25Standard+200+Resin%25%22%2Cvendor_sku.ilike.%22%25Standard+200+Resin%25%22%2Cvendor.ilike.%22%25Standard+200+Resin%25%22%2Csize.ilike.%22%25Standard+200+Resin%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25Standard+200+Resin%25%22%2Ccanonical_item_name.ilike.%22%25Standard+200+Resin%25%22%2Cvendor_sku.ilike.%22%25Standard+200+Resin%25%22%2Cvendor_name.ilike.%22%25Standard+200+Resin%25%22%2Csize.ilike.%22%25Standard+200+Resin%25%22%2Ccanonical_size.ilike.%22%25Standard+200+Resin%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-0/1"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25Standard+200+Hardener%25%22%2Cvendor_sku.ilike.%22%25Standard+200+Hardener%25%22%2Cvendor.ilike.%22%25Standard+200+Hardener%25%22%2Csize.ilike.%22%25Standard+200+Hardener%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25Standard+200+Hardener%25%22%2Ccanonical_item_name.ilike.%22%25Standard+200+Hardener%25%22%2Cvendor_sku.ilike.%22%25Standard+200+Hardener%25%22%2Cvendor_name.ilike.%22%25Standard+200+Hardener%25%22%2Csize.ilike.%22%25Standard+200+Hardener%25%22%2Ccanonical_size.ilike.%22%25Standard+200+Hardener%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-0/1"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25Mother+Of+Pearl%25%22%2Cvendor_sku.ilike.%22%25Mother+Of+Pearl%25%22%2Cvendor.ilike.%22%25Mother+Of+Pearl%25%22%2Csize.ilike.%22%25Mother+Of+Pearl%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25Mother+Of+Pearl%25%22%2Ccanonical_item_name.ilike.%22%25Mother+Of+Pearl%25%22%2Cvendor_sku.ilike.%22%25Mother+Of+Pearl%25%22%2Cvendor_name.ilike.%22%25Mother+Of+Pearl%25%22%2Csize.ilike.%22%25Mother+Of+Pearl%25%22%2Ccanonical_size.ilike.%22%25Mother+Of+Pearl%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-0/1"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25TG-2%25%22%2Cvendor_sku.ilike.%22%25TG-2%25%22%2Cvendor.ilike.%22%25TG-2%25%22%2Csize.ilike.%22%25TG-2%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-0/1"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25TG-2%25%22%2Ccanonical_item_name.ilike.%22%25TG-2%25%22%2Cvendor_sku.ilike.%22%25TG-2%25%22%2Cvendor_name.ilike.%22%25TG-2%25%22%2Csize.ilike.%22%25TG-2%25%22%2Ccanonical_size.ilike.%22%25TG-2%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog?select=id%2Cvendor%2Cvendor_sku%2Citem_name%2Csize%2Ccategory%2Cmaterial_class%2Cunit%2Cprice%2Cprice_basis&or=%28item_name.ilike.%22%25Blanco%25%22%2Cvendor_sku.ilike.%22%25Blanco%25%22%2Cvendor.ilike.%22%25Blanco%25%22%2Csize.ilike.%22%25Blanco%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "0-1/2"
+    },
+    {
+      "url": "http://localhost:3000/rest/v1/vendor_catalog_v2?select=id%2Cvendor_name%2Cvendor_sku%2Citem_name%2Ccanonical_item_name%2Csize%2Ccanonical_size%2Ccolor%2Ccomponent_type%2Ccategory%2Cmaterial_type%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cprice%2Cbulk_price%2Cbulk_minimum_quantity%2Cbulk_minimum_uom%2Ctruckload_price%2Ctruckload_minimum_quantity%2Ctruckload_minimum_uom%2Cprice_unit%2Cquote_required%2Cminimum_order_qty%2Cminimum_order_uom%2Clead_time_days%2Cis_active&is_active=eq.true&or=%28item_name.ilike.%22%25Blanco%25%22%2Ccanonical_item_name.ilike.%22%25Blanco%25%22%2Cvendor_sku.ilike.%22%25Blanco%25%22%2Cvendor_name.ilike.%22%25Blanco%25%22%2Csize.ilike.%22%25Blanco%25%22%2Ccanonical_size.ilike.%22%25Blanco%25%22%29&order=id.asc&offset=0&limit=250",
+      "status": 200,
+      "count": "*/0"
+    }
+  ],
+  "rootCause": "Disposable review server returned [] for vendor_catalog and vendor_catalog_v2. Both requests succeeded with 200/count 0; there was no CORS failure. Existing role classification had no records to process.",
+  "classification": "Review-environment data/API gap, not candidate regression",
+  "candidateCodeChanged": false,
+  "repair": "Same-origin localhost adapter now serves eight read-only local Regular/Specialty catalog fixture records with structured classification, filtering, pagination and exact count headers. Existing product search/ranking/autofill code runs unchanged.",
+  "fixtureLimit": "Representative local catalog subset; not a Production catalog replica. Package/SKU values are disposable review data, not procurement specifications.",
+  "localEnvironmentFiles": [
+    "/private/tmp/tenops-sample-batch-review/manual-review-server.mjs",
+    "/private/tmp/tenops-sample-batch-review/catalog-api.mjs",
+    "/private/tmp/tenops-sample-batch-review/catalog-fixtures.json"
+  ],
+  "manualReview": "http://localhost:3000/samples",
+  "hostedChanges": false,
+  "released": false
+}

@@ -1,0 +1,208 @@
+{
+  "_projectMemory": {
+    "classification": "KEEP — historical evidence, but superseded for Product behavior",
+    "noticeAdded": "2026-10-01",
+    "currentProductAuthority": "../2026-10-01-sample-batch-first-authority.md",
+    "payloadPreserved": true,
+    "notice": "Dated local environment/test evidence only, not current Product authority or proof of current localhost/hosted state. Temporary fixture IDs, URLs and catalog results belong to that run. Consult the current authority and the October 1 review report before reusing environment claims.",
+    "latestLocalReview": "../2026-10-01-sample-admin-delete-local-review.md",
+    "environmentLimitation": "The October 1 restoration did not recover this September 30 full-catalog snapshot; these results are not a present catalog acceptance claim."
+  },
+  "candidate": "bdfdf78e69ae03067f926ff9dc5a62e2c8a2d576",
+  "candidateCodeChanged": false,
+  "correction": "Replaced eight-record synthetic catalog fixture subset with full read-only snapshot of configured TenOps Regular and active Specialty catalog tables. Sample writes remain disposable/local.",
+  "snapshot": {
+    "copiedAt": "2026-09-30T20:38:07.531Z",
+    "counts": {
+      "vendor_catalog": 1951,
+      "vendor_catalog_v2": 301
+    },
+    "readOnlySource": true,
+    "fields": {
+      "vendor_catalog": "id,vendor,vendor_sku,item_name,size,category,material_class,unit,price,price_basis",
+      "vendor_catalog_v2": "id,vendor_name,vendor_sku,item_name,canonical_item_name,size,canonical_size,color,component_type,category,material_type,packaging,unit_size,unit_size_uom,price,bulk_price,bulk_minimum_quantity,bulk_minimum_uom,truckload_price,truckload_minimum_quantity,truckload_minimum_uom,price_unit,quote_required,minimum_order_qty,minimum_order_uom,lead_time_days,is_active"
+    },
+    "blueExamples": {
+      "vendor_catalog": [
+        {
+          "name": "Dark Blue",
+          "size": "#1",
+          "vendor": "ASG"
+        },
+        {
+          "name": "Opaque Co Blue",
+          "size": "#2",
+          "vendor": "Arim"
+        },
+        {
+          "name": "Texas Blue",
+          "size": "#0",
+          "vendor": "T&M Supply"
+        },
+        {
+          "name": "Light Blue",
+          "size": "#3",
+          "vendor": "ASG"
+        },
+        {
+          "name": "Blue Raspberry Iridescent",
+          "size": "Medium",
+          "vendor": "ASG"
+        },
+        {
+          "name": "Crystal Blue",
+          "size": "Small",
+          "vendor": "ASG"
+        },
+        {
+          "name": "Light Blue",
+          "size": "#2",
+          "vendor": "ASG"
+        },
+        {
+          "name": "Blue",
+          "size": "Large",
+          "vendor": "ASG"
+        },
+        {
+          "name": "Diablo Blue",
+          "size": "#2",
+          "vendor": "T&M Supply"
+        },
+        {
+          "name": "Cobalt Blue (Fresh)",
+          "size": "#2",
+          "vendor": "Arim"
+        },
+        {
+          "name": "Midnight Blue (ASG)",
+          "size": "#0",
+          "vendor": "T&M Supply"
+        },
+        {
+          "name": "Midnight Blues",
+          "size": "#1",
+          "vendor": "T&M Supply"
+        }
+      ],
+      "vendor_catalog_v2": [
+        {
+          "name": "Texas Blue",
+          "size": "#1",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "Estes PermaColor Quartz Granules - Blue Gray",
+          "size": "BroadcastMedium30-50Mesh",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "Texas Blue",
+          "size": "#2",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "EnviroBLUE",
+          "size": "#2",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "Blue Grey",
+          "size": "#2",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "Blue Grey",
+          "size": "#1",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "Blue Grey",
+          "size": "#0",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "Estes PermaColor Quartz Granules - Blue",
+          "size": "BroadcastMedium30-50Mesh",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "Canadian Blue Grey",
+          "size": "#2",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "KCI Blue Bottles",
+          "size": "#1",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "Canadian Blue Grey",
+          "size": "#0",
+          "vendor": "Klein & Co / KCI"
+        },
+        {
+          "name": "KCI Blue Bottles",
+          "size": "#2",
+          "vendor": "Klein & Co / KCI"
+        }
+      ]
+    }
+  },
+  "ui": {
+    "origin": "http://localhost:3000",
+    "queries": [
+      {
+        "term": "blue",
+        "countLabel": "1\u201350 of 199 Catalog matches",
+        "examples": [
+          "BlueRegular \u00b7 ASG \u00b7 Large \u00b7 glass tumbled_landscape \u00b7 25 LB bag",
+          "BlueRegular \u00b7 ASG \u00b7 Medium \u00b7 glass tumbled_landscape \u00b7 50 LB bag",
+          "BlueRegular \u00b7 ASG \u00b7 Large \u00b7 glass tumbled_landscape \u00b7 5 LB bag",
+          "BlueRegular \u00b7 ASG \u00b7 Medium \u00b7 glass tumbled_landscape \u00b7 10 LB bag"
+        ]
+      },
+      {
+        "term": "green",
+        "countLabel": "1\u201350 of 157 Catalog matches",
+        "examples": [
+          "GreenRegular \u00b7 ASG \u00b7 Medium \u00b7 glass tumbled_landscape \u00b7 25 LB bag",
+          "GreenRegular \u00b7 ASG \u00b7 Large \u00b7 glass tumbled_landscape \u00b7 25 LB bag",
+          "GreenRegular \u00b7 ASG \u00b7 Large \u00b7 glass tumbled_landscape \u00b7 50 LB bag",
+          "GreenRegular \u00b7 ASG \u00b7 Medium \u00b7 glass tumbled_landscape \u00b7 50 LB bag"
+        ]
+      },
+      {
+        "term": "red",
+        "countLabel": "1\u201350 of 111 Catalog matches",
+        "examples": [
+          "RedRegular \u00b7 Arim \u00b7 #2 \u00b7 glass specialty_glass",
+          "RedRegular \u00b7 Arim \u00b7 #1 \u00b7 glass specialty_glass",
+          "RedRegular \u00b7 Arim \u00b7 #0 \u00b7 glass specialty_glass",
+          "RedRegular \u00b7 ASG \u00b7 Medium \u00b7 glass tumbled_landscape \u00b7 1 LB bag"
+        ]
+      }
+    ],
+    "selection": {
+      "color": "Texas Blue",
+      "vendor": "CCQ",
+      "togglePreserved": true
+    },
+    "pagination": "51\u2013100 of 199 Catalog matches",
+    "filler": {
+      "query": "ATF",
+      "selected": "ATF - 20",
+      "vendor": "T&M Supply"
+    },
+    "resin": {
+      "query": "Epoxy Matrix Resin",
+      "vendor": "Master Terrazzo Technologies"
+    },
+    "savedSamples": false
+  },
+  "sourceRequests": "GET-only, explicitly selected catalog fields, exact-count pagination verified; no hosted writes.",
+  "snapshotPath": "/private/tmp/tenops-sample-batch-review/catalog-snapshot.json",
+  "reviewURL": "http://localhost:3000/samples",
+  "hostedMutations": false,
+  "released": false
+}

@@ -1,0 +1,962 @@
+{
+  "_projectMemory": {
+    "classification": "KEEP — historical evidence, but superseded for Product behavior",
+    "noticeAdded": "2026-10-01",
+    "currentProductAuthority": "../2026-10-01-sample-batch-first-authority.md",
+    "payloadPreserved": true,
+    "notice": "Original source facts and legacy calculation replays remain unchanged. Former 16-oz MTT filler, fixed 80-oz dry pool, Sample-first authority, Production reverse-scaling and coordinated filler/chip substitution are not current Product requirements. Use the linked Batch-first authority: common MTT Batch 180 lb chips / 50 lb filler / 5 US gal A / 1 US gal B; representative shop Sample filler 18 oz."
+  },
+  "head": "af334e42076311501fbab464180fa6d799cbcc4b",
+  "scope": "Local read-only geometry investigation; saved hosted evidence captured September 29, not re-queried. Corpus extraction is printed-value comparison, not recovered formulas.",
+  "corpus": [
+    {
+      "page": 1,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 2,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 3,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 4,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 5,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 6,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 7,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 8,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 9,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 10,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 11,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 12,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 13,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 14,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 15,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 16,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 17,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 18,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 19,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 20,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 21,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 22,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 23,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 24,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 25,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 26,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 27,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 28,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 29,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 30,
+      "qty": 2,
+      "width": 12,
+      "length": 6,
+      "thickness": "1 1/8",
+      "printed_area": 0.5,
+      "finished_area": 1.0,
+      "equal": false
+    },
+    {
+      "page": 31,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "1/2",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 32,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 33,
+      "qty": 2,
+      "width": 12,
+      "length": 6,
+      "thickness": "1 1/8",
+      "printed_area": 0.5,
+      "finished_area": 1.0,
+      "equal": false
+    },
+    {
+      "page": 34,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 35,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 36,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 37,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 38,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 39,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 40,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 41,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 42,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 43,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 44,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 45,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 46,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 47,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 48,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 0.5,
+      "equal": false
+    },
+    {
+      "page": 49,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 50,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 51,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 52,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 53,
+      "qty": 2,
+      "width": 12,
+      "length": 12,
+      "thickness": "5/8",
+      "printed_area": 1.0,
+      "finished_area": 2.0,
+      "equal": false
+    },
+    {
+      "page": 54,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 55,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 56,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 25.0,
+      "finished_area": 0.5,
+      "equal": false
+    },
+    {
+      "page": 57,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 58,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 59,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 60,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 61,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 62,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 63,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 64,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 65,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 66,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 67,
+      "qty": 2,
+      "width": 12,
+      "length": 12,
+      "thickness": "4",
+      "printed_area": 2.0,
+      "finished_area": 2.0,
+      "equal": true
+    },
+    {
+      "page": 68,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 69,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 70,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 71,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 72,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 73,
+      "qty": 2,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 0.5,
+      "finished_area": 0.5,
+      "equal": true
+    },
+    {
+      "page": 74,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 75,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 76,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 77,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 78,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/4",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 79,
+      "qty": 3,
+      "width": 12,
+      "length": 12,
+      "thickness": "1 1/4",
+      "printed_area": 3.0,
+      "finished_area": 3.0,
+      "equal": true
+    },
+    {
+      "page": 80,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "1 1/4",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    },
+    {
+      "page": 81,
+      "qty": 3,
+      "width": 6,
+      "length": 12,
+      "thickness": "1 1/4",
+      "printed_area": 1.5,
+      "finished_area": 1.5,
+      "equal": true
+    },
+    {
+      "page": 82,
+      "qty": 6,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.5,
+      "finished_area": 1.5,
+      "equal": true
+    },
+    {
+      "page": 83,
+      "qty": 4,
+      "width": 6,
+      "length": 6,
+      "thickness": "3/8",
+      "printed_area": 1.0,
+      "finished_area": 1.0,
+      "equal": true
+    }
+  ],
+  "replay": [
+    {
+      "name": "blank_headers",
+      "header": "",
+      "finishedQuantity": "4",
+      "finishedArea": "1",
+      "pourArea": "1",
+      "chips": "64",
+      "filler": "16",
+      "A": "15",
+      "B": "3",
+      "validation": null,
+      "pdfSummary": "Captured formulation profile \u00b7 Chip Mix 64 oz \u00b7 Profile MTT 2560 / 5:1 \u00b7 Density 128 lb/CFT \u00b7 Filler 16 oz \u00b7 Resin 15 fl oz \u00b7 Expected dry 80 oz \u00b7 Actual dry 80 oz \u00b7 Variance 0 oz \u00b7 Area 1 SF \u00b7 4 lb/SF \u00b7 Target 4 lb \u00b7 Thickness 0.375 in \u00b7 Resin : Hardener 5:1"
+    },
+    {
+      "name": "header_one",
+      "header": "1",
+      "finishedQuantity": "4",
+      "finishedArea": "1",
+      "pourArea": "1",
+      "chips": "64",
+      "filler": "16",
+      "A": "15",
+      "B": "3",
+      "validation": null,
+      "pdfSummary": "Captured formulation profile \u00b7 Chip Mix 64 oz \u00b7 Profile MTT 2560 / 5:1 \u00b7 Density 128 lb/CFT \u00b7 Filler 16 oz \u00b7 Resin 15 fl oz \u00b7 Expected dry 80 oz \u00b7 Actual dry 80 oz \u00b7 Variance 0 oz \u00b7 Area 1 SF \u00b7 4 lb/SF \u00b7 Target 4 lb \u00b7 Thickness 0.375 in \u00b7 Resin : Hardener 5:1"
+    },
+    {
+      "name": "header_eight",
+      "header": "8",
+      "finishedQuantity": "4",
+      "finishedArea": "1",
+      "pourArea": "1",
+      "chips": "64",
+      "filler": "16",
+      "A": "15",
+      "B": "3",
+      "validation": null,
+      "pdfSummary": "Captured formulation profile \u00b7 Chip Mix 64 oz \u00b7 Profile MTT 2560 / 5:1 \u00b7 Density 128 lb/CFT \u00b7 Filler 16 oz \u00b7 Resin 15 fl oz \u00b7 Expected dry 80 oz \u00b7 Actual dry 80 oz \u00b7 Variance 0 oz \u00b7 Area 1 SF \u00b7 4 lb/SF \u00b7 Target 4 lb \u00b7 Thickness 0.375 in \u00b7 Resin : Hardener 5:1"
+    },
+    {
+      "name": "finished_one",
+      "header": "",
+      "finishedQuantity": "1",
+      "finishedArea": "0.25",
+      "pourArea": "1",
+      "chips": "64",
+      "filler": "16",
+      "A": "15",
+      "B": "3",
+      "validation": null,
+      "pdfSummary": "Captured formulation profile \u00b7 Chip Mix 64 oz \u00b7 Profile MTT 2560 / 5:1 \u00b7 Density 128 lb/CFT \u00b7 Filler 16 oz \u00b7 Resin 15 fl oz \u00b7 Expected dry 80 oz \u00b7 Actual dry 80 oz \u00b7 Variance 0 oz \u00b7 Area 1 SF \u00b7 4 lb/SF \u00b7 Target 4 lb \u00b7 Thickness 0.375 in \u00b7 Resin : Hardener 5:1"
+    },
+    {
+      "name": "pour_6x6",
+      "header": "",
+      "finishedQuantity": "1",
+      "finishedArea": "0.25",
+      "pourArea": "0.25",
+      "chips": "16",
+      "filler": "4",
+      "A": "3.75",
+      "B": "0.75",
+      "validation": null,
+      "pdfSummary": "Captured formulation profile \u00b7 Chip Mix 16 oz \u00b7 Profile MTT 2560 / 5:1 \u00b7 Density 128 lb/CFT \u00b7 Filler 4 oz \u00b7 Resin 3.75 fl oz \u00b7 Expected dry 20 oz \u00b7 Actual dry 20 oz \u00b7 Variance 0 oz \u00b7 Area 0.25 SF \u00b7 4 lb/SF \u00b7 Target 1 lb \u00b7 Thickness 0.375 in \u00b7 Resin : Hardener 5:1"
+    }
+  ],
+  "saved_geometry": {
+    "sample_size": "6x6",
+    "sample_quantity": "1",
+    "formulation_state": {
+      "basis": "weight_per_sf",
+      "width": "12",
+      "length": "12",
+      "derived": {
+        "areaSf": 1,
+        "targetWeight": 4,
+        "finishedAreaSf": 1,
+        "targetWeightOz": 64,
+        "productionVolumeCft": 0.03125,
+        "effectiveWeightPerSf": 4,
+        "calculatedWeightPerSf": 4,
+        "geometryChipMixWeight": 4
+      },
+      "resinParts": "5",
+      "weightUnit": "lb",
+      "thicknessIn": "0.375",
+      "totalWeight": "",
+      "weightPerSf": "4",
+      "dimensionUnit": "in",
+      "hardenerParts": "1",
+      "defaultVersion": 1,
+      "materialDensity": "128",
+      "ratioProvenance": "default",
+      "calculationVersion": "sample-formulation-v1",
+      "finishedPlateWidth": "6",
+      "ratioDefaultSource": "General",
+      "finishedPlateLength": "6",
+      "totalFormulaWeightOz": "",
+      "finishedPlateQuantity": "4",
+      "supplierRatioDefaults": {
+        "key": "5:1",
+        "mtt": "5:1",
+        "sherwin": "4:1",
+        "terroxy": "5:1",
+        "key resin co.": "5:1",
+        "sherwin williams": "4:1",
+        "sherwin-williams": "4:1"
+      },
+      "weightPerSfProvenance": "calculated"
+    }
+  },
+  "source_sha256": {
+    "/Users/chrisngo/my stuff/Jobs/2026 Sample Plate Formulations.pdf": "e761f2cf92d5cd9ac2d616464d23ff7505bbe82615b578fd0fc125c1cd10432b",
+    "src/modules/samples/formulation.ts": "90237d23adae2552df3081c0131b72232cd3528e8bd7a2ae8b37bc9431411db0",
+    "src/modules/samples/SampleWorkspace.tsx": "de96e33fa98cf1cc1d5e96e57b6d41b5156a1a52da39b32975f5f695dc10a346",
+    "src/modules/samples/SampleFormulationTutorial.tsx": "31eb3978723935ba0c5aac6591ef114b96478241fea540cd957c29a188fca835",
+    "supabase/functions/_shared/sample-work-order-pdf-model.mjs": "817ea28b86a8d9afa382fa8949dbae8cf3229652196d89ebb9b71d8e93548967"
+  }
+}

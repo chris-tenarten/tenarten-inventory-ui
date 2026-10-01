@@ -1,0 +1,233 @@
+{
+  "_projectMemory": {
+    "classification": "KEEP — historical evidence, but superseded for Product behavior",
+    "noticeAdded": "2026-10-01",
+    "currentProductAuthority": "../2026-10-01-sample-batch-first-authority.md",
+    "payloadPreserved": true,
+    "notice": "Original source facts and legacy calculation replays remain unchanged. Former 16-oz MTT filler, fixed 80-oz dry pool, Sample-first authority, Production reverse-scaling and coordinated filler/chip substitution are not current Product requirements. Use the linked Batch-first authority: common MTT Batch 180 lb chips / 50 lb filler / 5 US gal A / 1 US gal B; representative shop Sample filler 18 oz."
+  },
+  "scenarios": [
+    {
+      "name": "one_sf",
+      "current": {
+        "area": "1",
+        "finishedArea": "1",
+        "volume": "0.03125",
+        "chips": "64",
+        "filler": "16",
+        "A": "15",
+        "B": "3",
+        "blend": [
+          "25.6",
+          "19.2",
+          "12.8",
+          "3.2",
+          "3.2"
+        ]
+      },
+      "batchFraction": 0.022222222222222223,
+      "transcribedBatchProjection": {
+        "chipsOz": 64,
+        "fillerOz": 17.77777777777778,
+        "AFlOz": 14.222222222222223,
+        "BFlOz": 2.8444444444444446
+      }
+    },
+    {
+      "name": "small",
+      "current": {
+        "area": "0.25",
+        "finishedArea": "0.25",
+        "volume": "0.007813",
+        "chips": "16",
+        "filler": "4",
+        "A": "3.75",
+        "B": "0.75",
+        "blend": [
+          "6.4",
+          "4.8",
+          "3.2",
+          "0.8",
+          "0.8"
+        ]
+      },
+      "batchFraction": 0.005555555555555556,
+      "transcribedBatchProjection": {
+        "chipsOz": 16,
+        "fillerOz": 4.444444444444445,
+        "AFlOz": 3.555555555555556,
+        "BFlOz": 0.7111111111111111
+      }
+    },
+    {
+      "name": "large",
+      "current": {
+        "area": "2",
+        "finishedArea": "2",
+        "volume": "0.0625",
+        "chips": "128",
+        "filler": "32",
+        "A": "30",
+        "B": "6",
+        "blend": [
+          "51.2",
+          "38.4",
+          "25.6",
+          "6.4",
+          "6.4"
+        ]
+      },
+      "batchFraction": 0.044444444444444446,
+      "transcribedBatchProjection": {
+        "chipsOz": 128,
+        "fillerOz": 35.55555555555556,
+        "AFlOz": 28.444444444444446,
+        "BFlOz": 5.688888888888889
+      }
+    },
+    {
+      "name": "three_6in_plates",
+      "current": {
+        "area": "0.75",
+        "finishedArea": "0.75",
+        "volume": "0.023438",
+        "chips": "48",
+        "filler": "12",
+        "A": "11.25",
+        "B": "2.25",
+        "blend": [
+          "19.2",
+          "14.4",
+          "9.6",
+          "2.4",
+          "2.4"
+        ]
+      },
+      "batchFraction": 0.016666666666666666,
+      "transcribedBatchProjection": {
+        "chipsOz": 48,
+        "fillerOz": 13.333333333333334,
+        "AFlOz": 10.666666666666666,
+        "BFlOz": 2.1333333333333333
+      }
+    },
+    {
+      "name": "half_inch",
+      "current": {
+        "area": "1",
+        "finishedArea": "1",
+        "volume": "0.041667",
+        "chips": "85.333333",
+        "filler": "21.333333",
+        "A": "20",
+        "B": "4",
+        "blend": [
+          "34.133333",
+          "25.6",
+          "17.066667",
+          "4.266667",
+          "4.266667"
+        ]
+      },
+      "batchFraction": 0.029629629629629627,
+      "transcribedBatchProjection": {
+        "chipsOz": 85.33333333333333,
+        "fillerOz": 23.703703703703702,
+        "AFlOz": 18.962962962962962,
+        "BFlOz": 3.7925925925925923
+      }
+    }
+  ],
+  "profileSwitch": {
+    "area": "1",
+    "finishedArea": "1",
+    "volume": "0.03125",
+    "chips": "64",
+    "filler": "16",
+    "A": "16",
+    "B": "4",
+    "blend": [
+      "25.6",
+      "19.2",
+      "12.8",
+      "3.2",
+      "3.2"
+    ]
+  },
+  "ratioOnly": {
+    "area": "1",
+    "finishedArea": "1",
+    "volume": "0.03125",
+    "chips": "64",
+    "filler": "16",
+    "A": "15",
+    "B": "3.75",
+    "blend": [
+      "25.6",
+      "19.2",
+      "12.8",
+      "3.2",
+      "3.2"
+    ]
+  },
+  "finishedCountOnly": {
+    "area": "1",
+    "finishedArea": "0.25",
+    "volume": "0.03125",
+    "chips": "64",
+    "filler": "16",
+    "A": "15",
+    "B": "3",
+    "blend": [
+      "25.6",
+      "19.2",
+      "12.8",
+      "3.2",
+      "3.2"
+    ]
+  },
+  "generic": {
+    "area": "1",
+    "finishedArea": "1",
+    "volume": "0.03125",
+    "chips": "64",
+    "filler": "18",
+    "A": "15",
+    "B": "3",
+    "blend": [
+      "25.6",
+      "19.2",
+      "12.8",
+      "3.2",
+      "3.2"
+    ]
+  },
+  "head": "af334e42076311501fbab464180fa6d799cbcc4b",
+  "scope": "Read-only source investigation; no hosted verification. Batch projection conditional on user transcription.",
+  "sources": [
+    {
+      "path": "/Users/chrisngo/my stuff/Jobs/2026 Sample Plate Formulations.pdf",
+      "sha256": "e761f2cf92d5cd9ac2d616464d23ff7505bbe82615b578fd0fc125c1cd10432b"
+    },
+    {
+      "path": "/Users/chrisngo/Downloads/Sample-Working.pdf",
+      "sha256": "34ac6d61a8722d4eae5c48b4238d162e9fccb4daa150b4e3724b761c29452436"
+    },
+    {
+      "path": "/Users/chrisngo/Downloads/Blank Color Plate MANUAL TEMPLATE.xlsx",
+      "sha256": "99b86c1f77f3cb0223e24c4ebd4300ce069e779159196da4f0ee3010934365c1"
+    },
+    {
+      "path": "src/modules/samples/formulation.ts",
+      "sha256": "90237d23adae2552df3081c0131b72232cd3528e8bd7a2ae8b37bc9431411db0"
+    },
+    {
+      "path": "supabase/migrations/20260918_004_sample_formula_density_profiles.sql",
+      "sha256": "bab26a2a7eec2db8b0933588db5bb99babefd3b8b18cffe9479c140bd3db853e"
+    },
+    {
+      "path": "supabase/migrations/20260923160000_sample_operational_profiles.sql",
+      "sha256": "0fce994d5086b37c36cda085c5623767c8688b71862336e1f4cf9840d6120d0e"
+    }
+  ]
+}
