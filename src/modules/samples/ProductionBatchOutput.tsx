@@ -1,15 +1,17 @@
 "use client";
+import {useAuth} from '@/lib/auth';
 import {useState} from 'react';
 import {productionBatchReadiness} from '../../../supabase/functions/_shared/sample-production-batch.mjs';
 import {generateProductionBatchPdf} from './queries';
 import {validateSampleForOutput,formatSampleError} from './sample-errors';
 import type {SampleRecord} from './types';
 export default function ProductionBatchOutput({sample,onSave,onPreview}:{sample:SampleRecord;onSave:()=>Promise<SampleRecord>;onPreview:(url:string,filename:string)=>void}) {
+ const auth=useAuth();const admin=auth.profile?.isActive&&auth.profile.role==='admin';
  const [source,setSource]=useState('working');const [busy,setBusy]=useState(false);const [error,setError]=useState('');
  const document=sample.issuedDocuments.find(d=>d.id===source);
  const reasons=source==='working'?productionBatchReadiness(sample).reasons:document?.batchUnavailableReasons??['Issued formulation is unavailable.'];
  async function generate(){
-  if(reasons.length)return;setBusy(true);setError('');
+  if(!admin||reasons.length)return;setBusy(true);setError('');
   try {
    let request:{sampleId:string}|{documentId:string};
    if(source==='working'){
@@ -20,6 +22,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview}:{sample:
    onPreview(URL.createObjectURL(blob),`Production-Batch-${document?'Issue-'+document.issueNumber:'Working-NOT-ISSUED'}.pdf`);
   }catch(caught){setError(`${caught instanceof Error?caught.message:'Unable to generate Production Batch.'} No issue or inventory transaction was created.`);}finally{setBusy(false);}
  }
+ if(!admin)return null;
  return <section aria-label="Production Batch Blend Sheet" className="border border-slate-300 bg-white p-4">
   <h2 className="text-sm font-bold uppercase tracking-wide">Production Batch Blend Sheet</h2>
   <p className="mt-1 text-xs text-slate-600">One Batch from the selected formulation. Package equivalents are a shop reference; generating this sheet does not consume inventory.</p>

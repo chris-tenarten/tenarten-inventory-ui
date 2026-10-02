@@ -1,4 +1,5 @@
 "use client";
+import {applyResinIdentity,synchronizeResin,resinConflict} from './resin-identity';
 import SampleResinSystemSelector from './SampleResinSystemSelector';
 import {BATCH_FIRST_VERSION,batchFirstQuantities} from "./formulation";
 import { projectSampleBatch, formatBatchQuantity } from "./batch-projection";
@@ -209,7 +210,7 @@ export default function SampleWorkspace() {
     const query = catalogQuery.trim();
     setCatalogResults([]);
     setCatalogSearchError("");
-    if (catalogRow === null || !catalogRole) {
+    if (catalogRow === null || !catalogRole || ['resin','hardener'].includes(catalogRole)) {
       setCatalogSearching(false);
       return;
     }
@@ -289,13 +290,14 @@ export default function SampleWorkspace() {
     try {
       const formulation = await loadSampleFormulationDefault();
       const bid = bids.find((item) => item.id === initialContext.bid);
-      const local = newLocalSample({
+      const initial = newLocalSample({
         preparedBy: auth.profile?.displayName ?? "",
         bidId: bid?.id,
         projectName: bid?.projectName,
         customerName: bid?.customer,
         formulation,
       });
+      const local=applyResinIdentity(initial,formulation);
       setQuantityViewState({record:null,view:"working"});
       setDraft(local);
       setDraftBaseline(JSON.stringify(local));
@@ -330,6 +332,7 @@ export default function SampleWorkspace() {
     }
   }
   async function persistDraft(source: SampleRecord) {
+    if(resinConflict(source))throw new Error('Resolve the Resin Color / # and Resin row difference before saving.');
     let saved = source;
     let createdId = "";
     try {
@@ -959,14 +962,15 @@ export default function SampleWorkspace() {
                   fieldKey={sampleRecentFieldKeys.resinColorNumber}
                   suggestions={recentValues.resin_color_number ?? []}
                   onLoad={loadRecent}
-                  onChange={(value) => patch("resinColorNumber", value)}
+                  onChange={(value) => setDraft(current=>current?synchronizeResin(current,"setup",value):current)}
                   className={field}
                 />
               </div>
             </section>
+            {resinConflict(draft)&&<div role="alert" className="border border-amber-400 bg-amber-50 p-3 text-sm">Resin Color / # and the Resin row contain different descriptions. Choose which value to keep in both fields before saving.<div className="mt-2 flex flex-wrap gap-2"><button type="button" className="min-h-11 border px-3" onClick={()=>setDraft(synchronizeResin(draft,'setup',draft.resinColorNumber,true))}>Use Resin Color / # for both</button><button type="button" className="min-h-11 border px-3" onClick={()=>setDraft(synchronizeResin(draft,'row',draft.blendRows.find(r=>r.componentRole==='resin')?.color??'',true))}>Use Resin row for both</button></div></div>}
             <section aria-label="Quantity view" className="border border-slate-300 bg-white p-4">
               <SampleResinSystemSelector state={draft.formulation} rows={draft.blendRows} onChange={formulation=>{
-                setDraft({...draft,formulation,blendRows:draft.blendRows.map(row=>row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})});
+                setDraft(applyResinIdentity({...draft,blendRows:draft.blendRows.map(row=>row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})},formulation));
                 setMessage('Resin System applied. Batch Filler and shop quantities reset to this profile; materials and percentages are preserved.');
               }}/>
               <p className="text-sm font-bold">View quantities as</p>
@@ -1112,12 +1116,13 @@ export default function SampleWorkspace() {
                         Color
                         <div className="relative">
                           <input
-                            role="combobox"
-                            aria-autocomplete="list"
+                            role={row.componentRole==='resin'||row.componentRole==='hardener'?undefined:"combobox"}
+                            aria-autocomplete={row.componentRole==='resin'||row.componentRole==='hardener'?undefined:"list"}
                             aria-expanded={catalogRow === index}
                             aria-controls={`sample-catalog-results-${row.id}`}
                             value={row.color}
                             onFocus={() => {
+                              if(['resin','hardener'].includes(row.componentRole))return;
                               setCatalogRow(index);
                               setCatalogQuery(row.color);
                             }}
@@ -1126,6 +1131,8 @@ export default function SampleWorkspace() {
                               setCatalogRow((current) => current === index ? null : current);
                             }}
                             onChange={(e) => {
+                              if(row.componentRole==='resin'){setDraft(current=>current?synchronizeResin(current,'row',e.target.value):current);return;}
+                              if(row.componentRole==='hardener'){patchRow(index,{...clearSampleCatalogSelection(row),color:e.target.value});return;}
                               patchRow(index, { ...clearSampleCatalogSelection(row), color: e.target.value });
                               setCatalogRow(index);
                               setCatalogQuery(e.target.value);
@@ -1133,15 +1140,15 @@ export default function SampleWorkspace() {
                             onKeyDown={(e) => {
                               if (e.key === "Escape") setCatalogRow(null);
                             }}
-                            placeholder="Type or search Catalog"
+                            placeholder={['resin','hardener'].includes(row.componentRole)?'Material description':'Type or search Catalog'}
                             className={`${field} pr-8`}
                           />
-                          <Search
+                          {!['resin','hardener'].includes(row.componentRole)&&<Search
                             aria-hidden="true"
                             className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                          />
+                          />}
                         </div>
-                        {catalogRow === index && (
+                        {catalogRow === index && !['resin','hardener'].includes(row.componentRole) && (
                           <div
                             id={catalogResults.length ? undefined : `sample-catalog-results-${row.id}`}
                             className="absolute left-0 right-0 z-30 mt-1 border border-slate-300 bg-white text-left shadow-xl"

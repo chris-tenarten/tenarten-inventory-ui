@@ -1,4 +1,5 @@
 // @ts-nocheck -- Deno Edge Function; validated through its local renderer fixture.
+import {renderCompactSample,COMPACT_SAMPLE_VERSION} from '../_shared/sample-working-compact-pdf.ts';
 import { renderProductionBatch } from "../_shared/production-batch-pdf.ts";
 import { createClient } from "@supabase/supabase-js";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
@@ -26,7 +27,8 @@ const cors = (origin: string) => ({
 const json = (body: unknown, status: number, headers: Record<string, string>) =>
   new Response(JSON.stringify(body), { status, headers: { ...headers, "Content-Type": "application/json" } });
 export async function renderSampleWorkOrder(snapshot: Record<string, unknown>, documentVersion = SAMPLE_PDF_VERSION) {
-  if ((snapshot.formulation ?? snapshot.formulation_state)?.calculationVersion === 'sample-formulation-v5-batch-first' && documentVersion === SAMPLE_PDF_VERSION) documentVersion = 'sample-work-order-pdf-v8-batch-first';
+  if ((snapshot.formulation ?? snapshot.formulation_state)?.calculationVersion === 'sample-formulation-v5-batch-first' && documentVersion === SAMPLE_PDF_VERSION) documentVersion = COMPACT_SAMPLE_VERSION;
+  if(documentVersion===COMPACT_SAMPLE_VERSION)return renderCompactSample(snapshot);
   const model = buildSamplePdfModel(snapshot, documentVersion);
   const pdf = await PDFDocument.create();
   pdf.setTitle(`Sample Work Order ${model.colorPlateNumber || ""}`.trim());
@@ -235,6 +237,9 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
       return json({ deleted: true }, 200, headers);
     }
     if (action === "batch-working" || action === "batch-issued") {
+      const {data: profiles,error: profileError}=await user.rpc("get_my_app_user");
+      const profile=Array.isArray(profiles)?profiles[0]:profiles;
+      if(profileError||profile?.role!=="admin"||profile?.is_active!==true)return json({error:"Production Batch Blend is currently available to Admin only."},403,headers);
       let snapshot;
       if (action === "batch-working") {
         const sampleId = String(body.sampleId || "");
