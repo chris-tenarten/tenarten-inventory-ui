@@ -13,7 +13,9 @@ export async function requireEdgeCapability(request: Request, capability: string
   if (!url || !anonKey) throw new EdgeAuthorizationError("Authorization configuration is incomplete.", 500);
   if (!token) throw new EdgeAuthorizationError("Authentication required.", 401);
   const caller = createClient(url, anonKey, {
-    global: { headers: { authorization } },
+    // Match the SDK's casing: getUser(token) adds Authorization itself.
+    // A lowercase duplicate is combined into an invalid comma-separated token.
+    global: { headers: { Authorization: authorization } },
     auth: { persistSession: false },
   });
   const { data: userData, error: userError } = await caller.auth.getUser(token);
