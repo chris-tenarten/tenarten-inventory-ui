@@ -4,6 +4,7 @@ import {BusinessSelect} from '@/components/BusinessWriteControls';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {buildProductionBlend,blendNumber as n} from '../../../supabase/functions/_shared/production-blend.mjs';
+import {hasCapturedBatchBasis} from './operational-profile-model';
 import type {SampleRecord} from './types';
 
 type Inputs={batchCount:string;plannedQuantity:string;blendSize:string};
@@ -22,6 +23,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview}:{sample:
  const [inputs,setInputs]=useState<Inputs>({batchCount:'1',plannedQuantity:'',blendSize:'1000'});
  let model:Model|null=null,calculationError='';
  if(snapshot)try{model=buildProductionBlend(snapshot,inputs);}catch(e){calculationError=e instanceof Error?e.message:'Invalid planning inputs.';}
+ const missingCurrentBasis = !hasCapturedBatchBasis(sample.formulation);
  const frozen=plan?.status==='issued';
  const shown=frozen?plan.model:model;
  async function run(work:()=>Promise<void>){setBusy(true);setError('');try{await work();}catch(e){setError(e instanceof Error?e.message:'Unable to load Production Blend.');}finally{setBusy(false);}}
@@ -45,8 +47,10 @@ export default function ProductionBatchOutput({sample,onSave,onPreview}:{sample:
   {!open?<button type="button" disabled={busy||!sample.id} className={`${button} mt-3`} onClick={()=>void begin()}>Plan Production Blend</button>:<>
    <div className="mt-3 flex flex-wrap gap-3">
     <label className="text-sm">Source formulation<BusinessSelect aria-label="Production source formulation" disabled={busy} value={source} onChange={e=>{setSource(e.target.value);setSnapshot(null);setPlan(null);}} className="ml-2 min-h-11 border border-slate-300"><option value="working">Current saved formulation</option>{sample.issuedDocuments.map(d=><option value={d.id} key={d.id}>Sample Issue {d.issueNumber}</option>)}</BusinessSelect></label>
-    <button type="button" className={button} disabled={busy} onClick={()=>void capture()}>New Blend Plan</button>
+    <button type="button" className={button} disabled={busy || (source==='working' && missingCurrentBasis)} onClick={()=>void capture()}>New Blend Plan</button>
    </div>
+   {source==='working' && missingCurrentBasis && <p role="status" className="mt-3 text-sm text-amber-900">This formulation has no captured Batch basis. <a className="font-bold underline" href="#sample-resin-system">Review the current Resin System defaults</a>, explicitly apply a complete profile, then save to enable New Blend Plan. Issued Sample history remains unchanged.</p>}
+   {source!=='working' && <p className="mt-3 text-sm text-slate-600">Issued sources are immutable. If this issue lacks Batch authority, select Current saved formulation, review and apply current Resin System defaults there, then save. This does not update the issued source.</p>}
    {plans.length>0&&<label className="mt-3 block text-sm">Saved Production plans<BusinessSelect aria-label="Saved Production plans" value={plan?.id||''} onChange={e=>{const p=plans.find(p=>p.id===e.target.value);if(p)load(p);}} className="ml-2 min-h-11 max-w-full border border-slate-300"><option value="">Select a plan</option>{plans.map(p=><option key={p.id} value={p.id}>{p.status==='issued'?'Issued':'Working'} · {n(p.model.batchCount)} Batches · {n(p.model.plannedQuantity)} lb · {new Date(p.created_at).toLocaleString()}</option>)}</BusinessSelect></label>}
    {snapshot&&<div className="mt-4 space-y-4">
     <p className="text-sm font-bold">{frozen?'ISSUED PRODUCTION BLEND SHEET':'WORKING PRODUCTION BLEND — NOT ISSUED'}</p>

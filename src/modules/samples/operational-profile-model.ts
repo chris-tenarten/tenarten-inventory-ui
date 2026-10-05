@@ -1,4 +1,4 @@
-import { applyFormulationProfile, type SampleFormulationProfile, type SampleFormulationState } from './formulation';
+import { BATCH_FIRST_VERSION, batchFirstQuantities, standardFormulationState, applyFormulationProfile, type SampleFormulationProfile, type SampleFormulationState } from './formulation';
 
 export type OperationalProfile = {
   id: string; revision: number; name: string; sort_order: number; is_active: boolean;
@@ -33,4 +33,16 @@ export function captureOperationalProfile(p: OperationalProfile): SampleFormulat
 }
 export function applyOperationalProfile(state: SampleFormulationState, p: OperationalProfile) {
   return applyFormulationProfile(state, captureOperationalProfile(p));
+}
+
+// Eligibility is based on captured authority, never a profile-name match.
+export function hasCapturedBatchBasis(state: SampleFormulationState): boolean {
+  const target = Number(state.profile?.batchChipTargetLb);
+  return state.calculationVersion === BATCH_FIRST_VERSION && Number.isFinite(target) && target > 0;
+}
+export function canApplyCurrentBatchDefaults(profile: OperationalProfile): boolean {
+  if (!profile.is_active || !profile.batch_contract || missingProfileInputs(profile).length ||
+      !(Number(profile.batch_chip_target_lb) > 0) || !(Number(profile.batch_reference_thickness_in) > 0)) return false;
+  const result = batchFirstQuantities(applyOperationalProfile(standardFormulationState(), profile), []);
+  return result.productionIssues.length === 0 && (result.canonical.resin ?? 0) > 0 && (result.canonical.hardener ?? 0) > 0;
 }
