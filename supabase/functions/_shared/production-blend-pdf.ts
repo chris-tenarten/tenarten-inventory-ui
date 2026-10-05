@@ -23,8 +23,7 @@ export async function renderProductionBlend(plan){
  line(`RESIN "B": ${sheet.profile} · ${m.binder.hardenerIdentity||'—'} — ${m.binder.hardener?`${n(m.binder.hardener.total)} US gal`:'Production quantity unavailable'}`);
  for(const filler of m.filler)line(`FILLER: ${filler.material||'—'} — ${filler.quantity==null?'Production quantity unavailable':`${n(filler.quantity)} lb${filler.package?` · ${n(filler.package.equivalent)} × ${n(filler.package.weightLb)} lb / ${filler.package.container}`:''}`}`);
  for(const other of sheet.other)line(`${other.label}: ${other.name} — Production quantity unavailable`);
- y-=5;ensure(50);page.drawRectangle({x:left,y:y-35,width,height:42,color:pale});
- [['ADJD BATCHES',n(m.batchCount)],['LBS. / BATCH',n(m.batchChipLb)],['ADJ',n(m.adjustment)],['LBS. REQUIRED',n(m.plannedQuantity)]].forEach(([label,value],i)=>{const x=left+8+i*width/4;text(label,x,y-6,8,bold,muted);text(value,x,y-26,16,bold);});y-=52;
+ y-=12;
  const widths=[64,50,195,48,30,54,70,137,43,45];
  function header(){ensure(65);text('CHIP BLEND',left,y,11,bold);y-=15;let x=left;['BAGS / BLEND','SKU','CHIP COLOR','% OF BLEND','SIZE','TYPE','VENDOR','BAGS REQUIRED','IN STOCK','NEED TO ORDER'].forEach((label,i)=>{page.drawRectangle({x,y:y-31,width:widths[i],height:31,color:pale});wrap(label,widths[i]-8,7.5,bold).forEach((part,j)=>text(part,x+4,y-10-j*9,7.5,bold,i>7?muted:ink));x+=widths[i];});y-=31;}
  header();
@@ -39,7 +38,7 @@ export async function renderProductionBlend(plan){
  if(y-25<bottom){newPage();header();}
  let x=left;const totals=[sheet.totalPerBlend,'','TOTAL',`${sheet.totalPercentage}%`,'','','',sheet.totalRequired,'—','—'];
  totals.forEach((value,i)=>{page.drawRectangle({x,y:y-24,width:widths[i],height:24,color:pale});text(value,x+4,y-16,9,bold,i>7?muted:ink);x+=widths[i];});y-=40;
- ensure(14);text(`${n(m.blendCount)} CHIP BLENDS`,left,y,sheet.full?11:8,sheet.full?bold:regular,sheet.full?ink:muted);
+ if(sheet.full){ensure(14);text(`${n(m.blendCount)} CHIP BLENDS`,left,y,11,bold);}
  for(let i=0;i<pages.length;i++){page=pages[i];text(`PLATE # ${sheet.plate}`,left,22,8,regular,muted);text(`Page ${i+1} of ${pages.length}`,width-35,22,8,regular,muted);}
  return new Uint8Array(await pdf.save());
 }

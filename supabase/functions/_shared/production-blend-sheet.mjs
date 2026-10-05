@@ -24,8 +24,8 @@ export function productionBlendSheet(plan){
   }
   return {material:present(row.material),sku:present(catalog.vendor_sku??catalog.vendorSku??catalog.package_context?.vendor_sku),
    type:present(pick(captured,'materialType','material_type')),size:present(row.size),vendor:present(row.vendor),percentage:row.percentage,
-   perBlend:full&&isBag&&row.bagsPerBlend!=null?n(row.bagsPerBlend):'—',required,pounds,
-   perBlendBags:full&&isBag?row.bagsPerBlend:null,requiredBags:isBag&&wholePackages?equivalent:null};
+   perBlend:isBag&&row.bagsPerBlend!=null?n(row.bagsPerBlend):'—',required,pounds,
+   perBlendBags:isBag?row.bagsPerBlend:null,requiredBags:isBag&&wholePackages?equivalent:null};
  });
  const sumKnown=key=>rows.every(row=>row[key]!=null)?n(rows.reduce((sum,row)=>sum+row[key],0)):'—';
  return {profile,full,date:date&&!Number.isNaN(date.getTime())?new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(date):'—',
