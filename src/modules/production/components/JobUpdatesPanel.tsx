@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessSelect, BusinessInput, BusinessButton, BusinessTextarea } from '@/components/BusinessWriteControls';
+
 import {
   CheckCircle2,
   File,
@@ -112,7 +114,7 @@ function AuthorControl({
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-xs font-semibold text-slate-600">{label}</span>
-      <select
+      <BusinessSelect
         aria-label={label}
         value={custom ? OTHER_AUTHOR_VALUE : isPreset ? value : ""}
         disabled={disabled}
@@ -136,9 +138,9 @@ function AuthorControl({
           </option>
         ))}
         <option value={OTHER_AUTHOR_VALUE}>Other…</option>
-      </select>
+      </BusinessSelect>
       {custom && (
-        <input
+        <BusinessInput
           aria-label={`${label} custom name`}
           value={value}
           disabled={disabled}
@@ -655,24 +657,24 @@ export default function JobUpdatesPanel({
                       )
                     ) : null}
                     {canEditJobUpdate(update) && !isEditing && (
-                      <button
+                      <BusinessButton
                         type="button"
                         onClick={() => beginEdit(update)}
                         className="inline-flex min-h-8 items-center gap-1 px-1.5 text-xs font-semibold text-slate-500 hover:text-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
                       >
                         <Pencil className="h-3.5 w-3.5" />
                         Edit
-                      </button>
+                      </BusinessButton>
                     )}
                     {canDeleteUpdate(update) && !isEditing && (
-                      <button
+                      <BusinessButton
                         type="button"
                         onClick={() => setDeleteTarget(update)}
                         className="inline-flex min-h-8 items-center gap-1 px-1.5 text-xs font-semibold text-slate-500 hover:text-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         Delete
-                      </button>
+                      </BusinessButton>
                     )}
                   </div>
                 </div>
@@ -707,7 +709,7 @@ export default function JobUpdatesPanel({
                       >
                         Cancel
                       </button>
-                      <button
+                      <BusinessButton
                         type="button"
                         onClick={() => void saveEdit(update)}
                         disabled={
@@ -718,7 +720,7 @@ export default function JobUpdatesPanel({
                         className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {savingEditId === update.id ? "Saving…" : "Save Changes"}
-                      </button>
+                      </BusinessButton>
                     </div>
                   </div>
                 ) : (
@@ -807,7 +809,7 @@ export default function JobUpdatesPanel({
                       <span className="font-normal text-slate-500">
                         (optional)
                       </span>
-                      <textarea
+                      <BusinessTextarea
                         value={resolutionDraft.message}
                         disabled={resolvingId !== null}
                         onChange={(event) =>
@@ -828,7 +830,7 @@ export default function JobUpdatesPanel({
                       {resolutionDraft.files.length
                         ? `${resolutionDraft.files.length} selected`
                         : "Attach files (optional)"}
-                      <input
+                      <BusinessInput
                         type="file"
                         multiple
                         disabled={resolvingId !== null}
@@ -852,7 +854,7 @@ export default function JobUpdatesPanel({
                       </div>
                     )}
                     <div className="mt-3 flex justify-end border-t border-amber-200 pt-3">
-                      <button
+                      <BusinessButton
                         type="button"
                         onClick={() => void resolve(update)}
                         disabled={
@@ -863,7 +865,7 @@ export default function JobUpdatesPanel({
                         {resolvingId === update.id
                           ? "Resolving…"
                           : "Mark resolved"}
-                      </button>
+                      </BusinessButton>
                     </div>
                   </div>
                 )}
@@ -918,7 +920,7 @@ export default function JobUpdatesPanel({
               />
             </label>
           </div>
-          <button
+          <BusinessButton
             type="button"
             onClick={() => void postUpdate()}
             disabled={posting || !(auth.profile?.displayName ?? authorName).trim() || !body.trim()}
@@ -926,7 +928,7 @@ export default function JobUpdatesPanel({
           >
             <MessageSquare className="h-4 w-4" />
             {posting ? "Posting…" : "Post update"}
-          </button>
+          </BusinessButton>
         </div>
         {selectedFiles.length > 0 && (
           <div className="mt-2 text-xs text-slate-600">
@@ -958,7 +960,7 @@ export default function JobUpdatesPanel({
             <p className="mt-2 text-sm leading-6 text-slate-600">This permanently removes the Update from the Job history and cannot be undone. Supporting files remain available on the Job.</p>
             <div className="mt-5 flex justify-end gap-2">
               <button type="button" disabled={deletingId !== null} onClick={() => setDeleteTarget(null)} className="h-9 border border-slate-300 bg-white px-3 text-xs font-bold uppercase text-slate-700 disabled:opacity-50">Cancel</button>
-              <button type="button" disabled={deletingId !== null} onClick={() => void confirmDelete()} className="h-9 border border-red-800 bg-red-800 px-3 text-xs font-bold uppercase text-white disabled:opacity-50">{deletingId ? "Deleting…" : "Delete Update"}</button>
+              <BusinessButton type="button" disabled={deletingId !== null} onClick={() => void confirmDelete()} className="h-9 border border-red-800 bg-red-800 px-3 text-xs font-bold uppercase text-white disabled:opacity-50">{deletingId ? "Deleting…" : "Delete Update"}</BusinessButton>
             </div>
           </div>
         </div>

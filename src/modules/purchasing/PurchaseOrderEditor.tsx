@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessButton, BusinessInput, BusinessSelect, BusinessTextarea } from '@/components/BusinessWriteControls';
+
 import { Download, FileText, RefreshCw, Search, Settings2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
@@ -283,20 +285,20 @@ function LineEditor({
       <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 py-2">
         <div className="text-xs font-bold uppercase">{tr('Purchase Order Line', 'Partida de orden de compra')} {index + 1}</div>
         <div className="flex gap-2">
-          <button
+          <BusinessButton
             type="button"
             onClick={onDuplicate}
             className="text-xs font-bold text-blue-700"
           >
             {tr('Duplicate', 'Duplicar')}
-          </button>
-          <button
+          </BusinessButton>
+          <BusinessButton
             type="button"
             onClick={onRemove}
             className="text-xs font-bold text-red-700"
           >
             {tr('Remove', 'Quitar')}
-          </button>
+          </BusinessButton>
         </div>
       </div>
       <LineAllocations line={line} jobs={jobs} onChange={onChange}/>
@@ -370,7 +372,7 @@ function LineEditor({
       <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className={label}>
           {line.materialType === 'resin' ? tr('Product', 'Producto') : tr('Material', 'Material')}
-          <input
+          <BusinessInput
             value={details.materialNameSnapshot}
             onChange={(e) => set("materialNameSnapshot", e.target.value)}
             className={field}
@@ -378,18 +380,18 @@ function LineEditor({
         </label>
         <label className={label}>
           {tr('Vendor SKU', 'SKU del proveedor')}
-          <input
+          <BusinessInput
             value={details.vendorSkuSnapshot}
             onChange={(e) => set("vendorSkuSnapshot", e.target.value)}
             className={field}
           />
         </label>
         {line.materialType === 'chip' && <label className={label}>
-          {tr('Size', 'Tamaño')}<input value={details.chipSize} onChange={(e) => set("chipSize", e.target.value)} className={field} />
+          {tr('Size', 'Tamaño')}<BusinessInput value={details.chipSize} onChange={(e) => set("chipSize", e.target.value)} className={field} />
         </label>}
         {line.materialType === 'chip' && <label className={label}>
           {tr('Moisture', 'Condición de humedad')}
-          <select
+          <BusinessSelect
             value={details.moistureCondition}
             onChange={(e) => set("moistureCondition", e.target.value)}
             className={field}
@@ -398,13 +400,13 @@ function LineEditor({
             <option value="dry">{tr('Dry', 'Seco')}</option>
             <option value="damp">{tr('Damp', 'Húmedo')}</option>
             <option value="wet">{tr('Wet', 'Mojado')}</option>
-          </select>
+          </BusinessSelect>
         </label>}
-        {line.materialType === 'resin' && <label className={label}>Resin Color<input value={details.resinColor} onChange={(e) => set('resinColor', e.target.value)} className={field} /></label>}
-        {line.materialType === 'resin' && <label className={label}>Component Type<input value={details.componentType} onChange={(e) => set('componentType', e.target.value)} placeholder="Part A, Part B, or Hardener" className={field} /></label>}
+        {line.materialType === 'resin' && <label className={label}>Resin Color<BusinessInput value={details.resinColor} onChange={(e) => set('resinColor', e.target.value)} className={field} /></label>}
+        {line.materialType === 'resin' && <label className={label}>Component Type<BusinessInput value={details.componentType} onChange={(e) => set('componentType', e.target.value)} placeholder="Part A, Part B, or Hardener" className={field} /></label>}
         <label className={label}>
           {tr('Container Size', 'Tamaño del envase')}
-          <select
+          <BusinessSelect
             value={containerSize(details)}
             onChange={(event) => {
               const parsed = parseContainerSize(event.target.value);
@@ -414,7 +416,7 @@ function LineEditor({
           >
             <option value="">Select a Catalog package size</option>
             {availableContainerSizes.map((size) => <option key={size.toLowerCase()} value={size}>{size}</option>)}
-          </select>
+          </BusinessSelect>
         </label>
         <label className={label}>
           {tr('Container', 'Envase')}
@@ -422,7 +424,7 @@ function LineEditor({
         </label>
         <label className={label}>
           {tr('Quantity', 'Cantidad')}
-          <input
+          <BusinessInput
             inputMode="decimal"
             value={details.quantityOrdered}
             onChange={(e) => set("quantityOrdered", e.target.value)}
@@ -436,7 +438,7 @@ function LineEditor({
         </label>}
         <label className={label}>
           {tr('Unit Cost', 'Costo unitario')}
-          <input
+          <BusinessInput
             inputMode="decimal"
             value={details.unitPrice}
             onChange={(e) => set("unitPrice", e.target.value)}
@@ -445,7 +447,7 @@ function LineEditor({
         </label>
         <label className={label}>
           {tr('Price Basis', 'Base del precio')}
-          <input
+          <BusinessInput
             value={details.priceBasis}
             onChange={(e) => set("priceBasis", e.target.value)}
             className={field}
@@ -461,7 +463,7 @@ function LineEditor({
         </label>
         <label className={`${label} sm:col-span-2`}>
           {tr('Description', 'Descripción')}
-          <input
+          <BusinessInput
             value={details.notes}
             onChange={(e) => set("notes", e.target.value)}
             className={field}
@@ -509,22 +511,22 @@ function LineEditor({
                       : "Update Individual Catalog Price"}
                 </button>
                 {applicable?.mode !== "bulk" && !activeReference.bulkMinimumQuantity && (
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={() => setCatalogEditor("bulk")}
                     className="font-bold text-blue-700"
                   >
                     Configure Bulk Pricing
-                  </button>
+                  </BusinessButton>
                 )}
                 {applicable?.mode !== "truckload" && !activeReference.truckloadMinimumQuantity && (
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={() => setCatalogEditor("truckload")}
                     className="font-bold text-blue-700"
                   >
                     Configure Truckload Pricing
-                  </button>
+                  </BusinessButton>
                 )}
               </>
             )}
@@ -1037,11 +1039,11 @@ export function PurchaseOrderEditor({
             {!readOnly && <fieldset disabled={pdfLoading || saving || issuing} className="min-w-0">
               <legend className="mb-1 text-xs font-bold text-slate-600">{tr('PDF Text Size', 'Tamaño de texto PDF')}</legend>
               <div className="flex" role="group" aria-label="PDF Text Size">
-                {(['compact', 'standard', 'large'] as const).map(size => <button
+                {(['compact', 'standard', 'large'] as const).map(size => <BusinessButton
                   key={size} type="button" aria-pressed={(draft.pdfTextSize || 'standard') === size}
                   onClick={() => setHeader('pdfTextSize', size)}
                   className={`min-h-11 border px-3 text-sm font-bold disabled:opacity-50 ${(draft.pdfTextSize || 'standard') === size ? 'border-blue-700 bg-blue-700 text-white' : 'border-slate-300 bg-white text-slate-700'}`}
-                >{size === 'compact' ? tr('Compact', 'Compacto') : size === 'large' ? tr('Large', 'Grande') : tr('Standard', 'Estándar')}</button>)}
+                >{size === 'compact' ? tr('Compact', 'Compacto') : size === 'large' ? tr('Large', 'Grande') : tr('Standard', 'Estándar')}</BusinessButton>)}
               </div>
             </fieldset>}
             <button
@@ -1082,14 +1084,14 @@ export function PurchaseOrderEditor({
             <section className="grid gap-3 rounded-sm border border-slate-300 bg-white p-3 md:grid-cols-[260px_1fr]">
               <label className={label}>
                 {tr('Document Template', 'Plantilla del documento')}
-                <select
+                <BusinessSelect
                   value={draft.documentTemplate || "tenops"}
                   onChange={(event) => setHeader("documentTemplate", event.target.value as PurchaseOrderDraft["documentTemplate"])}
                   className={field}
                 >
                   <option value="tenops">TenOps</option>
                   <option value="classic">Legacy (Classic)</option>
-                </select>
+                </BusinessSelect>
               </label>
               <div className="self-end pb-2 text-sm text-slate-600">
                 {draft.documentTemplate === "classic"
@@ -1102,7 +1104,7 @@ export function PurchaseOrderEditor({
                 <label className={label}>
                   {tr('Job Reference / Link Production Job', 'Referencia / Vincular trabajo de Producción')}
                 </label>
-                <select
+                <BusinessSelect
                   value={draft.productionJobId}
                   onChange={(e) => selectHeaderJob(e.target.value)}
                   className={field}
@@ -1113,7 +1115,7 @@ export function PurchaseOrderEditor({
                       {formatProductionJobOptionWithStatus(job)}
                     </option>
                   ))}
-                </select>
+                </BusinessSelect>
                 {draft.productionJobId && (
                   <JobTag
                     className="mt-2"
@@ -1141,7 +1143,7 @@ export function PurchaseOrderEditor({
               </div>
               <div className="md:col-span-2">
                 <label className={label}>{tr('Production PO Reference', 'Referencia de OC de Producción')}</label>
-                <select
+                <BusinessSelect
                   value={draft.jobPoReferenceType}
                   onChange={(event) => setHeader("jobPoReferenceType", event.target.value as PurchaseOrderDraft["jobPoReferenceType"])}
                   disabled={!draft.productionJobId}
@@ -1150,7 +1152,7 @@ export function PurchaseOrderEditor({
                   <option value="">Do not update a Job PO reference</option>
                   <option value="resin">Resin PO</option>
                   <option value="chip">Chip PO</option>
-                </select>
+                </BusinessSelect>
                 <p className="mt-1 text-xs text-slate-500">The selected Job reference is populated only after this PO is successfully issued.</p>
               </div>
               <div className="md:col-span-2 2xl:col-span-1">
@@ -1164,7 +1166,7 @@ export function PurchaseOrderEditor({
                   onChange={selectVendor}
                   className={field}
                 />
-                <button
+                <BusinessButton
                   type="button"
                   onClick={() => setVendorManagerOpen(true)}
                   className="mt-2 inline-flex min-h-8 w-full items-center justify-center border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-bold leading-tight text-blue-800 transition hover:border-blue-500 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
@@ -1173,11 +1175,11 @@ export function PurchaseOrderEditor({
                     <Settings2 className="h-4 w-4 shrink-0" aria-hidden="true" />
                     <span className="min-w-0 text-center">{tr("Manage Vendors & Contacts", "Administrar proveedores y contactos")}</span>
                   </span>
-                </button>
+                </BusinessButton>
               </div>
               <div>
                 <label className={label}>{tr('PO Date', 'Fecha de OC')}</label>
-                <input
+                <BusinessInput
                   type="date"
                   value={draft.orderDate}
                   onChange={(e) => setHeader("orderDate", e.target.value)}
@@ -1186,7 +1188,7 @@ export function PurchaseOrderEditor({
               </div>
               <div>
                 <label className={label}>{tr('Date Requested', 'Fecha solicitada')}</label>
-                <input
+                <BusinessInput
                   type="date"
                   value={draft.requestedDate}
                   onChange={(e) => setHeader("requestedDate", e.target.value)}
@@ -1195,7 +1197,7 @@ export function PurchaseOrderEditor({
               </div>
               <div>
                 <label className={label}>{tr('PO Originated By', 'OC originada por')}</label>
-                <input
+                <BusinessInput
                   value={draft.createdBy}
                   onChange={(e) => setHeader("createdBy", e.target.value)}
                   className={field}
@@ -1203,7 +1205,7 @@ export function PurchaseOrderEditor({
               </div>
               <div className="md:col-span-2">
                 <label className={label}>{tr('Vendor Address', 'Dirección del proveedor')}</label>
-                <textarea
+                <BusinessTextarea
                   value={draft.vendorAddressSnapshot}
                   onChange={(e) =>
                     setHeader("vendorAddressSnapshot", e.target.value)
@@ -1215,7 +1217,7 @@ export function PurchaseOrderEditor({
               <div className="md:col-span-2">
                 <label className={label}>{tr('Vendor Contact', 'Contacto del proveedor')}</label>
                 {draft.vendorId && !draft.vendorContactSnapshot.trim() && (
-                  <select
+                  <BusinessSelect
                     defaultValue=""
                     onChange={(e) => selectContact(e.target.value)}
                     className={field}
@@ -1230,9 +1232,9 @@ export function PurchaseOrderEditor({
                           {c.role ? ` — ${c.role}` : ""}
                         </option>
                       ))}
-                  </select>
+                  </BusinessSelect>
                 )}
-                <input
+                <BusinessInput
                   value={draft.vendorContactSnapshot}
                   onChange={(e) =>
                     setHeader("vendorContactSnapshot", e.target.value)
@@ -1243,7 +1245,7 @@ export function PurchaseOrderEditor({
               </div>
               <div className="md:col-span-2">
                 <label className={label}>{tr('Ship To', 'Enviar a')}</label>
-                <textarea
+                <BusinessTextarea
                   value={draft.shipToSnapshot}
                   onChange={(e) => setHeader("shipToSnapshot", e.target.value)}
                   rows={2}
@@ -1252,7 +1254,7 @@ export function PurchaseOrderEditor({
               </div>
               <div>
                 <label className={label}>{tr('Payment Terms', 'Condiciones de pago')}</label>
-                <input
+                <BusinessInput
                   value={draft.paymentTermsSnapshot}
                   onChange={(e) =>
                     setHeader("paymentTermsSnapshot", e.target.value)
@@ -1262,7 +1264,7 @@ export function PurchaseOrderEditor({
               </div>
               <div>
                 <label className={label}>{tr('Authorized By', 'Autorizado por')}</label>
-                <textarea
+                <BusinessTextarea
                   value={draft.authorizedBySnapshot}
                   onChange={(e) =>
                     setHeader("authorizedBySnapshot", e.target.value)
@@ -1310,7 +1312,7 @@ export function PurchaseOrderEditor({
                 }
               />
             ))}
-            <button
+            <BusinessButton
               type="button"
               onClick={() =>
                 setDraft((current) => ({
@@ -1324,11 +1326,11 @@ export function PurchaseOrderEditor({
               className="h-9 border border-slate-400 bg-white px-4 text-sm font-bold"
             >
               + {tr('Add Chip Line', 'Agregar partida de chip')}
-            </button>
+            </BusinessButton>
             {(['resin','pigment','filler','other'] as const).map((materialType) => (
-              <button key={materialType} type="button" onClick={() => setDraft((current) => ({...current, lines:[...current.lines, createPurchaseOrderMaterialLine(materialType, current.lines.length + 1)]}))} className="ml-2 h-9 border border-slate-400 bg-white px-4 text-sm font-bold">
+              <BusinessButton key={materialType} type="button" onClick={() => setDraft((current) => ({...current, lines:[...current.lines, createPurchaseOrderMaterialLine(materialType, current.lines.length + 1)]}))} className="ml-2 h-9 border border-slate-400 bg-white px-4 text-sm font-bold">
                 + Add {materialType.replace(/^./, (letter) => letter.toUpperCase())} Line
-              </button>
+              </BusinessButton>
             ))}
             </fieldset>
           </main>
@@ -1352,7 +1354,7 @@ export function PurchaseOrderEditor({
                 </div>
                 <label className={label}>
                   {tr('Discount %', 'Descuento %')}
-                  <input
+                  <BusinessInput
                     value={draft.discountPercent}
                     onChange={(e) =>
                       setHeader("discountPercent", e.target.value)
@@ -1362,7 +1364,7 @@ export function PurchaseOrderEditor({
                 </label>
                 <label className={label}>
                   {tr('Sales Tax %', 'Impuesto %')}
-                  <input
+                  <BusinessInput
                     value={draft.taxPercent}
                     onChange={(e) => setHeader("taxPercent", e.target.value)}
                     className={field}
@@ -1370,7 +1372,7 @@ export function PurchaseOrderEditor({
                 </label>
                 <label className={label}>
                   {tr('Freight', 'Flete')}
-                  <input
+                  <BusinessInput
                     value={draft.freight}
                     onChange={(e) => setHeader("freight", e.target.value)}
                     className={field}
@@ -1389,7 +1391,7 @@ export function PurchaseOrderEditor({
             <section className="rounded-sm border border-slate-300 bg-white p-3">
               <label className={label}>
                 {tr('Additional Notes & Special Conditions', 'Notas adicionales y condiciones especiales')}
-                <textarea
+                <BusinessTextarea
                   value={draft.commercialNotes}
                   onChange={(e) => setHeader("commercialNotes", e.target.value)}
                   rows={4}
@@ -1398,7 +1400,7 @@ export function PurchaseOrderEditor({
               </label>
               <label className={`${label} mt-3 block`}>
                 Internal Notes · Not printed
-                <textarea
+                <BusinessTextarea
                   value={draft.internalNotes}
                   onChange={(e) => setHeader("internalNotes", e.target.value)}
                   rows={4}
@@ -1407,26 +1409,26 @@ export function PurchaseOrderEditor({
               </label>
             </section>
             </fieldset>
-            {!readOnly && <button
+            {!readOnly && <BusinessButton
               type="button"
               onClick={() => void save()}
               disabled={saving || deleting || issuing}
               className="h-11 w-full bg-slate-900 px-4 text-sm font-bold text-white disabled:opacity-50"
             >
               {saving ? tr("Saving Draft…", "Guardando borrador…") : tr("Save Draft", "Guardar borrador")}
-            </button>}
+            </BusinessButton>}
             {draft.id && !readOnly && (
-              <button
+              <BusinessButton
                 type="button"
                 onClick={() => void remove()}
                 disabled={saving || deleting || issuing}
                 className="h-10 w-full border border-red-400 bg-white px-4 text-sm font-bold text-red-700 disabled:opacity-50"
               >
                 {deleting ? tr("Deleting Draft…", "Eliminando borrador…") : tr("Delete Saved Draft", "Eliminar borrador guardado")}
-              </button>
+              </BusinessButton>
             )}
             {draft.id && !readOnly && (
-              <button
+              <BusinessButton
                 type="button"
                 onClick={() => void issue()}
                 disabled={saving || deleting || issuing || dirty}
@@ -1434,7 +1436,7 @@ export function PurchaseOrderEditor({
                 title={dirty ? "Save your latest changes before issuing." : undefined}
               >
                 {issuing ? tr("Issuing Purchase Order…", "Emitiendo orden de compra…") : tr("Issue Purchase Order", "Emitir orden de compra")}
-              </button>
+              </BusinessButton>
             )}
             {readOnly && (
               <section className="rounded-sm border border-slate-300 bg-white p-3">
@@ -1469,10 +1471,10 @@ export function PurchaseOrderEditor({
                       <Download className="h-4 w-4" />Open / Download
                     </button>
                   ) : (
-                    <button type="button" disabled={pdfLoading} onClick={() => void generatePdf()} className="inline-flex h-9 flex-1 items-center justify-center gap-2 border border-blue-700 bg-blue-700 px-3 text-xs font-bold text-white disabled:opacity-50">
+                    <BusinessButton type="button" disabled={pdfLoading} onClick={() => void generatePdf()} className="inline-flex h-9 flex-1 items-center justify-center gap-2 border border-blue-700 bg-blue-700 px-3 text-xs font-bold text-white disabled:opacity-50">
                       <RefreshCw className={`h-4 w-4 ${pdfLoading ? "animate-spin" : ""}`} />
                       {pdfDocument?.status === "failed" ? "Retry PDF Generation" : "Generate PDF"}
-                    </button>
+                    </BusinessButton>
                   )}
                 </div>
               </section>
@@ -1493,7 +1495,7 @@ export function PurchaseOrderEditor({
                 </div>
                 <div className="mt-3 grid gap-2">
                   {(pendingReceivalRemainingCount > 0 || !pendingReceivalProjection) && (
-                    <button
+                    <BusinessButton
                       type="button"
                       disabled={pendingReceivalLoading}
                       onClick={() => void openPendingReceivalReview()}
@@ -1504,7 +1506,7 @@ export function PurchaseOrderEditor({
                         : pendingReceivalCreatedCount > 0
                           ? "Create Remaining Lines"
                           : "Create Pending Receivals"}
-                    </button>
+                    </BusinessButton>
                   )}
                   {pendingReceivalCreatedCount > 0 && (
                     <a
@@ -1520,14 +1522,14 @@ export function PurchaseOrderEditor({
               </section>
             )}
             {readOnly && draft.id && (
-              <button
+              <BusinessButton
                 type="button"
                 onClick={() => void purgeIssuedTest()}
                 disabled={deleting}
                 className="h-10 w-full border border-red-500 bg-white px-4 text-sm font-bold text-red-700 disabled:opacity-50"
               >
                 {deleting ? "Deleting Test PO…" : "Delete Issued Test PO"}
-              </button>
+              </BusinessButton>
             )}
             <p className="text-xs text-slate-500">
               {readOnly

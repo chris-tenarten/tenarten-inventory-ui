@@ -10,6 +10,8 @@ import {
   isAppRole,
   RBAC_MODE,
   roleHasCapability,
+  accountHasCapability,
+  READ_CAPABILITIES,
 } from "@/lib/rbac";
 
 export type AppUserProfile = {
@@ -17,6 +19,8 @@ export type AppUserProfile = {
   displayName: string;
   role: AppRole;
   isActive: boolean;
+  readOnly: boolean;
+  messagingWrite: boolean;
 };
 
 type AuthContextValue = {
@@ -50,6 +54,8 @@ function normalizeProfile(value: unknown): AppUserProfile | null {
     displayName: typeof source.display_name === "string" ? source.display_name : "TenOps user",
     role,
     isActive: source.is_active === true,
+    readOnly: source.read_only === true,
+    messagingWrite: source.messaging_write === true,
   };
 }
 
@@ -66,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfileError("");
       return;
     }
-    const { data, error } = await supabase.rpc("get_my_app_user");
+    const { data, error } = await supabase.rpc("get_my_app_access");
     if (error) {
       setProfile(null);
       setProfileError(
@@ -79,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const nextProfile = normalizeProfile(data);
     setProfile(nextProfile);
     setProfileError("");
-    if (nextProfile?.isActive) {
+    if (nextProfile?.isActive && !nextProfile.readOnly) {
       const { error: welcomeError } = await supabase.rpc("ensure_my_welcome_notification");
       if (!welcomeError) window.dispatchEvent(new Event("tenops:notifications-changed"));
     }
@@ -125,9 +131,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshProfile = useCallback(async () => loadProfile(session), [loadProfile, session]);
   const can = useCallback((capability: Capability) => {
-    if (!session) return RBAC_MODE === "compatibility";
+    if (!session) return RBAC_MODE === "compatibility" && READ_CAPABILITIES.includes(capability);
     if (!profile?.isActive) return false;
-    return roleHasCapability(profile.role, capability);
+    return accountHasCapability(profile.role, capability, profile.readOnly, profile.messagingWrite);
   }, [profile, session]);
 
   const value = useMemo<AuthContextValue>(() => ({

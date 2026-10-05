@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-05",
+  "baseSha": "4c81212",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "typescript": "passed",
+  "targetedEslint": "passed, zero warnings",
+  "diffCheck": "passed",
+  "productionBuild": "passed: 22 static pages plus dynamic delete-transaction route",
+  "hostedMutation": false,
+  "released": false,
+  "sha256": {
+    "supabase/migrations/20261005120000_read_only_messaging_write.sql": "b02fcd9f292d381426a3dbae35f0ccab0076a5f91d846931414e96c0b88a22fc",
+    "src/lib/rbac.ts": "1a4189e274b70f55832af7b6d0497430857a173fd9bc4dd3572ea3451c08546b",
+    "src/lib/auth.tsx": "1a7cd62e9da9b8d8bad7ec3833742dbf2be104f17db930fcb9046083f9d92fd8",
+    "src/components/BusinessWriteControls.tsx": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+    "supabase/functions/admin-manage-users/index.ts": "0328d6d7848c82cdd2e2636a1cf57e92091bb644c4e0741da3dc9ae5313db8b6",
+    "supabase/functions/generate-sample-pdf/index.ts": "d9c7411e470074e397d64f0e83e614cafaa2489510bff2ea9eb7bf0835542bb9",
+    "supabase/functions/generate-proposal-pdf/index.ts": "fb2d7893f4c2656f0d9436d98a168b07a5b1a934d63e68010ae3108ffe1b7b65",
+    "src/lib/server-auth.ts": "5f7d6ab5fc395a523d86d5001711cb0c460e2d5411bc8f4342884960194496ec"
+  }
+}

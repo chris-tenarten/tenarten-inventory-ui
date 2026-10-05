@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessButton, BusinessInput, BusinessSelect, BusinessTextarea } from '@/components/BusinessWriteControls';
+
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -641,7 +643,7 @@ export default function TransactionsPage() {
             <div className="border-b border-slate-300 bg-[#f6f7f9] px-4 py-4 sm:px-5">
               <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Action</div>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                <button
+                <BusinessButton
                   type="button"
                   onClick={() => {
                     setAction("add");
@@ -657,9 +659,9 @@ export default function TransactionsPage() {
                   <span className="mt-1 block text-xs font-semibold uppercase tracking-[0.16em] opacity-80">
                     Add stock to inventory
                   </span>
-                </button>
+                </BusinessButton>
 
-                <button
+                <BusinessButton
                   type="button"
                   onClick={() => {
                     setAction("remove");
@@ -675,10 +677,10 @@ export default function TransactionsPage() {
                   <span className="mt-1 block text-xs font-semibold uppercase tracking-[0.16em] opacity-80">
                     Remove stock from inventory
                   </span>
-                </button>
+                </BusinessButton>
 
                 {SHOW_ADMIN_ACTIONS && (
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={() => {
                       setAction("audit");
@@ -695,7 +697,7 @@ export default function TransactionsPage() {
                     <span className="mt-1 block text-xs font-semibold uppercase tracking-[0.16em] opacity-80">
                       Create correction transaction
                     </span>
-                  </button>
+                  </BusinessButton>
                 )}
               </div>
             </div>
@@ -704,7 +706,7 @@ export default function TransactionsPage() {
               <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Line Items</div>
               <div className="grid max-w-md grid-cols-2 border border-slate-400 bg-white text-sm font-bold uppercase tracking-[0.12em]">
                 {(["single", "multi"] as EntryMode[]).map((mode) => (
-                  <button
+                  <BusinessButton
                     key={mode}
                     type="button"
                     onClick={() => {
@@ -719,7 +721,7 @@ export default function TransactionsPage() {
                     }`}
                   >
                     {mode === "single" ? "Single" : "Multiple"}
-                  </button>
+                  </BusinessButton>
                 ))}
               </div>
             </div>
@@ -749,14 +751,14 @@ export default function TransactionsPage() {
                               <div className="mt-1 text-xs font-bold text-red-700">{validation.error}</div>
                             )}
                           </div>
-                          <button
+                          <BusinessButton
                             type="button"
                             onClick={() => removeLineItem(line.id)}
                             disabled={lineItems.length <= 1}
                             className="border border-red-300 bg-red-50 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-red-700 transition hover:border-red-700 disabled:cursor-not-allowed disabled:opacity-40"
                           >
                             Remove
-                          </button>
+                          </BusinessButton>
                         </div>
 
                         <div className="grid gap-3 md:grid-cols-12">
@@ -764,7 +766,7 @@ export default function TransactionsPage() {
                             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                               Vendor
                             </label>
-                            <input
+                            <BusinessInput
                               value={line.vendor}
                               onChange={(e) => updateLineItem(line.id, { vendor: e.target.value })}
                               list="vendor-suggestions"
@@ -777,7 +779,7 @@ export default function TransactionsPage() {
                             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                               Material
                             </label>
-                            <input
+                            <BusinessInput
                               value={line.material}
                               onChange={(e) => updateLineItem(line.id, { material: e.target.value })}
                               list="all-material-suggestions"
@@ -790,7 +792,7 @@ export default function TransactionsPage() {
                             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                               Size
                             </label>
-                            <input
+                            <BusinessInput
                               value={line.size}
                               onChange={(e) => updateLineItem(line.id, { size: e.target.value })}
                               list="size-suggestions"
@@ -803,7 +805,7 @@ export default function TransactionsPage() {
                             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                               Qty
                             </label>
-                            <input
+                            <BusinessInput
                               value={line.quantity}
                               onChange={(e) => updateLineItem(line.id, { quantity: e.target.value })}
                               inputMode="decimal"
@@ -816,7 +818,7 @@ export default function TransactionsPage() {
                             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                               Unit
                             </label>
-                            <input
+                            <BusinessInput
                               value={line.unit}
                               onChange={(e) => updateLineItem(line.id, { unit: e.target.value })}
                               list="unit-suggestions"
@@ -829,7 +831,7 @@ export default function TransactionsPage() {
                             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                               Category
                             </label>
-                            <select
+                            <BusinessSelect
                               value={line.category}
                               onChange={(e) => updateLineItem(line.id, { category: e.target.value })}
                               className="w-full border border-slate-400 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -840,14 +842,14 @@ export default function TransactionsPage() {
                                   {option}
                                 </option>
                               ))}
-                            </select>
+                            </BusinessSelect>
                           </div>
 
                           <div className="md:col-span-2">
                             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                               Location
                             </label>
-                            <input
+                            <BusinessInput
                               value={line.location}
                               onChange={(e) => updateLineItem(line.id, { location: e.target.value })}
                               className="w-full border border-slate-400 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -859,7 +861,7 @@ export default function TransactionsPage() {
                             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                               Pallet
                             </label>
-                            <input
+                            <BusinessInput
                               value={line.palletNumber}
                               onChange={(e) => updateLineItem(line.id, { palletNumber: e.target.value })}
                               className="w-full border border-slate-400 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -871,7 +873,7 @@ export default function TransactionsPage() {
                             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
                               Note
                             </label>
-                            <input
+                            <BusinessInput
                               value={line.note}
                               onChange={(e) => updateLineItem(line.id, { note: e.target.value })}
                               className="w-full border border-slate-400 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -885,13 +887,13 @@ export default function TransactionsPage() {
                 </div>
 
                 <div className="border-t border-slate-300 bg-[#f6f7f9] px-4 py-3">
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={addLineItem}
                     className="border border-slate-400 bg-white px-4 py-2.5 text-sm font-bold uppercase tracking-[0.12em] text-slate-800 transition hover:border-slate-900 hover:bg-slate-100"
                   >
                     + Add Line Item
-                  </button>
+                  </BusinessButton>
                 </div>
               </div>
             ) : (
@@ -903,7 +905,7 @@ export default function TransactionsPage() {
                 <div className="grid gap-px bg-slate-300 sm:grid-cols-2">
                   <div className="bg-white p-3 sm:p-4">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Vendor</label>
-                    <input
+                    <BusinessInput
                       value={vendor}
                       onChange={(e) => setVendor(e.target.value)}
                       list="vendor-suggestions"
@@ -925,7 +927,7 @@ export default function TransactionsPage() {
 
                   <div className="bg-white p-3 sm:p-4">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Material</label>
-                    <input
+                    <BusinessInput
                       value={material}
                       onChange={(e) => setMaterial(e.target.value)}
                       list="material-suggestions"
@@ -941,7 +943,7 @@ export default function TransactionsPage() {
 
                   <div className="bg-white p-3 sm:p-4">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Size</label>
-                    <input
+                    <BusinessInput
                       value={size}
                       onChange={(e) => setSize(e.target.value)}
                       list="size-suggestions"
@@ -957,7 +959,7 @@ export default function TransactionsPage() {
 
                   <div className="bg-white p-3 sm:p-4">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Category</label>
-                    <select
+                    <BusinessSelect
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                       className="w-full border border-slate-400 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -968,7 +970,7 @@ export default function TransactionsPage() {
                           {option}
                         </option>
                       ))}
-                    </select>
+                    </BusinessSelect>
                   </div>
                 </div>
 
@@ -979,7 +981,7 @@ export default function TransactionsPage() {
                 <div className="grid gap-px bg-slate-300 sm:grid-cols-2">
                   <div className="bg-white p-3 sm:p-4">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Quantity</label>
-                    <input
+                    <BusinessInput
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value)}
                       className="w-full border border-slate-400 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -990,7 +992,7 @@ export default function TransactionsPage() {
 
                   <div className="bg-white p-3 sm:p-4">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Unit</label>
-                    <input
+                    <BusinessInput
                       value={unit}
                       onChange={(e) => setUnit(e.target.value)}
                       list="unit-suggestions"
@@ -1006,7 +1008,7 @@ export default function TransactionsPage() {
 
                   <div className="bg-white p-3 sm:p-4">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Location</label>
-                    <input
+                    <BusinessInput
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       className="w-full border border-slate-400 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -1016,7 +1018,7 @@ export default function TransactionsPage() {
 
                   <div className="bg-white p-3 sm:p-4">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Pallet</label>
-                    <input
+                    <BusinessInput
                       value={palletNumber}
                       onChange={(e) => setPalletNumber(e.target.value)}
                       className="w-full border border-slate-400 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -1026,7 +1028,7 @@ export default function TransactionsPage() {
 
                   <div className="bg-white p-3 sm:p-4">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Your Name</label>
-                    <input
+                    <BusinessInput
                       value={enteredBy}
                       onChange={(e) => setEnteredBy(e.target.value)}
                       className="w-full border border-slate-400 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -1036,7 +1038,7 @@ export default function TransactionsPage() {
 
                   <div className="bg-white p-3 sm:p-4 md:col-span-2">
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Note</label>
-                    <textarea
+                    <BusinessTextarea
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
                       rows={3}
@@ -1081,7 +1083,7 @@ export default function TransactionsPage() {
                   {reservationAction === "reserve" && (
                     <div>
                       <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">Job Name</label>
-                      <input
+                      <BusinessInput
                         value={jobName}
                         onChange={(e) => setJobName(e.target.value)}
                         className="w-full border border-slate-400 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -1094,7 +1096,7 @@ export default function TransactionsPage() {
                     <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-600">
                       {reservationAction === "release" ? "Release Note" : "Reservation Note"}
                     </label>
-                    <input
+                    <BusinessInput
                       value={reservationNote}
                       onChange={(e) => setReservationNote(e.target.value)}
                       className="w-full border border-slate-400 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -1107,7 +1109,7 @@ export default function TransactionsPage() {
               {entryMode === "multi" && (
                 <div className="border border-slate-300 bg-white p-3 text-xs leading-5 text-slate-600">
                   <div className="font-bold uppercase tracking-[0.14em] text-slate-600">Operator</div>
-                  <input
+                  <BusinessInput
                     value={enteredBy}
                     onChange={(e) => setEnteredBy(e.target.value)}
                     className="mt-2 w-full border border-slate-400 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
@@ -1145,7 +1147,7 @@ export default function TransactionsPage() {
               Reset
             </button>
 
-            <button
+            <BusinessButton
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || isLoadingCatalog}
@@ -1160,7 +1162,7 @@ export default function TransactionsPage() {
                     : action === "remove"
                       ? "Record Outtake"
                       : "Set Exact Count"}
-            </button>
+            </BusinessButton>
           </div>
         </div>
       </div>

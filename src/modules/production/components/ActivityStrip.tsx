@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessButton } from '@/components/BusinessWriteControls';
+
 import { ListTodo, Paperclip } from "lucide-react";
 import type { MouseEvent } from "react";
 import type { JobUpdateSummary } from "../jobs";
@@ -59,7 +61,7 @@ export default function ActivityStrip({
           {attachmentCount > 0 ? attachmentCount : ""}
         </span>
       </button>
-      <button
+      <BusinessButton
         type="button"
         onClick={createTask}
         aria-label={`New task for ${job.job_number || job.name}`}
@@ -67,7 +69,7 @@ export default function ActivityStrip({
         className="pointer-events-auto inline-flex h-6 w-6 shrink-0 items-center justify-center border border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
       >
         <ListTodo className="h-3.5 w-3.5" aria-hidden="true" />
-      </button>
+      </BusinessButton>
       <ReworkQuickAction job={job} onCreate={onCreateRework} />
     </span>
   );

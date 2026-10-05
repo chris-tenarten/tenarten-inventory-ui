@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessSelect, BusinessInput } from '@/components/BusinessWriteControls';
+
 import { useState } from "react";
 import type { VendorOption } from "./types";
 
@@ -23,7 +25,7 @@ export function PurchasingChoiceWithCustom({
 
   return (
     <div>
-      <select
+      <BusinessSelect
         value={showCustom ? "__other" : recognized || ""}
         onChange={(event) => {
           if (event.target.value === "__other") {
@@ -39,9 +41,9 @@ export function PurchasingChoiceWithCustom({
         <option value="">Not specified</option>
         {options.map((option) => <option key={option} value={option}>{option}</option>)}
         <option value="__other">Other</option>
-      </select>
+      </BusinessSelect>
       {showCustom && (
-        <input
+        <BusinessInput
           autoFocus
           value={value}
           onChange={(event) => onChange(event.target.value)}
@@ -69,7 +71,7 @@ export function PurchasingVendorNameInput({
   const optionsId = `${id}-options`;
   return (
     <>
-      <input
+      <BusinessInput
         id={id}
         list={optionsId}
         value={value}

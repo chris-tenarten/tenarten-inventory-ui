@@ -1,4 +1,7 @@
 "use client";
+
+import { BusinessButton, BusinessInput, BusinessSelect } from '@/components/BusinessWriteControls';
+
 import {resolveBatchFiller} from "../../../supabase/functions/_shared/sample-batch-first.mjs";
 import { Settings2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -160,7 +163,7 @@ export default function SampleFormulationConfigurator({
           </p>
           {result.invalidMassBalance && <p className="mt-1 text-xs font-bold text-red-700">Non-chip ingredients exceed Total Formula Weight. Reduce them or increase the total.</p>}
           {isV4 && Math.abs(Number(result.dryPoolVarianceOz||0))>0.005 && <div className="mt-3 border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950"><p className="font-bold">This formula differs from the selected profile&apos;s expected dry-material balance by {Number(result.dryPoolVarianceOz)>0?'+':''}{number(result.dryPoolVarianceOz)} oz.</p><p className="mt-1">This is allowed. Use Adjust Formulation only when you intend to preserve the profile relationship.</p></div>}
-          {isV4 && <button type="button" onClick={()=>{setAdjustmentFiller(result.effectiveFillerOz);setAdjusting(true);}} className="mt-3 min-h-10 border border-slate-400 bg-white px-3 text-xs font-bold">Adjust Formulation</button>}
+          {isV4 && <BusinessButton type="button" onClick={()=>{setAdjustmentFiller(result.effectiveFillerOz);setAdjusting(true);}} className="mt-3 min-h-10 border border-slate-400 bg-white px-3 text-xs font-bold">Adjust Formulation</BusinessButton>}
         </div>
         <button
           data-sample-tutorial="calculation-settings-toggle"
@@ -192,18 +195,18 @@ export default function SampleFormulationConfigurator({
           </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {isV4 && <>
-              <label className={label}>Dry-material Rate<input type="number" min="0" step="0.000001" value={state.profile?.dryPoolOzPerCft??''} onChange={(event)=>patchProfile({dryPoolOzPerCft:event.target.value})} className={input}/><span className={hint}>oz/CFT · advanced custom profile</span></label>
-              <label className={label}>Default Filler Rate<input type="number" min="0" step="0.000001" value={state.profile?.defaultFillerOzPerCft??''} onChange={(event)=>patchProfile({defaultFillerOzPerCft:event.target.value})} className={input}/><span className={hint}>oz/CFT · applies only to Profile-default Filler</span></label>
-              <label className={label}>Resin-volume Rate<input type="number" min="0" step="0.000001" value={state.profile?.resinFlOzPerCft??''} onChange={(event)=>patchProfile({resinFlOzPerCft:event.target.value})} className={input}/><span className={hint}>fl oz/CFT · applies only to Profile-default Resin</span></label>
+              <label className={label}>Dry-material Rate<BusinessInput type="number" min="0" step="0.000001" value={state.profile?.dryPoolOzPerCft??''} onChange={(event)=>patchProfile({dryPoolOzPerCft:event.target.value})} className={input}/><span className={hint}>oz/CFT · advanced custom profile</span></label>
+              <label className={label}>Default Filler Rate<BusinessInput type="number" min="0" step="0.000001" value={state.profile?.defaultFillerOzPerCft??''} onChange={(event)=>patchProfile({defaultFillerOzPerCft:event.target.value})} className={input}/><span className={hint}>oz/CFT · applies only to Profile-default Filler</span></label>
+              <label className={label}>Resin-volume Rate<BusinessInput type="number" min="0" step="0.000001" value={state.profile?.resinFlOzPerCft??''} onChange={(event)=>patchProfile({resinFlOzPerCft:event.target.value})} className={input}/><span className={hint}>fl oz/CFT · applies only to Profile-default Resin</span></label>
             </>}
             {isMassBalance && <label className={label}>
               Total Formula Weight
-              <input type="number" min="0" step="0.01" value={state.totalFormulaWeightOz} onChange={(event)=>patch({totalFormulaWeightOz:event.target.value})} className={input}/>
+              <BusinessInput type="number" min="0" step="0.01" value={state.totalFormulaWeightOz} onChange={(event)=>patch({totalFormulaWeightOz:event.target.value})} className={input}/>
               <span className={hint}>ounces · historical V2 mass-balance input</span>
             </label>}
             <label data-sample-tutorial="finished-pieces" className={label}>
               Finished Plate Width
-              <input
+              <BusinessInput
                 type="number"
                 min="0"
                 step="0.001"
@@ -217,7 +220,7 @@ export default function SampleFormulationConfigurator({
             </label>
             <label data-sample-tutorial="finished-pieces" className={label}>
               Finished Plate Length
-              <input
+              <BusinessInput
                 type="number"
                 min="0"
                 step="0.001"
@@ -231,7 +234,7 @@ export default function SampleFormulationConfigurator({
             </label>
             <label data-sample-tutorial="finished-pieces" className={label}>
               Finished Pieces
-              <input
+              <BusinessInput
                 type="number"
                 min="1"
                 step="1"
@@ -244,7 +247,7 @@ export default function SampleFormulationConfigurator({
             </label>
             <label data-sample-tutorial="finished-pieces production-pour" className={label}>
               Thickness
-              <input
+              <BusinessInput
                 type="number"
                 min="0"
                 step="0.001"
@@ -256,7 +259,7 @@ export default function SampleFormulationConfigurator({
             </label>
             <label data-sample-tutorial="production-pour" className={label}>
               Working Pour Width
-              <input
+              <BusinessInput
                 type="number"
                 min="0"
                 step="0.001"
@@ -267,7 +270,7 @@ export default function SampleFormulationConfigurator({
             </label>
             <label data-sample-tutorial="production-pour" className={label}>
               Working Pour Length
-              <input
+              <BusinessInput
                 type="number"
                 min="0"
                 step="0.001"
@@ -278,7 +281,7 @@ export default function SampleFormulationConfigurator({
             </label>
             <label data-sample-tutorial="production-pour" className={label}>
               Dimension Unit
-              <select
+              <BusinessSelect
                 value={state.dimensionUnit}
                 onChange={(event) =>
                   patch({ dimensionUnit: event.target.value as "in" | "ft" })
@@ -287,11 +290,11 @@ export default function SampleFormulationConfigurator({
               >
                 <option value="in">inches</option>
                 <option value="ft">feet</option>
-              </select>
+              </BusinessSelect>
             </label>
             <label className={label}>
               {isBatchFirst ? "Batch reference chip loading" : "Material Density"}
-              <input
+              <BusinessInput
                 type="number"
                 min="0"
                 step="0.001"
@@ -306,7 +309,7 @@ export default function SampleFormulationConfigurator({
             </label>
             {!isV4 && !isBatchFirst && <label className={label}>
               Weight / SF
-              <input
+              <BusinessInput
                 type="number"
                 min="0"
                 step="0.0001"
@@ -338,7 +341,7 @@ export default function SampleFormulationConfigurator({
                   Reset to Calculated
                 </button>
               ) : (
-                <button
+                <BusinessButton
                   type="button"
                   onClick={() =>
                     patch({
@@ -349,12 +352,12 @@ export default function SampleFormulationConfigurator({
                   className="mt-2 min-h-9 border border-slate-300 px-2 text-xs font-bold"
                 >
                   Override
-                </button>
+                </BusinessButton>
               )}
             </label>}
             {!isV4 && !isBatchFirst && <label className={label}>
               Geometry Chip Mix Reference
-              <input
+              <BusinessInput
                 type="number"
                 min="0"
                 step="0.0001"
@@ -388,7 +391,7 @@ export default function SampleFormulationConfigurator({
             </label>}
             <label className={label}>
               Resin : Hardener Ratio
-              <select
+              <BusinessSelect
                 disabled={isBatchFirst}
                 value={normalizeSupportedSampleRatio(state.resinParts,state.hardenerParts)??""}
                 onChange={(event) => {
@@ -404,7 +407,7 @@ export default function SampleFormulationConfigurator({
               >
                 <option value="5:1">5:1</option>
                 <option value="4:1">4:1</option>
-              </select>
+              </BusinessSelect>
               <span className={hint}>
                 {state.ratioProvenance === "manual"
                   ? "Modified"
@@ -421,13 +424,13 @@ export default function SampleFormulationConfigurator({
               )}
             </label>
           </div>
-          <button
+          <BusinessButton
             type="button"
             onClick={() => void saveDefault()}
             className="mt-4 min-h-10 border border-slate-300 bg-white px-3 text-xs font-bold"
           >
             Use settings for future new Samples
-          </button>
+          </BusinessButton>
           {defaultStatus && (
             <span role="status" className="ml-3 text-xs text-slate-500">
               {defaultStatus}
@@ -436,10 +439,10 @@ export default function SampleFormulationConfigurator({
         </div>
       )}
       {adjusting && !isBatchFirst && <div role="dialog" aria-modal="true" aria-label="Adjust Formulation" className="mt-4 border-2 border-blue-800 bg-blue-50 p-4">
-        <div className="flex items-start justify-between gap-3"><div><h3 className="text-sm font-bold">Increase Filler while preserving dry-material profile</h3><p className="mt-1 text-xs text-slate-700">This intentionally coordinates Filler, effective Chip density, Chip Mix, and calculated Aggregate ounces.</p></div><button type="button" onClick={()=>setAdjusting(false)} aria-label="Close formulation adjustment" className="h-10 w-10 border border-slate-400 bg-white"><X className="mx-auto h-4 w-4"/></button></div>
-        <label className={`${label} mt-3 block max-w-xs`}>Target Filler<input type="number" min="0" step="0.01" value={adjustmentFiller} onChange={event=>setAdjustmentFiller(event.target.value)} className={input}/><span className={hint}>oz at the current production geometry</span></label>
+        <div className="flex items-start justify-between gap-3"><div><h3 className="text-sm font-bold">Increase Filler while preserving dry-material profile</h3><p className="mt-1 text-xs text-slate-700">This intentionally coordinates Filler, effective Chip density, Chip Mix, and calculated Aggregate ounces.</p></div><BusinessButton type="button" onClick={()=>setAdjusting(false)} aria-label="Close formulation adjustment" className="h-10 w-10 border border-slate-400 bg-white"><X className="mx-auto h-4 w-4"/></BusinessButton></div>
+        <label className={`${label} mt-3 block max-w-xs`}>Target Filler<BusinessInput type="number" min="0" step="0.01" value={adjustmentFiller} onChange={event=>setAdjustmentFiller(event.target.value)} className={input}/><span className={hint}>oz at the current production geometry</span></label>
         {adjustmentPreview?<div className="mt-3 grid gap-2 text-xs sm:grid-cols-2"><p>Filler: <strong>{number(result.effectiveFillerOz)} → {number(adjustmentPreview.targetFillerOz)} oz</strong></p><p>Density: <strong>{number(result.effectiveChipDensityLbCft)} → {number(adjustmentPreview.resultingChipDensityLbCft)} lb/CFT</strong></p><p>Chip Mix: <strong>{number(result.availableChipMixOz)} → {number(adjustmentPreview.resultingChipMixOz)} oz</strong></p><p>Expected dry pool: <strong>{number(result.dryPoolOz)} oz unchanged</strong></p><p className="sm:col-span-2">Aggregate ounces: <strong>{rows.map((row,index)=>row.componentRole==='aggregate'?`${row.percentage||0}% → ${number(adjustmentResult?.rows[index]?.effectiveQuantity??'')} oz`:null).filter(Boolean).join(' · ')}</strong></p><p>Resin / Hardener: <strong>{number(result.effectiveResinFlOz)} / {number(result.rows[rows.findIndex(row=>row.componentRole==='hardener')]?.effectiveQuantity??'')} fl oz unchanged</strong></p></div>:<p className="mt-3 text-xs font-bold text-red-700">Enter a Filler quantity that does not exceed the expected dry pool.</p>}
-        <div className="mt-4 flex gap-2"><button type="button" disabled={!adjustmentPreview} onClick={()=>{if(!adjustmentPreview)return;onApplyAdjustment({...state,materialDensity:adjustmentPreview.resultingChipDensityLbCft,chipDensityProvenance:'increased_filler_adjustment',fillerProvenance:'increased_filler_adjustment',adjustment:adjustmentPreview.adjustment},adjustmentPreview.targetFillerOz);setAdjusting(false);}} className="min-h-11 bg-blue-800 px-4 text-xs font-bold text-white disabled:opacity-50">Apply coordinated adjustment</button><button type="button" onClick={()=>setAdjusting(false)} className="min-h-11 border border-slate-400 bg-white px-4 text-xs font-bold">Cancel</button></div>
+        <div className="mt-4 flex gap-2"><BusinessButton type="button" disabled={!adjustmentPreview} onClick={()=>{if(!adjustmentPreview)return;onApplyAdjustment({...state,materialDensity:adjustmentPreview.resultingChipDensityLbCft,chipDensityProvenance:'increased_filler_adjustment',fillerProvenance:'increased_filler_adjustment',adjustment:adjustmentPreview.adjustment},adjustmentPreview.targetFillerOz);setAdjusting(false);}} className="min-h-11 bg-blue-800 px-4 text-xs font-bold text-white disabled:opacity-50">Apply coordinated adjustment</BusinessButton><button type="button" onClick={()=>setAdjusting(false)} className="min-h-11 border border-slate-400 bg-white px-4 text-xs font-bold">Cancel</button></div>
       </div>}
     </section>
   );

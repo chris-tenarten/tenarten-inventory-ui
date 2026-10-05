@@ -1,5 +1,7 @@
 'use client';
 
+import { BusinessButton, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
+
 import { AlertTriangle, Camera, ChevronDown, ChevronUp, Flag, ListFilter, Plus, RotateCw } from 'lucide-react';
 import {
   useCallback,
@@ -787,14 +789,14 @@ export default function ProductionWorkspace() {
             </div>
 
             <div className="flex flex-col items-stretch gap-1.5 text-xs sm:items-end">
-              <button
+              <BusinessButton
                 type="button"
                 onClick={() => { setJobCreatorReturnView(activeView); setJobCreatorOpen(true); }}
                 className="tenops-selected-surface inline-flex h-10 items-center justify-center gap-1.5 border px-3 text-[10px] font-bold uppercase tracking-[0.07em] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
               >
                 <Plus className="h-4 w-4" aria-hidden="true" />
                 {tr('New Job', 'Nuevo trabajo')}
-              </button>
+              </BusinessButton>
             </div>
           </div>
 
@@ -837,7 +839,7 @@ export default function ProductionWorkspace() {
             className="col-span-3 h-10 min-w-0 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100 lg:col-auto lg:min-w-64 lg:flex-[1_1_20rem]"
           />
 
-          {activeView !== 'timeline' && <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:items-center lg:gap-2"><span id="production-sort-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0">{tr('Sort', 'Ordenar')}</span><div role="group" aria-labelledby="production-sort-label" className="grid h-10 min-w-0 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','recent','deadline'] as const satisfies readonly ProductionArrangement[]).map((value) => <button key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_arrangement', persistedProductionArrangement(value)); else window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', recent: 'Añadido recientemente', deadline: 'Entrega' } as const)[value] : ({ stage: 'Status', recent: 'Recently Added', deadline: 'Deadline' } as const)[value]}</button>)}</div></div>}
+          {activeView !== 'timeline' && <div className="col-span-3 min-w-0 lg:col-auto lg:flex lg:shrink-0 lg:items-center lg:gap-2"><span id="production-sort-label" className="mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 lg:mb-0">{tr('Sort', 'Ordenar')}</span><div role="group" aria-labelledby="production-sort-label" className="grid h-10 min-w-0 grid-cols-3 overflow-hidden rounded-sm border border-slate-300 lg:inline-flex lg:flex-none">{(['stage','recent','deadline'] as const satisfies readonly ProductionArrangement[]).map((value) => <BusinessButton key={value} type="button" aria-pressed={arrangement === value} onClick={() => { setArrangementState(value); if (accountPreferences.accountScoped) void accountPreferences.setPreference('production_arrangement', persistedProductionArrangement(value)); else window.localStorage.setItem(PRODUCTION_ARRANGEMENT_KEY, value); }} className={`min-w-0 border-r border-slate-300 px-1 text-[9px] font-bold uppercase last:border-r-0 sm:text-[10px] lg:px-3 ${arrangement === value ? 'tenops-selected-surface' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>{language === 'es' ? ({ stage: 'Estado', recent: 'Añadido recientemente', deadline: 'Entrega' } as const)[value] : ({ stage: 'Status', recent: 'Recently Added', deadline: 'Deadline' } as const)[value]}</BusinessButton>)}</div></div>}
 
           {activeView === 'spreadsheet' && (
             <div id="production-table-columns-toolbar-slot" className="relative min-w-0 lg:shrink-0" />
@@ -891,7 +893,7 @@ export default function ProductionWorkspace() {
                     </label>
                   ))}
                 </div>
-                <label className="mt-4 flex items-center gap-2 border-t border-slate-200 pt-4 text-sm text-slate-700"><input type="checkbox" checked={includeArchived} onChange={(event) => setIncludeArchived(event.target.checked)} />{tr('Include Archived', 'Incluir archivados')}</label>
+                <label className="mt-4 flex items-center gap-2 border-t border-slate-200 pt-4 text-sm text-slate-700"><BusinessInput type="checkbox" checked={includeArchived} onChange={(event) => setIncludeArchived(event.target.checked)} />{tr('Include Archived', 'Incluir archivados')}</label>
 
                 <button
                   type="button"
@@ -960,7 +962,7 @@ export default function ProductionWorkspace() {
         <SchedulingFeedbackPanel issues={hasPendingSchedules || previewPlanningIssues ? activePlanningIssues : []} focusedIssueId={focusedPlanningIssueId} />
 
         {hasPendingSchedules && (() => {
-          if (!stagedSchedule) return <div ref={scheduleActionsRef} data-pending-schedule-actions="true" tabIndex={-1} role="status" aria-live="polite" className="fixed bottom-3 left-3 right-3 z-[90] mx-auto flex max-w-5xl flex-col gap-3 border border-amber-600 bg-amber-50 px-4 py-3 shadow-2xl lg:flex-row lg:items-center lg:justify-between"><div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Planning schedule pending</div><div className="mt-1 text-sm font-bold text-slate-950">{Object.keys(stagedPlanningSchedules).length} Planning Phase change{Object.keys(stagedPlanningSchedules).length === 1 ? '' : 's'} ready for review</div></div><div className="flex flex-wrap gap-2"><button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button><button type="button" onClick={discardStagedSchedule} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button><button type="button" onClick={requestScheduleSave} disabled={schedulingErrors.length > 0} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white">Save all changes</button></div></div>;
+          if (!stagedSchedule) return <div ref={scheduleActionsRef} data-pending-schedule-actions="true" tabIndex={-1} role="status" aria-live="polite" className="fixed bottom-3 left-3 right-3 z-[90] mx-auto flex max-w-5xl flex-col gap-3 border border-amber-600 bg-amber-50 px-4 py-3 shadow-2xl lg:flex-row lg:items-center lg:justify-between"><div><div className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800">Planning schedule pending</div><div className="mt-1 text-sm font-bold text-slate-950">{Object.keys(stagedPlanningSchedules).length} Planning Phase change{Object.keys(stagedPlanningSchedules).length === 1 ? '' : 's'} ready for review</div></div><div className="flex flex-wrap gap-2"><button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button><button type="button" onClick={discardStagedSchedule} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button><BusinessButton type="button" onClick={requestScheduleSave} disabled={schedulingErrors.length > 0} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white">Save all changes</BusinessButton></div></div>;
           const hadSchedule = Boolean(stagedSchedule.persistedStart && stagedSchedule.persistedEnd);
           const estimatedHours = stagedJob?.estimated_man_hours ?? null;
           const before = hadSchedule ? laborIntensity(estimatedHours, stagedSchedule.persistedStart!, stagedSchedule.persistedEnd!) : null;
@@ -978,7 +980,7 @@ export default function ProductionWorkspace() {
               <div className="flex flex-wrap gap-2">
                 <button type="button" onClick={() => setReviewOpen(true)} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Review changes</button>
                 <button type="button" onClick={discardStagedSchedule} disabled={scheduleSaveState === 'saving'} className="h-9 border border-slate-500 bg-white px-4 text-xs font-bold uppercase">Discard all</button>
-                <button type="button" onClick={requestScheduleSave} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave} title={inspectorBlocksScheduleSave ? 'Save the open Inspector job details first' : undefined} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50">Save all changes</button>
+                <BusinessButton type="button" onClick={requestScheduleSave} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave} title={inspectorBlocksScheduleSave ? 'Save the open Inspector job details first' : undefined} className="h-9 border border-slate-950 bg-slate-900 px-4 text-xs font-bold uppercase text-white disabled:cursor-not-allowed disabled:opacity-50">Save all changes</BusinessButton>
               </div>
             </div>
           );
@@ -1040,7 +1042,7 @@ export default function ProductionWorkspace() {
             </div>
             {createdJobScheduleError && <p role="alert" className="mt-3 text-sm font-semibold text-red-700">{createdJobScheduleError}</p>}
             <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <button type="button" onClick={() => { setActiveView(jobCreatorReturnView, false); setCreatedJob(null); }} className="h-10 whitespace-nowrap border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-700 sm:flex-1">Return to Production</button>
+              <BusinessButton type="button" onClick={() => { setActiveView(jobCreatorReturnView, false); setCreatedJob(null); }} className="h-10 whitespace-nowrap border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-700 sm:flex-1">Return to Production</BusinessButton>
               <button type="button" onClick={() => void openCreatedJobScheduling(createdJob)} className="h-10 whitespace-nowrap border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white hover:bg-blue-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 sm:flex-1">Open Timeline to Schedule Job</button>
             </div>
           </div>
@@ -1059,13 +1061,13 @@ export default function ProductionWorkspace() {
             </div>
             {approvalActive ? <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border border-blue-300 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-900"><span>Temporary approval active for {Math.floor(approvalSecondsRemaining / 60)}:{String(approvalSecondsRemaining % 60).padStart(2, '0')}. Explicit confirmation is still required.</span><button type="button" onClick={() => { window.sessionStorage.removeItem(APPROVAL_EXPIRES_KEY); setApprovalExpiresAt(null); setApprovalNow(Date.now()); }} className="text-xs font-bold uppercase underline focus-visible:ring-2 focus-visible:ring-blue-700">Lock approval</button></div> : approvalExpiresAt ? <div className="mt-4 border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700">Approval window expired. Enter the approval password to continue.</div> : null}
             <label htmlFor="production-changed-by" className="mt-4 block text-sm font-bold text-slate-800">Changed by <span className="font-normal text-slate-500">— Recorded name for this change</span></label>
-            <input ref={approvalInitialRef} id="production-changed-by" value={changedByName} onChange={(event) => { setChangedByName(event.target.value); setApprovalError(''); }} autoComplete="name" className="mt-1 h-11 w-full border border-slate-400 px-3 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950" />
-            {!approvalActive && <><label htmlFor="production-approval-password" className="mt-4 block text-sm font-bold text-slate-800">Approval password</label><input id="production-approval-password" type="password" value={approvalPassword} onChange={(event) => { setApprovalPassword(event.target.value); setApprovalError(''); }} autoComplete="off" className="mt-1 h-11 w-full border border-slate-400 px-3 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950" /></>}
+            <BusinessInput ref={approvalInitialRef} id="production-changed-by" value={changedByName} onChange={(event) => { setChangedByName(event.target.value); setApprovalError(''); }} autoComplete="name" className="mt-1 h-11 w-full border border-slate-400 px-3 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950" />
+            {!approvalActive && <><label htmlFor="production-approval-password" className="mt-4 block text-sm font-bold text-slate-800">Approval password</label><BusinessInput id="production-approval-password" type="password" value={approvalPassword} onChange={(event) => { setApprovalPassword(event.target.value); setApprovalError(''); }} autoComplete="off" className="mt-1 h-11 w-full border border-slate-400 px-3 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950" /></>}
             <label htmlFor="production-change-note" className="mt-4 block text-sm font-bold text-slate-800">Reason / notes <span className="font-normal text-slate-500">(optional)</span></label>
-            <textarea id="production-change-note" value={changeNote} onChange={(event) => setChangeNote(event.target.value)} rows={3} className="mt-1 w-full resize-y border border-slate-400 px-3 py-2 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950" />
+            <BusinessTextarea id="production-change-note" value={changeNote} onChange={(event) => setChangeNote(event.target.value)} rows={3} className="mt-1 w-full resize-y border border-slate-400 px-3 py-2 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950" />
             {approvalError && <div role="alert" className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">{approvalError}</div>}
             <p className="mt-3 text-xs text-slate-500">This client-side confirmation is an internal MVP guardrail, not secure authentication.</p>
-            <div className="mt-5 flex flex-wrap justify-end gap-2"><button type="button" onClick={() => { setApprovalDialogOpen(false); setApprovalPassword(''); setApprovalError(''); }} className="h-10 border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-800">Cancel</button><button type="button" onClick={confirmApprovedSave} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave} className="h-10 border border-slate-950 bg-slate-900 px-4 text-sm font-bold text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">Confirm and save</button></div>
+            <div className="mt-5 flex flex-wrap justify-end gap-2"><button type="button" onClick={() => { setApprovalDialogOpen(false); setApprovalPassword(''); setApprovalError(''); }} className="h-10 border border-slate-400 bg-white px-4 text-sm font-bold text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-800">Cancel</button><BusinessButton type="button" onClick={confirmApprovedSave} disabled={scheduleSaveState === 'saving' || schedulingErrors.length > 0 || inspectorBlocksScheduleSave} className="h-10 border border-slate-950 bg-slate-900 px-4 text-sm font-bold text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">Confirm and save</BusinessButton></div>
           </div>
         </div>
       )}
@@ -1108,7 +1110,6 @@ export default function ProductionWorkspace() {
       />}
       {reworkTargetJob && <CreateReworkDialog job={reworkTargetJob} onClose={() => setReworkTargetJob(null)} onCreated={async () => { setReworkTargetJob(null); await loadJobs(); }} />}
       {planningIssuesOpen && <PlanningIssuesPanel category={planningIssuesCategory} jobs={jobs} stagedSchedules={stagedSchedules} onClose={() => setPlanningIssuesOpen(false)} onUpdateJob={handleUpdateJob} onStageSchedule={(job, start, end) => stageSchedule(job, start, end, 'production_inspector')} onOpenInspector={selectJob} />}
-
 
     </div>
   );

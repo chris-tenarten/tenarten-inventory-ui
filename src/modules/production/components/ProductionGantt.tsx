@@ -1,5 +1,8 @@
 'use client';
 
+import { useAuth } from '@/lib/auth';
+import { BusinessButton } from '@/components/BusinessWriteControls';
+
 import { AlertTriangle, ChevronDown, ChevronLeft, ChevronRight, ChevronRight as DisclosureRight, CircleX, Layers, LocateFixed, Maximize2, Minus, Plus } from 'lucide-react';
 import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent } from 'react';
@@ -147,7 +150,6 @@ function PhaseExecutionLabels({ title, percent }: { title: string; percent: numb
   </>;
 }
 
-
 function startOfLocalDay(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
@@ -229,6 +231,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   const [selectedDependencyIssueId, setSelectedDependencyIssueId] = useState<string | null>(null);
   const [selectedPhaseWarningId, setSelectedPhaseWarningId] = useState<string | null>(null);
   const [collapsedPhaseDisplay, setCollapsedPhaseDisplay] = useState<CollapsedPhaseDisplayMode>('fill');
+  const auth = useAuth();
   const [mobileReadOnly, setMobileReadOnly] = useState(false);
   const [mobileLandscape, setMobileLandscape] = useState(false);
   const [navigationMode, setNavigationMode] = useState<'fit' | 'today' | null>(null);
@@ -592,7 +595,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   }, [jobs, onSelectPlanningPhase, onStagePlanningSchedules, phaseInteraction, planningPhases]);
 
   function startInteraction(event: ReactPointerEvent, job: ProductionJob, mode: InteractionMode) {
-    if (mobileReadOnly) {
+    if (mobileReadOnly || !auth.can('writeBusinessData')) {
       event.preventDefault();
       event.stopPropagation();
       if (mode === 'move') onSelectJob(job);
@@ -622,7 +625,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
   }
 
   function startPhaseInteraction(event: ReactPointerEvent, phase: PlanningPhase, mode: InteractionMode) {
-    if (mobileReadOnly) {
+    if (mobileReadOnly || !auth.can('writeBusinessData')) {
       event.preventDefault();
       event.stopPropagation();
       if (mode === 'move') {
@@ -644,7 +647,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   function handlePhaseScheduleKey(event: KeyboardEvent<HTMLButtonElement>, phase: PlanningPhase, mode: InteractionMode) {
     if (!phase.start_date || !phase.end_date) return;
-    if (mobileReadOnly) {
+    if (mobileReadOnly || !auth.can('writeBusinessData')) {
       if ((event.key === 'Enter' || event.key === ' ') && mode === 'move') {
         event.preventDefault();
         const job = jobs.find((candidate) => candidate.id === phase.job_id);
@@ -701,7 +704,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
     const baselineStart = proposed?.proposed_planned_start ?? job.planned_start;
     const baselineEnd = proposed?.proposed_planned_end ?? job.planned_end;
     if (!baselineStart || !baselineEnd) return;
-    if (mobileReadOnly) {
+    if (mobileReadOnly || !auth.can('writeBusinessData')) {
       if ((event.key === 'Enter' || event.key === ' ') && mode === 'move') {
         event.preventDefault();
         onSelectJob(job);
@@ -1209,7 +1212,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                       style={{ left: startOffset * dayWidth + 3, width: barWidth, backgroundImage: statusVisual.timelinePattern ?? statusVisual.pattern }}
                       title={`${job.name}: ${statusVisual.label}; ${displayStart} through ${displayEnd}; ${intensityLabel(job, displayStart, displayEnd)}`}
                     >
-                      <button
+                      <BusinessButton
                         type="button"
                         aria-label={`Resize ${job.name} start date. Use left and right arrow keys for one-day adjustments.`}
                         onPointerDown={(event) => startInteraction(event, job, 'resize-start')}
@@ -1219,7 +1222,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                         style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}
                       >
                         <span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" />
-                      </button>
+                      </BusinessButton>
                       <button
                         type="button"
                         aria-label={mobileReadOnly ? `Open ${job.name}` : `Move ${job.name}. Use left and right arrow keys for one-day adjustments.`}
@@ -1235,7 +1238,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                           <span data-gantt-bar-copy className="pointer-events-none ml-auto shrink-0 border-l border-white/30 pl-2 text-[9px] normal-case tracking-normal">{formatHours(intensity.hoursPerScheduledDay)} h/day</span>
                         )}
                       </button>
-                      <button
+                      <BusinessButton
                         type="button"
                         aria-label={`Resize ${job.name} finish date. Use left and right arrow keys for one-day adjustments.`}
                         onPointerDown={(event) => startInteraction(event, job, 'resize-end')}
@@ -1245,7 +1248,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                         style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}
                       >
                         <span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" />
-                      </button>
+                      </BusinessButton>
                     </div>
                   )}
 
@@ -1350,9 +1353,9 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
                       return <>{savedGeometry && <div aria-label={`Last saved schedule for ${phase.title}`} className="pointer-events-none absolute top-1/2 z-[2] h-6 -translate-y-1/2 border-2 border-dashed border-slate-700 bg-slate-400/25" style={{ left: savedGeometry.left, width: savedGeometry.width }} />}<div data-planning-phase-bar ref={(element) => { if (element) phaseElementRefs.current.set(phase.id, element); else phaseElementRefs.current.delete(phase.id); }} className={`absolute top-1/2 h-6 overflow-visible -translate-y-1/2 border shadow-sm transition-[box-shadow,filter] ${phaseIssuePopoverOpen ? 'z-50' : 'z-[3]'} ${activePhaseInteraction ? 'z-20 brightness-110 shadow-lg outline outline-2 outline-slate-950/50' : 'hover:brightness-105 hover:shadow-md'} ${isHighlighted ? 'ring-2 ring-slate-500 ring-offset-1' : ''} ${isStagedPhase ? 'ring-2 ring-amber-300 ring-offset-1' : ''} ${phaseSeverity === 'error' ? 'outline outline-2 outline-red-600 outline-offset-1' : phaseSeverity === 'warning' ? 'outline outline-2 outline-orange-500 outline-offset-1' : ''} ${barClass}`} style={{ left: geometry.left, width: geometry.width, backgroundImage: phase.timeline_behavior === 'pause' ? PLANNING_PAUSE_HATCH : undefined }}>
                         {visual && phaseProgress.percent > 0 && <div aria-hidden="true" data-planning-progress-fill className={`pointer-events-none absolute inset-y-0 left-0 z-[1] ${visual.progressClassName}`} style={{ width: `${phaseProgress.percent}%` }} />}
                         {visual && phaseProgress.percent > 0 && phaseProgress.percent < 100 && <div aria-hidden="true" data-planning-progress-boundary className="pointer-events-none absolute inset-y-0 z-[9] w-0.5 -translate-x-0.5 bg-slate-950/80" style={{ left: `${phaseProgress.percent}%` }} />}
-                        <button type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} start date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-start')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-start')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 left-0 z-20 border-r border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></button>
+                        <BusinessButton type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} start date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-start')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-start')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 left-0 z-20 border-r border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></BusinessButton>
                         <button type="button" data-timeline-interactive="true" onPointerDown={(event) => startPhaseInteraction(event, phase, 'move')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'move')} onMouseEnter={() => setHoveredPlanningPhaseId(phase.id)} onMouseLeave={() => setHoveredPlanningPhaseId(null)} onFocus={() => setHoveredPlanningPhaseId(phase.id)} onBlur={() => setHoveredPlanningPhaseId(null)} onDragStart={(event) => event.preventDefault()} title={phaseTitle(phase)} aria-label={mobileReadOnly ? `Open Phase ${phase.title}` : `Move ${phase.title}. Use left and right arrow keys for one-day adjustments.`} className={`absolute inset-y-0 z-10 flex min-w-0 items-center gap-1 overflow-hidden px-1.5 text-left font-bold outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white ${preferences.rowDensity === 'compact' ? 'text-[6px]' : 'text-[6.5px]'}`} style={{ left: handleWidth, right: handleWidth, cursor: mobileReadOnly ? 'pointer' : activePhaseInteraction?.mode === 'move' ? 'grabbing' : 'grab', pointerEvents: 'auto', touchAction: mobileReadOnly ? 'manipulation' : 'none' }}>{visual && phaseProgress.totalItems > 0 ? <PhaseExecutionLabels title={phase.title} percent={phaseProgress.percent} /> : <span data-planning-phase-title className="min-w-0 truncate px-1 text-white" style={{ textShadow: '0 1px 2px rgba(15, 23, 42, 0.95), 0 0 2px rgba(15, 23, 42, 0.85)' }}>{phase.title}</span>}{isStagedPhase && geometry.width >= 140 && <span data-planning-staged-badge className="shrink-0 bg-amber-100/95 px-1 text-[8px] uppercase text-amber-950">Unsaved</span>}</button>
-                        <button type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} finish date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-end')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-end')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 right-0 z-20 border-l border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></button>
+                        <BusinessButton type="button" data-timeline-interactive="true" aria-label={`Resize ${phase.title} finish date. Use left and right arrow keys for one-day adjustments.`} onPointerDown={(event) => startPhaseInteraction(event, phase, 'resize-end')} onKeyDown={(event) => handlePhaseScheduleKey(event, phase, 'resize-end')} onDragStart={(event) => event.preventDefault()} className="group/handle absolute inset-y-0 right-0 z-20 border-l border-white/20 bg-black/10 outline-none hover:bg-white/30 focus-visible:bg-white/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white" style={{ width: handleWidth, cursor: 'ew-resize', pointerEvents: 'auto', touchAction: 'none' }}><span className="absolute left-1/2 top-1/2 h-4 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/75 shadow-sm" /></BusinessButton>
                         {phaseIssues.length > 0 && <div data-planning-warning-popover className="absolute top-1/2 z-40 -translate-y-1/2" style={{ left: handleWidth + 2 }}><button type="button" data-timeline-interactive="true" aria-expanded={phaseIssuePopoverOpen} aria-label={`${phaseSeverity === 'error' ? 'Scheduling errors' : 'Scheduling warnings'} for ${phase.title}`} title={phaseIssues.map((issue) => issue.message).join('\n')} onClick={(event) => { event.stopPropagation(); focusPhaseWarnings(phase.id, phaseIssues); }} className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/95 shadow-sm focus-visible:ring-2 focus-visible:ring-blue-700 ${phaseSeverity === 'error' ? 'text-red-600' : 'text-orange-600'}`}>{phaseSeverity === 'error' ? <CircleX className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}</button>{phaseIssuePopoverOpen && <div role="dialog" aria-label={`Scheduling feedback for ${phase.title}`} className={`absolute left-6 top-0 z-50 w-72 border bg-white p-3 text-left text-xs shadow-xl ${phaseSeverity === 'error' ? 'border-red-300' : 'border-orange-300'}`}><div className={`flex items-center gap-1.5 font-bold ${phaseSeverity === 'error' ? 'text-red-800' : 'text-orange-800'}`}>{phaseSeverity === 'error' ? <CircleX className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}{phaseSeverity === 'error' ? 'Scheduling Feedback' : 'Scheduling Warnings'}</div><ul className="mt-2 space-y-2 text-slate-800">{phaseIssues.map((issue) => <li key={issue.id} className="border-t border-slate-200 pt-2 first:border-t-0 first:pt-0">{issue.message}</li>)}</ul><p className="mt-2 text-slate-600">{phaseSeverity === 'error' ? 'Resolve errors before saving.' : 'Review before saving.'}</p></div>}</div>}
                       </div></>;
                     })()}

@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessButton } from '@/components/BusinessWriteControls';
+
 import { loadProductionJobOptions, openProductionJob, type ProductionJobOption } from "../production/job-options";
 import { getProductionJobReferenceLabel } from "../production/job-reference";
 import { JobTag } from "../production/components/JobTag";
@@ -87,13 +89,13 @@ export function MaterialUsageHistory({
           </p>
         </div>
 
-        <button
+        <BusinessButton
           type="button"
           onClick={onNew}
           className="w-full rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
         >
           {tr("New Material Report","Nuevo reporte de materiales")}
-        </button>
+        </BusinessButton>
         <div className="mt-3 space-y-2">
           <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr("Search reports…","Buscar reportes…")} className="h-9 w-full rounded-md border border-slate-300 px-3 text-sm" />
           <div className="relative"><button type="button" onClick={() => setFiltersOpen((current) => !current)} className={`h-9 w-full rounded-md border px-3 text-xs font-semibold ${activeFilterCount ? 'border-blue-600 bg-blue-50 text-blue-800' : 'border-slate-300 bg-white text-slate-700'}`}>{tr("Filters","Filtros")}{activeFilterCount ? ` (${activeFilterCount})` : ''}</button>{filtersOpen ? <div className="absolute right-0 top-10 z-30 w-64 rounded-md border border-slate-300 bg-white p-3 text-xs shadow-xl"><div className="text-[10px] font-bold uppercase tracking-wide text-slate-500">{tr("Production Status","Estado de producción")}</div><div className="mt-2 space-y-2">{productionStatusVisuals.map((visual) => <label key={visual.value} className="flex items-center justify-between gap-2 text-slate-700"><span className="flex items-center gap-2"><input type="checkbox" checked={statusFilters.has(visual.value)} onChange={() => setStatusFilters((current) => { const next = new Set(current); if (next.has(visual.value)) next.delete(visual.value); else next.add(visual.value); return next; })} /><span className="sr-only">{visual.label}</span></span><ProductionStatusBadge status={visual.value} /></label>)}</div><div className="mt-3 space-y-2 border-t border-slate-200 pt-3"><label className="flex items-center gap-2 text-slate-700"><input type="checkbox" checked={archived} onChange={(event) => setArchived(event.target.checked)} />{tr("Archived","Archivados")}</label><label className="flex items-center gap-2 text-slate-700"><input type="checkbox" checked={unlinked} onChange={(event) => setUnlinked(event.target.checked)} />{tr("Unlinked","Sin vincular")}</label></div>{activeFilterCount ? <button type="button" onClick={() => { setStatusFilters(new Set()); setArchived(false); setUnlinked(false); }} className="mt-3 w-full border-t border-slate-200 pt-2 font-semibold text-blue-700">{tr("Clear filters","Borrar filtros")}</button> : null}</div> : null}</div>

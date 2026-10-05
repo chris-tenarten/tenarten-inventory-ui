@@ -1,5 +1,7 @@
 'use client';
 
+import { BusinessInput, BusinessButton, BusinessSelect } from '@/components/BusinessWriteControls';
+
 import { ChevronDown, ChevronRight, Pencil, Plus, RotateCw, Search, Settings2 } from 'lucide-react';
 import { createContext, useContext, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -178,7 +180,7 @@ function SelectionCheckbox({
   }, [indeterminate]);
 
   return (
-    <input
+    <BusinessInput
       ref={ref}
       type="checkbox"
       checked={checked}
@@ -205,8 +207,8 @@ function ReportingGroupName({ group, onRename }: {
     finally { setSaving(false); }
   }
   function cancel() { setName(group.display_name); setEditing(false); }
-  if (!editing) return <div className="flex min-w-0 items-center gap-2"><span className="max-w-72 truncate text-sm font-bold text-slate-950">{group.display_name}</span><button type="button" onClick={() => setEditing(true)} aria-label="Edit group name" title="Edit group name" className="inline-flex h-7 w-7 shrink-0 items-center justify-center text-slate-500 hover:bg-white hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600"><Pencil className="h-3.5 w-3.5" /></button></div>;
-  return <div className="flex min-w-0 items-center gap-1"><input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void save(); } if (event.key === 'Escape') cancel(); }} aria-label="Reporting group name" placeholder="Reporting group name" className="h-8 w-64 min-w-0 rounded-sm border border-blue-500 bg-white px-2 text-sm font-bold text-slate-950 caret-slate-950 outline-none selection:bg-blue-200 focus:ring-2 focus:ring-blue-200" disabled={saving} /><button type="button" onClick={() => void save()} disabled={saving || !name.trim()} className="h-8 rounded-sm bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</button><button type="button" onClick={cancel} disabled={saving} className="h-8 rounded-sm px-2 text-xs font-bold text-slate-600 hover:bg-white">Cancel</button></div>;
+  if (!editing) return <div className="flex min-w-0 items-center gap-2"><span className="max-w-72 truncate text-sm font-bold text-slate-950">{group.display_name}</span><BusinessButton type="button" onClick={() => setEditing(true)} aria-label="Edit group name" title="Edit group name" className="inline-flex h-7 w-7 shrink-0 items-center justify-center text-slate-500 hover:bg-white hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600"><Pencil className="h-3.5 w-3.5" /></BusinessButton></div>;
+  return <div className="flex min-w-0 items-center gap-1"><BusinessInput autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void save(); } if (event.key === 'Escape') cancel(); }} aria-label="Reporting group name" placeholder="Reporting group name" className="h-8 w-64 min-w-0 rounded-sm border border-blue-500 bg-white px-2 text-sm font-bold text-slate-950 caret-slate-950 outline-none selection:bg-blue-200 focus:ring-2 focus:ring-blue-200" disabled={saving} /><BusinessButton type="button" onClick={() => void save()} disabled={saving || !name.trim()} className="h-8 rounded-sm bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</BusinessButton><button type="button" onClick={cancel} disabled={saving} className="h-8 rounded-sm px-2 text-xs font-bold text-slate-600 hover:bg-white">Cancel</button></div>;
 }
 
 function ReferenceSelect({
@@ -243,12 +245,12 @@ function ReferenceSelect({
     return (
       <div className="min-w-[180px]">
         <div className="flex gap-1">
-          <input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => {
+          <BusinessInput autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => {
             if (event.key === 'Enter') { event.preventDefault(); void add(); }
             if (event.key === 'Escape') setAdding(false);
           }} placeholder={`New ${noun} name`} className={inputClass} />
-          <button type="button" disabled={saving || !name.trim()} onClick={() => void add()} className="h-9 border border-slate-900 bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Add</button>
-          <button type="button" onClick={() => setAdding(false)} className="h-9 border border-slate-400 bg-white px-2 text-xs font-bold">×</button>
+          <BusinessButton type="button" disabled={saving || !name.trim()} onClick={() => void add()} className="h-9 border border-slate-900 bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Add</BusinessButton>
+          <BusinessButton type="button" onClick={() => setAdding(false)} className="h-9 border border-slate-400 bg-white px-2 text-xs font-bold">×</BusinessButton>
         </div>
         {error && <div className="mt-1 text-xs font-semibold text-red-700">{error}</div>}
       </div>
@@ -257,13 +259,13 @@ function ReferenceSelect({
 
   return (
     <div className="flex min-w-[180px] gap-1">
-      <button type="button" onClick={() => setAdding(true)} className="h-9 shrink-0 border border-blue-300 bg-blue-50 px-2 text-[10px] font-bold uppercase tracking-wide text-blue-800">+ Add</button>
-      <select value={value} onChange={(event) => onChange(event.target.value)} className={inputClass}>
+      <BusinessButton type="button" onClick={() => setAdding(true)} className="h-9 shrink-0 border border-blue-300 bg-blue-50 px-2 text-[10px] font-bold uppercase tracking-wide text-blue-800">+ Add</BusinessButton>
+      <BusinessSelect value={value} onChange={(event) => onChange(event.target.value)} className={inputClass}>
         <option value="">Select {noun}</option>
         {options.filter((option) => option.is_active || option.id === value).map((option) => (
           <option key={option.id} value={option.id}>{option.display_name}{option.is_active ? '' : ' (Inactive)'}</option>
         ))}
-      </select>
+      </BusinessSelect>
     </div>
   );
 }
@@ -322,10 +324,10 @@ function ReferenceManager({ noun, options, onCreate, onUpdate, onEditingChange }
     catch (caught) { setError(caughtMessage(caught, `Unable to update ${noun}.`)); }
   }
 
-  return <section className="flex min-h-0 min-w-0 flex-col"><div className="flex shrink-0 items-center justify-between gap-3"><h2 className="text-xs font-bold uppercase tracking-[0.12em] text-slate-700">{title}</h2><button type="button" onClick={beginAdd} className="inline-flex h-8 items-center gap-1 border border-slate-400 bg-white px-2 text-xs font-bold text-slate-800"><Plus className="h-3.5 w-3.5" /> Add {noun}</button></div>
+  return <section className="flex min-h-0 min-w-0 flex-col"><div className="flex shrink-0 items-center justify-between gap-3"><h2 className="text-xs font-bold uppercase tracking-[0.12em] text-slate-700">{title}</h2><BusinessButton type="button" onClick={beginAdd} className="inline-flex h-8 items-center gap-1 border border-slate-400 bg-white px-2 text-xs font-bold text-slate-800"><Plus className="h-3.5 w-3.5" /> Add {noun}</BusinessButton></div>
     <div data-settings-list className="mt-2 min-h-0 overflow-auto overscroll-contain border border-slate-300"><table className="w-full border-collapse text-sm"><thead className="sticky top-0 z-10"><tr><th className={headerClass}>Name</th><th className={`${headerClass} w-20`}>Order</th><th className={`${headerClass} w-20`}>Status</th><th className={`${headerClass} w-40`}>Actions</th></tr></thead><tbody>
-      {adding && <tr className="bg-blue-50"><td className="p-1"><input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void save(); if (event.key === 'Escape') cancel(); }} className={inputClass} placeholder={`${title.slice(0, -1)} name`} /></td><td className="p-1"><input type="number" step="1" value={order} onChange={(event) => setOrder(event.target.value)} className={inputClass} /></td><td className="px-2 text-xs font-semibold text-emerald-700">Active</td><td className="p-1"><button type="button" onClick={() => void save()} disabled={saving} className="h-8 bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</button><button type="button" onClick={cancel} className="h-8 px-2 text-xs font-bold text-slate-600">Cancel</button></td></tr>}
-      {options.map((option) => editingId === option.id ? <tr key={option.id} className="bg-blue-50"><td className="p-1"><input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void save(option); if (event.key === 'Escape') cancel(); }} className={inputClass} /></td><td className="p-1"><input type="number" step="1" value={order} onChange={(event) => setOrder(event.target.value)} className={inputClass} /></td><td className="px-2 text-xs font-semibold">{option.is_active ? 'Active' : 'Inactive'}</td><td className="p-1"><button type="button" onClick={() => void save(option)} disabled={saving} className="h-8 bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</button><button type="button" onClick={cancel} className="h-8 px-2 text-xs font-bold text-slate-600">Cancel</button></td></tr> : <tr key={option.id} className="border-t border-slate-200"><td className={`px-2 py-2 ${option.is_active ? 'font-medium' : 'text-slate-500'}`}>{option.display_name}</td><td className="px-2 py-2 tabular-nums text-slate-600">{option.sort_order}</td><td className={`px-2 py-2 text-xs font-semibold ${option.is_active ? 'text-emerald-700' : 'text-slate-500'}`}>{option.is_active ? 'Active' : 'Inactive'}</td><td className="whitespace-nowrap px-1 py-1"><button type="button" onClick={() => beginEdit(option)} className="h-8 px-2 text-xs font-bold text-blue-700">Edit</button><button type="button" onClick={() => void toggle(option)} className="h-8 px-2 text-xs font-bold text-blue-700">{option.is_active ? 'Deactivate' : 'Reactivate'}</button></td></tr>)}
+      {adding && <tr className="bg-blue-50"><td className="p-1"><BusinessInput autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void save(); if (event.key === 'Escape') cancel(); }} className={inputClass} placeholder={`${title.slice(0, -1)} name`} /></td><td className="p-1"><BusinessInput type="number" step="1" value={order} onChange={(event) => setOrder(event.target.value)} className={inputClass} /></td><td className="px-2 text-xs font-semibold text-emerald-700">Active</td><td className="p-1"><BusinessButton type="button" onClick={() => void save()} disabled={saving} className="h-8 bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</BusinessButton><button type="button" onClick={cancel} className="h-8 px-2 text-xs font-bold text-slate-600">Cancel</button></td></tr>}
+      {options.map((option) => editingId === option.id ? <tr key={option.id} className="bg-blue-50"><td className="p-1"><BusinessInput autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void save(option); if (event.key === 'Escape') cancel(); }} className={inputClass} /></td><td className="p-1"><BusinessInput type="number" step="1" value={order} onChange={(event) => setOrder(event.target.value)} className={inputClass} /></td><td className="px-2 text-xs font-semibold">{option.is_active ? 'Active' : 'Inactive'}</td><td className="p-1"><BusinessButton type="button" onClick={() => void save(option)} disabled={saving} className="h-8 bg-slate-900 px-2 text-xs font-bold text-white disabled:opacity-50">Save</BusinessButton><button type="button" onClick={cancel} className="h-8 px-2 text-xs font-bold text-slate-600">Cancel</button></td></tr> : <tr key={option.id} className="border-t border-slate-200"><td className={`px-2 py-2 ${option.is_active ? 'font-medium' : 'text-slate-500'}`}>{option.display_name}</td><td className="px-2 py-2 tabular-nums text-slate-600">{option.sort_order}</td><td className={`px-2 py-2 text-xs font-semibold ${option.is_active ? 'text-emerald-700' : 'text-slate-500'}`}>{option.is_active ? 'Active' : 'Inactive'}</td><td className="whitespace-nowrap px-1 py-1"><BusinessButton type="button" onClick={() => beginEdit(option)} className="h-8 px-2 text-xs font-bold text-blue-700">Edit</BusinessButton><BusinessButton type="button" onClick={() => void toggle(option)} className="h-8 px-2 text-xs font-bold text-blue-700">{option.is_active ? 'Deactivate' : 'Reactivate'}</BusinessButton></td></tr>)}
     </tbody></table></div>{error && <div className="mt-1 shrink-0 text-xs font-semibold text-red-700">{error}</div>}</section>;
 }
 
@@ -346,17 +348,17 @@ function WorkIdentityControl({ value, temporaryLabel, targets, onChange, compact
     return <div className="flex min-w-[260px] items-center gap-1"><span title="Preserved label from an imported or unlinked labor entry." className="shrink-0 rounded bg-slate-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-slate-600">Imported Label</span><span className="min-w-0 flex-1 truncate text-sm text-slate-900">{temporaryLabel}</span></div>;
   }
   if (changingSavedTemporary) {
-    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setChangingSavedTemporary(false); }}><select autoFocus defaultValue="" onChange={(event) => { const next = event.target.value; if (!next) return; setChangingSavedTemporary(false); onChange(next, next === UNLISTED_WORK_TARGET ? '' : temporaryLabel); }} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); setChangingSavedTemporary(false); } }} className={`${controlClass} min-w-0 flex-1`}><option value="">Choose Production job</option><option value={UNLISTED_WORK_TARGET}>+ Replace imported label</option>{targets.filter((target) => target.selectable || target.value === value).map((target) => <option key={target.value} value={target.value}>{target.label} — {productionStatusVisualByValue[target.status].label}</option>)}</select><button type="button" onClick={() => setChangingSavedTemporary(false)} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-slate-700">Back</button></div>;
+    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setChangingSavedTemporary(false); }}><BusinessSelect autoFocus defaultValue="" onChange={(event) => { const next = event.target.value; if (!next) return; setChangingSavedTemporary(false); onChange(next, next === UNLISTED_WORK_TARGET ? '' : temporaryLabel); }} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); setChangingSavedTemporary(false); } }} className={`${controlClass} min-w-0 flex-1`}><option value="">Choose Production job</option><option value={UNLISTED_WORK_TARGET}>+ Replace imported label</option>{targets.filter((target) => target.selectable || target.value === value).map((target) => <option key={target.value} value={target.value}>{target.label} — {productionStatusVisualByValue[target.status].label}</option>)}</BusinessSelect><button type="button" onClick={() => setChangingSavedTemporary(false)} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-slate-700">Back</button></div>;
   }
   if (value === UNLISTED_WORK_TARGET) {
     const cancelTemporaryEdit = () => onChange(savedTemporaryLabel ? UNLISTED_WORK_TARGET : '', savedTemporaryLabel ?? '');
-    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (savedTemporaryLabel && !event.currentTarget.contains(event.relatedTarget as Node | null)) { event.stopPropagation(); cancelTemporaryEdit(); } }}><span className="shrink-0 rounded bg-slate-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-slate-600">Imported Label</span><input autoFocus value={temporaryLabel} onChange={(event) => onChange(UNLISTED_WORK_TARGET, event.target.value)} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); cancelTemporaryEdit(); } }} placeholder="Enter imported or unlinked label" className={`${controlClass} bg-slate-50`} /><button type="button" onClick={cancelTemporaryEdit} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-blue-700">Back</button></div>;
+    return <div className="flex min-w-[260px] items-center gap-1" onBlur={(event) => { if (savedTemporaryLabel && !event.currentTarget.contains(event.relatedTarget as Node | null)) { event.stopPropagation(); cancelTemporaryEdit(); } }}><span className="shrink-0 rounded bg-slate-100 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-slate-600">Imported Label</span><BusinessInput autoFocus value={temporaryLabel} onChange={(event) => onChange(UNLISTED_WORK_TARGET, event.target.value)} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); cancelTemporaryEdit(); } }} placeholder="Enter imported or unlinked label" className={`${controlClass} bg-slate-50`} /><button type="button" onClick={cancelTemporaryEdit} className="h-8 shrink-0 px-1.5 text-[10px] font-bold text-blue-700">Back</button></div>;
   }
-  return <select value={value} onChange={(event) => onChange(event.target.value, '')} className={`${controlClass} min-w-[260px]`}>
+  return <BusinessSelect value={value} onChange={(event) => onChange(event.target.value, '')} className={`${controlClass} min-w-[260px]`}>
     <option value="">Production Job</option>
     <option value={UNLISTED_WORK_TARGET}>+ Add temporary job label</option>
     {targets.filter((target) => target.selectable || target.value === value).map((target) => <option key={target.value} value={target.value}>{target.label} — {productionStatusVisualByValue[target.status].label}</option>)}
-  </select>;
+  </BusinessSelect>;
 }
 
 function EntryFields({
@@ -380,17 +382,17 @@ function EntryFields({
   const total = Number(draft.amHours || 0) + Number(draft.pmHours || 0);
   return (
     <>
-      <td className="border-r border-slate-300 p-1"><input type="date" value={draft.workDate} onChange={(e) => set('workDate', e.target.value)} className={inputClass} /></td>
-      <td className="border-r border-slate-300 p-1"><select aria-label="Product Category" value={draft.productCategoryId} onFocus={() => void refresh().catch(() => {})} onChange={(e) => set('productCategoryId', e.target.value)} className={`${inputClass} min-w-[180px]`}><option value="" disabled={!allowUncategorized}>{allowUncategorized ? 'Uncategorized' : 'Select Product Category'}</option>{categories.filter((category) => category.is_active || category.id === draft.productCategoryId).map((category) => <option key={category.id} value={category.id} disabled={!category.is_active}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}</select></td>
+      <td className="border-r border-slate-300 p-1"><BusinessInput type="date" value={draft.workDate} onChange={(e) => set('workDate', e.target.value)} className={inputClass} /></td>
+      <td className="border-r border-slate-300 p-1"><BusinessSelect aria-label="Product Category" value={draft.productCategoryId} onFocus={() => void refresh().catch(() => {})} onChange={(e) => set('productCategoryId', e.target.value)} className={`${inputClass} min-w-[180px]`}><option value="" disabled={!allowUncategorized}>{allowUncategorized ? 'Uncategorized' : 'Select Product Category'}</option>{categories.filter((category) => category.is_active || category.id === draft.productCategoryId).map((category) => <option key={category.id} value={category.id} disabled={!category.is_active}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}</BusinessSelect></td>
       <td className="border-r border-slate-300 p-1"><ReferenceSelect value={draft.workerId} options={workers} noun="worker" onChange={(value) => set('workerId', value)} onAdd={addWorker} /></td>
       <td className="border-r border-slate-300 p-1"><ReferenceSelect value={draft.taskId} options={tasks} noun="task" onChange={(value) => set('taskId', value)} onAdd={addTask} /></td>
       <td className="border-r border-slate-300 p-1">
         {jobControl ?? (jobReadOnly ? <div className="min-w-[220px] px-2 text-xs text-slate-600">{targets.find((target) => target.value === draft.workTarget)?.label ?? (draft.unlistedLabel || 'Unlinked')}</div> : <WorkIdentityControl value={draft.workTarget} temporaryLabel={draft.unlistedLabel} savedTemporaryLabel={savedTemporaryLabel} targets={targets} onChange={(workTarget, unlistedLabel) => setDraft({ ...draft, workTarget, unlistedLabel })} />)}
       </td>
-      <td className="border-r border-slate-300 p-1"><input type="number" min="0" max="24" step="0.25" value={draft.amHours} onChange={(e) => set('amHours', e.target.value)} className={inputClass} /></td>
-      <td className="border-r border-slate-300 p-1"><input type="number" min="0" max="24" step="0.25" value={draft.pmHours} onChange={(e) => set('pmHours', e.target.value)} className={inputClass} /></td>
+      <td className="border-r border-slate-300 p-1"><BusinessInput type="number" min="0" max="24" step="0.25" value={draft.amHours} onChange={(e) => set('amHours', e.target.value)} className={inputClass} /></td>
+      <td className="border-r border-slate-300 p-1"><BusinessInput type="number" min="0" max="24" step="0.25" value={draft.pmHours} onChange={(e) => set('pmHours', e.target.value)} className={inputClass} /></td>
       <td className="border-r border-slate-300 bg-slate-50 px-2 text-center align-middle text-sm font-bold tabular-nums">{Number.isFinite(total) ? total.toFixed(2) : '—'}</td>
-      <td className="p-1"><div className="flex min-w-[220px] items-center gap-2"><input value={draft.notes} onChange={(e) => set('notes', e.target.value)} placeholder="Notes" className={inputClass} />{actions}</div></td>
+      <td className="p-1"><div className="flex min-w-[220px] items-center gap-2"><BusinessInput value={draft.notes} onChange={(e) => set('notes', e.target.value)} placeholder="Notes" className={inputClass} />{actions}</div></td>
     </>
   );
 }
@@ -450,10 +452,10 @@ function EditableEntryRow({ entry, targets, workers, tasks, addWorker, addTask, 
     }}>
       <td className="border-r border-slate-300 px-3 pt-3 text-center"><SelectionCheckbox checked={selected} label={`Select ${entry.worker.display_name} entry on ${entry.work_date}`} onChange={onSelected} /></td>
       <EntryFields allowUncategorized={entry.product_category_id === null} draft={draft} setDraft={change} targets={targets} workers={workers} tasks={tasks} addWorker={addWorker} addTask={addTask} savedTemporaryLabel={entry.unlisted_work_label} jobReadOnly jobControl={jobControl} actions={<span className="shrink-0 text-center text-[10px] font-bold uppercase tracking-wide">
-        {state === 'dirty' && <button type="button" onClick={() => void save()} className="text-blue-700">Save</button>}
+        {state === 'dirty' && <BusinessButton type="button" onClick={() => void save()} className="text-blue-700">Save</BusinessButton>}
         {state === 'saving' && <span className="text-slate-500">Saving…</span>}
         {state === 'saved' && <span className="text-emerald-700">Saved</span>}
-        {state === 'error' && <button type="button" onClick={() => void save()} title={message} className="text-red-700">Error · Retry</button>}
+        {state === 'error' && <BusinessButton type="button" onClick={() => void save()} title={message} className="text-red-700">Error · Retry</BusinessButton>}
       </span>} />
     </tr>
   );
@@ -524,53 +526,53 @@ function BulkActionBar({
       <div className="flex flex-wrap items-center gap-2">
         <span className="mr-1 text-xs font-bold text-blue-950">{selectedCount} selected</span>
         <button type="button" onClick={onClear} className="h-8 px-2 text-xs font-bold text-blue-800 hover:bg-blue-100">Deselect all</button>
-        <button type="button" onClick={() => void removeSelected()} disabled={(Boolean(busy) || categoryBusy)} className="h-8 border border-red-700 bg-red-700 px-2 text-xs font-bold text-white disabled:opacity-50">{busy === 'delete' ? 'Deleting…' : 'Delete selected'}</button>
+        <BusinessButton type="button" onClick={() => void removeSelected()} disabled={(Boolean(busy) || categoryBusy)} className="h-8 border border-red-700 bg-red-700 px-2 text-xs font-bold text-white disabled:opacity-50">{busy === 'delete' ? 'Deleting…' : 'Delete selected'}</BusinessButton>
 
         <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
-          <select value={reportingGroupId} onChange={(event) => setReportingGroupId(event.target.value)} className={compactInput}>
+          <BusinessSelect value={reportingGroupId} onChange={(event) => setReportingGroupId(event.target.value)} className={compactInput}>
             <option value="">Reporting Group</option>
             {reportingGroups.map((group) => <option key={group.id} value={group.id}>{group.display_name}</option>)}
-          </select>
-          <button type="button" disabled={!reportingGroupId || (Boolean(busy) || categoryBusy)} onClick={() => void apply('group', { reporting_group_id: reportingGroupId })} className={buttonClass}>{busy === 'group' ? 'Applying…' : 'Move to Group'}</button>
+          </BusinessSelect>
+          <BusinessButton type="button" disabled={!reportingGroupId || (Boolean(busy) || categoryBusy)} onClick={() => void apply('group', { reporting_group_id: reportingGroupId })} className={buttonClass}>{busy === 'group' ? 'Applying…' : 'Move to Group'}</BusinessButton>
         </div>
 
         <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
-          <input type="date" value={workDate} onChange={(event) => setWorkDate(event.target.value)} className={compactInput} />
-          <button type="button" disabled={!workDate || (Boolean(busy) || categoryBusy)} onClick={() => void apply('date', { work_date: workDate })} className={buttonClass}>{busy === 'date' ? 'Applying…' : 'Apply Date'}</button>
+          <BusinessInput type="date" value={workDate} onChange={(event) => setWorkDate(event.target.value)} className={compactInput} />
+          <BusinessButton type="button" disabled={!workDate || (Boolean(busy) || categoryBusy)} onClick={() => void apply('date', { work_date: workDate })} className={buttonClass}>{busy === 'date' ? 'Applying…' : 'Apply Date'}</BusinessButton>
         </div>
 
         <div className="flex max-w-full flex-wrap items-center gap-1 border-l border-blue-300 pl-2">
-          <select aria-label="Bulk Product Category" value={activeCategoryId} disabled={categoryBusy} onFocus={() => void refresh().catch(() => {})} onChange={(event) => setCategoryId(event.target.value)} className={`${compactInput} min-w-0 max-w-[180px]`}>
+          <BusinessSelect aria-label="Bulk Product Category" value={activeCategoryId} disabled={categoryBusy} onFocus={() => void refresh().catch(() => {})} onChange={(event) => setCategoryId(event.target.value)} className={`${compactInput} min-w-0 max-w-[180px]`}>
             <option value="">Product Category</option>
             {categories.filter((category) => category.is_active).map((category) => <option key={category.id} value={category.id}>{category.display_name}</option>)}
-          </select>
-          <button type="button" disabled={!activeCategoryId || Boolean(busy) || categoryBusy || categorySelectedCount > MAX_BULK_PRODUCT_ENTRIES} onClick={() => void onApplyCategory(activeCategoryId)} className={buttonClass}>{categoryBusy ? 'Applying…' : 'Apply Category'}</button>
+          </BusinessSelect>
+          <BusinessButton type="button" disabled={!activeCategoryId || Boolean(busy) || categoryBusy || categorySelectedCount > MAX_BULK_PRODUCT_ENTRIES} onClick={() => void onApplyCategory(activeCategoryId)} className={buttonClass}>{categoryBusy ? 'Applying…' : 'Apply Category'}</BusinessButton>
         </div>
 
         <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
-          <select value={workerId} onChange={(event) => setWorkerId(event.target.value)} className={compactInput}>
+          <BusinessSelect value={workerId} onChange={(event) => setWorkerId(event.target.value)} className={compactInput}>
             <option value="">Worker</option>
             {workers.filter((worker) => worker.is_active).map((worker) => <option key={worker.id} value={worker.id}>{worker.display_name}</option>)}
-          </select>
-          <button type="button" disabled={!workerId || (Boolean(busy) || categoryBusy)} onClick={() => void apply('worker', { worker_id: workerId })} className={buttonClass}>{busy === 'worker' ? 'Applying…' : 'Apply Worker'}</button>
+          </BusinessSelect>
+          <BusinessButton type="button" disabled={!workerId || (Boolean(busy) || categoryBusy)} onClick={() => void apply('worker', { worker_id: workerId })} className={buttonClass}>{busy === 'worker' ? 'Applying…' : 'Apply Worker'}</BusinessButton>
         </div>
 
         <div className="flex items-center gap-1 border-l border-blue-300 pl-2">
-          <select value={taskId} onChange={(event) => setTaskId(event.target.value)} className={compactInput}>
+          <BusinessSelect value={taskId} onChange={(event) => setTaskId(event.target.value)} className={compactInput}>
             <option value="">Task</option>
             {tasks.filter((task) => task.is_active).map((task) => <option key={task.id} value={task.id}>{task.display_name}</option>)}
-          </select>
-          <button type="button" disabled={!taskId || (Boolean(busy) || categoryBusy)} onClick={() => void apply('task', { task_id: taskId })} className={buttonClass}>{busy === 'task' ? 'Applying…' : 'Apply Task'}</button>
+          </BusinessSelect>
+          <BusinessButton type="button" disabled={!taskId || (Boolean(busy) || categoryBusy)} onClick={() => void apply('task', { task_id: taskId })} className={buttonClass}>{busy === 'task' ? 'Applying…' : 'Apply Task'}</BusinessButton>
         </div>
 
         <div className="flex max-w-full flex-wrap items-center gap-1 border-l border-blue-300 pl-2">
           <WorkIdentityControl compact value={workTarget} temporaryLabel={unlistedLabel} targets={targets} onChange={(value, label) => { setWorkTarget(value); setUnlistedLabel(label); }} />
-          <button
+          <BusinessButton
             type="button"
             disabled={!workTarget || (workTarget === UNLISTED_WORK_TARGET && !unlistedLabel.trim()) || (Boolean(busy) || categoryBusy)}
             onClick={() => void apply('identity', manpowerIdentityForTarget(workTarget, unlistedLabel, targets))}
             className={`${buttonClass} shrink-0 whitespace-nowrap`}
-          >{busy === 'identity' ? 'Applying…' : 'Apply Job / Label'}</button>
+          >{busy === 'identity' ? 'Applying…' : 'Apply Job / Label'}</BusinessButton>
         </div>
       </div>
       <p className="mt-2 text-[10px] text-blue-900">Category applies to all {categorySelectedCount} selected rows across groups and filters. Other actions use this group’s {selectedCount} selected rows. Maximum {MAX_BULK_PRODUCT_ENTRIES} per category apply.</p>
@@ -1003,7 +1005,6 @@ export default function ManpowerWorkspace() {
         </div>
       </div>
 
-
       {manageReferences && <section ref={settingsPanel} id="manpower-settings" aria-label="Manpower Settings" className="mx-auto mt-4 flex max-h-[calc(100svh-4rem)] w-full max-w-[1080px] flex-col rounded-sm border border-slate-200 bg-white p-3 shadow-sm sm:w-[calc(100%-1rem)] sm:p-4">
         <div className="flex shrink-0 items-center justify-between gap-3"><h2 className="text-sm font-bold text-slate-900">Manpower Settings</h2><button type="button" onClick={closeReferencePanel} className="h-9 border border-slate-300 bg-white px-3 text-xs font-bold focus-visible:ring-2 focus-visible:ring-blue-600">Close settings</button></div>
         <div role="tablist" aria-label="Manpower vocabularies" className="my-3 flex shrink-0 border-b border-slate-200">
@@ -1034,18 +1035,18 @@ export default function ManpowerWorkspace() {
       <div className="mt-5 space-y-3">
         <div className="grid grid-cols-1 items-center gap-3 lg:grid-cols-[max-content_minmax(0,1fr)_max-content]">
           <label className="flex min-w-0 flex-wrap items-center gap-2 text-xs font-semibold text-slate-600 sm:flex-nowrap"><span className="shrink-0 whitespace-nowrap">Job labor review</span>
-            <select aria-label="Job labor review" className={`${inputClass} sm:flex-1 lg:w-auto lg:max-w-xs lg:flex-none`} value={linkedJobId ?? ''} onChange={(event) => selectJob(event.target.value)}>
+            <BusinessSelect aria-label="Job labor review" className={`${inputClass} sm:flex-1 lg:w-auto lg:max-w-xs lg:flex-none`} value={linkedJobId ?? ''} onChange={(event) => selectJob(event.target.value)}>
               <option value="">All reporting groups</option>
               {linkedJobId && !reviewJobs.some((job) => job.id === linkedJobId) && <option value={linkedJobId}>Selected Production job</option>}
               {reviewJobs.map((job) => <option key={job.id} value={job.id}>{manpowerJobLabel(job)}{job.archived_at ? ' · Archived' : ''}</option>)}
-            </select>
+            </BusinessSelect>
           </label>
           <label className="relative block w-full min-w-0">
             <span className="sr-only">{tr('Search manpower','Buscar registros de mano de obra')}</span>
             <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr('Search manpower…','Buscar mano de obra…')} className={`${inputClass} pl-9 placeholder:font-semibold`} />
           </label>
-          {!showNewGroup ? <button type="button" onClick={() => setShowNewGroup(true)} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || loading || Boolean(loadError)} title="Clear filters before creating an empty group" className="inline-flex h-9 w-max shrink-0 items-center gap-1.5 whitespace-nowrap border border-blue-400 bg-blue-50 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 enabled:hover:bg-blue-100 enabled:active:bg-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:saturate-0"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</button> : <div className="flex min-w-0 flex-wrap items-center gap-1 border border-slate-400 bg-white p-1 lg:col-span-3"><input ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 min-w-0 max-w-full px-2 text-sm outline-none" /><button type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</button><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
+          {!showNewGroup ? <BusinessButton type="button" onClick={() => setShowNewGroup(true)} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || loading || Boolean(loadError)} title="Clear filters before creating an empty group" className="inline-flex h-9 w-max shrink-0 items-center gap-1.5 whitespace-nowrap border border-blue-400 bg-blue-50 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 enabled:hover:bg-blue-100 enabled:active:bg-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:saturate-0"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</BusinessButton> : <div className="flex min-w-0 flex-wrap items-center gap-1 border border-slate-400 bg-white p-1 lg:col-span-3"><BusinessInput ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 min-w-0 max-w-full px-2 text-sm outline-none" /><BusinessButton type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</BusinessButton><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
           {linkedJobId && <button type="button" onClick={() => selectJob('')} className="justify-self-start py-2 text-xs font-semibold text-slate-500 underline">Clear job filter</button>}
         </div>
         <ManpowerAnalytics entries={entries} categories={categories} tasks={tasks} jobId={linkedJobId} productFocus={productFilter} loading={loading} error={loadError} />
@@ -1054,7 +1055,6 @@ export default function ManpowerWorkspace() {
         </ProductLaborSummary>}
         {(normalizedSearch || productFilter || linkedJobId) && <p className="text-xs text-slate-500">Clear filters to create an empty group or change a whole group’s Job.</p>}
         <p className="text-xs text-slate-500">Choose one Product Category per line. Split hours across separate lines when labor belongs to different products.</p>
-
 
         {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : loadError ? <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{loadError}</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{linkedJobId ? 'No manpower reporting groups are linked to this Production job.' : normalizedSearch || productFilter ? 'No manpower entries match your filters.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
           const identityEntries = entries.filter((entry) => (entry.reporting_group_id ?? '__ungrouped__') === group.key);
@@ -1081,7 +1081,7 @@ export default function ManpowerWorkspace() {
             : group.entries.length > 0 ? 'Mixed lifecycle targets' : '';
           const previousJobName = identityEntries.find((entry) => entry.unlisted_work_label?.trim())?.unlisted_work_label?.trim() || group.label;
           const newEntryJobCell = <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === draft.workTarget)?.label ?? (draft.unlistedLabel || 'Choose a work target')}</div>;
-          const temporaryGroupJobCell = <input key={`${group.key}:${previousJobName}`} disabled={identityFiltered} defaultValue={previousJobName} aria-label={`Job name for ${group.label}`} onBlur={(event) => { if (event.target.value.trim() !== previousJobName) void renameUnlinkedGroup(group.key, identityEntries, event.target.value); }} className="h-8 min-w-[220px] w-full border border-slate-300 bg-white px-2 text-xs outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-200" />;
+          const temporaryGroupJobCell = <BusinessInput key={`${group.key}:${previousJobName}`} disabled={identityFiltered} defaultValue={previousJobName} aria-label={`Job name for ${group.label}`} onBlur={(event) => { if (event.target.value.trim() !== previousJobName) void renameUnlinkedGroup(group.key, identityEntries, event.target.value); }} className="h-8 min-w-[220px] w-full border border-slate-300 bg-white px-2 text-xs outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-200" />;
           return (
             <section key={group.key} className={`overflow-hidden rounded-sm border bg-white ${selectedGroupIds.length > 0 || emptyGroupSelected ? 'border-blue-600' : 'border-slate-200'}`}>
               <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800">
@@ -1114,14 +1114,14 @@ export default function ManpowerWorkspace() {
                 <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">PM {pm.toFixed(1)} hrs</span>
                 <span className="shrink-0 rounded-sm bg-slate-900 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">{identityFiltered ? 'MATCHING' : 'TOTAL'} {(am + pm).toFixed(2)} hrs</span>
               </div>
-              {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><button type="button" onClick={() => startAddingToGroup(group.group!.id, identityEntries, group.label)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</button></div>}
+              {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><BusinessButton type="button" onClick={() => startAddingToGroup(group.group!.id, identityEntries, group.label)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</BusinessButton></div>}
               {!isCollapsed && <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                 <span className="flex-1">{groupJob ? tr('This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.','Este grupo de mano de obra está vinculado al trabajo de Producción. Las horas registradas aquí se incluyen en las horas registradas del flujo de producción.') : tr('This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.','Este grupo de mano de obra no está vinculado a un trabajo de Producción. Las horas registradas aquí no aparecerán en Producción hasta que se vincule un trabajo.')}</span>
                 <ProductionJobLinkSelector groupLabel={group.label} targets={targets} value={groupTargetValue} selectedLabel={groupTargetLabel} disabled={linkingGroupId === group.key || identityFiltered} onChange={(workTarget) => void linkReportingGroup(group.key, identityEntries, workTarget, previousJobName)} />
               </div>}
               {selectedGroupIds.length > 0 && <BulkActionBar categorySelectedCount={selectedIds.size} categoryBusy={categoryBusy} onApplyCategory={applyBulkCategory} selectedCount={selectedGroupIds.length} targets={targets} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
-              {emptyGroupSelected && group.group && <div className="flex items-center justify-between border-b border-blue-200 bg-blue-50 px-3 py-2 text-xs"><span className="font-semibold text-blue-900">Empty group selected</span><div className="flex items-center gap-3"><button type="button" onClick={() => setSelectedEmptyGroupIds((current) => { const next = new Set(current); next.delete(group.key); return next; })} className="font-bold text-slate-600 hover:underline">Clear selection</button><button type="button" onClick={() => void deleteSelectedEmptyGroup(group.group!)} className="h-8 border border-red-500 bg-white px-3 font-bold text-red-700 hover:bg-red-50">Delete Empty Group</button></div></div>}
-              {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1480px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Product Category</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{addingToGroupId === group.key && group.group && <tr className="border-b-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly={Boolean(draft.workTarget)} jobControl={draft.workTarget ? newEntryJobCell : undefined} actions={<div className="flex gap-1"><button type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</button><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={groupTargetValue === UNLISTED_WORK_TARGET ? temporaryGroupJobCell : <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === manpowerEntryTargetValue(entry))?.label ?? entry.unlisted_work_label ?? 'Unlinked'}</div>} />)}</tbody></table></div>}
+              {emptyGroupSelected && group.group && <div className="flex items-center justify-between border-b border-blue-200 bg-blue-50 px-3 py-2 text-xs"><span className="font-semibold text-blue-900">Empty group selected</span><div className="flex items-center gap-3"><button type="button" onClick={() => setSelectedEmptyGroupIds((current) => { const next = new Set(current); next.delete(group.key); return next; })} className="font-bold text-slate-600 hover:underline">Clear selection</button><BusinessButton type="button" onClick={() => void deleteSelectedEmptyGroup(group.group!)} className="h-8 border border-red-500 bg-white px-3 font-bold text-red-700 hover:bg-red-50">Delete Empty Group</BusinessButton></div></div>}
+              {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1480px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Product Category</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{addingToGroupId === group.key && group.group && <tr className="border-b-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly={Boolean(draft.workTarget)} jobControl={draft.workTarget ? newEntryJobCell : undefined} actions={<div className="flex gap-1"><BusinessButton type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</BusinessButton><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={groupTargetValue === UNLISTED_WORK_TARGET ? temporaryGroupJobCell : <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === manpowerEntryTargetValue(entry))?.label ?? entry.unlisted_work_label ?? 'Unlinked'}</div>} />)}</tbody></table></div>}
             </section>
           );
         })}

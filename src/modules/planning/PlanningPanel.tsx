@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessSelect, BusinessButton, BusinessInput } from '@/components/BusinessWriteControls';
+
 import Link from "next/link";
 import { AlertTriangle, ChevronDown, ChevronRight, Info, Layers, Plus, Settings2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -301,10 +303,10 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
           <CollapsedPhaseDisplayToggle />
           <Link href={`/settings?returnJobId=${encodeURIComponent(job.id)}&returnJobName=${encodeURIComponent(job.name)}#phase-library`} className="inline-flex h-9 items-center gap-1.5 border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600"><Settings2 className="h-4 w-4" aria-hidden="true" />Phase Library</Link>
           {library.length > 0 && (
-            <select disabled={templateLoading} aria-label="Add from Phase Library" defaultValue="" onChange={(event) => { const value = event.target.value; event.target.value = ""; if (value) void openPhaseCreation(value, event.currentTarget); }} className="h-9 border border-slate-300 bg-white px-2 text-xs font-bold">
+            <BusinessSelect disabled={templateLoading} aria-label="Add from Phase Library" defaultValue="" onChange={(event) => { const value = event.target.value; event.target.value = ""; if (value) void openPhaseCreation(value, event.currentTarget); }} className="h-9 border border-slate-300 bg-white px-2 text-xs font-bold">
               <option value="">Add from Phase Library…</option>
               {library.map((entry) => <option key={entry.id} value={entry.id} disabled={planningPhaseCount >= MAX_PLANNING_PHASES && countsTowardPlanningPhaseLimit(entry.default_timeline_behavior)}>{entry.name}{planningPhaseCount >= MAX_PLANNING_PHASES && countsTowardPlanningPhaseLimit(entry.default_timeline_behavior) ? " — limit reached" : ""}</option>)}
-            </select>
+            </BusinessSelect>
           )}
           <button type="button" title={planningPhaseCount >= MAX_PLANNING_PHASES ? "Four Planning Phases exist. Pause intervals may still be added." : "Add Planning Phase"} onClick={(event) => openPhase(null, event.currentTarget)} className="inline-flex h-9 items-center gap-1.5 border border-blue-800 bg-blue-50 px-3 text-xs font-bold text-blue-900 focus-visible:ring-2 focus-visible:ring-blue-600"><Plus className="h-4 w-4" aria-hidden="true" />{planningPhaseCount >= MAX_PLANNING_PHASES ? "Add Pause" : "Add Phase"}</button>
         </div>
@@ -366,7 +368,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
                     {prerequisite && <div className="mt-0.5 text-[10px] font-semibold text-slate-500"><span>{isBlocked ? "Waiting for" : "Depends on"}: {prerequisite.title}</span></div>}
                     {scheduleIssues.map((issue) => <div key={issue.id} className={`mt-1 flex items-start gap-1 text-[10px] font-semibold ${issue.severity === "error" ? "text-red-700" : "text-orange-700"}`}><AlertTriangle className="mt-px h-3 w-3 shrink-0" aria-hidden="true" /><span>{issue.inspector_message ?? issue.message}</span></div>)}
                   </button>
-                  {phase.timeline_behavior !== "pause" && <button type="button" onClick={(event) => openItem(phase.id, null, event.currentTarget)} className="h-8 border border-slate-300 px-2 text-xs font-bold text-slate-700 focus-visible:ring-2 focus-visible:ring-blue-600">Add Item</button>}
+                  {phase.timeline_behavior !== "pause" && <BusinessButton type="button" onClick={(event) => openItem(phase.id, null, event.currentTarget)} className="h-8 border border-slate-300 px-2 text-xs font-bold text-slate-700 focus-visible:ring-2 focus-visible:ring-blue-600">Add Item</BusinessButton>}
                 </div>
                 {isExpanded && (
                   <div className="border-t border-slate-200 bg-slate-50 px-4 py-2">
@@ -375,7 +377,7 @@ export default function PlanningPanel({ job, compact = false, initialPhaseId, on
                     ) : (
                       phaseItems.map((item) => (
                         <div key={item.id} className="flex min-h-9 items-center gap-2 border-b border-slate-200 py-1.5 last:border-b-0">
-                          <input type="checkbox" checked={item.is_complete} disabled={savingCompletionIds.has(item.id)} aria-label={`Mark ${item.title} ${item.is_complete ? "incomplete" : "complete"}`} onChange={(event) => void toggleItemCompletion(item, event.target.checked)} />
+                          <BusinessInput type="checkbox" checked={item.is_complete} disabled={savingCompletionIds.has(item.id)} aria-label={`Mark ${item.title} ${item.is_complete ? "incomplete" : "complete"}`} onChange={(event) => void toggleItemCompletion(item, event.target.checked)} />
                           <button type="button" onClick={(event) => openItem(phase.id, item, event.currentTarget)} className={`min-w-0 flex-1 text-left text-sm focus-visible:ring-2 focus-visible:ring-blue-600 ${item.is_complete ? "text-slate-500 line-through" : "text-slate-800"}`}><span className="block truncate">{item.title}</span><span className="block text-[10px] text-slate-500 no-underline">{[`${formatPlanningHours(item.estimated_hours)} hrs`, item.owner, item.due_date ? `Due ${item.due_date}` : null].filter(Boolean).join(" · ")}</span></button>
                           {savingCompletionIds.has(item.id) && <span className="shrink-0 text-[9px] font-semibold uppercase tracking-wide text-slate-400">Saving</span>}
                         </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessInput } from '@/components/BusinessWriteControls';
+
 import type { ChangeEvent } from "react";
 import Image from "next/image";
 import { useEffect, useMemo } from "react";
@@ -25,7 +27,7 @@ export default function AttachmentFileInput({disabled=false,onFiles,onError,onPr
     }
   }
 
-  return <input type="file" multiple accept={attachmentAccept} disabled={disabled} onChange={(event)=>void retainFiles(event)} className="sr-only" />;
+  return <BusinessInput type="file" multiple accept={attachmentAccept} disabled={disabled} onChange={(event)=>void retainFiles(event)} className="sr-only" />;
 }
 
 export function StagedImagePreview({file}:{file:File}){

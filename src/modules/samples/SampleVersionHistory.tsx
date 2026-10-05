@@ -1,4 +1,7 @@
 "use client";
+
+import { BusinessButton, BusinessInput } from '@/components/BusinessWriteControls';
+
 import { Eye, History, RotateCcw, Save } from "lucide-react";
 import { useRef, useState } from "react";
 import { sampleWorkingPreviewInputKey, SessionPdfPreviewCache } from "@/lib/pdf-preview-cache";
@@ -180,14 +183,14 @@ export default function SampleVersionHistory({
         </p>
       )}
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-        <input
+        <BusinessInput
           value={note}
           maxLength={200}
           onChange={(event) => setNote(event.target.value)}
           placeholder="Optional note before trying another formula"
           className="h-11 min-w-0 flex-1 border border-slate-300 px-3 text-sm"
         />
-        <button
+        <BusinessButton
           type="button"
           disabled={Boolean(busy)}
           onClick={() => void checkpoint()}
@@ -195,7 +198,7 @@ export default function SampleVersionHistory({
         >
           <Save className="h-4 w-4" />
           {busy === "save-version" ? "Saving…" : "Save Version"}
-        </button>
+        </BusinessButton>
       </div>
       <div className="mt-3 space-y-2">
         {sample.workingVersions.length ? (
@@ -227,7 +230,7 @@ export default function SampleVersionHistory({
                 <Eye className="h-3.5 w-3.5" />
                 Working Sheet
               </button>
-              <button
+              <BusinessButton
                 type="button"
                 disabled={Boolean(busy)}
                 onClick={() => void restore(version.id)}
@@ -235,7 +238,7 @@ export default function SampleVersionHistory({
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 Use as Current Draft
-              </button>
+              </BusinessButton>
             </article>
           ))
         ) : (

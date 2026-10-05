@@ -1,5 +1,7 @@
 'use client';
 
+import { BusinessButton, BusinessInput } from '@/components/BusinessWriteControls';
+
 import { GripVertical, MoreHorizontal, Pencil, Plus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { ManpowerReference } from './types';
@@ -75,12 +77,12 @@ export default function ProductCategoryManager({ categories, onChanged, onEditin
   }
   function actions(item: ManpowerReference, index?: number) {
     return <>
-      <button type="button" data-control={`edit-${item.id}`} disabled={locked} aria-label={`Edit ${item.display_name}`} onClick={() => edit(item)} className={button}><Pencil size={16} aria-hidden="true" /></button>
+      <BusinessButton type="button" data-control={`edit-${item.id}`} disabled={locked} aria-label={`Edit ${item.display_name}`} onClick={() => edit(item)} className={button}><Pencil size={16} aria-hidden="true" /></BusinessButton>
       <div className="relative" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setMenu(null); }} onKeyDown={e => { if (e.key === 'Escape') { setMenu(null); focus(`actions-${item.id}`); } }}>
         <button type="button" data-control={`actions-${item.id}`} disabled={locked} aria-label={`Actions for ${item.display_name}`} aria-expanded={menu === item.id} aria-controls={`category-actions-${item.id}`} onClick={() => setMenu(menu === item.id ? null : item.id)} className={button}><MoreHorizontal size={18} aria-hidden="true" /></button>
         {menu === item.id && <div id={`category-actions-${item.id}`} className="absolute right-0 top-10 z-20 w-44 rounded-sm border border-slate-300 bg-white p-1 shadow-lg">
           {index !== undefined && <><button type="button" disabled={index === 0} className={`${button} w-full justify-start`} onClick={() => move(item.id, index - 1)}>Move up</button><button type="button" disabled={index === active.length - 1} className={`${button} w-full justify-start`} onClick={() => move(item.id, index + 1)}>Move down</button></>}
-          <button type="button" aria-label={`${item.is_active ? 'Deactivate' : 'Reactivate'} ${item.display_name}`} className={`${button} w-full justify-start`} onClick={() => toggle(item)}>{item.is_active ? 'Deactivate' : 'Reactivate'}</button>
+          <BusinessButton type="button" aria-label={`${item.is_active ? 'Deactivate' : 'Reactivate'} ${item.display_name}`} className={`${button} w-full justify-start`} onClick={() => toggle(item)}>{item.is_active ? 'Deactivate' : 'Reactivate'}</BusinessButton>
         </div>}
       </div>
     </>;
@@ -90,19 +92,19 @@ export default function ProductCategoryManager({ categories, onChanged, onEditin
     <p className="text-xs leading-relaxed text-slate-600">Manage the Product Categories available when entering labor. Renaming preserves labor history; deactivate categories no longer in use.</p>
     <p className="mt-1 text-xs text-slate-500">MISC. covers other products or deliverables. Historical entries without a category remain Uncategorized.</p>
     <div className="my-3 flex flex-wrap items-center gap-2">
-      <button type="button" data-control="add" disabled={locked} onClick={() => edit('new')} className={`${button} border border-slate-300 text-xs font-bold`}><Plus size={16} aria-hidden="true" /> Add Category</button>
-      <label className="flex min-h-10 items-center gap-2 text-xs"><input type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} />Show inactive</label>
+      <BusinessButton type="button" data-control="add" disabled={locked} onClick={() => edit('new')} className={`${button} border border-slate-300 text-xs font-bold`}><Plus size={16} aria-hidden="true" /> Add Category</BusinessButton>
+      <label className="flex min-h-10 items-center gap-2 text-xs"><BusinessInput type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} />Show inactive</label>
       <button type="button" disabled={busy || editing !== null} onClick={() => void refresh()} className={`${button} text-xs`}>Refresh categories</button>
     </div>
     {editing && <form onSubmit={e => { e.preventDefault(); save(); }} className="mb-3 flex flex-wrap items-end gap-2 rounded-sm bg-blue-50 p-3">
-      <label className="flex min-w-0 flex-1 flex-col gap-1 text-xs">Category name<input autoFocus required disabled={busy} value={name} onChange={e => setName(e.target.value)} onKeyDown={e => { if (e.key === 'Escape' && !busy) { const control = editing === 'new' ? 'add' : `edit-${editing.id}`; setEditing(null); setError(''); focus(control); } }} className="h-10 min-w-0 rounded-sm border border-slate-300 bg-white px-2 text-sm" /></label>
-      <button type="submit" disabled={busy} className={`${button} bg-slate-900 text-white hover:bg-slate-700`}>Save category</button>
+      <label className="flex min-w-0 flex-1 flex-col gap-1 text-xs">Category name<BusinessInput autoFocus required disabled={busy} value={name} onChange={e => setName(e.target.value)} onKeyDown={e => { if (e.key === 'Escape' && !busy) { const control = editing === 'new' ? 'add' : `edit-${editing.id}`; setEditing(null); setError(''); focus(control); } }} className="h-10 min-w-0 rounded-sm border border-slate-300 bg-white px-2 text-sm" /></label>
+      <BusinessButton type="submit" disabled={busy} className={`${button} bg-slate-900 text-white hover:bg-slate-700`}>Save category</BusinessButton>
       <button type="button" disabled={busy} onClick={() => { const control = editing === 'new' ? 'add' : `edit-${editing.id}`; setEditing(null); setError(''); focus(control); }} className={button}>Cancel category edit</button>
     </form>}
     {error && <p role="alert" className="my-2 text-sm text-red-700">{error}</p>}
     <p role="status" className="text-xs text-slate-600">{busy ? 'Saving / refreshing categories…' : status}</p>
     <p id="category-reorder-help" className="mb-2 mt-2 text-xs text-slate-500">Drag a handle to reorder, use its ↑ / ↓ keys, or choose Move up / down from Actions.</p>
-    {active.some((c, i) => c.sort_order !== i + 1) && <button type="button" disabled={locked} className={`${button} mb-2 border border-amber-300 text-xs`} onClick={() => void commit(normalizeCategories(categories), 'Active order normalized.', 'add')}>Normalize order</button>}
+    {active.some((c, i) => c.sort_order !== i + 1) && <BusinessButton type="button" disabled={locked} className={`${button} mb-2 border border-amber-300 text-xs`} onClick={() => void commit(normalizeCategories(categories), 'Active order normalized.', 'add')}>Normalize order</BusinessButton>}
     </div>
     <div data-settings-list className="min-h-0 overflow-y-auto overscroll-contain">
     <ol aria-label="Active Categories" className="divide-y divide-slate-200 border-y border-slate-200">
@@ -115,7 +117,7 @@ export default function ProductCategoryManager({ categories, onChanged, onEditin
       </li>)}
     </ol>
     {!active.length && <p className="py-3 text-sm text-slate-500">No active categories. Add or reactivate a category to enter labor.</p>}
-    {showInactive && <section aria-label="Inactive Categories" className="mt-5"><h3 className="text-xs font-bold uppercase tracking-wide text-slate-500">Inactive Categories</h3><ul className="mt-2 divide-y divide-slate-200">{categories.filter(c => !c.is_active).map(item => <li key={item.id} className="flex min-w-0 items-center gap-1 py-1"><span className="min-w-0 flex-1 break-words text-sm text-slate-600">{item.display_name}</span><span className="text-xs text-slate-500">Inactive</span><button type="button" disabled={locked} onClick={() => toggle(item)} aria-label={`Reactivate ${item.display_name}`} className={`${button} text-xs`}>Reactivate</button>{actions(item)}</li>)}</ul></section>}
+    {showInactive && <section aria-label="Inactive Categories" className="mt-5"><h3 className="text-xs font-bold uppercase tracking-wide text-slate-500">Inactive Categories</h3><ul className="mt-2 divide-y divide-slate-200">{categories.filter(c => !c.is_active).map(item => <li key={item.id} className="flex min-w-0 items-center gap-1 py-1"><span className="min-w-0 flex-1 break-words text-sm text-slate-600">{item.display_name}</span><span className="text-xs text-slate-500">Inactive</span><BusinessButton type="button" disabled={locked} onClick={() => toggle(item)} aria-label={`Reactivate ${item.display_name}`} className={`${button} text-xs`}>Reactivate</BusinessButton>{actions(item)}</li>)}</ul></section>}
     </div>
   </section>;
 }

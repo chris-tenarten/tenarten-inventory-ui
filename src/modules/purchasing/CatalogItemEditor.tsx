@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessSelect, BusinessInput, BusinessButton } from '@/components/BusinessWriteControls';
+
 import { useState } from "react";
 import { savePurchasingCatalogItem } from "./mutations";
 import { getPurchasingCatalogCategory } from "./catalog-category";
@@ -211,7 +213,7 @@ export default function CatalogItemEditor({
       <div className="mx-auto mt-4 grid max-w-[1040px] gap-3 px-2 sm:grid-cols-3">
         <label className={label}>
           Vendor
-          <select
+          <BusinessSelect
             className={field}
             value={draft.vendorId}
             onChange={(e) => set("vendorId", e.target.value)}
@@ -224,11 +226,11 @@ export default function CatalogItemEditor({
                   {v.name}
                 </option>
               ))}
-          </select>
+          </BusinessSelect>
         </label>
         <label className={label}>
           Material
-          <input
+          <BusinessInput
             className={field}
             value={draft.itemName}
             onChange={(e) => set("itemName", e.target.value)}
@@ -237,7 +239,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Vendor SKU
-          <input
+          <BusinessInput
             className={field}
             value={draft.vendorSku}
             onChange={(e) => set("vendorSku", e.target.value)}
@@ -245,16 +247,16 @@ export default function CatalogItemEditor({
           />
         </label>
         {materialType === "chip" ? (
-          <label className={label}>Size<input className={field} value={draft.size} onChange={(e) => set("size", e.target.value)} readOnly={Boolean(draft.id)} /></label>
+          <label className={label}>Size<BusinessInput className={field} value={draft.size} onChange={(e) => set("size", e.target.value)} readOnly={Boolean(draft.id)} /></label>
         ) : materialType === "resin" ? (
           <>
-            <label className={label}>Resin Color<input className={field} value={draft.resinColor} onChange={(e) => set("resinColor", e.target.value)} readOnly={Boolean(draft.id)} /></label>
-            <label className={label}>Component Type<input className={field} value={draft.componentType} onChange={(e) => set("componentType", e.target.value)} readOnly={Boolean(draft.id)} placeholder="Part A, Part B, or Hardener" /></label>
+            <label className={label}>Resin Color<BusinessInput className={field} value={draft.resinColor} onChange={(e) => set("resinColor", e.target.value)} readOnly={Boolean(draft.id)} /></label>
+            <label className={label}>Component Type<BusinessInput className={field} value={draft.componentType} onChange={(e) => set("componentType", e.target.value)} readOnly={Boolean(draft.id)} placeholder="Part A, Part B, or Hardener" /></label>
           </>
         ) : null}
         <label className={label}>
           Amount Per Container
-          <input
+          <BusinessInput
             className={field}
             value={draft.unitSize}
             onChange={(e) => set("unitSize", e.target.value)}
@@ -263,7 +265,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Measure
-          <select
+          <BusinessSelect
             className={field}
             value={draft.unitSizeUom}
             onChange={(e) => set("unitSizeUom", e.target.value)}
@@ -274,11 +276,11 @@ export default function CatalogItemEditor({
             <option>GAL</option>
             <option>KG</option>
             <option>OZ</option>
-          </select>
+          </BusinessSelect>
         </label>
         <label className={label}>
           Container
-          <input
+          <BusinessInput
             className={field}
             value={draft.packaging}
             onChange={(e) => set("packaging", e.target.value)}
@@ -287,7 +289,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Individual Price
-          <input
+          <BusinessInput
             inputMode="decimal"
             className={field}
             value={draft.price}
@@ -296,7 +298,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Bulk Price - Optional
-          <input
+          <BusinessInput
             inputMode="decimal"
             className={field}
             value={draft.bulkPrice}
@@ -308,7 +310,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Bulk Minimum Quantity
-          <input
+          <BusinessInput
             inputMode="decimal"
             className={field}
             value={draft.bulkMinimumQuantity}
@@ -317,7 +319,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Bulk Minimum Unit
-          <input
+          <BusinessInput
             className={field}
             value={draft.bulkMinimumUom}
             onChange={(e) => set("bulkMinimumUom", e.target.value)}
@@ -325,7 +327,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Truckload Price - Optional
-          <input
+          <BusinessInput
             inputMode="decimal"
             className={field}
             value={draft.truckloadPrice}
@@ -337,7 +339,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Truckload Minimum Quantity
-          <input
+          <BusinessInput
             inputMode="decimal"
             className={field}
             value={draft.truckloadMinimumQuantity}
@@ -346,7 +348,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Truckload Minimum Unit
-          <input
+          <BusinessInput
             className={field}
             value={draft.truckloadMinimumUom}
             onChange={(e) => set("truckloadMinimumUom", e.target.value)}
@@ -354,7 +356,7 @@ export default function CatalogItemEditor({
         </label>
         <label className={label}>
           Price Basis
-          <input
+          <BusinessInput
             className={field}
             value={draft.priceUnit}
             onChange={(e) => set("priceUnit", e.target.value)}
@@ -364,7 +366,7 @@ export default function CatalogItemEditor({
           <>
             <label className={label}>
               Minimum Order
-              <input
+              <BusinessInput
                 inputMode="decimal"
                 className={field}
                 value={draft.minimumOrderQty}
@@ -373,7 +375,7 @@ export default function CatalogItemEditor({
             </label>
             <label className={label}>
               Minimum Unit
-              <input
+              <BusinessInput
                 className={field}
                 value={draft.minimumOrderUom}
                 onChange={(e) => set("minimumOrderUom", e.target.value)}
@@ -382,7 +384,7 @@ export default function CatalogItemEditor({
           </>
         )}
       </div>
-      <button
+      <BusinessButton
         type="button"
         disabled={saving || !draft.vendorId || !draft.itemName.trim()}
         onClick={() => void save()}
@@ -407,7 +409,7 @@ export default function CatalogItemEditor({
                   ? "Create Maintained Item with Bulk Tier"
                   : "Save as Individual Catalog Price"
               : "Create and Use Catalog Item"}
-      </button>
+      </BusinessButton>
     </div>
   );
 }

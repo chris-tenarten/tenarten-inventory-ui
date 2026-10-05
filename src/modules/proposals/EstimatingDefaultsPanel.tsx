@@ -1,5 +1,7 @@
 'use client';
 
+import { BusinessTextarea, BusinessButton } from '@/components/BusinessWriteControls';
+
 import { useEffect, useState } from 'react';
 import { Settings2, X } from 'lucide-react';
 import EstimateAssumptionField from './EstimateAssumptionField';
@@ -95,10 +97,10 @@ export default function EstimatingDefaultsPanel({ open, onClose, onSaved }: Prop
           <div className="border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-950"><strong>Current canonical version: {defaults?.version ?? '—'}</strong>{defaults?.createdByName ? ` · last changed by ${defaults.createdByName}` : ''}</div>
           {errors.length ? <div role="alert" className="border border-red-300 bg-red-50 px-3 py-2 text-xs font-semibold text-red-800">{errors.join(' ')}</div> : null}
           {groups.map((group) => <section key={group.key} className="border border-slate-300 bg-white p-4"><h3 className="text-sm font-bold uppercase tracking-wide text-slate-900">{group.label}</h3><div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{estimateAssumptionsByGroup(group.key).map((definition) => <EstimateAssumptionField key={definition.key} definition={definition} value={draft[definition.key]} helperText="Used only when a future new Estimate captures this defaults version." showReset={false} disabled={busy} onChange={(value) => patch(definition.key, value)} />)}</div></section>)}
-          <label className="block text-xs font-bold text-slate-700">Change note <span className="font-normal text-slate-500">(optional)</span><textarea rows={2} maxLength={500} disabled={busy} value={changeNote} onChange={(event) => setChangeNote(event.target.value)} className="mt-1 w-full border border-slate-300 bg-white p-2 text-sm outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" placeholder="Why these defaults changed" /></label>
+          <label className="block text-xs font-bold text-slate-700">Change note <span className="font-normal text-slate-500">(optional)</span><BusinessTextarea rows={2} maxLength={500} disabled={busy} value={changeNote} onChange={(event) => setChangeNote(event.target.value)} className="mt-1 w-full border border-slate-300 bg-white p-2 text-sm outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" placeholder="Why these defaults changed" /></label>
         </div> : null}
       </div>
-      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-300 bg-white px-4 py-3 sm:px-5"><p className="text-xs text-slate-500">Saving does not recalculate or alter any existing Estimate.</p><div className="flex gap-2"><button type="button" disabled={busy} onClick={onClose} className="h-9 border border-slate-300 bg-white px-4 text-sm font-bold disabled:opacity-50">Close</button><button type="button" disabled={busy || !draft || !changed || errors.length > 0} onClick={() => void save()} className="h-9 bg-slate-900 px-4 text-sm font-bold text-white disabled:opacity-40">{busy ? 'Saving…' : 'Save New Defaults Version'}</button></div></footer>
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-300 bg-white px-4 py-3 sm:px-5"><p className="text-xs text-slate-500">Saving does not recalculate or alter any existing Estimate.</p><div className="flex gap-2"><button type="button" disabled={busy} onClick={onClose} className="h-9 border border-slate-300 bg-white px-4 text-sm font-bold disabled:opacity-50">Close</button><BusinessButton type="button" disabled={busy || !draft || !changed || errors.length > 0} onClick={() => void save()} className="h-9 bg-slate-900 px-4 text-sm font-bold text-white disabled:opacity-40">{busy ? 'Saving…' : 'Save New Defaults Version'}</BusinessButton></div></footer>
     </section>
   </div>;
 }

@@ -520,7 +520,10 @@ export default function ClientLayoutShell({
 
       <main className="min-h-[calc(100vh-65px)] bg-[#eef1f4] text-slate-950">
         {auth.ready && shellUnlocked ? (
-          children
+          <>
+            {auth.profile?.readOnly ? <p role="status" className="border-b border-slate-300 bg-slate-50 px-5 py-2 text-xs text-slate-600">Read-only access{auth.can("messaging.write") ? " · Messaging participation enabled" : ""}</p> : null}
+            {children}
+          </>
         ) : (
           <div data-login-gate-body className="flex min-h-[calc(100vh-65px)] items-center justify-center px-3 py-4 sm:px-5 sm:py-10">
             <div data-theme-access-card className="w-full max-w-lg border border-slate-400 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)] sm:max-w-2xl lg:max-w-3xl">

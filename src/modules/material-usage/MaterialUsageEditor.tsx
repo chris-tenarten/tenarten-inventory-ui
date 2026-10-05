@@ -1,5 +1,7 @@
 'use client';
 
+import { BusinessButton, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
+
 import {
   type ChangeEvent,
   useEffect,
@@ -501,13 +503,13 @@ export function MaterialUsageEditor({
 
           <div className="flex items-center gap-2">
             {report.id ? (
-              <button type="button" onClick={() => void handleDelete()} disabled={deleting || saving} className="rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50">
+              <BusinessButton type="button" onClick={() => void handleDelete()} disabled={deleting || saving} className="rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50">
                 {deleting ? 'Deleting...' : 'Delete'}
-              </button>
+              </BusinessButton>
             ) : null}
-            <button type="button" onClick={() => void handleSave()} disabled={saving || deleting} className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
+            <BusinessButton type="button" onClick={() => void handleSave()} disabled={saving || deleting} className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
               {saving ? tr('Saving...','Guardando...') : tr('Save Report','Guardar reporte')}
-            </button>
+            </BusinessButton>
           </div>
         </header>
 
@@ -521,7 +523,7 @@ export function MaterialUsageEditor({
               <div className="relative flex gap-2">
                 <div className="relative min-w-0 flex-1">
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><SearchIcon /></span>
-                  <input id="material-usage-job" value={jobSearch} onChange={handleJobSearchChange} onFocus={() => setJobMenuOpen(true)} onKeyDown={(event) => {
+                  <BusinessInput id="material-usage-job" value={jobSearch} onChange={handleJobSearchChange} onFocus={() => setJobMenuOpen(true)} onKeyDown={(event) => {
                     if (event.key === 'Escape') setJobMenuOpen(false);
                     if (event.key === 'Enter' && temporaryLabel) {
                       event.preventDefault();
@@ -591,22 +593,22 @@ export function MaterialUsageEditor({
 
             <div>
               <label htmlFor="material-usage-date" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">{tr('Date','Fecha')}</label>
-              <input id="material-usage-date" type="date" value={report.reportDate} onChange={(event) => updateReport({ reportDate: event.target.value })} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              <BusinessInput id="material-usage-date" type="date" value={report.reportDate} onChange={(event) => updateReport({ reportDate: event.target.value })} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
 
             <div>
               <label htmlFor="material-usage-work-order" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">{tr('Work Order #','Orden de trabajo #')}</label>
-              <input id="material-usage-work-order" value={report.workOrder} onChange={(event) => updateReport({ workOrder: event.target.value })} placeholder={tr('Work Order #','Orden de trabajo #')} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              <BusinessInput id="material-usage-work-order" value={report.workOrder} onChange={(event) => updateReport({ workOrder: event.target.value })} placeholder={tr('Work Order #','Orden de trabajo #')} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
 
             <div className="md:col-span-2">
               <label htmlFor="material-usage-terrazzo-type" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">{tr('Terrazzo Type','Tipo de terrazo')}</label>
-              <input id="material-usage-terrazzo-type" value={report.terrazzoType} onChange={(event) => updateReport({ terrazzoType: event.target.value })} placeholder={tr('For example: epoxy, precast, cementitious','Por ejemplo: epóxico, prefabricado, cementicio')} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              <BusinessInput id="material-usage-terrazzo-type" value={report.terrazzoType} onChange={(event) => updateReport({ terrazzoType: event.target.value })} placeholder={tr('For example: epoxy, precast, cementitious','Por ejemplo: epóxico, prefabricado, cementicio')} className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
 
             <div className="md:col-span-2">
               <label htmlFor="material-usage-notes" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-600">{tr('Report Notes','Notas del reporte')}</label>
-              <textarea id="material-usage-notes" value={report.notes} onChange={(event) => updateReport({ notes: event.target.value })} rows={3} placeholder={tr('Optional report-level notes','Notas generales opcionales del reporte')} className="w-full resize-y rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              <BusinessTextarea id="material-usage-notes" value={report.notes} onChange={(event) => updateReport({ notes: event.target.value })} rows={3} placeholder={tr('Optional report-level notes','Notas generales opcionales del reporte')} className="w-full resize-y rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
             </div>
           </div>
 
@@ -615,7 +617,7 @@ export function MaterialUsageEditor({
               <h3 className="text-sm font-semibold text-slate-900">{tr('Materials','Materiales')}</h3>
               <p className="mt-0.5 text-xs text-slate-500">{tr('Blank lines are ignored when the report is saved.','Los renglones vacíos se omiten al guardar el reporte.')}</p>
             </div>
-            <button type="button" onClick={addLine} className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">{tr('Add Line','Agregar renglón')}</button>
+            <BusinessButton type="button" onClick={addLine} className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">{tr('Add Line','Agregar renglón')}</BusinessButton>
           </div>
 
           <div className="overflow-x-auto">
@@ -641,14 +643,14 @@ export function MaterialUsageEditor({
                 {report.lines.map((line, index) => (
                   <tr key={line.id ?? `material-line-${index}`} className="border-b border-slate-100 last:border-b-0">
                     <td className="px-3 py-2 text-center text-xs text-slate-400">{index + 1}</td>
-                    <td className="px-2 py-2"><input value={line.materialType} onChange={(event) => updateMaterialType(index, event.target.value)} onBlur={(event) => finalizeMaterialType(index, event.target.value)} list="material-type-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
-                    <td className="px-2 py-2"><input value={line.manufacturer} onChange={(event) => updateLine(index, { manufacturer: event.target.value })} list="manufacturer-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
-                    <td className="px-2 py-2"><input value={line.materialName} onChange={(event) => updateLine(index, { materialName: event.target.value })} list="material-name-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
-                    <td className="px-2 py-2"><input type="number" min="0" step="0.001" value={line.quantity ?? ''} onChange={(event) => updateLine(index, { quantity: event.target.value === '' ? null : Number(event.target.value) })} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
-                    <td className="px-2 py-2"><input value={line.unit} onChange={(event) => updateLine(index, { unit: event.target.value })} list="unit-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
+                    <td className="px-2 py-2"><BusinessInput value={line.materialType} onChange={(event) => updateMaterialType(index, event.target.value)} onBlur={(event) => finalizeMaterialType(index, event.target.value)} list="material-type-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
+                    <td className="px-2 py-2"><BusinessInput value={line.manufacturer} onChange={(event) => updateLine(index, { manufacturer: event.target.value })} list="manufacturer-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
+                    <td className="px-2 py-2"><BusinessInput value={line.materialName} onChange={(event) => updateLine(index, { materialName: event.target.value })} list="material-name-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
+                    <td className="px-2 py-2"><BusinessInput type="number" min="0" step="0.001" value={line.quantity ?? ''} onChange={(event) => updateLine(index, { quantity: event.target.value === '' ? null : Number(event.target.value) })} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
+                    <td className="px-2 py-2"><BusinessInput value={line.unit} onChange={(event) => updateLine(index, { unit: event.target.value })} list="unit-suggestions" className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="px-2 py-2">
                       {isChipBlendMaterialType(line.materialType) ? (
-                        <input
+                        <BusinessInput
                           value={line.plate}
                           onChange={(event) => updateReport({
                             lines: applySharedChipBlendColorPlate(
@@ -666,9 +668,9 @@ export function MaterialUsageEditor({
                         </span>
                       )}
                     </td>
-                    <td className="px-2 py-2"><input value={line.notes} onChange={(event) => updateLine(index, { notes: event.target.value })} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
+                    <td className="px-2 py-2"><BusinessInput value={line.notes} onChange={(event) => updateLine(index, { notes: event.target.value })} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200" /></td>
                     <td className="sticky right-0 z-10 border-l border-slate-200 bg-white px-2 py-2 text-right">
-                      <button type="button" onClick={() => removeLine(index)} className="inline-flex h-8 items-center justify-center rounded border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-600 shadow-sm hover:border-red-200 hover:bg-red-50 hover:text-red-700">Remove</button>
+                      <BusinessButton type="button" onClick={() => removeLine(index)} className="inline-flex h-8 items-center justify-center rounded border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-600 shadow-sm hover:border-red-200 hover:bg-red-50 hover:text-red-700">Remove</BusinessButton>
                     </td>
                   </tr>
                 ))}
@@ -677,7 +679,7 @@ export function MaterialUsageEditor({
           </div>
 
           <div className="flex justify-end border-t border-slate-200 px-5 py-4">
-            <button type="button" onClick={() => void handleSave()} disabled={saving || deleting} className="rounded-md bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">{saving ? tr('Saving...','Guardando...') : tr('Save Report','Guardar reporte')}</button>
+            <BusinessButton type="button" onClick={() => void handleSave()} disabled={saving || deleting} className="rounded-md bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">{saving ? tr('Saving...','Guardando...') : tr('Save Report','Guardar reporte')}</BusinessButton>
           </div>
         </section>
       </div>

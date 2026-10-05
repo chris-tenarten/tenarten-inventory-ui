@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BusinessButton } from "@/components/BusinessWriteControls";
 import { useEffect, useState } from "react";
 import {
   applyDisplaySize,
@@ -93,7 +94,7 @@ export default function SettingsPage() {
           {APPEARANCES.map((value) => {
             const selected = appearance === value;
             return (
-              <button
+              <BusinessButton
                 key={value}
                 type="button"
                 role="radio"
@@ -116,7 +117,7 @@ export default function SettingsPage() {
                   />
                   {t(`settings.${value}` as TranslationKey)}
                 </span>
-              </button>
+              </BusinessButton>
             );
           })}
         </div>
@@ -142,7 +143,7 @@ export default function SettingsPage() {
           {DISPLAY_SIZE_OPTIONS.map((option) => {
             const selected = displaySize === option.value;
             return (
-              <button
+              <BusinessButton
                 key={option.value}
                 type="button"
                 role="radio"
@@ -168,7 +169,7 @@ export default function SettingsPage() {
                 <span className="mt-1 block text-xs leading-relaxed text-slate-600">
                   {t(`settings.${option.value}Description` as TranslationKey)}
                 </span>
-              </button>
+              </BusinessButton>
             );
           })}
         </div>
@@ -197,7 +198,7 @@ export default function SettingsPage() {
           ] as const).map(([value, labelKey]) => {
             const selected = language === value;
             return (
-              <button
+              <BusinessButton
                 key={value}
                 type="button"
                 role="radio"
@@ -220,7 +221,7 @@ export default function SettingsPage() {
                   />
                   {t(labelKey)}
                 </span>
-              </button>
+              </BusinessButton>
             );
           })}
         </div>

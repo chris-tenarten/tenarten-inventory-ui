@@ -18,7 +18,6 @@ export async function authorizeServerRequest(request: Request, capability: Capab
   const authorization = request.headers.get("authorization") ?? "";
   const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
   if (!token) {
-    if (!serverRbacEnforced) return null;
     throw new Response("Authentication required.", { status: 401 });
   }
   if (!url || !anonKey) throw new Response("Supabase authentication is not configured.", { status: 500 });

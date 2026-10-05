@@ -1,4 +1,6 @@
 "use client";
+
+import { BusinessSelect } from '@/components/BusinessWriteControls';
 import {useAuth} from '@/lib/auth';
 import {useState} from 'react';
 import {productionBatchReadiness} from '../../../supabase/functions/_shared/sample-production-batch.mjs';
@@ -27,10 +29,10 @@ export default function ProductionBatchOutput({sample,onSave,onPreview}:{sample:
   <h2 className="text-sm font-bold uppercase tracking-wide">Production Batch Blend Sheet</h2>
   <p className="mt-1 text-xs text-slate-600">One Batch from the selected formulation. Package equivalents are a shop reference; generating this sheet does not consume inventory.</p>
   <label className="mt-3 block text-xs font-bold">Source formulation
-   <select disabled={busy} value={source} onChange={e=>{setSource(e.target.value);setError('');}} className="mt-1 min-h-11 w-full border border-slate-300 bg-white px-2 text-sm">
+   <BusinessSelect disabled={busy} value={source} onChange={e=>{setSource(e.target.value);setError('');}} className="mt-1 min-h-11 w-full border border-slate-300 bg-white px-2 text-sm">
     <option value="working">Current Draft</option>
     {sample.issuedDocuments.map(d=><option key={d.id} value={d.id}>Issue {d.issueNumber} — {new Date(d.issuedAt).toLocaleDateString()}</option>)}
-   </select>
+   </BusinessSelect>
   </label>
   <p className={`mt-3 text-sm font-bold ${source==='working'?'text-amber-800':'text-blue-900'}`}>{source==='working'?'WORKING BATCH BLEND — NOT ISSUED':`Issued formulation · Issue ${document?.issueNumber}`}</p>
   <p className="mt-1 text-xs text-slate-600">{source==='working'?'Saves the current Draft before generating. This is not a controlled Production recipe.':'Uses only this issue’s captured formulation and package data. Current Draft edits do not affect it.'}</p>

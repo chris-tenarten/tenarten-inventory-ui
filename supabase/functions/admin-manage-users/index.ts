@@ -192,7 +192,7 @@ Deno.serve(async (request) => {
     const body = await request.json();
 
     if (body.action === "list") {
-      const { data, error } = await caller.rpc("admin_list_app_users");
+      const { data, error } = await caller.rpc("admin_list_app_access");
 
       if (error) {
         throw error;
@@ -206,7 +206,9 @@ Deno.serve(async (request) => {
         !body.userId ||
         !body.displayName?.trim() ||
         !roles.has(body.role) ||
-        typeof body.isActive !== "boolean"
+        typeof body.isActive !== "boolean" ||
+        typeof body.readOnly !== "boolean" || typeof body.messagingWrite !== "boolean" ||
+        (body.readOnly && body.role !== "guest")
       ) {
         return json(
           { error: "A valid user update is required." },
@@ -215,11 +217,13 @@ Deno.serve(async (request) => {
         );
       }
 
-      const { data, error } = await caller.rpc("admin_set_app_user_access", {
+      const { data, error } = await caller.rpc("admin_set_app_access", {
         p_user_id: body.userId,
         p_display_name: body.displayName.trim(),
         p_role: body.role,
         p_is_active: body.isActive,
+        p_read_only: body.readOnly,
+        p_messaging_write: body.messagingWrite,
       });
 
       if (error) {
@@ -233,7 +237,9 @@ Deno.serve(async (request) => {
       if (
         !body.email?.trim() ||
         !body.displayName?.trim() ||
-        !roles.has(body.role)
+        !roles.has(body.role) ||
+        typeof body.readOnly !== "boolean" || typeof body.messagingWrite !== "boolean" ||
+        (body.readOnly && body.role !== "guest")
       ) {
         return json(
           { error: "Email, display name, and role are required." },
@@ -272,6 +278,8 @@ Deno.serve(async (request) => {
           display_name: body.displayName.trim(),
           role: body.role,
           is_active: true,
+          read_only: body.readOnly,
+          messaging_write: body.messagingWrite,
           created_by_user_id: userData.user.id,
           updated_by_user_id: userData.user.id,
         });

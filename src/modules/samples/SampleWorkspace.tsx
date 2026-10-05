@@ -1,4 +1,7 @@
 "use client";
+
+import { BusinessButton, BusinessSelect, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
+
 import {applyResinIdentity,synchronizeResin,resinConflict} from './resin-identity';
 import SampleResinSystemSelector from './SampleResinSystemSelector';
 import {BATCH_FIRST_VERSION,batchFirstQuantities} from "./formulation";
@@ -588,7 +591,7 @@ export default function SampleWorkspace() {
               Production Job.
             </p>
           </div>
-          <button
+          <BusinessButton
             type="button"
             disabled={Boolean(busy) || Boolean(draft)}
             onClick={() => void create()}
@@ -596,7 +599,7 @@ export default function SampleWorkspace() {
           >
             <Plus className="h-4 w-4" />
             New Sample
-          </button>
+          </BusinessButton>
         </div>
         <OperationalProfilesSettings/>
         {error && (
@@ -630,7 +633,7 @@ export default function SampleWorkspace() {
                   <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
                     <label className={`${label} min-w-0 flex-1`}>
                       Existing standalone Sample
-                      <select
+                      <BusinessSelect
                         value={linkSelection}
                         onChange={(event) =>
                           setLinkSelection(event.target.value)
@@ -646,16 +649,16 @@ export default function SampleWorkspace() {
                               : ""}
                           </option>
                         ))}
-                      </select>
+                      </BusinessSelect>
                     </label>
-                    <button
+                    <BusinessButton
                       type="button"
                       disabled={!linkSelection || Boolean(busy)}
                       onClick={() => void linkExisting()}
                       className="h-10 border border-slate-400 px-3 text-sm font-bold disabled:opacity-40"
                     >
                       {busy === "link" ? "Linking…" : "Link Sample"}
-                    </button>
+                    </BusinessButton>
                   </div>
                 ) : null}
               </section>
@@ -739,7 +742,7 @@ export default function SampleWorkspace() {
                     Guide me
                   </button>
                 )}
-                <button
+                <BusinessButton
                   type="button"
                   disabled={Boolean(busy) || !draft.id}
                   onClick={() => void duplicate()}
@@ -747,7 +750,7 @@ export default function SampleWorkspace() {
                 >
                   <Copy className="h-4 w-4" />
                   Duplicate
-                </button>
+                </BusinessButton>
                 <button
                   type="button"
                   onClick={requestClose}
@@ -766,7 +769,7 @@ export default function SampleWorkspace() {
                 <label className={label}>
                   Sample Name{" "}
                   <span className="font-normal text-slate-400">(optional)</span>
-                  <input
+                  <BusinessInput
                     value={draft.sampleName}
                     maxLength={200}
                     onChange={(e) => patch("sampleName", e.target.value)}
@@ -785,7 +788,7 @@ export default function SampleWorkspace() {
                 />
                 <label className={label}>
                   Date Requested
-                  <input
+                  <BusinessInput
                     type="date"
                     value={draft.requestedDate}
                     onChange={(e) => patch("requestedDate", e.target.value)}
@@ -794,7 +797,7 @@ export default function SampleWorkspace() {
                 </label>
                 <label className={label}>
                   Prepared By
-                  <input
+                  <BusinessInput
                     value={draft.preparedBy}
                     onChange={(e) => patch("preparedBy", e.target.value)}
                     className={field}
@@ -802,7 +805,7 @@ export default function SampleWorkspace() {
                 </label>
                 <label className={label}>
                   Approved Date
-                  <input
+                  <BusinessInput
                     type="date"
                     value={draft.approvedDate}
                     onChange={(e) => patch("approvedDate", e.target.value)}
@@ -829,7 +832,7 @@ export default function SampleWorkspace() {
                 />
                 <label className={label}>
                   Color Plate #
-                  <input
+                  <BusinessInput
                     value={draft.colorPlateNumber}
                     onChange={(e) =>
                       patch("colorPlateNumber", e.target.value.toUpperCase())
@@ -867,7 +870,7 @@ export default function SampleWorkspace() {
                 />
                 <label className={label}>
                   Bid context
-                  <select
+                  <BusinessSelect
                     value={draft.bidId}
                     onChange={(e) => patch("bidId", e.target.value)}
                     className={field}
@@ -878,11 +881,11 @@ export default function SampleWorkspace() {
                         {bid.customer} · {bid.projectName}
                       </option>
                     ))}
-                  </select>
+                  </BusinessSelect>
                 </label>
                 <label className={label}>
                   Production Job context
-                  <select
+                  <BusinessSelect
                     value={draft.jobId}
                     onChange={(e) => patch("jobId", e.target.value)}
                     className={field}
@@ -894,7 +897,7 @@ export default function SampleWorkspace() {
                         {job.name}
                       </option>
                     ))}
-                  </select>
+                  </BusinessSelect>
                 </label>
               </div>
               {linkedBid && (
@@ -904,7 +907,7 @@ export default function SampleWorkspace() {
               )}
               <label className={`${label} mt-4 block`}>
                 Notes
-                <textarea
+                <BusinessTextarea
                   value={draft.notes}
                   onChange={(e) => patch("notes", e.target.value)}
                   rows={4}
@@ -1006,7 +1009,7 @@ export default function SampleWorkspace() {
               </div>
               <div className="mt-3 space-y-3">
                 {!displayRows.some(({row})=>row.componentRole==='aggregate') && (
-                  <button type="button" onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])} className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"><Plus className="h-4 w-4" />Add Aggregate</button>
+                  <BusinessButton type="button" onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])} className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"><Plus className="h-4 w-4" />Add Aggregate</BusinessButton>
                 )}
                 {displayRows.map(({row,sourceIndex:index},displayIndex) => (
                   <div key={row.id} className="space-y-3">
@@ -1031,7 +1034,7 @@ export default function SampleWorkspace() {
                           : " · Manual"}
                         {row.catalogItemId && catalogSelectionWarnings[row.id]?.itemId === row.catalogItemId && catalogSelectionWarnings[row.id]?.role === row.componentRole && <span className="ml-2 font-normal text-amber-700">Not classified for {row.componentRole.replace(/^./, (letter) => letter.toUpperCase())}. Selected manually; compatibility is not established.</span>}
                       </span>
-                      <button
+                      <BusinessButton
                         type="button"
                         disabled={draft.blendRows.length === 1}
                         onClick={() =>
@@ -1049,12 +1052,12 @@ export default function SampleWorkspace() {
                         className="h-11 w-11 border border-slate-300 bg-white text-red-700 disabled:opacity-30"
                       >
                         <Trash2 className="mx-auto h-4 w-4" />
-                      </button>
+                      </BusinessButton>
                     </div>
                     <div className="mt-2 grid items-start gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[minmax(7rem,0.85fr)_minmax(4.5rem,0.45fr)_minmax(10rem,1.35fr)_minmax(6rem,0.65fr)_minmax(7rem,0.8fr)_minmax(11rem,1.3fr)_minmax(9rem,1fr)]">
                       <label className={label}>
                         Formula Role
-                        <select
+                        <BusinessSelect
                           value={row.componentRole}
                           onChange={(event) => {
                             const componentRole = event.target
@@ -1089,12 +1092,12 @@ export default function SampleWorkspace() {
                           <option value="resin">Resin</option>
                           <option value="hardener">Hardener</option>
                           <option value="other">Other</option>
-                        </select>
+                        </BusinessSelect>
                       </label>
                       {row.componentRole === "aggregate" && (
                         <label className={`${label} text-left`}>
                           %
-                          <input
+                          <BusinessInput
                             type="number"
                             min="0"
                             max="100"
@@ -1115,7 +1118,7 @@ export default function SampleWorkspace() {
                       >
                         Color
                         <div className="relative">
-                          <input
+                          <BusinessInput
                             role={row.componentRole==='resin'||row.componentRole==='hardener'?undefined:"combobox"}
                             aria-autocomplete={row.componentRole==='resin'||row.componentRole==='hardener'?undefined:"list"}
                             aria-expanded={catalogRow === index}
@@ -1177,7 +1180,7 @@ export default function SampleWorkspace() {
                       </label>
                       <label className={`${label} text-left`}>
                         Size
-                        <input
+                        <BusinessInput
                           value={row.size}
                           onChange={(e) =>
                             patchRow(index, { size: e.target.value })
@@ -1187,7 +1190,7 @@ export default function SampleWorkspace() {
                       </label>
                       <label className={`${label} text-left`}>
                         Type
-                        <input
+                        <BusinessInput
                           value={row.materialType}
                           onChange={(e) =>
                             patchRow(index, { materialType: e.target.value })
@@ -1198,12 +1201,12 @@ export default function SampleWorkspace() {
                       {quantityView==='batch' ? <div className={`${label} text-left`}>
                         {row.componentRole==='filler' && shopProjection?.resolvedBatch.enabled ? <>
                           <label className="block">Current formulation Filler (lb)
-                            <input aria-label="Batch Filler (lb)" type="number" min="0" step="0.000001" value={draft.formulation.batchFillerOverrideLb ?? String(shopProjection.resolvedBatch.baselineFiller ?? '')} onChange={e=>changeBatchFiller(e.target.value)} className={field}/>
+                            <BusinessInput aria-label="Batch Filler (lb)" type="number" min="0" step="0.000001" value={draft.formulation.batchFillerOverrideLb ?? String(shopProjection.resolvedBatch.baselineFiller ?? '')} onChange={e=>changeBatchFiller(e.target.value)} className={field}/>
                           </label>
                           <p className="mt-2 text-xs font-normal">Profile default: {shopProjection.resolvedBatch.baselineFiller} lb · {shopProjection.resolvedBatch.modified ? 'Modified' : 'Profile default'}</p>
                           <p className="mt-1 text-xs font-normal">Profile Chip Mix: {shopProjection.resolvedBatch.baselineChip} lb · Current Chip Mix: {shopProjection.resolvedBatch.target ?? '—'} lb</p>
                           {!shopProjection.resolvedBatch.valid && <p role="alert" className="text-xs text-red-700">Enter a nonnegative Filler quantity that leaves a positive Chip Mix.</p>}
-                          {draft.formulation.batchFillerOverrideLb != null && <button type="button" className="mt-2 min-h-10 border px-2 text-xs" onClick={()=>changeBatchFiller(null)}>Restore Profile Default</button>}
+                          {draft.formulation.batchFillerOverrideLb != null && <BusinessButton type="button" className="mt-2 min-h-10 border px-2 text-xs" onClick={()=>changeBatchFiller(null)}>Restore Profile Default</BusinessButton>}
                         </> : <span>Batch quantity</span>}
                         <output aria-label={`${row.componentRole} Batch quantity`} title={batch?.rows[index]?.quantity===null?undefined:String(batch?.rows[index]?.quantity)} className="mt-1 block border border-slate-300 bg-slate-100 px-3 py-3 text-base font-bold">
                           {formatBatchQuantity(batch?.rows[index]?.quantity??null,batch?.rows[index]?.unit??'')} {batch?.rows[index]?.unit}
@@ -1214,7 +1217,7 @@ export default function SampleWorkspace() {
                       <div className={`${label} text-left`}>
                         <span>{batchFirst ? "Shop preparation quantity" : "Quantity"}</span>
                         <div className="relative mt-1">
-                          <input
+                          <BusinessInput
                             aria-label={`${row.componentRole} quantity`}
                             type="number"
                             min="0"
@@ -1271,7 +1274,7 @@ export default function SampleWorkspace() {
                                   : "Entered for this Sample"}
                         </p>
                         {(row.componentRole === "aggregate" || row.componentRole === "filler" || row.componentRole === "resin" || row.componentRole === "hardener") && !(batchFirst && row.componentRole === "hardener") && (
-                          <button
+                          <BusinessButton
                             type="button"
                             onClick={() => patchRow(index, {
                               quantityProvenance: row.quantityProvenance === "calculated" ? "manual" : "calculated",
@@ -1286,7 +1289,7 @@ export default function SampleWorkspace() {
                               : row.componentRole === "filler" || row.componentRole === "resin"
                                 ? "Use profile default"
                                 : "Use calculated value"}
-                          </button>
+                          </BusinessButton>
                         )}
                         {row.componentRole === "other" && row.quantityProvenance === "manual" && (
                           <label className="mt-2 block">
@@ -1316,14 +1319,14 @@ export default function SampleWorkspace() {
                     </div>
                   </article>
                   {row.componentRole === "aggregate" && displayRows[displayIndex+1]?.row.componentRole !== "aggregate" && (
-                    <button
+                    <BusinessButton
                       type="button"
                       onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])}
                       className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"
                     >
                       <Plus className="h-4 w-4" />
                       Add Aggregate
-                    </button>
+                    </BusinessButton>
                   )}
                   </div>
                 ))}
@@ -1333,7 +1336,7 @@ export default function SampleWorkspace() {
               className={`${label} block border border-slate-300 bg-white p-4`}
             >
               More Notes
-              <textarea
+              <BusinessTextarea
                 value={draft.moreNotes}
                 onChange={(e) => patch("moreNotes", e.target.value)}
                 rows={6}
@@ -1392,7 +1395,7 @@ export default function SampleWorkspace() {
                           Open PDF
                         </button>
                       ) : (
-                        <button
+                        <BusinessButton
                           type="button"
                           disabled={
                             Boolean(busy) ||
@@ -1407,7 +1410,7 @@ export default function SampleWorkspace() {
                           document.generationStatus === "generating"
                             ? "Generating…"
                             : "Generate PDF"}
-                        </button>
+                        </BusinessButton>
                       )}
                     </div>
                   ))}
@@ -1421,7 +1424,7 @@ export default function SampleWorkspace() {
             <footer className="sticky bottom-0 flex flex-wrap items-center justify-between gap-3 border border-slate-300 bg-white p-3">
               {draft.issuedDocuments.length ? (
                 auth.profile?.role === "admin" ? (
-                  <button
+                  <BusinessButton
                     type="button"
                     disabled={Boolean(busy)}
                     onClick={() => void deleteIssued()}
@@ -1431,14 +1434,14 @@ export default function SampleWorkspace() {
                     {busy === "delete-issued"
                       ? "Permanently deleting…"
                       : "Permanently Delete Issued Sample"}
-                  </button>
+                  </BusinessButton>
                 ) : (
                   <span className="text-xs text-slate-500">
                     Issued Sample history is protected from deletion.
                   </span>
                 )
               ) : draft.id ? (
-                <button
+                <BusinessButton
                   type="button"
                   disabled={Boolean(busy)}
                   onClick={() => void deleteDraft()}
@@ -1446,7 +1449,7 @@ export default function SampleWorkspace() {
                 >
                   <Trash2 className="h-4 w-4" />
                   {busy === "delete" ? "Deleting…" : "Delete Draft"}
-                </button>
+                </BusinessButton>
               ) : (
                 <button
                   type="button"
@@ -1461,22 +1464,22 @@ export default function SampleWorkspace() {
                 </button>
               )}
               <div className="flex flex-wrap justify-end gap-2">
-                <button
+                <BusinessButton
                   type="button"
                   disabled={Boolean(busy)}
                   onClick={() => void save()}
                   className="h-10 border border-slate-400 px-4 text-sm font-bold"
                 >
                   {busy === "save" ? "Saving…" : "Save"}
-                </button>
-                <button
+                </BusinessButton>
+                <BusinessButton
                   type="button"
                   disabled={Boolean(busy)}
                   onClick={() => void issue()}
                   className="h-10 border border-blue-900 bg-white px-4 text-sm font-bold text-blue-950"
                 >
                   {busy === "issue" ? "Issuing…" : "Formal Issue"}
-                </button>
+                </BusinessButton>
               </div>
             </footer>
           </div>
@@ -1541,14 +1544,14 @@ export default function SampleWorkspace() {
               >
                 Discard
               </button>
-              <button
+              <BusinessButton
                 type="button"
                 disabled={Boolean(busy)}
                 onClick={() => void saveAndClose()}
                 className="min-h-11 bg-blue-900 px-4 text-sm font-bold text-white"
               >
                 {busy === "save-close" ? "Saving…" : "Save Draft"}
-              </button>
+              </BusinessButton>
             </div>
           </div>
         </div>

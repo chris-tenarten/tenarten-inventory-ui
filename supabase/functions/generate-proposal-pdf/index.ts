@@ -265,6 +265,10 @@ if (typeof Deno !== 'undefined') Deno.serve(async (request) => {
     if (accessError || access !== true) return json({ error: 'Proposal access denied.' }, 403, headers);
     const body = await request.json();
     const action = String(body.action || '');
+    if (action === 'generate' || action === 'delete') {
+      const { data: writable, error: writeError } = await user.rpc('has_app_capability', { p_capability: 'writeBusinessData' });
+      if (writeError || writable !== true) return json({ error: 'Business write access denied.' }, 403, headers);
+    }
     if (action === 'preview') {
       const bytes = await render(body.snapshot);
       return new Response(bytes, { headers: { ...headers, 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="Proposal-Preview.pdf"' } });

@@ -2,6 +2,8 @@ export const APP_ROLES = ["guest", "member", "lead", "developer", "admin"] as co
 export type AppRole = (typeof APP_ROLES)[number];
 
 export const CAPABILITIES = [
+  "writeBusinessData",
+  "messaging.write",
   "readOperationalData",
   "accessIntake",
   "viewIntake",
@@ -35,7 +37,7 @@ export const CAPABILITIES = [
 
 export type Capability = (typeof CAPABILITIES)[number];
 
-const guest = ["accessIntake", "viewIntake", "readOperationalData", "previewOperationalDocuments"] as const;
+const guest = ["writeBusinessData", "messaging.write", "accessIntake", "viewIntake", "readOperationalData", "previewOperationalDocuments"] as const;
 const member = [
   ...guest,
   "createProductionJob",
@@ -82,6 +84,8 @@ export const ROLE_LABELS: Record<AppRole, string> = {
 };
 
 export const CAPABILITY_LABELS: Record<Capability, string> = {
+  writeBusinessData: "Write business data (subject to role permissions)",
+  "messaging.write": "Participate in Messaging",
   readOperationalData: "View operational data",
   accessIntake: "Manage Intake",
   viewIntake: "View Intake",
@@ -122,4 +126,14 @@ export function isAppRole(value: unknown): value is AppRole {
 
 export function roleHasCapability(role: AppRole, capability: Capability) {
   return ROLE_CAPABILITIES[role].includes(capability);
+}
+
+// Read-only is a restriction on the existing role, never a visibility grant.
+export const READ_CAPABILITIES: readonly Capability[] = [
+  "readOperationalData", "viewIntake", "previewOperationalDocuments", "accessDevelopmentEnvironment",
+];
+export function accountHasCapability(role: AppRole, capability: Capability, readOnly: boolean, messagingWrite: boolean) {
+  if (capability === "messaging.write" && readOnly) return messagingWrite;
+  if (readOnly && !READ_CAPABILITIES.includes(capability)) return false;
+  return roleHasCapability(role, capability);
 }

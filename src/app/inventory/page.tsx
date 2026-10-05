@@ -1,5 +1,7 @@
 'use client';
 
+import { BusinessButton, BusinessSelect, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
+
 import { loadCompleteRows } from '@/lib/complete-rows';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
@@ -156,7 +158,6 @@ function ChevronRightIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-
 function normalizeSearch(value: unknown) {
   return String(value ?? '').toLowerCase();
 }
@@ -172,7 +173,6 @@ function getNumericQuantity(value: number | string | null) {
   const parsed = Number(value || 0);
   return Number.isFinite(parsed) ? parsed : 0;
 }
-
 
 function getSupabaseErrorMessage(error: unknown, fallback: string) {
   if (error instanceof Error && error.message) return error.message;
@@ -398,13 +398,11 @@ function groupSearchText(group: InventoryGroup) {
     .join(' ');
 }
 
-
 function uniqueSorted(values: Array<string | null | undefined>) {
   return Array.from(new Set(values.map((value) => String(value || '').trim()).filter(Boolean))).sort((a, b) =>
     a.localeCompare(b),
   );
 }
-
 
 function pendingReceivalDraftSignature(form: PendingReceivalForm, lines: StockLine[]) {
   return JSON.stringify({ form, lines: lines.map((line) => ({ ...line, id: '' })) });
@@ -2376,14 +2374,14 @@ export default function InventoryPage() {
                 <div className="text-xs text-slate-500">{tr('Only fields chosen below will be changed.', 'Solo se modificarán los campos seleccionados a continuación.')}</div>
               </div>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={openBulkReceivePendingDialog} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending || !canReceivePendingReceivals} title={!canReceivePendingReceivals ? 'Requires Inventory receiving permission' : undefined} className="h-8 rounded-md bg-slate-900 px-3 text-xs font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{tr('Receive selected', 'Recibir seleccionadas')}</button>
+                <BusinessButton type="button" onClick={openBulkReceivePendingDialog} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending || !canReceivePendingReceivals} title={!canReceivePendingReceivals ? 'Requires Inventory receiving permission' : undefined} className="h-8 rounded-md bg-slate-900 px-3 text-xs font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{tr('Receive selected', 'Recibir seleccionadas')}</BusinessButton>
                 <button type="button" onClick={() => resetPendingBulkEditor(true)} disabled={isApplyingPendingBulkEdit || isBulkReceivingPending} className="text-xs font-medium text-slate-600 underline-offset-2 hover:underline disabled:opacity-60">{tr('Clear selection', 'Limpiar selección')}</button>
               </div>
             </div>
             {canAdjustPendingReceivals && <div className="grid gap-3 lg:grid-cols-[1fr_1fr_auto]">
               <div className="rounded-md border border-slate-200 bg-white p-3">
                 <label className={labelClass}>{tr('Reservation', 'Reserva')}</label>
-                <select value={bulkPendingReservationMode} onChange={(event) => {
+                <BusinessSelect value={bulkPendingReservationMode} onChange={(event) => {
                   const mode = event.target.value as BulkReservationMode;
                   setBulkPendingReservationMode(mode);
                   if (mode !== 'canonical') setBulkPendingProductionJobId('');
@@ -2393,27 +2391,27 @@ export default function InventoryPage() {
                   <option value="canonical">{tr('Reserve for Production job', 'Reservar para un trabajo de Producción')}</option>
                   <option value="temporary">{tr('Reserve with temporary label', 'Reservar con etiqueta temporal')}</option>
                   <option value="none">{tr('Remove reservation', 'Quitar reserva')}</option>
-                </select>
+                </BusinessSelect>
                 {bulkPendingReservationMode === 'canonical' && (
-                  <select disabled={productionJobsLoading} value={bulkPendingProductionJobId} onChange={(event) => setBulkPendingProductionJobId(event.target.value)} className={`${fieldClass} mt-2`}>
+                  <BusinessSelect disabled={productionJobsLoading} value={bulkPendingProductionJobId} onChange={(event) => setBulkPendingProductionJobId(event.target.value)} className={`${fieldClass} mt-2`}>
                     <option value="">{productionJobsLoading ? 'Loading Production jobs…' : 'Select Production job...'}</option>
                     {productionJobs.map((job) => <option key={job.id} value={job.id}>{formatProductionJobOptionWithStatus(job)}</option>)}
-                  </select>
+                  </BusinessSelect>
                 )}
-                {bulkPendingReservationMode === 'temporary' && <input value={bulkPendingTemporaryJobLabel} onChange={(event) => setBulkPendingTemporaryJobLabel(event.target.value)} className={`${fieldClass} mt-2`} placeholder="Temporary job label" />}
-                {(bulkPendingReservationMode === 'canonical' || bulkPendingReservationMode === 'temporary') && <input value={bulkPendingReservationNotes} onChange={(event) => setBulkPendingReservationNotes(event.target.value)} className={`${fieldClass} mt-2`} placeholder="Reservation notes (optional)" />}
+                {bulkPendingReservationMode === 'temporary' && <BusinessInput value={bulkPendingTemporaryJobLabel} onChange={(event) => setBulkPendingTemporaryJobLabel(event.target.value)} className={`${fieldClass} mt-2`} placeholder="Temporary job label" />}
+                {(bulkPendingReservationMode === 'canonical' || bulkPendingReservationMode === 'temporary') && <BusinessInput value={bulkPendingReservationNotes} onChange={(event) => setBulkPendingReservationNotes(event.target.value)} className={`${fieldClass} mt-2`} placeholder="Reservation notes (optional)" />}
               </div>
               <div className="rounded-md border border-slate-200 bg-white p-3">
                 <label className={labelClass}>{tr('General Notes', 'Notas generales')}</label>
-                <select value={bulkPendingNotesMode} onChange={(event) => setBulkPendingNotesMode(event.target.value as BulkNotesMode)} className={fieldClass}>
+                <BusinessSelect value={bulkPendingNotesMode} onChange={(event) => setBulkPendingNotesMode(event.target.value as BulkNotesMode)} className={fieldClass}>
                   <option value="unchanged">{tr('Leave unchanged', 'Sin cambios')}</option>
                   <option value="replace">{tr('Replace notes', 'Reemplazar notas')}</option>
                   <option value="clear">{tr('Clear notes', 'Borrar notas')}</option>
-                </select>
-                {bulkPendingNotesMode === 'replace' && <textarea value={bulkPendingNotes} onChange={(event) => setBulkPendingNotes(event.target.value)} rows={2} className="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" placeholder="Notes for every selected receival" />}
+                </BusinessSelect>
+                {bulkPendingNotesMode === 'replace' && <BusinessTextarea value={bulkPendingNotes} onChange={(event) => setBulkPendingNotes(event.target.value)} rows={2} className="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" placeholder="Notes for every selected receival" />}
               </div>
               <div className="flex items-end">
-                <button type="button" onClick={handleApplyPendingBulkEdit} disabled={isApplyingPendingBulkEdit} className="h-9 rounded-md bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{isApplyingPendingBulkEdit ? tr('Applying...', 'Aplicando...') : tr('Apply changes', 'Aplicar cambios')}</button>
+                <BusinessButton type="button" onClick={handleApplyPendingBulkEdit} disabled={isApplyingPendingBulkEdit} className="h-9 rounded-md bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">{isApplyingPendingBulkEdit ? tr('Applying...', 'Aplicando...') : tr('Apply changes', 'Aplicar cambios')}</BusinessButton>
               </div>
             </div>}
             {pendingBulkEditMessage && <div className="mt-2 text-xs font-medium text-slate-700" role="status">{pendingBulkEditMessage}</div>}
@@ -2470,7 +2468,7 @@ export default function InventoryPage() {
                       <tr key={receival.id} data-pending-receival-received={isReceived ? 'true' : undefined} className={rowClass}>
                         <td className="px-3 py-2 text-center">
                           {!isReceived && (canReceivePendingReceivals || canAdjustPendingReceivals) && (
-                            <input
+                            <BusinessInput
                               type="checkbox"
                               aria-label={`Select ${receival.material_name}`}
                               checked={selectedPendingReceivalIds.has(receival.id)}
@@ -2532,16 +2530,16 @@ export default function InventoryPage() {
                                 {receivingPendingId === receival.id ? 'Receiving...' : 'Receive'}
                               </button>
                             ) : null}
-                            {!isReceived && canUndoReceipt && canAdjustPendingReceivals && <button type="button" onClick={()=>openUndoReceiveDialog(receival)} disabled={undoingPendingId===receival.id} className="min-h-8 border px-2 text-xs">Undo latest receipt</button>}
+                            {!isReceived && canUndoReceipt && canAdjustPendingReceivals && <BusinessButton type="button" onClick={()=>openUndoReceiveDialog(receival)} disabled={undoingPendingId===receival.id} className="min-h-8 border px-2 text-xs">Undo latest receipt</BusinessButton>}
                             {!isReceived && canAdjustPendingReceivals && (
-                              <button
+                              <BusinessButton
                                 type="button"
                                 onClick={() => openEditPendingReceivalForm(receival)}
                                 disabled={receivingPendingId === receival.id || cancellingPendingId === receival.id}
                                 className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
                               >
                                 Edit
-                              </button>
+                              </BusinessButton>
                             )}
                             {!isReceived && canAdjustPendingReceivals && (
                               <button
@@ -2637,23 +2635,23 @@ export default function InventoryPage() {
                 <div className="mb-4 grid gap-3 md:grid-cols-4">
                   <div>
                     <label className={labelClass}>Vendor *</label>
-                    <input value={pendingReceivalForm.vendor} onChange={(event) => updatePendingReceivalForm('vendor', event.target.value)} list="pending-inventory-vendor-options" className={fieldClass} />
+                    <BusinessInput value={pendingReceivalForm.vendor} onChange={(event) => updatePendingReceivalForm('vendor', event.target.value)} list="pending-inventory-vendor-options" className={fieldClass} />
                   </div>
                   <div>
                     <label className={labelClass}>Ordered By *</label>
-                    <input value={pendingReceivalForm.orderedBy} onChange={(event) => updatePendingReceivalForm('orderedBy', event.target.value)} list="pending-people-options" className={fieldClass} placeholder="Enter your name" />
+                    <BusinessInput value={pendingReceivalForm.orderedBy} onChange={(event) => updatePendingReceivalForm('orderedBy', event.target.value)} list="pending-people-options" className={fieldClass} placeholder="Enter your name" />
                   </div>
                   <div>
                     <label className={labelClass}>Order Date *</label>
-                    <input value={pendingReceivalForm.orderDate} onChange={(event) => updatePendingReceivalForm('orderDate', event.target.value)} type="date" className={fieldClass} />
+                    <BusinessInput value={pendingReceivalForm.orderDate} onChange={(event) => updatePendingReceivalForm('orderDate', event.target.value)} type="date" className={fieldClass} />
                   </div>
                   <div>
                     <label className={labelClass}>ETA</label>
-                    <input value={pendingReceivalForm.eta} onChange={(event) => updatePendingReceivalForm('eta', event.target.value)} type="date" className={fieldClass} />
+                    <BusinessInput value={pendingReceivalForm.eta} onChange={(event) => updatePendingReceivalForm('eta', event.target.value)} type="date" className={fieldClass} />
                   </div>
                   <div className="md:col-span-4">
                     <label className={labelClass}>Order Note</label>
-                    <input value={pendingReceivalForm.note} onChange={(event) => updatePendingReceivalForm('note', event.target.value)} className={fieldClass} placeholder="PO, vendor note, etc." />
+                    <BusinessInput value={pendingReceivalForm.note} onChange={(event) => updatePendingReceivalForm('note', event.target.value)} className={fieldClass} placeholder="PO, vendor note, etc." />
                   </div>
                 </div>
 
@@ -2670,85 +2668,85 @@ export default function InventoryPage() {
                       <div className="mb-3 flex items-center justify-between gap-2">
                         <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-600">Line {index + 1}</div>
                         {!editingPendingReceivalId && pendingReceivalLines.length > 1 && (
-                          <button
+                          <BusinessButton
                             type="button"
                             onClick={() => removePendingReceivalLine(line.id)}
                             className="border border-slate-300 bg-white px-2 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-slate-600 transition hover:border-red-400 hover:text-red-700"
                           >
                             Remove
-                          </button>
+                          </BusinessButton>
                         )}
                       </div>
                       <div className="grid gap-3 md:grid-cols-4">
                         <div>
                           <label className={labelClass}>Vendor Override</label>
-                          <input placeholder={pendingReceivalForm.vendor || 'Uses order vendor'} value={line.vendor} onChange={(event) => updatePendingReceivalLine(line.id, 'vendor', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-vendor-options" className={fieldClass} />
+                          <BusinessInput placeholder={pendingReceivalForm.vendor || 'Uses order vendor'} value={line.vendor} onChange={(event) => updatePendingReceivalLine(line.id, 'vendor', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-vendor-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Material</label>
-                          <input value={line.material} onChange={(event) => updatePendingReceivalMaterial(line.id, event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-material-options" className={fieldClass} />
+                          <BusinessInput value={line.material} onChange={(event) => updatePendingReceivalMaterial(line.id, event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-material-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Size</label>
-                          <input value={line.size} onChange={(event) => updatePendingReceivalLine(line.id, 'size', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-size-options" className={fieldClass} />
+                          <BusinessInput value={line.size} onChange={(event) => updatePendingReceivalLine(line.id, 'size', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-size-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Quantity Expected</label>
-                          <input value={line.quantity} onChange={(event) => updatePendingReceivalLine(line.id, 'quantity', event.target.value)} inputMode="decimal" className={fieldClass} />
+                          <BusinessInput value={line.quantity} onChange={(event) => updatePendingReceivalLine(line.id, 'quantity', event.target.value)} inputMode="decimal" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Unit</label>
-                          <input value={line.unit} onChange={(event) => updatePendingReceivalLine(line.id, 'unit', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-unit-options" className={fieldClass} />
+                          <BusinessInput value={line.unit} onChange={(event) => updatePendingReceivalLine(line.id, 'unit', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-unit-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Location</label>
-                          <input value={line.location} onChange={(event) => updatePendingReceivalLine(line.id, 'location', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-location-options" className={fieldClass} />
+                          <BusinessInput value={line.location} onChange={(event) => updatePendingReceivalLine(line.id, 'location', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-location-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Category</label>
-                          <input value={line.category} onChange={(event) => updatePendingReceivalLine(line.id, 'category', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-category-options" className={fieldClass} />
+                          <BusinessInput value={line.category} onChange={(event) => updatePendingReceivalLine(line.id, 'category', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-category-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Pallet #</label>
-                          <input value={line.palletNumber} onChange={(event) => updatePendingReceivalLine(line.id, 'palletNumber', event.target.value)} className={fieldClass} />
+                          <BusinessInput value={line.palletNumber} onChange={(event) => updatePendingReceivalLine(line.id, 'palletNumber', event.target.value)} className={fieldClass} />
                         </div>
                         <div className="md:col-span-4">
                           <label className={labelClass}>Line Note</label>
-                          <input value={line.note} onChange={(event) => updatePendingReceivalLine(line.id, 'note', event.target.value)} className={fieldClass} placeholder="Optional note for this material" />
+                          <BusinessInput value={line.note} onChange={(event) => updatePendingReceivalLine(line.id, 'note', event.target.value)} className={fieldClass} placeholder="Optional note for this material" />
                         </div>
                         <div className="md:col-span-4 border border-slate-300 bg-white p-3">
                           <div className="grid gap-3 md:grid-cols-3">
                             <div>
                               <label className={labelClass}>Reservation</label>
-                              <select value={line.reservationMode} onChange={(event) => updatePendingReservationMode(line.id, event.target.value as ReservationMode)} className={fieldClass}>
+                              <BusinessSelect value={line.reservationMode} onChange={(event) => updatePendingReservationMode(line.id, event.target.value as ReservationMode)} className={fieldClass}>
                                 <option value="none">No reservation</option>
                                 <option value="canonical">Production job</option>
                                 <option value="temporary">Temporary / unlisted job</option>
-                              </select>
+                              </BusinessSelect>
                             </div>
                             {line.reservationMode === 'canonical' && (
                               <div className="md:col-span-2">
                                 <label className={labelClass}>Production Job *</label>
-                                <select value={line.productionJobId} onChange={(event) => updatePendingReceivalLine(line.id, 'productionJobId', event.target.value)} className={fieldClass} disabled={productionJobsLoading}>
+                                <BusinessSelect value={line.productionJobId} onChange={(event) => updatePendingReceivalLine(line.id, 'productionJobId', event.target.value)} className={fieldClass} disabled={productionJobsLoading}>
                                   <option value="">{productionJobsLoading ? 'Loading Production jobs…' : 'Select a Production job'}</option>
                                   {availableProductionJobs(line).map((job) => (
                                     <option key={job.id} value={job.id}>{formatProductionJobOptionWithStatus(job)}</option>
                                   ))}
-                                </select>
+                                </BusinessSelect>
                                 {productionJobsError && <p className="mt-1 text-xs font-semibold text-red-700">{productionJobsError}</p>}
                               </div>
                             )}
                             {line.reservationMode === 'temporary' && (
                               <div className="md:col-span-2">
                                 <label className={labelClass}>Temporary Label *</label>
-                                <input value={line.temporaryJobLabel} onChange={(event) => updatePendingReceivalLine(line.id, 'temporaryJobLabel', event.target.value)} className={fieldClass} placeholder="Unlinked operational job label" />
+                                <BusinessInput value={line.temporaryJobLabel} onChange={(event) => updatePendingReceivalLine(line.id, 'temporaryJobLabel', event.target.value)} className={fieldClass} placeholder="Unlinked operational job label" />
                                 <p className="mt-1 text-xs font-semibold text-amber-700">This reservation is not linked to a Production job.</p>
                               </div>
                             )}
                             {line.reservationMode !== 'none' && (
                               <div className="md:col-span-3">
                                 <label className={labelClass}>Reservation Note</label>
-                                <input value={line.reservationNotes} onChange={(event) => updatePendingReceivalLine(line.id, 'reservationNotes', event.target.value)} className={fieldClass} placeholder="Optional reservation note" />
+                                <BusinessInput value={line.reservationNotes} onChange={(event) => updatePendingReceivalLine(line.id, 'reservationNotes', event.target.value)} className={fieldClass} placeholder="Optional reservation note" />
                               </div>
                             )}
                           </div>
@@ -2759,25 +2757,25 @@ export default function InventoryPage() {
                 </div>
 
                 {!editingPendingReceivalId && <div className="mt-4 border-t border-slate-300 pt-4">
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={addPendingReceivalLine}
                     className="w-full border border-slate-500 bg-white px-4 py-2.5 text-sm font-black uppercase tracking-[0.08em] text-slate-800 transition hover:border-slate-800 hover:bg-slate-100"
                   >
                     + Add Another Material
-                  </button>
+                  </BusinessButton>
                 </div>}
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-slate-300 pt-4">
                   <p className="text-xs font-semibold leading-5 text-slate-500">This records expected material only. It will not touch inventory until someone clicks Receive.</p>
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={handleCreatePendingReceival}
                     disabled={isSavingPendingReceival}
                     className="border border-slate-900 bg-slate-800 px-5 py-2.5 text-sm font-black text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isSavingPendingReceival ? 'Saving...' : editingPendingReceivalId ? 'Save Changes' : 'Add Pending Receivals'}
-                  </button>
+                  </BusinessButton>
                 </div>
             </div>
 
@@ -2831,7 +2829,7 @@ export default function InventoryPage() {
             <div className="grid gap-3">
               <div>
                 <label className={labelClass}>Received By</label>
-                <input
+                <BusinessInput
                   value={receivePendingByInput}
                   onChange={(event) => setReceivePendingByInput(event.target.value)}
                   list="pending-people-options"
@@ -2841,7 +2839,7 @@ export default function InventoryPage() {
               </div>
             </div>
 
-            <label className="mt-3 block text-xs font-bold">Quantity received now ({receival.unit})<input type="number" min="0" step="0.000001" max={getNumericQuantity(receival.quantity_expected)-getNumericQuantity(receival.quantity_received)} value={receivePendingQuantity} onChange={event=>setReceivePendingQuantity(event.target.value)} disabled={receivingPendingId===receival.id} className={fieldClass}/></label>
+            <label className="mt-3 block text-xs font-bold">Quantity received now ({receival.unit})<BusinessInput type="number" min="0" step="0.000001" max={getNumericQuantity(receival.quantity_expected)-getNumericQuantity(receival.quantity_received)} value={receivePendingQuantity} onChange={event=>setReceivePendingQuantity(event.target.value)} disabled={receivingPendingId===receival.id} className={fieldClass}/></label>
             <p className="mt-2 text-xs text-slate-600">Only this quantity enters Inventory. The balance stays pending; cancel an undelivered balance separately. If the result is uncertain, retry here with the same quantity before starting another receipt.</p>
             {receivePendingMessage && (
               <div className="mt-3 border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-700">{receivePendingMessage}</div>
@@ -2855,14 +2853,14 @@ export default function InventoryPage() {
               >
                 Cancel
               </button>
-              <button
+              <BusinessButton
                 type="button"
                 onClick={confirmReceivePendingReceival}
                 disabled={receivingPendingId === receival.id}
                 className="border border-slate-950 bg-slate-900 px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {receivingPendingId === receival.id ? 'Receiving...' : 'Confirm Receive'}
-              </button>
+              </BusinessButton>
             </div>
           </div>
         </div>
@@ -2887,7 +2885,7 @@ export default function InventoryPage() {
               {PEOPLE_OPTIONS.map((name) => <option key={name} value={name} />)}
             </datalist>
             <label className={labelClass}>Received By</label>
-            <input value={bulkReceivePendingByInput} onChange={(event) => setBulkReceivePendingByInput(event.target.value)} list="pending-people-options" className={fieldClass} placeholder="Name" disabled={isBulkReceivingPending} />
+            <BusinessInput value={bulkReceivePendingByInput} onChange={(event) => setBulkReceivePendingByInput(event.target.value)} list="pending-people-options" className={fieldClass} placeholder="Name" disabled={isBulkReceivingPending} />
             <p className="mt-2 text-xs text-slate-500">Each receival uses the existing receipt transaction and carries its reservation into Inventory.</p>
             {bulkReceivePendingMessage && <div className="mt-3 border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-700" role="alert">{bulkReceivePendingMessage}</div>}
             <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-slate-300 pt-4">
@@ -2922,17 +2920,17 @@ export default function InventoryPage() {
             <div className="grid gap-3">
               <div>
                 <label className={labelClass}>Your Name</label>
-                <input value={undoReceiveByInput} onChange={(event) => setUndoReceiveByInput(event.target.value)} list="undo-pending-people-options" className={fieldClass} placeholder="Name" disabled={undoingPendingId === receival.id} />
+                <BusinessInput value={undoReceiveByInput} onChange={(event) => setUndoReceiveByInput(event.target.value)} list="undo-pending-people-options" className={fieldClass} placeholder="Name" disabled={undoingPendingId === receival.id} />
               </div>
               <div>
                 <label className={labelClass}>Reason (Optional)</label>
-                <textarea value={undoReceiveReasonInput} onChange={(event) => setUndoReceiveReasonInput(event.target.value)} rows={3} className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" placeholder="Why is this receipt being undone?" disabled={undoingPendingId === receival.id} />
+                <BusinessTextarea value={undoReceiveReasonInput} onChange={(event) => setUndoReceiveReasonInput(event.target.value)} rows={3} className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200" placeholder="Why is this receipt being undone?" disabled={undoingPendingId === receival.id} />
               </div>
             </div>
             {undoReceiveMessage && <div className="mt-3 border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-700" role="alert">{undoReceiveMessage}</div>}
             <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-slate-300 pt-4">
               <button type="button" onClick={closeUndoReceiveDialog} disabled={Boolean(undoingPendingId)} className="border border-slate-400 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-slate-700 transition hover:bg-slate-100 disabled:opacity-60">Cancel</button>
-              <button type="button" onClick={confirmUndoPendingReceival} disabled={undoingPendingId === receival.id} className="border border-red-800 bg-red-800 px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-red-900 disabled:cursor-not-allowed disabled:opacity-60">{undoingPendingId === receival.id ? 'Undoing...' : 'Confirm Undo'}</button>
+              <BusinessButton type="button" onClick={confirmUndoPendingReceival} disabled={undoingPendingId === receival.id} className="border border-red-800 bg-red-800 px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-red-900 disabled:cursor-not-allowed disabled:opacity-60">{undoingPendingId === receival.id ? 'Undoing...' : 'Confirm Undo'}</BusinessButton>
             </div>
           </div>
         </div>
@@ -3026,47 +3024,47 @@ export default function InventoryPage() {
                 <div className="grid gap-3 md:grid-cols-2">
                   <div>
                     <label className={labelClass}>Vendor</label>
-                    <input value={editVendor} onChange={(event) => setEditVendor(event.target.value)} className={fieldClass} placeholder="e.g. Arim / KCI / TM" />
+                    <BusinessInput value={editVendor} onChange={(event) => setEditVendor(event.target.value)} className={fieldClass} placeholder="e.g. Arim / KCI / TM" />
                   </div>
 
                   <div>
                     <label className={labelClass}>Material</label>
-                    <input value={editMaterial} onChange={(event) => setEditMaterial(event.target.value)} className={fieldClass} placeholder="e.g. Blanco Mexicano" />
+                    <BusinessInput value={editMaterial} onChange={(event) => setEditMaterial(event.target.value)} className={fieldClass} placeholder="e.g. Blanco Mexicano" />
                   </div>
 
                   <div>
                     <label className={labelClass}>Size</label>
-                    <input value={editSize} onChange={(event) => setEditSize(event.target.value)} className={fieldClass} placeholder="e.g. #1 / #3-5" />
+                    <BusinessInput value={editSize} onChange={(event) => setEditSize(event.target.value)} className={fieldClass} placeholder="e.g. #1 / #3-5" />
                   </div>
 
                   <div>
                     <label className={labelClass}>Category</label>
-                    <input value={editCategory} onChange={(event) => setEditCategory(event.target.value)} className={fieldClass} placeholder="e.g. glass / marble / filler" />
+                    <BusinessInput value={editCategory} onChange={(event) => setEditCategory(event.target.value)} className={fieldClass} placeholder="e.g. glass / marble / filler" />
                   </div>
 
                   <div>
                     <label className={labelClass}>Unit</label>
-                    <input value={editUnit} onChange={(event) => setEditUnit(event.target.value)} className={fieldClass} placeholder="e.g. Bags" />
+                    <BusinessInput value={editUnit} onChange={(event) => setEditUnit(event.target.value)} className={fieldClass} placeholder="e.g. Bags" />
                   </div>
 
                   <div>
                     <label className={labelClass}>Location</label>
-                    <input value={editLocation} onChange={(event) => setEditLocation(event.target.value)} className={fieldClass} placeholder="e.g. Denton / Backstock / Aisle 2" />
+                    <BusinessInput value={editLocation} onChange={(event) => setEditLocation(event.target.value)} className={fieldClass} placeholder="e.g. Denton / Backstock / Aisle 2" />
                   </div>
 
                   <div>
                     <label className={labelClass}>Pallet #</label>
-                    <input value={editPalletNumber} onChange={(event) => setEditPalletNumber(event.target.value)} className={fieldClass} placeholder="e.g. P-014" />
+                    <BusinessInput value={editPalletNumber} onChange={(event) => setEditPalletNumber(event.target.value)} className={fieldClass} placeholder="e.g. P-014" />
                   </div>
 
                   <div>
                     <label className={labelClass}>Your Name</label>
-                    <input value={editEnteredBy} onChange={(event) => setEditEnteredBy(event.target.value)} className={fieldClass} placeholder="e.g. Chris" />
+                    <BusinessInput value={editEnteredBy} onChange={(event) => setEditEnteredBy(event.target.value)} className={fieldClass} placeholder="e.g. Chris" />
                   </div>
 
                   <div>
                     <label className={labelClass}>Reservation</label>
-                    <select value={editReservationMode} onChange={(event) => {
+                    <BusinessSelect value={editReservationMode} onChange={(event) => {
                       const mode = event.target.value as ReservationMode;
                       setEditReservationMode(mode);
                       if (mode !== 'canonical') setEditProductionJobId('');
@@ -3075,7 +3073,7 @@ export default function InventoryPage() {
                       <option value="none">No reservation</option>
                       <option value="canonical">Production job</option>
                       <option value="temporary">Temporary / unlisted job</option>
-                    </select>
+                    </BusinessSelect>
                   </div>
 
                   {editReservationMode !== 'none' && (
@@ -3083,18 +3081,18 @@ export default function InventoryPage() {
                       {editReservationMode === 'canonical' ? (
                         <div>
                           <label className={labelClass}>Production Job *</label>
-                          <select disabled={productionJobsLoading} value={editProductionJobId} onChange={(event) => setEditProductionJobId(event.target.value)} className={fieldClass}>
+                          <BusinessSelect disabled={productionJobsLoading} value={editProductionJobId} onChange={(event) => setEditProductionJobId(event.target.value)} className={fieldClass}>
                             <option value="">{productionJobsLoading ? 'Loading Production jobs…' : 'Select a Production job'}</option>
                             {row.production_job && !productionJobs.some((job) => job.id === row.production_job!.id) && (
                               <option value={row.production_job.id}>{formatProductionJobOptionWithStatus(row.production_job)}</option>
                             )}
                             {productionJobs.map((job) => <option key={job.id} value={job.id}>{formatProductionJobOptionWithStatus(job)}</option>)}
-                          </select>
+                          </BusinessSelect>
                         </div>
                       ) : (
                         <div>
                           <label className={labelClass}>Temporary Label *</label>
-                          <input value={editTemporaryJobLabel} onChange={(event) => setEditTemporaryJobLabel(event.target.value)} className={fieldClass} placeholder="Unlinked operational job label" />
+                          <BusinessInput value={editTemporaryJobLabel} onChange={(event) => setEditTemporaryJobLabel(event.target.value)} className={fieldClass} placeholder="Unlinked operational job label" />
                           <p className="mt-1 text-xs font-semibold text-amber-700">Not linked to a Production job.</p>
                         </div>
                       )}
@@ -3102,7 +3100,7 @@ export default function InventoryPage() {
                       {!Boolean(row.production_job_id || row.temporary_job_label || row.earmarked_for_job) && (
                         <div>
                           <label className={labelClass}>Reservation Quantity</label>
-                          <input
+                          <BusinessInput
                             value={editReserveQuantity}
                             onChange={(event) => setEditReserveQuantity(event.target.value)}
                             className={fieldClass}
@@ -3111,7 +3109,7 @@ export default function InventoryPage() {
                             disabled={editReserveEntireLot}
                           />
                           <label className="mt-2 flex items-center gap-2 text-xs font-medium text-slate-700">
-                            <input type="checkbox" checked={editReserveEntireLot} onChange={(event) => { setEditReserveEntireLot(event.target.checked); if (event.target.checked) setEditReserveQuantity(''); }} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" />
+                            <BusinessInput type="checkbox" checked={editReserveEntireLot} onChange={(event) => { setEditReserveEntireLot(event.target.checked); if (event.target.checked) setEditReserveQuantity(''); }} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" />
                             Reserve the entire selected lot ({formatQuantity(Number(row.quantity || 0))} {row.unit || ''})
                           </label>
                           <p className="mt-1 text-[11px] font-medium text-slate-500">
@@ -3122,14 +3120,14 @@ export default function InventoryPage() {
 
                       <div>
                         <label className={labelClass}>Reservation Note</label>
-                        <input value={editEarmarkNotes} onChange={(event) => setEditEarmarkNotes(event.target.value)} className={fieldClass} placeholder="Optional note to append" />
+                        <BusinessInput value={editEarmarkNotes} onChange={(event) => setEditEarmarkNotes(event.target.value)} className={fieldClass} placeholder="Optional note to append" />
                       </div>
                     </>
                   )}
 
                   <div className="md:col-span-2">
                     <label className={labelClass}>Add Note</label>
-                    <textarea
+                    <BusinessTextarea
                       value={editNote}
                       onChange={(event) => setEditNote(event.target.value)}
                       rows={3}
@@ -3155,14 +3153,14 @@ export default function InventoryPage() {
 
               <div className="flex flex-wrap justify-between gap-2 border-t border-slate-300 pt-4">
                 <div className="flex flex-wrap gap-2">
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={handleSaveDetails}
                     disabled={isSavingDetails || isDeletingMaterial}
                     className="border border-slate-900 bg-slate-800 px-4 py-2 text-sm font-black text-white transition hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isSavingDetails ? 'Saving...' : 'Save Details'}
-                  </button>
+                  </BusinessButton>
 
                   <button
                     type="button"
@@ -3174,14 +3172,14 @@ export default function InventoryPage() {
                   </button>
                 </div>
 
-                <button
+                <BusinessButton
                   type="button"
                   onClick={() => handleDeleteMaterial(row)}
                   disabled={isDeletingMaterial || isSavingDetails || isApplyingAdjustment}
                   className="border border-red-400 bg-red-50 px-4 py-2 text-sm font-black text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isDeletingMaterial ? 'Deleting...' : 'Delete Selected Lot'}
-                </button>
+                </BusinessButton>
               </div>
             </div>
           </section>
@@ -3208,7 +3206,7 @@ export default function InventoryPage() {
                 <label className={labelClass}>Movement Type</label>
                 <div className="inline-flex border border-slate-400 bg-white p-1">
                   {(['add', 'remove'] as AdjustmentType[]).map((type) => (
-                    <button
+                    <BusinessButton
                       key={type}
                       type="button"
                       onClick={() => setAdjustmentType(type)}
@@ -3217,11 +3215,11 @@ export default function InventoryPage() {
                       }`}
                     >
                       {adjustmentLabel(type)}
-                    </button>
+                    </BusinessButton>
                   ))}
 
                   {isAdmin && (
-                    <button
+                    <BusinessButton
                       type="button"
                       onClick={() => setAdjustmentType('set_exact')}
                       className={`px-3 py-2 text-xs font-black transition ${
@@ -3229,19 +3227,19 @@ export default function InventoryPage() {
                       }`}
                     >
                       Set Exact
-                    </button>
+                    </BusinessButton>
                   )}
                 </div>
               </div>
 
               <div>
                 <label className={labelClass}>Quantity</label>
-                <input value={adjustmentQty} onChange={(event) => setAdjustmentQty(event.target.value)} inputMode="decimal" className={fieldClass} placeholder="e.g. 5" />
+                <BusinessInput value={adjustmentQty} onChange={(event) => setAdjustmentQty(event.target.value)} inputMode="decimal" className={fieldClass} placeholder="e.g. 5" />
               </div>
 
               <div>
                 <label className={labelClass}>Reason / Note</label>
-                <textarea value={adjustmentReason} onChange={(event) => setAdjustmentReason(event.target.value)} rows={4} className={fieldClass} placeholder="e.g. Used for Job 25-017" />
+                <BusinessTextarea value={adjustmentReason} onChange={(event) => setAdjustmentReason(event.target.value)} rows={4} className={fieldClass} placeholder="e.g. Used for Job 25-017" />
               </div>
 
               {adjustmentMessage && (
@@ -3250,7 +3248,7 @@ export default function InventoryPage() {
                 </div>
               )}
 
-              <button
+              <BusinessButton
                 type="button"
                 onClick={handleApplyAdjustment}
                 disabled={isApplyingAdjustment}
@@ -3263,7 +3261,7 @@ export default function InventoryPage() {
                     : adjustmentType === 'remove'
                       ? 'Record Outtake'
                       : 'Set Exact Count'}
-              </button>
+              </BusinessButton>
             </div>
           </aside>
         </div>
@@ -3302,7 +3300,7 @@ export default function InventoryPage() {
               </div>
             </div>
 
-            <button
+            <BusinessButton
               type="button"
               onClick={() => {
                 setSelectedGroupKey(null);
@@ -3313,7 +3311,7 @@ export default function InventoryPage() {
               className="border border-slate-500 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-800 transition hover:border-slate-900 hover:bg-slate-100 active:translate-y-px"
             >
               Close
-            </button>
+            </BusinessButton>
           </div>
 
           <div className="max-h-[calc(100vh-7.5rem)] overflow-y-auto bg-[#eef1f4]">
@@ -3394,7 +3392,7 @@ export default function InventoryPage() {
                     <label className={labelClass}>Movement Type</label>
                     <div className="grid grid-cols-2 border border-slate-400 bg-white p-1">
                       {(['intake', 'outtake'] as const).map((type) => (
-                        <button
+                        <BusinessButton
                           key={type}
                           type="button"
                           onClick={() => setRecordMovementType(type)}
@@ -3403,14 +3401,14 @@ export default function InventoryPage() {
                           }`}
                         >
                           {type === 'intake' ? 'Intake' : 'Outtake'}
-                        </button>
+                        </BusinessButton>
                       ))}
                     </div>
                   </div>
 
                   <div>
                     <label className={labelClass}>Your Name</label>
-                    <input
+                    <BusinessInput
                       value={editEnteredBy}
                       onChange={(event) => setEditEnteredBy(event.target.value)}
                       className={fieldClass}
@@ -3431,7 +3429,7 @@ export default function InventoryPage() {
                     </div>
                   )}
 
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={handleApplyBulkMovement}
                     disabled={isApplyingBulkMovement}
@@ -3442,7 +3440,7 @@ export default function InventoryPage() {
                       : recordMovementType === 'intake'
                         ? 'Record Intake Lines'
                         : 'Record Outtake Lines'}
-                  </button>
+                  </BusinessButton>
                 </div>
               </aside>
 
@@ -3455,13 +3453,13 @@ export default function InventoryPage() {
                     </p>
                   </div>
 
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={addStockLine}
                     className="border border-slate-400 bg-white px-4 py-2 text-sm font-black text-slate-800 transition hover:border-slate-700 hover:bg-slate-100"
                   >
                     + Add Line Item
-                  </button>
+                  </BusinessButton>
                 </div>
 
                 <div className="space-y-3">
@@ -3472,52 +3470,52 @@ export default function InventoryPage() {
                     <div key={line.id} className="border border-slate-300 bg-[#f8fafc] p-3">
                       <div className="mb-3 flex items-center justify-between gap-3">
                         <div className="text-xs font-black uppercase tracking-[0.12em] text-slate-600">Line {index + 1}</div>
-                        <button
+                        <BusinessButton
                           type="button"
                           onClick={() => removeStockLine(line.id)}
                           disabled={stockLines.length <= 1}
                           className="border border-red-300 bg-red-50 px-2 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           Remove
-                        </button>
+                        </BusinessButton>
                       </div>
 
                       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                         <div>
                           <label className={labelClass}>Vendor</label>
-                          <input value={line.vendor} onChange={(event) => updateStockLine(line.id, 'vendor', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-vendor-options" className={fieldClass} />
+                          <BusinessInput value={line.vendor} onChange={(event) => updateStockLine(line.id, 'vendor', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-vendor-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Material</label>
-                          <input value={line.material} onChange={(event) => updateStockLine(line.id, 'material', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-material-options" className={fieldClass} />
+                          <BusinessInput value={line.material} onChange={(event) => updateStockLine(line.id, 'material', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-material-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Size</label>
-                          <input value={line.size} onChange={(event) => updateStockLine(line.id, 'size', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-size-options" className={fieldClass} />
+                          <BusinessInput value={line.size} onChange={(event) => updateStockLine(line.id, 'size', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-size-options" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Quantity</label>
-                          <input value={line.quantity} onChange={(event) => updateStockLine(line.id, 'quantity', event.target.value)} inputMode="decimal" className={fieldClass} />
+                          <BusinessInput value={line.quantity} onChange={(event) => updateStockLine(line.id, 'quantity', event.target.value)} inputMode="decimal" className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Unit</label>
-                          <input value={line.unit} onChange={(event) => updateStockLine(line.id, 'unit', event.target.value)} className={fieldClass} />
+                          <BusinessInput value={line.unit} onChange={(event) => updateStockLine(line.id, 'unit', event.target.value)} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Location</label>
-                          <input value={line.location} onChange={(event) => updateStockLine(line.id, 'location', event.target.value)} className={fieldClass} />
+                          <BusinessInput value={line.location} onChange={(event) => updateStockLine(line.id, 'location', event.target.value)} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Category</label>
-                          <input value={line.category} onChange={(event) => updateStockLine(line.id, 'category', event.target.value)} className={fieldClass} />
+                          <BusinessInput value={line.category} onChange={(event) => updateStockLine(line.id, 'category', event.target.value)} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Pallet</label>
-                          <input value={line.palletNumber} onChange={(event) => updateStockLine(line.id, 'palletNumber', event.target.value)} className={fieldClass} />
+                          <BusinessInput value={line.palletNumber} onChange={(event) => updateStockLine(line.id, 'palletNumber', event.target.value)} className={fieldClass} />
                         </div>
                         <div className="sm:col-span-2 xl:col-span-4">
                           <label className={labelClass}>Note</label>
-                          <input value={line.note} onChange={(event) => updateStockLine(line.id, 'note', event.target.value)} className={fieldClass} placeholder="Optional" />
+                          <BusinessInput value={line.note} onChange={(event) => updateStockLine(line.id, 'note', event.target.value)} className={fieldClass} placeholder="Optional" />
                         </div>
                       </div>
 
@@ -3531,15 +3529,15 @@ export default function InventoryPage() {
                 </div>
 
                 <div className="mt-4 flex flex-wrap justify-between gap-2 border-t border-slate-300 pt-4">
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={addStockLine}
                     className="border border-slate-400 bg-white px-4 py-2 text-sm font-black text-slate-800 transition hover:border-slate-700 hover:bg-slate-100"
                   >
                     + Add Line Item
-                  </button>
+                  </BusinessButton>
 
-                  <button
+                  <BusinessButton
                     type="button"
                     onClick={handleApplyBulkMovement}
                     disabled={isApplyingBulkMovement}
@@ -3550,7 +3548,7 @@ export default function InventoryPage() {
                       : recordMovementType === 'intake'
                         ? 'Record Intake Lines'
                         : 'Record Outtake Lines'}
-                  </button>
+                  </BusinessButton>
                 </div>
               </section>
             </div>
@@ -3618,8 +3616,8 @@ export default function InventoryPage() {
                 <div className="text-sm font-semibold text-slate-900">Return {selectedReservedLotIds.size} reserved lot{selectedReservedLotIds.size === 1 ? '' : 's'} to general stock</div>
                 <div className="text-xs text-slate-500">Matching vendor, material, size, category, unit, location, and pallet lots merge automatically.</div>
               </div>
-              <div className="w-full sm:w-44"><label className={labelClass}>Your Name</label><input value={bulkReleaseBy} onChange={(event) => setBulkReleaseBy(event.target.value)} className={fieldClass} placeholder="Name" /></div>
-              <div className="w-full sm:w-64"><label className={labelClass}>Return Note</label><input value={bulkReleaseNote} onChange={(event) => setBulkReleaseNote(event.target.value)} className={fieldClass} placeholder="Optional reason" /></div>
+              <div className="w-full sm:w-44"><label className={labelClass}>Your Name</label><BusinessInput value={bulkReleaseBy} onChange={(event) => setBulkReleaseBy(event.target.value)} className={fieldClass} placeholder="Name" /></div>
+              <div className="w-full sm:w-64"><label className={labelClass}>Return Note</label><BusinessInput value={bulkReleaseNote} onChange={(event) => setBulkReleaseNote(event.target.value)} className={fieldClass} placeholder="Optional reason" /></div>
               <button type="button" onClick={handleBulkReleaseReservations} disabled={isBulkReleasingReservations} className="h-9 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60">{isBulkReleasingReservations ? 'Returning...' : 'Return to General Stock'}</button>
               <button type="button" onClick={() => setSelectedReservedLotIds(new Set())} disabled={isBulkReleasingReservations} className="h-9 px-2 text-xs font-medium text-slate-600 underline-offset-2 hover:underline disabled:opacity-60">Clear</button>
             </div>
@@ -3710,7 +3708,7 @@ export default function InventoryPage() {
                 <table className="w-full border-collapse text-left text-sm">
                   <thead className="bg-slate-50 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600">
                     <tr className="border-b border-slate-300">
-                      <th className="w-10 px-3 py-2 text-center"><input ref={reservedSelectAllRef} type="checkbox" aria-label="Select all visible reserved lots" checked={allVisibleReservedSelected} disabled={visibleReservedLotIds.length === 0 || isBulkReleasingReservations} onChange={toggleAllVisibleReservedLots} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" /></th>
+                      <th className="w-10 px-3 py-2 text-center"><BusinessInput ref={reservedSelectAllRef} type="checkbox" aria-label="Select all visible reserved lots" checked={allVisibleReservedSelected} disabled={visibleReservedLotIds.length === 0 || isBulkReleasingReservations} onChange={toggleAllVisibleReservedLots} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" /></th>
                       <th className="px-3 py-2">{tr('Vendor', 'Proveedor')}</th>
                       <th className="px-3 py-2">{tr('Material', 'Material')}</th>
                       <th className="px-3 py-2">{tr('Size', 'Tamaño')}</th>
@@ -3734,7 +3732,7 @@ export default function InventoryPage() {
                             onClick={() => openGroup(group)}
                             className={`${isSelected ? 'bg-slate-100' : 'bg-white'} group cursor-pointer transition hover:bg-slate-100 hover:shadow-[inset_3px_0_0_#0f172a]`}
                           >
-                            <td className="px-3 py-2 text-center" onClick={(event) => event.stopPropagation()}>{groupReservedIds.length > 0 && <input type="checkbox" aria-label={`Select reserved lots for ${row.color || 'inventory group'}`} checked={groupReservedIds.every((id) => selectedReservedLotIds.has(id))} onChange={() => toggleReservedLots(groupReservedIds)} disabled={isBulkReleasingReservations} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" />}</td>
+                            <td className="px-3 py-2 text-center" onClick={(event) => event.stopPropagation()}>{groupReservedIds.length > 0 && <BusinessInput type="checkbox" aria-label={`Select reserved lots for ${row.color || 'inventory group'}`} checked={groupReservedIds.every((id) => selectedReservedLotIds.has(id))} onChange={() => toggleReservedLots(groupReservedIds)} disabled={isBulkReleasingReservations} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-blue-600" />}</td>
                             <td className="px-3 py-2 font-semibold text-slate-800">{row.vendor || '—'}</td>
                             <td className="px-3 py-2 font-semibold text-slate-950">{row.color || '—'}</td>
                             <td className="px-3 py-2 font-semibold text-slate-800">{row.size || '—'}</td>

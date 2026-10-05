@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessButton } from '@/components/BusinessWriteControls';
+
 import { RotateCcw } from "lucide-react";
 import type { MouseEvent } from "react";
 import type { ProductionJob } from "../types";
@@ -33,7 +35,7 @@ export default function ReworkQuickAction({
       data-rework-action-group
       className="pointer-events-none inline-flex h-6 shrink-0 items-center"
     >
-      <button
+      <BusinessButton
         type="button"
         data-rework-quick-action
         onClick={createRework}
@@ -42,7 +44,7 @@ export default function ReworkQuickAction({
         className={`pointer-events-auto inline-flex shrink-0 items-center justify-center border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 ${compact ? "h-5 w-6" : "h-6 w-7"} ${className}`}
       >
         <RotateCcw className={compact ? "h-3 w-3" : "h-3.5 w-3.5"} strokeWidth={2.5} aria-hidden="true" />
-      </button>
+      </BusinessButton>
     </span>
   );
 }

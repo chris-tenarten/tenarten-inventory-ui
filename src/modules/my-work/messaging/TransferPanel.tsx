@@ -1,10 +1,12 @@
 'use client';
+import { useAuth } from '@/lib/auth';
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { fileSize } from './files';
 import { dismissTransfer } from './client';
 import type { MessageTransfer } from './transfer';
 
 export default function TransferPanel({transfer}:{transfer:MessageTransfer}) {
+  const canWrite=useAuth().can('messaging.write');
   const [selectionError,setSelectionError]=useState('');
   const state=useSyncExternalStore(transfer.subscribe,transfer.snapshot,transfer.snapshot);
   const active=!['sent','canceled','failed'].includes(state.phase);
@@ -22,11 +24,11 @@ export default function TransferPanel({transfer}:{transfer:MessageTransfer}) {
     <progress aria-label="Total attachment upload progress" className="mt-1 w-full" max={Math.max(1,state.total)} value={state.phase==='sent'?Math.max(1,state.total):state.uploaded}/>
     <p>{fileSize(state.uploaded)} / {fileSize(state.total)}</p>
     {state.error?<p role="alert" className="mt-1 text-red-800">{state.error}</p>:null}
-    {recovering?<div><p>Reselect the original files to resume. If clipboard files are no longer available, cancel this draft and attach them again.</p><ul className="max-h-24 overflow-y-auto">{transfer.draft.entries.map(entry=><li key={entry.id}><bdi>{entry.name}</bdi> · {fileSize(entry.size)}</li>)}</ul><input aria-label="Reselect original attachments" type="file" multiple onChange={event=>{try{transfer.supplyFiles(Array.from(event.currentTarget.files??[]));setSelectionError('');void transfer.start();}catch(error){setSelectionError(error instanceof Error?error.message:'Unable to reselect files.');}event.currentTarget.value='';}}/></div>:null}
+    {recovering?<div><p>Reselect the original files to resume. If clipboard files are no longer available, cancel this draft and attach them again.</p><ul className="max-h-24 overflow-y-auto">{transfer.draft.entries.map(entry=><li key={entry.id}><bdi>{entry.name}</bdi> · {fileSize(entry.size)}</li>)}</ul><input aria-label="Reselect original attachments" type="file" multiple disabled={!canWrite} onChange={event=>{try{transfer.supplyFiles(Array.from(event.currentTarget.files??[]));setSelectionError('');void transfer.start();}catch(error){setSelectionError(error instanceof Error?error.message:'Unable to reselect files.');}event.currentTarget.value='';}}/></div>:null}
     {selectionError?<p role="alert">{selectionError}</p>:null}
     <div className="flex gap-2">
-      {state.phase==='failed'?<button type="button" onClick={()=>void transfer.start()} className="min-h-10 rounded border px-3">{transfer.cancellationPending?"Retry cleanup":recovering?"Check transfer result":"Retry transfer"}</button>:null}
-      {!['sent','canceled'].includes(state.phase)?<button type="button" disabled={state.phase==='canceling'} onClick={()=>void transfer.cancel()} className="min-h-10 rounded border px-3">Cancel transfer</button>:<button type="button" onClick={dismissTransfer} className="min-h-10 rounded border px-3">Dismiss transfer</button>}
+      {state.phase==='failed'?<button type="button" disabled={!canWrite} onClick={()=>void transfer.start()} className="min-h-10 rounded border px-3">{transfer.cancellationPending?"Retry cleanup":recovering?"Check transfer result":"Retry transfer"}</button>:null}
+      {!['sent','canceled'].includes(state.phase)?<button type="button" disabled={!canWrite||state.phase==='canceling'} onClick={()=>void transfer.cancel()} className="min-h-10 rounded border px-3">Cancel transfer</button>:<button type="button" onClick={dismissTransfer} className="min-h-10 rounded border px-3">Dismiss transfer</button>}
     </div>
   </section>;
 }

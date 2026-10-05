@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessInput, BusinessTextarea, BusinessButton } from '@/components/BusinessWriteControls';
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PlanningItem, PlanningItemInput } from "./types";
 
@@ -109,16 +111,16 @@ export default function PlanningItemEditor({ phaseId, item, sortOrder, onSave, o
         </div>
         {error && <div role="alert" className="mt-3 border border-red-300 bg-red-50 p-2 text-sm font-semibold text-red-800">{error}</div>}
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <label className="text-xs font-bold sm:col-span-2">Title<input ref={titleRef} value={draft.title} maxLength={200} onChange={(event) => setDraft((value) => ({ ...value, title: event.target.value }))} className={fieldClass} /></label>
-          <label className="text-xs font-bold">Owner <span className="font-normal text-slate-500">(optional)</span><input value={draft.owner} maxLength={200} onChange={(event) => setDraft((value) => ({ ...value, owner: event.target.value }))} className={fieldClass} /></label>
-          <label className="text-xs font-bold">Due date <span className="font-normal text-slate-500">(optional)</span><input type="date" value={draft.dueDate} onChange={(event) => setDraft((value) => ({ ...value, dueDate: event.target.value }))} className={fieldClass} /></label>
-          <label className="text-xs font-bold">Estimated hours<input type="number" min="0.01" step="any" value={draft.estimatedHours} onChange={(event) => setDraft((value) => ({ ...value, estimatedHours: event.target.value }))} className={fieldClass} /></label>
-          <label className="text-xs font-bold sm:col-span-2">Notes <span className="font-normal text-slate-500">(optional)</span><textarea value={draft.notes} maxLength={12000} rows={3} onChange={(event) => setDraft((value) => ({ ...value, notes: event.target.value }))} className="mt-1 w-full border border-slate-300 p-2 text-sm" /></label>
-          <label className="flex items-center gap-2 text-sm font-bold sm:col-span-2"><input type="checkbox" checked={draft.complete} onChange={(event) => setDraft((value) => ({ ...value, complete: event.target.checked }))} />Complete</label>
+          <label className="text-xs font-bold sm:col-span-2">Title<BusinessInput ref={titleRef} value={draft.title} maxLength={200} onChange={(event) => setDraft((value) => ({ ...value, title: event.target.value }))} className={fieldClass} /></label>
+          <label className="text-xs font-bold">Owner <span className="font-normal text-slate-500">(optional)</span><BusinessInput value={draft.owner} maxLength={200} onChange={(event) => setDraft((value) => ({ ...value, owner: event.target.value }))} className={fieldClass} /></label>
+          <label className="text-xs font-bold">Due date <span className="font-normal text-slate-500">(optional)</span><BusinessInput type="date" value={draft.dueDate} onChange={(event) => setDraft((value) => ({ ...value, dueDate: event.target.value }))} className={fieldClass} /></label>
+          <label className="text-xs font-bold">Estimated hours<BusinessInput type="number" min="0.01" step="any" value={draft.estimatedHours} onChange={(event) => setDraft((value) => ({ ...value, estimatedHours: event.target.value }))} className={fieldClass} /></label>
+          <label className="text-xs font-bold sm:col-span-2">Notes <span className="font-normal text-slate-500">(optional)</span><BusinessTextarea value={draft.notes} maxLength={12000} rows={3} onChange={(event) => setDraft((value) => ({ ...value, notes: event.target.value }))} className="mt-1 w-full border border-slate-300 p-2 text-sm" /></label>
+          <label className="flex items-center gap-2 text-sm font-bold sm:col-span-2"><BusinessInput type="checkbox" checked={draft.complete} onChange={(event) => setDraft((value) => ({ ...value, complete: event.target.checked }))} />Complete</label>
         </div>
         <div className="mt-5 flex justify-between gap-3">
-          {onDelete ? <button type="button" disabled={busy} onClick={async () => { if (!window.confirm("Delete this Item?")) return; setBusy(true); try { await onDelete(); onClose(); } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to delete Item."); setBusy(false); } }} className="h-10 border border-red-300 px-4 text-sm font-bold text-red-700">Delete</button> : <span />}
-          <div className="flex gap-2"><button type="button" onClick={requestClose} className="h-10 border border-slate-300 px-4 text-sm font-bold">Cancel</button><button type="button" disabled={busy} onClick={() => void save()} className="h-10 bg-slate-900 px-4 text-sm font-bold text-white disabled:opacity-50">{busy ? "Saving…" : "Save Item"}</button></div>
+          {onDelete ? <BusinessButton type="button" disabled={busy} onClick={async () => { if (!window.confirm("Delete this Item?")) return; setBusy(true); try { await onDelete(); onClose(); } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to delete Item."); setBusy(false); } }} className="h-10 border border-red-300 px-4 text-sm font-bold text-red-700">Delete</BusinessButton> : <span />}
+          <div className="flex gap-2"><button type="button" onClick={requestClose} className="h-10 border border-slate-300 px-4 text-sm font-bold">Cancel</button><BusinessButton type="button" disabled={busy} onClick={() => void save()} className="h-10 bg-slate-900 px-4 text-sm font-bold text-white disabled:opacity-50">{busy ? "Saving…" : "Save Item"}</BusinessButton></div>
         </div>
       </div>
   );

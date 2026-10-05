@@ -5,7 +5,7 @@ export class EdgeAuthorizationError extends Error {
 }
 
 export async function requireEdgeCapability(request: Request, capability: string) {
-  if (Deno.env.get("RBAC_ENFORCED") !== "true") return null;
+
   const url = Deno.env.get("SUPABASE_URL");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const authorization = request.headers.get("authorization") || "";

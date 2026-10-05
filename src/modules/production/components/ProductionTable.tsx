@@ -1,5 +1,7 @@
 'use client';
 
+import { BusinessInput, BusinessSelect, BusinessTextarea, BusinessButton } from '@/components/BusinessWriteControls';
+
 import { ArrowDown, ArrowUp, ChevronsLeftRight, Paperclip, Search, Settings2, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -816,40 +818,40 @@ export default function ProductionTable({
         <td className={`${cellClass} sticky z-20`} style={{ left: jobNumberStickyLeft }}>
           <div className="flex h-6 min-w-0 items-center bg-white">
             {jobNumberIndicator}
-            <input value={row.jobNumber} title={row.jobNumber || undefined} onChange={(e) => onChange('jobNumber', e.target.value)} onBlur={blur('jobNumber')} onKeyDown={blurOnEnter} placeholder="Job #" className={`${inputClass} min-w-0 flex-1 bg-white`} />
+            <BusinessInput value={row.jobNumber} title={row.jobNumber || undefined} onChange={(e) => onChange('jobNumber', e.target.value)} onBlur={blur('jobNumber')} onKeyDown={blurOnEnter} placeholder="Job #" className={`${inputClass} min-w-0 flex-1 bg-white`} />
           </div>
         </td>
         <td className={`${cellClass} sticky z-20`} style={{ left: projectStickyLeft }}>
           <div className="relative bg-white">
-            <input ref={nameRef} value={row.name} title={row.name} onChange={(e) => onChange('name', e.target.value)} onBlur={blur('name')} onKeyDown={blurOnEnter} placeholder="Project name *" className={`${inputClass} bg-white pr-24 font-semibold text-slate-950`} />
+            <BusinessInput ref={nameRef} value={row.name} title={row.name} onChange={(e) => onChange('name', e.target.value)} onBlur={blur('name')} onKeyDown={blurOnEnter} placeholder="Project name *" className={`${inputClass} bg-white pr-24 font-semibold text-slate-950`} />
             {projectAttachmentIndicator && <div className="absolute right-1 top-1/2 z-10 -translate-y-1/2">{projectAttachmentIndicator}</div>}
           </div>
         </td>
-        {!hiddenColumns.has('customer') && <td className={cellClass}><input list="production-customer-suggestions" autoComplete="off" value={row.customer} title={row.customer || undefined} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>}
-        {!hiddenColumns.has('estimate') && <td className={cellClass}><input value={row.estimateNumber} title={row.estimateNumber || undefined} onChange={(e) => onChange('estimateNumber', e.target.value)} onBlur={blur('estimateNumber')} onKeyDown={blurOnEnter} placeholder="Estimate #" className={inputClass} /></td>}
-        {!hiddenColumns.has('workOrder') && <td className={cellClass}><input value={row.workOrderNumber} title={row.workOrderNumber || undefined} onChange={(e) => onChange('workOrderNumber', e.target.value)} onBlur={blur('workOrderNumber')} onKeyDown={blurOnEnter} placeholder="Work order #" className={inputClass} /></td>}
-        {!hiddenColumns.has('deposit') && <td className={cellClass}><input aria-label="Deposit date" title={row.depositDate || undefined} type="date" value={row.depositDate} onChange={(e) => onChange('depositDate', e.target.value)} onBlur={blur('depositDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.depositDate ? populatedDateClass : emptyDateClass}`} /></td>}
-        {!hiddenColumns.has('delivery') && <td className={cellClass}><input aria-label="Requested delivery date" title={row.requestedDeliveryDate || undefined} type="date" value={row.requestedDeliveryDate} onChange={(e) => onChange('requestedDeliveryDate', e.target.value)} onBlur={blur('requestedDeliveryDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.requestedDeliveryDate ? populatedDateClass : emptyDateClass}`} /></td>}
-        {!hiddenColumns.has('start') && <td className={cellClass}><div className="relative"><input ref={scheduleRefs?.start} aria-label={scheduleState === 'staged' ? 'Proposed planned start date, unsaved' : 'Planned start date'} title={row.plannedStart || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedStart ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
-        {!hiddenColumns.has('finish') && <td className={cellClass}><div className="relative"><input ref={scheduleRefs?.finish} aria-label={scheduleState === 'staged' ? 'Proposed planned finish date, unsaved' : 'Planned finish date'} title={row.plannedEnd || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedEnd ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
-        {!hiddenColumns.has('labor') && <td className={cellClass}><input type="number" min="0" step="0.25" value={row.estimatedManHours} onChange={(e) => onChange('estimatedManHours', e.target.value)} onBlur={blur('estimatedManHours')} onKeyDown={blurOnEnter} placeholder="Hours" className={inputClass} /></td>}
-        {!hiddenColumns.has('days') && <td className={cellClass}><input type="number" min="0" step="1" value={row.estimatedCalendarDays} onChange={(e) => onChange('estimatedCalendarDays', e.target.value)} onBlur={blur('estimatedCalendarDays')} onKeyDown={blurOnEnter} placeholder="Days" className={inputClass} /></td>}
-        {!hiddenColumns.has('colorPlate') && <td className={cellClass}><input value={row.colorPlateNumber} title={row.colorPlateNumber || undefined} onChange={(e) => onChange('colorPlateNumber', e.target.value)} onBlur={blur('colorPlateNumber')} onKeyDown={blurOnEnter} placeholder="Color plate #" className={inputClass} /></td>}
-        {!hiddenColumns.has('sample') && <td className={cellClass}><input aria-label="Sample submitted date" title={row.sampleSubmittedDate || undefined} type="date" value={row.sampleSubmittedDate} onChange={(e) => onChange('sampleSubmittedDate', e.target.value)} onBlur={blur('sampleSubmittedDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.sampleSubmittedDate ? populatedDateClass : emptyDateClass}`} /></td>}
-        {!hiddenColumns.has('approval') && <td className={cellClass}><input aria-label="Approval date" title={row.approvalDate || undefined} type="date" value={row.approvalDate} onChange={(e) => onChange('approvalDate', e.target.value)} onBlur={blur('approvalDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.approvalDate ? populatedDateClass : emptyDateClass}`} /></td>}
+        {!hiddenColumns.has('customer') && <td className={cellClass}><BusinessInput list="production-customer-suggestions" autoComplete="off" value={row.customer} title={row.customer || undefined} onChange={(e) => onChange('customer', e.target.value)} onBlur={blur('customer')} onKeyDown={blurOnEnter} placeholder="Customer" className={inputClass} /></td>}
+        {!hiddenColumns.has('estimate') && <td className={cellClass}><BusinessInput value={row.estimateNumber} title={row.estimateNumber || undefined} onChange={(e) => onChange('estimateNumber', e.target.value)} onBlur={blur('estimateNumber')} onKeyDown={blurOnEnter} placeholder="Estimate #" className={inputClass} /></td>}
+        {!hiddenColumns.has('workOrder') && <td className={cellClass}><BusinessInput value={row.workOrderNumber} title={row.workOrderNumber || undefined} onChange={(e) => onChange('workOrderNumber', e.target.value)} onBlur={blur('workOrderNumber')} onKeyDown={blurOnEnter} placeholder="Work order #" className={inputClass} /></td>}
+        {!hiddenColumns.has('deposit') && <td className={cellClass}><BusinessInput aria-label="Deposit date" title={row.depositDate || undefined} type="date" value={row.depositDate} onChange={(e) => onChange('depositDate', e.target.value)} onBlur={blur('depositDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.depositDate ? populatedDateClass : emptyDateClass}`} /></td>}
+        {!hiddenColumns.has('delivery') && <td className={cellClass}><BusinessInput aria-label="Requested delivery date" title={row.requestedDeliveryDate || undefined} type="date" value={row.requestedDeliveryDate} onChange={(e) => onChange('requestedDeliveryDate', e.target.value)} onBlur={blur('requestedDeliveryDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.requestedDeliveryDate ? populatedDateClass : emptyDateClass}`} /></td>}
+        {!hiddenColumns.has('start') && <td className={cellClass}><div className="relative"><BusinessInput ref={scheduleRefs?.start} aria-label={scheduleState === 'staged' ? 'Proposed planned start date, unsaved' : 'Planned start date'} title={row.plannedStart || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedStart} onChange={(e) => onChange('plannedStart', e.target.value)} onBlur={blur('plannedStart')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedStart ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
+        {!hiddenColumns.has('finish') && <td className={cellClass}><div className="relative"><BusinessInput ref={scheduleRefs?.finish} aria-label={scheduleState === 'staged' ? 'Proposed planned finish date, unsaved' : 'Planned finish date'} title={row.plannedEnd || undefined} disabled={scheduleState === 'locked'} type="date" value={row.plannedEnd} min={row.plannedStart || undefined} onChange={(e) => onChange('plannedEnd', e.target.value)} onBlur={blur('plannedEnd')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.plannedEnd ? populatedDateClass : emptyDateClass} ${scheduleState === 'staged' ? 'bg-amber-50 pr-10 ring-2 ring-inset ring-amber-400' : ''} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400`} />{scheduleState === 'staged' && <span className="pointer-events-none absolute right-1 top-0.5 text-[7px] font-bold uppercase text-amber-800">Unsaved</span>}</div></td>}
+        {!hiddenColumns.has('labor') && <td className={cellClass}><BusinessInput type="number" min="0" step="0.25" value={row.estimatedManHours} onChange={(e) => onChange('estimatedManHours', e.target.value)} onBlur={blur('estimatedManHours')} onKeyDown={blurOnEnter} placeholder="Hours" className={inputClass} /></td>}
+        {!hiddenColumns.has('days') && <td className={cellClass}><BusinessInput type="number" min="0" step="1" value={row.estimatedCalendarDays} onChange={(e) => onChange('estimatedCalendarDays', e.target.value)} onBlur={blur('estimatedCalendarDays')} onKeyDown={blurOnEnter} placeholder="Days" className={inputClass} /></td>}
+        {!hiddenColumns.has('colorPlate') && <td className={cellClass}><BusinessInput value={row.colorPlateNumber} title={row.colorPlateNumber || undefined} onChange={(e) => onChange('colorPlateNumber', e.target.value)} onBlur={blur('colorPlateNumber')} onKeyDown={blurOnEnter} placeholder="Color plate #" className={inputClass} /></td>}
+        {!hiddenColumns.has('sample') && <td className={cellClass}><BusinessInput aria-label="Sample submitted date" title={row.sampleSubmittedDate || undefined} type="date" value={row.sampleSubmittedDate} onChange={(e) => onChange('sampleSubmittedDate', e.target.value)} onBlur={blur('sampleSubmittedDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.sampleSubmittedDate ? populatedDateClass : emptyDateClass}`} /></td>}
+        {!hiddenColumns.has('approval') && <td className={cellClass}><BusinessInput aria-label="Approval date" title={row.approvalDate || undefined} type="date" value={row.approvalDate} onChange={(e) => onChange('approvalDate', e.target.value)} onBlur={blur('approvalDate')} onKeyDown={blurOnEnter} className={`${dateInputClass} ${row.approvalDate ? populatedDateClass : emptyDateClass}`} /></td>}
         {!hiddenColumns.has('operations') && <td className={`${cellClass} px-1`}>{operationsControl}</td>}
         {!hiddenColumns.has('material') && <td className={cellClass}>
-          <select value={row.materialStatus} onChange={(e) => onChange('materialStatus', e.target.value as MaterialStatus)} onBlur={blur('materialStatus')} onKeyDown={blurOnEnter} className={selectClass}>
+          <BusinessSelect value={row.materialStatus} onChange={(e) => onChange('materialStatus', e.target.value as MaterialStatus)} onBlur={blur('materialStatus')} onKeyDown={blurOnEnter} className={selectClass}>
             {materialStatusOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </select>
+          </BusinessSelect>
         </td>}
         {!hiddenColumns.has('status') && <td className={cellClass}>
-          <select value={row.productionStatus} onChange={(e) => onChange('productionStatus', e.target.value as ProductionStatus)} onBlur={blur('productionStatus')} onKeyDown={blurOnEnter} className={selectClass}>
+          <BusinessSelect value={row.productionStatus} onChange={(e) => onChange('productionStatus', e.target.value as ProductionStatus)} onBlur={blur('productionStatus')} onKeyDown={blurOnEnter} className={selectClass}>
             {productionStatuses.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </select>
+          </BusinessSelect>
         </td>}
         {!hiddenColumns.has('remarks') && <td className={cellClass}>
-          {remarksControl ?? <textarea value={row.remarks} title={row.remarks || undefined} onChange={(e) => onChange('remarks', e.target.value)} onBlur={blur('remarks')} placeholder="Remarks" rows={1} wrap="off" className="h-6 w-full min-w-0 resize-none overflow-hidden whitespace-nowrap border-0 bg-transparent px-0.5 py-0 text-[10px] leading-6 outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600" />}
+          {remarksControl ?? <BusinessTextarea value={row.remarks} title={row.remarks || undefined} onChange={(e) => onChange('remarks', e.target.value)} onBlur={blur('remarks')} placeholder="Remarks" rows={1} wrap="off" className="h-6 w-full min-w-0 resize-none overflow-hidden whitespace-nowrap border-0 bg-transparent px-0.5 py-0 text-[10px] leading-6 outline-none focus:bg-blue-50 focus:ring-2 focus:ring-inset focus:ring-blue-600" />}
         </td>}
       </>
     );
@@ -906,7 +908,7 @@ export default function ProductionTable({
               <div className="min-h-0 flex-1 overflow-y-auto p-2 pr-1">
                 {tableColumns.map((column) => (
                   <label key={column.id} className={`flex min-h-8 items-center gap-2 rounded-sm px-2 text-xs ${column.hideable ? 'cursor-pointer text-slate-700 hover:bg-slate-50' : 'cursor-not-allowed text-slate-400'}`}>
-                    <input
+                    <BusinessInput
                       type="checkbox"
                       checked={!hiddenColumns.has(column.id)}
                       disabled={!column.hideable}
@@ -1084,7 +1086,7 @@ export default function ProductionTable({
         <label htmlFor="production-table-remarks-editor" className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-600">
           Remarks · {remarksEditor.job.job_number || remarksEditor.job.name}
         </label>
-        <textarea
+        <BusinessTextarea
           ref={remarksTextareaRef}
           id="production-table-remarks-editor"
           value={remarksEditor.draft}
@@ -1107,7 +1109,7 @@ export default function ProductionTable({
           <span className="text-[10px] text-slate-500">Ctrl/Cmd+Enter to save · Esc to cancel</span>
           <div className="flex gap-2">
             <button type="button" onClick={closeRemarksEditor} disabled={remarksSaving} className="h-8 rounded-sm border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">Cancel</button>
-            <button type="button" onClick={() => void saveRemarks()} disabled={remarksSaving} className="h-8 rounded-sm border border-slate-950 bg-slate-900 px-3 text-xs font-bold text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">{remarksSaving ? 'Saving…' : 'Save'}</button>
+            <BusinessButton type="button" onClick={() => void saveRemarks()} disabled={remarksSaving} className="h-8 rounded-sm border border-slate-950 bg-slate-900 px-3 text-xs font-bold text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50">{remarksSaving ? 'Saving…' : 'Save'}</BusinessButton>
           </div>
         </div>
       </div>,

@@ -1,5 +1,7 @@
 'use client';
 
+import { BusinessInput, BusinessTextarea, BusinessButton } from '@/components/BusinessWriteControls';
+
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useLanguage } from '@/lib/language';
@@ -743,7 +745,7 @@ export default function CatalogPage() {
                         <label className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
                           Annotated By
                         </label>
-                        <input
+                        <BusinessInput
                           className="h-10 w-full border border-slate-400 bg-white px-3 text-sm text-slate-950 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
                           value={annotatedBy}
                           onChange={(e) => setAnnotatedBy(e.target.value)}
@@ -755,7 +757,7 @@ export default function CatalogPage() {
                         <label className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
                           Notes
                         </label>
-                        <textarea
+                        <BusinessTextarea
                           className="w-full border border-slate-400 bg-white p-3 text-sm text-slate-950 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
                           value={notes}
                           onChange={(e) => setNotes(e.target.value)}
@@ -768,7 +770,7 @@ export default function CatalogPage() {
                         <label className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
                           Match Warning
                         </label>
-                        <textarea
+                        <BusinessTextarea
                           className="w-full border border-slate-400 bg-white p-3 text-sm text-slate-950 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
                           value={matchWarning}
                           onChange={(e) => setMatchWarning(e.target.value)}
@@ -791,22 +793,22 @@ export default function CatalogPage() {
                       </div>
 
                       <div className="grid gap-2 border-t border-slate-300 pt-3 sm:flex sm:flex-wrap sm:items-center">
-                        <button
+                        <BusinessButton
                           type="button"
                           className="w-full bg-slate-800 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:py-2.5"
                           onClick={handleSaveAnnotation}
                           disabled={isSaving || isDeleting}
                         >
                           {isSaving ? 'Saving...' : 'Save Annotation'}
-                        </button>
-                        <button
+                        </BusinessButton>
+                        <BusinessButton
                           type="button"
                           className="w-full border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-2.5"
                           onClick={handleDeleteAnnotation}
                           disabled={isSaving || isDeleting || !hasAnnotation(selected)}
                         >
                           {isDeleting ? 'Deleting...' : 'Delete Annotation'}
-                        </button>
+                        </BusinessButton>
                         {saveMessage && <span className="text-sm font-medium text-slate-600">{saveMessage}</span>}
                       </div>
                     </div>

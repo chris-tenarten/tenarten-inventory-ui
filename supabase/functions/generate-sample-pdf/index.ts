@@ -214,6 +214,10 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
     if (accessError || allowed !== true) return json({ error: "Sample access denied." }, 403, headers);
     const body = await req.json();
     const action = String(body.action || "");
+    if (action === "generate" || action === "delete") {
+      const { data: writable, error: writeError } = await user.rpc("has_app_capability", { p_capability: "writeBusinessData" });
+      if (writeError || writable !== true) return json({ error: "Business write access denied." }, 403, headers);
+    }
     if (action === "delete") {
       const sampleId = String(body.sampleId || "");
       if (!/^[0-9a-f-]{36}$/i.test(sampleId)) return json({ error: "Invalid Sample deletion request." }, 400, headers);

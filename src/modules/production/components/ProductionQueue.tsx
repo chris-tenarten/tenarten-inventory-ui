@@ -1,5 +1,7 @@
 'use client';
 
+import { BusinessButton } from '@/components/BusinessWriteControls';
+
 import { AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
 import { EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary, type ProductionIntegrationSummary } from '../jobs';
@@ -133,7 +135,7 @@ export default function ProductionQueue({
 
               <div className="pointer-events-none relative z-10 hidden min-w-0 items-start gap-4 md:flex">
                 {needsScheduling(job) ? <span className="pointer-events-auto flex shrink-0 self-stretch flex-col items-center justify-center gap-1">
-                  {needsScheduling(job) ? <button type="button" data-overview-needs-dates-marker aria-label={`Schedule ${job.name}`} title="Needs planned dates" onClick={() => onScheduleJob(job)} className="inline-flex h-6 w-6 items-center justify-center text-amber-700 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"><AlertTriangle aria-hidden="true" className="h-4 w-4" /></button> : null}
+                  {needsScheduling(job) ? <BusinessButton type="button" data-overview-needs-dates-marker aria-label={`Schedule ${job.name}`} title="Needs planned dates" onClick={() => onScheduleJob(job)} className="inline-flex h-6 w-6 items-center justify-center text-amber-700 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"><AlertTriangle aria-hidden="true" className="h-4 w-4" /></BusinessButton> : null}
                 </span> : null}
                 <div className="min-w-0">
                   <span className={`flex items-center gap-1.5 text-sm font-bold leading-5 ${selectedJobId === job.id ? 'text-blue-800' : ''}`}>{job.job_number && <span className="text-slate-500">{job.job_number}</span>}<span className="truncate">{job.name}</span>{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} showSequence={false} /> : null}</span>

@@ -1,0 +1,28 @@
+{
+  "localOnly": true,
+  "realJwtRpcRls": true,
+  "readVisibility": true,
+  "businessTableDenials": [
+    "jobs",
+    "inventory_items",
+    "samples",
+    "proposals",
+    "bids",
+    "reporting_records"
+  ],
+  "legacyReadCapabilityRpcDenied": true,
+  "myWorkDenied": true,
+  "messagingSendReplyEditRead": true,
+  "attachmentUploadFinalizeDownload": true,
+  "transferRecoveryCancellation": true,
+  "unrelatedConversationAndStorageDenied": true,
+  "ordinaryUsersPreserved": true,
+  "assignmentRevocation": true,
+  "zeroRowDenial": true,
+  "anonymousBypassDenied": true,
+  "allExistingBusinessTablesGuarded": true,
+  "businessStorageDenied": true,
+  "firstAndLastAdminPreserved": true,
+  "independentProposalVisibilityPreserved": true,
+  "tenantModel": "Single TenOps app_users membership; participant isolation preserved. No tenant model introduced."
+}

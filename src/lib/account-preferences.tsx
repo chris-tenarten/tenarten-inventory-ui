@@ -69,7 +69,7 @@ export function AccountPreferencesProvider({ children }: { children: ReactNode }
     key: K,
     value: NonNullable<AccountPreferences[K]>,
   ) => {
-    if (!accountUserId) return;
+    if (!accountUserId || auth.profile?.readOnly) return;
     setLoaded((current) => ({
       userId: accountUserId,
       preferences: { ...(current.userId === accountUserId ? current.preferences : {}), [key]: value },
@@ -93,7 +93,7 @@ export function AccountPreferencesProvider({ children }: { children: ReactNode }
       },
       error: "",
     }));
-  }, [accountUserId]);
+  }, [accountUserId, auth.profile?.readOnly]);
 
   const value = useMemo<AccountPreferencesContextValue>(() => ({
     accountScoped,

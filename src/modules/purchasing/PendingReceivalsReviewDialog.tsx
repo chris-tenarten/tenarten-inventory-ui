@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessInput, BusinessButton } from '@/components/BusinessWriteControls';
+
 import { useMemo, useState } from "react";
 import type {
   PendingReceivalProposalLine,
@@ -64,7 +66,7 @@ export default function PendingReceivalsReviewDialog({
             return (
               <section key={line.sourceLineId || `line-${line.sourceLineNumber}`} className={`border p-3 ${line.alreadyCreated ? "border-emerald-300 bg-emerald-50/60" : !line.eligible ? "border-slate-300 bg-slate-100" : "border-slate-300 bg-white"}`}>
                 <div className="mb-3 flex flex-wrap items-center gap-3">
-                  <input
+                  <BusinessInput
                     type="checkbox"
                     aria-label={`Include PO line ${line.sourceLineNumber}`}
                     checked={line.selected && !locked}
@@ -79,25 +81,25 @@ export default function PendingReceivalsReviewDialog({
                 </div>
                 <div className="grid gap-3 md:grid-cols-4">
                   <label className={label}>Material
-                    <input className={input} readOnly={line.allocationIntentCaptured} value={line.materialName} disabled={locked || saving} onChange={event => update(line.sourceLineId, { materialName:event.target.value })} />
+                    <BusinessInput className={input} readOnly={line.allocationIntentCaptured} value={line.materialName} disabled={locked || saving} onChange={event => update(line.sourceLineId, { materialName:event.target.value })} />
                   </label>
                   <label className={label}>Size
-                    <input className={input} value={line.size} disabled={locked || saving} onChange={event => update(line.sourceLineId, { size:event.target.value })} />
+                    <BusinessInput className={input} value={line.size} disabled={locked || saving} onChange={event => update(line.sourceLineId, { size:event.target.value })} />
                   </label>
                   <label className={label}>Category
-                    <input className={input} value={line.category} disabled={locked || saving} onChange={event => update(line.sourceLineId, { category:event.target.value })} />
+                    <BusinessInput className={input} value={line.category} disabled={locked || saving} onChange={event => update(line.sourceLineId, { category:event.target.value })} />
                   </label>
                   <label className={label}>Quantity
-                    <input className={input} type="number" min="0.0001" step="any" readOnly={line.allocationIntentCaptured} value={line.quantityExpected} disabled={locked || saving} onChange={event => update(line.sourceLineId, { quantityExpected:event.target.value })} />
+                    <BusinessInput className={input} type="number" min="0.0001" step="any" readOnly={line.allocationIntentCaptured} value={line.quantityExpected} disabled={locked || saving} onChange={event => update(line.sourceLineId, { quantityExpected:event.target.value })} />
                   </label>
                   <label className={label}>Unit
-                    <input className={input} readOnly={line.allocationIntentCaptured} value={line.unit} disabled={locked || saving} onChange={event => update(line.sourceLineId, { unit:event.target.value })} />
+                    <BusinessInput className={input} readOnly={line.allocationIntentCaptured} value={line.unit} disabled={locked || saving} onChange={event => update(line.sourceLineId, { unit:event.target.value })} />
                   </label>
                   <label className={label}>ETA
-                    <input className={input} type="date" value={line.eta} disabled={locked || saving} onChange={event => update(line.sourceLineId, { eta:event.target.value })} />
+                    <BusinessInput className={input} type="date" value={line.eta} disabled={locked || saving} onChange={event => update(line.sourceLineId, { eta:event.target.value })} />
                   </label>
                   <label className={`${label} md:col-span-2`}>Location
-                    <input className={input} value={line.location} disabled={locked || saving} onChange={event => update(line.sourceLineId, { location:event.target.value })} />
+                    <BusinessInput className={input} value={line.location} disabled={locked || saving} onChange={event => update(line.sourceLineId, { location:event.target.value })} />
                   </label>
                 </div>
               </section>
@@ -109,14 +111,14 @@ export default function PendingReceivalsReviewDialog({
           <div className="text-sm text-slate-600">
             {selected.length} remaining line{selected.length === 1 ? "" : "s"} selected
           </div>
-          <button
+          <BusinessButton
             type="button"
             disabled={saving || selected.length === 0 || invalidSelected}
             onClick={() => void onCreate(selected)}
             className="h-10 border border-blue-800 bg-blue-700 px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? "Creating Pending Receivals…" : `Create ${selected.length} Pending Receival${selected.length === 1 ? "" : "s"}`}
-          </button>
+          </BusinessButton>
         </footer>
       </div>
     </div>

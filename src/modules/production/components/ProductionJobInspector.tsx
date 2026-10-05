@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessButton, BusinessInput, BusinessSelect, BusinessTextarea } from '@/components/BusinessWriteControls';
+
 import { ClipboardList, File, Pencil, RotateCcw, Send, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
@@ -761,7 +763,7 @@ export default function ProductionJobInspector({
                 {draft.job_number || "Job number not recorded"}
               </span>
               {canCreateProductionRework(job) ? (
-                <button
+                <BusinessButton
                   type="button"
                   data-rework-inspector-action
                   data-rework-quick-action
@@ -770,12 +772,12 @@ export default function ProductionJobInspector({
                 >
                   <RotateCcw className="h-2.5 w-2.5" aria-hidden="true" />
                   <span className="relative top-px">Create Rework</span>
-                </button>
+                </BusinessButton>
               ) : null}
             </div>
             <div className="flex min-w-0 items-center gap-1.5">
               {headerNameEditing ? (
-                <input
+                <BusinessInput
                   ref={headerProjectNameRef}
                   id="job-inspector-title"
                   aria-label="Project name"
@@ -804,7 +806,7 @@ export default function ProductionJobInspector({
                   >
                     {draft.name || "Untitled job"}
                   </h2>
-                  <button
+                  <BusinessButton
                     type="button"
                     aria-label="Edit project name"
                     title="Edit project name"
@@ -815,7 +817,7 @@ export default function ProductionJobInspector({
                     className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-sm text-slate-500 hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                   >
                     <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
-                  </button>
+                  </BusinessButton>
                 </>
               )}
             </div>
@@ -892,7 +894,7 @@ export default function ProductionJobInspector({
               >
                 <label className="text-xs font-bold">
                   Job number
-                  <input
+                  <BusinessInput
                     data-field="job-number"
                     value={draft.job_number}
                     aria-invalid={Boolean(jobNumberConflict)}
@@ -904,7 +906,7 @@ export default function ProductionJobInspector({
                 </label>
                 <label className="text-xs font-bold">
                   Project name
-                  <input
+                  <BusinessInput
                     ref={projectNameRef}
                     data-field="project-name"
                     required
@@ -915,7 +917,7 @@ export default function ProductionJobInspector({
                 </label>
                 <label className="text-xs font-bold sm:col-span-2">
                   Customer
-                  <input
+                  <BusinessInput
                     list="production-customer-suggestions"
                     autoComplete="off"
                     value={draft.customer}
@@ -957,7 +959,7 @@ export default function ProductionJobInspector({
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <label className="text-xs font-bold">
                     Planned start
-                    <input
+                    <BusinessInput
                       data-field="planned-dates"
                       type="date"
                       value={scheduleDraft.start}
@@ -967,7 +969,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Planned finish
-                    <input
+                    <BusinessInput
                       type="date"
                       value={scheduleDraft.end}
                       min={scheduleDraft.start || undefined}
@@ -988,7 +990,7 @@ export default function ProductionJobInspector({
                   )}
                   <label className="text-xs font-bold">
                     Requested delivery
-                    <input
+                    <BusinessInput
                       data-field="requested-delivery"
                       type="date"
                       value={draft.requested_delivery_date}
@@ -1004,7 +1006,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Estimated labor
-                    <input
+                    <BusinessInput
                       data-field="labor"
                       type="number"
                       min="0"
@@ -1021,7 +1023,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Estimated calendar days
-                    <input
+                    <BusinessInput
                       type="number"
                       min="0"
                       step="1"
@@ -1038,7 +1040,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Production status
-                    <select
+                    <BusinessSelect
                       value={draft.production_status}
                       onChange={(event) => {
                         setDraft((current) => ({
@@ -1055,11 +1057,11 @@ export default function ProductionJobInspector({
                           {visual.label}
                         </option>
                       ))}
-                    </select>
+                    </BusinessSelect>
                   </label>
                   <label className="text-xs font-bold">
                     Material status
-                    <select
+                    <BusinessSelect
                       value={draft.material_status}
                       onChange={(event) => {
                         setDraft((current) => ({
@@ -1075,7 +1077,7 @@ export default function ProductionJobInspector({
                           {option.label}
                         </option>
                       ))}
-                    </select>
+                    </BusinessSelect>
                   </label>
                 </div>
               </section>
@@ -1084,7 +1086,7 @@ export default function ProductionJobInspector({
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <label className="text-xs font-bold">
                     Work order
-                    <input
+                    <BusinessInput
                       value={draft.work_order_number}
                       onChange={(event) => updateDraft("work_order_number", event.target.value)}
                       className={fieldClass}
@@ -1092,7 +1094,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Estimate number
-                    <input
+                    <BusinessInput
                       value={draft.estimate_number}
                       onChange={(event) => updateDraft("estimate_number", event.target.value)}
                       className={fieldClass}
@@ -1100,7 +1102,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Color plate number
-                    <input
+                    <BusinessInput
                       value={draft.color_plate_number}
                       onChange={(event) => updateDraft("color_plate_number", event.target.value)}
                       className={fieldClass}
@@ -1108,7 +1110,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Approval date
-                    <input
+                    <BusinessInput
                       type="date"
                       value={draft.approval_date}
                       onChange={(event) => updateDraft("approval_date", event.target.value)}
@@ -1117,7 +1119,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Sample submitted
-                    <input
+                    <BusinessInput
                       type="date"
                       value={draft.sample_submitted_date}
                       onChange={(event) => updateDraft("sample_submitted_date", event.target.value)}
@@ -1126,7 +1128,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Deposit date
-                    <input
+                    <BusinessInput
                       type="date"
                       value={draft.deposit_date}
                       onChange={(event) => updateDraft("deposit_date", event.target.value)}
@@ -1135,7 +1137,7 @@ export default function ProductionJobInspector({
                   </label>
                   <label className="text-xs font-bold">
                     Contract value
-                    <input
+                    <BusinessInput
                       type="number"
                       min="0"
                       step="0.01"
@@ -1155,7 +1157,7 @@ export default function ProductionJobInspector({
                   </div>
                   <label className="text-xs font-bold sm:col-span-2">
                     Remarks
-                    <textarea
+                    <BusinessTextarea
                       value={draft.remarks}
                       onChange={(event) => updateDraft("remarks", event.target.value)}
                       rows={4}
@@ -1169,7 +1171,7 @@ export default function ProductionJobInspector({
                 job.production_status,
               ) && !job.archived_at ? (
                 <section className="mt-5 border-t border-slate-200 pt-4">
-                  <button
+                  <BusinessButton
                     type="button"
                     aria-label={`Archive ${job.name}`}
                     disabled={saving}
@@ -1200,12 +1202,12 @@ export default function ProductionJobInspector({
                     className="h-9 rounded-sm border border-red-400 bg-white px-3 text-sm font-bold text-red-700 transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 disabled:opacity-50"
                   >
                     Archive Job
-                  </button>
+                  </BusinessButton>
                 </section>
               ) : null}
               {job.archived_at ? (
                 <section className="mt-5 border-t border-slate-200 pt-4">
-                  <button
+                  <BusinessButton
                     type="button"
                     disabled={saving}
                     onClick={async () => {
@@ -1235,14 +1237,14 @@ export default function ProductionJobInspector({
                     className="text-sm font-bold text-blue-700 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                   >
                     Restore job
-                  </button>
+                  </BusinessButton>
                 </section>
               ) : null}
               {isAdmin ? (
                 <section className="mt-5 border-t border-red-200 pt-4">
                   <div className="text-xs font-bold uppercase tracking-[0.08em] text-red-800">Admin cleanup</div>
                   <p className="mt-1 text-xs leading-5 text-slate-600">Only empty or disposable Jobs without operational history can be permanently deleted.</p>
-                  <button type="button" disabled={saving} onClick={()=>void permanentlyDeleteCurrentJob()} className="mt-3 h-9 rounded-sm border border-red-400 bg-white px-3 text-sm font-bold text-red-700 transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 disabled:opacity-50">Permanently delete Job</button>
+                  <BusinessButton type="button" disabled={saving} onClick={()=>void permanentlyDeleteCurrentJob()} className="mt-3 h-9 rounded-sm border border-red-400 bg-white px-3 text-sm font-bold text-red-700 transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 disabled:opacity-50">Permanently delete Job</BusinessButton>
                 </section>
               ) : null}
             </>
@@ -1261,7 +1263,7 @@ export default function ProductionJobInspector({
               <div className="mt-3 flex flex-wrap items-end gap-2">
                 <label className="text-xs font-bold">
                   Document type
-                  <select
+                  <BusinessSelect
                     value={documentType}
                     onChange={(event) =>
                       setDocumentType(event.target.value as JobDocumentType)
@@ -1278,12 +1280,12 @@ export default function ProductionJobInspector({
                     <option value="sample_approval">Sample / Approval</option>
                     <option value="purchase_order">Purchase Order</option>
                     <option value="photo">Photo</option>
-                  </select>
+                  </BusinessSelect>
                 </label>
                 <label className="inline-flex h-9 cursor-pointer items-center gap-2 border border-slate-900 bg-slate-900 px-3 text-xs font-bold text-white hover:bg-slate-950">
                   <Upload className="h-4 w-4" />
                   {uploading ? "Uploading…" : "Add Attachment"}
-                  <input
+                  <BusinessInput
                     ref={fileRef}
                     type="file"
                     multiple
@@ -1365,7 +1367,7 @@ export default function ProductionJobInspector({
                               </button>
                             </div>
                           )}
-                          <button
+                          <BusinessButton
                             type="button"
                             disabled={deletingId === attachment.id}
                             onClick={() => void removeAttachment(attachment)}
@@ -1374,7 +1376,7 @@ export default function ProductionJobInspector({
                             className="inline-flex h-8 w-8 shrink-0 items-center justify-center border border-slate-300 text-red-700 hover:bg-red-50 disabled:opacity-50"
                           >
                             <Trash2 className="h-4 w-4" />
-                          </button>
+                          </BusinessButton>
                         </div>
                         {selected && (
                           <div className="border-t border-slate-300 p-2">
@@ -1474,7 +1476,7 @@ export default function ProductionJobInspector({
             </div>
             <div className="flex flex-wrap justify-end gap-2">
               {dirtyCount > 0 && <button type="button" onClick={discardDraft} disabled={saving} className="h-9 border border-slate-500 bg-white px-3 text-xs font-bold uppercase text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-700 disabled:opacity-50">Discard</button>}
-              <button type="button" onClick={() => void saveDraft()} disabled={saving || dirtyCount === 0 || Boolean(jobNumberConflict)} className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Saving…" : saveError && dirtyCount > 0 ? "Retry save" : "Save changes"}</button>
+              <BusinessButton type="button" onClick={() => void saveDraft()} disabled={saving || dirtyCount === 0 || Boolean(jobNumberConflict)} className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Saving…" : saveError && dirtyCount > 0 ? "Retry save" : "Save changes"}</BusinessButton>
             </div>
           </div>
         )}

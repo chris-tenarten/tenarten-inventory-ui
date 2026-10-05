@@ -1,0 +1,19 @@
+{
+  "origin": "http://localhost:3000",
+  "actualApp": true,
+  "noApiMocks": true,
+  "localDataOnly": true,
+  "myWorkCreateDisabled": true,
+  "messagingSendReplyAttachment": true,
+  "readerComposerDisabled": true,
+  "memberCreateUnchanged": true,
+  "adminAssignmentAndRevocationUi": true,
+  "adminHiddenForReadOnly": true,
+  "sampleEdgeWriteDenied": true,
+  "proposalEdgeWriteDenied": true,
+  "nextServerWriteDenied": true,
+  "phaseLibraryReadOnly": true,
+  "readonlyPdfPreview": true,
+  "pageErrors": [],
+  "hostedRequests": []
+}

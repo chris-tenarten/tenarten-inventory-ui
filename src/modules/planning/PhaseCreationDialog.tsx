@@ -1,5 +1,7 @@
 "use client";
 
+import { BusinessInput, BusinessButton } from '@/components/BusinessWriteControls';
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PhaseLibraryEntry, PhaseLibraryItem } from "./types";
 import { formatPlanningHours } from "./progress.mjs";
@@ -82,7 +84,7 @@ export default function PhaseCreationDialog({ entry, items, busy, error, onCreat
               {orderedItems.length > 0 && <div className="flex gap-2"><button type="button" onClick={() => setSelectedItemIds(new Set(orderedItems.map((item) => item.id)))} className="text-xs font-bold text-blue-800 underline-offset-2 hover:underline focus-visible:ring-2 focus-visible:ring-blue-600">Select All</button><button type="button" onClick={() => setSelectedItemIds(new Set())} className="text-xs font-bold text-slate-600 underline-offset-2 hover:underline focus-visible:ring-2 focus-visible:ring-blue-600">Deselect All</button></div>}
             </div>
             <div className="mt-2 max-h-56 overflow-y-auto border border-slate-300">
-              {orderedItems.length === 0 ? <p className="p-3 text-sm text-slate-500">{entry.default_timeline_behavior === "pause" ? "Pause templates intentionally contain no Items." : "This template contains no Items."}</p> : orderedItems.map((item) => <label key={item.id} className="flex min-h-10 cursor-pointer items-center gap-2 border-b border-slate-200 px-3 py-2 last:border-b-0 hover:bg-slate-50"><input type="checkbox" checked={selectedItemIds.has(item.id)} onChange={() => toggleItem(item.id)} className="h-4 w-4 shrink-0" /><span className="min-w-0 flex-1 text-sm text-slate-800">{item.title}</span><span className="shrink-0 tabular-nums text-xs font-semibold text-slate-600">{formatPlanningHours(item.estimated_hours)} hrs</span></label>)}
+              {orderedItems.length === 0 ? <p className="p-3 text-sm text-slate-500">{entry.default_timeline_behavior === "pause" ? "Pause templates intentionally contain no Items." : "This template contains no Items."}</p> : orderedItems.map((item) => <label key={item.id} className="flex min-h-10 cursor-pointer items-center gap-2 border-b border-slate-200 px-3 py-2 last:border-b-0 hover:bg-slate-50"><BusinessInput type="checkbox" checked={selectedItemIds.has(item.id)} onChange={() => toggleItem(item.id)} className="h-4 w-4 shrink-0" /><span className="min-w-0 flex-1 text-sm text-slate-800">{item.title}</span><span className="shrink-0 tabular-nums text-xs font-semibold text-slate-600">{formatPlanningHours(item.estimated_hours)} hrs</span></label>)}
             </div>
           </section>
 
@@ -95,7 +97,7 @@ export default function PhaseCreationDialog({ entry, items, busy, error, onCreat
 
         <div className="flex justify-end gap-2 border-t border-slate-200 px-4 py-3">
           <button type="button" disabled={busy} onClick={onClose} className="h-9 border border-slate-300 px-4 text-sm font-bold disabled:opacity-50">Cancel</button>
-          <button type="button" disabled={busy || selectionInvalid} onClick={() => void onCreate([...selectedItemIds])} className="h-9 bg-slate-900 px-4 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40">{busy ? "Creating…" : "Create Phase"}</button>
+          <BusinessButton type="button" disabled={busy || selectionInvalid} onClick={() => void onCreate([...selectedItemIds])} className="h-9 bg-slate-900 px-4 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40">{busy ? "Creating…" : "Create Phase"}</BusinessButton>
         </div>
       </div>
     </div>
