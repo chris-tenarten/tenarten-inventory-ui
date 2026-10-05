@@ -1,4 +1,5 @@
 // @ts-nocheck -- Deno Edge Function; validated through its local renderer fixture.
+import { handleProductionBlend } from '../_shared/production-blend-handler.ts';
 import {renderCompactSample,COMPACT_SAMPLE_VERSION} from '../_shared/sample-working-compact-pdf.ts';
 import { renderProductionBatch } from "../_shared/production-batch-pdf.ts";
 import { createClient } from "@supabase/supabase-js";
@@ -214,10 +215,11 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
     if (accessError || allowed !== true) return json({ error: "Sample access denied." }, 403, headers);
     const body = await req.json();
     const action = String(body.action || "");
-    if (action === "generate" || action === "delete") {
+    if (action === "generate" || action === "delete" || action.startsWith("blend-")) {
       const { data: writable, error: writeError } = await user.rpc("has_app_capability", { p_capability: "writeBusinessData" });
       if (writeError || writable !== true) return json({ error: "Business write access denied." }, 403, headers);
     }
+    if (action.startsWith("blend-")) return handleProductionBlend({user,service:createClient(url,serviceKey),body,headers});
     if (action === "delete") {
       const sampleId = String(body.sampleId || "");
       if (!/^[0-9a-f-]{36}$/i.test(sampleId)) return json({ error: "Invalid Sample deletion request." }, 400, headers);
