@@ -3,6 +3,7 @@ import {useState} from 'react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {buildProductionBlend,blendNumber as n} from '../../../supabase/functions/_shared/production-blend.mjs';
+import {blendShopPresentation} from '../../../supabase/functions/_shared/production-blend-shop.mjs';
 import {hasCapturedBatchBasis} from './operational-profile-model';
 import type {SampleRecord} from './types';
 
@@ -25,6 +26,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview}:{sample:
  const missingCurrentBasis = !hasCapturedBatchBasis(sample.formulation);
  const frozen=plan?.status==='issued';
  const shown=frozen?plan.model:model;
+ const shop=shown?blendShopPresentation(shown,Boolean(frozen)):null;
  async function run(work:()=>Promise<void>){setBusy(true);setError('');try{await work();}catch(e){setError(e instanceof Error?e.message:'Unable to load Production Blend.');}finally{setBusy(false);}}
  async function refresh(){setPlans(await request({action:'blend-list',sampleId:sample.id}));}
  async function begin(){await run(async()=>{await refresh();setOpen(true);});}
@@ -62,7 +64,15 @@ export default function ProductionBatchOutput({sample,onSave,onPreview}:{sample:
      {shown.blendCount<1&&<p role="status" className="text-sm text-amber-800">This plan is less than one Blend. Review the Planned Quantity or Blend Size before issuing.</p>}
      <dl className="grid gap-3 bg-slate-50 p-3 sm:grid-cols-3"><div><dt>Calculated Quantity <span className="block text-xs">Batch Count × chips per Batch</span></dt><dd className="font-bold">{n(shown.calculatedQuantity)} lb</dd></div><div><dt>Adjustment</dt><dd className="font-bold">{shown.adjustment>=0?'+':''}{n(shown.adjustment)} lb</dd></div><div><dt>Blends <span className="block text-xs">Planned Quantity ÷ Blend Size</span></dt><dd className="font-bold">{n(shown.blendCount)}</dd></div></dl>
      {shown.warnings.map(w=><p key={w} role="alert" className="text-sm text-amber-800">{w} Correct it before issue.</p>)}
-     <div className="overflow-x-auto"><table className="w-full min-w-[620px] text-left text-sm"><thead><tr>{['Material','Size','Vendor','%','Bags / Blend','lb / Blend'].map(h=><th key={h} className="p-2">{h}</th>)}</tr></thead><tbody>{shown.aggregates.map((r:Model["aggregates"][number],i:number)=><tr key={i} className="border-t border-slate-200"><td className="p-2">{r.material}</td><td className="p-2">{r.size}</td><td className="p-2">{r.vendor}</td><td className="p-2">{n(r.percentage)}</td><td className="p-2 font-bold">{r.bagsPerBlend==null?'Unavailable':n(r.bagsPerBlend)}{r.packageWeightLb&&<span className="block text-xs font-normal">{n(r.packageWeightLb)} lb / {r.packageContainer}</span>}</td><td className="p-2">{n(r.lbPerBlend)}</td></tr>)}</tbody></table></div>
+     {shop&&<>
+      <h3 className="text-sm font-bold">{shop.heading}</h3>
+      <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead><tr>{['Material','Size','Vendor',shop.basis==='plannedQuantity'?'Shop Qty':'Bags / Blend',shop.basis==='plannedQuantity'?'lb':'lb / Blend','Qty in Stock','Qty to Order'].map(h=><th key={h} className="p-2">{h}</th>)}</tr></thead><tbody>{shown.aggregates.map((r:Model["aggregates"][number],i:number)=><tr key={i} className="border-t border-slate-200"><td className="p-2">{r.material}</td><td className="p-2">{r.size}</td><td className="p-2">{r.vendor}</td><td className="p-2 font-bold">{shop.rows[i].instruction}</td><td className="p-2">{n(shop.rows[i].pounds)}</td><td className="p-2 text-slate-500">—</td><td className="p-2 text-slate-500">—</td></tr>)}</tbody></table></div>
+      <details className="text-sm"><summary className="cursor-pointer font-bold">View calculation details</summary>
+       <p className="my-2">Recipe basis: {shop.basis==='plannedQuantity'?'Planned Quantity':'Blend Size'} · {String(shop.basisLb)} lb. Inventory placeholders are not connected to Inventory.</p>
+       {shown.aggregates.map((r:Model["aggregates"][number],i:number)=>{const d=shop.rows[i];return <div key={i} className="border-t border-slate-200 py-2"><strong>{r.material}</strong><p>{String(d.percentage)}% × {String(shop.basisLb)} lb = {String(d.pounds)} lb</p><p>Package: {d.packageWeightLb==null?'Unavailable':`${String(d.packageWeightLb)} lb / ${d.packageContainer}`} · {d.packageSource==='captured_catalog'?'Captured/catalog metadata':d.packageSource==='normal_aggregate_50lb'?'Normal-Aggregate 50-lb fallback':'No package authority'}</p><p>Exact package equivalent: {d.exactEquivalent==null?'Unavailable':String(d.exactEquivalent)} · Shop instruction: {d.instruction}</p></div>;})}
+      </details>
+     </>}
+
      {shown.filler.map((f:Model["filler"][number],i:number)=><p key={i} className="text-sm">Filler: {f.material} — {f.quantity==null ? "Production quantity unavailable" : `${n(f.quantity)} lb (${n(f.perBatch)} lb/Batch × ${n(shown.batchCount)} Batches)`}{f.package && <span> · {n(f.package.equivalent)} × {n(f.package.weightLb)} lb / {f.package.container}</span>}</p>)}
      <p className="text-sm">Part A: <strong>{shown.binder.resin?`${n(shown.binder.resin.total)} US gal`:'Unavailable'}</strong> · Part B: <strong>{shown.binder.hardener?`${n(shown.binder.hardener.total)} US gal`:'Unavailable'}</strong> · {n(shown.batchCount)} Batches</p>
     </>}

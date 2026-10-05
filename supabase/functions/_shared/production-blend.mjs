@@ -1,3 +1,4 @@
+import {buildBlendShopPresentation} from './production-blend-shop.mjs';
 import {BATCH_FIRST_VERSION,resolveBatchFiller,batchFirstQuantities} from './sample-batch-first.mjs';
 import {packageEquivalent} from './sample-production-batch.mjs';
 export const PRODUCTION_BLEND_VERSION='production-blend-v1';
@@ -36,5 +37,5 @@ export function buildProductionBlend(snapshot,inputs){
   filler:fillers.map(r=>{const perBatch=fillers.length===1?canonical.filler:null,quantity=perBatch===null?null:perBatch*batchCount;return {material:text(r.color),vendor:text(r.vendor),perBatch,quantity,unit:'lb',package:quantity===null?null:packageEquivalent(r,quantity),reason:quantity===null?'Captured Filler authority or material allocation is unavailable.':null};}),
   binder:{resin:binder('resin'),hardener:binder('hardener'),resinIdentity:rows.find(r=>r.componentRole==='resin')?.color??'',hardenerIdentity:rows.find(r=>r.componentRole==='hardener')?.color??'',ratio:state.profile?.resinParts&&state.profile?.hardenerParts?`${state.profile.resinParts}:${state.profile.hardenerParts}`:null}};
  if([calculatedQuantity,adjustment,blendCount,...model.filler.map(r=>r.quantity??0),...model.aggregates.flatMap(r=>[r.lbPerBlend,r.totalLb,r.bagsPerBlend??0,r.totalBags??0]),model.binder.resin?.total??0,model.binder.hardener?.total??0].some(n=>!Number.isFinite(n)))throw new Error('Production quantities exceed the supported numeric range.');
- return model;
+ return {...model,shopPresentation:buildBlendShopPresentation(model)};
 }
