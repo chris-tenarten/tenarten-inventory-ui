@@ -1,0 +1,31 @@
+// @ts-nocheck -- Node/Deno shared model exercised at runtime.
+import assert from 'node:assert/strict';
+import {mkdirSync,writeFileSync} from 'node:fs';
+import {blendFixtures} from './support/production-blend-fixtures.mts';
+import {buildProductionBlend,productionAggregatePackage} from '../supabase/functions/_shared/production-blend.mjs';
+import {renderProductionBlend} from '../supabase/functions/_shared/production-blend-pdf.ts';
+const sample=structuredClone(blendFixtures[4].snapshot);
+sample.formulation.profile!.batchContract!.fillerSubstitution='equal_mass_preserve_yield_v1';
+for(const r of sample.blendRows)r.catalogSnapshot={};
+const inputs={batchCount:1,plannedQuantity:180,blendSize:1000};
+const one=buildProductionBlend(sample,inputs);
+assert.deepEqual(one.aggregates.map(r=>r.bagsPerBlend),[8,6,4,1,1]);
+assert(one.aggregates.every(r=>r.packageProvenance==='normal_aggregate_50lb'));
+assert.equal(one.blendCount,.18);assert.equal(one.warnings.length,0);
+assert.equal(one.filler[0].quantity,50);assert.equal(one.filler[0].package,null);
+const sixty=buildProductionBlend(sample,{...inputs,batchCount:60,plannedQuantity:12000});assert.equal(sixty.filler[0].quantity,3000);
+for(const changed of [{plannedQuantity:14000},{blendSize:500}]){const m=buildProductionBlend(sample,{...inputs,batchCount:60,plannedQuantity:12000,...changed});assert.equal(m.filler[0].quantity,3000);assert.equal(m.binder.resin?.total,300);assert.equal(m.binder.hardener?.total,60);}
+const modified=structuredClone(sample);modified.formulation.batchFillerOverrideLb='100';const override=buildProductionBlend(modified,inputs);assert.equal(override.filler[0].quantity,100);assert.equal(override.batchChipLb,130);
+const legacy=structuredClone(sample);delete legacy.formulation.profile!.batchContract!.components.filler;assert.equal(buildProductionBlend(legacy,inputs).filler[0].quantity,null);
+const explicit=structuredClone(blendFixtures[4].snapshot);explicit.blendRows[0].catalogSnapshot.package_context.amount='25';const authoritative=buildProductionBlend(explicit,inputs);assert.equal(authoritative.aggregates[0].bagsPerBlend,16);assert.equal(authoritative.aggregates[0].packageProvenance,'captured_catalog');
+assert.equal(productionAggregatePackage({componentRole:'aggregate'},175)?.equivalent,3.5);assert.equal(productionAggregatePackage({componentRole:'aggregate'},25)?.equivalent,.5);
+for(const role of ['filler','resin','hardener','other'])assert.equal(productionAggregatePackage({componentRole:role},50),null);
+assert.equal(productionAggregatePackage({componentRole:'aggregate',catalogSnapshot:{package_context:{amount:'1',unit:'gal'}}},50),null);
+assert.equal(productionAggregatePackage({componentRole:'aggregate',catalogSnapshot:{unit:'gal'}},50),null);
+const filler=explicit.blendRows.find(r=>r.componentRole==='filler')!;filler.catalogSource='standard';filler.catalogItemId='filler-package';filler.catalogSnapshot={package_context:{version:1,amount:'25',unit:'lb',container:'bag',catalog_source:'standard',catalog_item_id:'filler-package'}};
+assert.equal(buildProductionBlend(explicit,inputs).filler[0].package?.equivalent,2);
+const big=buildProductionBlend(blendFixtures[1].snapshot,blendFixtures[1].inputs);assert.equal(big.blendCount,.8);assert.equal(big.warnings.length,0);
+const agawam=buildProductionBlend(blendFixtures[3].snapshot,blendFixtures[3].inputs);assert.deepEqual([agawam.calculatedQuantity,agawam.plannedQuantity,agawam.adjustment,agawam.blendCount,agawam.aggregates.reduce((n,r)=>n+(r.totalBags??0),0),agawam.binder.resin?.total,agawam.binder.hardener?.total,agawam.filler[0].quantity],[10800,12000,1200,12,240,300,60,3000]);
+mkdirSync('output/pdf/blend-v11',{recursive:true});
+for(const [name,model] of [['MTT-small',one],['Big-Springs',big],['Agawam',agawam]] as const)writeFileSync(`output/pdf/blend-v11/${name}.pdf`,await renderProductionBlend({id:'Local review',status:'working',model}));
+console.log('PASS: aggregate package precedence/fallback/provenance/fractions; Filler 50/3000 and override/legacy/packages; Filler+binder independent of ADJ/size; 0.18 and 0.8 valid; Agawam unchanged except authorized Filler. Three PDFs generated.');

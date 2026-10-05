@@ -30,7 +30,7 @@ export async function renderProductionBlend(plan){
   }
  }
  y-=25;line('Planned aggregate total',`${n(m.plannedQuantity)} lb`);
- for(const filler of m.filler)line('Filler',`${filler.material}${filler.vendor?' / '+filler.vendor:''} — Production quantity unavailable`);
+ for(const filler of m.filler)line('Filler',`${filler.material}${filler.vendor?' / '+filler.vendor:''} — ${filler.quantity==null?'Production quantity unavailable':`${n(filler.quantity)} lb (${n(filler.perBatch)} lb/Batch × ${n(m.batchCount)} Batches)${filler.package?` · ${n(filler.package.equivalent)} × ${n(filler.package.weightLb)} lb / ${filler.package.container}`:''}`}`);
  ensure(70);text(`BINDER — ${n(m.batchCount)} BATCHES`,36,y,11,bold);y-=21;
  line('Part A',`${m.binder.resinIdentity} — ${m.binder.resin?`${n(m.binder.resin.total)} US gal`:'Production quantity unavailable'}`);
  line('Part B',`${m.binder.hardenerIdentity} — ${m.binder.hardener?`${n(m.binder.hardener.total)} US gal`:'Production quantity unavailable'}`);

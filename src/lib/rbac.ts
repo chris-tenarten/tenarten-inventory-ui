@@ -4,6 +4,7 @@ export type AppRole = (typeof APP_ROLES)[number];
 export const CAPABILITIES = [
   "writeBusinessData",
   "messaging.write",
+  "production_blend.manage",
   "readOperationalData",
   "accessIntake",
   "viewIntake",
@@ -86,6 +87,7 @@ export const ROLE_LABELS: Record<AppRole, string> = {
 export const CAPABILITY_LABELS: Record<Capability, string> = {
   writeBusinessData: "Write business data (subject to role permissions)",
   "messaging.write": "Participate in Messaging",
+  "production_blend.manage": "Manage Production Blend planning (explicit grant)",
   readOperationalData: "View operational data",
   accessIntake: "Manage Intake",
   viewIntake: "View Intake",
@@ -132,7 +134,8 @@ export function roleHasCapability(role: AppRole, capability: Capability) {
 export const READ_CAPABILITIES: readonly Capability[] = [
   "readOperationalData", "viewIntake", "previewOperationalDocuments", "accessDevelopmentEnvironment",
 ];
-export function accountHasCapability(role: AppRole, capability: Capability, readOnly: boolean, messagingWrite: boolean) {
+export function accountHasCapability(role: AppRole, capability: Capability, readOnly: boolean, messagingWrite: boolean, productionBlendManage = false) {
+  if (capability === "production_blend.manage") return role === "admin" || productionBlendManage;
   if (capability === "messaging.write" && readOnly) return messagingWrite;
   if (readOnly && !READ_CAPABILITIES.includes(capability)) return false;
   return roleHasCapability(role, capability);

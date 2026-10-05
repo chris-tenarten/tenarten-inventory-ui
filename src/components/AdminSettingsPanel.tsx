@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { APP_ROLES, CAPABILITIES, CAPABILITY_LABELS, type AppRole, ROLE_CAPABILITIES, ROLE_LABELS } from "@/lib/rbac";
 import LegacyJobUpdateEnrollment from "./LegacyJobUpdateEnrollment";
 
-type AdminUser = { user_id: string; display_name: string; email: string; role: AppRole; is_active: boolean; read_only: boolean; messaging_write: boolean };
+type AdminUser = { user_id: string; display_name: string; email: string; role: AppRole; is_active: boolean; read_only: boolean; messaging_write: boolean; production_blend_manage: boolean };
 
 async function adminFunctionErrorMessage(error: unknown) {
   if (error instanceof FunctionsHttpError) {
@@ -31,7 +31,7 @@ export default function AdminSettingsPanel() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [invite, setInvite] = useState({ displayName: "", email: "", role: "member" as AppRole, readOnly: false, messagingWrite: false });
+  const [invite, setInvite] = useState({ displayName: "", email: "", role: "member" as AppRole, readOnly: false, messagingWrite: false, productionBlendManage: false });
   const canManageUsers = auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.can("manageUsers");
 
   const request = useCallback(async (options?: RequestInit) => {
@@ -79,6 +79,7 @@ export default function AdminSettingsPanel() {
     <div className="mt-2 flex flex-wrap gap-4 text-xs">
       <label><input type="checkbox" checked={invite.readOnly} disabled={invite.role !== "guest"} onChange={event => setInvite(current => ({ ...current, readOnly: event.target.checked }))} /> Read-only outside Messaging (Guest)</label>
       <label><input type="checkbox" checked={invite.messagingWrite} disabled={!invite.readOnly} onChange={event => setInvite(current => ({ ...current, messagingWrite: event.target.checked }))} /> Allow Messaging write</label>
+      <label><input type="checkbox" checked={invite.productionBlendManage} disabled={invite.role === "admin"} onChange={event => setInvite(current => ({ ...current, productionBlendManage: event.target.checked }))} /> Allow Production Blend planning</label>
     </div>
     <div className="mt-4 divide-y divide-slate-200 border border-slate-200">
       {users.map((user) => <div key={user.user_id} className="grid gap-2 p-3 sm:grid-cols-[1fr_1.25fr_0.8fr_auto_auto] sm:items-center">
@@ -86,7 +87,8 @@ export default function AdminSettingsPanel() {
         <span className="truncate text-xs text-slate-600">{user.email}</span>
         <select aria-label={`Role for ${user.display_name}`} value={user.role} onChange={(event) => setUsers((current) => current.map((item) => item.user_id === user.user_id ? { ...item, role: event.target.value as AppRole, read_only: event.target.value === "guest" && item.read_only } : item))} className="h-9 border border-slate-300 px-2 text-xs">{APP_ROLES.map((role) => <option key={role} value={role}>{ROLE_LABELS[role]}</option>)}</select>
         <label className="inline-flex items-center gap-1.5 text-xs font-bold"><input type="checkbox" checked={user.is_active} onChange={(event) => setUsers((current) => current.map((item) => item.user_id === user.user_id ? { ...item, is_active: event.target.checked } : item))} />Active</label>
-        <div className="flex gap-1"><button disabled={loading} onClick={() => void action({ action: "update", userId: user.user_id, displayName: user.display_name, role: user.role, isActive: user.is_active, readOnly: user.read_only, messagingWrite: user.messaging_write }, "User access updated.")} className="h-8 border border-slate-400 px-2 text-[10px] font-bold">Save</button><button disabled={loading} onClick={() => void action({ action: "reset", email: user.email }, "Password reset email requested.")} className="h-8 border border-slate-300 px-2 text-[10px] font-bold">Reset</button></div>
+        <div className="flex gap-1"><button disabled={loading} onClick={() => void action({ action: "update", userId: user.user_id, displayName: user.display_name, role: user.role, isActive: user.is_active, readOnly: user.read_only, messagingWrite: user.messaging_write, productionBlendManage: user.production_blend_manage }, "User access updated.")} className="h-8 border border-slate-400 px-2 text-[10px] font-bold">Save</button><button disabled={loading} onClick={() => void action({ action: "reset", email: user.email }, "Password reset email requested.")} className="h-8 border border-slate-300 px-2 text-[10px] font-bold">Reset</button></div>
+        <label className="text-xs sm:col-span-5"><input type="checkbox" checked={user.role === "admin" || user.production_blend_manage} disabled={user.role === "admin"} onChange={event => setUsers(current => current.map(item => item.user_id === user.user_id ? { ...item, production_blend_manage: event.target.checked } : item))} /> Allow Production Blend planning{user.role === "admin" ? " (included for Admin)" : ""}</label>
         {user.role === "guest" ? <div className="flex flex-wrap gap-4 border-t border-slate-100 pt-2 sm:col-span-5">
         <label className="text-xs"><input type="checkbox" checked={user.read_only} disabled={user.role !== "guest"} onChange={event => setUsers(current => current.map(item => item.user_id === user.user_id ? { ...item, read_only: event.target.checked } : item))} /> Read-only outside Messaging</label>
         <label className="text-xs"><input type="checkbox" checked={user.messaging_write} disabled={!user.read_only} onChange={event => setUsers(current => current.map(item => item.user_id === user.user_id ? { ...item, messaging_write: event.target.checked } : item))} /> Allow Messaging write</label>

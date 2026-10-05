@@ -4,8 +4,8 @@ import {renderProductionBlend} from './production-blend-pdf.ts';
 const uuid=v=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 export async function handleProductionBlend({user,service,body,headers}){
  const reply=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{...headers,'Content-Type':'application/json','Cache-Control':'no-store'}});
- const {data:profiles,error}=await user.rpc('get_my_app_user');const profile=Array.isArray(profiles)?profiles[0]:profiles;
- if(error||profile?.role!=='admin'||profile?.is_active!==true)return reply({error:'Production Blend is available to Admin only.'},403);
+ const {data:allowed,error}=await user.rpc('has_app_capability',{p_capability:'production_blend.manage'});
+ if(error||allowed!==true)return reply({error:'Production Blend planning access is required.'},403);
  try{
   const action=body.action;
   if(!['blend-context','blend-list','blend-save','blend-issue','blend-pdf'].includes(action))return reply({error:'Unsupported Production Blend action.'},400);

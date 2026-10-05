@@ -13,6 +13,8 @@ export function startBlendDatabase(name){
 export function blendClients(container,actor=admin){
  const call=q=>sql(container,asUser('select '+q,actor));const parsed=q=>JSON.parse(call(q));
  const rpc=async(name,args={})=>{try{
+  // Minimal historical bootstrap has no per-account capability columns until V1.1.
+  if(name==='has_app_capability'&&args.p_capability==='production_blend.manage')return {data:parsed(`exists(select 1 from app_users u where user_id=${literal(actor)} and is_active and (role='admin' or coalesce((to_jsonb(u)->>'production_blend_manage')::boolean,false)))`)};
   if(name==='get_my_app_user')return {data:parsed(`coalesce(jsonb_agg(u),'[]') from app_users u where user_id=${literal(actor)}`)};
   if(name==='get_sample_working_pdf_snapshot')return {data:parsed(`get_sample_working_pdf_snapshot(${literal(args.p_sample_id)},null)`)};
   if(name==='persist_production_blend'){
