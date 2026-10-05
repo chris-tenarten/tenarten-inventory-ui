@@ -7,17 +7,23 @@ import {blendNumber as n} from './production-blend.mjs';
 export async function renderProductionBlend(plan){
  const m=plan.model,status=plan.status==='issued'?'ISSUED PRODUCTION BLEND SHEET':'WORKING PRODUCTION BLEND — NOT ISSUED';
  const shop=blendShopPresentation(m,plan.status==='issued');
+ const batches=`${n(m.batchCount)} ${m.batchCount===1?'Batch':'Batches'}`;
+ const profile=m.profile.replace(/(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)/g,(_,a,b)=>`${Number(a)}:${Number(b)}`).replace(/\s[-–]\s(?=\d+:)/g,' — ');
  const pdf=await PDFDocument.create();pdf.setTitle(`Production Blend Sheet - ${m.identity}`);pdf.setAuthor('Tenarten Terrazzo');
  const regular=await pdf.embedFont(StandardFonts.Helvetica),bold=await pdf.embedFont(StandardFonts.HelveticaBold);
  const ink=rgb(.07,.13,.23),muted=rgb(.35,.4,.47),pale=rgb(.94,.96,.98),white=rgb(1,1,1);let page,y;const pages=[];
- const text=(v,x,yy,size=10,font=regular,color=ink)=>page.drawText(v==='—'?v:normalizePdfText(v),{x,y:yy,size,font,color});
- const wrap=(v,w,size=10,font=regular)=>wrapMeasuredPdfText(normalizePdfText(v),w,size,(s,n)=>font.widthOfTextAtSize(s,n));
+ const printable=v=>String(v).split('—').map(normalizePdfText).join(' — ').trim();
+ const text=(v,x,yy,size=10,font=regular,color=ink)=>page.drawText(printable(v),{x,y:yy,size,font,color});
+ const wrap=(v,w,size=10,font=regular)=>wrapMeasuredPdfText(printable(v),w,size,(s,n)=>font.widthOfTextAtSize(s,n));
  function newPage(){page=pdf.addPage([612,792]);pages.push(page);page.drawRectangle({x:36,y:727,width:540,height:35,color:ink});text('TENOPS  /  PRODUCTION BLEND SHEET',46,740,15,bold,white);text(status,36,710,9,bold);y=685;if(pages.length>1){for(const part of wrap(`Color Plate: ${m.identity}`,540,10)){text(part,36,y,10,bold);y-=14;}y-=8;}}
  const ensure=h=>{if(y-h<68)newPage();};
  function line(label,value){const parts=wrap(`${label}: ${value}`,540,10);for(const part of parts){ensure(16);text(part,36,y);y-=14;}y-=5;}
- newPage();line('Color Plate',m.identity);if(m.job||m.project)line('Job / Project',[m.job,m.project].filter(Boolean).join(' / '));line('Resin System',m.profile);
+ newPage();line('Color Plate',m.identity);if(m.job||m.project)line('Job / Project',[m.job,m.project].filter(Boolean).join(' / '));line('Resin System',profile);
  ensure(58);page.drawRectangle({x:36,y:y-43,width:540,height:49,color:pale});
- [['BLENDS',n(m.blendCount)],['BLEND SIZE',`${n(m.blendSize)} lb`],['BATCH COUNT',n(m.batchCount)]].forEach(([label,value],i)=>{text(label,46+i*180,y-8,9,bold,muted);text(value,46+i*180,y-29,18,bold);});y-=68;
+ const metrics=m.blendCount<1
+  ? [['BATCH SIZE',`${n(m.batchChipLb)} lb`],['BATCH COUNT',n(m.batchCount)],['PLANNED CHIP TOTAL',`${n(m.plannedQuantity)} lb`]]
+  : [['BLENDS',n(m.blendCount)],['BLEND SIZE',`${n(m.blendSize)} lb`],['BATCH COUNT',n(m.batchCount)],['PLANNED CHIP TOTAL',`${n(m.plannedQuantity)} lb`]];
+ metrics.forEach(([label,value],i)=>{const x=46+i*540/metrics.length;text(label,x,y-8,9,bold,muted);text(value,x,y-29,18,bold);});y-=68;
  const widths=[133,34,78,119,58,59,59];
  function header(){ensure(62);text(shop.heading,36,y,11,bold);y-=26;let x=36;['MATERIAL','SIZE','VENDOR',shop.basis==='plannedQuantity'?'SHOP QTY':'BAGS / BLEND',shop.basis==='plannedQuantity'?'lb':'lb / BLEND','Qty in Stock','Qty to Order'].forEach((s,i)=>{page.drawRectangle({x,y:y-17,width:widths[i],height:32,color:pale});wrap(s,widths[i]-10,8,bold).forEach((part,j)=>text(part,x+5,y-j*10,8,bold,i>4?muted:ink));x+=widths[i];});y-=17;}
  header();
@@ -30,9 +36,13 @@ export async function renderProductionBlend(plan){
    for(let i=0;i<widths.length;i++){page.drawRectangle({x,y:y-height,width:widths[i],height,borderWidth:.4,borderColor:rgb(.72,.76,.81)});cells[i].slice(offset,offset+count).forEach((s,j)=>text(s,x+5,y-17-j*14,i===3?11:9,i===3?bold:regular,i>4?muted:ink));x+=widths[i];}y-=height;offset+=count;
   }
  }
- y-=25;line('Planned aggregate total',`${n(m.plannedQuantity)} lb`);
- for(const filler of m.filler)line('Filler',`${filler.material}${filler.vendor?' / '+filler.vendor:''} — ${filler.quantity==null?'Production quantity unavailable':`${n(filler.quantity)} lb (${n(filler.perBatch)} lb/Batch × ${n(m.batchCount)} Batches)${filler.package?` · ${n(filler.package.equivalent)} × ${n(filler.package.weightLb)} lb / ${filler.package.container}`:''}`}`);
- ensure(70);text(`BINDER — ${n(m.batchCount)} BATCHES`,36,y,11,bold);y-=21;
+ if(y-28<68){newPage();header();}
+ page.drawRectangle({x:36,y:y-26,width:540,height:26,color:pale});
+ text('TOTAL',41,y-17,10,bold);
+ text(`${n(shop.rows.reduce((sum,row)=>sum+row.pounds,0))} lb`,36+widths.slice(0,4).reduce((a,b)=>a+b,0)+5,y-17,9,bold);
+ y-=48;
+ for(const filler of m.filler)line('Filler',`${filler.material}${filler.vendor?' / '+filler.vendor:''} — ${filler.quantity==null?'Production quantity unavailable':`${n(filler.quantity)} lb (${n(filler.perBatch)} lb/Batch × ${batches})${filler.package?` · ${n(filler.package.equivalent)} × ${n(filler.package.weightLb)} lb / ${filler.package.container}`:''}`}`);
+ ensure(70);text(`BINDER — ${batches.toUpperCase()}`,36,y,11,bold);y-=21;
  line('Part A',`${m.binder.resinIdentity} — ${m.binder.resin?`${n(m.binder.resin.total)} US gal`:'Production quantity unavailable'}`);
  line('Part B',`${m.binder.hardenerIdentity} — ${m.binder.hardener?`${n(m.binder.hardener.total)} US gal`:'Production quantity unavailable'}`);
  for(const warning of m.warnings){line('Planning warning',warning);}
