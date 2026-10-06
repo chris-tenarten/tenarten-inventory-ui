@@ -51,7 +51,8 @@ import {
 import { clearSampleCatalogSelection, sampleBlendCatalogAutofill } from "./material-autofill";
 import {
   adminPermanentlyDeleteSampleDraft,
-  createSample,
+  createSampleWithFormulation,
+  suggestSampleColorPlateNumber,
   duplicateSample,
   generateSamplePdf,
   issueSample,
@@ -199,6 +200,7 @@ export default function SampleWorkspace() {
           const formulation=await loadSampleFormulationDefault();
           const local=applyResinIdentity(newLocalSample({preparedBy:auth.profile?.displayName??'',formulation}),formulation);
           setQuantityViewState({record:null,view:'working'});
+          local.colorPlateNumber=await suggestSampleColorPlateNumber();local.colorPlateNumberSource='automatic';
           setDraft(local);setDraftBaseline(JSON.stringify(local));return;
         }
         const target = items.find((item) => item.id === initialContext.open);
@@ -315,6 +317,7 @@ export default function SampleWorkspace() {
         formulation,
       });
       const local=applyResinIdentity(initial,formulation);
+      local.colorPlateNumber=await suggestSampleColorPlateNumber();local.colorPlateNumberSource='automatic';
       setQuantityViewState({record:null,view:"working"});
       setDraft(local);
       setDraftBaseline(JSON.stringify(local));
@@ -352,43 +355,35 @@ export default function SampleWorkspace() {
     if(!source.id&&!source.formulation.profile)throw new Error('Select a Resin System to establish Batch quantities before saving.');
     if(resinConflict(source))throw new Error('Resolve the Resin Color / # and Resin row difference before saving.');
     const original=samples.find(item=>item.id===source.id)?.colorPlateNumber??'';
-    if(source.colorPlateNumber!==original){
+    if(source.colorPlateNumber!==original&&(source.id||source.colorPlateNumberSource!=='automatic')){
       const normalized=preferredColorPlate(source.colorPlateNumber);
       const conflict=colorPlateConflict(samples,source.id,normalized);
       if(conflict&&!window.confirm(`Another Sample uses ${conflict.colorPlateNumber}. These identifiers may refer to the same Color Plate. Save this Sample with that identifier anyway?`))throw new Error('Save cancelled. Review the Color Plate identifier.');
       if(colorPlateWarning(normalized)&&!window.confirm('This does not match the usual Color Plate format. Save as entered?'))throw new Error('Save cancelled. Review the Color Plate identifier.');
       source={...source,colorPlateNumber:normalized};
     }
-    let saved = source;
-    let createdId = "";
-    try {
-      if (!source.id) {
-        createdId = await createSample(source.bidId, source.jobId);
-        saved = { ...source, id: createdId };
-      }
-      await saveSample(saved);
-      await recordMySampleRecentValues(saved);
-      const next = await reload();
-      const authoritative = next.find((item) => item.id === saved.id);
-      if (!authoritative)
-        throw new Error("Saved Sample could not be reloaded.");
-      setDraft(authoritative);
-      setDraftBaseline(JSON.stringify(authoritative));
-      setRecentValues({});
-      return authoritative;
-    } catch (caught) {
-      if (createdId)
-        await permanentlyDeleteSampleDraft(createdId).catch(() => undefined);
-      throw caught;
-    }
+    let saved=source;
+    if(!source.id){
+      const created=await createSampleWithFormulation(source);
+      saved={...source,id:created.id,colorPlateNumber:created.color_plate_number,colorPlateNumberSource:undefined};
+      // Creation has committed. Ancillary refresh failures must not create a second Sample.
+      setDraft(saved);setDraftBaseline(JSON.stringify(saved));
+    }else await saveSample(saved);
+    await recordMySampleRecentValues(saved);
+    const next=await reload();
+    const authoritative=next.find(item=>item.id===saved.id);
+    if(!authoritative)throw new Error('Saved Sample could not be reloaded.');
+    setDraft(authoritative);setDraftBaseline(JSON.stringify(authoritative));setRecentValues({});
+    return authoritative;
   }
+
   async function save() {
     if (!draft) return;
     setBusy("save");
     setError("");
     try {
-      await persistDraft(draft);
-      setMessage("Sample saved.");
+      const saved=await persistDraft(draft);
+      setMessage(!draft.id&&draft.colorPlateNumberSource==='automatic'?`Sample saved as ${saved.colorPlateNumber}.`:'Sample saved.');
     } catch (caught) {
       showOperationError(caught, "save-draft");
     } finally {
@@ -821,13 +816,14 @@ export default function SampleWorkspace() {
                   <BusinessInput
                     aria-label="Color Plate / Formula #"
                     value={draft.colorPlateNumber}
-                    onChange={(e) => patch("colorPlateNumber", e.target.value)}
+                    onChange={(e) => {const value=e.target.value;setDraft(current=>current?{...current,colorPlateNumber:value,...(!current.id&&preferredColorPlate(value)!==preferredColorPlate(current.colorPlateNumber)?{colorPlateNumberSource:'manual' as const}:{})}:current);}}
                     onBlur={()=>{if(draft.colorPlateNumber!==(samples.find(s=>s.id===draft.id)?.colorPlateNumber??''))patch("colorPlateNumber",preferredColorPlate(draft.colorPlateNumber));}}
                     placeholder="T26-123-A"
                     className={field}
                   />
+                {!draft.id&&draft.colorPlateNumberSource==='automatic'&&<span className="mt-1 block text-xs font-normal text-slate-500">Suggested by TenOps · editable · assigned when saved</span>}
                 {colorPlateWarning(draft.colorPlateNumber)&&<span className="mt-1 block font-normal text-amber-800">{colorPlateWarning(draft.colorPlateNumber)}</span>}
-                  {colorPlateConflict(samples,draft.id,draft.colorPlateNumber)&&<span className="block font-normal text-amber-800">Another Sample uses an equivalent Color Plate identifier. Review before saving.</span>}
+                  {(draft.id||draft.colorPlateNumberSource!=='automatic')&&colorPlateConflict(samples,draft.id,draft.colorPlateNumber)&&<span className="block font-normal text-amber-800">Another Sample uses an equivalent Color Plate identifier. Review before saving.</span>}
                 </label>
                 <label className={label}>
                   Date Initiated
