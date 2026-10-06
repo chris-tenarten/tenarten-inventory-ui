@@ -939,27 +939,15 @@ export default function SampleWorkspace() {
               </label>
             </section>
             {(draft.sampleName||draft.sampleSize||draft.sampleQuantity)&&<details className="text-xs text-slate-500"><summary className="cursor-pointer py-2">Legacy context</summary><p className="mb-2">Retained historical metadata. Physical dimensions and piece count are set in Sample Plate.</p><dl className="grid gap-1 sm:grid-cols-3">{draft.sampleName&&<div><dt>Historical name</dt><dd>{draft.sampleName}</dd></div>}{draft.sampleSize&&<div><dt>Historical size</dt><dd>{draft.sampleSize}</dd></div>}{draft.sampleQuantity&&<div><dt>Historical quantity</dt><dd>{draft.sampleQuantity}</dd></div>}</dl></details>}
-            <div >
-            <label
-              className={`${label} block border border-slate-300 bg-white p-4`}
-            >
-              More Notes
-              <BusinessTextarea
-                value={draft.moreNotes}
-                onChange={(e) => patch("moreNotes", e.target.value)}
-                rows={6}
-                className={area}
-              />
-            </label>
-
-            </div>
+            {draft.moreNotes&&<details className="text-xs text-slate-600"><summary className="cursor-pointer py-2">Historical additional notes</summary><p className="mb-2">Retained with this Sample and included in generated documents. Use Notes above for new instructions.</p><p className="whitespace-pre-wrap">{draft.moreNotes}</p></details>}
             </div>
             <div id="formulation-materials" className="space-y-3">
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
                 Materials and setup
               </h2>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <p className="mt-2 text-sm text-slate-600">Resin System: {displayProfileRatio(draft.formulation.profile?.name)||"Not selected"}</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <SampleRecentValueInput
                   label="Filler"
                   value={draft.filler}
@@ -1006,6 +994,16 @@ export default function SampleWorkspace() {
                   <h2 className="text-sm font-bold uppercase tracking-wide">
                     Batch Formulation
                   </h2>
+                  <dl data-testid="canonical-batch-summary" className="my-3 grid grid-cols-2 gap-3 border-y border-slate-200 py-3 sm:grid-cols-4">
+                    <div><dt className="text-xs text-slate-500">Chip Mix</dt><dd className="font-bold">{batch?.target==null?'Not captured':`${formatBatchQuantity(batch.target,'lb')} lb`}</dd></div>
+                    {(['filler','resin','hardener'] as const).map(role=>{
+                      const projection=batch?.rows[draft.blendRows.findIndex(row=>row.componentRole===role)];
+                      const quantity=shopProjection?shopProjection.canonical[role]:projection?.quantity;
+                      const unit=role==='filler'?'lb':'gal';
+                      return <div key={role}><dt className="text-xs capitalize text-slate-500">{role}</dt><dd className="font-bold">{quantity==null?'Not captured':`${formatBatchQuantity(quantity,unit)} ${unit==='gal'?'US gal':unit}`}</dd></div>;
+                    })}
+                  </dl>
+                  <h3 className="text-xs font-bold uppercase tracking-wide">Chip Blend</h3>
                   <p className="mt-1 whitespace-normal break-words text-xs text-slate-500">
                     Set the aggregate percentages. The blend must total 100%.
                   </p>
