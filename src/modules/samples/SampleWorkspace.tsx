@@ -17,7 +17,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import { useAuth } from "@/lib/auth";
 import { loadBids } from "@/modules/pre-production/queries";
@@ -324,7 +324,7 @@ export default function SampleWorkspace() {
       setDraft(next.find((item) => item.id === linkSelection) ?? null);
       setLinkSelection("");
       setMessage(
-        "Existing Sample linked to this Bid. Issued history was not changed.",
+        "Existing Sample linked to this Bid. Generated documents were not changed.",
       );
     } catch (caught) {
       setError(
@@ -373,6 +373,7 @@ export default function SampleWorkspace() {
     }
   }
   const [blendDirty,setBlendDirty]=useState(false);
+  const productionRef=useRef<{open:()=>void}>(null);
   function requestClose() {
     if(blendDirty&&!window.confirm("Discard unsaved Blend planning changes?"))return;
     setBlendDirty(false);
@@ -421,7 +422,7 @@ export default function SampleWorkspace() {
       !draft ||
       draft.issuedDocuments.length ||
       !window.confirm(
-        "Permanently delete this unissued Sample draft?\n\nIts material rows and saved working versions will also be removed. This cannot be undone.",
+        "Permanently delete this Sample draft without generated documents?\n\nIts material rows and saved working versions will also be removed. This cannot be undone.",
       )
     )
       return;
@@ -448,9 +449,9 @@ export default function SampleWorkspace() {
     )
       return;
     const confirmation = window.prompt(
-      "ADMIN PERMANENT DELETION\n\nThis permanently removes the Sample, working versions, issued history, and stored Sample PDFs. This cannot be undone.\n\nType DELETE ISSUED SAMPLE to continue.",
+      "ADMIN PERMANENT DELETION\n\nThis permanently removes the Sample, saved checkpoints, generated documents, and stored Sample PDFs. This cannot be undone.\n\nType DELETE SAMPLE AND DOCUMENTS to continue.",
     );
-    if (confirmation !== "DELETE ISSUED SAMPLE") return;
+    if (confirmation !== "DELETE SAMPLE AND DOCUMENTS") return;
     setBusy("delete-issued");
     setError("");
     try {
@@ -460,7 +461,7 @@ export default function SampleWorkspace() {
       await reload();
       setDraft(null);
       setMessage(
-        "Issued Sample and its owned documents were permanently deleted.",
+        "Sample and its generated documents were permanently deleted.",
       );
     } catch (caught) {
       showOperationError(caught, "delete-issued");
@@ -537,9 +538,9 @@ export default function SampleWorkspace() {
       setDraft(next.find((item) => item.id === draft.id) ?? null);
       setPreview({
         url,
-        filename: `${draft.colorPlateNumber || "Sample-Work-Order"}-Issue-${issueNumber}.pdf`,
+        filename: `${draft.colorPlateNumber || "Sample-Work-Order"}-Document-${issueNumber}.pdf`,
       });
-      setMessage(`Issue ${issueNumber} PDF generated.`);
+      setMessage(`Document ${issueNumber} PDF ready.`);
     } catch (caught) {
       showOperationError(caught, "issued-pdf");
     } finally {
@@ -702,7 +703,7 @@ export default function SampleWorkspace() {
                         {sampleLibraryStatus(sample)}
                         {sample.issuedDocuments.length > 0 && (
                           <span className="mt-1 block text-[10px] font-normal text-slate-400">
-                            {sample.issuedDocuments.length} issued
+                            {sample.issuedDocuments.length} generated
                           </span>
                         )}
                       </span>
@@ -758,6 +759,28 @@ export default function SampleWorkspace() {
                 </button>
               </div>
             </div>
+            <div aria-label="Sample actions" className="sticky top-[73px] z-20 border border-slate-300 bg-white p-3 shadow-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <BusinessButton
+                  type="button"
+                  disabled={Boolean(busy)}
+                  onClick={() => void save()}
+                  className="h-10 border border-slate-400 px-4 text-sm font-bold"
+                >
+                  {busy === "save" ? "Saving…" : "Save"}
+                </BusinessButton>
+                <BusinessButton
+                  type="button"
+                  disabled={Boolean(busy)}
+                  onClick={() => void issue()}
+                  className="h-10 border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white"
+                >
+                  {busy === "issue" ? "Generating…" : "Generate Sample Work Order"}
+                </BusinessButton>
+                {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)||!draft.id} onClick={()=>productionRef.current?.open()} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
+              </div>
+            </div>
+            <ProductionBatchOutput ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
                 Sample context
@@ -848,7 +871,7 @@ export default function SampleWorkspace() {
                   className={field}
                 />
                 <SampleRecentValueInput
-                  label="Sample Size (document metadata)"
+                  label="Sample Size"
                   value={draft.sampleSize}
                   fieldKey={sampleRecentFieldKeys.sampleSize}
                   suggestions={recentValues.sample_size ?? []}
@@ -857,7 +880,7 @@ export default function SampleWorkspace() {
                   className={field}
                 />
                 <SampleRecentValueInput
-                  label="Sample Quantity (document metadata)"
+                  label="Sample Quantity"
                   value={draft.sampleQuantity}
                   fieldKey={sampleRecentFieldKeys.sampleQuantity}
                   suggestions={recentValues.sample_quantity ?? []}
@@ -912,7 +935,7 @@ export default function SampleWorkspace() {
                 />
               </label>
             </section>
-            <p className="text-xs text-slate-500">Sample Size / Quantity are printed document metadata only; they do not set Finished Plates or Working Pour.</p>
+            <p className="text-xs text-slate-500">Sample Size / Quantity describe the document; they do not change calculated Sample Plate quantities.</p>
             <SampleFormulationConfigurator
               state={draft.formulation}
               rows={draft.blendRows}
@@ -975,7 +998,7 @@ export default function SampleWorkspace() {
               }}/>
               <p className="text-sm font-bold">View quantities as</p>
               <div role="group" aria-label="View quantities as" className="mt-2 inline-flex gap-1">
-                {([['batch','Batch'],['working','Working Pour']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
+                {([['batch','Batch'],['working','Sample Plate']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
               </div>
               {quantityView==='batch' && batch && <div className="mt-4" data-testid="batch-summary">
                 <p className="text-xl font-bold">Batch chip target: {batch.target===null?'not captured':`${formatBatchQuantity(batch.target,'lb')} lb = 100%`}</p>
@@ -1000,7 +1023,7 @@ export default function SampleWorkspace() {
                   >
                     {quantityView === "batch"
                       ? `Batch: ${batch?.totalPercent ?? 0}% = ${formatBatchQuantity(batch?.subtotalLb ?? null, "lb")} lb Chip Mix`
-                      : `Working Pour: ${formulationResult?.percentageTotal || "0"}% = ${formulationResult?.availableChipMixOz || "0"} oz Chip Mix`}
+                      : `Sample Plate: ${formulationResult?.percentageTotal || "0"}% = ${formulationResult?.availableChipMixOz || "0"} oz Chip Mix`}
                   </p>
                 </div>
               </div>
@@ -1209,7 +1232,7 @@ export default function SampleWorkspace() {
                           {formatBatchQuantity(batch?.rows[index]?.quantity??null,batch?.rows[index]?.unit??'')} {batch?.rows[index]?.unit}
                         </output>
                         <p className="mt-2 text-xs font-normal text-slate-600">{batch?.rows[index]?.note}</p>
-                        {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit quantity in Working Pour.</p>}
+                        {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit quantity in Sample Plate view.</p>}
                       </div> : <>
                       <div className={`${label} text-left`}>
                         <span>{batchFirst ? "Shop preparation quantity" : "Quantity"}</span>
@@ -1340,7 +1363,7 @@ export default function SampleWorkspace() {
                 className={area}
               />
             </label>
-            <ProductionBatchOutput key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
+
             <SampleVersionHistory
               sample={draft}
               onSave={() => persistDraft(draft)}
@@ -1368,8 +1391,8 @@ export default function SampleWorkspace() {
                       <span className="min-w-0 flex-1 text-sm">
                         <strong>{draft.colorPlateNumber || draft.sampleName || "Sample"} · Document {document.issueNumber}</strong>
                         <span className="block text-xs text-slate-500">
-                          {new Date(document.issuedAt).toLocaleString()} ·{" "}
-                          {document.generationStatus}
+                          {new Date(document.generatedAt || document.issuedAt).toLocaleString()}{document.generationStatus !== "generated" ? " · " : ""}
+                          {document.generationStatus === 'generated' ? '' : document.generationStatus === 'generating' || busy === `generate:${document.id}` ? 'Generating…' : document.generationStatus === 'failed' ? 'PDF unavailable — retry' : 'PDF delivery incomplete — retry'}
                         </span>
                       </span>
                       {document.generationStatus === "generated" ? (
@@ -1380,7 +1403,7 @@ export default function SampleWorkspace() {
                               .then((url) =>
                                 setPreview({
                                   url,
-                                  filename: `${draft.colorPlateNumber || "Sample-Work-Order"}-Issue-${document.issueNumber}.pdf`,
+                                  filename: `${draft.colorPlateNumber || "Sample-Work-Order"}-Document-${document.issueNumber}.pdf`,
                                 }),
                               )
                               .catch((caught) =>
@@ -1389,7 +1412,7 @@ export default function SampleWorkspace() {
                           }
                           className="h-9 border border-slate-300 px-3 text-xs font-bold"
                         >
-                          Open PDF
+                          View
                         </button>
                       ) : (
                         <BusinessButton
@@ -1418,7 +1441,7 @@ export default function SampleWorkspace() {
                 </p>
               )}
             </section>
-            <footer className="sticky bottom-0 flex flex-wrap items-center justify-between gap-3 border border-slate-300 bg-white p-3">
+            <footer className="flex flex-wrap items-center gap-3 border border-slate-300 bg-white p-3">
               {draft.issuedDocuments.length ? (
                 auth.profile?.role === "admin" ? (
                   <BusinessButton
@@ -1430,11 +1453,11 @@ export default function SampleWorkspace() {
                     <Trash2 className="h-4 w-4" />
                     {busy === "delete-issued"
                       ? "Permanently deleting…"
-                      : "Permanently Delete Issued Sample"}
+                      : "Delete Sample and Generated Documents"}
                   </BusinessButton>
                 ) : (
                   <span className="text-xs text-slate-500">
-                    Issued Sample history is protected from deletion.
+                    Generated Sample documents are protected from deletion.
                   </span>
                 )
               ) : draft.id ? (
@@ -1460,24 +1483,7 @@ export default function SampleWorkspace() {
                   Discard
                 </button>
               )}
-              <div className="flex flex-wrap justify-end gap-2">
-                <BusinessButton
-                  type="button"
-                  disabled={Boolean(busy)}
-                  onClick={() => void save()}
-                  className="h-10 border border-slate-400 px-4 text-sm font-bold"
-                >
-                  {busy === "save" ? "Saving…" : "Save"}
-                </BusinessButton>
-                <BusinessButton
-                  type="button"
-                  disabled={Boolean(busy)}
-                  onClick={() => void issue()}
-                  className="h-10 border border-blue-900 bg-white px-4 text-sm font-bold text-blue-950"
-                >
-                  {busy === "issue" ? "Generating…" : "Generate Sample Work Order"}
-                </BusinessButton>
-              </div>
+
             </footer>
           </div>
         )}

@@ -18,7 +18,7 @@ assert.equal(sampleLibraryContext(sample({sampleName:'Lobby test',customerName:'
 assert.equal(sampleFormulationPreview(sample()),'No materials added');
 assert.equal(sampleFormulationPreview(sample({blendRows:[material('Alaska White','#1'),material('KCI HSF-2','')]})),'Alaska White #1 · KCI HSF-2 · 5:1 resin');
 assert.equal(sampleLibraryStatus(sample({workingVersions:[version(1),version(2),version(3)]})),'Draft · 3 versions');
-assert.equal(sampleLibraryStatus(sample({workingVersions:[version(1),version(2)],issuedDocuments:[issued(1)]})),'Issued · 2 versions');
+assert.equal(sampleLibraryStatus(sample({workingVersions:[version(1),version(2)],issuedDocuments:[issued(1)]})),'Generated · 2 versions');
 assert.match(sampleLibraryMetadata(sample({workingVersions:[version(1),version(2),version(3)]}),'en-US'),/^Sep 17 · Giovanni Coppola · Draft · v3$/);
 
 const queries=readFileSync(new URL('../src/modules/samples/queries.ts',import.meta.url),'utf8');

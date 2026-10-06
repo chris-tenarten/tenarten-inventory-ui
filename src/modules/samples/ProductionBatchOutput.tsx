@@ -1,5 +1,7 @@
 "use client";
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useImperativeHandle,useRef,useState} from 'react';
+import Help from './ContextHelp';
+import type {Ref} from 'react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {buildProductionBlend,blendNumber as n} from '../../../supabase/functions/_shared/production-blend.mjs';
@@ -17,17 +19,14 @@ async function request(body:Record<string,unknown>){
  if(error){let message=error.message;try{message=(await error.context.json()).error||message;}catch{}throw new Error(message);}
  return data;
 }
-function Help({label,children}:{label:string;children:React.ReactNode}) {
- const [expanded,setExpanded]=useState(false);
- return <span className="group relative inline-flex"><button type="button" aria-label={`Help: ${label}`} aria-expanded={expanded} className="peer ml-1 rounded border border-slate-400 px-1 text-xs" onClick={()=>setExpanded(v=>!v)} onKeyDown={e=>{if(e.key==='Escape')setExpanded(false);}}>?</button><span role="tooltip" className={`${expanded?'block':'hidden'} absolute left-0 top-full z-20 w-64 border border-slate-300 bg-white p-2 text-xs font-normal shadow-lg group-hover:block group-focus-within:block`}>{children}</span></span>;
-}
-export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyChange}:{sample:SampleRecord;onSave:()=>Promise<SampleRecord>;onPreview:(url:string,filename:string)=>void;onDirtyChange?:(dirty:boolean)=>void}){
+export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyChange,ref}:{sample:SampleRecord;onSave:()=>Promise<SampleRecord>;onPreview:(url:string,filename:string)=>void;onDirtyChange?:(dirty:boolean)=>void;ref?:Ref<{open:()=>void}>}){
  const auth=useAuth();const canManage=auth.can('production_blend.manage');
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const [source,setSource]=useState('working'),[snapshot,setSnapshot]=useState<Snapshot|null>(null),[plans,setPlans]=useState<Plan[]>([]);
  const [inputs,setInputs]=useState<Inputs>({batchCount:'1',plannedQuantity:'',blendSize:'1000'});
  const [dirty,setDirty]=useState(false),[pending,setPending]=useState<Plan|null>(null);
- const lock=useRef(false);
+ const lock=useRef(false),section=useRef<HTMLElement>(null);
+ useImperativeHandle(ref,()=>({open:()=>void begin()}));
  useEffect(()=>{onDirtyChange?.(dirty);const warn=(event:BeforeUnloadEvent)=>{if(dirty){event.preventDefault();event.returnValue='';}};window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[dirty,onDirtyChange]);
  let model:Model|null=null,calculationError='';
  if(snapshot)try{model=buildProductionBlend(snapshot,inputs);}catch(e){calculationError=e instanceof Error?e.message:'Invalid planning inputs.';}
@@ -40,7 +39,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
   const probe=buildProductionBlend(context.snapshot,{batchCount:1,plannedQuantity:1,blendSize:1000});
   setSnapshot(context.snapshot);setInputs({batchCount:'1',plannedQuantity:String(probe.batchChipLb),blendSize:'1000'});setDirty(false);
  }
- async function begin(){await run(async()=>{await refresh();setOpen(true);if(!missingCurrentBasis)await capture();});}
+ async function begin(){await run(async()=>{await refresh();setOpen(true);if(!missingCurrentBasis&&!snapshot)await capture();setTimeout(()=>section.current?.scrollIntoView({behavior:'smooth',block:'start'}),0);});}
  async function view(p:Plan){const blob=await request({action:'blend-pdf',planId:p.id});if(!(blob instanceof Blob))throw new Error('Invalid Production PDF response.');onPreview(URL.createObjectURL(blob),'Material-Quantity-Blend-Sheet.pdf');}
  async function generate(){await run(async()=>{
   if(pending){await view(pending);setPending(null);return;}
@@ -53,13 +52,13 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
   setPending(saved);setDirty(false);await refresh();await view(saved);setPending(null);
  });}
  const edit=(field:'batchCount'|'adjustment'|'blendSize',value:string)=>{if(!snapshot)return;const basis=buildProductionBlend(snapshot,{batchCount:1,plannedQuantity:1,blendSize:1000}).batchChipLb;setInputs(current=>editBlendPlanning(current,field,value,Number(basis)));setDirty(true);};
- if(!canManage)return null;
+ if(!canManage||!open)return null;
  const button='min-h-11 border border-blue-900 px-3 py-2 text-sm font-bold disabled:opacity-40';
- return <section aria-label="Production Blend Sheet" className="border border-slate-300 bg-white p-4">
-  <h2 className="text-sm font-bold uppercase tracking-wide">Production Blend Sheet</h2>
+ return <section ref={section} aria-label="Production Blend Sheet" className="scroll-mt-40 border border-blue-300 bg-white p-4">
+  <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-bold">Production planning</h2><button type="button" className="min-h-11 text-sm font-bold text-blue-900 underline" onClick={()=>setOpen(false)}>Back to Sample</button></div>
   <p className="mt-1 text-xs text-slate-600">Configure the material requirement, then generate the shop sheet.</p>
   {!sample.id&&<p className="mt-2 text-xs text-slate-600">Save this Sample before planning Production.</p>}
-  {!open?<button type="button" disabled={busy||!sample.id} className={`${button} mt-3`} onClick={()=>void begin()}>Plan Production Blend</button>:<>
+  <>
    <p className="mt-3 text-xs text-slate-600">Based on {source==='working'?'current saved formulation':'selected historical formulation'}.</p>
    {sample.issuedDocuments.length>0&&<label className="mt-3 block text-sm">Formulation version<select aria-label="Formulation version" disabled={busy||Boolean(pending)} value={source} onChange={e=>{if(dirty&&!window.confirm('Discard unsaved Blend planning changes?'))return;const selected=e.target.value;setSource(selected);setSnapshot(null);void run(()=>capture(selected));}} className="ml-2 min-h-11 border border-slate-300"><option value="working">Current saved formulation</option>{sample.issuedDocuments.map(d=><option key={d.id} value={d.id}>Historical Sample {d.issueNumber}</option>)}</select></label>}
    {source==='working'&&missingCurrentBasis&&<p className="mt-3 text-sm text-amber-900">Apply current profile defaults and save this formulation before planning Production. <a href="#sample-resin-system" className="underline">Review Resin System</a></p>}
@@ -105,7 +104,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
     {!plans.some(p=>p.status==='issued')&&<p className="text-sm text-slate-500">No generated Blend Sheets yet.</p>}
    </section>
    {plans.some(p=>p.status==='working')&&<details className="mt-3"><summary>Legacy saved plans</summary>{plans.filter(p=>p.status==='working').map(p=><button type="button" disabled={busy} key={p.id} className="mt-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.model.identity} · {n(p.model.plannedQuantity)} lb · {new Date(p.created_at).toLocaleString()} — view captured plan</button>)}</details>}
-  </>}
+  </>
   {error&&<p role="alert" className="mt-3 text-sm text-red-800">{error}</p>}
  </section>;
 }

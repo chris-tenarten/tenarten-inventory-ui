@@ -21,8 +21,8 @@ export function sampleFormulationPreview(sample:SampleRecord){
 
 export function sampleLibraryMetadata(sample:SampleRecord,locale?:string){
  const updated=sample.updatedAt?new Date(sample.updatedAt).toLocaleDateString(locale,{month:'short',day:'numeric'}):'';
- const author=clean(sample.preparedBy)||clean(sample.creatorName);const state=sample.issuedDocuments.length?'Issued':'Draft';
+ const author=clean(sample.preparedBy)||clean(sample.creatorName);const state=sample.issuedDocuments.length?'Generated':'Draft';
  return [updated,author,state,sample.workingVersions.length?`v${sample.workingVersions.length}`:''].filter(Boolean).join(' · ');
 }
 
-export function sampleLibraryStatus(sample:SampleRecord){return`${sample.issuedDocuments.length?'Issued':'Draft'} · ${plural(sample.workingVersions.length,'version')}`;}
+export function sampleLibraryStatus(sample:SampleRecord){return`${sample.issuedDocuments.length?'Generated':'Draft'} · ${plural(sample.workingVersions.length,'version')}`;}
