@@ -803,13 +803,158 @@ export default function SampleWorkspace() {
                 {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)} onClick={()=>productionRef.current?.open()} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
               </div>
             </div>
-            <nav aria-label="Workspace sections" className="sticky top-[73px] z-10 flex flex-wrap gap-x-4 border-b border-slate-300 bg-white px-3 py-2 text-sm font-bold">{[['formulation-setup','Formulation'],['sample-context','Sample Context'],['sample-plate','Sample Plate'],...(auth.can('production_blend.manage')?[['production-planning','Production']]:[]),['sample-documents','Documents']].map(([id,title])=><a key={id} href={`#${id}`} className="py-2 text-blue-900" onClick={e=>{e.preventDefault();if(id==='sample-documents')setDocumentsOpen(true);jumpTo(id);}}>{title}</a>)}</nav>
             <div id="formulation-setup" tabIndex={-1} className="scroll-mt-28 space-y-3">
             <section className="border border-slate-300 bg-white p-4"><h2 className="mb-3 text-lg font-bold">Formulation setup</h2>              <SampleResinSystemSelector initialSelection={!draft.id} state={draft.formulation} rows={draft.blendRows} onChange={formulation=>{
                 setDraft(applyResinIdentity({...draft,blendRows:draft.blendRows.map(row=>row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})},formulation));
                 setMessage('Resin System applied. Batch Filler and shop quantities reset to this profile; materials and percentages are preserved.');
               }}/>
 </section>
+            </div>
+            <div id="sample-context" tabIndex={-1} className="space-y-4">
+            <section className="border border-slate-300 bg-white p-4">
+              <h2 className="text-sm font-bold uppercase tracking-wide">
+                Sample context
+              </h2>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <label className={label}>
+                  Color Plate / Formula #<Help label="Color Plate number">Formula # on the historical Sample Work Order; Plate # on downstream Production documents. Typical format: T26-258-A. Recognizable missing separators can be normalized; unusual identifiers can be saved after review.</Help>
+                  <BusinessInput
+                    aria-label="Color Plate / Formula #"
+                    value={draft.colorPlateNumber}
+                    onChange={(e) => patch("colorPlateNumber", e.target.value)}
+                    onBlur={()=>{if(draft.colorPlateNumber!==(samples.find(s=>s.id===draft.id)?.colorPlateNumber??''))patch("colorPlateNumber",preferredColorPlate(draft.colorPlateNumber));}}
+                    placeholder="T26-123-A"
+                    className={field}
+                  />
+                {colorPlateWarning(draft.colorPlateNumber)&&<span className="mt-1 block font-normal text-amber-800">{colorPlateWarning(draft.colorPlateNumber)}</span>}
+                  {colorPlateConflict(samples,draft.id,draft.colorPlateNumber)&&<span className="block font-normal text-amber-800">Another Sample uses an equivalent Color Plate identifier. Review before saving.</span>}
+                </label>
+                <label className={label}>
+                  Date Initiated
+                  <BusinessInput
+                    type="date"
+                    value={draft.requestedDate}
+                    onChange={(e) => patch("requestedDate", e.target.value)}
+                    className={field}
+                  />
+                </label>
+                <SampleRecentValueInput
+                  label="Requested By"
+                  value={draft.requestedBy}
+                  fieldKey={sampleRecentFieldKeys.requestedBy}
+                  suggestions={recentValues.requested_by ?? []}
+                  onLoad={loadRecent}
+                  onChange={(value) => patch("requestedBy", value)}
+                  className={field}
+                />
+                <label className={label}>
+                  Prepared By
+                  <BusinessInput
+                    value={draft.preparedBy}
+                    onChange={(e) => patch("preparedBy", e.target.value)}
+                    className={field}
+                  />
+                </label>
+                <SampleRecentValueInput
+                  label="Project Name"
+                  value={draft.projectName}
+                  fieldKey={sampleRecentFieldKeys.projectName}
+                  suggestions={recentValues.project_name ?? []}
+                  onLoad={loadRecent}
+                  onChange={(value) => patch("projectName", value)}
+                  className={field}
+                />
+                <SampleRecentValueInput
+                  label="Customer"
+                  value={draft.customerName}
+                  fieldKey={sampleRecentFieldKeys.customerName}
+                  suggestions={recentValues.customer_name ?? []}
+                  onLoad={loadRecent}
+                  onChange={(value) => patch("customerName", value)}
+                  className={field}
+                />
+                <SampleRecentValueInput
+                  label="Finish"
+                  value={draft.finishRequested}
+                  fieldKey={sampleRecentFieldKeys.finishRequested}
+                  suggestions={recentValues.finish_requested ?? []}
+                  onLoad={loadRecent}
+                  onChange={(value) => patch("finishRequested", value)}
+                  className={field}
+                />
+                <label className={label}>
+                  Approved Date
+                  <BusinessInput
+                    type="date"
+                    value={draft.approvedDate}
+                    onChange={(e) => patch("approvedDate", e.target.value)}
+                    className={field}
+                  />
+                </label>
+                <label className={`${label} sm:col-span-2`}>
+                  Bid context
+                  <BusinessSelect
+                    value={draft.bidId}
+                    onChange={(e) => patch("bidId", e.target.value)}
+                    className={field}
+                  >
+                    <option value="">Standalone / no Bid</option>
+                    {bids.map((bid) => (
+                      <option key={bid.id} value={bid.id}>
+                        {bid.customer} · {bid.projectName}
+                      </option>
+                    ))}
+                  </BusinessSelect>
+                </label>
+                <label className={`${label} sm:col-span-2`}>
+                  Production Job context
+                  <BusinessSelect
+                    value={draft.jobId}
+                    onChange={(e) => patch("jobId", e.target.value)}
+                    className={field}
+                  >
+                    <option value="">No Production Job</option>
+                    {jobs.map((job) => (
+                      <option key={job.id} value={job.id}>
+                        {job.job_number ? `${job.job_number} · ` : ""}
+                        {job.name}
+                      </option>
+                    ))}
+                  </BusinessSelect>
+                </label>
+              </div>
+              {linkedBid && (
+                <p className="mt-3 text-xs text-slate-500">
+                  Linked to Bid: {linkedBid.customer} · {linkedBid.projectName}
+                </p>
+              )}
+              <label className={`${label} mt-4 block`}>
+                Notes
+                <BusinessTextarea
+                  value={draft.notes}
+                  onChange={(e) => patch("notes", e.target.value)}
+                  rows={4}
+                  className={area}
+                />
+              </label>
+            </section>
+            {(draft.sampleName||draft.sampleSize||draft.sampleQuantity)&&<details className="text-xs text-slate-500"><summary className="cursor-pointer py-2">Legacy context</summary><p className="mb-2">Retained historical metadata. Physical dimensions and piece count are set in Sample Plate.</p><dl className="grid gap-1 sm:grid-cols-3">{draft.sampleName&&<div><dt>Historical name</dt><dd>{draft.sampleName}</dd></div>}{draft.sampleSize&&<div><dt>Historical size</dt><dd>{draft.sampleSize}</dd></div>}{draft.sampleQuantity&&<div><dt>Historical quantity</dt><dd>{draft.sampleQuantity}</dd></div>}</dl></details>}
+            <div >
+            <label
+              className={`${label} block border border-slate-300 bg-white p-4`}
+            >
+              More Notes
+              <BusinessTextarea
+                value={draft.moreNotes}
+                onChange={(e) => patch("moreNotes", e.target.value)}
+                rows={6}
+                className={area}
+              />
+            </label>
+
+            </div>
+            </div>
+            <div id="formulation-materials" className="space-y-3">
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
                 Materials and setup
@@ -867,7 +1012,7 @@ export default function SampleWorkspace() {
                   <p
                     className={`mt-2 text-sm font-bold ${formulationResult?.percentageReconciles ? "text-emerald-700" : "text-amber-700"}`}
                   >
-                    {batch?.target!=null?`Chip Mix / Batch: ${formatBatchQuantity(batch.target,'lb')} lb = 100%`:'Select a Resin System to establish Batch quantities.'}
+                    {batch?.target!=null?`100% = ${formatBatchQuantity(batch.target,'lb')} lb Chip Mix`:'Select a Resin System to establish Batch quantities.'}
 
                   </p>
                 </div>
@@ -1113,150 +1258,6 @@ export default function SampleWorkspace() {
                 ))}
               </div>}
             </section>
-            <div id="sample-context" tabIndex={-1} className="space-y-4">
-            <section className="border border-slate-300 bg-white p-4">
-              <h2 className="text-sm font-bold uppercase tracking-wide">
-                Sample context
-              </h2>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <label className={label}>
-                  Color Plate / Formula #<Help label="Color Plate number">Formula # on the historical Sample Work Order; Plate # on downstream Production documents. Typical format: T26-258-A. Recognizable missing separators can be normalized; unusual identifiers can be saved after review.</Help>
-                  <BusinessInput
-                    aria-label="Color Plate / Formula #"
-                    value={draft.colorPlateNumber}
-                    onChange={(e) => patch("colorPlateNumber", e.target.value)}
-                    onBlur={()=>{if(draft.colorPlateNumber!==(samples.find(s=>s.id===draft.id)?.colorPlateNumber??''))patch("colorPlateNumber",preferredColorPlate(draft.colorPlateNumber));}}
-                    placeholder="T26-123-A"
-                    className={field}
-                  />
-                {colorPlateWarning(draft.colorPlateNumber)&&<span className="mt-1 block font-normal text-amber-800">{colorPlateWarning(draft.colorPlateNumber)}</span>}
-                  {colorPlateConflict(samples,draft.id,draft.colorPlateNumber)&&<span className="block font-normal text-amber-800">Another Sample uses an equivalent Color Plate identifier. Review before saving.</span>}
-                </label>
-                <label className={label}>
-                  Date Initiated
-                  <BusinessInput
-                    type="date"
-                    value={draft.requestedDate}
-                    onChange={(e) => patch("requestedDate", e.target.value)}
-                    className={field}
-                  />
-                </label>
-                <SampleRecentValueInput
-                  label="Requested By"
-                  value={draft.requestedBy}
-                  fieldKey={sampleRecentFieldKeys.requestedBy}
-                  suggestions={recentValues.requested_by ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("requestedBy", value)}
-                  className={field}
-                />
-                <label className={label}>
-                  Prepared By
-                  <BusinessInput
-                    value={draft.preparedBy}
-                    onChange={(e) => patch("preparedBy", e.target.value)}
-                    className={field}
-                  />
-                </label>
-                <SampleRecentValueInput
-                  label="Project Name"
-                  value={draft.projectName}
-                  fieldKey={sampleRecentFieldKeys.projectName}
-                  suggestions={recentValues.project_name ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("projectName", value)}
-                  className={field}
-                />
-                <SampleRecentValueInput
-                  label="Customer"
-                  value={draft.customerName}
-                  fieldKey={sampleRecentFieldKeys.customerName}
-                  suggestions={recentValues.customer_name ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("customerName", value)}
-                  className={field}
-                />
-                <SampleRecentValueInput
-                  label="Finish"
-                  value={draft.finishRequested}
-                  fieldKey={sampleRecentFieldKeys.finishRequested}
-                  suggestions={recentValues.finish_requested ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("finishRequested", value)}
-                  className={field}
-                />
-                <label className={label}>
-                  Approved Date
-                  <BusinessInput
-                    type="date"
-                    value={draft.approvedDate}
-                    onChange={(e) => patch("approvedDate", e.target.value)}
-                    className={field}
-                  />
-                </label>
-                <label className={`${label} sm:col-span-2`}>
-                  Bid context
-                  <BusinessSelect
-                    value={draft.bidId}
-                    onChange={(e) => patch("bidId", e.target.value)}
-                    className={field}
-                  >
-                    <option value="">Standalone / no Bid</option>
-                    {bids.map((bid) => (
-                      <option key={bid.id} value={bid.id}>
-                        {bid.customer} · {bid.projectName}
-                      </option>
-                    ))}
-                  </BusinessSelect>
-                </label>
-                <label className={`${label} sm:col-span-2`}>
-                  Production Job context
-                  <BusinessSelect
-                    value={draft.jobId}
-                    onChange={(e) => patch("jobId", e.target.value)}
-                    className={field}
-                  >
-                    <option value="">No Production Job</option>
-                    {jobs.map((job) => (
-                      <option key={job.id} value={job.id}>
-                        {job.job_number ? `${job.job_number} · ` : ""}
-                        {job.name}
-                      </option>
-                    ))}
-                  </BusinessSelect>
-                </label>
-              </div>
-              {linkedBid && (
-                <p className="mt-3 text-xs text-slate-500">
-                  Linked to Bid: {linkedBid.customer} · {linkedBid.projectName}
-                </p>
-              )}
-              <label className={`${label} mt-4 block`}>
-                Notes
-                <BusinessTextarea
-                  value={draft.notes}
-                  onChange={(e) => patch("notes", e.target.value)}
-                  rows={4}
-                  className={area}
-                />
-              </label>
-            </section>
-            {(draft.sampleName||draft.sampleSize||draft.sampleQuantity)&&<details className="text-xs text-slate-500"><summary className="cursor-pointer py-2">Legacy context</summary><p className="mb-2">Retained historical metadata. Physical dimensions and piece count are set in Sample Plate.</p><dl className="grid gap-1 sm:grid-cols-3">{draft.sampleName&&<div><dt>Historical name</dt><dd>{draft.sampleName}</dd></div>}{draft.sampleSize&&<div><dt>Historical size</dt><dd>{draft.sampleSize}</dd></div>}{draft.sampleQuantity&&<div><dt>Historical quantity</dt><dd>{draft.sampleQuantity}</dd></div>}</dl></details>}
-            <div >
-            <label
-              className={`${label} block border border-slate-300 bg-white p-4`}
-            >
-              More Notes
-              <BusinessTextarea
-                value={draft.moreNotes}
-                onChange={(e) => patch("moreNotes", e.target.value)}
-                rows={6}
-                className={area}
-              />
-            </label>
-
-            </div>
-            </div>
             <div id="sample-plate" tabIndex={-1} className="scroll-mt-28 space-y-3">
             <h2 className="text-lg font-bold">Sample Plate</h2><p className="text-sm text-slate-600">Scale the Batch formulation down for the Working Pour and finished pieces.</p>
             {draft.formulation.profile||draft.id?<SampleFormulationConfigurator
