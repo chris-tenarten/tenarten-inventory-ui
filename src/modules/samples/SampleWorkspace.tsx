@@ -112,14 +112,13 @@ export default function SampleWorkspace() {
   const [vendors, setVendors] = useState<VendorOption[]>([]);
   const [linkSelection, setLinkSelection] = useState("");
   const [draft, setDraft] = useState<SampleRecord | null>(null);
-  const [tabState,setTabState]=useState<{id:string;tab:string}>({id:'',tab:'Sample'});
-  const activeTab=tabState.id===(draft?.id??'')?tabState.tab:'Sample';
-  function activateTab(tab:string){setTabState({id:draft?.id??'',tab});if(tab==='Production')productionRef.current?.open();}
+  const [documentsOpen,setDocumentsOpen]=useState(false);
+  function jumpTo(id:string){const element=document.getElementById(id);element?.scrollIntoView({behavior:'smooth',block:'start'});element?.focus({preventScroll:true});}
   const [sampleHistoryExpanded,setSampleHistoryExpanded]=useState(false);
   const [expandedRows,setExpandedRows]=useState<Record<string,boolean>>({});
   const [draftBaseline, setDraftBaseline] = useState("");
   const [quantityViewState, setQuantityViewState] = useState<{record: string | null; view: "batch" | "working"}>({record:null,view:"batch"});
-  const quantityView = activeTab==='Formulation'?'batch':quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "batch";
+  const quantityView = quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "batch";
   const batchFirst = draft?.formulation.calculationVersion === BATCH_FIRST_VERSION;
   const shopProjection = draft && batchFirst ? batchFirstQuantities(draft.formulation,draft.blendRows) : null;
   function changeBatchFiller(value: string | null) {
@@ -350,6 +349,7 @@ export default function SampleWorkspace() {
     }
   }
   async function persistDraft(source: SampleRecord) {
+    if(!source.id&&!source.formulation.profile)throw new Error('Select a Resin System to establish Batch quantities before saving.');
     if(resinConflict(source))throw new Error('Resolve the Resin Color / # and Resin row difference before saving.');
     const original=samples.find(item=>item.id===source.id)?.colorPlateNumber??'';
     if(source.colorPlateNumber!==original){
@@ -800,159 +800,16 @@ export default function SampleWorkspace() {
                 >
                   {busy === "issue" ? "Generating…" : "Generate Sample Work Order"}
                 </BusinessButton>
-                {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)||!draft.id} onClick={()=>activateTab('Production')} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
+                {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)} onClick={()=>productionRef.current?.open()} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
               </div>
             </div>
-            <nav role="tablist" aria-label="Sample workspace" className="sticky top-[73px] z-10 flex max-w-full gap-1 overflow-x-auto border-b border-slate-300 bg-white p-1">
-              {['Sample','Formulation','Sample Plate',...(auth.can('production_blend.manage')?['Production']:[]),'Documents'].map(tab=><button key={tab} id={`workspace-tab-${tab.replaceAll(' ','-')}`} role="tab" aria-selected={activeTab===tab} aria-controls={`workspace-panel-${tab.replaceAll(' ','-')}`} onClick={()=>activateTab(tab)} onKeyDown={event=>{const buttons=Array.from(event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role=tab]')??[]);const index=buttons.indexOf(event.currentTarget);const next=event.key==='ArrowRight'?(index+1)%buttons.length:event.key==='ArrowLeft'?(index-1+buttons.length)%buttons.length:event.key==='Home'?0:event.key==='End'?buttons.length-1:null;if(next!==null){event.preventDefault();buttons[next].focus();buttons[next].click();}}} className={`min-h-11 shrink-0 px-4 text-sm font-bold ${activeTab===tab?'border-b-2 border-blue-900 text-blue-900':'text-slate-600'}`}>{tab}</button>)}
-            </nav>
-            <div hidden={activeTab!=='Production'&&activeTab!=='Documents'} id="workspace-panel-Production" role="tabpanel" aria-labelledby="workspace-tab-Production">
-            <ProductionBatchOutput mode={activeTab==='Documents'?'documents':activeTab==='Production'?'planner':'hidden'} onDocuments={()=>activateTab('Documents')} onSample={()=>activateTab('Sample')} ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
-            </div>
-            <div hidden={activeTab!=='Sample'} id="workspace-panel-Sample" role="tabpanel" aria-labelledby="workspace-tab-Sample" className="space-y-4">
-            <section className="border border-slate-300 bg-white p-4">
-              <h2 className="text-sm font-bold uppercase tracking-wide">
-                Sample context
-              </h2>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <label className={label}>
-                  Color Plate / Formula #<Help label="Color Plate number">Formula # on the historical Sample Work Order; Plate # on downstream Production documents. Typical format: T26-258-A. Recognizable missing separators can be normalized; unusual identifiers can be saved after review.</Help>
-                  <BusinessInput
-                    aria-label="Color Plate / Formula #"
-                    value={draft.colorPlateNumber}
-                    onChange={(e) => patch("colorPlateNumber", e.target.value)}
-                    onBlur={()=>{if(draft.colorPlateNumber!==(samples.find(s=>s.id===draft.id)?.colorPlateNumber??''))patch("colorPlateNumber",preferredColorPlate(draft.colorPlateNumber));}}
-                    placeholder="T26-123-A"
-                    className={field}
-                  />
-                {colorPlateWarning(draft.colorPlateNumber)&&<span className="mt-1 block font-normal text-amber-800">{colorPlateWarning(draft.colorPlateNumber)}</span>}
-                  {colorPlateConflict(samples,draft.id,draft.colorPlateNumber)&&<span className="block font-normal text-amber-800">Another Sample uses an equivalent Color Plate identifier. Review before saving.</span>}
-                </label>
-                <label className={label}>
-                  Date Initiated
-                  <BusinessInput
-                    type="date"
-                    value={draft.requestedDate}
-                    onChange={(e) => patch("requestedDate", e.target.value)}
-                    className={field}
-                  />
-                </label>
-                <SampleRecentValueInput
-                  label="Requested By"
-                  value={draft.requestedBy}
-                  fieldKey={sampleRecentFieldKeys.requestedBy}
-                  suggestions={recentValues.requested_by ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("requestedBy", value)}
-                  className={field}
-                />
-                <label className={label}>
-                  Prepared By
-                  <BusinessInput
-                    value={draft.preparedBy}
-                    onChange={(e) => patch("preparedBy", e.target.value)}
-                    className={field}
-                  />
-                </label>
-                <SampleRecentValueInput
-                  label="Project Name"
-                  value={draft.projectName}
-                  fieldKey={sampleRecentFieldKeys.projectName}
-                  suggestions={recentValues.project_name ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("projectName", value)}
-                  className={field}
-                />
-                <SampleRecentValueInput
-                  label="Customer"
-                  value={draft.customerName}
-                  fieldKey={sampleRecentFieldKeys.customerName}
-                  suggestions={recentValues.customer_name ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("customerName", value)}
-                  className={field}
-                />
-                <SampleRecentValueInput
-                  label="Finish"
-                  value={draft.finishRequested}
-                  fieldKey={sampleRecentFieldKeys.finishRequested}
-                  suggestions={recentValues.finish_requested ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("finishRequested", value)}
-                  className={field}
-                />
-                <label className={label}>
-                  Approved Date
-                  <BusinessInput
-                    type="date"
-                    value={draft.approvedDate}
-                    onChange={(e) => patch("approvedDate", e.target.value)}
-                    className={field}
-                  />
-                </label>
-                <label className={`${label} sm:col-span-2`}>
-                  Bid context
-                  <BusinessSelect
-                    value={draft.bidId}
-                    onChange={(e) => patch("bidId", e.target.value)}
-                    className={field}
-                  >
-                    <option value="">Standalone / no Bid</option>
-                    {bids.map((bid) => (
-                      <option key={bid.id} value={bid.id}>
-                        {bid.customer} · {bid.projectName}
-                      </option>
-                    ))}
-                  </BusinessSelect>
-                </label>
-                <label className={`${label} sm:col-span-2`}>
-                  Production Job context
-                  <BusinessSelect
-                    value={draft.jobId}
-                    onChange={(e) => patch("jobId", e.target.value)}
-                    className={field}
-                  >
-                    <option value="">No Production Job</option>
-                    {jobs.map((job) => (
-                      <option key={job.id} value={job.id}>
-                        {job.job_number ? `${job.job_number} · ` : ""}
-                        {job.name}
-                      </option>
-                    ))}
-                  </BusinessSelect>
-                </label>
-              </div>
-              {linkedBid && (
-                <p className="mt-3 text-xs text-slate-500">
-                  Linked to Bid: {linkedBid.customer} · {linkedBid.projectName}
-                </p>
-              )}
-              <label className={`${label} mt-4 block`}>
-                Notes
-                <BusinessTextarea
-                  value={draft.notes}
-                  onChange={(e) => patch("notes", e.target.value)}
-                  rows={4}
-                  className={area}
-                />
-              </label>
-            </section>
-            {(draft.sampleName||draft.sampleSize||draft.sampleQuantity)&&<details className="text-xs text-slate-500"><summary className="cursor-pointer py-2">Legacy context</summary><p className="mb-2">Retained historical metadata. Physical dimensions and piece count are set in Sample Plate.</p><dl className="grid gap-1 sm:grid-cols-3">{draft.sampleName&&<div><dt>Historical name</dt><dd>{draft.sampleName}</dd></div>}{draft.sampleSize&&<div><dt>Historical size</dt><dd>{draft.sampleSize}</dd></div>}{draft.sampleQuantity&&<div><dt>Historical quantity</dt><dd>{draft.sampleQuantity}</dd></div>}</dl></details>}
-            </div>
-            <div hidden={activeTab!=='Sample Plate'} id="workspace-panel-Sample-Plate" role="tabpanel" aria-labelledby="workspace-tab-Sample-Plate">
-            <SampleFormulationConfigurator
-              state={draft.formulation}
-              rows={draft.blendRows}
-              resinSupplier={draft.resinSupplier}
-              onChange={(formulation) => {
-                const changed = batchFirst && ['length','width','thicknessIn','dimensionUnit','profile'].some(key=>JSON.stringify(formulation[key as keyof typeof formulation])!==JSON.stringify(draft.formulation[key as keyof typeof formulation]));
-                if(changed) {setDraft({...draft,formulation,blendRows:draft.blendRows.map(row=>row.quantityProvenance==='manual'?{...row,quantity:'',quantityProvenance:row.componentRole==='other'?'manual':'calculated'}:row)});setMessage('Shop overrides reset for the new Working Pour or profile. Review preparation quantities before use.');}
-                else patch("formulation", formulation);
-              }}
-              onApplyAdjustment={(formulation,targetFillerOz)=>setDraft(current=>current?{...current,formulation,blendRows:current.blendRows.map(row=>row.componentRole==='filler'?{...row,quantity:targetFillerOz,quantityProvenance:'manual'}:row)}:current)}
-            />
-            </div>
-            <div hidden={activeTab!=='Sample'}>
+            <nav aria-label="Workspace sections" className="sticky top-[73px] z-10 flex flex-wrap gap-x-4 border-b border-slate-300 bg-white px-3 py-2 text-sm font-bold">{[['formulation-setup','Formulation'],['sample-context','Sample Context'],['sample-plate','Sample Plate'],...(auth.can('production_blend.manage')?[['production-planning','Production']]:[]),['sample-documents','Documents']].map(([id,title])=><a key={id} href={`#${id}`} className="py-2 text-blue-900" onClick={e=>{e.preventDefault();if(id==='sample-documents')setDocumentsOpen(true);jumpTo(id);}}>{title}</a>)}</nav>
+            <div id="formulation-setup" tabIndex={-1} className="scroll-mt-28 space-y-3">
+            <section className="border border-slate-300 bg-white p-4"><h2 className="mb-3 text-lg font-bold">Formulation setup</h2>              <SampleResinSystemSelector initialSelection={!draft.id} state={draft.formulation} rows={draft.blendRows} onChange={formulation=>{
+                setDraft(applyResinIdentity({...draft,blendRows:draft.blendRows.map(row=>row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})},formulation));
+                setMessage('Resin System applied. Batch Filler and shop quantities reset to this profile; materials and percentages are preserved.');
+              }}/>
+</section>
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
                 Materials and setup
@@ -997,32 +854,12 @@ export default function SampleWorkspace() {
               </div>
             </section>
             {resinConflict(draft)&&<div role="alert" className="border border-amber-400 bg-amber-50 p-3 text-sm">Resin Color / # and the Resin row contain different descriptions. Choose which value to keep in both fields before saving.<div className="mt-2 flex flex-wrap gap-2"><button type="button" className="min-h-11 border px-3" onClick={()=>setDraft(synchronizeResin(draft,'setup',draft.resinColorNumber,true))}>Use Resin Color / # for both</button><button type="button" className="min-h-11 border px-3" onClick={()=>setDraft(synchronizeResin(draft,'row',draft.blendRows.find(r=>r.componentRole==='resin')?.color??'',true))}>Use Resin row for both</button></div></div>}
-            <section aria-label="Quantity view" className="border border-slate-300 bg-white p-4">
-              <SampleResinSystemSelector state={draft.formulation} rows={draft.blendRows} onChange={formulation=>{
-                setDraft(applyResinIdentity({...draft,blendRows:draft.blendRows.map(row=>row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})},formulation));
-                setMessage('Resin System applied. Batch Filler and shop quantities reset to this profile; materials and percentages are preserved.');
-              }}/>
-            </section>
             </div>
-            <section hidden={activeTab!=='Sample Plate'} className="border border-slate-300 bg-white p-4">
-              <p className="text-sm font-bold">View quantities as</p>
-              <div role="group" aria-label="View quantities as" className="mt-2 inline-flex gap-1">
-                {([['batch','Batch'],['working','Sample Plate']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
-              </div>
-              {quantityView==='batch' && batch && <div className="mt-4" data-testid="batch-summary">
-                <p className="text-xl font-bold">Batch chip target: {batch.target===null?'not captured':`${formatBatchQuantity(batch.target,'lb')} lb = 100%`}</p>
-                <p className="mt-1 text-sm">{displayProfileRatio(draft.formulation.profile?.name)} · Operator-authored percentages define this chip blend.</p>
-                <p className="mt-2 font-bold">{batch.complete?'TOTAL':'Calculated chip subtotal'}: {batch.totalPercent}% · {formatBatchQuantity(batch.subtotalLb,'lb')} lb</p>
-                {batch.fraction!==null && <p className="text-sm">Working Pour fraction of Batch: {formatBatchQuantity(batch.fraction,'gal')}</p>}
-                {batch.issues.map(issue=><p role="status" className="mt-1 text-sm text-amber-800" key={issue}>{issue}</p>)}
-                <p className="mt-2 text-xs text-slate-600">{batchFirst ? "Canonical Batch quantities define Production. Working Pour and shop preparation quantities are downstream." : "Filler, Resin and Hardener are projected from this formulation. These equivalents do not prescribe whole-package rounding."}</p>
-              </div>}
-            </section>
-            <section hidden={activeTab!=='Formulation'&&activeTab!=='Sample Plate'} id="workspace-panel-Formulation" role="tabpanel" aria-labelledby="workspace-tab-Formulation" data-compact={activeTab==='Formulation'} data-sample-tutorial="aggregate-section" className="border border-slate-300 bg-white p-4">
+            <section id="batch-formulation" tabIndex={-1} data-compact={true} data-sample-tutorial="aggregate-section" className="border border-slate-300 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="min-w-0 w-full">
                   <h2 className="text-sm font-bold uppercase tracking-wide">
-                    Chip Blend
+                    Batch Formulation
                   </h2>
                   <p className="mt-1 whitespace-normal break-words text-xs text-slate-500">
                     Set the aggregate percentages. The blend must total 100%.
@@ -1030,14 +867,13 @@ export default function SampleWorkspace() {
                   <p
                     className={`mt-2 text-sm font-bold ${formulationResult?.percentageReconciles ? "text-emerald-700" : "text-amber-700"}`}
                   >
-                    {quantityView === "batch"
-                      ? `Batch: ${batch?.totalPercent ?? 0}% = ${formatBatchQuantity(batch?.subtotalLb ?? null, "lb")} lb Chip Mix`
-                      : `Sample Plate: ${formulationResult?.percentageTotal || "0"}% = ${formulationResult?.availableChipMixOz || "0"} oz Chip Mix`}
+                    {batch?.target!=null?`Chip Mix / Batch: ${formatBatchQuantity(batch.target,'lb')} lb = 100%`:'Select a Resin System to establish Batch quantities.'}
+
                   </p>
                 </div>
               </div>
-              {activeTab==='Formulation'&&<div className="blend-column-headings mt-3 text-xs font-bold text-slate-600"><span>%</span><span>Color / Material</span><span>Size</span><span>Type</span><span>Vendor</span><span>Batch Qty<Help label="Batch Qty">Calculated from this material’s percentage × current Chip Mix per Batch.</Help></span><span>Actions</span></div>}
-              <div className="blend-rows mt-1 space-y-1">
+              {<div className="blend-column-headings mt-3 text-xs font-bold text-slate-600"><span>%</span><span>Color / Material</span><span>Size</span><span>Type</span><span>Vendor</span><span>Batch Qty<Help label="Batch Qty">Calculated from this material’s percentage × current Chip Mix per Batch.</Help></span><span>Actions</span></div>}
+              {!draft.formulation.profile&&!draft.id?<p className="my-3 text-sm text-amber-800">Select a Resin System above before authoring Batch quantities.</p>:<div className="blend-rows mt-1 space-y-1">
                 {!displayRows.some(({row})=>row.componentRole==='aggregate') && (
                   <BusinessButton type="button" onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])} className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"><Plus className="h-4 w-4" />Add Aggregate</BusinessButton>
                 )}
@@ -1232,7 +1068,7 @@ export default function SampleWorkspace() {
                           className={field}
                         />
                       </label>
-                      {quantityView==='batch' ? <div className={`${label} text-left blend-quantity`}>
+                      <div className={`${label} text-left blend-quantity`}>
                         {row.componentRole==='filler' && shopProjection?.resolvedBatch.enabled ? <>
                           <label className="relative block"><span className="blend-field-label">Current formulation Filler (lb)</span><span aria-hidden="true" className="pointer-events-none absolute right-2 top-2 text-xs text-slate-500">lb</span>
                             <BusinessInput aria-label="Batch Filler (lb)" type="number" min="0" step="0.000001" value={draft.formulation.batchFillerOverrideLb ?? String(shopProjection.resolvedBatch.baselineFiller ?? '')} onChange={e=>changeBatchFiller(e.target.value)} className={field}/>
@@ -1247,8 +1083,208 @@ export default function SampleWorkspace() {
                         </output>
                         <p className="blend-provenance mt-2 text-xs font-normal text-slate-600">{batch?.rows[index]?.note}</p>
                         {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit quantity in Sample Plate view.</p>}
-                      </div> : <>
-                      <div className={`${label} text-left`}>
+                      </div>
+                      <label className={`${label} text-left blend-vendor`}>
+                        <span className="blend-field-label">Vendor</span>
+                        <PurchasingVendorNameInput
+                          id={`sample-material-vendor-${row.id}`}
+                          value={row.vendor}
+                          vendors={vendors}
+                          onChange={(value) =>
+                            patchRow(index, { vendor: value })
+                          }
+                          className={field}
+                        />
+                      </label>
+                    </div>
+                    {expandedRows[row.id]&&<div className="blend-row-details text-xs text-slate-600"><p>{row.catalogItemId?`Catalog-assisted · ${row.catalogSource??'Catalog'}`:'Manual material entry'}</p>{row.catalogSnapshot.package_context!=null&&<p>Captured package: {(() => {const value=row.catalogSnapshot.package_context as {amount?:string;unit?:string;container?:string};return [value.amount,value.unit,value.container].filter(Boolean).join(' · ')||'See selected catalog material';})()}</p>}</div>}
+                  </article>
+                  {row.componentRole === "aggregate" && displayRows[displayIndex+1]?.row.componentRole !== "aggregate" && (
+                    <div><p className="my-2 text-right text-sm font-bold">Total: {batch?.totalPercent??0}% · {formatBatchQuantity(batch?.subtotalLb??null,'lb')} lb</p><BusinessButton
+                      type="button"
+                      onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])}
+                      className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Aggregate
+                    </BusinessButton></div>
+                  )}
+                  </div>
+                ))}
+              </div>}
+            </section>
+            <div id="sample-context" tabIndex={-1} className="space-y-4">
+            <section className="border border-slate-300 bg-white p-4">
+              <h2 className="text-sm font-bold uppercase tracking-wide">
+                Sample context
+              </h2>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <label className={label}>
+                  Color Plate / Formula #<Help label="Color Plate number">Formula # on the historical Sample Work Order; Plate # on downstream Production documents. Typical format: T26-258-A. Recognizable missing separators can be normalized; unusual identifiers can be saved after review.</Help>
+                  <BusinessInput
+                    aria-label="Color Plate / Formula #"
+                    value={draft.colorPlateNumber}
+                    onChange={(e) => patch("colorPlateNumber", e.target.value)}
+                    onBlur={()=>{if(draft.colorPlateNumber!==(samples.find(s=>s.id===draft.id)?.colorPlateNumber??''))patch("colorPlateNumber",preferredColorPlate(draft.colorPlateNumber));}}
+                    placeholder="T26-123-A"
+                    className={field}
+                  />
+                {colorPlateWarning(draft.colorPlateNumber)&&<span className="mt-1 block font-normal text-amber-800">{colorPlateWarning(draft.colorPlateNumber)}</span>}
+                  {colorPlateConflict(samples,draft.id,draft.colorPlateNumber)&&<span className="block font-normal text-amber-800">Another Sample uses an equivalent Color Plate identifier. Review before saving.</span>}
+                </label>
+                <label className={label}>
+                  Date Initiated
+                  <BusinessInput
+                    type="date"
+                    value={draft.requestedDate}
+                    onChange={(e) => patch("requestedDate", e.target.value)}
+                    className={field}
+                  />
+                </label>
+                <SampleRecentValueInput
+                  label="Requested By"
+                  value={draft.requestedBy}
+                  fieldKey={sampleRecentFieldKeys.requestedBy}
+                  suggestions={recentValues.requested_by ?? []}
+                  onLoad={loadRecent}
+                  onChange={(value) => patch("requestedBy", value)}
+                  className={field}
+                />
+                <label className={label}>
+                  Prepared By
+                  <BusinessInput
+                    value={draft.preparedBy}
+                    onChange={(e) => patch("preparedBy", e.target.value)}
+                    className={field}
+                  />
+                </label>
+                <SampleRecentValueInput
+                  label="Project Name"
+                  value={draft.projectName}
+                  fieldKey={sampleRecentFieldKeys.projectName}
+                  suggestions={recentValues.project_name ?? []}
+                  onLoad={loadRecent}
+                  onChange={(value) => patch("projectName", value)}
+                  className={field}
+                />
+                <SampleRecentValueInput
+                  label="Customer"
+                  value={draft.customerName}
+                  fieldKey={sampleRecentFieldKeys.customerName}
+                  suggestions={recentValues.customer_name ?? []}
+                  onLoad={loadRecent}
+                  onChange={(value) => patch("customerName", value)}
+                  className={field}
+                />
+                <SampleRecentValueInput
+                  label="Finish"
+                  value={draft.finishRequested}
+                  fieldKey={sampleRecentFieldKeys.finishRequested}
+                  suggestions={recentValues.finish_requested ?? []}
+                  onLoad={loadRecent}
+                  onChange={(value) => patch("finishRequested", value)}
+                  className={field}
+                />
+                <label className={label}>
+                  Approved Date
+                  <BusinessInput
+                    type="date"
+                    value={draft.approvedDate}
+                    onChange={(e) => patch("approvedDate", e.target.value)}
+                    className={field}
+                  />
+                </label>
+                <label className={`${label} sm:col-span-2`}>
+                  Bid context
+                  <BusinessSelect
+                    value={draft.bidId}
+                    onChange={(e) => patch("bidId", e.target.value)}
+                    className={field}
+                  >
+                    <option value="">Standalone / no Bid</option>
+                    {bids.map((bid) => (
+                      <option key={bid.id} value={bid.id}>
+                        {bid.customer} · {bid.projectName}
+                      </option>
+                    ))}
+                  </BusinessSelect>
+                </label>
+                <label className={`${label} sm:col-span-2`}>
+                  Production Job context
+                  <BusinessSelect
+                    value={draft.jobId}
+                    onChange={(e) => patch("jobId", e.target.value)}
+                    className={field}
+                  >
+                    <option value="">No Production Job</option>
+                    {jobs.map((job) => (
+                      <option key={job.id} value={job.id}>
+                        {job.job_number ? `${job.job_number} · ` : ""}
+                        {job.name}
+                      </option>
+                    ))}
+                  </BusinessSelect>
+                </label>
+              </div>
+              {linkedBid && (
+                <p className="mt-3 text-xs text-slate-500">
+                  Linked to Bid: {linkedBid.customer} · {linkedBid.projectName}
+                </p>
+              )}
+              <label className={`${label} mt-4 block`}>
+                Notes
+                <BusinessTextarea
+                  value={draft.notes}
+                  onChange={(e) => patch("notes", e.target.value)}
+                  rows={4}
+                  className={area}
+                />
+              </label>
+            </section>
+            {(draft.sampleName||draft.sampleSize||draft.sampleQuantity)&&<details className="text-xs text-slate-500"><summary className="cursor-pointer py-2">Legacy context</summary><p className="mb-2">Retained historical metadata. Physical dimensions and piece count are set in Sample Plate.</p><dl className="grid gap-1 sm:grid-cols-3">{draft.sampleName&&<div><dt>Historical name</dt><dd>{draft.sampleName}</dd></div>}{draft.sampleSize&&<div><dt>Historical size</dt><dd>{draft.sampleSize}</dd></div>}{draft.sampleQuantity&&<div><dt>Historical quantity</dt><dd>{draft.sampleQuantity}</dd></div>}</dl></details>}
+            <div >
+            <label
+              className={`${label} block border border-slate-300 bg-white p-4`}
+            >
+              More Notes
+              <BusinessTextarea
+                value={draft.moreNotes}
+                onChange={(e) => patch("moreNotes", e.target.value)}
+                rows={6}
+                className={area}
+              />
+            </label>
+
+            </div>
+            </div>
+            <div id="sample-plate" tabIndex={-1} className="scroll-mt-28 space-y-3">
+            <h2 className="text-lg font-bold">Sample Plate</h2><p className="text-sm text-slate-600">Scale the Batch formulation down for the Working Pour and finished pieces.</p>
+            {draft.formulation.profile||draft.id?<SampleFormulationConfigurator
+              state={draft.formulation}
+              rows={draft.blendRows}
+              resinSupplier={draft.resinSupplier}
+              onChange={(formulation) => {
+                const changed = batchFirst && ['length','width','thicknessIn','dimensionUnit','profile'].some(key=>JSON.stringify(formulation[key as keyof typeof formulation])!==JSON.stringify(draft.formulation[key as keyof typeof formulation]));
+                if(changed) {setDraft({...draft,formulation,blendRows:draft.blendRows.map(row=>row.quantityProvenance==='manual'?{...row,quantity:'',quantityProvenance:row.componentRole==='other'?'manual':'calculated'}:row)});setMessage('Shop overrides reset for the new Working Pour or profile. Review preparation quantities before use.');}
+                else patch("formulation", formulation);
+              }}
+              onApplyAdjustment={(formulation,targetFillerOz)=>setDraft(current=>current?{...current,formulation,blendRows:current.blendRows.map(row=>row.componentRole==='filler'?{...row,quantity:targetFillerOz,quantityProvenance:'manual'}:row)}:current)}
+            />:<p className="text-sm text-amber-800">Select a Resin System to establish Batch quantities.</p>}
+            {(draft.formulation.profile||draft.id)&&<section className="border border-slate-300 bg-white p-4">
+              <p className="text-sm font-bold">View quantities as</p>
+              <div role="group" aria-label="View quantities as" className="mt-2 inline-flex gap-1">
+                {([['batch','Batch'],['working','Sample Plate']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
+              </div>
+              {quantityView==='batch' && batch && <div className="mt-4" data-testid="batch-summary">
+                <p className="text-xl font-bold">Batch chip target: {batch.target===null?'not captured':`${formatBatchQuantity(batch.target,'lb')} lb = 100%`}</p>
+                <p className="mt-1 text-sm">{displayProfileRatio(draft.formulation.profile?.name)} · Operator-authored percentages define this chip blend.</p>
+                <p className="mt-2 font-bold">{batch.complete?'TOTAL':'Calculated chip subtotal'}: {batch.totalPercent}% · {formatBatchQuantity(batch.subtotalLb,'lb')} lb</p>
+                {batch.fraction!==null && <p className="text-sm">Working Pour fraction of Batch: {formatBatchQuantity(batch.fraction,'gal')}</p>}
+                {batch.issues.map(issue=><p role="status" className="mt-1 text-sm text-amber-800" key={issue}>{issue}</p>)}
+                <p className="mt-2 text-xs text-slate-600">{batchFirst ? "Canonical Batch quantities define Production. Working Pour and shop preparation quantities are downstream." : "Filler, Resin and Hardener are projected from this formulation. These equivalents do not prescribe whole-package rounding."}</p>
+              </div>}
+            </section>}
+            {(draft.formulation.profile||draft.id)&&<div className="space-y-2">{displayRows.map(({row,sourceIndex:index})=><div key={row.id} className="grid gap-3 border border-slate-200 bg-white p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]"><div className="text-sm"><strong className="capitalize">{row.componentRole}</strong><p>{row.color||'Material not selected'}</p></div>{quantityView==='batch'?<output className="font-bold">{formatBatchQuantity(batch?.rows[index]?.quantity??null,batch?.rows[index]?.unit??'')} {batch?.rows[index]?.unit}</output>:<>                      <div className={`${label} text-left`}>
                         <span>{batchFirst ? "Shop preparation quantity" : "Quantity"}</span>
                         <div className="relative mt-1">
                           <BusinessInput
@@ -1337,51 +1373,13 @@ export default function SampleWorkspace() {
                           </label>
                         )}
                       </div>
-                      </>}
-                      <label className={`${label} text-left blend-vendor`}>
-                        <span className="blend-field-label">Vendor</span>
-                        <PurchasingVendorNameInput
-                          id={`sample-material-vendor-${row.id}`}
-                          value={row.vendor}
-                          vendors={vendors}
-                          onChange={(value) =>
-                            patchRow(index, { vendor: value })
-                          }
-                          className={field}
-                        />
-                      </label>
-                    </div>
-                    {expandedRows[row.id]&&<div className="blend-row-details text-xs text-slate-600"><p>{row.catalogItemId?`Catalog-assisted · ${row.catalogSource??'Catalog'}`:'Manual material entry'}</p>{row.catalogSnapshot.package_context!=null&&<p>Captured package: {(() => {const value=row.catalogSnapshot.package_context as {amount?:string;unit?:string;container?:string};return [value.amount,value.unit,value.container].filter(Boolean).join(' · ')||'See selected catalog material';})()}</p>}</div>}
-                  </article>
-                  {row.componentRole === "aggregate" && displayRows[displayIndex+1]?.row.componentRole !== "aggregate" && (
-                    <div><p className="my-2 text-right text-sm font-bold">Total: {quantityView==='batch'?`${batch?.totalPercent??0}% · ${formatBatchQuantity(batch?.subtotalLb??null,'lb')} lb`:`${formulationResult?.percentageTotal||'0'}% · ${formulationResult?.availableChipMixOz||'0'} oz`}</p><BusinessButton
-                      type="button"
-                      onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])}
-                      className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Add Aggregate
-                    </BusinessButton></div>
-                  )}
-                  </div>
-                ))}
-              </div>
-            </section>
-            <div hidden={activeTab!=='Sample'}>
-            <label
-              className={`${label} block border border-slate-300 bg-white p-4`}
-            >
-              More Notes
-              <BusinessTextarea
-                value={draft.moreNotes}
-                onChange={(e) => patch("moreNotes", e.target.value)}
-                rows={6}
-                className={area}
-              />
-            </label>
-
+</>}</div>)}</div>}
             </div>
-            <div hidden={activeTab!=='Documents'} id="workspace-panel-Documents" role="tabpanel" aria-labelledby="workspace-tab-Documents" className="space-y-3">
+            <div id="production-planning" tabIndex={-1} className="scroll-mt-28">
+            <ProductionBatchOutput mode="planner" onDocuments={()=>{setDocumentsOpen(true);jumpTo('sample-documents');}} onSample={()=>jumpTo('formulation-setup')} ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
+            </div>
+            <details id="sample-documents" tabIndex={-1} className="scroll-mt-28 space-y-3 border bg-white p-4" open={documentsOpen} onToggle={e=>setDocumentsOpen(e.currentTarget.open)}><summary className="cursor-pointer text-lg font-bold">Documents / History</summary>
+            {documentsOpen&&draft.id&&<ProductionBatchOutput mode="documents" sample={draft} onDocuments={()=>{}} onSample={()=>jumpTo('formulation-setup')} onSave={()=>persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>}
             <h2 className="font-bold">Recent Documents · Sample Work Order</h2>
             <SampleVersionHistory
               sample={draft}
@@ -1461,7 +1459,7 @@ export default function SampleWorkspace() {
                 </p>
               )}
             </section>
-            </div>
+            </details>
             <footer className="flex flex-wrap items-center gap-3 border border-slate-300 bg-white p-3">
               {draft.issuedDocuments.length ? (
                 auth.profile?.role === "admin" ? (

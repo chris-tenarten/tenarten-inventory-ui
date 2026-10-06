@@ -14,7 +14,7 @@ const label='block text-xs font-bold text-slate-700';
 const input='mt-1 min-h-11 w-full border border-slate-300 bg-white px-3 text-base';
 const hint='mt-1 block text-xs font-normal text-slate-500';
 const inches=(value:string)=>Number(value)===.375?'3/8″':`${value}″`;
-export default function SampleResinSystemSelector({state,rows,onChange}:{state:SampleFormulationState;rows:SampleBlendRow[];onChange:(state:SampleFormulationState)=>void}) {
+export default function SampleResinSystemSelector({state,rows,onChange,initialSelection=false}:{initialSelection?:boolean;state:SampleFormulationState;rows:SampleBlendRow[];onChange:(state:SampleFormulationState)=>void}) {
  const isV4=state.calculationVersion===SAMPLE_FORMULATION_CALCULATION_VERSION;
  const isBatchFirst=state.calculationVersion===BATCH_FIRST_VERSION;
   const auth = useAuth();
@@ -31,6 +31,7 @@ export default function SampleResinSystemSelector({state,rows,onChange}:{state:S
   const canUpgrade = currentProfile && canApplyCurrentBatchDefaults(currentProfile);
   const pendingProfile = profiles.find(p => p.id === pendingProfileId);
   function chooseProfile(profile: OperationalProfile) {
+    if(initialSelection&&!state.profile&&!missingProfileInputs(profile).length&&canApplyCurrentBatchDefaults(profile)){confirmProfile(profile);return;}
     setPendingProfileId(profile.id);
   }
   function confirmProfile(profile: OperationalProfile) {
@@ -41,12 +42,13 @@ export default function SampleResinSystemSelector({state,rows,onChange}:{state:S
               Resin System
               <BusinessSelect aria-label="Resin System" value={pendingProfileId || (state.profile ? `${state.profile.id}:${state.profile.version}` : '')} onChange={event => { const profile = profiles.find(p => `${`operational:${p.id}`}:${p.revision}` === event.target.value); if (profile) chooseProfile(profile); }} className={input}>
                 {state.profile && <option value={`${state.profile.id}:${state.profile.version}`}>{profiles.some(p=>`operational:${p.id}`===state.profile?.id && p.revision===state.profile?.version && p.is_active) ? '' : 'Captured: '}{displayProfileRatio(state.profile.name)}</option>}
-                {!state.profile && <option value="">Choose profile</option>}
+                {!state.profile && <option value="">Select resin system…</option>}
                 {pendingProfile && <option value={pendingProfile.id}>{displayProfileRatio(operationalProfileLabel(pendingProfile))} — not applied</option>}
                 {profiles.filter(p => p.is_active && `${`operational:${p.id}`}:${p.revision}` !== `${state.profile?.id}:${state.profile?.version}`).map(p => <option key={p.id} value={`${`operational:${p.id}`}:${p.revision}`}>{displayProfileRatio(operationalProfileLabel(p))}{missingProfileInputs(p).length ? ' · Incomplete' : ''}</option>)}
               </BusinessSelect>
               <span className={hint}>Captured with this Sample. Changing supplier alone does not change the profile.</span>
-              {missingBatchBasis && <span className="mt-2 block text-sm font-normal text-amber-900">
+              {initialSelection&&!state.profile&&<span className={hint}>Select a Resin System to establish Batch quantities.</span>}
+              {missingBatchBasis && !(initialSelection&&!state.profile) && <span className="mt-2 block text-sm font-normal text-amber-900">
                 This formulation has no captured Batch basis. {canUpgrade ? `Review and apply the current ${currentProfile.name} profile defaults, then save to enable Production Blend planning.` : 'Choose a complete current Resin System and apply its defaults to enable Production Blend planning. Incomplete profiles cannot supply Batch authority.'}
                 <span className="mt-1 block">This changes only the editable formulation. Batch Filler and shop quantities reset; materials, percentages and issued history are preserved.</span>
                 {canUpgrade && <BusinessButton type="button" onClick={() => chooseProfile(currentProfile)} className="mt-2 min-h-11 border border-amber-700 px-3 font-bold">Review current profile defaults</BusinessButton>}

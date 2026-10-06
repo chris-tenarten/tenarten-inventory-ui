@@ -1,6 +1,5 @@
 import {productionSourceKey} from './production-source-key';
 import { productionBatchReadiness } from '../../../supabase/functions/_shared/sample-production-batch.mjs';
-import { applyOperationalProfile, loadOperationalProfiles, missingProfileInputs } from './operational-profiles';
 import {supabase} from '@/lib/supabase';
 import type {SampleBlendRow,SampleIssuedDocument,SampleRecord,SampleWorkingVersion} from './types';
 import {BATCH_FIRST_VERSION,blankFormulationState,calculateSampleFormulation,HISTORICAL_PARITY_SAMPLE_FORMULATION_CALCULATION_VERSION,normalizedSampleRatioParts,SAMPLE_FORMULATION_CALCULATION_VERSION,VOLUMETRIC_PROFILE_SAMPLE_FORMULATION_CALCULATION_VERSION,standardFormulationState,type SampleFormulationState} from './formulation';
@@ -31,11 +30,10 @@ export async function previewSamplePdf(sample:SampleRecord){const calculated=cal
 export async function generateSamplePdf(documentId:string){const{data,error}=await supabase.functions.invoke('generate-sample-pdf',{body:{action:'generate',documentId}});if(error)await throwSampleFunctionError(error);if(!data?.url)throw new Error(String(data?.error||'Sample PDF was not generated.'));return String(data.url);}
 export async function openSamplePdf(documentId:string){const{data,error}=await supabase.functions.invoke('generate-sample-pdf',{body:{action:'open',documentId}});if(error)await throwSampleFunctionError(error);if(!data?.url)throw new Error(String(data?.error||'Sample PDF is unavailable.'));return String(data.url);}
 
-export async function loadSampleFormulationDefault(){
- const [geometry, profiles] = await Promise.all([loadLegacySampleGeometryDefault(), loadOperationalProfiles()]);
- const initial = profiles.find(p => p.is_active && missingProfileInputs(p).length === 0);
- if (!initial) throw new Error('No active, configured operational profile is available. An Admin or Developer must configure a profile before creating a new Sample.');
- return applyOperationalProfile(geometry, initial);
+/** New drafts retain geometry defaults but acquire no formulation authority until selection. */
+export async function loadSampleFormulationDefault():Promise<SampleFormulationState>{
+ const geometry=await loadLegacySampleGeometryDefault();
+ return {...geometry,calculationVersion:BATCH_FIRST_VERSION,profile:null,materialDensity:'',weightPerSf:'',resinParts:'',hardenerParts:'',ratioDefaultSource:'',profileProvenance:'selected'};
 }
 
 export async function generateProductionBatchPdf(source:{sampleId:string}|{documentId:string}) {
