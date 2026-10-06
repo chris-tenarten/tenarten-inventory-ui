@@ -195,7 +195,13 @@ export default function SampleWorkspace() {
   );
   useEffect(() => {
     void reload()
-      .then((items) => {
+      .then(async (items) => {
+        if(initialContext.open==='new'){
+          const formulation=await loadSampleFormulationDefault();
+          const local=applyResinIdentity(newLocalSample({preparedBy:auth.profile?.displayName??'',formulation}),formulation);
+          setQuantityViewState({record:null,view:'working'});
+          setDraft(local);setDraftBaseline(JSON.stringify(local));return;
+        }
         const target = items.find((item) => item.id === initialContext.open);
         if (target) {
           setDraft(target);
@@ -214,7 +220,7 @@ export default function SampleWorkspace() {
         setVendors(nextVendors);
       })
       .catch((caught) => showOperationError(caught, "load"));
-  }, [initialContext.open, reload, showOperationError]);
+  }, [initialContext.open, reload, showOperationError, auth.profile?.displayName]);
   const catalogRole = catalogRow === null ? undefined : draft?.blendRows[catalogRow]?.componentRole;
   const catalogSearchKey = JSON.stringify([catalogRow, catalogRole, catalogQuery]);
   const [catalogResultKey, setCatalogResultKey] = useState("");
@@ -784,7 +790,7 @@ export default function SampleWorkspace() {
                   onClick={() => void save()}
                   className="h-10 border border-slate-400 px-4 text-sm font-bold"
                 >
-                  {busy === "save" ? "Saving…" : "Save Changes"}
+                  {busy === "save" ? "Saving…" : draft.id ? "Save Changes" : "Save Sample"}
                 </BusinessButton>
                 <BusinessButton
                   type="button"
@@ -810,13 +816,24 @@ export default function SampleWorkspace() {
               </h2>
               <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <label className={label}>
-                  Sample Name{" "}
-                  <span className="font-normal text-slate-400">(optional)</span>
+                  Color Plate / Formula #<Help label="Color Plate number">Formula # on the historical Sample Work Order; Plate # on downstream Production documents. Typical format: T26-258-A. Recognizable missing separators can be normalized; unusual identifiers can be saved after review.</Help>
                   <BusinessInput
-                    value={draft.sampleName}
-                    maxLength={200}
-                    onChange={(e) => patch("sampleName", e.target.value)}
-                    placeholder="Blue terrazzo trial"
+                    aria-label="Color Plate / Formula #"
+                    value={draft.colorPlateNumber}
+                    onChange={(e) => patch("colorPlateNumber", e.target.value)}
+                    onBlur={()=>{if(draft.colorPlateNumber!==(samples.find(s=>s.id===draft.id)?.colorPlateNumber??''))patch("colorPlateNumber",preferredColorPlate(draft.colorPlateNumber));}}
+                    placeholder="T26-123-A"
+                    className={field}
+                  />
+                {colorPlateWarning(draft.colorPlateNumber)&&<span className="mt-1 block font-normal text-amber-800">{colorPlateWarning(draft.colorPlateNumber)}</span>}
+                  {colorPlateConflict(samples,draft.id,draft.colorPlateNumber)&&<span className="block font-normal text-amber-800">Another Sample uses an equivalent Color Plate identifier. Review before saving.</span>}
+                </label>
+                <label className={label}>
+                  Date Initiated
+                  <BusinessInput
+                    type="date"
+                    value={draft.requestedDate}
+                    onChange={(e) => patch("requestedDate", e.target.value)}
                     className={field}
                   />
                 </label>
@@ -830,28 +847,10 @@ export default function SampleWorkspace() {
                   className={field}
                 />
                 <label className={label}>
-                  Date Requested
-                  <BusinessInput
-                    type="date"
-                    value={draft.requestedDate}
-                    onChange={(e) => patch("requestedDate", e.target.value)}
-                    className={field}
-                  />
-                </label>
-                <label className={label}>
                   Prepared By
                   <BusinessInput
                     value={draft.preparedBy}
                     onChange={(e) => patch("preparedBy", e.target.value)}
-                    className={field}
-                  />
-                </label>
-                <label className={label}>
-                  Approved Date
-                  <BusinessInput
-                    type="date"
-                    value={draft.approvedDate}
-                    onChange={(e) => patch("approvedDate", e.target.value)}
                     className={field}
                   />
                 </label>
@@ -865,7 +864,7 @@ export default function SampleWorkspace() {
                   className={field}
                 />
                 <SampleRecentValueInput
-                  label="Customer Name"
+                  label="Customer"
                   value={draft.customerName}
                   fieldKey={sampleRecentFieldKeys.customerName}
                   suggestions={recentValues.customer_name ?? []}
@@ -873,21 +872,8 @@ export default function SampleWorkspace() {
                   onChange={(value) => patch("customerName", value)}
                   className={field}
                 />
-                <label className={label}>
-                  Color Plate #<Help label="Color Plate number">Typical format: T26-258-A. Recognizable missing separators can be normalized; unusual identifiers can be saved after review.</Help>
-                  <BusinessInput
-                    aria-label="Color Plate #"
-                    value={draft.colorPlateNumber}
-                    onChange={(e) => patch("colorPlateNumber", e.target.value)}
-                    onBlur={()=>{if(draft.colorPlateNumber!==(samples.find(s=>s.id===draft.id)?.colorPlateNumber??''))patch("colorPlateNumber",preferredColorPlate(draft.colorPlateNumber));}}
-                    placeholder="T26-123-A"
-                    className={field}
-                  />
-                {colorPlateWarning(draft.colorPlateNumber)&&<span className="mt-1 block font-normal text-amber-800">{colorPlateWarning(draft.colorPlateNumber)}</span>}
-                  {colorPlateConflict(samples,draft.id,draft.colorPlateNumber)&&<span className="block font-normal text-amber-800">Another Sample uses an equivalent Color Plate identifier. Review before saving.</span>}
-                </label>
                 <SampleRecentValueInput
-                  label="Finish Requested"
+                  label="Finish"
                   value={draft.finishRequested}
                   fieldKey={sampleRecentFieldKeys.finishRequested}
                   suggestions={recentValues.finish_requested ?? []}
@@ -895,25 +881,16 @@ export default function SampleWorkspace() {
                   onChange={(value) => patch("finishRequested", value)}
                   className={field}
                 />
-                <SampleRecentValueInput
-                  label="Sample Size"
-                  value={draft.sampleSize}
-                  fieldKey={sampleRecentFieldKeys.sampleSize}
-                  suggestions={recentValues.sample_size ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("sampleSize", value)}
-                  className={field}
-                />
-                <SampleRecentValueInput
-                  label="Sample Quantity"
-                  value={draft.sampleQuantity}
-                  fieldKey={sampleRecentFieldKeys.sampleQuantity}
-                  suggestions={recentValues.sample_quantity ?? []}
-                  onLoad={loadRecent}
-                  onChange={(value) => patch("sampleQuantity", value)}
-                  className={field}
-                />
                 <label className={label}>
+                  Approved Date
+                  <BusinessInput
+                    type="date"
+                    value={draft.approvedDate}
+                    onChange={(e) => patch("approvedDate", e.target.value)}
+                    className={field}
+                  />
+                </label>
+                <label className={`${label} sm:col-span-2`}>
                   Bid context
                   <BusinessSelect
                     value={draft.bidId}
@@ -928,7 +905,7 @@ export default function SampleWorkspace() {
                     ))}
                   </BusinessSelect>
                 </label>
-                <label className={label}>
+                <label className={`${label} sm:col-span-2`}>
                   Production Job context
                   <BusinessSelect
                     value={draft.jobId}
@@ -960,7 +937,7 @@ export default function SampleWorkspace() {
                 />
               </label>
             </section>
-            <p className="text-xs text-slate-500">Sample Size / Quantity describe the document; they do not change calculated Sample Plate quantities.</p>
+            {(draft.sampleName||draft.sampleSize||draft.sampleQuantity)&&<details className="text-xs text-slate-500"><summary className="cursor-pointer py-2">Legacy context</summary><p className="mb-2">Retained historical metadata. Physical dimensions and piece count are set in Sample Plate.</p><dl className="grid gap-1 sm:grid-cols-3">{draft.sampleName&&<div><dt>Historical name</dt><dd>{draft.sampleName}</dd></div>}{draft.sampleSize&&<div><dt>Historical size</dt><dd>{draft.sampleSize}</dd></div>}{draft.sampleQuantity&&<div><dt>Historical quantity</dt><dd>{draft.sampleQuantity}</dd></div>}</dl></details>}
             </div>
             <div hidden={activeTab!=='Sample Plate'} id="workspace-panel-Sample-Plate" role="tabpanel" aria-labelledby="workspace-tab-Sample-Plate">
             <SampleFormulationConfigurator
