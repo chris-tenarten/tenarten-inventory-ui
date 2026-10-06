@@ -1,4 +1,5 @@
 // @ts-nocheck -- shared Deno/local PDF renderer, covered by focused layout gates.
+import {displayProfileRatio} from './ratio-display.mjs';
 import {PDFDocument,StandardFonts,rgb} from 'pdf-lib';
 import {buildSamplePdfModel} from './sample-work-order-pdf-model.mjs';
 import {wrapMeasuredPdfText} from './pdf-layout.mjs';
@@ -23,7 +24,7 @@ export async function renderAudienceSample(snapshot){
  field('Job #',model.jobNumber);
  field('Requested',[model.requestedBy,model.requestedDate].filter(Boolean).join(' · '));
  field('Prepared / Approved',[model.preparedBy,model.approvedDate].filter(Boolean).join(' · '));
- field('Resin System',String(state.profile?.name||model.resinSupplier||'Captured formulation').replace(/(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)/g,(_,a,b)=>`${Number(a)}:${Number(b)}`));
+ field('Resin System',displayProfileRatio(state.profile?.name||model.resinSupplier||'Captured formulation'));
  field('MATRIX COLOR / #',model.resinColorNumber);
  field('Finish / Sealer',[model.finishRequested,model.sealer].filter(Boolean).join(' · '));
  y-=8;

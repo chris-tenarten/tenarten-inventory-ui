@@ -1,3 +1,4 @@
+import {displayProfileRatio} from './ratio-display.mjs';
 import {blendNumber as n} from './production-blend.mjs';
 const pick=(row,camel,snake)=>row?.[camel]??row?.[snake];
 const present=value=>value==null||String(value).trim()===''?'—':String(value);
@@ -9,7 +10,7 @@ export function productionBlendSheet(plan){
  const full=m.blendCount>=1;
  const dateValue=plan.status==='issued'?plan.issued_at:plan.created_at;
  const date=dateValue?new Date(dateValue):null;
- const profile=present(m.profile).replace(/(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)/g,(_,a,b)=>`${Number(a)}:${Number(b)}`).replace(/\s[-–]\s(?=\d+:)/g,' — ');
+ const profile=displayProfileRatio(present(m.profile)).replace(/\s[-–]\s(?=\d+:)/g,' — ');
  const rows=m.aggregates.map((row,index)=>{
   const captured=aggregates[row.sourceIndex??index]??{};
   const catalog=row.catalogSnapshot??{};

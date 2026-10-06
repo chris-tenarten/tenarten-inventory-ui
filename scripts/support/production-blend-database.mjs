@@ -23,6 +23,7 @@ export function blendClients(container,actor=admin){
  }catch(e){return {error:{message:e.message}};}};
  const client={rpc,auth:{getUser:async()=>({data:{user:{id:actor}}})},from:table=>{
   if(!['production_blend_plans','sample_issued_documents'].includes(table))throw new Error('Unexpected table');let filters=[];
-  const q={select:()=>q,eq:(key,value)=>{if(!['id','sample_id'].includes(key))throw new Error('Unexpected filter');filters.push(`${key}=${literal(value)}`);return q;},single:async()=>{try{return {data:parsed(`to_jsonb(t) from ${table} t where ${filters.join(' and ')}`)}}catch(e){return {error:e}};},order:async()=>({data:parsed(`coalesce(jsonb_agg(t order by created_at desc),'[]') from ${table} t where ${filters.join(' and ')}`)})};return q;
+  let projection='*',limit='';
+  const q={select:(columns='*')=>{projection=columns==='*'?'*':"id,status,created_at,model->>'identity' as identity,model->>'project' as project,model->>'job' as job,model->>'plannedQuantity' as planned_quantity";return q;},eq:(key,value)=>{if(!['id','sample_id','status'].includes(key))throw new Error('Unexpected filter');filters.push(`${key}=${literal(value)}`);return q;},single:async()=>{try{return {data:parsed(`to_jsonb(t) from ${table} t where ${filters.join(' and ')}`)}}catch(e){return {error:e}};},order:()=>q,limit:value=>{if(value!==1)throw new Error('Unexpected limit');limit='limit 1';return q;},then:(resolve,reject)=>{try{return Promise.resolve({data:parsed(`coalesce(jsonb_agg(t),'[]') from (select ${projection} from ${table} where ${filters.join(' and ')} order by created_at desc ${limit}) t`)}).then(resolve,reject);}catch(e){return Promise.reject(e).then(resolve,reject);}}};return q;
  }};return {user:client,service:{rpc}};
 }

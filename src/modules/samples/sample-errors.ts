@@ -12,8 +12,10 @@ const result=(operation:SampleOperation,error:unknown,kind:SampleErrorKind,messa
 
 export function translateSampleError(error:unknown,operation:SampleOperation):SampleActionError{
  const {code,rawMessage}=details(error);const lower=rawMessage.toLowerCase();
+ if(lower.startsWith('save cancelled'))return result(operation,error,'validation','Save cancelled.','No changes were saved. Review the identifier before trying again.');
+ if(lower.includes('color plate')&&lower.includes('80'))return result(operation,error,'validation','The Color Plate number is too long.','Use 80 characters or fewer.');
  if(lower.includes('prepared by'))return result(operation,error,'validation','Prepared By is required to generate a Sample Work Order.','Select or confirm Prepared By, then try again.');
- if(lower.includes('color plate')||lower.includes('tyy-nnnl'))return result(operation,error,'validation','The Color Plate number is not valid.','Use the TYY-NNNL format, for example T26-123A.');
+ if(lower.includes('color plate')||lower.includes('tyy-nnnl'))return result(operation,error,'validation','The Color Plate number is not valid.','Check the Color Plate number. Typical format: T26-123-A; other identifiers may be saved after review.');
  if(lower.includes('ratio')||lower.includes('4:1')||lower.includes('5:1'))return result(operation,error,'validation','Choose a valid Resin : Hardener ratio.','Select 5:1 or 4:1, then try again.');
  if(code==='42501'||code==='403'||lower.includes('permission')||lower.includes('access denied')||lower==='denied')return result(operation,error,'permission',operation==='formal-issue'?"You don't have permission to generate this Sample Work Order.":"You don't have permission to modify this Sample.",'Ask an administrator to confirm your TenOps access.');
  if(code==='23505'||code==='409'||lower.includes('changed after you opened')||lower.includes('stale')||lower.includes('conflict'))return result(operation,error,'conflict','This Sample changed after you opened it.','Reload the latest Draft before saving your changes.');

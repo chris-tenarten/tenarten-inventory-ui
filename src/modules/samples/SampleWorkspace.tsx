@@ -1,8 +1,12 @@
 "use client";
 
+import {displayProfileRatio} from '../../../supabase/functions/_shared/ratio-display.mjs';
 import { BusinessButton, BusinessSelect, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
 
 import {applyResinIdentity,synchronizeResin,resinConflict} from './resin-identity';
+import Help from './ContextHelp';
+import {preferredColorPlate,colorPlateWarning,colorPlateConflict} from './color-plate-identifier';
+import './sample-workspace.css';
 import SampleResinSystemSelector from './SampleResinSystemSelector';
 import {BATCH_FIRST_VERSION,batchFirstQuantities} from "./formulation";
 import { projectSampleBatch, formatBatchQuantity } from "./batch-projection";
@@ -108,9 +112,14 @@ export default function SampleWorkspace() {
   const [vendors, setVendors] = useState<VendorOption[]>([]);
   const [linkSelection, setLinkSelection] = useState("");
   const [draft, setDraft] = useState<SampleRecord | null>(null);
+  const [tabState,setTabState]=useState<{id:string;tab:string}>({id:'',tab:'Sample'});
+  const activeTab=tabState.id===(draft?.id??'')?tabState.tab:'Sample';
+  function activateTab(tab:string){setTabState({id:draft?.id??'',tab});if(tab==='Production')productionRef.current?.open();}
+  const [sampleHistoryExpanded,setSampleHistoryExpanded]=useState(false);
+  const [expandedRows,setExpandedRows]=useState<Record<string,boolean>>({});
   const [draftBaseline, setDraftBaseline] = useState("");
   const [quantityViewState, setQuantityViewState] = useState<{record: string | null; view: "batch" | "working"}>({record:null,view:"batch"});
-  const quantityView = quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "batch";
+  const quantityView = activeTab==='Formulation'?'batch':quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "batch";
   const batchFirst = draft?.formulation.calculationVersion === BATCH_FIRST_VERSION;
   const shopProjection = draft && batchFirst ? batchFirstQuantities(draft.formulation,draft.blendRows) : null;
   function changeBatchFiller(value: string | null) {
@@ -336,6 +345,14 @@ export default function SampleWorkspace() {
   }
   async function persistDraft(source: SampleRecord) {
     if(resinConflict(source))throw new Error('Resolve the Resin Color / # and Resin row difference before saving.');
+    const original=samples.find(item=>item.id===source.id)?.colorPlateNumber??'';
+    if(source.colorPlateNumber!==original){
+      const normalized=preferredColorPlate(source.colorPlateNumber);
+      const conflict=colorPlateConflict(samples,source.id,normalized);
+      if(conflict&&!window.confirm(`Another Sample uses ${conflict.colorPlateNumber}. These identifiers may refer to the same Color Plate. Save this Sample with that identifier anyway?`))throw new Error('Save cancelled. Review the Color Plate identifier.');
+      if(colorPlateWarning(normalized)&&!window.confirm('This does not match the usual Color Plate format. Save as entered?'))throw new Error('Save cancelled. Review the Color Plate identifier.');
+      source={...source,colorPlateNumber:normalized};
+    }
     let saved = source;
     let createdId = "";
     try {
@@ -759,7 +776,7 @@ export default function SampleWorkspace() {
                 </button>
               </div>
             </div>
-            <div aria-label="Sample actions" className="sticky top-[73px] z-20 border border-slate-300 bg-white p-3 shadow-sm">
+            <div aria-label="Sample actions" className="border border-slate-300 bg-white p-3 shadow-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <BusinessButton
                   type="button"
@@ -767,7 +784,7 @@ export default function SampleWorkspace() {
                   onClick={() => void save()}
                   className="h-10 border border-slate-400 px-4 text-sm font-bold"
                 >
-                  {busy === "save" ? "Saving…" : "Save"}
+                  {busy === "save" ? "Saving…" : "Save Changes"}
                 </BusinessButton>
                 <BusinessButton
                   type="button"
@@ -777,10 +794,16 @@ export default function SampleWorkspace() {
                 >
                   {busy === "issue" ? "Generating…" : "Generate Sample Work Order"}
                 </BusinessButton>
-                {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)||!draft.id} onClick={()=>productionRef.current?.open()} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
+                {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)||!draft.id} onClick={()=>activateTab('Production')} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
               </div>
             </div>
-            <ProductionBatchOutput ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
+            <nav role="tablist" aria-label="Sample workspace" className="sticky top-[73px] z-10 flex max-w-full gap-1 overflow-x-auto border-b border-slate-300 bg-white p-1">
+              {['Sample','Formulation','Sample Plate',...(auth.can('production_blend.manage')?['Production']:[]),'Documents'].map(tab=><button key={tab} id={`workspace-tab-${tab.replaceAll(' ','-')}`} role="tab" aria-selected={activeTab===tab} aria-controls={`workspace-panel-${tab.replaceAll(' ','-')}`} onClick={()=>activateTab(tab)} onKeyDown={event=>{const buttons=Array.from(event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role=tab]')??[]);const index=buttons.indexOf(event.currentTarget);const next=event.key==='ArrowRight'?(index+1)%buttons.length:event.key==='ArrowLeft'?(index-1+buttons.length)%buttons.length:event.key==='Home'?0:event.key==='End'?buttons.length-1:null;if(next!==null){event.preventDefault();buttons[next].focus();buttons[next].click();}}} className={`min-h-11 shrink-0 px-4 text-sm font-bold ${activeTab===tab?'border-b-2 border-blue-900 text-blue-900':'text-slate-600'}`}>{tab}</button>)}
+            </nav>
+            <div hidden={activeTab!=='Production'&&activeTab!=='Documents'} id="workspace-panel-Production" role="tabpanel" aria-labelledby="workspace-tab-Production">
+            <ProductionBatchOutput mode={activeTab==='Documents'?'documents':activeTab==='Production'?'planner':'hidden'} onDocuments={()=>activateTab('Documents')} onSample={()=>activateTab('Sample')} ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
+            </div>
+            <div hidden={activeTab!=='Sample'} id="workspace-panel-Sample" role="tabpanel" aria-labelledby="workspace-tab-Sample" className="space-y-4">
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
                 Sample context
@@ -851,15 +874,17 @@ export default function SampleWorkspace() {
                   className={field}
                 />
                 <label className={label}>
-                  Color Plate #
+                  Color Plate #<Help label="Color Plate number">Typical format: T26-258-A. Recognizable missing separators can be normalized; unusual identifiers can be saved after review.</Help>
                   <BusinessInput
+                    aria-label="Color Plate #"
                     value={draft.colorPlateNumber}
-                    onChange={(e) =>
-                      patch("colorPlateNumber", e.target.value.toUpperCase())
-                    }
-                    placeholder="T26-123A"
+                    onChange={(e) => patch("colorPlateNumber", e.target.value)}
+                    onBlur={()=>{if(draft.colorPlateNumber!==(samples.find(s=>s.id===draft.id)?.colorPlateNumber??''))patch("colorPlateNumber",preferredColorPlate(draft.colorPlateNumber));}}
+                    placeholder="T26-123-A"
                     className={field}
                   />
+                {colorPlateWarning(draft.colorPlateNumber)&&<span className="mt-1 block font-normal text-amber-800">{colorPlateWarning(draft.colorPlateNumber)}</span>}
+                  {colorPlateConflict(samples,draft.id,draft.colorPlateNumber)&&<span className="block font-normal text-amber-800">Another Sample uses an equivalent Color Plate identifier. Review before saving.</span>}
                 </label>
                 <SampleRecentValueInput
                   label="Finish Requested"
@@ -936,6 +961,8 @@ export default function SampleWorkspace() {
               </label>
             </section>
             <p className="text-xs text-slate-500">Sample Size / Quantity describe the document; they do not change calculated Sample Plate quantities.</p>
+            </div>
+            <div hidden={activeTab!=='Sample Plate'} id="workspace-panel-Sample-Plate" role="tabpanel" aria-labelledby="workspace-tab-Sample-Plate">
             <SampleFormulationConfigurator
               state={draft.formulation}
               rows={draft.blendRows}
@@ -947,6 +974,8 @@ export default function SampleWorkspace() {
               }}
               onApplyAdjustment={(formulation,targetFillerOz)=>setDraft(current=>current?{...current,formulation,blendRows:current.blendRows.map(row=>row.componentRole==='filler'?{...row,quantity:targetFillerOz,quantityProvenance:'manual'}:row)}:current)}
             />
+            </div>
+            <div hidden={activeTab!=='Sample'}>
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
                 Materials and setup
@@ -996,20 +1025,23 @@ export default function SampleWorkspace() {
                 setDraft(applyResinIdentity({...draft,blendRows:draft.blendRows.map(row=>row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})},formulation));
                 setMessage('Resin System applied. Batch Filler and shop quantities reset to this profile; materials and percentages are preserved.');
               }}/>
+            </section>
+            </div>
+            <section hidden={activeTab!=='Sample Plate'} className="border border-slate-300 bg-white p-4">
               <p className="text-sm font-bold">View quantities as</p>
               <div role="group" aria-label="View quantities as" className="mt-2 inline-flex gap-1">
                 {([['batch','Batch'],['working','Sample Plate']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
               </div>
               {quantityView==='batch' && batch && <div className="mt-4" data-testid="batch-summary">
                 <p className="text-xl font-bold">Batch chip target: {batch.target===null?'not captured':`${formatBatchQuantity(batch.target,'lb')} lb = 100%`}</p>
-                <p className="mt-1 text-sm">{draft.formulation.profile?.name} · Operator-authored percentages define this chip blend.</p>
+                <p className="mt-1 text-sm">{displayProfileRatio(draft.formulation.profile?.name)} · Operator-authored percentages define this chip blend.</p>
                 <p className="mt-2 font-bold">{batch.complete?'TOTAL':'Calculated chip subtotal'}: {batch.totalPercent}% · {formatBatchQuantity(batch.subtotalLb,'lb')} lb</p>
                 {batch.fraction!==null && <p className="text-sm">Working Pour fraction of Batch: {formatBatchQuantity(batch.fraction,'gal')}</p>}
                 {batch.issues.map(issue=><p role="status" className="mt-1 text-sm text-amber-800" key={issue}>{issue}</p>)}
                 <p className="mt-2 text-xs text-slate-600">{batchFirst ? "Canonical Batch quantities define Production. Working Pour and shop preparation quantities are downstream." : "Filler, Resin and Hardener are projected from this formulation. These equivalents do not prescribe whole-package rounding."}</p>
               </div>}
             </section>
-            <section data-sample-tutorial="aggregate-section" className="border border-slate-300 bg-white p-4">
+            <section hidden={activeTab!=='Formulation'&&activeTab!=='Sample Plate'} id="workspace-panel-Formulation" role="tabpanel" aria-labelledby="workspace-tab-Formulation" data-compact={activeTab==='Formulation'} data-sample-tutorial="aggregate-section" className="border border-slate-300 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="min-w-0 w-full">
                   <h2 className="text-sm font-bold uppercase tracking-wide">
@@ -1027,7 +1059,8 @@ export default function SampleWorkspace() {
                   </p>
                 </div>
               </div>
-              <div className="mt-3 space-y-3">
+              {activeTab==='Formulation'&&<div className="blend-column-headings mt-3 text-xs font-bold text-slate-600"><span>%</span><span>Color / Material</span><span>Size</span><span>Type</span><span>Vendor</span><span>Batch Qty<Help label="Batch Qty">Calculated from this material’s percentage × current Chip Mix per Batch.</Help></span><span>Actions</span></div>}
+              <div className="blend-rows mt-1 space-y-1">
                 {!displayRows.some(({row})=>row.componentRole==='aggregate') && (
                   <BusinessButton type="button" onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])} className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"><Plus className="h-4 w-4" />Add Aggregate</BusinessButton>
                 )}
@@ -1035,10 +1068,12 @@ export default function SampleWorkspace() {
                   <div key={row.id} className="space-y-3">
                   <article
                     data-sample-material-row={row.id}
+                    data-role={row.componentRole}
+                    data-details={Boolean(expandedRows[row.id])}
                     data-sample-tutorial={row.componentRole === "filler" ? "filler" : row.componentRole === "resin" || row.componentRole === "hardener" ? "resin-hardener" : undefined}
-                    className="border border-slate-200 bg-slate-50 p-3"
+                    className="blend-row border border-slate-200 bg-slate-50 p-3"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="blend-row-heading flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-600">
                         {row.componentRole === "aggregate"
                           ? `Aggregate ${displayIndex + 1}`
@@ -1054,6 +1089,7 @@ export default function SampleWorkspace() {
                           : " · Manual"}
                         {row.catalogItemId && catalogSelectionWarnings[row.id]?.itemId === row.catalogItemId && catalogSelectionWarnings[row.id]?.role === row.componentRole && <span className="ml-2 font-normal text-amber-700">Not classified for {row.componentRole.replace(/^./, (letter) => letter.toUpperCase())}. Selected manually; compatibility is not established.</span>}
                       </span>
+                      <div className="blend-row-actions flex items-center gap-1"><button type="button" aria-label={`More details for ${row.componentRole} ${displayIndex+1}`} aria-expanded={Boolean(expandedRows[row.id])} onClick={()=>setExpandedRows(current=>({...current,[row.id]:!current[row.id]}))} className="min-h-9 px-2 text-xs text-blue-900 underline">Details</button>
                       <BusinessButton
                         type="button"
                         disabled={draft.blendRows.length === 1}
@@ -1072,12 +1108,13 @@ export default function SampleWorkspace() {
                         className="h-11 w-11 border border-slate-300 bg-white text-red-700 disabled:opacity-30"
                       >
                         <Trash2 className="mx-auto h-4 w-4" />
-                      </BusinessButton>
+                      </BusinessButton></div>
                     </div>
-                    <div className="mt-2 grid items-start gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[minmax(7rem,0.85fr)_minmax(4.5rem,0.45fr)_minmax(10rem,1.35fr)_minmax(6rem,0.65fr)_minmax(7rem,0.8fr)_minmax(11rem,1.3fr)_minmax(9rem,1fr)]">
-                      <label className={label}>
+                    <div className="blend-row-fields mt-2 grid items-start gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[minmax(7rem,0.85fr)_minmax(4.5rem,0.45fr)_minmax(10rem,1.35fr)_minmax(6rem,0.65fr)_minmax(7rem,0.8fr)_minmax(11rem,1.3fr)_minmax(9rem,1fr)]">
+                      <label className={`${label} blend-role`}>
                         Formula Role
                         <BusinessSelect
+                          aria-label="Formula Role"
                           value={row.componentRole}
                           onChange={(event) => {
                             const componentRole = event.target
@@ -1115,8 +1152,8 @@ export default function SampleWorkspace() {
                         </BusinessSelect>
                       </label>
                       {row.componentRole === "aggregate" && (
-                        <label className={`${label} text-left`}>
-                          %
+                        <label className={`${label} text-left blend-percent`}>
+                          <span className="blend-field-label">%</span>
                           <BusinessInput
                             type="number"
                             min="0"
@@ -1134,9 +1171,9 @@ export default function SampleWorkspace() {
                         <span aria-hidden="true" className="hidden xl:block" />
                       )}
                       <label
-                        className={`${label} relative text-left`}
+                        className={`${label} relative text-left blend-color`}
                       >
-                        Color
+                        <span className="blend-field-label">Color</span>
                         <div className="relative">
                           <BusinessInput
                             role={row.componentRole==='resin'||row.componentRole==='hardener'?undefined:"combobox"}
@@ -1198,8 +1235,8 @@ export default function SampleWorkspace() {
                           </div>
                         )}
                       </label>
-                      <label className={`${label} text-left`}>
-                        Size
+                      <label className={`${label} text-left blend-size`}>
+                        <span className="blend-field-label">Size</span>
                         <BusinessInput
                           value={row.size}
                           onChange={(e) =>
@@ -1208,8 +1245,8 @@ export default function SampleWorkspace() {
                           className={field}
                         />
                       </label>
-                      <label className={`${label} text-left`}>
-                        Type
+                      <label className={`${label} text-left blend-type`}>
+                        <span className="blend-field-label">Type</span>
                         <BusinessInput
                           value={row.materialType}
                           onChange={(e) =>
@@ -1218,20 +1255,20 @@ export default function SampleWorkspace() {
                           className={field}
                         />
                       </label>
-                      {quantityView==='batch' ? <div className={`${label} text-left`}>
+                      {quantityView==='batch' ? <div className={`${label} text-left blend-quantity`}>
                         {row.componentRole==='filler' && shopProjection?.resolvedBatch.enabled ? <>
-                          <label className="block">Current formulation Filler (lb)
+                          <label className="relative block"><span className="blend-field-label">Current formulation Filler (lb)</span><span aria-hidden="true" className="pointer-events-none absolute right-2 top-2 text-xs text-slate-500">lb</span>
                             <BusinessInput aria-label="Batch Filler (lb)" type="number" min="0" step="0.000001" value={draft.formulation.batchFillerOverrideLb ?? String(shopProjection.resolvedBatch.baselineFiller ?? '')} onChange={e=>changeBatchFiller(e.target.value)} className={field}/>
                           </label>
                           <p className="mt-2 text-xs font-normal">Profile default: {shopProjection.resolvedBatch.baselineFiller} lb · {shopProjection.resolvedBatch.modified ? 'Modified' : 'Profile default'}</p>
                           <p className="mt-1 text-xs font-normal">Profile Chip Mix: {shopProjection.resolvedBatch.baselineChip} lb · Current Chip Mix: {shopProjection.resolvedBatch.target ?? '—'} lb</p>
                           {!shopProjection.resolvedBatch.valid && <p role="alert" className="text-xs text-red-700">Enter a nonnegative Filler quantity that leaves a positive Chip Mix.</p>}
                           {draft.formulation.batchFillerOverrideLb != null && <BusinessButton type="button" className="mt-2 min-h-10 border px-2 text-xs" onClick={()=>changeBatchFiller(null)}>Restore Profile Default</BusinessButton>}
-                        </> : <span>Batch quantity</span>}
+                        </> : <span className="blend-field-label">Batch quantity</span>}
                         <output aria-label={`${row.componentRole} Batch quantity`} title={batch?.rows[index]?.quantity===null?undefined:String(batch?.rows[index]?.quantity)} className="mt-1 block border border-slate-300 bg-slate-100 px-3 py-3 text-base font-bold">
                           {formatBatchQuantity(batch?.rows[index]?.quantity??null,batch?.rows[index]?.unit??'')} {batch?.rows[index]?.unit}
                         </output>
-                        <p className="mt-2 text-xs font-normal text-slate-600">{batch?.rows[index]?.note}</p>
+                        <p className="blend-provenance mt-2 text-xs font-normal text-slate-600">{batch?.rows[index]?.note}</p>
                         {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit quantity in Sample Plate view.</p>}
                       </div> : <>
                       <div className={`${label} text-left`}>
@@ -1324,8 +1361,8 @@ export default function SampleWorkspace() {
                         )}
                       </div>
                       </>}
-                      <label className={`${label} text-left`}>
-                        Vendor
+                      <label className={`${label} text-left blend-vendor`}>
+                        <span className="blend-field-label">Vendor</span>
                         <PurchasingVendorNameInput
                           id={`sample-material-vendor-${row.id}`}
                           value={row.vendor}
@@ -1337,21 +1374,23 @@ export default function SampleWorkspace() {
                         />
                       </label>
                     </div>
+                    {expandedRows[row.id]&&<div className="blend-row-details text-xs text-slate-600"><p>{row.catalogItemId?`Catalog-assisted · ${row.catalogSource??'Catalog'}`:'Manual material entry'}</p>{row.catalogSnapshot.package_context!=null&&<p>Captured package: {(() => {const value=row.catalogSnapshot.package_context as {amount?:string;unit?:string;container?:string};return [value.amount,value.unit,value.container].filter(Boolean).join(' · ')||'See selected catalog material';})()}</p>}</div>}
                   </article>
                   {row.componentRole === "aggregate" && displayRows[displayIndex+1]?.row.componentRole !== "aggregate" && (
-                    <BusinessButton
+                    <div><p className="my-2 text-right text-sm font-bold">Total: {quantityView==='batch'?`${batch?.totalPercent??0}% · ${formatBatchQuantity(batch?.subtotalLb??null,'lb')} lb`:`${formulationResult?.percentageTotal||'0'}% · ${formulationResult?.availableChipMixOz||'0'} oz`}</p><BusinessButton
                       type="button"
                       onClick={() => patch("blendRows", [...draft.blendRows, blankSampleBlendRow(draft.blendRows.length)])}
                       className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-dashed border-slate-400 bg-white px-3 text-sm font-bold sm:w-auto"
                     >
                       <Plus className="h-4 w-4" />
                       Add Aggregate
-                    </BusinessButton>
+                    </BusinessButton></div>
                   )}
                   </div>
                 ))}
               </div>
             </section>
+            <div hidden={activeTab!=='Sample'}>
             <label
               className={`${label} block border border-slate-300 bg-white p-4`}
             >
@@ -1364,6 +1403,9 @@ export default function SampleWorkspace() {
               />
             </label>
 
+            </div>
+            <div hidden={activeTab!=='Documents'} id="workspace-panel-Documents" role="tabpanel" aria-labelledby="workspace-tab-Documents" className="space-y-3">
+            <h2 className="font-bold">Recent Documents · Sample Work Order</h2>
             <SampleVersionHistory
               sample={draft}
               onSave={() => persistDraft(draft)}
@@ -1378,18 +1420,19 @@ export default function SampleWorkspace() {
             />
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
-                Generated Sample Work Orders
+                Sample Work Orders
               </h2>
+              {draft.issuedDocuments.length>1&&<button type="button" className="min-h-11 text-sm font-bold underline" aria-expanded={sampleHistoryExpanded} onClick={()=>setSampleHistoryExpanded(!sampleHistoryExpanded)}>{sampleHistoryExpanded?'Show recent only':`Show all Sample Work Orders (${draft.issuedDocuments.length})`}</button>}
               {draft.issuedDocuments.length ? (
                 <div className="mt-3 space-y-2">
-                  {draft.issuedDocuments.map((document) => (
+                  {[...draft.issuedDocuments].sort((a,b)=>b.issuedAt.localeCompare(a.issuedAt)).slice(0,sampleHistoryExpanded?undefined:1).map((document) => (
                     <div
                       key={document.id}
                       className="flex flex-wrap items-center gap-3 border border-slate-200 p-3"
                     >
                       <FileText className="h-5 w-5 text-slate-500" />
                       <span className="min-w-0 flex-1 text-sm">
-                        <strong>{draft.colorPlateNumber || draft.sampleName || "Sample"} · Document {document.issueNumber}</strong>
+                        <strong>{document.displayIdentity||'Sample Work Order'} · {new Date(document.generatedAt || document.issuedAt).toLocaleString()}</strong>
                         <span className="block text-xs text-slate-500">
                           {new Date(document.generatedAt || document.issuedAt).toLocaleString()}{document.generationStatus !== "generated" ? " · " : ""}
                           {document.generationStatus === 'generated' ? '' : document.generationStatus === 'generating' || busy === `generate:${document.id}` ? 'Generating…' : document.generationStatus === 'failed' ? 'PDF unavailable — retry' : 'PDF delivery incomplete — retry'}
@@ -1441,6 +1484,7 @@ export default function SampleWorkspace() {
                 </p>
               )}
             </section>
+            </div>
             <footer className="flex flex-wrap items-center gap-3 border border-slate-300 bg-white p-3">
               {draft.issuedDocuments.length ? (
                 auth.profile?.role === "admin" ? (

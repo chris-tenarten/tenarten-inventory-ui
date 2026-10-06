@@ -4,6 +4,6 @@ export function editBlendPlanning(inputs:BlendPlannerInputs, field:'batchCount'|
   if(field==='blendSize')return {...inputs,blendSize:value};
   const adjustment=Number(inputs.plannedQuantity)-Number(inputs.batchCount)*chipsPerBatch;
   return field==='adjustment'
-    ? {...inputs,plannedQuantity:value.trim()===''?'':String(Number(inputs.batchCount)*chipsPerBatch+Number(value))}
+    ? {...inputs,plannedQuantity:String(Number(inputs.batchCount)*chipsPerBatch+Number(value))}
     : {...inputs,batchCount:value,plannedQuantity:value.trim()===''?'':String(Number(value)*chipsPerBatch+adjustment)};
 }

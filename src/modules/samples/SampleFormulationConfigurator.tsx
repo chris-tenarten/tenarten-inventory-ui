@@ -1,5 +1,6 @@
 "use client";
 
+import {displayProfileRatio} from '../../../supabase/functions/_shared/ratio-display.mjs';
 import { BusinessButton, BusinessInput, BusinessSelect } from '@/components/BusinessWriteControls';
 
 import {resolveBatchFiller} from "../../../supabase/functions/_shared/sample-batch-first.mjs";
@@ -103,7 +104,7 @@ export default function SampleFormulationConfigurator({
   };
   const patchProfile = (changes: Partial<NonNullable<SampleFormulationState["profile"]>>) => {
     if (!state.profile) return;
-    onChange({...state,profile:{...state.profile,...changes,id:'custom',name:state.profile.id==='custom'?state.profile.name:`${state.profile.name} (Custom)`},profileProvenance:'custom'});
+    onChange({...state,profile:{...state.profile,...changes,id:'custom',name:state.profile.id==='custom'?state.profile.name:`${displayProfileRatio(state.profile.name)} (Custom)`},profileProvenance:'custom'});
   };
   const resetWeightPerSf = () =>
     patch({
@@ -142,7 +143,7 @@ export default function SampleFormulationConfigurator({
               <dt className="font-bold text-slate-600">Batch Basis</dt>
               <dd className="mt-1 font-semibold">{batchTarget === null ? "Batch basis not captured" : `${formatBatchQuantity(batchTarget, "lb")} lb chips = 100%`}</dd>
               {batchReference && <dd data-testid="batch-reference-yield" className="mt-1 text-xs text-slate-600">{formatBatchQuantity(batchReference.coverageSf, "SF")} SF @ {inches(String(batchReference.referenceThicknessIn))} · {formatBatchQuantity(batchReference.chipRateLbSf, "lb")} lb chips/SF</dd>}
-              {batchTarget !== null && <dd className="mt-1 text-xs text-slate-500">{state.profile?.name}</dd>}
+              {batchTarget !== null && <dd className="mt-1 text-xs text-slate-500">{displayProfileRatio(state.profile?.name)}</dd>}
             </div>
             <div className="min-w-0">
               <dt className="font-bold text-slate-600">Working Pour</dt>

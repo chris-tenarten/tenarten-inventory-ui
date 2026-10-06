@@ -36,6 +36,7 @@ try {
  const inputs={batchCount:1,plannedQuantity:230,blendSize:1000};
  const response=await request({action:'blend-issue',sampleId:id,inputs});assert.equal(response.status,200,await response.clone().text());const first=await response.json();assert.equal(first.status,'issued');assert.equal(call('count(*) from production_blend_plans'),'1');
  const second=await(await request({action:'blend-issue',sampleId:id,inputs})).json();assert.notEqual(second.id,first.id);assert.equal(call('count(*) from production_blend_plans'),'2');
+ const metadata=await(await request({action:'blend-list',sampleId:id,metadata:true})).json();assert.equal(metadata.length,2);assert(metadata.every(row=>!('model' in row)&&!('source_snapshot' in row)&&row.identity));const latest=await(await request({action:'blend-list',sampleId:id,metadata:true,latest:true})).json();assert.equal(latest.length,1);assert.equal(latest[0].id,second.id);assert.equal(editBlendPlanning({batchCount:'1',plannedQuantity:'230',blendSize:'1000'},'adjustment','',180).plannedQuantity,'180');
  rows[0].catalog_snapshot.package_context.amount='25';save();sql(name,"update sample_operational_profiles set description='Later local profile edit'");
  assert.deepEqual(parse(`to_jsonb(p) from production_blend_plans p where id=${literal(first.id)}`),first);
  assert.equal((await request({action:'blend-pdf',planId:first.id})).status,200);assert.equal((await request({action:'blend-save',planId:first.id,revision:first.revision,inputs})).status,422);
