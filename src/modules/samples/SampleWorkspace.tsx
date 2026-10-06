@@ -372,7 +372,10 @@ export default function SampleWorkspace() {
       setBusy("");
     }
   }
+  const [blendDirty,setBlendDirty]=useState(false);
   function requestClose() {
+    if(blendDirty&&!window.confirm("Discard unsaved Blend planning changes?"))return;
+    setBlendDirty(false);
     if (!draft) return;
     if (JSON.stringify(draft) === draftBaseline) {
       setDraft(null);
@@ -466,13 +469,7 @@ export default function SampleWorkspace() {
     }
   }
   async function issue() {
-    if (
-      !draft ||
-      !window.confirm(
-        "Issue the current Sample Work Order?\n\nThis creates an immutable historical snapshot. The Sample may later gain context without changing this issued form.",
-      )
-    )
-      return;
+    if (!draft) return;
     setBusy("issue");
     setError("");
     const readiness = validateSampleForOutput(draft, "formal-issue");
@@ -489,7 +486,7 @@ export default function SampleWorkspace() {
       showOperationError(
         caught,
         "save-draft",
-        "Sample not issued — Draft could not be saved.",
+        "Sample Work Order not generated — changes could not be saved.",
       );
       setBusy("");
       return;
@@ -512,12 +509,12 @@ export default function SampleWorkspace() {
         url,
         filename: `${draft.colorPlateNumber || "Sample-Work-Order"}.pdf`,
       });
-      setMessage("Sample Work Order issued and generated.");
+      setMessage("Sample Work Order generated.");
     } catch (caught) {
       showOperationError(
         caught,
         "issued-pdf",
-        "Sample issued, but its PDF could not be generated. The issued snapshot is safe. Use Generate PDF to retry.",
+        "Document captured, but its PDF could not be opened. Use Retry PDF in Generated Documents; do not generate another document to retry.",
       );
       await reload()
         .then((next) =>
@@ -1343,7 +1340,7 @@ export default function SampleWorkspace() {
                 className={area}
               />
             </label>
-            <ProductionBatchOutput key={`batch-output:${draft.id}`} sample={draft} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
+            <ProductionBatchOutput key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
             <SampleVersionHistory
               sample={draft}
               onSave={() => persistDraft(draft)}
@@ -1358,7 +1355,7 @@ export default function SampleWorkspace() {
             />
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
-                Issued Sample Work Orders
+                Generated Sample Work Orders
               </h2>
               {draft.issuedDocuments.length ? (
                 <div className="mt-3 space-y-2">
@@ -1369,7 +1366,7 @@ export default function SampleWorkspace() {
                     >
                       <FileText className="h-5 w-5 text-slate-500" />
                       <span className="min-w-0 flex-1 text-sm">
-                        <strong>Issue {document.issueNumber}</strong>
+                        <strong>{draft.colorPlateNumber || draft.sampleName || "Sample"} · Document {document.issueNumber}</strong>
                         <span className="block text-xs text-slate-500">
                           {new Date(document.issuedAt).toLocaleString()} ·{" "}
                           {document.generationStatus}
@@ -1409,7 +1406,7 @@ export default function SampleWorkspace() {
                           {busy === `generate:${document.id}` ||
                           document.generationStatus === "generating"
                             ? "Generating…"
-                            : "Generate PDF"}
+                            : "Retry PDF"}
                         </BusinessButton>
                       )}
                     </div>
@@ -1417,7 +1414,7 @@ export default function SampleWorkspace() {
                 </div>
               ) : (
                 <p className="mt-2 text-sm text-slate-500">
-                  No issued forms yet. Preview does not create history.
+                  No generated Sample Work Orders yet.
                 </p>
               )}
             </section>
@@ -1478,7 +1475,7 @@ export default function SampleWorkspace() {
                   onClick={() => void issue()}
                   className="h-10 border border-blue-900 bg-white px-4 text-sm font-bold text-blue-950"
                 >
-                  {busy === "issue" ? "Issuing…" : "Formal Issue"}
+                  {busy === "issue" ? "Generating…" : "Generate Sample Work Order"}
                 </BusinessButton>
               </div>
             </footer>

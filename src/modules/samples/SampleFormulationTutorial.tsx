@@ -71,7 +71,7 @@ const steps: Record<SampleTutorialStep, StepDefinition> = {
   review: {
     title: "Review what the shop will measure",
     anchor: "working-sheet",
-    body: <><p>Review the quantities and units before saving: Aggregate and Filler use oz; Resin and Hardener use fl oz.</p><p className="mt-2">Generate Working Sheet creates the operational worksheet marked WORKING SAMPLE - NOT ISSUED.</p><p className="mt-2">Save Version creates a checkpoint you can restore later. Formal Issue is separate and creates an immutable issued snapshot.</p></>,
+    body: <><p>Review the quantities and units before saving: Aggregate and Filler use oz; Resin and Hardener use fl oz.</p><p className="mt-2">Generate Sample Work Order captures and opens a document, available later in Generated Sample Work Orders.</p><p className="mt-2">Save Version creates a checkpoint you can restore later. Checkpoints and previews are optional; they do not create Generated Documents.</p></>,
     note: <>The tutorial does not save, generate, version, or issue anything. Use the normal controls when you are ready.</>,
     next: "Finish Tutorial",
   },

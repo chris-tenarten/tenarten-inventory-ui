@@ -87,6 +87,7 @@ export function buildSamplePdfModel(snapshot, documentVersion = SAMPLE_PDF_VERSI
     formulationSummary,
     calculationVersion: value(formulation, "calculationVersion"),
     rows: orderedRows.map((row,index) => ({
+      componentRole: value(row,"componentRole","component_role"),
       percentage: value(row, "percentage"),
       color: value(row, "color"),
       size: value(row, "size"),

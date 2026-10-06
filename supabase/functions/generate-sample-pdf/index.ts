@@ -1,5 +1,6 @@
 // @ts-nocheck -- Deno Edge Function; validated through its local renderer fixture.
 import { handleProductionBlend } from '../_shared/production-blend-handler.ts';
+import {renderAudienceSample,AUDIENCE_SAMPLE_VERSION} from '../_shared/sample-audience-pdf.ts';
 import {renderCompactSample,COMPACT_SAMPLE_VERSION} from '../_shared/sample-working-compact-pdf.ts';
 import { renderProductionBatch } from "../_shared/production-batch-pdf.ts";
 import { createClient } from "@supabase/supabase-js";
@@ -28,7 +29,8 @@ const cors = (origin: string) => ({
 const json = (body: unknown, status: number, headers: Record<string, string>) =>
   new Response(JSON.stringify(body), { status, headers: { ...headers, "Content-Type": "application/json" } });
 export async function renderSampleWorkOrder(snapshot: Record<string, unknown>, documentVersion = SAMPLE_PDF_VERSION) {
-  if ((snapshot.formulation ?? snapshot.formulation_state)?.calculationVersion === 'sample-formulation-v5-batch-first' && documentVersion === SAMPLE_PDF_VERSION) documentVersion = COMPACT_SAMPLE_VERSION;
+  if ((snapshot.formulation ?? snapshot.formulation_state)?.calculationVersion === 'sample-formulation-v5-batch-first' && documentVersion === SAMPLE_PDF_VERSION) documentVersion = AUDIENCE_SAMPLE_VERSION;
+  if(documentVersion===AUDIENCE_SAMPLE_VERSION)return renderAudienceSample(snapshot);
   if(documentVersion===COMPACT_SAMPLE_VERSION)return renderCompactSample(snapshot);
   const model = buildSamplePdfModel(snapshot, documentVersion);
   const pdf = await PDFDocument.create();

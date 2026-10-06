@@ -152,8 +152,9 @@ export default function SampleVersionHistory({
     }
   };
   return (
-    <section data-sample-tutorial="working-sheet" className="border border-slate-300 bg-white p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <details data-sample-tutorial="working-sheet" className="border border-slate-300 bg-white p-4">
+      <summary className="cursor-pointer text-sm font-bold">Formula checkpoints and previews</summary>
+      <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide">
             <History className="h-4 w-4" />
@@ -161,7 +162,7 @@ export default function SampleVersionHistory({
           </h2>
           <p className="mt-1 text-xs text-slate-500">
             Current Draft is what you are editing. Saved Versions are reusable
-            checkpoints, not formal issues.
+            checkpoints, separate from Generated Documents.
           </p>
         </div>
         <button
@@ -171,7 +172,7 @@ export default function SampleVersionHistory({
           className="inline-flex min-h-11 items-center gap-2 border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white"
         >
           <Eye className="h-4 w-4" />
-          Generate Working Sheet
+          Preview current Sample
         </button>
       </div>
       {error && (
@@ -228,7 +229,7 @@ export default function SampleVersionHistory({
                 className="inline-flex min-h-9 items-center gap-1 border border-slate-300 px-3 text-xs font-bold"
               >
                 <Eye className="h-3.5 w-3.5" />
-                Working Sheet
+                Preview checkpoint
               </button>
               <BusinessButton
                 type="button"
@@ -245,6 +246,6 @@ export default function SampleVersionHistory({
           <p className="text-sm text-slate-500">No saved versions yet.</p>
         )}
       </div>
-    </section>
+    </details>
   );
 }
