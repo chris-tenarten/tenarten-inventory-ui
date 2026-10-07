@@ -2,6 +2,17 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { getBrandingConfig, isDevBrandingEnabled } from "../src/lib/dev-branding.mjs";
 
+import { resolveDevBranding } from "../src/lib/branding-environment.mjs";
+assert.equal(resolveDevBranding(), false);
+assert.equal(resolveDevBranding({requested:'true',nodeEnv:'production'}), false);
+assert.equal(resolveDevBranding({requested:'true',nodeEnv:'development'}), true);
+assert.equal(resolveDevBranding({requested:'false',nodeEnv:'development'}), false);
+for (const pagesUrl of ['https://tenops.pages.dev','https://123.tenops.pages.dev','invalid','https://tendev.pages.dev.evil.example']) {
+  assert.equal(resolveDevBranding({requested:'true',nodeEnv:'development',pagesUrl}), false);
+}
+for (const pagesUrl of ['https://tendev.pages.dev','https://123.tendev.pages.dev']) {
+  assert.equal(resolveDevBranding({requested:'true',nodeEnv:'production',pagesUrl}), true);
+}
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 const [shell, appBranding, overlays, layout, settings, appearance, styles] = await Promise.all([
   read("src/app/client-layout-shell.tsx"),
