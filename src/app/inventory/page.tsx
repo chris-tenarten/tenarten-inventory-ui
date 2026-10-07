@@ -1,5 +1,7 @@
 'use client';
 
+import SuggestionInput from '@/components/SuggestionInput';
+
 import { BusinessButton, BusinessSelect, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
 
 import { loadCompleteRows } from '@/lib/complete-rows';
@@ -2635,7 +2637,7 @@ export default function InventoryPage() {
                 <div className="mb-4 grid gap-3 md:grid-cols-4">
                   <div>
                     <label className={labelClass}>Vendor *</label>
-                    <BusinessInput value={pendingReceivalForm.vendor} onChange={(event) => updatePendingReceivalForm('vendor', event.target.value)} list="pending-inventory-vendor-options" className={fieldClass} />
+                    <SuggestionInput ariaLabel="Vendor" value={pendingReceivalForm.vendor} onChange={(value) => updatePendingReceivalForm('vendor', value)} options={vendorOptions} className={fieldClass} />
                   </div>
                   <div>
                     <label className={labelClass}>Ordered By *</label>
@@ -2680,15 +2682,15 @@ export default function InventoryPage() {
                       <div className="grid gap-3 md:grid-cols-4">
                         <div>
                           <label className={labelClass}>Vendor Override</label>
-                          <BusinessInput placeholder={pendingReceivalForm.vendor || 'Uses order vendor'} value={line.vendor} onChange={(event) => updatePendingReceivalLine(line.id, 'vendor', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-vendor-options" className={fieldClass} />
+                          <SuggestionInput ariaLabel="Vendor Override" placeholder={pendingReceivalForm.vendor || 'Uses order vendor'} value={line.vendor} onChange={(value) => updatePendingReceivalLine(line.id, 'vendor', value)} onBlur={() => autofillPendingReceivalLine(line.id)} options={vendorOptions} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Material</label>
-                          <BusinessInput value={line.material} onChange={(event) => updatePendingReceivalMaterial(line.id, event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-material-options" className={fieldClass} />
+                          <SuggestionInput ariaLabel="Material" value={line.material} onChange={(value) => updatePendingReceivalMaterial(line.id, value)} onBlur={() => autofillPendingReceivalLine(line.id)} options={materialOptions} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Size</label>
-                          <BusinessInput value={line.size} onChange={(event) => updatePendingReceivalLine(line.id, 'size', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-size-options" className={fieldClass} />
+                          <SuggestionInput ariaLabel="Size" value={line.size} onChange={(value) => updatePendingReceivalLine(line.id, 'size', value)} onBlur={() => autofillPendingReceivalLine(line.id)} options={sizeOptions} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Quantity Expected</label>
@@ -2696,15 +2698,15 @@ export default function InventoryPage() {
                         </div>
                         <div>
                           <label className={labelClass}>Unit</label>
-                          <BusinessInput value={line.unit} onChange={(event) => updatePendingReceivalLine(line.id, 'unit', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-unit-options" className={fieldClass} />
+                          <SuggestionInput ariaLabel="Unit" value={line.unit} onChange={(value) => updatePendingReceivalLine(line.id, 'unit', value)} onBlur={() => autofillPendingReceivalLine(line.id)} options={unitOptions} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Location</label>
-                          <BusinessInput value={line.location} onChange={(event) => updatePendingReceivalLine(line.id, 'location', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-location-options" className={fieldClass} />
+                          <SuggestionInput ariaLabel="Location" value={line.location} onChange={(value) => updatePendingReceivalLine(line.id, 'location', value)} onBlur={() => autofillPendingReceivalLine(line.id)} options={locationOptions} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Category</label>
-                          <BusinessInput value={line.category} onChange={(event) => updatePendingReceivalLine(line.id, 'category', event.target.value)} onBlur={() => autofillPendingReceivalLine(line.id)} list="pending-inventory-category-options" className={fieldClass} />
+                          <SuggestionInput ariaLabel="Category" value={line.category} onChange={(value) => updatePendingReceivalLine(line.id, 'category', value)} onBlur={() => autofillPendingReceivalLine(line.id)} options={categoryOptions} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Pallet #</label>
@@ -3483,15 +3485,15 @@ export default function InventoryPage() {
                       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                         <div>
                           <label className={labelClass}>Vendor</label>
-                          <BusinessInput value={line.vendor} onChange={(event) => updateStockLine(line.id, 'vendor', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-vendor-options" className={fieldClass} />
+                          <SuggestionInput ariaLabel="Vendor" value={line.vendor} onChange={(value) => updateStockLine(line.id, 'vendor', value)} onBlur={() => autofillStockLine(line.id)} options={vendorOptions} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Material</label>
-                          <BusinessInput value={line.material} onChange={(event) => updateStockLine(line.id, 'material', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-material-options" className={fieldClass} />
+                          <SuggestionInput ariaLabel="Material" value={line.material} onChange={(value) => updateStockLine(line.id, 'material', value)} onBlur={() => autofillStockLine(line.id)} options={materialOptions} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Size</label>
-                          <BusinessInput value={line.size} onChange={(event) => updateStockLine(line.id, 'size', event.target.value)} onBlur={() => autofillStockLine(line.id)} list="inventory-size-options" className={fieldClass} />
+                          <SuggestionInput ariaLabel="Size" value={line.size} onChange={(value) => updateStockLine(line.id, 'size', value)} onBlur={() => autofillStockLine(line.id)} options={sizeOptions} className={fieldClass} />
                         </div>
                         <div>
                           <label className={labelClass}>Quantity</label>

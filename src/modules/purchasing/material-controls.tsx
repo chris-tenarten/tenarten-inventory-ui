@@ -2,6 +2,8 @@
 
 import { BusinessSelect, BusinessInput } from '@/components/BusinessWriteControls';
 
+import SuggestionInput from '@/components/SuggestionInput';
+
 import { useState } from "react";
 import type { VendorOption } from "./types";
 
@@ -68,19 +70,5 @@ export function PurchasingVendorNameInput({
   onChange(value: string): void;
   className: string;
 }) {
-  const optionsId = `${id}-options`;
-  return (
-    <>
-      <BusinessInput
-        id={id}
-        list={optionsId}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className={className}
-      />
-      <datalist id={optionsId}>
-        {vendors.map((vendor) => <option key={vendor.id} value={vendor.name} />)}
-      </datalist>
-    </>
-  );
+  return <SuggestionInput id={id} value={value} options={vendors.map(vendor=>vendor.name)} onChange={onChange} className={className}/>;
 }

@@ -29,6 +29,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
  const [source,setSource]=useState('working'),[snapshot,setSnapshot]=useState<Snapshot|null>(null),[plans,setPlans]=useState<HistoryEntry[]>([]);
  const [latest,setLatest]=useState<HistoryEntry[]>([]),[historyLoaded,setHistoryLoaded]=useState(false),[historyExpanded,setHistoryExpanded]=useState(false);
  const [inputs,setInputs]=useState<Inputs>({batchCount:'1',plannedQuantity:'',blendSize:'1000'});
+ const [adjustmentText,setAdjustmentText]=useState('0');
  const [dirty,setDirty]=useState(false),[pending,setPending]=useState<Plan|null>(null);
  const lock=useRef(false),section=useRef<HTMLElement>(null);
  useImperativeHandle(ref,()=>({open:()=>{section.current?.scrollIntoView({behavior:'smooth',block:'start'});section.current?.focus({preventScroll:true});}}));
@@ -47,7 +48,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
  async function capture(selected=source){
   const context=await request({action:'blend-context',sampleId:sample.id,...(selected==='working'?{}:{documentId:selected})});
   const probe=buildProductionBlend(context.snapshot,{batchCount:1,plannedQuantity:1,blendSize:1000});
-  setSnapshot(context.snapshot);setInputs({batchCount:'1',plannedQuantity:String(probe.batchChipLb),blendSize:'1000'});setDirty(false);
+  setAdjustmentText('0');setSnapshot(context.snapshot);setInputs({batchCount:'1',plannedQuantity:String(probe.batchChipLb),blendSize:'1000'});setDirty(false);
  }
  useEffect(()=>{
   if(mode!=='planner'||!canManage||!sample.id)return;
@@ -55,7 +56,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
   request({action:'blend-list',sampleId:sample.id,metadata:true,latest:true}).then(data=>{if(!cancelled)setLatest(data);}).catch(e=>{if(!cancelled)setError(e.message);});
   if(!missingCurrentBasis)request({action:'blend-context',sampleId:sample.id}).then(context=>{
    const probe=buildProductionBlend(context.snapshot,{batchCount:1,plannedQuantity:1,blendSize:1000});
-   if(!cancelled){setSnapshot(context.snapshot);setInputs({batchCount:'1',plannedQuantity:String(probe.batchChipLb),blendSize:'1000'});}
+   if(!cancelled){setAdjustmentText('0');setSnapshot(context.snapshot);setInputs({batchCount:'1',plannedQuantity:String(probe.batchChipLb),blendSize:'1000'});}
   }).catch(e=>{if(!cancelled)setError(e.message);});
   return()=>{cancelled=true;};
  },[mode,canManage,sample.id,missingCurrentBasis]);
@@ -70,7 +71,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
   const saved:Plan=await request({action:'blend-issue',sampleId:sample.id,...(source==='working'?{}:{documentId:source}),expectedSourceUpdatedAt:context.snapshot.updated_at,inputs});
   setPending(saved);setDirty(false);await refresh();await view(saved);setPending(null);
  });}
- const edit=(field:'batchCount'|'adjustment'|'blendSize',value:string)=>{if(!snapshot)return;const basis=buildProductionBlend(snapshot,{batchCount:1,plannedQuantity:1,blendSize:1000}).batchChipLb;setInputs(current=>editBlendPlanning(current,field,value,Number(basis)));setDirty(true);};
+ const edit=(field:'batchCount'|'adjustment'|'blendSize',value:string)=>{if(!snapshot)return;const basis=buildProductionBlend(snapshot,{batchCount:1,plannedQuantity:1,blendSize:1000}).batchChipLb;if(field==='adjustment')setAdjustmentText(value);setInputs(current=>field==='batchCount'?{...current,batchCount:value,plannedQuantity:value.trim()===''?'':String(Number(value)*Number(basis)+Number(adjustmentText))}:editBlendPlanning(current,field,value,Number(basis)));setDirty(true);};
  if(!canManage||mode==='hidden')return null;
  if(mode==='documents')return <section className="border bg-white p-4"><h2 className="font-bold">Recent Documents · Blend Sheet</h2>{!historyLoaded?<p>Loading generated history…</p>:<>{plans.filter(p=>p.status==='issued').slice(0,1).map(p=><button key={p.id} type="button" className="my-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {p.project||p.job} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()} — View</button>)}<details onToggle={e=>setHistoryExpanded(e.currentTarget.open)}><summary className="min-h-11 cursor-pointer text-sm font-bold">Blend Sheets ({plans.filter(p=>p.status==='issued').length})</summary>{historyExpanded&&plans.filter(p=>p.status==='issued').slice(1).map(p=><button key={p.id} type="button" className="my-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {p.project||p.job} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()}</button>)}<p className="text-xs text-slate-500">Newest sheet appears above.</p></details>{plans.some(p=>p.status==='working')&&<details><summary>Legacy history</summary>{plans.filter(p=>p.status==='working').map(p=><button key={p.id} type="button" className="my-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()}</button>)}</details>}</>}{error&&<p role="alert">{error}</p>}</section>;
  const button='min-h-11 border border-blue-900 px-3 py-2 text-sm font-bold disabled:opacity-40';
@@ -91,7 +92,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
       <p className="mt-2 text-sm">Calculated Chips: <strong>{basis&&!fieldErrors.batchCount?n(Number(inputs.batchCount)*basis):'—'} lb</strong></p>
      </div>
      <div className="border border-slate-200 p-3"><h3 className="mb-3 font-bold">2 — Chip adjustment</h3>
-      <label className="block text-sm font-bold">ADJ (lb)<Help label="ADJ">Additional chips added to the calculated Batch requirement.</Help><input aria-label="ADJ (lb)" type="number" step="any" value={inputs.plannedQuantity===''?'':snapshot?Number(inputs.plannedQuantity)-Number(inputs.batchCount)*Number(buildProductionBlend(snapshot,{batchCount:1,plannedQuantity:1,blendSize:1000}).batchChipLb):''} onChange={e=>edit('adjustment',e.target.value)} className="mt-2 min-h-11 w-full border px-2"/></label>
+      <label className="block text-sm font-bold">ADJ (lb)<Help label="ADJ">Additional chips added to the calculated Batch requirement.</Help><input aria-label="ADJ (lb)" type="number" step="any" value={adjustmentText} onBlur={()=>{if(!adjustmentText.trim())setAdjustmentText('0');}} onChange={e=>edit('adjustment',e.target.value)} className="mt-2 min-h-11 w-full border px-2"/></label>
       {fieldErrors.adjustment&&<p role="alert" className="text-sm text-red-800">{fieldErrors.adjustment}</p>}
       <p className="mt-3 text-sm">Total Chips Required<Help label="Total Chips Required">Final chip quantity to prepare after ADJ.</Help>: <strong>{shown?n(shown.plannedQuantity):'—'} lb</strong></p>
      </div>

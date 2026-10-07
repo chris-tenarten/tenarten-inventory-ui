@@ -1136,8 +1136,9 @@ export default function SampleWorkspace() {
                             onFocus={() => {
                               if(['resin','hardener'].includes(row.componentRole))return;
                               setCatalogRow(index);
-                              setCatalogQuery(row.color);
+                              setCatalogQuery("");
                             }}
+                            onClick={()=>{if(!['resin','hardener'].includes(row.componentRole)&&catalogRow!==index){setCatalogRow(index);setCatalogQuery('');}}}
                             onBlur={(event) => {
                               if (event.relatedTarget instanceof Element && event.relatedTarget.closest("article") === event.currentTarget.closest("article")) return;
                               setCatalogRow((current) => current === index ? null : current);
