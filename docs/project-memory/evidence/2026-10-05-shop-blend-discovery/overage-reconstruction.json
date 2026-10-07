@@ -1,0 +1,313 @@
+{
+  "date": "2026-10-05",
+  "scope": "Investigation only; four unique completed Blend Sheets. No additional completed source found in expanded local search. Not an exhaustive company archive.",
+  "counting": "12 local workbook copies / 10 unique SHA-256; 83-page Sample compendium is not 83 Blend Sheets; missing external workbook names excluded.",
+  "terminology": "Unadjusted chip subtotal uses printed ADJD BATCHES; no earlier pre-adjustment Batch count recovered. Roundup means minimum multiple at or above subtotal; exact multiples need zero.",
+  "rows": [
+    {
+      "job": "TAMU",
+      "plate": "T25-203-B",
+      "printed_adjusted_batches": 33,
+      "chip_lb_per_batch": 150,
+      "unadjusted_chip_lb": 4950,
+      "adj_status": "present_nonzero",
+      "adj_lb": 50,
+      "final_chip_lb": 5000,
+      "blend_count": 5,
+      "implied_lb_per_blend": 1000,
+      "adj_pct_of_unadjusted": 1.0101010101010102,
+      "adjusted_factor": 1.0101010101010102,
+      "next_1000_roundup_adj_lb": 50,
+      "roundup_matches": true,
+      "resin_a_gal": 165,
+      "resin_b_gal": 33,
+      "binder_follows_printed_batch_count": true,
+      "printed_job_number": "25-0317",
+      "printed_date": "2026-05-18",
+      "printed_system_color": "SW / 7044 AMAZING GRAY",
+      "product_context": "No matched Production geometry recovered",
+      "bags_per_blend_by_material": [
+        2,
+        6,
+        4,
+        4,
+        4
+      ],
+      "required_bags_by_material": [
+        10,
+        30,
+        20,
+        20,
+        20
+      ],
+      "source": "source-inventory.json: recovered_text",
+      "source_formula_ownership": "Unknown: no native completed Blend workbook recovered",
+      "waste_overage_notes": "ADJ label only; no explanation of waste or rounding",
+      "adj_lb_per_printed_batch": 1.5151515151515151,
+      "adj_lb_per_blend": 10.0,
+      "required_total_50lb_bags": 100.0,
+      "bags_per_blend": 20,
+      "whole_total_bags": true,
+      "even_total_bags": true,
+      "whole_blends": true,
+      "whole_or_half_blends": true,
+      "fractional_material_bags_required": false,
+      "rounding_tests": {
+        "50": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 0,
+          "minimum_roundup_matches": false
+        },
+        "100": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 50,
+          "minimum_roundup_matches": true
+        },
+        "500": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 50,
+          "minimum_roundup_matches": true
+        },
+        "1000": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 50,
+          "minimum_roundup_matches": true
+        }
+      }
+    },
+    {
+      "job": "Big Springs",
+      "plate": "T25-125-A",
+      "printed_adjusted_batches": 2,
+      "chip_lb_per_batch": 180,
+      "unadjusted_chip_lb": 360,
+      "adj_status": "present_nonzero",
+      "adj_lb": 40,
+      "final_chip_lb": 400,
+      "blend_count": 0.8,
+      "implied_lb_per_blend": 500,
+      "adj_pct_of_unadjusted": 11.11111111111111,
+      "adjusted_factor": 1.1111111111111112,
+      "next_1000_roundup_adj_lb": 640,
+      "roundup_matches": false,
+      "resin_a_gal": 10,
+      "resin_b_gal": 2,
+      "binder_follows_printed_batch_count": true,
+      "printed_job_number": "25-1205",
+      "printed_date": "2026-08-17",
+      "printed_system_color": "KEY / Big Springs Brown B",
+      "product_context": "Associated WO slab pour and flat base/plinth evidence; two plates; layout job 25-1202 differs",
+      "bags_per_blend_by_material": [
+        0.5,
+        0.5,
+        1.5,
+        7,
+        0.5
+      ],
+      "required_bags_by_material": [
+        0.4,
+        0.4,
+        1.2,
+        5.6,
+        0.4
+      ],
+      "source": "source-inventory.json: recovered_text",
+      "source_formula_ownership": "Unknown: no native completed Blend workbook recovered",
+      "waste_overage_notes": "ADJ label only; no explanation of waste or rounding",
+      "adj_lb_per_printed_batch": 20.0,
+      "adj_lb_per_blend": 50.0,
+      "required_total_50lb_bags": 8.0,
+      "bags_per_blend": 10.0,
+      "whole_total_bags": true,
+      "even_total_bags": true,
+      "whole_blends": false,
+      "whole_or_half_blends": false,
+      "fractional_material_bags_required": true,
+      "rounding_tests": {
+        "50": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 40,
+          "minimum_roundup_matches": true
+        },
+        "100": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 40,
+          "minimum_roundup_matches": true
+        },
+        "500": {
+          "final_is_multiple": false,
+          "minimum_roundup_adj_lb": 140,
+          "minimum_roundup_matches": false
+        },
+        "1000": {
+          "final_is_multiple": false,
+          "minimum_roundup_adj_lb": 640,
+          "minimum_roundup_matches": false
+        }
+      }
+    },
+    {
+      "job": "Forest Theater",
+      "plate": "T26-273-A",
+      "printed_adjusted_batches": 8,
+      "chip_lb_per_batch": 200,
+      "unadjusted_chip_lb": 1600,
+      "adj_status": "present_nonzero",
+      "adj_lb": 400,
+      "final_chip_lb": 2000,
+      "blend_count": 2,
+      "implied_lb_per_blend": 1000,
+      "adj_pct_of_unadjusted": 25.0,
+      "adjusted_factor": 1.25,
+      "next_1000_roundup_adj_lb": 400,
+      "roundup_matches": true,
+      "resin_a_gal": 40,
+      "resin_b_gal": 8,
+      "binder_follows_printed_batch_count": true,
+      "printed_job_number": "25-1004",
+      "printed_date": "2026-08-18",
+      "printed_system_color": "KEY / Granite Brown 07022026",
+      "product_context": "No matched Production geometry recovered",
+      "bags_per_blend_by_material": [
+        4,
+        8,
+        8
+      ],
+      "required_bags_by_material": [
+        8,
+        16,
+        16
+      ],
+      "source": "source-inventory.json: recovered_text",
+      "source_formula_ownership": "Unknown: no native completed Blend workbook recovered",
+      "waste_overage_notes": "ADJ label only; no explanation of waste or rounding",
+      "adj_lb_per_printed_batch": 50.0,
+      "adj_lb_per_blend": 200.0,
+      "required_total_50lb_bags": 40.0,
+      "bags_per_blend": 20,
+      "whole_total_bags": true,
+      "even_total_bags": true,
+      "whole_blends": true,
+      "whole_or_half_blends": true,
+      "fractional_material_bags_required": false,
+      "rounding_tests": {
+        "50": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 0,
+          "minimum_roundup_matches": false
+        },
+        "100": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 0,
+          "minimum_roundup_matches": false
+        },
+        "500": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 400,
+          "minimum_roundup_matches": true
+        },
+        "1000": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 400,
+          "minimum_roundup_matches": true
+        }
+      }
+    },
+    {
+      "job": "Agawam",
+      "plate": "T26-267-A",
+      "printed_adjusted_batches": 60,
+      "chip_lb_per_batch": 180,
+      "unadjusted_chip_lb": 10800,
+      "adj_status": "present_nonzero",
+      "adj_lb": 1200,
+      "final_chip_lb": 12000,
+      "blend_count": 12,
+      "implied_lb_per_blend": 1000,
+      "adj_pct_of_unadjusted": 11.11111111111111,
+      "adjusted_factor": 1.1111111111111112,
+      "next_1000_roundup_adj_lb": 200,
+      "roundup_matches": false,
+      "resin_a_gal": 300,
+      "resin_b_gal": 60,
+      "binder_follows_printed_batch_count": true,
+      "printed_job_number": "26-0529",
+      "printed_date": "2026-08-20",
+      "printed_system_color": "Key Resin / Cafe Au Lait KR-300-450",
+      "product_context": "Three WOs; no Production geometry or allocation recovered",
+      "bags_per_blend_by_material": [
+        3.5,
+        3.5,
+        0.5,
+        0.5,
+        3,
+        3,
+        2,
+        2,
+        1,
+        1
+      ],
+      "required_bags_by_material": [
+        42,
+        42,
+        6,
+        6,
+        36,
+        36,
+        24,
+        24,
+        12,
+        12
+      ],
+      "source": "agawam-source.json",
+      "source_formula_ownership": "Unknown: no native completed Blend workbook recovered",
+      "waste_overage_notes": "ADJ label only; no explanation of waste or rounding",
+      "adj_lb_per_printed_batch": 20.0,
+      "adj_lb_per_blend": 100.0,
+      "required_total_50lb_bags": 240.0,
+      "bags_per_blend": 20.0,
+      "whole_total_bags": true,
+      "even_total_bags": true,
+      "whole_blends": true,
+      "whole_or_half_blends": true,
+      "fractional_material_bags_required": false,
+      "rounding_tests": {
+        "50": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 0,
+          "minimum_roundup_matches": false
+        },
+        "100": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 0,
+          "minimum_roundup_matches": false
+        },
+        "500": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 200,
+          "minimum_roundup_matches": false
+        },
+        "1000": {
+          "final_is_multiple": true,
+          "minimum_roundup_adj_lb": 200,
+          "minimum_roundup_matches": false
+        }
+      }
+    }
+  ],
+  "search_exclusion": {
+    "workbook": "/Users/chrisngo/Desktop/Q26-0901-1.0 St Ignacio HS CALCS.xlsx",
+    "sheet": "3\" Epoxy Slab",
+    "cells": {
+      "B68": "ADJUSTMENT",
+      "K68": "=G16 (352 sf)",
+      "M68": "0 unit price",
+      "N68": "=M68*K68",
+      "B83": "ADJUSTMENT",
+      "K83": "=G57 (0 sf)",
+      "M83": "0.02 unit price"
+    },
+    "reason": "Material/inbound shipping cost adjustments, not a completed chip ADJ source or matched job."
+  },
+  "result": "Variable ADJ quantities established; manual authorship and waste purpose unproven. All final totals multiples of 100 lb/even 50-lb bags; deliberate rounding intent unproven. No universal tested minimum-rounding rule fits."
+}

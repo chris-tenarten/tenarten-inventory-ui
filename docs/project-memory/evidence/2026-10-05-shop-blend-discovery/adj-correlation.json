@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-05",
+  "authority": "Chris relayed Gio clarification: ADJ is a normal field on every shop Blend Sheet. Corpus validates presence in four of four, not universality beyond that corpus.",
+  "sources": [
+    "source-inventory.json: recovered_text for TAMU, Big Springs and Forest",
+    "agawam-source.json: original PDF extraction and matched Sample page 10"
+  ],
+  "rows": [
+    {
+      "job": "TAMU",
+      "plate": "T25-203-B",
+      "printed_adjusted_batches": 33,
+      "chip_lb_per_batch": 150,
+      "unadjusted_chip_lb": 4950,
+      "adj_status": "present_nonzero",
+      "adj_lb": 50,
+      "final_chip_lb": 5000,
+      "blend_count": 5,
+      "implied_lb_per_blend": 1000,
+      "adj_pct_of_unadjusted": 1.0101010101010102,
+      "adjusted_factor": 1.0101010101010102,
+      "next_1000_roundup_adj_lb": 50,
+      "roundup_matches": true,
+      "resin_a_gal": 165,
+      "resin_b_gal": 33,
+      "binder_follows_printed_batch_count": true
+    },
+    {
+      "job": "Big Springs",
+      "plate": "T25-125-A",
+      "printed_adjusted_batches": 2,
+      "chip_lb_per_batch": 180,
+      "unadjusted_chip_lb": 360,
+      "adj_status": "present_nonzero",
+      "adj_lb": 40,
+      "final_chip_lb": 400,
+      "blend_count": 0.8,
+      "implied_lb_per_blend": 500,
+      "adj_pct_of_unadjusted": 11.11111111111111,
+      "adjusted_factor": 1.1111111111111112,
+      "next_1000_roundup_adj_lb": 640,
+      "roundup_matches": false,
+      "resin_a_gal": 10,
+      "resin_b_gal": 2,
+      "binder_follows_printed_batch_count": true
+    },
+    {
+      "job": "Forest Theater",
+      "plate": "T26-273-A",
+      "printed_adjusted_batches": 8,
+      "chip_lb_per_batch": 200,
+      "unadjusted_chip_lb": 1600,
+      "adj_status": "present_nonzero",
+      "adj_lb": 400,
+      "final_chip_lb": 2000,
+      "blend_count": 2,
+      "implied_lb_per_blend": 1000,
+      "adj_pct_of_unadjusted": 25.0,
+      "adjusted_factor": 1.25,
+      "next_1000_roundup_adj_lb": 400,
+      "roundup_matches": true,
+      "resin_a_gal": 40,
+      "resin_b_gal": 8,
+      "binder_follows_printed_batch_count": true
+    },
+    {
+      "job": "Agawam",
+      "plate": "T26-267-A",
+      "printed_adjusted_batches": 60,
+      "chip_lb_per_batch": 180,
+      "unadjusted_chip_lb": 10800,
+      "adj_status": "present_nonzero",
+      "adj_lb": 1200,
+      "final_chip_lb": 12000,
+      "blend_count": 12,
+      "implied_lb_per_blend": 1000,
+      "adj_pct_of_unadjusted": 11.11111111111111,
+      "adjusted_factor": 1.1111111111111112,
+      "next_1000_roundup_adj_lb": 200,
+      "roundup_matches": false,
+      "resin_a_gal": 300,
+      "resin_b_gal": 60,
+      "binder_follows_printed_batch_count": true
+    }
+  ],
+  "hypotheses": {
+    "universal_round_up_to_next_1000": "contradicted: 2 of 4 match",
+    "selected_target_residual": "all reconcile numerically; input/formula ownership unknown",
+    "waste_allowance": "plausible but unproven",
+    "geometry_correlation": "insufficient matched estimating/yield evidence",
+    "pool_mix_correlation": "not supported by Agawam documents"
+  },
+  "pool_mix_prior_evidence": {
+    "session": "/Users/chrisngo/.codex/sessions/2026/09/29/rollout-2026-09-29T14-30-15-01a0eea5-7357-7d81-9277-df6b2c862f62.jsonl",
+    "investigation_summary_line": 88,
+    "saved_draft_forensics_line": 155,
+    "investigation_summary": "**C \u2014 the reported defect could not be reproduced from available evidence.** The investigation is complete; no fix was implemented.\n\n[Full investigation report and proposed validation contract](/private/tmp/tenops-pool-mix-investigation/report.md)\n\nKey findings:\n\n- Fetched `dev` and `main` both resolve to `907e4e7`.\n- Both current hosted Pool Mix offers are classified **filler**, not chip aggregate.\n- TenOps already separates **catalog classification** from **Formula Role**. Catalog selection does not change calculation role.\n- A synthetic 90% Pool Mix / 10% chip blend calculates successfully: **57.6 oz Pool Mix + 6.4 oz chips**, with **18 oz separate filler**, **15 fl oz resin**, and **3 fl oz hardener**.\n- Changing Pool Mix\u2019s role to Filler leaves only 10% participating in the aggregate blend. That fails percentage reconciliation; the hidden original percentage can also remain in PDF-model output.\n- No saved Pool Mix usage or hosted historical snapshots were available to establish Gio\u2019s intended recipe.\n- Three focused repository verifiers passed.\n\nThe recommendation is to **reuse existing roles**, pending confirmation of what \u201c90%\u201d measures. Neither global reclassification nor a new role enum is justified.\n\nOnly two questions remain:\n\n1. **Does Gio\u2019s 90% mean chip weight, all dry-material weight, or volume\u2014and does Pool Mix replace the normal separate filler?**\n2. **For that one recipe, what were the pour dimensions/thickness, profile/resin system, remaining components, expected quantities, and actual wrong output or error?** A saved Sample identifier can locate the example; customer details are unnecessary.\n\nThe report covers equations, managed profiles, reproduction results, conditional implementation boundaries, snapshot preservation, Purchasing compatibility, and regression requirements. Repository files and hosted data remain unchanged.",
+    "forensics_summary": "September investigation recovered a 40/30/20/5/5 named-chip draft with 18 oz ATF-20 and Key Resin, no Pool Mix, no 90% component, and no Job/Plate link to establish the reported attempt. See session line 155."
+  },
+  "agawam_classification": "Ordinary named-marble chip-blend staging example with unresolved ADJ provenance and missing filler quantity; not an established high-Pool-Mix edge case; not a fully validated general planning formula."
+}

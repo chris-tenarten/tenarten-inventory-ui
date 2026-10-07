@@ -1,0 +1,3333 @@
+{
+  "date": "2026-10-05",
+  "baseline": "4c81212f8ef25e494ca43adea66a062888fe969e",
+  "method": "Local read-only discovery. No hosted requests. Workbook OOXML values/formulas/caches inspected without Excel recalculation. Archived text and images recovered; source PDFs for archived records no longer present locally. No original-PDF hash claimed for those records.",
+  "archived_metadata_source": "/Users/chrisngo/.codex/archived_sessions/rollout-2026-08-31T13-14-08-01a05907-58f9-72d0-9143-95997e48e1ea.jsonl:2871",
+  "archived_text_sources": [
+    "/Users/chrisngo/.codex/archived_sessions/rollout-2026-09-08T11-26-16-01a081d7-761c-7643-b41d-0cbc373cddb7.jsonl:9820",
+    "/Users/chrisngo/.codex/archived_sessions/rollout-2026-09-08T11-26-16-01a081d7-761c-7643-b41d-0cbc373cddb7.jsonl:9955"
+  ],
+  "archived_documents": [
+    {
+      "job_id": "2aae53ef-bca0-4ab2-90c0-7575f8a6f31c",
+      "file_name": "Color Plate #T25-203-B (Amazing Gray).pdf",
+      "storage_path": "2aae53ef-bca0-4ab2-90c0-7575f8a6f31c/87cfa474-1927-4aec-9afa-e78d5a7af129-Color_Plate_T25-203-B_Amazing_Gray_.pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 377258,
+      "document_type": "other",
+      "created_at": "2026-07-20T14:49:17.987911+00:00"
+    },
+    {
+      "job_id": "2aae53ef-bca0-4ab2-90c0-7575f8a6f31c",
+      "file_name": "TAMU WO 051826 MAT QTY BLEND SHEET.pdf",
+      "storage_path": "2aae53ef-bca0-4ab2-90c0-7575f8a6f31c/76c70e43-6e46-4e79-9cab-8b488a295b45-TAMU_WO_051826_MAT_QTY_BLEND_SHEET.pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 425132,
+      "document_type": "other",
+      "created_at": "2026-07-20T14:49:22.027268+00:00"
+    },
+    {
+      "job_id": "7a0b7de8-0ed2-46a3-9618-c35405fa1791",
+      "file_name": "SLAB POUR 081726.pdf",
+      "storage_path": "7a0b7de8-0ed2-46a3-9618-c35405fa1791/a612c707-c9e7-422d-8279-75478f261060-SLAB_POUR_081726.pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 263606,
+      "document_type": "work_order",
+      "created_at": "2026-08-17T16:53:47.008404+00:00"
+    },
+    {
+      "job_id": "7a0b7de8-0ed2-46a3-9618-c35405fa1791",
+      "file_name": "T25-125-A.pdf",
+      "storage_path": "7a0b7de8-0ed2-46a3-9618-c35405fa1791/58eaa9c3-12e2-4db1-a4a1-b41627166bc5-T25-125-A.pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 307367,
+      "document_type": "work_order",
+      "created_at": "2026-08-17T16:53:47.652365+00:00"
+    },
+    {
+      "job_id": "7a0b7de8-0ed2-46a3-9618-c35405fa1791",
+      "file_name": "Big Springs Blend Sheet 081726-1.pdf",
+      "storage_path": "7a0b7de8-0ed2-46a3-9618-c35405fa1791/685988a5-8ec7-49e0-b649-6bb089bf142e-Big_Springs_Blend_Sheet_081726-1.pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 509050,
+      "document_type": "other",
+      "created_at": "2026-08-17T17:08:39.46691+00:00"
+    },
+    {
+      "job_id": "b848fe33-3ac3-4c28-96a8-2e07d32aba5f",
+      "file_name": "Color Plate T26-273-A.pdf",
+      "storage_path": "b848fe33-3ac3-4c28-96a8-2e07d32aba5f/c383b901-40f2-4373-90f0-504bc6b85f91-Color_Plate_T26-273-A.pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 515489,
+      "document_type": "other",
+      "created_at": "2026-08-18T19:28:00.268497+00:00"
+    },
+    {
+      "job_id": "b848fe33-3ac3-4c28-96a8-2e07d32aba5f",
+      "file_name": "Mat QTY & Blend Sheet.pdf",
+      "storage_path": "b848fe33-3ac3-4c28-96a8-2e07d32aba5f/9a482fe7-57d1-4114-89b5-a5c3d27de4c2-Mat_QTY_Blend_Sheet.pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 508696,
+      "document_type": "other",
+      "created_at": "2026-08-18T19:28:01.305472+00:00"
+    }
+  ],
+  "recovered_text": {
+    "/tmp/sample-formula-forensics/02-Color_Plate_T25-203-B_Amazing_Gray_.txt": "Project Name:   Project # Location: Texarkana   4.50   cft   128.00   lbs. / cft Customer Superior Terrazzo   3.00   (5 gal) batches   11.00   3/8   \" thick   4.00   lbs. / sf @3/8\" FORMULA # MATRIX COLOR:   7044 AMAZING GRAY   12.375   FILLER:   SF-20  FINISH:   3000 Grit   SEALER:   TerraGlaze  Chip Mix:   COLOR   %   SIZE   TYPE   VENDOR LBS / 150 lb. BATCH 50# Bags / 1000 lbs   TOTAL BAGS   #REF!  RC50 Clear Glass   10%   #00   Glass   ARIM   15.0   2.00   1.10  RC50 Clear Glass   30%   #0   Glass   ARIM   45.0   6.00   3.30  True Grey   20%   #0   Marble   CCQ   30.0   4.00   2.20  True Grey   20%   #1   Marble   CCQ   30.0   4.00   2.20  OSM (EnviroFLECT)   20%   #1   Glass   ENVR   30.0   4.00   2.20 -   -   - -   -   -  100%   150.0   20.0   11.0   #REF!  SAMPLE PLATE QUANTITIES:  RC50 Clear Glass   10%   #00   6.40   ounces   0.4 lbs.   0.40  RC50 Clear Glass   30%   #0   19.20   ounces   1.2 lbs.   1.20  True Grey   20%   #0   12.80   ounces   0.8 lbs.   0.80  True Grey   20%   #1   12.80   ounces   0.8 lbs.   0.80  OSM (EnviroFLECT)   20%   #1   12.80   ounces   0.8 lbs.   0.80  0   0%   0%   -   ounces   -   lbs.   -  0   0%   0%   -   ounces   -   lbs.   -  TOTAL   100%   64.00   ounces   4.0 lbs.   4.00  SF-20   Filler   16.00   ounces   1.0 lbs.   1.00  7044 AMAZING GRAY   Resin   16.00   ounces   0.13 gal.   0.13  Hardener   4.00   ounces   0.03 gal.  FIN. PCS  4   6\" x 6\"   3/8   1.00   sf   0.031 CFT  3/8 \" thick  TENARTEN TERRAZZO   SHERWIN-WILLIAMS   Requested by:   Mike  SAMPLE WORK ORDER   Date Initiated:   1/9/2026 Color Sample Match  TAMU Texarkana   25-0317  Project Info:  T25-203-B   SW  12 12",
+    "/tmp/sample-formula-forensics/03-TAMU_WO_051826_MAT_QTY_BLEND_SHEET.txt": "165.0   Gallons  33.0   Gallons  33.0   Bags 120 BAGS / BLEND   SKU   % of Blend   SIZE   TYPE   VENDOR   Bags REQUIRED   IN STOCK   NEED TO ORDER  2   RC50   10%   #00   Glass   ENVR   10.0   15  6   RC50   30%   #0   Glass   ENVR   30.0   50  4   20%   #0   Marble   CCQ   20.0   35  4   20%   #1   Marble   CCQ   20.0   35  4   20%   #1   Glass   ENVR   20.0   30  -  20   100%   100  5   CHIP BLENDS  JOB #   25-0317   Carrollton, TX 75007  DATE   5/18/2026   Tenarten Terrazzo  PRECAST MANUFACTURING  2933 Eisenhower St., Suite 120  LBS. / BATCH   150 ADJD BATCHES   33  JOB. NAME   TAMU - TEXARK.  PLATE #:   T25-203-B  RESIN \"A\"   SW   7044 AMAZING GRAY  RESIN \"B\"   SW FILLER   ATF-20 ADJ   50 LBS. REQUIRED   5,000 OSM (ENVIRO Flect) CHIP BLEND  CHIP COLOR  Clear Clear True Grey True Grey",
+    "/tmp/sample-formula-forensics/07-Big_Springs_Blend_Sheet_081726-1.txt": "Big Springs Brown \"B\"   10   Gallons  2   Gallons  2   bags  -   Bags  -   Bags 8 BAGS / BLEND   SKU   % of Blend   SIZE   TYPE   VENDOR   BAGS REQUIRED   IN STOCK   NEED TO ORDER  0.5   5.0%   #0   Marble   CCQ   0.4   5  0.5   5.0%   #1   Marble   CCQ   0.4   5  1.5   15.0%   #0   Marble   CCQ   1.2   5  7.0   70.0%   #1   Marble   CCQ   5.6   5  0.5   5.0%   #0   Marble   CCQ   0.4   5  10   8.0  0.8   CHIP BLENDS   100.0%  IT Yellow Verona IT Yellow Verona Texas Black Texas Black Verde Antique  ADJ   40 LBS. REQUIRED   400 CHIP BLEND  CHIP COLOR  CEMENT ADJD BATCHES   2.0  LBS. / BATCH   180 RESIN \"B\"   KEY FILLER   ATF-20  CEMENT PLATE #:   T25-125-A RESIN \"A\"   KEY JOB. NAME   Big Springs   2933 Eisenhower St., Suite 120  WO #   081726-1   Carrollton, TX 75007  DATE   8/17/2026   Tenarten Terrazzo  JOB #   25-1205  PRECAST MANUFACTURING",
+    "/tmp/sample-formula-forensics/08-Color_Plate_T26-273-A.txt": "Project Name:   Project # Location: Dallas, TX   18.00   cft   128.00   lbs. / cft Custiomer SUPERIOR TERRAZZO   10.00   (6 gal) batches   36.00   3/8   \" thick   4.0   lbs. / sf @3/8\" FORMULA # MATRIX COLOR:   Granite Brown 07022026   KEY RESIN   FILLER:   ATF-20  FINISH:   1500 Grit   SEALER:   TerraGlaze  Chip Mix:   COLOR   %   SIZE   TYPE   VENDOR LBS / 200 lb. BATCH 50# Bags / 1000 lbs   TOTAL BAGS   #REF!  CC ROSE   20%   #1   Marble   KCI   40.0   4.00   7.20  Red Cedar   40%   #1   Marble   KCI   80.0   8.00   14.40  Canadian Chocolate   40%   #1   Marble   KCI   80.0   8.00   14.40 -   -   - -   -   -  100%   200.0   20.0   36.0   #REF!  SAMPLE PLATE QUANTITIES:  CC ROSE   20%   #1   6.40   ounces   0.40 lbs.   0.40  Red Cedar   40%   #1   12.80   ounces   0.80 lbs.   0.80  Canadian Chocolate   40%   #1   12.80   ounces   0.80 lbs.   0.80  0   0%   0%   -   ounces   -   lbs.   -  0   0%   0%   -   ounces   -   lbs.   -  TOTAL   100%   32.00   ounces   2.00 lbs.   88.88  ATF-20   Filler   9.00   ounces   0.56 lbs.   25.00  Granite Brown 07022026   Resin   7.50   ounces   0.06 gal.   2.50  Hardener   1.50   ounces   0.01 gal.   0.50 FIN. PCS  2   6\" x 6\"   3/8   0.50   sf   0.016 CFT  3/8 \" thick Project Info:  T26-273-A  TENARTEN TERRAZZO   KEY RESIN CO.   Requested by:   Anthony  SAMPLE WORK ORDER   Date Initiated:   8/18/2026  12  Color Sample Match  FOREST THEATER  6",
+    "/tmp/sample-formula-forensics/09-Mat_QTY_Blend_Sheet.txt": "40   Gallons  8   Gallons  8   bags  -   Bags  -   Bags BAGS / BLEND   SKU   % of Blend   SIZE   TYPE   VENDOR   BAGS REQUIRED   IN STOCK   NEED TO ORDER  4   20.0%   1   Marble   KCI   8.0  8   40.0%   1   Marble   KCI   16.0  8   40.0%   1   Marble   KCI   16.0 -   -  - -  20   100%   40   0  2.0 CHIP BLENDS  GAL / B   WATER   0   GAL GAL / B   AKKRO-7T   0   GAL OZ./ B   PLASTOL 6420   0   OUNCES  2933 Eisenhower St., Suite 120  WO #   081826-1   Carrollton, TX 75007  DATE   8/18/2026   Tenarten Terrazzo  JOB #   25-1004  PRECAST MANUFACTURING  PLATE #:   T26-273-A RESIN \"A\"   KEY JOB. NAME   FOREST THEATER  RESIN \"B\"   KEY FILLER   ATF-20  CEMENT CEMENT ADJD BATCHES   8.0  LBS. / BATCH   200 ADJ   400 LBS. REQUIRED   2,000 CHIP BLEND  Granite Brown 07022026  CC ROSE Red Cedar Canadian Chocolate  CHIP COLOR",
+    "/tmp/sample-formula-forensics/additional-work-orders/09-SLAB_POUR_081726.txt": "x 17 ea. Pour @ 5/8\" thick Finish @ 1/2\" thick  SLAB POUR LAYOUT  TENARTEN TERRAZZO CO.  PROJECT: PROD WO #: DWG. DATE ITEM: QTY REQ:   As Noted  REVIEWED BY: REF:  1.1.0  REV. # / DATE DRAWN BY:  081726-1  PRECAST MFG.  APPROVED FOR PRODCTN X   PRELIMINARY FOR REVIEW 08.16.26  TERR. COLOR PLATE: MATRIX: FINISH: PROJECT #  A T I 25-1202 SLAB POUR LAYOUT  WWW.PRECASTTZ.COM.  200g. BIG SPRINGS AS NOTED T25-125-A  CUSTOMER: LOCATION:   Big Springs, TX Superior Terrazzo  - ALL DIMENSIONS SHALL BE FIELD VERIFIED BY CUSTOMER PRIOR TO FABRICATION  NOTE:  49 \"   50 \" 42 \"   45 \" 48 \" 6 \" 4 1/2 \" 6 1/2 \"  x 2 ea. Pour @ 1-1/4\" thick Finish @ 1\" thick  T25-125-A   T25-196-B",
+    "/tmp/sample-formula-forensics/additional-work-orders/10-T25-125-A.txt": "Project Name:   Project # Location: Big Springs, TX   160.00   lbs. / cft Custiomer Superior   Project Info:   400   3/8   \" thick   5.0   lbs. / sf @3/8\" FORMULA # MATRIX COLOR:   108   KEY   FILLER:   ATF-20  FINISH:   200 Grit   SEALER:   TerraGlaze  Chip Mix:   COLOR   %   SIZE   TYPE   VENDOR LBS / 180 lb. BATCH 50# Bags / 1000 lbs   TOTAL BAGS   #REF!  IT Yellow Verona   5.0%   #0   Marble   CCQ   9.0   0.91   2.00  IT Yellow Verona   5.0%   #1   Marble   CCQ   9.0   0.91   2.00  Texas Black   15.0%   #0   Marble   CCQ   30.0   3.03   6.00  Texas Black   70.0%   #1   Marble   CCQ   140.0   14.14   28.00  Verde Antique   5.0%   #0   Marble   CCQ   10.0   1.01   2.00  -   -   - -   -   -  -   -   - -   -   - -   -   - -   -   -  100%   198.0   20.0   40.0   #REF!  Sample Qty.   IT Yellow Verona   5%   #0   2.00   ounces   0.13  IT Yellow Verona   5%   #1   2.00   ounces   0.13  Texas Black   15%   #0   6.00   ounces   0.38  Texas Black   70%   #1   28.00   ounces   1.75  Verde Antique   5%   #0   2.00   ounces   0.13  0%   0%   -   ounces   -  0   0%   0%   -   ounces   -  0%   0%   -   ounces   -  TOTAL   100%   40.00   ounces   2.50  ATF-20   Filler   18.00   ounces   1.13  108 Resin   7.50   ounces   0.06  Hardener   1.50   ounces  FIN. PCS  4   6\" x 6\"   3/8   1.00   sf   0.016  6   CFT  3/8 \" thick 12  Color Sample Match  Big Springs   TBD  TT25-125-A  Big Springs Brown \"B\"  TENARTEN TERRAZZO   Requested by:  SAMPLE WORK ORDER   Date Initiated:   3/13/2025"
+  },
+  "images": [
+    {
+      "path": "tamu-blend-source.png",
+      "sha256": "61d4ce1a1a47ee57b257ca95c5ecd5a3bc018f7447fa2b6973dafcc2ee5a6f50",
+      "source": "/Users/chrisngo/.codex/archived_sessions/rollout-2026-09-17T14-11-27-01a0b0c7-ee6b-75c1-9e81-aad6bbfbb857.jsonl:578 output image 2; requested at line 575",
+      "kind": "unaltered recovered archived page rendering; not original PDF bytes"
+    },
+    {
+      "path": "tamu-sample-source.png",
+      "sha256": "978eaf06a364c7dce507d71e194d9010790ad9ad6680643a09617537669cdd6f",
+      "source": "/Users/chrisngo/.codex/archived_sessions/rollout-2026-09-08T11-26-16-01a081d7-761c-7643-b41d-0cbc373cddb7.jsonl:9867 output image 1; requested at line 9860",
+      "kind": "unaltered recovered archived page rendering; not original PDF bytes"
+    },
+    {
+      "path": "forest-sample-source.png",
+      "sha256": "c07f98192b6168ea60744957e6b91591c2f639823225cc0f589c6874b017fe09",
+      "source": "/Users/chrisngo/.codex/archived_sessions/rollout-2026-09-08T11-26-16-01a081d7-761c-7643-b41d-0cbc373cddb7.jsonl:9867 output image 5; requested at line 9860",
+      "kind": "unaltered recovered archived page rendering; not original PDF bytes"
+    }
+  ],
+  "workbooks": [
+    {
+      "path": "/Users/chrisngo/Downloads/cbe1920e-266a-4400-acc1-bc5bb1c2601c (1).xlsx",
+      "sha256": "b2351bcf673dd5f5df5561c0fb693f221f9fff54d9a0202e4323241a4d21c544",
+      "duplicate_paths": [
+        "/Users/chrisngo/Downloads/cbe1920e-266a-4400-acc1-bc5bb1c2601c.xlsx"
+      ],
+      "sheets": [
+        {
+          "name": "Q26-0901-2.0 QUOTE",
+          "nonempty_cell_count": 249,
+          "selected_cells": []
+        },
+        {
+          "name": "Q26-0901-2.0 CALCS",
+          "nonempty_cell_count": 229,
+          "selected_cells": []
+        }
+      ],
+      "core_metadata": {
+        "creator": "Tenarten Terrazzo",
+        "lastModifiedBy": "Tenarten Terrazzo",
+        "lastPrinted": "2026-09-01T12:21:11Z",
+        "created": "2026-09-01T11:21:03Z",
+        "modified": "2026-09-01T12:26:47Z"
+      }
+    },
+    {
+      "path": "/Users/chrisngo/Downloads/Blank Color Plate MANUAL TEMPLATE.xlsx",
+      "sha256": "99b86c1f77f3cb0223e24c4ebd4300ce069e779159196da4f0ee3010934365c1",
+      "duplicate_paths": [],
+      "sheets": [
+        {
+          "name": "10.07.25",
+          "nonempty_cell_count": 27,
+          "selected_cells": []
+        }
+      ],
+      "core_metadata": {
+        "creator": "Tenarten Terrazzo",
+        "lastModifiedBy": "Giovanni  Coppola",
+        "created": "2025-10-07T21:11:01Z",
+        "modified": "2025-10-08T13:36:20Z"
+      }
+    },
+    {
+      "path": "/Users/chrisngo/Desktop/Q26-0901-1.0 St Ignacio HS CALCS.xlsx",
+      "sha256": "da74d9085d71c6fc483914019c9d13f8f1f755b11472658320aa5c5404919cdc",
+      "duplicate_paths": [],
+      "sheets": [
+        {
+          "name": "3\" Epoxy Slab",
+          "nonempty_cell_count": 1050,
+          "selected_cells": [
+            {
+              "cell": "C24",
+              "value": "940",
+              "formula": "47/125*2500"
+            },
+            {
+              "cell": "F24",
+              "value": "Waste Factor",
+              "formula": null
+            },
+            {
+              "cell": "G24",
+              "value": "cft/batch",
+              "formula": null
+            },
+            {
+              "cell": "I24",
+              "value": "Est Batches",
+              "formula": null
+            },
+            {
+              "cell": "K24",
+              "value": "Core",
+              "formula": null
+            },
+            {
+              "cell": "L24",
+              "value": "Conc",
+              "formula": null
+            },
+            {
+              "cell": "P24",
+              "value": "0",
+              "formula": "O24*$F$17"
+            },
+            {
+              "cell": "F25",
+              "value": "0.4467592592592593",
+              "formula": "(I23/I16)-1"
+            },
+            {
+              "cell": "G25",
+              "value": "1.7682610000000001",
+              "formula": null
+            },
+            {
+              "cell": "H25",
+              "value": "9.0000016128002898",
+              "formula": "I23/G25"
+            },
+            {
+              "cell": "I25",
+              "value": "9.0000016128002898",
+              "formula": "I23/G25"
+            },
+            {
+              "cell": "J25",
+              "value": "72",
+              "formula": null
+            },
+            {
+              "cell": "P25",
+              "value": "0",
+              "formula": "O25*$F$17"
+            },
+            {
+              "cell": "T25",
+              "value": "13734",
+              "formula": "30*327*1.4"
+            },
+            {
+              "cell": "K26",
+              "value": "Nosing Warning",
+              "formula": null
+            },
+            {
+              "cell": "L26",
+              "value": "Resin",
+              "formula": null
+            },
+            {
+              "cell": "M26",
+              "value": "0",
+              "formula": null
+            },
+            {
+              "cell": "N26",
+              "value": "0",
+              "formula": "M26*F17"
+            },
+            {
+              "cell": "C27",
+              "value": "Finish",
+              "formula": null
+            },
+            {
+              "cell": "E27",
+              "value": "200 grit",
+              "formula": null
+            },
+            {
+              "cell": "K27",
+              "value": "Forms",
+              "formula": null
+            },
+            {
+              "cell": "L27",
+              "value": "(ea)",
+              "formula": null
+            },
+            {
+              "cell": "M27",
+              "value": "6",
+              "formula": "6/1"
+            },
+            {
+              "cell": "N27",
+              "value": "22",
+              "formula": "H21"
+            },
+            {
+              "cell": "C28",
+              "value": "Sealer type",
+              "formula": null
+            },
+            {
+              "cell": "E28",
+              "value": "Plaza Plus",
+              "formula": null
+            },
+            {
+              "cell": "K28",
+              "value": "Labor rate",
+              "formula": null
+            },
+            {
+              "cell": "M28",
+              "value": "50",
+              "formula": null
+            },
+            {
+              "cell": "C29",
+              "value": "Color Plate",
+              "formula": null
+            },
+            {
+              "cell": "E29",
+              "value": "SW-20-1062 TZ",
+              "formula": null
+            },
+            {
+              "cell": "C30",
+              "value": "Resin Color",
+              "formula": null
+            },
+            {
+              "cell": "E30",
+              "value": "KRC 001 White ",
+              "formula": null
+            },
+            {
+              "cell": "M30",
+              "value": "200",
+              "formula": null
+            },
+            {
+              "cell": "N30",
+              "value": "lbs. / batch",
+              "formula": null
+            },
+            {
+              "cell": "C31",
+              "value": "FILLER:",
+              "formula": null
+            },
+            {
+              "cell": "E31",
+              "value": "HSF-20",
+              "formula": null
+            },
+            {
+              "cell": "M31",
+              "value": "1800.0003225600581",
+              "formula": "I25*M30"
+            },
+            {
+              "cell": "N31",
+              "value": "Lbs.",
+              "formula": null
+            },
+            {
+              "cell": "C33",
+              "value": "Chip Mix:",
+              "formula": null
+            },
+            {
+              "cell": "D33",
+              "value": "COLOR",
+              "formula": null
+            },
+            {
+              "cell": "G33",
+              "value": "%",
+              "formula": null
+            },
+            {
+              "cell": "H33",
+              "value": "SIZE",
+              "formula": null
+            },
+            {
+              "cell": "I33",
+              "value": "TYPE",
+              "formula": null
+            },
+            {
+              "cell": "J33",
+              "value": "VENDOR",
+              "formula": null
+            },
+            {
+              "cell": "K33",
+              "value": "LBS / 200 lb. BATCH",
+              "formula": null
+            },
+            {
+              "cell": "L33",
+              "value": "50# Bags / 1000 lbs",
+              "formula": null
+            },
+            {
+              "cell": "M33",
+              "value": "TOTAL BAGS",
+              "formula": null
+            },
+            {
+              "cell": "N33",
+              "value": "22.5",
+              "formula": "N46/M46"
+            },
+            {
+              "cell": "C34",
+              "value": "20",
+              "formula": null
+            },
+            {
+              "cell": "D34",
+              "value": "China White Marble #1",
+              "formula": null
+            },
+            {
+              "cell": "G34",
+              "value": "0.9",
+              "formula": null
+            },
+            {
+              "cell": "H34",
+              "value": "1",
+              "formula": null
+            },
+            {
+              "cell": "I34",
+              "value": "Marble",
+              "formula": null
+            },
+            {
+              "cell": "J34",
+              "value": "KCI",
+              "formula": null
+            },
+            {
+              "cell": "K34",
+              "value": "180",
+              "formula": "G34*$M$30"
+            },
+            {
+              "cell": "L34",
+              "value": "18",
+              "formula": "K34/$K$46*20"
+            },
+            {
+              "cell": "M34",
+              "value": "32.400005806081047",
+              "formula": "$M$31*G34/50"
+            },
+            {
+              "cell": "N34",
+              "value": "648.00011612162098",
+              "formula": "C34*M34"
+            },
+            {
+              "cell": "P34",
+              "value": "10",
+              "formula": null
+            },
+            {
+              "cell": "Q34",
+              "value": "ea. 50 lb. bags",
+              "formula": null
+            },
+            {
+              "cell": "R34",
+              "value": "Cameo Cream ",
+              "formula": null
+            },
+            {
+              "cell": "S34",
+              "value": "#1",
+              "formula": null
+            },
+            {
+              "cell": "C35",
+              "value": "45",
+              "formula": null
+            },
+            {
+              "cell": "D35",
+              "value": "KCI SA Mirror #1",
+              "formula": null
+            },
+            {
+              "cell": "G35",
+              "value": "0.1",
+              "formula": null
+            },
+            {
+              "cell": "H35",
+              "value": "1",
+              "formula": null
+            },
+            {
+              "cell": "I35",
+              "value": "Glass",
+              "formula": null
+            },
+            {
+              "cell": "J35",
+              "value": "KCI",
+              "formula": null
+            },
+            {
+              "cell": "K35",
+              "value": "20",
+              "formula": ""
+            },
+            {
+              "cell": "L35",
+              "value": "2",
+              "formula": ""
+            },
+            {
+              "cell": "M35",
+              "value": "3.6000006451201165",
+              "formula": ""
+            },
+            {
+              "cell": "N35",
+              "value": "162.00002903040524",
+              "formula": ""
+            },
+            {
+              "cell": "P35",
+              "value": "10",
+              "formula": null
+            },
+            {
+              "cell": "Q35",
+              "value": "ea. 50 lb. bags",
+              "formula": null
+            },
+            {
+              "cell": "R35",
+              "value": "Cameo Cream ",
+              "formula": null
+            },
+            {
+              "cell": "S35",
+              "value": "#2",
+              "formula": null
+            },
+            {
+              "cell": "K36",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "L36",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M36",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N36",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "P36",
+              "value": "5",
+              "formula": null
+            },
+            {
+              "cell": "Q36",
+              "value": "ea. 50 lb. bags",
+              "formula": null
+            },
+            {
+              "cell": "R36",
+              "value": "Blanco Mexicano",
+              "formula": null
+            },
+            {
+              "cell": "S36",
+              "value": "#1",
+              "formula": null
+            },
+            {
+              "cell": "K37",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "L37",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M37",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N37",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "P37",
+              "value": "5",
+              "formula": null
+            },
+            {
+              "cell": "Q37",
+              "value": "ea. 50 lb. bags",
+              "formula": null
+            },
+            {
+              "cell": "R37",
+              "value": "Blanco Mexicano",
+              "formula": null
+            },
+            {
+              "cell": "S37",
+              "value": "#2",
+              "formula": null
+            },
+            {
+              "cell": "K38",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "L38",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M38",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N38",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "K39",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "L39",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M39",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N39",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "K40",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "L40",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M40",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N40",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "K41",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "L41",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M41",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N41",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "K42",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "L42",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M42",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N42",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "K43",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "L43",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M43",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N43",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "K44",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "L44",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M44",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N44",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "K45",
+              "value": "0",
+              "formula": "G45*200"
+            },
+            {
+              "cell": "L45",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "M45",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "N45",
+              "value": "0",
+              "formula": ""
+            },
+            {
+              "cell": "G46",
+              "value": "1",
+              "formula": "SUM(G34:G45)"
+            },
+            {
+              "cell": "H46",
+              "value": "",
+              "formula": "IF(G46=1,\"\",\"NOT EQUAL TO 100% \")"
+            },
+            {
+              "cell": "K46",
+              "value": "200",
+              "formula": "SUM(K34:K45)"
+            },
+            {
+              "cell": "L46",
+              "value": "20",
+              "formula": "SUM(L34:L45)"
+            },
+            {
+              "cell": "M46",
+              "value": "36.000006451201166",
+              "formula": "SUM(M34:M45)"
+            },
+            {
+              "cell": "N46",
+              "value": "810.00014515202622",
+              "formula": "SUM(N34:N45)"
+            },
+            {
+              "cell": "O46",
+              "value": "43545",
+              "formula": null
+            },
+            {
+              "cell": "P46",
+              "value": "42734.999854847971",
+              "formula": "O46-N46"
+            },
+            {
+              "cell": "A49",
+              "value": "MATERIALS",
+              "formula": null
+            },
+            {
+              "cell": "T49",
+              "value": "   ",
+              "formula": null
+            },
+            {
+              "cell": "B50",
+              "value": "Item",
+              "formula": null
+            },
+            {
+              "cell": "F50",
+              "value": "Description",
+              "formula": null
+            },
+            {
+              "cell": "H50",
+              "value": "Yield / Item",
+              "formula": null
+            },
+            {
+              "cell": "K50",
+              "value": "QTY RQD",
+              "formula": null
+            },
+            {
+              "cell": "M50",
+              "value": "Unit Price",
+              "formula": null
+            },
+            {
+              "cell": "N50",
+              "value": "Mat Cost",
+              "formula": null
+            },
+            {
+              "cell": "O50",
+              "value": "$/sf",
+              "formula": null
+            },
+            {
+              "cell": "P50",
+              "value": "$ Batch",
+              "formula": null
+            },
+            {
+              "cell": "B51",
+              "value": "Chips",
+              "formula": null
+            },
+            {
+              "cell": "H51",
+              "value": "180",
+              "formula": null
+            },
+            {
+              "cell": "I51",
+              "value": "200",
+              "formula": "M30"
+            },
+            {
+              "cell": "J51",
+              "value": "lbs/batch",
+              "formula": null
+            },
+            {
+              "cell": "K51",
+              "value": "36.000006451201166",
+              "formula": "M46"
+            },
+            {
+              "cell": "L51",
+              "value": "50 lb. bags",
+              "formula": null
+            },
+            {
+              "cell": "M51",
+              "value": "22.5",
+              "formula": "N33"
+            },
+            {
+              "cell": "N51",
+              "value": "810.00014515202622",
+              "formula": "M51*K51"
+            },
+            {
+              "cell": "O51",
+              "value": "2.3011367760000745",
+              "formula": "N51/$G$16"
+            },
+            {
+              "cell": "P51",
+              "value": "90.000000000000014",
+              "formula": "N51/$I$25"
+            },
+            {
+              "cell": "B52",
+              "value": "Epoxy Resin",
+              "formula": null
+            },
+            {
+              "cell": "F52",
+              "value": "KRC 001 White ",
+              "formula": "E30"
+            },
+            {
+              "cell": "H52",
+              "value": "5",
+              "formula": null
+            },
+            {
+              "cell": "I52",
+              "value": "5",
+              "formula": null
+            },
+            {
+              "cell": "J52",
+              "value": "ga/batch",
+              "formula": null
+            },
+            {
+              "cell": "K52",
+              "value": "45.000008064001449",
+              "formula": "I25*I52"
+            },
+            {
+              "cell": "L52",
+              "value": "gallons",
+              "formula": null
+            },
+            {
+              "cell": "M52",
+              "value": "30",
+              "formula": null
+            },
+            {
+              "cell": "N52",
+              "value": "1350.0002419200434",
+              "formula": ""
+            },
+            {
+              "cell": "O52",
+              "value": "3.8352279600001236",
+              "formula": ""
+            },
+            {
+              "cell": "P52",
+              "value": "150",
+              "formula": ""
+            },
+            {
+              "cell": "B53",
+              "value": "Epoxy Hardener",
+              "formula": null
+            },
+            {
+              "cell": "H53",
+              "value": "1",
+              "formula": null
+            },
+            {
+              "cell": "I53",
+              "value": "1",
+              "formula": "I52/5"
+            },
+            {
+              "cell": "J53",
+              "value": "gal/5 gal",
+              "formula": null
+            },
+            {
+              "cell": "K53",
+              "value": "9.0000016128002898",
+              "formula": "K52/5"
+            },
+            {
+              "cell": "L53",
+              "value": "gallons",
+              "formula": null
+            },
+            {
+              "cell": "M53",
+              "value": "28.5",
+              "formula": null
+            },
+            {
+              "cell": "N53",
+              "value": "256.50004596480824",
+              "formula": ""
+            },
+            {
+              "cell": "O53",
+              "value": "0.72869331240002344",
+              "formula": ""
+            },
+            {
+              "cell": "P53",
+              "value": "28.499999999999996",
+              "formula": ""
+            },
+            {
+              "cell": "B54",
+              "value": "Marble Filler",
+              "formula": null
+            },
+            {
+              "cell": "F54",
+              "value": "HSF-20",
+              "formula": "E31"
+            },
+            {
+              "cell": "H54",
+              "value": "1",
+              "formula": null
+            },
+            {
+              "cell": "I54",
+              "value": "1",
+              "formula": "I53"
+            },
+            {
+              "cell": "J54",
+              "value": "bag/batch",
+              "formula": null
+            },
+            {
+              "cell": "K54",
+              "value": "9.0000016128002898",
+              "formula": "I25"
+            },
+            {
+              "cell": "L54",
+              "value": "50lb. Bags",
+              "formula": null
+            },
+            {
+              "cell": "M54",
+              "value": "15",
+              "formula": null
+            },
+            {
+              "cell": "N54",
+              "value": "135.00002419200433",
+              "formula": ""
+            },
+            {
+              "cell": "O54",
+              "value": "0.38352279600001232",
+              "formula": ""
+            },
+            {
+              "cell": "P54",
+              "value": "14.999999999999998",
+              "formula": ""
+            }
+          ]
+        },
+        {
+          "name": "Q26-0827-1.0 ",
+          "nonempty_cell_count": 135,
+          "selected_cells": []
+        }
+      ],
+      "core_metadata": {
+        "creator": "Tenarten Terrazzo",
+        "lastModifiedBy": "Tenarten Terrazzo",
+        "lastPrinted": "2026-09-01T11:03:53Z",
+        "created": "2026-09-01T10:32:06Z",
+        "modified": "2026-09-02T20:47:38Z"
+      }
+    },
+    {
+      "path": "/Users/chrisngo/Desktop/Copy of 2026 Weekly Project Update 02.09.26.xlsx",
+      "sha256": "15591be4767ae53f3358563610752be39d076e161335b148f06267d42c5fb64c",
+      "duplicate_paths": [
+        "/Users/chrisngo/work/tenarten/production planning workbooks/Copy of 2026 Weekly Project Update 02.09.26.xlsx"
+      ],
+      "sheets": [
+        {
+          "name": "wo 02.16.26",
+          "nonempty_cell_count": 1100,
+          "selected_cells": [
+            {
+              "cell": "Q3",
+              "value": "BLEND SHEET",
+              "formula": null
+            },
+            {
+              "cell": "Y3",
+              "value": "BLEND SHEET",
+              "formula": null
+            },
+            {
+              "cell": "AI64",
+              "value": "Need to create blend sheet and prepare purchase orders",
+              "formula": null
+            },
+            {
+              "cell": "AI67",
+              "value": "Need blend sheet work order and PO.",
+              "formula": null
+            },
+            {
+              "cell": "AI89",
+              "value": "Need to prepare; work order, fabr. ticket, in-stock material review, blend sheet, material PO\u2019s",
+              "formula": null
+            }
+          ]
+        },
+        {
+          "name": "wo 02.09.26",
+          "nonempty_cell_count": 1005,
+          "selected_cells": [
+            {
+              "cell": "O3",
+              "value": "BLEND SHEET",
+              "formula": null
+            },
+            {
+              "cell": "W3",
+              "value": "BLEND SHEET",
+              "formula": null
+            },
+            {
+              "cell": "AG64",
+              "value": "Need to create blend sheet and prepare purchase orders",
+              "formula": null
+            },
+            {
+              "cell": "AG67",
+              "value": "Need blend sheet work order and PO.",
+              "formula": null
+            },
+            {
+              "cell": "AG89",
+              "value": "Need to prepare; work order, fabr. ticket, in-stock material review, blend sheet, material PO\u2019s",
+              "formula": null
+            }
+          ]
+        },
+        {
+          "name": "wo 02.02.26",
+          "nonempty_cell_count": 917,
+          "selected_cells": [
+            {
+              "cell": "O3",
+              "value": "BLEND SHEET",
+              "formula": null
+            },
+            {
+              "cell": "W3",
+              "value": "BLEND SHEET",
+              "formula": null
+            }
+          ]
+        },
+        {
+          "name": "wo 01.26.26",
+          "nonempty_cell_count": 823,
+          "selected_cells": [
+            {
+              "cell": "N3",
+              "value": "BLEND SHEET",
+              "formula": null
+            }
+          ]
+        },
+        {
+          "name": "wo 01.19.26",
+          "nonempty_cell_count": 833,
+          "selected_cells": [
+            {
+              "cell": "N3",
+              "value": "BLEND SHEET",
+              "formula": null
+            }
+          ]
+        }
+      ],
+      "core_metadata": {
+        "creator": "Tenarten Terrazzo",
+        "lastModifiedBy": "Tenarten Terrazzo",
+        "created": "2026-01-19T15:08:56Z",
+        "modified": "2026-02-19T19:50:58Z"
+      }
+    },
+    {
+      "path": "/Users/chrisngo/Desktop/East montgomery PO Calcs.xlsx",
+      "sha256": "d72ba0c43eaee476b6e15bccd60d15ce076c3eb3aa3aebff32d7672e5d54068a",
+      "duplicate_paths": [],
+      "sheets": [
+        {
+          "name": "PO #0422-002 TM",
+          "nonempty_cell_count": 229,
+          "selected_cells": [
+            {
+              "cell": "B5",
+              "value": "Carrollton, TX 75007",
+              "formula": null
+            },
+            {
+              "cell": "T5",
+              "value": "46218",
+              "formula": null
+            },
+            {
+              "cell": "Y5",
+              "value": "AI",
+              "formula": null
+            },
+            {
+              "cell": "AD5",
+              "value": "0422-002",
+              "formula": null
+            },
+            {
+              "cell": "C15",
+              "value": "East Montgomery CC",
+              "formula": null
+            },
+            {
+              "cell": "N15",
+              "value": "26-0422",
+              "formula": null
+            },
+            {
+              "cell": "U15",
+              "value": "2933 EISENHOWER ST., SUITE 120",
+              "formula": null
+            },
+            {
+              "cell": "C17",
+              "value": "Net 30",
+              "formula": null
+            },
+            {
+              "cell": "N17",
+              "value": "46227",
+              "formula": null
+            },
+            {
+              "cell": "U17",
+              "value": "Attn.  Marcos Alvarado",
+              "formula": null
+            },
+            {
+              "cell": "B18",
+              "value": "ITEM",
+              "formula": null
+            },
+            {
+              "cell": "D18",
+              "value": "SKU ",
+              "formula": null
+            },
+            {
+              "cell": "G18",
+              "value": "DESCRIPTION",
+              "formula": null
+            },
+            {
+              "cell": "U18",
+              "value": "QTY",
+              "formula": null
+            },
+            {
+              "cell": "Y18",
+              "value": "UNIT",
+              "formula": null
+            },
+            {
+              "cell": "AA18",
+              "value": "UNIT PRICE",
+              "formula": null
+            },
+            {
+              "cell": "AE18",
+              "value": "TOTAL",
+              "formula": null
+            },
+            {
+              "cell": "B19",
+              "value": "1",
+              "formula": null
+            },
+            {
+              "cell": "G19",
+              "value": "Beige Blend Marble #1, 50# Bag, Dry",
+              "formula": null
+            },
+            {
+              "cell": "U19",
+              "value": "90",
+              "formula": null
+            },
+            {
+              "cell": "Y19",
+              "value": "bags",
+              "formula": null
+            },
+            {
+              "cell": "AA19",
+              "value": "13.9",
+              "formula": null
+            },
+            {
+              "cell": "AE19",
+              "value": "1251",
+              "formula": "U19*AA19"
+            },
+            {
+              "cell": "AM19",
+              "value": "24.25",
+              "formula": null
+            },
+            {
+              "cell": "AN19",
+              "value": "BLUE COAL",
+              "formula": null
+            },
+            {
+              "cell": "AO19",
+              "value": "0.15",
+              "formula": null
+            },
+            {
+              "cell": "AP19",
+              "value": "#0",
+              "formula": null
+            },
+            {
+              "cell": "AQ19",
+              "value": "Marble",
+              "formula": null
+            },
+            {
+              "cell": "AR19",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "AS19",
+              "value": "30",
+              "formula": "AO19*200"
+            },
+            {
+              "cell": "AT19",
+              "value": "#DIV/0!",
+              "formula": "AS19/($H$24)*20"
+            },
+            {
+              "cell": "B20",
+              "value": "2",
+              "formula": null
+            },
+            {
+              "cell": "G20",
+              "value": "FW-M. Mother of Pearl #1, 50# Bag, Dry",
+              "formula": null
+            },
+            {
+              "cell": "U20",
+              "value": "10",
+              "formula": null
+            },
+            {
+              "cell": "Y20",
+              "value": "bags",
+              "formula": null
+            },
+            {
+              "cell": "AA20",
+              "value": "62.75",
+              "formula": null
+            },
+            {
+              "cell": "AE20",
+              "value": "627.5",
+              "formula": ""
+            },
+            {
+              "cell": "AM20",
+              "value": "24.25",
+              "formula": null
+            },
+            {
+              "cell": "AN20",
+              "value": "BLUE COAL",
+              "formula": null
+            },
+            {
+              "cell": "AO20",
+              "value": "0.15",
+              "formula": null
+            },
+            {
+              "cell": "AP20",
+              "value": "#1",
+              "formula": null
+            },
+            {
+              "cell": "AQ20",
+              "value": "Marble",
+              "formula": null
+            },
+            {
+              "cell": "AR20",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "AS20",
+              "value": "30",
+              "formula": ""
+            },
+            {
+              "cell": "AT20",
+              "value": "#DIV/0!",
+              "formula": ""
+            },
+            {
+              "cell": "B21",
+              "value": "3",
+              "formula": null
+            },
+            {
+              "cell": "G21",
+              "value": "NTMA Chip fund",
+              "formula": null
+            },
+            {
+              "cell": "U21",
+              "value": "100",
+              "formula": "SUM(U19:X20)"
+            },
+            {
+              "cell": "Y21",
+              "value": "bags",
+              "formula": null
+            },
+            {
+              "cell": "AA21",
+              "value": "0.25",
+              "formula": null
+            },
+            {
+              "cell": "AE21",
+              "value": "25",
+              "formula": "U21*AA21"
+            },
+            {
+              "cell": "AM21",
+              "value": "15.85",
+              "formula": null
+            },
+            {
+              "cell": "AN21",
+              "value": "BLACK STALLION",
+              "formula": null
+            },
+            {
+              "cell": "AO21",
+              "value": "0.1",
+              "formula": null
+            },
+            {
+              "cell": "AP21",
+              "value": "#0",
+              "formula": null
+            },
+            {
+              "cell": "AQ21",
+              "value": "Marble",
+              "formula": null
+            },
+            {
+              "cell": "AR21",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "AS21",
+              "value": "20",
+              "formula": ""
+            },
+            {
+              "cell": "AT21",
+              "value": "#DIV/0!",
+              "formula": ""
+            }
+          ]
+        },
+        {
+          "name": "PO #0422-001 TM",
+          "nonempty_cell_count": 217,
+          "selected_cells": [
+            {
+              "cell": "B5",
+              "value": "Carrollton, TX 75007",
+              "formula": null
+            },
+            {
+              "cell": "T5",
+              "value": "46218",
+              "formula": null
+            },
+            {
+              "cell": "Y5",
+              "value": "AI",
+              "formula": null
+            },
+            {
+              "cell": "AD5",
+              "value": "0422-001",
+              "formula": null
+            },
+            {
+              "cell": "C15",
+              "value": "East Montgomery CC",
+              "formula": null
+            },
+            {
+              "cell": "N15",
+              "value": "26-0422",
+              "formula": null
+            },
+            {
+              "cell": "U15",
+              "value": "2933 EISENHOWER ST., SUITE 120",
+              "formula": null
+            },
+            {
+              "cell": "C17",
+              "value": "Net 30",
+              "formula": null
+            },
+            {
+              "cell": "N17",
+              "value": "46227",
+              "formula": null
+            },
+            {
+              "cell": "U17",
+              "value": "Attn.  Marcos Alvarado",
+              "formula": null
+            },
+            {
+              "cell": "B18",
+              "value": "ITEM",
+              "formula": null
+            },
+            {
+              "cell": "D18",
+              "value": "SKU ",
+              "formula": null
+            },
+            {
+              "cell": "G18",
+              "value": "DESCRIPTION",
+              "formula": null
+            },
+            {
+              "cell": "U18",
+              "value": "QTY",
+              "formula": null
+            },
+            {
+              "cell": "Y18",
+              "value": "UNIT",
+              "formula": null
+            },
+            {
+              "cell": "AA18",
+              "value": "UNIT PRICE",
+              "formula": null
+            },
+            {
+              "cell": "AE18",
+              "value": "TOTAL",
+              "formula": null
+            },
+            {
+              "cell": "B19",
+              "value": "1",
+              "formula": null
+            },
+            {
+              "cell": "G19",
+              "value": "Terroxy Resin; Color #14580 Sandy Ridge;  (5 gallon Pails)",
+              "formula": null
+            },
+            {
+              "cell": "U19",
+              "value": "100",
+              "formula": null
+            },
+            {
+              "cell": "Y19",
+              "value": "gal",
+              "formula": null
+            },
+            {
+              "cell": "AA19",
+              "value": "32.5",
+              "formula": null
+            },
+            {
+              "cell": "AE19",
+              "value": "3250",
+              "formula": "U19*AA19"
+            },
+            {
+              "cell": "AM19",
+              "value": "24.25",
+              "formula": null
+            },
+            {
+              "cell": "AN19",
+              "value": "BLUE COAL",
+              "formula": null
+            },
+            {
+              "cell": "AO19",
+              "value": "0.15",
+              "formula": null
+            },
+            {
+              "cell": "AP19",
+              "value": "#0",
+              "formula": null
+            },
+            {
+              "cell": "AQ19",
+              "value": "Marble",
+              "formula": null
+            },
+            {
+              "cell": "AR19",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "AS19",
+              "value": "30",
+              "formula": "AO19*200"
+            },
+            {
+              "cell": "AT19",
+              "value": "#DIV/0!",
+              "formula": "AS19/($H$24)*20"
+            },
+            {
+              "cell": "B20",
+              "value": "2",
+              "formula": null
+            },
+            {
+              "cell": "G20",
+              "value": "Terroxy Resin; Part B Hardener (1 gallon)",
+              "formula": null
+            },
+            {
+              "cell": "U20",
+              "value": "20",
+              "formula": "U19/5"
+            },
+            {
+              "cell": "Y20",
+              "value": "gal",
+              "formula": null
+            },
+            {
+              "cell": "AA20",
+              "value": "32.5",
+              "formula": null
+            },
+            {
+              "cell": "AE20",
+              "value": "650",
+              "formula": ""
+            },
+            {
+              "cell": "AM20",
+              "value": "24.25",
+              "formula": null
+            },
+            {
+              "cell": "AN20",
+              "value": "BLUE COAL",
+              "formula": null
+            },
+            {
+              "cell": "AO20",
+              "value": "0.15",
+              "formula": null
+            },
+            {
+              "cell": "AP20",
+              "value": "#1",
+              "formula": null
+            },
+            {
+              "cell": "AQ20",
+              "value": "Marble",
+              "formula": null
+            },
+            {
+              "cell": "AR20",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "AS20",
+              "value": "30",
+              "formula": ""
+            },
+            {
+              "cell": "AT20",
+              "value": "#DIV/0!",
+              "formula": ""
+            },
+            {
+              "cell": "B21",
+              "value": "3",
+              "formula": null
+            },
+            {
+              "cell": "G21",
+              "value": "NTMA Epoxy fund",
+              "formula": null
+            },
+            {
+              "cell": "U21",
+              "value": "120",
+              "formula": "SUM(U19:X20)"
+            },
+            {
+              "cell": "Y21",
+              "value": "gal",
+              "formula": null
+            },
+            {
+              "cell": "AA21",
+              "value": "0.25",
+              "formula": null
+            },
+            {
+              "cell": "AE21",
+              "value": "30",
+              "formula": ""
+            },
+            {
+              "cell": "AM21",
+              "value": "15.85",
+              "formula": null
+            },
+            {
+              "cell": "AN21",
+              "value": "BLACK STALLION",
+              "formula": null
+            },
+            {
+              "cell": "AO21",
+              "value": "0.1",
+              "formula": null
+            },
+            {
+              "cell": "AP21",
+              "value": "#0",
+              "formula": null
+            },
+            {
+              "cell": "AQ21",
+              "value": "Marble",
+              "formula": null
+            },
+            {
+              "cell": "AR21",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "AS21",
+              "value": "20",
+              "formula": ""
+            },
+            {
+              "cell": "AT21",
+              "value": "#DIV/0!",
+              "formula": ""
+            }
+          ]
+        }
+      ],
+      "core_metadata": {
+        "creator": "Tenarten Terrazzo",
+        "lastModifiedBy": "Tenarten Terrazzo",
+        "created": "2026-07-15T14:43:58Z",
+        "modified": "2026-07-22T20:26:35Z"
+      }
+    },
+    {
+      "path": "/Users/chrisngo/work/tenarten/inventory/clean_inventory_final.xlsx",
+      "sha256": "b4955cf83c22f9378463072e8ee8d3f4267551a62d26171b29f248dcd44301a4",
+      "duplicate_paths": [],
+      "sheets": [
+        {
+          "name": "Sheet1",
+          "nonempty_cell_count": 658,
+          "selected_cells": []
+        }
+      ],
+      "core_metadata": {
+        "creator": null,
+        "lastModifiedBy": null,
+        "created": "2026-03-27T19:58:28Z",
+        "modified": "2026-03-27T19:58:28Z"
+      }
+    },
+    {
+      "path": "/Users/chrisngo/work/tenarten/inventory/combined_vendor_catalog_v2_more_complete.xlsx",
+      "sha256": "e26c64cc617ba802c25582b61f63bc211218f3d6ed7bd47548cf37fe59129a05",
+      "duplicate_paths": [],
+      "sheets": [
+        {
+          "name": "combined",
+          "nonempty_cell_count": 14418,
+          "selected_cells": []
+        },
+        {
+          "name": "ASG",
+          "nonempty_cell_count": 5917,
+          "selected_cells": []
+        },
+        {
+          "name": "Arim",
+          "nonempty_cell_count": 4119,
+          "selected_cells": []
+        },
+        {
+          "name": "CCQ",
+          "nonempty_cell_count": 1157,
+          "selected_cells": []
+        },
+        {
+          "name": "EnviroGlas",
+          "nonempty_cell_count": 120,
+          "selected_cells": []
+        },
+        {
+          "name": "Southern Aggregates",
+          "nonempty_cell_count": 330,
+          "selected_cells": []
+        },
+        {
+          "name": "T&M Supply",
+          "nonempty_cell_count": 2825,
+          "selected_cells": []
+        },
+        {
+          "name": "README",
+          "nonempty_cell_count": 5,
+          "selected_cells": []
+        }
+      ],
+      "core_metadata": {
+        "creator": "openpyxl",
+        "created": "2026-03-31T18:48:42Z",
+        "modified": "2026-03-31T18:48:43Z"
+      }
+    },
+    {
+      "path": "/Users/chrisngo/work/tenarten/production planning workbooks/Material Usage Report  - Copy - Copy.xlsx",
+      "sha256": "d058f331fa09cf39573c329ddfcc94d7b71d1edfb4f8f62d375d429d5ec32dbd",
+      "duplicate_paths": [],
+      "sheets": [
+        {
+          "name": "Material Report (Epoxy)",
+          "nonempty_cell_count": 46,
+          "selected_cells": [
+            {
+              "cell": "B2",
+              "value": "TENARTEN TERRAZZO",
+              "formula": null
+            },
+            {
+              "cell": "B4",
+              "value": "MATERIAL USAGE REPORT (Epoxy)",
+              "formula": null
+            },
+            {
+              "cell": "G6",
+              "value": "JOB #",
+              "formula": null
+            },
+            {
+              "cell": "AI6",
+              "value": "WO #",
+              "formula": null
+            },
+            {
+              "cell": "G8",
+              "value": "JOB. NAME",
+              "formula": null
+            },
+            {
+              "cell": "AI8",
+              "value": "COMPL DATE",
+              "formula": null
+            },
+            {
+              "cell": "G10",
+              "value": "TERR. TYPE",
+              "formula": null
+            },
+            {
+              "cell": "O10",
+              "value": "Epoxy",
+              "formula": null
+            },
+            {
+              "cell": "AI10",
+              "value": "WO ITEM",
+              "formula": null
+            },
+            {
+              "cell": "S14",
+              "value": "Number of Batches",
+              "formula": null
+            },
+            {
+              "cell": "S16",
+              "value": "Resin Color Name",
+              "formula": null
+            },
+            {
+              "cell": "S18",
+              "value": "Resin Color Number",
+              "formula": null
+            },
+            {
+              "cell": "G22",
+              "value": "Material",
+              "formula": null
+            },
+            {
+              "cell": "P22",
+              "value": "Manufacturer / Plate #",
+              "formula": null
+            },
+            {
+              "cell": "AC22",
+              "value": "Qty",
+              "formula": null
+            },
+            {
+              "cell": "AI22",
+              "value": "Unit",
+              "formula": null
+            },
+            {
+              "cell": "AN22",
+              "value": "Note",
+              "formula": null
+            },
+            {
+              "cell": "G24",
+              "value": "Resin",
+              "formula": null
+            },
+            {
+              "cell": "AC24",
+              "value": "0",
+              "formula": "AF14*5"
+            },
+            {
+              "cell": "AI24",
+              "value": "Gallon",
+              "formula": null
+            },
+            {
+              "cell": "G26",
+              "value": "Hardener",
+              "formula": null
+            },
+            {
+              "cell": "AC26",
+              "value": "0",
+              "formula": "AF14*1"
+            },
+            {
+              "cell": "AI26",
+              "value": "Gallon",
+              "formula": null
+            },
+            {
+              "cell": "G28",
+              "value": "Filler",
+              "formula": null
+            },
+            {
+              "cell": "AC28",
+              "value": "0",
+              "formula": "AF14*1"
+            },
+            {
+              "cell": "AI28",
+              "value": "Bag",
+              "formula": null
+            },
+            {
+              "cell": "G30",
+              "value": "Additional Filler",
+              "formula": null
+            },
+            {
+              "cell": "AI30",
+              "value": "Bag",
+              "formula": null
+            },
+            {
+              "cell": "G32",
+              "value": "Additional Filler",
+              "formula": null
+            },
+            {
+              "cell": "AI32",
+              "value": "--",
+              "formula": null
+            },
+            {
+              "cell": "G34",
+              "value": "Chip Blend 1",
+              "formula": null
+            },
+            {
+              "cell": "AI34",
+              "value": "Pounds",
+              "formula": null
+            },
+            {
+              "cell": "G36",
+              "value": "Chip Blend 2",
+              "formula": null
+            },
+            {
+              "cell": "AI36",
+              "value": "Pounds",
+              "formula": null
+            },
+            {
+              "cell": "G38",
+              "value": "Chip Blend 3",
+              "formula": null
+            },
+            {
+              "cell": "AI38",
+              "value": "--",
+              "formula": null
+            },
+            {
+              "cell": "G40",
+              "value": "Sealer",
+              "formula": null
+            },
+            {
+              "cell": "AI40",
+              "value": "Gallon",
+              "formula": null
+            },
+            {
+              "cell": "D46",
+              "value": "Accessories",
+              "formula": null
+            },
+            {
+              "cell": "D48",
+              "value": "Material",
+              "formula": null
+            },
+            {
+              "cell": "Q48",
+              "value": "Product",
+              "formula": null
+            },
+            {
+              "cell": "Z48",
+              "value": "Size",
+              "formula": null
+            },
+            {
+              "cell": "AF48",
+              "value": "Color / Type",
+              "formula": null
+            },
+            {
+              "cell": "AM48",
+              "value": "Qty",
+              "formula": null
+            },
+            {
+              "cell": "AS48",
+              "value": "Note",
+              "formula": null
+            },
+            {
+              "cell": "AR83",
+              "value": "Material Usage Report - Revisoin 09 JAN 23",
+              "formula": null
+            }
+          ]
+        }
+      ],
+      "core_metadata": {
+        "creator": "Anthony Iorio",
+        "lastModifiedBy": "Marcos Alvarado",
+        "created": "2023-01-11T22:14:54Z",
+        "modified": "2025-03-06T12:52:02Z"
+      }
+    },
+    {
+      "path": "/Users/chrisngo/work/tenarten/production planning workbooks/SLABS  - Copy.xlsx",
+      "sha256": "09c1c17646c8bae3a31b3416c704cecc3df81dd3ce242a6893a0d19d6ca4d301",
+      "duplicate_paths": [],
+      "sheets": [
+        {
+          "name": "MANPOWER 8-5-25",
+          "nonempty_cell_count": 129,
+          "selected_cells": [
+            {
+              "cell": "E45",
+              "value": "DRUMS OF CHIPS BLENDED",
+              "formula": null
+            },
+            {
+              "cell": "E47",
+              "value": "FORMS POURED",
+              "formula": null
+            }
+          ]
+        },
+        {
+          "name": "PRODUCTION",
+          "nonempty_cell_count": 81,
+          "selected_cells": [
+            {
+              "cell": "E9",
+              "value": "DRUMS OF CHIPS BLENDED",
+              "formula": null
+            },
+            {
+              "cell": "E11",
+              "value": "FORMS POURED",
+              "formula": null
+            }
+          ]
+        },
+        {
+          "name": "Sheet3",
+          "nonempty_cell_count": 0,
+          "selected_cells": []
+        }
+      ],
+      "core_metadata": {
+        "title": null,
+        "subject": null,
+        "creator": "aiorio",
+        "keywords": null,
+        "description": null,
+        "lastModifiedBy": "Marcos Alvarado",
+        "revision": null,
+        "created": "2018-08-13T18:42:09Z",
+        "modified": "2025-08-07T19:33:50Z",
+        "category": null,
+        "contentStatus": null
+      }
+    },
+    {
+      "path": "/Users/chrisngo/work/tenarten/production planning workbooks/Inventory - Copy.xlsx",
+      "sha256": "fbddeff9cf4717551c528cad70cec7fe69737434c8c3edbe596f675078bf4825",
+      "duplicate_paths": [],
+      "sheets": [
+        {
+          "name": "Inventory Location List ",
+          "nonempty_cell_count": 596,
+          "selected_cells": [
+            {
+              "cell": "C89",
+              "value": "Air Products / Mixed Chips",
+              "formula": null
+            },
+            {
+              "cell": "D89",
+              "value": "Super Sack",
+              "formula": null
+            },
+            {
+              "cell": "G89",
+              "value": "A3 - 6.2",
+              "formula": null
+            },
+            {
+              "cell": "H89",
+              "value": "  ",
+              "formula": null
+            },
+            {
+              "cell": "I89",
+              "value": "A",
+              "formula": null
+            },
+            {
+              "cell": "C90",
+              "value": "Newark TT21224",
+              "formula": null
+            },
+            {
+              "cell": "D90",
+              "value": "Super Sack",
+              "formula": null
+            },
+            {
+              "cell": "G90",
+              "value": "A4 - 6.2",
+              "formula": null
+            },
+            {
+              "cell": "H90",
+              "value": "60",
+              "formula": null
+            },
+            {
+              "cell": "I90",
+              "value": "A",
+              "formula": null
+            }
+          ]
+        },
+        {
+          "name": "New Inventory",
+          "nonempty_cell_count": 277,
+          "selected_cells": []
+        },
+        {
+          "name": "Warehouse Layout ",
+          "nonempty_cell_count": 77,
+          "selected_cells": []
+        },
+        {
+          "name": "Inventory",
+          "nonempty_cell_count": 222,
+          "selected_cells": []
+        },
+        {
+          "name": "New Inventory 2",
+          "nonempty_cell_count": 215,
+          "selected_cells": []
+        },
+        {
+          "name": "Sheet1",
+          "nonempty_cell_count": 54,
+          "selected_cells": [
+            {
+              "cell": "E3",
+              "value": "in stock",
+              "formula": null
+            },
+            {
+              "cell": "B4",
+              "value": "FORMULA #",
+              "formula": null
+            },
+            {
+              "cell": "C4",
+              "value": "D20-257-F (Bora Bora)",
+              "formula": null
+            },
+            {
+              "cell": "B5",
+              "value": "MATRIX COLOR:",
+              "formula": null
+            },
+            {
+              "cell": "C5",
+              "value": "2001 WHITE",
+              "formula": null
+            },
+            {
+              "cell": "F5",
+              "value": "FILLER:",
+              "formula": null
+            },
+            {
+              "cell": "G5",
+              "value": "1/8\" POOL MIX",
+              "formula": null
+            },
+            {
+              "cell": "B6",
+              "value": "FINISH:",
+              "formula": null
+            },
+            {
+              "cell": "C6",
+              "value": "Polish: 1500 Grit / Honed: 200 Grit / Brushed: 1500 Grit",
+              "formula": null
+            },
+            {
+              "cell": "F6",
+              "value": "SEALER:",
+              "formula": null
+            },
+            {
+              "cell": "G6",
+              "value": "Terra Glaze",
+              "formula": null
+            },
+            {
+              "cell": "B7",
+              "value": "Chip Mix:",
+              "formula": null
+            },
+            {
+              "cell": "C7",
+              "value": "COLOR",
+              "formula": null
+            },
+            {
+              "cell": "D7",
+              "value": "%",
+              "formula": null
+            },
+            {
+              "cell": "E7",
+              "value": "SIZE",
+              "formula": null
+            },
+            {
+              "cell": "F7",
+              "value": "TYPE",
+              "formula": null
+            },
+            {
+              "cell": "G7",
+              "value": "VENDOR",
+              "formula": null
+            },
+            {
+              "cell": "C8",
+              "value": "CLASSIC MOP",
+              "formula": null
+            },
+            {
+              "cell": "D8",
+              "value": "0.25",
+              "formula": null
+            },
+            {
+              "cell": "E8",
+              "value": "#3",
+              "formula": null
+            },
+            {
+              "cell": "F8",
+              "value": "SHELL",
+              "formula": null
+            },
+            {
+              "cell": "G8",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "J8",
+              "value": "FW 6MM 9  21BAGS",
+              "formula": null
+            },
+            {
+              "cell": "C9",
+              "value": "POLAR WHITE",
+              "formula": null
+            },
+            {
+              "cell": "D9",
+              "value": "0.2",
+              "formula": null
+            },
+            {
+              "cell": "E9",
+              "value": "#1",
+              "formula": null
+            },
+            {
+              "cell": "F9",
+              "value": "GLASS",
+              "formula": null
+            },
+            {
+              "cell": "G9",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "H9",
+              "value": "108 BAGS",
+              "formula": null
+            },
+            {
+              "cell": "C10",
+              "value": "POLAR WHITE",
+              "formula": null
+            },
+            {
+              "cell": "D10",
+              "value": "0.15",
+              "formula": null
+            },
+            {
+              "cell": "E10",
+              "value": "#2",
+              "formula": null
+            },
+            {
+              "cell": "F10",
+              "value": "GLASS",
+              "formula": null
+            },
+            {
+              "cell": "G10",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "H10",
+              "value": "3 BAGS",
+              "formula": null
+            },
+            {
+              "cell": "I10",
+              "value": "OPAQUE WHITE 8 BAGS",
+              "formula": null
+            },
+            {
+              "cell": "C11",
+              "value": "CRYSTAL CLEAR",
+              "formula": null
+            },
+            {
+              "cell": "D11",
+              "value": "0.1",
+              "formula": null
+            },
+            {
+              "cell": "E11",
+              "value": "#1",
+              "formula": null
+            },
+            {
+              "cell": "F11",
+              "value": "GLASS",
+              "formula": null
+            },
+            {
+              "cell": "G11",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "H11",
+              "value": "15 BAGS",
+              "formula": null
+            },
+            {
+              "cell": "C12",
+              "value": "ASG CRYSTAL CLEAR LANDSCAPE",
+              "formula": null
+            },
+            {
+              "cell": "D12",
+              "value": "0.1",
+              "formula": null
+            },
+            {
+              "cell": "E12",
+              "value": "#3",
+              "formula": null
+            },
+            {
+              "cell": "F12",
+              "value": "GLASS",
+              "formula": null
+            },
+            {
+              "cell": "G12",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "H12",
+              "value": "5 BAGS",
+              "formula": null
+            },
+            {
+              "cell": "C13",
+              "value": "ASG CRYSTAL CLEAR LANDSCAPE",
+              "formula": null
+            },
+            {
+              "cell": "D13",
+              "value": "0.2",
+              "formula": null
+            },
+            {
+              "cell": "E13",
+              "value": "MEDIUM",
+              "formula": null
+            },
+            {
+              "cell": "F13",
+              "value": "GLASS",
+              "formula": null
+            },
+            {
+              "cell": "G13",
+              "value": "T&M",
+              "formula": null
+            },
+            {
+              "cell": "H13",
+              "value": "6 BAGS",
+              "formula": null
+            }
+          ]
+        }
+      ],
+      "core_metadata": {
+        "creator": "bryson amelia",
+        "lastModifiedBy": "Marcos Alvarado",
+        "lastPrinted": "2025-11-10T21:31:06Z",
+        "created": "2025-01-22T19:00:56Z",
+        "modified": "2026-03-04T00:04:52Z"
+      }
+    }
+  ],
+  "sample_compendium": {
+    "path": "/Users/chrisngo/my stuff/Jobs/2026 Sample Plate Formulations.pdf",
+    "sha256": "e761f2cf92d5cd9ac2d616464d23ff7505bbe82615b578fd0fc125c1cd10432b",
+    "pages": [
+      {
+        "page": 1,
+        "project": "LBJ HOPS #1590",
+        "formula": "T26-271-A",
+        "date": "8/10/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "98d5790f9930f441a47721eda4bb5097d619a2031dda7089a0e3f58dbf02fb0e"
+      },
+      {
+        "page": 2,
+        "project": "VA HOSP - MAINE",
+        "formula": "T26-270-F",
+        "date": "8/6/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "c0370c554dc18107280b30156b07a734191bfd0a34e0adb3f68b5e0ba940321f"
+      },
+      {
+        "page": 3,
+        "project": "VA HOSP - MAINE",
+        "formula": "T26-270-E",
+        "date": "7/20/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "87835c37a1306e84d6b72c3ddfe2eef0bc9853aef4b82f4897e09d6124ab42b7"
+      },
+      {
+        "page": 4,
+        "project": "VA HOSP - MAINE",
+        "formula": "T26-270-D",
+        "date": "7/20/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "5c4385459912aebce0581d414afb6acc33b3aa261d9382409dd47dc75d68b849"
+      },
+      {
+        "page": 5,
+        "project": "VA HOSP - MAINE",
+        "formula": "T26-270-C",
+        "date": "7/20/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "5b0695a3598ed29c99f3d07e37ce8791a017b9ac237bcb69ad3c7448ed9272fb"
+      },
+      {
+        "page": 6,
+        "project": "VA HOSP - MAINE",
+        "formula": "T26-270-B",
+        "date": "7/20/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "1d756a0e2703b38c92cda3aecbaaebb0179a935f127778fab5cf01e53c07dd01"
+      },
+      {
+        "page": 7,
+        "project": "VA HOSP - MAINE",
+        "formula": "T26-270-A (NTMA EPIV-88)",
+        "date": "7/20/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "89aa6a36966cc52399fed769cf0407225b0f4ed147c460fabbe7b11c7155a070"
+      },
+      {
+        "page": 8,
+        "project": "VA HOSP - MAINE",
+        "formula": "T26-269-A (NTMA EPI-50)",
+        "date": "7/20/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "76b33e39068c38a5d3ba9e19915da455d947ee82b9a758012298bd8107fef801"
+      },
+      {
+        "page": 9,
+        "project": "Amanyara",
+        "formula": "T26-268-A",
+        "date": "7/20/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "74ffa650a90d57b970e30086c08a058ca00166be467c4b160a6c2641c8bd8d42"
+      },
+      {
+        "page": 10,
+        "project": "Agawam HS",
+        "formula": "T26-267-A",
+        "date": "7/14/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "311148d504f2da12c68e4a0aabb2e75b48719be97ab2ca63397416ce837d1317"
+      },
+      {
+        "page": 11,
+        "project": "East Montgomery #5186",
+        "formula": "T26-266-A (TM #16-457)",
+        "date": "7/10/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "79fb1ed5d785488f3e41c652e60834eb5a8c9cd00a7bb6b61f2ec812027abcaa"
+      },
+      {
+        "page": 12,
+        "project": "McCoullough JHS",
+        "formula": "T26-265-A",
+        "date": "7/10/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "dbb25684166e8b986fbf8901fae0fa8120f8b5b5143910d36b18afee16f1b3dc"
+      },
+      {
+        "page": 13,
+        "project": "KP RPLCMNT",
+        "formula": "T26-264-A",
+        "date": "7/7/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "fe7ba33ab63832576c91c3cc3df1ee6f1cde0130e9d8646ca1d0a23cae97d3aa"
+      },
+      {
+        "page": 14,
+        "project": "Boston City Hall",
+        "formula": "T26-263-A",
+        "date": "7/7/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "444d0c711ffb7acad4a2d0ac4d99fce359ea9eb24cbd9c7d4f39bbb8f2ec6bb4"
+      },
+      {
+        "page": 15,
+        "project": "ZIA",
+        "formula": "T26-262-B",
+        "date": "6/1/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "9a06d2be58fd0f6c45311e33ade670369dc921c90c0cbe64e21180c3b5d30213"
+      },
+      {
+        "page": 16,
+        "project": "ZIA",
+        "formula": "T26-262-A",
+        "date": "6/1/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "e4cbe39e2f2852848b4759183532caecfcd92c70837d203f9d19cafdba1b7709"
+      },
+      {
+        "page": 17,
+        "project": "DTE Cristina",
+        "formula": "T26-261-A",
+        "date": "6/1/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "61dd4148e5c26d888d0257ea711317dce1b02ead9efb6d1e2d2f738ef2903bb3"
+      },
+      {
+        "page": 18,
+        "project": "Cartersville City Hall",
+        "formula": "T26-260-A",
+        "date": "5/26/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "7974f8b8b841660d92090e05042475abbcfa0ed323b6dc5ead3d959205100ffc"
+      },
+      {
+        "page": 19,
+        "project": "Gessner Metronational",
+        "formula": "T26-259-A (MTT #80317M-V)",
+        "date": "5/25/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "09e53c21036994e584f6e36679e5d4fd5de1810c0df889130cb86ff91d0ae06f"
+      },
+      {
+        "page": 20,
+        "project": "Denison Univ. Doan Hall",
+        "formula": "T26-258-A",
+        "date": "5/17/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "51de52455540cb11489d047a08bf1eae0764ae7c2e81ab6e5585e9fe441c11c7"
+      },
+      {
+        "page": 21,
+        "project": "Mount Zion",
+        "formula": "T26-257-A",
+        "date": "5/13/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "4106deb3f94cd75698ef07b8086cf1c76aef4e37a91b56aa0bfc2a3a8ac14229"
+      },
+      {
+        "page": 22,
+        "project": "CRANDALL ISD",
+        "formula": "T26-256-B",
+        "date": "6/8/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "bf682bea4a54d7548bc2af77d39c0f1c8183e9b28f35eaa44e9c365fc77c9741"
+      },
+      {
+        "page": 23,
+        "project": "CRANDALL ISD",
+        "formula": "T26-256-A",
+        "date": "5/8/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "36273e07fc6a935c9740495a5b90b4495b5257b3b67a7a7ae0bb85bd2e38350b"
+      },
+      {
+        "page": 24,
+        "project": "Grady Hospital",
+        "formula": "T26-254-A",
+        "date": "4/9/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "dd5803a65835f1ab6ff4b3af2aa58a38a4e43609f1d29ddceb1a52754768dff4"
+      },
+      {
+        "page": 25,
+        "project": "GA STATE CAPITAL",
+        "formula": "T26-253-A (TZ-3)",
+        "date": "4/14/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "9d649f788676de7b66377237b21426e23d5b15f599832203c0bcece2840ab88e"
+      },
+      {
+        "page": 26,
+        "project": "RICE UNIV McNair Hall #5176",
+        "formula": "T26-252-A",
+        "date": "4/21/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "91281724072dd6cc3e6d7a13c73fd967abf7948b6ae6efb1e777d0174f24abc9"
+      },
+      {
+        "page": 27,
+        "project": "OSU WMC Powell",
+        "formula": "T26-251-A",
+        "date": "4/9/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "afc70e864b9b34c711c4115fe4acec23c30ca8b0445cbc03838d9f5428693c69"
+      },
+      {
+        "page": 28,
+        "project": "Roanoke ISD",
+        "formula": "T26-250-A",
+        "date": "4/9/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "ab0436c921b2c6339c6658fd45f89ab531ae9d7d7116a6da667f1c274842f2c2"
+      },
+      {
+        "page": 29,
+        "project": "TAMPA DUPLEX",
+        "formula": "T26-249-B (TZ-2) Black",
+        "date": "4/6/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "4a99a837dac348ab37d35f623687e6b49c5763026e872b2716f39b4aa59d7cef"
+      },
+      {
+        "page": 30,
+        "project": "Tampa Duplex",
+        "formula": "T26-249-A",
+        "date": "4/6/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "8f5dd472791d1d0e2c8f0a5d83928a9bce6306b009957fab0b54bea45ab62327"
+      },
+      {
+        "page": 31,
+        "project": "TAMPA DUPLEX",
+        "formula": "T26-248-C (TZ-1) White",
+        "date": "5/1/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "8ff19d16ecce8e36b66396883ab588b5fc100a3810bfea813c1d87cd8183996e"
+      },
+      {
+        "page": 32,
+        "project": "TAMPA DUPLEX",
+        "formula": "T26-248-B (TZ-1) White",
+        "date": "4/6/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "9b5ca1f97ad102225525ea8e1386ec4d017c53d599c905a6ad9266bd0c29eafd"
+      },
+      {
+        "page": 33,
+        "project": "DUPLEX",
+        "formula": "T26-248-A",
+        "date": "4/6/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "409178066ec1a71213b9459564b3c3dc71fd8b510e4a313f355da9160e133082"
+      },
+      {
+        "page": 34,
+        "project": "RICE UNIV McNair Hall",
+        "formula": "T26-247-A",
+        "date": "4/7/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "a1da7cf293ea0f35a44020130288d222ed4a209a6df1ee30adaab74481a6074e"
+      },
+      {
+        "page": 35,
+        "project": "GA STATE CAPITAL",
+        "formula": "T26-246-A (TZ-2)",
+        "date": "3/19/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "c10f994a3a666c4836012a078f9a6efbe6e0756fe66b67ee81151431eebe3e3b"
+      },
+      {
+        "page": 36,
+        "project": "GA STATE CAPITAL",
+        "formula": "T26-245-A (TZ-1)",
+        "date": "3/19/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "63663e6bd6f426ba0cfd79ba96645383e2e9effbaf4eceb27a6ee8ca14e283a9"
+      },
+      {
+        "page": 37,
+        "project": "Clinton Middle School",
+        "formula": "T26-244-B (TZ-3c)",
+        "date": "4/15/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "128bed912628ef1b3923a85e55b487818a0c4e755c392429fbb07bf22cc92bc1"
+      },
+      {
+        "page": 38,
+        "project": "Clinton Middle School",
+        "formula": "T26-244-A (TZ-3c)",
+        "date": "3/23/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "eb07bf98c95adea8cbff7d5408d5e3d660ceda66515bd867ef1bbe254926bb34"
+      },
+      {
+        "page": 39,
+        "project": "Clinton Middle School",
+        "formula": "T26-243-A (TZ-2c)",
+        "date": "3/23/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "40c56d67b18c90c2977dc5e7919a205597bf37a0e7976b6a868afa14862031a1"
+      },
+      {
+        "page": 40,
+        "project": "Clinton Middle School",
+        "formula": "T26-242-A (TZ-1)",
+        "date": "3/23/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "7565e28416bf92dfc98041fc332c9dd73c00b795fb2058c53012769964fc4eaa"
+      },
+      {
+        "page": 41,
+        "project": "Clinton Middle School",
+        "formula": "T26-241-B (TZ-3e)",
+        "date": "4/15/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "86151847a8ff227290fe9bb6aaa0e74cdb0af6de89308dcdbac6d96125ea9022"
+      },
+      {
+        "page": 42,
+        "project": "Clinton Middle School",
+        "formula": "T26-241-A (TZ-3e)",
+        "date": "3/23/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "c200d62985645dca14843b3d5cc064feb1cc82ad3f150c584639ea3295406d3e"
+      },
+      {
+        "page": 43,
+        "project": "Clinton Middle School",
+        "formula": "T26-240-B (TZ-2e)",
+        "date": "4/15/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "8cb2cabc309d04f36c4b7cb350b67b99930ab897c9a8e04176cf93c43cf11aed"
+      },
+      {
+        "page": 44,
+        "project": "Clinton Middle School",
+        "formula": "T26-242-B (TZ-1c)",
+        "date": "4/15/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "f7d662b16e54fe23aff9301efa70b6fa8338bee7d4b4e8aae671305cb44ac744"
+      },
+      {
+        "page": 45,
+        "project": "Clinton Middle School",
+        "formula": "T26-240-A (TZ-2e)",
+        "date": "3/23/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "65f85716bb7ff0832f9def7a5a288a7ecc300ee1ace4b061025726c56eabb07c"
+      },
+      {
+        "page": 46,
+        "project": "Clinton Middle School",
+        "formula": "T26-239-B (TZ-1e)",
+        "date": "4/15/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "71af7831f2a958d1f889001624283edca9494ac39eeb2f78753c8fa107962094"
+      },
+      {
+        "page": 47,
+        "project": "Clinton Middle School",
+        "formula": "T26-239-A (TZ-1e)",
+        "date": "3/23/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "ba299a451d4f0b38eec6ce515bb24e62bba23d1db37332148963a9823ff552fc"
+      },
+      {
+        "page": 48,
+        "project": "Johnson Ferry Worship Center",
+        "formula": "T26-238-A",
+        "date": "3/12/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "a8f44520541f795c843dc7e4b2e081d5c08acac004d50c2b88f03bc3ba34af3e"
+      },
+      {
+        "page": 49,
+        "project": "Bank of America - BP",
+        "formula": "T26-237-A",
+        "date": "3/12/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "ddcd8d380df9c30ba30607c2ebdc30535fae188be218297fe293689032933ccf"
+      },
+      {
+        "page": 50,
+        "project": "Bank of America - BP",
+        "formula": "T26-236-B",
+        "date": "4/8/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "069b36c53dbe3070794e995f0e9befdec2c1f25053a32b99df0651c9b04d7de1"
+      },
+      {
+        "page": 51,
+        "project": "Bank of America - BP",
+        "formula": "T26-236-A",
+        "date": "3/12/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "859c0382a0ee98384cb77d2e1a8e6a6df0785d546bb38b534dfaaca3a794f48d"
+      },
+      {
+        "page": 52,
+        "project": "Bank of America - BP",
+        "formula": "T26-235-A",
+        "date": "3/12/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "98eba1f7bd57cdb72787ebcdbef63f70ae8d405511dac00d77046c07e443cae0"
+      },
+      {
+        "page": 53,
+        "project": "Bank of America - One Bryant Park",
+        "formula": "T25-213-A             (#81058M-V)",
+        "date": "12/18/2025",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "10aef14c1f1144d2bbcf89c3778dec76618be9a1bdb3459b9a2fcd9c88ef9267"
+      },
+      {
+        "page": 54,
+        "project": "IAH WEST PIER #5187",
+        "formula": "T26-234-G",
+        "date": "5/1/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "e412c9929b214c9bdaa993507e77813ea5e2bcbed3172c4cd1da260d18476beb"
+      },
+      {
+        "page": 55,
+        "project": "IAH WEST PIER #5187",
+        "formula": "T26-234-F",
+        "date": "4/20/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "3b2e71a8384ed12415eace7d0f41860945d2343046ea8b26e64acbb93b228980"
+      },
+      {
+        "page": 56,
+        "project": "IAH WEST PIER #5187",
+        "formula": "T26-234-E",
+        "date": "3/30/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "3f58dd37f160294b20bad41eb972f05552200ddd2c5c923cf0234febdc77b3f9"
+      },
+      {
+        "page": 57,
+        "project": "IAH WEST PIER #5187",
+        "formula": "T26-234-D",
+        "date": "3/18/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "1aaba6e6c14e02c1021375525d28e35f7f95a3cad441861f923eda082b9b4984"
+      },
+      {
+        "page": 58,
+        "project": "IAH WEST PIER #5187",
+        "formula": "T26-234-C",
+        "date": "3/12/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "5e3323cbd236846cac3cb3787c8236a6f0febc4895ab2c399b95d856f32dd60e"
+      },
+      {
+        "page": 59,
+        "project": "IAH WEST PIER #5187",
+        "formula": "T26-234-B",
+        "date": "3/7/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "b410573f54b6f4caebb94d31c1e337cf60d5d59e38d882edb3df1b28c94e437f"
+      },
+      {
+        "page": 60,
+        "project": "IAH WEST PIER #5187",
+        "formula": "T26-234-A",
+        "date": "3/7/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "bf52e8eb2d67e69c64011c35cf4431bbd2e563388a63e091017a2d172115f65a"
+      },
+      {
+        "page": 61,
+        "project": "M D Anderson",
+        "formula": "T26-233-A",
+        "date": "3/5/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "34757d01949750ff16492c42f1e64bea2a554fc359f651f3ef608d7d21719037"
+      },
+      {
+        "page": 62,
+        "project": "BIBLE STUDY",
+        "formula": "T26-232-A",
+        "date": "3/2/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "162cb09d02406f86b97e650393a346c9b739f6cb6f6979d2adcd56ace5989fba"
+      },
+      {
+        "page": 63,
+        "project": "BIBLE STUDY",
+        "formula": "T26-231-A",
+        "date": "3/2/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "8c2cbe16d369bb3e00bb4f81438ccdc609639c171078670ac70324553e1f07ff"
+      },
+      {
+        "page": 64,
+        "project": "Alabama State House",
+        "formula": "T26-230-A (MTT 88099)",
+        "date": "3/7/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "3cefb4f8880d06786d31c37b44594625f43784c56bb3be2cc14c5337d8aee25b"
+      },
+      {
+        "page": 65,
+        "project": "Alabama State House",
+        "formula": "T26-229-A (MTT88098)",
+        "date": "3/7/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "0be0912de87e93ebbfb148a5491668e6abbe249ec5f578a98de39d67ca19d70e"
+      },
+      {
+        "page": 66,
+        "project": "Ector Co ISD MS",
+        "formula": "T26-228-A (STC25-004)",
+        "date": "3/4/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "1bfdbcc33e19c1fcf6c3e3176f894d6106dc941b1f3766740b7fc560c7970a36"
+      },
+      {
+        "page": 67,
+        "project": "BUNCH HEARTH",
+        "formula": "T26-227-A",
+        "date": "3/4/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "6654e6433c1465b12cba8bb812821fcc564fb4b67d9a27eb7f4046f294de968c"
+      },
+      {
+        "page": 68,
+        "project": "TBD",
+        "formula": "T26-226-A",
+        "date": "3/3/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "36e1c190a3a537d1d78ca1735bdb64c08fbf15046cca2a8ecf46611905d0598a"
+      },
+      {
+        "page": 69,
+        "project": "TBD",
+        "formula": "T26-225-C",
+        "date": "3/6/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "d0ea76c95987bd2a7ffa71b5728acc14c5b6f608c4a2b4a20d2550aae8d47643"
+      },
+      {
+        "page": 70,
+        "project": "TBD",
+        "formula": "T26-225-B",
+        "date": "3/6/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "0d5e0d8d817fe3975077743459d4728c98860bff102c81d92e23fb30e98fbe5d"
+      },
+      {
+        "page": 71,
+        "project": "TBD",
+        "formula": "T26-225-A",
+        "date": "2/28/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "dd2f409be70937f70058dc2ebb04826e05a7cf2a4d0bd0282a059f85efeb4687"
+      },
+      {
+        "page": 72,
+        "project": "Dornblazer Residence",
+        "formula": "T26-224-A",
+        "date": "2/24/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "203c8d078b253ca69b7124dcfa0e93f8a4294fcc99ac6e2f1bb225a59d6d12e6"
+      },
+      {
+        "page": 73,
+        "project": "Prospect Middle School #7 & #8",
+        "formula": "T26-223-A",
+        "date": "2/12/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "e21a3fcfa46e4d2e6448dfda12691446aad26cefe2bfaa0204a123371d17070e"
+      },
+      {
+        "page": 74,
+        "project": "IDAHO SLABS",
+        "formula": "T26-222-A",
+        "date": "2/9/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "ba58243726fe1b0da2380d24034facd95ce083b75c971198ae156b8515a8408f"
+      },
+      {
+        "page": 75,
+        "project": "IDAHO SLABS",
+        "formula": "T26-221-E",
+        "date": "3/3/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "205df78e5bfaec04f7ac622a6b63e96ee18f30b9ae85623adf269fdb9dae1e8f"
+      },
+      {
+        "page": 76,
+        "project": "IDAHO SLABS",
+        "formula": "T26-221-A",
+        "date": "2/9/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "1e5edbee43bea0f9f854904675a6c9a537fde8010f5ed80cdceb40b4371ebeda"
+      },
+      {
+        "page": 77,
+        "project": "TN TOWER",
+        "formula": "T26-220-A",
+        "date": "2/5/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "7359e509650edb5b7d286e8b921f361159d9404fd9ca14a704fa8e57eac758ab"
+      },
+      {
+        "page": 78,
+        "project": "Coca-Cola",
+        "formula": "T26-219-A",
+        "date": "1/29/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "068a3cb6e943f28fc43605eab77b1ec67d75e03c1417a87b012b2df3a3f8b864"
+      },
+      {
+        "page": 79,
+        "project": "Condo Balconies",
+        "formula": "T26-218-B",
+        "date": "2/11/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "abe9634904ea8e224c674f3689b25661f70adc2dd8ba0b76f38090dba7d0c2e8"
+      },
+      {
+        "page": 80,
+        "project": "Condo Balconies",
+        "formula": "T26-218-A",
+        "date": "1/20/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "813c286ba88d81735214952be75ec1fb45bf32d0518cfeba8c48e2da73ffbced"
+      },
+      {
+        "page": 81,
+        "project": "Inn at Perry Cabin",
+        "formula": "T26-217-A",
+        "date": "1/18/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "c1c45f6593725cc769faab9f5534a0de65c1afc2b04bfd207974a96be6adfe98"
+      },
+      {
+        "page": 82,
+        "project": "TAMU Texarkana",
+        "formula": "T25-216-B",
+        "date": "1/9/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "88d12ea153a525f2e6a76c81919988fe5127a0223482693b20819a4d296596e2"
+      },
+      {
+        "page": 83,
+        "project": "PRISMA",
+        "formula": "T26-215-A",
+        "date": "1/8/2026",
+        "has_1000": true,
+        "has_sample": true,
+        "text_sha256": "3554ba51600104f4ed508e9ecb4855f4bf7d72ce571cb26d340f52e955db45ed"
+      }
+    ]
+  },
+  "unavailable_original_lead": {
+    "host_workbook": "/Users/chrisngo/Desktop/Q26-0901-1.0 St Ignacio HS CALCS.xlsx",
+    "member": "xl/externalLinks/externalLink1.xml",
+    "original_path": "\\\\SMG8310\\pm\\Anthony\\1 - PRIMARY FILES\\13 -Retail Precast Jobs\\1- IN PROGRESS\\UT HSCH -SA\\UTHSCH-SA.xlsx",
+    "sheet_names": [
+      "Blend Sheet Calcs",
+      "WO 110123-3",
+      "WO 110123-2",
+      "23-763-B",
+      "23-763-A"
+    ],
+    "limitation": "Sheet names only. Entire external link has one cached cell; no recovered Blend Sheet calculation payload."
+  }
+}
