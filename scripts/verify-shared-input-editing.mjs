@@ -3,8 +3,7 @@ import {chromium,expect} from '@playwright/test';
 const browser=await chromium.launch();const page=await browser.newPage();page.setDefaultTimeout(12000);
 const writes=[];page.on('request',r=>{if(r.method()!=='GET'&&/save_sample|blend-issue/.test(r.url()+r.postData()))writes.push(r.url());});
 try {
- // Supply disposable suggestion values through the existing recent-values read contract.
- await page.route('**/rpc/list_my_sample_recent_values',r=>r.fulfill({json:[{value:'Sherwin-Williams'},{value:'Terroxy'},{value:'MTT'}]}));
+ // Exercise the disposable registered vendors through the actual review backend.
  await page.goto('http://localhost:3000/samples?open=53587d50-88c8-4b06-8c93-19dd99aa4feb');
  const adj=page.getByRole('spinbutton',{name:'ADJ (lb)',exact:true}),batches=page.getByRole('spinbutton',{name:'ADJD Batches',exact:true});
  const production=page.getByRole('region',{name:'Production Blend Sheet',exact:true});const cards=production.locator('fieldset > div');
@@ -23,7 +22,7 @@ try {
  await supplier.click();await expect(page.getByRole('option',{name:'Sherwin-Williams',exact:true})).toBeVisible();await supplier.press('Escape');await expect(supplier).toHaveValue('Terroxy');
  await supplier.fill('Sher');await supplier.press('ArrowDown');await supplier.press('Enter');await expect(supplier).toHaveValue('Sherwin-Williams');
  await supplier.locator('..').getByRole('button',{name:'Browse choices'}).click();await page.locator('#sample-context').click({position:{x:4,y:4}});await expect(supplier).toHaveValue('Sherwin-Williams');
- console.log('PASS recent-value shared combobox replacement, reopen, search/keyboard/Escape/click-away/chevron');
+ console.log('PASS vendor shared combobox replacement, reopen, search/keyboard/Escape/click-away/chevron');
  const color=page.locator('[data-sample-material-row]').first().locator('.blend-color input');
  await color.click();await page.getByRole('option').filter({hasText:'Blue Glass'}).click();await expect(color).toHaveValue('Blue Glass');await color.click();await expect(page.getByRole('option').filter({hasText:'Blanco #1'})).toBeVisible();await color.press('Escape');await expect(color).toHaveValue('Blue Glass');
  console.log('PASS Sample Catalog selected material reopens alternatives without clearing');

@@ -3,6 +3,7 @@
 import {displayProfileRatio} from '../../../supabase/functions/_shared/ratio-display.mjs';
 import { BusinessButton, BusinessSelect, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
 
+import {sampleVendorPackageWarning} from './vendor-authority';
 import {applyResinIdentity,synchronizeResin,resinConflict} from './resin-identity';
 import Help from './ContextHelp';
 import {preferredColorPlate,colorPlateWarning,colorPlateConflict} from './color-plate-identifier';
@@ -93,7 +94,6 @@ import {
   sampleLibraryTitle,
 } from "./library-row";
 import {
-  applySupplierRatioDefault,
   calculateSampleFormulation,
   normalizeSupportedSampleRatio,
   SAMPLE_FORMULATION_CALCULATION_VERSION,
@@ -289,19 +289,8 @@ export default function SampleWorkspace() {
     setMessage("");
   }
   function patchResinSupplier(value: string) {
-    setDraft((current) =>
-      current
-        ? {
-            ...current,
-            resinSupplier: value,
-            formulation:
-              current.formulation.ratioProvenance === "manual" || [SAMPLE_FORMULATION_CALCULATION_VERSION,BATCH_FIRST_VERSION].includes(current.formulation.calculationVersion)
-                ? current.formulation
-                : applySupplierRatioDefault(current.formulation, value),
-          }
-        : current,
-    );
-    setMessage("");
+    // Sourcing is independent of the captured Resin System, including legacy drafts.
+    patch("resinSupplier", value);
   }
   async function create() {
     setBusy("create");
@@ -962,15 +951,16 @@ export default function SampleWorkspace() {
                   onChange={(value) => patch("sealer", value)}
                   className={field}
                 />
-                <SampleRecentValueInput
-                  label="Resin Supplier"
-                  value={draft.resinSupplier}
-                  fieldKey={sampleRecentFieldKeys.resinSupplier}
-                  suggestions={recentValues.resin_supplier ?? []}
-                  onLoad={loadRecent}
-                  onChange={patchResinSupplier}
-                  className={field}
-                />
+                <label className={label}>Resin Supplier
+                  <PurchasingVendorNameInput
+                    id="sample-resin-supplier"
+                    ariaLabel="Resin Supplier"
+                    value={draft.resinSupplier}
+                    vendors={vendors}
+                    onChange={patchResinSupplier}
+                    className={field}
+                  />
+                </label>
                 <SampleRecentValueInput
                   label="Resin Color and #"
                   value={draft.resinColorNumber}
@@ -1235,6 +1225,7 @@ export default function SampleWorkspace() {
                           }
                           className={field}
                         />
+                        {sampleVendorPackageWarning(row)&&<p role="status" className="mt-1 text-xs font-normal text-amber-800">{sampleVendorPackageWarning(row)}</p>}
                       </label>
                     </div>
                     {expandedRows[row.id]&&<div className="blend-row-details text-xs text-slate-600"><p>{row.catalogItemId?`Catalog-assisted · ${row.catalogSource??'Catalog'}`:'Manual material entry'}</p>{row.catalogSnapshot.package_context!=null&&<p>Captured package: {(() => {const value=row.catalogSnapshot.package_context as {amount?:string;unit?:string;container?:string};return [value.amount,value.unit,value.container].filter(Boolean).join(' · ')||'See selected catalog material';})()}</p>}</div>}

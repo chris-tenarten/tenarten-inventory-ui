@@ -59,16 +59,18 @@ export function PurchasingChoiceWithCustom({
 
 export function PurchasingVendorNameInput({
   id,
+  ariaLabel = "Vendor",
   value,
   vendors,
   onChange,
   className,
 }: {
   id: string;
+  ariaLabel?: string;
   value: string;
   vendors: VendorOption[];
   onChange(value: string): void;
   className: string;
 }) {
-  return <SuggestionInput id={id} value={value} options={vendors.map(vendor=>vendor.name)} onChange={onChange} className={className}/>;
+  return <SuggestionInput ariaLabel={ariaLabel} id={id} value={value} options={vendors.map(vendor=>vendor.name)} onChange={onChange} className={className}/>;
 }
