@@ -1,5 +1,6 @@
 "use client";
 
+import SamplePourPlanner from "./SamplePourPlanner";
 import {displayProfileRatio} from '../../../supabase/functions/_shared/ratio-display.mjs';
 import { BusinessButton, BusinessInput, BusinessSelect } from '@/components/BusinessWriteControls';
 
@@ -58,7 +59,6 @@ export default function SampleFormulationConfigurator({
   const batchReference = deriveBatchReference(state);
   const batchTarget = isBatchFirst ? resolveBatchFiller(state).target : isV4 ? validBatchTarget(state.profile?.batchChipTargetLb) : null;
   const compact = (value: string) => value !== "" && Number.isFinite(Number(value)) ? Number(value).toLocaleString("en-US", { maximumFractionDigits: 4 }) : "—";
-  const pourDimension = (value: string) => state.dimensionUnit === "in" ? inches(value) : `${compact(value)}′`;
   const calculatedTarget = useMemo(
     () => calculateSampleFormulation(
       { ...state, basis: "weight_per_sf", totalWeight: "" },
@@ -132,23 +132,13 @@ export default function SampleFormulationConfigurator({
           <h2 className="text-sm font-bold uppercase tracking-wide">
             Sample Plate Calculation
           </h2>
+          <SamplePourPlanner state={state} rows={rows} patch={patch} onChange={onChange}>
           <dl className="mt-3 grid gap-4 text-sm sm:grid-cols-2">
-            <div className="min-w-0">
-              <dt className="font-bold text-slate-600">Finished Plates</dt>
-              <dd className="mt-1 font-semibold">{state.finishedPlateQuantity || "—"} pcs · {inches(state.finishedPlateWidth)} × {inches(state.finishedPlateLength)} × {inches(state.thicknessIn)}</dd>
-              <dd className="mt-1 text-xs text-slate-500">Finished plate area: {number(result.finishedAreaSf)} SF</dd>
-              <dd className="mt-1 text-xs text-slate-500">Intended pieces from the pour. Changing these does not resize the Working Pour.</dd>
-            </div>
             <div className="min-w-0">
               <dt className="font-bold text-slate-600">Batch Basis</dt>
               <dd className="mt-1 font-semibold">{batchTarget === null ? "Batch basis not captured" : `${formatBatchQuantity(batchTarget, "lb")} lb chips = 100%`}</dd>
               {batchReference && <dd data-testid="batch-reference-yield" className="mt-1 text-xs text-slate-600">{formatBatchQuantity(batchReference.coverageSf, "SF")} SF @ {inches(String(batchReference.referenceThicknessIn))} · {formatBatchQuantity(batchReference.chipRateLbSf, "lb")} lb chips/SF</dd>}
               {batchTarget !== null && <dd className="mt-1 text-xs text-slate-500">{displayProfileRatio(state.profile?.name)}</dd>}
-            </div>
-            <div className="min-w-0">
-              <dt className="font-bold text-slate-600">Working Pour</dt>
-              <dd className="mt-1 font-semibold">{pourDimension(state.width)} × {pourDimension(state.length)} × {inches(state.thicknessIn)} · {number(result.areaSf)} SF</dd>
-              {(isV4 || isBatchFirst) && result.effectiveWeightPerSf && <dd className="mt-1 text-xs text-slate-500">{compact(result.effectiveWeightPerSf)} lb chips/SF at this pour thickness</dd>}
             </div>
             <div className="min-w-0">
               <dt className="font-bold text-slate-600">Working Pour Chip Mix</dt>
@@ -162,6 +152,7 @@ export default function SampleFormulationConfigurator({
                 ? `${number(result.availableChipMixOz)} oz from ${number(result.effectiveChipDensityLbCft)} lb/CFT. Expected dry pool ${number(result.dryPoolOz)} oz; actual ${number(result.actualDryTotalOz)} oz.`
                 : "Calculated from working pour area × Weight / SF. Filler and Resin are entered separately."}
           </p>
+          </SamplePourPlanner>
           {result.invalidMassBalance && <p className="mt-1 text-xs font-bold text-red-700">Non-chip ingredients exceed Total Formula Weight. Reduce them or increase the total.</p>}
           {isV4 && Math.abs(Number(result.dryPoolVarianceOz||0))>0.005 && <div className="mt-3 border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950"><p className="font-bold">This formula differs from the selected profile&apos;s expected dry-material balance by {Number(result.dryPoolVarianceOz)>0?'+':''}{number(result.dryPoolVarianceOz)} oz.</p><p className="mt-1">This is allowed. Use Adjust Formulation only when you intend to preserve the profile relationship.</p></div>}
           {isV4 && <BusinessButton type="button" onClick={()=>{setAdjustmentFiller(result.effectiveFillerOz);setAdjusting(true);}} className="mt-3 min-h-10 border border-slate-400 bg-white px-3 text-xs font-bold">Adjust Formulation</BusinessButton>}
@@ -205,94 +196,6 @@ export default function SampleFormulationConfigurator({
               <BusinessInput type="number" min="0" step="0.01" value={state.totalFormulaWeightOz} onChange={(event)=>patch({totalFormulaWeightOz:event.target.value})} className={input}/>
               <span className={hint}>ounces · historical V2 mass-balance input</span>
             </label>}
-            <label data-sample-tutorial="finished-pieces" className={label}>
-              Finished Plate Width
-              <BusinessInput
-                type="number"
-                min="0"
-                step="0.001"
-                value={state.finishedPlateWidth}
-                onChange={(event) =>
-                  patch({ finishedPlateWidth: event.target.value })
-                }
-                className={input}
-              />
-              <span className={hint}>inches</span>
-            </label>
-            <label data-sample-tutorial="finished-pieces" className={label}>
-              Finished Plate Length
-              <BusinessInput
-                type="number"
-                min="0"
-                step="0.001"
-                value={state.finishedPlateLength}
-                onChange={(event) =>
-                  patch({ finishedPlateLength: event.target.value })
-                }
-                className={input}
-              />
-              <span className={hint}>inches</span>
-            </label>
-            <label data-sample-tutorial="finished-pieces" className={label}>
-              Finished Pieces
-              <BusinessInput
-                type="number"
-                min="1"
-                step="1"
-                value={state.finishedPlateQuantity}
-                onChange={(event) =>
-                  patch({ finishedPlateQuantity: event.target.value })
-                }
-                className={input}
-              />
-            </label>
-            <label data-sample-tutorial="finished-pieces production-pour" className={label}>
-              Thickness
-              <BusinessInput
-                type="number"
-                min="0"
-                step="0.001"
-                value={state.thicknessIn}
-                onChange={(event) => patch({ thicknessIn: event.target.value })}
-                className={input}
-              />
-              <span className={hint}>inches · 0.375 = 3/8″</span>
-            </label>
-            <label data-sample-tutorial="production-pour" className={label}>
-              Working Pour Width
-              <BusinessInput
-                type="number"
-                min="0"
-                step="0.001"
-                value={state.width}
-                onChange={(event) => patch({ width: event.target.value })}
-                className={input}
-              />
-            </label>
-            <label data-sample-tutorial="production-pour" className={label}>
-              Working Pour Length
-              <BusinessInput
-                type="number"
-                min="0"
-                step="0.001"
-                value={state.length}
-                onChange={(event) => patch({ length: event.target.value })}
-                className={input}
-              />
-            </label>
-            <label data-sample-tutorial="production-pour" className={label}>
-              Dimension Unit
-              <BusinessSelect
-                value={state.dimensionUnit}
-                onChange={(event) =>
-                  patch({ dimensionUnit: event.target.value as "in" | "ft" })
-                }
-                className={input}
-              >
-                <option value="in">inches</option>
-                <option value="ft">feet</option>
-              </BusinessSelect>
-            </label>
             <label className={label}>
               {isBatchFirst ? "Batch reference chip loading" : "Material Density"}
               <BusinessInput

@@ -1102,10 +1102,12 @@ export default function SampleWorkspace() {
                             max="100"
                             step="0.001"
                             value={row.percentage}
+                            inputMode="decimal"
+                            onWheel={(e) => e.currentTarget.blur()}
                             onChange={(e) =>
                               patchRow(index, { percentage: e.target.value })
                             }
-                            className={field}
+                            className={`${field} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                           />
                         </label>
                       )}
@@ -1251,8 +1253,9 @@ export default function SampleWorkspace() {
               rows={draft.blendRows}
               resinSupplier={draft.resinSupplier}
               onChange={(formulation) => {
-                const changed = batchFirst && ['length','width','thicknessIn','dimensionUnit','profile'].some(key=>JSON.stringify(formulation[key as keyof typeof formulation])!==JSON.stringify(draft.formulation[key as keyof typeof formulation]));
-                if(changed) {setDraft({...draft,formulation,blendRows:draft.blendRows.map(row=>row.quantityProvenance==='manual'?{...row,quantity:'',quantityProvenance:row.componentRole==='other'?'manual':'calculated'}:row)});setMessage('Shop overrides reset for the new Working Pour or profile. Review preparation quantities before use.');}
+                // Geometry edits preserve authored shop quantities; the planner asks the operator to review them.
+                const changed = batchFirst && JSON.stringify(formulation.profile)!==JSON.stringify(draft.formulation.profile);
+                if(changed) {setDraft({...draft,formulation,blendRows:draft.blendRows.map(row=>row.quantityProvenance==='manual'?{...row,quantity:'',quantityProvenance:row.componentRole==='other'?'manual':'calculated'}:row)});setMessage('Shop overrides reset for the new profile. Review preparation quantities before use.');}
                 else patch("formulation", formulation);
               }}
               onApplyAdjustment={(formulation,targetFillerOz)=>setDraft(current=>current?{...current,formulation,blendRows:current.blendRows.map(row=>row.componentRole==='filler'?{...row,quantity:targetFillerOz,quantityProvenance:'manual'}:row)}:current)}
