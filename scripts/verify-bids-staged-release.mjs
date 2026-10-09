@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {readFileSync,existsSync} from 'node:fs';
+const base='095f3215d4a57c7439aa974e59a617f54ccdeba9';
+const git=(...args)=>execFileSync('git',args,{encoding:'utf8'});
+const paths=['src/modules/my-work','src/components/AccountNotifications.tsx','src/modules/production','src/modules/pre-production/queries.ts','src/modules/pre-production/types.ts','src/modules/pre-production/BidProposalCard.tsx','src/modules/proposals','supabase/migrations','supabase/functions','supabase/operations','src/lib/auth.tsx','src/lib/branding-environment.mjs','next.config.ts'];
+for(const path of paths)assert.equal(git('diff',base,'--',path),'',`Unexpected downstream change: ${path}`);
+assert(!existsSync('.env.local'),'Production build must exclude .env.local');
+const preview=readFileSync('src/modules/pre-production/BidCollaborationPreview.tsx','utf8');assert(!/supabase|queries|fetch\(|createWorkTask|uploadWorkTask/.test(preview));assert(preview.includes('Not Yet Available'));assert(preview.includes('Nothing entered here is saved, uploaded or sent'));
+const migrations=['20261009100000_bid_update_collaboration.sql','20261009101000_bid_my_work_context.sql','20261009102000_bid_task_reminders.sql'];
+const checksums=Object.fromEntries(migrations.map(name=>[name,createHash('sha256').update(git('show',`8ac1dba42e09c8f7045aefeec93cb305569d7c6a:supabase/migrations/${name}`)).digest('hex')]));
+console.log(JSON.stringify({result:'PASS',unchangedDownstreamPaths:paths,draftMigrationChecksums:checksums,migrationsInRelease:[],previewHasNoPersistenceInfrastructure:true},null,2));

@@ -1,6 +1,8 @@
 # Bids CRM UX overhaul — local increment and backend boundary
 
-Status: partial local candidate; full overhaul is not complete or release-ready. No push, deployment, hosted mutation, or migration application authorized/performed.
+Historical checkpoint, superseded by backend authorization and the [controlled Production frontend release](2026-10-09-bids-production-staged-release.md).
+
+Status at this checkpoint: partial local candidate; full overhaul is not complete or release-ready. No push, deployment, hosted mutation, or migration application authorized/performed.
 
 ## Authority and baseline
 

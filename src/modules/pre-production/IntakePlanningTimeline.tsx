@@ -132,6 +132,7 @@ export default function IntakePlanningTimeline({ bids, onSelectBid, onChanged, m
     const mode = (target.closest('[data-window-edge]')?.getAttribute('data-window-edge') ?? 'move') as WindowEdit;
     const next = { record, mode, x: event.clientX, start: record.projected_production_start, end: record.projected_production_end, moved: false };
     dragRef.current = next; setDrag(next); suppressClick.current = false;
+    viewport.current?.focus({preventScroll:true});
     event.currentTarget.setPointerCapture(event.pointerId);
     event.preventDefault();
   }
