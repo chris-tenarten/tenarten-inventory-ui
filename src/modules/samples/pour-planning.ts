@@ -10,6 +10,15 @@ export function convertPourUnits(state: SampleFormulationState, unit: 'in' | 'ft
   const convert = (value: string) => value.trim() && Number.isFinite(Number(value)) ? dimensionalValue(Number(value) * factor) : value;
   return {...state, width: convert(state.width), length: convert(state.length), dimensionUnit: unit};
 }
+export function geometryInputErrors(state: SampleFormulationState) {
+  const fields = [['finishedPlateWidth','Finished Plate Width'],['finishedPlateLength','Finished Plate Length'],['finishedPlateQuantity','Finished Pieces'],['thicknessIn','Thickness'],['width','Working Pour Width'],['length','Working Pour Length']] as const;
+  const errors: {key:string;label:string;message:string}[] = fields.flatMap(([key,label])=> {
+    const value=positive(state[key]);
+    return value===null || (key==='finishedPlateQuantity'&&!Number.isSafeInteger(value)) ? [{key,label,message:key==='finishedPlateQuantity'?'Enter a positive whole finished-piece count.':`Enter a positive, finite ${label.toLowerCase()}.`}] : [];
+  });
+  if(!['in','ft'].includes(state.dimensionUnit))errors.push({key:'dimensionUnit',label:'Working Pour Units',message:'Choose inches or feet for Working Pour dimensions.'});
+  return errors;
+}
 export function finishedGeometry(state: SampleFormulationState) {
   const w = positive(state.finishedPlateWidth), l = positive(state.finishedPlateLength), count = positive(state.finishedPlateQuantity), t = positive(state.thicknessIn);
   const area = w !== null && l !== null && count !== null ? w * l * count / 144 : null;
@@ -31,13 +40,14 @@ export function suggestPourLayouts(state: SampleFormulationState, edgeText: stri
   if (n > 10000) return {layouts: [], issue: 'Suggestions support up to 10,000 identical rectangular pieces. Author the Working Pour directly for larger layouts.'};
   const allowance = (s: string) => s.trim() !== '' && Number.isFinite(Number(s)) && Number(s) >= 0 ? Number(s) : null;
   const edge = allowance(edgeText), gap = allowance(separationText);
-  if (edge === null || gap === null) return {layouts: [], issue: 'Enter zero or a positive allowance in inches.'};
+  if (edge === null || gap === null) return {layouts: [], issue: `${edge===null?'Edge':'Separation / cutting'} allowance must be zero or a positive finite number in inches.`};
+  if(!['in','ft'].includes(state.dimensionUnit))return {layouts:[],issue:'Choose inches or feet for Working Pour dimensions.'};
   const maxWidth = constraints?.maxWidth.trim() ? positive(constraints.maxWidth) : Infinity;
   const maxLength = constraints?.maxLength.trim() ? positive(constraints.maxLength) : Infinity;
   const fixedColumns = constraints?.arrangement === 'fixed' ? positive(constraints.columns) : null;
   const unitFactor = state.dimensionUnit === 'ft' ? 12 : 1;
   const lockedWidth = positive(state.width), lockedLength = positive(state.length);
-  if (maxWidth === null || maxLength === null) return {layouts:[],issue:'Maximum width and length must be positive, or blank for no limit.'};
+  if (maxWidth === null || maxLength === null) return {layouts:[],issue:`Maximum ${maxWidth===null?'width':'length'} must be positive and finite, or blank for no limit.`};
   if (constraints?.arrangement === 'fixed' && (fixedColumns === null || !Number.isSafeInteger(fixedColumns) || fixedColumns > n)) return {layouts:[],issue:'Enter a whole column count between 1 and the finished piece count.'};
   if (constraints && ((!constraints.adjustWidth && lockedWidth === null) || (!constraints.adjustLength && lockedLength === null))) return {layouts:[],issue:'Locked Working Pour dimensions must be positive.'};
   const candidates: PourLayout[] = [];
@@ -55,7 +65,10 @@ export function suggestPourLayouts(state: SampleFormulationState, edgeText: stri
       candidates.push({name: '', columns, rows, rotated, widthIn, lengthIn, thicknessIn: t, area, volume, unused: columns * rows - n});
     }
   }
-  if (!candidates.length) return {layouts: [], issue: 'No modeled rectangular arrangement fits these constraints. Increase a limit, unlock a dimension, or change the permitted arrangement/allowances.'};
+  if (!candidates.length) {
+    const limits = [constraints&&!constraints.adjustWidth?`locked width ${geometryNumber(lockedWidth! * unitFactor)} inches`:null,constraints&&!constraints.adjustLength?`locked length ${geometryNumber(lockedLength! * unitFactor)} inches`:null,maxWidth!==Infinity?`maximum width ${maxWidth} inches`:null,maxLength!==Infinity?`maximum length ${maxLength} inches`:null,fixedColumns!==null?`${fixedColumns} fixed columns`:null,constraints?.rotate===false?'no piece rotation':null,`edge allowance ${edge} inches`,`separation allowance ${gap} inches`].filter(Boolean);
+    return {layouts: [], issue: `No modeled rectangular arrangement fits: ${limits.join('; ')}. Increase a limit, unlock a dimension, or revise the arrangement/allowances.`};
+  }
   if (constraints) {
     const seen = new Set<string>();
     const layouts = candidates.sort((a,b)=>a.volume-b.volume || Math.max(a.widthIn,a.lengthIn)-Math.max(b.widthIn,b.lengthIn) || a.unused-b.unused).filter(c=>{

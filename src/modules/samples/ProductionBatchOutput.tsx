@@ -3,6 +3,7 @@ import {displayProfileRatio} from '../../../supabase/functions/_shared/ratio-dis
 import {useEffect,useImperativeHandle,useRef,useState} from 'react';
 import {resolveBatchFiller} from '../../../supabase/functions/_shared/sample-batch-first.mjs';
 import {productionSourceKey} from './production-source-key';
+import type {SampleAttention} from './sample-validation-view';
 import Help from './ContextHelp';
 import type {Ref} from 'react';
 import {useAuth} from '@/lib/auth';
@@ -23,7 +24,7 @@ async function request(body:Record<string,unknown>){
  if(error){let message=error.message;try{message=(await error.context.json()).error||message;}catch{}throw new Error(message);}
  return data;
 }
-export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyChange,ref,mode,onDocuments,onSample}:{mode:'planner'|'documents'|'hidden';onDocuments:()=>void;onSample:()=>void;sample:SampleRecord;onSave:()=>Promise<SampleRecord>;onPreview:(url:string,filename:string)=>void;onDirtyChange?:(dirty:boolean)=>void;ref?:Ref<{open:()=>void}>}){
+export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyChange,onValidationChange,ref,mode,onDocuments,onSample}:{onValidationChange?:(items:SampleAttention[])=>void;mode:'planner'|'documents'|'hidden';onDocuments:()=>void;onSample:()=>void;sample:SampleRecord;onSave:()=>Promise<SampleRecord>;onPreview:(url:string,filename:string)=>void;onDirtyChange?:(dirty:boolean)=>void;ref?:Ref<{open:()=>void}>}){
  const auth=useAuth();const canManage=auth.can('production_blend.manage');
  const [busy,setBusy]=useState(false),[error,setError]=useState('');
  const [source,setSource]=useState('working'),[snapshot,setSnapshot]=useState<Snapshot|null>(null),[plans,setPlans]=useState<HistoryEntry[]>([]);
@@ -35,12 +36,21 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
  useImperativeHandle(ref,()=>({open:()=>{section.current?.scrollIntoView({behavior:'smooth',block:'start'});section.current?.focus({preventScroll:true});}}));
  useEffect(()=>{onDirtyChange?.(dirty);const warn=(event:BeforeUnloadEvent)=>{if(dirty){event.preventDefault();event.returnValue='';}};window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[dirty,onDirtyChange]);
  const basis=resolveBatchFiller(snapshot?.formulation??snapshot?.formulation_state??sample.formulation).target;
- const fieldErrors={batchCount:Number.isFinite(Number(inputs.batchCount))&&Number(inputs.batchCount)>=1?'':'Enter at least 1 Production Batch.',blendSize:Number.isFinite(Number(inputs.blendSize))&&Number(inputs.blendSize)>0?'':'Blend Size must be greater than 0 lb.',adjustment:Number.isFinite(Number(inputs.plannedQuantity))&&Number(inputs.plannedQuantity)>0?'':'ADJ must leave Total Chips Required greater than 0 lb.'};
+ const validBatchCount=Number.isFinite(Number(inputs.batchCount))&&Number(inputs.batchCount)>=1;
+ const fieldErrors={batchCount:validBatchCount?'':'Enter at least 1 Production Batch.',blendSize:Number.isFinite(Number(inputs.blendSize))&&Number(inputs.blendSize)>0?'':'Blend Size must be greater than 0 lb.',adjustment:!validBatchCount||Number.isFinite(Number(inputs.plannedQuantity))&&Number(inputs.plannedQuantity)>0?'':'ADJ must leave Total Chips Required greater than 0 lb.'};
  let model:Model|null=null,calculationError='';
  if(snapshot&&!Object.values(fieldErrors).some(Boolean))try{model=buildProductionBlend(snapshot,inputs);}catch(e){calculationError=e instanceof Error?e.message.replaceAll('Planned Quantity','Total Chips Required'):'Invalid planning inputs.';}
  useEffect(()=>{if(mode==='documents'&&canManage&&!historyLoaded){let cancelled=false;request({action:'blend-list',sampleId:sample.id,metadata:true}).then(data=>{if(!cancelled){setPlans(data);setHistoryLoaded(true);}}).catch(e=>{if(!cancelled)setError(e.message);});return()=>{cancelled=true;};}},[mode,canManage,historyLoaded,sample.id]);
  const seenSources=new Set<string>(snapshot?[productionSourceKey(snapshot)??'']:[]);
  const historicalSources=sample.issuedDocuments.filter(d=>{const key=d.productionSourceKey??d.id;if(d.id===source)return true;if(seenSources.has(key))return false;seenSources.add(key);return true;});
+ const validationItems:SampleAttention[]=mode==='planner'&&canManage ? [
+  ...(sample.id&&!hasCapturedBatchBasis(sample.formulation)?[{label:'Production Batch basis',section:'formulation-setup',selector:'select',message:'Review current profile defaults and save the formulation before Production planning.'}]:[]),
+  ...(snapshot?Object.entries(fieldErrors).filter(([,message])=>message).map(([key,message])=>({label:`Production (${key==='batchCount'?'Batch Count':key==='blendSize'?'Blend Size':'ADJ'})`,section:'production-planning',selector:`[aria-label="${key==='batchCount'?'ADJD Batches':key==='blendSize'?'Blend Size (lb)':'ADJ (lb)'}"]`,message})):[]),
+  ...((calculationError||error)?[{label:'Production formulation',section:'production-planning',message:calculationError||error}]:[]),
+  ...(model?.warnings.length?[{label:'Production material authority',section:'production-planning',message:model.warnings.join(' ')}]:[])
+ ]:[];
+ const validationKey=JSON.stringify(validationItems);
+ useEffect(()=>{onValidationChange?.(JSON.parse(validationKey));},[validationKey,onValidationChange]);
  const shown=model,shop=shown?blendShopPresentation(shown,false):null;
  const missingCurrentBasis=!hasCapturedBatchBasis(sample.formulation);
  async function run(work:()=>Promise<void>){if(lock.current)return;lock.current=true;setBusy(true);setError('');try{await work();}catch(e){setError(e instanceof Error?e.message:'Unable to generate Blend Sheet.');}finally{lock.current=false;setBusy(false);}}
@@ -87,18 +97,18 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
    {snapshot&&<div className="mt-4 space-y-4">
     <fieldset disabled={busy||Boolean(pending)} className="grid gap-4 md:grid-cols-3">
      <div className="border border-slate-200 p-3"><h3 className="mb-3 font-bold">1 — Production requirement</h3>
-      <label className="block text-sm font-bold">ADJD Batches<Help label="ADJD Batches">Final production batches. Drives Resin, Hardener and Filler.</Help><input aria-label="ADJD Batches" type="number" min="0" step="any" value={inputs.batchCount} onChange={e=>edit('batchCount',e.target.value)} className="mt-2 min-h-11 w-full border px-2"/></label>
-      <p className="mt-3 text-sm font-bold">{basis?`1 Batch = ${n(basis)} lb chips`:'This formulation does not have an authoritative Chip Mix per Batch.'}</p>{fieldErrors.batchCount&&<p role="alert" className="text-sm text-red-800">{fieldErrors.batchCount}</p>}
+      <label className="block text-sm font-bold">ADJD Batches<Help label="ADJD Batches">Final production batches. Drives Resin, Hardener and Filler.</Help><input aria-label="ADJD Batches" aria-invalid={Boolean(fieldErrors.batchCount)} aria-describedby={fieldErrors.batchCount?"production-batchCount-error":undefined} type="number" min="0" step="any" value={inputs.batchCount} onChange={e=>edit('batchCount',e.target.value)} className="mt-2 min-h-11 w-full border px-2"/></label>
+      <p className="mt-3 text-sm font-bold">{basis?`1 Batch = ${n(basis)} lb chips`:'This formulation does not have an authoritative Chip Mix per Batch.'}</p>{fieldErrors.batchCount&&<p id="production-batchCount-error" role="alert" className="text-sm text-red-800">{fieldErrors.batchCount}</p>}
       <p className="mt-2 text-sm">Calculated Chips: <strong>{basis&&!fieldErrors.batchCount?n(Number(inputs.batchCount)*basis):'—'} lb</strong></p>
      </div>
      <div className="border border-slate-200 p-3"><h3 className="mb-3 font-bold">2 — Chip adjustment</h3>
-      <label className="block text-sm font-bold">ADJ (lb)<Help label="ADJ">Additional chips added to the calculated Batch requirement.</Help><input aria-label="ADJ (lb)" type="number" step="any" value={adjustmentText} onBlur={()=>{if(!adjustmentText.trim())setAdjustmentText('0');}} onChange={e=>edit('adjustment',e.target.value)} className="mt-2 min-h-11 w-full border px-2"/></label>
-      {fieldErrors.adjustment&&<p role="alert" className="text-sm text-red-800">{fieldErrors.adjustment}</p>}
+      <label className="block text-sm font-bold">ADJ (lb)<Help label="ADJ">Additional chips added to the calculated Batch requirement.</Help><input aria-label="ADJ (lb)" aria-invalid={Boolean(fieldErrors.adjustment)} aria-describedby={fieldErrors.adjustment?"production-adjustment-error":undefined} type="number" step="any" value={adjustmentText} onBlur={()=>{if(!adjustmentText.trim())setAdjustmentText('0');}} onChange={e=>edit('adjustment',e.target.value)} className="mt-2 min-h-11 w-full border px-2"/></label>
+      {fieldErrors.adjustment&&<p id="production-adjustment-error" role="alert" className="text-sm text-red-800">{fieldErrors.adjustment}</p>}
       <p className="mt-3 text-sm">Total Chips Required<Help label="Total Chips Required">Final chip quantity to prepare after ADJ.</Help>: <strong>{shown?n(shown.plannedQuantity):'—'} lb</strong></p>
      </div>
      <div className="border border-slate-200 p-3"><h3 className="mb-3 font-bold">3 — Blend staging</h3>
-      <label className="block text-sm font-bold">Blend Size (lb)<Help label="Blend Size">Chip mix staged in one Blend or super sack.</Help><input aria-label="Blend Size (lb)" type="number" min="0" step="any" value={inputs.blendSize} onChange={e=>edit('blendSize',e.target.value)} className="mt-2 min-h-11 w-full border px-2"/></label>
-      {fieldErrors.blendSize&&<p role="alert" className="text-sm text-red-800">{fieldErrors.blendSize}</p>}
+      <label className="block text-sm font-bold">Blend Size (lb)<Help label="Blend Size">Chip mix staged in one Blend or super sack.</Help><input aria-label="Blend Size (lb)" aria-invalid={Boolean(fieldErrors.blendSize)} aria-describedby={fieldErrors.blendSize?"production-blendSize-error":undefined} type="number" min="0" step="any" value={inputs.blendSize} onChange={e=>edit('blendSize',e.target.value)} className="mt-2 min-h-11 w-full border px-2"/></label>
+      {fieldErrors.blendSize&&<p id="production-blendSize-error" role="alert" className="text-sm text-red-800">{fieldErrors.blendSize}</p>}
       <p className="mt-3 text-sm">CHIP BLENDS<Help label="CHIP BLENDS">Blend units produced from the total chip requirement.</Help>: <strong>{shown?n(shown.blendCount):'—'}</strong></p>
       {shown&&<p className="text-sm">{Number.isInteger(shown.blendCount)?`${n(shown.blendCount)} × ${n(shown.blendSize)}-lb Blends`:`${n(Math.floor(shown.blendCount))} full Blends + ${n(shown.plannedQuantity%shown.blendSize)} lb`}</p>}
      </div>

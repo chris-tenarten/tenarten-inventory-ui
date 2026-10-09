@@ -28,7 +28,7 @@ try {
  await planner.getByRole('button',{name:'Suggest Working Pour',exact:true}).click();await expect(planner.getByTestId('pour-suggestion')).toHaveCount(0);
  await expect(planner.getByRole('checkbox',{name:/Allow thicker Working Pour/})).toBeDisabled();
  await planner.getByRole('button',{name:'Calculate Suggestions',exact:true}).click();await expect(planner.getByTestId('pour-suggestion')).toHaveCount(3);
- await field('Finished Pieces').fill('5');await expect(planner.getByTestId('pour-suggestion')).toHaveCount(0);await expect(planner).toContainText('Inputs changed.');await field('Finished Pieces').fill('4');
+ await field('Finished Pieces').fill('5');await expect(planner.getByTestId('pour-suggestion')).toHaveCount(0);await expect(planner).toContainText('Inputs changed — recalculate suggestions.');await field('Finished Pieces').fill('4');
  await planner.getByRole('spinbutton',{name:'Maximum pour width (in)'}).fill('5');await planner.getByRole('button',{name:'Calculate Suggestions',exact:true}).click();await expect(planner).toContainText('No modeled rectangular arrangement');
  await planner.getByRole('spinbutton',{name:'Maximum pour width (in)'}).fill('');
  await planner.getByRole('checkbox',{name:'Allow width adjustment'}).uncheck();await planner.getByRole('button',{name:'Calculate Suggestions',exact:true}).click();await expect(planner.getByTestId('pour-suggestion').first()).toContainText('12″ × 12″');

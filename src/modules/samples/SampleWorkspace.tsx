@@ -5,6 +5,7 @@ import { BusinessButton, BusinessSelect, BusinessInput, BusinessTextarea } from 
 
 import {sampleVendorPackageWarning} from './vendor-authority';
 import {applyResinIdentity,synchronizeResin,resinConflict} from './resin-identity';
+import {sampleAttention,chipTotalMessage,focusSampleAttention,type SampleAttention} from './sample-validation-view';
 import Help from './ContextHelp';
 import {preferredColorPlate,colorPlateWarning,colorPlateConflict} from './color-plate-identifier';
 import './sample-workspace.css';
@@ -253,6 +254,7 @@ export default function SampleWorkspace() {
     };
   }, [catalogQuery, catalogRow, catalogRole, catalogSearchKey]);
   function patch<K extends keyof SampleRecord>(key: K, value: SampleRecord[K]) {
+    setError('');
     setDraft((current) => (current ? { ...current, [key]: value } : current));
     setMessage("");
   }
@@ -279,6 +281,7 @@ export default function SampleWorkspace() {
   );
   function patchRow(index: number, changes: Partial<SampleBlendRow>) {
     if (!draft) return;
+    setError('');
     setDraft((current) => {
       if (!current) return current;
       const role=changes.componentRole??current.blendRows[index]?.componentRole;
@@ -380,6 +383,7 @@ export default function SampleWorkspace() {
     }
   }
   const [blendDirty,setBlendDirty]=useState(false);
+  const [productionAttention,setProductionAttention]=useState<SampleAttention[]>([]);
   const productionRef=useRef<{open:()=>void}>(null);
   function requestClose() {
     if(blendDirty&&!window.confirm("Discard unsaved Blend planning changes?"))return;
@@ -483,7 +487,7 @@ export default function SampleWorkspace() {
     const readiness = validateSampleForOutput(draft, "formal-issue");
     if (readiness) {
       logSampleError(readiness);
-      setError(formatSampleError(readiness));
+      const first=sampleAttention(draft)[0];if(first)focusSampleAttention(first);
       setBusy("");
       return;
     }
@@ -573,6 +577,8 @@ export default function SampleWorkspace() {
   const formulationResult = draft
     ? calculateSampleFormulation(draft.formulation, draft.blendRows)
     : null;
+  const attention = draft ? sampleAttention(draft) : [];
+  const allAttention = [...attention,...(auth.can('production_blend.manage')?productionAttention:[])];
   const displayRows = draft ? sampleRowsForDisplay(draft.blendRows) : [];
   const visibleSamples = initialContext.bid
     ? samples.filter((sample) => sample.bidId === initialContext.bid)
@@ -607,7 +613,7 @@ export default function SampleWorkspace() {
           </BusinessButton>
         </div>
         <OperationalProfilesSettings/>
-        {error && (
+        {error && !draft && (
           <div
             role="alert"
             className="mt-4 border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800"
@@ -766,7 +772,7 @@ export default function SampleWorkspace() {
                 </button>
               </div>
             </div>
-            <div aria-label="Sample actions" className="border border-slate-300 bg-white p-3 shadow-sm">
+            <div aria-label="Sample actions" style={{top:'var(--tenops-shell-header-height, 73px)'}} className="sticky z-30 border border-slate-300 bg-white p-3 shadow-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <BusinessButton
                   type="button"
@@ -786,12 +792,15 @@ export default function SampleWorkspace() {
                 </BusinessButton>
                 {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)} onClick={()=>productionRef.current?.open()} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
               </div>
+              {allAttention.length>0&&<div data-testid="sample-validation-summary" className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-red-800"><strong>{allAttention.length} {allAttention.length===1?'item needs':'items need'} attention:</strong>{allAttention.map(item=><button key={`${item.section}:${item.label}`} type="button" title={item.message} className="min-h-7 text-left font-semibold underline" onClick={()=>focusSampleAttention(item)}>{item.label}</button>)}<span className="text-slate-600">Draft saving and document generation have different requirements.</span></div>}
+              {error&&<p role="alert" className="mt-2 text-xs text-red-800">{error}</p>}
             </div>
             <div id="formulation-setup" tabIndex={-1} className="scroll-mt-28 space-y-3">
             <section className="border border-slate-300 bg-white p-4"><h2 className="mb-3 text-lg font-bold">Formulation setup</h2>              <SampleResinSystemSelector initialSelection={!draft.id} state={draft.formulation} rows={draft.blendRows} onChange={formulation=>{
                 setDraft(applyResinIdentity({...draft,blendRows:draft.blendRows.map(row=>row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})},formulation));
                 setMessage('Resin System applied. Batch Filler and shop quantities reset to this profile; materials and percentages are preserved.');
               }}/>
+{attention.filter(item=>item.section==='formulation-setup').map(item=><p key={item.label} role="alert" className="mt-2 text-xs text-red-800">{item.message}</p>)}
 </section>
             </div>
             <div id="sample-context" tabIndex={-1} className="space-y-4">
@@ -835,10 +844,13 @@ export default function SampleWorkspace() {
                 <label className={label}>
                   Prepared By
                   <BusinessInput
+                    aria-label="Prepared By"
+                    aria-invalid={!draft.preparedBy.trim()}
                     value={draft.preparedBy}
                     onChange={(e) => patch("preparedBy", e.target.value)}
                     className={field}
                   />
+                  {!draft.preparedBy.trim()&&<span className="mt-1 block text-xs text-red-800">Prepared By is required to generate a Sample Work Order.</span>}
                 </label>
                 <SampleRecentValueInput
                   label="Project Name"
@@ -1001,6 +1013,7 @@ export default function SampleWorkspace() {
                   </p>
                 </div>
               </div>
+              <div data-testid="chip-total-validation" aria-live="polite" className={`mt-2 text-sm font-bold ${formulationResult?.percentageReconciles?'text-emerald-700':'text-red-800'}`}><span>{formulationResult?.percentageTotal||'0'}% / 100%</span>{formulationResult&&!formulationResult.percentageReconciles&&<p className="text-xs font-normal">{chipTotalMessage(formulationResult.percentageTotal,formulationResult.percentageReconciles)}</p>}</div>
               {<div className="blend-column-headings mt-3 text-xs font-bold text-slate-600"><span>%</span><span>Color / Material</span><span>Size</span><span>Type</span><span>Vendor</span><span>Batch Qty<Help label="Batch Qty">Calculated from this material’s percentage × current Chip Mix per Batch.</Help></span><span>Actions</span></div>}
               {!draft.formulation.profile&&!draft.id?<p className="my-3 text-sm text-amber-800">Select a Resin System above before authoring Batch quantities.</p>:<div className="blend-rows mt-1 space-y-1">
                 {!displayRows.some(({row})=>row.componentRole==='aggregate') && (
@@ -1118,6 +1131,7 @@ export default function SampleWorkspace() {
                         className={`${label} relative text-left blend-color`}
                       >
                         <span className="blend-field-label">Color</span>
+                        {row.componentRole==='aggregate'&&!row.color.trim()&&<span className="block text-xs font-normal text-red-800">Identify this material before Production Blend generation.</span>}
                         <div className="relative">
                           <BusinessInput
                             role={row.componentRole==='resin'||row.componentRole==='hardener'?undefined:"combobox"}
@@ -1248,6 +1262,7 @@ export default function SampleWorkspace() {
             </section>
             <div id="sample-plate" tabIndex={-1} className="scroll-mt-28 space-y-3">
             <h2 className="text-lg font-bold">Sample Plate</h2><p className="text-sm text-slate-600">Scale the Batch formulation down for the Working Pour and finished pieces.</p>
+            {attention.filter(item=>item.section==='sample-plate'&&!item.label.startsWith('Sample Plate (')).map(item=><p key={item.label} role="alert" className="text-xs text-red-800">{item.message}</p>)}
             {draft.formulation.profile||draft.id?<SampleFormulationConfigurator
               state={draft.formulation}
               rows={draft.blendRows}
@@ -1366,7 +1381,7 @@ export default function SampleWorkspace() {
 </>}</div>)}</div>}
             </div>
             <div id="production-planning" tabIndex={-1} className="scroll-mt-28">
-            <ProductionBatchOutput mode="planner" onDocuments={()=>{setDocumentsOpen(true);jumpTo('sample-documents');}} onSample={()=>jumpTo('formulation-setup')} ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
+            <ProductionBatchOutput onValidationChange={setProductionAttention} mode="planner" onDocuments={()=>{setDocumentsOpen(true);jumpTo('sample-documents');}} onSample={()=>jumpTo('formulation-setup')} ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
             </div>
             <details id="sample-documents" tabIndex={-1} className="scroll-mt-28 space-y-3 border bg-white p-4" open={documentsOpen} onToggle={e=>setDocumentsOpen(e.currentTarget.open)}><summary className="cursor-pointer text-lg font-bold">Documents / History</summary>
             {documentsOpen&&draft.id&&<ProductionBatchOutput mode="documents" sample={draft} onDocuments={()=>{}} onSample={()=>jumpTo('formulation-setup')} onSave={()=>persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>}
