@@ -2,7 +2,7 @@
 
 import { BusinessInput, BusinessButton } from '@/components/BusinessWriteControls';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { openProductionJob } from '@/modules/production/job-options';
 import type { Bid } from './types';
@@ -10,7 +10,7 @@ import type { BidPlanning } from './planning';
 import { convertBidToProduction, loadBidPlanning, saveBidProjectedWindow } from './planning-data';
 
 const input = 'mt-1 min-h-10 w-full rounded-sm border border-slate-300 bg-white px-2 text-sm text-slate-950';
-export default function BidPlanningCard({ bid, onChanged }: { bid: Bid; onChanged(): Promise<unknown> }) {
+export default function BidPlanningCard({ bid, onChanged, onDirtyChange, onBusyChange }: { bid: Bid; onChanged(): Promise<unknown>; onDirtyChange?(dirty:boolean):void; onBusyChange?(busy:boolean):void }) {
   const auth = useAuth();
   const canWrite = Boolean(auth.profile?.isActive && auth.can('accessIntake'));
   const [record, setRecord] = useState<BidPlanning | null>(null);
@@ -24,6 +24,7 @@ export default function BidPlanningCard({ bid, onChanged }: { bid: Bid; onChange
   const [newStart, setNewStart] = useState('');
   const [newEnd, setNewEnd] = useState('');
   const [jobNumber, setJobNumber] = useState('');
+  const planningDraft=useRef(false);
   const reload = useCallback(async () => {
     const next = (await loadBidPlanning(bid.id))[0];
     if (!next) throw new Error('Bid planning record was not found.');
@@ -32,19 +33,22 @@ export default function BidPlanningCard({ bid, onChanged }: { bid: Bid; onChange
   useEffect(() => { let live = true; void loadBidPlanning(bid.id).then(([next]) => {
     if (!live) return;
     if (!next) throw new Error('Bid planning record was not found.');
-    setRecord(next); setStart(next.projected_production_start ?? ''); setEnd(next.projected_production_end ?? '');
+    setRecord(next); if(!planningDraft.current){setStart(next.projected_production_start ?? ''); setEnd(next.projected_production_end ?? '');}
   }).catch(caught => { if (live) setError(caught.message); }); return () => { live = false; }; }, [bid.id, bid.updatedAt]);
+  const dirty=Boolean(record&&(start!==(record.projected_production_start??'')||end!==(record.projected_production_end??'')))||converting;
+  useEffect(()=>{planningDraft.current=dirty;onDirtyChange?.(dirty);return()=>onDirtyChange?.(false);},[dirty,onDirtyChange]);
+  useEffect(()=>{onBusyChange?.(busy);return()=>onBusyChange?.(false);},[busy,onBusyChange]);
   async function save() {
     if (!canWrite || !record || busy) return;
     setBusy(true); setError(''); setMessage('');
-    try { await saveBidProjectedWindow(record, start, end); await onChanged(); setMessage('Projected production window updated.'); }
+    try { await saveBidProjectedWindow(record, start, end); await reload(); await onChanged(); setMessage('Projected production window updated.'); }
     catch (caught) { setError(`${caught instanceof Error ? caught.message : 'Unable to save projected window.'} Refresh to verify the saved dates before retrying.`); }
     finally { setBusy(false); }
   }
   async function convert() {
     if (!canWrite || !auth.can('createProductionJob') || !record || busy) return;
     setBusy(true); setError(''); setMessage('');
-    try { await convertBidToProduction(record, choice, newStart, newEnd, jobNumber); await onChanged(); setConverting(false); setMessage('Converted to Production. Production scheduling is now authoritative.'); }
+    try { await convertBidToProduction(record, choice, newStart, newEnd, jobNumber); await reload(); await onChanged(); setConverting(false); setMessage('Converted to Production. Production scheduling is now authoritative.'); }
     catch (caught) { setError(`${caught instanceof Error ? caught.message : 'Unable to convert Bid.'} Refresh to check whether conversion completed. Retrying will not create a second Job.`); }
     finally { setBusy(false); }
   }
@@ -57,7 +61,7 @@ export default function BidPlanningCard({ bid, onChanged }: { bid: Bid; onChange
     {!record ? <p className="mt-3 text-sm text-slate-500">{error ? 'Planning information is unavailable. The planning migration must be installed before this feature can be used.' : 'Loading planning information…'}</p> : <>
       {record.production_job_id ? <div className="mt-3 space-y-2 text-sm"><p>Converted to Production. Original projection: {start && end ? `${start} – ${end}` : 'Not set'}.</p><button type="button" onClick={() => openProductionJob(record.production_job_id!)} className="min-h-10 font-semibold text-blue-700 underline">Open Production Job</button></div> : <>
         <div className="mt-3 grid gap-3 sm:grid-cols-2"><label className="text-xs font-semibold">Projected start<BusinessInput type="date" aria-label="Projected start" value={start} disabled={!canWrite || busy} onChange={event => setStart(event.target.value)} className={input}/></label><label className="text-xs font-semibold">Projected end<BusinessInput type="date" aria-label="Projected end" min={start || undefined} value={end} disabled={!canWrite || busy} onChange={event => setEnd(event.target.value)} className={input}/></label></div>
-        <div className="mt-3 flex flex-wrap gap-3"><BusinessButton type="button" disabled={!canWrite || busy || !valid} onClick={() => void save()} className="min-h-10 border border-blue-900 bg-blue-900 px-3 text-sm font-bold text-white disabled:opacity-50">Save projected window</BusinessButton><button type="button" disabled={!canWrite || busy} onClick={() => { setStart(''); setEnd(''); }} className="min-h-10 px-2 text-sm underline">Clear dates</button><button type="button" disabled={busy} onClick={() => void reload().then(() => setError('')).catch(caught => setError(caught.message))} className="min-h-10 px-2 text-sm underline">Refresh planning</button></div>
+        <div className="mt-3 flex flex-wrap gap-3"><BusinessButton type="button" disabled={!canWrite || busy || !valid} onClick={() => void save()} className="min-h-10 border border-blue-900 bg-blue-900 px-3 text-sm font-bold text-white disabled:opacity-50">Save projected window</BusinessButton><button type="button" disabled={!canWrite || busy} onClick={() => { setStart(''); setEnd(''); }} className="min-h-10 px-2 text-sm underline">Clear dates</button><button type="button" disabled={busy} onClick={() => {if(dirty&&!window.confirm('Discard unsaved planning dates and refresh?'))return;void reload().then(() => setError('')).catch(caught => setError(caught.message));}} className="min-h-10 px-2 text-sm underline">Refresh planning</button></div>
         {canWrite && auth.can('createProductionJob') && <div className="mt-4 border-t border-slate-200 pt-3"><p className="text-xs text-slate-600">Conversion requires a saved Won status and Deposit Received Date. Unsaved Bid edits are not carried forward.</p><button type="button" disabled={busy || bid.status !== 'won' || !bid.depositReceivedDate} onClick={() => { setConverting(true); setChoice(auth.can('scheduleProduction') && record.projected_production_start ? 'carry' : 'unscheduled'); }} className="mt-2 min-h-10 border border-slate-400 px-3 text-sm font-bold disabled:opacity-50">Convert to Production</button></div>}
         {converting && <fieldset className="mt-4 space-y-3 border border-slate-300 p-3" disabled={!canWrite || busy}><legend className="px-1 text-sm font-bold">Confirm Production handoff</legend><p className="text-xs text-slate-600">Creates one canonical Job. Original Bid and issued documents remain intact.</p><label className="block text-sm"><BusinessInput type="radio" name="conversion-window" checked={choice === 'carry'} disabled={!auth.can('scheduleProduction') || !record.projected_production_start} onChange={() => setChoice('carry')}/> Carry Forward: {record.projected_production_start ?? 'No projection'} – {record.projected_production_end ?? ''}</label><label className="block text-sm"><BusinessInput type="radio" name="conversion-window" checked={choice === 'new'} disabled={!auth.can('scheduleProduction')} onChange={() => setChoice('new')}/> Set New Dates</label><label className="block text-sm"><BusinessInput type="radio" name="conversion-window" checked={choice === 'unscheduled'} onChange={() => setChoice('unscheduled')}/> Plan in Production Later (original projection remains on Bid)</label>
           {!auth.can('scheduleProduction') && <p className="text-xs text-slate-600">A user with Production scheduling permission must confirm committed dates.</p>}
