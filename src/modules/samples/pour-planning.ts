@@ -22,7 +22,9 @@ export function batchFractionLabel(value: number | null) {
   return `${geometryNumber(value)} Batch${value === 1 ? '' : 'es'}`;
 }
 export type PourLayout = {name: string; columns: number; rows: number; rotated: boolean; widthIn: number; lengthIn: number; thicknessIn: number; area: number; volume: number; unused: number};
-export function suggestPourLayouts(state: SampleFormulationState, edgeText: string, separationText: string): {layouts: PourLayout[]; issue: string | null} {
+export type PourConstraints = {adjustWidth: boolean; adjustLength: boolean; maxWidth: string; maxLength: string; arrangement: 'auto'|'fixed'; columns: string; rotate: boolean};
+export const defaultPourConstraints: PourConstraints = {adjustWidth:true,adjustLength:true,maxWidth:'',maxLength:'',arrangement:'auto',columns:'2',rotate:true};
+export function suggestPourLayouts(state: SampleFormulationState, edgeText: string, separationText: string, constraints?: PourConstraints): {layouts: PourLayout[]; issue: string | null} {
   const w = positive(state.finishedPlateWidth), l = positive(state.finishedPlateLength), n = positive(state.finishedPlateQuantity), t = positive(state.thicknessIn);
   if (w === null || l === null || n === null || t === null || !Number.isSafeInteger(n)) return {layouts: [], issue: 'Enter positive finished dimensions, thickness and a whole piece count.'};
   // Bound this small grid planner; no nesting or industrial optimization is claimed.
@@ -30,17 +32,38 @@ export function suggestPourLayouts(state: SampleFormulationState, edgeText: stri
   const allowance = (s: string) => s.trim() !== '' && Number.isFinite(Number(s)) && Number(s) >= 0 ? Number(s) : null;
   const edge = allowance(edgeText), gap = allowance(separationText);
   if (edge === null || gap === null) return {layouts: [], issue: 'Enter zero or a positive allowance in inches.'};
+  const maxWidth = constraints?.maxWidth.trim() ? positive(constraints.maxWidth) : Infinity;
+  const maxLength = constraints?.maxLength.trim() ? positive(constraints.maxLength) : Infinity;
+  const fixedColumns = constraints?.arrangement === 'fixed' ? positive(constraints.columns) : null;
+  const unitFactor = state.dimensionUnit === 'ft' ? 12 : 1;
+  const lockedWidth = positive(state.width), lockedLength = positive(state.length);
+  if (maxWidth === null || maxLength === null) return {layouts:[],issue:'Maximum width and length must be positive, or blank for no limit.'};
+  if (constraints?.arrangement === 'fixed' && (fixedColumns === null || !Number.isSafeInteger(fixedColumns) || fixedColumns > n)) return {layouts:[],issue:'Enter a whole column count between 1 and the finished piece count.'};
+  if (constraints && ((!constraints.adjustWidth && lockedWidth === null) || (!constraints.adjustLength && lockedLength === null))) return {layouts:[],issue:'Locked Working Pour dimensions must be positive.'};
   const candidates: PourLayout[] = [];
-  for (const rotated of w === l ? [false] : [false, true]) {
+  for (const rotated of w === l || constraints?.rotate === false ? [false] : [false, true]) {
     const pw = rotated ? l : w, pl = rotated ? w : l;
     for (let columns = 1; columns <= n; columns++) {
-      const rows = Math.ceil(n / columns), widthIn = columns * pw + (columns - 1) * gap + 2 * edge, lengthIn = rows * pl + (rows - 1) * gap + 2 * edge;
+      if (fixedColumns !== null && columns !== fixedColumns) continue;
+      const rows = Math.ceil(n / columns);
+      let widthIn = columns * pw + (columns - 1) * gap + 2 * edge, lengthIn = rows * pl + (rows - 1) * gap + 2 * edge;
+      if (constraints && !constraints.adjustWidth) {if (widthIn > lockedWidth! * unitFactor + 1e-9) continue; widthIn = lockedWidth! * unitFactor;}
+      if (constraints && !constraints.adjustLength) {if (lengthIn > lockedLength! * unitFactor + 1e-9) continue; lengthIn = lockedLength! * unitFactor;}
+      if (widthIn > maxWidth + 1e-9 || lengthIn > maxLength + 1e-9) continue;
       const area = widthIn * lengthIn / 144, volume = area * t / 12;
       if (![widthIn, lengthIn, area, volume].every(Number.isFinite)) continue;
       candidates.push({name: '', columns, rows, rotated, widthIn, lengthIn, thicknessIn: t, area, volume, unused: columns * rows - n});
     }
   }
-  if (!candidates.length) return {layouts: [], issue: 'These dimensions are too large to evaluate reliably.'};
+  if (!candidates.length) return {layouts: [], issue: 'No modeled rectangular arrangement fits these constraints. Increase a limit, unlock a dimension, or change the permitted arrangement/allowances.'};
+  if (constraints) {
+    const seen = new Set<string>();
+    const layouts = candidates.sort((a,b)=>a.volume-b.volume || Math.max(a.widthIn,a.lengthIn)-Math.max(b.widthIn,b.lengthIn) || a.unused-b.unused).filter(c=>{
+      const key = `${dimensionalValue(c.widthIn)}:${dimensionalValue(c.lengthIn)}`;
+      if(seen.has(key)) return false; seen.add(key); return true;
+    }).slice(0,3).map((c,i)=>({...c,name:`Alternative ${i+1}`}));
+    return {layouts,issue:null};
+  }
   // Compact means shortest longest side, then least area. Whole grids may have spare positions.
   const compact = [...candidates].sort((a,b) => Math.max(a.widthIn,a.lengthIn)-Math.max(b.widthIn,b.lengthIn) || a.area-b.area || a.unused-b.unused)[0];
   const selected = [{...compact, name:'Compact grid'}, {...candidates.find(c=>!c.rotated&&c.rows===1)!, name:'Single row'}, {...candidates.find(c=>!c.rotated&&c.columns===1)!, name:'Single column'}];

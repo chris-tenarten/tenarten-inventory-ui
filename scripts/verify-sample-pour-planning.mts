@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {applyPourLayout,batchFractionLabel,convertPourUnits,finishedGeometry,suggestPourLayouts} from '../src/modules/samples/pour-planning';
+import {defaultPourConstraints,applyPourLayout,batchFractionLabel,convertPourUnits,finishedGeometry,suggestPourLayouts} from '../src/modules/samples/pour-planning';
 import {type SampleFormulationState,standardFormulationState,BATCH_FIRST_VERSION,calculateSampleFormulation} from '../src/modules/samples/formulation';
 import {batchFirstProfile} from './support/sample-batch-first-fixture';
 import type {SampleBlendRow} from '../src/modules/samples/types';
@@ -23,3 +23,24 @@ const legacy={...state,calculationVersion:'sample-formulation-v4-density-profile
 const before=JSON.stringify(legacy);finishedGeometry(legacy);suggestPourLayouts(legacy,'0','0');assert.equal(JSON.stringify(legacy),before);
 assert.equal(JSON.stringify({state,rows}),original);
 console.log('PASS geometry A–M calculations: baseline, finished independence, shared thickness, pour edits, units, suggestions, allowances, apply, volume comparison inputs, manual preservation, nonmutating legacy reads. Batch-first engine unchanged.');
+
+const plan=(changes={},source=state,edge='0',gap='0')=>suggestPourLayouts(source,edge,gap,{...defaultPourConstraints,...changes});
+assert.equal(plan().layouts[0].volume,.03125);
+assert.ok(plan({maxWidth:'5'}).issue);
+assert.ok(plan({maxLength:'-1'}).issue);
+assert.ok(plan({adjustWidth:false}, {...state,width:'5'}).issue);
+assert.ok(plan({adjustLength:false}, {...state,length:'5'}).issue);
+const locked=plan({adjustWidth:false},{...state,width:'20'});assert.ok(locked.layouts.length);assert.ok(locked.layouts.every(l=>l.widthIn===20));
+const lockedLength=plan({adjustLength:false},{...state,length:'20'});assert.ok(lockedLength.layouts.every(l=>l.lengthIn===20));
+assert.ok(plan({adjustWidth:false,maxWidth:'10'}).issue);
+assert.ok(plan({arrangement:'fixed',columns:'0'}).issue);
+assert.ok(plan({arrangement:'fixed',columns:'3',maxWidth:'12',rotate:false}).issue);
+assert.ok(plan({arrangement:'fixed',columns:'2',rotate:false}).layouts.every(l=>l.columns===2&&!l.rotated));
+const ranked=plan({}, {...state,finishedPlateQuantity:'5'}).layouts;assert.ok(ranked.every((l,i)=>i===0||l.volume>=ranked[i-1].volume));
+const allowed=plan({},state,'1','.125').layouts;assert.equal(allowed[0].widthIn,14.125);assert.equal(allowed[0].lengthIn,14.125);
+assert.ok(plan({},state,'-1').issue);
+assert.ok(plan({}, {...state,finishedPlateQuantity:'0'}).issue);
+const appliedConstraint={...state,...applyPourLayout(state,allowed[0])};
+for(const k of ['finishedPlateWidth','finishedPlateLength','finishedPlateQuantity','thicknessIn','profile'] as const) assert.equal(appliedConstraint[k],state[k]);
+assert.equal(q(appliedConstraint,manual).rows[5].shop,22);
+console.log('PASS constraints: fixed specs/thickness, width/length locks and maxima, impossible layouts, fixed columns/rotation, allowances, volume ranking, Apply/manual preservation. Independent thicker pours intentionally unsupported.');
