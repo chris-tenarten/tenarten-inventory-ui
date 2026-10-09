@@ -1,4 +1,5 @@
 // @ts-nocheck -- Deno Edge Function; validated through its local renderer fixture.
+import {diagnosticResponse} from '../_shared/sample-diagnostics.mjs';
 import { handleProductionBlend } from '../_shared/production-blend-handler.ts';
 import {renderAudienceSample,AUDIENCE_SAMPLE_VERSION} from '../_shared/sample-audience-pdf.ts';
 import {renderCompactSample,COMPACT_SAMPLE_VERSION} from '../_shared/sample-working-compact-pdf.ts';
@@ -206,6 +207,8 @@ export async function renderSampleWorkOrder(snapshot: Record<string, unknown>, d
 if (typeof Deno !== "undefined") Deno.serve(async (req) => {
   const headers = cors(req.headers.get("origin") || "");
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers });
+  const correlationId=crypto.randomUUID();let diagnosticUser=null,diagnosticState=null,stage='authorization';
+  const failure=async(error,status)=>json({error:stage==='pdf-render'?'Sample PDF could not be rendered.':stage==='storage-upload'?'Sample PDF could not be stored.':stage==='snapshot-persistence'?'Sample PDF status could not be saved.':stage==='source-load'?'Issued Sample Form not found.':stage==='delivery'?'Sample PDF is unavailable.':stage==='authorization'?'Sample generation access denied.':'Invalid Sample PDF request.',...(diagnosticUser?await diagnosticResponse(diagnosticUser,error,stage,{correlationId,state:diagnosticState,source:diagnosticState?'captured-snapshot':undefined}):{})},status,headers);
   try {
     const authorization = req.headers.get("authorization") || "";
     if (!authorization) return json({ error: "Authentication required." }, 401, headers);
@@ -213,14 +216,17 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
     const anon = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const user = createClient(url, anon, { global: { headers: { Authorization: authorization } } });
+    diagnosticUser=user;
     const { data: allowed, error: accessError } = await user.rpc("has_app_capability", { p_capability: "readOperationalData" });
-    if (accessError || allowed !== true) return json({ error: "Sample access denied." }, 403, headers);
-    const body = await req.json();
+    if (accessError || allowed !== true) return failure(new Error("Sample access denied."),403);
+    stage='request-validation';const body = await req.json();
     const action = String(body.action || "");
     if (action === "generate" || action === "delete") {
+      stage='authorization';
       const { data: writable, error: writeError } = await user.rpc("has_app_capability", { p_capability: "writeBusinessData" });
-      if (writeError || writable !== true) return json({ error: "Business write access denied." }, 403, headers);
+      if (writeError || writable !== true) return failure(new Error("Business write access denied."),403);
     }
+    stage='request-validation';
     if (action.startsWith("blend-")) return handleProductionBlend({user,service:createClient(url,serviceKey),body,headers});
     if (action === "delete") {
       const sampleId = String(body.sampleId || "");
@@ -272,7 +278,7 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
       }
     }
     if (action === "preview") {
-      const bytes = await renderSampleWorkOrder(body.snapshot);
+      stage='pdf-render';const bytes = await renderSampleWorkOrder(body.snapshot);
       return new Response(bytes, { headers: { ...headers, "Content-Type": "application/pdf", "Content-Disposition": "inline; filename=\"Sample-Work-Order-Preview.pdf\"" } });
     }
     if (action === "working") {
@@ -281,29 +287,31 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
       if (!/^[0-9a-f-]{36}$/i.test(sampleId) || (versionId && !/^[0-9a-f-]{36}$/i.test(versionId))) return json({ error: "Invalid Sample working document request." }, 400, headers);
       const { data: snapshot, error: snapshotError } = await user.rpc("get_sample_working_pdf_snapshot", { p_sample_id: sampleId, p_version_id: versionId });
       if (snapshotError || !snapshot) return json({ error: snapshotError?.message || "Working Sample was not found." }, 404, headers);
-      const bytes = await renderSampleWorkOrder(snapshot);
+      diagnosticState=snapshot?.formulation_state??snapshot?.formulation;stage='pdf-render';const bytes = await renderSampleWorkOrder(snapshot);
       return new Response(bytes, { headers: { ...headers, "Content-Type": "application/pdf", "Cache-Control": "no-store", "Content-Disposition": "inline; filename=\"Working-Sample-Work-Order.pdf\"" } });
     }
     const documentId = String(body.documentId || "");
-    if (!/^[0-9a-f-]{36}$/i.test(documentId)) return json({ error: "Invalid Sample document." }, 400, headers);
+    if (!/^[0-9a-f-]{36}$/i.test(documentId)) return failure(new Error("Invalid Sample document."),400);
+    stage='source-load';
     const service = createClient(url, serviceKey);
     const { data: document, error } = await service
       .from("sample_issued_documents")
       .select("id,sample_id,issue_number,issued_snapshot,storage_bucket,storage_path,generation_status,document_version")
       .eq("id", documentId)
       .single();
-    if (error || !document) return json({ error: "Issued Sample Form not found." }, 404, headers);
+    if (error || !document) return failure(new Error("Issued Sample Form not found."),404);
+    diagnosticState=document.issued_snapshot?.formulation_state??document.issued_snapshot?.formulation;
     const path = `${document.sample_id}/${document.id}.pdf`;
     if (action === "generate" && !(document.generation_status === "generated" && document.storage_path)) {
       await service.from("sample_issued_documents").update({ generation_status: "generating", last_error: null }).eq("id", documentId);
       try {
-        const bytes = await renderSampleWorkOrder(document.issued_snapshot, document.document_version || "sample-work-order-pdf-v6-density-profile");
+        stage='pdf-render';const bytes = await renderSampleWorkOrder(document.issued_snapshot, document.document_version || "sample-work-order-pdf-v6-density-profile");
         const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)))
           .map((part) => part.toString(16).padStart(2, "0"))
           .join("");
-        const upload = await service.storage.from("sample-documents").upload(path, bytes, { contentType: "application/pdf", upsert: true });
+        stage='storage-upload';const upload = await service.storage.from("sample-documents").upload(path, bytes, { contentType: "application/pdf", upsert: true });
         if (upload.error) throw upload.error;
-        const updated = await service
+        stage='snapshot-persistence';const updated = await service
           .from("sample_issued_documents")
           .update({ generation_status: "generated", storage_path: path, snapshot_hash: hash, generated_at: new Date().toISOString(), last_error: null })
           .eq("id", documentId);
@@ -316,10 +324,10 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
         throw cause;
       }
     }
-    const signed = await service.storage.from("sample-documents").createSignedUrl(document.storage_path || path, 3600);
-    if (signed.error) return json({ error: "Sample PDF is unavailable." }, 404, headers);
+    stage='delivery';const signed = await service.storage.from("sample-documents").createSignedUrl(document.storage_path || path, 3600);
+    if (signed.error) return failure(new Error("Sample PDF is unavailable."),404);
     return json({ url: signed.data.signedUrl }, 200, headers);
   } catch (cause) {
-    return json({ error: cause instanceof Error ? cause.message : "Sample PDF request failed." }, 500, headers);
+    return failure(cause,500);
   }
 });

@@ -1,3 +1,4 @@
+import {generationDiagnostic} from '../../../supabase/functions/_shared/sample-diagnostics.mjs';
 import {BATCH_FIRST_VERSION,batchFirstQuantities,calculateSampleFormulation,normalizeSupportedSampleRatio,VOLUMETRIC_PROFILE_SAMPLE_FORMULATION_CALCULATION_VERSION,SAMPLE_FORMULATION_CALCULATION_VERSION} from './formulation';
 import type {SampleRecord} from './types';
 
@@ -30,7 +31,7 @@ export function translateSampleError(error:unknown,operation:SampleOperation):Sa
 }
 
 export function formatSampleError(error:SampleActionError){return `${error.title} — ${error.message} ${error.guidance} ${error.safeState}${error.retrySafe?' Retrying is safe.':''}`;}
-export function logSampleError(error:SampleActionError){console.error('[Sample operation failed]',error.diagnostic);}
+export function logSampleError(error:SampleActionError){console.error('[Sample operation failed]',generationDiagnostic({code:error.diagnostic.code,message:error.diagnostic.rawMessage},error.diagnostic.operation==='formal-issue'?'issue-snapshot':'generation'));}
 
 export function validateSampleForOutput(sample:SampleRecord,operation:'working-pdf'|'formal-issue'='working-pdf'):SampleActionError|null{
  if(sample.formulation.calculationVersion===BATCH_FIRST_VERSION){

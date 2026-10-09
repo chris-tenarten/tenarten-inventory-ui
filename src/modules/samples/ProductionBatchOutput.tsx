@@ -1,4 +1,7 @@
 "use client";
+import TechnicalDetails from './TechnicalDetails';
+import {generationDiagnostic,readGenerationDiagnostic,type GenerationDiagnostic} from '../../../supabase/functions/_shared/sample-diagnostics.mjs';
+import {throwSampleFunctionError} from './function-errors';
 import {displayProfileRatio} from '../../../supabase/functions/_shared/ratio-display.mjs';
 import {useEffect,useImperativeHandle,useRef,useState} from 'react';
 import {resolveBatchFiller} from '../../../supabase/functions/_shared/sample-batch-first.mjs';
@@ -21,11 +24,12 @@ type Model=ReturnType<typeof buildProductionBlend>;
 type Plan={id:string;revision:number;status:'working'|'issued';inputs:Inputs;model:Model;source_snapshot:Snapshot;created_at:string};
 async function request(body:Record<string,unknown>){
  const {data,error}=await supabase.functions.invoke('generate-sample-pdf',{body});
- if(error){let message=error.message;try{message=(await error.context.json()).error||message;}catch{}throw new Error(message);}
+ if(error)await throwSampleFunctionError(error);
  return data;
 }
 export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyChange,onValidationChange,ref,mode,onDocuments,onSample}:{onValidationChange?:(items:SampleAttention[])=>void;mode:'planner'|'documents'|'hidden';onDocuments:()=>void;onSample:()=>void;sample:SampleRecord;onSave:()=>Promise<SampleRecord>;onPreview:(url:string,filename:string)=>void;onDirtyChange?:(dirty:boolean)=>void;ref?:Ref<{open:()=>void}>}){
  const auth=useAuth();const canManage=auth.can('production_blend.manage');
+ const [technical,setTechnical]=useState<GenerationDiagnostic|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState('');
  const [source,setSource]=useState('working'),[snapshot,setSnapshot]=useState<Snapshot|null>(null),[plans,setPlans]=useState<HistoryEntry[]>([]);
  const [latest,setLatest]=useState<HistoryEntry[]>([]),[historyLoaded,setHistoryLoaded]=useState(false),[historyExpanded,setHistoryExpanded]=useState(false);
@@ -40,7 +44,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
  const fieldErrors={batchCount:validBatchCount?'':'Enter at least 1 Production Batch.',blendSize:Number.isFinite(Number(inputs.blendSize))&&Number(inputs.blendSize)>0?'':'Blend Size must be greater than 0 lb.',adjustment:!validBatchCount||Number.isFinite(Number(inputs.plannedQuantity))&&Number(inputs.plannedQuantity)>0?'':'ADJ must leave Total Chips Required greater than 0 lb.'};
  let model:Model|null=null,calculationError='';
  if(snapshot&&!Object.values(fieldErrors).some(Boolean))try{model=buildProductionBlend(snapshot,inputs);}catch(e){calculationError=e instanceof Error?e.message.replaceAll('Planned Quantity','Total Chips Required'):'Invalid planning inputs.';}
- useEffect(()=>{if(mode==='documents'&&canManage&&!historyLoaded){let cancelled=false;request({action:'blend-list',sampleId:sample.id,metadata:true}).then(data=>{if(!cancelled){setPlans(data);setHistoryLoaded(true);}}).catch(e=>{if(!cancelled)setError(e.message);});return()=>{cancelled=true;};}},[mode,canManage,historyLoaded,sample.id]);
+ useEffect(()=>{if(mode==='documents'&&canManage&&!historyLoaded){let cancelled=false;request({action:'blend-list',sampleId:sample.id,metadata:true}).then(data=>{if(!cancelled){setPlans(data);setHistoryLoaded(true);}}).catch(e=>{if(!cancelled){setTechnical(null);setError(e.message);}});return()=>{cancelled=true;};}},[mode,canManage,historyLoaded,sample.id]);
  const seenSources=new Set<string>(snapshot?[productionSourceKey(snapshot)??'']:[]);
  const historicalSources=sample.issuedDocuments.filter(d=>{const key=d.productionSourceKey??d.id;if(d.id===source)return true;if(seenSources.has(key))return false;seenSources.add(key);return true;});
  const validationItems:SampleAttention[]=mode==='planner'&&canManage ? [
@@ -53,7 +57,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
  useEffect(()=>{onValidationChange?.(JSON.parse(validationKey));},[validationKey,onValidationChange]);
  const shown=model,shop=shown?blendShopPresentation(shown,false):null;
  const missingCurrentBasis=!hasCapturedBatchBasis(sample.formulation);
- async function run(work:()=>Promise<void>){if(lock.current)return;lock.current=true;setBusy(true);setError('');try{await work();}catch(e){setError(e instanceof Error?e.message:'Unable to generate Blend Sheet.');}finally{lock.current=false;setBusy(false);}}
+ async function run(work:()=>Promise<void>){if(lock.current)return;lock.current=true;setBusy(true);setError('');setTechnical(null);try{await work();}catch(e){setTechnical(readGenerationDiagnostic((e as {diagnostic?:unknown})?.diagnostic)??generationDiagnostic(e,'generation',{}));setError(e instanceof Error?e.message:'Unable to generate Blend Sheet.');}finally{lock.current=false;setBusy(false);}}
  async function refresh(){setLatest(await request({action:'blend-list',sampleId:sample.id,metadata:true,latest:true}));setHistoryLoaded(false);}
  async function capture(selected=source){
   const context=await request({action:'blend-context',sampleId:sample.id,...(selected==='working'?{}:{documentId:selected})});
@@ -63,11 +67,11 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
  useEffect(()=>{
   if(mode!=='planner'||!canManage||!sample.id)return;
   let cancelled=false;
-  request({action:'blend-list',sampleId:sample.id,metadata:true,latest:true}).then(data=>{if(!cancelled)setLatest(data);}).catch(e=>{if(!cancelled)setError(e.message);});
+  request({action:'blend-list',sampleId:sample.id,metadata:true,latest:true}).then(data=>{if(!cancelled)setLatest(data);}).catch(e=>{if(!cancelled){setTechnical(null);setError(e.message);}});
   if(!missingCurrentBasis)request({action:'blend-context',sampleId:sample.id}).then(context=>{
    const probe=buildProductionBlend(context.snapshot,{batchCount:1,plannedQuantity:1,blendSize:1000});
    if(!cancelled){setAdjustmentText('0');setSnapshot(context.snapshot);setInputs({batchCount:'1',plannedQuantity:String(probe.batchChipLb),blendSize:'1000'});}
-  }).catch(e=>{if(!cancelled)setError(e.message);});
+  }).catch(e=>{if(!cancelled){setTechnical(null);setError(e.message);}});
   return()=>{cancelled=true;};
  },[mode,canManage,sample.id,missingCurrentBasis]);
  async function view(p:{id:string}){const blob=await request({action:'blend-pdf',planId:p.id});if(!(blob instanceof Blob))throw new Error('Invalid Production PDF response.');onPreview(URL.createObjectURL(blob),'Material-Quantity-Blend-Sheet.pdf');}
@@ -83,7 +87,7 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
  });}
  const edit=(field:'batchCount'|'adjustment'|'blendSize',value:string)=>{if(!snapshot)return;const basis=buildProductionBlend(snapshot,{batchCount:1,plannedQuantity:1,blendSize:1000}).batchChipLb;if(field==='adjustment')setAdjustmentText(value);setInputs(current=>field==='batchCount'?{...current,batchCount:value,plannedQuantity:value.trim()===''?'':String(Number(value)*Number(basis)+Number(adjustmentText))}:editBlendPlanning(current,field,value,Number(basis)));setDirty(true);};
  if(!canManage||mode==='hidden')return null;
- if(mode==='documents')return <section className="border bg-white p-4"><h2 className="font-bold">Recent Documents · Blend Sheet</h2>{!historyLoaded?<p>Loading generated history…</p>:<>{plans.filter(p=>p.status==='issued').slice(0,1).map(p=><button key={p.id} type="button" className="my-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {p.project||p.job} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()} — View</button>)}<details onToggle={e=>setHistoryExpanded(e.currentTarget.open)}><summary className="min-h-11 cursor-pointer text-sm font-bold">Blend Sheets ({plans.filter(p=>p.status==='issued').length})</summary>{historyExpanded&&plans.filter(p=>p.status==='issued').slice(1).map(p=><button key={p.id} type="button" className="my-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {p.project||p.job} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()}</button>)}<p className="text-xs text-slate-500">Newest sheet appears above.</p></details>{plans.some(p=>p.status==='working')&&<details><summary>Legacy history</summary>{plans.filter(p=>p.status==='working').map(p=><button key={p.id} type="button" className="my-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()}</button>)}</details>}</>}{error&&<p role="alert">{error}</p>}</section>;
+ if(mode==='documents')return <section className="border bg-white p-4"><h2 className="font-bold">Recent Documents · Blend Sheet</h2>{!historyLoaded?<p>Loading generated history…</p>:<>{plans.filter(p=>p.status==='issued').slice(0,1).map(p=><button key={p.id} type="button" className="my-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {p.project||p.job} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()} — View</button>)}<details onToggle={e=>setHistoryExpanded(e.currentTarget.open)}><summary className="min-h-11 cursor-pointer text-sm font-bold">Blend Sheets ({plans.filter(p=>p.status==='issued').length})</summary>{historyExpanded&&plans.filter(p=>p.status==='issued').slice(1).map(p=><button key={p.id} type="button" className="my-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {p.project||p.job} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()}</button>)}<p className="text-xs text-slate-500">Newest sheet appears above.</p></details>{plans.some(p=>p.status==='working')&&<details><summary>Legacy history</summary>{plans.filter(p=>p.status==='working').map(p=><button key={p.id} type="button" className="my-2 block text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()}</button>)}</details>}</>}{error&&<><p role="alert">{error}</p><TechnicalDetails diagnostic={technical}/></>}</section>;
  const button='min-h-11 border border-blue-900 px-3 py-2 text-sm font-bold disabled:opacity-40';
  return <section ref={section} tabIndex={-1} aria-label="Production Blend Sheet" className="scroll-mt-40 border border-blue-300 bg-white p-4">
   <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-bold">Production planning</h2><button type="button" className="min-h-11 text-sm font-bold text-blue-900 underline" onClick={onSample}>Back to formulation</button></div>
@@ -134,6 +138,6 @@ export default function ProductionBatchOutput({sample,onSave,onPreview,onDirtyCh
    </div>}
    <section className="mt-5 border-t pt-3"><h3 className="font-bold">Last generated</h3>{latest.map(p=><button type="button" disabled={busy} key={p.id} className="mt-2 block text-left text-sm underline" onClick={()=>void run(()=>view(p))}>{p.identity} · {p.project||p.job} · {n(Number(p.planned_quantity))} lb · {new Date(p.created_at).toLocaleString()} — View</button>)}{!latest.length&&<p className="text-sm text-slate-500">No generated Blend Sheets yet.</p>}<button type="button" className="mt-2 min-h-11 text-sm font-bold underline" onClick={onDocuments}>View generated sheets in Documents</button></section>
   </>
-  {error&&<p role="alert" className="mt-3 text-sm text-red-800">{error}</p>}
+  {error&&<><p role="alert" className="mt-3 text-sm text-red-800">{error}</p><TechnicalDetails diagnostic={technical}/></>}
  </section>;
 }

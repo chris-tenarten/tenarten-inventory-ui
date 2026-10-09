@@ -1,4 +1,6 @@
 "use client";
+import TechnicalDetails from './TechnicalDetails';
+import {generationDiagnostic,readGenerationDiagnostic,type GenerationDiagnostic} from '../../../supabase/functions/_shared/sample-diagnostics.mjs';
 
 import {displayProfileRatio} from '../../../supabase/functions/_shared/ratio-display.mjs';
 import { BusinessButton, BusinessSelect, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
@@ -134,6 +136,7 @@ export default function SampleWorkspace() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
+  const [technical,setTechnical]=useState<GenerationDiagnostic|null>(null);
   const [message, setMessage] = useState("");
   const [tutorialActive, setTutorialActive] = useState(false);
   const [tutorialStep, setTutorialStep] = useState<SampleTutorialStep>("finished-pieces");
@@ -186,6 +189,7 @@ export default function SampleWorkspace() {
     (caught: unknown, operation: SampleOperation, prefix = "") => {
       const translated = translateSampleError(caught, operation);
       logSampleError(translated);
+      setTechnical(readGenerationDiagnostic((caught as {diagnostic?:unknown})?.diagnostic)??generationDiagnostic(caught,operation==='formal-issue'?'issue-snapshot':operation==='save-draft'?'save-draft':'generation',{}));
       setError(
         prefix
           ? `${prefix} ${translated.message} ${translated.guidance} ${translated.safeState}${translated.retrySafe ? " Retrying is safe." : ""}`
@@ -487,6 +491,8 @@ export default function SampleWorkspace() {
     const readiness = validateSampleForOutput(draft, "formal-issue");
     if (readiness) {
       logSampleError(readiness);
+      setError(formatSampleError(readiness));
+      setTechnical(generationDiagnostic({code:readiness.diagnostic.code,message:readiness.message},'client-validation',{state:draft.formulation,source:'current-draft'}));
       const first=sampleAttention(draft)[0];if(first)focusSampleAttention(first);
       setBusy("");
       return;
@@ -507,7 +513,7 @@ export default function SampleWorkspace() {
     try {
       documentId = await issueSample(saved.id);
     } catch (caught) {
-      showOperationError(caught, "formal-issue");
+      showOperationError(Object.assign(new Error(caught instanceof Error?caught.message:String((caught as {message?:unknown})?.message??'Sample issuance failed')),caught,{diagnostic:generationDiagnostic(caught,'issue-snapshot',{state:saved.formulation,draftState:draft.formulation,source:'captured-snapshot'})}), "formal-issue");
       setBusy("");
       return;
     }
@@ -793,7 +799,7 @@ export default function SampleWorkspace() {
                 {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)} onClick={()=>productionRef.current?.open()} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
               </div>
               {allAttention.length>0&&<div data-testid="sample-validation-summary" className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-red-800"><strong>{allAttention.length} {allAttention.length===1?'item needs':'items need'} attention:</strong>{allAttention.map(item=><button key={`${item.section}:${item.label}`} type="button" title={item.message} className="min-h-7 text-left font-semibold underline" onClick={()=>focusSampleAttention(item)}>{item.label}</button>)}<span className="text-slate-600">Draft saving and document generation have different requirements.</span></div>}
-              {error&&<p role="alert" className="mt-2 text-xs text-red-800">{error}</p>}
+              {error&&<><p role="alert" className="mt-2 text-xs text-red-800">{error}</p><TechnicalDetails diagnostic={technical}/></>}
             </div>
             <div id="formulation-setup" tabIndex={-1} className="scroll-mt-28 space-y-3">
             <section className="border border-slate-300 bg-white p-4"><h2 className="mb-3 text-lg font-bold">Formulation setup</h2>              <SampleResinSystemSelector initialSelection={!draft.id} state={draft.formulation} rows={draft.blendRows} onChange={formulation=>{
