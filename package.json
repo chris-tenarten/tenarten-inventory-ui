@@ -19,6 +19,7 @@
     "verify:purchasing-pdf": "node scripts/verify-purchasing-pdf.mjs",
     "verify:purchasing-numbering": "node scripts/verify-purchasing-numbering.mjs",
     "verify:job-transmittals": "node scripts/verify-job-transmittals.mjs",
+    "verify:transmittal-auth": "node scripts/verify-transmittal-edge-auth.mjs",
     "verify:purchasing-arim-skus": "node scripts/verify-purchasing-arim-skus.mjs",
     "verify:purchasing-pending-receivals": "node scripts/verify-purchasing-pending-receivals.mjs",
     "verify:planning": "node scripts/verify-planning.mjs",
