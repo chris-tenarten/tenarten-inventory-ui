@@ -9,7 +9,7 @@ import {sampleVendorPackageWarning} from './vendor-authority';
 import {applyResinIdentity,synchronizeResin,resinConflict} from './resin-identity';
 import {sampleAttention,chipTotalMessage,focusSampleAttention,type SampleAttention} from './sample-validation-view';
 import Help from './ContextHelp';
-import {preparationHelp, preparationDescription, exactPreparationDisplay} from './preparation';
+import SamplePreparationList from './SamplePreparationList';
 import {preferredColorPlate,colorPlateWarning,colorPlateConflict} from './color-plate-identifier';
 import './sample-workspace.css';
 import SampleResinSystemSelector from './SampleResinSystemSelector';
@@ -37,9 +37,7 @@ import {
 } from "@/modules/production/job-options";
 import { sampleCatalogEligible, searchSampleCatalog } from "./catalog";
 import {
-  PurchasingChoiceWithCustom,
   PurchasingVendorNameInput,
-  purchasingQuantityUnits,
 } from "@/modules/purchasing/material-controls";
 import { loadVendors } from "@/modules/purchasing/queries";
 import type {
@@ -99,7 +97,6 @@ import {
 } from "./library-row";
 import {
   calculateSampleFormulation,
-  normalizeSupportedSampleRatio,
   SAMPLE_FORMULATION_CALCULATION_VERSION,
 } from "./formulation";
 
@@ -118,13 +115,12 @@ export default function SampleWorkspace() {
   const [linkSelection, setLinkSelection] = useState("");
   const [draft, setDraft] = useState<SampleRecord | null>(null);
   const [documentsOpen,setDocumentsOpen]=useState(false);
-  function jumpTo(id:string){const element=document.getElementById(id);element?.scrollIntoView({behavior:'smooth',block:'start'});element?.focus({preventScroll:true});}
+  function jumpTo(id:string){const element=document.getElementById(id);let ancestor:HTMLElement|null=element;while(ancestor){if(ancestor instanceof HTMLDetailsElement)ancestor.open=true;ancestor=ancestor.parentElement;}element?.scrollIntoView({behavior:'smooth',block:'start'});element?.focus({preventScroll:true});}
   const [sampleHistoryExpanded,setSampleHistoryExpanded]=useState(false);
-  const [preparationBlurred,setPreparationBlurred]=useState<Record<string,boolean>>({});
   const [expandedRows,setExpandedRows]=useState<Record<string,boolean>>({});
   const [draftBaseline, setDraftBaseline] = useState("");
-  const [quantityViewState, setQuantityViewState] = useState<{record: string | null; view: "batch" | "working"}>({record:null,view:"batch"});
-  const quantityView = quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "batch";
+  const [quantityViewState, setQuantityViewState] = useState<{record: string | null; view: "batch" | "working"}>({record:null,view:"working"});
+  const quantityView = quantityViewState.record === (draft?.id ?? null) ? quantityViewState.view : "working";
   const batchFirst = draft?.formulation.calculationVersion === BATCH_FIRST_VERSION;
   const shopProjection = draft && batchFirst ? batchFirstQuantities(draft.formulation,draft.blendRows) : null;
   function changeBatchFiller(value: string | null) {
@@ -800,9 +796,12 @@ export default function SampleWorkspace() {
                 </BusinessButton>
                 {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)} onClick={()=>productionRef.current?.open()} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
               </div>
-              {allAttention.length>0&&<div data-testid="sample-validation-summary" className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-red-800"><strong>{allAttention.length} {allAttention.length===1?'item needs':'items need'} attention:</strong>{allAttention.map(item=><button key={`${item.section}:${item.label}`} type="button" title={item.message} className="min-h-7 text-left font-semibold underline" onClick={()=>focusSampleAttention(item)}>{item.label}</button>)}<span className="text-slate-600">Draft saving and document generation have different requirements.</span></div>}
+              {allAttention.length>0&&<div data-testid="sample-validation-summary" className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-red-800"><strong>{allAttention.length} {allAttention.length===1?'item needs':'items need'} attention:</strong>{allAttention.map(item=><button key={`${item.section}:${item.label}`} type="button" title={item.message} className="min-h-7 text-left font-semibold underline" onClick={()=>focusSampleAttention(item)}>{item.label}: {item.message}</button>)}<span className="text-slate-600">Draft saving and document generation have different requirements.</span></div>}
               {error&&<><p role="alert" className="mt-2 text-xs text-red-800">{error}</p><TechnicalDetails diagnostic={technical}/></>}
             </div>
+            <details key={draft.id??'new-sample'} id="operator-sample-details" open={!draft.id||!draft.preparedBy.trim()} className="border border-slate-300 bg-white p-3">
+              <summary className="cursor-pointer text-sm"><strong>{draft.colorPlateNumber||'New Sample'}</strong> · {displayProfileRatio(draft.formulation.profile?.name)||'Select Resin System'} <span className="ml-2 text-blue-900 underline">Edit Sample details</span></summary>
+              <div className="mt-3 space-y-3">
             <div id="formulation-setup" tabIndex={-1} className="scroll-mt-28 space-y-3">
             <section className="border border-slate-300 bg-white p-4"><h2 className="mb-3 text-lg font-bold">Formulation setup</h2>              <SampleResinSystemSelector initialSelection={!draft.id} state={draft.formulation} rows={draft.blendRows} onChange={formulation=>{
                 setDraft(applyResinIdentity({...draft,blendRows:draft.blendRows.map(row=>row.quantityProvenance==='manual'||row.componentRole==='other'?row:{...row,quantity:'',quantityProvenance:'calculated',calculationBasis:row.componentRole==='aggregate'?'target_total':null})},formulation));
@@ -946,6 +945,29 @@ export default function SampleWorkspace() {
             {(draft.sampleName||draft.sampleSize||draft.sampleQuantity)&&<details className="text-xs text-slate-500"><summary className="cursor-pointer py-2">Legacy context</summary><p className="mb-2">Retained historical metadata. Physical dimensions and piece count are set in Sample Plate.</p><dl className="grid gap-1 sm:grid-cols-3">{draft.sampleName&&<div><dt>Historical name</dt><dd>{draft.sampleName}</dd></div>}{draft.sampleSize&&<div><dt>Historical size</dt><dd>{draft.sampleSize}</dd></div>}{draft.sampleQuantity&&<div><dt>Historical quantity</dt><dd>{draft.sampleQuantity}</dd></div>}</dl></details>}
             {draft.moreNotes&&<details className="text-xs text-slate-600"><summary className="cursor-pointer py-2">Historical additional notes</summary><p className="mb-2">Retained with this Sample and included in generated documents. Use Notes above for new instructions.</p><p className="whitespace-pre-wrap">{draft.moreNotes}</p></details>}
             </div>
+              </div>
+            </details>
+            <div role="group" aria-label="View quantities as" className="flex flex-wrap gap-2">
+              <button type="button" aria-pressed={quantityView==='working'} onClick={()=>{setQuantityViewState({record:draft.id,view:'working'});jumpTo('sample-plate');}} className="min-h-11 border border-slate-300 bg-white px-3 text-sm font-bold aria-pressed:bg-blue-900 aria-pressed:text-white">Prepare Sample</button>
+              <button type="button" aria-pressed={quantityView==='batch'} onClick={()=>{setQuantityViewState({record:draft.id,view:'batch'});requestAnimationFrame(()=>jumpTo('operator-batch-formula'));}} className="min-h-11 border border-slate-300 bg-white px-3 text-sm font-bold aria-pressed:bg-blue-900 aria-pressed:text-white">View Batch Formula</button>
+            </div>
+            <div id="sample-plate" tabIndex={-1} className="scroll-mt-28 space-y-3">
+            <h2 className="sr-only">Sample Plate</h2>
+            {attention.filter(item=>item.section==='sample-plate'&&!item.label.startsWith('Sample Plate (')).map(item=><p key={item.label} role="alert" className="text-xs text-red-800">{item.message}</p>)}
+            {draft.formulation.profile||draft.id?<SampleFormulationConfigurator
+              state={draft.formulation}
+              rows={draft.blendRows}
+              resinSupplier={draft.resinSupplier}
+              onChange={(formulation) => {
+                patch("formulation", formulation);
+              }}
+              onApplyAdjustment={(formulation,targetFillerOz)=>setDraft(current=>current?{...current,formulation,blendRows:current.blendRows.map(row=>row.componentRole==='filler'?{...row,quantity:targetFillerOz,quantityProvenance:'manual'}:row)}:current)}
+            />:<p className="text-sm text-amber-800">Select a Resin System to establish Batch quantities.</p>}
+            {batch?.issues.map(issue=><p role="status" className="text-xs text-amber-800" key={issue}>{issue}</p>)}
+            <SamplePreparationList state={draft.formulation} rows={draft.blendRows} result={formulationResult} onPatch={patchRow}/>
+            </div>
+            <details id="operator-batch-formula" open={quantityView==='batch'} onToggle={e=>setQuantityViewState({record:draft.id,view:e.currentTarget.open?'batch':'working'})} className="border border-slate-300 bg-white p-3">
+              <summary className="cursor-pointer py-1 text-sm font-bold">Batch formula · materials, percentages and sourcing</summary>
             <div id="formulation-materials" className="space-y-3">
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
@@ -1236,7 +1258,7 @@ export default function SampleWorkspace() {
                           {formatBatchQuantity(batch?.rows[index]?.quantity??null,batch?.rows[index]?.unit??'')} {batch?.rows[index]?.unit}
                         </output>
                         <p className="blend-provenance mt-2 text-xs font-normal text-slate-600">{batch?.rows[index]?.note}</p>
-                        {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit quantity in Shop Preparation view.</p>}
+                        {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit amount in Prepare Sample.</p>}
                       </div>
                       <label className={`${label} text-left blend-vendor`}>
                         <span className="blend-field-label">Vendor</span>
@@ -1268,126 +1290,7 @@ export default function SampleWorkspace() {
                 ))}
               </div>}
             </section>
-            <div id="sample-plate" tabIndex={-1} className="scroll-mt-28 space-y-3">
-            <h2 className="text-lg font-bold">Sample Plate</h2>{draft.blendRows.some(row=>row.quantityProvenance==='manual')&&<p role="status" className="text-xs text-amber-800">Manual preparation quantities remain fixed. Review them after changing Working Pour dimensions, thickness, Resin System or Batch Filler.</p>}<p className="text-sm text-slate-600">Scale the Batch formulation down for the Working Pour and finished pieces.</p>
-            {attention.filter(item=>item.section==='sample-plate'&&!item.label.startsWith('Sample Plate (')).map(item=><p key={item.label} role="alert" className="text-xs text-red-800">{item.message}</p>)}
-            {draft.formulation.profile||draft.id?<SampleFormulationConfigurator
-              state={draft.formulation}
-              rows={draft.blendRows}
-              resinSupplier={draft.resinSupplier}
-              onChange={(formulation) => {
-                patch("formulation", formulation);
-              }}
-              onApplyAdjustment={(formulation,targetFillerOz)=>setDraft(current=>current?{...current,formulation,blendRows:current.blendRows.map(row=>row.componentRole==='filler'?{...row,quantity:targetFillerOz,quantityProvenance:'manual'}:row)}:current)}
-            />:<p className="text-sm text-amber-800">Select a Resin System to establish Batch quantities.</p>}
-            {(draft.formulation.profile||draft.id)&&<section className="border border-slate-300 bg-white p-4">
-              <p className="text-sm font-bold">View quantities as</p>
-              <p className="text-xs text-slate-600">Shop Preparation shows Working Pour quantities and Filler/Resin preparation overrides.</p>
-              <div role="group" aria-label="View quantities as" className="mt-2 inline-flex gap-1">
-                {([['batch','Batch'],['working','Shop Preparation']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
-              </div>
-              {quantityView==='batch' && batch && <div className="mt-4" data-testid="batch-summary">
-                <p className="text-xl font-bold">Batch chip target: {batch.target===null?'not captured':`${formatBatchQuantity(batch.target,'lb')} lb = 100%`}</p>
-                <p className="mt-1 text-sm">{displayProfileRatio(draft.formulation.profile?.name)} · Operator-authored percentages define this chip blend.</p>
-                <p className="mt-2 font-bold">{batch.complete?'TOTAL':'Calculated chip subtotal'}: {batch.totalPercent}% · {formatBatchQuantity(batch.subtotalLb,'lb')} lb</p>
-                {batch.fraction!==null && <p className="text-sm">Working Pour fraction of Batch: {formatBatchQuantity(batch.fraction,'gal')}</p>}
-                {batch.issues.map(issue=><p role="status" className="mt-1 text-sm text-amber-800" key={issue}>{issue}</p>)}
-                <p className="mt-2 text-xs text-slate-600">{batchFirst ? "Canonical Batch quantities define Production. Working Pour and shop preparation quantities are downstream." : "Filler, Resin and Hardener are projected from this formulation. These equivalents do not prescribe whole-package rounding."}</p>
-              </div>}
-            </section>}
-            {(draft.formulation.profile||draft.id)&&<div className="space-y-2">{displayRows.map(({row,sourceIndex:index})=><div key={row.id} className="grid gap-3 border border-slate-200 bg-white p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]"><div className="text-sm"><strong className="capitalize">{row.componentRole}</strong><p>{row.color||'Material not selected'}</p></div>{quantityView==='batch'?<output className="font-bold">{formatBatchQuantity(batch?.rows[index]?.quantity??null,batch?.rows[index]?.unit??'')} {batch?.rows[index]?.unit}</output>:<>                      <div className={`${label} text-left`}>
-                        <span className="inline-flex items-center gap-1">{batchFirst ? preparationDescription(draft.formulation,draft.blendRows,index,shopProjection!).label : "Quantity"}{batchFirst&&<Help label="Shop preparation">{preparationHelp}</Help>}</span>
-                        <div className="relative mt-1">
-                          <BusinessInput
-                            aria-label={`${row.componentRole} quantity`}
-                            aria-invalid={row.quantityProvenance === 'manual' && preparationBlurred[row.id] && String(row.quantity).trim() === '' ? true : undefined}
-                            aria-describedby={row.quantityProvenance === 'manual' && preparationBlurred[row.id] && String(row.quantity).trim() === '' ? `preparation-error-${row.id}` : undefined}
-                            onBlur={() => setPreparationBlurred(current => ({...current,[row.id]:true}))}
-                            type="number"
-                            min="0"
-                            step="0.0001"
-                            readOnly={row.quantityProvenance === "calculated"}
-                            value={
-                              row.quantityProvenance === "calculated"
-                                ? formulationResult?.rows[index]
-                                    ?.calculatedQuantity || ""
-                                : row.quantity
-                            }
-                            onChange={(e) =>
-                              patchRow(index, { quantity: e.target.value })
-                            }
-                            className={`${field} mt-0 pr-14 ${row.quantityProvenance === "calculated" ? "bg-slate-100" : row.componentRole === "aggregate" || row.componentRole === "hardener" ? "border-amber-300 bg-amber-50/60 dark:border-amber-700 dark:bg-amber-950/20" : "border-emerald-300 bg-emerald-50/60 dark:border-emerald-700 dark:bg-emerald-950/20"}`}
-                          />
-                          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">
-                            {row.componentRole === "resin" || row.componentRole === "hardener"
-                              ? "fl oz"
-                              : "oz"}
-                          </span>
-                        </div>
-                        {row.quantityProvenance === 'manual' && preparationBlurred[row.id] && String(row.quantity).trim() === '' && <p id={`preparation-error-${row.id}`} role="alert" className="mt-1 text-xs font-normal text-red-700">Enter a preparation quantity{['aggregate','filler','resin'].includes(row.componentRole) ? ' or choose Use calculated preparation' : ''}.</p>}
-                        {batchFirst && <div className="mt-2 text-xs font-normal text-slate-500"><p>Exact Batch projection: {exactPreparationDisplay(shopProjection?.rows[index]?.exact??null)}{shopProjection?.rows[index]?.exact!=null?` ${row.componentRole==='resin'||row.componentRole==='hardener'?'fl oz':'oz'}`:''}</p><p>{preparationDescription(draft.formulation,draft.blendRows,index,shopProjection!).note}</p></div>}
-                        <div className="mt-2 flex min-h-5 flex-wrap items-center gap-1.5">
-                          <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${row.quantityProvenance === "calculated" ? "bg-slate-200 text-slate-700" : row.componentRole === "aggregate" || row.componentRole === "hardener" ? "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"}`}>
-                            {row.quantityProvenance === "manual"
-                              ? row.componentRole === "aggregate" || row.componentRole === "hardener"
-                                ? "Modified"
-                                : "Authored"
-                              : row.componentRole === "filler" || row.componentRole === "resin"
-                                ? draft.formulation[row.componentRole === "filler" ? "fillerProvenance" : "resinProvenance"] === "restored"
-                                  ? "Restored"
-                                  : "Profile Default"
-                                : "Calculated"}
-                          </span>
-                        </div>
-                        <p className="mt-1 min-h-8 text-[11px] font-normal leading-4 text-slate-500">
-                          {batchFirst && row.componentRole !== "aggregate" ? "Shop preparation only. Canonical Batch quantities remain unchanged." : row.componentRole === "aggregate"
-                            ? row.quantityProvenance === "manual"
-                              ? "Overrides the calculated Aggregate quantity"
-                              : `${row.percentage || "0"}% × ${formulationResult?.availableChipMixOz || "0"} oz Chip Mix`
-                            : row.componentRole === "filler"
-                              ? row.quantityProvenance === "manual"
-                                ? "Entered for this Sample"
-                                : "Profile default"
-                              : row.componentRole === "resin"
-                                ? row.quantityProvenance === "manual"
-                                  ? "Entered for this Sample"
-                                  : "Profile-derived from production volume"
-                                : row.componentRole === "hardener"
-                                  ? row.quantityProvenance === "manual"
-                                    ? "Overrides the calculated Hardener quantity"
-                                    : `Calculated from ${normalizeSupportedSampleRatio(draft.formulation.resinParts,draft.formulation.hardenerParts)??`${draft.formulation.resinParts}:${draft.formulation.hardenerParts}`}`
-                                  : "Entered for this Sample"}
-                        </p>
-                        {(row.componentRole === "aggregate" || row.componentRole === "filler" || row.componentRole === "resin" || row.componentRole === "hardener") && !(batchFirst && row.componentRole === "hardener") && (
-                          <BusinessButton
-                            type="button"
-                            onClick={() => patchRow(index, {
-                              quantityProvenance: row.quantityProvenance === "calculated" ? "manual" : "calculated",
-                              calculationBasis: row.componentRole === "aggregate" && row.quantityProvenance === "manual" ? "target_total" : null,
-                              quantity: row.quantityProvenance === "calculated" ? (formulationResult?.rows[index]?.calculatedQuantity || "") : row.quantity,
-                              unit: row.componentRole === "resin" || row.componentRole === "hardener" ? "fl oz" : "oz",
-                            })}
-                            className="mt-1 inline-flex min-h-11 items-center justify-center rounded-sm border border-slate-300 bg-white px-2.5 text-[11px] font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-700"
-                          >
-                            {row.quantityProvenance === "calculated"
-                              ? "Override preparation quantity"
-                              : "Use calculated preparation"}
-                          </BusinessButton>
-                        )}
-                        {row.componentRole === "other" && row.quantityProvenance === "manual" && (
-                          <label className="mt-2 block">
-                            Unit
-                            <PurchasingChoiceWithCustom
-                              value={row.unit}
-                              options={purchasingQuantityUnits}
-                              onChange={(value) => patchRow(index, { unit: value })}
-                              className={field}
-                            />
-                          </label>
-                        )}
-                      </div>
-</>}</div>)}</div>}
-            </div>
+            </details>
             <div id="production-planning" tabIndex={-1} className="scroll-mt-28">
             <ProductionBatchOutput onValidationChange={setProductionAttention} mode="planner" onDocuments={()=>{setDocumentsOpen(true);jumpTo('sample-documents');}} onSample={()=>jumpTo('formulation-setup')} ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
             </div>

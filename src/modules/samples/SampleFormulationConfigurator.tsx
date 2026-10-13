@@ -130,7 +130,7 @@ export default function SampleFormulationConfigurator({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div data-sample-tutorial="chip-summary" className="min-w-0 w-full lg:flex-1">
           <h2 className="text-sm font-bold uppercase tracking-wide">
-            Sample Plate Calculation
+            Pour dimensions
           </h2>
           <SamplePourPlanner state={state} rows={rows} patch={patch} onChange={onChange}>
           <dl className="mt-3 grid gap-4 text-sm sm:grid-cols-2">
@@ -167,7 +167,7 @@ export default function SampleFormulationConfigurator({
           <Settings2 className="h-4 w-4" />
           {advanced
             ? "Close Calculation Settings"
-            : "Adjust Sample Plate Calculation"}
+            : "Advanced calculation settings"}
         </button>
       </div>
       {advanced && (

@@ -35,32 +35,34 @@ export default function SamplePourPlanner({state, rows, patch, onChange, childre
   const displacedInstructions = batch && volume !== null ? Object.entries(state.profile?.batchContract?.components ?? {}).filter(([,c])=>c?.shopWorking?.rule==='at_volume' && Math.abs(Number(c.shopWorking.volumeCft)-volume)>1e-6) : [];
   const field = (title: string, key: 'finishedPlateWidth'|'finishedPlateLength'|'finishedPlateQuantity'|'thicknessIn'|'width'|'length', suffix?: string) => <label className={label}>{title}<BusinessInput aria-label={title} aria-invalid={geometryErrors.some(e=>e.key===key)} aria-describedby={geometryErrors.some(e=>e.key===key)?`${arrangementId}-${key}-error`:undefined} type="number" min={key==='finishedPlateQuantity'?1:0} step={key==='finishedPlateQuantity'?1:'any'} value={state[key]} onChange={e=>patch({[key]:e.target.value})} className={input}/>{geometryErrors.filter(e=>e.key===key).map(e=><span key={e.key} id={`${arrangementId}-${key}-error`} className="mt-1 block text-xs font-normal text-red-700">{e.message}</span>)}{suffix && <span className="mt-1 block text-[11px] font-normal text-slate-500">{suffix}</span>}</label>;
   return <div className="mt-3 space-y-4" data-testid="sample-pour-planner">
-    <fieldset><legend className="text-sm font-bold">Finished Plates</legend>
+    <details><summary className="cursor-pointer text-sm font-semibold">Finished Plates · {state.finishedPlateQuantity||"—"} pcs · {state.finishedPlateWidth||"—"}″ × {state.finishedPlateLength||"—"}″ × {state.thicknessIn||"—"}″</summary><fieldset><legend className="sr-only">Finished Plates</legend>
       <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {field('Finished Plate Width','finishedPlateWidth','inches')}{field('Finished Plate Length','finishedPlateLength','inches')}{field('Finished Pieces','finishedPlateQuantity')}{field('Thickness','thicknessIn','inches · shared with Working Pour')}
+        {field('Finished Plate Width','finishedPlateWidth','inches')}{field('Finished Plate Length','finishedPlateLength','inches')}{field('Finished Pieces','finishedPlateQuantity')}
       </div>
       <p data-testid="finished-geometry" className="mt-2 text-sm font-semibold">{fmt(finished.area)} SF · {fmt(finished.volume)} CFT finished</p>
       <p className="text-xs text-slate-500">Changing finished dimensions or count does not resize the Working Pour. Shared thickness updates both.</p>
-    </fieldset>
+    </fieldset></details>
     <fieldset><legend className="text-sm font-bold">Working Pour</legend>
-      <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {field('Working Pour Width','width')}{field('Working Pour Length','length')}
+      <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {field('Working Pour Width','width')}{field('Working Pour Length','length')}{field('Thickness','thicknessIn','inches · shared with finished plates')}
         <label className={label}>Working Pour Units<BusinessSelect aria-label="Working Pour Units" value={state.dimensionUnit} onChange={e=>onChange(convertPourUnits(state,e.target.value as 'in'|'ft'))} className={input}><option value="in">inches</option><option value="ft">feet</option></BusinessSelect><span className="mt-1 block text-[11px] font-normal text-slate-500">Converts width and length; preserves physical size.</span></label>
       </div>
       {geometryErrors.filter(e=>e.key==='dimensionUnit').map(e=><p key={e.key} role="alert" className="text-xs text-red-700">{e.message}</p>)}
-      <p data-testid="working-geometry" className="mt-2 text-sm font-semibold">{result.areaSf === '' ? '—' : fmt(Number(result.areaSf))} SF · {fmt(volume)} CFT Working Pour</p>
+      <p data-testid="working-geometry" className="mt-2 text-sm font-semibold">{result.areaSf === '' ? '—' : fmt(Number(result.areaSf))} SF · {fmt(volume)} CFT · {result.availableChipMixOz || "—"} oz chips</p>
       {volume !== null && finished.volume !== null && volume < finished.volume-1e-6 && <p role="status" className="mt-2 text-xs font-semibold text-amber-800">Working Pour volume is less than the total finished-piece volume.</p>}
       <p className="text-xs text-slate-500">Volume alone does not establish that pieces fit or allow for cutting and finishing.</p>
     </fieldset>
-    <div className="grid gap-2 border-y border-slate-200 py-3 text-sm sm:grid-cols-2" aria-label="Batch relationship">
+    <details><summary className="cursor-pointer py-1 text-xs text-slate-600">Calculation details</summary><div className="grid gap-2 border-y border-slate-200 py-3 text-sm sm:grid-cols-2" aria-label="Batch relationship">
       <p>Reference Batch volume: <strong>{fmt(referenceVolume)} CFT</strong></p>
       <p data-testid="pour-fraction">Working Pour: <strong>{batchFractionLabel(batch?.fraction ?? null)}</strong></p>
       <p className="text-xs text-slate-500 sm:col-span-2">Derived from captured Batch chips and chip loading; not measured finished-terrazzo yield. Missing Batch authority is shown as —.</p>
     </div>
-    {children}
+    {children}</details>
     {manual && <p className="text-xs text-amber-800">Manual shop quantities are preserved and do not automatically scale with geometry. Review them against the current exact projection before preparation.</p>}
     {displacedInstructions.length>0 && <div className="text-xs text-amber-800"><p>Captured shop instructions apply at a different pour volume. Their original values remain captured; calculated rows use the existing exact-projection fallback. Manual overrides remain unchanged. Review practical quantities.</p><ul className="mt-1 list-inside list-disc">{displacedInstructions.map(([role,c])=><li key={role}>{role === 'resin' ? 'Resin' : role === 'hardener' ? 'Hardener' : 'Filler'}: {c?.shopWorking?.quantity} {c?.shopWorking?.unit} at {c?.shopWorking?.volumeCft} CFT</li>)}</ul></div>}
-    <button type="button" aria-expanded={show} onClick={()=>setShow(!show)} className="min-h-10 border border-slate-400 px-3 text-xs font-bold">{show?'Hide suggestions':'Suggest Working Pour'}</button>
+    <button type="button" aria-expanded={show} onClick={()=>setShow(!show)} className="min-h-10 border border-slate-400 px-3 text-xs font-bold">{show?'Hide suggestions':'Suggest Pour Size'}</button>
+    {!show&&stale&&<p role="status" className="text-xs text-amber-800">Inputs changed — recalculate suggestions.</p>}
+    {!show&&suggestions.issue&&<p role="alert" className="text-xs text-red-700">{suggestions.issue}</p>}
     {show && <div className="space-y-3 border border-slate-200 bg-slate-50 p-3">
       <p className="text-xs text-slate-600">Theoretical rectangular grids, not shop-approved molds. All pieces use the same orientation. Confirm fit, allowances and cutting feasibility before applying.</p>
       <h4 className="text-sm font-bold">Configure constraints</h4>

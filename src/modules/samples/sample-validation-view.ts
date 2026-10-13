@@ -30,5 +30,7 @@ export function sampleAttention(sample:SampleRecord):SampleAttention[] {
 export function focusSampleAttention(item:SampleAttention) {
  const section=document.getElementById(item.section);if(!section)return;
  const control=item.selector?section.querySelector<HTMLElement>(item.selector):null;
- const target=control??section;target.scrollIntoView({behavior:'smooth',block:'center'});target.focus({preventScroll:true});
+ const target=control??section;
+ let ancestor:HTMLElement|null=target;while(ancestor){if(ancestor instanceof HTMLDetailsElement)ancestor.open=true;ancestor=ancestor.parentElement;}
+ target.scrollIntoView({behavior:'smooth',block:'center'});target.focus({preventScroll:true});
 }

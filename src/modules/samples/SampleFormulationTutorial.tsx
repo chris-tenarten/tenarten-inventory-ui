@@ -143,6 +143,7 @@ export default function SampleFormulationTutorial({
     const matches = targets();
     const describedBy = "sample-formulation-tutorial-heading";
     matches.forEach((target) => {
+      let ancestor:HTMLElement|null=target;while(ancestor){if(ancestor instanceof HTMLDetailsElement)ancestor.open=true;ancestor=ancestor.parentElement;}
       highlightedClasses.forEach((className) => target.classList.add(className));
       target.setAttribute("aria-describedby", describedBy);
       target.setAttribute("data-sample-tutorial-current", "true");
