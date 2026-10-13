@@ -22,6 +22,7 @@ export type AppUserProfile = {
   readOnly: boolean;
   messagingWrite: boolean;
   productionBlendManage: boolean;
+  sampleLabelsGenerate: boolean;
 };
 
 type AuthContextValue = {
@@ -58,6 +59,7 @@ function normalizeProfile(value: unknown): AppUserProfile | null {
     readOnly: source.read_only === true,
     messagingWrite: source.messaging_write === true,
     productionBlendManage: source.production_blend_manage === true,
+    sampleLabelsGenerate: source.sample_labels_generate === true,
   };
 }
 
@@ -135,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const can = useCallback((capability: Capability) => {
     if (!session) return RBAC_MODE === "compatibility" && READ_CAPABILITIES.includes(capability);
     if (!profile?.isActive) return false;
-    return accountHasCapability(profile.role, capability, profile.readOnly, profile.messagingWrite, profile.productionBlendManage);
+    return accountHasCapability(profile.role, capability, profile.readOnly, profile.messagingWrite, profile.productionBlendManage, profile.sampleLabelsGenerate);
   }, [profile, session]);
 
   const value = useMemo<AuthContextValue>(() => ({

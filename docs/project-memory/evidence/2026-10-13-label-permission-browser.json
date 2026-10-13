@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-10-13T19:20:47.596Z",
+  "environment": "tenops-label-permission-review",
+  "realSeparateContexts": true,
+  "sessionUnchanged": true,
+  "checks": [
+    "Admin inherent checkbox and Member independent checkbox verified",
+    "OFF direct Sample route retains existing generator, hides label action",
+    "OFF→ON actual Admin checkbox grant, Member refresh, same real session",
+    "Authorized Member preview generation succeeds",
+    "ON→OFF stale open editor download denied, action disappears, no sign-out",
+    "Revoked stale editor print denied; reopen grant uses same session",
+    "Revoked stale editor generation denied; reopen grant uses same session",
+    "Revoked refresh preserves Sample generator; no output or page errors"
+  ],
+  "downloads": [],
+  "printCalls": [],
+  "errors": []
+}

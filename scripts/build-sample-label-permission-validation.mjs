@@ -1,0 +1,11 @@
+import { cpSync, mkdirSync, symlinkSync, readFileSync, existsSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import assert from 'node:assert/strict';
+const dest = '/private/tmp/tenops-sample-label-permission-build';
+assert.ok(!existsSync(dest), 'Refusing to replace an existing build');
+mkdirSync(dest);
+for (const name of ['src', 'public', 'supabase/functions', 'package.json', 'package-lock.json', 'tsconfig.json', 'next.config.ts', 'postcss.config.mjs', 'eslint.config.mjs', 'next-env.d.ts']) if (existsSync(name)) cpSync(name, dest + '/' + name, { recursive: true });
+symlinkSync('/Users/chrisngo/source/repos/tenarten-inventory-ui/node_modules', dest + '/node_modules');
+const cfg = JSON.parse(readFileSync('.tmp-label-permission-validation/config.json'));
+const result = spawnSync(dest + '/node_modules/.bin/next', ['build', '--webpack'], { cwd: dest, stdio: 'inherit', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: cfg.appOrigin, NEXT_PUBLIC_SUPABASE_ANON_KEY: cfg.anonKey, NEXT_PUBLIC_RBAC_MODE: 'enforced', NEXT_PUBLIC_DEV_BRANDING: 'false' } });
+process.exitCode = result.status ?? 1;

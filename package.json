@@ -36,7 +36,8 @@
     "pdfjs-dist": "^6.2.108",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "tus-js-client": "^4.3.1"
+    "tus-js-client": "^4.3.1",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
@@ -46,7 +47,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
-    "pdf-lib": "^1.17.1",
     "start-server-and-test": "^3.0.11",
     "tailwindcss": "^4",
     "tsx": "^4.23.12",

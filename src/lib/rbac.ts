@@ -5,6 +5,7 @@ export const CAPABILITIES = [
   "writeBusinessData",
   "messaging.write",
   "production_blend.manage",
+  "sample_labels.generate",
   "readOperationalData",
   "accessIntake",
   "viewIntake",
@@ -88,6 +89,7 @@ export const CAPABILITY_LABELS: Record<Capability, string> = {
   writeBusinessData: "Write business data (subject to role permissions)",
   "messaging.write": "Participate in Messaging",
   "production_blend.manage": "Manage Production Blend planning (explicit grant)",
+  "sample_labels.generate": "Generate Color Plate Labels",
   readOperationalData: "View operational data",
   accessIntake: "Manage Intake",
   viewIntake: "View Intake",
@@ -134,7 +136,8 @@ export function roleHasCapability(role: AppRole, capability: Capability) {
 export const READ_CAPABILITIES: readonly Capability[] = [
   "readOperationalData", "viewIntake", "previewOperationalDocuments", "accessDevelopmentEnvironment",
 ];
-export function accountHasCapability(role: AppRole, capability: Capability, readOnly: boolean, messagingWrite: boolean, productionBlendManage = false) {
+export function accountHasCapability(role: AppRole, capability: Capability, readOnly: boolean, messagingWrite: boolean, productionBlendManage = false, sampleLabelsGenerate = false) {
+  if (capability === "sample_labels.generate") return role === "admin" || sampleLabelsGenerate;
   if (capability === "production_blend.manage") return role === "admin" || productionBlendManage;
   if (capability === "messaging.write" && readOnly) return messagingWrite;
   if (readOnly && !READ_CAPABILITIES.includes(capability)) return false;

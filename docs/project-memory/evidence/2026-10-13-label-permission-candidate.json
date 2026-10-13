@@ -1,0 +1,190 @@
+{
+  "timestamp": "2026-10-13T19:23:47.573Z",
+  "branch": "feature/sample-color-plate-label-generator",
+  "baseHead": "1866efe4f862621513c0a45def9cc249286805f2",
+  "candidateCommit": null,
+  "reason": "Uncommitted candidate; commit not authorized",
+  "files": [
+    {
+      "status": " M",
+      "path": "package-lock.json",
+      "sha256": "25aa4647a7195f10d90cf7f27a3cf3e3d0d0ec39ab2448d8be7aabed9098d83a"
+    },
+    {
+      "status": " M",
+      "path": "package.json",
+      "sha256": "ac38332509c787f1d8089f774d6e41b0bd75e68708a6ad8b04077bf1a84af411"
+    },
+    {
+      "status": " M",
+      "path": "src/components/AdminSettingsPanel.tsx",
+      "sha256": "2926faa4a60b16a760d581a8846a63068a6404d805b48c1161353531e0438632"
+    },
+    {
+      "status": " M",
+      "path": "src/lib/auth.tsx",
+      "sha256": "a73601ed8fed4dc77fe697fa112bfa251491890cf0f8803ffbbf9f83ac6bc3ea"
+    },
+    {
+      "status": " M",
+      "path": "src/lib/rbac.ts",
+      "sha256": "bacf2878c5b723195a37b41478b0509877fa457242893e3a028d5818702dbd7d"
+    },
+    {
+      "status": " M",
+      "path": "src/modules/samples/SampleWorkspace.tsx",
+      "sha256": "4d36a8bc6f87c7289af69507aac8299395fb7a6ec2315c2a29fa8f1c5e536645"
+    },
+    {
+      "status": " M",
+      "path": "supabase/functions/admin-manage-users/index.ts",
+      "sha256": "35c6c2cd2f46465b7b7ffa76dbb2daadee5785aa9762d06b3f8a67e480aaf7cf"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/2026-10-13-dymo-physical-print-test.md",
+      "sha256": "5bbac0269c5d0befc1b465ad83f5203c8a91799d81a083dcbbed550e720fe3dd"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/2026-10-13-label-permission-isolation-plan.md",
+      "sha256": "81708c01c45f589fc801f28cb580ec96135adf671fc2ea0b98395d5b8356464a"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/2026-10-13-sample-color-plate-label-review.md",
+      "sha256": "21285629808b2506fb17cbe63def8cd8093f44222e278d71d2dbf0a7e7f74398"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/2026-10-13-sample-label-permission-and-dymo-test.md",
+      "sha256": "9bb64a34b41359268345843512c103f6fc0a943f480d155a11e9063a4fb7cd71"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/2026-10-13-sample-label-permission-implementation-review.md",
+      "sha256": "6960c57400439fbda51b6acf80ecb2a3738c3ba7592ae9e6d2b691092d64f7d5"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/evidence/2026-10-13-label-permission-api.json",
+      "sha256": "66c4b9f141eebf89cab8d363fd553f767e8dbadc8152b1ddceefad4a07f40824"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/evidence/2026-10-13-label-permission-browser.json",
+      "sha256": "21d4ffde78800af1406e30f4bd3f09344cc13fe75782b6181790773e966e2a55"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/evidence/2026-10-13-label-print-packet-http.json",
+      "sha256": "38ce923380928e156c240a48058f6f9ba8987a0225ad766707caa0d0e5b636af"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/evidence/2026-10-13-label-print-packet.json",
+      "sha256": "afab6024459f7e6433ac77ffe33b882462a0f363c8f21e4c9b39bc712e9b5f1b"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/evidence/2026-10-13-label-review-preservation.json",
+      "sha256": "d873263d663b96d9ed99a86a82205a29d56c032941e96e7a64875983f5820eff"
+    },
+    {
+      "status": "??",
+      "path": "docs/project-memory/proposals/2026-10-13-sample-label-permission.sql",
+      "sha256": "a3a4031a6800cff71e0c088e263edea3acd925b0ffd6458a0dcb7a3424d6e290"
+    },
+    {
+      "status": "??",
+      "path": "scripts/build-sample-label-permission-validation.mjs",
+      "sha256": "b514109690d6fc8ef3b956b533581369441e7defc0527d5196b293d16ab4ac5a"
+    },
+    {
+      "status": "??",
+      "path": "scripts/prepare-sample-label-permission-validation.mjs",
+      "sha256": "81acbd7f7a8dbb9182a82e033f4d7a891bcd134391aced1442ae764280aee74c"
+    },
+    {
+      "status": "??",
+      "path": "scripts/serve-color-plate-label-print-test.mjs",
+      "sha256": "ef6a4c828934c37599c11b4f14f7b5144da6940fde22f32c1f819144be3f584d"
+    },
+    {
+      "status": "??",
+      "path": "scripts/start-color-plate-label-review.mjs",
+      "sha256": "ff130745dca8adb8abd9e533ffdc28c88852cded837b15bb66635c988779323e"
+    },
+    {
+      "status": "??",
+      "path": "scripts/start-sample-label-permission-validation.mjs",
+      "sha256": "6928d3419de11c5dcfc2a6706bb4d75da9b1440e47d13015539186386a9736a7"
+    },
+    {
+      "status": "??",
+      "path": "scripts/support/label-permission-migrations.json",
+      "sha256": "96ace5101baadb86479494268f50344ce8e939eef423bbb53544cf6f316991e4"
+    },
+    {
+      "status": "??",
+      "path": "scripts/verify-color-plate-label-browser.mjs",
+      "sha256": "a2dcafea7566e9902042ae7a132eb5206d0cfb749ec223db4877db4613be9df1"
+    },
+    {
+      "status": "??",
+      "path": "scripts/verify-color-plate-label.mts",
+      "sha256": "c84faabeab4a8a336b5effbaf75e2538ca2c8ec3622f73e05d22b1b956018bda"
+    },
+    {
+      "status": "??",
+      "path": "scripts/verify-sample-label-permission-browser.mjs",
+      "sha256": "3014cc812076b2de2124279b6217234031f53ec6b930862f1c1ec1f0d93ada6a"
+    },
+    {
+      "status": "??",
+      "path": "scripts/verify-sample-label-permission.mjs",
+      "sha256": "444203d47eac9a48b72c129b60583a38967d3abb449c1b218f9654b56697a087"
+    },
+    {
+      "status": "??",
+      "path": "src/modules/samples/ColorPlateLabelEditor.tsx",
+      "sha256": "cfc45730d3d7b3737dcf7740c5bc763a730a3528460b66300552444d41a1eaf2"
+    },
+    {
+      "status": "??",
+      "path": "src/modules/samples/color-plate-label-access.ts",
+      "sha256": "619f9fa5851ad41a880ea83d2cf9adc1609782b68e626f23c4a0ce21b53ea661"
+    },
+    {
+      "status": "??",
+      "path": "src/modules/samples/color-plate-label-fields.ts",
+      "sha256": "7ab49d5b6b077723d1b173ab108f847f48b185119a9e4a4b609c80ed4e60a753"
+    },
+    {
+      "status": "??",
+      "path": "src/modules/samples/color-plate-label.ts",
+      "sha256": "ac1fea548a1a081095464aba11e2926c56dca72c09e8173ec262910f21f3e283"
+    },
+    {
+      "status": "??",
+      "path": "supabase/migrations/20261013180000_sample_label_capability.sql",
+      "sha256": "8baf8d94b880c021ca5a9dae03f5b5cbf7a2f68b54313d21e84422fda273647d"
+    }
+  ],
+  "preservation": {
+    "rendererAndFields": true,
+    "priorEvidenceFiles": 15,
+    "packetBuildFiles": 248,
+    "packetArchiveUnchanged": true
+  },
+  "validation": {
+    "apiChecks": 32,
+    "browserChecks": 8,
+    "webpackProductionBuild": true,
+    "typescriptBuildCheck": true,
+    "targetedEslint": true,
+    "diffCheck": true,
+    "pdfAndPrintingSuitesRerun": false
+  },
+  "manifestSelfExcluded": true
+}

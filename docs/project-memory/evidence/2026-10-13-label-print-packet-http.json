@@ -1,0 +1,29 @@
+{
+  "scope": "new portable packet HTTP routes only; no repeated app/PDF/browser/build tests",
+  "results": [
+    {
+      "route": "/samples",
+      "status": 200
+    },
+    {
+      "route": "/rest/v1/rpc/list_samples",
+      "status": 200
+    },
+    {
+      "route": "/rest/v1/rpc/get_my_app_access",
+      "status": 200
+    },
+    {
+      "route": "/rest/v1/rpc/save_sample_draft",
+      "status": 403
+    },
+    {
+      "route": "/functions/v1/admin-manage-users",
+      "status": 403
+    },
+    {
+      "route": "/rest/v1/samples",
+      "status": 403
+    }
+  ]
+}

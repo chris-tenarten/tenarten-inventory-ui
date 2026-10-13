@@ -1,0 +1,12 @@
+{
+  "archive": "/private/tmp/tenops-dymo-print-test-packet.zip",
+  "bytes": 17346941,
+  "sha256": "6e037265161c5a20ca247d458005e1d96536d62206ff1c49fc1da512dc4c9dc1",
+  "sourceUnchanged": true,
+  "priorEvidenceUnchanged": true,
+  "preservedBuildFiles": 248,
+  "priorEvidenceFiles": 15,
+  "transferredToAnthony": false,
+  "physicalPrintingVerified": false,
+  "permissionProposalImplemented": false
+}

@@ -1,4 +1,7 @@
 "use client";
+import dynamic from "next/dynamic";
+const ColorPlateLabelEditor = dynamic(() => import("./ColorPlateLabelEditor"), { ssr: false });
+
 import TechnicalDetails from './TechnicalDetails';
 import {generationDiagnostic,readGenerationDiagnostic,type GenerationDiagnostic} from '../../../supabase/functions/_shared/sample-diagnostics.mjs';
 
@@ -115,6 +118,9 @@ export default function SampleWorkspace() {
   const [linkSelection, setLinkSelection] = useState("");
   const [draft, setDraft] = useState<SampleRecord | null>(null);
   const [documentsOpen,setDocumentsOpen]=useState(false);
+  const [labelSample, setLabelSample] = useState<{sample: SampleRecord; userId: string} | null>(null);
+  const refreshAccess = auth.refreshProfile;
+  useEffect(() => { void refreshAccess(); }, [draft?.id, refreshAccess]);
   function jumpTo(id:string){const element=document.getElementById(id);let ancestor:HTMLElement|null=element;while(ancestor){if(ancestor instanceof HTMLDetailsElement)ancestor.open=true;ancestor=ancestor.parentElement;}element?.scrollIntoView({behavior:'smooth',block:'start'});element?.focus({preventScroll:true});}
   const [sampleHistoryExpanded,setSampleHistoryExpanded]=useState(false);
   const [expandedRows,setExpandedRows]=useState<Record<string,boolean>>({});
@@ -592,6 +598,7 @@ export default function SampleWorkspace() {
     : [];
   return (
     <main className="min-h-[calc(100vh-73px)] bg-[#eef1f4] px-3 py-5 text-slate-950 sm:px-5">
+      {labelSample && labelSample.userId === auth.user?.id && auth.accessAllowed && auth.can("readOperationalData") && auth.can("sample_labels.generate") && <ColorPlateLabelEditor key={`${labelSample.userId}:${labelSample.sample.id}`} sample={labelSample.sample} onClose={()=>setLabelSample(null)}/>}
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -794,6 +801,7 @@ export default function SampleWorkspace() {
                 >
                   {busy === "issue" ? "Generating…" : "Generate Sample Work Order"}
                 </BusinessButton>
+                {auth.can('readOperationalData')&&auth.can('sample_labels.generate')&&<button type="button" disabled={Boolean(busy)} onClick={()=>{if(auth.user)setLabelSample({sample:structuredClone(draft),userId:auth.user.id});}} className="min-h-10 border border-slate-400 px-3 text-xs font-bold disabled:opacity-40">PRINT COLOR PLATE LABEL</button>}
                 {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)} onClick={()=>productionRef.current?.open()} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
               </div>
               {allAttention.length>0&&<div data-testid="sample-validation-summary" className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-red-800"><strong>{allAttention.length} {allAttention.length===1?'item needs':'items need'} attention:</strong>{allAttention.map(item=><button key={`${item.section}:${item.label}`} type="button" title={item.message} className="min-h-7 text-left font-semibold underline" onClick={()=>focusSampleAttention(item)}>{item.label}: {item.message}</button>)}<span className="text-slate-600">Draft saving and document generation have different requirements.</span></div>}

@@ -209,7 +209,7 @@ Deno.serve(async (request) => {
         !body.displayName?.trim() ||
         !roles.has(body.role) ||
         typeof body.isActive !== "boolean" ||
-        typeof body.readOnly !== "boolean" || typeof body.messagingWrite !== "boolean" || (body.productionBlendManage !== undefined && typeof body.productionBlendManage !== "boolean") ||
+        typeof body.readOnly !== "boolean" || typeof body.messagingWrite !== "boolean" || (body.productionBlendManage !== undefined && typeof body.productionBlendManage !== "boolean") || (body.sampleLabelsGenerate !== undefined && typeof body.sampleLabelsGenerate !== "boolean") ||
         (body.readOnly && body.role !== "guest")
       ) {
         return json(
@@ -219,14 +219,16 @@ Deno.serve(async (request) => {
         );
       }
 
-      const { data, error } = await caller.rpc(body.productionBlendManage === undefined ? "admin_set_app_access" : "admin_set_app_access_v2", {
+      const { data, error } = await caller.rpc(body.sampleLabelsGenerate !== undefined ? "admin_set_app_access_v3" : body.productionBlendManage === undefined ? "admin_set_app_access" : "admin_set_app_access_v2", {
         p_user_id: body.userId,
         p_display_name: body.displayName.trim(),
         p_role: body.role,
         p_is_active: body.isActive,
         p_read_only: body.readOnly,
         p_messaging_write: body.messagingWrite,
-        ...(body.productionBlendManage === undefined ? {} : { p_production_blend_manage: body.productionBlendManage }),
+        ...(body.sampleLabelsGenerate === undefined
+          ? (body.productionBlendManage === undefined ? {} : { p_production_blend_manage: body.productionBlendManage })
+          : { p_production_blend_manage: body.productionBlendManage ?? null, p_sample_labels_generate: body.sampleLabelsGenerate }),
       });
 
       if (error) {
@@ -241,7 +243,7 @@ Deno.serve(async (request) => {
         !body.email?.trim() ||
         !body.displayName?.trim() ||
         !roles.has(body.role) ||
-        typeof body.readOnly !== "boolean" || typeof body.messagingWrite !== "boolean" || (body.productionBlendManage !== undefined && typeof body.productionBlendManage !== "boolean") ||
+        typeof body.readOnly !== "boolean" || typeof body.messagingWrite !== "boolean" || (body.productionBlendManage !== undefined && typeof body.productionBlendManage !== "boolean") || (body.sampleLabelsGenerate !== undefined && typeof body.sampleLabelsGenerate !== "boolean") ||
         (body.readOnly && body.role !== "guest")
       ) {
         return json(
@@ -284,6 +286,7 @@ Deno.serve(async (request) => {
           read_only: body.readOnly,
           messaging_write: body.messagingWrite,
           production_blend_manage: body.productionBlendManage ?? false,
+          ...(body.sampleLabelsGenerate === undefined ? {} : { sample_labels_generate: body.sampleLabelsGenerate }),
           created_by_user_id: userData.user.id,
           updated_by_user_id: userData.user.id,
         });
