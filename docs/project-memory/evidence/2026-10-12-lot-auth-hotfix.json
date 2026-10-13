@@ -1,0 +1,307 @@
+{
+  "date": "2026-10-12",
+  "sourceCommit": "c8602494897f05e813c117ccd47a678083cdd98f",
+  "beforeFunctions": [
+    {
+      "id": "d733081f-f813-45ef-9317-db933857df3c",
+      "slug": "monday-material-check",
+      "name": "monday-material-check",
+      "status": "ACTIVE",
+      "version": 20,
+      "created_at": 1774897655964,
+      "updated_at": 1776877301777,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_d733081f-f813-45ef-9317-db933857df3c_12/source/index.ts",
+      "ezbr_sha256": "51da7c50dd73f6d27bcce0496963035757038fdb4ba849ec25fa07aff7866253"
+    },
+    {
+      "id": "4800ff21-d1ab-4cd0-a300-266956929ca8",
+      "slug": "generate-purchase-order-pdf",
+      "name": "generate-purchase-order-pdf",
+      "status": "ACTIVE",
+      "version": 25,
+      "created_at": 1784829431430,
+      "updated_at": 1791228851648,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_4800ff21-d1ab-4cd0-a300-266956929ca8_25/source/supabase/functions/generate-purchase-order-pdf/index.ts",
+      "ezbr_sha256": "214faff2b7df40548ada2221617e583887623e04efd4cbeb8ef91aa22ce39c7b"
+    },
+    {
+      "id": "55c0246b-b5a5-4a2e-8d58-18bc9757f1c3",
+      "slug": "generate-job-transmittal-pdf",
+      "name": "generate-job-transmittal-pdf",
+      "status": "ACTIVE",
+      "version": 12,
+      "created_at": 1785283420593,
+      "updated_at": 1791223573610,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_55c0246b-b5a5-4a2e-8d58-18bc9757f1c3_12/source/supabase/functions/generate-job-transmittal-pdf/index.ts",
+      "ezbr_sha256": "77366e8e34f4d1dd11e541c9d52325d340ab8cc3d67ffd5dd4a3001286c6cfb4"
+    },
+    {
+      "id": "023a3001-f733-40da-96dc-1c041f0d01dc",
+      "slug": "admin-manage-users",
+      "name": "admin-manage-users",
+      "status": "ACTIVE",
+      "version": 8,
+      "created_at": 1787021113566,
+      "updated_at": 1791237399052,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/admin-manage-users/index.ts",
+      "ezbr_sha256": "cbdbb8e570bc06a52b11874e3baca6aec97dfb10ca42b9993af2f7cd3f6566b0"
+    },
+    {
+      "id": "0c25a597-ca3f-4dfe-9007-ae76ea14bce1",
+      "slug": "generate-proposal-pdf",
+      "name": "generate-proposal-pdf",
+      "status": "ACTIVE",
+      "version": 12,
+      "created_at": 1787857641213,
+      "updated_at": 1791223573610,
+      "verify_jwt": true,
+      "import_map": true,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_0c25a597-ca3f-4dfe-9007-ae76ea14bce1_12/source/supabase/functions/generate-proposal-pdf/index.ts",
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_0c25a597-ca3f-4dfe-9007-ae76ea14bce1_12/source/supabase/functions/generate-proposal-pdf/deno.json",
+      "ezbr_sha256": "02dfc6b14cba350d2f44742bf68e27141af21e4b2dddcb97b56561fc30b63685"
+    },
+    {
+      "id": "aca8265a-5cc1-4dd8-b4df-e28a4b6e524e",
+      "slug": "generate-sample-pdf",
+      "name": "generate-sample-pdf",
+      "status": "ACTIVE",
+      "version": 24,
+      "created_at": 1788359441268,
+      "updated_at": 1791575741340,
+      "verify_jwt": true,
+      "import_map": true,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_aca8265a-5cc1-4dd8-b4df-e28a4b6e524e_24/source/supabase/functions/generate-sample-pdf/index.ts",
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_aca8265a-5cc1-4dd8-b4df-e28a4b6e524e_24/source/supabase/functions/generate-sample-pdf/deno.json",
+      "ezbr_sha256": "0d54eda124b14c6525445bb62172f4bb4d3083d2c033c9ae84b9d134b2647fb2"
+    },
+    {
+      "id": "cdc0b169-61b3-4e9e-9217-347b2f961f72",
+      "slug": "cleanup-messaging-drafts",
+      "name": "cleanup-messaging-drafts",
+      "status": "ACTIVE",
+      "version": 1,
+      "created_at": 1790354803313,
+      "updated_at": 1790354803313,
+      "verify_jwt": true,
+      "import_map": true,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_cdc0b169-61b3-4e9e-9217-347b2f961f72_1/source/.tmp-messaging-operations/deploy/supabase/functions/cleanup-messaging-drafts/index.ts",
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_cdc0b169-61b3-4e9e-9217-347b2f961f72_1/source/.tmp-messaging-operations/deploy/supabase/functions/cleanup-messaging-drafts/deno.json",
+      "ezbr_sha256": "02ce8b6f40df6f742d0929fca59c1284bc76fa50103b6c1d7208d760cc72046b"
+    },
+    {
+      "id": "3486ee84-dced-45f1-baa9-786a961de0e7",
+      "slug": "admin-delete-messaging-message",
+      "name": "admin-delete-messaging-message",
+      "status": "ACTIVE",
+      "version": 1,
+      "created_at": 1790356288851,
+      "updated_at": 1790356288851,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_3486ee84-dced-45f1-baa9-786a961de0e7_1/source/.tmp-messaging-admin/deploy/supabase/functions/admin-delete-messaging-message/index.ts",
+      "ezbr_sha256": "28f075c71aa3a5b485b5a4ed02f4ffef1b5cf285eeea4cf766ae35321f4af631"
+    }
+  ],
+  "afterFunctions": [
+    {
+      "id": "d733081f-f813-45ef-9317-db933857df3c",
+      "slug": "monday-material-check",
+      "name": "monday-material-check",
+      "status": "ACTIVE",
+      "version": 20,
+      "created_at": 1774897655964,
+      "updated_at": 1776877301777,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_d733081f-f813-45ef-9317-db933857df3c_12/source/index.ts",
+      "ezbr_sha256": "51da7c50dd73f6d27bcce0496963035757038fdb4ba849ec25fa07aff7866253"
+    },
+    {
+      "id": "4800ff21-d1ab-4cd0-a300-266956929ca8",
+      "slug": "generate-purchase-order-pdf",
+      "name": "generate-purchase-order-pdf",
+      "status": "ACTIVE",
+      "version": 25,
+      "created_at": 1784829431430,
+      "updated_at": 1791228851648,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_4800ff21-d1ab-4cd0-a300-266956929ca8_25/source/supabase/functions/generate-purchase-order-pdf/index.ts",
+      "ezbr_sha256": "214faff2b7df40548ada2221617e583887623e04efd4cbeb8ef91aa22ce39c7b"
+    },
+    {
+      "id": "55c0246b-b5a5-4a2e-8d58-18bc9757f1c3",
+      "slug": "generate-job-transmittal-pdf",
+      "name": "generate-job-transmittal-pdf",
+      "status": "ACTIVE",
+      "version": 13,
+      "created_at": 1785283420593,
+      "updated_at": 1791826715052,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_55c0246b-b5a5-4a2e-8d58-18bc9757f1c3_13/source/supabase/functions/generate-job-transmittal-pdf/index.ts",
+      "ezbr_sha256": "40ea701e98e43a935292e92db20cbfcba12ae019c928cbdd78f1b3a133e9c39c"
+    },
+    {
+      "id": "023a3001-f733-40da-96dc-1c041f0d01dc",
+      "slug": "admin-manage-users",
+      "name": "admin-manage-users",
+      "status": "ACTIVE",
+      "version": 8,
+      "created_at": 1787021113566,
+      "updated_at": 1791237399052,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/admin-manage-users/index.ts",
+      "ezbr_sha256": "cbdbb8e570bc06a52b11874e3baca6aec97dfb10ca42b9993af2f7cd3f6566b0"
+    },
+    {
+      "id": "0c25a597-ca3f-4dfe-9007-ae76ea14bce1",
+      "slug": "generate-proposal-pdf",
+      "name": "generate-proposal-pdf",
+      "status": "ACTIVE",
+      "version": 12,
+      "created_at": 1787857641213,
+      "updated_at": 1791223573610,
+      "verify_jwt": true,
+      "import_map": true,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_0c25a597-ca3f-4dfe-9007-ae76ea14bce1_12/source/supabase/functions/generate-proposal-pdf/index.ts",
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_0c25a597-ca3f-4dfe-9007-ae76ea14bce1_12/source/supabase/functions/generate-proposal-pdf/deno.json",
+      "ezbr_sha256": "02dfc6b14cba350d2f44742bf68e27141af21e4b2dddcb97b56561fc30b63685"
+    },
+    {
+      "id": "aca8265a-5cc1-4dd8-b4df-e28a4b6e524e",
+      "slug": "generate-sample-pdf",
+      "name": "generate-sample-pdf",
+      "status": "ACTIVE",
+      "version": 24,
+      "created_at": 1788359441268,
+      "updated_at": 1791575741340,
+      "verify_jwt": true,
+      "import_map": true,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_aca8265a-5cc1-4dd8-b4df-e28a4b6e524e_24/source/supabase/functions/generate-sample-pdf/index.ts",
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_aca8265a-5cc1-4dd8-b4df-e28a4b6e524e_24/source/supabase/functions/generate-sample-pdf/deno.json",
+      "ezbr_sha256": "0d54eda124b14c6525445bb62172f4bb4d3083d2c033c9ae84b9d134b2647fb2"
+    },
+    {
+      "id": "cdc0b169-61b3-4e9e-9217-347b2f961f72",
+      "slug": "cleanup-messaging-drafts",
+      "name": "cleanup-messaging-drafts",
+      "status": "ACTIVE",
+      "version": 1,
+      "created_at": 1790354803313,
+      "updated_at": 1790354803313,
+      "verify_jwt": true,
+      "import_map": true,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_cdc0b169-61b3-4e9e-9217-347b2f961f72_1/source/.tmp-messaging-operations/deploy/supabase/functions/cleanup-messaging-drafts/index.ts",
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_cdc0b169-61b3-4e9e-9217-347b2f961f72_1/source/.tmp-messaging-operations/deploy/supabase/functions/cleanup-messaging-drafts/deno.json",
+      "ezbr_sha256": "02ce8b6f40df6f742d0929fca59c1284bc76fa50103b6c1d7208d760cc72046b"
+    },
+    {
+      "id": "3486ee84-dced-45f1-baa9-786a961de0e7",
+      "slug": "admin-delete-messaging-message",
+      "name": "admin-delete-messaging-message",
+      "status": "ACTIVE",
+      "version": 1,
+      "created_at": 1790356288851,
+      "updated_at": 1790356288851,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_3486ee84-dced-45f1-baa9-786a961de0e7_1/source/.tmp-messaging-admin/deploy/supabase/functions/admin-delete-messaging-message/index.ts",
+      "ezbr_sha256": "28f075c71aa3a5b485b5a4ed02f4ffef1b5cf285eeea4cf766ae35321f4af631"
+    }
+  ],
+  "capturesBefore": {
+    "mode": "before",
+    "captureCount": 3,
+    "captureMetadataSha256": "17fc6b61ef1bd86090948dd4d1d574955248539428f4e0a7a34a1df283aed3be",
+    "validSessionAvailable": false,
+    "canPreview": false,
+    "canGenerate": false,
+    "probes": [
+      {
+        "action": "draft-preview",
+        "kind": "missing",
+        "status": 401
+      },
+      {
+        "action": "draft-preview",
+        "kind": "invalid",
+        "status": 401
+      },
+      {
+        "action": "preview",
+        "kind": "missing",
+        "status": 401
+      },
+      {
+        "action": "preview",
+        "kind": "invalid",
+        "status": 401
+      },
+      {
+        "action": "generate",
+        "kind": "missing",
+        "status": 401
+      },
+      {
+        "action": "generate",
+        "kind": "invalid",
+        "status": 401
+      }
+    ]
+  },
+  "capturesAfter": {
+    "mode": "after",
+    "captureCount": 3,
+    "captureMetadataSha256": "17fc6b61ef1bd86090948dd4d1d574955248539428f4e0a7a34a1df283aed3be",
+    "validSessionAvailable": false,
+    "canPreview": false,
+    "canGenerate": false,
+    "probes": [
+      {
+        "action": "draft-preview",
+        "kind": "missing",
+        "status": 401
+      },
+      {
+        "action": "draft-preview",
+        "kind": "invalid",
+        "status": 401
+      },
+      {
+        "action": "preview",
+        "kind": "missing",
+        "status": 401
+      },
+      {
+        "action": "preview",
+        "kind": "invalid",
+        "status": 401
+      },
+      {
+        "action": "generate",
+        "kind": "missing",
+        "status": 401
+      },
+      {
+        "action": "generate",
+        "kind": "invalid",
+        "status": 401
+      }
+    ],
+    "probesLeftCapturesUnchanged": true,
+    "capturesUnchanged": true
+  },
+  "deployedSourceEqualsCandidate": true,
+  "diff": "_shared/rbac.ts: lowercase authorization global header changed to uppercase Authorization; two explanatory comment lines",
+  "validHostedUserSmoke": "Pending: no valid existing session available"
+}
