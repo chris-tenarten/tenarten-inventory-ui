@@ -12,7 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: BRANDING.productName,
     short_name: BRANDING.productName,
     description: 'Tenarten operations and personal task workspace',
-    start_url: '/my-work',
+    start_url: '/',
     scope: '/',
     display: 'standalone',
     background_color: dark ? '#11151b' : '#eef1f4',
