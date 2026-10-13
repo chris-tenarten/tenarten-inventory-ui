@@ -120,6 +120,7 @@ export default function SampleWorkspace() {
   const [documentsOpen,setDocumentsOpen]=useState(false);
   function jumpTo(id:string){const element=document.getElementById(id);element?.scrollIntoView({behavior:'smooth',block:'start'});element?.focus({preventScroll:true});}
   const [sampleHistoryExpanded,setSampleHistoryExpanded]=useState(false);
+  const [preparationBlurred,setPreparationBlurred]=useState<Record<string,boolean>>({});
   const [expandedRows,setExpandedRows]=useState<Record<string,boolean>>({});
   const [draftBaseline, setDraftBaseline] = useState("");
   const [quantityViewState, setQuantityViewState] = useState<{record: string | null; view: "batch" | "working"}>({record:null,view:"batch"});
@@ -1235,7 +1236,7 @@ export default function SampleWorkspace() {
                           {formatBatchQuantity(batch?.rows[index]?.quantity??null,batch?.rows[index]?.unit??'')} {batch?.rows[index]?.unit}
                         </output>
                         <p className="blend-provenance mt-2 text-xs font-normal text-slate-600">{batch?.rows[index]?.note}</p>
-                        {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit quantity in Sample Plate view.</p>}
+                        {row.quantityProvenance==='manual' && <p className="text-xs font-normal">Edit quantity in Shop Preparation view.</p>}
                       </div>
                       <label className={`${label} text-left blend-vendor`}>
                         <span className="blend-field-label">Vendor</span>
@@ -1281,8 +1282,9 @@ export default function SampleWorkspace() {
             />:<p className="text-sm text-amber-800">Select a Resin System to establish Batch quantities.</p>}
             {(draft.formulation.profile||draft.id)&&<section className="border border-slate-300 bg-white p-4">
               <p className="text-sm font-bold">View quantities as</p>
+              <p className="text-xs text-slate-600">Shop Preparation shows Working Pour quantities and Filler/Resin preparation overrides.</p>
               <div role="group" aria-label="View quantities as" className="mt-2 inline-flex gap-1">
-                {([['batch','Batch'],['working','Sample Plate']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
+                {([['batch','Batch'],['working','Shop Preparation']] as const).map(([view,title])=><button key={view} type="button" aria-pressed={quantityView===view} onClick={()=>setQuantityViewState({record:draft.id,view})} className={`min-h-11 border px-4 text-sm font-bold ${quantityView===view?'bg-blue-900 text-white':'bg-white text-slate-800'}`}>{title}</button>)}
               </div>
               {quantityView==='batch' && batch && <div className="mt-4" data-testid="batch-summary">
                 <p className="text-xl font-bold">Batch chip target: {batch.target===null?'not captured':`${formatBatchQuantity(batch.target,'lb')} lb = 100%`}</p>
@@ -1298,6 +1300,9 @@ export default function SampleWorkspace() {
                         <div className="relative mt-1">
                           <BusinessInput
                             aria-label={`${row.componentRole} quantity`}
+                            aria-invalid={row.quantityProvenance === 'manual' && preparationBlurred[row.id] && String(row.quantity).trim() === '' ? true : undefined}
+                            aria-describedby={row.quantityProvenance === 'manual' && preparationBlurred[row.id] && String(row.quantity).trim() === '' ? `preparation-error-${row.id}` : undefined}
+                            onBlur={() => setPreparationBlurred(current => ({...current,[row.id]:true}))}
                             type="number"
                             min="0"
                             step="0.0001"
@@ -1319,6 +1324,7 @@ export default function SampleWorkspace() {
                               : "oz"}
                           </span>
                         </div>
+                        {row.quantityProvenance === 'manual' && preparationBlurred[row.id] && String(row.quantity).trim() === '' && <p id={`preparation-error-${row.id}`} role="alert" className="mt-1 text-xs font-normal text-red-700">Enter a preparation quantity{['aggregate','filler','resin'].includes(row.componentRole) ? ' or choose Use calculated preparation' : ''}.</p>}
                         {batchFirst && <div className="mt-2 text-xs font-normal text-slate-500"><p>Exact Batch projection: {exactPreparationDisplay(shopProjection?.rows[index]?.exact??null)}{shopProjection?.rows[index]?.exact!=null?` ${row.componentRole==='resin'||row.componentRole==='hardener'?'fl oz':'oz'}`:''}</p><p>{preparationDescription(draft.formulation,draft.blendRows,index,shopProjection!).note}</p></div>}
                         <div className="mt-2 flex min-h-5 flex-wrap items-center gap-1.5">
                           <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${row.quantityProvenance === "calculated" ? "bg-slate-200 text-slate-700" : row.componentRole === "aggregate" || row.componentRole === "hardener" ? "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"}`}>
@@ -1364,10 +1370,8 @@ export default function SampleWorkspace() {
                             className="mt-1 inline-flex min-h-11 items-center justify-center rounded-sm border border-slate-300 bg-white px-2.5 text-[11px] font-bold text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-700"
                           >
                             {row.quantityProvenance === "calculated"
-                              ? "Enter manually"
-                              : row.componentRole === "filler" || row.componentRole === "resin"
-                                ? "Use profile default"
-                                : "Use calculated value"}
+                              ? "Override preparation quantity"
+                              : "Use calculated preparation"}
                           </BusinessButton>
                         )}
                         {row.componentRole === "other" && row.quantityProvenance === "manual" && (

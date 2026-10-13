@@ -1,3 +1,4 @@
+import {displayRatio} from '../../../supabase/functions/_shared/ratio-display.mjs';
 import {batchFirstQuantities, type SampleFormulationState, type FormulationRowInput} from './formulation';
 
 export const preparationHelp = "Shop quantities are scaled from the formulation's reference preparation. Exact Batch calculations are preserved. Manual overrides take precedence.";
@@ -13,7 +14,7 @@ export function preparationDescription(state:SampleFormulationState, rows:Formul
  if(role==='aggregate')return {label:'EXACT BATCH PROJECTION',note:'Authored percentage of the Working Pour Chip Mix.'};
  if(role==='hardener') {
   const resinIndex=rows.findIndex(r=>r.componentRole==='resin');
-  if(resinIndex>=0){const resin=preparationDescription(state,rows,resinIndex,projection);return {label:resin.label,note:result?.shop==null?'No authoritative preparation quantity is available.':`Derived from Resin using the captured ${state.profile?.resinParts}:${state.profile?.hardenerParts} ratio.`};}
+  if(resinIndex>=0){const resin=preparationDescription(state,rows,resinIndex,projection);return {label:resin.label,note:result?.shop==null?'No authoritative preparation quantity is available.':`Calculated from Resin at ${displayRatio(state.profile?.resinParts,state.profile?.hardenerParts)}.`};}
  }
  const instruction=role==='filler'||role==='resin'?state.profile?.batchContract?.components[role]?.shopWorking:undefined;
  const volume=Number(state.length)*Number(state.width)/(state.dimensionUnit==='in'?144:1)*Number(state.thicknessIn)/12;
