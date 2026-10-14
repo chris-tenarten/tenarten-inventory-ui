@@ -7,10 +7,13 @@ import { colorPlateLabelFieldNames, populateColorPlateLabel, validateColorPlateL
 import { colorPlatePrintHtml, type ColorPlateLabel } from './color-plate-label';
 import { requireColorPlateLabelAccess, generateAuthorizedColorPlateLabel } from './color-plate-label-access';
 
+const PRINT_SETUP_HINT_KEY = 'tenops.colorPlateLabel.printSetupDismissed.v1';
+
 export default function ColorPlateLabelEditor({ sample, onClose }: { sample: SampleRecord; onClose: () => void }) {
   const auth = useAuth();
   const allowed = auth.accessAllowed && auth.can('readOperationalData') && auth.can('sample_labels.generate');
   const [confirmed, setConfirmed] = useState(false);
+  const [showPrintHint, setShowPrintHint] = useState(false);
   const refreshAccess = auth.refreshProfile;
   const [fields, setFields] = useState(() => populateColorPlateLabel(sample));
   const [label, setLabel] = useState<ColorPlateLabel | null>(null);
@@ -43,7 +46,11 @@ export default function ColorPlateLabelEditor({ sample, onClose }: { sample: Sam
   useEffect(() => {
     let cancelled = false;
     if (allowed) void requireColorPlateLabelAccess(sample.id).then(() => {
-      if (!cancelled) setConfirmed(true);
+      if (!cancelled) {
+        setConfirmed(true);
+        try { setShowPrintHint(window.localStorage.getItem(PRINT_SETUP_HINT_KEY) !== '1'); }
+        catch { setShowPrintHint(true); }
+      }
     }).catch((e: unknown) => {
       if (!cancelled) { setLayoutError(e instanceof Error ? e.message : 'Label access could not be confirmed.'); void refreshAccess(); }
     });
@@ -66,6 +73,12 @@ export default function ColorPlateLabelEditor({ sample, onClose }: { sample: Sam
   function change(key: keyof ColorPlateLabelFields, value: string) {
     setLabel(null); setLayoutError(''); setPrintError('');
     setFields(current => ({ ...current, [key]: value }));
+  }
+
+  function dismissPrintHint() {
+    setShowPrintHint(false);
+    try { window.localStorage.setItem(PRINT_SETUP_HINT_KEY, '1'); }
+    catch { /* Dismiss for this visit even when browser storage is unavailable. */ }
   }
 
   function print() {
@@ -129,6 +142,10 @@ export default function ColorPlateLabelEditor({ sample, onClose }: { sample: Sam
     {layoutError && <p role="alert" className="mt-3 text-sm text-red-800">{layoutError}</p>}
     {label && !Object.keys(errors).length && <div aria-label="Label preview" className="mt-4 overflow-x-auto border border-slate-300 bg-slate-50 p-3"><div className="mx-auto w-fit max-w-full bg-white [&_svg]:h-auto [&_svg]:max-w-full" dangerouslySetInnerHTML={{ __html: label.svg }} /></div>}
     {printError && <p role="alert" className="mt-3 text-sm text-red-800">{printError}</p>}
+    {showPrintHint && <aside aria-label="Printer setup tip" className="mt-4 flex items-start gap-3 border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
+      <p className="flex-1">Select DYMO LabelWriter 550 and label size 30256 the first time you print.</p>
+      <button type="button" aria-label="Dismiss printer setup tip" onClick={dismissPrintHint} className="min-h-10 shrink-0 px-2 font-semibold underline">Got it</button>
+    </aside>}
     <div className="mt-4 flex flex-wrap items-center gap-4"><button type="button" disabled={!label || Boolean(Object.keys(errors).length) || printing} onClick={print} className="min-h-11 bg-blue-900 px-7 text-sm font-bold text-white disabled:opacity-40">{printing ? 'Opening print…' : 'Print'}</button><button type="button" disabled={!label || printing || Boolean(Object.keys(errors).length)} onClick={()=>void download()} className="min-h-11 text-sm underline disabled:opacity-40">Download PDF</button><button type="button" onClick={onClose} className="ml-auto min-h-11 text-sm">Cancel</button></div>
     </>}
   </dialog>;

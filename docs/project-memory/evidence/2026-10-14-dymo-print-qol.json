@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "No global printer instruction outside label review",
+    "First authorized label review shows exact contextual hint; Print remains available without dismissing",
+    "Dismissal persists across editor reopen and page reload",
+    "Saved browser preference survives context recreation (simulated restart, not native Chrome/driver retention)",
+    "First-use tip fits narrow editor without a new dialog",
+    "Blocked preference storage still allows dismissal and label preparation"
+  ],
+  "errors": [],
+  "external": [],
+  "sourceSizePreserved": true,
+  "hardwareResult": "Not tested here; Chris reports Anthony successfully printed the released label on Windows; retention remains unverified",
+  "browserMode": "Headless Chromium; synthetic read-only granted local fixture; no print invocation or printer settings changes"
+}
