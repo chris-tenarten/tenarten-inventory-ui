@@ -1,0 +1,60 @@
+{
+  "candidate": "uncommitted",
+  "base": "1d34f1800635336157f25db10206f7a4938d23ae",
+  "incrementFiles": [
+    "src/modules/production/jobs.ts",
+    "src/modules/production/ProductionWorkspace.tsx",
+    "scripts/start-production-contact-review.mjs",
+    "scripts/verify-production-customer-list-browser.mjs",
+    "scripts/verify-protected-project-contacts.mjs",
+    "supabase/migrations/20261014220000_protected_job_contacts.sql",
+    "supabase/migrations/20261014221000_defer_project_contact_detachment.sql",
+    "supabase/migrations/20261014222000_preserve_archived_project_contact_refresh.sql",
+    "docs/project-memory/2026-10-14-protected-project-contact-integration.md",
+    "docs/project-memory/evidence/2026-10-14-protected-project-contact-integration.json"
+  ],
+  "database": {
+    "checks": [
+      "Active operational readers, including read-only users, can read protected snapshots",
+      "Inactive direct queries return no snapshots; anonymous direct queries denied",
+      "Read-only and inactive writes denied",
+      "Jobs SELECT * contains no contact columns",
+      "Invalid snapshot rolls back both creation and editing, including Job timestamps",
+      "Project edits preserve independent captured snapshot",
+      "Legacy customer-only edits detach stale identity without changing Jobs RLS",
+      "Hosted-equivalent broad Jobs read simulated transactionally: inactive sees Jobs but no protected contacts; fixture policy rolled back",
+      "Existing Jobs policies unchanged throughout gate; original schema restored",
+      "Existing exact 20-name importer validation reused; importer has no Jobs or snapshot dependency"
+    ],
+    "hostedWrites": false
+  },
+  "browser": {
+    "checks": [
+      "One-step customer selection without contact selection; no directory startup requests",
+      "Project creation still permits no customer",
+      "Same Customer Inspector saves name-only and optional contact/phone/email customers",
+      "Optional information reused by selecting only a customer name",
+      "Prominent Customer field/sliders integration; shared edits leave current and other Job snapshots unchanged",
+      "Archive removes configured choices, preserves linked Jobs, and retains historical-name selection",
+      "Explicit Save to Customer List promotion; original historical Project remains unlinked",
+      "Member adds new customers but shared editing/archive controls and direct RPC are denied",
+      "Collapsed secondary controls preserve explicit Project-only editing/refresh, including retained archived links",
+      "Keyboard search/arrow/Enter selection and 390px mobile usability"
+    ],
+    "external": [],
+    "pageErrors": [],
+    "origin": "http://localhost:3001",
+    "hostedWrites": false
+  },
+  "activityLeakageMatches": 0,
+  "typescript": "passed",
+  "targetedEslint": "passed",
+  "productionBuild": "passed",
+  "diffCheck": "passed",
+  "importerEvidenceReused": "2026-10-14-customer-access-and-import.json",
+  "manifestSha256": "b643e27b743b378712171637d7bade9a455d20a597d2ff8a6c65e6d563fd4ef7",
+  "headerAppHashesUnchanged": true,
+  "hostedWrites": false,
+  "push": false,
+  "deployment": false
+}

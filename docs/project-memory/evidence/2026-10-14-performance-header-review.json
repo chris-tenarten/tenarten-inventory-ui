@@ -1,0 +1,31 @@
+{
+  "checks": [
+    "Activation remains unset; inclusive start/exclusive seven-day end; preview unavailable on hosted origins",
+    "Desktop header, exact copy, open/close, Escape focus restoration, outside click, opening does not dismiss, 400ms entrance once per session",
+    "Expired/pre-activation/unconfigured actual-app states hidden; unchanged desktop header height",
+    "1024px desktop breakpoint keeps badge clear of navigation without horizontal overflow",
+    "390px and 320px compact lightning fits without overflow or brand overlap; popover contained; unchanged mobile header height; brand navigation works",
+    "Explicit dismissal persists across reload and recreated browser context; local preview does not consume Production dismissal",
+    "Reduced-motion mode suppresses entrance animation",
+    "Export branding TenOps / OPERATIONS CONTROL; no development branding in rendered HTML"
+  ],
+  "errors": [],
+  "external": [],
+  "activation": null,
+  "mode": "Actual Production-mode exported TenOps with synthetic localhost read-only fixture; no hosted writes or deployment",
+  "riskTier": 1,
+  "testingLevel": 1,
+  "typescript": "passed",
+  "targetedLint": "passed",
+  "brandingVerifier": "passed",
+  "diffCheck": "passed",
+  "build": "Final isolated Production-mode webpack export passed; .env.local excluded; NEXT_PUBLIC_DEV_BRANDING=false; synthetic localhost backend; NOT deployable",
+  "buildAttempts": "Three completed builds plus one early interrupted build; corrective reruns addressed lint and the 1024px overlap, no broad suites",
+  "productionActivation": null,
+  "released": false,
+  "pushed": false,
+  "hostedDataModified": false,
+  "tenDevModified": false,
+  "baseSha": "1d34f1800635336157f25db10206f7a4938d23ae",
+  "reviewUrl": "http://localhost:3000/manpower-reporting?performancePreview=active"
+}

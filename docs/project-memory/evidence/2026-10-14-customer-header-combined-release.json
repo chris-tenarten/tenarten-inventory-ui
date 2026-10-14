@@ -1,0 +1,1205 @@
+{
+  "status": "READY FOR PRODUCT RELEASE APPROVAL \u2014 NOT RELEASED",
+  "timestamp": "2026-10-14T22:37:17.291635+00:00",
+  "canonicalMain": "1d34f1800635336157f25db10206f7a4938d23ae",
+  "canonicalDev": "1d34f1800635336157f25db10206f7a4938d23ae",
+  "contactCandidate": "3191e615f0316b876b698bcaaa83ea2b5240c707",
+  "headerCandidate": "5a8f35d199149d078027c1472e0629d10b900f53",
+  "combinedApplicationCommit": "b76d24336323fec624c240b442cfb614bd85b17e",
+  "combinedBranch": "release/customer-list-update-header",
+  "combinedFiles": [
+    "docs/project-memory/2026-10-14-customer-access-and-import-review.md",
+    "docs/project-memory/2026-10-14-customer-header-combined-release.md",
+    "docs/project-memory/2026-10-14-historical-customer-import-review.md",
+    "docs/project-memory/2026-10-14-performance-header-review.md",
+    "docs/project-memory/2026-10-14-production-contacts-local-review.md",
+    "docs/project-memory/2026-10-14-production-customer-list-local-review.md",
+    "docs/project-memory/2026-10-14-protected-project-contact-integration.md",
+    "docs/project-memory/customer-import-approved-2026-10-14.json",
+    "docs/project-memory/evidence/2026-10-14-customer-access-and-import.json",
+    "docs/project-memory/evidence/2026-10-14-customer-header-combined-release.json",
+    "docs/project-memory/evidence/2026-10-14-customer-header-import-preview.json",
+    "docs/project-memory/evidence/2026-10-14-historical-customer-import.json",
+    "docs/project-memory/evidence/2026-10-14-performance-header-final-trigger.json",
+    "docs/project-memory/evidence/2026-10-14-performance-header-review.json",
+    "docs/project-memory/evidence/2026-10-14-performance-header-visual-review.json",
+    "docs/project-memory/evidence/2026-10-14-production-contacts.json",
+    "docs/project-memory/evidence/2026-10-14-production-customer-list.json",
+    "docs/project-memory/evidence/2026-10-14-protected-project-contact-integration.json",
+    "scripts/import-approved-customers-local.mjs",
+    "scripts/prepare-contact-release-transaction.mjs",
+    "scripts/preview-historical-customers.mjs",
+    "scripts/start-performance-header-review.mjs",
+    "scripts/start-production-contact-review.mjs",
+    "scripts/support/customer-import.mjs",
+    "scripts/support/production-contact-local.mjs",
+    "scripts/verify-customer-access-and-import.mjs",
+    "scripts/verify-historical-customer-preview.mjs",
+    "scripts/verify-performance-header.mjs",
+    "scripts/verify-production-contact-browser.mjs",
+    "scripts/verify-production-contact-db.mts",
+    "scripts/verify-production-customer-list-browser.mjs",
+    "scripts/verify-production-customer-list-db.mts",
+    "scripts/verify-protected-project-contacts.mjs",
+    "src/app/client-layout-shell.tsx",
+    "src/components/PerformanceAnnouncement.module.css",
+    "src/components/PerformanceAnnouncement.tsx",
+    "src/lib/performance-announcement.mjs",
+    "src/modules/production/ProductionWorkspace.tsx",
+    "src/modules/production/components/ProductionJobCreator.tsx",
+    "src/modules/production/components/ProductionJobInspector.tsx",
+    "src/modules/production/contacts/CustomerInspector.tsx",
+    "src/modules/production/contacts/ProjectContactEditor.tsx",
+    "src/modules/production/contacts/model.ts",
+    "src/modules/production/contacts/queries.ts",
+    "src/modules/production/jobs.ts",
+    "src/modules/production/types.ts",
+    "src/modules/production/update-normalization.ts",
+    "supabase/inspection/20261014_combined_contact_release.sql",
+    "supabase/inspection/20261014_customer_import_compatibility.sql",
+    "supabase/inspection/20261014_customer_snapshot_access.sql",
+    "supabase/migrations/20261014190000_production_contact_configuration.sql",
+    "supabase/migrations/20261014210000_production_customer_list.sql",
+    "supabase/migrations/20261014220000_protected_job_contacts.sql",
+    "supabase/migrations/20261014221000_defer_project_contact_detachment.sql",
+    "supabase/migrations/20261014222000_preserve_archived_project_contact_refresh.sql",
+    "supabase/migrations/20261014230000_approved_historical_customer_names.sql"
+  ],
+  "appBoundary": [
+    "src/modules/production/ProductionWorkspace.tsx",
+    "src/modules/production/components/ProductionJobCreator.tsx",
+    "src/modules/production/components/ProductionJobInspector.tsx",
+    "src/modules/production/contacts/CustomerInspector.tsx",
+    "src/modules/production/contacts/ProjectContactEditor.tsx",
+    "src/modules/production/contacts/model.ts",
+    "src/modules/production/contacts/queries.ts",
+    "src/modules/production/jobs.ts",
+    "src/modules/production/types.ts",
+    "src/modules/production/update-normalization.ts",
+    "src/app/client-layout-shell.tsx",
+    "src/components/PerformanceAnnouncement.module.css",
+    "src/components/PerformanceAnnouncement.tsx",
+    "src/lib/performance-announcement.mjs"
+  ],
+  "migrations": {
+    "migrations": [
+      {
+        "filename": "20261014190000_production_contact_configuration.sql",
+        "sha256": "039d2ee95ad675872ba55a1c3223990fc77687ddc1b1c794f266a6c1c3c94ee4"
+      },
+      {
+        "filename": "20261014210000_production_customer_list.sql",
+        "sha256": "b6f257c71a99ad7f90400aecf502af70900cd83632faf53ab0df1ab00672ea66"
+      },
+      {
+        "filename": "20261014220000_protected_job_contacts.sql",
+        "sha256": "7c4400586f4b194ec8cd911385736b0093fb9e1254002a3a34fa81fc2500867f"
+      },
+      {
+        "filename": "20261014221000_defer_project_contact_detachment.sql",
+        "sha256": "f0ab637f6a383ee3bd3ee4fd209fa0fcd56374aaa9df69170da34f005a20fe21"
+      },
+      {
+        "filename": "20261014222000_preserve_archived_project_contact_refresh.sql",
+        "sha256": "1c4f8ac2537bdf30e59394dcfbd8872709f891cd604009e2866238c10d95050a"
+      },
+      {
+        "filename": "20261014230000_approved_historical_customer_names.sql",
+        "sha256": "c9a65289ab1b7c8e2e10a4b5b87dd79e36917be12eb93d6da85839f656fb12c8"
+      }
+    ],
+    "bundleSha256": "4bf588678d150714b4ca118a1aa6f84351bbf9bcf19cb189aa4f04b39820dcd3",
+    "executesImport": false,
+    "hostedApplied": false
+  },
+  "hostedCompatibility": {
+    "capabilities": "unchanged",
+    "columns": "unchanged",
+    "functions": "unchanged",
+    "grants": "unchanged",
+    "job_constraints": "unchanged",
+    "job_triggers": "unchanged",
+    "migrations": "unchanged",
+    "policies": "unchanged",
+    "tables": "unchanged"
+  },
+  "currentAccessMetadata": {
+    "candidate_rpc_collisions": null,
+    "migration_ledger_columns": [
+      {
+        "name": "version",
+        "type": "text"
+      },
+      {
+        "name": "statements",
+        "type": "ARRAY"
+      },
+      {
+        "name": "name",
+        "type": "text"
+      }
+    ],
+    "protected_activity_key_rows": 0,
+    "snapshot_access": {
+      "grants": [
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "DELETE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "INSERT",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "REFERENCES",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "SELECT",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "YES"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRIGGER",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRUNCATE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "UPDATE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "DELETE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "INSERT",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "REFERENCES",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "SELECT",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "YES"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRIGGER",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRUNCATE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "UPDATE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "DELETE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "INSERT",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "REFERENCES",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "SELECT",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "YES"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "TRIGGER",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "TRUNCATE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "UPDATE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "DELETE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "INSERT",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "REFERENCES",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "SELECT",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "YES"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRIGGER",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRUNCATE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "UPDATE",
+          "table_catalog": "postgres",
+          "table_name": "job_activity",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "REFERENCES",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRIGGER",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRUNCATE",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "INSERT",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "REFERENCES",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "SELECT",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "YES"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRIGGER",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRUNCATE",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "UPDATE",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "DELETE",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "INSERT",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "REFERENCES",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "SELECT",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "YES"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "TRIGGER",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "TRUNCATE",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "is_grantable": "YES",
+          "privilege_type": "UPDATE",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "DELETE",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "INSERT",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "REFERENCES",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "SELECT",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "YES"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRIGGER",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "TRUNCATE",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "is_grantable": "NO",
+          "privilege_type": "UPDATE",
+          "table_catalog": "postgres",
+          "table_name": "jobs",
+          "table_schema": "public",
+          "with_hierarchy": "NO"
+        }
+      ],
+      "jobs_columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "name",
+          "type": "text"
+        },
+        {
+          "name": "customer",
+          "type": "text"
+        },
+        {
+          "name": "job_number",
+          "type": "text"
+        },
+        {
+          "name": "estimate_number",
+          "type": "text"
+        },
+        {
+          "name": "work_order_number",
+          "type": "text"
+        },
+        {
+          "name": "contract_value",
+          "type": "numeric"
+        },
+        {
+          "name": "deposit_date",
+          "type": "date"
+        },
+        {
+          "name": "color_plate_number",
+          "type": "text"
+        },
+        {
+          "name": "sample_submitted_date",
+          "type": "date"
+        },
+        {
+          "name": "approval_date",
+          "type": "date"
+        },
+        {
+          "name": "resin_po",
+          "type": "text"
+        },
+        {
+          "name": "chip_po",
+          "type": "text"
+        },
+        {
+          "name": "estimated_man_hours",
+          "type": "numeric"
+        },
+        {
+          "name": "estimated_calendar_days",
+          "type": "integer"
+        },
+        {
+          "name": "requested_delivery_date",
+          "type": "date"
+        },
+        {
+          "name": "planned_start",
+          "type": "date"
+        },
+        {
+          "name": "planned_end",
+          "type": "date"
+        },
+        {
+          "name": "production_status",
+          "type": "text"
+        },
+        {
+          "name": "material_status",
+          "type": "text"
+        },
+        {
+          "name": "priority",
+          "type": "text"
+        },
+        {
+          "name": "progress_percent",
+          "type": "integer"
+        },
+        {
+          "name": "owner_name",
+          "type": "text"
+        },
+        {
+          "name": "remarks",
+          "type": "text"
+        },
+        {
+          "name": "monday_item_id",
+          "type": "text"
+        },
+        {
+          "name": "monday_board_id",
+          "type": "text"
+        },
+        {
+          "name": "legacy_source",
+          "type": "text"
+        },
+        {
+          "name": "archived_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ],
+      "policies": [
+        {
+          "cmd": "DELETE",
+          "permissive": "PERMISSIVE",
+          "policyname": "Allow anon delete job activity",
+          "qual": "true",
+          "roles": [
+            "anon"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "permissive": "PERMISSIVE",
+          "policyname": "Allow anon insert job activity",
+          "qual": null,
+          "roles": [
+            "anon"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": "true"
+        },
+        {
+          "cmd": "SELECT",
+          "permissive": "PERMISSIVE",
+          "policyname": "Allow anon read job activity",
+          "qual": "true",
+          "roles": [
+            "anon"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "permissive": "PERMISSIVE",
+          "policyname": "Allow anon update job activity",
+          "qual": "true",
+          "roles": [
+            "anon"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": "true"
+        },
+        {
+          "cmd": "DELETE",
+          "permissive": "PERMISSIVE",
+          "policyname": "Compatibility authenticated delete job activity",
+          "qual": "true",
+          "roles": [
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "permissive": "PERMISSIVE",
+          "policyname": "Compatibility authenticated insert job activity",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": "true"
+        },
+        {
+          "cmd": "SELECT",
+          "permissive": "PERMISSIVE",
+          "policyname": "Compatibility authenticated read job activity",
+          "qual": "true",
+          "roles": [
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "permissive": "PERMISSIVE",
+          "policyname": "Compatibility authenticated update job activity",
+          "qual": "true",
+          "roles": [
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": "true"
+        },
+        {
+          "cmd": "DELETE",
+          "permissive": "RESTRICTIVE",
+          "policyname": "tenops_business_write_delete",
+          "qual": "has_app_capability('writeBusinessData'::text)",
+          "roles": [
+            "anon",
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "permissive": "RESTRICTIVE",
+          "policyname": "tenops_business_write_insert",
+          "qual": null,
+          "roles": [
+            "anon",
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": "has_app_capability('writeBusinessData'::text)"
+        },
+        {
+          "cmd": "UPDATE",
+          "permissive": "RESTRICTIVE",
+          "policyname": "tenops_business_write_update",
+          "qual": "has_app_capability('writeBusinessData'::text)",
+          "roles": [
+            "anon",
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "job_activity",
+          "with_check": "has_app_capability('writeBusinessData'::text)"
+        },
+        {
+          "cmd": "DELETE",
+          "permissive": "PERMISSIVE",
+          "policyname": "Allow anon delete jobs",
+          "qual": "true",
+          "roles": [
+            "anon"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "permissive": "PERMISSIVE",
+          "policyname": "Allow anon insert jobs",
+          "qual": null,
+          "roles": [
+            "anon"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": "true"
+        },
+        {
+          "cmd": "SELECT",
+          "permissive": "PERMISSIVE",
+          "policyname": "Allow anon read jobs",
+          "qual": "true",
+          "roles": [
+            "anon"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "permissive": "PERMISSIVE",
+          "policyname": "Allow anon update jobs",
+          "qual": "true",
+          "roles": [
+            "anon"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": "true"
+        },
+        {
+          "cmd": "DELETE",
+          "permissive": "PERMISSIVE",
+          "policyname": "Compatibility authenticated delete jobs",
+          "qual": "true",
+          "roles": [
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "permissive": "PERMISSIVE",
+          "policyname": "Compatibility authenticated insert jobs",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": "true"
+        },
+        {
+          "cmd": "SELECT",
+          "permissive": "PERMISSIVE",
+          "policyname": "Compatibility authenticated read jobs",
+          "qual": "true",
+          "roles": [
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "permissive": "PERMISSIVE",
+          "policyname": "Compatibility authenticated update jobs",
+          "qual": "true",
+          "roles": [
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": "true"
+        },
+        {
+          "cmd": "DELETE",
+          "permissive": "RESTRICTIVE",
+          "policyname": "tenops_business_write_delete",
+          "qual": "has_app_capability('writeBusinessData'::text)",
+          "roles": [
+            "anon",
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "permissive": "RESTRICTIVE",
+          "policyname": "tenops_business_write_insert",
+          "qual": null,
+          "roles": [
+            "anon",
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": "has_app_capability('writeBusinessData'::text)"
+        },
+        {
+          "cmd": "UPDATE",
+          "permissive": "RESTRICTIVE",
+          "policyname": "tenops_business_write_update",
+          "qual": "has_app_capability('writeBusinessData'::text)",
+          "roles": [
+            "anon",
+            "authenticated"
+          ],
+          "schemaname": "public",
+          "tablename": "jobs",
+          "with_check": "has_app_capability('writeBusinessData'::text)"
+        }
+      ],
+      "tables": [
+        {
+          "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+          "name": "job_activity",
+          "rls": true
+        },
+        {
+          "acl": "{postgres=arwdDxtm/postgres,anon=Dxtm/postgres,authenticated=arwDxtm/postgres,service_role=arwdDxtm/postgres}",
+          "name": "jobs",
+          "rls": true
+        }
+      ]
+    }
+  },
+  "hostedMigrationLedger": [
+    {
+      "name": "001_guarded_test_purchase_order_purge",
+      "version": "20260724"
+    },
+    {
+      "name": "001_manpower_product_categories",
+      "version": "20260921"
+    },
+    {
+      "name": "sample_operational_profiles",
+      "version": "20260923160000"
+    },
+    {
+      "name": "po_reservation_allocations",
+      "version": "20260923160100"
+    },
+    {
+      "name": "partial_pending_receipts",
+      "version": "20260923160200"
+    },
+    {
+      "name": "intake_early_access",
+      "version": "20260923215900"
+    },
+    {
+      "name": "intake_projected_planning",
+      "version": "20260923220000"
+    },
+    {
+      "name": "intake_view_access",
+      "version": "20260924180000"
+    },
+    {
+      "name": "intake_personal_training",
+      "version": "20260924190000"
+    },
+    {
+      "name": "manpower_analytics_preference",
+      "version": "20260924200000"
+    },
+    {
+      "name": "manpower_anonymous_access",
+      "version": "20260924210000"
+    },
+    {
+      "name": "production_rework_anonymous_access",
+      "version": "20260924210100"
+    },
+    {
+      "name": "messaging_large_attachments",
+      "version": "20260925120000"
+    },
+    {
+      "name": "intake_early_access_editing",
+      "version": "20260925180000"
+    },
+    {
+      "name": "messaging_v11",
+      "version": "20260925200000"
+    },
+    {
+      "name": "sample_batch_chip_basis",
+      "version": "20260930170000"
+    },
+    {
+      "name": "sample_batch_reference_thickness",
+      "version": "20260930220000"
+    },
+    {
+      "name": "sample_batch_first_authority",
+      "version": "20261001010000"
+    },
+    {
+      "name": "sample_batch_first_history",
+      "version": "20261001013000"
+    },
+    {
+      "name": "sample_batch_filler_override",
+      "version": "20261001150000"
+    },
+    {
+      "name": "sample_four_to_one_baseline_correction",
+      "version": "20261001160000"
+    },
+    {
+      "name": "sample_normal_resin_profiles",
+      "version": "20261002120000"
+    },
+    {
+      "name": "read_only_messaging_write",
+      "version": "20261005120000"
+    },
+    {
+      "name": "production_blend_plans",
+      "version": "20261005150000"
+    },
+    {
+      "name": "production_blend_capability",
+      "version": "20261005170000"
+    },
+    {
+      "name": "sample_audience_pdf_version",
+      "version": "20261006120000"
+    },
+    {
+      "name": "sample_color_plate_validation",
+      "version": "20261006160000"
+    },
+    {
+      "name": "sample_color_plate_allocation",
+      "version": "20261006190000"
+    },
+    {
+      "name": "sample_decimal_input_parsing",
+      "version": "20261009120000"
+    },
+    {
+      "name": "sample_label_capability",
+      "version": "20261013180000"
+    }
+  ],
+  "finalImportPreview": "docs/project-memory/evidence/2026-10-14-customer-header-import-preview.json",
+  "headerActivation": null,
+  "productionBrandingPreflight": "node scripts/verify-dev-branding.mjs passed",
+  "sourceBoundariesMatchAcceptedCandidates": true,
+  "reusedEvidence": [
+    "2026-10-14-protected-project-contact-integration.json",
+    "2026-10-14-customer-access-and-import.json",
+    "2026-10-14-production-customer-list.json",
+    "2026-10-14-performance-header-review.json",
+    "2026-10-14-performance-header-visual-review.json",
+    "2026-10-14-performance-header-final-trigger.json"
+  ],
+  "newBuilds": 0,
+  "broadSuitesRun": 0,
+  "hostedWrites": false,
+  "hostedImport": false,
+  "push": false,
+  "deployment": false,
+  "tenDevMatcherCommit": "950dd714da215eaf5a3ad0b351aa344b80e09064"
+}

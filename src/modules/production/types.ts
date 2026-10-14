@@ -1,3 +1,4 @@
+import type { ProjectContact } from './contacts/model';
 export type ProductionStatus =
   | 'not_started'
   | 'on_deck'
@@ -45,7 +46,7 @@ export type JobDocumentType =
   | 'photo'
   | 'other';
 
-export type ProductionJob = {
+export type ProductionJob = Partial<ProjectContact> & {
   id: string;
   name: string;
   customer: string | null;
@@ -81,7 +82,7 @@ export type ProductionJob = {
   original_updated_at?: string;
 };
 
-export type NewProductionJob = {
+export type NewProductionJob = Partial<ProjectContact> & {
   name: string;
   customer: string | null;
   job_number: string | null;

@@ -1,0 +1,35 @@
+.root { position: relative; flex: 0 0 auto; }
+.trigger { display: flex; height: 26px; align-items: center; gap: 4px; padding: 0; border: 0; background: transparent; color: #1e40af; font-size: 10px; font-weight: 700; letter-spacing: .1em; line-height: 1; text-decoration: none; white-space: nowrap; cursor: pointer; }
+.trigger:hover, .trigger[aria-expanded="true"] { color: #1e3a8a; }
+.trigger:focus-visible, .popover button:focus-visible { outline: 2px solid #2563eb; outline-offset: 3px; }
+.bolt { width: 14px; height: 14px; flex: 0 0 auto; }
+.enter { animation: announcement-enter 400ms ease-out both; }
+@keyframes announcement-enter { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
+.popover { position: fixed; z-index: 140; width: 304px; max-width: calc(100vw - 24px); border: 1px solid #cbd5e1; background: #fff; box-shadow: 0 12px 30px rgba(15,23,42,.18); color: #334155; }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+.heading h2 { margin: 0; color: #0f172a; font-size: 13px; font-weight: 700; line-height: 20px; }
+.close { display: grid; place-items: center; width: 24px; height: 24px; flex-shrink: 0; background: transparent; border: 0; color: #64748b; cursor: pointer; font-size: 18px; }
+.close:hover { background: #f8fafc; color: #0f172a; }
+.item { padding: 8px 12px; }
+.item h3 { margin: 0 0 3px; color: #64748b; font-size: 10px; font-weight: 700; letter-spacing: .12em; line-height: 14px; }
+.item p { margin: 0; font-size: 12px; line-height: 18px; }
+.dismiss { display: block; padding: 9px 12px; width: 100%; border: 0; border-top: 1px solid #e2e8f0; background: transparent; text-align: left; font-size: 11px; line-height: 16px; color: #475569; cursor: pointer; }
+.dismiss:hover { background: #f8fafc; color: #0f172a; }
+/* Keep the wordmark and its full subtitle at their natural width. */
+:global([data-shell-branding]):has(.root) { position: relative; }
+:global([data-shell-branding]):has(.root) :global([data-shell-brand-link]) { flex-shrink: 0; }
+:global([data-shell-branding]):has(.root) :global([data-shell-brand-subtitle]) { white-space: nowrap; }
+/* The trigger remains a sibling to the complete branding block at every size. */
+@media (max-width: 639px) {
+  :global([data-shell-branding]):has(.root) { padding-right: 0; }
+}
+@media (max-width: 359px) { .label { display: none; } }
+/* Reuse the existing mobile icon presentation at tablet and tight desktop widths.
+   Labels remain accessible, and all links, hover menus and controls are unchanged. */
+@media (min-width: 640px) and (max-width: 1279px) {
+  :global([data-shell-header]):has(.root) :global([data-shell-primary-nav] > div > a > span:first-of-type) {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) { .enter { animation: none; } }

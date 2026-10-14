@@ -1,0 +1,32 @@
+{
+  "approval": "Chris: CUSTOMER IMPORT APPROVAL & ACCESS BOUNDARY, 2026-10-14",
+  "scope": "Eventual import of company names only. No hosted execution authorized.",
+  "names": [
+    "Atlantic Exterior Wall Systems",
+    "Batson Cooke",
+    "Buslam",
+    "Camarata",
+    "Camarata Masonry Systems",
+    "Coral Reef",
+    "DePaoli Mosaic",
+    "IB SUPPLY",
+    "IntraState Terrazzo",
+    "Joseph Cohn & Son",
+    "LX Granite",
+    "MTT",
+    "RNC Concrete Coatings",
+    "Spectra CF",
+    "Superior",
+    "Superior Terrazzo & Finishes",
+    "T. Yorie Corp.",
+    "United Enterprises, Inc",
+    "Williams",
+    "Williams Tile & Marble"
+  ],
+  "excluded": ["[Place Services] temporary", "INTERNAL TEST — NOT A CUSTOMER"],
+  "keepSeparate": [
+    ["Camarata", "Camarata Masonry Systems"],
+    ["Superior", "Superior Terrazzo & Finishes"],
+    ["Williams", "Williams Tile & Marble"]
+  ]
+}

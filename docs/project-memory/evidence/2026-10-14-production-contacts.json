@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-14",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "base": "1d34f1800635336157f25db10206f7a4938d23ae",
+  "candidateCommit": null,
+  "branch": "feature/production-contact-configuration",
+  "worktree": "/private/tmp/tenops-production-contacts",
+  "contentFingerprintSha256": "bca304ee7c4ca4bce1cc93e5c0d5213f031bfe0d6f38081744b2eeed48498fb3",
+  "filesSha256": {
+    "scripts/start-production-contact-review.mjs": "67123c9da3a29ef97cb382b2040f350385910ca24f4f0816f48952b814c3b99d",
+    "scripts/support/production-contact-local.mjs": "b752cd63575eace63b721ccc429a5acea2954b2ad5867098e115eecca4b4efda",
+    "scripts/verify-production-contact-browser.mjs": "0e6adc686bdc6690ac1bd4381c8f49d30aca0ba45851132954b89d096f819ad4",
+    "scripts/verify-production-contact-db.mts": "923e8122a5b401cda1d2ff4aa6ed2e042839303a8043afd9022cdbec2bb35842",
+    "src/modules/production/ProductionWorkspace.tsx": "fc388e0e54c5204306b4ce303408d03f763fb420374aa775f6546b01a5957739",
+    "src/modules/production/components/ProductionJobCreator.tsx": "006a7bac069fb761aef61fdc7e6b3f8c12ff31706cd450602f7a0272e0c43975",
+    "src/modules/production/components/ProductionJobInspector.tsx": "4da9e67fbe19ff981f90e9d50d06f09c0191c34b5d284f77838fbadb262b57f4",
+    "src/modules/production/contacts/ProjectContactEditor.tsx": "a8198e2a1f751097995db7d7910af530e07c18716a4bee52e627d81c937cebfc",
+    "src/modules/production/contacts/model.ts": "f2881facef0e735a675270c24dd2a5735942d16d66e87359cf50acfa5e555ff6",
+    "src/modules/production/contacts/queries.ts": "13fad7872c3eba8a6cf203042247103498b8e462e13b2ede9981b2bc4c25302f",
+    "src/modules/production/jobs.ts": "9cd7cd4b77b2ed29af129db936d8ade58a5070ba5afaaeb1a8f89aa632d75a18",
+    "src/modules/production/types.ts": "a4da0a785abb38d17d77a2743020b0ff0b5ee50e1eef8b6a6be9375f0a4b4107",
+    "src/modules/production/update-normalization.ts": "ddd70542bab5f6be6f7134519c26bd32ced1a020d9aeaabf42176f28fdcc7960",
+    "supabase/migrations/20261014190000_production_contact_configuration.sql": "039d2ee95ad675872ba55a1c3223990fc77687ddc1b1c794f266a6c1c3c94ee4"
+  },
+  "database": {
+    "checks": [
+      "Company-only creation with all supplemental fields omitted",
+      "Named contact, optional fields, multiple people in one company",
+      "RPC-only writes, no deletion API, Member/Guest/Developer/read-only/inactive shared edit denial, anonymous denial",
+      "Project create/save/reopen, shared-edit snapshot preservation, Project-only override, explicit refresh, unrelated fields preserved",
+      "Lead/Admin shared edits; stale save rejection; duplicate names do not merge",
+      "Mismatched company/contact FK denial, snapshot whitelist/length/identity validation, unauthorized Project capture denial",
+      "Legacy text-only editing safely detaches links; historical Jobs and optional customer remain compatible",
+      "Bounded stable pagination, company/person prefix search, literal wildcard escaping, inactive/anonymous lookup denial, shared authorized visibility without account leakage"
+    ],
+    "hostedAccess": false,
+    "localUrl": "http://127.0.0.1:55581",
+    "migration": "20261014190000_production_contact_configuration.sql"
+  },
+  "browser": {
+    "checks": [
+      "No directory requests on workspace startup",
+      "Search, multiple contacts/company-only choices, existing contact Project creation",
+      "Project-only editing, save/reload/reopen preserves override and saved directory",
+      "Authorized shared editing preserves captures; explicit confirmed refresh updates only snapshot",
+      "Inline new company/contact Save and Select, collapsed optional fields, no mandatory supplemental input",
+      "Historical names and native datalist retained without automatic directory creation",
+      "Explicit Save as reusable customer creates a company-only selection; historical Projects stay unlinked",
+      "Add contact to an existing company retains company identity",
+      "Member can edit Project capture; hidden shared edit plus real RPC denial",
+      "Compact configuration fits a 390px viewport"
+    ],
+    "external": [],
+    "pageErrors": [],
+    "origin": "http://localhost:3001",
+    "hostedAccess": false
+  },
+  "validation": {
+    "typescript": "PASS: tsc --noEmit",
+    "targetedEslint": "PASS",
+    "diffCheck": "PASS",
+    "productionBuild": "PASS: Next 16.2.2 Turbopack; compiled, TypeScript, all 22 static pages generated",
+    "buildSource": "/private/tmp/tenops-production-contacts-build-isolated; exact application source copy, local dependency copy, local Supabase environment",
+    "visualInspection": "Desktop selector, configuration, and 390px mobile screenshots inspected",
+    "buildApplicationSourceComparison": "PASS: all nine changed application files byte-identical to successful build copy"
+  },
+  "hostedWrites": false,
+  "hostedMigrationApplied": false,
+  "push": false,
+  "deployment": false,
+  "commit": false,
+  "reviewUrl": "http://localhost:3001/",
+  "portException": "Chris explicitly chose to preserve the performance-header review on localhost:3000 and use localhost:3001."
+}

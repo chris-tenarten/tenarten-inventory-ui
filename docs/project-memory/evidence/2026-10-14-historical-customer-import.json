@@ -1,0 +1,2176 @@
+{
+  "date": "2026-10-14",
+  "status": "STOPPED: material hosted/local Jobs read authorization mismatch",
+  "hostedPreview": {
+    "timestamp": "2026-10-14T21:49:31.181Z",
+    "project": "vxdxjhazkqhpkwdqtobp",
+    "readOnly": true,
+    "directoryPresent": false,
+    "pagination": {
+      "jobs": [
+        {
+          "offset": 0,
+          "rows": 41,
+          "total": 41
+        },
+        {
+          "offset": 41,
+          "rows": 0,
+          "total": 41
+        }
+      ],
+      "companies": []
+    },
+    "counts": {
+      "historicalJobs": 41,
+      "activeJobs": 41,
+      "archivedJobs": 0,
+      "distinctCustomerStrings": 22,
+      "distinctNonblankStrings": 22,
+      "normalizedIdentities": 22,
+      "alreadyConfigured": 0,
+      "proposed": 20,
+      "excludedIdentities": 0,
+      "invalidBlankJobs": 0,
+      "manualReview": 2,
+      "duplicateGroups": 0,
+      "existingConfiguredRecords": 0
+    },
+    "identities": [
+      {
+        "name": "[Place Services] temporary",
+        "key": "[place services] temporary",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "manual_review",
+        "warnings": [
+          "Temporary/test label: verify whether this is a real customer"
+        ],
+        "variants": [
+          {
+            "value": "[Place Services] temporary",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Atlantic Exterior Wall Systems",
+        "key": "atlantic exterior wall systems",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Atlantic Exterior Wall Systems",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Batson Cooke",
+        "key": "batson cooke",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Batson Cooke",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Buslam",
+        "key": "buslam",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Buslam",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Camarata",
+        "key": "camarata",
+        "usage": 5,
+        "activeJobs": 5,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Camarata",
+            "count": 5
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Camarata Masonry Systems",
+        "key": "camarata masonry systems",
+        "usage": 2,
+        "activeJobs": 2,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Camarata Masonry Systems",
+            "count": 2
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Coral Reef",
+        "key": "coral reef",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Coral Reef",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "DePaoli Mosaic",
+        "key": "depaoli mosaic",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "DePaoli Mosaic",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "IB SUPPLY",
+        "key": "ib supply",
+        "usage": 6,
+        "activeJobs": 6,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "IB SUPPLY",
+            "count": 6
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "INTERNAL TEST \u2014 NOT A CUSTOMER",
+        "key": "internal test \u2014 not a customer",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "manual_review",
+        "warnings": [
+          "Temporary/test label: verify whether this is a real customer",
+          "Non-ASCII identity: review normalization explicitly"
+        ],
+        "variants": [
+          {
+            "value": "INTERNAL TEST \u2014 NOT A CUSTOMER",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "IntraState Terrazzo",
+        "key": "intrastate terrazzo",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "IntraState Terrazzo",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Joseph Cohn & Son",
+        "key": "joseph cohn & son",
+        "usage": 2,
+        "activeJobs": 2,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Joseph Cohn & Son",
+            "count": 2
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "LX Granite",
+        "key": "lx granite",
+        "usage": 2,
+        "activeJobs": 2,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "LX Granite",
+            "count": 2
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "MTT",
+        "key": "mtt",
+        "usage": 3,
+        "activeJobs": 3,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "MTT",
+            "count": 3
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "RNC Concrete Coatings",
+        "key": "rnc concrete coatings",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "RNC Concrete Coatings",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Spectra CF",
+        "key": "spectra cf",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Spectra CF",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Superior",
+        "key": "superior",
+        "usage": 5,
+        "activeJobs": 5,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Superior",
+            "count": 5
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Superior Terrazzo & Finishes",
+        "key": "superior terrazzo & finishes",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Superior Terrazzo & Finishes",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "T. Yorie Corp.",
+        "key": "t. yorie corp.",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "T. Yorie Corp.",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "United Enterprises, Inc",
+        "key": "united enterprises, inc",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "United Enterprises, Inc",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Williams",
+        "key": "williams",
+        "usage": 1,
+        "activeJobs": 1,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Williams",
+            "count": 1
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      },
+      {
+        "name": "Williams Tile & Marble",
+        "key": "williams tile & marble",
+        "usage": 2,
+        "activeJobs": 2,
+        "archivedJobs": 0,
+        "status": "safe_new",
+        "warnings": [],
+        "variants": [
+          {
+            "value": "Williams Tile & Marble",
+            "count": 2
+          }
+        ],
+        "caseWhitespaceDuplicate": false,
+        "existing": []
+      }
+    ],
+    "proposedNames": [
+      "Atlantic Exterior Wall Systems",
+      "Batson Cooke",
+      "Buslam",
+      "Camarata",
+      "Camarata Masonry Systems",
+      "Coral Reef",
+      "DePaoli Mosaic",
+      "IB SUPPLY",
+      "IntraState Terrazzo",
+      "Joseph Cohn & Son",
+      "LX Granite",
+      "MTT",
+      "RNC Concrete Coatings",
+      "Spectra CF",
+      "Superior",
+      "Superior Terrazzo & Finishes",
+      "T. Yorie Corp.",
+      "United Enterprises, Inc",
+      "Williams",
+      "Williams Tile & Marble"
+    ],
+    "invalidBlankValues": []
+  },
+  "hostedCompatibility": {
+    "capabilities": [
+      [
+        "admin",
+        "createProductionJob"
+      ],
+      [
+        "admin",
+        "editProductionJobDetails"
+      ],
+      [
+        "admin",
+        "editProductionJobRoutine"
+      ],
+      [
+        "admin",
+        "manageUsers"
+      ],
+      [
+        "admin",
+        "readOperationalData"
+      ],
+      [
+        "admin",
+        "scheduleProduction"
+      ],
+      [
+        "admin",
+        "writeBusinessData"
+      ],
+      [
+        "developer",
+        "readOperationalData"
+      ],
+      [
+        "developer",
+        "writeBusinessData"
+      ],
+      [
+        "guest",
+        "readOperationalData"
+      ],
+      [
+        "guest",
+        "writeBusinessData"
+      ],
+      [
+        "lead",
+        "createProductionJob"
+      ],
+      [
+        "lead",
+        "editProductionJobDetails"
+      ],
+      [
+        "lead",
+        "editProductionJobRoutine"
+      ],
+      [
+        "lead",
+        "readOperationalData"
+      ],
+      [
+        "lead",
+        "scheduleProduction"
+      ],
+      [
+        "lead",
+        "writeBusinessData"
+      ],
+      [
+        "member",
+        "createProductionJob"
+      ],
+      [
+        "member",
+        "editProductionJobRoutine"
+      ],
+      [
+        "member",
+        "readOperationalData"
+      ],
+      [
+        "member",
+        "writeBusinessData"
+      ]
+    ],
+    "columns": [
+      {
+        "default": null,
+        "name": "user_id",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "uuid",
+        "udt": "uuid"
+      },
+      {
+        "default": null,
+        "name": "display_name",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "role",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": "true",
+        "name": "is_active",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "boolean",
+        "udt": "bool"
+      },
+      {
+        "default": null,
+        "name": "created_by_user_id",
+        "nullable": "YES",
+        "table": "app_users",
+        "type": "uuid",
+        "udt": "uuid"
+      },
+      {
+        "default": null,
+        "name": "updated_by_user_id",
+        "nullable": "YES",
+        "table": "app_users",
+        "type": "uuid",
+        "udt": "uuid"
+      },
+      {
+        "default": "now()",
+        "name": "created_at",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "timestamp with time zone",
+        "udt": "timestamptz"
+      },
+      {
+        "default": "now()",
+        "name": "updated_at",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "timestamp with time zone",
+        "udt": "timestamptz"
+      },
+      {
+        "default": "false",
+        "name": "read_only",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "boolean",
+        "udt": "bool"
+      },
+      {
+        "default": "false",
+        "name": "messaging_write",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "boolean",
+        "udt": "bool"
+      },
+      {
+        "default": "false",
+        "name": "production_blend_manage",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "boolean",
+        "udt": "bool"
+      },
+      {
+        "default": "false",
+        "name": "sample_labels_generate",
+        "nullable": "NO",
+        "table": "app_users",
+        "type": "boolean",
+        "udt": "bool"
+      },
+      {
+        "default": "gen_random_uuid()",
+        "name": "id",
+        "nullable": "NO",
+        "table": "jobs",
+        "type": "uuid",
+        "udt": "uuid"
+      },
+      {
+        "default": null,
+        "name": "name",
+        "nullable": "NO",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "customer",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "job_number",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "estimate_number",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "work_order_number",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "contract_value",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "numeric",
+        "udt": "numeric"
+      },
+      {
+        "default": null,
+        "name": "deposit_date",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "date",
+        "udt": "date"
+      },
+      {
+        "default": null,
+        "name": "color_plate_number",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "sample_submitted_date",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "date",
+        "udt": "date"
+      },
+      {
+        "default": null,
+        "name": "approval_date",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "date",
+        "udt": "date"
+      },
+      {
+        "default": null,
+        "name": "resin_po",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "chip_po",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "estimated_man_hours",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "numeric",
+        "udt": "numeric"
+      },
+      {
+        "default": null,
+        "name": "estimated_calendar_days",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "integer",
+        "udt": "int4"
+      },
+      {
+        "default": null,
+        "name": "requested_delivery_date",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "date",
+        "udt": "date"
+      },
+      {
+        "default": null,
+        "name": "planned_start",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "date",
+        "udt": "date"
+      },
+      {
+        "default": null,
+        "name": "planned_end",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "date",
+        "udt": "date"
+      },
+      {
+        "default": "'not_started'::text",
+        "name": "production_status",
+        "nullable": "NO",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": "'unknown'::text",
+        "name": "material_status",
+        "nullable": "NO",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": "'normal'::text",
+        "name": "priority",
+        "nullable": "NO",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": "0",
+        "name": "progress_percent",
+        "nullable": "NO",
+        "table": "jobs",
+        "type": "integer",
+        "udt": "int4"
+      },
+      {
+        "default": null,
+        "name": "owner_name",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "remarks",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "monday_item_id",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "monday_board_id",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "legacy_source",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "text",
+        "udt": "text"
+      },
+      {
+        "default": null,
+        "name": "archived_at",
+        "nullable": "YES",
+        "table": "jobs",
+        "type": "timestamp with time zone",
+        "udt": "timestamptz"
+      },
+      {
+        "default": "now()",
+        "name": "created_at",
+        "nullable": "NO",
+        "table": "jobs",
+        "type": "timestamp with time zone",
+        "udt": "timestamptz"
+      },
+      {
+        "default": "now()",
+        "name": "updated_at",
+        "nullable": "NO",
+        "table": "jobs",
+        "type": "timestamp with time zone",
+        "udt": "timestamptz"
+      }
+    ],
+    "functions": [
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definition": "CREATE OR REPLACE FUNCTION public.get_my_app_access()\n RETURNS TABLE(user_id uuid, display_name text, role text, is_active boolean, read_only boolean, messaging_write boolean, production_blend_manage boolean, sample_labels_generate boolean)\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\n select u.user_id,u.display_name,u.role,u.is_active,u.read_only,u.messaging_write,u.production_blend_manage,u.sample_labels_generate\n from public.app_users u where u.user_id=auth.uid();\n$function$\n",
+        "identity": "",
+        "name": "get_my_app_access",
+        "owner": "postgres",
+        "security_definer": true
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definition": "CREATE OR REPLACE FUNCTION public.guard_tenops_business_write()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\nbegin\n if auth.role() in ('anon','authenticated') or auth.uid() is not null then\n   -- Preserve the original first-Admin bootstrap, whose RPC verifies the empty\n   -- Admin state. Direct authenticated app_users writes remain ungranted.\n   if tg_table_name='app_users' and auth.uid() is not null\n     and not exists(select 1 from public.app_users where user_id=auth.uid())\n     and not exists(select 1 from public.app_users where role='admin' and is_active) then return null; end if;\n   perform public.require_app_capability('writeBusinessData');\n end if;\n return null;\nend;$function$\n",
+        "identity": "",
+        "name": "guard_tenops_business_write",
+        "owner": "postgres",
+        "security_definer": true
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definition": "CREATE OR REPLACE FUNCTION public.has_app_capability(p_capability text)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\n select exists(select 1 from public.app_users u where u.user_id=auth.uid() and u.is_active and\n   case when p_capability='sample_labels.generate' then u.role='admin' or u.sample_labels_generate\n        when p_capability='production_blend.manage' then u.role='admin' or u.production_blend_manage\n        when u.read_only and p_capability='messaging.write' then u.messaging_write\n        when u.read_only and p_capability not in ('readOperationalData','viewIntake','previewOperationalDocuments','accessDevelopmentEnvironment') then false\n        else exists(select 1 from public.app_role_capabilities c where c.role=u.role and c.capability=p_capability) end);\n$function$\n",
+        "identity": "p_capability text",
+        "name": "has_app_capability",
+        "owner": "postgres",
+        "security_definer": true
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definition": "CREATE OR REPLACE FUNCTION public.require_app_capability(p_capability text)\n RETURNS void\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\nbegin\n  if auth.uid() is null or not public.has_app_capability(p_capability) then\n    raise exception 'TenOps permission denied.' using errcode = '42501', detail = p_capability;\n  end if;\nend;\n$function$\n",
+        "identity": "p_capability text",
+        "name": "require_app_capability",
+        "owner": "postgres",
+        "security_definer": true
+      }
+    ],
+    "grants": [
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "DELETE",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "INSERT",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "SELECT",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "UPDATE",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "DELETE",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "INSERT",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "SELECT",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "UPDATE",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "DELETE",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "INSERT",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "SELECT",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "UPDATE",
+        "table_catalog": "postgres",
+        "table_name": "app_role_capabilities",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "DELETE",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "INSERT",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "SELECT",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "UPDATE",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "DELETE",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "INSERT",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "SELECT",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "UPDATE",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "DELETE",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "INSERT",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "SELECT",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "UPDATE",
+        "table_catalog": "postgres",
+        "table_name": "app_users",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "anon",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "INSERT",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "SELECT",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "UPDATE",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "DELETE",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "INSERT",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "SELECT",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "is_grantable": "YES",
+        "privilege_type": "UPDATE",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "DELETE",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "INSERT",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "REFERENCES",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "SELECT",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRIGGER",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "TRUNCATE",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "is_grantable": "NO",
+        "privilege_type": "UPDATE",
+        "table_catalog": "postgres",
+        "table_name": "jobs",
+        "table_schema": "public",
+        "with_hierarchy": "NO"
+      }
+    ],
+    "job_constraints": [
+      {
+        "definition": "CHECK (((contract_value IS NULL) OR (contract_value >= (0)::numeric)))",
+        "name": "jobs_contract_value_check"
+      },
+      {
+        "definition": "CHECK (((estimated_calendar_days IS NULL) OR (estimated_calendar_days >= 0)))",
+        "name": "jobs_estimated_calendar_days_check"
+      },
+      {
+        "definition": "CHECK (((estimated_man_hours IS NULL) OR (estimated_man_hours >= (0)::numeric)))",
+        "name": "jobs_estimated_man_hours_check"
+      },
+      {
+        "definition": "CHECK ((material_status = ANY (ARRAY['unknown'::text, 'not_ready'::text, 'ordered'::text, 'ready'::text])))",
+        "name": "jobs_material_status_check"
+      },
+      {
+        "definition": "PRIMARY KEY (id)",
+        "name": "jobs_pkey"
+      },
+      {
+        "definition": "CHECK (((planned_start IS NULL) OR (planned_end IS NULL) OR (planned_end >= planned_start)))",
+        "name": "jobs_planned_date_order_check"
+      },
+      {
+        "definition": "CHECK ((priority = ANY (ARRAY['low'::text, 'normal'::text, 'high'::text, 'urgent'::text])))",
+        "name": "jobs_priority_check"
+      },
+      {
+        "definition": "CHECK ((production_status = ANY (ARRAY['not_started'::text, 'on_deck'::text, 'in_production'::text, 'on_hold'::text, 'shipped'::text, 'complete'::text, 'cancelled'::text])))",
+        "name": "jobs_production_status_check"
+      },
+      {
+        "definition": "CHECK (((progress_percent >= 0) AND (progress_percent <= 100)))",
+        "name": "jobs_progress_percent_check"
+      }
+    ],
+    "job_triggers": [
+      {
+        "definition": "CREATE TRIGGER jobs_canonicalize_job_number BEFORE INSERT OR UPDATE OF job_number ON public.jobs FOR EACH ROW EXECUTE FUNCTION canonicalize_job_number()",
+        "function": "canonicalize_job_number",
+        "function_definition": "CREATE OR REPLACE FUNCTION public.canonicalize_job_number()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\r\nbegin\r\n  new.job_number:=nullif(btrim(new.job_number),'');\r\n  return new;\r\nend $function$\n",
+        "name": "jobs_canonicalize_job_number"
+      },
+      {
+        "definition": "CREATE TRIGGER tenops_business_write_guard BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.jobs FOR EACH STATEMENT EXECUTE FUNCTION guard_tenops_business_write()",
+        "function": "guard_tenops_business_write",
+        "function_definition": "CREATE OR REPLACE FUNCTION public.guard_tenops_business_write()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\nbegin\n if auth.role() in ('anon','authenticated') or auth.uid() is not null then\n   -- Preserve the original first-Admin bootstrap, whose RPC verifies the empty\n   -- Admin state. Direct authenticated app_users writes remain ungranted.\n   if tg_table_name='app_users' and auth.uid() is not null\n     and not exists(select 1 from public.app_users where user_id=auth.uid())\n     and not exists(select 1 from public.app_users where role='admin' and is_active) then return null; end if;\n   perform public.require_app_capability('writeBusinessData');\n end if;\n return null;\nend;$function$\n",
+        "name": "tenops_business_write_guard"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_jobs_updated_at BEFORE UPDATE ON public.jobs FOR EACH ROW EXECUTE FUNCTION set_jobs_updated_at()",
+        "function": "set_jobs_updated_at",
+        "function_definition": "CREATE OR REPLACE FUNCTION public.set_jobs_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nbegin\r\n  new.updated_at = now();\r\n  return new;\r\nend;\r\n$function$\n",
+        "name": "trg_jobs_updated_at"
+      }
+    ],
+    "migrations": [
+      {
+        "name": "001_guarded_test_purchase_order_purge",
+        "version": "20260724"
+      },
+      {
+        "name": "001_manpower_product_categories",
+        "version": "20260921"
+      },
+      {
+        "name": "sample_operational_profiles",
+        "version": "20260923160000"
+      },
+      {
+        "name": "po_reservation_allocations",
+        "version": "20260923160100"
+      },
+      {
+        "name": "partial_pending_receipts",
+        "version": "20260923160200"
+      },
+      {
+        "name": "intake_early_access",
+        "version": "20260923215900"
+      },
+      {
+        "name": "intake_projected_planning",
+        "version": "20260923220000"
+      },
+      {
+        "name": "intake_view_access",
+        "version": "20260924180000"
+      },
+      {
+        "name": "intake_personal_training",
+        "version": "20260924190000"
+      },
+      {
+        "name": "manpower_analytics_preference",
+        "version": "20260924200000"
+      },
+      {
+        "name": "manpower_anonymous_access",
+        "version": "20260924210000"
+      },
+      {
+        "name": "production_rework_anonymous_access",
+        "version": "20260924210100"
+      },
+      {
+        "name": "messaging_large_attachments",
+        "version": "20260925120000"
+      },
+      {
+        "name": "intake_early_access_editing",
+        "version": "20260925180000"
+      },
+      {
+        "name": "messaging_v11",
+        "version": "20260925200000"
+      },
+      {
+        "name": "sample_batch_chip_basis",
+        "version": "20260930170000"
+      },
+      {
+        "name": "sample_batch_reference_thickness",
+        "version": "20260930220000"
+      },
+      {
+        "name": "sample_batch_first_authority",
+        "version": "20261001010000"
+      },
+      {
+        "name": "sample_batch_first_history",
+        "version": "20261001013000"
+      },
+      {
+        "name": "sample_batch_filler_override",
+        "version": "20261001150000"
+      },
+      {
+        "name": "sample_four_to_one_baseline_correction",
+        "version": "20261001160000"
+      },
+      {
+        "name": "sample_normal_resin_profiles",
+        "version": "20261002120000"
+      },
+      {
+        "name": "read_only_messaging_write",
+        "version": "20261005120000"
+      },
+      {
+        "name": "production_blend_plans",
+        "version": "20261005150000"
+      },
+      {
+        "name": "production_blend_capability",
+        "version": "20261005170000"
+      },
+      {
+        "name": "sample_audience_pdf_version",
+        "version": "20261006120000"
+      },
+      {
+        "name": "sample_color_plate_validation",
+        "version": "20261006160000"
+      },
+      {
+        "name": "sample_color_plate_allocation",
+        "version": "20261006190000"
+      },
+      {
+        "name": "sample_decimal_input_parsing",
+        "version": "20261009120000"
+      },
+      {
+        "name": "sample_label_capability",
+        "version": "20261013180000"
+      }
+    ],
+    "policies": [
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "role_capabilities_read_active",
+        "qual": "(EXISTS ( SELECT 1\n   FROM app_users\n  WHERE ((app_users.user_id = auth.uid()) AND app_users.is_active)))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "app_role_capabilities",
+        "with_check": null
+      },
+      {
+        "cmd": "DELETE",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_delete",
+        "qual": "has_app_capability('writeBusinessData'::text)",
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "app_role_capabilities",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_insert",
+        "qual": null,
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "app_role_capabilities",
+        "with_check": "has_app_capability('writeBusinessData'::text)"
+      },
+      {
+        "cmd": "UPDATE",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_update",
+        "qual": "has_app_capability('writeBusinessData'::text)",
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "app_role_capabilities",
+        "with_check": "has_app_capability('writeBusinessData'::text)"
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "app_users_read_self",
+        "qual": "((user_id = auth.uid()) OR has_app_capability('manageUsers'::text))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "app_users",
+        "with_check": null
+      },
+      {
+        "cmd": "DELETE",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_delete",
+        "qual": "has_app_capability('writeBusinessData'::text)",
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "app_users",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_insert",
+        "qual": null,
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "app_users",
+        "with_check": "has_app_capability('writeBusinessData'::text)"
+      },
+      {
+        "cmd": "UPDATE",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_update",
+        "qual": "has_app_capability('writeBusinessData'::text)",
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "app_users",
+        "with_check": "has_app_capability('writeBusinessData'::text)"
+      },
+      {
+        "cmd": "DELETE",
+        "permissive": "PERMISSIVE",
+        "policyname": "Allow anon delete jobs",
+        "qual": "true",
+        "roles": [
+          "anon"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "permissive": "PERMISSIVE",
+        "policyname": "Allow anon insert jobs",
+        "qual": null,
+        "roles": [
+          "anon"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": "true"
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "Allow anon read jobs",
+        "qual": "true",
+        "roles": [
+          "anon"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "permissive": "PERMISSIVE",
+        "policyname": "Allow anon update jobs",
+        "qual": "true",
+        "roles": [
+          "anon"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": "true"
+      },
+      {
+        "cmd": "DELETE",
+        "permissive": "PERMISSIVE",
+        "policyname": "Compatibility authenticated delete jobs",
+        "qual": "true",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "permissive": "PERMISSIVE",
+        "policyname": "Compatibility authenticated insert jobs",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": "true"
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "Compatibility authenticated read jobs",
+        "qual": "true",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "permissive": "PERMISSIVE",
+        "policyname": "Compatibility authenticated update jobs",
+        "qual": "true",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": "true"
+      },
+      {
+        "cmd": "DELETE",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_delete",
+        "qual": "has_app_capability('writeBusinessData'::text)",
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_insert",
+        "qual": null,
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": "has_app_capability('writeBusinessData'::text)"
+      },
+      {
+        "cmd": "UPDATE",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_update",
+        "qual": "has_app_capability('writeBusinessData'::text)",
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "jobs",
+        "with_check": "has_app_capability('writeBusinessData'::text)"
+      }
+    ],
+    "tables": [
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "force_rls": false,
+        "name": "app_role_capabilities",
+        "rls": true
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "force_rls": false,
+        "name": "app_users",
+        "rls": true
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,anon=Dxtm/postgres,authenticated=arwDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "force_rls": false,
+        "name": "jobs",
+        "rls": true
+      }
+    ]
+  },
+  "compatibilityFinding": {
+    "hostedJobsSelect": "Compatibility authenticated read jobs: USING (true); authenticated SELECT granted",
+    "validatedLocalJobsSelect": "fixture_jobs_read: USING (has_app_capability(readOperationalData))",
+    "materialRisk": "New Job contact snapshots inherit broader hosted Jobs read access, including sessions whose app membership is inactive; this was not covered by the local fixture. Hosted inactive-user runtime access was not tested.",
+    "capabilityAndWriteGuardBodiesMatchCanonical": true,
+    "newDirectoryTablesPresent": false,
+    "contactMigrationsApplied": false
+  },
+  "migrationLedgerAssessment": {
+    "unrecordedCanonicalFiles": [
+      "supabase/migrations/20260713_001_database_groom_phase1.sql",
+      "supabase/migrations/20260713_002_production_mvp_jobs.sql",
+      "supabase/migrations/20260713_003_job_attachments.sql",
+      "supabase/migrations/20260714_001_manpower_reporting_mvp.sql",
+      "supabase/migrations/20260714_002_manpower_reporting_groups_and_import_correction.sql",
+      "supabase/migrations/20260714_003_normalize_manpower_reference_order.sql",
+      "supabase/migrations/20260714_004_manpower_entries_delete_policy.sql",
+      "supabase/migrations/20260714_005_inventory_production_job_reservations.sql",
+      "supabase/migrations/20260714_006_harden_inventory_reservation_receipts.sql",
+      "supabase/migrations/20260716_001_add_ordered_material_status.sql",
+      "supabase/migrations/20260716_002_atomic_production_schedule_batch.sql",
+      "supabase/migrations/20260720_001_material_usage_reporting.sql",
+      "supabase/migrations/20260721_001_atomic_inventory_reservations.sql",
+      "supabase/migrations/20260722_001_pending_receival_undo.sql",
+      "supabase/migrations/20260722_002_purchasing_phase1.sql",
+      "supabase/migrations/20260722_003_purchasing_phase1_1_simplification.sql",
+      "supabase/migrations/20260722_004_purchasing_optional_charges.sql",
+      "supabase/migrations/20260722_005_purchasing_vendor_configuration.sql",
+      "supabase/migrations/20260722_006_purchasing_reference_data.sql",
+      "supabase/migrations/20260722_007_remove_vendor_import_notes.sql",
+      "supabase/migrations/20260722_008_vendor_catalog_bulk_pricing.sql",
+      "supabase/migrations/20260723_001_purchase_order_issuance.sql",
+      "supabase/migrations/20260723_002_vendor_catalog_truckload_pricing.sql",
+      "supabase/migrations/20260723_003_purchase_order_issuance_column_resolution.sql",
+      "supabase/migrations/20260723_004_purchase_order_pdf_documents.sql",
+      "supabase/migrations/20260723_005_purchase_order_pdf_v2.sql",
+      "supabase/migrations/20260723_006_purchase_order_number_allocation.sql",
+      "supabase/migrations/20260723_007_arim_catalog_skus.sql",
+      "supabase/migrations/20260723_008_purchase_order_pending_receivals.sql",
+      "supabase/migrations/20260723_009_purchase_order_pdf_snapshot_pgcrypto_path.sql",
+      "supabase/migrations/20260724020000_delete_empty_manpower_reporting_groups.sql",
+      "supabase/migrations/20260727_001_production_job_updates.sql",
+      "supabase/migrations/20260728_001_job_transmittals.sql",
+      "supabase/migrations/20260728_001_job_update_resolution_details.sql",
+      "supabase/migrations/20260728_002_job_transmittal_hardening.sql",
+      "supabase/migrations/20260728_003_job_document_reservation_privileges.sql",
+      "supabase/migrations/20260728_004_purchase_order_allocator_privileges.sql",
+      "supabase/migrations/20260729_001_shared_document_numbering_suffix_one.sql",
+      "supabase/migrations/20260731_001_whiteboard_mvp.sql",
+      "supabase/migrations/20260731_002_whiteboard_table_privileges.sql",
+      "supabase/migrations/20260731_003_planning_phases_items.sql",
+      "supabase/migrations/20260803_001_planning_library_colors_and_phase_cap.sql",
+      "supabase/migrations/20260803_002_job_transmittal_editable_customer.sql",
+      "supabase/migrations/20260803_003_atomic_production_planning_schedule.sql",
+      "supabase/migrations/20260804_001_planning_execution_progress.sql",
+      "supabase/migrations/20260817_001_job_update_assignment.sql",
+      "supabase/migrations/20260817_002_job_update_editing.sql",
+      "supabase/migrations/20260817_003_production_rework_cycles.sql",
+      "supabase/migrations/20260818_001_rbac_identity_infrastructure.sql",
+      "supabase/migrations/20260818_002_rbac_final_enforcement_DO_NOT_APPLY.sql",
+      "supabase/migrations/20260818_003_rbac_compatibility_authenticated_access.sql",
+      "supabase/migrations/20260818_004_final_compatibility_support.sql",
+      "supabase/migrations/20260819_001_job_update_account_collaboration.sql",
+      "supabase/migrations/20260819_002_legacy_job_update_enrollment_notifications.sql",
+      "supabase/migrations/20260821_001_job_update_deletion.sql",
+      "supabase/migrations/20260821_002_friday_welcome_and_job_update_seen.sql",
+      "supabase/migrations/20260821_003_job_update_self_mention_notifications.sql",
+      "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+      "supabase/migrations/20260824_002_manpower_rework_attribution.sql",
+      "supabase/migrations/20260824_003_account_notifications_realtime.sql",
+      "supabase/migrations/20260825_001_production_dark_mode_notification.sql",
+      "supabase/migrations/20260827_004_proposal_generator_v1.sql",
+      "supabase/migrations/20260827_005_admin_delete_issued_proposal.sql",
+      "supabase/migrations/20260827_006_proposal_commercial_defaults.sql",
+      "supabase/migrations/20260827_007_proposal_acceptance_defaults.sql",
+      "supabase/migrations/20260827_008_proposal_commercial_clarifications.sql",
+      "supabase/migrations/20260827_009_job_number_uniqueness.sql",
+      "supabase/migrations/20260827_010_proposal_standard_commercial_defaults.sql",
+      "supabase/migrations/20260827_011_proposal_informational_line_type.sql",
+      "supabase/migrations/20260827_012_my_work_mvp.sql",
+      "supabase/migrations/20260828_013_my_work_enrichment.sql",
+      "supabase/migrations/20260828_014_generic_proposal_creation.sql",
+      "supabase/migrations/20260831_015_my_work_task_attachments.sql",
+      "supabase/migrations/20260831_016_my_work_inbox.sql",
+      "supabase/migrations/20260831_017_my_work_inbox_attachments.sql",
+      "supabase/migrations/20260831_018_durable_release_communications.sql",
+      "supabase/migrations/20260831_019_private_my_work_typing_broadcast.sql",
+      "supabase/migrations/20260831_020_my_work_lifecycle_admin_cleanup.sql",
+      "supabase/migrations/20260831_021_my_work_task_estimated_time.sql",
+      "supabase/migrations/20260901_001_preproduction_bids.sql",
+      "supabase/migrations/20260901_002_bid_operational_context.sql",
+      "supabase/migrations/20260901_003_bid_files.sql",
+      "supabase/migrations/20260901_004_admin_canonical_cleanup.sql",
+      "supabase/migrations/20260901_005_sample_color_plate_generator.sql",
+      "supabase/migrations/20260901_006_vendor_catalog_whitespace_normalization.sql",
+      "supabase/migrations/20260902_001_sample_draft_deletion.sql",
+      "supabase/migrations/20260902_002_bid_proposal_relationships.sql",
+      "supabase/migrations/20260902_003_bid_delete_runtime_fix.sql",
+      "supabase/migrations/20260902_004_my_work_task_groups.sql",
+      "supabase/migrations/20260902_005_sample_recent_value_suggestions.sql",
+      "supabase/migrations/20260904_001_job_transmittal_without_job_number.sql",
+      "supabase/migrations/20260908_001_job_transmittal_linkage_semantics.sql",
+      "supabase/migrations/20260908_002_purchase_order_line_material_types.sql",
+      "supabase/migrations/20260908_003_purchase_order_chip_order_unit.sql",
+      "supabase/migrations/20260908_004_proposal_generator_v2.sql",
+      "supabase/migrations/20260917_001_sample_formulation_foundation.sql",
+      "supabase/migrations/20260917_002_sample_draft_library_identity.sql",
+      "supabase/migrations/20260917_003_sample_deletion_lifecycle.sql",
+      "supabase/migrations/20260917_004_purchase_order_material_taxonomy.sql",
+      "supabase/migrations/20260917_005_purchase_order_recovery_idempotency.sql",
+      "supabase/migrations/20260917_006_sample_admin_draft_deletion.sql",
+      "supabase/migrations/20260917_007_sample_formula_mass_balance.sql",
+      "supabase/migrations/20260918_001_sample_formula_historical_parity.sql",
+      "supabase/migrations/20260918_002_purchase_order_pdf_text_size.sql",
+      "supabase/migrations/20260918_003_sample_formula_volumetric_profiles.sql",
+      "supabase/migrations/20260918_004_sample_formula_density_profiles.sql"
+    ],
+    "recentCanonicalVersionsUnrecorded": [],
+    "interpretation": "Legacy ledger gaps are not proof of pending/unapplied objects. No unrelated migration is approved or required by this inspection. Never apply superseded final-enforcement migration."
+  },
+  "customerCandidate": {
+    "base": "1d34f1800635336157f25db10206f7a4938d23ae",
+    "branch": "feature/production-contact-configuration",
+    "commit": null,
+    "acceptedImplementationUnchanged": true,
+    "priorEvidence": "2026-10-14-production-customer-list.json"
+  },
+  "headerCandidate": {
+    "head": "83c634b79db69addfd3cdac5d8f0cda86947db9f",
+    "worktree": "/private/tmp/tenops-performance-header",
+    "branch": "feature/performance-header-polish",
+    "appFilesSha256": {
+      "src/app/client-layout-shell.tsx": "eb67dab10bfa60f478ec7da175875809ab6824218fc070bcef757e1b29cb29ad",
+      "src/components/PerformanceAnnouncement.tsx": "8c7f283ad1dd79ac61d10ab683d8417c8f49598c26a42581cac587a49cd3644b",
+      "src/components/PerformanceAnnouncement.module.css": "f052b7b5af43ffd852c4a1ff468e9bcf218d9108a8fde2516d1b3be4c36d2c93",
+      "src/lib/performance-announcement.mjs": "965c315f70968b15a56f176baa5e1c6b4f70f127c642062e7db07433959848ef"
+    },
+    "acceptedAppDiffSha256": "8caddd96255c197a629d2ff43f67df1731292af804ec1dd08bd62fbb0b5225ff",
+    "workingTreeOverlayRequired": true,
+    "activation": null,
+    "acceptanceAuthority": "Current explicit Product approval; older local review notes are superseded on acceptance status only"
+  },
+  "protectedMatcherBranch": {
+    "branch": "release/sample-match-tendev",
+    "sha": "950dd714da215eaf5a3ad0b351aa344b80e09064",
+    "hostedTenDevStateReverified": false
+  },
+  "validation": {
+    "readOnlyHostedPagination": "PASS: 41 rows + terminal empty page; exact total count; all archived rows eligible; zero archived rows present",
+    "previewUnitChecks": "PASS: 2505 rows with 137-row server cap, premature empty/drift rejection, normalization, existing/archived/duplicate ambiguity classification",
+    "targetedLint": "PASS",
+    "diffCheck": "PASS",
+    "importIdempotencyDatabaseTests": "NOT RUN: import implementation stopped at explicit compatibility gate",
+    "newApplicationBuild": "NOT RUN: accepted application source is unchanged; prior build evidence reused"
+  },
+  "changedFiles": [
+    "scripts/support/customer-import.mjs",
+    "scripts/preview-historical-customers.mjs",
+    "scripts/verify-historical-customer-preview.mjs",
+    "supabase/inspection/20261014_customer_import_compatibility.sql",
+    "docs/project-memory/2026-10-14-production-customer-list-local-review.md",
+    "docs/project-memory/2026-10-14-historical-customer-import-review.md",
+    "docs/project-memory/evidence/2026-10-14-historical-customer-import.json"
+  ],
+  "noHostedImport": true,
+  "noHostedMigrations": true,
+  "noPush": true,
+  "noDeployment": true,
+  "noCommit": true
+}

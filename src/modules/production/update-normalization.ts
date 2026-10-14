@@ -25,6 +25,10 @@ const nullableNumberFields = new Set<keyof ProductionJob>([
 ]);
 
 export function productionValuesEqual(field: keyof ProductionJob, previous: unknown, next: unknown) {
+  if (field === 'customer_contact_snapshot') {
+    const stable = (value: unknown) => value == null ? null : JSON.stringify(Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b)));
+    return stable(previous) === stable(next);
+  }
   if (nullableNumberFields.has(field)) {
     const previousNumber = normalizeNullableNumber(previous);
     const nextNumber = normalizeNullableNumber(next);

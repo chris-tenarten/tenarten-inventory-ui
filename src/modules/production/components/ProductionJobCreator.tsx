@@ -5,6 +5,9 @@ import { BusinessInput, BusinessTextarea, BusinessButton } from '@/components/Bu
 import { FileText, Plus, Upload, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import ProjectContactEditor from '../contacts/ProjectContactEditor';
+import { unlinkedContact, type ProjectContact } from '../contacts/model';
+
 import type { NewProductionJob, ProductionJob } from '../types';
 import type { JobUpdateSummary, ProductionJobUpdate } from '../jobs';
 import { findMatchingProductionJob, type ProductionJobMatch } from '../job-import-matching';
@@ -28,7 +31,7 @@ type Props = {
 type CreatorMethod = 'choose' | 'blank' | 'import';
 type ImportStep = 'upload' | 'extracting' | 'review' | 'duplicate' | 'updating';
 
-type BlankJobDraft = {
+type BlankJobDraft = ProjectContact & {
   name: string;
   customer: string;
   jobNumber: string;
@@ -47,7 +50,7 @@ type BlankJobDraft = {
 };
 
 const emptyDraft = (): BlankJobDraft => ({
-  name: '', customer: '', jobNumber: '', estimateNumber: '', workOrderNumber: '',
+  ...unlinkedContact(), name: '', customer: '', jobNumber: '', estimateNumber: '', workOrderNumber: '',
   depositDate: '', requestedDeliveryDate: '', plannedStart: '', plannedEnd: '',
   estimatedManHours: '', estimatedCalendarDays: '', colorPlateNumber: '',
   sampleSubmittedDate: '', approvalDate: '', remarks: '',
@@ -76,6 +79,9 @@ function validateDraft(draft: BlankJobDraft) {
 
 function toNewJob(draft: BlankJobDraft): NewProductionJob {
   return {
+    customer_company_id: draft.customer_company_id,
+    customer_contact_id: draft.customer_contact_id,
+    customer_contact_snapshot: draft.customer_contact_snapshot ? { ...draft.customer_contact_snapshot, company_name: draft.customer_contact_snapshot.company_name.trim() } : null,
     name: draft.name.trim(),
     customer: draft.customer.trim() || null,
     job_number: draft.jobNumber.trim() || null,
@@ -102,6 +108,7 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
   const [draft, setDraft] = useState<BlankJobDraft>(emptyDraft);
   const [saveState, setSaveState] = useState<'idle' | 'saving'>('idle');
   const [error, setError] = useState('');
+  const [contactPending, setContactPending] = useState(false);
   const [importStep, setImportStep] = useState<ImportStep>('upload');
   const [files, setFiles] = useState<File[]>([]);
   const [extracted, setExtracted] = useState<ExtractedJobMetadata | null>(null);
@@ -131,13 +138,13 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
     setFiles([]); setExtracted(null); setMatch(null); setSelectedUpdates(new Set()); setRetentionRecoveryJob(null); setRetentionRecoveryCompletesCreation(false);
   };
   const requestClose = () => {
-    if (operationInFlightRef.current) return;
+    if (operationInFlightRef.current || contactPending) return;
     if ((dirty || files.length > 0) && !window.confirm('Discard this new Production Job draft?')) return;
     reset();
     onClose();
   };
   const beginOperation = () => {
-    if (operationInFlightRef.current) return false;
+    if (operationInFlightRef.current || contactPending) return false;
     operationInFlightRef.current = true;
     setSaveState('saving');
     setError('');
@@ -281,7 +288,7 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
             <h3 className="border-b border-slate-200 pb-2 text-xs font-bold uppercase tracking-[0.1em] text-slate-700">Job identity</h3>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <label className={labelClass}>Project name<BusinessInput ref={nameRef} value={draft.name} onChange={(e) => update('name', e.target.value)} className={inputClass} /></label>
-              <label className={labelClass}>Customer<BusinessInput value={draft.customer} onChange={(e) => update('customer', e.target.value)} list="production-customer-suggestions" autoComplete="off" className={inputClass} /></label>
+              <div className="sm:col-span-2"><ProjectContactEditor onPendingChange={setContactPending} customer={draft.customer} value={draft} historicalNames={jobs.map((job) => job.customer ?? '')} onChange={(customer, contact) => { setDraft((current) => ({ ...current, ...contact, customer })); setError(''); }} /></div>
               <label className={labelClass}>Job number<BusinessInput value={draft.jobNumber} onChange={(e) => update('jobNumber', e.target.value)} aria-invalid={Boolean(blankJobNumberConflict)} aria-describedby={blankJobNumberConflict?'production-job-number-conflict':undefined} className={inputClass} />{blankJobNumberConflict&&<span id="production-job-number-conflict" className="mt-1 block text-xs font-semibold text-red-700">{jobNumberConflictMessage(draft.jobNumber,blankJobNumberConflict)} <button type="button" className="underline" onClick={()=>{const existing=blankJobNumberConflict;reset();onClose();onOpenJob(existing);}}>Open existing Job</button></span>}</label>
               <label className={labelClass}>Estimate number<BusinessInput value={draft.estimateNumber} onChange={(e) => update('estimateNumber', e.target.value)} className={inputClass} /></label>
               <label className={labelClass}>Work order<BusinessInput value={draft.workOrderNumber} onChange={(e) => update('workOrderNumber', e.target.value)} className={inputClass} /></label>
@@ -305,8 +312,8 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
           {error && <div role="alert" className="mt-4 border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">{error}</div>}
         </div>
         <footer className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-300 bg-slate-50 px-4 py-3 sm:px-5">
-          <button type="button" onClick={() => { setDraft(emptyDraft()); setError(''); setMethod('choose'); }} disabled={saveState === 'saving'} className="h-10 border border-slate-400 bg-white px-4 text-xs font-bold uppercase tracking-[0.07em] text-slate-700 hover:bg-slate-100 disabled:opacity-50">Back</button>
-          <BusinessButton type="button" onClick={() => void create()} disabled={saveState === 'saving'||Boolean(blankJobNumberConflict)} className="inline-flex h-10 items-center gap-2 border border-blue-900 bg-blue-900 px-5 text-xs font-bold uppercase tracking-[0.07em] text-white hover:bg-blue-950 disabled:opacity-50"><Plus className="h-4 w-4" />{saveState === 'saving' ? 'Creating…' : 'Create Job'}</BusinessButton>
+          <button type="button" onClick={() => { setDraft(emptyDraft()); setError(''); setMethod('choose'); }} disabled={saveState === 'saving'||contactPending} className="h-10 border border-slate-400 bg-white px-4 text-xs font-bold uppercase tracking-[0.07em] text-slate-700 hover:bg-slate-100 disabled:opacity-50">Back</button>
+          <BusinessButton type="button" onClick={() => void create()} disabled={saveState === 'saving'||contactPending||Boolean(blankJobNumberConflict)} className="inline-flex h-10 items-center gap-2 border border-blue-900 bg-blue-900 px-5 text-xs font-bold uppercase tracking-[0.07em] text-white hover:bg-blue-950 disabled:opacity-50"><Plus className="h-4 w-4" />{saveState === 'saving' ? 'Creating…' : 'Create Job'}</BusinessButton>
         </footer>
         </>}
         {method === 'import' && <>

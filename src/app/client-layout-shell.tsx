@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import EarlyAccessBadge from '@/components/EarlyAccessBadge';
+import PerformanceAnnouncement from '@/components/PerformanceAnnouncement';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { BookOpen, Factory, Hammer } from 'lucide-react';
@@ -468,7 +469,7 @@ export default function ClientLayoutShell({
                 <span data-shell-environment><HeaderEnvironmentIdentity loginGate={!shellUnlocked} /></span>
               </div>
             </Link>
-
+            {shellUnlocked && <PerformanceAnnouncement key={pathname} />}
           </div>
 
           <div data-shell-nav-row className="flex w-full items-center lg:w-auto lg:justify-end">

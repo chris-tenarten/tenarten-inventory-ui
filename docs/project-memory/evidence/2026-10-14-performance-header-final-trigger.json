@@ -1,0 +1,21 @@
+{
+  "observations": [
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "brandRight": 249.671875,
+      "triggerLeft": 261.671875,
+      "subtitleClipped": false,
+      "headerHeight": 109,
+      "overflow": false,
+      "color": "rgb(30, 64, 175)",
+      "iconColor": "rgb(30, 64, 175)",
+      "border": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "underline": "none"
+    }
+  ],
+  "reused": "Previous accepted behavior and visual evidence; no broad suite rerun",
+  "activation": null
+}

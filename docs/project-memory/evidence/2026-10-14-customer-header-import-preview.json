@@ -1,0 +1,440 @@
+{
+  "timestamp": "2026-10-14T22:25:00.141Z",
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "readOnly": true,
+  "directoryPresent": false,
+  "pagination": {
+    "jobs": [
+      {
+        "offset": 0,
+        "rows": 41,
+        "total": 41
+      },
+      {
+        "offset": 41,
+        "rows": 0,
+        "total": 41
+      }
+    ],
+    "companies": []
+  },
+  "counts": {
+    "historicalJobs": 41,
+    "activeJobs": 41,
+    "archivedJobs": 0,
+    "distinctCustomerStrings": 22,
+    "distinctNonblankStrings": 22,
+    "normalizedIdentities": 22,
+    "alreadyConfigured": 0,
+    "proposed": 20,
+    "excludedIdentities": 0,
+    "invalidBlankJobs": 0,
+    "manualReview": 2,
+    "duplicateGroups": 0,
+    "existingConfiguredRecords": 0
+  },
+  "identities": [
+    {
+      "name": "[Place Services] temporary",
+      "key": "[place services] temporary",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "manual_review",
+      "warnings": [
+        "Temporary/test label: verify whether this is a real customer"
+      ],
+      "variants": [
+        {
+          "value": "[Place Services] temporary",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Atlantic Exterior Wall Systems",
+      "key": "atlantic exterior wall systems",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Atlantic Exterior Wall Systems",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Batson Cooke",
+      "key": "batson cooke",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Batson Cooke",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Buslam",
+      "key": "buslam",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Buslam",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Camarata",
+      "key": "camarata",
+      "usage": 5,
+      "activeJobs": 5,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Camarata",
+          "count": 5
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Camarata Masonry Systems",
+      "key": "camarata masonry systems",
+      "usage": 2,
+      "activeJobs": 2,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Camarata Masonry Systems",
+          "count": 2
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Coral Reef",
+      "key": "coral reef",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Coral Reef",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "DePaoli Mosaic",
+      "key": "depaoli mosaic",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "DePaoli Mosaic",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "IB SUPPLY",
+      "key": "ib supply",
+      "usage": 6,
+      "activeJobs": 6,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "IB SUPPLY",
+          "count": 6
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "INTERNAL TEST \u2014 NOT A CUSTOMER",
+      "key": "internal test \u2014 not a customer",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "manual_review",
+      "warnings": [
+        "Temporary/test label: verify whether this is a real customer",
+        "Non-ASCII identity: review normalization explicitly"
+      ],
+      "variants": [
+        {
+          "value": "INTERNAL TEST \u2014 NOT A CUSTOMER",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "IntraState Terrazzo",
+      "key": "intrastate terrazzo",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "IntraState Terrazzo",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Joseph Cohn & Son",
+      "key": "joseph cohn & son",
+      "usage": 2,
+      "activeJobs": 2,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Joseph Cohn & Son",
+          "count": 2
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "LX Granite",
+      "key": "lx granite",
+      "usage": 2,
+      "activeJobs": 2,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "LX Granite",
+          "count": 2
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "MTT",
+      "key": "mtt",
+      "usage": 3,
+      "activeJobs": 3,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "MTT",
+          "count": 3
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "RNC Concrete Coatings",
+      "key": "rnc concrete coatings",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "RNC Concrete Coatings",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Spectra CF",
+      "key": "spectra cf",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Spectra CF",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Superior",
+      "key": "superior",
+      "usage": 5,
+      "activeJobs": 5,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Superior",
+          "count": 5
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Superior Terrazzo & Finishes",
+      "key": "superior terrazzo & finishes",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Superior Terrazzo & Finishes",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "T. Yorie Corp.",
+      "key": "t. yorie corp.",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "T. Yorie Corp.",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "United Enterprises, Inc",
+      "key": "united enterprises, inc",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "United Enterprises, Inc",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Williams",
+      "key": "williams",
+      "usage": 1,
+      "activeJobs": 1,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Williams",
+          "count": 1
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    },
+    {
+      "name": "Williams Tile & Marble",
+      "key": "williams tile & marble",
+      "usage": 2,
+      "activeJobs": 2,
+      "archivedJobs": 0,
+      "status": "safe_new",
+      "warnings": [],
+      "variants": [
+        {
+          "value": "Williams Tile & Marble",
+          "count": 2
+        }
+      ],
+      "caseWhitespaceDuplicate": false,
+      "existing": []
+    }
+  ],
+  "proposedNames": [
+    "Atlantic Exterior Wall Systems",
+    "Batson Cooke",
+    "Buslam",
+    "Camarata",
+    "Camarata Masonry Systems",
+    "Coral Reef",
+    "DePaoli Mosaic",
+    "IB SUPPLY",
+    "IntraState Terrazzo",
+    "Joseph Cohn & Son",
+    "LX Granite",
+    "MTT",
+    "RNC Concrete Coatings",
+    "Spectra CF",
+    "Superior",
+    "Superior Terrazzo & Finishes",
+    "T. Yorie Corp.",
+    "United Enterprises, Inc",
+    "Williams",
+    "Williams Tile & Marble"
+  ],
+  "invalidBlankValues": []
+}

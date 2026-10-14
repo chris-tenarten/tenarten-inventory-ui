@@ -28,6 +28,7 @@ const JOB_COLUMNS = [
   'id',
   'name',
   'customer',
+  'contact_details:production_job_contacts(customer_company_id,customer_contact_id,customer_contact_snapshot)',
   'job_number',
   'estimate_number',
   'work_order_number',
@@ -53,6 +54,20 @@ const JOB_COLUMNS = [
   'created_at',
   'updated_at',
 ].join(',');
+
+const CONTACT_FIELDS = ['customer_company_id', 'customer_contact_id', 'customer_contact_snapshot'] as const;
+function hydrateProject(row: unknown): ProductionJob {
+  const { contact_details, ...job } = row as ProductionJob & { contact_details?: Partial<ProductionJob> | null };
+  return { ...job, customer_company_id: null, customer_contact_id: null, customer_contact_snapshot: null, ...contact_details };
+}
+function splitProject(input: object) {
+  const job = { ...input } as Record<string, unknown>;
+  const contact: Record<string, unknown> = {};
+  for (const key of CONTACT_FIELDS) { if (key in job) contact[key] = job[key]; delete job[key]; }
+  return { job, contact };
+}
+
+const JOB_LIST_COLUMNS = JOB_COLUMNS.replace('contact_details:production_job_contacts(customer_company_id,customer_contact_id,customer_contact_snapshot),', '');
 
 const ATTACHMENT_COLUMNS = [
   'id',
@@ -107,6 +122,9 @@ export type ProductionJobUpdate = Partial<
     ProductionJob,
     | 'name'
     | 'customer'
+    | 'customer_company_id'
+    | 'customer_contact_id'
+    | 'customer_contact_snapshot'
     | 'job_number'
     | 'estimate_number'
     | 'work_order_number'
@@ -127,7 +145,7 @@ export type ProductionJobUpdate = Partial<
 export async function loadProductionJobs(includeArchived = false): Promise<ProductionJob[]> {
   const page = (from: number, to: number) => { let query = supabase
     .from('jobs')
-    .select(JOB_COLUMNS, { count: 'exact' })
+    .select(JOB_LIST_COLUMNS, { count: 'exact' })
     .order('planned_start', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false }).order('id').range(from,to);
   if (!includeArchived) query = query.is('archived_at', null);
@@ -142,7 +160,8 @@ export async function loadProductionJobs(includeArchived = false): Promise<Produ
       activeByJob.set(cycle.job_id, cycle);
     }
   }
-  return ((data ?? []) as unknown as ProductionJob[]).map((job) => {
+  return ((data ?? []) as unknown as ProductionJob[]).map((row) => {
+    const job = hydrateProject(row);
     const cycle = activeByJob.get(job.id);
     if (!cycle) return { ...job, lifecycle_key: `original:${job.id}`, rework_cycle: null };
     return {
@@ -319,7 +338,7 @@ export async function archiveProductionJob(job: ProductionJob): Promise<Producti
   const { data, error } = await supabase.from('jobs').update({ archived_at: archivedAt }).eq('id', job.id).is('archived_at', null).select(JOB_COLUMNS).single();
   if (error) throw error;
   await supabase.from('job_activity').insert({ job_id: job.id, event_type: 'job_archived', summary: `Job archived: ${job.name}`, metadata: { archived_at: archivedAt } });
-  return data as unknown as ProductionJob;
+  return hydrateProject(data);
 }
 
 export async function restoreProductionJob(job: ProductionJob): Promise<ProductionJob> {
@@ -328,7 +347,7 @@ export async function restoreProductionJob(job: ProductionJob): Promise<Producti
   if (error) throw error;
   const { error: activityError } = await supabase.from('job_activity').insert({ job_id: job.id, event_type: 'job_restored', summary: `Job restored: ${job.name}`, metadata: { previous_archived_at: job.archived_at } });
   if (activityError) console.error('Job restored, but activity logging failed:', activityError);
-  return data as unknown as ProductionJob;
+  return hydrateProject(data);
 }
 
 async function loadJobNumberConflict(jobNumber:string|null|undefined,excludeJobId?:string){
@@ -347,25 +366,18 @@ export async function createProductionJob(
   const canonicalInput={...input,job_number:canonicalJobNumber(input.job_number)};
   const conflict=await loadJobNumberConflict(canonicalInput.job_number);
   if(conflict)throw new Error(jobNumberConflictMessage(canonicalInput.job_number,conflict));
-  const { data, error } = await supabase
-    .from('jobs')
-    .insert({
-      ...canonicalInput,
-      production_status: 'not_started',
-      material_status: 'unknown',
-      priority: 'normal',
-      progress_percent: 0,
-      owner_name: null,
-      contract_value: null,
-      resin_po: null,
-      chip_po: null,
-    })
-    .select(JOB_COLUMNS)
-    .single();
+  const { job, contact } = splitProject(canonicalInput);
+  const { data, error } = await supabase.rpc('save_production_project', {
+    p_job_id: null,
+    p_job: { ...job, production_status: 'not_started', material_status: 'unknown', priority: 'normal',
+      progress_percent: 0, owner_name: null, contract_value: null, resin_po: null, chip_po: null },
+    p_contact: contact, p_save_contact: Object.keys(contact).length > 0,
+  });
 
   if(error){if(isJobNumberUniqueViolation(error))throw new Error(jobNumberConflictMessage(canonicalInput.job_number));throw error;}
 
-  const createdJob = data as unknown as ProductionJob;
+  const createdJob = await loadProductionJob(String(data));
+  if (!createdJob) throw new Error('Created Project unavailable.');
 
   const { error: activityError } = await supabase.from('job_activity').insert({
     job_id: createdJob.id,
@@ -408,26 +420,28 @@ export async function updateProductionJob(
   if (changedFields.length === 0) return currentJob;
   if('job_number'in effectiveChanges){const conflict=await loadJobNumberConflict(effectiveChanges.job_number,currentJob.id);if(conflict)throw new Error(jobNumberConflictMessage(effectiveChanges.job_number,conflict));}
 
-  const { data, error } = await supabase
-    .from('jobs')
-    .update(effectiveChanges)
-    .eq('id', currentJob.id)
-    .select(JOB_COLUMNS)
-    .single();
+  const { job, contact } = splitProject(effectiveChanges);
+  const saveContact = Object.keys(contact).length > 0;
+  const { data, error } = await supabase.rpc('save_production_project', {
+    p_job_id: currentJob.id, p_job: job,
+    p_contact: { ...splitProject(currentJob).contact, ...contact }, p_save_contact: saveContact,
+  });
 
   if(error){if(isJobNumberUniqueViolation(error))throw new Error(jobNumberConflictMessage(effectiveChanges.job_number??currentJob.job_number));throw error;}
 
-  const updatedJob = data as unknown as ProductionJob;
+  const updatedJob = await loadProductionJob(String(data));
+  if (!updatedJob) throw new Error('Updated Project unavailable.');
+  const publicFields = changedFields.filter(field => !CONTACT_FIELDS.includes(field as typeof CONTACT_FIELDS[number]));
 
   const { error: activityError } = await supabase.from('job_activity').insert({
     job_id: currentJob.id,
     event_type: 'job_updated',
     summary: `Job updated: ${updatedJob.name}`,
     metadata: {
-      changed_fields: changedFields,
-      changes: effectiveChanges,
-      old_values: Object.fromEntries(changedFields.map((field) => [field, currentJob[field]])),
-      new_values: Object.fromEntries(changedFields.map((field) => [field, updatedJob[field]])),
+      changed_fields: publicFields,
+      changes: Object.fromEntries(publicFields.map(field => [field, effectiveChanges[field]])),
+      old_values: Object.fromEntries(publicFields.map((field) => [field, currentJob[field]])),
+      new_values: Object.fromEntries(publicFields.map((field) => [field, updatedJob[field]])),
     },
   });
 
@@ -718,5 +732,5 @@ export async function loadProductionJob(jobId: string): Promise<ProductionJob | 
     .maybeSingle();
 
   if (error) throw error;
-  return data as unknown as ProductionJob | null;
+  return data ? hydrateProject(data) : null;
 }

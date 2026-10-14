@@ -1,4 +1,6 @@
 "use client";
+import ProjectContactEditor from '../contacts/ProjectContactEditor';
+import type { ProjectContact } from '../contacts/model';
 
 import { BusinessButton, BusinessInput, BusinessSelect, BusinessTextarea } from '@/components/BusinessWriteControls';
 
@@ -61,6 +63,7 @@ const documentActionClass =
 type Props = {
   job: ProductionJob;
   jobNumberOwners: JobNumberOwner[];
+  historicalCustomerNames?: string[];
   attachmentCount: number;
   onClose: () => void;
   onUpdateJob: (
@@ -96,7 +99,7 @@ const sectionTitle =
 const fieldClass =
   "mt-1 h-9 w-full rounded-sm border border-slate-300 bg-white px-2 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-100";
 
-type InspectorDraft = {
+type InspectorDraft = ProjectContact & {
   name: string;
   customer: string;
   job_number: string;
@@ -117,6 +120,9 @@ type InspectorDraft = {
 
 function inspectorDraftFromJob(job: ProductionJob): InspectorDraft {
   return {
+    customer_company_id: job.customer_company_id ?? null,
+    customer_contact_id: job.customer_contact_id ?? null,
+    customer_contact_snapshot: job.customer_contact_snapshot ?? null,
     name: job.name,
     customer: job.customer ?? "",
     job_number: job.job_number ?? "",
@@ -272,6 +278,7 @@ function activityDescription(change: ProductionJobActivity) {
 export default function ProductionJobInspector({
   job,
   jobNumberOwners,
+  historicalCustomerNames = [],
   attachmentCount,
   onClose,
   onUpdateJob,
@@ -317,6 +324,7 @@ export default function ProductionJobInspector({
   const [saveError, setSaveError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
   const [saving, setSaving] = useState(false);
+  const [contactPending, setContactPending] = useState(false);
   const [draft, setDraft] = useState(() => inspectorDraftFromJob(job));
   const [headerNameEditing, setHeaderNameEditing] = useState(false);
   const [attachmentError, setAttachmentError] = useState("");
@@ -461,6 +469,9 @@ export default function ProductionJobInspector({
   }, [headerNameEditing]);
 
   const normalizedDraft: ProductionJobUpdate = {
+    customer_company_id: draft.customer_company_id,
+    customer_contact_id: draft.customer_contact_id,
+    customer_contact_snapshot: draft.customer_contact_snapshot ? { ...draft.customer_contact_snapshot, company_name: draft.customer_contact_snapshot.company_name.trim() } : null,
     name: draft.name.trim(),
     customer: draft.customer.trim() || null,
     job_number: draft.job_number.trim() || null,
@@ -507,6 +518,7 @@ export default function ProductionJobInspector({
   }, [job.id, onOrdinarySaveStateChange]);
 
   const requestClose = useCallback(() => {
+    if (contactPending) return;
     if (
       dirtyCount &&
       !window.confirm(
@@ -515,7 +527,7 @@ export default function ProductionJobInspector({
     )
       return;
     onClose();
-  }, [dirtyCount, onClose]);
+  }, [contactPending, dirtyCount, onClose]);
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
@@ -555,6 +567,7 @@ export default function ProductionJobInspector({
 
   const readiness = getJobReadiness(job);
   const selectSection = (section: InspectorSection) => {
+    if (contactPending) return;
     setActiveSection(section);
   };
   const updateDraft = <Key extends keyof InspectorDraft>(
@@ -572,6 +585,7 @@ export default function ProductionJobInspector({
     setSaveMessage("");
   };
   const saveDraft = async () => {
+    if (contactPending) return;
     const hours = normalizeNullableNumber(draft.estimated_man_hours);
     const days = normalizeNullableNumber(draft.estimated_calendar_days);
     const contractValue = normalizeNullableNumber(draft.contract_value);
@@ -836,6 +850,7 @@ export default function ProductionJobInspector({
             ref={closeRef}
             type="button"
             onClick={requestClose}
+            disabled={contactPending}
             className="h-8 shrink-0 border border-slate-400 px-3 text-sm font-bold hover:bg-slate-100"
           >
             Close
@@ -915,18 +930,7 @@ export default function ProductionJobInspector({
                     className={fieldClass}
                   />
                 </label>
-                <label className="text-xs font-bold sm:col-span-2">
-                  Customer
-                  <BusinessInput
-                    list="production-customer-suggestions"
-                    autoComplete="off"
-                    value={draft.customer}
-                    onChange={(event) =>
-                      updateDraft("customer", event.target.value)
-                    }
-                    className={fieldClass}
-                  />
-                </label>
+                <div className="sm:col-span-2"><ProjectContactEditor variant="inspector" onPendingChange={setContactPending} key={job.id} customer={draft.customer} value={draft} historicalNames={historicalCustomerNames} onChange={(customer, contact) => setDraft((current) => ({ ...current, ...contact, customer }))} /></div>
               </section>
               <section className="mt-5">
                 <h3 className={sectionTitle}>Documents</h3>
@@ -1475,8 +1479,8 @@ export default function ProductionJobInspector({
               {jobNumberConflict ? <div role="alert" className="mt-0.5 max-w-sm text-xs font-semibold text-red-800">{jobNumberConflictMessage(draft.job_number,jobNumberConflict)}</div> : saveError ? <div role="alert" className="mt-0.5 max-w-sm text-xs font-semibold text-red-800">{saveError}</div> : scheduleIsStaged && (dirtyCount > 0 || saving) ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Save job details first. Planned dates will remain staged.</div> : scheduleIsStaged && saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Job details saved. Schedule changes still require approval.</div> : scheduleIsStaged ? <div className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Planned dates remain staged for the existing Save All approval workflow.</div> : scheduleIsIncomplete ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">Enter both planned dates to stage this schedule for Save All.</div> : saveMessage ? <div role="status" className="mt-0.5 max-w-sm text-xs font-semibold text-slate-700">{saveMessage}</div> : null}
             </div>
             <div className="flex flex-wrap justify-end gap-2">
-              {dirtyCount > 0 && <button type="button" onClick={discardDraft} disabled={saving} className="h-9 border border-slate-500 bg-white px-3 text-xs font-bold uppercase text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-700 disabled:opacity-50">Discard</button>}
-              <BusinessButton type="button" onClick={() => void saveDraft()} disabled={saving || dirtyCount === 0 || Boolean(jobNumberConflict)} className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Saving…" : saveError && dirtyCount > 0 ? "Retry save" : "Save changes"}</BusinessButton>
+              {dirtyCount > 0 && <button type="button" onClick={discardDraft} disabled={saving || contactPending} className="h-9 border border-slate-500 bg-white px-3 text-xs font-bold uppercase text-slate-800 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-slate-700 disabled:opacity-50">Discard</button>}
+              <BusinessButton type="button" onClick={() => void saveDraft()} disabled={saving || contactPending || dirtyCount === 0 || Boolean(jobNumberConflict)} className="h-9 border border-slate-950 bg-slate-900 px-3 text-xs font-bold uppercase text-white hover:bg-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-40">{saving ? "Saving…" : saveError && dirtyCount > 0 ? "Retry save" : "Save changes"}</BusinessButton>
             </div>
           </div>
         )}

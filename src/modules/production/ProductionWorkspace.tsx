@@ -635,7 +635,14 @@ export default function ProductionWorkspace() {
     counts[phase.job_id] = (counts[phase.job_id] ?? 0) + 1;
     return counts;
   }, {}), [planningPhases]);
-  const selectJob = (job:ProductionJob, focus?:string) => {
+  const selectJob = async (job:ProductionJob, focus?:string) => {
+    try {
+      const details = await loadProductionJob(job.id);
+      if (!details) throw new Error('Project unavailable.');
+      setJobs(current => current.map(item => item.id === job.id ? { ...item,
+        customer_company_id: details.customer_company_id, customer_contact_id: details.customer_contact_id,
+        customer_contact_snapshot: details.customer_contact_snapshot } : item));
+    } catch (error) { console.error('Unable to load Project contact details:', error); return; }
     if (document.activeElement instanceof HTMLElement) inspectorOpenerRef.current = document.activeElement;
     setSelectedJobId(job.id);
     setInspectorFocus(focus);
@@ -1083,6 +1090,7 @@ export default function ProductionWorkspace() {
         key={`${selectedJob.id}:${inspectorFocus ?? ''}`}
         job={stagedSchedules[selectedJob.id] ? { ...selectedJob, planned_start: stagedSchedules[selectedJob.id].proposed_planned_start, planned_end: stagedSchedules[selectedJob.id].proposed_planned_end } : selectedJob}
         jobNumberOwners={jobs}
+        historicalCustomerNames={customerSuggestions}
         attachmentCount={attachmentCounts[selectedJob.id] ?? 0}
         jobUpdateSummary={jobUpdateSummaries[selectedJob.id] ?? EMPTY_JOB_UPDATE_SUMMARY}
         onJobUpdateSummaryChanged={handleJobUpdateSummaryChanged}

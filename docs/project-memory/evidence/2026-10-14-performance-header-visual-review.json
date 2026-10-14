@@ -1,0 +1,298 @@
+{
+  "checks": [
+    "1440/1280/1024/768/390/320px: full branding, no wrapping/overflow/overlap, unchanged header height, full/compact text labels",
+    "Square white dropdown, slate border and section headings, compact spacing, approved copy preserved; contained at all checked sizes",
+    "Popover opens, Escape closes and restores focus; trigger does not navigate",
+    "1024px compact domain controls retain accessible labels and working hover dropdown/navigation",
+    "Reduced-motion styling preserved; seven-day and dismissal logic unchanged (accepted evidence reused)"
+  ],
+  "metrics": [
+    {
+      "width": 1440,
+      "height": 960,
+      "geometry": {
+        "titleClipped": false,
+        "subtitleClipped": false,
+        "subtitleWrapped": false,
+        "overflow": false,
+        "headerHeight": 73,
+        "titleRight": 137.484375,
+        "trigger": {
+          "x": 278,
+          "right": 417.484375,
+          "y": 23,
+          "bottom": 49
+        },
+        "subtitle": {
+          "y": 40.5,
+          "bottom": 52.5
+        },
+        "nav": {
+          "x": 579.546875,
+          "y": 16
+        },
+        "label": "PERFORMANCE UPDATE",
+        "color": "rgb(51, 65, 85)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      "popover": {
+        "x": 278,
+        "y": 77,
+        "width": 304,
+        "height": 285
+      },
+      "style": {
+        "radius": "0px",
+        "border": "rgb(203, 213, 225)",
+        "surface": "rgb(255, 255, 255)",
+        "headings": [
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)"
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "geometry": {
+        "titleClipped": false,
+        "subtitleClipped": false,
+        "subtitleWrapped": false,
+        "overflow": false,
+        "headerHeight": 73,
+        "titleRight": 137.484375,
+        "trigger": {
+          "x": 146,
+          "right": 187.734375,
+          "y": 17,
+          "bottom": 37
+        },
+        "subtitle": {
+          "y": 40.5,
+          "bottom": 52.5
+        },
+        "nav": {
+          "x": 419.546875,
+          "y": 16
+        },
+        "label": "UPDATE",
+        "color": "rgb(51, 65, 85)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      "popover": {
+        "x": 146,
+        "y": 77,
+        "width": 304,
+        "height": 285
+      },
+      "style": {
+        "radius": "0px",
+        "border": "rgb(203, 213, 225)",
+        "surface": "rgb(255, 255, 255)",
+        "headings": [
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)"
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "geometry": {
+        "titleClipped": false,
+        "subtitleClipped": false,
+        "subtitleWrapped": false,
+        "overflow": false,
+        "headerHeight": 73,
+        "titleRight": 137.484375,
+        "trigger": {
+          "x": 146,
+          "right": 187.734375,
+          "y": 17,
+          "bottom": 37
+        },
+        "subtitle": {
+          "y": 40.5,
+          "bottom": 52.5
+        },
+        "nav": {
+          "x": 469.171875,
+          "y": 16
+        },
+        "label": "UPDATE",
+        "color": "rgb(15, 23, 42)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      "popover": {
+        "x": 146,
+        "y": 77,
+        "width": 304,
+        "height": 285
+      },
+      "style": {
+        "radius": "0px",
+        "border": "rgb(203, 213, 225)",
+        "surface": "rgb(255, 255, 255)",
+        "headings": [
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)"
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "geometry": {
+        "titleClipped": false,
+        "subtitleClipped": false,
+        "subtitleWrapped": false,
+        "overflow": false,
+        "headerHeight": 125,
+        "titleRight": 137.484375,
+        "trigger": {
+          "x": 146,
+          "right": 187.734375,
+          "y": 17,
+          "bottom": 37
+        },
+        "subtitle": {
+          "y": 40.5,
+          "bottom": 52.5
+        },
+        "nav": {
+          "x": 20,
+          "y": 72
+        },
+        "label": "UPDATE",
+        "color": "rgb(15, 23, 42)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      "popover": {
+        "x": 146,
+        "y": 129,
+        "width": 304,
+        "height": 285
+      },
+      "style": {
+        "radius": "0px",
+        "border": "rgb(203, 213, 225)",
+        "surface": "rgb(255, 255, 255)",
+        "headings": [
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)"
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "geometry": {
+        "titleClipped": false,
+        "subtitleClipped": false,
+        "subtitleWrapped": false,
+        "overflow": false,
+        "headerHeight": 109,
+        "titleRight": 121.984375,
+        "trigger": {
+          "x": 126,
+          "right": 167.734375,
+          "y": 15,
+          "bottom": 35
+        },
+        "subtitle": {
+          "y": 36,
+          "bottom": 48
+        },
+        "nav": {
+          "x": 12,
+          "y": 62
+        },
+        "label": "UPDATE",
+        "color": "rgb(15, 23, 42)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      "popover": {
+        "x": 74,
+        "y": 113,
+        "width": 304,
+        "height": 285
+      },
+      "style": {
+        "radius": "0px",
+        "border": "rgb(203, 213, 225)",
+        "surface": "rgb(255, 255, 255)",
+        "headings": [
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)"
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "height": 740,
+      "geometry": {
+        "titleClipped": false,
+        "subtitleClipped": false,
+        "subtitleWrapped": false,
+        "overflow": false,
+        "headerHeight": 109,
+        "titleRight": 121.984375,
+        "trigger": {
+          "x": 126,
+          "right": 167.734375,
+          "y": 15,
+          "bottom": 35
+        },
+        "subtitle": {
+          "y": 36,
+          "bottom": 48
+        },
+        "nav": {
+          "x": 12,
+          "y": 62
+        },
+        "label": "UPDATE",
+        "color": "rgb(15, 23, 42)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      "popover": {
+        "x": 12,
+        "y": 113,
+        "width": 296,
+        "height": 285
+      },
+      "style": {
+        "radius": "0px",
+        "border": "rgb(203, 213, 225)",
+        "surface": "rgb(255, 255, 255)",
+        "headings": [
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)",
+          "rgb(100, 116, 139)"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "activation": null,
+  "status": "NOT RELEASED \u2014 VISUAL PRODUCT REVIEW",
+  "baseCandidate": "83c634b79db69addfd3cdac5d8f0cda86947db9f",
+  "revisionCommitted": false,
+  "riskTier": 1,
+  "testingLevel": 1,
+  "reviewUrl": "http://localhost:3000/manpower-reporting?performancePreview=active",
+  "build": "Final Production-mode webpack export and TypeScript passed; synthetic localhost backend; not deployable",
+  "lint": "passed",
+  "brandingVerifier": "passed",
+  "diffCheck": "passed",
+  "reusedFunctionalEvidence": "Seven-day expiration, explicit dismissal and browser-local persistence unchanged",
+  "pushed": false,
+  "deployed": false,
+  "hostedWrites": false
+}
