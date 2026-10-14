@@ -294,15 +294,21 @@ export async function markJobUpdatesSeen(jobId: string) {
   if (error && error.code !== 'PGRST202') throw error;
 }
 
-export async function loadProductionIntegrationSummaries(): Promise<Record<string, ProductionIntegrationSummary>> {
-  const [labor, materials] = await Promise.all([
-    loadCompleteLabor((from, to) => supabase.from('manpower_entries').select('id,job_id,am_hours,pm_hours', { count: 'exact' }).not('job_id', 'is', null).order('id').range(from, to)),
-    supabase.from('material_usage_reports').select('job_id,report_date').not('job_id', 'is', null),
-  ]);
-  if (materials.error) throw materials.error;
+export async function loadProductionIntegrationSummaries(jobIds: string[]): Promise<Record<string, ProductionIntegrationSummary>> {
+  const ids = [...new Set(jobIds)];
   const summaries: Record<string, ProductionIntegrationSummary> = {};
-  for (const row of labor) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].actualHours += Number(row.am_hours ?? 0) + Number(row.pm_hours ?? 0); summaries[id].laborEntryCount += 1; }
-  for (const row of materials.data ?? []) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].materialReportDates.push(String(row.report_date)); }
+  // Bounded URL scopes; preserve lifetime hours, including all Rework cycles.
+  for (let offset = 0; offset < ids.length; offset += 200) {
+    const scope = ids.slice(offset, offset + 200);
+    const [labor, materials] = await Promise.all([
+      loadCompleteRows((from, to) => supabase.from('manpower_entries')
+        .select('id,job_id,am_hours,pm_hours', { count: 'exact' }).in('job_id', scope).order('id').range(from, to)),
+      loadCompleteRows((from, to) => supabase.from('material_usage_reports')
+        .select('id,job_id,report_date', { count: 'exact' }).in('job_id', scope).order('id').range(from, to)),
+    ]);
+    for (const row of labor) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].actualHours += Number(row.am_hours ?? 0) + Number(row.pm_hours ?? 0); summaries[id].laborEntryCount += 1; }
+    for (const row of materials) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].materialReportDates.push(String(row.report_date)); }
+  }
   return summaries;
 }
 

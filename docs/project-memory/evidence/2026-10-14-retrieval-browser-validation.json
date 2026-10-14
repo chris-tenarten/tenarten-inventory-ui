@@ -1,0 +1,1664 @@
+{
+  "note": "Local actual exported app. Synthetic read-only users and data. No hosted connections. Timings from one browser session, not percentiles.",
+  "calls": [
+    {
+      "table": "get_my_app_access",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998088961
+    },
+    {
+      "table": "get_my_account_preferences",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998088996
+    },
+    {
+      "table": "my_work_messages",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/my_work_messages?select=id&recipient_user_id=eq.00000000-0000-4000-8000-000000900001&delivery_status=eq.ready&read_at=is.null",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998089001,
+      "done": 1791998089022
+    },
+    {
+      "table": "list_my_account_notification_history",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998089023
+    },
+    {
+      "table": "jobs",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/jobs?select=id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at&archived_at=is.null&order=name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 20,
+      "bytes": 2991,
+      "started": 1791998089014,
+      "done": 1791998089034
+    },
+    {
+      "table": "production_rework_cycles",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/production_rework_cycles?select=id%2Cjob_id%2Csequence_number%2Cproduction_status&order=sequence_number.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998089019,
+      "done": 1791998089040
+    },
+    {
+      "table": "manpower_reporting_groups",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_reporting_groups?select=id%2Cdisplay_name%2Ccreated_at%2Cupdated_at&order=created_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 42,
+      "bytes": 6417,
+      "started": 1791998089020,
+      "done": 1791998089040
+    },
+    {
+      "table": "manpower_workers",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_workers?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 1,
+      "bytes": 187,
+      "started": 1791998089020,
+      "done": 1791998089041
+    },
+    {
+      "table": "manpower_tasks",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_tasks?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 1,
+      "bytes": 181,
+      "started": 1791998089020,
+      "done": 1791998089042
+    },
+    {
+      "table": "manpower_product_categories",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_product_categories?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc",
+      "rows": 1,
+      "bytes": 178,
+      "started": 1791998089024,
+      "done": 1791998089043
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998089055,
+      "done": 1791998089075
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.asc%2Ccreated_at.asc%2Cid.asc&limit=1",
+      "rows": 1,
+      "bytes": 705,
+      "started": 1791998089065,
+      "done": 1791998089086
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.desc&limit=1",
+      "rows": 1,
+      "bytes": 720,
+      "started": 1791998089073,
+      "done": 1791998089093
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=500&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998089083,
+      "done": 1791998089104
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1000&limit=500",
+      "rows": 201,
+      "bytes": 141220,
+      "started": 1791998089111,
+      "done": 1791998089132
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998089148,
+      "done": 1791998104150
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=500&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998104172,
+      "done": 1791998104195
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1000&limit=500",
+      "rows": 500,
+      "bytes": 356782,
+      "started": 1791998104211,
+      "done": 1791998104233
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104247,
+      "done": 1791998104269
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=2000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104284,
+      "done": 1791998104306
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=2500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104319,
+      "done": 1791998104340
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=3000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104353,
+      "done": 1791998104375
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=3500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104387,
+      "done": 1791998104409
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=4000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104422,
+      "done": 1791998104444
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=4500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104462,
+      "done": 1791998104484
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=5000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104497,
+      "done": 1791998104518
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=5500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104533,
+      "done": 1791998104555
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=6000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104565,
+      "done": 1791998104587
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=6500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104597,
+      "done": 1791998104619
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=7000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104630,
+      "done": 1791998104651
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=7500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104662,
+      "done": 1791998104684
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=8000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104694,
+      "done": 1791998104716
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=8500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104726,
+      "done": 1791998104748
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-07-17&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998104759,
+      "done": 1791998104780
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.asc%2Ccreated_at.asc%2Cid.asc&limit=1",
+      "rows": 1,
+      "bytes": 705,
+      "started": 1791998104765,
+      "done": 1791998104787
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.desc&limit=1",
+      "rows": 1,
+      "bytes": 720,
+      "started": 1791998104771,
+      "done": 1791998104791
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=9000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104778,
+      "done": 1791998104800
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-07-17&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=500&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998104786,
+      "done": 1791998104811
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=9500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104810,
+      "done": 1791998104832
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-07-17&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1000&limit=500",
+      "rows": 500,
+      "bytes": 356782,
+      "started": 1791998104817,
+      "done": 1791998104843
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=10000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104842,
+      "done": 1791998104865
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-07-17&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1500&limit=500",
+      "rows": 301,
+      "bytes": 217039,
+      "started": 1791998104851,
+      "done": 1791998104875
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=10500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104875,
+      "done": 1791998104895
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=11000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104907,
+      "done": 1791998104928
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=11500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998104939,
+      "done": 1791998104960
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=12000&limit=500",
+      "rows": 1,
+      "bytes": 739,
+      "started": 1791998104968,
+      "done": 1791998104988
+    },
+    {
+      "table": "get_my_app_access",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998165957
+    },
+    {
+      "table": "get_my_account_preferences",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998165975
+    },
+    {
+      "table": "manpower_reporting_groups",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_reporting_groups?select=id%2Cdisplay_name%2Ccreated_at%2Cupdated_at&order=created_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 42,
+      "bytes": 6417,
+      "started": 1791998165977,
+      "done": 1791998165997
+    },
+    {
+      "table": "my_work_messages",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/my_work_messages?select=id&recipient_user_id=eq.00000000-0000-4000-8000-000000900001&delivery_status=eq.ready&read_at=is.null",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998165977,
+      "done": 1791998165998
+    },
+    {
+      "table": "jobs",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/jobs?select=id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at&archived_at=is.null&order=name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 20,
+      "bytes": 2991,
+      "started": 1791998165977,
+      "done": 1791998165998
+    },
+    {
+      "table": "production_rework_cycles",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/production_rework_cycles?select=id%2Cjob_id%2Csequence_number%2Cproduction_status&order=sequence_number.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998165977,
+      "done": 1791998165998
+    },
+    {
+      "table": "manpower_workers",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_workers?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 1,
+      "bytes": 187,
+      "started": 1791998165978,
+      "done": 1791998165999
+    },
+    {
+      "table": "list_my_account_notification_history",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998165999
+    },
+    {
+      "table": "manpower_tasks",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_tasks?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 1,
+      "bytes": 181,
+      "started": 1791998165978,
+      "done": 1791998166001
+    },
+    {
+      "table": "manpower_product_categories",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_product_categories?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc",
+      "rows": 1,
+      "bytes": 178,
+      "started": 1791998165999,
+      "done": 1791998166020
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.desc&limit=1&job_id=eq.00000000-0000-4000-8000-000000001000",
+      "rows": 1,
+      "bytes": 720,
+      "started": 1791998166028,
+      "done": 1791998166050
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500&job_id=eq.00000000-0000-4000-8000-000000001000",
+      "rows": 61,
+      "bytes": 43860,
+      "started": 1791998166030,
+      "done": 1791998166050
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.asc%2Ccreated_at.asc%2Cid.asc&limit=1&job_id=eq.00000000-0000-4000-8000-000000001000",
+      "rows": 1,
+      "bytes": 720,
+      "started": 1791998166031,
+      "done": 1791998166052
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998166066,
+      "done": 1791998166067
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=500&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998166078,
+      "done": 1791998166100
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1000&limit=500",
+      "rows": 500,
+      "bytes": 356782,
+      "started": 1791998166109,
+      "done": 1791998166131
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166142,
+      "done": 1791998166163
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=2000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166173,
+      "done": 1791998166195
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=2500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166208,
+      "done": 1791998166229
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=3000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166240,
+      "done": 1791998166261
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=3500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166272,
+      "done": 1791998166293
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=4000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166305,
+      "done": 1791998166326
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=4500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166337,
+      "done": 1791998166359
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=5000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166372,
+      "done": 1791998166394
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=5500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166406,
+      "done": 1791998166427
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=6000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166439,
+      "done": 1791998166461
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=6500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166473,
+      "done": 1791998166495
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=7000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166506,
+      "done": 1791998166528
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=7500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166539,
+      "done": 1791998166561
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=8000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166573,
+      "done": 1791998166595
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=8500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166607,
+      "done": 1791998166628
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=9000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166640,
+      "done": 1791998166661
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=9500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166673,
+      "done": 1791998166695
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=10000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166707,
+      "done": 1791998166729
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=10500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166741,
+      "done": 1791998166763
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=11000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166776,
+      "done": 1791998166797
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=11500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998166809,
+      "done": 1791998166830
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=12000&limit=500",
+      "rows": 1,
+      "bytes": 739,
+      "started": 1791998166839,
+      "done": 1791998166860
+    },
+    {
+      "table": "get_my_app_access",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "method": "POST",
+      "time": 1791998176447
+    },
+    {
+      "table": "get_my_account_preferences",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "method": "POST",
+      "time": 1791998176484
+    },
+    {
+      "table": "my_work_messages",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/my_work_messages?select=id&recipient_user_id=eq.00000000-0000-4000-8000-000000900002&delivery_status=eq.ready&read_at=is.null",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998176485,
+      "done": 1791998176506
+    },
+    {
+      "table": "jobs",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/jobs?select=id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at&archived_at=is.null&order=name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 20,
+      "bytes": 2991,
+      "started": 1791998176493,
+      "done": 1791998176515
+    },
+    {
+      "table": "manpower_reporting_groups",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/manpower_reporting_groups?select=id%2Cdisplay_name%2Ccreated_at%2Cupdated_at&order=created_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 42,
+      "bytes": 6417,
+      "started": 1791998176493,
+      "done": 1791998176517
+    },
+    {
+      "table": "manpower_workers",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/manpower_workers?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 1,
+      "bytes": 188,
+      "started": 1791998176493,
+      "done": 1791998176525
+    },
+    {
+      "table": "manpower_tasks",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/manpower_tasks?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 1,
+      "bytes": 181,
+      "started": 1791998176493,
+      "done": 1791998176525
+    },
+    {
+      "table": "production_rework_cycles",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/production_rework_cycles?select=id%2Cjob_id%2Csequence_number%2Cproduction_status&order=sequence_number.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998176493,
+      "done": 1791998176526
+    },
+    {
+      "table": "list_my_account_notification_history",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "method": "POST",
+      "time": 1791998176527
+    },
+    {
+      "table": "manpower_product_categories",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/manpower_product_categories?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc",
+      "rows": 1,
+      "bytes": 178,
+      "started": 1791998176508,
+      "done": 1791998176528
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998176542,
+      "done": 1791998176563
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.asc%2Ccreated_at.asc%2Cid.asc&limit=1",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998176543,
+      "done": 1791998176567
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.desc&limit=1",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998176544,
+      "done": 1791998176568
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900002",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998176574,
+      "done": 1791998176576
+    },
+    {
+      "table": "get_my_app_access",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998186722
+    },
+    {
+      "table": "get_my_account_preferences",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998186746
+    },
+    {
+      "table": "list_my_account_notification_history",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998186748
+    },
+    {
+      "table": "my_work_messages",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/my_work_messages?select=id&recipient_user_id=eq.00000000-0000-4000-8000-000000900001&delivery_status=eq.ready&read_at=is.null",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998186748,
+      "done": 1791998186767
+    },
+    {
+      "table": "jobs",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/jobs?select=id%2Cname%2Ccustomer%2Cjob_number%2Cestimate_number%2Cwork_order_number%2Ccontract_value%2Cdeposit_date%2Ccolor_plate_number%2Csample_submitted_date%2Capproval_date%2Cresin_po%2Cchip_po%2Cestimated_man_hours%2Cestimated_calendar_days%2Crequested_delivery_date%2Cplanned_start%2Cplanned_end%2Cproduction_status%2Cmaterial_status%2Cpriority%2Cprogress_percent%2Cowner_name%2Cremarks%2Carchived_at%2Ccreated_at%2Cupdated_at&order=planned_start.asc.nullslast%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500&archived_at=is.null",
+      "rows": 20,
+      "bytes": 10011,
+      "started": 1791998186748,
+      "done": 1791998186768
+    },
+    {
+      "table": "production_rework_cycles",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/production_rework_cycles?select=id%2Cjob_id%2Csequence_number%2Creason_category%2Cscope_details%2Cintake_date%2Cproduction_status%2Cplanned_start%2Cplanned_end%2Ccreated_by%2Ccompleted_at%2Ccompleted_by%2Ccreated_at%2Cupdated_at&production_status=not.in.%28complete%2Ccancelled%29&order=sequence_number.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998186748,
+      "done": 1791998186768
+    },
+    {
+      "table": "job_attachments",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/job_attachments?select=id%2Cjob_id&order=id.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998186787,
+      "done": 1791998186808
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cjob_id%2Cam_hours%2Cpm_hours&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=0&limit=500",
+      "rows": 500,
+      "bytes": 62501,
+      "started": 1791998186799,
+      "done": 1791998186819
+    },
+    {
+      "table": "job_updates",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/job_updates?select=job_id%2Ccreated_at%2Crequires_follow_up%2Cresolved_at%2Cfollow_up_assignee_name",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998186800,
+      "done": 1791998186821
+    },
+    {
+      "table": "list_my_unseen_job_update_jobs",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998186831
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cjob_id%2Cam_hours%2Cpm_hours&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=500&limit=500",
+      "rows": 500,
+      "bytes": 62501,
+      "started": 1791998186831,
+      "done": 1791998186852
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cjob_id%2Cam_hours%2Cpm_hours&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=1000&limit=500",
+      "rows": 201,
+      "bytes": 25126,
+      "started": 1791998186863,
+      "done": 1791998186885
+    },
+    {
+      "table": "get_my_app_access",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998210216
+    },
+    {
+      "table": "get_my_account_preferences",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998210241
+    },
+    {
+      "table": "list_my_account_notification_history",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998210243
+    },
+    {
+      "table": "my_work_messages",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/my_work_messages?select=id&recipient_user_id=eq.00000000-0000-4000-8000-000000900001&delivery_status=eq.ready&read_at=is.null",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998210242,
+      "done": 1791998210262
+    },
+    {
+      "table": "jobs",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/jobs?select=id%2Cname%2Ccustomer%2Cjob_number%2Cestimate_number%2Cwork_order_number%2Ccontract_value%2Cdeposit_date%2Ccolor_plate_number%2Csample_submitted_date%2Capproval_date%2Cresin_po%2Cchip_po%2Cestimated_man_hours%2Cestimated_calendar_days%2Crequested_delivery_date%2Cplanned_start%2Cplanned_end%2Cproduction_status%2Cmaterial_status%2Cpriority%2Cprogress_percent%2Cowner_name%2Cremarks%2Carchived_at%2Ccreated_at%2Cupdated_at&order=planned_start.asc.nullslast%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500&archived_at=is.null",
+      "rows": 20,
+      "bytes": 10011,
+      "started": 1791998210242,
+      "done": 1791998210263
+    },
+    {
+      "table": "production_rework_cycles",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/production_rework_cycles?select=id%2Cjob_id%2Csequence_number%2Creason_category%2Cscope_details%2Cintake_date%2Cproduction_status%2Cplanned_start%2Cplanned_end%2Ccreated_by%2Ccompleted_at%2Ccompleted_by%2Ccreated_at%2Cupdated_at&production_status=not.in.%28complete%2Ccancelled%29&order=sequence_number.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998210242,
+      "done": 1791998210263
+    },
+    {
+      "table": "job_attachments",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/job_attachments?select=id%2Cjob_id&order=id.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998210292,
+      "done": 1791998210312
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cjob_id%2Cam_hours%2Cpm_hours&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=0&limit=500",
+      "rows": 500,
+      "bytes": 62501,
+      "started": 1791998210302,
+      "done": 1791998210324
+    },
+    {
+      "table": "material_usage_reports",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/material_usage_reports?select=id%2Cjob_id%2Creport_date&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=0&limit=500",
+      "rows": 500,
+      "bytes": 60501,
+      "started": 1791998210303,
+      "done": 1791998210324
+    },
+    {
+      "table": "job_updates",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/job_updates?select=job_id%2Ccreated_at%2Crequires_follow_up%2Cresolved_at%2Cfollow_up_assignee_name",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998210303,
+      "done": 1791998210325
+    },
+    {
+      "table": "list_my_unseen_job_update_jobs",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998210337
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cjob_id%2Cam_hours%2Cpm_hours&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=500&limit=500",
+      "rows": 500,
+      "bytes": 62501,
+      "started": 1791998210335,
+      "done": 1791998210356
+    },
+    {
+      "table": "material_usage_reports",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/material_usage_reports?select=id%2Cjob_id%2Creport_date&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=500&limit=500",
+      "rows": 500,
+      "bytes": 60501,
+      "started": 1791998210337,
+      "done": 1791998210357
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cjob_id%2Cam_hours%2Cpm_hours&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=1000&limit=500",
+      "rows": 201,
+      "bytes": 25126,
+      "started": 1791998210367,
+      "done": 1791998210388
+    },
+    {
+      "table": "material_usage_reports",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/material_usage_reports?select=id%2Cjob_id%2Creport_date&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=1000&limit=500",
+      "rows": 201,
+      "bytes": 24322,
+      "started": 1791998210368,
+      "done": 1791998210389
+    },
+    {
+      "table": "list_my_work_conversations_v11",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998240487
+    },
+    {
+      "table": "list_my_work_inbox_recipients",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998240489
+    },
+    {
+      "table": "list_my_work_inbox_recipients",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998240509
+    },
+    {
+      "table": "list_my_work_conversations_v11",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998240820
+    },
+    {
+      "table": "my_work_messages",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/my_work_messages?select=id&recipient_user_id=eq.00000000-0000-4000-8000-000000900001&delivery_status=eq.ready&read_at=is.null",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998240821,
+      "done": 1791998240842
+    },
+    {
+      "table": "get_my_app_access",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998329544
+    },
+    {
+      "table": "get_my_account_preferences",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998329573
+    },
+    {
+      "table": "list_my_account_notification_history",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "method": "POST",
+      "time": 1791998329575
+    },
+    {
+      "table": "my_work_messages",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/my_work_messages?select=id&recipient_user_id=eq.00000000-0000-4000-8000-000000900001&delivery_status=eq.ready&read_at=is.null",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998329574,
+      "done": 1791998329595
+    },
+    {
+      "table": "jobs",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/jobs?select=id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at&archived_at=is.null&order=name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 20,
+      "bytes": 2991,
+      "started": 1791998329576,
+      "done": 1791998329596
+    },
+    {
+      "table": "production_rework_cycles",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/production_rework_cycles?select=id%2Cjob_id%2Csequence_number%2Cproduction_status&order=sequence_number.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 0,
+      "bytes": 2,
+      "started": 1791998329576,
+      "done": 1791998329596
+    },
+    {
+      "table": "manpower_reporting_groups",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_reporting_groups?select=id%2Cdisplay_name%2Ccreated_at%2Cupdated_at&order=created_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 42,
+      "bytes": 6417,
+      "started": 1791998329576,
+      "done": 1791998329596
+    },
+    {
+      "table": "manpower_workers",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_workers?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 1,
+      "bytes": 187,
+      "started": 1791998329576,
+      "done": 1791998329597
+    },
+    {
+      "table": "manpower_tasks",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_tasks?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc&offset=0&limit=500",
+      "rows": 1,
+      "bytes": 181,
+      "started": 1791998329576,
+      "done": 1791998329597
+    },
+    {
+      "table": "manpower_product_categories",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_product_categories?select=id%2Cdisplay_name%2Csort_order%2Cis_active%2Ccreated_at%2Cupdated_at&order=sort_order.asc%2Cdisplay_name.asc%2Cid.asc",
+      "rows": 1,
+      "bytes": 178,
+      "started": 1791998329596,
+      "done": 1791998329616
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998329637,
+      "done": 1791998329657
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.asc%2Ccreated_at.asc%2Cid.asc&limit=1",
+      "rows": 1,
+      "bytes": 705,
+      "started": 1791998329643,
+      "done": 1791998329665
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.desc&limit=1",
+      "rows": 1,
+      "bytes": 720,
+      "started": 1791998329649,
+      "done": 1791998329670
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=500&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998329665,
+      "done": 1791998329687
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1000&limit=500",
+      "rows": 201,
+      "bytes": 141220,
+      "started": 1791998329691,
+      "done": 1791998329712
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998329729,
+      "done": 1791998344731
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=500&limit=500",
+      "rows": 500,
+      "bytes": 351251,
+      "started": 1791998344755,
+      "done": 1791998344777
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1000&limit=500",
+      "rows": 500,
+      "bytes": 356782,
+      "started": 1791998344792,
+      "done": 1791998344813
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998344828,
+      "done": 1791998344848
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=2000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998344862,
+      "done": 1791998344884
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=2500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998344897,
+      "done": 1791998344919
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=3000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998344935,
+      "done": 1791998344956
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=3500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998344968,
+      "done": 1791998344990
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=4000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345002,
+      "done": 1791998345022
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=4500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345034,
+      "done": 1791998345055
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=5000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345067,
+      "done": 1791998345088
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=5500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345101,
+      "done": 1791998345123
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=6000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345137,
+      "done": 1791998345159
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=6500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345171,
+      "done": 1791998345193
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=7000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345205,
+      "done": 1791998345227
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=7500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345241,
+      "done": 1791998345263
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=8000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345274,
+      "done": 1791998345295
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=8500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345307,
+      "done": 1791998345328
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=9000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345340,
+      "done": 1791998345362
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=9500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345375,
+      "done": 1791998345397
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=10000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345409,
+      "done": 1791998345430
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=10500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345443,
+      "done": 1791998345465
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=11000&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345477,
+      "done": 1791998345498
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=11500&limit=500",
+      "rows": 500,
+      "bytes": 360501,
+      "started": 1791998345510,
+      "done": 1791998345532
+    },
+    {
+      "table": "manpower_entries",
+      "account": "00000000-0000-4000-8000-000000900001",
+      "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=12000&limit=500",
+      "rows": 1,
+      "bytes": 739,
+      "started": 1791998345542,
+      "done": 1791998345563
+    }
+  ],
+  "observations": [
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 67.70000000018626,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": false
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 222.59999999962747,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 284.5,
+      "analytics": null,
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 377.59999999962747,
+      "analytics": "4,503.75 h",
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 15988.200000000186,
+      "analytics": null,
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 16120.400000000373,
+      "analytics": "6,753.75 h",
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 16250,
+      "analytics": "6,753.75 h",
+      "jobs": true,
+      "historyLoading": false
+    },
+    {
+      "path": "/manpower-reporting?job=00000000-0000-4000-8000-000000001000",
+      "ms": 41.700000000186265,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": false
+    },
+    {
+      "path": "/manpower-reporting?job=00000000-0000-4000-8000-000000001000",
+      "ms": 73,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?job=00000000-0000-4000-8000-000000001000",
+      "ms": 131.29999999981374,
+      "analytics": null,
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?job=00000000-0000-4000-8000-000000001000",
+      "ms": 163.79999999981374,
+      "analytics": "228.75 h",
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?job=00000000-0000-4000-8000-000000001000",
+      "ms": 992.0999999996275,
+      "analytics": "228.75 h",
+      "jobs": true,
+      "historyLoading": false
+    },
+    {
+      "path": "/manpower-reporting?reviewAccount=B",
+      "ms": 38.09999999962747,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": false
+    },
+    {
+      "path": "/manpower-reporting?reviewAccount=B",
+      "ms": 71.3999999994412,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewAccount=B",
+      "ms": 145.70000000018626,
+      "analytics": null,
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewAccount=B",
+      "ms": 182.59999999962747,
+      "analytics": "0 h",
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewAccount=B",
+      "ms": 195.29999999981374,
+      "analytics": "0 h",
+      "jobs": true,
+      "historyLoading": false
+    },
+    {
+      "path": "/?reviewFailMaterial=1",
+      "ms": 38.799999999813735,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": false
+    },
+    {
+      "path": "/?reviewFailMaterial=1",
+      "ms": 129.20000000018626,
+      "analytics": null,
+      "jobs": true,
+      "historyLoading": false
+    },
+    {
+      "path": "/",
+      "ms": 48.30000000074506,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": false
+    },
+    {
+      "path": "/",
+      "ms": 137.5,
+      "analytics": null,
+      "jobs": true,
+      "historyLoading": false
+    },
+    {
+      "path": "/",
+      "ms": 18456.300000000745,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": false
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 70,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": false
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 133.59999999962747,
+      "analytics": null,
+      "jobs": false,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 200.69999999925494,
+      "analytics": null,
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 300,
+      "analytics": "4,503.75 h",
+      "jobs": true,
+      "historyLoading": true
+    },
+    {
+      "path": "/manpower-reporting?reviewHistoryDelay=15000",
+      "ms": 16175.299999999814,
+      "analytics": "4,503.75 h",
+      "jobs": true,
+      "historyLoading": false
+    }
+  ],
+  "representativeChecks": {
+    "selectedPeriodBeforeHistory": "4503.75 h visible at 377.6ms while history loading; second navigation 300ms",
+    "ninetyDays": "6753.75 h",
+    "year": "6753.75 h",
+    "selectedJob": "228.75 h for Job 0",
+    "secondAccount": "Review B shows 0 h, no A labor rows",
+    "production": "20 Jobs; Job 0 228.8h reported and material link in Overview; Table renders",
+    "enrichmentFailure": "Visible alert and Labor unavailable; no No Labor Reports labels",
+    "messaging": "Inbox opens and closes; empty fixture; no selected-thread or Realtime delivery validation"
+  }
+}

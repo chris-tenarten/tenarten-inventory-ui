@@ -582,6 +582,12 @@ function BulkActionBar({
 }
 
 export default function ManpowerWorkspace() {
+  const auth = useAuth();
+  // Remount account-owned operational state rather than sharing it across sessions.
+  return <AccountManpowerWorkspace key={`${auth.user?.id ?? 'anonymous'}:${auth.profile?.userId ?? 'unresolved'}`} />;
+}
+
+function AccountManpowerWorkspace() {
   const { tr } = useLanguage();
   const auth = useAuth();
   const canManageCategories = auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.can('manageManpowerProductCategories');
@@ -601,6 +607,11 @@ export default function ManpowerWorkspace() {
   const [linkedJobId, setLinkedJobId] = useState<string | null>(() => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('job'));
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const [loading, setLoading] = useState(true);
+  const [referencesReady, setReferencesReady] = useState(false);
+  const [historyReady, setHistoryReady] = useState(false);
+  const [referenceRevision, setReferenceRevision] = useState(0);
+  const loadGeneration = useRef(0);
+  const historyStarted = useRef(-1);
   const [loadError, setLoadError] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -650,26 +661,46 @@ export default function ManpowerWorkspace() {
   }, [refreshCategories]);
 
   const load = useCallback(async () => {
-    setLoading(true); setError(''); setLoadError('');
+    const generation = ++loadGeneration.current;
+    setLoading(true); setError(''); setLoadError(''); setReferencesReady(false); setHistoryReady(false);
     try {
-      const [entryFacts, loadedJobs, loadedGroups, loadedWorkers, loadedTasks, loadedCategories] = await Promise.all([
-        loadManpowerEntryFacts(), loadManpowerJobs(), loadManpowerReportingGroups(), loadManpowerReferences('manpower_workers'), loadManpowerReferences('manpower_tasks'), loadProductCategories(),
+      const [loadedJobs, loadedGroups, loadedWorkers, loadedTasks, loadedCategories] = await Promise.all([
+        loadManpowerJobs(), loadManpowerReportingGroups(), loadManpowerReferences('manpower_workers'), loadManpowerReferences('manpower_tasks'), loadProductCategories(),
       ]);
-      const loadedEntries = hydrateManpowerEntries(entryFacts, loadedWorkers, loadedTasks, loadedGroups);
-      setEntries(loadedEntries); setJobs(loadedJobs); setReportingGroups(loadedGroups); setWorkers(loadedWorkers); setTasks(loadedTasks); setCategories(loadedCategories);
+      if (generation !== loadGeneration.current) return;
+      setJobs(loadedJobs); setReportingGroups(loadedGroups); setWorkers(loadedWorkers); setTasks(loadedTasks); setCategories(loadedCategories);
+      setReferenceRevision(generation); setReferencesReady(true);
+    } catch (caught) {
+      if (generation !== loadGeneration.current) return;
+      setLoadError(caughtMessage(caught, 'Unable to load manpower reporting.')); setLoading(false);
+    }
+  }, []);
+
+  // The selected report finishes first. Editable groups still receive complete
+  // history; neither historical search nor bulk operations use a period subset.
+  const loadHistory = useCallback(() => {
+    if (!referencesReady || historyStarted.current === referenceRevision) return;
+    const generation = referenceRevision;
+    historyStarted.current = generation;
+    void loadManpowerEntryFacts().then((facts) => {
+      if (generation !== loadGeneration.current) return;
+      const loadedEntries = hydrateManpowerEntries(facts, workers, tasks, reportingGroups);
+      setEntries(loadedEntries); setHistoryReady(true);
       if (!collapseInitialized.current) {
         setCollapsed(new Set([
-          ...loadedGroups.map((group) => group.id),
+          ...reportingGroups.map((group) => group.id),
           ...(loadedEntries.some((entry) => !entry.reporting_group_id) ? ['__ungrouped__'] : []),
         ]));
         collapseInitialized.current = true;
       }
       const loadedIds = new Set(loadedEntries.map((entry) => entry.id));
       setSelectedIds((current) => new Set([...current].filter((id) => loadedIds.has(id))));
-    } catch (caught) {
-      setLoadError(caughtMessage(caught, 'Unable to load manpower reporting.'));
-    } finally { setLoading(false); }
-  }, []);
+    }).catch((caught) => {
+      if (generation === loadGeneration.current) setLoadError(caughtMessage(caught, 'Unable to load manpower reporting.'));
+    }).finally(() => { if (generation === loadGeneration.current) setLoading(false); });
+  }, [referencesReady, referenceRevision, workers, tasks, reportingGroups]);
+
+  useEffect(() => () => { loadGeneration.current += 1; }, []);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -1049,7 +1080,7 @@ export default function ManpowerWorkspace() {
           {!showNewGroup ? <BusinessButton type="button" onClick={() => setShowNewGroup(true)} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || loading || Boolean(loadError)} title="Clear filters before creating an empty group" className="inline-flex h-9 w-max shrink-0 items-center gap-1.5 whitespace-nowrap border border-blue-400 bg-blue-50 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 enabled:hover:bg-blue-100 enabled:active:bg-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:saturate-0"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</BusinessButton> : <div className="flex min-w-0 flex-wrap items-center gap-1 border border-slate-400 bg-white p-1 lg:col-span-3"><BusinessInput ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 min-w-0 max-w-full px-2 text-sm outline-none" /><BusinessButton type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</BusinessButton><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
           {linkedJobId && <button type="button" onClick={() => selectJob('')} className="justify-self-start py-2 text-xs font-semibold text-slate-500 underline">Clear job filter</button>}
         </div>
-        <ManpowerAnalytics entries={entries} categories={categories} tasks={tasks} jobId={linkedJobId} productFocus={productFilter} loading={loading} error={loadError} />
+        <ManpowerAnalytics entries={entries} categories={categories} tasks={tasks} jobId={linkedJobId} productFocus={productFilter} loading={loading} error={loadError} workers={workers} groups={reportingGroups} referencesReady={referencesReady} historyReady={historyReady} revision={referenceRevision} onReportSettled={loadHistory} />
         {linkedJobId && !loading && !loadError && <ProductLaborSummary key={linkedJobId} entries={groups.flatMap((group) => group.entries)} totalEntries={entries.filter((entry) => entry.job_id === linkedJobId)} categories={categories} tasks={tasks}>
           <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">Product Category filter<select aria-label="Product Category filter" className={`${inputClass} max-w-xs`} value={productFilter} onFocus={() => void refreshCategories().catch(() => {})} onChange={(event) => setProductFilter(event.target.value)}><option value="">All Products</option>{categories.filter((category) => category.is_active || entries.some((entry) => entry.product_category_id === category.id)).map((category) => <option key={category.id} value={category.id}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}<option value={UNCATEGORIZED}>Uncategorized</option></select></label>
         </ProductLaborSummary>}

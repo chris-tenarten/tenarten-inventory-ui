@@ -1,0 +1,102 @@
+{
+  "mode": "candidate",
+  "note": "Actual loaders; synthetic 20ms fetch delay, exact selected-column projection. Not database/browser latency. Baseline material rows intentionally reflect provider truncation.",
+  "measurements": [
+    {
+      "name": "after-manpower-critical",
+      "elapsedMs": 100.301625,
+      "requests": 5,
+      "rows": 1203,
+      "bytes": 845147,
+      "calls": [
+        {
+          "table": "manpower_entries",
+          "rows": 1,
+          "bytes": 705,
+          "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.asc%2Ccreated_at.asc%2Cid.asc&limit=1",
+          "ms": 32.517583
+        },
+        {
+          "table": "manpower_entries",
+          "rows": 1,
+          "bytes": 720,
+          "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.desc&limit=1",
+          "ms": 27.621875000000017
+        },
+        {
+          "table": "manpower_entries",
+          "rows": 500,
+          "bytes": 351251,
+          "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=0&limit=500",
+          "ms": 26.955708000000016
+        },
+        {
+          "table": "manpower_entries",
+          "rows": 500,
+          "bytes": 351251,
+          "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=500&limit=500",
+          "ms": 26.000875000000008
+        },
+        {
+          "table": "manpower_entries",
+          "rows": 201,
+          "bytes": 141220,
+          "url": "/rest/v1/manpower_entries?select=id%2Cwork_date%2Cworker_id%2Ctask_id%2Cproduct_category_id%2Cjob_id%2Crework_cycle_id%2Creporting_group_id%2Cunlisted_work_label%2Cam_hours%2Cpm_hours%2Cnotes%2Centered_by%2Ccreated_at%2Cupdated_at%2Cjob%3Ajobs%28id%2Cname%2Cjob_number%2Cproduction_status%2Carchived_at%29%2Crework_cycle%3Aproduction_rework_cycles%21manpower_entries_rework_matches_job_fkey%28id%2Cjob_id%2Csequence_number%2Cproduction_status%29&work_date=gte.2026-09-15&work_date=lte.2026-10-14&order=work_date.desc%2Ccreated_at.desc%2Cid.asc&offset=1000&limit=500",
+          "ms": 24.43879099999998
+        }
+      ]
+    },
+    {
+      "name": "after-production-enrichment",
+      "elapsedMs": 97.37687499999998,
+      "requests": 6,
+      "rows": 2402,
+      "bytes": 295452,
+      "calls": [
+        {
+          "table": "material_usage_reports",
+          "rows": 500,
+          "bytes": 60501,
+          "url": "/rest/v1/material_usage_reports?select=id%2Cjob_id%2Creport_date&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=0&limit=500",
+          "ms": 23.664459000000022
+        },
+        {
+          "table": "manpower_entries",
+          "rows": 500,
+          "bytes": 62501,
+          "url": "/rest/v1/manpower_entries?select=id%2Cjob_id%2Cam_hours%2Cpm_hours&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=0&limit=500",
+          "ms": 31.528250000000014
+        },
+        {
+          "table": "material_usage_reports",
+          "rows": 500,
+          "bytes": 60501,
+          "url": "/rest/v1/material_usage_reports?select=id%2Cjob_id%2Creport_date&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=500&limit=500",
+          "ms": 21.432792000000006
+        },
+        {
+          "table": "manpower_entries",
+          "rows": 500,
+          "bytes": 62501,
+          "url": "/rest/v1/manpower_entries?select=id%2Cjob_id%2Cam_hours%2Cpm_hours&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=500&limit=500",
+          "ms": 31.609834000000035
+        },
+        {
+          "table": "material_usage_reports",
+          "rows": 201,
+          "bytes": 24322,
+          "url": "/rest/v1/material_usage_reports?select=id%2Cjob_id%2Creport_date&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=1000&limit=500",
+          "ms": 29.145166000000017
+        },
+        {
+          "table": "manpower_entries",
+          "rows": 201,
+          "bytes": 25126,
+          "url": "/rest/v1/manpower_entries?select=id%2Cjob_id%2Cam_hours%2Cpm_hours&job_id=in.%2800000000-0000-4000-8000-000000001000%2C00000000-0000-4000-8000-000000001001%2C00000000-0000-4000-8000-000000001002%2C00000000-0000-4000-8000-000000001003%2C00000000-0000-4000-8000-000000001004%2C00000000-0000-4000-8000-000000001005%2C00000000-0000-4000-8000-000000001006%2C00000000-0000-4000-8000-000000001007%2C00000000-0000-4000-8000-000000001008%2C00000000-0000-4000-8000-000000001009%2C00000000-0000-4000-8000-000000001010%2C00000000-0000-4000-8000-000000001011%2C00000000-0000-4000-8000-000000001012%2C00000000-0000-4000-8000-000000001013%2C00000000-0000-4000-8000-000000001014%2C00000000-0000-4000-8000-000000001015%2C00000000-0000-4000-8000-000000001016%2C00000000-0000-4000-8000-000000001017%2C00000000-0000-4000-8000-000000001018%2C00000000-0000-4000-8000-000000001019%29&order=id.asc&offset=1000&limit=500",
+          "ms": 31.20700000000005
+        }
+      ]
+    }
+  ],
+  "fixturesPassed": true
+}

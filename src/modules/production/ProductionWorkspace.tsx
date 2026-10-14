@@ -110,6 +110,7 @@ export default function ProductionWorkspace() {
   const [reworkTargetJob, setReworkTargetJob] = useState<ProductionJob | null>(null);
   const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
   const [jobUpdateSummaries, setJobUpdateSummaries] = useState<Record<string, JobUpdateSummary>>({});
+  const [integrationStatus, setIntegrationStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [integrationSummaries, setIntegrationSummaries] = useState<Record<string, ProductionIntegrationSummary>>({});
   const [planningPhases, setPlanningPhases] = useState<PlanningPhase[]>([]);
   const [progressError, setProgressError] = useState('');
@@ -231,19 +232,9 @@ export default function ProductionWorkspace() {
       setIsLoading(true);
       setIsPlanningLoading(planningEnabled);
       setLoadError('');
+      setIntegrationStatus('loading');
 
       try {
-        const supportingDataPromise = Promise.all([
-          loadJobAttachmentCounts().catch((error) => {
-            console.error('Unable to load Production attachment counts', error);
-            return {};
-          }),
-          loadProductionIntegrationSummaries().catch((error) => { console.error('Unable to load Production integration summaries', error); return {}; }),
-          loadJobUpdateSummaries().catch((error) => {
-            console.error('Unable to load Production Job Update summaries', error);
-            return {};
-          }),
-        ]);
         const [loadedJobs, focusedJob] = await Promise.all([
           loadProductionJobs(includeArchived),
           focusedJobId ? loadProductionJob(focusedJobId) : Promise.resolve(null),
@@ -275,16 +266,31 @@ export default function ProductionWorkspace() {
           setLoadError('The requested Production Job is no longer available.');
         }
 
+        const supportingDataPromise = Promise.all([
+          loadJobAttachmentCounts().catch((error) => {
+            console.error('Unable to load Production attachment counts', error);
+            return {};
+          }),
+          loadProductionIntegrationSummaries(visibleJobs.map((job) => job.id)).then((summaries) => {
+            if (requestId === jobLoadRequestRef.current) { setIntegrationSummaries(summaries); setIntegrationStatus('ready'); }
+          }).catch((error) => {
+            console.error('Unable to load Production integration summaries', error);
+            if (requestId === jobLoadRequestRef.current) setIntegrationStatus('error');
+          }),
+          loadJobUpdateSummaries().catch((error) => {
+            console.error('Unable to load Production Job Update summaries', error);
+            return {};
+          }),
+        ]);
         const planningDataPromise = planningEnabled
           ? loadPlanningPhases(visibleJobs.map((job) => job.id)).then((phases) => ({ phases }))
           : Promise.resolve({ phases: [] as PlanningPhase[] });
-        const [[loadedCounts, summaries, updateSummaries], planningData] = await Promise.all([
+        const [[loadedCounts, , updateSummaries], planningData] = await Promise.all([
           supportingDataPromise,
           planningDataPromise,
         ]);
         if (requestId !== jobLoadRequestRef.current) return;
         setAttachmentCounts(loadedCounts);
-        setIntegrationSummaries(summaries);
         setJobUpdateSummaries(updateSummaries);
         setPlanningPhases(planningData.phases);
       } catch (error) {
@@ -928,6 +934,7 @@ export default function ProductionWorkspace() {
             {loadError}
           </div>
         )}
+        {integrationStatus === 'error' && <p role="alert" className="mt-3 text-sm text-red-800">Labor and material summaries could not be loaded completely. Refresh to retry; Job details remain available.</p>}
         <div className="relative mt-3">
         <div data-production-attention-strip data-operational-tone={schedulingAttentionJobs.length > 0 ? 'attention' : undefined} className={`flex min-h-10 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-3 py-2 text-xs ${schedulingAttentionJobs.length > 0 ? 'border-l-2 border-amber-500 bg-amber-50/70 text-slate-600' : 'border border-slate-200 bg-white text-slate-600'}`}>
           <button type="button" onClick={() => setAttentionCenterOpen((value) => !value)} aria-expanded={attentionCenterOpen} className="inline-flex min-h-7 items-center gap-2 text-left focus-visible:ring-2 focus-visible:ring-blue-700">
@@ -990,11 +997,11 @@ export default function ProductionWorkspace() {
         <div className="mt-4">
           {isLoading || (activeView === 'timeline' && isPlanningLoading) ? (
             <div className="flex min-h-72 items-center justify-center border border-slate-400 bg-white text-sm font-semibold text-slate-600">Loading active jobs…</div>
-          ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} integrationSummaries={integrationSummaries} jobUpdateSummaries={jobUpdateSummaries} onSelectJob={selectJob} onScheduleJob={openJobScheduling} onCreateRework={setReworkTargetJob}/> : activeView === 'spreadsheet' ? (
+          ) : activeView === 'queue' ? <ProductionQueue jobs={displayedJobs} selectedJobId={selectedJobId} attachmentCounts={attachmentCounts} integrationSummaries={integrationSummaries} integrationStatus={integrationStatus} jobUpdateSummaries={jobUpdateSummaries} onSelectJob={selectJob} onScheduleJob={openJobScheduling} onCreateRework={setReworkTargetJob}/> : activeView === 'spreadsheet' ? (
             <ProductionTable
               jobs={displayedJobs}
               attachmentCounts={attachmentCounts}
-              integrationSummaries={integrationSummaries}
+              integrationSummaries={integrationSummaries} integrationStatus={integrationStatus}
               jobUpdateSummaries={jobUpdateSummaries}
               onUpdateJob={handleUpdateJob}
               onOpenAttachments={(job) => selectJob(job, 'attachments')}

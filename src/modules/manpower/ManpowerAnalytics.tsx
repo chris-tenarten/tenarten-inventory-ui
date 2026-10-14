@@ -3,7 +3,8 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useAccountPreferences } from '@/lib/account-preferences';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import type { ManpowerEntry, ManpowerReference } from './types';
+import type { ManpowerEntry, ManpowerReference, ManpowerReportingGroup } from './types';
+import { hydrateManpowerEntries, loadManpowerReportFacts } from './manpower';
 import { aggregateLabor, LABOR_PERIODS, laborColorSlot, laborDateLabel, laborPeriod, localLaborToday, type LaborPeriodDays, type LaborSlice, type LaborJob, laborColorSlots, laborColorValue } from './analytics';
 import { entryHundredths, productKey, productLabel } from './product-reporting';
 import styles from './ManpowerAnalytics.module.css';
@@ -56,9 +57,10 @@ function JobAnalyticsPanel({ jobs, focus, period, onReview }: { jobs: LaborJob[]
     </div>;
   })}</>;
 }
-export default function ManpowerAnalytics({ entries, categories, tasks, jobId, productFocus, loading, error }: {
+export default function ManpowerAnalytics({ entries, categories, tasks, jobId, productFocus, loading, error, workers, groups, referencesReady, historyReady, revision, onReportSettled }: {
   entries: ManpowerEntry[]; categories: ManpowerReference[]; tasks: ManpowerReference[]; jobId: string | null;
   productFocus: string; loading: boolean; error: string;
+  workers: ManpowerReference[]; groups: ManpowerReportingGroup[]; referencesReady: boolean; historyReady: boolean; revision: number; onReportSettled(): void;
 }) {
   const [days, setDays] = useState<LaborPeriodDays>(30);
   const accountPreferences = useAccountPreferences();
@@ -83,9 +85,24 @@ export default function ManpowerAnalytics({ entries, categories, tasks, jobId, p
     const timer = window.setInterval(tick, 60000); window.addEventListener('focus', tick);
     return () => { window.clearInterval(timer); window.removeEventListener('focus', tick); };
   }, []);
-  const data = useMemo(() => aggregateLabor(entries, categories, tasks, laborPeriod(days, today), jobId), [entries, categories, tasks, days, today, jobId]);
+  const scope = `${revision}:${days}:${jobId ?? ''}:${today}`;
+  const [report, setReport] = useState<{ scope: string; entries: ManpowerEntry[]; error: string } | null>(null);
+  useEffect(() => {
+    if (!referencesReady || historyReady) return;
+    let active = true;
+    void loadManpowerReportFacts(laborPeriod(days, today), jobId).then((facts) => {
+      if (active) setReport({ scope, entries: hydrateManpowerEntries(facts, workers, tasks, groups), error: '' });
+    }).catch((caught) => {
+      if (active) setReport({ scope, entries: [], error: caught instanceof Error ? caught.message : 'Unable to load complete period labor.' });
+    }).finally(() => { if (active) onReportSettled(); });
+    return () => { active = false; };
+  }, [referencesReady, historyReady, scope, days, today, jobId, workers, tasks, groups, onReportSettled]);
+  const reportEntries = useMemo(() => historyReady ? entries : report?.scope === scope ? report.entries : [], [historyReady, entries, report, scope]);
+  const reportLoading = historyReady ? loading : !referencesReady ? loading : report?.scope !== scope;
+  const reportError = historyReady || !referencesReady ? error : report?.scope === scope ? report.error : '';
+  const data = useMemo(() => aggregateLabor(reportEntries, categories, tasks, laborPeriod(days, today), jobId), [reportEntries, categories, tasks, days, today, jobId]);
   const colors = useMemo(() => ({ slots: laborColorSlots(categories), inactive: new Set(categories.filter(c => !c.is_active).map(c => c.id)) }), [categories]);
-  const available = !loading && !error;
+  const available = !reportLoading && !reportError;
   const openDetail = (next: Detail) => { setDetail(next); setShowEntries(false); };
   const detailJob = detail?.kind === 'job' ? data.jobs.find(job => job.id === detail.id) : undefined;
   const detailCategory = detail?.kind === 'job' ? detailJob?.products.find(p => p.id === detail.categoryId) : undefined;
@@ -96,7 +113,7 @@ export default function ManpowerAnalytics({ entries, categories, tasks, jobId, p
   const selectedWeek = detail?.kind === 'week' ? data.weeks.find(w => w.id === detail.id) : undefined;
   const detailTitle = detailJob ? [detailJob.label, detailCategory?.label, detailTask?.label].filter(Boolean).join(' → ') : selectedWeek ? `${selectedWeek.partial ? `Partial ${data.trendUnit}` : data.trendUnit === 'month' ? 'Month' : 'Week'} · ${laborDateLabel(selectedWeek.start)}–${laborDateLabel(selectedWeek.end)}` : selected?.label;
   const maxWeek = Math.max(1, ...data.weeks.map(w => w.units));
-  const summary = available ? <><span className={styles.value} data-testid="analytics-total">{hours(data.total)}</span><span className={styles.muted}>{data.total ? `${(data.categorized / data.total * 100).toFixed(1)}% categorized` : 'No labor recorded in this period'}</span><span className={styles.muted}>Latest work {data.latest ? laborDateLabel(data.latest) : '—'}</span></> : <span role="status" className={styles.muted}>{loading ? 'Loading complete labor…' : 'Analytics unavailable — complete labor could not be loaded.'}</span>;
+  const summary = available ? <><span className={styles.value} data-testid="analytics-total">{hours(data.total)}</span><span className={styles.muted}>{data.total ? `${(data.categorized / data.total * 100).toFixed(1)}% categorized` : 'No labor recorded in this period'}</span><span className={styles.muted}>Latest work {data.latest ? laborDateLabel(data.latest) : '—'}</span></> : <span role="status" className={styles.muted}>{reportLoading ? 'Loading complete labor…' : 'Analytics unavailable — complete labor could not be loaded.'}</span>;
   return <ChartColors.Provider value={colors}><section className={styles.band} aria-label="Recent labor" data-testid="recent-labor">
     <div className={styles.header}>
       <button type="button" className={styles.disclosure} aria-label="Recent labor" aria-expanded={expanded} aria-controls="recent-labor-panels" disabled={!accountPreferences.ready || preferenceSaving} aria-busy={preferenceSaving} onClick={() => void toggleExpanded()}><span className={styles.chevron} aria-hidden="true">{expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</span><span className={styles.summary}><strong>Recent labor</strong><span>{periodName(days)}</span>{summary}</span></button>

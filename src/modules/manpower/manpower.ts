@@ -45,6 +45,32 @@ export async function loadManpowerEntryFacts(): Promise<ManpowerEntryFacts[]> {
     .range(from, to).returns<ManpowerEntryFacts[]>());
 }
 
+/** Complete selected-period facts plus at most two historical boundary rows.
+ * Boundaries preserve latest-work and available-year-history presentation without
+ * transferring every older entry. The existing aggregator excludes them from totals. */
+export async function loadManpowerReportFacts(period: { start: string; end: string }, jobId: string | null): Promise<ManpowerEntryFacts[]> {
+  const scoped = (from: number, to: number) => {
+    let query = supabase.from('manpower_entries').select(ENTRY_FACT_COLUMNS, { count: 'exact' })
+      .gte('work_date', period.start).lte('work_date', period.end)
+      .order('work_date', { ascending: false }).order('created_at', { ascending: false }).order('id').range(from, to);
+    if (jobId) query = query.eq('job_id', jobId);
+    return query.returns<ManpowerEntryFacts[]>();
+  };
+  const boundary = async (ascending: boolean) => {
+    let query = supabase.from('manpower_entries').select(ENTRY_FACT_COLUMNS)
+      .lte('work_date', period.end).order('work_date', { ascending })
+      .order('created_at', { ascending }).order('id', { ascending }).limit(1);
+    if (jobId) query = query.eq('job_id', jobId);
+    const { data, error } = await query.returns<ManpowerEntryFacts[]>();
+    if (error) throw error;
+    return data ?? [];
+  };
+  const [facts, first, last] = await Promise.all([loadCompleteRows(scoped), boundary(true), boundary(false)]);
+  // Prefer the complete period read if a boundary is also in that period.
+  return [...new Map([...first, ...last, ...facts].map(row => [row.id, row])).values()]
+    .sort((a, b) => b.work_date.localeCompare(a.work_date) || b.created_at.localeCompare(a.created_at) || a.id.localeCompare(b.id));
+}
+
 export function hydrateManpowerEntries(facts: ManpowerEntryFacts[], workers: ManpowerReference[], tasks: ManpowerReference[], groups: ManpowerReportingGroup[]): ManpowerEntry[] {
   const workerById = new Map(workers.map(row => [row.id, row]));
   const taskById = new Map(tasks.map(row => [row.id, row]));
@@ -59,16 +85,14 @@ export function hydrateManpowerEntries(facts: ManpowerEntryFacts[], workers: Man
 
 export async function loadManpowerJobs(): Promise<ManpowerJob[]> {
   const [jobs, reworks] = await Promise.all([
-    supabase.from('jobs').select('id,name,job_number,production_status,archived_at').is('archived_at', null).order('name'),
-    supabase.from('production_rework_cycles').select('id,job_id,sequence_number,production_status').order('sequence_number', { ascending: false }),
+    loadCompleteRows((from, to) => supabase.from('jobs').select('id,name,job_number,production_status,archived_at', { count: 'exact' }).is('archived_at', null).order('name').order('id').range(from, to)),
+    loadCompleteRows((from, to) => supabase.from('production_rework_cycles').select('id,job_id,sequence_number,production_status', { count: 'exact' }).order('sequence_number', { ascending: false }).order('id').range(from, to)),
   ]);
-  if (jobs.error) throw jobs.error;
-  if (reworks.error) throw reworks.error;
   const activeByJob = new Map<string, ManpowerReworkCycle>();
-  for (const cycle of (reworks.data ?? []) as ManpowerReworkCycle[]) {
+  for (const cycle of reworks as ManpowerReworkCycle[]) {
     if (isActiveProductionRework(cycle) && !activeByJob.has(cycle.job_id)) activeByJob.set(cycle.job_id, cycle);
   }
-  return ((jobs.data ?? []) as Omit<ManpowerJob, 'active_rework_cycle'>[]).map((job) => ({
+  return (jobs as Omit<ManpowerJob, 'active_rework_cycle'>[]).map((job) => ({
     ...job,
     active_rework_cycle: activeByJob.get(job.id) ?? null,
   }));

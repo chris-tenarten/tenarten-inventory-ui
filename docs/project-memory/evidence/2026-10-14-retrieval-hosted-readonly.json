@@ -1,0 +1,35 @@
+{
+  "time": "2026-10-14T17:11:06.640Z",
+  "note": "Four sequential privileged HEAD requests and non-ANALYZE plan probe. No rows retained or hosted writes. Service-role bypasses user RLS; timings are single samples, not authenticated API latency or SQL execution time.",
+  "probes": [
+    {
+      "name": "labor-all",
+      "status": 206,
+      "range": "0-999/2011",
+      "ms": 1044.548125
+    },
+    {
+      "name": "labor-30-days",
+      "status": 200,
+      "range": "0-199/200",
+      "ms": 279.95062499999995
+    },
+    {
+      "name": "labor-90-days",
+      "status": 200,
+      "range": "0-811/812",
+      "ms": 206.58799999999997
+    },
+    {
+      "name": "nonarchived-jobs",
+      "status": 200,
+      "range": "0-39/40",
+      "ms": 192.34845800000016
+    }
+  ],
+  "plan": {
+    "status": 406,
+    "ms": 179.11587499999996,
+    "code": "PGRST107"
+  }
+}

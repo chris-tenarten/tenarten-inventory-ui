@@ -1,0 +1,12 @@
+{
+  "tier": 3,
+  "checks": {
+    "typescript": "passed",
+    "targetedLint": "passed",
+    "focusedFixtures": "passed",
+    "productionBuild": "passed, webpack, local placeholder credentials",
+    "diffCheck": "passed",
+    "browser": "representative actual exported app with local read-only fixture"
+  },
+  "excluded": "No full unrelated suite, hosted auth/RLS proof, load tests, writes, schemas, RPC changes, migrations, push or deployment"
+}

@@ -29,6 +29,7 @@ type Props = {
   jobs: ProductionJob[];
   attachmentCounts: Record<string, number>;
   integrationSummaries: Record<string, ProductionIntegrationSummary>;
+  integrationStatus?: 'loading' | 'ready' | 'error';
   jobUpdateSummaries: Record<string, JobUpdateSummary>;
   onUpdateJob: (
     jobId: string,
@@ -335,6 +336,7 @@ export default function ProductionTable({
   jobs,
   attachmentCounts,
   integrationSummaries,
+  integrationStatus = 'ready',
   jobUpdateSummaries,
   onUpdateJob,
   onOpenAttachments,
@@ -1009,7 +1011,7 @@ export default function ProductionTable({
                       </button>}<JobUpdatesIndicator job={job} summary={updateSummary} onOpen={() => onSelectJob(job, 'job-updates')} /><ReworkQuickAction job={job} onCreate={onCreateRework} compact /></div>,
                     <div className="flex h-6 min-w-0 items-center gap-1 overflow-hidden whitespace-nowrap">
                       {job.estimated_man_hours !== null ? <span className="h-6 px-1 text-[9px] leading-6 text-slate-600"><strong className="text-slate-900">{formatHours(job.estimated_man_hours)}h</strong> Estimated</span> : <span className="h-6 px-1 text-[9px] font-semibold leading-6 text-slate-900">No Labor Estimate</span>}
-                      {integration.laborEntryCount > 0 ? <button
+                      {integrationStatus !== 'ready' ? <span>{integrationStatus === 'error' ? 'Labor unavailable' : 'Loading labor…'}</span> : integration.laborEntryCount > 0 ? <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -1021,7 +1023,7 @@ export default function ProductionTable({
                       >
                         {formatHours(integration.actualHours)}h Current
                       </button> : <span className="h-6 px-1 text-[9px] font-semibold leading-6 text-slate-900">No Labor Reports</span>}
-                      <button
+                      {integrationStatus !== 'ready' ? <span>{integrationStatus === 'error' ? 'Material reports unavailable' : 'Loading material reports…'}</span> : <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -1031,7 +1033,7 @@ export default function ProductionTable({
                         className={`${productionTagClassName} h-auto cursor-pointer whitespace-nowrap px-1 transition hover:-translate-y-px hover:shadow focus-visible:outline-none focus-visible:ring-2 ${hasMaterialUse ? 'border-emerald-200 bg-emerald-100 text-emerald-800 hover:border-emerald-300 hover:bg-emerald-200 focus-visible:ring-emerald-700' : 'border-amber-200 bg-amber-100 text-amber-900 hover:border-amber-300 hover:bg-amber-200 focus-visible:ring-amber-700'}`}
                       >
                         {hasMaterialUse ? 'Material Use' : 'No Material Use Linked'}
-                      </button>
+                      </button>}
                     </div>,
                     <div className="relative flex h-6 items-center justify-center">
                       <button type="button" onClick={(event) => { event.stopPropagation(); onSelectJob(job); }} aria-label="Inspect job" title={`Inspect ${job.job_number ? `${job.job_number} — ` : ''}${job.name}`} className={`inline-flex h-6 w-6 items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 group-hover:text-slate-700 ${selectedJobId === job.id ? 'text-blue-700' : ''}`}><Search className="h-3.5 w-3.5" aria-hidden="true" /></button>
