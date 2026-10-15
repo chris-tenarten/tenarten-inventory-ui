@@ -15,6 +15,7 @@ import { useAttachmentQueue } from "./messaging/useAttachmentQueue";
 import InlinePreview from "./messaging/InlinePreview";
 import { useConversation } from "./messaging/useConversation";
 import TransferPanel from "./messaging/TransferPanel";
+import { useTextDraft } from "@/lib/drafts/useTextDraft";
 
 const subscribeNoTransfer=()=>()=>{};
 const noTransferState=()=>null;
@@ -37,7 +38,9 @@ export default function InboxDialog({open,onClose,currentUserId,collaborators,in
   // A completed banner may survive rerenders, close/reopen, or a new composer mount.
   const handledTransfer=useRef(transfer&&!transferBlocked?transfer:null);
   const[summaries,setSummaries]=useState<ConversationSummary[]>([]);const[selectedUserId,setSelectedUserId]=useState("");const[newMessage,setNewMessage]=useState(false);const[recipientId,setRecipientId]=useState("");
-  const[body,setBody]=useState("");
+  const draftOwner=auth.user?.id===currentUserId?currentUserId:"";
+  const {text:body,setText:setBody,captureSend}=useTextDraft(draftOwner,"messaging",selectedUserId||recipientId||"new",open);
+  const sendLock=useRef(false);
   const[sending,setSending]=useState(false);const[sendStage,setSendStage]=useState("");const[error,setError]=useState("");const[preview,setPreview]=useState<InboxAttachment|null>(null);
   const attachmentQueue=useAttachmentQueue(!canWrite||sending||transferBlocked,setError);
   const {files,clear:clearAttachments}=attachmentQueue;
@@ -57,8 +60,9 @@ export default function InboxDialog({open,onClose,currentUserId,collaborators,in
   const summary=conversations.find(item=>item.userId===selectedUserId);
   const selected=selectedUserId?{userId:selectedUserId,name:summary?.name??collaborators.find(user=>user.userId===selectedUserId)?.displayName??"Conversation",role:summary?.role??"",isSystem:isTenOpsSystemInboxUser(selectedUserId),messages}:undefined;
   const typingPeerId=open&&selectedUserId&&!isTenOpsSystemInboxUser(selectedUserId)?selectedUserId:"";
-  const resetComposer=useCallback(()=>{setBody("");clearAttachments();},[clearAttachments]);
+  const resetComposer=useCallback(()=>{clearAttachments();},[clearAttachments]);
   const chooseConversation=useCallback((userId:string)=>{if(transferBlocked)return;setSelectedUserId(userId);setNewMessage(false);setRecipientId(userId);resetComposer();},[resetComposer,transferBlocked]);
+  useEffect(()=>{setSelectedUserId("");setRecipientId("");setNewMessage(false);clearAttachments();setEditBody("");setEditingMessageId("");setPreview(null);initialUserHandledRef.current="";},[draftOwner,clearAttachments]);
   const broadcastTyping=useCallback((typing:boolean)=>{const channel=typingChannelRef.current;if(canWrite&&channel)void channel.send({type:"broadcast",event:"typing",payload:{userId:currentUserId,typing}});},[canWrite,currentUserId]);
   const announceTyping=useCallback((typing:boolean)=>{window.clearTimeout(typingStopTimerRef.current);if(!typing){broadcastTyping(false);lastTypingBroadcastRef.current=0;return;}const now=Date.now();if(now-lastTypingBroadcastRef.current>=1000){broadcastTyping(true);lastTypingBroadcastRef.current=now;}typingStopTimerRef.current=window.setTimeout(()=>{broadcastTyping(false);lastTypingBroadcastRef.current=0;},1300);},[broadcastTyping]);
 
@@ -85,15 +89,20 @@ export default function InboxDialog({open,onClose,currentUserId,collaborators,in
     clearAttachments();
     if(transferPhase==='sent'){
       setSelectedUserId(transfer.draft.recipient);setNewMessage(false);reconcile(transfer.draft.id);
-      nearBottomRef.current=true;setBody("");void load();
+      nearBottomRef.current=true;void load();
       window.dispatchEvent(new Event("tenops:notifications-changed"));
     }
     // Cancellation preserves unsent text; both terminal outcomes release the queue.
     if(open)composeRef.current?.focus();
   },[transfer,transferPhase,transferBlocked,clearAttachments,reconcile,load,open]);
-  async function send(){if(!canWrite)return;const target=selectedUserId||recipientId;if(!target||(!body.trim()&&!files.length)||sending||transferBlocked)return;announceTyping(false);setError("");
-    if(files.length){try{startTransfer(currentUserId,target,body.trim(),"",files);}catch(caught){setError(caught instanceof Error?caught.message:"Unable to start transfer.");}return;}
-    setSending(true);try{const id=await sendInboxMessage(target,body.trim());nearBottomRef.current=true;reconcile(id);resetComposer();setSelectedUserId(target);setNewMessage(false);await load();window.dispatchEvent(new Event("tenops:notifications-changed"));}catch(caught){setError(caught instanceof Error?caught.message:"Unable to send message.");}finally{setSending(false);}
+  async function send(){if(!canWrite||!draftOwner)return;const target=selectedUserId||recipientId;if(!target||(!body.trim()&&!files.length)||sendLock.current||sending||transferBlocked)return;announceTyping(false);setError("");
+    const sent=captureSend();
+    if(files.length){try{
+      const pending=startTransfer(currentUserId,target,body.trim(),"",files);
+      const complete=()=>{if(pending.state.phase==='sent'){sent();unsubscribe();}else if(pending.state.phase==='canceled')unsubscribe();};
+      const unsubscribe=pending.subscribe(complete);complete();
+    }catch(caught){setError(caught instanceof Error?caught.message:"Unable to start transfer.");}return;}
+    sendLock.current=true;setSending(true);try{const id=await sendInboxMessage(target,body.trim());sent();nearBottomRef.current=true;reconcile(id);await load();window.dispatchEvent(new Event("tenops:notifications-changed"));}catch(caught){setError(caught instanceof Error?caught.message:"Unable to send message.");}finally{sendLock.current=false;setSending(false);}
   }
   async function previewAttachment(attachment:InboxAttachment){try{setSendStage("Loading preview…");if(!canPreview(attachment))return;const url=await createInboxAttachmentUrl(attachment);setPreview({...attachment,previewUrl:url});}catch(caught){setError(caught instanceof Error?caught.message:"Unable to preview attachment.");}finally{setSendStage("");}}
   async function saveMessageEdit(){if(!editingMessageId||!editBody.trim()||messageActionBusy)return;setMessageActionBusy(true);setError("");try{await editInboxMessage(editingMessageId,editBody);reconcile(editingMessageId);setEditingMessageId("");setEditBody("");setActionMessageId("");await load();}catch(caught){setError(caught instanceof Error?caught.message:"Unable to edit message.");}finally{setMessageActionBusy(false);}}
@@ -125,7 +134,7 @@ export default function InboxDialog({open,onClose,currentUserId,collaborators,in
             {selected?.isSystem?<div className="shrink-0 border-t border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-medium text-slate-500">TenOps system messages are read-only.</div>:<div {...attachmentQueue.events} data-messaging-composer className={`shrink-0 border-t border-slate-200 px-3 pt-3 pb-[max(.75rem,env(safe-area-inset-bottom))] ${attachmentQueue.dragging?"bg-blue-50 ring-2 ring-inset ring-blue-500":"bg-white"}`}>
               {attachmentQueue.dragging?<p role="status" className="text-xs text-blue-800">Drop files to attach</p>:null}
               {files.length?<div className="mb-2 max-h-40 space-y-1 overflow-y-auto">{files.map((file,index)=><div key={`${file.name}-${file.size}-${index}`} className="flex min-w-0 items-center gap-2 rounded border border-slate-200 bg-slate-50 px-2 py-1.5"><Paperclip className="h-3.5 w-3.5 shrink-0" /><bdi className="min-w-0 flex-1 truncate text-xs">{file.name}</bdi><span className="shrink-0 text-[10px] text-slate-400">{fileSize(file.size)}</span><button type="button" disabled={!canWrite||transferBlocked} onClick={()=>attachmentQueue.remove(index)} aria-label={`Remove ${file.name}`} className="flex h-9 w-9 shrink-0 items-center justify-center text-red-700"><Trash2 className="h-4 w-4" /></button></div>)}</div>:null}
-              <div aria-live="polite" className="h-5 px-1 text-[11px] italic text-slate-500">{remoteTypingUserId===typingPeerId&&selected?`${selected.name} is typing…`:null}</div><textarea disabled={!canWrite||transferBlocked} ref={composeRef} value={body} onChange={(event)=>{setBody(event.target.value);announceTyping(Boolean(event.target.value));}} onBlur={()=>announceTyping(false)} onKeyDown={(event)=>{if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();void send();}}} rows={3} aria-label="Message" aria-describedby="messaging-attachment-help" placeholder="Write a message…" className="min-h-20 w-full resize-none rounded-md border border-slate-300 bg-white px-3 py-2 text-base sm:text-sm" />
+              <div aria-live="polite" className="h-5 px-1 text-[11px] italic text-slate-500">{remoteTypingUserId===typingPeerId&&selected?`${selected.name} is typing…`:null}</div><textarea disabled={!canWrite||transferBlocked} ref={composeRef} value={draftOwner?body:""} onChange={(event)=>{setBody(event.target.value);announceTyping(Boolean(event.target.value));}} onBlur={()=>announceTyping(false)} onKeyDown={(event)=>{if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();void send();}}} rows={3} aria-label="Message" aria-describedby="messaging-attachment-help" placeholder="Write a message…" className="min-h-20 w-full resize-none rounded-md border border-slate-300 bg-white px-3 py-2 text-base sm:text-sm" />
               <p id="messaging-attachment-help" className="mt-1 text-[10px] text-slate-500">Attach, paste images/files, or drop files here. 50 MB per file · 200 MB per message. Clipboard support varies by browser.</p>{sendStage?<p role="status" className="mt-2 text-xs font-medium text-blue-800">{sendStage}</p>:null}<div className="mt-2 flex flex-wrap items-center gap-1"><label className="inline-flex h-11 cursor-pointer items-center gap-1.5 rounded px-2 text-xs font-medium text-slate-700 hover:bg-slate-100 focus-within:ring-2 focus-within:ring-blue-500"><Paperclip className="h-4 w-4" />Attach<input aria-label="Attach files" type="file" multiple disabled={!canWrite||sending||transferBlocked} className="sr-only" onChange={event=>{const selected=Array.from(event.currentTarget.files??[]);event.currentTarget.value="";attachmentQueue.add(selected,"picker",event.nativeEvent);}}/></label><button type="button" onClick={()=>void send()} disabled={!canWrite||sending||transferBlocked||(!body.trim()&&!files.length)||!(selectedUserId||recipientId)} className="tenops-selected-surface ml-auto flex h-11 items-center gap-2 rounded-md border px-4 text-sm font-semibold disabled:opacity-40"><span>{sending?sendStage||"Sending…":"Send"}</span><Send className="h-4 w-4" /></button></div>
             </div>}
           </>}

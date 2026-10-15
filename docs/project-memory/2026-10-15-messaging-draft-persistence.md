@@ -1,0 +1,22 @@
+# Messaging text drafts — local candidate
+
+Base: origin/main and origin/dev `ace3df55ca8350f007b067ca599163906aa73213`.
+Branch: feature/messaging-draft-persistence. Uncommitted; no release authorized.
+
+Previously, InboxDialog held text in component state, reset on conversation selection, and unconditionally cleared on successful sends. Attachment-transfer identifiers already use sessionStorage; no reusable text draft mechanism existed.
+
+The new text-only hook uses localStorage for navigation, refresh and browser restart recovery. Keys contain authenticated UUID and workflow; entries contain peer UUID (or `new` before choosing a recipient), text, revision and update time. Typing remains in memory, with a 400 ms debounce and close/unmount/pagehide/visibility flush. Success clears the captured revision; failures and newer edits survive, including a remounted composer. Empty entries are removed. Reads/writes are best effort and add no network dependency. Per-owner/workflow limits: 40 drafts, 30-day expiration, 32,000 characters per draft. Cleanup occurs on access/write, not an application startup scan. Expired dormant envelopes remain on disk until that owner/workflow is used again. Browser-local drafts are plaintext under the application's browser origin, with application identity isolation rather than encryption.
+
+Attachments remain in the existing queue/transfer system; File objects are not persisted by this feature. Select screenshots after returning. Attachment-transfer recovery across a full page reload retains the existing transfer contract; the new text-success callback itself does not survive a full reload, so text may remain after a recovered attachment transfer completes. Simultaneous tabs do not synchronize active composers; no conflict resolution is implemented. Storage denial/quota failure allows composing and sending but cannot guarantee recovery after unmount. Oversized text remains usable in memory but is not persisted. A recipientless `new` draft is separate from recipient drafts; choose the recipient before composing to keep one continuous draft identity.
+
+## Adoption guidance
+
+Use authenticated UUID + narrowly named workflow + stable existing record ID. For new records, assign a stable local draft UUID; use distinct IDs when multiple new forms can exist. Capture a revision at save start and clear only on confirmed success. Explicit discard should set empty text and flush. Change identity synchronously with the authenticated owner and reset other form state on account changes. Never store credentials, sensitive fields, File bytes or authoritative record snapshots indiscriminately. Existing records require a server version/update marker and a reviewed restore/merge policy: never silently overlay a stale local draft onto authoritative saved fields. Configure expiration and size/count budgets per workflow before adoption. This text hook is not a generic structured-form autosave solution.
+
+Recommended next adoption: My Work task creation, then a bounded Production Job creation draft, each with its own acceptance criteria. Bid/Sample/Proposal lifecycle integrations remain subject to their separate Product Acceptance Contract.
+
+## Validation and local review
+
+Tier 2 implementation with focused Level 3 persistence/isolation checks. Deterministic fixture: restoration, peer/account isolation, revision races including remount, failed-send retention, empty cleanup, expiration/count bounds, malformed/unavailable storage. Actual TenOps browser smoke at localhost:3000: module navigation, two conversations, refresh, failed/successful send, newer typing during send, attachment selection after return; zero hosted requests/page errors. Standalone TypeScript, targeted source lint, diff check and production build passed. Build initially failed on symlinked dependencies; copied local dependencies and retried with required process permissions after a sandboxed build stalled. No hosted verification or database checks claimed.
+
+Run `node scripts/start-messaging-draft-review.mjs` in the isolated worktree. Review URL: http://localhost:3000. Synthetic login: customer-review@example.invalid / Local-review-only! Conversations: Draft Review Bob and Draft Review Carol. The local fixture has successful text sends and a synthetic failure for the exact text `FAIL`; it does not emulate attachment uploads, Realtime, PDFs or other module mutations. No migrations, hosted writes, commits, pushes or deployment.
