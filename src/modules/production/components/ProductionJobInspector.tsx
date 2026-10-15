@@ -1,6 +1,7 @@
 "use client";
 import ProjectContactEditor from '../contacts/ProjectContactEditor';
 import type { ProjectContact } from '../contacts/model';
+import { useProductionDialogScrollLock } from '../contacts/ProductionDialog';
 
 import { BusinessButton, BusinessInput, BusinessSelect, BusinessTextarea } from '@/components/BusinessWriteControls';
 
@@ -353,6 +354,7 @@ export default function ProductionJobInspector({
     end: job.planned_end || "",
   }));
   const scheduleIsIncomplete = Boolean(scheduleDraft.start) !== Boolean(scheduleDraft.end);
+  useProductionDialogScrollLock();
   const panel = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const projectNameRef = useRef<HTMLInputElement>(null);
@@ -531,7 +533,7 @@ export default function ProductionJobInspector({
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
-      if (attachmentFullscreen || transmittalOpen || planningEditorOpen) return;
+      if (event.defaultPrevented || contactPending || attachmentFullscreen || transmittalOpen || planningEditorOpen) return;
       if (event.key === "Escape") requestClose();
       if (event.key !== "Tab" || !panel.current) return;
       const focusable = [
@@ -553,7 +555,7 @@ export default function ProductionJobInspector({
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [attachmentFullscreen, requestClose, transmittalOpen, planningEditorOpen]);
+  }, [attachmentFullscreen, contactPending, requestClose, transmittalOpen, planningEditorOpen]);
 
   useEffect(() => {
     if (!dirtyCount) return;

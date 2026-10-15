@@ -1,0 +1,70 @@
+{
+  "status": "LOCAL PRODUCT REVIEW \u2014 UNCOMMITTED",
+  "base": "cb5fc4c341e95a670011a84e73508c0fa749466b",
+  "branch": "feature/customer-dialog-hotfix",
+  "riskTier": 2,
+  "testingLevel": 2,
+  "timestamp": "2026-10-15T17:17:46.527792+00:00",
+  "changedFiles": [
+    "src/modules/production/components/ProductionJobCreator.tsx",
+    "src/modules/production/components/ProductionJobInspector.tsx",
+    "src/modules/production/contacts/CustomerInspector.tsx",
+    "src/modules/production/contacts/ProjectContactEditor.tsx",
+    "src/modules/production/contacts/ProductionDialog.tsx",
+    "scripts/start-customer-dialog-review.mjs",
+    "scripts/support/customer-dialog-review-fixture.mjs",
+    "scripts/verify-customer-dialog-hotfix.mjs",
+    "docs/project-memory/2026-10-15-customer-dialog-hotfix.md",
+    "docs/project-memory/evidence/2026-10-15-customer-dialog-hotfix.json"
+  ],
+  "browser": {
+    "origin": "http://localhost:3000",
+    "checks": [
+      "New Job sliders opens shared manager; Close restores trigger and unsaved fields; background focus blocked",
+      "Nested Escape closes editor then manager, one level per key; child and parent focus restore",
+      "Backdrop closes only topmost child; parent draft and body lock survive",
+      "Cancel discards only current shared-customer edit and returns to its management list",
+      "Dropdown Add Customer \u2192 Cancel preserves Job and restores the dropdown trigger",
+      "Dropdown Manage Customer List uses the same dialog and restores its surviving dropdown trigger",
+      "Manager Add \u2192 Save returns to originating Job with new company available, without replacing its Customer",
+      "Add Customer \u2192 Save returns selected saved customer to Job; busy Escape/backdrop cannot dismiss or duplicate save",
+      "Configured Customers and Previously Used Names remain distinct; excluded historical text is preserved",
+      "Closing outer Job restores original opener and releases final body scroll lock",
+      "Existing Inspector sliders reuses manager; native child keys do not reach parent Escape/Tab handlers",
+      "390px mobile dialogs fit viewport, retain draft and restore balanced scroll locking"
+    ],
+    "external": [],
+    "pageErrors": [],
+    "hostedWrites": false,
+    "dataSource": "stateful synthetic localhost API; existing database/auth evidence reused",
+    "localSavedCustomer": "Dialog Hotfix 1792084401578 Saved"
+  },
+  "typescript": "passed",
+  "targetedEslint": "passed, zero warnings",
+  "diffCheck": "passed",
+  "productionBuild": "one isolated webpack/TypeScript build passed; synthetic localhost environment, not deployable",
+  "visualInspection": [
+    "desktop-editor.png",
+    "mobile-editor.png"
+  ],
+  "unchangedContractFiles": [
+    "src/modules/production/jobs.ts",
+    "src/modules/production/contacts/model.ts",
+    "src/modules/production/contacts/queries.ts",
+    "src/lib/performance-announcement.mjs",
+    "src/components/PerformanceAnnouncement.tsx",
+    "src/components/PerformanceAnnouncement.module.css"
+  ],
+  "migrationChecksumsUnchanged": true,
+  "authorizationAndDatabaseEvidenceReused": "2026-10-14-protected-project-contact-integration.json",
+  "reviewUrl": "http://localhost:3000",
+  "fixture": "Stateful synthetic localhost UI API at 127.0.0.1:55591; no database dependency or outbound requests; name-only saves held in memory",
+  "environmentIssue": "Shared local Supabase/Docker API unresponsive; did not restart shared Docker or other stacks. Initial package lookup failed in sandbox. Review fallback does not use Supabase CLI.",
+  "validationNotes": "Final consolidated 12-group pass succeeded after correcting a textarea test locator and missing nullable fields in the synthetic Job fixture; no broad suites rerun.",
+  "hostedWrites": false,
+  "schemaChanges": false,
+  "migrations": false,
+  "permissionChanges": false,
+  "push": false,
+  "deployment": false
+}

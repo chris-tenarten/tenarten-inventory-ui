@@ -1,8 +1,9 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { BusinessButton, BusinessInput, BusinessSelect } from '@/components/BusinessWriteControls';
 import { useAuth } from '@/lib/auth';
 import type { Contact, ContactChoice } from './model';
+import ProductionDialog from './ProductionDialog';
 import { archiveCustomer, CONTACT_PAGE_SIZE, listCompanyContacts, saveCustomer } from './queries';
 
 const field = 'mt-1 h-10 w-full rounded-sm border border-slate-300 bg-white px-3 text-sm text-slate-900 disabled:bg-slate-50';
@@ -14,11 +15,12 @@ export type CustomerSearchProps = {
 };
 type Props = CustomerSearchProps & {
   newName: string | null; onClose: () => void;
+  returnFocusRef?: RefObject<HTMLElement | null>; fallbackFocusRef?: RefObject<HTMLElement | null>;
   onSaved: (choice: ContactChoice) => void; onRemoved: () => void;
   onBusyChange: (busy: boolean) => void;
 };
 
-export default function CustomerInspector({ newName, rows, loading, search, offset, onSearch, onPage, onClose, onSaved, onRemoved, onBusyChange }: Props) {
+export default function CustomerInspector({ newName, rows, loading, search, offset, onSearch, onPage, onClose, onSaved, onRemoved, onBusyChange, returnFocusRef, fallbackFocusRef }: Props) {
   const auth = useAuth();
   const canCreate = auth.can('writeBusinessData') && (auth.can('createProductionJob') || auth.can('editProductionJobRoutine') || auth.can('editProductionJobDetails'));
   const canShared = auth.can('writeBusinessData') && auth.can('editProductionJobDetails');
@@ -86,9 +88,17 @@ export default function CustomerInspector({ newName, rows, loading, search, offs
     catch (cause) { setError(errorMessage(cause)); }
     finally { operation.current = false; setBusy(false); onBusyChange(false); }
   }
-  return <section role="dialog" aria-label="Customer Inspector" onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); if (!busy) onClose(); } }} className="space-y-3 rounded-sm border-2 border-blue-200 bg-slate-50 p-3 sm:p-4">
-    <div className="flex items-center justify-between gap-2"><h4 className="text-sm font-bold">{editing === undefined ? 'Manage Customer List' : editing ? 'Customer Inspector' : 'Add New Customer'}</h4><button type="button" disabled={busy} onClick={onClose} className={button}>Cancel</button></div>
-    {editing === undefined ? <>
+  function cancelEditor() {
+    if (operation.current) return;
+    setError(''); setName(''); setPerson(''); setPhone(''); setEmail('');
+    if (newName === null) setEditing(undefined); else onClose();
+  }
+  function closeList() { if (!operation.current) onClose(); }
+  return <>
+    {newName === null && <ProductionDialog label="Manage Customer List" onDismiss={closeList} returnFocusRef={returnFocusRef} fallbackFocusRef={fallbackFocusRef}>
+      <div className="space-y-3 bg-slate-50 p-3 sm:p-4">
+        <div className="flex items-center justify-between gap-2"><h4 className="text-sm font-bold">Manage Customer List</h4><button type="button" onClick={closeList} className={button}>Close</button></div>
+
       <label className="block text-xs font-bold">Search customers<input autoFocus aria-label="Search managed customers" value={search} maxLength={300} onChange={(event) => onSearch(event.target.value)} className={field} /></label>
       {loading ? <p role="status" className="text-sm">Loading customers…</p> : <>
         <ul className="max-h-52 overflow-auto divide-y divide-slate-200">{rows.slice(0,CONTACT_PAGE_SIZE).map((choice) => <li key={choice.company.id}><button type="button" className="min-h-10 w-full px-2 py-2 text-left text-sm hover:bg-blue-50" onClick={() => openCustomer(choice)}>{choice.company.name}</button></li>)}</ul>
@@ -96,7 +106,14 @@ export default function CustomerInspector({ newName, rows, loading, search, offs
         <div className="flex gap-2"><button type="button" className={button} disabled={!offset} onClick={() => onPage(Math.max(0,offset-CONTACT_PAGE_SIZE))}>Previous</button><button type="button" className={button} disabled={rows.length<=CONTACT_PAGE_SIZE || offset>=10000} onClick={() => onPage(offset+CONTACT_PAGE_SIZE)}>Next</button></div>
       </>}
       {canCreate && <BusinessButton type="button" className={button} onClick={() => openCustomer(null)}>+ Add New Customer</BusinessButton>}
-    </> : <>
+
+      </div>
+    </ProductionDialog>}
+    {editing !== undefined && <ProductionDialog label="Customer Inspector" onDismiss={cancelEditor}
+      returnFocusRef={newName === null ? undefined : returnFocusRef} fallbackFocusRef={newName === null ? undefined : fallbackFocusRef}>
+      <div className="space-y-3 bg-slate-50 p-3 sm:p-4">
+        <div className="flex items-center justify-between gap-2"><h4 className="text-sm font-bold">{editing ? 'Customer Inspector' : 'Add New Customer'}</h4><button type="button" disabled={busy} onClick={cancelEditor} className={button}>Cancel</button></div>
+
       <label className="block text-xs font-bold">Customer / Company Name *<BusinessInput ref={nameRef} aria-label="Customer / Company Name" value={name} required maxLength={300} disabled={busy || !allowed} onChange={(event) => setName(event.target.value)} className={field} /></label>
       <details open={detailsOpen} onToggle={(event) => setDetailsOpen(event.currentTarget.open)}>
         <summary className="min-h-8 cursor-pointer py-1 text-xs font-bold">Additional Information (Optional)</summary>
@@ -114,10 +131,12 @@ export default function CustomerInspector({ newName, rows, loading, search, offs
       {editing && !canShared && <p className="text-xs text-slate-600">Lead/Admin access is required to edit or remove a saved customer.</p>}
       <div className="flex flex-wrap justify-end gap-2">
         {editing && canShared && <BusinessButton type="button" className={`${button} mr-auto text-red-700`} disabled={busy} onClick={() => void remove()}>Remove From List</BusinessButton>}
-        {newName === null && <button type="button" disabled={busy} className={button} onClick={() => { setEditing(undefined); setError(''); }}>Back to list</button>}
+        {newName === null && <button type="button" disabled={busy} className={button} onClick={cancelEditor}>Back to list</button>}
         {allowed && <BusinessButton type="button" className={`${button} border-blue-900 bg-blue-900 text-white`} disabled={busy || !name.trim()} onClick={() => void save()}>{busy ? 'Saving…' : editing ? 'Save Changes' : 'Save Customer'}</BusinessButton>}
       </div>
-    </>}
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-  </section>;
+
+        {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      </div>
+    </ProductionDialog>}
+  </>;
 }

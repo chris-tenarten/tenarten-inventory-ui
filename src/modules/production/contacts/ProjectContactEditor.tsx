@@ -36,6 +36,7 @@ export default function ProjectContactEditor({ customer, value, onChange, histor
   const identity = useRef('');
   const trigger = useRef<HTMLButtonElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const managerTrigger = useRef<HTMLElement | null>(null);
   const dropdownId = useId();
   identity.current = `${value.customer_company_id}:${value.customer_contact_id}`;
   const lookup = open || manager === 'manage';
@@ -74,9 +75,10 @@ export default function ProjectContactEditor({ customer, value, onChange, histor
     onChange(name,canWrite ? unlinkedContact() : value); closeDropdown(); setNotice('');
   }
   function openInspector(mode: 'new' | 'manage', name = '') {
+    managerTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setNewName(name); setManager(mode); setOpen(false); setError(''); setNotice('');
   }
-  function closeInspector() { if (!busy) { setManager(null); trigger.current?.focus(); } }
+  function closeInspector() { if (!busy) setManager(null); }
   async function refreshSnapshot() {
     if (!value.customer_company_id || operation.current) return;
     const current = identity.current;
@@ -114,7 +116,7 @@ export default function ProjectContactEditor({ customer, value, onChange, histor
       <button ref={trigger} type="button" role="combobox" aria-label={variant === 'creator' ? 'Customer' : 'Select customer'} aria-expanded={open} aria-controls={`${dropdownId}-list`} aria-haspopup="listbox" disabled={busy || manager!==null} onClick={() => setOpen(!open)} onKeyDown={(event) => { if (event.key==='ArrowDown') { event.preventDefault(); setOpen(true); } }} className={`${field} flex items-center justify-between gap-2 text-left ${variant==='inspector' ? '!w-10 shrink-0 !px-2' : 'flex-1'}`}>
         {variant === 'creator' && <span className={`truncate ${customer ? '' : 'text-slate-500'}`}>{customer || 'Select customer…'}</span>}<ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
       </button>
-      {variant === 'inspector' && <button type="button" aria-label="Manage Customer List" title="Manage Customer List" disabled={busy || manager!==null} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-50" onClick={() => openInspector('manage')}><SlidersHorizontal className="h-4 w-4" aria-hidden="true" /></button>}
+      <button type="button" aria-label="Manage Customer List" title="Manage Customer List" disabled={busy || manager!==null} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-50" onClick={() => openInspector('manage')}><SlidersHorizontal className="h-4 w-4" aria-hidden="true" /></button>
     </div>
     {summary && <p className="break-words text-xs text-slate-500">{summary}</p>}
     {open && <section id={dropdownId} aria-label="Customer choices" onKeyDown={navigate} className="space-y-2 rounded-sm border border-slate-300 bg-white p-3 shadow-sm">
@@ -137,7 +139,7 @@ export default function ProjectContactEditor({ customer, value, onChange, histor
       {search.trim() && auth.can('writeBusinessData') && <button type="button" className="block min-h-10 w-full px-2 text-left text-xs text-slate-600 hover:bg-slate-50" onClick={() => selectHistoricalName(search.trim())}>Use “{search.trim()}” without saving to list</button>}
       {customer && auth.can('writeBusinessData') && <button type="button" className="block min-h-10 w-full px-2 text-left text-xs text-slate-600 hover:bg-slate-50" onClick={() => selectHistoricalName('')}>Clear customer</button>}
     </section>}
-    {manager && <CustomerInspector key={`${manager}:${newName}`} newName={manager==='new' ? newName : null} rows={rows} loading={loading} search={search} offset={offset} onSearch={changeSearch} onPage={setOffset} onClose={closeInspector} onBusyChange={setBusy}
+    {manager && <CustomerInspector returnFocusRef={managerTrigger} fallbackFocusRef={trigger} key={`${manager}:${newName}`} newName={manager==='new' ? newName : null} rows={rows} loading={loading} search={search} offset={offset} onSearch={changeSearch} onPage={setOffset} onClose={closeInspector} onBusyChange={setBusy}
       onSaved={(choice) => { if (manager==='new') select(choice); else setNotice('Customer saved. This Job’s captured details are unchanged.'); setManager(null); setRows([]); }}
       onRemoved={() => { setManager(null); setRows([]); setNotice('Removed from the customer list. Existing Jobs keep their customer names and captured details.'); }} />}
     {canWrite && !manager && <details className="text-xs text-slate-500">

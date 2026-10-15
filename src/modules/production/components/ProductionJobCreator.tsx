@@ -6,6 +6,7 @@ import { FileText, Plus, Upload, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ProjectContactEditor from '../contacts/ProjectContactEditor';
+import ProductionDialog from '../contacts/ProductionDialog';
 import { unlinkedContact, type ProjectContact } from '../contacts/model';
 
 import type { NewProductionJob, ProductionJob } from '../types';
@@ -268,8 +269,8 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/55 p-3 backdrop-blur-sm sm:p-6" onMouseDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
-      <div role="dialog" aria-modal="true" aria-labelledby="production-job-creator-title" className="flex max-h-full w-full max-w-3xl flex-col border border-slate-400 bg-white shadow-2xl">
+    <ProductionDialog labelledBy="production-job-creator-title" onDismiss={requestClose} className="max-w-3xl">
+      <div className="flex max-h-[calc(100dvh-1.5rem)] w-full flex-col">
         <header className="flex items-start justify-between gap-4 border-b border-slate-300 px-4 py-3 sm:px-5">
           <div>
             <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Production · New Job</div>
@@ -380,6 +381,6 @@ export default function ProductionJobCreator({ open, onClose, onCreateJob, jobs,
           <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-300 bg-slate-50 px-4 py-3 sm:px-5"><button type="button" onClick={() => { if (importStep === 'upload') { setFiles([]); setMethod('choose'); } else if (importStep === 'review') setImportStep('upload'); else if (importStep === 'updating') setImportStep('duplicate'); }} disabled={saveState === 'saving' || importStep === 'extracting' || importStep === 'duplicate'} className="h-10 border border-slate-400 bg-white px-4 text-xs font-bold uppercase text-slate-700 disabled:opacity-40">Back</button>{importStep === 'upload' && <button type="button" onClick={() => void beginExtraction()} disabled={!files.length} className="h-10 border border-blue-900 bg-blue-900 px-5 text-xs font-bold uppercase text-white disabled:opacity-40">Review documents</button>}{importStep === 'review' && <button type="button" onClick={reviewImport} disabled={saveState === 'saving'} className="h-10 border border-blue-900 bg-blue-900 px-5 text-xs font-bold uppercase text-white disabled:opacity-40">{saveState === 'saving' ? 'Creating…' : 'Check & Create Job'}</button>}{importStep === 'updating' && <BusinessButton type="button" onClick={() => void applyUpdates()} disabled={saveState === 'saving' || selectedUpdates.size === 0} className="h-10 border border-blue-900 bg-blue-900 px-5 text-xs font-bold uppercase text-white disabled:opacity-40">{saveState === 'saving' ? 'Updating…' : 'Confirm selected updates'}</BusinessButton>}</footer>
         </>}
       </div>
-    </div>
+    </ProductionDialog>
   );
 }
