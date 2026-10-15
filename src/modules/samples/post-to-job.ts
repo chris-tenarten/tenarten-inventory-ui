@@ -6,11 +6,14 @@ export async function searchPublishJobs(search: string): Promise<PublishJob[]> {
   if (error) throw error;
   return (data ?? []) as PublishJob[];
 }
-export async function postSampleToJob(input: { jobId: string; requestId: string; file: File; documentType: JobDocumentType; body: string; mentionedUserIds: string[] }): Promise<JobUpdate> {
-  const { jobId, requestId, file } = input;
+export async function assertCanPublishSampleToJob(jobId: string): Promise<void> {
   const permitted = await supabase.rpc('can_publish_sample_to_job', { p_job_id: jobId });
   if (permitted.error) throw permitted.error;
   if (!permitted.data) throw new Error('You do not have permission to post a document to this Job.');
+}
+export async function postSampleToJob(input: { jobId: string; requestId: string; file: File; documentType: JobDocumentType; body: string; mentionedUserIds: string[] }): Promise<JobUpdate> {
+  const { jobId, requestId, file } = input;
+  await assertCanPublishSampleToJob(jobId);
   const path = `${jobId}/sample-updates/${requestId}.pdf`;
   const uploaded = await supabase.storage.from('job-attachments').upload(path, file, { contentType: 'application/pdf', upsert: false });
   // Only an existing object is retryable without uploading. Network/other errors

@@ -30,9 +30,12 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import PostSampleToJob from "./PostSampleToJob";
+import PostSampleToJob, { type PostDocumentSource } from "./PostSampleToJob";
+import { sampleWorkingPreviewInputKey } from "@/lib/pdf-preview-cache";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
+import { throwSampleFunctionError } from "./function-errors";
 import { loadBids } from "@/modules/pre-production/queries";
 import type { Bid } from "@/modules/pre-production/types";
 import {
@@ -62,6 +65,7 @@ import {
   suggestSampleColorPlateNumber,
   duplicateSample,
   generateSamplePdf,
+  generateWorkingSamplePdf,
   issueSample,
   linkSampleToBid,
   loadSampleFormulationDefault,
@@ -395,6 +399,44 @@ export default function SampleWorkspace() {
   const [blendDirty,setBlendDirty]=useState(false);
   const [productionAttention,setProductionAttention]=useState<SampleAttention[]>([]);
   const productionRef=useRef<{open:()=>void}>(null);
+  type PostingBlend = {id:string;status:string;created_at:string;identity:string;planned_quantity:string};
+  const [postingBlends,setPostingBlends]=useState<{sampleId:string;rows:PostingBlend[];loading:boolean;error:string}>({sampleId:'',rows:[],loading:false,error:''});
+  const loadPostingBlends=useCallback(async()=>{
+    if(!draft?.id||!auth.can('production_blend.manage'))return;
+    const sampleId=draft.id;
+    setPostingBlends(current=>({...current,sampleId,loading:true,error:''}));
+    try{
+      const {data,error}=await supabase.functions.invoke('generate-sample-pdf',{body:{action:'blend-list',sampleId,metadata:true,latest:true}});
+      if(error)await throwSampleFunctionError(error);
+      setPostingBlends({sampleId,rows:data??[],loading:false,error:''});
+    }catch(caught){setPostingBlends({sampleId,rows:[],loading:false,error:(caught as {message?:string})?.message||'Unable to load captured Blend Sheet.'});}
+  },[draft?.id,auth]);
+  function postingDocumentChoices():PostDocumentSource[]{
+    if(!draft)return [];
+    const sample=draft,identity=sample.colorPlateNumber||'Sample';
+    const issued=sample.issuedDocuments.slice().sort((a,b)=>b.issueNumber-a.issueNumber);
+    const workOrders:PostDocumentSource[]=issued.length?issued.map(document=>({
+      id:`work_order:${document.id}`,label:`Sample Work Order — Document ${document.issueNumber}`,documentType:'work_order',filename:`${document.displayIdentity||'Sample-Work-Order'}-Document-${document.issueNumber}.pdf`,inputKey:`issued:${document.id}:${document.snapshotHash}`,
+      description:'Uses this existing issued document and its immutable snapshot. No new issued version is created.',
+      generate:async()=>{const url=await generateSamplePdf(document.id);const response=await fetch(url);if(!response.ok)throw new Error('Unable to read the issued PDF. Retry this same document.');return response.blob();},
+      unavailableReason:document.generationStatus==='generating'?'This issued PDF is currently generating. Reopen Post to Job when it is ready.':undefined,
+    })): [{id:'work_order',label:'Sample Work Order',documentType:'work_order',filename:`${identity}.pdf`,inputKey:'no-issued-document',generate:async()=>{throw new Error('No issued Sample Work Order exists.');},unavailableReason:'No issued Sample Work Order exists. Use the existing Generate Sample Work Order action to issue one explicitly; Post to Job will not create an issued version.',configureLabel:'Open Sample Work Order controls',onConfigure:()=>jumpTo('sample-document-actions')}];
+    const dirty=JSON.stringify(sample)!==draftBaseline;
+    const readiness=validateSampleForOutput(sample);
+    const working:PostDocumentSource={id:'working',label:'Working Sheet',documentType:'blend_sheet',filename:`${identity}-Working.pdf`,inputKey:`working:${sample.id}:${sample.updatedAt}:${sampleWorkingPreviewInputKey(sample)}`,
+      description:'Generated from the saved Sample formulation and preparation overrides. The Sample is not saved or issued by posting.',
+      generate:()=>generateWorkingSamplePdf(sample.id),
+      unavailableReason:!sample.id?'Save the Sample before generating a Working Sheet.':dirty?'Save your current Sample changes before generating a Working Sheet. Posting will not save them silently.':readiness?formatSampleError(readiness):undefined,
+      configureLabel:dirty||!sample.id?'Open Save Sample controls':'Review Sample configuration',onConfigure:()=>dirty||!sample.id?jumpTo('sample-document-actions'):jumpTo('formulation-setup')};
+    const captured=postingBlends.sampleId===sample.id?postingBlends.rows[0]:undefined;
+    const blend:PostDocumentSource={id:'blend',label:'Blend Sheet',documentType:'blend_sheet',filename:`${captured?.identity||identity}-Material-Quantity-Blend-Sheet.pdf`,inputKey:`blend:${captured?.id??''}:${captured?.created_at??''}:${blendDirty?'unreviewed-planning':'captured'}`,
+      description:captured?`Existing captured Blend Sheet · ${captured.planned_quantity} lb · ${new Date(captured.created_at).toLocaleString()}. Uses its recorded configuration and overrides.`:'Uses an existing captured Blend Sheet. Posting never captures or issues a new plan.',
+      generate:async()=>{if(!captured)throw new Error('Choose a captured Blend Sheet.');const {data,error}=await supabase.functions.invoke('generate-sample-pdf',{body:{action:'blend-pdf',planId:captured.id}});if(error)await throwSampleFunctionError(error);if(!(data instanceof Blob))throw new Error('Invalid Blend Sheet PDF response.');return data;},
+      unavailableReason:!auth.can('production_blend.manage')?'You do not have access to Blend Sheet generation.':blendDirty?'Blend planning has unsaved changes. Review and explicitly capture them in the existing configuration workflow before posting. Posting will not silently create a new issued Blend Sheet.':postingBlends.loading?'Loading captured Blend Sheet…':postingBlends.error||(!captured?'No captured Blend Sheet is available. Review and generate one explicitly in the existing Production planning workflow.':undefined),
+      configureLabel:'Open Blend Sheet configuration',onConfigure:()=>productionRef.current?.open()};
+    return [...workOrders,working,blend];
+  }
+
   function requestClose() {
     if(blendDirty&&!window.confirm("Discard unsaved Blend planning changes?"))return;
     setBlendDirty(false);
@@ -785,7 +827,7 @@ export default function SampleWorkspace() {
                 </button>
               </div>
             </div>
-            <div aria-label="Sample actions" style={{top:'var(--tenops-shell-header-height, 73px)'}} className="sticky z-30 border border-slate-300 bg-white p-3 shadow-sm">
+            <div id="sample-document-actions" tabIndex={-1} aria-label="Sample actions" style={{top:'var(--tenops-shell-header-height, 73px)'}} className="sticky z-30 border border-slate-300 bg-white p-3 shadow-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <BusinessButton
                   type="button"
@@ -803,6 +845,7 @@ export default function SampleWorkspace() {
                 >
                   {busy === "issue" ? "Generating…" : "Generate Sample Work Order"}
                 </BusinessButton>
+                <PostSampleToJob key={`inspector-post:${draft.id}`} documents={postingDocumentChoices()} onOpen={loadPostingBlends} disabled={Boolean(busy)} />
                 {auth.can('readOperationalData')&&auth.can('sample_labels.generate')&&<button type="button" disabled={Boolean(busy)} onClick={()=>{if(auth.user)setLabelSample({sample:structuredClone(draft),userId:auth.user.id});}} className="min-h-10 border border-slate-400 px-3 text-xs font-bold disabled:opacity-40">PRINT COLOR PLATE LABEL</button>}
                 {auth.can('production_blend.manage')&&<button type="button" disabled={Boolean(busy)} onClick={()=>productionRef.current?.open()} className="min-h-10 border-l border-slate-300 pl-4 pr-2 text-sm font-bold text-blue-900 disabled:opacity-40">Plan Production Blend →</button>}
               </div>

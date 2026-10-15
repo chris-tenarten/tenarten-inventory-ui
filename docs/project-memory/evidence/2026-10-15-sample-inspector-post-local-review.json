@@ -1,0 +1,33 @@
+{
+  "inspector": true,
+  "documentTypes": [
+    "existing issued Sample Work Order",
+    "saved Working Sheet",
+    "captured Blend Sheet"
+  ],
+  "previewBytesReused": true,
+  "inputInvalidation": true,
+  "unsavedBlendPlanningBlocked": true,
+  "lifecyclePreserved": true,
+  "existingPreview": true,
+  "duplicateAndFailureRecovery": true,
+  "updates": 5,
+  "objects": 5,
+  "external": [],
+  "errors": [],
+  "base": "350c556129312a0321ced8bb23c29b128848e00c",
+  "candidate": "uncommitted",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "targetedLint": "PASS",
+  "productionBuildAndTypeScript": "PASS",
+  "diffCheck": "PASS",
+  "normalSignInSmoke": "PASS",
+  "databaseEvidence": "Reused released backend qualification; no database suite rerun.",
+  "hostedMutations": false,
+  "screenshots": "output/sample-inspector-post/",
+  "expectedFixtureDiagnostics": [
+    "Realtime WebSocket not implemented by disposable adapter",
+    "Deliberate generation/post/lost-response/conflict statuses during recovery checks"
+  ]
+}

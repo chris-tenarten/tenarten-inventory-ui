@@ -5,6 +5,8 @@ import {createServer} from 'node:http';
 import {readFileSync,existsSync,statSync,mkdirSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {blendFixtures} from './support/production-blend-fixtures.mts';
+import {renderProductionBlend} from '../supabase/functions/_shared/production-blend-pdf.ts';
+import {buildProductionBlend} from '../supabase/functions/_shared/production-blend.mjs';
 import {renderSampleWorkOrder} from '../supabase/functions/generate-sample-pdf/index.ts';
 import {fixtureResponse,uuid,stamp} from './retrieval-review-fixture.mjs';
 import {reviewSession} from './support/messaging-draft-review-fixture.mjs';
@@ -19,7 +21,10 @@ const row=Object.fromEntries(Object.entries(snapshot).map(([k,v])=>[snake(k),v])
 const baseJob={id:jobId,name:'Disposable Job — Sample review',customer:'Local review customer',job_number:'LOCAL-901',production_status:'not_started',material_status:'unknown',priority:'normal',progress_percent:0,created_at:stamp,updated_at:stamp,archived_at:null,contact_details:null};
 const tables={jobs:[baseJob],job_updates:[],job_attachments:[{id:uuid(710005),job_id:jobId,file_name:'Existing attachment.pdf',storage_path:jobId+'/existing.pdf',document_type:'other',mime_type:'application/pdf',size_bytes:10,created_at:stamp,job_update_id:null,job_update_attachment_role:null}]};
 const pdfs=new Map();
-const pdf=async key=>{if(!pdfs.has(key))pdfs.set(key,renderSampleWorkOrder(snapshot));return pdfs.get(key);};
+const camel=s=>s.replace(/_([a-z])/g,(_,c)=>c.toUpperCase());
+const workingSnapshot=()=>({...snapshot,...Object.fromEntries(Object.entries(row).map(([k,v])=>[camel(k),v])),formulation:row.formulation_state,blendRows:row.blend_rows.map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[camel(k),v])))});
+const pdf=async(key,value=snapshot)=>{if(!pdfs.has(key))pdfs.set(key,renderSampleWorkOrder(value));return pdfs.get(key);};
+const blendPlan={id:uuid(710020),status:'issued',created_at:stamp,inputs:blendFixtures[4].inputs,source_snapshot:structuredClone(snapshot),model:buildProductionBlend(snapshot,blendFixtures[4].inputs)};
 const objects=new Map(),requests=new Map(),notifications=[],calls=[],profiles=new Map();let failNext='',lostNext=false;
 const allowed=p=>p?.is_active&&!p.read_only&&['admin','lead','member'].includes(p.role);
 const server=createServer(async(req,res)=>{
@@ -40,27 +45,30 @@ const server=createServer(async(req,res)=>{
   if(fixtureAuth&&url.pathname==='/__review/failure'){failNext=body.stage;lostNext=body.lost===true;return send(200,{});}
   const profile=profiles.get(auth);if(url.pathname.startsWith('/rest/')||url.pathname.startsWith('/functions/')||url.pathname.startsWith('/storage/')){
    if(!profile?.is_active)return send(403,{message:'Sign in to review',code:'42501'});
-   calls.push({path:url.pathname,method:req.method});
+   calls.push({path:url.pathname,method:req.method,...(url.pathname.startsWith('/functions/')?{action:body.action,planId:body.planId}: {})});
   }
   if(isStorage){const key=decodeURIComponent(url.pathname.slice('/storage/v1/object/job-attachments/'.length));if(!allowed(profile)||!key.startsWith(jobId+'/sample-updates/'))return send(403,{message:'Not authorized'});if(failNext==='upload'){failNext='';return send(503,{message:'Disposable upload failure'});}if(objects.has(key))return send(409,{message:'The resource already exists',statusCode:'409'});const form=req.headers['content-type']?.startsWith('multipart/')?await new Response(raw,{headers:{'content-type':req.headers['content-type']}}).formData():null;const uploaded=form?form.get(''):null;objects.set(key,uploaded?Buffer.from(await uploaded.arrayBuffer()):raw);return send(200,{Key:'job-attachments/'+key});}
   if(url.pathname==='/storage/v1/object/job-attachments'&&req.method==='DELETE'){for(const key of body.prefixes??[])objects.delete(key);return send(200,[]);}
   if(url.pathname.startsWith('/storage/v1/object/sign/job-attachments/'))return send(200,{signedURL:'/object/public/job-attachments/'+url.pathname.split('/job-attachments/')[1]});
   if(url.pathname.startsWith('/storage/v1/object/public/job-attachments/')){const bytes=objects.get(decodeURIComponent(url.pathname.split('/job-attachments/')[1]));return bytes?send(200,bytes,{'content-type':'application/pdf'}):send(404,{});}
-  if(url.pathname.startsWith('/review/pdf/'))return send(200,await pdf(url.pathname),{'content-type':'application/pdf'});
+  if(url.pathname.startsWith('/review/pdf/')){const id=url.pathname.split('/').at(-1).replace(/\.pdf$/,'');const issued=row.issued_documents.find(d=>d.id===id);return send(200,await pdf(url.pathname,issued?{...issued.issued_snapshot,issue_number:issued.issue_number}:snapshot),{'content-type':'application/pdf'});}
   if(url.pathname==='/functions/v1/generate-sample-pdf'){
+   if(failNext==='generation'&&!['blend-list','blend-context'].includes(body.action)){failNext='';return send(503,{message:'Disposable generation failure'});}
    if(body.action==='blend-context')return send(200,{snapshot});
-   if(body.action==='blend-list')return send(200,[]);
-   if(['working','preview','batch-working'].includes(body.action))return send(200,await pdf(url.pathname),{'content-type':'application/pdf'});
+   if(body.action==='blend-list')return send(200,[{id:blendPlan.id,status:blendPlan.status,created_at:stamp,identity:snapshot.colorPlateNumber,project:snapshot.projectName,planned_quantity:String(blendPlan.inputs.plannedQuantity)}]);
+   if(body.action==='blend-pdf')return send(200,await renderProductionBlend(blendPlan),{'content-type':'application/pdf'});
+   if(['working','preview','batch-working'].includes(body.action))return send(200,await pdf(url.pathname+JSON.stringify(row.formulation_state)+JSON.stringify(row.blend_rows)+row.updated_at,{...workingSnapshot(),render_context:'working'}),{'content-type':'application/pdf'});
    if(['generate','open'].includes(body.action))return send(200,{url:origin+'/review/pdf/'+body.documentId+'.pdf'});
    return send(403,{message:'Only local Sample PDF generation is allowed'});
   }
   if(url.pathname.startsWith('/rest/v1/rpc/')){
+   if(name==='list_bids')return send(200,[],{'content-range':'*/0'});
    if(name==='list_samples')return send(200,[{sample:row}]);
    if(name==='get_sample_formulation_default')return send(200,{});
-   if(name==='save_sample_draft'){Object.assign(row,body.p_sample);row.blend_rows=body.p_rows;return send(200,null);}
+   if(name==='save_sample_draft'){Object.assign(row,body.p_sample,{updated_at:new Date().toISOString()});row.blend_rows=body.p_rows;return send(200,null);}
    if(name==='record_my_sample_recent_values')return send(200,null);
    if(name==='create_sample')return send(200,sampleId);
-   if(name==='issue_sample_form'){const id=uuid(720000+row.issued_documents.length);row.issued_documents.push({id,sample_id:sampleId,issue_number:row.issued_documents.length+1,issued_at:stamp,generation_status:'generated',issued_snapshot:snapshot});return send(200,id);}
+   if(name==='issue_sample_form'){const id=uuid(720000+row.issued_documents.length);row.issued_documents.push({id,sample_id:sampleId,issue_number:row.issued_documents.length+1,issued_at:stamp,generation_status:'generated',snapshot_hash:'fixture-issued-'+id,issued_snapshot:structuredClone(workingSnapshot())});return send(200,id);}
    if(name==='search_sample_update_jobs')return send(200,allowed(profile)&&[baseJob.name,baseJob.customer,baseJob.job_number].join(' ').toLowerCase().includes((body.p_search??'').toLowerCase())?[baseJob]:[]);
    if(name==='can_publish_sample_to_job')return send(200,allowed(profile)&&body.p_job_id===jobId);
    if(name==='list_active_job_update_collaborators')return send(200,[{user_id:peerId,display_name:'Review Colleague',role:'member'}]);
