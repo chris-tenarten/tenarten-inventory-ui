@@ -1,0 +1,6 @@
+import {spawn} from 'node:child_process';
+import {mkdirSync,writeFileSync} from 'node:fs';
+mkdirSync('output/sample-job-updates',{recursive:true});
+const commands=[['typescript',['./node_modules/.bin/tsc','--noEmit']],['lint',['./node_modules/.bin/eslint','src/modules/samples/PostSampleToJob.tsx','src/modules/samples/post-to-job.ts','src/modules/samples/SampleWorkspace.tsx','src/components/documents/DocumentViewer.tsx']],['diff',['git','diff','--check']],['collaboration',['node','scripts/verify-job-update-account-collaboration.mjs']],['mentions',['./node_modules/.bin/tsx','scripts/verify-job-update-mention-composer.ts']],['database',['node','scripts/verify-sample-job-update-db.mjs']],['build',['node','scripts/build-sample-job-update-review.mjs']]];
+const results=await Promise.all(commands.map(([name,[command,...args]])=>new Promise(resolve=>{const child=spawn(command,args,{stdio:['ignore','pipe','pipe']});let output='';child.stdout.on('data',b=>output+=b);child.stderr.on('data',b=>output+=b);child.on('exit',code=>{writeFileSync(`output/sample-job-updates/${name}.log`,output);console.log(name,code===0?'PASS':'FAIL',output.slice(-450));resolve({name,code});});})));
+writeFileSync('output/sample-job-updates/validation.json',JSON.stringify(results,null,2));if(results.some(r=>r.code!==0))process.exitCode=1;

@@ -14,6 +14,7 @@ type Props = {
   metadata?: string;
   url?: string;
   children?: ReactNode;
+  actions?: ReactNode;
   onClose(): void;
   onPrevious?: () => void;
   onNext?: () => void;
@@ -27,7 +28,7 @@ const extension = (filename: string) => filename.split('.').pop()?.toLowerCase()
 const formatSize = (bytes?: number | null) => bytes === null || bytes === undefined ? '' : bytes < 1024 ? `${bytes} B` : bytes < 1048576 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1048576).toFixed(1)} MB`;
 export const isDocumentPreviewSupported = (filename: string,mimeType?: string|null) => mimeType === 'application/pdf' || imageTypes.has(mimeType ?? '') || ['pdf','png','jpg','jpeg','webp'].includes(extension(filename));
 
-export default function DocumentViewer({ mode = 'fullscreen', title, filename, mimeType, sizeBytes, metadata, url: sourceUrl, children, onClose, onPrevious, onNext, hasPrevious, hasNext, onOpenFullscreen }: Props) {
+export default function DocumentViewer({ mode = 'fullscreen', title, filename, mimeType, sizeBytes, metadata, url: sourceUrl, children, actions, onClose, onPrevious, onNext, hasPrevious, hasNext, onOpenFullscreen }: Props) {
   const [zoom, setZoom] = useState(100);
   const [loading, setLoading] = useState(Boolean(sourceUrl && (mimeType === 'application/pdf' || imageTypes.has(mimeType ?? '') || ['pdf', 'png', 'jpg', 'jpeg', 'webp'].includes(extension(filename)))));
   const [previewError, setPreviewError] = useState('');
@@ -92,6 +93,7 @@ export default function DocumentViewer({ mode = 'fullscreen', title, filename, m
       {(onPrevious || onNext) && <div className="flex"><button type="button" disabled={!hasPrevious} onClick={onPrevious} className="inline-flex h-9 w-9 items-center justify-center border border-slate-600 disabled:opacity-30" aria-label="Previous document"><ChevronLeft className="h-4 w-4"/></button><button type="button" disabled={!hasNext} onClick={onNext} className="inline-flex h-9 w-9 items-center justify-center border border-l-0 border-slate-600 disabled:opacity-30" aria-label="Next document"><ChevronRight className="h-4 w-4"/></button></div>}
       {previewable && <div className="flex items-center"><button type="button" onClick={() => setZoom(value => Math.max(50, value - 10))} className="inline-flex h-9 w-9 items-center justify-center border border-slate-600" aria-label="Zoom out"><Minus className="h-4 w-4"/></button><span className="inline-flex h-9 min-w-14 items-center justify-center border-y border-slate-600 px-2 text-xs">{zoom}%</span><button type="button" onClick={() => setZoom(value => Math.min(200, value + 10))} className="inline-flex h-9 w-9 items-center justify-center border border-slate-600" aria-label="Zoom in"><Plus className="h-4 w-4"/></button></div>}
       {url && <><a href={url} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1 border border-slate-600 px-2 text-xs font-bold"><ExternalLink className="h-4 w-4"/>Open</a><a href={url} download={filename} className="inline-flex h-9 items-center gap-1 border border-slate-600 px-2 text-xs font-bold"><Download className="h-4 w-4"/>Download</a></>}
+      {actions}
       {children && <button type="button" onClick={() => window.print()} className="inline-flex h-9 items-center gap-1 border border-slate-600 px-2 text-xs font-bold"><Printer className="h-4 w-4"/>Print</button>}
       <button type="button" onClick={onClose} className="inline-flex h-9 w-9 items-center justify-center border border-slate-600" aria-label="Close document viewer"><X className="h-5 w-5"/></button>
     </header>

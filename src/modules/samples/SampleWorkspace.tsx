@@ -30,6 +30,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import PostSampleToJob from "./PostSampleToJob";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import { useAuth } from "@/lib/auth";
 import { loadBids } from "@/modules/pre-production/queries";
@@ -155,6 +156,7 @@ export default function SampleWorkspace() {
   const [preview, setPreview] = useState<{
     url: string;
     filename: string;
+    documentType?: "work_order" | "blend_sheet";
   } | null>(null);
   const [recentValues, setRecentValues] = useState<
     Partial<Record<SampleRecentFieldKey, string[]>>
@@ -1300,10 +1302,10 @@ export default function SampleWorkspace() {
             </section>
             </details>
             <div id="production-planning" tabIndex={-1} className="scroll-mt-28">
-            <ProductionBatchOutput onValidationChange={setProductionAttention} mode="planner" onDocuments={()=>{setDocumentsOpen(true);jumpTo('sample-documents');}} onSample={()=>jumpTo('formulation-setup')} ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>
+            <ProductionBatchOutput onValidationChange={setProductionAttention} mode="planner" onDocuments={()=>{setDocumentsOpen(true);jumpTo('sample-documents');}} onSample={()=>jumpTo('formulation-setup')} ref={productionRef} key={`batch-output:${draft.id}`} sample={draft} onDirtyChange={setBlendDirty} onSave={() => persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename,documentType:"blend_sheet"})}/>
             </div>
             <details id="sample-documents" tabIndex={-1} className="scroll-mt-28 space-y-3 border bg-white p-4" open={documentsOpen} onToggle={e=>setDocumentsOpen(e.currentTarget.open)}><summary className="cursor-pointer text-lg font-bold">Documents / History</summary>
-            {documentsOpen&&draft.id&&<ProductionBatchOutput mode="documents" sample={draft} onDocuments={()=>{}} onSample={()=>jumpTo('formulation-setup')} onSave={()=>persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename})}/>}
+            {documentsOpen&&draft.id&&<ProductionBatchOutput mode="documents" sample={draft} onDocuments={()=>{}} onSample={()=>jumpTo('formulation-setup')} onSave={()=>persistDraft(draft)} onPreview={(url,filename)=>setPreview({url,filename,documentType:"blend_sheet"})}/>}
             <h2 className="font-bold">Recent Documents · Sample Work Order</h2>
             <SampleVersionHistory
               sample={draft}
@@ -1315,7 +1317,7 @@ export default function SampleWorkspace() {
                 setDraft(current);
                 if (current) setDraftBaseline(JSON.stringify(current));
               }}
-              onPreview={(url, filename) => setPreview({ url, filename })}
+              onPreview={(url, filename) => setPreview({ url, filename, documentType: "blend_sheet" })}
             />
             <section className="border border-slate-300 bg-white p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide">
@@ -1437,6 +1439,7 @@ export default function SampleWorkspace() {
           filename={preview.filename}
           mimeType="application/pdf"
           url={preview.url}
+          actions={<PostSampleToJob key={preview.url} url={preview.url} filename={preview.filename} documentType={preview.documentType ?? "work_order"} />}
           onClose={() => {
             if (preview.url.startsWith("blob:"))
               URL.revokeObjectURL(preview.url);
