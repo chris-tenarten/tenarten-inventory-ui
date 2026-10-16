@@ -1,7 +1,7 @@
 "use client";
 
 import type { Session, User } from "@supabase/supabase-js";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { BRANDING } from "@/lib/dev-branding.mjs";
 import {
@@ -25,7 +25,10 @@ export type AppUserProfile = {
   sampleLabelsGenerate: boolean;
 };
 
+export type AccountAccessStatus = "pending" | "allowed" | "denied" | "failed";
+
 type AuthContextValue = {
+  accessStatus: AccountAccessStatus;
   ready: boolean;
   session: Session | null;
   user: User | null;
@@ -70,88 +73,119 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profileError, setProfileError] = useState("");
   const [requiresPasswordSetup, setRequiresPasswordSetup] = useState(false);
 
-  const loadProfile = useCallback(async (nextSession: Session | null) => {
-    if (!nextSession) {
-      setProfile(null);
+  const [accessStatus, setAccessStatus] = useState<AccountAccessStatus>("pending");
+  const currentSession = useRef<Session | null>(null);
+  const generation = useRef(0);
+  const mounted = useRef(false);
+
+  const loadProfile = useCallback(async (nextSession: Session, request: number) => {
+    const current = () => mounted.current && generation.current === request && currentSession.current === nextSession;
+    if (!current()) return;
+    try {
+      const { data, error } = await supabase.rpc("get_my_app_access");
+      if (!current()) return;
+      if (error) throw error;
+      const nextProfile = normalizeProfile(data);
+      if (nextProfile && nextProfile.userId !== nextSession.user.id) {
+        throw new Error("The returned account profile does not match the authenticated account.");
+      }
+      const allowed = Boolean(nextProfile?.isActive && (RBAC_MODE === "compatibility" || !BRANDING.showDeveloperArtwork || roleHasCapability(nextProfile.role, "accessDevelopmentEnvironment")));
+      setProfile(nextProfile);
       setProfileError("");
-      return;
-    }
-    const { data, error } = await supabase.rpc("get_my_app_access");
-    if (error) {
+      setAccessStatus(allowed ? "allowed" : "denied");
+      if (allowed && nextProfile && !nextProfile.readOnly && current()) {
+        // Notification failure is independent of account-access verification.
+        try {
+          const { error: welcomeError } = await supabase.rpc("ensure_my_welcome_notification");
+          if (current() && !welcomeError) window.dispatchEvent(new Event("tenops:notifications-changed"));
+        } catch { /* Keep the successfully verified access decision. */ }
+      }
+    } catch (cause) {
+      if (!current()) return;
       setProfile(null);
-      setProfileError(
-        RBAC_MODE === "compatibility"
-          ? "Account profile infrastructure is not available in this environment yet."
-          : error.message,
-      );
-      return;
-    }
-    const nextProfile = normalizeProfile(data);
-    setProfile(nextProfile);
-    setProfileError("");
-    if (nextProfile?.isActive && !nextProfile.readOnly) {
-      const { error: welcomeError } = await supabase.rpc("ensure_my_welcome_notification");
-      if (!welcomeError) window.dispatchEvent(new Event("tenops:notifications-changed"));
+      const detail = cause && typeof cause === "object" && "message" in cause && typeof cause.message === "string" ? cause.message : "Please refresh and retry.";
+      setProfileError(`Unable to verify your TenOps account access. ${detail}`);
+      setAccessStatus("failed");
     }
   }, []);
 
+  // Invalidate old requests immediately, before deferring any authenticated RPC.
+  const beginResolution = useCallback((nextSession: Session | null) => {
+    const request = ++generation.current;
+    currentSession.current = nextSession;
+    setSession(nextSession);
+    setProfile(null);
+    setProfileError("");
+    setAccessStatus(nextSession ? "pending" : "denied");
+    setReady(true);
+    return request;
+  }, []);
+
   useEffect(() => {
-    let live = true;
+    mounted.current = true;
     let initialAuthSnapshotReceived = false;
     let authChangeProfileTimer: number | null = null;
-    void supabase.auth.getSession().then(async ({ data }) => {
-      if (!live) return;
+    const bootstrap = generation.current;
+    void supabase.auth.getSession().then(async ({ data, error }) => {
+      if (!mounted.current || generation.current !== bootstrap) return;
+      if (error) throw error;
       const accountFlow = new URLSearchParams(window.location.search).get("account");
       setRequiresPasswordSetup((accountFlow === "setup" || accountFlow === "recovery") && Boolean(data.session));
-      setSession(data.session);
-      await loadProfile(data.session);
-      if (live) setReady(true);
+      const request = beginResolution(data.session);
+      if (data.session) await loadProfile(data.session, request);
+    }).catch(() => {
+      if (!mounted.current || generation.current !== bootstrap) return;
+      setProfile(null);
+      setProfileError("Unable to restore your TenOps session. Please refresh and retry.");
+      setAccessStatus("failed");
+      setReady(true);
     });
     const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      // getSession above owns bootstrap. Supabase also emits INITIAL_SESSION
-      // for that same snapshot; it must not repeat profile/welcome requests.
       if (event === "INITIAL_SESSION") { initialAuthSnapshotReceived = true; return; }
-      // Session recovery emits SIGNED_IN before INITIAL_SESSION. getSession
-      // resolves that recovered session too. Later sign-ins still refresh.
-      if (event === "SIGNED_IN" && !initialAuthSnapshotReceived) return;
+      // Deduplicate only an already accepted bootstrap snapshot. A different
+      // identity/session event must invalidate bootstrap even before INITIAL_SESSION.
+      if (event === "SIGNED_IN" && !initialAuthSnapshotReceived && currentSession.current?.user.id === nextSession?.user.id && currentSession.current?.access_token === nextSession?.access_token) return;
       const accountFlow = new URLSearchParams(window.location.search).get("account");
       const callbackFlow = accountFlow === "setup" || accountFlow === "recovery";
       setRequiresPasswordSetup(Boolean(nextSession) && (event === "PASSWORD_RECOVERY" || callbackFlow));
-      setSession(nextSession);
-      // Supabase holds its auth-token lock while this callback runs. Starting
-      // an authenticated RPC here can contend with that lock for five seconds.
+      const request = beginResolution(nextSession);
+      // Supabase holds its auth-token lock while this callback runs.
       if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
       authChangeProfileTimer = window.setTimeout(() => {
-        if (live) void loadProfile(nextSession);
+        if (nextSession) void loadProfile(nextSession, request);
       }, 0);
-      setReady(true);
     });
     return () => {
-      live = false;
+      mounted.current = false;
+      // This is a generation counter, not a DOM ref: invalidate all current work.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      generation.current++;
       if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
       data.subscription.unsubscribe();
     };
-  }, [loadProfile]);
+  }, [beginResolution, loadProfile]);
 
-  const refreshProfile = useCallback(async () => loadProfile(session), [loadProfile, session]);
+  const refreshProfile = useCallback(async () => {
+    const nextSession = currentSession.current;
+    const request = beginResolution(nextSession);
+    if (nextSession) await loadProfile(nextSession, request);
+  }, [beginResolution, loadProfile]);
   const can = useCallback((capability: Capability) => {
     if (!session) return RBAC_MODE === "compatibility" && READ_CAPABILITIES.includes(capability);
-    if (!profile?.isActive) return false;
+    if (accessStatus !== "allowed" || !profile?.isActive || profile.userId !== session.user.id) return false;
     return accountHasCapability(profile.role, capability, profile.readOnly, profile.messagingWrite, profile.productionBlendManage, profile.sampleLabelsGenerate);
-  }, [profile, session]);
+  }, [accessStatus, profile, session]);
 
   const value = useMemo<AuthContextValue>(() => ({
     ready,
+    accessStatus,
     session,
     user: session?.user ?? null,
     profile,
     profileError,
     requiresPasswordSetup,
     isAuthenticated: Boolean(session),
-    accessAllowed:
-      RBAC_MODE === "compatibility"
-        ? true
-        : Boolean(profile?.isActive && (!BRANDING.showDeveloperArtwork || roleHasCapability(profile.role, "accessDevelopmentEnvironment"))),
+    accessAllowed: accessStatus === "allowed",
     can,
     async signIn(email, password) {
       const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
@@ -184,7 +218,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.history.replaceState({}, "", window.location.pathname);
     },
     refreshProfile,
-  }), [can, profile, profileError, ready, refreshProfile, requiresPasswordSetup, session]);
+  }), [accessStatus, can, profile, profileError, ready, refreshProfile, requiresPasswordSetup, session]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

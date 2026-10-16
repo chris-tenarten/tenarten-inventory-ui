@@ -396,7 +396,7 @@ export default function ClientLayoutShell({
     await auth.signOut();
   }
 
-  const shellUnlocked = !auth.requiresPasswordSetup && auth.isAuthenticated && auth.accessAllowed;
+  const shellUnlocked = auth.ready && auth.accessStatus === "allowed" && !auth.requiresPasswordSetup && auth.isAuthenticated && auth.accessAllowed;
 
   return (
     <div ref={shellRef} data-app-shell>
@@ -542,10 +542,11 @@ export default function ClientLayoutShell({
               </div>
 
               <div className="px-4 py-5 sm:px-10 sm:py-8 lg:px-12">
-                {auth.ready
+                {auth.ready && auth.accessStatus !== "pending"
                   ? <AccountAccessPanel onAuthenticated={() => {}} separated={false} />
                   : <div role="status" aria-live="polite" className="py-6 text-center text-sm font-semibold text-slate-600">Restoring your TenOps session…</div>}
-                {auth.isAuthenticated && !auth.accessAllowed ? <div role="alert" className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-xs font-semibold text-red-800">This account is disabled or does not have access to this TenOps environment.</div> : null}
+                {auth.accessStatus === "failed" && !auth.isAuthenticated ? <div role="alert" className="mt-3 text-xs font-semibold text-red-700">{auth.profileError}</div> : null}
+                {auth.isAuthenticated && auth.accessStatus === "denied" ? <div role="alert" className="mt-3 border border-red-300 bg-red-50 px-3 py-2 text-xs font-semibold text-red-800">This account is disabled or does not have access to this TenOps environment.</div> : null}
               </div>
             </div>
           </div>
