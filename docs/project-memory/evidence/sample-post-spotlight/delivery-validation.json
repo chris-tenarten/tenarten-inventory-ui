@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "recipients": [
+    "Anthony Iorio",
+    "Giovanni Coppola",
+    "Patrick Soldow",
+    "Chris Ngo"
+  ],
+  "excluded": [
+    "Marcos Alvarado",
+    "Jason Allen",
+    "chris developer"
+  ],
+  "systemSender": true,
+  "attachmentsPerRecipient": 5,
+  "orderingAndCaptions": true,
+  "privateRls": true,
+  "anonymousAndUnrelatedDenied": true,
+  "impersonationDenied": true,
+  "effectiveExecutePrivilegesVerified": true,
+  "policiesUnchanged": true,
+  "uploadFailureHidden": true,
+  "lostResponseResume": true,
+  "duplicateMessages": 0,
+  "duplicateNotifications": 0,
+  "duplicateReferences": 0,
+  "corruptBytesRejected": true,
+  "orphans": 0,
+  "textCompatibility": true,
+  "hostedWrites": 0,
+  "storageHttp": "Emulated byte adapter; actual PostgreSQL RLS/Storage guard/persistence verified",
+  "oldPublisherDefinitionHashes": "deliver_tenops_release_communication(text):468ecfc4f13911755aaf08789b10b773\ndeliver_tenops_release_communication_to_user(text,uuid):03878730216436300b326b5119ec2b1b"
+}

@@ -1,0 +1,60 @@
+{
+  "pattern": "Product-approved explicit four-person list; not a broadcast.",
+  "observedAt": "2026-10-15T22:26:40.433Z",
+  "proposedRecipients": [
+    {
+      "userId": "92edea19-e431-4493-9a1b-3c3ecf32aeae",
+      "name": "Anthony Iorio",
+      "role": "lead"
+    },
+    {
+      "userId": "29bed5b3-2ed8-43aa-9af2-45578b00388e",
+      "name": "Giovanni Coppola",
+      "role": "lead"
+    },
+    {
+      "userId": "c85c852e-6775-4ee7-bfb7-f6ff0778243b",
+      "name": "Patrick Soldow",
+      "role": "lead"
+    },
+    {
+      "userId": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+      "name": "Chris Ngo",
+      "role": "admin"
+    }
+  ],
+  "inactiveExcluded": 0,
+  "futureUsers": false,
+  "delivered": false,
+  "systemSender": {
+    "senderKind": "system",
+    "senderUserId": null,
+    "systemSenderKey": "tenops",
+    "uiConversationId": "00000000-0000-0000-0000-000000000001"
+  },
+  "originalCommunications": [
+    {
+      "key": "my_work_v1_announcement",
+      "channel": "account_notification",
+      "futureUsers": false
+    },
+    {
+      "key": "inbox_onboarding_v1",
+      "channel": "system_inbox",
+      "futureUsers": true
+    },
+    {
+      "key": "tasks_messaging_intake_20260902",
+      "channel": "account_notification",
+      "futureUsers": false
+    }
+  ],
+  "observedSystemMessageKeys": [
+    "inbox_onboarding_v1"
+  ],
+  "excludedNames": [
+    "Marcos Alvarado",
+    "Jason Allen",
+    "chris developer"
+  ]
+}

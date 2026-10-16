@@ -3,11 +3,11 @@
 import { ArrowLeft, BriefcaseBusiness, FileText, Inbox, MessageSquarePlus, MoreHorizontal, Paperclip, Send, Sparkles, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
+import AttachmentImageViewer from "./messaging/AttachmentImageViewer";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { openProductionJob } from "@/modules/production/job-options";
-import { createInboxAttachmentUrl, editInboxMessage, isTenOpsSystemInboxUser, loadConversationSummaries, loadInboxUnreadCount, markInboxConversationRead, openInboxAttachment, permanentlyDeleteInboxMessage, sendInboxMessage, type ConversationSummary, type InboxAttachment, type InboxMessage } from "./inbox";
+import { editInboxMessage, isTenOpsSystemInboxUser, loadConversationSummaries, loadInboxUnreadCount, markInboxConversationRead, openInboxAttachment, permanentlyDeleteInboxMessage, sendInboxMessage, type ConversationSummary, type InboxAttachment, type InboxMessage } from "./inbox";
 import type { WorkCollaborator } from "./types";
 import { canPreview, fileExtension, fileSize } from "./messaging/files";
 import { getTransfer, serverTransfer, startTransfer, subscribeTransfer, transferPending } from "./messaging/client";
@@ -41,7 +41,7 @@ export default function InboxDialog({open,onClose,currentUserId,collaborators,in
   const draftOwner=auth.user?.id===currentUserId?currentUserId:"";
   const {text:body,setText:setBody,captureSend}=useTextDraft(draftOwner,"messaging",selectedUserId||recipientId||"new",open);
   const sendLock=useRef(false);
-  const[sending,setSending]=useState(false);const[sendStage,setSendStage]=useState("");const[error,setError]=useState("");const[preview,setPreview]=useState<InboxAttachment|null>(null);
+  const[sending,setSending]=useState(false);const[sendStage]=useState("");const[error,setError]=useState("");const[preview,setPreview]=useState<{attachments:InboxAttachment[];index:number}|null>(null);
   const attachmentQueue=useAttachmentQueue(!canWrite||sending||transferBlocked,setError);
   const {files,clear:clearAttachments}=attachmentQueue;
   const[actionMessageId,setActionMessageId]=useState("");const[editingMessageId,setEditingMessageId]=useState("");const[editBody,setEditBody]=useState("");const[messageActionBusy,setMessageActionBusy]=useState(false);
@@ -104,7 +104,7 @@ export default function InboxDialog({open,onClose,currentUserId,collaborators,in
     }catch(caught){setError(caught instanceof Error?caught.message:"Unable to start transfer.");}return;}
     sendLock.current=true;setSending(true);try{const id=await sendInboxMessage(target,body.trim());sent();nearBottomRef.current=true;reconcile(id);await load();window.dispatchEvent(new Event("tenops:notifications-changed"));}catch(caught){setError(caught instanceof Error?caught.message:"Unable to send message.");}finally{sendLock.current=false;setSending(false);}
   }
-  async function previewAttachment(attachment:InboxAttachment){try{setSendStage("Loading preview…");if(!canPreview(attachment))return;const url=await createInboxAttachmentUrl(attachment);setPreview({...attachment,previewUrl:url});}catch(caught){setError(caught instanceof Error?caught.message:"Unable to preview attachment.");}finally{setSendStage("");}}
+  function previewAttachment(attachment:InboxAttachment){const images=messages.find(message=>message.id===attachment.messageId)?.attachments.filter(canPreview)??[attachment];setPreview({attachments:images,index:Math.max(0,images.findIndex(item=>item.id===attachment.id))});}
   async function saveMessageEdit(){if(!editingMessageId||!editBody.trim()||messageActionBusy)return;setMessageActionBusy(true);setError("");try{await editInboxMessage(editingMessageId,editBody);reconcile(editingMessageId);setEditingMessageId("");setEditBody("");setActionMessageId("");await load();}catch(caught){setError(caught instanceof Error?caught.message:"Unable to edit message.");}finally{setMessageActionBusy(false);}}
   async function permanentlyDeleteMessage(message:InboxMessage){if(messageActionBusy||!window.confirm("Permanently delete this message? This removes the selected message and its attachments for both participants. This cannot be undone."))return;setMessageActionBusy(true);setError("");try{await permanentlyDeleteInboxMessage(message.id);reconcile(message.id);setActionMessageId("");if(editingMessageId===message.id){setEditingMessageId("");setEditBody("");}await load();window.dispatchEvent(new Event("tenops:notifications-changed"));}catch(caught){setError(caught instanceof Error?caught.message:"Unable to permanently delete message.");}finally{setMessageActionBusy(false);}}
   if(!open||typeof document==="undefined")return null;const showConversation=Boolean(selected||newMessage);
@@ -141,6 +141,6 @@ export default function InboxDialog({open,onClose,currentUserId,collaborators,in
         </div>
       </div>
     </section>
-    {preview?.previewUrl?<div className="fixed inset-0 z-[130] flex items-center justify-center bg-slate-950/85 p-4" role="dialog" aria-modal="true" aria-label={`Preview ${preview.originalFilename}`} onMouseDown={(event)=>{if(event.target===event.currentTarget)setPreview(null);}}><button type="button" onClick={()=>setPreview(null)} aria-label="Close image preview" className="absolute right-4 top-[max(1rem,env(safe-area-inset-top))] flex h-11 w-11 items-center justify-center rounded bg-white text-slate-900"><X className="h-5 w-5" /></button><Image onError={()=>{setPreview(null);setError("Preview unavailable. Use Download to save the attachment.");}} unoptimized src={preview.previewUrl} alt={preview.originalFilename} width={1600} height={1200} className="max-h-[90dvh] h-auto max-w-full w-auto object-contain" /></div>:null}
+    {preview?<AttachmentImageViewer attachments={preview.attachments} initialIndex={preview.index} onClose={()=>setPreview(null)}/>:null}
   </div>,document.body);
 }

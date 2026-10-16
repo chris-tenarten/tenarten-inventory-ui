@@ -1,0 +1,80 @@
+{
+  "mode": "READ_ONLY_PREVIEW",
+  "communicationKey": "sample_post_to_job_20261015",
+  "recipients": [
+    {
+      "userId": "92edea19-e431-4493-9a1b-3c3ecf32aeae",
+      "name": "Anthony Iorio",
+      "role": "lead",
+      "active": true,
+      "authenticatedIdentity": true,
+      "messagingEligible": true
+    },
+    {
+      "userId": "29bed5b3-2ed8-43aa-9af2-45578b00388e",
+      "name": "Giovanni Coppola",
+      "role": "lead",
+      "active": true,
+      "authenticatedIdentity": true,
+      "messagingEligible": true
+    },
+    {
+      "userId": "c85c852e-6775-4ee7-bfb7-f6ff0778243b",
+      "name": "Patrick Soldow",
+      "role": "lead",
+      "active": true,
+      "authenticatedIdentity": true,
+      "messagingEligible": true
+    },
+    {
+      "userId": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+      "name": "Chris Ngo",
+      "role": "admin",
+      "active": true,
+      "authenticatedIdentity": true,
+      "messagingEligible": true
+    }
+  ],
+  "excluded": [
+    "Marcos Alvarado",
+    "Jason Allen",
+    "chris developer"
+  ],
+  "files": [
+    {
+      "name": "Step 1 — Open a Sample and select Post to Job..jpg",
+      "size": 15747,
+      "width": 576,
+      "height": 115,
+      "sha256": "111f04e17b29cffbf104f5702496047428a04beb05b14376d443b9bd3b3bad42"
+    },
+    {
+      "name": "Step 2 — Choose the Sample document you want to share..jpg",
+      "size": 42186,
+      "width": 512,
+      "height": 642,
+      "sha256": "1588c494b636c8dc07484b158403c0ff9166cd24a7ea1e809f5ba0de2acea5df"
+    },
+    {
+      "name": "Step 3 — Select the Production Job that should receive it..jpg",
+      "size": 41948,
+      "width": 512,
+      "height": 642,
+      "sha256": "3445f8e6d84a4ec856771b0cbbdf88821fb78111a232cbf69a2a57a6aa3211a1"
+    },
+    {
+      "name": "Step 4 — Add a message if you’d like. Type @ to mention a coworker and notify them..jpg",
+      "size": 43658,
+      "width": 512,
+      "height": 642,
+      "sha256": "913fd33fcdf8f3c5c621c858253b9f845ac6ea518c52859de74837d074d1bf82"
+    },
+    {
+      "name": "Step 5 — Post the document. Your PDF and message will appear in the Job’s Updates..jpg",
+      "size": 42985,
+      "width": 512,
+      "height": 642,
+      "sha256": "c80729b3bc7e9dda3b7e4a7eb2807a50caf5e7e69e0cfe5a8e1af5e5c001b9a3"
+    }
+  ]
+}

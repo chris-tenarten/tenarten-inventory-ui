@@ -1,0 +1,49 @@
+{
+  "sender": "TenOps",
+  "systemId": "00000000-0000-0000-0000-000000000001",
+  "steps": 5,
+  "ordered": true,
+  "captions": true,
+  "desktop": true,
+  "mobile": true,
+  "navigation": true,
+  "keyboard": true,
+  "closeReturnsToMessaging": true,
+  "duplicateMessages": 0,
+  "hostedRequests": [],
+  "notifications": [],
+  "errors": [],
+  "screenshots": [
+    {
+      "file": "01.jpg",
+      "sha256": "111f04e17b29cffbf104f5702496047428a04beb05b14376d443b9bd3b3bad42"
+    },
+    {
+      "file": "02.jpg",
+      "sha256": "1588c494b636c8dc07484b158403c0ff9166cd24a7ea1e809f5ba0de2acea5df"
+    },
+    {
+      "file": "03.jpg",
+      "sha256": "3445f8e6d84a4ec856771b0cbbdf88821fb78111a232cbf69a2a57a6aa3211a1"
+    },
+    {
+      "file": "04.jpg",
+      "sha256": "913fd33fcdf8f3c5c621c858253b9f845ac6ea518c52859de74837d074d1bf82"
+    },
+    {
+      "file": "05.jpg",
+      "sha256": "c80729b3bc7e9dda3b7e4a7eb2807a50caf5e7e69e0cfe5a8e1af5e5c001b9a3"
+    }
+  ],
+  "lint": "PASS",
+  "typeScript": "PASS (corrected build)",
+  "build": "PASS; one corrective rebuild after focused lint finding",
+  "diffCheck": "PASS",
+  "riskTier": 2,
+  "hostedDeliveryTested": false,
+  "normalAuthReviewSmoke": {
+    "signInScreen": "PASS",
+    "unauthenticatedLocalPublishDenied": "PASS",
+    "businessDataSource": "disposable local only"
+  }
+}

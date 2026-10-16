@@ -1,0 +1,56 @@
+{
+  "communicationKey": "sample_post_to_job_20261015",
+  "senderKind": "system",
+  "systemSenderKey": "tenops",
+  "senderName": "TenOps",
+  "body": "New in TenOps: Post Sample Documents to Jobs\n\nYou can now send Sample Work Orders, Working Sheets and Blend Sheets directly to Production Jobs—without downloading and reuploading PDFs.\n\nFollow the quick walkthrough below to see how.\n\nPosting shares a PDF; it does not approve or issue a Sample. Sample Work Orders use an existing issued document.",
+  "steps": [
+    {
+      "number": 1,
+      "caption": "Open a Sample and select Post to Job.",
+      "file": "01.jpg"
+    },
+    {
+      "number": 2,
+      "caption": "Choose the Sample document you want to share.",
+      "file": "02.jpg"
+    },
+    {
+      "number": 3,
+      "caption": "Select the Production Job that should receive it.",
+      "file": "03.jpg"
+    },
+    {
+      "number": 4,
+      "caption": "Add a message if you’d like. Type @ to mention a coworker and notify them.",
+      "file": "04.jpg"
+    },
+    {
+      "number": 5,
+      "caption": "Post the document. Your PDF and message will appear in the Job’s Updates.",
+      "file": "05.jpg"
+    }
+  ],
+  "dimensions": {
+    "01.jpg": {
+      "width": 576,
+      "height": 115
+    },
+    "02.jpg": {
+      "width": 512,
+      "height": 642
+    },
+    "03.jpg": {
+      "width": 512,
+      "height": 642
+    },
+    "04.jpg": {
+      "width": 512,
+      "height": 642
+    },
+    "05.jpg": {
+      "width": 512,
+      "height": 642
+    }
+  }
+}
