@@ -1,0 +1,22 @@
+{
+  "migration": "supabase/migrations/20261015230000_rich_release_communications.sql",
+  "sha256": "dcc4ceb7fa70317be16a25ed8327bc289248bcafef88f2039a8fc4ac63184ca7",
+  "onlyTwoPrerequisiteChecksChanged": true,
+  "normalization": [
+    {
+      "changedBodyRejected": true,
+      "crlfPass": true,
+      "lfPass": true,
+      "signature": "public.deliver_tenops_release_communication(text)"
+    },
+    {
+      "changedBodyRejected": true,
+      "crlfPass": true,
+      "lfPass": true,
+      "signature": "public.deliver_tenops_release_communication_to_user(text,uuid)"
+    }
+  ],
+  "applicationSourceUnchanged": true,
+  "hostedBaselineUnchanged": true,
+  "productionServedSha": "0375b8a0472ee8bc64fc590da871f4b3230e77cf"
+}

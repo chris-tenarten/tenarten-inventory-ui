@@ -11,8 +11,8 @@ alter table public.tenops_release_communications
         and jsonb_array_length(attachment_manifest) between 1 and 5
         and attachment_uploader_user_id is not null and channel='system_inbox' and not deliver_to_future_users)
   );
-do $$ begin if (select md5(prosrc) from pg_proc where oid='public.deliver_tenops_release_communication_to_user(text,uuid)'::regprocedure) is distinct from '03878730216436300b326b5119ec2b1b' then raise exception 'Release publisher prerequisite drift: deliver_tenops_release_communication_to_user'; end if; end $$;
-do $$ begin if (select md5(prosrc) from pg_proc where oid='public.deliver_tenops_release_communication(text)'::regprocedure) is distinct from '468ecfc4f13911755aaf08789b10b773' then raise exception 'Release publisher prerequisite drift: deliver_tenops_release_communication'; end if; end $$;
+do $$ begin if (select md5(replace(prosrc,E'\r\n',E'\n')) from pg_proc where oid='public.deliver_tenops_release_communication_to_user(text,uuid)'::regprocedure) is distinct from '03878730216436300b326b5119ec2b1b' then raise exception 'Release publisher prerequisite drift: deliver_tenops_release_communication_to_user'; end if; end $$;
+do $$ begin if (select md5(replace(prosrc,E'\r\n',E'\n')) from pg_proc where oid='public.deliver_tenops_release_communication(text)'::regprocedure) is distinct from '468ecfc4f13911755aaf08789b10b773' then raise exception 'Release publisher prerequisite drift: deliver_tenops_release_communication'; end if; end $$;
 
 create function public.prepare_tenops_rich_release_communication(
  p_key text,p_title text,p_body text,p_recipients uuid[],p_files jsonb,p_uploader uuid
