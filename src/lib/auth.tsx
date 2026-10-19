@@ -167,9 +167,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshProfile = useCallback(async () => {
     const nextSession = currentSession.current;
-    const request = beginResolution(nextSession);
+    // Explicit same-session revalidation must not unmount its caller. Samples
+    // revalidates on mount: resetting the shell here creates a mount/refresh loop.
+    // Only retain a decision already verified for this exact current session;
+    // initial restoration and auth/session changes still enter pending normally.
+    const request = nextSession && nextSession === session && accessStatus === "allowed"
+      ? ++generation.current
+      : beginResolution(nextSession);
     if (nextSession) await loadProfile(nextSession, request);
-  }, [beginResolution, loadProfile]);
+  }, [accessStatus, beginResolution, loadProfile, session]);
   const can = useCallback((capability: Capability) => {
     if (!session) return RBAC_MODE === "compatibility" && READ_CAPABILITIES.includes(capability);
     if (accessStatus !== "allowed" || !profile?.isActive || profile.userId !== session.user.id) return false;
