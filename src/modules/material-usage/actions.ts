@@ -1,3 +1,4 @@
+import { loadCompleteRows } from '@/lib/complete-rows';
 import { supabase } from '@/lib/supabase';
 
 import {
@@ -21,7 +22,7 @@ function cleanDistinctValues(
 export async function getMaterialUsageReports(): Promise<
   MaterialUsageReportSummary[]
 > {
-  const { data, error } = await supabase
+  const data = await loadCompleteRows((from,to)=>supabase
     .from('material_usage_reports')
     .select(`
       id,
@@ -34,14 +35,9 @@ export async function getMaterialUsageReports(): Promise<
       job_name_snapshot,
       unlisted_job_name,
       notes
-    `)
+    `, {count: 'exact'})
     .order('report_date', { ascending: false })
-    .order('updated_at', { ascending: false });
-
-  if (error) {
-    throw error;
-  }
-
+    .order('updated_at', { ascending: false }).order('id').range(from,to));
   return (data ?? []).map((row) => ({
     id: row.id,
     reportDate: row.report_date,
@@ -59,21 +55,13 @@ export async function getMaterialUsageReports(): Promise<
 export async function getMaterialUsageReport(
   id: string,
 ): Promise<MaterialUsageReport> {
-  const { data, error } = await supabase
-    .from('material_usage_reports')
-    .select(`
-      *,
-      material_usage_lines(*)
-    `)
-    .eq('id', id)
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
+  const [{data,error},lines]=await Promise.all([
+    supabase.from('material_usage_reports').select('*').eq('id',id).single(),
+    loadCompleteRows((from,to)=>supabase.from('material_usage_lines').select('*',{count:'exact'}).eq('report_id',id).order('sort_order').order('id').range(from,to)),
+  ]);
+  if(error)throw error;
   const sortedLines = [
-    ...(data.material_usage_lines ?? []),
+    ...lines,
   ].sort(
     (first, second) =>
       (first.sort_order ?? 0) -

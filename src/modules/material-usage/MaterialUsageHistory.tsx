@@ -18,6 +18,7 @@ interface Props {
   reports: MaterialUsageReportSummary[];
   selectedId: string | null;
   loading: boolean;
+  error?: string|null;
 
   onSelect(id: string): void;
   onNew(): void;
@@ -41,6 +42,7 @@ export function MaterialUsageHistory({
   reports,
   selectedId,
   loading,
+  error,
   onSelect,
   onNew,
 }: Props) {
@@ -53,7 +55,12 @@ export function MaterialUsageHistory({
   const [unlinked, setUnlinked] = useState(false);
   const [jobs, setJobs] = useState<ProductionJobOption[]>([]);
   const today = localDateKey();
-  useEffect(() => { void loadProductionJobOptions({ orderBy: 'schedule', includeArchived: true }).then(setJobs); }, []);
+  const [jobsError,setJobsError]=useState('');
+  useEffect(() => {
+    let live=true;
+    void loadProductionJobOptions({orderBy:'schedule',includeArchived:true}).then(rows=>{if(live)setJobs(rows);}).catch(caught=>{if(live)setJobsError(caught instanceof Error?caught.message:'Job filters unavailable.');});
+    return()=>{live=false;};
+  }, []);
   useEffect(() => {
     const syncJobFilter = () => setJobId(new URLSearchParams(window.location.search).get('historyJob') ?? '');
     window.addEventListener('popstate', syncJobFilter);
@@ -110,7 +117,8 @@ export function MaterialUsageHistory({
           </div>
         ) : null}
 
-        {!loading && visibleReports.length === 0 ? (
+        {jobsError && <p role="alert" className="px-4 py-3 text-sm text-red-700">Job filters unavailable. {jobsError}</p>}
+        {!loading && !error && !jobsError && visibleReports.length === 0 ? (
           <div className="px-4 py-8 text-center">
             <p className="text-sm font-medium text-slate-700">
               {tr("No material reports yet","Aún no hay reportes de materiales")}

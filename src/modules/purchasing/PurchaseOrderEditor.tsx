@@ -110,6 +110,7 @@ function LineEditor({
   const [searchError, setSearchError] = useState("");
   const [resultKey, setResultKey] = useState("");
   const searchKey = JSON.stringify([query, vendorName, line.materialType]);
+  const [containerError,setContainerError]=useState('');
   const [catalogContainerSizes, setCatalogContainerSizes] = useState<string[]>([]);
   const [reference, setReference] =
     useState<PurchasingCatalogSuggestion | null>(null);
@@ -183,8 +184,8 @@ function LineEditor({
   useEffect(() => {
     let active = true;
     loadPurchasingContainerSizeOptions(line.materialType, vendorName)
-      .then((options) => { if (active) setCatalogContainerSizes(options); })
-      .catch(() => { if (active) setCatalogContainerSizes([]); });
+      .then((options) => { if (active) {setCatalogContainerSizes(options);setContainerError('');} })
+      .catch(caught => { if (active) {setCatalogContainerSizes([]);setContainerError(caught instanceof Error?caught.message:"Container options unavailable.");} });
     return () => { active = false; };
   }, [line.materialType, vendorName]);
   const select = (item: PurchasingCatalogSuggestion) => {
@@ -334,6 +335,7 @@ function LineEditor({
             {searchError}
           </div>
         )}
+        {containerError && <p role="alert" className="mt-2 text-xs text-red-700">Container options unavailable. {containerError} Manual entry remains available.</p>}
         {query.trim().length >= 2 && resultKey === searchKey && !searching && !searchError && (
           <div className="mt-2 overflow-hidden border border-slate-200 bg-white">
             {results.length > 0 && <CatalogSearchResults key={`${query}:${vendorName}:${line.materialType}`} items={results} onSelect={select} />}

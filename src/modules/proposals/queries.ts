@@ -1,3 +1,5 @@
+import { loadCompleteRows } from '@/lib/complete-rows';
+import { loadScopedRows } from '@/lib/scoped-rows';
 import { supabase } from '@/lib/supabase';
 import { emptyProposalEstimateInputs, proposalEstimateDefaultAssumptions } from './estimate-defaults';
 import type { ProposalEstimate, ProposalEstimateAssumptionOverrides, ProposalEstimateAssumptions, ProposalEstimateInputs, ProposalEstimateOutputs, ProposalEstimatingDefaults } from './estimate-types';
@@ -50,11 +52,44 @@ const proposal = (row: Record<string, unknown>, lines: ProposalLine[] = [], curr
 });
 
 export async function hasProposalAccess() { const { data, error } = await supabase.rpc('has_proposal_access'); return error ? false : data === true; }
-export async function loadJobProposals(jobId: string) { const { data, error } = await supabase.from('proposals').select('*').eq('job_id', jobId).order('version_major', { ascending: false }).order('version_minor', { ascending: false }); if (error) throw error; return (data ?? []).map((row) => proposal(row)); }
-export async function loadProposals() { const { data, error } = await supabase.from('proposals').select('*').order('created_at', { ascending: false }); if (error) throw error; return (data ?? []).map((row) => proposal(row)); }
-export async function loadBidProposalSummaries(bidId: string) { const { data, error } = await supabase.from('bid_proposal_relationships').select('proposal:proposals!bid_proposal_relationships_proposal_id_fkey(id,estimate_number,status,updated_at)').eq('bid_id', bidId).order('linked_at', { ascending: false }); if (error) throw error; return (data ?? []).flatMap((row) => { const value = Array.isArray(row.proposal) ? row.proposal[0] : row.proposal; return value ? [{ id: text(value.id), estimateNumber: text(value.estimate_number), status: text(value.status) as Proposal['status'], updatedAt: text(value.updated_at) }] : []; }); }
-export async function loadBidProposals(bidId: string) { const { data, error } = await supabase.from('bid_proposal_relationships').select('proposal:proposals!bid_proposal_relationships_proposal_id_fkey(*)').eq('bid_id', bidId).order('linked_at', { ascending: false }); if (error) throw error; return (data ?? []).flatMap((row) => { const value = Array.isArray(row.proposal) ? row.proposal[0] : row.proposal; return value ? [proposal(value as Record<string, unknown>)] : []; }); }
-export async function loadLinkableProposals() { const [all, relationships] = await Promise.all([loadProposals(), supabase.from('bid_proposal_relationships').select('proposal_id')]); if (relationships.error) throw relationships.error; const linked = new Set((relationships.data ?? []).map((row) => text(row.proposal_id))); return all.filter((item) => item.jobId === null && !linked.has(item.id)); }
+export type ProposalSummary = Pick<Proposal, 'id'|'jobId'|'estimateNumber'|'versionMinor'|'status'|'customerName'|'projectName'|'total'|'createdAt'|'issuedAt'|'creatorName'>;
+const SUMMARY_COLUMNS = 'id,job_id,estimate_number,version_minor,status,customer_name,project_name,total,created_at,issued_at,created_by_name';
+const summary = (row: Record<string,unknown>):ProposalSummary => ({id:text(row.id),jobId:row.job_id==null?null:text(row.job_id),estimateNumber:text(row.estimate_number),versionMinor:Number(row.version_minor),status:text(row.status) as Proposal['status'],customerName:text(row.customer_name),projectName:text(row.project_name),total:String(row.total??0),createdAt:text(row.created_at),issuedAt:text(row.issued_at),creatorName:text(row.created_by_name)});
+export async function loadJobProposals(jobId: string) {
+  const rows=await loadCompleteRows((from,to)=>supabase.from('proposals').select(SUMMARY_COLUMNS,{count:'exact'}).eq('job_id',jobId).order('version_major',{ascending:false}).order('version_minor',{ascending:false}).order('id').range(from,to));
+  return rows.map(summary);
+}
+export async function loadProposals(standaloneOnly = false) {
+  const rows=await loadCompleteRows((from,to)=>{
+    let query=supabase.from('proposals').select(SUMMARY_COLUMNS,{count:'exact'}).order('created_at',{ascending:false}).order('id').range(from,to);
+    if(standaloneOnly)query=query.is('job_id',null);
+    return query;
+  });
+  return rows.map(summary);
+}
+async function bidProposalRows(bidId:string,columns:string) {
+  return loadCompleteRows(async(from,to)=>{
+    const result=await supabase.from('bid_proposal_relationships').select(`proposal_id,proposal:proposals!bid_proposal_relationships_proposal_id_fkey(${columns})`,{count:'exact'}).eq('bid_id',bidId).order('linked_at',{ascending:false}).order('proposal_id').range(from,to).returns<Array<{proposal_id:string;proposal:Record<string,unknown>|null}>>();
+    return {...result,data:result.data?.map(row=>({...row,id:text(row.proposal_id)}))??null};
+  });
+}
+export async function loadBidProposalSummaries(bidId:string) {
+  const rows=await bidProposalRows(bidId,'id,estimate_number,status,updated_at');
+  return rows.flatMap(row=>{const value=Array.isArray(row.proposal)?row.proposal[0]:row.proposal;return value?[{id:text(value.id),estimateNumber:text(value.estimate_number),status:text(value.status) as Proposal['status'],updatedAt:text(value.updated_at)}]:[];});
+}
+export async function loadBidProposals(bidId:string) {
+  const rows=await bidProposalRows(bidId,SUMMARY_COLUMNS);
+  return rows.flatMap(row=>{const value=Array.isArray(row.proposal)?row.proposal[0]:row.proposal;return value?[summary(value)]:[];});
+}
+export async function loadLinkableProposals() {
+  const all=await loadProposals(true);
+  const relationships=await loadScopedRows(all.map(row=>row.id),async(scope,from,to)=>{
+    const result=await supabase.from('bid_proposal_relationships').select('proposal_id',{count:'exact'}).in('proposal_id',scope!).order('proposal_id').range(from,to);
+    return {...result,data:result.data?.map(row=>({...row,id:text(row.proposal_id)}))??null};
+  });
+  const linked=new Set(relationships.map(row=>row.proposal_id));
+  return all.filter(row=>!linked.has(row.id));
+}
 
 export async function loadProposalEstimate(proposalId: string) {
   const { data, error } = await supabase.from('proposal_estimates').select('*,defaults:proposal_estimating_default_versions!proposal_estimates_defaults_version_id_fkey(version)').eq('proposal_id', proposalId).maybeSingle();
@@ -65,7 +100,7 @@ export async function loadProposalEstimate(proposalId: string) {
 }
 
 export async function loadProposal(id: string) {
-  const [{ data, error }, { data: rows, error: lineError }, currentEstimate] = await Promise.all([supabase.from('proposals').select('*').eq('id', id).single(), supabase.from('proposal_lines').select('*').eq('proposal_id', id).order('display_order'), loadProposalEstimate(id)]);
+  const [{ data, error }, { data: rows, error: lineError }, currentEstimate] = await Promise.all([supabase.from('proposals').select('*').eq('id', id).single(), loadCompleteRows((from,to)=>supabase.from('proposal_lines').select('*',{count:'exact'}).eq('proposal_id',id).order('display_order').order('id').range(from,to)).then(data=>({data,error:null})), loadProposalEstimate(id)]);
   if (error) throw error;
   if (lineError) throw lineError;
   return proposal(data, (rows ?? []).map((row) => line(row)), currentEstimate);

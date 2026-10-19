@@ -1,0 +1,27 @@
+{
+  "origin": "http://localhost:3322",
+  "checks": [
+    "Production usable before delayed Planning; scoped complete activity",
+    "Production denial leaves Jobs usable with unavailable indicators",
+    "PO history beyond 1000 is searchable without additional filtering requests",
+    "PO New action rejects delayed selected detail",
+    "Proposal complete narrow history, historical open, creation and real local PDF",
+    "Proposal and PO denied history never look like empty results",
+    "Material historical tail search and New reject delayed detail",
+    "Material history failure is distinct from empty history",
+    "Empty lists terminate and show their legitimate empty states",
+    "In-place account switch discards delayed former-account history"
+  ],
+  "measurements": [
+    {
+      "name": "Production with 2-second Planning fixture delay",
+      "coreVisibleMs": 226,
+      "activityVisibleMs": 311,
+      "planningNotCompleteAtActivity": true,
+      "scopedActivityRows": 2402
+    }
+  ],
+  "pageErrors": [],
+  "external": [],
+  "hostedWrites": 0
+}

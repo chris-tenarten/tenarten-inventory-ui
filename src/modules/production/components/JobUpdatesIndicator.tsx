@@ -8,6 +8,7 @@ import type { ProductionJob } from "../types";
 type Props = {
   job: ProductionJob;
   summary: JobUpdateSummary;
+  status?: 'loading'|'ready'|'error';
   onOpen(): void;
   className?: string;
   display?: "compact" | "overview-slots";
@@ -16,13 +17,14 @@ type Props = {
 export default function JobUpdatesIndicator({
   job,
   summary,
+  status='ready',
   onOpen,
   className = "",
 }: Props) {
   const jobLabel = job.job_number || job.name;
-  const hasUpdates = summary.total > 0;
+  const hasUpdates = status==='ready' && summary.total > 0;
   const hasUnseenActivity = hasUpdates && summary.hasUnseenActivity;
-  const tooltip = hasUpdates
+  const tooltip = status!=='ready' ? (status==='loading'?'Loading Job Update indicators':'Job Update indicators unavailable') : hasUpdates
     ? `${summary.total} job ${summary.total === 1 ? "update" : "updates"}`
     : "No job updates";
   const accessibleLabel = `Open Job Updates for ${jobLabel}: ${tooltip}`;
@@ -48,7 +50,7 @@ export default function JobUpdatesIndicator({
         <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
           {hasUnseenActivity ? <span data-job-updates-unseen-dot aria-hidden="true" className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-blue-600 ring-1 ring-white" /> : null}
         </span>
-        {hasUpdates ? <>
+        {status!=='ready' ? <span aria-hidden="true">—</span> : hasUpdates ? <>
           <span aria-hidden="true" className="text-[9px] font-semibold text-slate-400">|</span>
           <span className="min-w-3 text-center">{summary.total}</span>
         </> : null}

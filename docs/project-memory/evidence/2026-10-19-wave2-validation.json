@@ -1,0 +1,92 @@
+{
+  "status": "LOCAL_CANDIDATE_VALIDATED",
+  "base": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "branch": "perf/list-production-wave2",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "reviewOrigin": "http://localhost:3322",
+  "portException": "Port 3000 belongs to preserved Wave 1 review server",
+  "applicationHashes": {
+    "src/modules/material-usage/MaterialUsageHistory.tsx": "8a74f048450f4abbf5512f072d888dbfb68f8901adae856f3bd2a0b6554f0ddb",
+    "src/modules/material-usage/MaterialUsageWorkspace.tsx": "1c82effa53ce6fd975dff3f6c93c3e567e66c132964bc03a77b9b89ff9d0e63d",
+    "src/modules/material-usage/actions.ts": "f9dd9be9c2d48e7faa2b0ba8abb531ef0dde44412e04a0841f2ab6fb814a21d6",
+    "src/modules/production/ProductionWorkspace.tsx": "a31410ddec13b03533e86d2440ad4b389fafb526ce553eed7a777a6c340d6e44",
+    "src/modules/production/components/ActivityStrip.tsx": "a365186a4ed6886a9c5cd561b8d070b76cbd28a5db568835eb5fa1a599fe5932",
+    "src/modules/production/components/JobUpdatesIndicator.tsx": "b32f9a754dd227089eeb2078567c4a1eb54afed950c648cd6750476b4c17aad0",
+    "src/modules/production/components/ProductionQueue.tsx": "a597763aec958aa4861ec443980a639244125f6e70d42c936b98759338b6a0c8",
+    "src/modules/production/components/ProductionTable.tsx": "dd43095ec327f7e3f3e19993a70296be66fbe09b58573e2d151d8d6859be9d58",
+    "src/modules/production/jobs.ts": "57e2f002d27a5dc4d6bcd9965d90806ed09cbd39705e934a1bf2c25784394c2e",
+    "src/modules/proposals/ProposalPanel.tsx": "4fc090da9456ed8ca08695fe5d0e6c73bf1c4e7fa8d16209cca3dab84fcd7875",
+    "src/modules/proposals/queries.ts": "837ef0421bdf336b642bfd91137a771c86387b9c4dce114272b7c21b5f65112e",
+    "src/modules/purchasing/PurchaseOrderEditor.tsx": "28ce1b95a6f11e9d9f25f95d0b981d6d8c2c9b2ab818b6bf846344d968882fd7",
+    "src/modules/purchasing/PurchasingWorkspace.tsx": "b8001cc33695f4b824d0f5f9877c2a005463aaf5125e83fb20b49402937392b4",
+    "src/modules/purchasing/catalog.ts": "586f386ca776686e5a550e172060839316c80eb4aa9b9e8faf8ede78cfe6d8fb",
+    "src/modules/purchasing/queries.ts": "e01640325ac4ae5d32a4f18b67e2d403bbcae40c25f789730839652241a7f15c",
+    "src/lib/scoped-rows.ts": "634c0cba08eb7676bffc25fdd45db11a35a25e60a9085ab6918d88159747de8d"
+  },
+  "unchangedContractHashes": {
+    "src/lib/auth.tsx": "836ea5a08eb60ed2e591581e41606eee40530c9bfdbed5b6d76fa9262b2fd997",
+    "src/components/GlobalMessaging.tsx": "95d7747e9145ecdb96bc55fb6d68a7c4acc946b3c54d0813fcbc0b02b5a052e2",
+    "src/components/AccountNotifications.tsx": "ef16b2ef85c34cc265ffdaf2ed2412e8877c6150bbce5b1af13c1e7502fd1615",
+    "src/modules/my-work/InboxDialog.tsx": "017d2a31f66049977e8b87f2ad266d402d69c234c21341023e62f1bb8ce9303c",
+    "src/modules/proposals/estimate-calculations.ts": "14b1e08d74a5e37d56b6fef69c050777655825f16c307d1c89822838c318f689",
+    "supabase/functions/generate-proposal-pdf/index.ts": "fb2d7893f4c2656f0d9436d98a168b07a5b1a934d63e68010ae3108ffe1b7b65",
+    "supabase/functions/generate-purchase-order-pdf/index.ts": "f42b9421b2991799cf5f27ecaea578f2868e66d52037092c02dfc8b97a989c41"
+  },
+  "preservedWave1": "71f6915bd66eeb079b4adcae1f234cc37174dca6",
+  "main": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "dev": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "checks": {
+    "finalProductionWebpackExport": "passed",
+    "typescript": "passed; final build includes Inspector type correction",
+    "targetedESLint": "passed",
+    "diffCheck": "passed",
+    "largeFixture": "1201 parent/child/reference rows; measured cap 1000, stress cap 137",
+    "boundaryMatrix": [
+      0,
+      1,
+      137,
+      500,
+      501,
+      1000,
+      1001
+    ],
+    "scopes": "empty, duplicated, 205 IDs, archived Job",
+    "errors": "denied parent/child/catalog/update/unseen; count drift, duplicates, missing pages",
+    "browserScenarios": [
+      "Production usable before delayed Planning; scoped complete activity",
+      "Production denial leaves Jobs usable with unavailable indicators",
+      "PO history beyond 1000 is searchable without additional filtering requests",
+      "PO New action rejects delayed selected detail",
+      "Proposal complete narrow history, historical open, creation and real local PDF",
+      "Proposal and PO denied history never look like empty results",
+      "Material historical tail search and New reject delayed detail",
+      "Material history failure is distinct from empty history",
+      "Empty lists terminate and show their legitimate empty states",
+      "In-place account switch discards delayed former-account history"
+    ],
+    "purchasingPermanentPdf": "passed",
+    "proposalV2PdfModel": "passed",
+    "branding": "passed",
+    "emReview": "Focused self-review of retrieval scopes, ordering/count invariants, mappings, stale response guards, error/loading semantics and protected paths; no additional agent"
+  },
+  "measurements": [
+    {
+      "name": "Production with 2-second Planning fixture delay",
+      "coreVisibleMs": 226,
+      "activityVisibleMs": 311,
+      "planningNotCompleteAtActivity": true,
+      "scopedActivityRows": 2402
+    }
+  ],
+  "hostedWrites": 0,
+  "migrations": 0,
+  "pushes": 0,
+  "deployments": 0,
+  "limitations": [
+    "Synthetic measurements, no Production latency claims",
+    "Count checks are not transactional cross-table snapshots",
+    "No new hosted authorization or native physical refocus certification",
+    "Transport cancellation is not added"
+  ]
+}

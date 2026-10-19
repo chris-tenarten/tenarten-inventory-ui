@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   getMaterialUsageReport,
@@ -36,27 +36,35 @@ export function MaterialUsageWorkspace() {
   const [historyLoading, setHistoryLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const historyRequest=useRef(0);
+  const detailRequest=useRef(0);
+  const [historyError,setHistoryError]=useState<string|null>(null);
+
   const refreshHistory = useCallback(async () => {
+    const request=++historyRequest.current;
     try {
-      setHistoryLoading(true);
+      setHistoryLoading(true);setHistoryError(null);
       setError(null);
 
       const nextReports =
         await getMaterialUsageReports();
 
-      setReports(nextReports);
+      if(request===historyRequest.current)setReports(nextReports);
     } catch (caughtError) {
-      setError(
+      if(request!==historyRequest.current)return;
+      setReports([]);
+      setHistoryError(
         caughtError instanceof Error
           ? caughtError.message
           : "Unable to load material usage reports."
       );
     } finally {
-      setHistoryLoading(false);
+      if(request===historyRequest.current)setHistoryLoading(false);
     }
   }, []);
 
   const openReport = useCallback(async (id: string) => {
+    const request=++detailRequest.current;
     try {
       setLoading(true);
       setError(null);
@@ -64,20 +72,23 @@ export function MaterialUsageWorkspace() {
       const report =
         await getMaterialUsageReport(id);
 
+      if(request!==detailRequest.current)return;
       setSelectedReport(report);
       setSelectedId(id);
     } catch (caughtError) {
+      if(request!==detailRequest.current)return;
       setError(
         caughtError instanceof Error
           ? caughtError.message
           : "Unable to load the selected report."
       );
     } finally {
-      setLoading(false);
+      if(request===detailRequest.current)setLoading(false);
     }
   }, []);
 
   function createNewReport() {
+    detailRequest.current++;setLoading(false);
     setSelectedId(null);
     setSelectedReport(
       createBlankMaterialUsageReport()
@@ -87,6 +98,13 @@ export function MaterialUsageWorkspace() {
 
   useEffect(() => {
     void refreshHistory();
+    return()=>{
+      // Invalidate asynchronous generations; these refs are counters, not nodes.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      historyRequest.current++;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      detailRequest.current++;
+    };
   }, [refreshHistory]);
 
   useEffect(() => {
@@ -125,6 +143,7 @@ export function MaterialUsageWorkspace() {
         reports={reports}
         selectedId={selectedId}
         loading={historyLoading}
+        error={historyError}
         onSelect={(id) => {
           void openReport(id);
         }}
@@ -132,9 +151,9 @@ export function MaterialUsageWorkspace() {
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        {error ? (
+        {error || historyError ? (
           <div className="border-b border-red-200 bg-red-50 px-5 py-3 text-sm text-red-700">
-            {error}
+            {error || historyError}
           </div>
         ) : null}
 

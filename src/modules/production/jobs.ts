@@ -1,3 +1,4 @@
+import { loadScopedRows } from '@/lib/scoped-rows';
 import { loadCompleteRows } from '@/lib/complete-rows';
 import { loadCompleteLabor } from '../manpower/pagination';
 import { supabase } from '../../lib/supabase';
@@ -281,31 +282,32 @@ export async function loadProductionJobLaborLifecycleSummary(jobId: string): Pro
     reworks: [],
   };
 }
-export async function loadJobUpdateSummaries(): Promise<Record<string, JobUpdateSummary>> {
-  const [{ data, error }, sessionResult] = await Promise.all([
-    supabase.from('job_updates').select('job_id,created_at,requires_follow_up,resolved_at,follow_up_assignee_name'),
-    supabase.auth.getSession(),
+export async function loadJobUpdateSummaries(jobIds?:string[]): Promise<Record<string, JobUpdateSummary>> {
+  if(jobIds?.length===0)return {};
+  const loadUnseen=async()=>{
+    const session=await supabase.auth.getSession();
+    if(session.error)throw session.error;
+    if(!session.data.session)return [] as Array<{id:string;job_id:string}>;
+    return loadScopedRows(jobIds,async(scope,from,to)=>{
+      let query=supabase.rpc('list_my_unseen_job_update_jobs',{}, {count:'exact'}).order('job_id').range(from,to);
+      if(scope)query=query.in('job_id',scope);
+      const result=await query;
+      // Preserve the released compatibility behavior for older backends only.
+      if(result.error?.code==='PGRST202')return {data:[],error:null,count:0};
+      return {...result,data:result.data?.map((row:{job_id:string})=>({...row,id:row.job_id}))??null};
+    });
+  };
+  const [data,unseen]=await Promise.all([
+    loadScopedRows(jobIds,(scope,from,to)=>{
+      let query=supabase.from('job_updates').select('id,job_id,created_at,requires_follow_up,resolved_at,follow_up_assignee_name',{count:'exact'}).order('id').range(from,to);
+      if(scope)query=query.in('job_id',scope);
+      return query;
+    }),loadUnseen(),
   ]);
-  if (error) throw error;
-
-  const unseenJobIds = new Set<string>();
-  if (sessionResult.data.session) {
-    const unseen = await supabase.rpc('list_my_unseen_job_update_jobs');
-    if (unseen.error && unseen.error.code !== 'PGRST202') throw unseen.error;
-    for (const row of unseen.data ?? []) unseenJobIds.add(String(row.job_id));
-  }
-
-  const grouped: Record<string, typeof data> = {};
-  for (const row of data ?? []) {
-    const jobId = String(row.job_id);
-    grouped[jobId] = [...(grouped[jobId] ?? []), row];
-  }
-  return Object.fromEntries(
-    Object.entries(grouped).map(([jobId, rows]) => [
-      jobId,
-      { ...summarizeJobUpdates(rows ?? []), hasUnseenActivity: unseenJobIds.has(jobId) },
-    ]),
-  );
+  const unseenJobIds=new Set(unseen.map(row=>row.job_id));
+  const grouped:Record<string,typeof data>={};
+  for(const row of data)(grouped[row.job_id]??=[]).push(row);
+  return Object.fromEntries(Object.entries(grouped).map(([jobId,rows])=>[jobId,{...summarizeJobUpdates(rows),hasUnseenActivity:unseenJobIds.has(jobId)}]));
 }
 
 export async function markJobUpdatesSeen(jobId: string) {
@@ -473,14 +475,7 @@ export async function loadProductionJobActivity(jobId: string): Promise<Producti
 }
 
 export async function loadJobUpdates(jobId: string): Promise<JobUpdate[]> {
-  const { data, error } = await supabase
-    .from('job_updates')
-    .select(JOB_UPDATE_COLUMNS)
-    .eq('job_id', jobId)
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return (data ?? []) as unknown as JobUpdate[];
+  return loadCompleteRows((from,to)=>supabase.from('job_updates').select(JOB_UPDATE_COLUMNS,{count:'exact'}).eq('job_id',jobId).order('created_at',{ascending:false}).order('id').range(from,to).returns<JobUpdate[]>());
 }
 
 export async function createJobUpdate(
@@ -594,11 +589,14 @@ export async function loadJobUpdateMentions(jobId: string) {
   }));
 }
 
-export async function loadJobAttachmentCounts(): Promise<
+export async function loadJobAttachmentCounts(jobIds?:string[]): Promise<
   Record<string, number>
 > {
-  const data = await loadCompleteRows((from, to) => supabase.from('job_attachments')
-    .select('id,job_id', { count: 'exact' }).order('id').range(from, to));
+  const data = await loadScopedRows(jobIds,(scope,from,to)=>{
+    let query=supabase.from('job_attachments').select('id,job_id',{count:'exact'}).order('id').range(from,to);
+    if(scope)query=query.in('job_id',scope);
+    return query;
+  });
 
   return (data ?? []).reduce<Record<string, number>>((counts, row) => {
     const jobId = String(row.job_id);

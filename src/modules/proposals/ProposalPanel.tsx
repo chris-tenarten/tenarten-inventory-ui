@@ -30,6 +30,7 @@ import {
   loadProposals,
   previewProposal,
   saveProposal,
+  type ProposalSummary,
 } from './queries';
 import { PROPOSAL_DISCLAIMER, type Proposal } from './types';
 
@@ -50,8 +51,8 @@ export default function ProposalPanel({
   onClose: () => void;
 }) {
   const auth = useAuth();
-  const [history, setHistory] = useState<Proposal[]>([]);
-  const [linkable, setLinkable] = useState<Proposal[]>([]);
+  const [history, setHistory] = useState<ProposalSummary[]>([]);
+  const [linkable, setLinkable] = useState<ProposalSummary[]>([]);
   const [linkSelection, setLinkSelection] = useState('');
   const [draft, setDraft] = useState<Proposal | null>(null);
   const [editorTab, setEditorTab] = useState<EditorTab>('estimate');
@@ -59,25 +60,31 @@ export default function ProposalPanel({
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
+  const [historyFailed,setHistoryFailed]=useState(false);
   const [message, setMessage] = useState('');
   const [preview, setPreview] = useState<{ url: string; filename: string; title: string } | null>(null);
   const initialOpened = useRef(false);
+  const listRequest=useRef(0),selectionRequest=useRef(0);
 
   const reload = useCallback(async () => {
-    setLoading(true);
+    const request=++listRequest.current;
+    setLoading(true);setError('');setHistoryFailed(false);
     try {
       const [nextHistory, nextLinkable] = await Promise.all([
-        job ? loadJobProposals(job.id) : bidId ? loadBidProposals(bidId) : loadProposals(),
+        job?.id ? loadJobProposals(job.id) : bidId ? loadBidProposals(bidId) : loadProposals(),
         bidId ? loadLinkableProposals() : Promise.resolve([]),
       ]);
+      if(request!==listRequest.current)return;
       setHistory(nextHistory);
       setLinkable(nextLinkable);
     } catch (caught) {
+      if(request!==listRequest.current)return;
+      setHistory([]);setLinkable([]);setHistoryFailed(true);
       setError(caught instanceof Error ? caught.message : 'Unable to load Proposals.');
     } finally {
-      setLoading(false);
+      if(request===listRequest.current)setLoading(false);
     }
-  }, [job, bidId]);
+  }, [job?.id, bidId]);
 
   const hydrateProposal = useCallback(async (id: string, isNew = false) => {
     let value = await loadProposal(id);
@@ -91,19 +98,28 @@ export default function ProposalPanel({
     return value;
   }, [auth]);
 
-  useEffect(() => { void reload(); }, [reload]);
+  useEffect(() => { void reload();return()=>{
+      // Invalidate asynchronous generations; these refs are counters, not nodes.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      listRequest.current++;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      selectionRequest.current++;
+    }; }, [reload]);
 
   async function open(id: string, isNew = false) {
+    const request=++selectionRequest.current;
     setBusy(id);
     setError('');
     try {
       const value = await hydrateProposal(id, isNew);
+      if(request!==selectionRequest.current)return;
       setDraft(value);
       setEditorTab(value.estimate ? 'estimate' : 'proposal');
     } catch (caught) {
+      if(request!==selectionRequest.current)return;
       setError(caught instanceof Error ? caught.message : 'Unable to open Proposal.');
     } finally {
-      setBusy('');
+      if(request===selectionRequest.current)setBusy('');
     }
   }
 
@@ -111,15 +127,17 @@ export default function ProposalPanel({
     if (!initialOpenId || initialOpened.current || loading) return;
     if (bidId && !history.some((item) => item.id === initialOpenId)) return;
     initialOpened.current = true;
+    const request=++selectionRequest.current;
     setBusy(initialOpenId);
     setError('');
     void hydrateProposal(initialOpenId)
       .then((value) => {
+        if(request!==selectionRequest.current)return;
         setDraft(value);
         setEditorTab(value.estimate ? 'estimate' : 'proposal');
       })
-      .catch((caught: unknown) => setError(caught instanceof Error ? caught.message : 'Unable to open Proposal.'))
-      .finally(() => setBusy(''));
+      .catch((caught: unknown) => {if(request===selectionRequest.current)setError(caught instanceof Error ? caught.message : 'Unable to open Proposal.');})
+      .finally(() => {if(request===selectionRequest.current)setBusy('');});
   }, [bidId, history, hydrateProposal, initialOpenId, loading]);
 
   async function create() {
@@ -275,9 +293,9 @@ export default function ProposalPanel({
 
         <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5">
           {!draft ? <section>
-            <div className="mb-4 flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-bold">Proposal history</h3>{activeDraft ? <p className="mt-1 max-w-2xl text-sm text-slate-600">A draft Proposal already exists for this {job ? 'Job' : 'Bid'}. Open the existing draft or delete it before creating a new Proposal.</p> : null}</div><BusinessButton type="button" disabled={Boolean(busy) || Boolean(activeDraft)} onClick={() => void create()} className="inline-flex h-10 items-center gap-2 border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"><Plus className="h-4 w-4" />{busy === 'create' ? 'Creating…' : 'Create Proposal'}</BusinessButton></div>
+            <div className="mb-4 flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-bold">Proposal history</h3>{activeDraft ? <p className="mt-1 max-w-2xl text-sm text-slate-600">A draft Proposal already exists for this {job ? 'Job' : 'Bid'}. Open the existing draft or delete it before creating a new Proposal.</p> : null}</div><BusinessButton type="button" disabled={loading || historyFailed || Boolean(busy) || Boolean(activeDraft)} onClick={() => void create()} className="inline-flex h-10 items-center gap-2 border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"><Plus className="h-4 w-4" />{busy === 'create' ? 'Creating…' : 'Create Proposal'}</BusinessButton></div>
             {bidId && linkable.length ? <div className="mb-4 flex flex-col gap-2 border border-slate-300 bg-white p-3 sm:flex-row sm:items-end"><label className="min-w-0 flex-1 text-xs font-bold text-slate-700">Link existing standalone Proposal<BusinessSelect value={linkSelection} onChange={(event) => setLinkSelection(event.target.value)} className="mt-1 h-9 w-full border border-slate-300 bg-white px-2 text-sm"><option value="">Select Proposal</option>{linkable.map((item) => <option key={item.id} value={item.id}>{item.estimateNumber} · {item.status.toUpperCase()} · {item.customerName || 'No customer'} · {item.projectName || 'No project'}</option>)}</BusinessSelect></label><BusinessButton type="button" disabled={!linkSelection || Boolean(busy)} onClick={() => void linkExisting()} className="h-9 border border-slate-400 px-3 text-xs font-bold disabled:opacity-40">{busy === 'link' ? 'Linking…' : 'Link Proposal'}</BusinessButton></div> : null}
-            {loading ? <p>Loading…</p> : history.length === 0 ? <div className="border border-slate-300 bg-white p-5 text-sm text-slate-600">No Proposals are linked to this {job ? 'Job' : bidId ? 'Bid' : 'workspace'}.</div> : <div className="space-y-2">{history.map((item) => <article key={item.id} className="flex flex-wrap items-center gap-3 border border-slate-300 bg-white p-4"><FileText className="h-5 w-5 text-slate-500" /><div className="min-w-0 flex-1"><div className="font-bold">{item.estimateNumber}{item.versionMinor > 0 ? <span className="ml-2 text-xs font-bold text-red-700">REVISED</span> : null}</div><div className="text-xs text-slate-500">{item.status.toUpperCase()} · {item.issuedAt ? new Date(item.issuedAt).toLocaleDateString() : new Date(item.createdAt).toLocaleDateString()} · {item.creatorName || 'TenOps'}{!bidId ? ' · ' + formatMoney(item.total) : ''}</div></div><button type="button" disabled={Boolean(busy)} onClick={() => void open(item.id)} className="h-9 border border-slate-300 px-3 text-xs font-bold">{item.status === 'draft' ? 'Open draft' : 'View issued'}</button>{item.status === 'issued' ? <BusinessButton type="button" disabled={Boolean(busy)} onClick={() => void revise(item.id)} className="inline-flex h-9 items-center gap-1 border border-slate-300 px-3 text-xs font-bold"><RefreshCw className="h-3.5 w-3.5" />Create Revision</BusinessButton> : null}</article>)}</div>}
+            {loading ? <p>Loading…</p> : historyFailed ? <p role="alert">Proposal history unavailable.</p> : history.length === 0 ? <div className="border border-slate-300 bg-white p-5 text-sm text-slate-600">No Proposals are linked to this {job ? 'Job' : bidId ? 'Bid' : 'workspace'}.</div> : <div className="space-y-2">{history.map((item) => <article key={item.id} className="flex flex-wrap items-center gap-3 border border-slate-300 bg-white p-4"><FileText className="h-5 w-5 text-slate-500" /><div className="min-w-0 flex-1"><div className="font-bold">{item.estimateNumber}{item.versionMinor > 0 ? <span className="ml-2 text-xs font-bold text-red-700">REVISED</span> : null}</div><div className="text-xs text-slate-500">{item.status.toUpperCase()} · {item.issuedAt ? new Date(item.issuedAt).toLocaleDateString() : new Date(item.createdAt).toLocaleDateString()} · {item.creatorName || 'TenOps'}{!bidId ? ' · ' + formatMoney(item.total) : ''}</div></div><button type="button" disabled={Boolean(busy)} onClick={() => void open(item.id)} className="h-9 border border-slate-300 px-3 text-xs font-bold">{item.status === 'draft' ? 'Open draft' : 'View issued'}</button>{item.status === 'issued' ? <BusinessButton type="button" disabled={Boolean(busy)} onClick={() => void revise(item.id)} className="inline-flex h-9 items-center gap-1 border border-slate-300 px-3 text-xs font-bold"><RefreshCw className="h-3.5 w-3.5" />Create Revision</BusinessButton> : null}</article>)}</div>}
           </section> : <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3"><button type="button" onClick={() => setDraft(null)} className="h-9 border border-slate-400 bg-white px-3 text-xs font-bold">Back to history</button><div className="text-right"><div className="font-bold">{draft.estimateNumber} {draft.versionMinor > 0 ? <span className="text-xs text-red-700">REVISED</span> : null}</div><div className="text-xs uppercase text-slate-500">{draft.status}</div></div></div>
             <nav className="grid grid-cols-2 border border-slate-300 bg-white sm:w-[28rem]" aria-label="Proposal workspace sections"><button type="button" aria-current={editorTab === 'estimate' ? 'page' : undefined} onClick={() => setEditorTab('estimate')} className={tabClass(editorTab === 'estimate')}>Internal Estimate</button><button type="button" aria-current={editorTab === 'proposal' ? 'page' : undefined} onClick={() => setEditorTab('proposal')} className={tabClass(editorTab === 'proposal')}>Customer Proposal</button></nav>

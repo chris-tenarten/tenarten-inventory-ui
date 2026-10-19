@@ -12,6 +12,7 @@ import ReworkQuickAction from "./ReworkQuickAction";
 type Props = {
   job: ProductionJob;
   attachmentCount: number;
+  activityStatus?: 'loading'|'ready'|'error';
   updateSummary: JobUpdateSummary;
   onOpenAttachments(): void;
   onOpenUpdates(): void;
@@ -21,6 +22,7 @@ type Props = {
 export default function ActivityStrip({
   job,
   attachmentCount,
+  activityStatus='ready',
   updateSummary,
   onOpenAttachments,
   onOpenUpdates,
@@ -41,6 +43,7 @@ export default function ActivityStrip({
       <JobUpdatesIndicator
         job={job}
         summary={updateSummary}
+        status={activityStatus}
         onOpen={onOpenUpdates}
         className="shrink-0"
         display="overview-slots"
@@ -48,8 +51,8 @@ export default function ActivityStrip({
       <button
         type="button"
         onClick={openAttachments}
-        aria-label={`Open Project Files for ${job.job_number || job.name}: ${attachmentCount} ${attachmentCount === 1 ? "attachment" : "attachments"}`}
-        title={attachmentCount ? `${attachmentCount} attached ${attachmentCount === 1 ? "file" : "files"}` : "No attached files"}
+        aria-label={`Open Project Files for ${job.job_number || job.name}: ${activityStatus!=='ready'?'count unavailable':attachmentCount} ${attachmentCount === 1 ? "attachment" : "attachments"}`}
+        title={activityStatus!=='ready' ? (activityStatus==='loading'?'Loading attachment indicators':'Attachment indicators unavailable') : attachmentCount ? `${attachmentCount} attached ${attachmentCount === 1 ? "file" : "files"}` : "No attached files"}
         className={`tenops-compact-type pointer-events-auto inline-flex h-6 w-12 items-center justify-center gap-1 border font-bold tabular-nums hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${
           attachmentCount
             ? "border-slate-300 bg-white text-slate-600"
@@ -58,7 +61,7 @@ export default function ActivityStrip({
       >
         <Paperclip className="h-3 w-3 shrink-0" aria-hidden="true" />
         <span className="min-w-4 text-center">
-          {attachmentCount > 0 ? attachmentCount : ""}
+          {activityStatus!=='ready' ? "—" : attachmentCount > 0 ? attachmentCount : ""}
         </span>
       </button>
       <BusinessButton

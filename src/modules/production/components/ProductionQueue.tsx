@@ -18,6 +18,7 @@ type Props = {
   jobs: ProductionJob[];
   selectedJobId: string | null;
   attachmentCounts: Record<string, number>;
+  activityStatus?: 'loading'|'ready'|'error';
   integrationSummaries: Record<string, ProductionIntegrationSummary>;
   integrationStatus?: 'loading' | 'ready' | 'error';
   jobUpdateSummaries: Record<string, JobUpdateSummary>;
@@ -47,6 +48,7 @@ export default function ProductionQueue({
   jobs,
   selectedJobId,
   attachmentCounts,
+  activityStatus='ready',
   integrationSummaries,
   integrationStatus = 'ready',
   jobUpdateSummaries,
@@ -130,7 +132,7 @@ export default function ProductionQueue({
                 </div>
 
                 <div className="mt-2 flex min-w-0 items-center justify-between gap-2 border-t border-slate-200 pt-2">
-                  <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} onCreateRework={onCreateRework} />
+                  <ActivityStrip activityStatus={activityStatus} job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} onCreateRework={onCreateRework} />
                   {job.archived_at ? <span className="text-[9px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}
                 </div>
               </div>
@@ -142,7 +144,7 @@ export default function ProductionQueue({
                 <div className="min-w-0">
                   <span className={`flex items-center gap-1.5 text-sm font-bold leading-5 ${selectedJobId === job.id ? 'text-blue-800' : ''}`}>{job.job_number && <span className="text-slate-500">{job.job_number}</span>}<span className="truncate">{job.name}</span>{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} showSequence={false} /> : null}</span>
                   <span className="mt-0.5 block truncate text-xs text-slate-500">{job.customer || tr('Customer not recorded', 'Cliente no registrado')}</span>
-                  <ActivityStrip job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} onCreateRework={onCreateRework} />
+                  <ActivityStrip activityStatus={activityStatus} job={job} attachmentCount={fileCount} updateSummary={updateSummary} onOpenAttachments={() => onSelectJob(job, 'attachments')} onOpenUpdates={() => onSelectJob(job, 'job-updates')} onCreateRework={onCreateRework} />
                   {job.archived_at ? <span className="mt-1 inline-block text-[10px] font-bold uppercase text-slate-500">{tr('Archived', 'Archivado')}</span> : null}
                 </div>
               </div>

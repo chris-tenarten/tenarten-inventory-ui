@@ -1,4 +1,6 @@
 import { normalizePdfTextSize } from '../../../supabase/functions/_shared/pdf-text-size.mjs';
+import { loadCompleteRows } from '@/lib/complete-rows';
+import { loadScopedRows } from '@/lib/scoped-rows';
 import { supabase } from '@/lib/supabase';
 import type { PurchaseOrder, PurchaseOrderDocument, PurchaseOrderLine, PurchaseOrderPendingReceivalProjection, PurchaseOrderSummary, VendorContact, VendorOption } from './types';
 
@@ -9,13 +11,17 @@ const address = (row: Record<string, unknown>) => [row.address_line_1 || row.add
 const contactText = (contact: VendorContact) => [contact.contactName, contact.role, contact.email, contact.phone].filter(Boolean).join(' · ');
 
 export async function loadVendors(includeInactive = false): Promise<VendorOption[]> {
-  let query = supabase.from('vendors').select('id,name,canonical_name,address,address_line_1,address_line_2,city,state,postal_code,country,phone,email,website,payment_terms,notes,is_active,contacts:vendor_contacts(id,vendor_id,contact_name,role,email,phone,notes,is_default,is_active)').order('name');
-  if (!includeInactive) query = query.eq('is_active', true);
-  const { data, error } = await query;
-  if (error) throw error;
+  const data=await loadCompleteRows((from,to)=>{
+    let query=supabase.from('vendors').select('id,name,canonical_name,address,address_line_1,address_line_2,city,state,postal_code,country,phone,email,website,payment_terms,notes,is_active',{count:'exact'}).order('name').order('id').range(from,to);
+    if(!includeInactive)query=query.eq('is_active',true);
+    return query;
+  });
+  const contactRows=await loadScopedRows(data.map(row=>row.id),(scope,from,to)=>supabase.from('vendor_contacts').select('id,vendor_id,contact_name,role,email,phone,notes,is_default,is_active',{count:'exact'}).in('vendor_id',scope!).order('id').range(from,to));
+  const contactsByVendor=new Map<string,typeof contactRows>();
+  for(const contact of contactRows){const rows=contactsByVendor.get(contact.vendor_id)??[];rows.push(contact);contactsByVendor.set(contact.vendor_id,rows);}
   return (data ?? []).map((raw) => {
     const row = raw as Record<string, unknown>;
-    const contacts = ((row.contacts as Array<Record<string, unknown>>) ?? []).map((item): VendorContact => ({
+    const contacts = (contactsByVendor.get(text(row.id)) ?? []).map((item): VendorContact => ({
       id:text(item.id), vendorId:text(item.vendor_id), contactName:text(item.contact_name), role:text(item.role),
       email:text(item.email), phone:text(item.phone), notes:text(item.notes), isDefault:Boolean(item.is_default), isActive:Boolean(item.is_active),
     })).sort((a,b) => Number(b.isDefault)-Number(a.isDefault) || a.contactName.localeCompare(b.contactName));
@@ -32,20 +38,34 @@ export async function loadVendors(includeInactive = false): Promise<VendorOption
 }
 
 export async function loadPurchaseOrderSummaries(): Promise<PurchaseOrderSummary[]> {
-  const { data, error } = await supabase.from('purchase_orders').select('id,po_number,status,vendor_name_snapshot,order_date,requested_date,currency,total,revision_number,updated_at,lines:purchase_order_lines(id)').order('updated_at',{ascending:false});
-  if (error) throw error;
+  const data=await loadCompleteRows((from,to)=>supabase.from('purchase_orders').select('id,po_number,status,vendor_name_snapshot,order_date,requested_date,currency,total,revision_number,updated_at',{count:'exact'}).order('updated_at',{ascending:false}).order('id').range(from,to));
+  // Embedded child arrays have their own transport caps. Read complete scoped
+  // identities rather than counting a potentially truncated embedded array.
+  const lines=await loadScopedRows(data.map(row=>row.id),(scope,from,to)=>supabase.from('purchase_order_lines').select('id,purchase_order_id',{count:'exact'}).in('purchase_order_id',scope!).order('id').range(from,to));
+  const lineCounts=new Map<string,number>();
+  for(const row of lines)lineCounts.set(row.purchase_order_id,(lineCounts.get(row.purchase_order_id)??0)+1);
   return (data ?? []).map(row => ({
     id:String(row.id), poNumber:row.po_number ? String(row.po_number) : null, status:row.status as PurchaseOrderSummary['status'],
     vendorNameSnapshot:text(row.vendor_name_snapshot), orderDate:text(row.order_date), requestedDate:text(row.requested_date),
     currency:text(row.currency), total:text(row.total), revisionNumber:Number(row.revision_number),
-    updatedAt:text(row.updated_at), lineCount:Array.isArray(row.lines) ? row.lines.length : 0,
+    updatedAt:text(row.updated_at), lineCount:lineCounts.get(row.id)??0,
   }));
 }
 
 export async function loadPurchaseOrder(id: string): Promise<PurchaseOrder> {
-  const { data, error } = await supabase.from('purchase_orders').select('*,issuances:purchase_order_issuances(id,revision_number,issued_at,issued_by,snapshot_hash),lines:purchase_order_lines(*,details:chip_purchase_order_line_details(*),allocations:purchase_order_line_allocations(*))').eq('id',id).single();
-  if (error) throw error;
-  const row = data as DbOrder;
+  const [{data,error},lineRows,issuances]=await Promise.all([
+    supabase.from('purchase_orders').select('*').eq('id',id).single(),
+    loadCompleteRows((from,to)=>supabase.from('purchase_order_lines').select('*,details:chip_purchase_order_line_details(*)',{count:'exact'}).eq('purchase_order_id',id).order('line_number').order('id').range(from,to)),
+    loadCompleteRows((from,to)=>supabase.from('purchase_order_issuances').select('id,revision_number,issued_at,issued_by,snapshot_hash',{count:'exact'}).eq('purchase_order_id',id).order('revision_number',{ascending:false}).order('id').range(from,to)),
+  ]);
+  if(error)throw error;
+  const allocations=await loadScopedRows(lineRows.map(row=>row.id),async(scope,from,to)=>{
+    const result=await supabase.from('purchase_order_line_allocations').select('purchase_order_line_id,production_job_id,quantity',{count:'exact'}).in('purchase_order_line_id',scope!).order('purchase_order_line_id').order('production_job_id').range(from,to);
+    return {...result,data:result.data?.map(row=>({...row,id:row.purchase_order_line_id+':'+row.production_job_id}))??null};
+  });
+  const allocationsByLine=new Map<string,typeof allocations>();
+  for(const allocation of allocations){const rows=allocationsByLine.get(allocation.purchase_order_line_id)??[];rows.push(allocation);allocationsByLine.set(allocation.purchase_order_line_id,rows);}
+  const row:DbOrder={...data,issuances,lines:lineRows.map(line=>({...line,allocations:allocationsByLine.get(line.id)??[]}))};
   const lines = ((row.lines as Array<Record<string,unknown>>) || []).sort((a,b) => Number(a.line_number)-Number(b.line_number)).map((line): PurchaseOrderLine => {
     const detail = (Array.isArray(line.details) ? line.details[0] : line.details) as Record<string,unknown>;
     return {

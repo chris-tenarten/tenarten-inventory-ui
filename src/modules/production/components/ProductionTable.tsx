@@ -28,6 +28,7 @@ const formatHours = (value: number) => new Intl.NumberFormat(undefined, { maximu
 type Props = {
   jobs: ProductionJob[];
   attachmentCounts: Record<string, number>;
+  activityStatus?: 'loading'|'ready'|'error';
   integrationSummaries: Record<string, ProductionIntegrationSummary>;
   integrationStatus?: 'loading' | 'ready' | 'error';
   jobUpdateSummaries: Record<string, JobUpdateSummary>;
@@ -335,6 +336,7 @@ function blurOnEnter(event: KeyboardEvent<HTMLInputElement | HTMLSelectElement>)
 export default function ProductionTable({
   jobs,
   attachmentCounts,
+  activityStatus='ready',
   integrationSummaries,
   integrationStatus = 'ready',
   jobUpdateSummaries,
@@ -996,19 +998,19 @@ export default function ProductionTable({
                     },
                     stagedSchedules[job.id] ? 'staged' : undefined,
                     !row.plannedStart || !row.plannedEnd ? <span data-table-needs-dates className="flex h-6 w-5 shrink-0 items-center justify-center"><UnscheduledBadge iconOnly ariaLabel={`${job.name} needs planned dates`} onClick={() => focusMissingScheduleField(job, row)} /></span> : null,
-                    <div className="flex items-center gap-1">{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} /> : null}{count > 0 && <button
+                    <div className="flex items-center gap-1">{job.rework_cycle ? <ReworkBadge sequence={job.rework_cycle.sequence_number} /> : null}{(count > 0 || activityStatus!=='ready') && <button
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
                           onOpenAttachments(job);
                         }}
-                        aria-label={`View ${count} attached ${count === 1 ? 'file' : 'files'} for ${job.name}`}
-                        title="View attached files"
+                        aria-label={activityStatus==='ready'?`View ${count} attached ${count === 1 ? 'file' : 'files'} for ${job.name}`:`Open attached files for ${job.name}: count unavailable`}
+                        title={activityStatus==='ready'?"View attached files":"Attachment count unavailable"}
                         className="inline-flex h-6 items-center gap-1 border border-slate-300 bg-slate-50 px-1.5 text-[10px] font-bold text-slate-600 hover:border-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
                       >
                         <Paperclip className="h-3.5 w-3.5" aria-hidden="true" />
-                        {count}
-                      </button>}<JobUpdatesIndicator job={job} summary={updateSummary} onOpen={() => onSelectJob(job, 'job-updates')} /><ReworkQuickAction job={job} onCreate={onCreateRework} compact /></div>,
+                        {activityStatus==='ready'?count:"—"}
+                      </button>}<JobUpdatesIndicator status={activityStatus} job={job} summary={updateSummary} onOpen={() => onSelectJob(job, 'job-updates')} /><ReworkQuickAction job={job} onCreate={onCreateRework} compact /></div>,
                     <div className="flex h-6 min-w-0 items-center gap-1 overflow-hidden whitespace-nowrap">
                       {job.estimated_man_hours !== null ? <span className="h-6 px-1 text-[9px] leading-6 text-slate-600"><strong className="text-slate-900">{formatHours(job.estimated_man_hours)}h</strong> Estimated</span> : <span className="h-6 px-1 text-[9px] font-semibold leading-6 text-slate-900">No Labor Estimate</span>}
                       {integrationStatus !== 'ready' ? <span>{integrationStatus === 'error' ? 'Labor unavailable' : 'Loading labor…'}</span> : integration.laborEntryCount > 0 ? <button

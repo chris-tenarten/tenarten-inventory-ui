@@ -1,0 +1,150 @@
+{
+  "environment": "Synthetic actual-loader execution; no SQL/production/network timing",
+  "sourceRoot": "/Users/chrisngo/source/repos/tenarten-inventory-ui",
+  "measurementCap": 1000,
+  "stressCap": 1000,
+  "measurements": [
+    {
+      "name": "Proposal history",
+      "requests": 1,
+      "rows": 1000,
+      "bytes": 4982391,
+      "elapsedMs": 25.398124999999993,
+      "calls": [
+        {
+          "table": "proposals",
+          "rows": 1000,
+          "bytes": 4982391,
+          "url": "/rest/v1/proposals?select=*&order=created_at.desc"
+        }
+      ]
+    },
+    {
+      "name": "Purchase Order summaries",
+      "requests": 1,
+      "rows": 1000,
+      "bytes": 320636,
+      "elapsedMs": 9.152791000000008,
+      "calls": [
+        {
+          "table": "purchase_orders",
+          "rows": 1000,
+          "bytes": 320636,
+          "url": "/rest/v1/purchase_orders?select=id%2Cpo_number%2Cstatus%2Cvendor_name_snapshot%2Corder_date%2Crequested_date%2Ccurrency%2Ctotal%2Crevision_number%2Cupdated_at%2Clines%3Apurchase_order_lines%28id%29&order=updated_at.desc"
+        }
+      ]
+    },
+    {
+      "name": "Material Usage history",
+      "requests": 1,
+      "rows": 1000,
+      "bytes": 317113,
+      "elapsedMs": 4.2786669999999845,
+      "calls": [
+        {
+          "table": "material_usage_reports",
+          "rows": 1000,
+          "bytes": 317113,
+          "url": "/rest/v1/material_usage_reports?select=id%2Creport_date%2Cwork_order%2Cterrazzo_type%2Cupdated_at%2Cjob_id%2Cjob_number_snapshot%2Cjob_name_snapshot%2Cunlisted_job_name%2Cnotes&order=report_date.desc%2Cupdated_at.desc"
+        }
+      ]
+    },
+    {
+      "name": "Production attachment summaries",
+      "requests": 5,
+      "rows": 2402,
+      "bytes": 225793,
+      "elapsedMs": 5.486374999999981,
+      "calls": [
+        {
+          "table": "job_attachments",
+          "rows": 500,
+          "bytes": 47001,
+          "url": "/rest/v1/job_attachments?select=id%2Cjob_id&order=id.asc&offset=0&limit=500"
+        },
+        {
+          "table": "job_attachments",
+          "rows": 500,
+          "bytes": 47001,
+          "url": "/rest/v1/job_attachments?select=id%2Cjob_id&order=id.asc&offset=500&limit=500"
+        },
+        {
+          "table": "job_attachments",
+          "rows": 500,
+          "bytes": 47001,
+          "url": "/rest/v1/job_attachments?select=id%2Cjob_id&order=id.asc&offset=1000&limit=500"
+        },
+        {
+          "table": "job_attachments",
+          "rows": 500,
+          "bytes": 47001,
+          "url": "/rest/v1/job_attachments?select=id%2Cjob_id&order=id.asc&offset=1500&limit=500"
+        },
+        {
+          "table": "job_attachments",
+          "rows": 402,
+          "bytes": 37789,
+          "url": "/rest/v1/job_attachments?select=id%2Cjob_id&order=id.asc&offset=2000&limit=500"
+        }
+      ]
+    },
+    {
+      "name": "Production update summaries",
+      "requests": 2,
+      "rows": 1012,
+      "bytes": 168806,
+      "elapsedMs": 3.5671250000000043,
+      "calls": [
+        {
+          "table": "job_updates",
+          "rows": 1000,
+          "bytes": 168001,
+          "url": "/rest/v1/job_updates?select=job_id%2Ccreated_at%2Crequires_follow_up%2Cresolved_at%2Cfollow_up_assignee_name"
+        },
+        {
+          "table": "list_my_unseen_job_update_jobs",
+          "rows": 12,
+          "bytes": 805,
+          "url": "/rest/v1/rpc/list_my_unseen_job_update_jobs"
+        }
+      ]
+    },
+    {
+      "name": "Vendor options",
+      "requests": 1,
+      "rows": 1000,
+      "bytes": 257223,
+      "elapsedMs": 8.504124999999988,
+      "calls": [
+        {
+          "table": "vendors",
+          "rows": 1000,
+          "bytes": 257223,
+          "url": "/rest/v1/vendors?select=id%2Cname%2Ccanonical_name%2Caddress%2Caddress_line_1%2Caddress_line_2%2Ccity%2Cstate%2Cpostal_code%2Ccountry%2Cphone%2Cemail%2Cwebsite%2Cpayment_terms%2Cnotes%2Cis_active%2Ccontacts%3Avendor_contacts%28id%2Cvendor_id%2Ccontact_name%2Crole%2Cemail%2Cphone%2Cnotes%2Cis_default%2Cis_active%29&order=name.asc&is_active=eq.true"
+        }
+      ]
+    },
+    {
+      "name": "Container-size options",
+      "requests": 2,
+      "rows": 2000,
+      "bytes": 230681,
+      "elapsedMs": 6.996541000000008,
+      "calls": [
+        {
+          "table": "vendor_catalog_v2",
+          "rows": 1000,
+          "bytes": 146787,
+          "url": "/rest/v1/vendor_catalog_v2?select=vendor_name%2Cpackaging%2Cunit_size%2Cunit_size_uom%2Cmaterial_type%2Ccategory%2Cis_active&is_active=eq.true&limit=1000"
+        },
+        {
+          "table": "vendor_catalog",
+          "rows": 1000,
+          "bytes": 83894,
+          "url": "/rest/v1/vendor_catalog?select=vendor%2Cunit%2Ccategory%2Cmaterial_class&unit=not.is.null&limit=1000"
+        }
+      ]
+    }
+  ],
+  "checks": []
+}

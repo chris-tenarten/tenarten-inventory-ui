@@ -1,3 +1,4 @@
+import { loadCompleteRows } from "@/lib/complete-rows";
 import { supabase } from "@/lib/supabase";
 import { combinePurchasingCatalogRecords, parsePurchasingPackage, samePurchasingVendor } from "./catalog-records";
 import type { PurchasingCatalogSuggestion } from "./types";
@@ -22,8 +23,8 @@ export async function loadPurchasingContainerSizeOptions(
 ): Promise<string[]> {
   if (!materialType) return [];
   const [standard, specialty] = await Promise.all([
-    supabase.from("vendor_catalog").select("vendor,unit,category,material_class").not("unit", "is", null).limit(1000),
-    supabase.from("vendor_catalog_v2").select("vendor_name,packaging,unit_size,unit_size_uom,material_type,category,is_active").eq("is_active", true).limit(1000),
+    loadCompleteRows((from,to)=>supabase.from("vendor_catalog").select("id,vendor,unit,category,material_class",{count:"exact"}).not("unit", "is", null).order("id").range(from,to)),
+    loadCompleteRows((from,to)=>supabase.from("vendor_catalog_v2").select("id,vendor_name,packaging,unit_size,unit_size_uom,material_type,category,is_active",{count:"exact"}).eq("is_active", true).order("id").range(from,to)),
   ]);
   const options = new Map<string, { value: string; preferred: boolean }>();
   const add = (quantity: unknown, measure: unknown, preferred: boolean) => {
@@ -35,13 +36,13 @@ export async function loadPurchasingContainerSizeOptions(
     const current = options.get(key);
     options.set(key, { value, preferred: preferred || Boolean(current?.preferred) });
   };
-  for (const row of standard.data ?? []) {
+  for (const row of standard) {
     const classification = `${row.category ?? ""} ${row.material_class ?? ""}`.toLowerCase();
     if (!catalogMatchesMaterialType(classification, materialType)) continue;
     const parsed = parsePurchasingPackage(String(row.unit ?? ""));
     add(parsed.quantity, parsed.measure, Boolean(vendor) && samePurchasingVendor(String(row.vendor ?? ""), vendor));
   }
-  for (const row of specialty.data ?? []) {
+  for (const row of specialty) {
     const classification = `${row.material_type ?? ""} ${row.category ?? ""}`.toLowerCase();
     if (!catalogMatchesMaterialType(classification, materialType)) continue;
     const parsed = parsePurchasingPackage(String(row.packaging ?? ""));
