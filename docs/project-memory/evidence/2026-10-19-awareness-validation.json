@@ -1,0 +1,61 @@
+{
+  "status": "LOCAL_CANDIDATE_VALIDATED",
+  "base": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "branch": "perf/messaging-notification-wave1",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "environment": "local-only fixture export at http://localhost:3000",
+  "applicationHashes": {
+    "src/lib/coalesced-read.ts": "467a5e76390ad54f811b88e4d98ef9368ce6778e4dbaf2c0ce5e99f4733f1bc5",
+    "src/modules/my-work/messaging/awareness.ts": "b71b94e7df62fdb6cdcaf1ba31a9ec27948d8931b5b08319f4c2a1841b781b29",
+    "src/components/GlobalMessaging.tsx": "2c2fbb71d01c7d676bfd618b02d8f28ee018e2c6a86e5298e5209aba9ee928d7",
+    "src/modules/my-work/InboxDialog.tsx": "f2877235a3c29f2c1a1d5273584dcc4e0365dace83430543a5dfe98a1a0a4c1a",
+    "src/components/AccountNotifications.tsx": "22525d4218d73b8058fc713e2deeff0bb26a561cf2217d1a200b03818bc028a4"
+  },
+  "unchangedContracts": {
+    "src/lib/auth.tsx": {
+      "base": "836ea5a08eb60ed2e591581e41606eee40530c9bfdbed5b6d76fa9262b2fd997",
+      "candidate": "836ea5a08eb60ed2e591581e41606eee40530c9bfdbed5b6d76fa9262b2fd997"
+    },
+    "src/modules/my-work/inbox.ts": {
+      "base": "19e4df7e5786e0cf88694db051322e06c8fedfb833bb7410a2b096fb00431fe7",
+      "candidate": "19e4df7e5786e0cf88694db051322e06c8fedfb833bb7410a2b096fb00431fe7"
+    },
+    "src/modules/my-work/messaging/useConversation.ts": {
+      "base": "01b46213dcc502c714bbcf4078e89877ed0638ac4d0a75db4666b84918dd524a",
+      "candidate": "01b46213dcc502c714bbcf4078e89877ed0638ac4d0a75db4666b84918dd524a"
+    }
+  },
+  "checks": {
+    "productionWebpackExport": "passed",
+    "typescript": "passed",
+    "targetedEslint": "passed",
+    "diffWhitespace": "passed",
+    "coordinatorGroups": 6,
+    "browserComparisonScenarios": 13,
+    "additionalBrowserSafetyScenarios": 4,
+    "profileRevocation": "passed",
+    "recentThreadCache": "passed",
+    "textDrafts": "passed",
+    "notificationOnboarding": "passed",
+    "notificationArrivalDeepLinks": "passed",
+    "branding": "passed",
+    "existingRefocusAffectedBrowserChecks": 2
+  },
+  "nativeTabCommands": {
+    "switches": 3,
+    "inspectorPreserved": true,
+    "visibilityEvents": [],
+    "newPhysicalRefocusAcceptance": false
+  },
+  "limitations": [
+    "Synthetic fixture timings, not Production latency",
+    "No hosted RLS/Realtime certification",
+    "No new full attachment transfer or all-history pagination tests; source unchanged"
+  ],
+  "hostedWrites": 0,
+  "migrations": 0,
+  "pushes": 0,
+  "deployments": 0,
+  "emDiffReview": "Focused self-review: owner cleanup/generation rejection, finite reuse vs meaningful invalidation, subscription filters/cleanup, no auth or SQL delta, permission-error recovery and scope boundary inspected. No additional agent used."
+}

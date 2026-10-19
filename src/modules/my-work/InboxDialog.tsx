@@ -7,7 +7,7 @@ import AttachmentImageViewer from "./messaging/AttachmentImageViewer";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { openProductionJob } from "@/modules/production/job-options";
-import { editInboxMessage, isTenOpsSystemInboxUser, loadConversationSummaries, loadInboxUnreadCount, markInboxConversationRead, openInboxAttachment, permanentlyDeleteInboxMessage, sendInboxMessage, type ConversationSummary, type InboxAttachment, type InboxMessage } from "./inbox";
+import { editInboxMessage, isTenOpsSystemInboxUser, markInboxConversationRead, openInboxAttachment, permanentlyDeleteInboxMessage, sendInboxMessage, type ConversationSummary, type InboxAttachment, type InboxMessage } from "./inbox";
 import type { WorkCollaborator } from "./types";
 import { canPreview, fileExtension, fileSize } from "./messaging/files";
 import { getTransfer, serverTransfer, startTransfer, subscribeTransfer, transferPending } from "./messaging/client";
@@ -15,6 +15,8 @@ import { useAttachmentQueue } from "./messaging/useAttachmentQueue";
 import InlinePreview from "./messaging/InlinePreview";
 import { useConversation } from "./messaging/useConversation";
 import TransferPanel from "./messaging/TransferPanel";
+import type { MessagingAwareness } from "./messaging/awareness";
+import { InvalidatedRead } from "@/lib/coalesced-read";
 import { useTextDraft } from "@/lib/drafts/useTextDraft";
 
 const subscribeNoTransfer=()=>()=>{};
@@ -28,7 +30,7 @@ function AttachmentView({attachment,onError,onPreview}:{attachment:InboxAttachme
   return <div className="min-w-0">{attachment.preview?<InlinePreview preview={attachment.preview} name={attachment.originalFilename} onOpen={()=>onPreview(attachment)}/>:null}<div className="mt-2 flex max-w-full flex-wrap items-center gap-2 rounded border border-slate-200 bg-white px-2 py-2 text-left"><FileText className="h-4 w-4 shrink-0 text-slate-500"/><span className="min-w-0 flex-1"><bdi className="block truncate text-xs font-medium text-slate-800">{attachment.originalFilename}</bdi><span className="block text-[10px] text-slate-500">{fileExtension(attachment.originalFilename)} · {fileSize(attachment.byteSize)}</span></span>{canPreview(attachment)&&!attachment.preview?<button type="button" onClick={()=>onPreview(attachment)} className="min-h-10 px-2 text-xs text-blue-800">Preview image</button>:null}<button type="button" onClick={()=>void openInboxAttachment(attachment).catch(caught=>onError(caught instanceof Error?caught.message:"Unable to download attachment."))} className="min-h-10 px-2 text-xs text-blue-800">Download</button></div></div>;
 }
 
-export default function InboxDialog({open,onClose,currentUserId,collaborators,initialUserId="",startNewMessage=false,onUnreadChange,presentation="dialog"}:{open:boolean;onClose:()=>void;currentUserId:string;collaborators:WorkCollaborator[];initialUserId?:string;startNewMessage?:boolean;onUnreadChange:(count:number)=>void;presentation?:"dialog"|"sidepane"}){
+export default function InboxDialog({awareness,open,onClose,currentUserId,collaborators,initialUserId="",startNewMessage=false,onUnreadChange,presentation="dialog"}:{awareness:MessagingAwareness;open:boolean;onClose:()=>void;currentUserId:string;collaborators:WorkCollaborator[];initialUserId?:string;startNewMessage?:boolean;onUnreadChange:(count:number)=>void;presentation?:"dialog"|"sidepane"}){
   const auth=useAuth();
   const canWrite=auth.can("messaging.write");
   const transfer=useSyncExternalStore(subscribeTransfer,getTransfer,serverTransfer);
@@ -52,9 +54,17 @@ export default function InboxDialog({open,onClose,currentUserId,collaborators,in
   const typingChannelRef=useRef<ReturnType<typeof supabase.channel>|null>(null);const typingStopTimerRef=useRef<number|undefined>(undefined);const remoteTypingTimerRef=useRef<number|undefined>(undefined);const lastTypingBroadcastRef=useRef(0);
   const[remoteTypingUserId,setRemoteTypingUserId]=useState("");
 
-  const load=useCallback(async()=>{const generation=++summaryGeneration.current;if(!auth.profile?.isActive)return;try{const [next,count]=await Promise.all([loadConversationSummaries(),loadInboxUnreadCount(currentUserId)]);if(generation!==summaryGeneration.current)return;setSummaries(next);setError(current=>current==="Unable to load Inbox."?"":current);onUnreadChange(count);}catch(caught){setError(caught instanceof Error?caught.message:"Unable to load Inbox.");}},[auth.profile?.isActive,currentUserId,onUnreadChange]);
+  const load=useCallback(async(force=true)=>{
+    const generation=++summaryGeneration.current;
+    if(!auth.profile?.isActive||auth.user?.id!==currentUserId)return;
+    try{
+      const [next,count]=await awareness.overview(force);
+      if(generation!==summaryGeneration.current)return;
+      setSummaries(next);setError(current=>current==="Unable to load Inbox."?"":current);onUnreadChange(count);
+    }catch(caught){if(generation===summaryGeneration.current&&!(caught instanceof InvalidatedRead))setError(caught instanceof Error?caught.message:"Unable to load Inbox.");}
+  },[auth.profile?.isActive,auth.user?.id,awareness,currentUserId,onUnreadChange]);
   const summaryTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
-  const queueLoad=useCallback(()=>{clearTimeout(summaryTimer.current);summaryTimer.current=setTimeout(()=>void load(),100);},[load]);
+  const queueLoad=useCallback(()=>{awareness.invalidateOverview();clearTimeout(summaryTimer.current);summaryTimer.current=setTimeout(()=>void load(false),100);},[awareness,load]);
   useEffect(()=>()=>clearTimeout(summaryTimer.current),[]);
   const conversations=useMemo(()=>summaries.map(item=>({...item,isSystem:isTenOpsSystemInboxUser(item.userId)})),[summaries]);
   const summary=conversations.find(item=>item.userId===selectedUserId);
@@ -66,16 +76,16 @@ export default function InboxDialog({open,onClose,currentUserId,collaborators,in
   const broadcastTyping=useCallback((typing:boolean)=>{const channel=typingChannelRef.current;if(canWrite&&channel)void channel.send({type:"broadcast",event:"typing",payload:{userId:currentUserId,typing}});},[canWrite,currentUserId]);
   const announceTyping=useCallback((typing:boolean)=>{window.clearTimeout(typingStopTimerRef.current);if(!typing){broadcastTyping(false);lastTypingBroadcastRef.current=0;return;}const now=Date.now();if(now-lastTypingBroadcastRef.current>=1000){broadcastTyping(true);lastTypingBroadcastRef.current=now;}typingStopTimerRef.current=window.setTimeout(()=>{broadcastTyping(false);lastTypingBroadcastRef.current=0;},1300);},[broadcastTyping]);
 
-  useEffect(()=>{if(!open)return;void load();closeRef.current?.focus();const changed=queueLoad;window.addEventListener("tenops:messaging-changed",changed);return()=>{
+  useEffect(()=>{if(!open)return;void load(false);closeRef.current?.focus();const changed=queueLoad;window.addEventListener("tenops:messaging-changed",changed);return()=>{
     // Counter invalidates asynchronous summary reads after close/unmount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    summaryGeneration.current++;window.removeEventListener("tenops:messaging-changed",changed);};},[load,open,queueLoad]);
+    summaryGeneration.current++;clearTimeout(summaryTimer.current);window.removeEventListener("tenops:messaging-changed",changed);};},[load,open,queueLoad]);
   useEffect(()=>{if(!open){initialUserHandledRef.current="";return;}if(initialUserId&&initialUserHandledRef.current!==initialUserId){initialUserHandledRef.current=initialUserId;chooseConversation(initialUserId);}},[chooseConversation,initialUserId,open]);
   useEffect(()=>{if(!open||!startNewMessage)return;setNewMessage(true);setSelectedUserId("");setRecipientId("");resetComposer();},[open,resetComposer,startNewMessage]);
-  useEffect(()=>{if(!open||!isTenOpsSystemInboxUser(selectedUserId))return;const channel=supabase.channel(`my-work-system:${currentUserId}`).on("postgres_changes",{event:"*",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${currentUserId}`},event=>{const row=event.new as {id?:string;sender_user_id?:string};if(row.id&&!row.sender_user_id)reconcile(row.id);}).subscribe(status=>{if(status==="SUBSCRIBED")void refresh();});return()=>{void supabase.removeChannel(channel);};},[currentUserId,open,selectedUserId,reconcile,refresh]);
+  useEffect(()=>{if(!open||!isTenOpsSystemInboxUser(selectedUserId))return;let joined=false;const channel=supabase.channel(`my-work-system:${currentUserId}`).on("postgres_changes",{event:"*",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${currentUserId}`},event=>{const row=event.new as {id?:string;sender_user_id?:string};if(row.id&&!row.sender_user_id)reconcile(row.id);}).subscribe(status=>{if(status==="SUBSCRIBED"){void refresh();if(joined)queueLoad();joined=true;}});return()=>{void supabase.removeChannel(channel);};},[currentUserId,open,selectedUserId,reconcile,refresh,queueLoad]);
   useEffect(()=>{if(!open)return;const escape=(event:KeyboardEvent)=>{if(event.key!=="Escape")return;if(preview)setPreview(null);else onClose();};window.addEventListener("keydown",escape);return()=>window.removeEventListener("keydown",escape);},[onClose,open,preview]);
   useEffect(()=>{if(newMessage)composeRef.current?.focus();},[newMessage]);
-  useEffect(()=>{if(!typingPeerId||!currentUserId)return;let active=true;let channel:ReturnType<typeof supabase.channel>|null=null;const subscribe=async()=>{const{data:{session}}=await supabase.auth.getSession();if(!active||!session?.access_token)return;await supabase.realtime.setAuth(session.access_token);if(!active)return;const topic=[currentUserId,typingPeerId].sort().join(":");channel=supabase.channel(`my-work-typing:${topic}`,{config:{private:true,broadcast:{self:false}}}).on("broadcast",{event:"typing"},({payload})=>{if(payload?.userId!==typingPeerId)return;window.clearTimeout(remoteTypingTimerRef.current);if(payload.typing!==true){setRemoteTypingUserId("");return;}setRemoteTypingUserId(typingPeerId);remoteTypingTimerRef.current=window.setTimeout(()=>setRemoteTypingUserId(""),2600);});channel.on("broadcast",{event:"message_changed"},({payload})=>{if(typeof payload?.id==="string"){reconcile(payload.id,payload.kind!=="new");queueLoad();}});typingChannelRef.current=channel;channel.subscribe(status=>{if(status==="SUBSCRIBED")void refresh();});};void subscribe();return()=>{active=false;if(canWrite&&channel)void channel.send({type:"broadcast",event:"typing",payload:{userId:currentUserId,typing:false}});typingChannelRef.current=null;window.clearTimeout(typingStopTimerRef.current);window.clearTimeout(remoteTypingTimerRef.current);lastTypingBroadcastRef.current=0;setRemoteTypingUserId("");if(channel)void supabase.removeChannel(channel);};},[canWrite,currentUserId,typingPeerId,reconcile,refresh,queueLoad]);
+  useEffect(()=>{if(!typingPeerId||!currentUserId)return;let active=true;let joined=false;let channel:ReturnType<typeof supabase.channel>|null=null;const subscribe=async()=>{const{data:{session}}=await supabase.auth.getSession();if(!active||!session?.access_token)return;await supabase.realtime.setAuth(session.access_token);if(!active)return;const topic=[currentUserId,typingPeerId].sort().join(":");channel=supabase.channel(`my-work-typing:${topic}`,{config:{private:true,broadcast:{self:false}}}).on("broadcast",{event:"typing"},({payload})=>{if(payload?.userId!==typingPeerId)return;window.clearTimeout(remoteTypingTimerRef.current);if(payload.typing!==true){setRemoteTypingUserId("");return;}setRemoteTypingUserId(typingPeerId);remoteTypingTimerRef.current=window.setTimeout(()=>setRemoteTypingUserId(""),2600);});channel.on("broadcast",{event:"message_changed"},({payload})=>{if(typeof payload?.id==="string"){reconcile(payload.id,payload.kind!=="new");queueLoad();}});typingChannelRef.current=channel;channel.subscribe(status=>{if(status==="SUBSCRIBED"){void refresh();if(joined)queueLoad();joined=true;}});};void subscribe();return()=>{active=false;if(canWrite&&channel)void channel.send({type:"broadcast",event:"typing",payload:{userId:currentUserId,typing:false}});typingChannelRef.current=null;window.clearTimeout(typingStopTimerRef.current);window.clearTimeout(remoteTypingTimerRef.current);lastTypingBroadcastRef.current=0;setRemoteTypingUserId("");if(channel)void supabase.removeChannel(channel);};},[canWrite,currentUserId,typingPeerId,reconcile,refresh,queueLoad]);
 
   useEffect(()=>{if(!open||!selectedUserId)return;const unread=messages.filter(message=>message.senderUserId===selectedUserId&&message.recipientUserId===currentUserId&&!message.readAt);const key=selectedUserId+":"+unread.map(message=>message.id).join(",");if(!unread.length||key===readKeyRef.current)return;readKeyRef.current=key;const peer=selectedUserId;const ids=new Set(unread.map(message=>message.id));void markInboxConversationRead(peer).then(()=>{setMessages(current=>current.map(message=>message.senderUserId===peer&&ids.has(message.id)&&!message.readAt?{...message,readAt:new Date().toISOString()}:message));void load();window.dispatchEvent(new Event("tenops:notifications-changed"));}).catch(caught=>setError(caught instanceof Error?caught.message:"Unable to mark messages read."));},[currentUserId,messages,load,open,selectedUserId,setMessages]);
   useEffect(()=>{if(!open){scrollPeerRef.current="";scrollLastRef.current="";nearBottomRef.current=true;}},[open]);

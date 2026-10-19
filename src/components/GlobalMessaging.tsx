@@ -7,7 +7,9 @@ import { Component, useCallback, useEffect, useMemo, useRef, useState, type Erro
 import { createPortal } from "react-dom";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
-import { isTenOpsSystemInboxUser, loadInboxRecipients, loadInboxUnreadCount, loadConversationSummaries, type ConversationSummary } from "@/modules/my-work/inbox";
+import { isTenOpsSystemInboxUser, type ConversationSummary } from "@/modules/my-work/inbox";
+import { MessagingAwareness } from "@/modules/my-work/messaging/awareness";
+import { InvalidatedRead } from "@/lib/coalesced-read";
 import type { WorkCollaborator } from "@/modules/my-work/types";
 
 const InboxDialog = dynamic(() => import("@/modules/my-work/InboxDialog"), { ssr: false });
@@ -30,9 +32,10 @@ export default function GlobalMessaging(){
   const currentUserId=auth.profile?.userId??"";
   const pathname=usePathname();
   const menuRef=useRef<HTMLDivElement>(null);
-  const recentRequestRef=useRef(false);
-  const recentLoadedRef=useRef(false);
+  const awareness=useMemo(()=>new MessagingAwareness(currentUserId),[currentUserId]);
+  const ownerGeneration=useRef(0);
   const awarenessVisibleRef=useRef(false);
+  const inboxVisibleRef=useRef(false);
   const[modalOpen,setModalOpen]=useState(false);
   const[menuOpen,setMenuOpen]=useState(false);
   const[sidebarOpen,setSidebarOpen]=useState(false);
@@ -46,20 +49,47 @@ export default function GlobalMessaging(){
   const[error,setError]=useState("");
   const[headerPortalTarget,setHeaderPortalTarget]=useState<HTMLElement|null>(null);
 
-  const refreshUnread=useCallback((userId:string)=>{if(!userId)return;void loadInboxUnreadCount(userId).then(setUnreadCount).catch(()=>{});},[]);
-  const loadRecent=useCallback((force=false)=>{if(!currentUserId||recentRequestRef.current||(!force&&recentLoadedRef.current))return;recentRequestRef.current=true;setRecentLoading(true);setError("");void Promise.all([loadConversationSummaries(),recentLoadedRef.current?Promise.resolve(null):loadInboxRecipients()]).then(([messages,people])=>{setRecentMessages(messages);if(people)setCollaborators(people.filter(user=>user.userId!==currentUserId));recentLoadedRef.current=true;}).catch(caught=>setError(caught instanceof Error?caught.message:"Unable to load recent messages.")).finally(()=>{recentRequestRef.current=false;setRecentLoading(false);});},[currentUserId]);
-  const handleUnreadChange=useCallback((count:number)=>{setUnreadCount(count);if(awarenessVisibleRef.current)loadRecent(true);},[loadRecent]);
-  const prepareWorkspace=useCallback((onReady:()=>void)=>{setModalReady(false);setError("");void (collaborators.length?Promise.resolve(collaborators):loadInboxRecipients()).then((people)=>{setCollaborators(people.filter(user=>user.userId!==currentUserId));setModalReady(true);onReady();}).catch(caught=>setError(caught instanceof Error?caught.message:"Unable to load Messaging."));},[collaborators,currentUserId]);
+  const refreshUnread=useCallback(()=>{void awareness.unread.refresh().catch(()=>{});},[awareness]);
+  const loadRecent=useCallback((force=false)=>{
+    if(!currentUserId)return;
+    const generation=ownerGeneration.current;
+    setRecentLoading(true);setError("");
+    void Promise.all([awareness.overview(force),awareness.recipients.read()]).then(([,people])=>{
+      if(generation===ownerGeneration.current)setCollaborators(people.filter(user=>user.userId!==currentUserId));
+    }).catch(caught=>{if(generation===ownerGeneration.current&&!(caught instanceof InvalidatedRead))setError(caught instanceof Error?caught.message:"Unable to load recent messages.");})
+      .finally(()=>{if(generation===ownerGeneration.current)setRecentLoading(false);});
+  },[awareness,currentUserId]);
+  // The shared overview publishes summaries to both consumers. An unread result
+  // must not recursively trigger another summary request.
+  const handleUnreadChange=useCallback((count:number)=>{setUnreadCount(count);},[]);
+  const prepareWorkspace=useCallback((onReady:()=>void)=>{
+    const generation=ownerGeneration.current;
+    setModalReady(false);setError("");
+    void awareness.recipients.read().then(people=>{
+      if(generation!==ownerGeneration.current)return;
+      setCollaborators(people.filter(user=>user.userId!==currentUserId));setModalReady(true);onReady();
+    }).catch(caught=>{if(generation===ownerGeneration.current&&!(caught instanceof InvalidatedRead))setError(caught instanceof Error?caught.message:"Unable to load Messaging.");});
+  },[awareness,currentUserId]);
   const openModal=useCallback((userId="")=>{setInitialUserId(userId);setSidebarExpanded(false);setModalOpen(true);setMenuOpen(false);prepareWorkspace(()=>{});},[prepareWorkspace]);
   const expandSidebar=()=>{setInitialUserId("");setModalOpen(false);setMenuOpen(false);setSidebarExpanded(true);prepareWorkspace(()=>{});};
 
   const conversations=useMemo(()=>recentMessages.map(item=>({...item,isSystem:isTenOpsSystemInboxUser(item.userId)})),[recentMessages]);
 
-  useEffect(()=>{refreshUnread(currentUserId);},[currentUserId,refreshUnread]);
+  useEffect(()=>{
+    const stopSummaries=awareness.summaries.subscribe(setRecentMessages);
+    const stopUnread=awareness.unread.subscribe(setUnreadCount);
+    refreshUnread();
+    return()=>{
+      // This counter invalidates reads, not a DOM ref.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      ownerGeneration.current++;
+      stopSummaries();stopUnread();awareness.reset();
+    };
+  },[awareness,refreshUnread]);
   useEffect(()=>{const timer=window.setTimeout(()=>setHeaderPortalTarget(document.querySelector<HTMLElement>("[data-shell-header]")),0);return()=>window.clearTimeout(timer);},[]);
   useEffect(()=>{const timer=window.setTimeout(()=>setSidebarOpen(window.sessionStorage.getItem(SIDEBAR_SESSION_KEY)==="shown"),0);return()=>window.clearTimeout(timer);},[]);
-  useEffect(()=>{awarenessVisibleRef.current=menuOpen||sidebarOpen;},[menuOpen,sidebarOpen]);
-  useEffect(()=>{if(!currentUserId)return;let timer:ReturnType<typeof setTimeout>|undefined;const flush=()=>{window.dispatchEvent(new Event("tenops:messaging-changed"));refreshUnread(currentUserId);if(awarenessVisibleRef.current)loadRecent(true);};const refresh=()=>{clearTimeout(timer);timer=setTimeout(flush,100);};const channel=supabase.channel(`global-messaging-badge:${currentUserId}`).on("postgres_changes",{event:"INSERT",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${currentUserId}`},refresh).on("postgres_changes",{event:"UPDATE",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${currentUserId}`},refresh).subscribe();return()=>{clearTimeout(timer);void supabase.removeChannel(channel);};},[currentUserId,loadRecent,refreshUnread]);
+  useEffect(()=>{awarenessVisibleRef.current=menuOpen||sidebarOpen;inboxVisibleRef.current=modalReady&&(modalOpen||sidebarExpanded);},[menuOpen,sidebarOpen,modalOpen,sidebarExpanded,modalReady]);
+  useEffect(()=>{if(!currentUserId)return;let joined=false;let timer:ReturnType<typeof setTimeout>|undefined;const flush=()=>{awareness.invalidateOverview();window.dispatchEvent(new Event("tenops:messaging-changed"));if(inboxVisibleRef.current)return;if(awarenessVisibleRef.current)loadRecent(true);else refreshUnread();};const refresh=()=>{clearTimeout(timer);timer=setTimeout(flush,100);};const channel=supabase.channel(`global-messaging-badge:${currentUserId}`).on("postgres_changes",{event:"INSERT",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${currentUserId}`},refresh).on("postgres_changes",{event:"UPDATE",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${currentUserId}`},refresh).subscribe(status=>{if(status==="SUBSCRIBED"){if(joined)refresh();joined=true;}});return()=>{clearTimeout(timer);void supabase.removeChannel(channel);};},[awareness,currentUserId,loadRecent,refreshUnread]);
   useEffect(()=>{const handleOpen=(event:Event)=>openModal((event as CustomEvent<{userId?:string}>).detail?.userId??"");window.addEventListener("tenops:open-inbox",handleOpen);return()=>window.removeEventListener("tenops:open-inbox",handleOpen);},[openModal]);
   useEffect(()=>{if(!menuOpen)return;const pointer=(event:PointerEvent)=>{if(!menuRef.current?.contains(event.target as Node))setMenuOpen(false);};const key=(event:KeyboardEvent)=>{if(event.key==="Escape")setMenuOpen(false);};document.addEventListener("pointerdown",pointer);document.addEventListener("keydown",key);return()=>{document.removeEventListener("pointerdown",pointer);document.removeEventListener("keydown",key);};},[menuOpen]);
   useEffect(()=>{if(!auth.profile?.isActive)return;const params=new URLSearchParams(window.location.search);if(params.get("inbox")!=="1"&&!params.get("inboxUserId"))return;const timer=window.setTimeout(()=>openModal(params.get("inboxUserId")??""),0);params.delete("inbox");params.delete("inboxUserId");const query=params.toString();window.history.replaceState({},"",`${window.location.pathname}${query?`?${query}`:""}${window.location.hash}`);return()=>window.clearTimeout(timer);},[auth.profile?.isActive,openModal,pathname]);
@@ -78,6 +108,6 @@ export default function GlobalMessaging(){
     {headerPortalTarget&&sidebarOpen&&!sidebarExpanded?createPortal(<button type="button" onClick={expandSidebar} aria-label="Expand message sidebar" aria-expanded="false" className="tenops-selected-surface absolute inset-y-0 right-full z-[110] hidden w-14 items-center justify-center md:flex"><Send className="h-[23px] w-[23px]"/>{unreadCount?<span aria-label={`${unreadCount} unread messages`} className="absolute right-1 top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold text-white ring-2 ring-white">{unreadCount>9?"9+":unreadCount}</span>:null}<span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px" style={{backgroundColor:"#172033"}}/></button>,headerPortalTarget):null}
     {typeof document!=="undefined"&&sidebarOpen&&!sidebarExpanded?createPortal(<aside data-global-message-sidebar data-expanded="false" aria-hidden="true" className="tenops-selected-surface fixed inset-y-0 left-0 z-[90] hidden w-14 border-r border-blue-800/20 shadow-xl md:block"/>,document.body):null}
     {(modalOpen||sidebarExpanded)&&!modalReady?createPortal(<div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/45 p-4" onMouseDown={event=>{if(event.target===event.currentTarget){setModalOpen(false);setSidebarExpanded(false);}}}><section role="dialog" aria-modal="true" aria-label="Messaging" className="w-full max-w-lg border border-slate-300 bg-white p-4 shadow-2xl"><div className="flex items-center justify-between"><strong>Messaging</strong><button type="button" onClick={()=>{setModalOpen(false);setSidebarExpanded(false);}} aria-label="Close Messaging" className="flex h-10 w-10 items-center justify-center rounded-md border border-slate-300"><X className="h-5 w-5"/></button></div>{error?<p role="alert" className="mt-4 text-sm text-red-700">Messaging could not be loaded. The rest of TenOps remains available.</p>:<p className="mt-4 text-sm text-slate-500">Loading Messaging…</p>}</section></div>,document.body):null}
-    {modalReady?<MessagingErrorBoundary key={sidebarExpanded?"sidepane":modalOpen?"modal":"closed"} onClose={()=>{setModalOpen(false);setSidebarExpanded(false);}}><InboxDialog open={modalOpen||sidebarExpanded} onClose={()=>{if(sidebarExpanded)setSidebarExpanded(false);else setModalOpen(false);}} currentUserId={currentUserId} collaborators={collaborators} initialUserId={initialUserId} onUnreadChange={handleUnreadChange} presentation={sidebarExpanded?"sidepane":"dialog"}/></MessagingErrorBoundary>:null}
+    {modalReady?<MessagingErrorBoundary key={sidebarExpanded?"sidepane":modalOpen?"modal":"closed"} onClose={()=>{setModalOpen(false);setSidebarExpanded(false);}}><InboxDialog awareness={awareness} open={modalOpen||sidebarExpanded} onClose={()=>{if(sidebarExpanded)setSidebarExpanded(false);else setModalOpen(false);}} currentUserId={currentUserId} collaborators={collaborators} initialUserId={initialUserId} onUnreadChange={handleUnreadChange} presentation={sidebarExpanded?"sidepane":"dialog"}/></MessagingErrorBoundary>:null}
   </>;
 }

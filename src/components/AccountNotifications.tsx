@@ -9,6 +9,7 @@ import { ROLE_LABELS, type AppRole } from "@/lib/rbac";
 import { supabase } from "@/lib/supabase";
 import { initialNotificationOnboardingState, notificationOnboardingReducer } from "./notification-onboarding-state";
 import { createNotificationArrivalSession, dismissNotificationArrival, observeLiveNotificationArrival, observeNotificationArrivals } from "./notification-arrival-state";
+import { CoalescedRead, InvalidatedRead } from "@/lib/coalesced-read";
 import { MyWorkIcon } from "./primary-navigation-icons";
 
 export type AccountNotification = {
@@ -74,6 +75,12 @@ export default function AccountNotifications({ onOpen, onWelcomeChange }: {
   const arrivalSessionRef = useRef(createNotificationArrivalSession());
   const pendingLiveIdsRef = useRef(new Set<string>());
   const loadRequestRef = useRef(0);
+  const historyRead = useMemo(() => new CoalescedRead(async () => {
+    if (!profileUserId) throw new InvalidatedRead();
+    const result = await supabase.rpc("list_my_account_notification_history", { p_limit: 100 });
+    if (result.error) throw result.error;
+    return result.data;
+  }), [profileUserId]);
   const arrivalNotificationIdRef = useRef(arrivalNotificationId);
 
   useEffect(() => {
@@ -89,10 +96,14 @@ export default function AccountNotifications({ onOpen, onWelcomeChange }: {
     if (!isAuthenticated || !profileIsActive || !profileUserId) { setItems([]); return; }
     if (liveNotificationId) pendingLiveIdsRef.current.add(liveNotificationId);
     const requestId = ++loadRequestRef.current;
-    const account = await supabase.rpc("list_my_account_notification_history", { p_limit: 100 });
+    let data;
+    try { data = await historyRead.refresh(); }
+    catch (caught) {
+      if (requestId === loadRequestRef.current && !(caught instanceof InvalidatedRead)) setError(caught instanceof Error ? caught.message : (caught as {message?:string})?.message || "Unable to load notifications.");
+      return;
+    }
     if (requestId !== loadRequestRef.current) return;
-    if (account.error) { setError(account.error.message); return; }
-    const accountItems = ((account.data ?? []) as Omit<GeneralNotification, "kind">[]).map((item): NotificationItem => {
+    const accountItems = ((data ?? []) as Omit<GeneralNotification, "kind">[]).map((item): NotificationItem => {
       if (item.notification_type.startsWith("job_update_") && item.metadata.job_id && item.metadata.update_id && item.metadata.job_name) {
         return {
           kind: "job_update",
@@ -133,14 +144,15 @@ export default function AccountNotifications({ onOpen, onWelcomeChange }: {
       dispatchOnboarding({ type: "focus-arrival", notificationId: focusId });
     }
     setError("");
-  }, [isAuthenticated, profileIsActive, profileUserId]);
+  }, [historyRead, isAuthenticated, profileIsActive, profileUserId]);
 
   useEffect(() => {
     loadRequestRef.current += 1;
     arrivalSessionRef.current = createNotificationArrivalSession();
     pendingLiveIdsRef.current.clear();
     dispatchOnboarding({ type: "reset" });
-  }, [isAuthenticated, profileIsActive, profileUserId]);
+    return () => { loadRequestRef.current++; historyRead.reset(); };
+  }, [historyRead, isAuthenticated, profileIsActive, profileUserId]);
 
   useEffect(() => {
     const initialLoad = window.setTimeout(() => void load(), 0);
@@ -152,6 +164,7 @@ export default function AccountNotifications({ onOpen, onWelcomeChange }: {
 
   useEffect(() => {
     if (!isAuthenticated || !profileIsActive || !profileUserId) return;
+    let joined = false;
     const channel = supabase
       .channel(`account-notifications:${profileUserId}`)
       .on(
@@ -163,7 +176,11 @@ export default function AccountNotifications({ onOpen, onWelcomeChange }: {
           void load(inserted.id);
         },
       )
-      .subscribe();
+      .subscribe(status => {
+        if (status !== "SUBSCRIBED") return;
+        if (joined) void load();
+        joined = true;
+      });
     return () => { void supabase.removeChannel(channel); };
   }, [isAuthenticated, load, profileIsActive, profileUserId]);
 
@@ -211,6 +228,7 @@ export default function AccountNotifications({ onOpen, onWelcomeChange }: {
     if (readError) { setError(readError.message); return false; }
     const readAt = new Date().toISOString();
     setItems((current) => current.map((candidate) => candidate.id === item.id ? { ...candidate, read_at: readAt } : candidate));
+    void load();
     return true;
   }
 
@@ -261,6 +279,7 @@ export default function AccountNotifications({ onOpen, onWelcomeChange }: {
       const readAt = new Date().toISOString();
       setItems((current) => current.map((item) => item.read_at ? item : { ...item, read_at: readAt }));
       setError("");
+      void load();
     }
     setWorking(false);
   }
