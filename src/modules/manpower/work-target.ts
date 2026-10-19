@@ -69,7 +69,14 @@ export function buildManpowerWorkTargetOptions(
     }
   }
   for (const entry of entries) {
-    if (!entry.job || !entry.rework_cycle) continue;
+    if (!entry.job) continue;
+    const baseValue = manpowerJobTargetValue(entry.job.id);
+    if (!values.has(baseValue)) {
+      options.push({value: baseValue, target: {kind: 'job', jobId: entry.job.id},
+        label: manpowerJobLabel(entry.job), status: entry.job.production_status, selectable: false});
+      values.add(baseValue);
+    }
+    if (!entry.rework_cycle) continue;
     const value = manpowerReworkTargetValue(entry.rework_cycle.id);
     if (values.has(value)) continue;
     options.push(reworkOption(entry.job, entry.rework_cycle, false));

@@ -1,0 +1,38 @@
+{
+  "baseline": true,
+  "origin": "http://localhost:3000",
+  "results": [
+    {
+      "name": "ordinary Manpower report and complete history on demand",
+      "reportReadyMs": 307,
+      "initial": {
+        "requests": 30,
+        "rows": 13204,
+        "bytes": 9475691
+      },
+      "historyRequests": 25
+    },
+    {
+      "name": "Inventory startup, current quantities and complete received history",
+      "stockReadyMs": 699,
+      "stockRows": 1201,
+      "stockTotal": 13210,
+      "initial": {
+        "requests": 6,
+        "rows": 2407,
+        "bytes": 1495838
+      },
+      "receivedRows": 1201
+    },
+    {
+      "name": "Activity audit includes oldest intake and usage",
+      "requests": 1,
+      "rows": 500,
+      "bytes": 253891
+    }
+  ],
+  "pageErrors": [],
+  "external": [],
+  "hostedWrites": 0,
+  "note": "Actual components, synthetic local data. JSON bytes are not compressed transfer sizes or SQL timings."
+}

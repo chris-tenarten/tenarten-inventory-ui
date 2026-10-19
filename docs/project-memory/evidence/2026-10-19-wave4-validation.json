@@ -1,0 +1,28 @@
+{
+  "riskTier": 3,
+  "testingLevel": 3,
+  "base": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "browserCandidateGroupsPassed": 13,
+  "browserBaselineGroupsPassed": 3,
+  "checks": {
+    "focusedDataContracts": "verify-wave4-retrieval.mts passed",
+    "inventoryReservations": "verify-inventory-reservation-workflow.mjs passed",
+    "productionWebpackBuild": "passed final application source after archived-target correction",
+    "typescript": "final standalone and Production build TypeScript passed",
+    "targetedESLint": "passed",
+    "diffCheck": "passed"
+  },
+  "corrections": [
+    "Test locators narrowed to desktop tables because responsive duplicates and nested main elements caused strict-locator failures. Previously passed groups were reused.",
+    "Historical edit exposed baseline missing archived ordinary-Job target. Added preserved nonselectable identity; pure and browser edit checks passed. Only affected gates/build repeated.",
+    "Final standalone TypeScript caught a synthetic historical-Rework status literal (completed); corrected to existing enum complete. No application source change; final standalone TypeScript and data verifier passed."
+  ],
+  "accountAndRefocus": "Inventory token revalidation, account switch, denial, Manpower simulated focus and continuing SIGNED_IN passed. Shared Oct19 auth source unchanged; no physical tab-visibility certification.",
+  "limitations": [
+    "All fixtures synthetic; no hosted role, SQL plan, RLS, migration or Production latency verification.",
+    "Receipt/undo fixture models only disposable UI refresh/data lineage, not hosted RPC transactional integrity."
+  ],
+  "hostedWrites": 0,
+  "migrations": 0,
+  "releaseActions": 0
+}

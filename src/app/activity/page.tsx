@@ -1,7 +1,8 @@
 'use client';
 
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {loadInventoryTransactions} from '@/modules/inventory/retrieval';
+import {useAuth} from '@/lib/auth';
 import { useLanguage } from '@/lib/language';
 
 type TransactionTypeFilter = 'all' | 'intake' | 'outtake' | 'adjustment';
@@ -125,6 +126,13 @@ function filterLabel(filter: TransactionTypeFilter) {
 }
 
 export default function ActivityPage() {
+  const auth = useAuth();
+  return <AccountActivityPage key={`${auth.user?.id ?? 'anonymous'}:${auth.profile?.userId ?? 'unresolved'}`} />;
+}
+
+function AccountActivityPage() {
+  const requestRef = useRef<AbortController | null>(null);
+  useEffect(() => () => { requestRef.current?.abort(); }, []);
   const { language, tr } = useLanguage();
   const [rows, setRows] = useState<TransactionRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -134,16 +142,14 @@ export default function ActivityPage() {
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
 
   const loadRows = useCallback(async () => {
+    requestRef.current?.abort();
+    const request = new AbortController(); requestRef.current = request;
     setLoading(true);
     setLoadError('');
 
-    const { data, error } = await supabase
-      .from('inventory_transactions')
-      .select(
-        'id, created_at, transaction_type, vendor, specialty_vendor_name, item_name, size, unit, quantity, location, notes, catalog_source, is_earmarked, earmarked_job_name, earmark_notes, synced_to_inventory_at, reversal_of_transaction_id, reversed_at, reversed_by',
-      )
-      .order('created_at', { ascending: false })
-      .limit(500);
+    const {data, error} = await loadInventoryTransactions<TransactionRow>(request.signal)
+      .then(data => ({data, error: null})).catch(error => ({data: null, error}));
+    if (request.signal.aborted) return;
 
     if (error) {
       console.error('Failed to load activity:', error);

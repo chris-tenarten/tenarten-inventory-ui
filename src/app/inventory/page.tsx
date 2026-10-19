@@ -4,7 +4,7 @@ import SuggestionInput from '@/components/SuggestionInput';
 
 import { BusinessButton, BusinessSelect, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
 
-import { loadCompleteRows } from '@/lib/complete-rows';
+import {loadInventoryRows, loadReceivalRows} from '@/modules/inventory/retrieval';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import {
@@ -422,6 +422,11 @@ function stockLineStatusClass(tone: 'neutral' | 'good' | 'warning' | 'bad') {
 }
 
 export default function InventoryPage() {
+  const auth = useAuth();
+  return <AccountInventoryPage key={`${auth.user?.id ?? 'anonymous'}:${auth.profile?.userId ?? 'unresolved'}`} />;
+}
+
+function AccountInventoryPage() {
   const narrowLayout = useMediaQuery('(max-width: 767px)');
   const { tr } = useLanguage();
   const auth = useAuth();
@@ -472,6 +477,12 @@ export default function InventoryPage() {
   const reservedSelectAllRef = useRef<HTMLInputElement>(null);
 
   const [pendingReceivals, setPendingReceivals] = useState<PendingReceival[]>([]);
+  const [includeReceived, setIncludeReceived] = useState(false);
+  const includeReceivedRef = useRef(includeReceived);
+  includeReceivedRef.current = includeReceived;
+  const stockRequest = useRef<AbortController | null>(null);
+  const receivalRequest = useRef<AbortController | null>(null);
+  useEffect(() => () => { stockRequest.current?.abort(); receivalRequest.current?.abort(); }, []);
   const [pendingReceivalsLoading, setPendingReceivalsLoading] = useState(true);
   const [pendingReceivalsError, setPendingReceivalsError] = useState('');
   const [pendingReceivalsExpanded, setPendingReceivalsExpanded] = useState(false);
@@ -528,19 +539,15 @@ export default function InventoryPage() {
   const [productionJobsError, setProductionJobsError] = useState('');
 
   const loadData = useCallback(async () => {
+    stockRequest.current?.abort();
+    const request = new AbortController(); stockRequest.current = request;
     setLoading(true);
     setLoadError('');
 
-    const { data, error } = await loadCompleteRows((from, to) => supabase
-      .from('inventory_items')
-      .select(
-        'id, vendor, color, size, category, quantity, unit, location, pallet_number, notes, earmarked_for_job, earmarked_job, earmark_notes, production_job_id, temporary_job_label, production_job:jobs!production_job_id(id,name,job_number,production_status,archived_at), updated_at, last_counted_at, last_counted_by', { count: 'exact' },
-      )
-      .order('vendor', { ascending: true })
-      .order('color', { ascending: true })
-      .order('size', { ascending: true }).order('id').range(from, to))
+    const { data, error } = await loadInventoryRows(request.signal)
       .then(data => ({ data, error: null })).catch(error => ({ data: null, error }));
 
+    if (request.signal.aborted) return;
     if (error) {
       console.error('Failed to load inventory:', error);
       setLoadError(error.message || 'Failed to load inventory.');
@@ -553,23 +560,15 @@ export default function InventoryPage() {
   }, []);
 
   const loadPendingReceivals = useCallback(async () => {
+    receivalRequest.current?.abort();
+    const request = new AbortController(); receivalRequest.current = request;
     setPendingReceivalsLoading(true);
     setPendingReceivalsError('');
 
-    const { data, error } = await loadCompleteRows((from, to) => supabase
-      .from('pending_receivals')
-      .select(
-        'id, vendor, material_name, size, category, quantity_expected, quantity_received, unit, location, pallet_number, status, ordered_by, order_date, received_by, eta, notes, created_at, received_at, is_earmarked, earmarked_job_name, earmark_notes, production_job_id, temporary_job_label, receipt_inventory_item_id, receipt_transaction_id, receipt_created_inventory_item, production_job:jobs!production_job_id(id,name,job_number,production_status,archived_at)', { count: 'exact' },
-      )
-      .in('status', ['pending', 'partially_received', 'received'])
-      .order('eta', { ascending: true, nullsFirst: false })
-      .order('created_at', { ascending: true })
-      // Batch-created rows can share timestamps; receive/undo must not reshuffle ties.
-      .order('material_name', { ascending: true })
-      .order('size', { ascending: true, nullsFirst: false })
-      .order('id', { ascending: true }).range(from, to))
+    const { data, error } = await loadReceivalRows<PendingReceival>(includeReceivedRef.current, request.signal)
       .then(data => ({ data, error: null })).catch(error => ({ data: null, error }));
 
+    if (request.signal.aborted) return;
     if (error) {
       console.error('Failed to load pending receivals:', error);
       setPendingReceivalsError(error.message || 'Failed to load pending receivals.');
@@ -581,10 +580,8 @@ export default function InventoryPage() {
     setPendingReceivalsLoading(false);
   }, []);
 
-  useEffect(() => {
-    loadData();
-    loadPendingReceivals();
-  }, [loadData, loadPendingReceivals]);
+  useEffect(() => { void loadData(); }, [loadData]);
+  useEffect(() => { void loadPendingReceivals(); }, [loadPendingReceivals, includeReceived]);
 
   const jobChoicesVisible = Boolean(selectedLotId || isPendingReceivalFormOpen ||
     (pendingReceivalsExpanded && selectedPendingReceivalIds.size > 0));
@@ -2346,7 +2343,8 @@ export default function InventoryPage() {
           {pendingReceivalsExpanded && (
           <div className="min-h-0 overflow-hidden">
             <div className="flex flex-wrap items-center justify-end gap-2 border-b border-slate-200 bg-white px-5 py-3">
-            {pendingReceivals.some((item) => item.status === 'received') && (
+            {!includeReceived && <button type="button" disabled={pendingReceivalsLoading} onClick={() => setIncludeReceived(true)} className="h-8 rounded-md border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 disabled:opacity-50">{tr('Load received items', 'Cargar artículos recibidos')}</button>}
+            {includeReceived && !pendingReceivalsLoading && !pendingReceivalsError && pendingReceivals.some((item) => item.status === 'received') && (
               <button
                 type="button"
                 onClick={handleClearReceivedPendingReceivals}
@@ -2422,7 +2420,7 @@ export default function InventoryPage() {
 
         {pendingReceivalsError && (
           <div className="border-b border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-            {pendingReceivalsError}
+            {pendingReceivalsError} <button type="button" onClick={() => void loadPendingReceivals()} disabled={pendingReceivalsLoading} className="underline">Retry receivals</button>
           </div>
         )}
 

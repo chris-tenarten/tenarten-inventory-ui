@@ -1,0 +1,80 @@
+{
+  "baseline": false,
+  "origin": "http://localhost:3344",
+  "results": [
+    {
+      "name": "ordinary Manpower report and complete history on demand",
+      "reportReadyMs": 320,
+      "initial": {
+        "requests": 5,
+        "rows": 1203,
+        "bytes": 845147
+      },
+      "historyRequests": 25
+    },
+    {
+      "name": "Inventory startup, current quantities and complete received history",
+      "stockReadyMs": 278,
+      "stockRows": 1201,
+      "stockTotal": 13210,
+      "initial": {
+        "requests": 4,
+        "rows": 1206,
+        "bytes": 549236
+      },
+      "receivedRows": 1201
+    },
+    {
+      "name": "Activity audit includes oldest intake and usage",
+      "requests": 3,
+      "rows": 1401,
+      "bytes": 712001
+    },
+    {
+      "name": "period and Job changes discard delayed obsolete reports"
+    },
+    {
+      "name": "history denial is separate from usable report; explicit retry succeeds"
+    },
+    {
+      "name": "empty Manpower and Inventory resolve without infinite loading"
+    },
+    {
+      "name": "Inventory denial resolves; refresh supersedes delayed stock and keeps search"
+    },
+    {
+      "name": "session revalidation preserves current stock; account change clears private workspace"
+    },
+    {
+      "name": "selected-period denial terminates and next period recovers"
+    },
+    {
+      "name": "received-history denial retains stock and explicit retry loads all records"
+    },
+    {
+      "name": "local historical edit and receive/undo preserve totals and lineage",
+      "historicalEdit": true,
+      "reportHoursUnchanged": true,
+      "partialReceipt": 5,
+      "fullReceipt": 20,
+      "undoRestoresQuantity": true,
+      "reservationLineagePreserved": true,
+      "auditReversalRetained": true
+    },
+    {
+      "name": "away and back while delayed history cannot repopulate a new workspace"
+    },
+    {
+      "name": "focus and continuing-sign-in preserve unsaved historical editor",
+      "simulatedFocus": true,
+      "continuingSignedIn": true,
+      "unsavedNotePreserved": true,
+      "extraHistoryReads": 0,
+      "physicalVisibilityNotCertified": true
+    }
+  ],
+  "pageErrors": [],
+  "external": [],
+  "hostedWrites": 0,
+  "note": "Actual components, synthetic local data. JSON bytes are not compressed transfer sizes or SQL timings."
+}

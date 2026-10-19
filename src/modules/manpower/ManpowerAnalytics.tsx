@@ -90,12 +90,13 @@ export default function ManpowerAnalytics({ entries, categories, tasks, jobId, p
   useEffect(() => {
     if (!referencesReady || historyReady) return;
     let active = true;
-    void loadManpowerReportFacts(laborPeriod(days, today), jobId).then((facts) => {
+    const request = new AbortController();
+    void loadManpowerReportFacts(laborPeriod(days, today), jobId, request.signal).then((facts) => {
       if (active) setReport({ scope, entries: hydrateManpowerEntries(facts, workers, tasks, groups), error: '' });
     }).catch((caught) => {
       if (active) setReport({ scope, entries: [], error: caught instanceof Error ? caught.message : 'Unable to load complete period labor.' });
     }).finally(() => { if (active) onReportSettled(); });
-    return () => { active = false; };
+    return () => { active = false; request.abort(); };
   }, [referencesReady, historyReady, scope, days, today, jobId, workers, tasks, groups, onReportSettled]);
   const reportEntries = useMemo(() => historyReady ? entries : report?.scope === scope ? report.entries : [], [historyReady, entries, report, scope]);
   const reportLoading = historyReady ? loading : !referencesReady ? loading : report?.scope !== scope;

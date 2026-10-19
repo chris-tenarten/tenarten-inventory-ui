@@ -609,6 +609,11 @@ function AccountManpowerWorkspace() {
   const [loading, setLoading] = useState(true);
   const [referencesReady, setReferencesReady] = useState(false);
   const [historyReady, setHistoryReady] = useState(false);
+  const [historyRequested, setHistoryRequested] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState('');
+  const historyRequest = useRef<AbortController | null>(null);
+  const reportSettled = useCallback(() => setLoading(false), []);
   const [referenceRevision, setReferenceRevision] = useState(0);
   const loadGeneration = useRef(0);
   const historyStarted = useRef(-1);
@@ -662,6 +667,8 @@ function AccountManpowerWorkspace() {
 
   const load = useCallback(async () => {
     const generation = ++loadGeneration.current;
+    historyRequest.current?.abort();
+    setHistoryError(''); setHistoryLoading(false);
     setLoading(true); setError(''); setLoadError(''); setReferencesReady(false); setHistoryReady(false);
     try {
       const [loadedJobs, loadedGroups, loadedWorkers, loadedTasks, loadedCategories] = await Promise.all([
@@ -676,13 +683,16 @@ function AccountManpowerWorkspace() {
     }
   }, []);
 
-  // The selected report finishes first. Editable groups still receive complete
+  // The selected report finishes first. Explicitly requested editing still receives complete
   // history; neither historical search nor bulk operations use a period subset.
   const loadHistory = useCallback(() => {
     if (!referencesReady || historyStarted.current === referenceRevision) return;
     const generation = referenceRevision;
     historyStarted.current = generation;
-    void loadManpowerEntryFacts().then((facts) => {
+    const request = new AbortController();
+    historyRequest.current?.abort(); historyRequest.current = request;
+    setHistoryLoading(true); setHistoryError('');
+    void loadManpowerEntryFacts(request.signal).then((facts) => {
       if (generation !== loadGeneration.current) return;
       const loadedEntries = hydrateManpowerEntries(facts, workers, tasks, reportingGroups);
       setEntries(loadedEntries); setHistoryReady(true);
@@ -696,11 +706,17 @@ function AccountManpowerWorkspace() {
       const loadedIds = new Set(loadedEntries.map((entry) => entry.id));
       setSelectedIds((current) => new Set([...current].filter((id) => loadedIds.has(id))));
     }).catch((caught) => {
-      if (generation === loadGeneration.current) setLoadError(caughtMessage(caught, 'Unable to load manpower reporting.'));
-    }).finally(() => { if (generation === loadGeneration.current) setLoading(false); });
+      if (generation === loadGeneration.current && !request.signal.aborted) {
+        historyStarted.current = -1;
+        setHistoryError(caughtMessage(caught, 'Unable to load complete manpower history.'));
+      }
+    }).finally(() => { if (generation === loadGeneration.current && !request.signal.aborted) setHistoryLoading(false); });
   }, [referencesReady, referenceRevision, workers, tasks, reportingGroups]);
 
-  useEffect(() => () => { loadGeneration.current += 1; }, []);
+  useEffect(() => {
+    if (historyRequested && referencesReady && !loading) loadHistory();
+  }, [historyRequested, referencesReady, loading, loadHistory]);
+  useEffect(() => () => { loadGeneration.current += 1; historyRequest.current?.abort(); }, []);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -1075,19 +1091,24 @@ function AccountManpowerWorkspace() {
           <label className="relative block w-full min-w-0">
             <span className="sr-only">{tr('Search manpower','Buscar registros de mano de obra')}</span>
             <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-            <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={tr('Search manpower…','Buscar mano de obra…')} className={`${inputClass} pl-9 placeholder:font-semibold`} />
+            <input type="search" value={search} disabled={!historyReady} onChange={(event) => setSearch(event.target.value)} placeholder={tr('Search manpower…','Buscar mano de obra…')} className={`${inputClass} pl-9 placeholder:font-semibold`} />
           </label>
-          {!showNewGroup ? <BusinessButton type="button" onClick={() => setShowNewGroup(true)} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || loading || Boolean(loadError)} title="Clear filters before creating an empty group" className="inline-flex h-9 w-max shrink-0 items-center gap-1.5 whitespace-nowrap border border-blue-400 bg-blue-50 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 enabled:hover:bg-blue-100 enabled:active:bg-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:saturate-0"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</BusinessButton> : <div className="flex min-w-0 flex-wrap items-center gap-1 border border-slate-400 bg-white p-1 lg:col-span-3"><BusinessInput ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 min-w-0 max-w-full px-2 text-sm outline-none" /><BusinessButton type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</BusinessButton><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
+          {!showNewGroup ? <BusinessButton type="button" onClick={() => setShowNewGroup(true)} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || !historyReady || historyLoading || loading || Boolean(loadError)} title="Load history and clear filters before creating an empty group" className="inline-flex h-9 w-max shrink-0 items-center gap-1.5 whitespace-nowrap border border-blue-400 bg-blue-50 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 enabled:hover:bg-blue-100 enabled:active:bg-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:saturate-0"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</BusinessButton> : <div className="flex min-w-0 flex-wrap items-center gap-1 border border-slate-400 bg-white p-1 lg:col-span-3"><BusinessInput ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 min-w-0 max-w-full px-2 text-sm outline-none" /><BusinessButton type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</BusinessButton><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
           {linkedJobId && <button type="button" onClick={() => selectJob('')} className="justify-self-start py-2 text-xs font-semibold text-slate-500 underline">Clear job filter</button>}
         </div>
-        <ManpowerAnalytics entries={entries} categories={categories} tasks={tasks} jobId={linkedJobId} productFocus={productFilter} loading={loading} error={loadError} workers={workers} groups={reportingGroups} referencesReady={referencesReady} historyReady={historyReady} revision={referenceRevision} onReportSettled={loadHistory} />
-        {linkedJobId && !loading && !loadError && <ProductLaborSummary key={linkedJobId} entries={groups.flatMap((group) => group.entries)} totalEntries={entries.filter((entry) => entry.job_id === linkedJobId)} categories={categories} tasks={tasks}>
+        <ManpowerAnalytics entries={entries} categories={categories} tasks={tasks} jobId={linkedJobId} productFocus={productFilter} loading={loading} error={loadError} workers={workers} groups={reportingGroups} referencesReady={referencesReady} historyReady={historyReady} revision={referenceRevision} onReportSettled={reportSettled} />
+        {linkedJobId && historyReady && !loading && !loadError && <ProductLaborSummary key={linkedJobId} entries={groups.flatMap((group) => group.entries)} totalEntries={entries.filter((entry) => entry.job_id === linkedJobId)} categories={categories} tasks={tasks}>
           <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">Product Category filter<select aria-label="Product Category filter" className={`${inputClass} max-w-xs`} value={productFilter} onFocus={() => void refreshCategories().catch(() => {})} onChange={(event) => setProductFilter(event.target.value)}><option value="">All Products</option>{categories.filter((category) => category.is_active || entries.some((entry) => entry.product_category_id === category.id)).map((category) => <option key={category.id} value={category.id}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}<option value={UNCATEGORIZED}>Uncategorized</option></select></label>
         </ProductLaborSummary>}
         {(normalizedSearch || productFilter || linkedJobId) && <p className="text-xs text-slate-500">Clear filters to create an empty group or change a whole group’s Job.</p>}
         <p className="text-xs text-slate-500">Choose one Product Category per line. Split hours across separate lines when labor belongs to different products.</p>
 
-        {loading ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : loadError ? <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{loadError}</div> : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{linkedJobId ? 'No manpower reporting groups are linked to this Production job.' : normalizedSearch || productFilter ? 'No manpower entries match your filters.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
+        {!historyRequested && !loadError && <div className="border border-slate-300 bg-white p-4 text-sm text-slate-600">
+          <p>{tr('Load complete history to search, create reporting groups, or edit historical entries.', 'Cargue el historial completo para buscar, crear grupos o editar registros históricos.')}</p>
+          <button type="button" disabled={loading || !referencesReady} onClick={() => setHistoryRequested(true)} className="mt-3 min-h-9 border border-slate-400 px-3 font-semibold disabled:opacity-50">{tr('Load reporting history', 'Cargar historial de reportes')}</button>
+        </div>}
+        {historyError && <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{historyError} <button type="button" onClick={loadHistory} disabled={historyLoading} className="underline">Retry history</button></div>}
+        {historyRequested && (loading || historyLoading || !historyReady) && !historyError && !loadError ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading manpower entries…</div> : loadError ? <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{loadError}</div> : !historyRequested || historyError ? null : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{linkedJobId ? 'No manpower reporting groups are linked to this Production job.' : normalizedSearch || productFilter ? 'No manpower entries match your filters.' : 'No reporting groups yet. Create the first group to begin.'}</div> : groups.map((group) => {
           const identityEntries = entries.filter((entry) => (entry.reporting_group_id ?? '__ungrouped__') === group.key);
           const identityFiltered = Boolean(normalizedSearch || productFilter || linkedJobId);
           const isCollapsed = normalizedSearch || productFilter ? false : collapsed.has(group.key);

@@ -38,30 +38,31 @@ export const ENTRY_FACT_COLUMNS = ENTRY_COLUMNS
   .replace(/,\s*reporting_group:manpower_reporting_groups\(id, display_name, created_at, updated_at\)/, '');
 
 /** Reporting already reads these reference tables; transfer their labels once. */
-export async function loadManpowerEntryFacts(): Promise<ManpowerEntryFacts[]> {
-  return await loadCompleteRows((from, to) => supabase.from('manpower_entries')
-    .select(ENTRY_FACT_COLUMNS, { count: 'exact' })
-    .order('work_date', { ascending: false }).order('created_at', { ascending: false }).order('id')
-    .range(from, to).returns<ManpowerEntryFacts[]>());
+export async function loadManpowerEntryFacts(signal?: AbortSignal): Promise<ManpowerEntryFacts[]> {
+  return await loadCompleteRows((from, to) => {
+    const query = supabase.from('manpower_entries').select(ENTRY_FACT_COLUMNS, { count: 'exact' })
+      .order('work_date', { ascending: false }).order('created_at', { ascending: false }).order('id').range(from, to);
+    return (signal ? query.abortSignal(signal) : query).returns<ManpowerEntryFacts[]>();
+  });
 }
 
 /** Complete selected-period facts plus at most two historical boundary rows.
  * Boundaries preserve latest-work and available-year-history presentation without
  * transferring every older entry. The existing aggregator excludes them from totals. */
-export async function loadManpowerReportFacts(period: { start: string; end: string }, jobId: string | null): Promise<ManpowerEntryFacts[]> {
+export async function loadManpowerReportFacts(period: { start: string; end: string }, jobId: string | null, signal?: AbortSignal): Promise<ManpowerEntryFacts[]> {
   const scoped = (from: number, to: number) => {
     let query = supabase.from('manpower_entries').select(ENTRY_FACT_COLUMNS, { count: 'exact' })
       .gte('work_date', period.start).lte('work_date', period.end)
       .order('work_date', { ascending: false }).order('created_at', { ascending: false }).order('id').range(from, to);
     if (jobId) query = query.eq('job_id', jobId);
-    return query.returns<ManpowerEntryFacts[]>();
+    return (signal ? query.abortSignal(signal) : query).returns<ManpowerEntryFacts[]>();
   };
   const boundary = async (ascending: boolean) => {
     let query = supabase.from('manpower_entries').select(ENTRY_FACT_COLUMNS)
       .lte('work_date', period.end).order('work_date', { ascending })
       .order('created_at', { ascending }).order('id', { ascending }).limit(1);
     if (jobId) query = query.eq('job_id', jobId);
-    const { data, error } = await query.returns<ManpowerEntryFacts[]>();
+    const { data, error } = await (signal ? query.abortSignal(signal) : query).returns<ManpowerEntryFacts[]>();
     if (error) throw error;
     return data ?? [];
   };
