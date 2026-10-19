@@ -1,0 +1,135 @@
+{
+  "measuredAt": "2026-10-19T21:45:03.192Z",
+  "existingUserToken": {
+    "present": true,
+    "unexpired": false,
+    "role": "authenticated"
+  },
+  "authenticatedPerformanceComparisonAvailable": false,
+  "reason": "Existing user token expired; no refresh credential accompanies it. No credentials requested or minted.",
+  "results": [
+    {
+      "kind": "anonymous",
+      "table": "manpower_entries",
+      "filter": {},
+      "status": 401,
+      "contentRange": null,
+      "elapsedMs": 1309
+    },
+    {
+      "kind": "anonymous",
+      "table": "manpower_workers",
+      "filter": {},
+      "status": 401,
+      "contentRange": null,
+      "elapsedMs": 455
+    },
+    {
+      "kind": "anonymous",
+      "table": "manpower_tasks",
+      "filter": {},
+      "status": 401,
+      "contentRange": null,
+      "elapsedMs": 385
+    },
+    {
+      "kind": "anonymous",
+      "table": "manpower_reporting_groups",
+      "filter": {},
+      "status": 401,
+      "contentRange": null,
+      "elapsedMs": 265
+    },
+    {
+      "kind": "anonymous",
+      "table": "production_rework_cycles",
+      "filter": {},
+      "status": 401,
+      "contentRange": null,
+      "elapsedMs": 262
+    },
+    {
+      "kind": "privileged-count-only",
+      "table": "jobs",
+      "filter": {
+        "archived_at": "is.null"
+      },
+      "status": 200,
+      "contentRange": "0-42/43",
+      "elapsedMs": 277
+    },
+    {
+      "kind": "privileged-count-only",
+      "table": "proposals",
+      "filter": {},
+      "status": 200,
+      "contentRange": "0-6/7",
+      "elapsedMs": 322
+    },
+    {
+      "kind": "privileged-count-only",
+      "table": "purchase_orders",
+      "filter": {},
+      "status": 200,
+      "contentRange": "0-12/13",
+      "elapsedMs": 367
+    },
+    {
+      "kind": "privileged-count-only",
+      "table": "manpower_entries",
+      "filter": {},
+      "status": 206,
+      "contentRange": "0-999/2061",
+      "elapsedMs": 308
+    },
+    {
+      "kind": "privileged-count-only",
+      "table": "inventory_items",
+      "filter": {},
+      "status": 200,
+      "contentRange": "0-186/187",
+      "elapsedMs": 293
+    },
+    {
+      "kind": "privileged-count-only",
+      "table": "pending_receivals",
+      "filter": {
+        "status": "in.(pending,partially_received,received)"
+      },
+      "status": 200,
+      "contentRange": "0-9/10",
+      "elapsedMs": 469
+    },
+    {
+      "kind": "privileged-count-only",
+      "table": "pending_receivals",
+      "filter": {
+        "status": "in.(pending,partially_received)"
+      },
+      "status": 200,
+      "contentRange": "*/0",
+      "elapsedMs": 267
+    },
+    {
+      "kind": "privileged-count-only",
+      "table": "inventory_transactions",
+      "filter": {},
+      "status": 200,
+      "contentRange": "0-100/101",
+      "elapsedMs": 412
+    },
+    {
+      "kind": "privileged-count-only",
+      "table": "manpower_entries",
+      "filter": {
+        "and": "(work_date.gte.2026-09-20,work_date.lte.2026-10-19)"
+      },
+      "status": 200,
+      "contentRange": "0-215/216",
+      "elapsedMs": 3121
+    }
+  ],
+  "securityScope": "HEAD contains no business row bodies. Effective grants/policies checked separately via catalog-only SQL.",
+  "limitations": "Privileged HEAD timings/counts bypass user RLS; not user latency, SQL time, or baseline/candidate application measurements. No private message/task data queried.",
+  "businessWrites": 0
+}

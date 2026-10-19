@@ -1,0 +1,711 @@
+{
+  "origin": "http://localhost:3355",
+  "environment": "actual app with browser-routed synthetic API; not Production timings",
+  "measurements": [
+    {
+      "name": "initial shell",
+      "ms": 514,
+      "requests": 10,
+      "bytes": 171,
+      "counts": {
+        "get_my_app_access": 1,
+        "ensure_my_welcome_notification": 1,
+        "get_my_account_preferences": 1,
+        "list_my_work_task_groups": 1,
+        "list_my_work_tasks": 1,
+        "list_my_work_task_group_memberships": 1,
+        "my_work_messages": 1,
+        "work_task_attachments": 1,
+        "list_my_account_notification_history": 2
+      }
+    },
+    {
+      "name": "first Messaging open",
+      "ms": 323,
+      "requests": 2,
+      "bytes": 620,
+      "counts": {
+        "list_my_work_conversations_v11": 1,
+        "list_my_work_inbox_recipients": 1
+      }
+    },
+    {
+      "name": "reopen Messaging",
+      "ms": 219,
+      "requests": 0,
+      "bytes": 0,
+      "counts": {}
+    },
+    {
+      "name": "switch conversations",
+      "ms": 326,
+      "requests": 3,
+      "bytes": 1000,
+      "counts": {
+        "list_my_work_message_page_v11": 3
+      }
+    },
+    {
+      "name": "send message",
+      "ms": 209,
+      "requests": 5,
+      "bytes": 799,
+      "counts": {
+        "send_my_work_inbox_message": 1,
+        "list_my_work_conversations_v11": 1,
+        "my_work_messages": 1,
+        "list_my_account_notification_history": 1,
+        "list_my_work_message_page_v11": 1
+      }
+    },
+    {
+      "name": "receive and mark read",
+      "ms": 368,
+      "requests": 7,
+      "bytes": 1166,
+      "counts": {
+        "list_my_work_message_page_v11": 1,
+        "list_my_work_conversations_v11": 2,
+        "my_work_messages": 2,
+        "mark_my_work_inbox_conversation_read": 1,
+        "list_my_account_notification_history": 1
+      }
+    },
+    {
+      "name": "edited message event",
+      "ms": 370,
+      "requests": 3,
+      "bytes": 784,
+      "counts": {
+        "list_my_work_message_page_v11": 1,
+        "list_my_work_conversations_v11": 1,
+        "my_work_messages": 1
+      }
+    },
+    {
+      "name": "deleted message event",
+      "ms": 361,
+      "requests": 3,
+      "bytes": 434,
+      "counts": {
+        "list_my_work_message_page_v11": 1,
+        "list_my_work_conversations_v11": 1,
+        "my_work_messages": 1
+      }
+    },
+    {
+      "name": "overlapping notification triggers",
+      "ms": 184,
+      "requests": 1,
+      "bytes": 2,
+      "counts": {
+        "list_my_account_notification_history": 1
+      }
+    },
+    {
+      "name": "notification event during delayed read",
+      "ms": 265,
+      "requests": 2,
+      "bytes": 170,
+      "counts": {
+        "list_my_account_notification_history": 2
+      }
+    },
+    {
+      "name": "focus after completed refresh",
+      "ms": 182,
+      "requests": 1,
+      "bytes": 168,
+      "counts": {
+        "list_my_account_notification_history": 1
+      }
+    },
+    {
+      "name": "continuing session refocus",
+      "ms": 192,
+      "requests": 3,
+      "bytes": 323,
+      "counts": {
+        "get_my_app_access": 1,
+        "ensure_my_welcome_notification": 1,
+        "list_my_account_notification_history": 1
+      }
+    },
+    {
+      "name": "reconnect",
+      "ms": 2037,
+      "requests": 4,
+      "bytes": 1260,
+      "counts": {
+        "list_my_account_notification_history": 1,
+        "list_my_work_message_page_v11": 1,
+        "list_my_work_conversations_v11": 1,
+        "my_work_messages": 1
+      }
+    },
+    {
+      "name": "Realtime notification co-arrivals retain attention and unread state",
+      "ms": 438,
+      "requests": 4,
+      "bytes": 1480,
+      "counts": {
+        "list_my_account_notification_history": 3,
+        "mark_all_my_account_notifications_read": 1
+      }
+    },
+    {
+      "name": "draft and attachment queue survive thread switch and reopen",
+      "ms": 378,
+      "requests": 5,
+      "bytes": 1988,
+      "counts": {
+        "list_my_work_message_page_v11": 5
+      }
+    },
+    {
+      "name": "summary denial and retry",
+      "ms": 524,
+      "requests": 3,
+      "bytes": 485,
+      "counts": {
+        "list_my_work_conversations_v11": 2,
+        "my_work_messages": 1
+      }
+    },
+    {
+      "name": "account switch rejects old summary and notification responses",
+      "ms": 709,
+      "requests": 16,
+      "bytes": 976,
+      "counts": {
+        "my_work_messages": 3,
+        "get_my_app_access": 1,
+        "ensure_my_welcome_notification": 1,
+        "list_my_work_conversations_v11": 2,
+        "list_my_work_inbox_recipients": 1,
+        "get_my_account_preferences": 1,
+        "list_my_work_task_groups": 1,
+        "list_my_work_tasks": 1,
+        "list_my_work_task_group_memberships": 1,
+        "work_task_attachments": 1,
+        "list_my_account_notification_history": 3
+      }
+    }
+  ],
+  "calls": [
+    {
+      "name": "get_my_app_access",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 153,
+      "start": 1792446112461,
+      "done": 1792446112497
+    },
+    {
+      "name": "ensure_my_welcome_notification",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446112523,
+      "done": 1792446112557
+    },
+    {
+      "name": "get_my_account_preferences",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446112528,
+      "done": 1792446112563
+    },
+    {
+      "name": "list_my_work_task_groups",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446112528,
+      "done": 1792446112564
+    },
+    {
+      "name": "list_my_work_tasks",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446112528,
+      "done": 1792446112565
+    },
+    {
+      "name": "list_my_work_task_group_memberships",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446112528,
+      "done": 1792446112565
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446112528,
+      "done": 1792446112566
+    },
+    {
+      "name": "work_task_attachments",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446112529,
+      "done": 1792446112566
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446112529,
+      "done": 1792446112566
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446112574,
+      "done": 1792446112608
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 431,
+      "start": 1792446113059,
+      "done": 1792446113094
+    },
+    {
+      "name": "list_my_work_inbox_recipients",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 189,
+      "start": 1792446113060,
+      "done": 1792446113095
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 332,
+      "start": 1792446113931,
+      "done": 1792446113967
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 334,
+      "start": 1792446113955,
+      "done": 1792446113995
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 334,
+      "start": 1792446114002,
+      "done": 1792446114038
+    },
+    {
+      "name": "send_my_work_inbox_message",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 38,
+      "start": 1792446114445,
+      "done": 1792446114483
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 430,
+      "start": 1792446114487,
+      "done": 1792446114523
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446114487,
+      "done": 1792446114524
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446114528,
+      "done": 1792446114563
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 327,
+      "start": 1792446114546,
+      "done": 1792446114583
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 308,
+      "start": 1792446114870,
+      "done": 1792446114907
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 425,
+      "start": 1792446114911,
+      "done": 1792446114947
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446114911,
+      "done": 1792446114948
+    },
+    {
+      "name": "mark_my_work_inbox_conversation_read",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446114911,
+      "done": 1792446114948
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 425,
+      "start": 1792446114953,
+      "done": 1792446114989
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446114953,
+      "done": 1792446114989
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446114954,
+      "done": 1792446114989
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 359,
+      "start": 1792446115420,
+      "done": 1792446115456
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 423,
+      "start": 1792446115459,
+      "done": 1792446115495
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446115460,
+      "done": 1792446115495
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446115971,
+      "done": 1792446116007
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 430,
+      "start": 1792446116012,
+      "done": 1792446116048
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446116012,
+      "done": 1792446116049
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446116452,
+      "done": 1792446116489
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446116817,
+      "done": 1792446116853
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 168,
+      "start": 1792446116855,
+      "done": 1792446116891
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 168,
+      "start": 1792446117264,
+      "done": 1792446117299
+    },
+    {
+      "name": "get_my_app_access",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 153,
+      "start": 1792446117637,
+      "done": 1792446117674
+    },
+    {
+      "name": "ensure_my_welcome_notification",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446117676,
+      "done": 1792446117713
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 168,
+      "start": 1792446117714,
+      "done": 1792446117750
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 168,
+      "start": 1792446119008,
+      "done": 1792446119043
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 660,
+      "start": 1792446119008,
+      "done": 1792446119043
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 430,
+      "start": 1792446119209,
+      "done": 1792446119245
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446119209,
+      "done": 1792446119246
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 168,
+      "start": 1792446120223,
+      "done": 1792446120260
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 628,
+      "start": 1792446120268,
+      "done": 1792446120304
+    },
+    {
+      "name": "mark_all_my_account_notifications_read",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446120391,
+      "done": 1792446120427
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 682,
+      "start": 1792446120429,
+      "done": 1792446120464
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 332,
+      "start": 1792446120901,
+      "done": 1792446120937
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 660,
+      "start": 1792446120929,
+      "done": 1792446120965
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 332,
+      "start": 1792446120950,
+      "done": 1792446120986
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 332,
+      "start": 1792446120988,
+      "done": 1792446121025
+    },
+    {
+      "name": "list_my_work_message_page_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 332,
+      "start": 1792446121043,
+      "done": 1792446121079
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 53,
+      "start": 1792446121512,
+      "done": 1792446121548
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446121512,
+      "done": 1792446121549
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 430,
+      "start": 1792446121659,
+      "done": 1792446121694
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 2,
+      "start": 1792446122215,
+      "done": 1792446122251
+    },
+    {
+      "name": "get_my_app_access",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 153,
+      "start": 1792446122227,
+      "done": 1792446122263
+    },
+    {
+      "name": "ensure_my_welcome_notification",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122282,
+      "done": 1792446122316
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122286,
+      "done": 1792446122321
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122286,
+      "done": 1792446122321
+    },
+    {
+      "name": "list_my_work_inbox_recipients",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 189,
+      "start": 1792446122287,
+      "done": 1792446122321
+    },
+    {
+      "name": "get_my_account_preferences",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122287,
+      "done": 1792446122322
+    },
+    {
+      "name": "list_my_work_task_groups",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122287,
+      "done": 1792446122322
+    },
+    {
+      "name": "list_my_work_tasks",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122287,
+      "done": 1792446122322
+    },
+    {
+      "name": "list_my_work_task_group_memberships",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122287,
+      "done": 1792446122322
+    },
+    {
+      "name": "work_task_attachments",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122287,
+      "done": 1792446122322
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122287,
+      "done": 1792446122322
+    },
+    {
+      "name": "my_work_messages",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122326,
+      "done": 1792446122362
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 2,
+      "start": 1792446122329,
+      "done": 1792446122364
+    },
+    {
+      "name": "list_my_account_notification_history",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 180,
+      "start": 1792446122111,
+      "done": 1792446122380
+    },
+    {
+      "name": "list_my_work_conversations_v11",
+      "id": "00000000-0000-4000-8000-000000900021",
+      "bytes": 430,
+      "start": 1792446122213,
+      "done": 1792446122380
+    },
+    {
+      "name": "get_my_app_access",
+      "id": "00000000-0000-4000-8000-000000900023",
+      "bytes": 154,
+      "start": 1792446122826,
+      "done": 1792446122861
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "restorationEntrances": 1
+}

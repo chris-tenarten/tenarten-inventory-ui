@@ -1,0 +1,469 @@
+{
+  "capturedAt": "2026-10-19",
+  "scope": "Catalogs only; no business records or writes",
+  "evidence": {
+    "tables": [
+      {
+        "anon_column_privileges": [],
+        "anon_privileges": {
+          "DELETE": false,
+          "INSERT": false,
+          "REFERENCES": false,
+          "SELECT": false,
+          "TRIGGER": false,
+          "TRUNCATE": false,
+          "UPDATE": false
+        },
+        "authenticated_select": true,
+        "force_rls": false,
+        "policies": [
+          {
+            "check": null,
+            "command": "DELETE",
+            "name": "Compatibility authenticated delete manpower entries",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": "true",
+            "command": "INSERT",
+            "name": "Compatibility authenticated insert manpower entries",
+            "permissive": "PERMISSIVE",
+            "qual": null,
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": null,
+            "command": "SELECT",
+            "name": "Compatibility authenticated read manpower entries",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": "true",
+            "command": "UPDATE",
+            "name": "Compatibility authenticated update manpower entries",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": null,
+            "command": "DELETE",
+            "name": "tenops_business_write_delete",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "INSERT",
+            "name": "tenops_business_write_insert",
+            "permissive": "RESTRICTIVE",
+            "qual": null,
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "UPDATE",
+            "name": "tenops_business_write_update",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          }
+        ],
+        "relation": "manpower_entries",
+        "rls": true,
+        "service_select": true
+      },
+      {
+        "anon_column_privileges": [],
+        "anon_privileges": {
+          "DELETE": false,
+          "INSERT": false,
+          "REFERENCES": false,
+          "SELECT": false,
+          "TRIGGER": false,
+          "TRUNCATE": false,
+          "UPDATE": false
+        },
+        "authenticated_select": true,
+        "force_rls": false,
+        "policies": [
+          {
+            "check": "true",
+            "command": "INSERT",
+            "name": "Compatibility authenticated insert manpower reporting groups",
+            "permissive": "PERMISSIVE",
+            "qual": null,
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": null,
+            "command": "SELECT",
+            "name": "Compatibility authenticated read manpower reporting groups",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": "true",
+            "command": "UPDATE",
+            "name": "Compatibility authenticated update manpower reporting groups",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": null,
+            "command": "DELETE",
+            "name": "tenops_business_write_delete",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "INSERT",
+            "name": "tenops_business_write_insert",
+            "permissive": "RESTRICTIVE",
+            "qual": null,
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "UPDATE",
+            "name": "tenops_business_write_update",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          }
+        ],
+        "relation": "manpower_reporting_groups",
+        "rls": true,
+        "service_select": true
+      },
+      {
+        "anon_column_privileges": [],
+        "anon_privileges": {
+          "DELETE": false,
+          "INSERT": false,
+          "REFERENCES": false,
+          "SELECT": false,
+          "TRIGGER": false,
+          "TRUNCATE": false,
+          "UPDATE": false
+        },
+        "authenticated_select": true,
+        "force_rls": false,
+        "policies": [
+          {
+            "check": "true",
+            "command": "INSERT",
+            "name": "Compatibility authenticated insert manpower tasks",
+            "permissive": "PERMISSIVE",
+            "qual": null,
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": null,
+            "command": "SELECT",
+            "name": "Compatibility authenticated read manpower tasks",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": "true",
+            "command": "UPDATE",
+            "name": "Compatibility authenticated update manpower tasks",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": null,
+            "command": "DELETE",
+            "name": "tenops_business_write_delete",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "INSERT",
+            "name": "tenops_business_write_insert",
+            "permissive": "RESTRICTIVE",
+            "qual": null,
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "UPDATE",
+            "name": "tenops_business_write_update",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          }
+        ],
+        "relation": "manpower_tasks",
+        "rls": true,
+        "service_select": true
+      },
+      {
+        "anon_column_privileges": [],
+        "anon_privileges": {
+          "DELETE": false,
+          "INSERT": false,
+          "REFERENCES": false,
+          "SELECT": false,
+          "TRIGGER": false,
+          "TRUNCATE": false,
+          "UPDATE": false
+        },
+        "authenticated_select": true,
+        "force_rls": false,
+        "policies": [
+          {
+            "check": "true",
+            "command": "INSERT",
+            "name": "Compatibility authenticated insert manpower workers",
+            "permissive": "PERMISSIVE",
+            "qual": null,
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": null,
+            "command": "SELECT",
+            "name": "Compatibility authenticated read manpower workers",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": "true",
+            "command": "UPDATE",
+            "name": "Compatibility authenticated update manpower workers",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": null,
+            "command": "DELETE",
+            "name": "tenops_business_write_delete",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "INSERT",
+            "name": "tenops_business_write_insert",
+            "permissive": "RESTRICTIVE",
+            "qual": null,
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "UPDATE",
+            "name": "tenops_business_write_update",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          }
+        ],
+        "relation": "manpower_workers",
+        "rls": true,
+        "service_select": true
+      },
+      {
+        "anon_column_privileges": [],
+        "anon_privileges": {
+          "DELETE": false,
+          "INSERT": false,
+          "REFERENCES": false,
+          "SELECT": false,
+          "TRIGGER": false,
+          "TRUNCATE": false,
+          "UPDATE": false
+        },
+        "authenticated_select": true,
+        "force_rls": false,
+        "policies": [
+          {
+            "check": null,
+            "command": "SELECT",
+            "name": "Compatibility read Production Rework",
+            "permissive": "PERMISSIVE",
+            "qual": "true",
+            "roles": [
+              "authenticated"
+            ]
+          },
+          {
+            "check": null,
+            "command": "DELETE",
+            "name": "tenops_business_write_delete",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "INSERT",
+            "name": "tenops_business_write_insert",
+            "permissive": "RESTRICTIVE",
+            "qual": null,
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          },
+          {
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "command": "UPDATE",
+            "name": "tenops_business_write_update",
+            "permissive": "RESTRICTIVE",
+            "qual": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "anon",
+              "authenticated"
+            ]
+          }
+        ],
+        "relation": "production_rework_cycles",
+        "rls": true,
+        "service_select": true
+      }
+    ],
+    "functions": [
+      {
+        "anon_execute": false,
+        "authenticated_execute": true,
+        "security_definer": true,
+        "service_execute": true,
+        "signature": "create_production_rework(uuid,text,text,date,text)"
+      },
+      {
+        "anon_execute": false,
+        "authenticated_execute": true,
+        "security_definer": true,
+        "service_execute": true,
+        "signature": "delete_empty_manpower_reporting_group(uuid)"
+      },
+      {
+        "anon_execute": false,
+        "authenticated_execute": true,
+        "security_definer": true,
+        "service_execute": true,
+        "signature": "save_production_rework_mixed_schedule_batch(jsonb,jsonb,jsonb,text,text,uuid)"
+      },
+      {
+        "anon_execute": false,
+        "authenticated_execute": true,
+        "security_definer": true,
+        "service_execute": true,
+        "signature": "save_production_rework_schedule_batch(jsonb,text,text,uuid)"
+      },
+      {
+        "anon_execute": false,
+        "authenticated_execute": true,
+        "security_definer": true,
+        "service_execute": true,
+        "signature": "update_production_rework_status(uuid,text,timestamp with time zone,text)"
+      }
+    ],
+    "roles": [
+      {
+        "bypass_rls": false,
+        "inherit": true,
+        "name": "anon",
+        "superuser": false
+      },
+      {
+        "bypass_rls": false,
+        "inherit": true,
+        "name": "authenticated",
+        "superuser": false
+      },
+      {
+        "bypass_rls": true,
+        "inherit": true,
+        "name": "service_role",
+        "superuser": false
+      }
+    ],
+    "ledger": [
+      "20260924210000",
+      "20260924210100"
+    ]
+  }
+}

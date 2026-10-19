@@ -1,0 +1,27 @@
+{
+  "checks": [
+    "Production enrichment, Messaging and notifications coexist before Planning completes",
+    "Complete Proposals and purchasing with creation and local PDF",
+    "Samples initialize independently of complete supplier enrichment and preserve edits",
+    "Manpower report readiness and complete history coexist with Messaging",
+    "Inventory current quantities and complete receiving/usage histories",
+    "Denied enrichment and histories resolve without loops or false empty states",
+    "Rapid navigation, delayed summaries and account switch clear former account data"
+  ],
+  "observations": [
+    {
+      "name": "Production readiness",
+      "jobsReadyMs": 156,
+      "scopeRows": 2402
+    },
+    {
+      "name": "New draft with delayed complete vendors",
+      "readyMs": 306
+    }
+  ],
+  "pageErrors": [],
+  "external": [],
+  "hostedWrites": 0,
+  "origin": "http://localhost:3355",
+  "note": "Actual integrated export, one synthetic source for all modules. Not hosted performance."
+}

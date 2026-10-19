@@ -1,0 +1,53 @@
+{
+  "base": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "branch": "perf/waves1-4-integration",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "integrationOrder": [
+    {
+      "original": "71f6915bd66eeb079b4adcae1f234cc37174dca6",
+      "integrated": "e7bcd95"
+    },
+    {
+      "original": "8f264712813cf7d7deb848e721cae40949c4f8f9",
+      "integrated": "0fcf9f0"
+    },
+    {
+      "original": "d310e4f2d28c0688705d933e896705c113af607e",
+      "integrated": "e4c0e92"
+    },
+    {
+      "original": "1dc57a3f4c35f1d3f31312191f84df1052dc695c",
+      "integrated": "c43f0c7"
+    }
+  ],
+  "conflicts": [],
+  "remoteMainDevVerifiedAtBase": true,
+  "applicationPathsIdenticalToOriginalCandidates": 31,
+  "checks": {
+    "combinedBrowserGroups": 7,
+    "messagingSafetyScenarios": 17,
+    "liveForbiddenGuardProbes": 20,
+    "originalGuardUnitVerifier": "passed",
+    "freshProductionWebpackExport": "passed once on final application source",
+    "typescriptStandalone": "passed",
+    "targetedESLint": "passed",
+    "diffCheck": "passed"
+  },
+  "reusedEvidence": [
+    "Wave 1 coordinator/thread/draft/private-event safety",
+    "Wave 2 complete/scoped pagination and selected-detail semantics",
+    "Wave 3 calculation/snapshot/PDF and initialization lifecycle",
+    "Wave 4 complete historical editing, numerical equality, quantity/receive/undo lineage"
+  ],
+  "hostedSecurity": "fresh metadata-only read-only transaction and anonymous HEAD checks confirm scoped effective anon closure; no migration or mutation probe",
+  "authenticatedRealDataLatencyCompared": false,
+  "reason": "Existing user token expired and guard lacks several current reads; no fresh credentials, impersonation, expanded allowlist, or privileged-user substitution.",
+  "hostedBusinessWrites": 0,
+  "canonicalChanges": 0,
+  "pushDeployMigrationReleaseActions": 0,
+  "wave1UxAccepted": false,
+  "physicalRefocusNewlyCertified": false,
+  "productReviewUrl": "http://localhost:3355/",
+  "releaseReady": false
+}
