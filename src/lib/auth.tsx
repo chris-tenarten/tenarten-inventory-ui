@@ -66,6 +66,22 @@ function normalizeProfile(value: unknown): AppUserProfile | null {
   };
 }
 
+// Supabase's JWT session_id identifies a login across access-token rotation.
+// This is only a continuity discriminator; the current profile RPC remains the
+// authority. Missing/unreadable claims never carry access to a different token.
+function sameAuthSession(previous: Session | null, next: Session | null): boolean {
+  if (!previous || !next || previous.user.id !== next.user.id) return false;
+  if (previous.access_token && previous.access_token === next.access_token) return true;
+  const identity = (session: Session): string | null => {
+    try {
+      const payload = JSON.parse(atob(session.access_token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+      return payload.sub === session.user.id && typeof payload.session_id === "string" && payload.session_id.length > 0 ? payload.session_id : null;
+    } catch { return null; }
+  };
+  const previousId = identity(previous);
+  return previousId !== null && previousId === identity(next);
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
@@ -75,6 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const [accessStatus, setAccessStatus] = useState<AccountAccessStatus>("pending");
   const currentSession = useRef<Session | null>(null);
+  const verifiedSession = useRef<Session | null>(null);
   const generation = useRef(0);
   const mounted = useRef(false);
 
@@ -90,6 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("The returned account profile does not match the authenticated account.");
       }
       const allowed = Boolean(nextProfile?.isActive && (RBAC_MODE === "compatibility" || !BRANDING.showDeveloperArtwork || roleHasCapability(nextProfile.role, "accessDevelopmentEnvironment")));
+      verifiedSession.current = allowed ? nextSession : null;
       setProfile(nextProfile);
       setProfileError("");
       setAccessStatus(allowed ? "allowed" : "denied");
@@ -102,6 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (cause) {
       if (!current()) return;
+      verifiedSession.current = null;
       setProfile(null);
       const detail = cause && typeof cause === "object" && "message" in cause && typeof cause.message === "string" ? cause.message : "Please refresh and retry.";
       setProfileError(`Unable to verify your TenOps account access. ${detail}`);
@@ -110,13 +129,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Invalidate old requests immediately, before deferring any authenticated RPC.
-  const beginResolution = useCallback((nextSession: Session | null) => {
+  const beginResolution = useCallback((nextSession: Session | null, continuing = false) => {
     const request = ++generation.current;
     currentSession.current = nextSession;
     setSession(nextSession);
-    setProfile(null);
-    setProfileError("");
-    setAccessStatus(nextSession ? "pending" : "denied");
+    if (!continuing) {
+      verifiedSession.current = null;
+      setProfile(null);
+      setProfileError("");
+      setAccessStatus(nextSession ? "pending" : "denied");
+    }
     setReady(true);
     return request;
   }, []);
@@ -148,7 +170,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const accountFlow = new URLSearchParams(window.location.search).get("account");
       const callbackFlow = accountFlow === "setup" || accountFlow === "recovery";
       setRequiresPasswordSetup(Boolean(nextSession) && (event === "PASSWORD_RECOVERY" || callbackFlow));
-      const request = beginResolution(nextSession);
+      const continuing = !callbackFlow && (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && sameAuthSession(verifiedSession.current, nextSession);
+      const request = beginResolution(nextSession, continuing);
       // Supabase holds its auth-token lock while this callback runs.
       if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
       authChangeProfileTimer = window.setTimeout(() => {
@@ -167,15 +190,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshProfile = useCallback(async () => {
     const nextSession = currentSession.current;
-    // Explicit same-session revalidation must not unmount its caller. Samples
-    // revalidates on mount: resetting the shell here creates a mount/refresh loop.
-    // Only retain a decision already verified for this exact current session;
-    // initial restoration and auth/session changes still enter pending normally.
-    const request = nextSession && nextSession === session && accessStatus === "allowed"
+    // Keep this callback stable across continued-session events, otherwise
+    // Samples' mount/revalidation effect runs again on every refocus/rotation.
+    const request = sameAuthSession(verifiedSession.current, nextSession)
       ? ++generation.current
       : beginResolution(nextSession);
     if (nextSession) await loadProfile(nextSession, request);
-  }, [accessStatus, beginResolution, loadProfile, session]);
+  }, [beginResolution, loadProfile]);
   const can = useCallback((capability: Capability) => {
     if (!session) return RBAC_MODE === "compatibility" && READ_CAPABILITIES.includes(capability);
     if (accessStatus !== "allowed" || !profile?.isActive || profile.userId !== session.user.id) return false;
