@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import {mkdirSync,writeFileSync} from 'node:fs';
+import {chromium,expect} from '@playwright/test';
+import {reviewSession} from './support/messaging-draft-review-fixture.mjs';
+const origin='http://localhost:3333',browser=await chromium.launch({headless:true}),calls=[],errors=[],external=[];
+try{
+ const context=await browser.newContext({viewport:{width:1440,height:1000}});
+ await context.addInitScript(session=>{localStorage.setItem('sb-localhost-auth-token',JSON.stringify(session));sessionStorage.setItem('tenops.welcomeHeroPlayed:'+session.user.id,'true');},reviewSession);
+ await context.routeWebSocket('**/realtime/v1/**',()=>{});
+ await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():(external.push(route.request().url()),route.abort()));
+ const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(r.url().includes('/rpc/')||r.url().includes('/functions/'))calls.push({path:new URL(r.url()).pathname,body:r.postDataJSON()});});
+ await page.goto(origin+'/samples?open=new');await expect(page.getByRole('button',{name:'Save Sample',exact:true})).toBeVisible();
+ const system=page.getByRole('combobox',{name:'Resin System',exact:true});await expect(system.locator('option')).toHaveCount(2);await system.selectOption({index:1});
+ await page.locator('#sample-documents > summary').click();await page.getByText('Formula checkpoints and previews',{exact:true}).click();
+ await page.getByPlaceholder('Optional note before trying another formula').fill('Disposable creation checkpoint');
+ await page.getByRole('button',{name:'Save Version',exact:true}).click();await expect(page.getByText('Saved Version 1',{exact:true})).toBeVisible();
+ assert.equal(calls.filter(c=>c.path.endsWith('/create_sample_with_formulation')).length,1);
+ assert.equal(calls.filter(c=>c.path.endsWith('/save_sample_working_version')).length,1);
+ page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'Use as Current Draft',exact:true}).click();await expect.poll(()=>calls.filter(c=>c.path.endsWith('/restore_sample_working_version')).length).toBe(1);
+ await page.goto(origin+'/samples?open=00000000-0000-4000-8000-000000710001');await expect(page.getByRole('button',{name:'Generate Sample Work Order',exact:true})).toBeVisible();
+ await page.locator('#sample-documents > summary').click();await page.getByText('Formula checkpoints and previews',{exact:true}).click();
+ await page.getByRole('button',{name:'Preview current Sample',exact:true}).click();
+ const viewer=page.getByRole('dialog').filter({has:page.getByRole('link',{name:'Download',exact:true})});await expect(viewer).toBeVisible();
+ const href=await viewer.getByRole('link',{name:'Download',exact:true}).getAttribute('href');assert.equal(await page.evaluate(async u=>(await(await fetch(u)).text()).slice(0,4),href),'%PDF');
+ await viewer.getByRole('button',{name:'Close document viewer',exact:true}).click();
+ await page.getByRole('button',{name:'Generate Sample Work Order',exact:true}).click();await expect(viewer).toBeVisible();
+ await viewer.getByRole('button',{name:'Close document viewer',exact:true}).click();
+ await page.locator('#sample-documents > summary').evaluate(el=>{el.parentElement.open=true;});
+ await page.locator('#sample-documents').getByRole('button',{name:'View',exact:true}).click();await expect(viewer).toBeVisible();
+ const issuedHref=await viewer.getByRole('link',{name:'Download',exact:true}).getAttribute('href');assert.equal(await page.evaluate(async u=>(await(await fetch(u)).text()).slice(0,4),issuedHref),'%PDF');
+ assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
+ mkdirSync('docs/project-memory/evidence',{recursive:true});writeFileSync('docs/project-memory/evidence/2026-10-19-samples-wave3-local-lifecycle.json',JSON.stringify({passed:['new draft create and checkpoint in one action','single creation, no duplicate','restore checkpoint','existing working PDF','issue and reopen captured document via existing endpoints'],calls,errors,external,hostedWrites:0},null,2));console.log('PASS local create/checkpoint/restore/PDF lifecycle');
+}finally{await browser.close();}

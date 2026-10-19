@@ -121,7 +121,23 @@ export default function SampleWorkspace() {
   const [jobs, setJobs] = useState<ProductionJobOption[]>([]);
   const [vendors, setVendors] = useState<VendorOption[]>([]);
   const [linkSelection, setLinkSelection] = useState("");
-  const [draft, setDraft] = useState<SampleRecord | null>(null);
+  const [draft, updateDraft] = useState<SampleRecord | null>(null);
+  const selectedSampleId = useRef(draft?.id);
+  selectedSampleId.current = draft?.id;
+  // User edits/selections invalidate pending initialization without resetting on profile refresh.
+  const draftRevision = useRef(0);
+  const mounted = useRef(false);
+  const listRequest = useRef<AbortController | null>(null);
+  const setDraft = useCallback((value: React.SetStateAction<SampleRecord | null>) => {
+    draftRevision.current += 1;
+    updateDraft(value);
+  }, []);
+  const preparedBy = useRef(auth.profile?.displayName ?? "");
+  preparedBy.current = auth.profile?.displayName ?? "";
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; draftRevision.current += 1; listRequest.current?.abort(); };
+  }, []);
   const [documentsOpen,setDocumentsOpen]=useState(false);
   const [labelSample, setLabelSample] = useState<{sample: SampleRecord; userId: string} | null>(null);
   const refreshAccess = auth.refreshProfile;
@@ -186,13 +202,17 @@ export default function SampleWorkspace() {
     setTutorialStep(next);
   };
   const reload = useCallback(async () => {
+    listRequest.current?.abort();
+    const request = new AbortController();
+    listRequest.current = request;
     setLoading(true);
     try {
-      const nextSamples = await loadSamples();
+      const nextSamples = await loadSamples(undefined, request.signal);
+      if (request.signal.aborted || !mounted.current) throw new DOMException("Superseded Sample read", "AbortError");
       setSamples(nextSamples);
       return nextSamples;
     } finally {
-      setLoading(false);
+      if (mounted.current && listRequest.current === request) setLoading(false);
     }
   }, []);
   const showOperationError = useCallback(
@@ -209,34 +229,32 @@ export default function SampleWorkspace() {
     [],
   );
   useEffect(() => {
-    void reload()
-      .then(async (items) => {
-        if(initialContext.open==='new'){
-          const formulation=await loadSampleFormulationDefault();
-          const local=applyResinIdentity(newLocalSample({preparedBy:auth.profile?.displayName??'',formulation}),formulation);
-          setQuantityViewState({record:null,view:'working'});
-          local.colorPlateNumber=await suggestSampleColorPlateNumber();local.colorPlateNumberSource='automatic';
-          setDraft(local);setDraftBaseline(JSON.stringify(local));return;
-        }
-        const target = items.find((item) => item.id === initialContext.open);
-        if (target) {
-          setDraft(target);
-          setDraftBaseline(JSON.stringify(target));
-        }
-      })
-      .catch((caught) => showOperationError(caught, "load"));
-    void Promise.all([
-      loadBids(),
-      loadProductionJobOptions({ includeArchived: true }),
-      loadVendors(),
-    ])
-      .then(([nextBids, nextJobs, nextVendors]) => {
-        setBids(nextBids);
-        setJobs(nextJobs);
-        setVendors(nextVendors);
-      })
-      .catch((caught) => showOperationError(caught, "load"));
-  }, [initialContext.open, reload, showOperationError, auth.profile?.displayName]);
+    let active = true;
+    const revision = draftRevision.current;
+    const canInitialize = () => active && mounted.current && draftRevision.current === revision;
+    const report = (caught: unknown) => { if (active && (caught as Error)?.name !== "AbortError") showOperationError(caught, "load"); };
+    // A new draft needs neither the library nor its historical snapshots.
+    void reload().then(items => {
+      if (!canInitialize() || initialContext.open === "new") return;
+      const target = items.find(item => item.id === initialContext.open);
+      if (target) { setDraft(target); setDraftBaseline(JSON.stringify(target)); }
+    }).catch(report);
+    if (initialContext.open === "new") {
+      void Promise.all([loadSampleFormulationDefault(), suggestSampleColorPlateNumber()])
+        .then(([formulation, number]) => {
+          if (!canInitialize()) return;
+          const local = applyResinIdentity(newLocalSample({preparedBy: preparedBy.current, formulation}), formulation);
+          local.colorPlateNumber = number; local.colorPlateNumberSource = "automatic";
+          setQuantityViewState({record: null, view: "working"});
+          setDraft(local); setDraftBaseline(JSON.stringify(local));
+        }).catch(report);
+    }
+    // Each independent option source can become usable even if another fails.
+    void loadBids().then(items => { if (active) setBids(items); }).catch(report);
+    void loadProductionJobOptions({includeArchived: true}).then(items => { if (active) setJobs(items); }).catch(report);
+    void loadVendors().then(items => { if (active) setVendors(items); }).catch(report);
+    return () => { active = false; };
+  }, [initialContext.open, reload, showOperationError, setDraft]);
   const catalogRole = catalogRow === null ? undefined : draft?.blendRows[catalogRow]?.componentRole;
   const catalogSearchKey = JSON.stringify([catalogRow, catalogRole, catalogQuery]);
   const [catalogResultKey, setCatalogResultKey] = useState("");
@@ -313,7 +331,9 @@ export default function SampleWorkspace() {
     setBusy("create");
     setError("");
     try {
-      const formulation = await loadSampleFormulationDefault();
+      const revision = draftRevision.current;
+      const [formulation, number] = await Promise.all([loadSampleFormulationDefault(), suggestSampleColorPlateNumber()]);
+      if (!mounted.current || draftRevision.current !== revision) return;
       const bid = bids.find((item) => item.id === initialContext.bid);
       const initial = newLocalSample({
         preparedBy: auth.profile?.displayName ?? "",
@@ -323,7 +343,7 @@ export default function SampleWorkspace() {
         formulation,
       });
       const local=applyResinIdentity(initial,formulation);
-      local.colorPlateNumber=await suggestSampleColorPlateNumber();local.colorPlateNumberSource='automatic';
+      local.colorPlateNumber=number;local.colorPlateNumberSource='automatic';
       setQuantityViewState({record:null,view:"working"});
       setDraft(local);
       setDraftBaseline(JSON.stringify(local));
@@ -1354,7 +1374,10 @@ export default function SampleWorkspace() {
               sample={draft}
               onSave={() => persistDraft(draft)}
               onReload={async (sampleId) => {
+                if (selectedSampleId.current !== sampleId) return;
+                const revision = draftRevision.current;
                 const next = await reload();
+                if (!mounted.current || revision !== draftRevision.current) return;
                 const current =
                   next.find((item) => item.id === sampleId) ?? null;
                 setDraft(current);
@@ -1387,12 +1410,12 @@ export default function SampleWorkspace() {
                           type="button"
                           onClick={() =>
                             void openSamplePdf(document.id)
-                              .then((url) =>
-                                setPreview({
+                              .then((url) => {
+                                if (mounted.current && selectedSampleId.current === draft.id) setPreview({
                                   url,
                                   filename: `${draft.colorPlateNumber || "Sample-Work-Order"}-Document-${document.issueNumber}.pdf`,
-                                }),
-                              )
+                                });
+                              })
                               .catch((caught) =>
                                 showOperationError(caught, "issued-pdf"),
                               )

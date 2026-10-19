@@ -1,6 +1,6 @@
 /** Existing disposable Sample fixture + actual exported app. Never contacts hosted data. */
 import assert from 'node:assert/strict';import {chromium,expect} from '@playwright/test';import {reviewSession} from './support/messaging-draft-review-fixture.mjs';
-const origin='http://localhost:3000',browser=await chromium.launch({channel:'chrome',headless:false}),checks=[],external=[],browserInternal=[],errors=[],focusEvidence=[];
+const origin=process.env.SAMPLE_REVIEW_ORIGIN||'http://localhost:3000',browser=await chromium.launch({channel:'chrome',headless:false}),checks=[],external=[],browserInternal=[],errors=[],focusEvidence=[];
 const SESSION_ID='11111111-1111-4111-8111-111111111111';
 function continuedSession(version=1,sid=SESSION_ID,id=reviewSession.user.id){const claims={sub:id,exp:4102444800,role:'authenticated',session_id:sid,version};return {...reviewSession,user:{...reviewSession.user,id},access_token:Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')+'.'+Buffer.from(JSON.stringify(claims)).toString('base64url')+'.local-only'};}
 
@@ -14,7 +14,7 @@ async function fixture({fresh=false,hold=true}={}){
  const allowed=async()=>{await expect(page.getByRole('button',{name:'Messaging',exact:true})).toBeVisible();assert.equal(await page.getByText('Restoring your TenOps session…',{exact:true}).count(),0);};
  const emit=async(event,session)=>page.evaluate(({event,session})=>{if(session)localStorage.setItem('sb-localhost-auth-token',JSON.stringify(session));else localStorage.removeItem('sb-localhost-auth-token');const channel=new BroadcastChannel('sb-localhost-auth-token');channel.postMessage({event,session});channel.close();},{event,session});return{context,page,next,allowed,emit,count:()=>count,pending};
 }
-async function run(name,test,options){if(process.argv.includes('--affected')&&!name.startsWith('Samples mount')&&!name.startsWith('native browser'))return;if(process.argv.includes('--remaining')&&name.startsWith('Samples mount'))return;const f=await fixture(options);try{await test(f);checks.push(name);console.log('PASS '+name);}catch(e){console.error((await f.page.locator('body').innerText()).slice(-2500));throw e;}finally{await f.context.close();}}
+async function run(name,test,options){if(process.argv.includes('--samples-session-followup')&&!/^(continued TOKEN_REFRESHED|same user|sign-out|account-switch|native browser)/.test(name))return;if(process.argv.includes('--affected')&&!name.startsWith('Samples mount')&&!name.startsWith('native browser'))return;if(process.argv.includes('--remaining')&&name.startsWith('Samples mount'))return;const f=await fixture(options);try{await test(f);checks.push(name);console.log('PASS '+name);}catch(e){console.error((await f.page.locator('body').innerText()).slice(-2500));throw e;}finally{await f.context.close();}}
 try{
  await run('Samples mount and Inspector revalidation preserve mounted generator; local PDF preview',async f=>{
   await f.page.goto(origin+'/samples');const initial=await f.next(0);await f.allowed();await expect(f.page.getByRole('button').filter({hasText:'Disposable Sample — Post to Job'})).toBeVisible();await initial.reply();

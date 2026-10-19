@@ -11,18 +11,22 @@ import {renderSampleWorkOrder} from '../supabase/functions/generate-sample-pdf/i
 import {fixtureResponse,uuid,stamp} from './retrieval-review-fixture.mjs';
 import {reviewSession} from './support/messaging-draft-review-fixture.mjs';
 import {PREFIX,planRequest,forwardHeaders} from './support/read-only-review-guard.mjs';
-const origin='http://localhost:3000',fixtureAuth=process.argv.includes('--fixture-auth');
+const port=Number(process.env.SAMPLE_REVIEW_PORT||3000);
+const origin=`http://localhost:${port}`,fixtureAuth=process.argv.includes('--fixture-auth');
 const source=fixtureAuth?{}:Object.fromEntries(readFileSync('/Users/chrisngo/source/repos/tenarten-inventory-ui/.env.local','utf8').split('\n').filter(l=>/^[A-Z_]+=/.test(l)).map(l=>{const i=l.indexOf('=');return [l.slice(0,i),l.slice(i+1).trim().replace(/^(["'])(.*)\1$/,'$2')];}));
 if(!fixtureAuth&&(!/^https:\/\/[a-z0-9]+\.supabase\.co\/?$/.test(source.NEXT_PUBLIC_SUPABASE_URL)||!source.NEXT_PUBLIC_SUPABASE_ANON_KEY))throw Error('Expected hosted public auth configuration.');
 const sampleId=uuid(710001),jobId=uuid(710002),hiddenId=uuid(710003),peerId=uuid(710004);
 const snapshot=structuredClone(blendFixtures[4].snapshot);Object.assign(snapshot,{id:sampleId,sampleName:'Disposable Sample — Post to Job',colorPlateNumber:'T26-901-A',sampleSize:'6x6',sampleQuantity:'4'});
 const snake=s=>s.replace(/[A-Z]/g,c=>'_'+c.toLowerCase());
 const row=Object.fromEntries(Object.entries(snapshot).map(([k,v])=>[snake(k),v]));row.formulation_state=snapshot.formulation;row.blend_rows=snapshot.blendRows.map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[snake(k),v])));row.issued_documents=[];row.working_versions=[];
+const sampleRows=[row];
+const captured=snapshot.formulation.profile;
+const reviewProfile={id:uuid(710030),revision:1,name:'Local captured Resin System',sort_order:1,is_active:true,chip_density:Number(captured.defaultChipDensityLbCft),dry_pool_rate:Number(captured.dryPoolOzPerCft),filler_rate:Number(captured.defaultFillerOzPerCft),resin_rate:Number(captured.resinFlOzPerCft),resin_parts:Number(captured.resinParts),hardener_parts:Number(captured.hardenerParts),batch_contract:captured.batchContract,batch_chip_target_lb:Number(captured.batchChipTargetLb),batch_reference_thickness_in:Number(captured.batchReferenceThicknessIn),description:'Disposable fixture from existing captured formulation'};
 const baseJob={id:jobId,name:'Disposable Job — Sample review',customer:'Local review customer',job_number:'LOCAL-901',production_status:'not_started',material_status:'unknown',priority:'normal',progress_percent:0,created_at:stamp,updated_at:stamp,archived_at:null,contact_details:null};
-const tables={jobs:[baseJob],job_updates:[],job_attachments:[{id:uuid(710005),job_id:jobId,file_name:'Existing attachment.pdf',storage_path:jobId+'/existing.pdf',document_type:'other',mime_type:'application/pdf',size_bytes:10,created_at:stamp,job_update_id:null,job_update_attachment_role:null}]};
+const tables={vendors:[{id:uuid(710040),name:'Local mineral supplier',is_active:true,vendor_contacts:[]}],vendor_catalog:[{id:uuid(710041),vendor:'Local mineral supplier',item_name:'Local marble chips',category:'aggregate',material_class:'marble',unit:'lb',price:1}],vendor_catalog_v2:[],sample_operational_profiles:[reviewProfile],jobs:[baseJob],job_updates:[],job_attachments:[{id:uuid(710005),job_id:jobId,file_name:'Existing attachment.pdf',storage_path:jobId+'/existing.pdf',document_type:'other',mime_type:'application/pdf',size_bytes:10,created_at:stamp,job_update_id:null,job_update_attachment_role:null}]};
 const pdfs=new Map();
 const camel=s=>s.replace(/_([a-z])/g,(_,c)=>c.toUpperCase());
-const workingSnapshot=()=>({...snapshot,...Object.fromEntries(Object.entries(row).map(([k,v])=>[camel(k),v])),formulation:row.formulation_state,blendRows:row.blend_rows.map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[camel(k),v])))});
+const workingSnapshot=(target=row)=>({...snapshot,...Object.fromEntries(Object.entries(target).map(([k,v])=>[camel(k),v])),formulation:target.formulation_state,blendRows:target.blend_rows.map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[camel(k),v])))});
 const pdf=async(key,value=snapshot)=>{if(!pdfs.has(key))pdfs.set(key,renderSampleWorkOrder(value));return pdfs.get(key);};
 const blendPlan={id:uuid(710020),status:'issued',created_at:stamp,inputs:blendFixtures[4].inputs,source_snapshot:structuredClone(snapshot),model:buildProductionBlend(snapshot,blendFixtures[4].inputs)};
 const objects=new Map(),requests=new Map(),notifications=[],calls=[],profiles=new Map();let failNext='',lostNext=false;
@@ -30,11 +34,12 @@ const allowed=p=>p?.is_active&&!p.read_only&&['admin','lead','member'].includes(
 const server=createServer(async(req,res)=>{
  const send=(status,value,headers={})=>{res.writeHead(status,{'content-type':'application/json','cache-control':'no-store',...headers});res.end(Buffer.isBuffer(value)||value instanceof Uint8Array?value:JSON.stringify(value));};
  try{
-  if(req.headers.host!=='localhost:3000'||req.headers.origin&&req.headers.origin!==origin)return send(403,{message:'Local origin only'});
+  if(req.headers.host!==`localhost:${port}`||req.headers.origin&&req.headers.origin!==origin)return send(403,{message:'Local origin only'});
   const url=new URL(req.url,origin),name=url.pathname.split('/').at(-1);let raw=Buffer.alloc(0);for await(const chunk of req){raw=Buffer.concat([raw,chunk]);if(raw.length>55*1024*1024)return send(413,{});}
   const isStorage=url.pathname.startsWith('/storage/v1/object/job-attachments/');
   let body={};if(raw.length&&!isStorage)body=JSON.parse(raw.toString());
   const auth=req.headers.authorization??'';
+  const row=sampleRows.find(item=>item.id===(body.p_sample?.id||body.sampleId||body.p_sample_id))??sampleRows[0];
   if(url.pathname.startsWith('/auth/v1/')||url.pathname==='/rest/v1/rpc/get_my_app_access'){
    if(fixtureAuth){const profile={user_id:reviewSession.user.id,display_name:'Local review Admin',role:'admin',is_active:true,read_only:false};profiles.set(auth,profile);return send(200,url.pathname.includes('get_my_app_access')?[profile]:name==='token'?reviewSession:reviewSession.user);}
    const plan=planRequest(PREFIX+url.pathname+url.search,req.method,body);if(!plan)return send(403,{message:'Auth operation blocked by read-only review guard'});
@@ -51,24 +56,30 @@ const server=createServer(async(req,res)=>{
   if(url.pathname==='/storage/v1/object/job-attachments'&&req.method==='DELETE'){for(const key of body.prefixes??[])objects.delete(key);return send(200,[]);}
   if(url.pathname.startsWith('/storage/v1/object/sign/job-attachments/'))return send(200,{signedURL:'/object/public/job-attachments/'+url.pathname.split('/job-attachments/')[1]});
   if(url.pathname.startsWith('/storage/v1/object/public/job-attachments/')){const bytes=objects.get(decodeURIComponent(url.pathname.split('/job-attachments/')[1]));return bytes?send(200,bytes,{'content-type':'application/pdf'}):send(404,{});}
-  if(url.pathname.startsWith('/review/pdf/')){const id=url.pathname.split('/').at(-1).replace(/\.pdf$/,'');const issued=row.issued_documents.find(d=>d.id===id);return send(200,await pdf(url.pathname,issued?{...issued.issued_snapshot,issue_number:issued.issue_number}:snapshot),{'content-type':'application/pdf'});}
+  if(url.pathname.startsWith('/review/pdf/')){const id=url.pathname.split('/').at(-1).replace(/\.pdf$/,'');const issued=sampleRows.flatMap(sample=>sample.issued_documents).find(d=>d.id===id);return send(200,await pdf(url.pathname,issued?{...issued.issued_snapshot,issue_number:issued.issue_number}:snapshot),{'content-type':'application/pdf'});}
   if(url.pathname==='/functions/v1/generate-sample-pdf'){
    if(failNext==='generation'&&!['blend-list','blend-context'].includes(body.action)){failNext='';return send(503,{message:'Disposable generation failure'});}
    if(body.action==='blend-context')return send(200,{snapshot});
    if(body.action==='blend-list')return send(200,[{id:blendPlan.id,status:blendPlan.status,created_at:stamp,identity:snapshot.colorPlateNumber,project:snapshot.projectName,planned_quantity:String(blendPlan.inputs.plannedQuantity)}]);
    if(body.action==='blend-pdf')return send(200,await renderProductionBlend(blendPlan),{'content-type':'application/pdf'});
-   if(['working','preview','batch-working'].includes(body.action))return send(200,await pdf(url.pathname+JSON.stringify(row.formulation_state)+JSON.stringify(row.blend_rows)+row.updated_at,{...workingSnapshot(),render_context:'working'}),{'content-type':'application/pdf'});
+   if(['working','preview','batch-working'].includes(body.action))return send(200,await pdf(url.pathname+row.id+(body.versionId??'')+JSON.stringify(row.formulation_state)+JSON.stringify(row.blend_rows)+row.updated_at,{...(body.versionId?workingSnapshot(row.working_versions.find(v=>v.id===body.versionId)?.snapshot??row):workingSnapshot(row)),render_context:'working'}),{'content-type':'application/pdf'});
    if(['generate','open'].includes(body.action))return send(200,{url:origin+'/review/pdf/'+body.documentId+'.pdf'});
    return send(403,{message:'Only local Sample PDF generation is allowed'});
   }
   if(url.pathname.startsWith('/rest/v1/rpc/')){
    if(name==='list_bids')return send(200,[],{'content-range':'*/0'});
-   if(name==='list_samples')return send(200,[{sample:row}]);
+   if(name==='list_samples')return send(200,sampleRows.map(sample=>({sample})));
+   if(name==='suggest_sample_color_plate_number')return send(200,`T26-${901+sampleRows.length}-A`);
+   if(name==='create_sample_with_formulation'){
+    const created={...structuredClone(row),...body.p_sample,id:uuid(710100+sampleRows.length),color_plate_number:body.p_sample.color_plate_number||'T26-902-A',blend_rows:body.p_rows,working_versions:[],issued_documents:[]};sampleRows.push(created);return send(200,{id:created.id,color_plate_number:created.color_plate_number});
+   }
+   if(name==='save_sample_working_version'){const id=uuid(750000+sampleRows.reduce((n,s)=>n+s.working_versions.length,0));const {working_versions,issued_documents,...current}=row;row.working_versions.unshift({id,sample_id:row.id,version_number:row.working_versions.length+1,version_note:body.p_note,saved_at:stamp,saved_by_name:'Local review Admin',snapshot:structuredClone(current)});return send(200,id);}
+   if(name==='restore_sample_working_version'){const version=row.working_versions.find(v=>v.id===body.p_version_id);if(!version)return send(404,{message:'Unknown local version'});const history=row.working_versions,issued=row.issued_documents;Object.assign(row,structuredClone(version.snapshot),{working_versions:history,issued_documents:issued});return send(200,null);}
    if(name==='get_sample_formulation_default')return send(200,{});
    if(name==='save_sample_draft'){Object.assign(row,body.p_sample,{updated_at:new Date().toISOString()});row.blend_rows=body.p_rows;return send(200,null);}
    if(name==='record_my_sample_recent_values')return send(200,null);
    if(name==='create_sample')return send(200,sampleId);
-   if(name==='issue_sample_form'){const id=uuid(720000+row.issued_documents.length);row.issued_documents.push({id,sample_id:sampleId,issue_number:row.issued_documents.length+1,issued_at:stamp,generation_status:'generated',snapshot_hash:'fixture-issued-'+id,issued_snapshot:structuredClone(workingSnapshot())});return send(200,id);}
+   if(name==='issue_sample_form'){const id=uuid(720000+sampleRows.reduce((n,s)=>n+s.issued_documents.length,0));row.issued_documents.push({id,sample_id:row.id,issue_number:row.issued_documents.length+1,issued_at:stamp,generation_status:'generated',snapshot_hash:'fixture-issued-'+id,issued_snapshot:structuredClone(workingSnapshot(row))});return send(200,id);}
    if(name==='search_sample_update_jobs')return send(200,allowed(profile)&&[baseJob.name,baseJob.customer,baseJob.job_number].join(' ').toLowerCase().includes((body.p_search??'').toLowerCase())?[baseJob]:[]);
    if(name==='can_publish_sample_to_job')return send(200,allowed(profile)&&body.p_job_id===jobId);
    if(name==='list_active_job_update_collaborators')return send(200,[{user_id:peerId,display_name:'Review Colleague',role:'member'}]);
@@ -93,4 +104,4 @@ const server=createServer(async(req,res)=>{
   const ext=path.extname(file);res.writeHead(200,{'content-type':({'.html':'text/html','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.txt':'text/plain'})[ext]||'application/octet-stream','content-security-policy':"default-src 'self'; connect-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; frame-src 'self' blob:; object-src 'none'; base-uri 'self'"});res.end(readFileSync(file));
  }catch(e){send(500,{message:e.message});}
 });
-server.listen(3000,'localhost',()=>console.log(`Local disposable review: ${origin}/samples?open=${sampleId} — ${fixtureAuth?'fixture auth for tests':'normal TenOps sign-in; hosted business writes blocked'}`));
+server.listen(port,'localhost',()=>console.log(`Local disposable review: ${origin}/samples?open=${sampleId} — ${fixtureAuth?'fixture auth for tests':'normal TenOps sign-in; hosted business writes blocked'}`));

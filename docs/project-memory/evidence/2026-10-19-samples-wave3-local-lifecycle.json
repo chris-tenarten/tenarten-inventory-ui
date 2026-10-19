@@ -1,0 +1,1035 @@
+{
+  "passed": [
+    "new draft create and checkpoint in one action",
+    "single creation, no duplicate",
+    "restore checkpoint",
+    "existing working PDF",
+    "issue and reopen captured document via existing endpoints"
+  ],
+  "calls": [
+    {
+      "path": "/rest/v1/rpc/get_my_app_access",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/ensure_my_welcome_notification",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/get_my_account_preferences",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/get_my_app_access",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/list_samples",
+      "body": {
+        "p_bid_id": null
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/get_sample_formulation_default",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/suggest_sample_color_plate_number",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/list_bids",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/list_my_account_notification_history",
+      "body": {
+        "p_limit": 100
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/ensure_my_welcome_notification",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/get_my_app_access",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/ensure_my_welcome_notification",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/list_my_account_notification_history",
+      "body": {
+        "p_limit": 100
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/create_sample_with_formulation",
+      "body": {
+        "p_sample": {
+          "id": "",
+          "bid_id": null,
+          "job_id": null,
+          "requested_by": "",
+          "requested_date": "2026-10-19",
+          "project_name": "",
+          "prepared_by": "Local review Admin",
+          "customer_name": "",
+          "color_plate_number": "T26-902-A",
+          "finish_requested": "",
+          "sample_size": "",
+          "sample_quantity": "",
+          "notes": "",
+          "filler": "",
+          "sealer": "",
+          "resin_supplier": "Local captured Resin System",
+          "resin_color_number": "",
+          "more_notes": "",
+          "approved_date": null,
+          "formulation_state": {
+            "basis": "weight_per_sf",
+            "weightUnit": "lb",
+            "totalWeight": "",
+            "totalFormulaWeightOz": "",
+            "finishedPlateWidth": "6",
+            "finishedPlateLength": "6",
+            "finishedPlateQuantity": "4",
+            "thicknessIn": "0.375",
+            "length": "12",
+            "width": "12",
+            "dimensionUnit": "in",
+            "materialDensity": "128",
+            "weightPerSf": "",
+            "weightPerSfProvenance": "calculated",
+            "chipDensityProvenance": "profile_default",
+            "resinParts": "5",
+            "hardenerParts": "1",
+            "ratioProvenance": "default",
+            "ratioDefaultSource": "Local captured Resin System — 5:1",
+            "supplierRatioDefaults": {},
+            "defaultVersion": null,
+            "calculationVersion": "sample-formulation-v5-batch-first",
+            "profile": {
+              "vendorName": "Local captured Resin System",
+              "batchContract": {
+                "version": 1,
+                "components": {
+                  "filler": {
+                    "exact": "50",
+                    "unit": "lb",
+                    "authority": "confirmed",
+                    "provenance": "Chris operational common MTT baseline",
+                    "shopWorking": {
+                      "quantity": "18",
+                      "unit": "oz",
+                      "volumeCft": ".03125",
+                      "rule": "at_volume",
+                      "provenance": "Anthony shop instruction"
+                    }
+                  },
+                  "resin": {
+                    "exact": "5",
+                    "unit": "gal",
+                    "authority": "confirmed",
+                    "provenance": "Chris operational common MTT baseline",
+                    "shopWorking": {
+                      "quantity": "15",
+                      "unit": "fl oz",
+                      "volumeCft": ".03125",
+                      "rule": "at_volume",
+                      "provenance": "Historical representative instruction"
+                    }
+                  },
+                  "hardener": {
+                    "exact": null,
+                    "unit": "gal",
+                    "authority": "confirmed",
+                    "rule": "resin_ratio",
+                    "provenance": "Confirmed 5:1"
+                  }
+                }
+              },
+              "id": "operational:00000000-0000-4000-8000-000000710030",
+              "version": 1,
+              "name": "Local captured Resin System — 5:1",
+              "defaultChipDensityLbCft": "128",
+              "dryPoolOzPerCft": "2560",
+              "defaultFillerOzPerCft": "512",
+              "resinFlOzPerCft": "480",
+              "batchReferenceThicknessIn": "0.375",
+              "batchChipTargetLb": "180",
+              "resinParts": "5",
+              "hardenerParts": "1",
+              "evidence": "Disposable fixture from existing captured formulation"
+            },
+            "profileProvenance": "selected",
+            "fillerProvenance": "profile_default",
+            "resinProvenance": "profile_default",
+            "adjustment": null,
+            "batchFillerOverrideLb": null
+          }
+        },
+        "p_rows": [
+          {
+            "percentage": "",
+            "color": "",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "",
+            "color": "Filler",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "filler",
+            "calculation_basis": null,
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "",
+            "color": "Local captured Resin System Resin",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "fl oz",
+            "vendor": "Local captured Resin System",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "resin",
+            "calculation_basis": null,
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "",
+            "color": "Local captured Resin System Hardener",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "fl oz",
+            "vendor": "Local captured Resin System",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "hardener",
+            "calculation_basis": null,
+            "quantity_provenance": "calculated"
+          }
+        ],
+        "p_sample_name": "",
+        "p_auto_number": true
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/record_my_sample_recent_values",
+      "body": {
+        "p_values": {
+          "requested_by": "",
+          "project_name": "",
+          "customer_name": "",
+          "finish_requested": "",
+          "sample_size": "",
+          "sample_quantity": "",
+          "filler": "",
+          "sealer": "",
+          "resin_supplier": "Local captured Resin System",
+          "resin_color_number": ""
+        }
+      }
+    },
+    {
+      "path": "/functions/v1/generate-sample-pdf",
+      "body": {
+        "action": "blend-list",
+        "sampleId": "00000000-0000-4000-8000-000000710101",
+        "metadata": true,
+        "latest": true
+      }
+    },
+    {
+      "path": "/functions/v1/generate-sample-pdf",
+      "body": {
+        "action": "blend-context",
+        "sampleId": "00000000-0000-4000-8000-000000710101"
+      }
+    },
+    {
+      "path": "/functions/v1/generate-sample-pdf",
+      "body": {
+        "action": "blend-list",
+        "sampleId": "00000000-0000-4000-8000-000000710101",
+        "metadata": true
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/get_my_app_access",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/list_samples",
+      "body": {
+        "p_bid_id": null
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/ensure_my_welcome_notification",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/save_sample_working_version",
+      "body": {
+        "p_sample_id": "00000000-0000-4000-8000-000000710101",
+        "p_note": "Disposable creation checkpoint"
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/list_my_account_notification_history",
+      "body": {
+        "p_limit": 100
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/list_samples",
+      "body": {
+        "p_bid_id": null
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/restore_sample_working_version",
+      "body": {
+        "p_sample_id": "00000000-0000-4000-8000-000000710101",
+        "p_version_id": "00000000-0000-4000-8000-000000750000"
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/list_samples",
+      "body": {
+        "p_bid_id": null
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/get_my_app_access",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/ensure_my_welcome_notification",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/get_my_account_preferences",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/get_my_app_access",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/list_samples",
+      "body": {
+        "p_bid_id": null
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/list_bids",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/list_my_account_notification_history",
+      "body": {
+        "p_limit": 100
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/ensure_my_welcome_notification",
+      "body": {}
+    },
+    {
+      "path": "/functions/v1/generate-sample-pdf",
+      "body": {
+        "action": "blend-list",
+        "sampleId": "00000000-0000-4000-8000-000000710001",
+        "metadata": true,
+        "latest": true
+      }
+    },
+    {
+      "path": "/functions/v1/generate-sample-pdf",
+      "body": {
+        "action": "blend-context",
+        "sampleId": "00000000-0000-4000-8000-000000710001"
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/get_my_app_access",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/ensure_my_welcome_notification",
+      "body": {}
+    },
+    {
+      "path": "/rest/v1/rpc/list_my_account_notification_history",
+      "body": {
+        "p_limit": 100
+      }
+    },
+    {
+      "path": "/functions/v1/generate-sample-pdf",
+      "body": {
+        "action": "blend-list",
+        "sampleId": "00000000-0000-4000-8000-000000710001",
+        "metadata": true
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/save_sample_draft",
+      "body": {
+        "p_sample": {
+          "id": "00000000-0000-4000-8000-000000710001",
+          "bid_id": null,
+          "job_id": null,
+          "requested_by": "",
+          "requested_date": "2026-10-19",
+          "project_name": "Current MTT",
+          "prepared_by": "Marcos",
+          "customer_name": "",
+          "color_plate_number": "T26-901-A",
+          "finish_requested": "",
+          "sample_size": "6x6",
+          "sample_quantity": "4",
+          "notes": "",
+          "filler": "",
+          "sealer": "",
+          "resin_supplier": "",
+          "resin_color_number": "",
+          "more_notes": "",
+          "approved_date": null,
+          "formulation_state": {
+            "basis": "weight_per_sf",
+            "weightUnit": "lb",
+            "totalWeight": "",
+            "totalFormulaWeightOz": "",
+            "finishedPlateWidth": "6",
+            "finishedPlateLength": "6",
+            "finishedPlateQuantity": "4",
+            "thicknessIn": "0.375",
+            "length": "12",
+            "width": "12",
+            "dimensionUnit": "in",
+            "materialDensity": "128",
+            "weightPerSf": "",
+            "weightPerSfProvenance": "calculated",
+            "chipDensityProvenance": "profile_default",
+            "resinParts": "5",
+            "hardenerParts": "1",
+            "ratioProvenance": "default",
+            "ratioDefaultSource": "MTT 2560 / 5:1",
+            "supplierRatioDefaults": {},
+            "defaultVersion": null,
+            "calculationVersion": "sample-formulation-v5-batch-first",
+            "profile": {
+              "id": "mtt-2560-standard-5to1",
+              "version": 2,
+              "name": "MTT",
+              "dryPoolOzPerCft": "2560",
+              "defaultChipDensityLbCft": "128",
+              "defaultFillerOzPerCft": "512",
+              "resinFlOzPerCft": "480",
+              "resinParts": "5",
+              "hardenerParts": "1",
+              "evidence": "2026 corpus p19,p49-p52,p65",
+              "batchChipTargetLb": "180",
+              "batchReferenceThicknessIn": ".375",
+              "batchContract": {
+                "version": 1,
+                "components": {
+                  "filler": {
+                    "exact": "50",
+                    "unit": "lb",
+                    "authority": "confirmed",
+                    "provenance": "Chris operational common MTT baseline",
+                    "shopWorking": {
+                      "quantity": "18",
+                      "unit": "oz",
+                      "volumeCft": ".03125",
+                      "rule": "at_volume",
+                      "provenance": "Anthony shop instruction"
+                    }
+                  },
+                  "resin": {
+                    "exact": "5",
+                    "unit": "gal",
+                    "authority": "confirmed",
+                    "provenance": "Chris operational common MTT baseline",
+                    "shopWorking": {
+                      "quantity": "15",
+                      "unit": "fl oz",
+                      "volumeCft": ".03125",
+                      "rule": "at_volume",
+                      "provenance": "Historical representative instruction"
+                    }
+                  },
+                  "hardener": {
+                    "exact": null,
+                    "unit": "gal",
+                    "authority": "confirmed",
+                    "rule": "resin_ratio",
+                    "provenance": "Confirmed 5:1"
+                  }
+                }
+              }
+            },
+            "profileProvenance": "selected",
+            "fillerProvenance": "profile_default",
+            "resinProvenance": "profile_default",
+            "adjustment": null,
+            "batchFillerOverrideLb": null
+          }
+        },
+        "p_rows": [
+          {
+            "percentage": "40",
+            "color": "Blanco #1",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-0",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-0"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "30",
+            "color": "Blanco #2",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-1",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-1"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "20",
+            "color": "MOP",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-2",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-2"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "5",
+            "color": "True Grey #1",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-3",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-3"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "5",
+            "color": "True Grey #2",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-4",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-4"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "",
+            "color": "ATF-20",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "filler",
+            "calculation_basis": null,
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "",
+            "color": "MTT Resin",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "fl oz",
+            "vendor": "",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "resin",
+            "calculation_basis": null,
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "",
+            "color": "Hardener",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "fl oz",
+            "vendor": "",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "hardener",
+            "calculation_basis": null,
+            "quantity_provenance": "calculated"
+          }
+        ],
+        "p_sample_name": "Disposable Sample — Post to Job"
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/record_my_sample_recent_values",
+      "body": {
+        "p_values": {
+          "requested_by": "",
+          "project_name": "Current MTT",
+          "customer_name": "",
+          "finish_requested": "",
+          "sample_size": "6x6",
+          "sample_quantity": "4",
+          "filler": "",
+          "sealer": "",
+          "resin_supplier": "",
+          "resin_color_number": ""
+        }
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/list_samples",
+      "body": {
+        "p_bid_id": null
+      }
+    },
+    {
+      "path": "/functions/v1/generate-sample-pdf",
+      "body": {
+        "action": "working",
+        "sampleId": "00000000-0000-4000-8000-000000710001",
+        "versionId": null
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/save_sample_draft",
+      "body": {
+        "p_sample": {
+          "id": "00000000-0000-4000-8000-000000710001",
+          "bid_id": null,
+          "job_id": null,
+          "requested_by": "",
+          "requested_date": "2026-10-19",
+          "project_name": "Current MTT",
+          "prepared_by": "Marcos",
+          "customer_name": "",
+          "color_plate_number": "T26-901-A",
+          "finish_requested": "",
+          "sample_size": "6x6",
+          "sample_quantity": "4",
+          "notes": "",
+          "filler": "",
+          "sealer": "",
+          "resin_supplier": "",
+          "resin_color_number": "",
+          "more_notes": "",
+          "approved_date": null,
+          "formulation_state": {
+            "basis": "weight_per_sf",
+            "weightUnit": "lb",
+            "totalWeight": "",
+            "totalFormulaWeightOz": "",
+            "finishedPlateWidth": "6",
+            "finishedPlateLength": "6",
+            "finishedPlateQuantity": "4",
+            "thicknessIn": "0.375",
+            "length": "12",
+            "width": "12",
+            "dimensionUnit": "in",
+            "materialDensity": "128",
+            "weightPerSf": "",
+            "weightPerSfProvenance": "calculated",
+            "chipDensityProvenance": "profile_default",
+            "resinParts": "5",
+            "hardenerParts": "1",
+            "ratioProvenance": "default",
+            "ratioDefaultSource": "MTT 2560 / 5:1",
+            "supplierRatioDefaults": {},
+            "defaultVersion": null,
+            "calculationVersion": "sample-formulation-v5-batch-first",
+            "profile": {
+              "id": "mtt-2560-standard-5to1",
+              "version": 2,
+              "name": "MTT",
+              "dryPoolOzPerCft": "2560",
+              "defaultChipDensityLbCft": "128",
+              "defaultFillerOzPerCft": "512",
+              "resinFlOzPerCft": "480",
+              "resinParts": "5",
+              "hardenerParts": "1",
+              "evidence": "2026 corpus p19,p49-p52,p65",
+              "batchChipTargetLb": "180",
+              "batchReferenceThicknessIn": ".375",
+              "batchContract": {
+                "version": 1,
+                "components": {
+                  "filler": {
+                    "exact": "50",
+                    "unit": "lb",
+                    "authority": "confirmed",
+                    "provenance": "Chris operational common MTT baseline",
+                    "shopWorking": {
+                      "quantity": "18",
+                      "unit": "oz",
+                      "volumeCft": ".03125",
+                      "rule": "at_volume",
+                      "provenance": "Anthony shop instruction"
+                    }
+                  },
+                  "resin": {
+                    "exact": "5",
+                    "unit": "gal",
+                    "authority": "confirmed",
+                    "provenance": "Chris operational common MTT baseline",
+                    "shopWorking": {
+                      "quantity": "15",
+                      "unit": "fl oz",
+                      "volumeCft": ".03125",
+                      "rule": "at_volume",
+                      "provenance": "Historical representative instruction"
+                    }
+                  },
+                  "hardener": {
+                    "exact": null,
+                    "unit": "gal",
+                    "authority": "confirmed",
+                    "rule": "resin_ratio",
+                    "provenance": "Confirmed 5:1"
+                  }
+                }
+              }
+            },
+            "profileProvenance": "selected",
+            "fillerProvenance": "profile_default",
+            "resinProvenance": "profile_default",
+            "adjustment": null,
+            "batchFillerOverrideLb": null
+          }
+        },
+        "p_rows": [
+          {
+            "percentage": "40",
+            "color": "Blanco #1",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-0",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-0"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "30",
+            "color": "Blanco #2",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-1",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-1"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "20",
+            "color": "MOP",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-2",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-2"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "5",
+            "color": "True Grey #1",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-3",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-3"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "5",
+            "color": "True Grey #2",
+            "size": "1",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "T&M",
+            "catalog_source": "standard",
+            "catalog_item_id": "material-4",
+            "catalog_snapshot": {
+              "package_context": {
+                "version": 1,
+                "amount": "50",
+                "unit": "lb",
+                "container": "bag",
+                "catalog_source": "standard",
+                "catalog_item_id": "material-4"
+              }
+            },
+            "component_role": "aggregate",
+            "calculation_basis": "target_total",
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "",
+            "color": "ATF-20",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "oz",
+            "vendor": "",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "filler",
+            "calculation_basis": null,
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "",
+            "color": "MTT Resin",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "fl oz",
+            "vendor": "",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "resin",
+            "calculation_basis": null,
+            "quantity_provenance": "calculated"
+          },
+          {
+            "percentage": "",
+            "color": "Hardener",
+            "size": "",
+            "material_type": "",
+            "quantity": "",
+            "unit": "fl oz",
+            "vendor": "",
+            "catalog_source": null,
+            "catalog_item_id": null,
+            "catalog_snapshot": {},
+            "component_role": "hardener",
+            "calculation_basis": null,
+            "quantity_provenance": "calculated"
+          }
+        ],
+        "p_sample_name": "Disposable Sample — Post to Job"
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/record_my_sample_recent_values",
+      "body": {
+        "p_values": {
+          "requested_by": "",
+          "project_name": "Current MTT",
+          "customer_name": "",
+          "finish_requested": "",
+          "sample_size": "6x6",
+          "sample_quantity": "4",
+          "filler": "",
+          "sealer": "",
+          "resin_supplier": "",
+          "resin_color_number": ""
+        }
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/list_samples",
+      "body": {
+        "p_bid_id": null
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/issue_sample_form",
+      "body": {
+        "p_sample_id": "00000000-0000-4000-8000-000000710001"
+      }
+    },
+    {
+      "path": "/functions/v1/generate-sample-pdf",
+      "body": {
+        "action": "generate",
+        "documentId": "00000000-0000-4000-8000-000000720000"
+      }
+    },
+    {
+      "path": "/rest/v1/rpc/list_samples",
+      "body": {
+        "p_bid_id": null
+      }
+    },
+    {
+      "path": "/functions/v1/generate-sample-pdf",
+      "body": {
+        "action": "open",
+        "documentId": "00000000-0000-4000-8000-000000720000"
+      }
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "hostedWrites": 0
+}

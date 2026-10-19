@@ -3,7 +3,7 @@
 import { BusinessButton, BusinessInput } from '@/components/BusinessWriteControls';
 
 import { Eye, History, RotateCcw, Save } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sampleWorkingPreviewInputKey, SessionPdfPreviewCache } from "@/lib/pdf-preview-cache";
 import {
   formatSampleError,
@@ -29,6 +29,11 @@ export default function SampleVersionHistory({
   onReload: (sampleId: string) => Promise<void>;
   onPreview: (url: string, filename: string) => void;
 }) {
+  const sampleId = useRef(sample.id);
+  sampleId.current = sample.id;
+  const active = useRef(false);
+  useEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
+  const [expanded, setExpanded] = useState(false);
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
@@ -65,6 +70,7 @@ export default function SampleVersionHistory({
       setBusy("");
       return;
     }
+    if (!active.current || (sampleId.current && sampleId.current !== saved.id)) return;
     try {
       await saveSampleWorkingVersion(saved.id, note);
       setNote("");
@@ -111,11 +117,13 @@ export default function SampleVersionHistory({
         return;
       }
     }
+    if (!active.current || (sampleId.current && sampleId.current !== target.id)) return;
     try {
       const blob = await generateWorkingSamplePdf(target.id, versionId);
       const cacheKey = versionId
         ? initialKey
         : `current:${sampleWorkingPreviewInputKey(target)}`;
+      if (!active.current || (sampleId.current && sampleId.current !== target.id)) return;
       previewCache.current.set(cacheKey, blob);
       onPreview(
         URL.createObjectURL(blob),
@@ -152,7 +160,7 @@ export default function SampleVersionHistory({
     }
   };
   return (
-    <details data-sample-tutorial="working-sheet" className="border border-slate-300 bg-white p-4">
+    <details onToggle={event => setExpanded(event.currentTarget.open)} data-sample-tutorial="working-sheet" className="border border-slate-300 bg-white p-4">
       <summary className="cursor-pointer text-sm font-bold">Formula checkpoints and previews</summary>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -203,7 +211,7 @@ export default function SampleVersionHistory({
       </div>
       <div className="mt-3 space-y-2">
         {sample.workingVersions.length ? (
-          sample.workingVersions.map((version) => (
+          expanded && sample.workingVersions.map((version) => (
             <article
               key={version.id}
               className="flex flex-wrap items-center gap-3 border border-slate-200 p-3"

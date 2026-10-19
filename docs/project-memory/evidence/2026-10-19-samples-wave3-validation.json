@@ -1,0 +1,38 @@
+{
+  "tier": 3,
+  "testingLevel": 3,
+  "authBrowserPassedGroups": [
+    "Samples mount and Inspector revalidation preserve mounted generator; local PDF preview",
+    "direct Generator link, refresh, other module and navigation back remain usable",
+    "fresh local sign-in reaches Samples without restoration loop",
+    "same-session denied revalidation closes access",
+    "same-session missing revalidation closes access",
+    "same-session failed revalidation closes access",
+    "session change invalidates in-flight background refresh and stays pending/closed",
+    "continuing SIGNED_IN and valid token rotation keep Inspector node and unsaved input",
+    "continued TOKEN_REFRESHED denied stays fail-closed",
+    "continued TOKEN_REFRESHED missing stays fail-closed",
+    "continued TOKEN_REFRESHED failed stays fail-closed",
+    "same user with a distinct login session blocks validation and starts genuine login animation",
+    "sign-out rejects an in-flight continuing-session response",
+    "account-switch rejects an in-flight continuing-session response",
+    "native browser tab-switch attempt preserves current Inspector state"
+  ],
+  "authGroupsPassed": 15,
+  "excluded": "Unchanged My Work composer requires recipients absent from this disposable Sample adapter; full run stopped there, remaining Sample/session cases passed separately. Existing accepted shared-auth evidence reused.",
+  "nativeRefocus": {
+    "attempts": 3,
+    "visibilityEvents": [],
+    "manualReviewRequired": true
+  },
+  "checks": {
+    "webpackProductionBuild": "passed exact final application source",
+    "typescript": "passed standalone and build",
+    "targetedESLint": "passed",
+    "diffCheck": "passed",
+    "formulationPdfIntegrity": "verify-sample-batch-first.mts passed"
+  },
+  "hostedWrites": 0,
+  "migrationApplied": false,
+  "productionLatencyMeasured": false
+}
