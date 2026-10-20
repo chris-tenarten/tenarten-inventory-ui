@@ -1,0 +1,14 @@
+{
+  "brand": "TenDev",
+  "origin": "http://localhost:3356",
+  "checks": [
+    "full sequence, four-second hold and continuous mounted entrance",
+    "desktop skip, editable-space guard, keyboard access and session replay protection",
+    "mobile tap skip and small viewport"
+  ],
+  "errors": [],
+  "external": [],
+  "notes": [
+    "Focus/visibility events and continuing auth events are simulated. Physical OS tab suspension and Home Screen launch require manual review."
+  ]
+}

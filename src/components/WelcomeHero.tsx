@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { X } from "lucide-react";
+import TerrazzoReveal from "./TerrazzoReveal";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { BRANDING } from "@/lib/dev-branding.mjs";
@@ -16,6 +16,9 @@ const HERO_DURATION_MS = 4600;
 const HERO_REDUCED_DURATION_MS = 450;
 const ONLINE_HOLD_MS = 900;
 const FADE_DURATION_MS = 850;
+const ISOLATION_MS = 650;
+const TRANSFORMATION_MS = 3500;
+const TERRAZZO_HOLD_MS = 1850;
 
 function smoothstep(value: number) {
   const clamped = Math.max(0, Math.min(1, value));
@@ -42,10 +45,13 @@ function diagonalRevealCoverage(progress: number) {
 
 export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeNotificationStatus | null }) {
   const auth = useAuth();
+  const heroRef = useRef<HTMLDivElement | null>(null);
   const coverRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const animationStartedAtRef = useRef<number | null>(null);
   const animationCompletedAtRef = useRef<number | null>(null);
+  const decorationStartedAtRef = useRef<number | null>(null);
+  const skipRequestedRef = useRef(false);
   const fadeStartedAtRef = useRef<number | null>(null);
   const criticalAppReadyRef = useRef(false);
   const lastAuthenticatedUserRef = useRef<string | null>(null);
@@ -58,6 +64,8 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
   const [visible, setVisible] = useState(false);
   const [bootClaimed, setBootClaimed] = useState(false);
   const [mode, setMode] = useState<WelcomeMode>("boot");
+  const [decorationElapsed, setDecorationElapsed] = useState(0);
+  const [assetFailed, setAssetFailed] = useState(false);
   const [progress, setProgress] = useState(0);
   const [fadeProgress, setFadeProgress] = useState(0);
   const [heroAnimationComplete, setHeroAnimationComplete] = useState(false);
@@ -70,6 +78,9 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
   const heroCoverVisible = heroStartingCoverVisible || heroVisible;
 
   const resetTimeline = useCallback(() => {
+    decorationStartedAtRef.current = null;
+    skipRequestedRef.current = false;
+    setDecorationElapsed(0);
     animationStartedAtRef.current = null;
     animationCompletedAtRef.current = null;
     fadeStartedAtRef.current = null;
@@ -178,6 +189,9 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
 
   useEffect(() => {
     const markReady = () => {
+      // Production announces readiness for rendered errors too. Release visual
+      // ownership immediately so that its real recovery UI remains accessible.
+      if (document.querySelector('[data-app-shell] main [role="alert"]')) finish();
       criticalAppReadyRef.current = true;
       setCriticalAppReady(true);
     };
@@ -190,15 +204,22 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
       window.clearTimeout(timeout);
       window.removeEventListener("tenops:critical-app-ready", markReady);
     };
-  }, [auth.user?.id]);
+  }, [auth.user?.id, finish]);
 
   useEffect(() => {
     if (!heroCoverVisible) return;
     const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement;
+    const siblings = Array.from(coverRef.current?.parentElement?.children ?? []).filter((node): node is HTMLElement => node instanceof HTMLElement && !node.hasAttribute("data-welcome-hero") && !node.hasAttribute("data-welcome-hero-cover"));
+    const priorInert = siblings.map(node => node.inert);
+    siblings.forEach(node => { node.inert = true; });
+    heroRef.current?.focus({ preventScroll: true });
     document.body.style.overflow = "hidden";
     document.body.dataset.welcomeHero = mode;
     return () => {
       document.body.style.overflow = previousOverflow;
+      siblings.forEach((node, index) => { node.inert = priorInert[index]; });
+      if (previousFocus instanceof HTMLElement && previousFocus.isConnected) previousFocus.focus({ preventScroll: true });
       delete document.body.dataset.welcomeHero;
     };
   }, [heroCoverVisible, mode]);
@@ -218,7 +239,15 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
           animationCompletedAtRef.current = now;
           setHeroAnimationComplete(true);
         }
-        if (criticalAppReadyRef.current && now - animationCompletedAtRef.current >= ONLINE_HOLD_MS) {
+        if (criticalAppReadyRef.current && now - animationCompletedAtRef.current >= (reducedMotion ? 0 : ONLINE_HOLD_MS)) {
+          if (decorationStartedAtRef.current === null) decorationStartedAtRef.current = now;
+          const elapsed = now - decorationStartedAtRef.current;
+          if (elapsed <= ISOLATION_MS + TRANSFORMATION_MS + 50) setDecorationElapsed(elapsed);
+          const decorationDone = reducedMotion || assetFailed || skipRequestedRef.current || elapsed >= ISOLATION_MS + TRANSFORMATION_MS + TERRAZZO_HOLD_MS;
+          if (!decorationDone) {
+            frameRef.current = window.requestAnimationFrame(tick);
+            return;
+          }
           if (fadeStartedAtRef.current === null) fadeStartedAtRef.current = now;
           const nextFade = Math.min(1, (now - fadeStartedAtRef.current) / fadeDuration);
           setFadeProgress(smoothstep(nextFade));
@@ -236,21 +265,41 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
       if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
       frameRef.current = null;
     };
-  }, [finish, heroVisible, reducedMotion]);
+  }, [assetFailed, finish, heroVisible, reducedMotion]);
+
+  const skipAvailable = heroVisible && heroAnimationComplete && criticalAppReady && decorationElapsed >= ISOLATION_MS && !reducedMotion && !assetFailed && fadeProgress === 0;
+  const skip = useCallback(() => {
+    if (skipAvailable) skipRequestedRef.current = true;
+  }, [skipAvailable]);
 
   useEffect(() => {
-    if (!visible || mode !== "replay") return;
-    const closeReplay = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setVisible(false);
+    if (!heroVisible) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        event.preventDefault();
+        if (skipAvailable) heroRef.current?.querySelector<HTMLButtonElement>("[data-welcome-skip]")?.focus();
+        return;
+      }
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable]:not([contenteditable='false']), [role='textbox']")) return;
+      if (event.code === "Space" && !event.repeat && !event.altKey && !event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        skip();
+      }
     };
-    window.addEventListener("keydown", closeReplay);
-    return () => window.removeEventListener("keydown", closeReplay);
-  }, [mode, visible]);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [heroVisible, skip, skipAvailable]);
+
+  const secondaryOpacity = 1 - smoothstep(decorationElapsed / ISOLATION_MS);
+  const transformationElapsed = Math.max(0, decorationElapsed - ISOLATION_MS);
+  const phase = fadeProgress > 0 ? "entrance" : decorationElapsed === 0 ? "opening" : decorationElapsed < ISOLATION_MS ? "isolate" : transformationElapsed < TRANSFORMATION_MS ? "transform" : "hold";
+  const brandLabel = `${BRANDING.productName} ${BRANDING.subtitle ?? "OPERATIONS CONTROL"}`;
 
   const heroProgress = reducedMotion ? (progress > 0 ? 1 : 0) : smoothstep(progress);
   const logoProgress = heroProgress;
   const percent = Math.round(diagonalRevealCoverage(logoProgress) * 100);
-  const statusLabel = heroAnimationComplete ? "OPERATIONS ENGINE ONLINE" : "OPERATIONS ENGINE INITIATING";
+  const statusLabel = heroAnimationComplete && criticalAppReady ? "OPERATIONS ENGINE ONLINE" : "OPERATIONS ENGINE INITIATING";
 
   return <>
     <div
@@ -258,7 +307,7 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
       hidden={!heroStartingCoverVisible}
       data-welcome-hero-cover
       data-dev-branding={BRANDING.showDeveloperArtwork ? "true" : undefined}
-      className="fixed inset-0 z-[81] bg-[#eef1f4]"
+      className="fixed inset-0 z-[251] bg-[#eef1f4]"
       aria-hidden="true"
     >
       <section className="flex h-dvh min-h-[28rem] flex-col items-center justify-center overflow-hidden px-5 text-center text-slate-950">
@@ -268,7 +317,7 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
               <div data-welcome-logo-stack className="relative aspect-[1024/1048] shrink-0">
                 <Image src="/tenarten-logo-gold-welcome.webp" alt="" aria-hidden="true" fill priority sizes="(max-width: 640px) 19rem, 35rem" className="object-contain" />
               </div>
-              <div className="mt-3 text-[clamp(0.9rem,2vw,1.08rem)] font-bold uppercase tracking-[0.18em] text-slate-700">TenOps Operations Control</div>
+              <div className="mt-3 text-[clamp(0.9rem,2vw,1.08rem)] font-bold uppercase tracking-[0.18em] text-slate-700">{brandLabel}</div>
             </div>
           </div>
           <div data-welcome-progress-cover className="mx-auto mb-[clamp(1rem,3vh,2.25rem)] w-full max-w-md px-2">
@@ -284,50 +333,58 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
       </section>
     </div>
     {heroVisible ? <div
+    ref={heroRef}
+    tabIndex={-1}
+    role="dialog"
+    aria-modal="true"
+    style={{ opacity: Math.max(0, 1 - fadeProgress) }}
     data-welcome-hero
     data-dev-branding={BRANDING.showDeveloperArtwork ? "true" : undefined}
     data-hero-animation-complete={heroAnimationComplete ? "true" : "false"}
     data-critical-app-ready={criticalAppReady ? "true" : "false"}
-    className="fixed inset-0 z-[80]"
-    aria-label="TenOps operations engine startup"
+    className="fixed inset-0 z-[250] outline-none"
+    aria-label={`${BRANDING.productName} startup presentation`}
+    data-welcome-phase={phase}
     aria-live="polite"
   >
     <section
       data-welcome-hero-surface
       className="flex h-dvh min-h-[28rem] flex-col items-center justify-center overflow-hidden bg-[#eef1f4] px-5 text-center text-slate-950"
-      style={{ opacity: Math.max(0, 1 - fadeProgress) }}
     >
       <div data-welcome-content-layout className="grid h-full w-full grid-rows-[minmax(0,1fr)_auto] items-center py-[clamp(0.75rem,2vh,1.5rem)]">
         <div data-welcome-primary-region className="flex min-h-0 w-full items-center justify-center">
           <div
             data-welcome-identity-group
             className="flex max-w-2xl flex-col items-center"
-            style={{ transform: `translateY(${-18 * fadeProgress}px) scale(${1 - 0.025 * fadeProgress})` }}
           >
             <div data-welcome-logo-stack className="relative aspect-[1024/1048] shrink-0">
-              <Image src="/tenarten-logo-gold-welcome.webp" alt="Tenarten Terrazzo Precast Manufacturing" fill priority sizes="(max-width: 640px) 19rem, 35rem" className="object-contain" />
-              <span data-welcome-logo-steel className="absolute inset-0" style={{ clipPath: diagonalRevealClip(logoProgress) }}>
-                <Image src="/tenarten-logo-steel-welcome.webp" alt="" aria-hidden="true" fill priority sizes="(max-width: 640px) 19rem, 35rem" className="object-contain" />
+              <Image src="/tenarten-logo-gold-welcome.webp" alt="Tenarten Terrazzo Precast Manufacturing" fill priority sizes="(max-width: 640px) 19rem, 35rem" className="object-contain" onError={() => setAssetFailed(true)} style={{ opacity: decorationElapsed > 0 ? 0 : 1 }} />
+              {decorationElapsed > 0 ? <span data-welcome-embedded-wordmark className="absolute inset-0" style={{ clipPath: "inset(80.916031% 0 0 0)", opacity: secondaryOpacity }}><Image src="/tenarten-logo-steel-welcome.webp" alt="" aria-hidden="true" fill sizes="(max-width: 640px) 19rem, 35rem" className="object-contain" /></span> : null}
+              <TerrazzoReveal elapsed={transformationElapsed} active={decorationElapsed > 0 && !reducedMotion && !assetFailed} onAssetError={() => setAssetFailed(true)} />
+              <span data-welcome-logo-steel className="absolute inset-0" style={{ clipPath: diagonalRevealClip(logoProgress), visibility: decorationElapsed > 0 && !reducedMotion && !assetFailed ? "hidden" : "visible" }}>
+                <Image src="/tenarten-logo-steel-welcome.webp" onError={() => setAssetFailed(true)} alt="" aria-hidden="true" fill priority sizes="(max-width: 640px) 19rem, 35rem" className="object-contain" />
               </span>
             </div>
-            <div className="mt-3 text-[clamp(0.9rem,2vw,1.08rem)] font-bold uppercase tracking-[0.18em] text-slate-700">TenOps Operations Control</div>
-            {auth.profile ? <div data-welcome-account-identity className="mt-3 flex max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-1">
+            <div data-welcome-secondary style={{ opacity: secondaryOpacity }} className="mt-3 text-[clamp(0.9rem,2vw,1.08rem)] font-bold uppercase tracking-[0.18em] text-slate-700">{brandLabel}</div>
+            {auth.profile ? <div data-welcome-account-identity style={{ opacity: secondaryOpacity }} className="mt-3 flex max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-1">
               <h1 className="text-[clamp(1.05rem,2.4vw,1.42rem)] font-normal tracking-tight text-slate-800">{auth.profile.displayName}</h1>
               <span data-welcome-role-tag className={`${productionTagClassName} border-slate-300 bg-slate-100 uppercase tracking-[0.06em] text-slate-600`}>{ROLE_LABELS[auth.profile.role]}</span>
             </div> : null}
           </div>
         </div>
-        <div data-welcome-progress className="mx-auto mb-[clamp(1rem,3vh,2.25rem)] w-full max-w-md px-2">
+        <div data-welcome-progress style={{ opacity: secondaryOpacity }} className="mx-auto mb-[clamp(1rem,3vh,2.25rem)] w-full max-w-md px-2">
           <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-600">
             <span className={`min-w-0 flex-1 truncate text-left ${heroAnimationComplete ? "text-emerald-700" : ""}`}>{statusLabel}</span>
             <span className="tabular-nums">{percent}%</span>
           </div>
-          <div className="mt-2 h-1 overflow-hidden bg-slate-300" role="progressbar" aria-label={statusLabel} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}>
+          <div className="mt-2 h-1 overflow-hidden bg-slate-300" role="progressbar" aria-label="Crest animation progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}>
             <div data-welcome-progress-fill className="h-full bg-slate-800" style={{ width: `${percent}%` }} />
           </div>
         </div>
       </div>
-      {mode === "replay" ? <button type="button" onClick={() => setVisible(false)} aria-label="Close Welcome introduction" title="Close" className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center text-slate-500 transition hover:bg-white/60 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"><X className="h-4 w-4" aria-hidden="true" /></button> : null}
+      {skipAvailable ? <button type="button" data-welcome-skip onClick={skip} className="welcome-skip absolute bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 min-h-11 -translate-x-1/2 px-4 text-[11px] text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600" aria-label="Skip remaining startup animation">
+        <span className="welcome-skip-desktop">Press Space to skip</span><span className="welcome-skip-touch">Tap to skip</span>
+      </button> : null}
     </section>
     </div> : null}
   </>;

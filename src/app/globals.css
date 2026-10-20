@@ -1640,3 +1640,15 @@ html[data-appearance="dark"] .manpower-bulk-action:disabled {
   background-color: #263448;
   border-color: #52647b;
 }
+
+/* Startup continuation: retained grid space keeps the crest still as labels fade. */
+.welcome-skip { animation: welcome-skip-in 650ms ease both; }
+.welcome-skip-touch { display: none; }
+@media (pointer: coarse) {
+  .welcome-skip-desktop { display: none; }
+  .welcome-skip-touch { display: inline; }
+}
+@keyframes welcome-skip-in { from { opacity: 0; } to { opacity: 0.8; } }
+@media (prefers-reduced-motion: reduce) {
+  .welcome-skip { animation: none; }
+}

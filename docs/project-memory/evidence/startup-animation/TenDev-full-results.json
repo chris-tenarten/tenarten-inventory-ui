@@ -1,0 +1,12 @@
+{
+  "brand": "TenDev",
+  "origin": "http://localhost:3356",
+  "checks": [
+    "full sequence, 1.85-second hold and continuous mounted entrance"
+  ],
+  "errors": [],
+  "external": [],
+  "notes": [
+    "Focus/visibility events and continuing auth events are simulated. Physical OS tab suspension and Home Screen launch require manual review."
+  ]
+}
