@@ -1,0 +1,15 @@
+{
+  "checks": {
+    "all_delivery_disabled": true,
+    "deliveries": 0,
+    "disabled_dispatcher_inert": true,
+    "exact_cohort": 2,
+    "exact_jobs": 1,
+    "outbox": 0,
+    "production_configuration_null": true,
+    "push_cron": 0,
+    "registration_disabled": true,
+    "subscriptions": 0,
+    "validated_constraints": 3
+  }
+}

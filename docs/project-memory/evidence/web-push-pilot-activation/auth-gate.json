@@ -1,0 +1,44 @@
+{
+  "checks": [
+    {
+      "name": "missing signature",
+      "status": 401
+    },
+    {
+      "name": "tampered",
+      "status": 401
+    },
+    {
+      "name": "wrong environment",
+      "status": 401
+    },
+    {
+      "name": "expired",
+      "status": 401
+    },
+    {
+      "name": "oversized",
+      "status": 400
+    },
+    {
+      "name": "Vault-signed, single-use run through hosted service RPCs",
+      "status": 200,
+      "claimed": 0,
+      "submitted": 0,
+      "skipped": 0,
+      "failed": 0
+    },
+    {
+      "name": "replay rejected",
+      "status": 409
+    },
+    {
+      "name": "restored disabled",
+      "status": 503
+    }
+  ],
+  "transportEnabled": false,
+  "registrationEnabled": false,
+  "realPushRequests": 0,
+  "cronCreated": false
+}

@@ -1,0 +1,14 @@
+{
+  "delivery_count": 0,
+  "event": {
+    "cohort_eligible": true,
+    "created_after_cutoff": false,
+    "source_eligible": true
+  },
+  "worker": {
+    "counts": "{\"claimed\":0,\"submitted\":0,\"skipped\":0,\"failed\":0}",
+    "error": null,
+    "status": 200,
+    "timed_out": false
+  }
+}

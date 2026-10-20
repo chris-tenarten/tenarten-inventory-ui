@@ -1,0 +1,9 @@
+{
+  "deliveries": 0,
+  "outbox": 0,
+  "outside_cohort_configuration_null": true,
+  "outside_cohort_registration_denied": true,
+  "push_cron": 0,
+  "subscriptions": 1,
+  "transport_enabled": false
+}

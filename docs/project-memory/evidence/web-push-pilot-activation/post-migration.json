@@ -1,0 +1,9 @@
+{
+  "checks": {
+    "empty_inert_state": true,
+    "exact_ledger_versions": 3,
+    "production_configuration_null": true,
+    "rls_and_grants": true,
+    "unenrolled_configuration_null": true
+  }
+}

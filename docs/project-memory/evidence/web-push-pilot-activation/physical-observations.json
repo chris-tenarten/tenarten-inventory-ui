@@ -1,0 +1,16 @@
+{
+  "device": "User-reported installed iPhone Home Screen PWA",
+  "permission": "granted and real Apple subscription registered",
+  "backgroundBanner": "User confirmed appeared; screenshotting when temporary banner dismissed",
+  "informativePreview": "not yet explicitly confirmed by user",
+  "dmTap": "Initial error; user Retry opened correct conversation",
+  "closedApp": "User closed and locked device, but mention guard found registration revoked before any mention was created",
+  "lockScreen": "not yet delivered/tested",
+  "genericPreview": "pending",
+  "source": "User observations, not simulation",
+  "acceptedSubmissions": 1,
+  "cronCreated": false,
+  "decorativeStartup": "User explicitly confirmed no decorative startup on notification entry",
+  "duplicateRecoveryWake": "zero claimed/submitted; accepted DM remains attempt 1",
+  "deliveryPaused": true
+}

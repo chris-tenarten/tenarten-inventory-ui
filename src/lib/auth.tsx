@@ -132,8 +132,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Invalidate old requests immediately, before deferring any authenticated RPC.
-  const beginResolution = useCallback((nextSession: Session | null, continuing = false) => {
-    if (!nextSession || (currentSession.current && (currentSession.current.user.id !== nextSession.user.id || !continuing))) setPushAccount(null);
+  const beginResolution = useCallback((nextSession: Session | null, continuing = false, preservePendingPushSession = false) => {
+    if (!nextSession || (currentSession.current && (currentSession.current.user.id !== nextSession.user.id || (!continuing && !preservePendingPushSession)))) setPushAccount(null);
     const request = ++generation.current;
     currentSession.current = nextSession;
     setSession(nextSession);
@@ -175,7 +175,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const callbackFlow = accountFlow === "setup" || accountFlow === "recovery";
       setRequiresPasswordSetup(Boolean(nextSession) && (event === "PASSWORD_RECOVERY" || callbackFlow));
       const continuing = !callbackFlow && (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && sameAuthSession(verifiedSession.current, nextSession);
-      const request = beginResolution(nextSession, continuing);
+      // A same-login refresh can arrive while bootstrap is still verifying the
+      // profile. Keep its device binding, without carrying any access decision.
+      // Password flows, new logins and different identities still invalidate it.
+      const preservePendingPushSession = !callbackFlow && !verifiedSession.current
+        && (event === "SIGNED_IN" || event === "TOKEN_REFRESHED")
+        && sameAuthSession(currentSession.current, nextSession);
+      const request = beginResolution(nextSession, continuing, preservePendingPushSession);
       // Supabase holds its auth-token lock while this callback runs.
       if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
       authChangeProfileTimer = window.setTimeout(() => {

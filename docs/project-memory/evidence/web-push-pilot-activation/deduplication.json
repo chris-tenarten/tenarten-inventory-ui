@@ -1,0 +1,15 @@
+{
+  "cron": 0,
+  "deliveries": [
+    {
+      "attempts": 1,
+      "outcome": "accepted",
+      "state": "submitted"
+    }
+  ],
+  "response": {
+    "counts": "{\"claimed\":0,\"submitted\":0,\"skipped\":0,\"failed\":0}",
+    "error": null,
+    "status": 200
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "reload and continuing token refresh preserve binding and startup",
+    "same-login auth event during pending bootstrap preserves device without granting stale access",
+    "new login session for same account still revokes previous binding",
+    "explicit sign-out removes registration without permission prompt",
+    "account switching clears former binding and shows independent device state",
+    "lost session unsubscribes locally",
+    "profile revocation removes device access and browser subscription",
+    "password recovery sign-out clears device binding",
+    "delayed registration across account switch never registers the new account"
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "permissionAndSubscriptions": "Simulated only; real root service worker",
+  "realDevicePushes": 0
+}

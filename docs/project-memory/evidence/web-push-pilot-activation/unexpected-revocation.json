@@ -1,0 +1,19 @@
+{
+  "deliveries": [
+    {
+      "attempts": 1,
+      "outcome": "accepted",
+      "state": "submitted"
+    }
+  ],
+  "devices": [
+    {
+      "enabled": false,
+      "environment": "tendev",
+      "generation": 2,
+      "owner": "approved_recipient",
+      "revoked_at": "2026-10-20T21:38:53.076259+00:00"
+    }
+  ],
+  "transport": false
+}

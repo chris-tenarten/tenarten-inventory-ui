@@ -22,7 +22,7 @@ const enable=f=>f.section.getByRole('button',{name:'Enable notifications on this
 const disable=f=>f.section.getByRole('button',{name:'Disable on this device',exact:true});
 const registered=f=>f.section.getByText('Registered on this device',{exact:true});
 const emit=async(f,event,s)=>f.page.evaluate(({event,s})=>{if(s)localStorage.setItem('sb-localhost-auth-token',JSON.stringify(s));else localStorage.removeItem('sb-localhost-auth-token');const c=new BroadcastChannel('sb-localhost-auth-token');c.postMessage({event,session:s});c.close();},{event,s});
-async function run(name,work,options){const f=await fixture(options);try{await work(f);checks.push(name);console.log('PASS '+name);}finally{await f.context.close();}}
+async function run(name,work,options){if(process.env.WEB_PUSH_BROWSER_CHECK&&!new RegExp(process.env.WEB_PUSH_BROWSER_CHECK).test(name))return;const f=await fixture(options);try{await work(f);checks.push(name);console.log('PASS '+name);}finally{await f.context.close();}}
 try{
  await run('desktop explicit enable, real root worker, disable and no caching',async f=>{
   await expect(enable(f)).toBeEnabled();assert.equal(await f.page.evaluate(()=>window.__pushReview.requests),0);
@@ -58,6 +58,25 @@ try{
   await emit(f,'TOKEN_REFRESHED',session(userId,2));await f.page.waitForTimeout(500);
   await expect(registered(f)).toBeVisible();assert.equal(await f.page.evaluate(()=>localStorage.getItem('tenops.push.device.v1')),binding);
   assert(await f.page.evaluate(()=>window.keptShell===document.querySelector('[data-app-shell]')));assert.equal(await f.page.locator('div[data-welcome-hero]').count(),0);
+ });
+ await run('same-login auth event during pending bootstrap preserves device without granting stale access',async f=>{
+  await enable(f).click();await expect(registered(f)).toBeVisible();
+  const binding=await f.page.evaluate(()=>localStorage.getItem('tenops.push.device.v1'));
+  let release;const hold=new Promise(resolve=>release=resolve);let calls=0;
+  await f.context.route('**/rest/v1/rpc/get_my_app_access',async route=>{if(++calls===1)await hold;await route.continue();});
+  try{
+   await f.page.reload();await expect.poll(()=>calls).toBe(1);
+   await emit(f,'SIGNED_IN',session(userId,8));await expect(registered(f)).toBeVisible();
+   assert.equal(await f.page.evaluate(()=>localStorage.getItem('tenops.push.device.v1')),binding);
+   assert(await f.page.evaluate(()=>Boolean(localStorage.getItem('review.push.endpoint'))));
+   release();await f.page.waitForTimeout(200);assert.equal(await f.page.evaluate(()=>localStorage.getItem('tenops.push.device.v1')),binding);
+  }finally{release();}
+ });
+ await run('new login session for same account still revokes previous binding',async f=>{
+  await enable(f).click();await expect(registered(f)).toBeVisible();const next=session(userId,9);
+  const parts=next.access_token.split('.'),claims=JSON.parse(Buffer.from(parts[1],'base64url'));claims.session_id='00000000-0000-4000-8000-000000999999';parts[1]=Buffer.from(JSON.stringify(claims)).toString('base64url');next.access_token=parts.join('.');
+  await emit(f,'SIGNED_IN',next);await expect.poll(()=>f.page.evaluate(()=>localStorage.getItem('tenops.push.device.v1'))).toBe(null);
+  await expect(f.section.getByText('Not registered on this device',{exact:true})).toBeVisible();
  });
  await run('explicit sign-out removes registration without permission prompt',async f=>{
   await enable(f).click();await expect(registered(f)).toBeVisible();await f.page.getByRole('button',{name:'Sign out of account',exact:true}).click();

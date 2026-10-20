@@ -1,0 +1,18 @@
+{
+  "cron": 0,
+  "deliveries": 0,
+  "outbox": 0,
+  "subscriptions": [
+    {
+      "enabled": true,
+      "environment": "tendev",
+      "expiration_time": null,
+      "generation": 1,
+      "key_version": "tendev-pilot-v1",
+      "owner": "approved_regular_recipient",
+      "show_previews": true,
+      "vendor": "Apple"
+    }
+  ],
+  "transport_enabled": false
+}

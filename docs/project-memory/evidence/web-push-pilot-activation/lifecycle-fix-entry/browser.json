@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "server preference defaults on, informative DM and generic preview off",
+    "warm notification tap opens actual Messaging without decorative replay",
+    "mention preview and tap reuse actual Job Update Inspector",
+    "cold notification launch bypasses decoration after profile checks",
+    "wrong account cannot resolve prior-account destination",
+    "expired session signs in before resolving notification without animation",
+    "unavailable content uses neutral state and never opens Messaging",
+    "push-owned DM and mention do not create intrusive in-app arrival attention"
+  ],
+  "pageErrors": [],
+  "external": [],
+  "simulatedBanners": true,
+  "realDevicePushes": 0
+}
