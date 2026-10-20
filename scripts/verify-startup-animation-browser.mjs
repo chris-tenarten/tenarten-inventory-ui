@@ -5,7 +5,7 @@ import {chromium,expect} from '@playwright/test';
 import {session,userId} from './support/wave4-fixture.mjs';
 const origin=process.env.STARTUP_REVIEW_ORIGIN||'http://localhost:3355';
 const brand=process.env.STARTUP_REVIEW_BRAND||'TenOps';
-const evidence=process.env.STARTUP_EVIDENCE_DIR||'docs/project-memory/evidence/startup-animation';
+const evidence=process.env.STARTUP_EVIDENCE_DIR||process.env.STARTUP_REVIEW_EVIDENCE||'docs/project-memory/evidence/startup-animation';
 mkdirSync(evidence,{recursive:true});
 const browser=await chromium.launch({channel:'chrome',headless:process.env.STARTUP_REVIEW_HEADED!=='true'});
 const checks=[],errors=[],external=[];

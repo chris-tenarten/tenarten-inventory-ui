@@ -1,0 +1,26 @@
+{
+  "passed": 2,
+  "checks": [
+    "Samples mount and Inspector revalidation preserve mounted generator; local PDF preview",
+    "native browser tab-switch attempt preserves current Inspector state"
+  ],
+  "focusEvidence": [
+    {
+      "kind": "native-browser-tab-commands",
+      "switches": 3,
+      "visibilityEvents": [],
+      "visibilitySupported": false,
+      "profileRequests": 0
+    }
+  ],
+  "browserInternal": [
+    "chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/pdf_embedder.css",
+    "chrome://resources/css/text_defaults_md.css",
+    "chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/index.css",
+    "chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/main.js",
+    "chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/pdf_viewer_wrapper.js"
+  ],
+  "external": [],
+  "pageErrors": [],
+  "hostedWrites": 0
+}

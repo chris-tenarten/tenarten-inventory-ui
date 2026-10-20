@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';import{readFileSync,writeFileSync}from'node:fs';import vm from'node:vm';
+const listeners={},shown=[],opened=[],messages=[];let windows=[];
+vm.runInNewContext(readFileSync('public/sw.js','utf8'),{URL,self:{location:{origin:'https://tenops.example'},addEventListener:(name,handler)=>listeners[name]=handler,skipWaiting:()=>{},registration:{showNotification:async(...args)=>shown.push(args)},clients:{claim:()=>{},matchAll:async()=>windows,openWindow:async url=>opened.push(url)}}});
+const id='00000000-0000-4000-8000-000000000010';
+const dispatch=async(name,event)=>{let work;listeners[name]({...event,waitUntil:value=>work=value});await work;};
+assert(!listeners.fetch);
+const p={v:1,id,title:'Alex · Direct Message',body:'Synthetic preview'};
+await dispatch('push',{data:{json:()=>p}});await dispatch('push',{data:{json:()=>p}});assert.equal(shown[0][1].tag,shown[1][1].tag);assert.equal(shown[0][1].renotify,false);
+await dispatch('push',{data:{json:()=>{throw Error('Invalid');}}});assert.equal(shown.at(-1)[0],'New TenOps notification');
+await dispatch('notificationclick',{notification:{close(){},data:{url:'https://evil.invalid/'}}});assert.equal(opened.length,0);
+windows=[{url:'https://tenops.example/settings',postMessage:value=>messages.push(value),focus:async()=>{}}];
+await dispatch('notificationclick',{notification:{close(){},data:{url:'/?pushNotificationId='+id}}});assert.equal(messages[0].id,id);assert.equal(opened.length,0);
+windows=[];await dispatch('notificationclick',{notification:{close(){},data:{url:'/?pushNotificationId='+id}}});assert.equal(opened[0],'https://tenops.example/?pushNotificationId='+id);
+const checks=['no fetch interception or authenticated cache','stable event tag and non-renotify hint','malformed payload generic fallback','external click destination rejected','warm click message bridge','cold click opaque same-origin URL'];
+for(const name of checks)console.log('PASS '+name);writeFileSync('docs/project-memory/evidence/web-push-stage-b/service-worker.json',JSON.stringify({checks,simulationOnly:true,realNotifications:0},null,2));

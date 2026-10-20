@@ -1,0 +1,13 @@
+{
+  "command": "npm run build -- --webpack",
+  "result": "passed",
+  "configuration": "Explicit localhost synthetic Supabase URL/public fixture key; enforced RBAC; TenOps branding; no .env.local copied",
+  "typescript": "passed --noEmit --incremental false",
+  "changedApplicationAndTestsLint": "passed",
+  "workerPolicyLint": "passed with --no-ignore",
+  "fixtureLint": "Inherited findings unchanged from Stage A; see fixture-lint.json",
+  "diffCheck": "passed",
+  "browserBundleScan": "No worker secrets, service-role key references or review browser shims in exported static chunks",
+  "deployable": false,
+  "reason": "This export is for localhost synthetic review only"
+}

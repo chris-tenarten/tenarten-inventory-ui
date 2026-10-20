@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "no fetch interception or authenticated cache",
+    "stable event tag and non-renotify hint",
+    "malformed payload generic fallback",
+    "external click destination rejected",
+    "warm click message bridge",
+    "cold click opaque same-origin URL"
+  ],
+  "simulationOnly": true,
+  "realNotifications": 0
+}

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/lib/auth';
-import { deviceSupport, disablePushDevice, enablePushDevice, inspectPushDevice, preparePushWorker, pushConfiguration, type PushConfiguration, type PushState } from '@/lib/web-push';
+import { deviceSupport, disablePushDevice, enablePushDevice, inspectPushDevice, preparePushWorker, pushConfiguration, setPushPreviews, type PushConfiguration, type PushState } from '@/lib/web-push';
 
 export default function PushNotificationSettings() {
   const auth = useAuth();
@@ -39,13 +39,13 @@ export default function PushNotificationSettings() {
     const request = generation.current;
     setBusy(true); setMessage('');
     const work = enable && config ? enablePushDevice(account, config) : disablePushDevice(account);
-    void work.then(() => { if (request === generation.current) setMessage(enable ? 'This device is registered. Message delivery is not active yet.' : 'Notifications are disabled on this device.'); })
+    void work.then(() => { if (request === generation.current) setMessage(enable ? 'This device is registered.' : 'Notifications are disabled on this device.'); })
       .catch(cause => { if (request === generation.current) setMessage(cause instanceof Error ? cause.message : 'Unable to update this device.'); })
       .finally(() => { setBusy(false); void refresh(); });
   }
   return <section id="notifications" className="mt-6 scroll-mt-20 border border-slate-300 bg-white p-4" aria-labelledby="push-settings-title">
     <h2 id="push-settings-title" className="text-lg font-bold text-slate-950">Device notifications</h2>
-    <p className="mt-1 text-sm text-slate-600">Prepare this device for direct-message notifications. Message delivery is not active yet.</p>
+    <p className="mt-1 text-sm text-slate-600">Enable this device for direct messages and Job Update mentions.</p>
     {!account ? <p className="mt-3 text-sm text-slate-600">Sign in with an active TenOps account to manage this device.</p> : !state ? <p role="status" className="mt-3 text-sm">Checking this device…</p> : <>
       <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
         <div><dt className="font-semibold">Browser</dt><dd>{state.supported ? 'Supported' : 'Not supported'}</dd></div>
@@ -53,6 +53,7 @@ export default function PushNotificationSettings() {
         <div><dt className="font-semibold">Permission</dt><dd>{state.permission === 'default' ? 'Not requested' : state.permission === 'granted' ? 'Allowed' : state.permission === 'denied' ? 'Blocked' : 'Unavailable'}</dd></div>
       </dl>
       <p className="mt-3 text-sm font-semibold">{state.registered ? 'Registered on this device' : 'Not registered on this device'}</p>
+      {state.registered && !state.deliveryActive ? <p className="mt-2 text-sm text-slate-600">Delivery is inactive in this environment.</p> : null}
       {state.needsInstall ? <p className="mt-2 text-sm text-slate-600">In Safari, open Share, choose Add to Home Screen, then open TenOps from its Home Screen icon.</p> : null}
       {state.permission === 'denied' ? <p className="mt-2 text-sm text-slate-600">Allow notifications in your browser settings or iPhone Settings → Notifications for this Home Screen app. Return here and retry.</p> : null}
       {!state.configured && state.supported ? <p className="mt-2 text-sm text-slate-600">Device registration is not available in this environment yet. You can still disable an existing registration.</p> : null}
@@ -61,6 +62,10 @@ export default function PushNotificationSettings() {
         <button type="button" disabled={busy} onClick={() => change(false)} className="min-h-11 border border-slate-400 px-3 text-sm font-semibold disabled:opacity-50">Disable on this device</button>
         <button type="button" disabled={busy} onClick={() => { setMessage(''); void refresh(); }} className="min-h-11 px-3 text-sm font-semibold underline">Check again</button>
       </div>
+      {state.registered ? <label className="mt-4 flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={state.previews !== false} disabled={busy} onChange={event => {
+        const previews=event.target.checked;setState(current=>current?{...current,previews}:current);setBusy(true);setMessage('');
+        void setPushPreviews(account,previews).catch(error=>setMessage(error.message)).finally(()=>{setBusy(false);void refresh();});
+      }} />Show message previews in notifications</label> : null}
       <p className="mt-3 text-xs text-slate-500">This setting applies to this installation only. Other devices are managed separately. In-app notifications remain available.</p>
       {state.error ? <p role="status" className="mt-3 text-sm text-amber-800">{state.error}</p> : null}
     </>}

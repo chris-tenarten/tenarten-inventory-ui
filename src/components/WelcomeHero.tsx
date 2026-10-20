@@ -9,6 +9,8 @@ import { ROLE_LABELS } from "@/lib/rbac";
 import type { WelcomeNotificationStatus } from "./AccountNotifications";
 import { productionTagClassName } from "@/modules/production/components/production-tag";
 
+import { pendingNotificationId } from "@/lib/notification-entry";
+
 type WelcomeMode = "boot" | "replay";
 
 const BOOT_PLAYED_KEY_PREFIX = "tenops.welcomeHeroPlayed:";
@@ -72,9 +74,10 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
   const [criticalAppReady, setCriticalAppReady] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const heroEligible = auth.ready && !auth.requiresPasswordSetup && auth.isAuthenticated && Boolean(auth.profile?.isActive) && auth.accessAllowed && Boolean(auth.user);
-  const bootRequired = heroEligible && !bootClaimed && typeof window !== "undefined" && !window.sessionStorage.getItem(`${BOOT_PLAYED_KEY_PREFIX}${auth.user?.id}`);
-  const heroVisible = heroEligible && (visible || bootRequired);
-  const heroStartingCoverVisible = !auth.requiresPasswordSetup && (preparingBoot || (bootRequired && !visible));
+  const notificationEntry = Boolean(pendingNotificationId());
+  const bootRequired = !notificationEntry && heroEligible && !bootClaimed && typeof window !== "undefined" && !window.sessionStorage.getItem(`${BOOT_PLAYED_KEY_PREFIX}${auth.user?.id}`);
+  const heroVisible = !notificationEntry && heroEligible && (visible || bootRequired);
+  const heroStartingCoverVisible = !notificationEntry && !auth.requiresPasswordSetup && (preparingBoot || (bootRequired && !visible));
   const heroCoverVisible = heroStartingCoverVisible || heroVisible;
 
   const resetTimeline = useCallback(() => {
@@ -118,6 +121,7 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
 
   useEffect(() => {
     const prepare = () => {
+      if (pendingNotificationId()) return;
       // The cover is kept mounted so login can hand off visual ownership
       // synchronously before Supabase publishes the authenticated session.
       if (coverRef.current) coverRef.current.hidden = false;
@@ -129,9 +133,12 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
       preparingBootRef.current = false;
       setPreparingBoot(false);
     };
+    const notificationOpen=()=>{setVisible(false);setBootClaimed(true);preparingBootRef.current=false;setPreparingBoot(false);};
+    window.addEventListener("tenops:notification-entry",notificationOpen);
     window.addEventListener("tenops:prepare-hero-boot", prepare);
     window.addEventListener("tenops:cancel-hero-boot", cancel);
     return () => {
+      window.removeEventListener("tenops:notification-entry",notificationOpen);
       window.removeEventListener("tenops:prepare-hero-boot", prepare);
       window.removeEventListener("tenops:cancel-hero-boot", cancel);
     };
@@ -157,6 +164,9 @@ export default function WelcomeHero({ welcomeStatus }: { welcomeStatus: WelcomeN
       const userId = auth.user.id;
       lastAuthenticatedUserRef.current = userId;
       const playedKey = `${BOOT_PLAYED_KEY_PREFIX}${userId}`;
+      if (pendingNotificationId()) {
+        window.sessionStorage.setItem(playedKey, "true");setBootClaimed(true);setVisible(false);preparingBootRef.current=false;setPreparingBoot(false);return;
+      }
       if (window.sessionStorage.getItem(playedKey) && !preparingBootRef.current) {
         setBootClaimed(true);
         return;

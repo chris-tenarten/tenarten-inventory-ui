@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "read-only active owner can register without messaging-write grant",
+    "duplicate registration is idempotent",
+    "direct subscription reads denied to authenticated, anonymous and service roles",
+    "anonymous cannot execute registration or configuration",
+    "cross-account safe summary is null and endpoint takeover denied",
+    "foreign revoke cannot affect owner binding",
+    "generation revoke is idempotent and cannot rebind revoked endpoint",
+    "endpoint SSRF and key/expiration validation",
+    "inactive cannot register; owner can still revoke",
+    "search paths and helper execution privileges are restricted"
+  ],
+  "engine": "PostgreSQL 17.6 (Debian 17.6-2.pgdg13+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "roles": [
+    "authenticated",
+    "anon",
+    "service_role"
+  ],
+  "hostedChanges": 0
+}

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {chromium,expect} from '@playwright/test';
 import {session,userId,otherUserId} from './support/wave4-fixture.mjs';
-const origin='http://localhost:3000',evidence='docs/project-memory/evidence/web-push-stage-a';
+const origin='http://localhost:3000',evidence=process.env.WEB_PUSH_EVIDENCE||'docs/project-memory/evidence/web-push-stage-a';
 mkdirSync(evidence,{recursive:true});
 const browser=await chromium.launch({channel:'chrome',headless:true});
 const checks=[],errors=[],external=[];

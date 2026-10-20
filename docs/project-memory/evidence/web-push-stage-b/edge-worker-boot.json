@@ -1,0 +1,8 @@
+{
+  "runtimeImage": "public.ecr.aws/supabase/edge-runtime:v1.74.3",
+  "entrypoint": "supabase/functions/send-web-push/index.ts",
+  "httpStatus": 503,
+  "response": {"status": "disabled"},
+  "installedCredentials": false,
+  "pushRequests": 0
+}

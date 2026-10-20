@@ -4,7 +4,7 @@
 import {createServer} from 'node:http';
 import {readFileSync,existsSync,statSync,mkdirSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
-import {pushReviewRpc,pushReviewScript} from './support/web-push-review-fixture.mjs';
+import {pushReviewRpc,pushReviewScript,pushDemoScript,reviewPushEvent,reviewNotificationHistory} from './support/web-push-review-fixture.mjs';
 import {blendFixtures} from './support/production-blend-fixtures.mts';
 import {renderProductionBlend} from '../supabase/functions/_shared/production-blend-pdf.ts';
 import {buildProductionBlend} from '../supabase/functions/_shared/production-blend.mjs';
@@ -42,9 +42,10 @@ const server=createServer(async(req,res)=>{
   const auth=req.headers.authorization??'';
   const row=sampleRows.find(item=>item.id===(body.p_sample?.id||body.sampleId||body.p_sample_id))??sampleRows[0];
   let actor=reviewSession.user.id;try{actor=JSON.parse(Buffer.from(auth.split('.')[1],'base64url').toString()).sub;}catch{}
-  if(process.env.WEB_PUSH_REVIEW==='true'&&url.pathname==='/__review/push-browser.js')return send(200,Buffer.from(pushReviewScript),{'content-type':'application/javascript'});
+  if(process.env.WEB_PUSH_REVIEW==='true'&&url.pathname==='/__review/push-browser.js')return send(200,Buffer.from(pushReviewScript+pushDemoScript),{'content-type':'application/javascript'});
+  if(process.env.WEB_PUSH_REVIEW==='true'&&url.pathname==='/__review/push-event'){const p=reviewPushEvent(url.searchParams.get('kind'),actor,jobId,peerId,url.searchParams.get('device'));if(p.kind==='mention')tables.job_updates.push({id:p.id,job_id:jobId,body:p.body,author_name:'Blair Lead',author_user_id:peerId,requires_follow_up:false,created_at:stamp,resolved_at:null,edited_at:null});return send(200,p);}
   if(process.env.WEB_PUSH_REVIEW==='true'&&url.pathname==='/__review/control'){pushControl=body;return send(200,true);}
-  if(process.env.WEB_PUSH_REVIEW==='true'&&/^(get_my_web_push_|register_my_web_push_|revoke_my_web_push_)/.test(name)){const result=await pushReviewRpc(name,body,actor,pushControl);return send(result.status,result.data);}
+  if(process.env.WEB_PUSH_REVIEW==='true'&&/^(get_my_web_push_|register_my_web_push_|revoke_my_web_push_|set_my_web_push_|resolve_my_push_)/.test(name)){const result=await pushReviewRpc(name,body,actor,pushControl);return send(result.status,result.data);}
   if(url.pathname.startsWith('/auth/v1/')||url.pathname==='/rest/v1/rpc/get_my_app_access'){
    if(fixtureAuth){const profile={user_id:actor,display_name:process.env.WEB_PUSH_REVIEW==='true'?(actor.endsWith('900042')?'Review B':'Wave 4 Review'):'Local review Admin',role:'admin',is_active:true,read_only:false};profiles.set(auth,profile);return send(200,url.pathname.includes('get_my_app_access')?[profile]:name==='token'?reviewSession:reviewSession.user);}
    const plan=planRequest(PREFIX+url.pathname+url.search,req.method,body);if(!plan)return send(403,{message:'Auth operation blocked by read-only review guard'});
@@ -72,6 +73,10 @@ const server=createServer(async(req,res)=>{
    return send(403,{message:'Only local Sample PDF generation is allowed'});
   }
   if(url.pathname.startsWith('/rest/v1/rpc/')){
+   if(process.env.WEB_PUSH_REVIEW==='true'&&name==='list_my_account_notification_history')return send(200,reviewNotificationHistory(actor));
+   if(process.env.WEB_PUSH_REVIEW==='true'&&name==='list_my_work_inbox_recipients')return send(200,[{user_id:peerId,display_name:'Alex Operator',role:'member'}]);
+   if(process.env.WEB_PUSH_REVIEW==='true'&&name==='list_my_work_message_page_v11')return send(200,[{id:uuid(710099),sender_user_id:peerId,sender_name:'Alex Operator',recipient_user_id:actor,recipient_name:'Local review',body:'Can you check the revised color plate before tomorrow?',created_at:stamp,read_at:null,attachments:[]}]);
+   if(name==='mark_my_work_inbox_conversation_read'||name==='mark_my_account_notification_read')return send(200,null);
    if(name==='list_bids')return send(200,[],{'content-range':'*/0'});
    if(name==='list_samples')return send(200,sampleRows.map(sample=>({sample})));
    if(name==='suggest_sample_color_plate_number')return send(200,`T26-${901+sampleRows.length}-A`);

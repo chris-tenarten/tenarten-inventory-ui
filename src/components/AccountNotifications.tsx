@@ -1,4 +1,5 @@
 "use client";
+import {pushOwnsAttention} from "@/lib/web-push";
 
 import { AlertTriangle, ArrowRight, AtSign, Bell, Inbox, MessageSquare, Send, Sparkles, UserRoundCheck, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
@@ -127,7 +128,7 @@ export default function AccountNotifications({ onOpen, onWelcomeChange }: {
     if (activeArrivalId && !accountItems.some((item) => item.id === activeArrivalId && item.read_at === null)) {
       dispatchOnboarding({ type: "finish-arrival" });
     }
-    const arrivalCandidates = accountItems.map((item) => ({ id: item.id, notificationType: item.notification_type, readAt: item.read_at }));
+    const arrivalCandidates = accountItems.map((item) => ({ id: item.id, readAt: item.read_at, notificationType: pushOwnsAttention(profileUserId,item.notification_type) ? "push_owned" : item.notification_type }));
     const liveCandidates = arrivalCandidates.filter((item) => pendingLiveIdsRef.current.has(item.id));
     let focusId: string | null = null;
     if (liveCandidates.length) {

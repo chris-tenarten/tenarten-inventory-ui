@@ -47,12 +47,13 @@ await run('late registration after account change cannot attach to new owner',as
 await run('new account has an independent fresh registration',async()=>{await push.enablePushDevice('B',config);assert.equal((await push.inspectPushDevice('B')).registered,true);assert.equal((await push.inspectPushDevice('A')).registered,false);});
 await run('previous account retry drains only its own revocations',async()=>{await push.releasePushDevice();actor='A';push.setPushAccount('A');await flush();assert.equal(JSON.parse(values.get('tenops.push.revocations.v1')).length,0);assert(revokeCalls>0);});
 await run('unsupported and uninstalled iPhone states are explicit',async()=>{navigator.userAgent='iPhone';assert.equal(push.deviceSupport().needsInstall,true);await assert.rejects(push.enablePushDevice('A',config),/Home Screen/);navigator.userAgent='Desktop';window.isSecureContext=false;assert.equal(push.deviceSupport().supported,false);window.isSecureContext=true;});
-await run('worker and migration have no delivery path or public subscription grants',async()=>{
- const worker=readFileSync('public/sw.js','utf8');assert(!/addEventListener\(['"](?:push|fetch|notificationclick)/.test(worker));assert(!/showNotification|caches\./.test(worker));
+await run('worker and Stage A migration preserve cache/privacy boundaries',async()=>{
+ const worker=readFileSync('public/sw.js','utf8');assert(!/addEventListener\(['"]fetch/.test(worker));assert(!/caches\./.test(worker));
  const sql=readFileSync('supabase/migrations/20261020200000_web_push_device_registration.sql','utf8');
  for(const match of ['enable row level security','user_id=auth.uid()','generation=generation+1','existing.user_id<>auth.uid()','registration_enabled boolean not null default false','unique(environment,endpoint_hash)'])assert(sql.includes(match),match);
  assert(!/grant (?:all|select).*web_push_subscriptions/i.test(sql));assert(!/net.http|cron.schedule|create trigger|insert into public.web_push_environments/i.test(sql));
 });
-mkdirSync('docs/project-memory/evidence/web-push-stage-a',{recursive:true});
-writeFileSync('docs/project-memory/evidence/web-push-stage-a/controller.json',JSON.stringify({checks,databaseExecution:'Not performed: migration application is not authorized',realPushRequests:0},null,2));
+const evidence=process.env.WEB_PUSH_EVIDENCE||'docs/project-memory/evidence/web-push-stage-a';
+mkdirSync(evidence,{recursive:true});
+writeFileSync(evidence+'/controller.json',JSON.stringify({checks,databaseExecution:'Controller simulation only; see separate database execution evidence',realPushRequests:0},null,2));
 await supabase.auth.stopAutoRefresh();

@@ -32,6 +32,7 @@ import AccountAccessPanel from '@/components/AccountAccessPanel';
 import AccountNotifications, { type WelcomeNotificationStatus } from '@/components/AccountNotifications';
 import GlobalMessaging from '@/components/GlobalMessaging';
 import WelcomeHero from '@/components/WelcomeHero';
+import PushNotificationEntry from '@/components/PushNotificationEntry';
 import { toolboxMenuSections } from '@/components/ToolboxLauncher';
 import { openProductionJob } from '@/modules/production/job-options';
 import { IntakeIcon, MyWorkIcon } from '@/components/primary-navigation-icons';
@@ -403,6 +404,7 @@ export default function ClientLayoutShell({
   return (
     <div ref={shellRef} onClickCapture={guardMobileNavigation} data-app-shell data-mobile-unlocked={shellUnlocked ? "true" : undefined}>
       <WelcomeHero welcomeStatus={welcomeStatus} />
+      <PushNotificationEntry />
       <header ref={shellHeaderRef} data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} data-compact-header={hasScrolled ? 'true' : undefined} className="sticky top-0 z-[100] border-b border-slate-200 bg-[#f2f5f8] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200">
         <div
           data-shell-header-inner
