@@ -1,0 +1,22 @@
+{
+  "checks": [
+    "desktop explicit enable, real root worker, disable and no caching",
+    "denied permission and recovery without repeated prompts",
+    "registration failure cleans browser subscription and retry succeeds",
+    "offline disable preserves cleanup and successful retry drains it",
+    "reload and continuing token refresh preserve binding and startup",
+    "explicit sign-out removes registration without permission prompt",
+    "account switching clears former binding and shows independent device state",
+    "lost session unsubscribes locally",
+    "profile revocation removes device access and browser subscription",
+    "password recovery sign-out clears device binding",
+    "delayed registration across account switch never registers the new account",
+    "safe localhost Sample library creation remains functional",
+    "unconfigured environment remains disabled and does not prompt",
+    "mobile Safari installation guidance and navigation fit"
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "permissionAndSubscriptions": "Simulated only; real root service worker",
+  "realDevicePushes": 0
+}

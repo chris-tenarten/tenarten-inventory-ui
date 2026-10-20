@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import PushNotificationSettings from "@/components/PushNotificationSettings";
 import { BusinessButton } from "@/components/BusinessWriteControls";
 import { useEffect, useState } from "react";
 import {
@@ -76,6 +77,7 @@ export default function SettingsPage() {
         <p className="mt-1 text-sm text-slate-600">Sign in with your individual TenOps account for personalized access, notifications, and role-based permissions.</p>
         <AccountAccessPanel onAuthenticated={() => {}} showEyebrow={false} />
       </section>
+      <PushNotificationSettings />
       <section id="appearance" className="mt-6 scroll-mt-20 border border-slate-300 bg-white p-4">
         <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
           {t("settings.appearance")}

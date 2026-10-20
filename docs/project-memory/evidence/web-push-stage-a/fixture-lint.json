@@ -1,0 +1,35 @@
+{
+  "unchangedFromBaseline": true,
+  "messages": [
+    {
+      "rule": "@typescript-eslint/ban-ts-comment",
+      "message": "Do not use \"@ts-nocheck\" because it alters compilation errors.",
+      "severity": 2
+    },
+    {
+      "rule": "@typescript-eslint/no-unused-vars",
+      "message": "'mkdirSync' is defined but never used.",
+      "severity": 1
+    },
+    {
+      "rule": "@typescript-eslint/no-unused-vars",
+      "message": "'writeFileSync' is defined but never used.",
+      "severity": 1
+    },
+    {
+      "rule": "@typescript-eslint/no-unused-vars",
+      "message": "'hiddenId' is assigned a value but never used.",
+      "severity": 1
+    },
+    {
+      "rule": "@typescript-eslint/no-unused-vars",
+      "message": "'working_versions' is assigned a value but never used.",
+      "severity": 1
+    },
+    {
+      "rule": "@typescript-eslint/no-unused-vars",
+      "message": "'issued_documents' is assigned a value but never used.",
+      "severity": 1
+    }
+  ]
+}

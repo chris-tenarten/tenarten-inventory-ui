@@ -3,6 +3,7 @@
 import type { Session, User } from "@supabase/supabase-js";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { releasePushDevice, setPushAccount } from "@/lib/web-push";
 import { BRANDING } from "@/lib/dev-branding.mjs";
 import {
   type AppRole,
@@ -107,6 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("The returned account profile does not match the authenticated account.");
       }
       const allowed = Boolean(nextProfile?.isActive && (RBAC_MODE === "compatibility" || !BRANDING.showDeveloperArtwork || roleHasCapability(nextProfile.role, "accessDevelopmentEnvironment")));
+      setPushAccount(allowed ? nextProfile!.userId : null);
       verifiedSession.current = allowed ? nextSession : null;
       setProfile(nextProfile);
       setProfileError("");
@@ -120,6 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (cause) {
       if (!current()) return;
+      setPushAccount(null);
       verifiedSession.current = null;
       setProfile(null);
       const detail = cause && typeof cause === "object" && "message" in cause && typeof cause.message === "string" ? cause.message : "Please refresh and retry.";
@@ -130,6 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Invalidate old requests immediately, before deferring any authenticated RPC.
   const beginResolution = useCallback((nextSession: Session | null, continuing = false) => {
+    if (!nextSession || (currentSession.current && (currentSession.current.user.id !== nextSession.user.id || !continuing))) setPushAccount(null);
     const request = ++generation.current;
     currentSession.current = nextSession;
     setSession(nextSession);
@@ -219,6 +223,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
     },
     async signOut() {
+      await releasePushDevice();
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     },
@@ -239,6 +244,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async updatePassword(password) {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
+      await releasePushDevice();
       const { error: signOutError } = await supabase.auth.signOut({ scope: "local" });
       if (signOutError) throw signOutError;
       setRequiresPasswordSetup(false);

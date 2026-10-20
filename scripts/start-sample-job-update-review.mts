@@ -4,6 +4,7 @@
 import {createServer} from 'node:http';
 import {readFileSync,existsSync,statSync,mkdirSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
+import {pushReviewRpc,pushReviewScript} from './support/web-push-review-fixture.mjs';
 import {blendFixtures} from './support/production-blend-fixtures.mts';
 import {renderProductionBlend} from '../supabase/functions/_shared/production-blend-pdf.ts';
 import {buildProductionBlend} from '../supabase/functions/_shared/production-blend.mjs';
@@ -29,7 +30,7 @@ const camel=s=>s.replace(/_([a-z])/g,(_,c)=>c.toUpperCase());
 const workingSnapshot=(target=row)=>({...snapshot,...Object.fromEntries(Object.entries(target).map(([k,v])=>[camel(k),v])),formulation:target.formulation_state,blendRows:target.blend_rows.map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[camel(k),v])))});
 const pdf=async(key,value=snapshot)=>{if(!pdfs.has(key))pdfs.set(key,renderSampleWorkOrder(value));return pdfs.get(key);};
 const blendPlan={id:uuid(710020),status:'issued',created_at:stamp,inputs:blendFixtures[4].inputs,source_snapshot:structuredClone(snapshot),model:buildProductionBlend(snapshot,blendFixtures[4].inputs)};
-const objects=new Map(),requests=new Map(),notifications=[],calls=[],profiles=new Map();let failNext='',lostNext=false;
+const objects=new Map(),requests=new Map(),notifications=[],calls=[],profiles=new Map();let failNext='',lostNext=false,pushControl={};
 const allowed=p=>p?.is_active&&!p.read_only&&['admin','lead','member'].includes(p.role);
 const server=createServer(async(req,res)=>{
  const send=(status,value,headers={})=>{res.writeHead(status,{'content-type':'application/json','cache-control':'no-store',...headers});res.end(Buffer.isBuffer(value)||value instanceof Uint8Array?value:JSON.stringify(value));};
@@ -40,8 +41,12 @@ const server=createServer(async(req,res)=>{
   let body={};if(raw.length&&!isStorage)body=JSON.parse(raw.toString());
   const auth=req.headers.authorization??'';
   const row=sampleRows.find(item=>item.id===(body.p_sample?.id||body.sampleId||body.p_sample_id))??sampleRows[0];
+  let actor=reviewSession.user.id;try{actor=JSON.parse(Buffer.from(auth.split('.')[1],'base64url').toString()).sub;}catch{}
+  if(process.env.WEB_PUSH_REVIEW==='true'&&url.pathname==='/__review/push-browser.js')return send(200,Buffer.from(pushReviewScript),{'content-type':'application/javascript'});
+  if(process.env.WEB_PUSH_REVIEW==='true'&&url.pathname==='/__review/control'){pushControl=body;return send(200,true);}
+  if(process.env.WEB_PUSH_REVIEW==='true'&&/^(get_my_web_push_|register_my_web_push_|revoke_my_web_push_)/.test(name)){const result=await pushReviewRpc(name,body,actor,pushControl);return send(result.status,result.data);}
   if(url.pathname.startsWith('/auth/v1/')||url.pathname==='/rest/v1/rpc/get_my_app_access'){
-   if(fixtureAuth){const profile={user_id:reviewSession.user.id,display_name:'Local review Admin',role:'admin',is_active:true,read_only:false};profiles.set(auth,profile);return send(200,url.pathname.includes('get_my_app_access')?[profile]:name==='token'?reviewSession:reviewSession.user);}
+   if(fixtureAuth){const profile={user_id:actor,display_name:process.env.WEB_PUSH_REVIEW==='true'?(actor.endsWith('900042')?'Review B':'Wave 4 Review'):'Local review Admin',role:'admin',is_active:true,read_only:false};profiles.set(auth,profile);return send(200,url.pathname.includes('get_my_app_access')?[profile]:name==='token'?reviewSession:reviewSession.user);}
    const plan=planRequest(PREFIX+url.pathname+url.search,req.method,body);if(!plan)return send(403,{message:'Auth operation blocked by read-only review guard'});
    const r=await fetch(new URL(plan.path,source.NEXT_PUBLIC_SUPABASE_URL),{method:plan.method,headers:{...forwardHeaders(req.headers,source.NEXT_PUBLIC_SUPABASE_ANON_KEY),...(plan.body?{'content-type':'application/json'}:{})},body:plan.body?JSON.stringify(plan.body):undefined,redirect:'error',signal:AbortSignal.timeout(20000)});
    const data=await r.json();if(url.pathname.includes('get_my_app_access')&&r.ok)profiles.set(auth,data[0]);return send(r.status,data);
@@ -101,7 +106,7 @@ const server=createServer(async(req,res)=>{
   if(url.pathname.startsWith('/rest/v1/')&&['GET','HEAD'].includes(req.method)){const r=fixtureResponse(url,tables);return send(200,req.headers.accept?.includes('vnd.pgrst.object')?r.rows[0]??null:r.rows,r.headers);}
   if(!['GET','HEAD'].includes(req.method)||url.pathname.startsWith('/api/'))return send(403,{message:'No hosted business writes permitted'});
   const root=path.resolve('out'),relative=decodeURIComponent(url.pathname).replace(/^\/+/, '')||'index';const file=[relative,relative+'.html',path.join(relative,'index.html')].map(f=>path.resolve(root,f)).find(f=>f.startsWith(root+path.sep)&&existsSync(f)&&statSync(f).isFile());if(!file)return send(404,{});
-  const ext=path.extname(file);res.writeHead(200,{'content-type':({'.html':'text/html','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.txt':'text/plain'})[ext]||'application/octet-stream','content-security-policy':"default-src 'self'; connect-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; frame-src 'self' blob:; object-src 'none'; base-uri 'self'"});res.end(readFileSync(file));
+  const ext=path.extname(file);res.writeHead(200,{'content-type':({'.html':'text/html','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.txt':'text/plain'})[ext]||'application/octet-stream','content-security-policy':"default-src 'self'; connect-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; frame-src 'self' blob:; object-src 'none'; base-uri 'self'"});let data=readFileSync(file);if(ext==='.html'&&process.env.WEB_PUSH_REVIEW==='true')data=Buffer.from(data.toString().replace('</head>',`<script src="/__review/push-browser.js"></script><script>if(!localStorage.getItem('sb-localhost-auth-token'))localStorage.setItem('sb-localhost-auth-token',${JSON.stringify(JSON.stringify(reviewSession))});</script></head>`));res.end(data);
  }catch(e){send(500,{message:e.message});}
 });
 server.listen(port,'localhost',()=>console.log(`Local disposable review: ${origin}/samples?open=${sampleId} — ${fixtureAuth?'fixture auth for tests':'normal TenOps sign-in; hosted business writes blocked'}`));

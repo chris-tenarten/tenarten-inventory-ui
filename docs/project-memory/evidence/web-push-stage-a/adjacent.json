@@ -1,0 +1,13 @@
+{
+  "command": "node scripts/verify-samples-access-refresh.mjs --affected",
+  "passed": 2,
+  "checks": [
+    "Samples mount and Inspector revalidation preserve mounted generator; local PDF preview",
+    "native browser tab-switch attempt preserves current Inspector state"
+  ],
+  "focusEvidence": {"switches": 3, "visibilityEvents": [], "visibilitySupported": false, "profileRequests": 0},
+  "pageErrors": [],
+  "hostedWrites": 0,
+  "external": [],
+  "browserInternal": "Chrome built-in PDF viewer resources only"
+}
