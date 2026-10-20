@@ -26,7 +26,7 @@ export default function ProposalWorkspace() {
         {allowed === false && <div role="alert" className="mt-5 border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">Your account does not have Proposal Generator access.</div>}
         {allowed && !open && <button type="button" onClick={() => setOpen(true)} className="mt-5 h-10 border border-blue-900 bg-blue-900 px-4 text-sm font-bold text-white">Open Proposal Generator</button>}
       </div>
-      {open && allowed && auth.profile && <ProposalPanel bidId={context.bidId || undefined} initialOpenId={context.openId || undefined} isAdmin={auth.profile.role === 'admin'} onClose={() => setOpen(false)} />}
+      {open && allowed && auth.profile && <ProposalPanel key={`${auth.profile.userId}:${auth.profile.role}:${auth.profile.readOnly}`} bidId={context.bidId || undefined} initialOpenId={context.openId || undefined} isAdmin={auth.profile.role === 'admin'} onClose={() => setOpen(false)} />}
     </main>
   );
 }

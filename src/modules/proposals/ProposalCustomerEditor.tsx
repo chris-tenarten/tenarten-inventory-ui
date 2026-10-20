@@ -1,5 +1,8 @@
 'use client';
 
+import ProjectContactEditor from '@/modules/production/contacts/ProjectContactEditor';
+import { unlinkedContact } from '@/modules/production/contacts/model';
+
 import { BusinessInput, BusinessTextarea, BusinessButton, BusinessSelect } from '@/components/BusinessWriteControls';
 
 import { Calculator, Plus, Trash2 } from 'lucide-react';
@@ -143,6 +146,16 @@ export default function ProposalCustomerEditor({ proposal, onChange }: { proposa
 
     <section className={section}>
       <h3 className="text-sm font-bold uppercase tracking-wide">Customer & contact</h3>
+      {!disabled && <div className="my-3"><ProjectContactEditor key={proposal.id} variant="proposal" customer={proposal.customerName} value={unlinkedContact()} onChange={(name, capture) => {
+        if (!capture.customer_contact_snapshot) { onChange({ ...proposal, customerName: name }); return; }
+        if (!window.confirm('Copy this saved customer into the Proposal draft? This replaces the draft’s company, address and contact information. Save the draft to keep it.')) return;
+        const snapshot = capture.customer_contact_snapshot;
+        onChange({ ...proposal, customerName: name, customerStreet: snapshot.mailing_address,
+          customerCity: '', customerState: '', customerPostalCode: '', customerAddress: '', customerContact: '',
+          customerContactName: snapshot.contact_name, customerOfficePhone: snapshot.contact_phone || snapshot.company_phone,
+          customerMobilePhone: '', customerEmail: snapshot.contact_email || snapshot.company_email });
+      }} /><p className="mt-2 text-xs text-slate-500">Select a saved customer to copy information into this draft. Later directory edits do not change this document. Company and contact fields below remain editable.</p></div>}
+
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className={`${label} sm:col-span-2`}>Company<BusinessInput disabled={disabled} value={proposal.customerName} onChange={(event) => patch('customerName', event.target.value)} className={field} /></label>
         <label className={`${label} sm:col-span-2`}>Street<BusinessInput disabled={disabled} value={proposal.customerStreet ?? ''} onChange={(event) => patch('customerStreet', event.target.value)} className={field} /></label>

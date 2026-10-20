@@ -6,7 +6,7 @@ import EarlyAccessBadge from '@/components/EarlyAccessBadge';
 import PerformanceAnnouncement from '@/components/PerformanceAnnouncement';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Factory, Hammer } from 'lucide-react';
+import { BookOpen, Factory, Hammer, ContactRound } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -253,12 +253,13 @@ function DomainNav({
 }
 
 function LauncherMenuSections({ pathname, sections, onSelect }: { pathname: string; sections: typeof myWorkMenuSections; onSelect(): void }) {
+  const auth = useAuth();
   return sections.map((section, sectionIndex) => <div key={section.label} className={sectionIndex ? 'border-t border-slate-200 pt-1' : ''}>
     <div className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
       {section.label === 'Tools' ? <Hammer className="h-3.5 w-3.5" /> : section.label === 'Resources' ? <BookOpen className="h-3.5 w-3.5" /> : <MyWorkIcon />}
       {section.label}
     </div>
-    {section.items.map((item) => <Link key={item.href} role="menuitem" href={item.href} onClick={onSelect} className={`block min-h-11 px-4 py-3 text-sm font-bold transition ${dropdownItemClass(pathname === item.href || pathname.startsWith(`${item.href}/`))}`}>{item.label}</Link>)}
+    {section.items.filter(item => item.href !== '/contacts' || auth.can('readOperationalData')).map((item) => <Link key={item.href} role="menuitem" href={item.href} onClick={onSelect} className={`block min-h-11 px-4 py-3 text-sm font-bold transition ${dropdownItemClass(pathname === item.href || pathname.startsWith(`${item.href}/`))}`}>{item.href === '/contacts' && <ContactRound className="mr-2 inline h-4 w-4" aria-hidden="true" />}{item.label}</Link>)}
   </div>);
 }
 
@@ -524,7 +525,7 @@ export default function ClientLayoutShell({
         ...dashboardNavItems.filter(item => item.href !== '/pre-production' || Boolean(auth.profile?.isActive && auth.can('viewIntake'))).map(item => ({href: item.href, label: t(item.labelKey)})),
         ...reportingNavItems.filter(item => !item.disabled).map(item => ({href: item.href, label: t(item.labelKey)})),
         ...inventoryNavItems.map(item => ({href: item.href, label: t(item.labelKey)})),
-        ...toolboxMenuSections.flatMap(section => section.items),
+        ...toolboxMenuSections.flatMap(section => section.items).filter(item => item.href !== '/contacts' || auth.can('readOperationalData')),
         {href: '/settings', label: 'Settings'},
       ]}/>}
       <main className="min-h-[calc(100vh-65px)] bg-[#eef1f4] text-slate-950">

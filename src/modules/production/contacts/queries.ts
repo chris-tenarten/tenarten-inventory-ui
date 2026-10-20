@@ -18,20 +18,28 @@ export async function saveContactChoice(company: Partial<Company>, contact: Part
 }
 
 export async function searchCustomers(search: string, offset = 0): Promise<ContactChoice[]> {
-  const { data, error } = await supabase.rpc('search_production_customers', { p_search: search, p_offset: offset });
+  // Same RLS-protected directory, paged without the legacy RPC's 10,000-offset ceiling.
+  const prefix = search.trim().replace(/[\\%_]/g, '\\$&');
+  const { data, error } = await supabase.from('production_companies')
+    .select('*,contact:production_contacts!production_company_default_contact_fk(*)')
+    .is('archived_at', null).ilike('name', `${prefix}%`)
+    .order('name').order('id').range(offset, offset + CONTACT_PAGE_SIZE);
   if (error) throw error;
-  return data as ContactChoice[];
+  return (data ?? []).map(({ contact, ...company }) => ({ company, contact: contact ?? null })) as ContactChoice[];
 }
+
 export async function getCustomer(companyId: string): Promise<ContactChoice> {
   const { data, error } = await supabase.rpc('get_production_customer', { p_company_id: companyId });
   if (error) throw error;
   return data as ContactChoice;
 }
 export async function listCompanyContacts(companyId: string, offset = 0): Promise<Contact[]> {
-  const { data, error } = await supabase.rpc('list_production_company_contacts', { p_company_id: companyId, p_offset: offset });
+  const { data, error } = await supabase.from('production_contacts').select('*')
+    .eq('company_id', companyId).order('name').order('id').range(offset, offset + CONTACT_PAGE_SIZE);
   if (error) throw error;
   return data as Contact[];
 }
+
 export async function saveCustomer(company: Partial<Company>, contact: Partial<Contact> | null): Promise<ContactChoice> {
   const { data, error } = await supabase.rpc('save_production_customer', { p_company: company, p_contact: contact });
   if (error) throw error;

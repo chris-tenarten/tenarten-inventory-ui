@@ -1,7 +1,8 @@
 'use client';
-import { useEffect, useRef, useState, type RefObject } from 'react';
-import { BusinessButton, BusinessInput, BusinessSelect } from '@/components/BusinessWriteControls';
+import { useEffect, useRef, useState, type RefObject, type ComponentProps, type ReactNode } from 'react';
+import { BusinessButton, BusinessInput } from '@/components/BusinessWriteControls';
 import { useAuth } from '@/lib/auth';
+import { useDetailNavigation } from '@/components/mobile/useDetailNavigation';
 import type { Contact, ContactChoice } from './model';
 import ProductionDialog from './ProductionDialog';
 import { archiveCustomer, CONTACT_PAGE_SIZE, listCompanyContacts, saveCustomer } from './queries';
@@ -14,23 +15,30 @@ export type CustomerSearchProps = {
   onSearch: (search: string) => void; onPage: (offset: number) => void;
 };
 type Props = CustomerSearchProps & {
-  newName: string | null; onClose: () => void;
+  initialChoice?: ContactChoice; newName: string | null; onClose: () => void;
   returnFocusRef?: RefObject<HTMLElement | null>; fallbackFocusRef?: RefObject<HTMLElement | null>;
   onSaved: (choice: ContactChoice) => void; onRemoved: () => void;
   onBusyChange: (busy: boolean) => void;
 };
 
-export default function CustomerInspector({ newName, rows, loading, search, offset, onSearch, onPage, onClose, onSaved, onRemoved, onBusyChange, returnFocusRef, fallbackFocusRef }: Props) {
+function CustomerEditorDialog({ allowClose, onClose, children, ...props }: Omit<ComponentProps<typeof ProductionDialog>, 'children' | 'onDismiss'> & {
+  allowClose: () => boolean; onClose: () => void; children: (close: () => void) => ReactNode;
+}) {
+  const close = useDetailNavigation(allowClose, onClose);
+  return <ProductionDialog {...props} onDismiss={close}>{children(close)}</ProductionDialog>;
+}
+
+export default function CustomerInspector({ newName, rows, loading, search, offset, onSearch, onPage, onClose, onSaved, onRemoved, onBusyChange, returnFocusRef, fallbackFocusRef, initialChoice }: Props) {
   const auth = useAuth();
   const canCreate = auth.can('writeBusinessData') && (auth.can('createProductionJob') || auth.can('editProductionJobRoutine') || auth.can('editProductionJobDetails'));
   const canShared = auth.can('writeBusinessData') && auth.can('editProductionJobDetails');
   // undefined = list; null = new customer; a choice = existing customer.
-  const [editing, setEditing] = useState<ContactChoice | null | undefined>(newName === null ? undefined : null);
-  const [name, setName] = useState(newName ?? '');
-  const [person, setPerson] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [editing, setEditing] = useState<ContactChoice | null | undefined>(initialChoice ?? (newName === null ? undefined : null));
+  const [name, setName] = useState(initialChoice?.company.name ?? newName ?? '');
+  const [person, setPerson] = useState(initialChoice?.contact?.name ?? '');
+  const [phone, setPhone] = useState(initialChoice?.contact?.phone ?? initialChoice?.company.phone ?? '');
+  const [email, setEmail] = useState(initialChoice?.contact?.email ?? initialChoice?.company.email ?? '');
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(initialChoice?.contact ?? null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [contactOffset, setContactOffset] = useState(0);
@@ -40,6 +48,14 @@ export default function CustomerInspector({ newName, rows, loading, search, offs
   const operation = useRef(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const allowed = editing ? canShared : canCreate;
+  const formState = JSON.stringify([name, person, phone, email, selectedContact?.id]);
+  const baseline = useRef(formState);
+  useEffect(() => {
+    if (editing === undefined) return;
+    const warn = (event: BeforeUnloadEvent) => { if (allowed && baseline.current !== formState || busy) { event.preventDefault(); event.returnValue = ''; } };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [editing, formState, busy, allowed]);
 
   useEffect(() => {
     if (editing !== undefined) nameRef.current?.focus();
@@ -55,6 +71,7 @@ export default function CustomerInspector({ newName, rows, loading, search, offs
   }, [detailsOpen, editing, contactOffset]);
 
   function openCustomer(choice: ContactChoice | null) {
+    baseline.current = JSON.stringify([choice?.company.name ?? '', choice?.contact?.name ?? '', choice?.contact?.phone ?? choice?.company.phone ?? '', choice?.contact?.email ?? choice?.company.email ?? '', choice?.contact?.id]);
     setEditing(choice); setName(choice?.company.name ?? '');
     setSelectedContact(choice?.contact ?? null); setPerson(choice?.contact?.name ?? '');
     setPhone(choice?.contact?.phone ?? choice?.company.phone ?? '');
@@ -90,12 +107,13 @@ export default function CustomerInspector({ newName, rows, loading, search, offs
   }
   function cancelEditor() {
     if (operation.current) return;
+    if (initialChoice) { onClose(); return; }
     setError(''); setName(''); setPerson(''); setPhone(''); setEmail('');
     if (newName === null) setEditing(undefined); else onClose();
   }
   function closeList() { if (!operation.current) onClose(); }
   return <>
-    {newName === null && <ProductionDialog label="Manage Customer List" onDismiss={closeList} returnFocusRef={returnFocusRef} fallbackFocusRef={fallbackFocusRef}>
+    {!initialChoice && newName === null && <ProductionDialog label="Manage Customer List" onDismiss={closeList} returnFocusRef={returnFocusRef} fallbackFocusRef={fallbackFocusRef}>
       <div className="space-y-3 bg-slate-50 p-3 sm:p-4">
         <div className="flex items-center justify-between gap-2"><h4 className="text-sm font-bold">Manage Customer List</h4><button type="button" onClick={closeList} className={button}>Close</button></div>
 
@@ -103,40 +121,41 @@ export default function CustomerInspector({ newName, rows, loading, search, offs
       {loading ? <p role="status" className="text-sm">Loading customers…</p> : <>
         <ul className="max-h-52 overflow-auto divide-y divide-slate-200">{rows.slice(0,CONTACT_PAGE_SIZE).map((choice) => <li key={choice.company.id}><button type="button" className="min-h-10 w-full px-2 py-2 text-left text-sm hover:bg-blue-50" onClick={() => openCustomer(choice)}>{choice.company.name}</button></li>)}</ul>
         {!rows.length && <p className="text-sm text-slate-600">No customers found.</p>}
-        <div className="flex gap-2"><button type="button" className={button} disabled={!offset} onClick={() => onPage(Math.max(0,offset-CONTACT_PAGE_SIZE))}>Previous</button><button type="button" className={button} disabled={rows.length<=CONTACT_PAGE_SIZE || offset>=10000} onClick={() => onPage(offset+CONTACT_PAGE_SIZE)}>Next</button></div>
+        <div className="flex gap-2"><button type="button" className={button} disabled={!offset} onClick={() => onPage(Math.max(0,offset-CONTACT_PAGE_SIZE))}>Previous</button><button type="button" className={button} disabled={rows.length<=CONTACT_PAGE_SIZE} onClick={() => onPage(offset+CONTACT_PAGE_SIZE)}>Next</button></div>
       </>}
       {canCreate && <BusinessButton type="button" className={button} onClick={() => openCustomer(null)}>+ Add New Customer</BusinessButton>}
 
       </div>
     </ProductionDialog>}
-    {editing !== undefined && <ProductionDialog label="Customer Inspector" onDismiss={cancelEditor}
+    {editing !== undefined && <CustomerEditorDialog label="Customer Inspector" onClose={cancelEditor}
+      allowClose={() => !operation.current && (!allowed || baseline.current === formState || window.confirm('Discard unsaved customer changes?'))}
       returnFocusRef={newName === null ? undefined : returnFocusRef} fallbackFocusRef={newName === null ? undefined : fallbackFocusRef}>
-      <div className="space-y-3 bg-slate-50 p-3 sm:p-4">
-        <div className="flex items-center justify-between gap-2"><h4 className="text-sm font-bold">{editing ? 'Customer Inspector' : 'Add New Customer'}</h4><button type="button" disabled={busy} onClick={cancelEditor} className={button}>Cancel</button></div>
+      {(closeEditor) => <div className="space-y-3 bg-slate-50 p-3 sm:p-4">
+        <div className="flex items-center justify-between gap-2"><h4 className="text-sm font-bold">{editing ? 'Customer Inspector' : 'Add New Customer'}</h4><button type="button" disabled={busy} onClick={closeEditor} className={button}>Cancel</button></div>
 
       <label className="block text-xs font-bold">Customer / Company Name *<BusinessInput ref={nameRef} aria-label="Customer / Company Name" value={name} required maxLength={300} disabled={busy || !allowed} onChange={(event) => setName(event.target.value)} className={field} /></label>
       <details open={detailsOpen} onToggle={(event) => setDetailsOpen(event.currentTarget.open)}>
         <summary className="min-h-8 cursor-pointer py-1 text-xs font-bold">Additional Information (Optional)</summary>
         <div className="mt-2 space-y-3">
           {editing && (contacts.length>0 || selectedContact) && <div>
-            <label className="block text-xs font-bold">Saved contact (optional)<BusinessSelect aria-label="Saved contact" value={selectedContact?.id ?? ''} disabled={busy || !allowed || contactsLoading} onChange={(event) => chooseContact(event.target.value)} className={field}><option value="">None / enter a new contact</option>{[...contacts.slice(0,CONTACT_PAGE_SIZE), ...(selectedContact && !contacts.slice(0,CONTACT_PAGE_SIZE).some((item) => item.id===selectedContact.id) ? [selectedContact] : [])].map((contact) => <option key={contact.id} value={contact.id}>{contact.name}</option>)}</BusinessSelect></label>
-            {(contactOffset>0 || contacts.length>CONTACT_PAGE_SIZE) && <div className="mt-1 flex gap-2"><button type="button" className={button} disabled={!contactOffset || contactsLoading} onClick={() => setContactOffset(Math.max(0,contactOffset-CONTACT_PAGE_SIZE))}>Previous contacts</button><button type="button" className={button} disabled={contacts.length<=CONTACT_PAGE_SIZE || contactsLoading || contactOffset>=10000} onClick={() => setContactOffset(contactOffset+CONTACT_PAGE_SIZE)}>Next contacts</button></div>}
+            <label className="block text-xs font-bold">Saved contact (optional)<select aria-label="Saved contact" value={selectedContact?.id ?? ''} disabled={busy || contactsLoading} onChange={(event) => chooseContact(event.target.value)} className={field}><option value="">None / enter a new contact</option>{[...contacts.slice(0,CONTACT_PAGE_SIZE), ...(selectedContact && !contacts.slice(0,CONTACT_PAGE_SIZE).some((item) => item.id===selectedContact.id) ? [selectedContact] : [])].map((contact) => <option key={contact.id} value={contact.id}>{contact.name}</option>)}</select></label>
+            {(contactOffset>0 || contacts.length>CONTACT_PAGE_SIZE) && <div className="mt-1 flex gap-2"><button type="button" className={button} disabled={!contactOffset || contactsLoading} onClick={() => setContactOffset(Math.max(0,contactOffset-CONTACT_PAGE_SIZE))}>Previous contacts</button><button type="button" className={button} disabled={contacts.length<=CONTACT_PAGE_SIZE || contactsLoading} onClick={() => setContactOffset(contactOffset+CONTACT_PAGE_SIZE)}>Next contacts</button></div>}
           </div>}
           <label className="block text-xs font-bold">Contact Name<BusinessInput aria-label="Contact Name" value={person} maxLength={300} disabled={busy || !allowed} onChange={(event) => setPerson(event.target.value)} className={field} /></label>
           <label className="block text-xs font-bold">Phone Number<BusinessInput aria-label="Phone Number" type="tel" value={phone} maxLength={100} disabled={busy || !allowed} onChange={(event) => setPhone(event.target.value)} className={field} /></label>
           <label className="block text-xs font-bold">Email Address<BusinessInput aria-label="Email Address" type="email" value={email} maxLength={320} disabled={busy || !allowed} onChange={(event) => setEmail(event.target.value)} className={field} /></label>
         </div>
       </details>
-      {editing && <p className="text-xs text-slate-500">Saved changes apply to future selections. Existing Jobs keep their captured information.</p>}
+      {editing && <p className="text-xs text-slate-500">Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information.</p>}
       {editing && !canShared && <p className="text-xs text-slate-600">Lead/Admin access is required to edit or remove a saved customer.</p>}
       <div className="flex flex-wrap justify-end gap-2">
         {editing && canShared && <BusinessButton type="button" className={`${button} mr-auto text-red-700`} disabled={busy} onClick={() => void remove()}>Remove From List</BusinessButton>}
-        {newName === null && <button type="button" disabled={busy} className={button} onClick={cancelEditor}>Back to list</button>}
+        {!initialChoice && newName === null && <button type="button" disabled={busy} className={button} onClick={closeEditor}>Back to list</button>}
         {allowed && <BusinessButton type="button" className={`${button} border-blue-900 bg-blue-900 text-white`} disabled={busy || !name.trim()} onClick={() => void save()}>{busy ? 'Saving…' : editing ? 'Save Changes' : 'Save Customer'}</BusinessButton>}
       </div>
 
         {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-      </div>
-    </ProductionDialog>}
+      </div>}
+    </CustomerEditorDialog>}
   </>;
 }

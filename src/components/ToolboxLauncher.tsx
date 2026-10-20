@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Hammer, ToolCase } from 'lucide-react';
+import { BookOpen, Hammer, ToolCase, ContactRound } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export const toolboxMenuSections = [
@@ -12,10 +13,11 @@ export const toolboxMenuSections = [
     { href: '/purchasing', label: 'PO Generator' },
     { href: '/transmittals', label: 'Letter of Transmittal' },
   ] },
-  { label: 'Resources', items: [{ href: '/catalog', label: 'Catalog' }] },
+  { label: 'Resources', items: [{ href: '/contacts', label: 'Contacts' }, { href: '/catalog', label: 'Catalog' }] },
 ];
 
 export default function ToolboxLauncher() {
+  const auth = useAuth();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -47,7 +49,7 @@ export default function ToolboxLauncher() {
             {section.label === 'Tools' ? <Hammer className="h-3.5 w-3.5" /> : <BookOpen className="h-3.5 w-3.5" />}
             {section.label}
           </div>
-          {section.items.map((item) => <Link key={item.href} role="menuitem" href={item.href} onClick={() => setIsOpen(false)} className={`block min-h-11 px-4 py-3 text-sm font-bold transition ${pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'bg-slate-100 text-slate-950' : 'text-slate-700 hover:bg-slate-50 hover:text-slate-950'}`}>{item.label}</Link>)}
+          {section.items.filter(item => item.href !== '/contacts' || auth.can('readOperationalData')).map((item) => <Link key={item.href} role="menuitem" href={item.href} onClick={() => setIsOpen(false)} className={`block min-h-11 px-4 py-3 text-sm font-bold transition ${pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'bg-slate-100 text-slate-950' : 'text-slate-700 hover:bg-slate-50 hover:text-slate-950'}`}>{item.href === '/contacts' && <ContactRound className="mr-2 inline h-4 w-4" aria-hidden="true" />}{item.label}</Link>)}
         </div>)}
       </div>
     </div>}
