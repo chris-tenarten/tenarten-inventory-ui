@@ -1,0 +1,34 @@
+{
+  "base": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+  "branch": "perf/manpower-progressive-groups",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "applicationPaths": [
+    "src/modules/manpower/ManpowerWorkspace.tsx",
+    "src/modules/manpower/manpower.ts",
+    "src/modules/manpower/progressive-history.ts",
+    "src/modules/manpower/useProgressiveHistory.ts"
+  ],
+  "sha256": {
+    "src/modules/manpower/ManpowerWorkspace.tsx": "7df2c298a3aa6e348e180b8bbf4e48b662b9ff82018708f91fdb799a87ca057f",
+    "src/modules/manpower/manpower.ts": "44bc34bfc9452c645aec3f5826edb289b179a4e0ca71821277ac6fb278ab5384",
+    "src/modules/manpower/progressive-history.ts": "9c538677d89cfec4fac678dd4f39260b7ebc5a1a4c35bc8859bce777e6a7e8cf",
+    "src/modules/manpower/useProgressiveHistory.ts": "19ec01d3ffbd272e675e6078f6b3aba60e71ea770e258d55e6658651ff9462dc"
+  },
+  "preservedLocalRefs": {
+    "main": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+    "dev": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+    "perf/waves1-4-integration": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+    "perf/messaging-notification-wave1": "71f6915bd66eeb079b4adcae1f234cc37174dca6",
+    "perf/list-production-wave2": "8f264712813cf7d7deb848e721cae40949c4f8f9",
+    "perf/samples-workspace-wave3": "d310e4f2d28c0688705d933e896705c113af607e",
+    "perf/manpower-inventory-wave4": "1dc57a3f4c35f1d3f31312191f84df1052dc695c",
+    "rollback/performance-20261020-main": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "rollback/performance-20261020-dev": "da21615ad6f06727e4f18a75c65331a7266d2404"
+  },
+  "hostedReads": 0,
+  "hostedWrites": 0,
+  "schemaOrPolicyChanges": false,
+  "calculationAndAuthSourceUnchanged": true,
+  "note": "Local candidate evidence only. Existing release receipts and baseline worktrees preserved; no push, merge or deployment."
+}

@@ -3,12 +3,14 @@
 import { BusinessInput, BusinessButton, BusinessSelect } from '@/components/BusinessWriteControls';
 
 import { ChevronDown, ChevronRight, Pencil, Plus, RotateCw, Search, Settings2 } from 'lucide-react';
-import { createContext, useContext, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, memo, useContext, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode, Dispatch, SetStateAction } from 'react';
 import { useAuth } from '@/lib/auth';
 import ProductCategoryManager from './ProductCategoryManager';
 import ProductLaborSummary from './ProductLaborSummary';
 import ManpowerAnalytics from './ManpowerAnalytics';
+import { useProgressiveHistory } from './useProgressiveHistory';
+import { HISTORY_GROUP_BATCH_SIZE, UNGROUPED_HISTORY_KEY } from './progressive-history';
 import { laborPeriod, localLaborToday, type LaborPeriodDays } from './analytics';
 import { productKey, productLabel, UNCATEGORIZED, validateProductSelection } from './product-reporting';
 import { useLanguage } from '@/lib/language';
@@ -25,8 +27,7 @@ import {
   createManpowerReportingGroup,
   deleteManpowerEntries,
   deleteEmptyManpowerReportingGroup,
-  loadManpowerEntries,
-  loadManpowerEntryFacts,
+  loadManpowerGroupFacts,
   loadManpowerReportFacts,
   hydrateManpowerEntries,
   loadManpowerJobs,
@@ -138,20 +139,6 @@ function ProductionJobLinkSelector({ groupLabel, targets, value, selectedLabel, 
       {targets.filter((target) => target.selectable || target.value === value).map((target) => <button key={target.value} type="button" role="option" aria-selected={target.value === value} onClick={() => { setOpen(false); onChange(target.value); }} className={`flex min-h-10 w-full items-center justify-between gap-3 px-2 text-left hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none ${target.value === value ? 'bg-blue-50' : ''}`}><span className="min-w-0 truncate text-xs font-semibold text-slate-900">{target.label}</span><ProductionStatusBadge status={target.status} /></button>)}
     </div> : null}
   </div>;
-}
-
-function groupReportingDate(group: ManpowerReportingGroup): number | null {
-  const match = group.display_name.match(/^\s*(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})\b/);
-  if (match) {
-    const year = Number(match[3]) < 100 ? 2000 + Number(match[3]) : Number(match[3]);
-    const month = Number(match[1]);
-    const day = Number(match[2]);
-    const date = new Date(Date.UTC(year, month - 1, day));
-    if (date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day) {
-      return date.getTime();
-    }
-  }
-  return null;
 }
 
 function sortReferences(items: ManpowerReference[]) {
@@ -589,6 +576,51 @@ export default function ManpowerWorkspace() {
   return <AccountManpowerWorkspace key={`${auth.user?.id ?? 'anonymous'}:${auth.profile?.userId ?? 'unresolved'}`} />;
 }
 
+const EMPTY_GROUP_ENTRIES: ManpowerEntry[] = [];
+const ReportingGroupHeader = memo(function ReportingGroupHeader({ groupKey, label, reportingGroup, members, identityEmpty, groupJob, mixed, isCollapsed, matching, selectedIds, selectedEmptyGroupIds, setSelectedEmptyGroupIds, onSelect, onToggle, onRename }: {
+  groupKey: string; label: string; reportingGroup: ManpowerReportingGroup | null; members: ManpowerEntry[]; identityEmpty: boolean; groupJob: ManpowerJob | undefined; mixed: boolean; isCollapsed: boolean; matching: boolean;
+  selectedIds: Set<string>; selectedEmptyGroupIds: Set<string>; setSelectedEmptyGroupIds: Dispatch<SetStateAction<Set<string>>>;
+  onSelect(ids: string[], checked: boolean): void; onToggle(key: string): void; onRename(group: ManpowerReportingGroup, name: string): Promise<void>;
+}) {
+  const groupIds = members.map(entry => entry.id), selectedGroupIds = groupIds.filter(id => selectedIds.has(id));
+  const allSelected = groupIds.length > 0 && selectedGroupIds.length === groupIds.length;
+  const someSelected = selectedGroupIds.length > 0 && !allSelected;
+  const emptyGroupSelected = identityEmpty && selectedEmptyGroupIds.has(groupKey);
+  const am = members.reduce((sum, entry) => sum + Number(entry.am_hours), 0), pm = members.reduce((sum, entry) => sum + Number(entry.pm_hours), 0);
+  return (
+              <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800">
+                <SelectionCheckbox
+                  checked={emptyGroupSelected || allSelected}
+                  indeterminate={someSelected}
+                  label={identityEmpty ? `Select empty group ${label}` : `Select displayed entries in ${label}`}
+                  onChange={(checked) => {
+                    if (members.length > 0) {
+                      onSelect(groupIds, checked);
+                      return;
+                    }
+                    setSelectedEmptyGroupIds((current) => {
+                      const next = new Set(current);
+                      if (checked) next.add(groupKey);
+                      else next.delete(groupKey);
+                      return next;
+                    });
+                  }}
+                />
+                <button type="button" onClick={() => onToggle(groupKey)} className="shrink-0" aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${label}`}>
+                  {isCollapsed ? <ChevronRight className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
+                </button>
+                {reportingGroup ? <ReportingGroupName group={reportingGroup} onRename={(name) => onRename(reportingGroup!, name)} /> : <span className="min-w-0 truncate text-sm font-bold text-slate-950">{label}</span>}
+                {groupJob ? <JobTag label={manpowerJobLabel(groupJob)} onClick={() => openProductionJob(groupJob.id)} title={`Open ${manpowerJobLabel(groupJob)} in Production`} className="max-w-[140px] shrink-0" /> : <span className="shrink-0 rounded-sm bg-slate-200 px-2 py-1 text-[10px] font-bold text-slate-700">{mixed ? 'Mixed' : 'Unlinked'}</span>}
+                <span className="min-w-0 flex-1" />
+                <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold text-slate-700">{members.length} {members.length === 1 ? 'entry' : 'entries'}</span>
+                {isCollapsed && selectedGroupIds.length > 0 && <span className="shrink-0 rounded bg-blue-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">{selectedGroupIds.length} selected</span>}
+                <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">AM {am.toFixed(1)} hrs</span>
+                <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">PM {pm.toFixed(1)} hrs</span>
+                <span className="shrink-0 rounded-sm bg-slate-900 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">{matching ? 'MATCHING' : 'TOTAL'} {(am + pm).toFixed(2)} hrs</span>
+              </div>
+  );
+});
+
 function AccountManpowerWorkspace() {
   const { tr } = useLanguage();
   const auth = useAuth();
@@ -599,7 +631,31 @@ function AccountManpowerWorkspace() {
   const settingsButton = useRef<HTMLButtonElement>(null);
   const settingsPanel = useRef<HTMLElement>(null);
   const [productFilter, setProductFilter] = useState('');
-  const [entries, setEntries] = useState<ManpowerEntry[]>([]);
+  const [entries, setEntryState] = useState<ManpowerEntry[]>([]);
+  const entrySnapshot = useRef<ManpowerEntry[]>([]);
+  const groupSnapshot = useRef(new Map<string, ManpowerEntry[]>());
+  const [entriesByGroup, setEntriesByGroup] = useState<Map<string, ManpowerEntry[]>>(() => new Map());
+  const setEntries: Dispatch<SetStateAction<ManpowerEntry[]>> = useCallback(next => {
+    const value = typeof next === 'function' ? next(entrySnapshot.current) : next;
+    const grouped = new Map<string, ManpowerEntry[]>();
+    for (const entry of value) {
+      const key = entry.reporting_group_id ?? UNGROUPED_HISTORY_KEY;
+      const members = grouped.get(key) ?? []; members.push(entry); grouped.set(key, members);
+    }
+    for (const [key, members] of grouped) {
+      const previous = groupSnapshot.current.get(key);
+      if (previous?.length === members.length && previous.every((entry, index) => entry === members[index])) grouped.set(key, previous);
+    }
+    groupSnapshot.current = grouped; setEntriesByGroup(grouped);
+    entrySnapshot.current = value; setEntryState(value);
+  }, []);
+  const publishGroupBatch = useCallback((loaded: ManpowerEntry[]) => {
+    // Each group is published once. A repeated entry indicates membership moved
+    // across batches; stop rather than silently retaining an obsolete identity.
+    setEntries(current => { const seen = new Set(current.map(entry => entry.id)); if (loaded.some(row => seen.has(row.id))) throw new Error('Reporting group membership changed across batches. Refresh reporting.'); return [...current, ...loaded]; });
+  }, [setEntries]);
+  const countPublishedEntries = useCallback(() => entrySnapshot.current.length, []);
+  const [periodFacts, setPeriodFacts] = useState<ManpowerEntry[] | null>(null);
   const [jobs, setJobs] = useState<ManpowerJob[]>([]);
   const [reportingGroups, setReportingGroups] = useState<ManpowerReportingGroup[]>([]);
   const [workers, setWorkers] = useState<ManpowerReference[]>([]);
@@ -610,21 +666,15 @@ function AccountManpowerWorkspace() {
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const [loading, setLoading] = useState(true);
   const [referencesReady, setReferencesReady] = useState(false);
-  const [historyReady, setHistoryReady] = useState(false);
-  const [historyRequested, setHistoryRequested] = useState(false);
-  const [historyLoading, setHistoryLoading] = useState(false);
-  const [historyError, setHistoryError] = useState('');
-  const historyRequest = useRef<AbortController | null>(null);
   const [days, setDays] = useState<LaborPeriodDays>(30);
   const [today, setToday] = useState(localLaborToday);
   const [loadedScope, setLoadedScope] = useState('');
   const [periodError, setPeriodError] = useState('');
   const [periodRetry, setPeriodRetry] = useState(0);
-  const [historyView, setHistoryView] = useState(false);
+  const [historyView, setHistoryView] = useState(true);
   const [referenceRevision, setReferenceRevision] = useState(0);
   const loadGeneration = useRef(0);
-  const historyStarted = useRef(-1);
-  const completeHistoryRevision = useRef(-1);
+  const isCurrentHistoryRevision = useCallback((revision: number) => loadGeneration.current === revision, []);
   const [loadError, setLoadError] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -675,10 +725,8 @@ function AccountManpowerWorkspace() {
 
   const load = useCallback(async () => {
     const generation = ++loadGeneration.current;
-    historyRequest.current?.abort();
-    completeHistoryRevision.current = -1;
-    setHistoryError(''); setHistoryLoading(false);
-    setLoading(true); setError(''); setLoadError(''); setReferencesReady(false); setHistoryReady(false);
+    setPeriodFacts(null); setEntries([]);
+    setLoading(true); setError(''); setLoadError(''); setReferencesReady(false);
     try {
       const [loadedJobs, loadedGroups, loadedWorkers, loadedTasks, loadedCategories] = await Promise.all([
         loadManpowerJobs(), loadManpowerReportingGroups(), loadManpowerReferences('manpower_workers'), loadManpowerReferences('manpower_tasks'), loadProductCategories(),
@@ -690,19 +738,28 @@ function AccountManpowerWorkspace() {
       if (generation !== loadGeneration.current) return;
       setLoadError(caughtMessage(caught, 'Unable to load manpower reporting.')); setLoading(false);
     }
-  }, []);
+  }, [setEntries]);
 
   // One complete selected-period read serves analytics and editable records. Boundary
-  // facts remain available to analytics but are excluded from the records below.
+  // facts remain analytics context; the editor receives complete group membership.
   const period = useMemo(() => laborPeriod(days, today), [days, today]);
   const reportScope = `${referenceRevision}:${days}:${linkedJobId ?? ''}:${today}:${periodRetry}`;
-  const activeReportScope = useRef(reportScope);
-  useLayoutEffect(() => { activeReportScope.current = reportScope; }, [reportScope]);
-  const recordsLoading = !historyReady && (!referencesReady || loadedScope !== reportScope);
-  const currentEntries = useMemo(() => historyReady || loadedScope === reportScope ? entries : [], [historyReady, loadedScope, reportScope, entries]);
+  const priority = useMemo(() => new Set((periodFacts ?? []).filter(entry => entry.work_date >= period.start && entry.work_date <= period.end)
+    .map(entry => entry.reporting_group_id ?? UNGROUPED_HISTORY_KEY)), [periodFacts, period]);
+  const history = useProgressiveHistory({ revision: referenceRevision, enabled: referencesReady && periodFacts !== null,
+    priority, workers, tasks, groups: reportingGroups, publish: publishGroupBatch, entryCount: countPublishedEntries, isCurrent: isCurrentHistoryRevision });
+  const historyReady = history.ready && referencesReady && loadedScope.startsWith(`${referenceRevision}:`);
+  const recordsLoading = !referencesReady || (!historyReady && loadedScope !== reportScope);
   const currentPeriodError = !historyReady && loadedScope === reportScope ? periodError : '';
-  const scopedEntries = useMemo(() => historyView && historyReady ? currentEntries : currentEntries.filter(entry =>
-    entry.work_date >= period.start && entry.work_date <= period.end), [historyView, historyReady, currentEntries, period]);
+  const currentEntries = useMemo(() => {
+    if (historyReady) return entries;
+    if (loadedScope !== reportScope) return [];
+    // Period facts are complete for analytics even while group hydration continues.
+    // Group rows override their period snapshots after local edits/deletions.
+    const complete = history.keys;
+    return [...(periodFacts ?? []).filter(entry => !complete.has(entry.reporting_group_id ?? UNGROUPED_HISTORY_KEY)), ...entries];
+  }, [historyReady, loadedScope, reportScope, periodFacts, entries, history.keys]);
+  const scopedEntries = entries;
   useEffect(() => {
     const tick = () => setToday(localLaborToday());
     const timer = window.setInterval(tick, 60000); window.addEventListener('focus', tick);
@@ -716,54 +773,20 @@ function AccountManpowerWorkspace() {
     let active = true;
     const request = new AbortController();
     void loadManpowerReportFacts(period, linkedJobId, request.signal).then(facts => {
-      if (!active || completeHistoryRevision.current === referenceRevision) return;
+      if (!active) return;
       const loaded = hydrateManpowerEntries(facts, workers, tasks, reportingGroups);
-      setEntries(loaded); setPeriodError(''); setLoadedScope(reportScope);
+      setPeriodFacts(loaded); setPeriodError(''); setLoadedScope(reportScope);
       if (!collapseInitialized.current) {
         setCollapsed(new Set([...reportingGroups.map(group => group.id), '__ungrouped__']));
         collapseInitialized.current = true;
       }
     }).catch(caught => {
-      if (active && completeHistoryRevision.current !== referenceRevision) { setEntries([]); setPeriodError(caughtMessage(caught, 'Unable to load complete period labor.')); setLoadedScope(reportScope); }
+      if (active) { setPeriodError(caughtMessage(caught, 'Unable to load complete period labor.')); setLoadedScope(reportScope); }
     }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; request.abort(); };
   }, [referencesReady, historyReady, reportScope, referenceRevision, period, linkedJobId, workers, tasks, reportingGroups]);
 
-  // Complete history is explicit; keep recent records available while it loads.
-  const loadHistory = useCallback(() => {
-    if (!referencesReady || historyStarted.current === referenceRevision) return;
-    const generation = referenceRevision;
-    historyStarted.current = generation;
-    const request = new AbortController();
-    historyRequest.current?.abort(); historyRequest.current = request;
-    setHistoryLoading(true); setHistoryError('');
-    void loadManpowerEntryFacts(request.signal).then((facts) => {
-      if (generation !== loadGeneration.current) return;
-      const loadedEntries = hydrateManpowerEntries(facts, workers, tasks, reportingGroups);
-      completeHistoryRevision.current = generation;
-      setEntries(loadedEntries); setHistoryReady(true);
-      setSelectedIds(new Set()); setSelectedEmptyGroupIds(new Set());
-      if (!collapseInitialized.current) {
-        setCollapsed(new Set([
-          ...reportingGroups.map((group) => group.id),
-          ...(loadedEntries.some((entry) => !entry.reporting_group_id) ? ['__ungrouped__'] : []),
-        ]));
-        collapseInitialized.current = true;
-      }
-      const loadedIds = new Set(loadedEntries.map((entry) => entry.id));
-      setSelectedIds((current) => new Set([...current].filter((id) => loadedIds.has(id))));
-    }).catch((caught) => {
-      if (generation === loadGeneration.current && !request.signal.aborted) {
-        historyStarted.current = -1;
-        setHistoryError(caughtMessage(caught, 'Unable to load complete manpower history.'));
-      }
-    }).finally(() => { if (generation === loadGeneration.current && !request.signal.aborted) setHistoryLoading(false); });
-  }, [referencesReady, referenceRevision, workers, tasks, reportingGroups]);
-
-  useEffect(() => {
-    if (historyRequested && referencesReady && !loading) loadHistory();
-  }, [historyRequested, referencesReady, loading, loadHistory]);
-  useEffect(() => () => { loadGeneration.current += 1; historyRequest.current?.abort(); }, []);
+  useEffect(() => () => { loadGeneration.current += 1; }, []);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -862,6 +885,7 @@ function AccountManpowerWorkspace() {
     setCreatingGroup(true); setError('');
     try {
       const created = await createManpowerReportingGroup(newGroupName);
+      history.register(created.id);
       setReportingGroups((groups) => [created, ...groups]);
       setCollapsed((current) => { const next = new Set(current); next.delete(created.id); return next; });
       setDraft({
@@ -877,19 +901,19 @@ function AccountManpowerWorkspace() {
     finally { setCreatingGroup(false); }
   }
 
-  async function renameGroup(group: ManpowerReportingGroup, displayName: string) {
+  const renameGroup = useCallback(async (group: ManpowerReportingGroup, displayName: string) => {
     if (!displayName.trim() || displayName.trim() === group.display_name) return;
     setError('');
     try {
       const updated = await updateManpowerReportingGroup(group.id, displayName);
       setReportingGroups((groups) => groups.map((item) => item.id === updated.id ? updated : item));
     } catch (caught) { setError(caughtMessage(caught, 'Unable to rename reporting group.')); throw caught; }
-  }
+  }, []);
 
   const normalizedSearch = search.trim().toLocaleLowerCase();
   const groups = useMemo(() => {
     const grouped = new Map<string, { key: string; label: string; group: ManpowerReportingGroup | null; entries: ManpowerEntry[] }>();
-    for (const group of reportingGroups) {
+    for (const group of reportingGroups.filter(group => history.keys.has(group.id))) {
       grouped.set(group.id, { key: group.id, label: group.display_name, group, entries: [] });
     }
     for (const entry of scopedEntries) {
@@ -900,23 +924,12 @@ function AccountManpowerWorkspace() {
       const group = grouped.get(key) ?? { key, label, group: entry.reporting_group, entries: [] };
       group.entries.push(entry); grouped.set(key, group);
     }
-    const sortedGroups = [...grouped.values()].filter((group) => (historyView && historyReady && !linkedJobId && !productFilter) || group.entries.length > 0).sort((a, b) => {
-      if (a.group && b.group) {
-        const aDate = groupReportingDate(a.group);
-        const bDate = groupReportingDate(b.group);
-        if (aDate !== null && bDate !== null && aDate !== bDate) return bDate - aDate;
-        if (aDate !== null && bDate === null) return -1;
-        if (aDate === null && bDate !== null) return 1;
-        const createdDifference = b.group.created_at.localeCompare(a.group.created_at);
-        if (createdDifference !== 0) return createdDifference;
-        const nameDifference = a.group.display_name.localeCompare(b.group.display_name);
-        if (nameDifference !== 0) return nameDifference;
-        return a.group.id.localeCompare(b.group.id);
-      }
-      if (a.group && !b.group) return -1;
-      if (!a.group && b.group) return 1;
-      return a.label.localeCompare(b.label);
-    });
+    if (!linkedJobId && !productFilter) for (const group of grouped.values()) group.entries = entriesByGroup.get(group.key) ?? EMPTY_GROUP_ENTRIES;
+    const rank = new Map(history.order.map((key, index) => [key, index]));
+    const sortedGroups = [...grouped.values()].filter(group => history.keys.has(group.key)
+      && (historyView || group.entries.some(entry => entry.work_date >= period.start && entry.work_date <= period.end))
+      && ((!linkedJobId && !productFilter) || group.entries.length > 0))
+      .sort((a, b) => (rank.get(a.key) ?? Infinity) - (rank.get(b.key) ?? Infinity));
     if (!normalizedSearch) return sortedGroups;
     return sortedGroups
       .map((group) => ({
@@ -936,7 +949,7 @@ function AccountManpowerWorkspace() {
         ].some((value) => value?.toLocaleLowerCase().includes(normalizedSearch))),
       }))
       .filter((group) => group.entries.length > 0);
-  }, [scopedEntries, historyView, historyReady, linkedJobId, productFilter, normalizedSearch, reportingGroups, categories]);
+  }, [scopedEntries, entriesByGroup, historyView, history.keys, history.order, period, linkedJobId, productFilter, normalizedSearch, reportingGroups, categories]);
 
   function startAddingToGroup(groupId: string, groupEntries: ManpowerEntry[], groupLabel: string) {
     const identities = new Map<string, Pick<Draft, 'workTarget' | 'unlistedLabel'>>();
@@ -970,7 +983,7 @@ function AccountManpowerWorkspace() {
     });
   }
 
-  function setGroupSelected(ids: string[], selected: boolean) {
+  const setGroupSelected = useCallback((ids: string[], selected: boolean) => {
     setSelectedIds((current) => {
       const next = new Set(current);
       for (const id of ids) {
@@ -979,10 +992,12 @@ function AccountManpowerWorkspace() {
       }
       return next;
     });
-  }
+  }, []);
+  const toggleGroupCollapsed = useCallback((key: string) => setCollapsed(current => { const next = new Set(current); if (next.has(key)) next.delete(key); else next.add(key); return next; }), []);
 
   async function applyBulkCategory(categoryId: string) {
     if (categoryApplying.current) return;
+    const generation = loadGeneration.current;
     const ids = [...selectedIds];
     const validation = validateProductSelection(categoryId, categories);
     if (validation || ids.length > MAX_BULK_PRODUCT_ENTRIES) {
@@ -1000,9 +1015,19 @@ function AccountManpowerWorkspace() {
     } catch (caught) {
       // A rejected SQL statement rolls back. A lost response or omitted RLS row is
       // ambiguous; reload authoritative values without retrying the write.
-      const [labor, choices] = await Promise.allSettled([historyReady ? loadManpowerEntries() : loadManpowerReportFacts(period, linkedJobId).then(facts => hydrateManpowerEntries(facts, workers, tasks, reportingGroups)), loadProductCategories()]);
-      if (activeReportScope.current !== reportScope) return;
-      if (labor.status === 'fulfilled') setEntries(labor.value);
+      const affected = new Set(entries.filter(entry => ids.includes(entry.id)).map(entry => entry.reporting_group_id ?? UNGROUPED_HISTORY_KEY));
+      const reloadAffected = async () => {
+        const keys = [...affected], facts = [];
+        for (let index = 0; index < keys.length; index += HISTORY_GROUP_BATCH_SIZE) {
+          const batch = keys.slice(index, index + HISTORY_GROUP_BATCH_SIZE).filter(key => key !== UNGROUPED_HISTORY_KEY);
+          if (batch.length) facts.push(...await loadManpowerGroupFacts(batch));
+        }
+        if (affected.has(UNGROUPED_HISTORY_KEY)) facts.push(...await loadManpowerGroupFacts([UNGROUPED_HISTORY_KEY]));
+        return hydrateManpowerEntries(facts, workers, tasks, reportingGroups);
+      };
+      const [labor, choices] = await Promise.allSettled([reloadAffected(), loadProductCategories()]);
+      if (loadGeneration.current !== generation) return;
+      if (labor.status === 'fulfilled') setEntries(current => [...current.filter(entry => !affected.has(entry.reporting_group_id ?? UNGROUPED_HISTORY_KEY)), ...labor.value]);
       else setLoadError('Unable to reconcile labor after the category request. Refresh before relying on totals.');
       if (choices.status === 'fulfilled') setCategories(choices.value);
       setCategoryResult({ error: true, message: `Category application was not confirmed: ${caughtMessage(caught, 'Request failed.')} Selection preserved. ${labor.status === 'fulfilled' ? 'Current labor values reloaded; review before retrying.' : 'Labor refresh failed.'} ${choices.status === 'rejected' ? 'Category refresh failed; refresh before retrying.' : 'Category choices refreshed.'}` });
@@ -1044,7 +1069,7 @@ function AccountManpowerWorkspace() {
   }
 
   async function linkReportingGroup(groupKey: string, groupEntries: ManpowerEntry[], workTarget: string, previousJobName: string) {
-    if (!historyReady) return;
+    if (!auth.can('writeBusinessData') || !history.keys.has(groupKey)) return;
     const identity = workTarget
       ? manpowerIdentityForTarget(workTarget, '', targets)
       : { job_id: null, rework_cycle_id: null, unlisted_work_label: previousJobName };
@@ -1056,7 +1081,7 @@ function AccountManpowerWorkspace() {
   }
 
   async function renameUnlinkedGroup(groupKey: string, groupEntries: ManpowerEntry[], jobName: string) {
-    if (!historyReady) return;
+    if (!auth.can('writeBusinessData') || !history.keys.has(groupKey)) return;
     const normalized = jobName.trim();
     if (!normalized) return;
     if (groupEntries.length > 1 && !window.confirm(`Change ${groupEntries.length} manpower entries to temporary label “${normalized}”?`)) return;
@@ -1092,8 +1117,9 @@ function AccountManpowerWorkspace() {
     }
   }
 
+  const productContext = useMemo(() => ({ categories, refresh: refreshCategories }), [categories, refreshCategories]);
   return (
-    <ProductContext.Provider value={{ categories, refresh: refreshCategories }}><div className="mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7">
+    <ProductContext.Provider value={productContext}><div className="mx-auto w-full max-w-[1800px] px-3 py-5 sm:px-5 sm:py-7">
       <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div><div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Operations Reporting','Reportes de operaciones')}</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{tr('Manpower Reporting','Reporte de mano de obra')}</h1><p className="mt-1 text-sm text-slate-600">{tr('Record shop labor by job, worker, task, and work date.','Registre las horas del taller por trabajo, empleado, tarea y fecha de trabajo.')}</p></div>
         <div className="flex flex-wrap gap-2">
@@ -1143,36 +1169,31 @@ function AccountManpowerWorkspace() {
             <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <input type="search" value={search} disabled={recordsLoading || Boolean(loadError || currentPeriodError)} onChange={(event) => setSearch(event.target.value)} placeholder={tr('Search manpower…','Buscar mano de obra…')} className={`${inputClass} pl-9 placeholder:font-semibold`} />
           </label>
-          {!showNewGroup ? <BusinessButton type="button" onClick={() => { setHistoryView(true); setShowNewGroup(true); }} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || !historyReady || historyLoading || loading || Boolean(loadError)} title="Load history and clear filters before creating an empty group" className="inline-flex h-9 w-max shrink-0 items-center gap-1.5 whitespace-nowrap border border-blue-400 bg-blue-50 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 enabled:hover:bg-blue-100 enabled:active:bg-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:saturate-0"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</BusinessButton> : <div className="flex min-w-0 flex-wrap items-center gap-1 border border-slate-400 bg-white p-1 lg:col-span-3"><BusinessInput ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 min-w-0 max-w-full px-2 text-sm outline-none" /><BusinessButton type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</BusinessButton><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
+          {!showNewGroup ? <BusinessButton type="button" onClick={() => { setHistoryView(true); setShowNewGroup(true); }} disabled={Boolean(normalizedSearch || productFilter || linkedJobId) || !referencesReady || loading || Boolean(loadError)} title="Clear filters before creating an empty group" className="inline-flex h-9 w-max shrink-0 items-center gap-1.5 whitespace-nowrap border border-blue-400 bg-blue-50 px-3 text-xs font-bold uppercase tracking-wide text-blue-800 enabled:hover:bg-blue-100 enabled:active:bg-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:saturate-0"><Plus className="h-4 w-4" /> {tr('New Group','Nuevo grupo')}</BusinessButton> : <div className="flex min-w-0 flex-wrap items-center gap-1 border border-slate-400 bg-white p-1 lg:col-span-3"><BusinessInput ref={newGroupInputRef} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createGroup(); } if (event.key === 'Escape') { setShowNewGroup(false); setNewGroupName(''); } }} placeholder={tr('Reporting group name','Nombre del grupo de reporte')} className="h-8 w-72 min-w-0 max-w-full px-2 text-sm outline-none" /><BusinessButton type="button" onClick={() => void createGroup()} disabled={creatingGroup || !newGroupName.trim() || Boolean(normalizedSearch || productFilter || linkedJobId)} className="h-8 bg-slate-900 px-3 text-xs font-bold text-white disabled:opacity-50">{creatingGroup ? tr('Creating…','Creando…') : tr('Create','Crear')}</BusinessButton><button type="button" onClick={() => { setShowNewGroup(false); setNewGroupName(''); }} className="h-8 px-2 text-xs font-bold text-slate-600">{tr('Cancel','Cancelar')}</button></div>}
           {linkedJobId && <button type="button" onClick={() => selectJob('')} className="justify-self-start py-2 text-xs font-semibold text-slate-500 underline">Clear job filter</button>}
         </div>
         <ManpowerAnalytics entries={currentEntries} categories={categories} tasks={tasks} jobId={linkedJobId} productFocus={productFilter} loading={loading || recordsLoading} error={loadError || currentPeriodError} days={days} setDays={(value) => { setDays(value); setHistoryView(false); }} today={today} />
-        {linkedJobId && historyView && historyReady && !loading && !loadError && <ProductLaborSummary key={linkedJobId} entries={groups.flatMap((group) => group.entries)} totalEntries={entries.filter((entry) => entry.job_id === linkedJobId)} categories={categories} tasks={tasks}>
-          <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">Product Category filter<select aria-label="Product Category filter" className={`${inputClass} max-w-xs`} value={productFilter} onFocus={() => void refreshCategories().catch(() => {})} onChange={(event) => setProductFilter(event.target.value)}><option value="">All Products</option>{categories.filter((category) => category.is_active || entries.some((entry) => entry.product_category_id === category.id)).map((category) => <option key={category.id} value={category.id}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}<option value={UNCATEGORIZED}>Uncategorized</option></select></label>
-        </ProductLaborSummary>}
-        {linkedJobId && !(historyReady && historyView) && !recordsLoading && !currentPeriodError && <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">Product Category filter<select aria-label="Product Category filter" className={`${inputClass} max-w-xs`} value={productFilter} onFocus={() => void refreshCategories().catch(() => {})} onChange={(event) => setProductFilter(event.target.value)}><option value="">All Products</option>{categories.filter((category) => category.is_active || entries.some((entry) => entry.product_category_id === category.id)).map((category) => <option key={category.id} value={category.id}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}<option value={UNCATEGORIZED}>Uncategorized</option></select></label>}
+        {linkedJobId && !recordsLoading && !currentPeriodError && <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">Product Category filter<select aria-label="Product Category filter" className={`${inputClass} max-w-xs`} value={productFilter} onFocus={() => void refreshCategories().catch(() => {})} onChange={(event) => setProductFilter(event.target.value)}><option value="">All Products</option>{categories.filter((category) => category.is_active || entries.some((entry) => entry.product_category_id === category.id)).map((category) => <option key={category.id} value={category.id}>{category.display_name}{category.is_active ? '' : ' · Inactive'}</option>)}<option value={UNCATEGORIZED}>Uncategorized</option></select></label>}
         {(normalizedSearch || productFilter || linkedJobId) && <p className="text-xs text-slate-500">Clear filters to create an empty group or change a whole group’s Job.</p>}
         <p className="text-xs text-slate-500">Choose one Product Category per line. Split hours across separate lines when labor belongs to different products.</p>
 
         {!loadError && <div className="border border-slate-300 bg-white p-4 text-sm text-slate-600">
-          <p>{historyView && historyReady ? 'Complete reporting history' : `Selected-period records · ${period.start} – ${period.end}`} · Search and selection apply to displayed records. Load complete history for older records, empty groups, new lines and whole-group changes.</p>
-          {!historyReady && <button type="button" disabled={loading || !referencesReady || historyLoading} onClick={() => { setHistoryView(true); setHistoryRequested(true); }} className="mt-3 min-h-9 border border-slate-400 px-3 font-semibold disabled:opacity-50">{historyLoading ? 'Loading complete history…' : 'Load complete history'}</button>}
-          {historyReady && <button type="button" onClick={() => setHistoryView(!historyView)} className="mt-3 min-h-9 border border-slate-400 px-3 font-semibold">{historyView ? 'Show selected period' : 'Show complete history'}</button>}
+          <p>{historyView ? 'All reporting groups' : `Groups with work in ${period.start} – ${period.end}`} · Complete group membership, all dates. Analytics use the selected period. Search and filters apply to loaded complete groups.</p>
+          <p role="status" data-testid="history-progress" data-complete={historyReady} className="mt-1 text-xs">{historyReady ? 'All available history loaded' : `${history.order.filter(key => key !== UNGROUPED_HISTORY_KEY).length} of ${reportingGroups.length} reporting groups loaded${history.loading ? ' · Loading older records…' : ''}. Search results are not exhaustive until history is complete.`}</p>
+          <button type="button" onClick={() => setHistoryView(!historyView)} className="mt-2 min-h-9 border border-slate-400 px-3 font-semibold">{historyView ? 'Selected-period groups only' : 'Show all groups'}</button>
         </div>}
-        {historyError && <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{historyError} <button type="button" onClick={loadHistory} disabled={historyLoading} className="underline">Retry history</button></div>}
+        {history.error && <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{history.error} Already loaded groups remain available. <button type="button" onClick={history.retry} disabled={history.loading} className="underline">Retry older groups</button></div>}
         {currentPeriodError && <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{currentPeriodError} <button type="button" onClick={() => setPeriodRetry(value => value + 1)} className="underline">Retry period</button></div>}
-        <fieldset disabled={historyLoading} data-testid="reporting-records" data-count={recordsLoading || currentPeriodError || loadError ? 0 : groups.reduce((count, group) => count + group.entries.length, 0)} className="space-y-3">
-        {recordsLoading && !loadError ? <div role="status" className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading selected-period entries…</div> : loadError ? <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{loadError} <button type="button" onClick={() => void load()} className="underline">Retry reporting</button></div> : currentPeriodError ? null : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{normalizedSearch || productFilter || linkedJobId ? 'No manpower entries match your filters in this scope.' : historyView ? 'No reporting groups yet. Create the first group to begin.' : 'No labor entries recorded in the selected period.'}</div> : groups.map((group) => {
-          const identityEntries = entries.filter((entry) => (entry.reporting_group_id ?? '__ungrouped__') === group.key);
-          const identityFiltered = !historyReady || Boolean(normalizedSearch || productFilter || linkedJobId);
+        <fieldset data-testid="reporting-records" data-count={recordsLoading || currentPeriodError || loadError ? 0 : groups.reduce((count, group) => count + group.entries.length, 0)} className="space-y-3">
+        {recordsLoading && !loadError ? <div role="status" className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading selected-period entries…</div> : loadError ? <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{loadError} <button type="button" onClick={() => void load()} className="underline">Retry reporting</button></div> : currentPeriodError ? null : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{normalizedSearch || productFilter || linkedJobId ? 'No manpower entries match your filters in this scope.' : history.loading ? 'Completing reporting groups…' : historyView ? 'No reporting groups yet. Create the first group to begin.' : 'No complete groups available in this scope yet.'}</div> : groups.map((group) => {
+          const identityEntries = entriesByGroup.get(group.key) ?? [];
+          const identityFiltered = Boolean(normalizedSearch || productFilter || linkedJobId);
           const isCollapsed = normalizedSearch || productFilter ? false : collapsed.has(group.key);
           const am = group.entries.reduce((sum, entry) => sum + Number(entry.am_hours), 0);
           const pm = group.entries.reduce((sum, entry) => sum + Number(entry.pm_hours), 0);
           const groupIds = group.entries.map((entry) => entry.id);
           const emptyGroupSelected = identityEntries.length === 0 && selectedEmptyGroupIds.has(group.key);
           const selectedGroupIds = groupIds.filter((id) => selectedIds.has(id));
-          const allSelected = groupIds.length > 0 && selectedGroupIds.length === groupIds.length;
-          const someSelected = selectedGroupIds.length > 0 && !allSelected;
           const linkedJobIds = [...new Set(identityEntries.map((entry) => entry.job_id).filter((id): id is string => Boolean(id)))];
           const groupJobId = linkedJobIds.length === 1 && identityEntries.every((entry) => entry.job_id === linkedJobIds[0]) ? linkedJobIds[0] : '';
           const groupJob = jobs.find((job) => job.id === groupJobId);
@@ -1189,49 +1210,23 @@ function AccountManpowerWorkspace() {
           const newEntryJobCell = <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === draft.workTarget)?.label ?? (draft.unlistedLabel || 'Choose a work target')}</div>;
           const temporaryGroupJobCell = <BusinessInput key={`${group.key}:${previousJobName}`} disabled={identityFiltered} defaultValue={previousJobName} aria-label={`Job name for ${group.label}`} onBlur={(event) => { if (event.target.value.trim() !== previousJobName) void renameUnlinkedGroup(group.key, identityEntries, event.target.value); }} className="h-8 min-w-[220px] w-full border border-slate-300 bg-white px-2 text-xs outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-200" />;
           return (
-            <section key={group.key} className={`overflow-hidden rounded-sm border bg-white ${selectedGroupIds.length > 0 || emptyGroupSelected ? 'border-blue-600' : 'border-slate-200'}`}>
-              <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800">
-                <SelectionCheckbox
-                  checked={emptyGroupSelected || allSelected}
-                  indeterminate={someSelected}
-                  label={identityEntries.length === 0 ? `Select empty group ${group.label}` : `Select displayed entries in ${group.label}`}
-                  onChange={(checked) => {
-                    if (group.entries.length > 0) {
-                      setGroupSelected(groupIds, checked);
-                      return;
-                    }
-                    setSelectedEmptyGroupIds((current) => {
-                      const next = new Set(current);
-                      if (checked) next.add(group.key);
-                      else next.delete(group.key);
-                      return next;
-                    });
-                  }}
-                />
-                <button type="button" onClick={() => setCollapsed((current) => { const next = new Set(current); if (next.has(group.key)) next.delete(group.key); else next.add(group.key); return next; })} className="shrink-0" aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${group.label}`}>
-                  {isCollapsed ? <ChevronRight className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
-                </button>
-                {group.group ? <ReportingGroupName group={group.group} onRename={(name) => renameGroup(group.group!, name)} /> : <span className="min-w-0 truncate text-sm font-bold text-slate-950">{group.label}</span>}
-                {groupJob ? <JobTag label={manpowerJobLabel(groupJob)} onClick={() => openProductionJob(groupJob.id)} title={`Open ${manpowerJobLabel(groupJob)} in Production`} className="max-w-[140px] shrink-0" /> : <span className="shrink-0 rounded-sm bg-slate-200 px-2 py-1 text-[10px] font-bold text-slate-700">{lifecycleIdentities.size > 1 ? 'Mixed' : 'Unlinked'}</span>}
-                <span className="min-w-0 flex-1" />
-                <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold text-slate-700">{group.entries.length} {group.entries.length === 1 ? 'entry' : 'entries'}</span>
-                {isCollapsed && selectedGroupIds.length > 0 && <span className="shrink-0 rounded bg-blue-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">{selectedGroupIds.length} selected</span>}
-                <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">AM {am.toFixed(1)} hrs</span>
-                <span className="shrink-0 rounded-sm bg-white px-2 py-1 text-xs font-bold tabular-nums text-slate-600">PM {pm.toFixed(1)} hrs</span>
-                <span className="shrink-0 rounded-sm bg-slate-900 px-2.5 py-1.5 text-xs font-extrabold tabular-nums text-white">{identityFiltered || !historyView ? 'MATCHING' : 'TOTAL'} {(am + pm).toFixed(2)} hrs</span>
-              </div>
-              {!isCollapsed && historyReady && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><BusinessButton type="button" onClick={() => startAddingToGroup(group.group!.id, identityEntries, group.label)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</BusinessButton></div>}
+            <section key={group.key} data-reporting-group={group.key} data-entry-count={group.entries.length} data-total-hours={(am + pm).toFixed(2)} className={`overflow-hidden rounded-sm border bg-white ${selectedGroupIds.length > 0 || emptyGroupSelected ? 'border-blue-600' : 'border-slate-200'}`}>
+              <ReportingGroupHeader groupKey={group.key} label={group.label} reportingGroup={group.group} members={group.entries} identityEmpty={identityEntries.length === 0} groupJob={groupJob} mixed={lifecycleIdentities.size > 1} isCollapsed={isCollapsed} matching={identityFiltered} selectedIds={selectedIds} selectedEmptyGroupIds={selectedEmptyGroupIds} setSelectedEmptyGroupIds={setSelectedEmptyGroupIds} onSelect={setGroupSelected} onToggle={toggleGroupCollapsed} onRename={renameGroup} />
+              {!isCollapsed && group.group && addingToGroupId !== group.key && <div className="border-b border-slate-200 bg-white px-3 py-1.5"><BusinessButton type="button" onClick={() => startAddingToGroup(group.group!.id, identityEntries, group.label)} className="inline-flex h-8 items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-blue-800 hover:text-blue-950"><Plus className="h-4 w-4" /> {tr('Add New Line','Agregar renglón')}</BusinessButton></div>}
               {!isCollapsed && <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                 <span className="flex-1">{groupJob ? tr('This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline.','Este grupo de mano de obra está vinculado al trabajo de Producción. Las horas registradas aquí se incluyen en las horas registradas del flujo de producción.') : tr('This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked.','Este grupo de mano de obra no está vinculado a un trabajo de Producción. Las horas registradas aquí no aparecerán en Producción hasta que se vincule un trabajo.')}</span>
-                <ProductionJobLinkSelector groupLabel={group.label} targets={targets} value={groupTargetValue} selectedLabel={groupTargetLabel} disabled={linkingGroupId === group.key || identityFiltered} onChange={(workTarget) => void linkReportingGroup(group.key, identityEntries, workTarget, previousJobName)} />
+                <ProductionJobLinkSelector groupLabel={group.label} targets={targets} value={groupTargetValue} selectedLabel={groupTargetLabel} disabled={!auth.can('writeBusinessData') || linkingGroupId === group.key || identityFiltered} onChange={(workTarget) => void linkReportingGroup(group.key, identityEntries, workTarget, previousJobName)} />
               </div>}
-              {selectedGroupIds.length > 0 && <BulkActionBar categorySelectedCount={selectedIds.size} categoryBusy={categoryBusy} onApplyCategory={applyBulkCategory} selectedCount={selectedGroupIds.length} targets={targets} reportingGroups={reportingGroups} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
+              {selectedGroupIds.length > 0 && <BulkActionBar categorySelectedCount={selectedIds.size} categoryBusy={categoryBusy} onApplyCategory={applyBulkCategory} selectedCount={selectedGroupIds.length} targets={targets} reportingGroups={reportingGroups.filter(group => history.keys.has(group.id))} workers={workers} tasks={tasks} onClear={() => setGroupSelected(groupIds, false)} onDelete={() => deleteSelectedEntries(selectedGroupIds)} onApply={(changes) => applyBulkUpdate(selectedGroupIds, changes)} />}
               {emptyGroupSelected && group.group && <div className="flex items-center justify-between border-b border-blue-200 bg-blue-50 px-3 py-2 text-xs"><span className="font-semibold text-blue-900">Empty group selected</span><div className="flex items-center gap-3"><button type="button" onClick={() => setSelectedEmptyGroupIds((current) => { const next = new Set(current); next.delete(group.key); return next; })} className="font-bold text-slate-600 hover:underline">Clear selection</button><BusinessButton type="button" onClick={() => void deleteSelectedEmptyGroup(group.group!)} className="h-8 border border-red-500 bg-white px-3 font-bold text-red-700 hover:bg-red-50">Delete Empty Group</BusinessButton></div></div>}
               {!isCollapsed && <div className="overflow-x-auto"><table className="w-full min-w-[1480px] border-collapse"><thead><tr><th className={`${headerClass} w-12 text-center`}>Select</th><th className={headerClass}>Work Date</th><th className={headerClass}>Product Category</th><th className={headerClass}>Worker</th><th className={headerClass}>Task</th><th className={headerClass}>Job</th><th className={headerClass}>AM Hours</th><th className={headerClass}>PM Hours</th><th className={headerClass}>Total</th><th className={headerClass}>Notes</th></tr></thead><tbody>{addingToGroupId === group.key && group.group && <tr className="border-b-2 border-blue-500 bg-blue-50 align-top"><td className="border-r border-slate-300 px-2 pt-3 text-center text-[9px] font-bold uppercase text-blue-700">New</td><EntryFields draft={draft} setDraft={setDraft} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} jobReadOnly={Boolean(draft.workTarget)} jobControl={draft.workTarget ? newEntryJobCell : undefined} actions={<div className="flex gap-1"><BusinessButton type="button" onClick={() => void createEntry()} disabled={saving} className="h-9 whitespace-nowrap bg-slate-900 px-3 text-xs font-bold uppercase tracking-wide text-white disabled:opacity-50">{saving ? 'Saving…' : 'Add Entry'}</BusinessButton><button type="button" onClick={() => setAddingToGroupId(null)} disabled={saving} className="h-9 whitespace-nowrap border border-slate-400 bg-white px-2 text-xs font-bold text-slate-700">Cancel</button></div>} /></tr>}{group.entries.map((entry) => <EditableEntryRow key={`${entry.id}:${entry.updated_at}`} entry={entry} targets={targets} workers={workers} tasks={tasks} addWorker={(name) => addReference('worker', name)} addTask={(name) => addReference('task', name)} onSaved={replaceEntry} selected={selectedIds.has(entry.id)} onSelected={(selected) => setEntrySelected(entry.id, selected)} jobControl={groupTargetValue === UNLISTED_WORK_TARGET ? temporaryGroupJobCell : <div className="min-w-[220px] px-2 text-xs font-semibold text-slate-700">{targets.find((target) => target.value === manpowerEntryTargetValue(entry))?.label ?? entry.unlisted_work_label ?? 'Unlinked'}</div>} />)}</tbody></table></div>}
             </section>
           );
         })}
         </fieldset>
+        {linkedJobId && historyView && historyReady && !loading && !loadError && <ProductLaborSummary key={linkedJobId} entries={groups.flatMap((group) => group.entries)} totalEntries={entries.filter((entry) => entry.job_id === linkedJobId)} categories={categories} tasks={tasks}>
+          {null}
+        </ProductLaborSummary>}
       </div>
     </div></ProductContext.Provider>
   );

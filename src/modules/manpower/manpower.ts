@@ -1,5 +1,6 @@
 import { loadCompleteRows } from '@/lib/complete-rows';
 import { loadCompleteLabor } from './pagination';
+import { readCompleteGroupBatch, UNGROUPED_HISTORY_KEY, HISTORY_GROUP_BATCH_SIZE } from './progressive-history';
 import { supabase } from '../../lib/supabase';
 import { isActiveProductionRework } from '../production/rework';
 import type {
@@ -44,6 +45,24 @@ export async function loadManpowerEntryFacts(signal?: AbortSignal): Promise<Manp
       .order('work_date', { ascending: false }).order('created_at', { ascending: false }).order('id').range(from, to);
     return (signal ? query.abortSignal(signal) : query).returns<ManpowerEntryFacts[]>();
   });
+}
+
+/** A batch is published only after every member of these groups is retrieved. */
+export async function loadManpowerGroupFacts(keys: string[], signal?: AbortSignal): Promise<ManpowerEntryFacts[]> {
+  if (!keys.length || keys.length > HISTORY_GROUP_BATCH_SIZE || (keys.includes(UNGROUPED_HISTORY_KEY) && keys.length !== 1)) throw new Error('Invalid reporting group batch.');
+  return readCompleteGroupBatch<ManpowerEntryFacts>(after => {
+    let query = supabase.from('manpower_entries').select(ENTRY_FACT_COLUMNS, { count: 'exact' }).order('id').limit(500);
+    query = keys[0] === UNGROUPED_HISTORY_KEY ? query.is('reporting_group_id', null) : query.in('reporting_group_id', keys);
+    if (after) query = query.gt('id', after);
+    return (signal ? query.abortSignal(signal) : query).returns<ManpowerEntryFacts[]>();
+  });
+}
+export async function loadManpowerEntryCount(signal?: AbortSignal): Promise<number> {
+  const query = supabase.from('manpower_entries').select('id', { count: 'exact', head: true });
+  const { count, error } = await (signal ? query.abortSignal(signal) : query);
+  if (error) throw error;
+  if (count === null) throw new Error('Unable to confirm complete history. Refresh reporting.');
+  return count;
 }
 
 /** Complete selected-period facts plus at most two historical boundary rows.

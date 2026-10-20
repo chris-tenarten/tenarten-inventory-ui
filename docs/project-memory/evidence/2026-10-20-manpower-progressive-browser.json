@@ -1,0 +1,28 @@
+{
+  "origin": "http://localhost:3000",
+  "checks": [
+    "Automatic complete groups, incremental history, stable scroll/order/expansion and unsaved edits",
+    "Failure keeps complete groups, rejects partial batches and retries explicitly without loops",
+    "Period/Job races and scoped search remain consistent while history continues",
+    "Historical archived edits and whole-group operations work during retrieval",
+    "Denied period settles and explicit retry starts history only after valid analytics",
+    "Empty history and reference refresh invalidate obsolete background results",
+    "Read-only access, account changes and navigation cancel obsolete retrieval",
+    "Create a complete empty group without blocking on global history",
+    "Ambiguous category write reconciles complete groups across period changes",
+    "Visibility pause stops between complete batches and resumes without restarting history"
+  ],
+  "observations": [
+    {
+      "completeMs": 14126,
+      "groups": 1014,
+      "rows": 12888,
+      "scrollY": 1100,
+      "backgroundRequests": 148
+    }
+  ],
+  "pageErrors": [],
+  "external": [],
+  "synthetic": true,
+  "hostedWrites": 0
+}

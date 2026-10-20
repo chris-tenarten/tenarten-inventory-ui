@@ -1,0 +1,47 @@
+{
+  "synthetic": true,
+  "baseline": false,
+  "origin": "http://localhost:3000",
+  "fixture": {
+    "groups": 1013,
+    "ungroupedScope": 1,
+    "entries": 12888,
+    "recentPeriodEntries": 1201,
+    "recentCompleteGroupMembers": 1207,
+    "providerCap": 137
+  },
+  "analyticsMs": 586,
+  "recentUsableMs": 880,
+  "firstOlderMs": 1247,
+  "completeMs": 9080,
+  "pollingObservations": {
+    "analyticsMs": 937,
+    "recentUsableMs": 940,
+    "firstOlderMs": 1237,
+    "completeMs": 9248
+  },
+  "viewToggleMs": 63,
+  "animationFrameObservations": {
+    "samples": 481,
+    "p95Ms": 45,
+    "p99Ms": 56,
+    "maxMs": 102.1,
+    "framesOver50Ms": 13
+  },
+  "initial": {
+    "requests": 20,
+    "rows": 2410,
+    "jsonBytes": 1681691
+  },
+  "initialPollingSnapshot": {
+    "requests": 24,
+    "rows": 2958,
+    "jsonBytes": 2074507
+  },
+  "complete": {
+    "requests": 160,
+    "rows": 14091,
+    "jsonBytes": 10053091
+  },
+  "note": "DOM readiness measured by MutationObserver relative to navigation; polling times retained separately. One local observation. Baseline older history requires manual initiation; candidate loads actual complete group batches automatically. Initial protocol cost is classified from period reads and the first eight complete recent groups; polling snapshots may include in-flight background reads. Every labor request has the same 20 ms synthetic delay."
+}

@@ -1,0 +1,12 @@
+{
+  "origin": "http://localhost:3000",
+  "synthetic": true,
+  "checks": [
+    "Actual Sample library loads",
+    "Complete Proposal library loads",
+    "Disposable local creation and PDF download",
+    "Recent and automatically published historical group screenshots"
+  ],
+  "hostedWrites": 0,
+  "cleanup": "Capture assertions passed; cleanup after browser closure failed, then an independent direct local reset succeeded. No application failure."
+}
