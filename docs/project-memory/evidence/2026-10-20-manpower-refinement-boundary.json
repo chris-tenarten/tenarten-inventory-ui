@@ -1,0 +1,16 @@
+{
+  "parentCommit": "e902bf3b018226fa49527b2a99cf45197bc3668e",
+  "changedApplicationPaths": [
+    "src/modules/manpower/ManpowerAnalytics.tsx",
+    "src/modules/manpower/ManpowerWorkspace.tsx"
+  ],
+  "preservedLocalRefs": {
+    "main": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "dev": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "perf/messaging-notification-wave1": "71f6915bd66eeb079b4adcae1f234cc37174dca6",
+    "perf/list-production-wave2": "8f264712813cf7d7deb848e721cae40949c4f8f9",
+    "perf/samples-workspace-wave3": "d310e4f2d28c0688705d933e896705c113af607e",
+    "perf/manpower-inventory-wave4": "1dc57a3f4c35f1d3f31312191f84df1052dc695c"
+  },
+  "note": "Local source comparison only. No fetch, hosted inspection or mutation performed for this refinement. Other application and migration paths are unchanged from the accepted integration candidate."
+}

@@ -1,0 +1,11 @@
+{
+  "origin": "http://localhost:3000",
+  "synthetic": true,
+  "checks": [
+    "Actual Sample library loads",
+    "Complete Proposal library loads",
+    "Disposable local Proposal creation",
+    "Existing renderer generates downloadable PDF"
+  ],
+  "hostedWrites": 0
+}

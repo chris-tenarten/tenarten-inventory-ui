@@ -1,11 +1,10 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 import { useAccountPreferences } from '@/lib/account-preferences';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import type { ManpowerEntry, ManpowerReference, ManpowerReportingGroup } from './types';
-import { hydrateManpowerEntries, loadManpowerReportFacts } from './manpower';
-import { aggregateLabor, LABOR_PERIODS, laborColorSlot, laborDateLabel, laborPeriod, localLaborToday, type LaborPeriodDays, type LaborSlice, type LaborJob, laborColorSlots, laborColorValue } from './analytics';
+import type { ManpowerEntry, ManpowerReference } from './types';
+import { aggregateLabor, LABOR_PERIODS, laborColorSlot, laborDateLabel, laborPeriod, type LaborPeriodDays, type LaborSlice, type LaborJob, laborColorSlots, laborColorValue } from './analytics';
 import { entryHundredths, productKey, productLabel } from './product-reporting';
 import styles from './ManpowerAnalytics.module.css';
 
@@ -57,12 +56,11 @@ function JobAnalyticsPanel({ jobs, focus, period, onReview }: { jobs: LaborJob[]
     </div>;
   })}</>;
 }
-export default function ManpowerAnalytics({ entries, categories, tasks, jobId, productFocus, loading, error, workers, groups, referencesReady, historyReady, revision, onReportSettled }: {
+export default function ManpowerAnalytics({ entries, categories, tasks, jobId, productFocus, loading, error, days, setDays, today }: {
   entries: ManpowerEntry[]; categories: ManpowerReference[]; tasks: ManpowerReference[]; jobId: string | null;
   productFocus: string; loading: boolean; error: string;
-  workers: ManpowerReference[]; groups: ManpowerReportingGroup[]; referencesReady: boolean; historyReady: boolean; revision: number; onReportSettled(): void;
+  days: LaborPeriodDays; setDays(days: LaborPeriodDays): void; today: string;
 }) {
-  const [days, setDays] = useState<LaborPeriodDays>(30);
   const accountPreferences = useAccountPreferences();
   const expanded = accountPreferences.preferences.manpower_recent_labor_expanded === true;
   const [preferenceSaving, setPreferenceSaving] = useState(false);
@@ -74,33 +72,14 @@ export default function ManpowerAnalytics({ entries, categories, tasks, jobId, p
     catch { setPreferenceFailure('That account preference could not be saved. The current page remains usable.'); }
     finally { setPreferenceSaving(false); }
   };
-  const [today, setToday] = useState(localLaborToday);
   const detailScope = `${days}:${jobId}:${today}`;
   const [detailState, setDetailState] = useState<{ scope: string; detail: Detail } | null>(null);
   const detail = detailState?.scope === detailScope ? detailState.detail : null;
   const setDetail = (next: Detail | null) => setDetailState(next ? { scope: detailScope, detail: next } : null);
   const [showEntries, setShowEntries] = useState(false);
-  useEffect(() => {
-    const tick = () => setToday(localLaborToday());
-    const timer = window.setInterval(tick, 60000); window.addEventListener('focus', tick);
-    return () => { window.clearInterval(timer); window.removeEventListener('focus', tick); };
-  }, []);
-  const scope = `${revision}:${days}:${jobId ?? ''}:${today}`;
-  const [report, setReport] = useState<{ scope: string; entries: ManpowerEntry[]; error: string } | null>(null);
-  useEffect(() => {
-    if (!referencesReady || historyReady) return;
-    let active = true;
-    const request = new AbortController();
-    void loadManpowerReportFacts(laborPeriod(days, today), jobId, request.signal).then((facts) => {
-      if (active) setReport({ scope, entries: hydrateManpowerEntries(facts, workers, tasks, groups), error: '' });
-    }).catch((caught) => {
-      if (active) setReport({ scope, entries: [], error: caught instanceof Error ? caught.message : 'Unable to load complete period labor.' });
-    }).finally(() => { if (active) onReportSettled(); });
-    return () => { active = false; request.abort(); };
-  }, [referencesReady, historyReady, scope, days, today, jobId, workers, tasks, groups, onReportSettled]);
-  const reportEntries = useMemo(() => historyReady ? entries : report?.scope === scope ? report.entries : [], [historyReady, entries, report, scope]);
-  const reportLoading = historyReady ? loading : !referencesReady ? loading : report?.scope !== scope;
-  const reportError = historyReady || !referencesReady ? error : report?.scope === scope ? report.error : '';
+  const reportEntries = entries;
+  const reportLoading = loading;
+  const reportError = error;
   const data = useMemo(() => aggregateLabor(reportEntries, categories, tasks, laborPeriod(days, today), jobId), [reportEntries, categories, tasks, days, today, jobId]);
   const colors = useMemo(() => ({ slots: laborColorSlots(categories), inactive: new Set(categories.filter(c => !c.is_active).map(c => c.id)) }), [categories]);
   const available = !reportLoading && !reportError;

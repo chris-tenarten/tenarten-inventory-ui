@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {mkdirSync,writeFileSync,readFileSync,existsSync} from 'node:fs';
 import {chromium,expect} from '@playwright/test';
 import {session as makeSession,uuid} from './support/wave4-fixture.mjs';
-const origin='http://localhost:3355',owner=uuid(900021),other=uuid(900024),only=process.env.INTEGRATION_CHECK||'';
+const origin=process.env.PERFORMANCE_REVIEW_ORIGIN||'http://localhost:3355',owner=uuid(900021),other=uuid(900024),only=process.env.INTEGRATION_CHECK||'';
 const browser=await chromium.launch({headless:true}),errors=[],external=[],checks=[],observations=[],file='docs/project-memory/evidence/2026-10-19-integration-browser.json';
 if(only&&existsSync(file)){const old=JSON.parse(readFileSync(file));checks.push(...old.checks);observations.push(...old.observations);}
 const ctx=await browser.newContext({viewport:{width:1440,height:1000}}),page=await ctx.newPage();
@@ -37,8 +37,8 @@ try{
   await identity.fill('T26-901-A');await page.locator('#sample-documents > summary').click();await page.getByText('Formula checkpoints and previews',{exact:true}).click();await page.getByRole('button',{name:'Preview current Sample',exact:true}).click();await pdf();
  });
  await run('Manpower report readiness and complete history coexist with Messaging',async()=>{
-  await page.goto(origin+'/manpower-reporting');await expect(total()).toHaveText('4,503.75 h');let s=await state();assert.equal(s.calls.filter(c=>c.name==='manpower_entries'&&!new URL(c.path,origin).searchParams.has('work_date')&&!new URL(c.path,origin).searchParams.has('job_id')).length,0);
-  await openMessaging();await page.getByRole('button',{name:'Close Inbox',exact:true}).click();await page.getByRole('button',{name:'Load reporting history',exact:true}).click();await expect(page.getByRole('searchbox',{name:'Search manpower',exact:true})).toBeEnabled();await expect(total()).toHaveText('4,503.75 h');await page.getByRole('button',{name:'90 Days',exact:true}).click();await expect(total()).toHaveText('6,753.75 h');
+  await page.goto(origin+'/manpower-reporting');await expect(total()).toHaveText('4,503.75 h');await expect(page.getByTestId('reporting-records')).toHaveAttribute('data-count','1201');let s=await state();assert.equal(s.calls.filter(c=>c.name==='manpower_entries'&&!new URL(c.path,origin).searchParams.has('work_date')&&!new URL(c.path,origin).searchParams.has('job_id')).length,0);
+  await openMessaging();await page.getByRole('button',{name:'Close Inbox',exact:true}).click();await page.getByRole('button',{name:'Load complete history',exact:true}).click();await expect(page.getByRole('searchbox',{name:'Search manpower',exact:true})).toBeEnabled();await expect(total()).toHaveText('4,503.75 h');await page.getByRole('button',{name:'90 Days',exact:true}).click();await expect(total()).toHaveText('6,753.75 h');
  });
  await run('Inventory current quantities and complete receiving/usage histories',async()=>{
   await page.goto(origin+'/inventory');await expect(page.locator('table').getByRole('cell',{name:/^13,189 Bags/})).toBeVisible();await page.getByRole('button').filter({hasText:'Pending Receivals'}).click();await expect(page.locator('#pending-receivals tbody tr')).toHaveCount(5);await page.getByRole('button',{name:'Load received items',exact:true}).click();await expect(page.locator('#pending-receivals tbody tr')).toHaveCount(1206);

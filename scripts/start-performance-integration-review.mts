@@ -80,8 +80,14 @@ const server=createServer(async(req,res)=>{
     if(/^(get_|list_|search_|suggest_)/.test(name))return send(200,[]);
     return send(403,{message:'Unsupported disposable write'});
    }
+   // Disposable fixture editing only; hosted mode exits through the read-only guard above.
+   if(req.method==='PATCH'&&name==='manpower_entries'&&actor===owner){
+    const id=url.searchParams.get('id')?.replace(/^eq\./,'');const entry=tables.manpower_entries.find(r=>r.id===id);if(!entry)return send(404,{});
+    Object.assign(entry,body,{updated_at:new Date().toISOString()});return send(200,entry);
+   }
    if(!['GET','HEAD'].includes(req.method))return send(403,{message:'Unsupported disposable write'});
    const data=actor===owner?{...tables,my_work_messages:messages}:Object.fromEntries(Object.keys(tables).map(k=>[k,[]]));
+   if(control.emptyManpower)data.manpower_entries=[];
    const result=wave2Response(url,data,137),single=req.headers.accept?.includes('vnd.pgrst.object'),payload=single?result.rows[0]??null:result.rows;
    call.rows=result.rows.length;call.bytes=Buffer.byteLength(JSON.stringify(payload));call.done=Date.now();return send(single&&!payload?406:200,payload,result.headers);
   }

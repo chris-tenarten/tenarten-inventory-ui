@@ -1,0 +1,27 @@
+{
+  "synthetic": true,
+  "baseline": false,
+  "initial": {
+    "ms": 321,
+    "requests": 11,
+    "bytes": 845153,
+    "rows": 1203,
+    "recentEntriesAutomatic": true,
+    "recentReadyMs": 323
+  },
+  "periodSwitch": {
+    "ms": 134,
+    "requests": 27,
+    "bytes": 2122911,
+    "rows": 3006
+  },
+  "completeHistory": {
+    "ms": 808,
+    "requests": 115,
+    "bytes": 10753518,
+    "rows": 15007
+  },
+  "note": "Period and history metrics are cumulative; recent readiness is manual in baseline.",
+  "origin": "http://localhost:3000",
+  "parentCommit": "e902bf3b018226fa49527b2a99cf45197bc3668e"
+}

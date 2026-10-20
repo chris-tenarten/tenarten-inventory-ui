@@ -1,0 +1,17 @@
+{
+  "origin": "http://localhost:3000",
+  "checks": [
+    "Automatic complete 30-day records, editable rows, scoped bulk selection and unchanged analytics",
+    "Period/Job changes reject late replies and preserve selected-period filters",
+    "Empty selected period settles with no false historical entries",
+    "Denied period terminates, has no retry loop and explicit retry restores complete rows",
+    "History denial preserves recent rows; retry loads all 12001, archived editing and cached period switching",
+    "A period selected during history loading is not overwritten by completion",
+    "Read-only account sees complete recent rows with disabled write controls",
+    "Same-account refocus/revalidation preserves unsaved input; Messaging/navigation and account change remain safe"
+  ],
+  "errors": [],
+  "external": [],
+  "synthetic": true,
+  "hostedWrites": 0
+}
