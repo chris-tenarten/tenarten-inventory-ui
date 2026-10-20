@@ -18,7 +18,7 @@ const ONLINE_HOLD_MS = 900;
 const FADE_DURATION_MS = 850;
 const ISOLATION_MS = 650;
 const TRANSFORMATION_MS = 3500;
-const TERRAZZO_HOLD_MS = 1850;
+const TERRAZZO_HOLD_MS = 888;
 
 function smoothstep(value: number) {
   const clamped = Math.max(0, Math.min(1, value));

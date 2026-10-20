@@ -5,7 +5,7 @@ import {chromium,expect} from '@playwright/test';
 import {session,userId} from './support/wave4-fixture.mjs';
 const origin=process.env.STARTUP_REVIEW_ORIGIN||'http://localhost:3355';
 const brand=process.env.STARTUP_REVIEW_BRAND||'TenOps';
-const evidence='docs/project-memory/evidence/startup-animation';
+const evidence=process.env.STARTUP_EVIDENCE_DIR||'docs/project-memory/evidence/startup-animation';
 mkdirSync(evidence,{recursive:true});
 const browser=await chromium.launch({channel:'chrome',headless:process.env.STARTUP_REVIEW_HEADED!=='true'});
 const checks=[],errors=[],external=[];
@@ -37,7 +37,7 @@ async function run(name,test,options={}){
 async function readyToSkip(p){await expect(skip(p)).toBeVisible({timeout:18000});await expect(hero(p)).toHaveAttribute('data-critical-app-ready','true');await expect(hero(p)).toHaveAttribute('data-hero-animation-complete','true');}
 const emit=async(p,event,s)=>p.evaluate(({event,s})=>{localStorage.setItem('sb-localhost-auth-token',JSON.stringify(s));const c=new BroadcastChannel('sb-localhost-auth-token');c.postMessage({event,session:s});c.close();},{event,s});
 try{
- await run('full sequence, 1.85-second hold and continuous mounted entrance',async p=>{
+ await run('full sequence, 0.888-second hold and continuous mounted entrance',async p=>{
   await p.goto(origin+'/');await expect(hero(p)).toBeVisible();
   await expect(p.locator('[data-welcome-secondary]')).toHaveText(brand==='TenDev'?'TenDev RESEARCH & DEVELOPMENT':'TenOps OPERATIONS CONTROL');
   const box=await p.locator('div[data-welcome-hero] [data-welcome-logo-stack]').boundingBox();
@@ -56,9 +56,9 @@ try{
   await expect(hero(p)).toHaveAttribute('data-welcome-phase','hold',{timeout:6000});
   await p.screenshot({path:`${evidence}/${brand}-terrazzo.png`});
   for(const plate of await p.locator('[data-welcome-plate]').all())await expect(plate).toHaveCSS('opacity','0');
-  await p.waitForFunction(()=>performance.now()-window.startupPhases.hold>=1200);await expect(hero(p)).toHaveAttribute('data-welcome-phase','hold');
+  await p.waitForFunction(()=>performance.now()-window.startupPhases.hold>=300);await expect(hero(p)).toHaveAttribute('data-welcome-phase','hold');
   await expect(hero(p)).toHaveAttribute('data-welcome-phase','entrance',{timeout:1200});
-  const holdMs=await p.evaluate(()=>window.startupPhases.entrance-window.startupPhases.hold);assert(holdMs>=1700&&holdMs<=2100,`Unexpected hold: ${holdMs}ms`);
+  const holdMs=await p.evaluate(()=>window.startupPhases.entrance-window.startupPhases.hold);assert(holdMs>=750&&holdMs<=1100,`Unexpected hold: ${holdMs}ms`);
   await expect(hero(p)).toHaveCount(0,{timeout:2000});
   assert(await p.evaluate(()=>window.keptShell===document.querySelector('[data-app-shell]')));
   await p.screenshot({path:`${evidence}/${brand}-application.png`});
