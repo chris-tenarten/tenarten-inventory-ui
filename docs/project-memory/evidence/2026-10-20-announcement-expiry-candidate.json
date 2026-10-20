@@ -1,0 +1,32 @@
+{
+  "checks": [
+    "desktop timer",
+    "desktop visibilitychange",
+    "desktop focus",
+    "desktop pageshow",
+    "desktop dismiss",
+    "mobile timer",
+    "mobile visibilitychange",
+    "mobile focus",
+    "mobile pageshow",
+    "mobile dismiss",
+    "desktop blocked-dismiss",
+    "desktop stored-dismiss",
+    "mobile blocked-dismiss",
+    "mobile stored-dismiss"
+  ],
+  "errors": [],
+  "external": [],
+  "backendRequestsForwarded": 0,
+  "mode": "Production export; existing intercepted synthetic backend; simulated mobile resume",
+  "baseline": "8f549d57bdfad25355787ccf0f3788436f38b23e",
+  "productionBuild": "passed (includes TypeScript)",
+  "targetedEslint": "passed",
+  "diffCheck": "passed",
+  "tier": 1,
+  "testingLevel": 2,
+  "limitations": [
+    "Simulated browser resume, not physical iOS suspension certification.",
+    "320px header overlap intercepted pointer clicks; popover opened by event dispatch to isolate lifecycle. No layout correction included."
+  ]
+}

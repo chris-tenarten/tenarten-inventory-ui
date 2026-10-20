@@ -14,6 +14,7 @@ export default function PerformanceAnnouncement() {
   const trigger = useRef<HTMLButtonElement>(null);
   const popover = useRef<HTMLDivElement>(null);
   const dismissKey = useRef('');
+  const dismissedHere = useRef(false);
 
   useEffect(() => {
     if (BRANDING.showDeveloperArtwork) return;
@@ -23,7 +24,7 @@ export default function PerformanceAnnouncement() {
     let dismissed = false;
     try { dismissed = localStorage.getItem(dismissKey.current) === '1'; } catch { /* Optional browser preference. */ }
     const update = () => {
-      const active = !dismissed && (preview ? preview.visible : announcementWindow(PERFORMANCE_ACTIVATED_AT, Date.now()));
+      const active = !dismissedHere.current && !dismissed && (preview ? preview.visible : announcementWindow(PERFORMANCE_ACTIVATED_AT, Date.now()));
       setVisible(active);
       if (!active) setOpen(false);
       if (active) {
@@ -41,12 +42,28 @@ export default function PerformanceAnnouncement() {
     const start = PERFORMANCE_ACTIVATED_AT ? Date.parse(PERFORMANCE_ACTIVATED_AT) : NaN;
     let timer: number | undefined;
     const schedule = () => {
+      window.clearTimeout(timer);
       const now = Date.now();
       const remaining = (now < start ? start : start + ANNOUNCEMENT_DURATION) - now;
       if (!preview && Number.isFinite(remaining) && remaining > 0) timer = window.setTimeout(() => { update(); schedule(); }, Math.min(remaining, 2147483647));
     };
+    const revalidate = () => {
+      try { dismissed = localStorage.getItem(dismissKey.current) === '1'; } catch { /* Keep current page preference. */ }
+      update();
+      schedule();
+    };
+    const onVisibility = () => { if (document.visibilityState === 'visible') revalidate(); };
+    window.addEventListener('focus', revalidate);
+    window.addEventListener('pageshow', revalidate);
+    document.addEventListener('visibilitychange', onVisibility);
     schedule();
-    return () => { window.removeEventListener('storage', onStorage); window.clearTimeout(timer); };
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('focus', revalidate);
+      window.removeEventListener('pageshow', revalidate);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -74,7 +91,7 @@ export default function PerformanceAnnouncement() {
       <div className={styles.item}><h3>PERFORMANCE</h3><p>Production and Manpower Reporting now load operational data more efficiently.</p></div>
       <div className={styles.item}><h3>SAMPLE GENERATOR</h3><p>Simplified Sample preparation with practical quantity scaling and easy manual adjustments.</p></div>
       <div className={styles.item}><h3>COLOR PLATE LABELS</h3><p>Generate and print Color Plate labels directly from TenOps.</p></div>
-      <button type="button" className={styles.dismiss} onClick={() => { try { localStorage.setItem(dismissKey.current, '1'); } catch { /* Dismiss for this page when storage is blocked. */ } setOpen(false); setVisible(false); }}>Dismiss announcement</button>
+      <button type="button" className={styles.dismiss} onClick={() => { dismissedHere.current = true; try { localStorage.setItem(dismissKey.current, '1'); } catch { /* Dismiss for this page when storage is blocked. */ } setOpen(false); setVisible(false); }}>Dismiss announcement</button>
     </div>, document.body)}
   </div>;
 }
