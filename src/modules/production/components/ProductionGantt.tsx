@@ -1,5 +1,7 @@
 'use client';
 
+import MobileTimeline from '@/components/mobile/MobileTimeline';
+import { mobileProductionRows } from '../mobile-timeline-adapter';
 import { useAuth } from '@/lib/auth';
 import { BusinessButton } from '@/components/BusinessWriteControls';
 
@@ -975,6 +977,7 @@ export default function ProductionGantt({ jobs, stagedSchedules, onStageSchedule
 
   return (
     <div ref={ganttRef} data-production-gantt data-mobile-read-only={mobileReadOnly ? 'true' : undefined} data-mobile-landscape={mobileLandscape ? 'true' : undefined} className="scroll-mt-16 overflow-hidden rounded-sm border border-slate-200 bg-white shadow-sm">
+      <MobileTimeline title="Production" rows={() => mobileProductionRows(jobs, stagedSchedules, planningEnabled ? planningPhases : [], stagedPlanningSchedules, job => onSelectJob(job, 'planned-dates'))}/>
       <div ref={workspaceRef} className="scroll-mt-16 border-b border-slate-200 bg-white px-3 py-2">
         <h3 className="text-xs font-bold uppercase tracking-[0.1em] text-slate-800">Planning Timeline</h3>
       </div>

@@ -53,6 +53,7 @@ type Props = {
   onSummaryChanged: (summary: JobUpdateSummary) => void;
   onAttachmentsChanged: (attachments: JobAttachment[]) => void;
   onOpenAttachment: (attachment: JobAttachment) => void;
+  onDraftStateChange?: (dirty: boolean, busy: boolean) => void;
 };
 
 type ResolutionDraft = {
@@ -162,6 +163,7 @@ export default function JobUpdatesPanel({
   onSummaryChanged,
   onAttachmentsChanged,
   onOpenAttachment,
+  onDraftStateChange,
 }: Props) {
   const auth = useAuth();
   const [updates, setUpdates] = useState<JobUpdate[]>([]);
@@ -195,6 +197,8 @@ export default function JobUpdatesPanel({
   const postingRef = useRef(false);
   const resolvingIdsRef = useRef(new Set<string>());
 
+  const pendingDraft = Boolean(body.trim() || selectedFiles.length || Object.values(resolutionDrafts).some(d => d.message.trim() || d.files.length) || editDraft);
+  useEffect(() => { onDraftStateChange?.(pendingDraft, posting || Boolean(resolvingId) || Boolean(savingEditId)); }, [onDraftStateChange, pendingDraft, posting, resolvingId, savingEditId]);
   useEffect(() => {
     let live = true;
     setLoading(true);
@@ -891,6 +895,7 @@ export default function JobUpdatesPanel({
           </label>
           <JobUpdateMentionTextarea
             id={`job-update-body-${job.id}`}
+            ariaLabel="Job update"
             value={body}
             mentions={mentions}
             collaborators={mentionableCollaborators}

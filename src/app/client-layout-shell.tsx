@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import MobileNavigation, {guardMobileNavigation} from '@/components/mobile/MobileNavigation';
 import EarlyAccessBadge from '@/components/EarlyAccessBadge';
 import PerformanceAnnouncement from '@/components/PerformanceAnnouncement';
 import Image from 'next/image';
@@ -185,7 +186,7 @@ function DomainNav({
   const isActive = items.some((item) => domainItemIsActive(item, pathname));
   return (
     <div
-      className="relative shrink-0"
+      className="desktop-domain-nav relative shrink-0"
       onMouseEnter={() => {
         if (!dismissedWhileHovered) setIsOpen(true);
       }}
@@ -399,7 +400,7 @@ export default function ClientLayoutShell({
   const shellUnlocked = auth.ready && auth.accessStatus === "allowed" && !auth.requiresPasswordSetup && auth.isAuthenticated && auth.accessAllowed;
 
   return (
-    <div ref={shellRef} data-app-shell>
+    <div ref={shellRef} onClickCapture={guardMobileNavigation} data-app-shell data-mobile-unlocked={shellUnlocked ? "true" : undefined}>
       <WelcomeHero welcomeStatus={welcomeStatus} />
       <header ref={shellHeaderRef} data-shell-header data-login-gate={!shellUnlocked ? 'true' : undefined} data-dev-branding={BRANDING.showDeveloperArtwork ? 'true' : undefined} data-compact-header={hasScrolled ? 'true' : undefined} className="sticky top-0 z-[100] border-b border-slate-200 bg-[#f2f5f8] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200">
         <div
@@ -484,7 +485,7 @@ export default function ClientLayoutShell({
                 <DomainNav pathname={pathname} labelKey="nav.inventory" href="/inventory" icon={PackageIcon} items={inventoryNavItems} />
                 <div className="flex shrink-0 items-center">
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
-                  <MyWorkNav pathname={pathname} />
+                  <span className="desktop-domain-nav"><MyWorkNav pathname={pathname} /></span>
                   <GlobalMessaging key={auth.profile?.userId??'signed-out'} />
                   <AccountNotifications key={`notifications:${auth.profile?.userId ?? "signed-out"}`} onWelcomeChange={setWelcomeStatus} onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   {auth.isAuthenticated && auth.profile?.isActive ? <div ref={accountMenuRef} data-account-identity className="relative">
@@ -519,6 +520,13 @@ export default function ClientLayoutShell({
         </div>
       </header>
 
+      {shellUnlocked && <MobileNavigation items={[
+        ...dashboardNavItems.filter(item => item.href !== '/pre-production' || Boolean(auth.profile?.isActive && auth.can('viewIntake'))).map(item => ({href: item.href, label: t(item.labelKey)})),
+        ...reportingNavItems.filter(item => !item.disabled).map(item => ({href: item.href, label: t(item.labelKey)})),
+        ...inventoryNavItems.map(item => ({href: item.href, label: t(item.labelKey)})),
+        ...toolboxMenuSections.flatMap(section => section.items),
+        {href: '/settings', label: 'Settings'},
+      ]}/>}
       <main className="min-h-[calc(100vh-65px)] bg-[#eef1f4] text-slate-950">
         {auth.ready && shellUnlocked ? (
           <>

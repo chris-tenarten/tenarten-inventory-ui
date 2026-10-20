@@ -1,4 +1,5 @@
 "use client";
+import {useMobileNavigationGuard} from '@/components/mobile/useMobileNavigationGuard';
 import dynamic from "next/dynamic";
 const ColorPlateLabelEditor = dynamic(() => import("./ColorPlateLabelEditor"), { ssr: false });
 
@@ -417,6 +418,7 @@ export default function SampleWorkspace() {
     }
   }
   const [blendDirty,setBlendDirty]=useState(false);
+  useMobileNavigationGuard(Boolean(draft && JSON.stringify(draft) !== draftBaseline) || blendDirty, Boolean(busy));
   const [productionAttention,setProductionAttention]=useState<SampleAttention[]>([]);
   const productionRef=useRef<{open:()=>void}>(null);
   type PostingBlend = {id:string;status:string;created_at:string;identity:string;planned_quantity:string};

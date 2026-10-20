@@ -184,6 +184,8 @@ export default function ProductionWorkspace() {
   const scheduleFeedbackRef = useRef<HTMLDivElement | null>(null);
   const approvalDialogRef = useRef<HTMLDivElement | null>(null);
   const approvalInitialRef = useRef<HTMLInputElement | null>(null);
+  const selectionRequest = useRef(0);
+  const [selectionMessage, setSelectionMessage] = useState('');
   const inspectorOpenerRef = useRef<HTMLElement | null>(null);
 
   const setDashboardMode = useCallback((mode: DashboardMode, history: 'push' | 'replace' = 'push') => {
@@ -641,13 +643,18 @@ export default function ProductionWorkspace() {
     return counts;
   }, {}), [planningPhases]);
   const selectJob = async (job:ProductionJob, focus?:string) => {
+    if (selectedJobId && selectedJobId !== job.id && !window.dispatchEvent(new Event('tenops:detail-leave', {cancelable:true}))) return;
+    const request = ++selectionRequest.current;
+    setSelectionMessage('Opening Job…');
     try {
       const details = await loadProductionJob(job.id);
+      if (request !== selectionRequest.current) return;
       if (!details) throw new Error('Project unavailable.');
       setJobs(current => current.map(item => item.id === job.id ? { ...item,
         customer_company_id: details.customer_company_id, customer_contact_id: details.customer_contact_id,
         customer_contact_snapshot: details.customer_contact_snapshot } : item));
-    } catch (error) { console.error('Unable to load Project contact details:', error); return; }
+    } catch (error) { if (request === selectionRequest.current) setSelectionMessage(error instanceof Error ? error.message : 'Unable to open Job. Try again.'); return; }
+    setSelectionMessage('');
     if (document.activeElement instanceof HTMLElement) inspectorOpenerRef.current = document.activeElement;
     setSelectedJobId(job.id);
     setInspectorFocus(focus);
@@ -784,7 +791,7 @@ export default function ProductionWorkspace() {
     .sort((first, second) => first.localeCompare(second, undefined, { sensitivity: 'base' }));
 
   return (
-    <div className={`mx-auto min-w-0 w-full max-w-[1800px] overflow-x-clip px-2 py-3 sm:px-5 sm:py-7 ${hasPendingSchedules ? 'pb-36' : ''}`}>
+    <div data-production-workspace className={`mx-auto min-w-0 w-full max-w-[1800px] overflow-x-clip px-2 py-3 sm:px-5 sm:py-7 ${hasPendingSchedules ? 'pb-36' : ''}`}>
       <datalist id="production-customer-suggestions">
         {customerSuggestions.map((customer) => <option key={customer} value={customer} />)}
       </datalist>
@@ -796,7 +803,7 @@ export default function ProductionWorkspace() {
         </div>
       </div>
       {dashboardMode === 'snapshot' ? <MonthlySnapshot /> : <div>
-        <div className="mb-4 border-b border-slate-200 pb-4">
+        <div data-production-heading className="mb-4 border-b border-slate-200 pb-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{tr('Production reporting', 'Control de producción')}</div>
@@ -1006,6 +1013,7 @@ export default function ProductionWorkspace() {
             </div>
           );
         })()}
+        {selectionMessage && <p role="status" className="my-2 text-sm text-slate-600">{selectionMessage}</p>}
         {scheduleMessage && <div ref={scheduleFeedbackRef} tabIndex={-1} role={scheduleSaveState === 'error' ? 'alert' : 'status'} className={`mt-3 px-4 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-slate-700 ${scheduleSaveState === 'error' ? 'border border-red-300 bg-red-50 text-red-800' : 'border border-slate-300 bg-white text-slate-700'}`}>{scheduleMessage}</div>}
 
         <div className="mt-4">

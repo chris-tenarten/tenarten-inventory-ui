@@ -1,0 +1,80 @@
+import assert from 'node:assert/strict';
+import {mkdirSync,writeFileSync,readFileSync,existsSync} from 'node:fs';
+import {chromium,expect} from '@playwright/test';
+import {session,uuid} from './support/wave4-fixture.mjs';
+const origin='http://localhost:3020',directory='docs/mobile-early-access',checks=[],errors=[],external=[];
+mkdirSync(directory+'/screenshots',{recursive:true});
+const only=process.env.MOBILE_CHECK||'';
+if(only&&existsSync(directory+'/browser-progress.json'))checks.push(...JSON.parse(readFileSync(directory+'/browser-progress.json')).checks);
+const browser=await chromium.launch({headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+await context.route('**/*',route=>{const u=new URL(route.request().url());if(u.origin===origin||u.protocol==='blob:')return route.continue();external.push(u.href);return route.abort();});
+await context.routeWebSocket('**/realtime/v1/**',()=>{});
+const page=await context.newPage();page.setDefaultTimeout(12000);page.on('pageerror',e=>errors.push(e.message));await page.clock.setFixedTime(new Date('2026-10-20T12:00:00Z'));
+const control=async data=>{assert((await context.request.post(origin+'/__review/control',{data})).ok());};
+const state=async()=>(await context.request.get(origin+'/__review/state')).json();
+const emit=async(event,s)=>page.evaluate(({event,s})=>{if(s)localStorage.setItem('sb-localhost-auth-token',JSON.stringify(s));else localStorage.removeItem('sb-localhost-auth-token');const c=new BroadcastChannel('sb-localhost-auth-token');c.postMessage({event,session:s});c.close();},{event,s});
+const snap=async name=>page.screenshot({path:`${directory}/screenshots/${name}.png`});
+async function run(name,fn){if(only&&!name.startsWith(only))return;await control({reset:true});await fn();if(!checks.includes(name))checks.push(name);writeFileSync(directory+'/browser-progress.json',JSON.stringify({checks,pageErrors:errors,external},null,2));console.log('PASS '+name);}
+const nav=()=>page.getByRole('navigation',{name:'Mobile navigation',exact:true});
+const inspector=()=>page.locator('[data-mobile-detail]');
+const timeline=()=>page.locator('.mobile-timeline');
+async function jobs(){await page.goto(origin);await expect(page.getByRole('button',{name:'Open Wave Job 0',exact:true})).toBeVisible();}
+async function selectJob(){await page.getByRole('button',{name:'Open Wave Job 0',exact:true}).click();await expect(inspector()).toBeVisible();}
+async function openTimeline(){await page.getByRole('button',{name:'Timeline',exact:true}).click();await page.getByRole('button',{name:'Open full-screen Timeline',exact:true}).click();await expect(timeline()).toBeVisible();}
+const touch=async(client,type,positions)=>client.send('Input.dispatchTouchEvent',{type,touchPoints:positions.map(([x,y],i)=>({x,y,id:i+1,radiusX:2,radiusY:2}))});
+try{
+ await run('Compact navigation, More reachability, active destinations and single Messaging instance',async()=>{
+  await jobs();await expect(nav().getByRole('link',{name:'Jobs',exact:true})).toHaveAttribute('aria-current','page');
+  const msg=page.getByRole('button',{name:'Messaging',exact:true});await expect(msg).toHaveCount(1);await expect(msg).toBeInViewport();assert((await msg.boundingBox()).height>=44);
+  await snap('jobs-portrait');await nav().getByRole('button',{name:'More',exact:true}).click();const more=page.getByRole('dialog',{name:'More destinations'});await expect(more.getByRole('link',{name:'Sample Form Generator'})).toBeVisible();assert((await more.getByRole('link').count())>=12);await snap('more-portrait');await page.goBack();await expect(more).toHaveCount(0);
+  await nav().getByRole('link',{name:'My Work',exact:true}).click();await expect(page).toHaveURL(/my-work/);await expect(nav().getByRole('link',{name:'My Work',exact:true})).toHaveAttribute('aria-current','page');await page.goBack();await expect(page).toHaveURL(origin+'/');
+  await msg.click();await expect(page.locator('#my-work-inbox-title')).toBeVisible();await page.getByRole('button',{name:'Close Inbox',exact:true}).click();
+ });
+ await run('Inspector Back cancellation preserves input and filtered list/scroll context',async()=>{
+  await jobs();const search=page.locator('[data-production-search]');await search.fill('Wave Job');await selectJob();await expect(inspector().getByRole('button',{name:'Save changes',exact:true})).toBeDisabled();
+  const input=inspector().getByRole('textbox',{name:'Project name',exact:true});await input.fill('Unsent mobile project name');page.once('dialog',d=>d.dismiss());await page.goBack();await expect(inspector()).toBeVisible();await expect(input).toHaveValue('Unsent mobile project name');
+  await snap('inspector-portrait');page.once('dialog',d=>d.accept());await inspector().getByRole('button',{name:'Back',exact:true}).click();await expect(inspector()).toHaveCount(0);await expect(search).toHaveValue('Wave Job');await expect(page).toHaveURL(origin+'/');
+ });
+ await run('Unsent Update survives tab switches and continuing-session refocus',async()=>{
+  await jobs();await selectJob();await inspector().getByRole('tab',{name:/Job Updates/}).click();const composer=inspector().getByRole('textbox',{name:'Job update',exact:true});await composer.fill('Keep this unsent update');await inspector().getByRole('tab',{name:'Details',exact:true}).click();await inspector().getByRole('tab',{name:/Job Updates/}).click();await expect(composer).toHaveText('Keep this unsent update');
+  const before=(await state()).calls.filter(c=>c.name==='get_my_app_access').length;await emit('SIGNED_IN',session(uuid(900021),2));await expect.poll(async()=>(await state()).calls.filter(c=>c.name==='get_my_app_access').length).toBe(before+1);await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await expect(composer).toHaveText('Keep this unsent update');await page.waitForTimeout(300);assert.equal((await state()).calls.filter(c=>c.name==='get_my_app_access').length,before+1);
+  page.once('dialog',d=>d.dismiss());await inspector().getByRole('button',{name:'Back',exact:true}).click();await expect(composer).toHaveText('Keep this unsent update');await composer.fill('');await inspector().getByRole('button',{name:'Back',exact:true}).click();await expect(inspector()).toHaveCount(0);
+ });
+ await run('Shared Production Timeline: names, natural clipping, selection, touch pan/pinch, Key and module editor',async()=>{
+  await jobs();await openTimeline();const bar=timeline().locator('[data-mobile-schedule-bar]').first();await expect(bar).toHaveText('Wave Job 0');const span=bar.locator('span');assert.equal(await span.evaluate(e=>getComputedStyle(e).position),'static');assert.equal(await bar.evaluate(e=>getComputedStyle(e).overflow),'hidden');
+  await timeline().getByRole('button',{name:'Select Wave Job 0',exact:true}).click();await expect(timeline().getByRole('region',{name:'Selected Timeline record'})).toContainText('Wave Job 0');await snap('production-timeline-portrait');
+  const client=await context.newCDPSession(page),bounds=await timeline().locator('.mt-map').boundingBox(),y=bounds.y+100;const before=await bar.boundingBox();await touch(client,'touchStart',[[230,y]]);await touch(client,'touchMove',[[175,y+24]]);await touch(client,'touchEnd',[]);await expect.poll(async()=>Math.round((await bar.boundingBox()).x)).not.toBe(Math.round(before.x));
+  const width=(await bar.boundingBox()).width;await touch(client,'touchStart',[[170,y],[260,y]]);await touch(client,'touchMove',[[145,y],[285,y]]);await touch(client,'touchEnd',[]);await expect.poll(async()=>(await bar.boundingBox()).width).toBeGreaterThan(width+20);
+  await timeline().getByRole('button',{name:'Today',exact:true}).click();await timeline().getByRole('button',{name:'Key',exact:true}).click();await expect(timeline().locator('.mt-key')).toContainText('Gestures never change schedule dates');await timeline().getByRole('button',{name:'Back to Timeline'}).click();await timeline().getByRole('button',{name:'Open details',exact:true}).click();await expect(timeline()).toHaveCount(0);await expect(inspector()).toBeVisible();await expect(inspector().getByRole('heading',{name:'Wave Job 0',exact:true})).toBeVisible();await inspector().getByRole('button',{name:'Back',exact:true}).click();
+  const s=await state();assert(!s.calls.some(c=>c.name==='save_production_schedule_batch'||c.name==='set_bid_projected_window'));
+ });
+ await run('Bids and Combined reuse the same surface; lost Bids excluded; Production references retain identity',async()=>{
+  await page.goto(origin+'/pre-production');await page.getByRole('button',{name:'Planning',exact:true}).click();await page.getByRole('button',{name:'Combined',exact:true}).click();await page.getByRole('button',{name:'Open full-screen Timeline',exact:true}).click();await expect(timeline()).toBeVisible();await expect(timeline().getByRole('button',{name:'Select Wave Job 0',exact:true})).toBeVisible();
+  assert.equal(await timeline().getByRole('button',{name:'Select Mobile Bid Project 7',exact:true}).count(),0);await timeline().getByRole('button',{name:'Select Wave Job 0',exact:true}).click();await expect(timeline().locator('.mt-selection')).toContainText('View in Production');await snap('bids-combined-portrait');await timeline().getByRole('button',{name:'Exit',exact:true}).click();
+  await page.getByRole('button',{name:'Projected Intake',exact:true}).click();await page.getByRole('button',{name:'Open full-screen Timeline',exact:true}).click();await expect(timeline().locator('[data-mobile-schedule-bar]').first()).toHaveText('Mobile Bid Project 0');await timeline().getByRole('button',{name:'Select Mobile Bid Project 0',exact:true}).click();await expect(timeline().locator('.mt-selection')).toContainText('No capacity reserved');await snap('bids-timeline-portrait');await page.goBack();await expect(timeline()).toHaveCount(0);
+ });
+ await run('Small portrait, landscape, safe viewport and desktop preservation',async()=>{
+  await page.setViewportSize({width:320,height:568});await jobs();assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await snap('jobs-small');
+  await page.setViewportSize({width:844,height:390});await jobs();await expect(nav()).toBeVisible();await selectJob();const box=await inspector().boundingBox();assert(box.width===844&&box.height<=391);await snap('inspector-landscape');await inspector().getByRole('button',{name:'Close',exact:true}).click();await openTimeline();await snap('production-timeline-landscape');await timeline().getByRole('button',{name:'Exit',exact:true}).click();
+  const desktop=await browser.newContext({viewport:{width:1440,height:1000}});const dp=await desktop.newPage();await dp.goto(origin);await expect(dp.getByRole('button',{name:'Open Wave Job 0',exact:true})).toBeVisible();await expect(dp.locator('[data-mobile-navigation]')).toBeHidden();await expect(dp.getByRole('button',{name:'Open full-screen Timeline',exact:true})).toHaveCount(0);await dp.getByRole('button',{name:'Open Wave Job 0',exact:true}).focus();await dp.getByRole('button',{name:'Open Wave Job 0',exact:true}).press('Enter');assert((await dp.getByRole('dialog').boundingBox()).width<=576);await dp.screenshot({path:directory+'/screenshots/desktop-inspector.png'});await desktop.close();await page.setViewportSize({width:390,height:844});
+ });
+ await run('Session identity replacement clears mounted Job draft',async()=>{
+  await jobs();await selectJob();const input=inspector().getByRole('textbox',{name:'Project name',exact:true});await input.fill('PRIVATE UNSENT A');await page.setViewportSize({width:390,height:540});await expect(input).toHaveValue('PRIVATE UNSENT A');assert((await inspector().boundingBox()).height<=541);await page.setViewportSize({width:390,height:844});
+  await emit('SIGNED_IN',session(uuid(900024),3));await expect(page.getByRole('button',{name:/Account menu for Review B/})).toBeVisible();await expect(inspector()).toHaveCount(0);await expect(page.locator('input[value="PRIVATE UNSENT A"]')).toHaveCount(0);await emit('SIGNED_IN',session(uuid(900021),4));await expect(page.getByRole('button',{name:/Account menu for Integrated Review/})).toBeVisible();
+ });
+ await run('Read-only and denied sessions preserve boundaries',async()=>{
+  await control({readOnly:true});await jobs();await selectJob();await expect(inspector().getByRole('textbox',{name:'Project name',exact:true})).toBeDisabled();await inspector().getByRole('button',{name:'Back',exact:true}).click();await openTimeline();await timeline().getByRole('button',{name:'Select Wave Job 0',exact:true}).click();await expect(timeline().getByRole('button',{name:'Open details',exact:true})).toBeEnabled();await timeline().getByRole('button',{name:'Exit',exact:true}).click();
+  await control({access:'denied'});await page.reload();await expect(page.getByRole('alert').filter({hasText:'disabled or does not have access'})).toBeVisible();await expect(nav()).toHaveCount(0);await expect(page.locator('[data-production-overview-row]')).toHaveCount(0);
+ });
+ await run('Delayed and failed Job access stays recoverable; scoped startup retrieval',async()=>{
+  await control({delays:{planning_phases:1500}});await jobs();await expect(nav()).toBeVisible();let s=await state();assert(!s.calls.some(c=>c.name==='manpower_entries'&&!new URL(c.path,origin).searchParams.has('job_id')));for(const c of s.calls.filter(c=>['job_updates','job_attachments'].includes(c.name)))assert(new URL(c.path,origin).searchParams.has('job_id'));
+  await control({failure:'jobs'});await page.getByRole('button',{name:'Open Wave Job 0',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Unable to open Job. Try again.'})).toBeVisible();await expect(inspector()).toHaveCount(0);await control({delays:{jobs:100}});await page.evaluate(()=>{document.querySelector('button[aria-label="Open Wave Job 0"]').click();document.querySelector('button[aria-label="Open Wave Job 1"]').click();});await expect(inspector().getByRole('heading',{name:'Wave Job 1',exact:true})).toBeVisible();await inspector().getByRole('button',{name:'Back',exact:true}).click();
+ });
+ await run('More opens Sample library and local Proposal creation/PDF without hosted writes',async()=>{
+  await jobs();await nav().getByRole('button',{name:'More',exact:true}).click();await page.getByRole('dialog',{name:'More destinations'}).getByRole('link',{name:'Sample Form Generator'}).click();await expect(page.getByRole('button').filter({hasText:'Integrated Sample'})).toBeVisible();
+  await page.goto(origin+'/samples?open=00000000-0000-4000-8000-000000710001');await page.locator('#operator-sample-details > summary').focus();await page.locator('#operator-sample-details > summary').press('Enter');const identity=page.getByLabel('Color Plate / Formula #',{exact:true});await identity.fill('KEEP-MOBILE-DRAFT');page.once('dialog',d=>d.dismiss());await nav().getByRole('link',{name:'Jobs',exact:true}).click();await expect(identity).toHaveValue('KEEP-MOBILE-DRAFT');await identity.fill('T26-901-A');
+  await nav().getByRole('button',{name:'More',exact:true}).click();await page.getByRole('dialog',{name:'More destinations'}).getByRole('link',{name:'Proposal Generator'}).click();await expect(page.locator('article')).toHaveCount(1201);await page.getByRole('button',{name:'Create Proposal',exact:true}).click();await page.getByRole('button',{name:'Preview PDF',exact:true}).click();const link=page.getByRole('link',{name:'Download',exact:true});await expect(link).toBeVisible();assert.equal(await page.evaluate(async u=>(await(await fetch(u)).text()).slice(0,4),await link.getAttribute('href')),'%PDF');
+ });
+ assert.deepEqual(errors,[]);assert.deepEqual(external,[]);writeFileSync(directory+'/browser.json',JSON.stringify({checks,pageErrors:errors,external,origin,hostedWrites:0,syntheticOnly:true,physicalIPhone:false},null,2));
+}catch(error){await snap('failure');console.error((await page.locator('body').innerText()).slice(-2200));throw error;}finally{await control({reset:true});await browser.close();}

@@ -120,6 +120,7 @@ function getCaretMenuPosition(editor: HTMLElement) {
 
 export default function JobUpdateMentionTextarea({
   id,
+  ariaLabel,
   value,
   mentions,
   collaborators,
@@ -129,6 +130,7 @@ export default function JobUpdateMentionTextarea({
   onChange,
 }: {
   id?: string;
+  ariaLabel?: string;
   value: string;
   mentions: SelectedMention[];
   collaborators: JobUpdateCollaborator[];
@@ -207,6 +209,7 @@ export default function JobUpdateMentionTextarea({
         ref={editorRef}
         id={id}
         role="textbox"
+        aria-label={ariaLabel}
         aria-multiline="true"
         aria-disabled={disabled || undefined}
         contentEditable={!disabled}

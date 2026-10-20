@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "Compact navigation, More reachability, active destinations and single Messaging instance",
+    "Inspector Back cancellation preserves input and filtered list/scroll context",
+    "Unsent Update survives tab switches and continuing-session refocus",
+    "Shared Production Timeline: names, natural clipping, selection, touch pan/pinch, Key and module editor",
+    "Bids and Combined reuse the same surface; lost Bids excluded; Production references retain identity",
+    "Small portrait, landscape, safe viewport and desktop preservation",
+    "Read-only and denied sessions preserve boundaries",
+    "Delayed and failed Job access stays recoverable; scoped startup retrieval",
+    "More opens Sample library and local Proposal creation/PDF without hosted writes",
+    "Session identity replacement clears mounted Job draft"
+  ],
+  "pageErrors": [],
+  "external": [],
+  "origin": "http://localhost:3020",
+  "hostedWrites": 0,
+  "syntheticOnly": true,
+  "physicalIPhone": false,
+  "correctiveValidation": "Completed unaffected groups retained; changed shared Timeline group rerun after Key observer correction; final light/dark/orientation visual checks passed."
+}

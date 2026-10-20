@@ -1,4 +1,5 @@
 "use client";
+import {useMobileNavigationGuard} from '@/components/mobile/useMobileNavigationGuard';
 
 import { BusinessButton, BusinessInput, BusinessSelect, BusinessTextarea } from '@/components/BusinessWriteControls';
 
@@ -600,6 +601,7 @@ export function PurchaseOrderEditor({
   const issuanceInFlight = useRef(false);
   const draftPreviewCache = useRef(new SessionPdfPreviewCache(3));
   const dirty = JSON.stringify(draft) !== original.current;
+  useMobileNavigationGuard(dirty, saving || deleting || issuing || pendingReceivalSaving);
   const readOnly = draft.status === "issued";
   const refreshPdfDocument = async (issuanceId = draft.issuanceId) => {
     if (!issuanceId) return null;

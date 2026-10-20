@@ -1,4 +1,5 @@
 'use client';
+import {useMobileNavigationGuard} from '@/components/mobile/useMobileNavigationGuard';
 
 import { BusinessButton, BusinessSelect } from '@/components/BusinessWriteControls';
 
@@ -55,10 +56,12 @@ export default function ProposalPanel({
   const [linkable, setLinkable] = useState<ProposalSummary[]>([]);
   const [linkSelection, setLinkSelection] = useState('');
   const [draft, setDraft] = useState<Proposal | null>(null);
+  const [draftBaseline,setDraftBaseline] = useState('');
   const [editorTab, setEditorTab] = useState<EditorTab>('estimate');
   const [defaultsOpen, setDefaultsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState('');
+  useMobileNavigationGuard(Boolean(draft && draft.status === 'draft' && JSON.stringify(draft) !== draftBaseline), Boolean(busy));
   const [error, setError] = useState('');
   const [historyFailed,setHistoryFailed]=useState(false);
   const [message, setMessage] = useState('');
@@ -114,6 +117,7 @@ export default function ProposalPanel({
       const value = await hydrateProposal(id, isNew);
       if(request!==selectionRequest.current)return;
       setDraft(value);
+      setDraftBaseline(JSON.stringify(value));
       setEditorTab(value.estimate ? 'estimate' : 'proposal');
     } catch (caught) {
       if(request!==selectionRequest.current)return;
@@ -134,6 +138,7 @@ export default function ProposalPanel({
       .then((value) => {
         if(request!==selectionRequest.current)return;
         setDraft(value);
+        setDraftBaseline(JSON.stringify(value));
         setEditorTab(value.estimate ? 'estimate' : 'proposal');
       })
       .catch((caught: unknown) => {if(request===selectionRequest.current)setError(caught instanceof Error ? caught.message : 'Unable to open Proposal.');})
@@ -182,7 +187,9 @@ export default function ProposalPanel({
     setError('');
     try {
       await saveProposal(draft);
-      setDraft(await loadProposal(draft.id));
+      const saved = await loadProposal(draft.id);
+      setDraft(saved);
+      setDraftBaseline(JSON.stringify(saved));
       setMessage('Draft saved.');
       await reload();
     } catch (caught) {
@@ -216,7 +223,9 @@ export default function ProposalPanel({
       await saveProposal(draft);
       await issueProposal(draft.id);
       const url = await generateProposalPdf(draft.id);
-      setDraft(await loadProposal(draft.id));
+      const saved = await loadProposal(draft.id);
+      setDraft(saved);
+      setDraftBaseline(JSON.stringify(saved));
       setPreview({ url, filename: draft.estimateNumber + '.pdf', title: 'Tenarten Proposal' });
       setMessage('Proposal and Estimate issued; PDF generated.');
       await reload();

@@ -6,6 +6,7 @@ import { useProductionDialogScrollLock } from '../contacts/ProductionDialog';
 import { BusinessButton, BusinessInput, BusinessSelect, BusinessTextarea } from '@/components/BusinessWriteControls';
 
 import { ClipboardList, File, Pencil, RotateCcw, Send, Trash2, Upload } from "lucide-react";
+import { useDetailNavigation } from '@/components/mobile/useDetailNavigation';
 import { useCallback, useEffect, useRef, useState } from "react";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 import ActivityHistory from "@/components/inspector/ActivityHistory";
@@ -314,6 +315,9 @@ export default function ProductionJobInspector({
           ? "recent-changes"
           : "details",
   );
+  const [updateDraftState, setUpdateDraftState] = useState({dirty:false,busy:false});
+  const [updatesVisited, setUpdatesVisited] = useState(activeSection === "updates");
+  const handleUpdateDraftState = useCallback((dirty:boolean,busy:boolean) => setUpdateDraftState(current => current.dirty === dirty && current.busy === busy ? current : {dirty,busy}), []);
   const attachmentCountChangedRef = useRef(onAttachmentsChanged);
   useEffect(() => { attachmentCountChangedRef.current = onAttachmentsChanged; }, [onAttachmentsChanged]);
   const attachmentsVisible = activeSection === "files" || activeSection === "updates";
@@ -321,6 +325,7 @@ export default function ProductionJobInspector({
   const [activity, setActivity] = useState<ProductionJobActivity[]>([]);
   const [activityError, setActivityError] = useState("");
   const [activityLoading, setActivityLoading] = useState(true);
+  const [attachmentsHydrated, setAttachmentsHydrated] = useState(false);
   const [attachments, setAttachments] = useState<JobAttachment[]>([]);
   const [saveError, setSaveError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
@@ -424,7 +429,7 @@ export default function ProductionJobInspector({
     setAttachmentError("");
     loadJobAttachments(job.id)
       .then((files) => {
-        if (live) { setAttachments(files); attachmentCountChangedRef.current(job.id, files.length); }
+        if (live) { setAttachmentsHydrated(true); setAttachments(files); attachmentCountChangedRef.current(job.id, files.length); }
       })
       .catch((loadError: unknown) => {
         if (live)
@@ -519,17 +524,19 @@ export default function ProductionJobInspector({
     onOrdinarySaveStateChange({ jobId: job.id, dirty: false, saving: false });
   }, [job.id, onOrdinarySaveStateChange]);
 
-  const requestClose = useCallback(() => {
-    if (contactPending) return;
+  const allowClose = useCallback(() => {
+    if (contactPending || saving || updateDraftState.busy) return false;
+    if (updateDraftState.dirty && !window.confirm("Discard unsaved Job Update text or files and close the Inspector?")) return false;
     if (
       dirtyCount &&
       !window.confirm(
         `Discard ${dirtyCount} unsaved ${dirtyCount === 1 ? "field" : "fields"} and close the Inspector?`,
       )
     )
-      return;
-    onClose();
-  }, [contactPending, dirtyCount, onClose]);
+      return false;
+    return true;
+  }, [contactPending, dirtyCount, saving, updateDraftState]);
+  const requestClose = useDetailNavigation(allowClose, onClose);
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
@@ -538,9 +545,9 @@ export default function ProductionJobInspector({
       if (event.key !== "Tab" || !panel.current) return;
       const focusable = [
         ...panel.current.querySelectorAll<HTMLElement>(
-          "button,input,select,textarea",
+          "button,a[href],input,select,textarea,[tabindex]",
         ),
-      ].filter((element) => !element.hasAttribute("disabled"));
+      ].filter((element) => !element.hasAttribute("disabled") && element.tabIndex >= 0 && element.getClientRects().length);
       if (!focusable.length) return;
       if (event.shiftKey && document.activeElement === focusable[0]) {
         event.preventDefault();
@@ -558,18 +565,19 @@ export default function ProductionJobInspector({
   }, [attachmentFullscreen, contactPending, requestClose, transmittalOpen, planningEditorOpen]);
 
   useEffect(() => {
-    if (!dirtyCount) return;
+    if (!dirtyCount && !updateDraftState.dirty) return;
     const warn = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = "";
     };
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
-  }, [dirtyCount]);
+  }, [dirtyCount, updateDraftState.dirty]);
 
   const readiness = getJobReadiness(job);
   const selectSection = (section: InspectorSection) => {
     if (contactPending) return;
+    if (section === "updates") setUpdatesVisited(true);
     setActiveSection(section);
   };
   const updateDraft = <Key extends keyof InspectorDraft>(
@@ -759,6 +767,7 @@ export default function ProductionJobInspector({
   return (
     <div
       data-shell-below-header
+      data-mobile-detail
       className="fixed inset-0 z-[80] bg-slate-950/30"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) requestClose();
@@ -817,7 +826,7 @@ export default function ProductionJobInspector({
                 <>
                   <h2
                     id="job-inspector-title"
-                    className="min-w-0 truncate text-2xl font-bold text-slate-950"
+                    className="mobile-detail-title min-w-0 truncate text-2xl font-bold text-slate-950"
                     title={draft.name || "Untitled job"}
                   >
                     {draft.name || "Untitled job"}
@@ -855,7 +864,7 @@ export default function ProductionJobInspector({
             disabled={contactPending}
             className="h-8 shrink-0 border border-slate-400 px-3 text-sm font-bold hover:bg-slate-100"
           >
-            Close
+            <span className="md:hidden">Back</span><span className="hidden md:inline">Close</span>
           </button>
         </div>
 
@@ -1430,9 +1439,10 @@ export default function ProductionJobInspector({
             </section>
           )}
 
-          {activeSection === "updates" && (attachmentsLoading ? <p className="py-5 text-sm">Loading Job Update attachments…</p> : attachmentError ? <p role="alert" className="py-5 text-sm text-red-700">{attachmentError}</p> :
+          {(activeSection === "updates" || updatesVisited) && <div hidden={activeSection !== "updates"}>{(attachmentsLoading && !attachmentsHydrated ? <p className="py-5 text-sm">Loading Job Update attachments…</p> : attachmentError && !attachmentsHydrated ? <p role="alert" className="py-5 text-sm text-red-700">{attachmentError}</p> :
             <JobUpdatesPanel
               job={job}
+              onDraftStateChange={handleUpdateDraftState}
               attachments={attachments}
               focusedUpdateId={focusedUpdateId}
               onFocusedUpdateResolved={(updateId, found) => onInitialFocusResolved?.(`job-updates:${updateId}`, found)}
@@ -1446,7 +1456,7 @@ export default function ProductionJobInspector({
                 void openAttachment(attachment);
               }}
             />
-          )}
+          )}</div>}
 
           {activeSection === "planning" && planningEnabled && (
             <section className="mt-3">

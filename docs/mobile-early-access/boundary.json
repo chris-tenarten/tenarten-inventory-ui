@@ -1,0 +1,58 @@
+{
+  "base": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+  "evidence": [
+    {
+      "path": "src/lib/auth.tsx",
+      "sha256": "836ea5a08eb60ed2e591581e41606eee40530c9bfdbed5b6d76fa9262b2fd997",
+      "unchanged": true
+    },
+    {
+      "path": "src/lib/rbac.ts",
+      "sha256": "bacf2878c5b723195a37b41478b0509877fa457242893e3a028d5818702dbd7d",
+      "unchanged": true
+    },
+    {
+      "path": "src/lib/account-preferences.tsx",
+      "sha256": "dc4ae30e4cab17fb8fba870aa2e93000bff1c6d84e07787feacc7c37aada09d6",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/production/jobs.ts",
+      "sha256": "57e2f002d27a5dc4d6bcd9965d90806ed09cbd39705e934a1bf2c25784394c2e",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/production/schedule-staging.ts",
+      "sha256": "3a32a97ae5b3d656791499b0eacae79f9163a3cb025ea5521a01b4a193c2f4cf",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/planning/schedule-staging.ts",
+      "sha256": "3fbd6ff5751f4c1a0c1dd2c9e11480df3856ccc84b09482da476ca4569c00455",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/pre-production/queries.ts",
+      "sha256": "5ab234d43e541779af4236f824910c9c488c3e857833521e80b1402b28ade4a3",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/pre-production/planning-data.ts",
+      "sha256": "a9230a1a79e844a7961d077e4e24b2902635845fd8acdb50b40cf2ff9400267e",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/pre-production/planning.ts",
+      "sha256": "48ea219009bbb39b6700182bf1b006d61f115dc84cd37c43ea74cf7373df63f5",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/pre-production/planning-model.ts",
+      "sha256": "b0eae334bef5fcca7c65dfc4c740f06ee71a1cfefb015c6b9185935c5b1bd28c",
+      "unchanged": true
+    }
+  ],
+  "supabaseUnchanged": true,
+  "sharedPresenterHasNoPersistence": true,
+  "prototypeFloatingLabelsRemoved": true
+}

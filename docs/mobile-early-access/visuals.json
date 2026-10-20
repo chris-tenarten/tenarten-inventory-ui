@@ -1,0 +1,10 @@
+{
+  "checks": [
+    "Messages visible and receives touch in its bottom navigation slot",
+    "Light/dark Timeline foreground contrast exceeds 4.5:1",
+    "Emulated portrait/landscape safe areas protect controls and Messaging slot",
+    "Actual Job Inspector portrait/landscape screenshots",
+    "Bids uses the same themed surface and fixed bar labels"
+  ],
+  "physicalIPhone": false
+}

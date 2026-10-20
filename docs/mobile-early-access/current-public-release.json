@@ -1,0 +1,18 @@
+[
+  {
+    "target": "tenops",
+    "matchedAssets": 46,
+    "release": "af04478658cac754c716e9a66758b12ccb8e8ab9",
+    "deploymentReceipt": "8b3d7b4f-cea2-4547-9059-4e9d38cb2026",
+    "verifiedAt": "2026-10-20T18:44:52.715Z",
+    "method": "Fresh public byte/hash comparison to the parallel accepted release export; no authenticated business data or deployment API read"
+  },
+  {
+    "target": "tendev",
+    "matchedAssets": 46,
+    "release": "af04478658cac754c716e9a66758b12ccb8e8ab9",
+    "deploymentReceipt": "f20e4894-b098-49da-842a-3659d66056ca",
+    "verifiedAt": "2026-10-20T18:44:55.997Z",
+    "method": "Fresh public byte/hash comparison to the parallel accepted release export; no authenticated business data or deployment API read"
+  }
+]
