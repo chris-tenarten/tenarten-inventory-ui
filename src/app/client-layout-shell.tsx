@@ -5,7 +5,7 @@ import MobileNavigation, {guardMobileNavigation} from '@/components/mobile/Mobil
 import EarlyAccessBadge from '@/components/EarlyAccessBadge';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Factory, Hammer, ContactRound } from 'lucide-react';
+import { BookOpen, Factory, Hammer } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -259,7 +259,7 @@ function LauncherMenuSections({ pathname, sections, onSelect }: { pathname: stri
       {section.label === 'Tools' ? <Hammer className="h-3.5 w-3.5" /> : section.label === 'Resources' ? <BookOpen className="h-3.5 w-3.5" /> : <MyWorkIcon />}
       {section.label}
     </div>
-    {section.items.filter(item => item.href !== '/contacts' || auth.can('readOperationalData')).map((item) => <Link key={item.href} role="menuitem" href={item.href} onClick={onSelect} className={`block min-h-11 px-4 py-3 text-sm font-bold transition ${dropdownItemClass(pathname === item.href || pathname.startsWith(`${item.href}/`))}`}>{item.href === '/contacts' && <ContactRound className="mr-2 inline h-4 w-4" aria-hidden="true" />}{item.label}</Link>)}
+    {section.items.filter(item => item.href !== '/contacts' || auth.can('readOperationalData')).map((item) => <Link key={item.href} role="menuitem" href={item.href} onClick={onSelect} className={`block min-h-11 px-4 py-3 text-sm font-bold transition ${dropdownItemClass(pathname === item.href || pathname.startsWith(`${item.href}/`))}`}>{item.label}</Link>)}
   </div>);
 }
 
