@@ -1,0 +1,44 @@
+{
+  "functions": [
+    {
+      "function": "begin_my_work_attachment_transfer",
+      "repository": "20260925200000_messaging_v11.sql",
+      "normalizedBodyMatches": false,
+      "hostedDefinitionSha256": "8017e56ad353b2ec4b446daa8d6a737ddc1a32cb946bd004c36caf029d69e0a4",
+      "drift": "Hosted adds require_app_capability('messaging.write') before actor lookup; token diff otherwise identical. Source notification keys, metadata, ready/finalize semantics unchanged. No source function replacement proposed."
+    },
+    {
+      "function": "finalize_my_work_inbox_message",
+      "repository": "20260925120000_messaging_large_attachments.sql",
+      "normalizedBodyMatches": false,
+      "hostedDefinitionSha256": "70c4cb80a8ac1c1c4194d9f358969df87163009919ad5f1d547046c7d6d24357",
+      "drift": "Hosted adds require_app_capability('messaging.write') before actor lookup; token diff otherwise identical. Source notification keys, metadata, ready/finalize semantics unchanged. No source function replacement proposed."
+    },
+    {
+      "function": "notify_job_update_account",
+      "repository": "20260821_003_job_update_self_mention_notifications.sql",
+      "normalizedBodyMatches": true,
+      "hostedDefinitionSha256": "c3ff6bf902f3b763020d9712f5af23551a587d75c87021fbe2b50ab77841a1a7"
+    },
+    {
+      "function": "send_my_work_inbox_message",
+      "repository": "20260831_016_my_work_inbox.sql",
+      "normalizedBodyMatches": false,
+      "hostedDefinitionSha256": "b50f38d3fe06b9c51f33bbb9c295d8918bcc481b64a833104e5d5bbf4c924a0c",
+      "drift": "Hosted adds require_app_capability('messaging.write') before actor lookup; token diff otherwise identical. Source notification keys, metadata, ready/finalize semantics unchanged. No source function replacement proposed."
+    },
+    {
+      "function": "sync_job_update_mentions",
+      "repository": "20260819_001_job_update_account_collaboration.sql",
+      "normalizedBodyMatches": true,
+      "hostedDefinitionSha256": "04670a27187124030e9b98c57425a8d4d80a5b420a6992ea92df3c8df78cf8e5"
+    }
+  ],
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "shared": true,
+  "pushObjects": null,
+  "pushCronCount": 0,
+  "privateRowsRead": 0,
+  "hostedMutations": 0,
+  "assessment": "Compatible with inspected push source contract; hosted Messaging authorization is stricter than original narrow fixture. Retain it."
+}

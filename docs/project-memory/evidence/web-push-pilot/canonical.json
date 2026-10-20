@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-10-20T21:07:51.213Z",
+  "main": "5e73284ece13f69016efa1c85c6a8befe66f76bb",
+  "dev": "5e73284ece13f69016efa1c85c6a8befe66f76bb",
+  "deployments": [
+    {
+      "project": "tenops",
+      "canonicalSha": "54d8169311c515fd289943bb19708aaeca9e1182",
+      "deploymentId": "10a4b547-5d7c-4e87-9d3d-83db02d0dbac",
+      "deploymentStatus": "success",
+      "servedStatus": 200,
+      "supabaseUrl": "https://vxdxjhazkqhpkwdqtobp.supabase.co"
+    },
+    {
+      "project": "tendev",
+      "canonicalSha": "5e73284ece13f69016efa1c85c6a8befe66f76bb",
+      "deploymentId": "d2089a40-767a-4cba-93bb-b9ccc12c8f7b",
+      "deploymentStatus": "success",
+      "servedStatus": 200,
+      "supabaseUrl": "https://vxdxjhazkqhpkwdqtobp.supabase.co"
+    }
+  ]
+}

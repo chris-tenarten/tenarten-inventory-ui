@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "empty allowlist denies registration and hides configuration",
+    "approved owner registers; production origin and environment denied",
+    "pilot tables private and production activation prohibited by constraints",
+    "disabled transport returns before source lookup and never backfills",
+    "only both approved accounts enqueue; non-pilot source remains inert",
+    "unapproved Job never enqueues and later approval does not replay",
+    "new approved Job mention enqueues once",
+    "removing sender or recipient authorization invalidates leased delivery",
+    "Production recipient is inert even when pilot transport runs"
+  ],
+  "hostedChanges": 0,
+  "realPushes": 0,
+  "engine": "PostgreSQL 17.6 (Debian 17.6-2.pgdg13+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "scope": "Existing Stage B fixture bootstrap; only pilot delta groups run. Original 33-group evidence preserved."
+}

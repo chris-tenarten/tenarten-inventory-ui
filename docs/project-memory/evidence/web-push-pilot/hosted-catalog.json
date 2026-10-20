@@ -1,0 +1,1534 @@
+{
+  "columns": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "table_name": "account_notifications"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "table_name": "account_notifications"
+    },
+    {
+      "column_name": "notification_key",
+      "data_type": "text",
+      "table_name": "account_notifications"
+    },
+    {
+      "column_name": "notification_type",
+      "data_type": "text",
+      "table_name": "account_notifications"
+    },
+    {
+      "column_name": "title",
+      "data_type": "text",
+      "table_name": "account_notifications"
+    },
+    {
+      "column_name": "body",
+      "data_type": "text",
+      "table_name": "account_notifications"
+    },
+    {
+      "column_name": "metadata",
+      "data_type": "jsonb",
+      "table_name": "account_notifications"
+    },
+    {
+      "column_name": "read_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "account_notifications"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "account_notifications"
+    },
+    {
+      "column_name": "role",
+      "data_type": "text",
+      "table_name": "app_role_capabilities"
+    },
+    {
+      "column_name": "capability",
+      "data_type": "text",
+      "table_name": "app_role_capabilities"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "display_name",
+      "data_type": "text",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "role",
+      "data_type": "text",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "created_by_user_id",
+      "data_type": "uuid",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "updated_by_user_id",
+      "data_type": "uuid",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "read_only",
+      "data_type": "boolean",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "messaging_write",
+      "data_type": "boolean",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "production_blend_manage",
+      "data_type": "boolean",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "sample_labels_generate",
+      "data_type": "boolean",
+      "table_name": "app_users"
+    },
+    {
+      "column_name": "job_update_id",
+      "data_type": "uuid",
+      "table_name": "job_update_mentions"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "table_name": "job_update_mentions"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "job_update_mentions"
+    },
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "job_id",
+      "data_type": "uuid",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "author_name",
+      "data_type": "text",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "body",
+      "data_type": "text",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "requires_follow_up",
+      "data_type": "boolean",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "resolved_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "resolved_by_name",
+      "data_type": "text",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "resolution_message",
+      "data_type": "text",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "follow_up_assignee_name",
+      "data_type": "text",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "edited_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "author_user_id",
+      "data_type": "uuid",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "follow_up_assignee_user_id",
+      "data_type": "uuid",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "resolved_by_user_id",
+      "data_type": "uuid",
+      "table_name": "job_updates"
+    },
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "customer",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "job_number",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "estimate_number",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "work_order_number",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "contract_value",
+      "data_type": "numeric",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "deposit_date",
+      "data_type": "date",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "color_plate_number",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "sample_submitted_date",
+      "data_type": "date",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "approval_date",
+      "data_type": "date",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "resin_po",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "chip_po",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "estimated_man_hours",
+      "data_type": "numeric",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "estimated_calendar_days",
+      "data_type": "integer",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "requested_delivery_date",
+      "data_type": "date",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "planned_start",
+      "data_type": "date",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "planned_end",
+      "data_type": "date",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "production_status",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "material_status",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "priority",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "progress_percent",
+      "data_type": "integer",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "owner_name",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "remarks",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "monday_item_id",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "monday_board_id",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "legacy_source",
+      "data_type": "text",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "archived_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "jobs"
+    },
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "table_name": "my_work_message_attachments"
+    },
+    {
+      "column_name": "message_id",
+      "data_type": "uuid",
+      "table_name": "my_work_message_attachments"
+    },
+    {
+      "column_name": "uploader_user_id",
+      "data_type": "uuid",
+      "table_name": "my_work_message_attachments"
+    },
+    {
+      "column_name": "storage_path",
+      "data_type": "text",
+      "table_name": "my_work_message_attachments"
+    },
+    {
+      "column_name": "original_filename",
+      "data_type": "text",
+      "table_name": "my_work_message_attachments"
+    },
+    {
+      "column_name": "content_type",
+      "data_type": "text",
+      "table_name": "my_work_message_attachments"
+    },
+    {
+      "column_name": "byte_size",
+      "data_type": "bigint",
+      "table_name": "my_work_message_attachments"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "my_work_message_attachments"
+    },
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "sender_user_id",
+      "data_type": "uuid",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "recipient_user_id",
+      "data_type": "uuid",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "body",
+      "data_type": "text",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "job_id",
+      "data_type": "uuid",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "read_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "delivery_status",
+      "data_type": "text",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "sender_kind",
+      "data_type": "text",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "system_sender_key",
+      "data_type": "text",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "system_message_key",
+      "data_type": "text",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "edited_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "edit_count",
+      "data_type": "integer",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "upload_request",
+      "data_type": "jsonb",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "upload_state",
+      "data_type": "text",
+      "table_name": "my_work_messages"
+    },
+    {
+      "column_name": "upload_touched_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "my_work_messages"
+    }
+  ],
+  "extensions": [
+    {
+      "extname": "pgcrypto",
+      "extversion": "1.3"
+    },
+    {
+      "extname": "supabase_vault",
+      "extversion": "0.3.1"
+    },
+    {
+      "extname": "pg_cron",
+      "extversion": "1.6.4"
+    },
+    {
+      "extname": "pg_net",
+      "extversion": "0.20.0"
+    }
+  ],
+  "functions": [
+    {
+      "definition": "CREATE OR REPLACE FUNCTION public.begin_my_work_attachment_transfer(p_id uuid, p_recipient uuid, p_body text, p_job uuid, p_files jsonb)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\ndeclare existing public.my_work_messages%rowtype; request jsonb; item jsonb; total bigint; actor public.app_users%rowtype;\nBEGIN\n  perform public.require_app_capability('messaging.write');\n  select * into strict actor from public.app_users where user_id=auth.uid() and is_active;\n  if p_id is null or p_recipient is null or p_recipient=auth.uid() then raise exception 'Choose another recipient.'; end if;\n  request=jsonb_build_object('recipient',p_recipient,'body',btrim(p_body),'job',p_job,'files',p_files);\n  -- Serializes concurrent calls even before the message row exists.\n  perform pg_advisory_xact_lock(hashtextextended(p_id::text,0));\n  select * into existing from public.my_work_messages where id=p_id for update;\n  if found then\n    if existing.sender_user_id<>auth.uid() or existing.upload_request is distinct from request then raise exception 'Transfer identity does not match.' using errcode='42501'; end if;\n    if existing.delivery_status='draft' and existing.upload_state='active' then update public.my_work_messages set upload_touched_at=clock_timestamp() where id=p_id; end if;\n    return;\n  end if;\n  if not exists(select 1 from public.app_users where user_id=p_recipient and is_active and (role<>'developer' or actor.role='admin')) then raise exception 'Recipient unavailable.'; end if;\n  if p_body is null or length(btrim(p_body))>10000 then raise exception 'Message must contain at most 10000 characters.'; end if;\n  if p_job is not null and not exists(select 1 from public.jobs where id=p_job) then raise exception 'Job unavailable.'; end if;\n  if jsonb_typeof(p_files)<>'array' or jsonb_array_length(p_files)<1 or p_files is null then raise exception 'Attachments required.'; end if;\n  select sum((x->>'size')::bigint) into total from jsonb_array_elements(p_files) x;\n  if total is null or total>200000000 then raise exception 'Attachments exceed 200 MB/message.'; end if;\n  if exists(select 1 from public.my_work_message_deletion_audit where deleted_message_id=p_id) then raise exception 'This message was permanently deleted.'; end if;\n  insert into public.my_work_messages(id,sender_user_id,recipient_user_id,body,job_id,delivery_status,upload_request,upload_state,upload_touched_at)\n  values(p_id,auth.uid(),p_recipient,btrim(p_body),p_job,'draft',request,'active',clock_timestamp());\n  for item in select * from jsonb_array_elements(p_files) loop\n    if (item->>'size') is null or (item->>'name') is null or (item->>'id') is null or (item->>'contentType') is null then raise exception 'Invalid file manifest.'; end if;\n    insert into public.my_work_message_attachments(id,message_id,uploader_user_id,storage_path,original_filename,content_type,byte_size)\n    values((item->>'id')::uuid,p_id,auth.uid(),p_id::text||'/'||(item->>'id')::uuid::text||'/file',item->>'name',item->>'contentType',(item->>'size')::bigint);\n  end loop;\nend;$function$\n",
+      "proacl": [
+        "postgres=X/postgres",
+        "service_role=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "proconfig": [
+        "search_path=pg_catalog, public"
+      ],
+      "prosecdef": true,
+      "signature": "begin_my_work_attachment_transfer(uuid,uuid,text,uuid,jsonb)"
+    },
+    {
+      "definition": "CREATE OR REPLACE FUNCTION public.finalize_my_work_inbox_message(p_message_id uuid, p_expected_attachment_count integer)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public', 'storage'\nAS $function$\ndeclare m public.my_work_messages%rowtype; actor public.app_users%rowtype; n integer; total bigint;\nBEGIN\n  perform public.require_app_capability('messaging.write');\n  select * into strict actor from public.app_users where user_id=auth.uid() and is_active;\n  select * into strict m from public.my_work_messages where id=p_message_id and sender_user_id=auth.uid() for update;\n  if m.upload_request is null then raise exception 'Refresh Messaging before sending attachments.'; end if;\n  select count(*),sum(byte_size) into n,total from public.my_work_message_attachments where message_id=m.id;\n  if p_expected_attachment_count is null or p_expected_attachment_count<1 or n<>p_expected_attachment_count or total>200000000 then raise exception 'Attachment manifest incomplete or too large.'; end if;\n  if m.delivery_status='ready' then return; end if;\n  if m.upload_state is distinct from 'active' then raise exception 'Transfer canceled.'; end if;\n  if exists(select 1 from public.my_work_message_attachments a left join storage.objects o on o.bucket_id='my-work-inbox-attachments' and o.name=a.storage_path\n    where a.message_id=m.id and (o.id is null or (o.metadata->>'size')::bigint is distinct from a.byte_size)) then raise exception 'Attachment bytes are incomplete.'; end if;\n  update public.my_work_messages set delivery_status='ready',upload_state=null where id=m.id;\n  insert into public.account_notifications(user_id,notification_key,notification_type,title,body,metadata)\n  values(m.recipient_user_id,'inbox-message:'||m.id,'inbox_message',actor.display_name||' sent you a message','Open Inbox to read it.',jsonb_strip_nulls(jsonb_build_object('message_id',m.id,'conversation_user_id',actor.user_id,'job_id',m.job_id,'purpose','open-my-work-inbox')))\n  on conflict(user_id,notification_key) do nothing;\nend;$function$\n",
+      "proacl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "proconfig": [
+        "search_path=pg_catalog, public, storage"
+      ],
+      "prosecdef": true,
+      "signature": "finalize_my_work_inbox_message(uuid,integer)"
+    },
+    {
+      "definition": "CREATE OR REPLACE FUNCTION public.notify_job_update_account(p_user_id uuid, p_update job_updates, p_purpose text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\ndeclare\n  selected_job public.jobs%rowtype;\n  notification_title text;\nbegin\n  if p_user_id is null then return; end if;\n  if p_purpose not in ('mention', 'assignment') then\n    raise exception 'Invalid Job Update notification purpose.' using errcode = '22023';\n  end if;\n  if p_purpose = 'assignment' and p_user_id = auth.uid() then return; end if;\n  if not exists (select 1 from public.app_users where user_id = p_user_id and is_active) then\n    raise exception 'Job Update recipient must be an active TenOps user.' using errcode = '22023';\n  end if;\n\n  select * into selected_job from public.jobs where id = p_update.job_id;\n  if not found then raise exception 'Production Job was not found.' using errcode = 'P0002'; end if;\n  notification_title := case p_purpose\n    when 'mention' then 'You were mentioned in a Job Update'\n    else 'A Job Update was assigned to you'\n  end;\n\n  insert into public.account_notifications(\n    user_id, notification_key, notification_type, title, body, metadata\n  ) values (\n    p_user_id,\n    'job-update-' || p_purpose || ':' || p_update.id::text,\n    'job_update_' || p_purpose,\n    notification_title,\n    coalesce(nullif(btrim(selected_job.job_number), '') || ' \u00b7 ', '') || selected_job.name || E'\\n' || left(p_update.body, 180),\n    jsonb_build_object(\n      'job_id', p_update.job_id,\n      'update_id', p_update.id,\n      'job_number', selected_job.job_number,\n      'job_name', selected_job.name,\n      'purpose', p_purpose\n    )\n  ) on conflict (user_id, notification_key) do nothing;\nend;\n$function$\n",
+      "proacl": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "proconfig": [
+        "search_path=pg_catalog, public"
+      ],
+      "prosecdef": true,
+      "signature": "notify_job_update_account(uuid,job_updates,text)"
+    },
+    {
+      "definition": "CREATE OR REPLACE FUNCTION public.send_my_work_inbox_message(p_recipient_user_id uuid, p_body text, p_job_id uuid DEFAULT NULL::uuid)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\ndeclare actor public.app_users%rowtype; recipient public.app_users%rowtype; selected_job public.jobs%rowtype; message_id uuid:=gen_random_uuid();\r\nBEGIN\n  perform public.require_app_capability('messaging.write');\r\n  select * into strict actor from public.app_users where user_id=auth.uid() and is_active;\r\n  if p_recipient_user_id=actor.user_id then raise exception 'Choose another TenOps user.' using errcode='22023'; end if;\r\n  select * into strict recipient from public.app_users where user_id=p_recipient_user_id and is_active;\r\n  if nullif(btrim(coalesce(p_body,'')),'') is null then raise exception 'Message is required.' using errcode='22023'; end if;\r\n  if length(btrim(p_body))>10000 then raise exception 'Message is too long.' using errcode='22023'; end if;\r\n  if p_job_id is not null then select * into strict selected_job from public.jobs where id=p_job_id; end if;\r\n  insert into public.my_work_messages(id,sender_user_id,recipient_user_id,body,job_id)\r\n  values(message_id,actor.user_id,recipient.user_id,btrim(p_body),p_job_id);\r\n  insert into public.account_notifications(user_id,notification_key,notification_type,title,body,metadata)\r\n  values(recipient.user_id,'inbox-message:'||message_id,'inbox_message',actor.display_name||' sent you a message','Open Inbox to read it.',\r\n    jsonb_strip_nulls(jsonb_build_object('message_id',message_id,'conversation_user_id',actor.user_id,'job_id',p_job_id,'purpose','open-my-work-inbox')));\r\n  return message_id;\r\nend;$function$\n",
+      "proacl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "proconfig": [
+        "search_path=public"
+      ],
+      "prosecdef": true,
+      "signature": "send_my_work_inbox_message(uuid,text,uuid)"
+    },
+    {
+      "definition": "CREATE OR REPLACE FUNCTION public.sync_job_update_mentions(p_update job_updates, p_mentioned_user_ids uuid[])\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\ndeclare\n  mentioned_user_id uuid;\nbegin\n  if auth.uid() is null and coalesce(cardinality(p_mentioned_user_ids), 0) > 0 then\n    raise exception 'Sign in to mention a TenOps user.' using errcode = '42501';\n  end if;\n  if exists (\n    select 1 from unnest(coalesce(p_mentioned_user_ids, array[]::uuid[])) candidate(user_id)\n    left join public.app_users users on users.user_id = candidate.user_id and users.is_active\n    where users.user_id is null\n  ) then\n    raise exception 'Mentions may target active TenOps users only.' using errcode = '22023';\n  end if;\n\n  delete from public.job_update_mentions\n  where job_update_id = p_update.id\n    and not (user_id = any(coalesce(p_mentioned_user_ids, array[]::uuid[])));\n\n  for mentioned_user_id in\n    insert into public.job_update_mentions(job_update_id, user_id)\n    select p_update.id, candidate.user_id\n    from (select distinct unnest(coalesce(p_mentioned_user_ids, array[]::uuid[])) user_id) candidate\n    on conflict do nothing\n    returning user_id\n  loop\n    perform public.notify_job_update_account(mentioned_user_id, p_update, 'mention');\n  end loop;\nend;\n$function$\n",
+      "proacl": [
+        "postgres=X/postgres",
+        "anon=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "proconfig": [
+        "search_path=pg_catalog, public"
+      ],
+      "prosecdef": true,
+      "signature": "sync_job_update_mentions(job_updates,uuid[])"
+    }
+  ],
+  "grants": [
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "INSERT",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "SELECT",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "UPDATE",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "DELETE",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRUNCATE",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "REFERENCES",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRIGGER",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "INSERT",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "SELECT",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "UPDATE",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "DELETE",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRUNCATE",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "REFERENCES",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRIGGER",
+      "table_catalog": "postgres",
+      "table_name": "account_notifications",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "INSERT",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "SELECT",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "UPDATE",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "DELETE",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRUNCATE",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "REFERENCES",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRIGGER",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "INSERT",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "SELECT",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "UPDATE",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "DELETE",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRUNCATE",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "REFERENCES",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRIGGER",
+      "table_catalog": "postgres",
+      "table_name": "job_update_mentions",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "INSERT",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "SELECT",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "UPDATE",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "DELETE",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRUNCATE",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "REFERENCES",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRIGGER",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "anon",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "INSERT",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "anon",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "SELECT",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "INSERT",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "SELECT",
+      "table_catalog": "postgres",
+      "table_name": "job_updates",
+      "table_schema": "public",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "INSERT",
+      "table_catalog": "postgres",
+      "table_name": "my_work_messages",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "SELECT",
+      "table_catalog": "postgres",
+      "table_name": "my_work_messages",
+      "table_schema": "public",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "UPDATE",
+      "table_catalog": "postgres",
+      "table_name": "my_work_messages",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "DELETE",
+      "table_catalog": "postgres",
+      "table_name": "my_work_messages",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRUNCATE",
+      "table_catalog": "postgres",
+      "table_name": "my_work_messages",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "REFERENCES",
+      "table_catalog": "postgres",
+      "table_name": "my_work_messages",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "TRIGGER",
+      "table_catalog": "postgres",
+      "table_name": "my_work_messages",
+      "table_schema": "public",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "is_grantable": "NO",
+      "privilege_type": "SELECT",
+      "table_catalog": "postgres",
+      "table_name": "my_work_messages",
+      "table_schema": "public",
+      "with_hierarchy": "YES"
+    }
+  ],
+  "policies": [
+    {
+      "cmd": "SELECT",
+      "permissive": "PERMISSIVE",
+      "policyname": "account_notifications_read_self",
+      "qual": "(user_id = auth.uid())",
+      "roles": [
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "account_notifications",
+      "with_check": null
+    },
+    {
+      "cmd": "SELECT",
+      "permissive": "PERMISSIVE",
+      "policyname": "job_update_mentions_authenticated_read",
+      "qual": "has_app_capability('readOperationalData'::text)",
+      "roles": [
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "job_update_mentions",
+      "with_check": null
+    },
+    {
+      "cmd": "DELETE",
+      "permissive": "RESTRICTIVE",
+      "policyname": "tenops_business_write_delete",
+      "qual": "has_app_capability('writeBusinessData'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "job_update_mentions",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "permissive": "RESTRICTIVE",
+      "policyname": "tenops_business_write_insert",
+      "qual": null,
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "job_update_mentions",
+      "with_check": "has_app_capability('writeBusinessData'::text)"
+    },
+    {
+      "cmd": "UPDATE",
+      "permissive": "RESTRICTIVE",
+      "policyname": "tenops_business_write_update",
+      "qual": "has_app_capability('writeBusinessData'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "job_update_mentions",
+      "with_check": "has_app_capability('writeBusinessData'::text)"
+    },
+    {
+      "cmd": "INSERT",
+      "permissive": "PERMISSIVE",
+      "policyname": "Allow anon insert job updates",
+      "qual": null,
+      "roles": [
+        "anon"
+      ],
+      "schemaname": "public",
+      "tablename": "job_updates",
+      "with_check": "true"
+    },
+    {
+      "cmd": "SELECT",
+      "permissive": "PERMISSIVE",
+      "policyname": "Allow anon read job updates",
+      "qual": "true",
+      "roles": [
+        "anon"
+      ],
+      "schemaname": "public",
+      "tablename": "job_updates",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "permissive": "PERMISSIVE",
+      "policyname": "Allow authenticated insert job updates",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "job_updates",
+      "with_check": "true"
+    },
+    {
+      "cmd": "SELECT",
+      "permissive": "PERMISSIVE",
+      "policyname": "Allow authenticated read job updates",
+      "qual": "true",
+      "roles": [
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "job_updates",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "permissive": "RESTRICTIVE",
+      "policyname": "job_updates_post_permission",
+      "qual": null,
+      "roles": [
+        "public"
+      ],
+      "schemaname": "public",
+      "tablename": "job_updates",
+      "with_check": "((auth.uid() IS NOT NULL) AND has_app_capability('writeBusinessData'::text) AND has_app_capability('postJobUpdate'::text))"
+    },
+    {
+      "cmd": "DELETE",
+      "permissive": "RESTRICTIVE",
+      "policyname": "tenops_business_write_delete",
+      "qual": "has_app_capability('writeBusinessData'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "job_updates",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "permissive": "RESTRICTIVE",
+      "policyname": "tenops_business_write_insert",
+      "qual": null,
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "job_updates",
+      "with_check": "has_app_capability('writeBusinessData'::text)"
+    },
+    {
+      "cmd": "UPDATE",
+      "permissive": "RESTRICTIVE",
+      "policyname": "tenops_business_write_update",
+      "qual": "has_app_capability('writeBusinessData'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "job_updates",
+      "with_check": "has_app_capability('writeBusinessData'::text)"
+    },
+    {
+      "cmd": "SELECT",
+      "permissive": "PERMISSIVE",
+      "policyname": "my_work_messages_participant_select",
+      "qual": "((EXISTS ( SELECT 1\n   FROM app_users actor\n  WHERE ((actor.user_id = auth.uid()) AND actor.is_active))) AND ((sender_user_id = auth.uid()) OR ((recipient_user_id = auth.uid()) AND (delivery_status = 'ready'::text))))",
+      "roles": [
+        "authenticated"
+      ],
+      "schemaname": "public",
+      "tablename": "my_work_messages",
+      "with_check": null
+    }
+  ],
+  "push_cron_count": 0,
+  "push_objects": null,
+  "triggers": [
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_notification_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "INSERT",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "account_notifications",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_notification_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_notification_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "DELETE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "account_notifications",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_notification_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_notification_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "UPDATE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "account_notifications",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_notification_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "STATEMENT",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_business_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "INSERT",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "job_update_mentions",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_business_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "STATEMENT",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_business_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "DELETE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "job_update_mentions",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_business_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "STATEMENT",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_business_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "UPDATE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "job_update_mentions",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_business_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "STATEMENT",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_business_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "INSERT",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "job_updates",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_business_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "STATEMENT",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_business_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "DELETE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "job_updates",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_business_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "STATEMENT",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_business_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "UPDATE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "job_updates",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_business_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION broadcast_my_work_message_v11()",
+      "action_timing": "AFTER",
+      "created": null,
+      "event_manipulation": "INSERT",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "my_work_messages",
+      "trigger_catalog": "postgres",
+      "trigger_name": "broadcast_my_work_message_v11",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_my_work_message_job_retirement()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "INSERT",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "my_work_messages",
+      "trigger_catalog": "postgres",
+      "trigger_name": "guard_my_work_message_job_retirement",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 2,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_messaging_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "INSERT",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "my_work_messages",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_messaging_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION broadcast_my_work_message_v11()",
+      "action_timing": "AFTER",
+      "created": null,
+      "event_manipulation": "DELETE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "my_work_messages",
+      "trigger_catalog": "postgres",
+      "trigger_name": "broadcast_my_work_message_v11",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_messaging_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "DELETE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "my_work_messages",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_messaging_write_guard",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION broadcast_my_work_message_v11()",
+      "action_timing": "AFTER",
+      "created": null,
+      "event_manipulation": "UPDATE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "my_work_messages",
+      "trigger_catalog": "postgres",
+      "trigger_name": "broadcast_my_work_message_v11",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 1,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_my_work_message_job_retirement()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "UPDATE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "my_work_messages",
+      "trigger_catalog": "postgres",
+      "trigger_name": "guard_my_work_message_job_retirement",
+      "trigger_schema": "public"
+    },
+    {
+      "action_condition": null,
+      "action_order": 2,
+      "action_orientation": "ROW",
+      "action_reference_new_row": null,
+      "action_reference_new_table": null,
+      "action_reference_old_row": null,
+      "action_reference_old_table": null,
+      "action_statement": "EXECUTE FUNCTION guard_tenops_messaging_write()",
+      "action_timing": "BEFORE",
+      "created": null,
+      "event_manipulation": "UPDATE",
+      "event_object_catalog": "postgres",
+      "event_object_schema": "public",
+      "event_object_table": "my_work_messages",
+      "trigger_catalog": "postgres",
+      "trigger_name": "tenops_messaging_write_guard",
+      "trigger_schema": "public"
+    }
+  ]
+}

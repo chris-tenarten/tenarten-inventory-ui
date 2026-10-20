@@ -1,0 +1,10 @@
+{
+  "runtimeImage": "public.ecr.aws/supabase/edge-runtime:v1.74.3",
+  "entrypoint": "supabase/functions/send-web-push-tendev/index.ts",
+  "dependencies": "reused prior Deno cache",
+  "network": "none",
+  "httpStatus": 503,
+  "installedCredentials": false,
+  "pushRequests": 0,
+  "probe": "busybox wget in container network namespace; HTTP/1.1 503 Service Unavailable"
+}

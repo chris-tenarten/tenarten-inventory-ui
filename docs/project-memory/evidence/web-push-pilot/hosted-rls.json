@@ -1,0 +1,75 @@
+{
+  "capability_helpers": [
+    {
+      "proacl": [
+        "postgres=X/postgres",
+        "anon=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "proconfig": [
+        "search_path=pg_catalog, public"
+      ],
+      "prosecdef": true,
+      "signature": "has_app_capability(text)"
+    },
+    {
+      "proacl": [
+        "postgres=X/postgres",
+        "anon=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "proconfig": [
+        "search_path=pg_catalog, public"
+      ],
+      "prosecdef": true,
+      "signature": "require_app_capability(text)"
+    }
+  ],
+  "crypto_namespace": "extensions",
+  "push_function_count": 0,
+  "rls": [
+    {
+      "relforcerowsecurity": false,
+      "relname": "account_notifications",
+      "relrowsecurity": true
+    },
+    {
+      "relforcerowsecurity": false,
+      "relname": "app_role_capabilities",
+      "relrowsecurity": true
+    },
+    {
+      "relforcerowsecurity": false,
+      "relname": "app_users",
+      "relrowsecurity": true
+    },
+    {
+      "relforcerowsecurity": false,
+      "relname": "job_update_mentions",
+      "relrowsecurity": true
+    },
+    {
+      "relforcerowsecurity": false,
+      "relname": "job_updates",
+      "relrowsecurity": true
+    },
+    {
+      "relforcerowsecurity": false,
+      "relname": "jobs",
+      "relrowsecurity": true
+    },
+    {
+      "relforcerowsecurity": false,
+      "relname": "my_work_message_attachments",
+      "relrowsecurity": true
+    },
+    {
+      "relforcerowsecurity": false,
+      "relname": "my_work_messages",
+      "relrowsecurity": true
+    }
+  ],
+  "server_version": "17.6"
+}

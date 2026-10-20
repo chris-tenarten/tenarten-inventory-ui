@@ -1,0 +1,18 @@
+{
+  "destination": "/private/tmp/tenops-web-push-pilot.sql",
+  "migrations": [
+    {
+      "name": "20261020200000_web_push_device_registration.sql",
+      "sha256": "6131fd73351b818f4e06424c09675c671968f9aa91f4c0954f8e67569ae53ef2"
+    },
+    {
+      "name": "20261020210000_web_push_transport.sql",
+      "sha256": "15a0ee8b5cf5cf715168646c37ca3c123483972556f887c34710483d546e95c5"
+    },
+    {
+      "name": "20261020220000_web_push_tendev_pilot_guard.sql",
+      "sha256": "c14809d54a1d22a8fa90c675d6d2b835d5815f36563b38233512169f087a138e"
+    }
+  ],
+  "applied": false
+}

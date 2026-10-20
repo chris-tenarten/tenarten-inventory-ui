@@ -1,0 +1,19 @@
+{
+  "riskTier": 3,
+  "testingLevel": 3,
+  "build": "Final post-rebase webpack export passed with CF_PAGES_URL=https://tendev.pages.dev and localhost synthetic Supabase configuration; not deployable artifact",
+  "typescript": "tsc --noEmit passed",
+  "targetedLint": "passed",
+  "databasePilotGroups": 9,
+  "browserGroups": 8,
+  "startup": "Final TenDev-branded full sequence, 888 ms hold, continuous mounted entrance passed",
+  "unchangedEvidenceReused": "Stage B 33 real-database groups, 14 worker groups, 6 service-worker groups, 16 lifecycle controller groups, 14 lifecycle browser groups, adjacent Samples/PDF and Edge encryption compatibility",
+  "physicalIPhoneAcceptance": false,
+  "hostedMutations": 0,
+  "outboundPushes": 0,
+  "canonicalBaseline": "5e73284ece13f69016efa1c85c6a8befe66f76bb",
+  "browser": "8 existing Stage B groups passed again after final rebase; no errors/external requests",
+  "protectedCanonicalDiff": "No changes relative to latest canonical in Mobile navigation components, PerformanceAnnouncement or Manpower modules",
+  "bundleSecretScan": "No TENDEV_WEB_PUSH_WAKE_SECRET, TENDEV_WEB_PUSH_VAPID_KEYS, SUPABASE_SERVICE_ROLE_KEY or fixture push-demo-controls in exported JS",
+  "hostedRls": "Enabled on all eight inspected source tables; pgcrypto is in extensions; zero push functions and no deployed push Edge Functions"
+}
