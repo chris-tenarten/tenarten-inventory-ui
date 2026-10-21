@@ -24,7 +24,8 @@ export function createWelcomeSparks(root, mark, front, heat, rear, image) {
  function radial(c,x,y,r,stops){const g=c.createRadialGradient(x,y,0,x,y,r);for(const[o,color]of stops)g.addColorStop(o,color);c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();}
  function render(t){
   clear();ctx.clearRect(0,0,728,806);ctx.globalCompositeOperation='source-over';
-  for(const s of paths){if(t<s.start||t>s.start+s.duration+500||t>1630)continue;const p=at(s,t),end=s.start+s.duration;
+  // Completed cuts remain behind the spark until the steel starts separating.
+  for(const s of paths){if(t<s.start||t>1630)continue;const p=at(s,t),end=s.start+s.duration;
    // A cool dark kerf (slit), not a luminous outline being traced.
    ctx.strokeStyle='rgba(17,13,11,.8)';ctx.lineWidth=3.8;ctx.lineCap='butt';ctx.beginPath();ctx.moveTo(...s.from);ctx.lineTo(p.x,p.y);ctx.stroke();
    // Local molten edge deposits: warm only near the moving penetration, then cool.

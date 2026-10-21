@@ -1,0 +1,85 @@
+{
+  "baseline": "73fe7a94cfeefa355aa8e912a9bcb524436b2442",
+  "status": "accepted local correction; release authorized after validation",
+  "riskTier": 1,
+  "testingLevel": 1,
+  "cause": "Completed crown kerf discarded at renderer time 1368ms; split starts1630ms. Slow mapping expands the missing-trail gap to436.667ms.",
+  "correction": "Remove per-path end+500 expiry; retain completed cuts until existing split boundary1630ms.",
+  "canvasProbe": {
+    "at1369ms": {
+      "before": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "after": [
+        14,
+        10,
+        8,
+        247
+      ]
+    },
+    "at1550ms": {
+      "before": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "after": [
+        14,
+        10,
+        8,
+        247
+      ]
+    },
+    "at1630ms": {
+      "before": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "after": [
+        14,
+        10,
+        8,
+        247
+      ]
+    },
+    "sampleXY": [
+      207,
+      230
+    ],
+    "activeFrame800msIdentical": true,
+    "activeFrameSha256": "ed6ab59d286ce28613551b59fb94486ee883367188e985b19a96a3a8ade24195"
+  },
+  "productionBuildIncludingTypescript": "passed",
+  "targetedLint": "passed",
+  "diffCheck": "passed",
+  "playback": {
+    "target": "tenops",
+    "origin": "http://localhost:3376",
+    "actualServedBundle": false,
+    "checks": [
+      "full sequence, 888 ms hold and continuous mounted entrance"
+    ],
+    "reducedEvidence": [],
+    "holdTimingsMs": [
+      899
+    ],
+    "acceptedHoldMs": 888,
+    "pageErrors": [],
+    "unexpectedExternal": [],
+    "controlledSyntheticBackend": true,
+    "authAndDataIntercepted": true,
+    "backendRequestsForwarded": 0,
+    "hostedBusinessWrites": 0,
+    "physicalFocusTest": false,
+    "liveAccountTest": false
+  },
+  "timingChanges": false,
+  "committed": false,
+  "deployed": false
+}
