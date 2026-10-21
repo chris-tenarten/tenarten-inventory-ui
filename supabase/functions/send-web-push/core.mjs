@@ -39,9 +39,10 @@ export function createHandler({rpc,encrypt,submit,secret,environment,enabled=fal
   if(request.method!=='POST'||Number(request.headers.get('content-length')||0)>2048)return new Response(null,{status:400});
   let data;try{const body=await limitedBody(request);if(body.length>2048)return new Response(null,{status:400});data=JSON.parse(body);}catch{return new Response(null,{status:400});}
   if(!await verifyWake(data,secret,environment,now()))return new Response(null,{status:401});
+  const call=(name,args={},context={})=>rpc(name,args,{run_id:data.run_id,...context});
   try{
-   if(!await rpc('consume_web_push_run',{p_id:data.run_id,p_environment:environment,p_exp:data.exp}))return new Response(null,{status:409});
-   const claims=await rpc('claim_web_push_deliveries',{p_environment:environment,p_limit:5});
+   if(!await call('consume_web_push_run',{p_id:data.run_id,p_environment:environment,p_exp:data.exp}))return new Response(null,{status:409});
+   const claims=await call('claim_web_push_deliveries',{p_environment:environment,p_limit:5});
    const counts={claimed:claims.length,submitted:0,skipped:0,failed:0};
    // Five claims and a 45-second processing deadline; unprocessed leases recover.
    const deadline=now()+45000;
@@ -49,7 +50,7 @@ export function createHandler({rpc,encrypt,submit,secret,environment,enabled=fal
     if(now()>deadline)break;
     let outcome='unavailable',delay=30;
     try{
-     const row=await rpc('prepare_web_push_delivery',{p_id:claim.id,p_lease:claim.lease_token});
+     const row=await call('prepare_web_push_delivery',{p_id:claim.id,p_lease:claim.lease_token},{delivery_id:claim.id,stage:'prepare'});
      if(row){
       if(row.environment!==environment||!endpointAllowed(row.endpoint)){outcome='invalid_endpoint';}
       else{
@@ -58,7 +59,7 @@ export function createHandler({rpc,encrypt,submit,secret,environment,enabled=fal
        if(ttl){
         const details=await encrypt(row,payload,ttl);
         // Recheck revocation/access/preference after encryption and before submission.
-        const fresh=await rpc('prepare_web_push_delivery',{p_id:claim.id,p_lease:claim.lease_token});
+        const fresh=await call('prepare_web_push_delivery',{p_id:claim.id,p_lease:claim.lease_token},{delivery_id:claim.id,stage:'recheck'});
         if(fresh&&fresh.endpoint===row.endpoint&&fresh.previews===row.previews&&JSON.stringify(fresh.source)===JSON.stringify(row.source)){
          const response=await submit(row.endpoint,details);outcome=providerOutcome(response.status);
          delay=retryDelay(row.attempts,response.headers.get('retry-after'),now());
@@ -67,10 +68,10 @@ export function createHandler({rpc,encrypt,submit,secret,environment,enabled=fal
       }
      }
     }catch(error){outcome=error?.name==='InvalidAccessError'||error?.name==='DataError'?'provider_rejected':'retryable';}
-    await rpc('finish_web_push_delivery',{p_id:claim.id,p_lease:claim.lease_token,p_outcome:outcome,p_delay:delay});
+    await call('finish_web_push_delivery',{p_id:claim.id,p_lease:claim.lease_token,p_outcome:outcome,p_delay:delay},{delivery_id:claim.id});
     if(outcome==='accepted')counts.submitted++;else if(outcome==='unavailable')counts.skipped++;else counts.failed++;
    }
-   await rpc('prune_web_push_transport');
+   await call('prune_web_push_transport');
    return Response.json(counts);
   }catch{return Response.json({status:'worker_failed'},{status:503});}
  };
