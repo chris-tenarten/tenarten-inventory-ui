@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-21",
+  "verification": "Live git ls-remote and read-only Cloudflare/Supabase checks during this task",
+  "canonicalMain": "5e73284ece13f69016efa1c85c6a8befe66f76bb",
+  "canonicalDev": "5e73284ece13f69016efa1c85c6a8befe66f76bb",
+  "basePilot": "19632860c78ecda4475d88a5312c41af9ad724cd",
+  "tenops": {
+    "sha": "5e73284ece13f69016efa1c85c6a8befe66f76bb",
+    "deployment": "190575f0-4845-4b1d-9aff-0d9002ec9f0c"
+  },
+  "tendev": {
+    "sha": "778fe14f9e148beb77cb1d0519aa3c1d9f291a10",
+    "deployment": "6607947f-c521-4de0-b461-c2ca6198981a"
+  },
+  "hosted": {
+    "project": "vxdxjhazkqhpkwdqtobp",
+    "environments": [
+      {
+        "environment": "tendev",
+        "origin": "https://tendev.pages.dev",
+        "registration_enabled": false
+      }
+    ],
+    "transport": [
+      {
+        "environment": "tendev",
+        "enabled": false
+      }
+    ],
+    "enabled_devices": 0,
+    "pending_retry_leased": 0,
+    "active_push_cron": 0
+  },
+  "hostedMutations": 0,
+  "deployments": 0,
+  "actualPushes": 0
+}

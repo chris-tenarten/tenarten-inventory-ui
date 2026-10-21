@@ -1,0 +1,10 @@
+{
+  "status": "PREPARED ONLY; not applied or deployed",
+  "files": {
+    "supabase/migrations/20261021120000_web_push_production_rollout.sql": "64d312eb5d902b29ad99b30118c3a75173d472b700d3dd09070d7ec0d91c1580",
+    "supabase/operations/web-push/setup-production.sql": "e6256ee121dd5f6233c537a068e9131fa6fa9b8f9c0a158c8c69fc02eeefef07",
+    "supabase/functions/send-web-push-tenops/index.ts": "2fa6e28dcbcfbbd94a6f9ce36cafb31a13c2145b01b5ceeacbe643e4509b7557",
+    "supabase/functions/send-web-push-tenops/deno.json": "f76cb3a4d50feb17e32476f23bc949badbe9d2b3f37ce5898f839c6f2d2f181e",
+    "supabase/functions/send-web-push/runtime.ts": "577518dad556369b703f84937172ab6ddd9b599536f5db56b560a316977fe68b"
+  }
+}

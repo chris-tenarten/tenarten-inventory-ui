@@ -8,7 +8,7 @@ const client=createClient(Deno.env.get('SUPABASE_URL')||'http://127.0.0.1',Deno.
 });
 Deno.serve(createHandler({
  environment,enabled:config('ENABLED')==='true',secret:config('WAKE_SECRET')||'',
- rpc:async(name:string,args:Record<string,unknown>={})=>{const{data,error}=await client.rpc(name,args);if(error)throw new Error('Transport database unavailable');return data;},
+ rpc:async(name:string,args:Record<string,unknown>={})=>{const{data,error}=await client.rpc(name,name==='prune_web_push_transport'?{p_environment:environment}:args);if(error)throw new Error('Transport database unavailable');return data;},
  encrypt:async(row:{key_version:string;endpoint:string;keys:{auth:string;p256dh:string}},payload:unknown,ttl:number)=>{
   const keys=JSON.parse(config('VAPID_KEYS')||'{}')[row.key_version];
   if(!keys)throw new Error('VAPID version unavailable');

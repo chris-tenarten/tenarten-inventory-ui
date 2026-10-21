@@ -1,0 +1,23 @@
+{
+  "build": {
+    "result": "passed",
+    "command": "npm run build -- --webpack",
+    "fixtureOrigin": "http://localhost:3000",
+    "branding": "TenDev authority for local review",
+    "deployable": false
+  },
+  "typescript": "passed",
+  "targetedEslint": "passed",
+  "diffCheck": "passed",
+  "browserGroups": 16,
+  "databaseGroups": 13,
+  "workerGroups": 14,
+  "clientWorkerSecretReferences": [],
+  "unchangedStartupSource": {
+    "holdMs": 888,
+    "fadeMs": 850
+  },
+  "level": 3,
+  "fullHistoricalBatteryRerun": false,
+  "actualDevicePushes": 0
+}

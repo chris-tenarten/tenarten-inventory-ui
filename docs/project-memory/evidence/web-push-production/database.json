@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "migration refuses enabled registration without leaving partial objects",
+    "migration leaves cohorts empty and both transports/registration disabled",
+    "rollout tables and source/enrollment helpers deny browser/service direct access",
+    "empty cohort denies registration even after registry enabled",
+    "Production enrollment is owner scoped and does not enroll TenDev",
+    "existing TenDev registration contract remains functional",
+    "only enabled Production transport enqueues, with no backfill or unapproved sender",
+    "Production mention requires approved Job and does not enroll pilot Jobs",
+    "worker claims and prepare preserve environment, owner, preview and cohort revocation",
+    "claim expiry/exhaustion cannot mutate another environment",
+    "legacy TenDev retention call cannot prune Production and scoped retention cannot prune TenDev",
+    "owner revocation remains available with registration and transport off",
+    "Production dispatcher is separate, private and inert while transport is disabled"
+  ],
+  "hostedChanges": 0,
+  "realPushes": 0,
+  "engine": "PostgreSQL 17.6 (Debian 17.6-2.pgdg13+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "scope": "Existing Stage B fixture; Production graduation delta only; original 33 groups reused."
+}

@@ -1,0 +1,13 @@
+{
+  "runtimeImage": "public.ecr.aws/supabase/edge-runtime:v1.74.3",
+  "entrypoint": "supabase/functions/send-web-push-tenops/index.ts",
+  "network": "none",
+  "installedCredentials": false,
+  "httpStatus": 503,
+  "body": {
+    "status": "disabled"
+  },
+  "pushRequests": 0,
+  "sourceMount": "functions only; existing cached Deno dependencies",
+  "initialProbeIssue": "Whole-repository mount caused frontend package/node_modules resolution; functions-only mount boots correctly."
+}
