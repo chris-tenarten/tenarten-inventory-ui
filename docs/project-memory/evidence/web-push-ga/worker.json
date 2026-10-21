@@ -1,0 +1,52 @@
+{
+  "checks": [
+    "informative and generic payloads, HTML/control/markup stripping",
+    "SSRF/redirect destination registry and retry policy",
+    "signed wake tamper, environment, expiry and malformed body rejected",
+    "disabled worker never touches database or endpoint",
+    "provider status 201 maps to sanitized durable outcome",
+    "provider status 404 maps to sanitized durable outcome",
+    "provider status 410 maps to sanitized durable outcome",
+    "provider status 429 maps to sanitized durable outcome",
+    "provider status 500 maps to sanitized durable outcome",
+    "provider status 403 maps to sanitized durable outcome",
+    "provider status 302 maps to sanitized durable outcome",
+    "device disable during encryption skips submission",
+    "replayed wake never claims another delivery",
+    "invalid endpoint and unavailable source never reach submit",
+    "RPC diagnostics: successes silent; HTTP/SQL failures redacted with correlation and elapsed time",
+    "RPC diagnostics: timeout, abort, network and response-body timeout classification",
+    "RPC diagnostics: concurrent invocations isolated; logging failure cannot affect recovery",
+    "all RPC failure stages retain worker response and retry behavior"
+  ],
+  "realPushRequests": 0,
+  "payloadExamples": [
+    {
+      "v": 1,
+      "id": "00000000-0000-4000-8000-000000000010",
+      "kind": "dm",
+      "title": "Alex Operator · Direct Message",
+      "body": "Can you check the revised color plate before tomorrow?",
+      "url": "/?pushNotificationId=00000000-0000-4000-8000-000000000010",
+      "tag": "tenops:00000000-0000-4000-8000-000000000010"
+    },
+    {
+      "v": 1,
+      "id": "00000000-0000-4000-8000-000000000010",
+      "kind": "mention",
+      "title": "Mentioned by Blair Lead · 26-1042",
+      "body": "Please verify material readiness.",
+      "url": "/?pushNotificationId=00000000-0000-4000-8000-000000000010",
+      "tag": "tenops:00000000-0000-4000-8000-000000000010"
+    },
+    {
+      "v": 1,
+      "id": "00000000-0000-4000-8000-000000000010",
+      "kind": "dm",
+      "title": "New TenOps message",
+      "body": "Open TenOps to view this notification.",
+      "url": "/?pushNotificationId=00000000-0000-4000-8000-000000000010",
+      "tag": "tenops:00000000-0000-4000-8000-000000000010"
+    }
+  ]
+}

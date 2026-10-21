@@ -66,7 +66,7 @@ sql(migration('20261020210000_web_push_transport.sql'));
 sql(`drop policy my_work_messages_participant_select on my_work_messages;
 create policy my_work_messages_participant_select on my_work_messages for select to authenticated using(exists(select 1 from app_users a where a.user_id=auth.uid() and a.is_active) and (sender_user_id=auth.uid() or(recipient_user_id=auth.uid() and delivery_status='ready')));
 grant select on app_users,jobs,job_updates to authenticated;`);
-if(focus==='production'){await import('./support/web-push-production-database.mjs');process.exit(0);}
+if(focus==='production'||focus==='ga'){await import('./support/web-push-production-database.mjs');process.exit(0);}
 if(focus==='posting'){await import('./support/web-push-posting-permission.mjs');process.exit(0);}
 if(pilotOnly){await import('./support/web-push-pilot-database.mjs');process.exit(0);}
 const fresh={...sub,endpoint:'https://web.push.apple.com/fresh-test'};

@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "GA preserves subscriptions, generation, preferences, transport and all other function definitions",
+    "all active TenOps accounts see Settings/configuration without cohort rows; TenDev stays independently gated",
+    "registration remains explicit, idempotent, owner scoped and unavailable cross-origin",
+    "no GA backfill; noncohort sender DM enqueues only opted-in recipient; unregistered account stays off",
+    "noncohort Job mention retains canonical membership and operational-read authorization",
+    "inactive account and anonymous access remain denied; helper/table material stays private",
+    "worker prepare preserves previews, source recheck and per-device revocation"
+  ],
+  "hostedChanges": 0,
+  "realPushes": 0,
+  "engine": "PostgreSQL 17.6 (Debian 17.6-2.pgdg13+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "scope": "GA helper delta only, existing fixture"
+}
