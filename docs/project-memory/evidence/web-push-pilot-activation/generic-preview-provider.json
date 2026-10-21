@@ -1,0 +1,9 @@
+{
+  "accepted": 3,
+  "previews_enabled": false,
+  "wake": {
+    "counts": "{\"claimed\":1,\"submitted\":1,\"skipped\":0,\"failed\":0}",
+    "error": null,
+    "status": 200
+  }
+}

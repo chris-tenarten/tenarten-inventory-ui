@@ -1,0 +1,19 @@
+{
+  "deliveries": [
+    {
+      "attempts": 1,
+      "outcome": "accepted",
+      "state": "submitted"
+    },
+    {
+      "attempts": 1,
+      "outcome": "accepted",
+      "state": "submitted"
+    }
+  ],
+  "wake": {
+    "counts": "{\"claimed\":1,\"submitted\":1,\"skipped\":0,\"failed\":0}",
+    "error": null,
+    "status": 200
+  }
+}

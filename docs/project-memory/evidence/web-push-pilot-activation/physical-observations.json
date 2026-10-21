@@ -4,16 +4,28 @@
   "backgroundBanner": "User confirmed appeared; screenshotting when temporary banner dismissed",
   "informativePreview": "not yet explicitly confirmed by user",
   "dmTap": "Initial error; user Retry opened correct conversation",
-  "closedApp": "User closed and locked device, but mention guard found registration revoked before any mention was created",
-  "lockScreen": "not yet delivered/tested",
-  "genericPreview": "pending",
+  "closedApp": "physical pass, @mention",
+  "lockScreen": "physical pass, @mention",
+  "genericPreview": "User confirmed generic title/body only on locked iPhone; no sender/message text",
   "source": "User observations, not simulation",
-  "acceptedSubmissions": 1,
+  "acceptedSubmissions": 3,
   "cronCreated": false,
   "decorativeStartup": "User explicitly confirmed no decorative startup on notification entry",
   "duplicateRecoveryWake": "zero claimed/submitted; accepted DM remains attempt 1",
   "deliveryPaused": true,
   "correctedReopen": "Final user clarification: Registered on this device; Enable greyed out; Delivery inactive in this environment. Correct registration state after reopening confirmed.",
   "serverAfterCorrectedReopen": "Newer regular-account TenDev subscription remains enabled generation 1; registration configuration true; transport false; no active push Cron.",
-  "mention": "Attempt refused by existing postJobUpdate authorization for developer; no mention/event created. Awaiting choice of permitted regular-account self-mention."
+  "mention": "User confirmed lock-screen notification with app closed; tap opened correct Job Update directly, without decorative startup or Retry",
+  "mentionTap": "physical pass, correct authorized Job Update, direct",
+  "permissionChange": "Explicit account-specific developer postJobUpdate granted; not role-wide",
+  "deviceRevocation": "User disabled device; server confirmed no active subscriptions; fresh authorized message created zero push work",
+  "shutdown": "Registration=false, transport=false, worker HTTP503, active devices=0, pending=0, cohort=0, jobs=0, active Cron=0",
+  "notPhysicallyAccepted": [
+    "permission denial through iOS Settings",
+    "expired-session first tap",
+    "account switching/password-related sign-out",
+    "offline revocation recovery",
+    "naturally expired APNs endpoint/404/410",
+    "provider transient retry/Focus/network/suspension matrix"
+  ]
 }

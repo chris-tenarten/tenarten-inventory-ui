@@ -1,0 +1,66 @@
+{
+  "accepted": 3,
+  "active_devices": 0,
+  "app_users_grants": [
+    {
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    }
+  ],
+  "app_users_policies": [
+    {
+      "cmd": "SELECT",
+      "policyname": "app_users_read_self",
+      "qual": "((user_id = auth.uid()) OR has_app_capability('manageUsers'::text))",
+      "with_check": null
+    },
+    {
+      "cmd": "DELETE",
+      "policyname": "tenops_business_write_delete",
+      "qual": "has_app_capability('writeBusinessData'::text)",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "policyname": "tenops_business_write_insert",
+      "qual": null,
+      "with_check": "has_app_capability('writeBusinessData'::text)"
+    },
+    {
+      "cmd": "UPDATE",
+      "policyname": "tenops_business_write_update",
+      "qual": "has_app_capability('writeBusinessData'::text)",
+      "with_check": "has_app_capability('writeBusinessData'::text)"
+    }
+  ],
+  "cohort": 0,
+  "cron": 0,
+  "jobs": 0,
+  "pending": 0,
+  "registration_enabled": false,
+  "transport_enabled": false
+}
