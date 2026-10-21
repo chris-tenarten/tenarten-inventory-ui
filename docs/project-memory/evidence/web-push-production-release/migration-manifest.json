@@ -1,0 +1,5 @@
+{
+  "supabase/migrations/20261021120000_web_push_production_rollout.sql": "64d312eb5d902b29ad99b30118c3a75173d472b700d3dd09070d7ec0d91c1580",
+  "supabase/migrations/20261021130000_web_push_settings_visibility.sql": "393981953a440c3d58d0e45ea83e1159b9bd5b9a0bbf2d3f1f76bf607154416a",
+  "supabase/operations/web-push/setup-production.sql": "e6256ee121dd5f6233c537a068e9131fa6fa9b8f9c0a158c8c69fc02eeefef07"
+}

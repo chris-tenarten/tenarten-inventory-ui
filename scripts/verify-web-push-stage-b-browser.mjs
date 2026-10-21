@@ -6,6 +6,16 @@ async function run(name,work){if(process.env.WEB_PUSH_BROWSER_CHECK&&!new RegExp
 const enable=async f=>{await f.page.getByRole('button',{name:'Enable notifications on this device',exact:true}).click();await expect(f.page.getByText('Registered on this device',{exact:true})).toBeVisible();};
 const simulate=async(f,kind)=>{await f.page.locator('#push-demo-controls').evaluate(el=>el.open=true);const previous=await f.page.evaluate(()=>window.lastPushPreview?.id);await f.page.getByRole('button',{name:kind==='dm'?'Simulate Direct Message':'Simulate Job mention',exact:true}).click();await expect.poll(()=>f.page.evaluate(()=>window.lastPushPreview?.id)).not.toBe(previous);return f.page.evaluate(()=>window.lastPushPreview);};
 try{
+ await run('settings stay hidden outside the server-approved rollout cohort',async f=>{
+  await f.context.route('**/rpc/can_view_my_web_push_settings',route=>route.fulfill({json:false}));
+  await f.page.reload();await expect(f.page.getByRole('heading',{name:'Settings',exact:true})).toBeVisible();
+  await expect(f.page.getByRole('heading',{name:'Device notifications'})).toHaveCount(0);
+  await expect(f.page.getByRole('button',{name:'Enable notifications on this device',exact:true})).toHaveCount(0);
+ });
+ await run('settings fail closed when cohort visibility cannot be verified',async f=>{
+  await f.context.route('**/rpc/can_view_my_web_push_settings',route=>route.fulfill({status:503,json:{message:'Unavailable'}}));
+  await f.page.reload();await expect(f.page.getByRole('heading',{name:'Settings',exact:true})).toBeVisible();await expect(f.page.getByRole('heading',{name:'Device notifications'})).toHaveCount(0);
+ });
  await run('server preference defaults on, informative DM and generic preview off',async f=>{
   await enable(f);const checkbox=f.page.getByRole('checkbox',{name:'Show message previews in notifications'});await expect(checkbox).toBeChecked();
   await simulate(f,'dm');await expect(f.page.locator('[data-simulated-banner]')).toContainText('Alex Operator · Direct Message');await expect(f.page.locator('[data-simulated-banner]')).toContainText('revised color plate');
@@ -40,8 +50,8 @@ try{
   await expect(f.page.getByRole('button',{name:'Retry',exact:true})).toHaveCount(0);assert.equal(await f.page.locator('div[data-welcome-hero]').count(),0);
  });
  await run('cold mention launch preserves authorized Job Update destination',async f=>{
-  const preview=await simulate(f,'mention');await f.page.goto(origin+'/?pushNotificationId='+preview.id);
-  await expect(f.page.getByText('Please verify material readiness before production.',{exact:true}).last()).toBeVisible();assert.equal(await f.page.locator('div[data-welcome-hero]').count(),0);
+  await enable(f);const preview=await simulate(f,'mention');await f.page.goto(origin+'/?pushNotificationId='+preview.id);
+  await expect(f.page.locator('#job-update-'+preview.id)).toContainText('Please verify material readiness before production.');assert.equal(await f.page.locator('div[data-welcome-hero]').count(),0);
  });
  for(const status of [401,403,503])await run('lookup '+status+' remains bounded and never opens unauthorized Messaging',async f=>{
   const preview=await simulate(f,'dm');let attempts=0;

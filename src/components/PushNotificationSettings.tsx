@@ -2,19 +2,24 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/lib/auth';
-import { deviceSupport, disablePushDevice, enablePushDevice, inspectPushDevice, preparePushWorker, pushConfiguration, setPushPreviews, type PushConfiguration, type PushState } from '@/lib/web-push';
+import { deviceSupport, disablePushDevice, enablePushDevice, inspectPushDevice, preparePushWorker, pushConfiguration, pushSettingsAccess, setPushPreviews, type PushConfiguration, type PushState } from '@/lib/web-push';
 
 export default function PushNotificationSettings() {
   const auth = useAuth();
   const account = auth.accessAllowed ? auth.profile?.userId : undefined;
   const [state, setState] = useState<PushState | null>(null);
   const [config, setConfig] = useState<PushConfiguration | null>(null);
+  const [visibleFor, setVisibleFor] = useState<string>();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const generation = useRef(0);
   const refresh = useCallback(async () => {
     const request = ++generation.current;
-    if (!account) { setState(null); setConfig(null); return; }
+    if (!account) { setState(null); setConfig(null); setVisibleFor(undefined); return; }
+    const allowed = await pushSettingsAccess(account).catch(() => false);
+    if (generation.current !== request) return;
+    setVisibleFor(allowed ? account : undefined);
+    if (!allowed) { setState(null); setConfig(null); return; }
     const support = deviceSupport();
     const next = await inspectPushDevice(account);
     const configuration = support.supported ? await pushConfiguration().catch(() => null) : null;
@@ -43,6 +48,7 @@ export default function PushNotificationSettings() {
       .catch(cause => { if (request === generation.current) setMessage(cause instanceof Error ? cause.message : 'Unable to update this device.'); })
       .finally(() => { setBusy(false); void refresh(); });
   }
+  if (!account || visibleFor !== account) return null;
   return <section id="notifications" className="mt-6 scroll-mt-20 border border-slate-300 bg-white p-4" aria-labelledby="push-settings-title">
     <h2 id="push-settings-title" className="text-lg font-bold text-slate-950">Device notifications</h2>
     <p className="mt-1 text-sm text-slate-600">Enable this device for direct messages and Job Update mentions.</p>

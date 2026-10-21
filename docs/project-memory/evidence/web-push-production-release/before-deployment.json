@@ -1,0 +1,14 @@
+{
+  "tenops": {
+    "sha": "5e73284ece13f69016efa1c85c6a8befe66f76bb",
+    "id": "190575f0-4845-4b1d-9aff-0d9002ec9f0c",
+    "configurationSha256": "f52ea907ffd36211ab1fdf4c71f9d75665506b841697f33fe533642a92155629",
+    "supabaseUrl": "https://vxdxjhazkqhpkwdqtobp.supabase.co"
+  },
+  "tendev": {
+    "sha": "778fe14f9e148beb77cb1d0519aa3c1d9f291a10",
+    "id": "6607947f-c521-4de0-b461-c2ca6198981a",
+    "configurationSha256": "18d2777c5819230ebdda9b0e65d8d40eca00dc5314cc614ca0d3063bb0135432",
+    "supabaseUrl": "https://vxdxjhazkqhpkwdqtobp.supabase.co"
+  }
+}

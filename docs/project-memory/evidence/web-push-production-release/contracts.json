@@ -1,0 +1,44 @@
+[
+  {
+    "contracts": {
+      "ledger_columns": [
+        "version",
+        "statements",
+        "name"
+      ],
+      "private_browser_grants": 0,
+      "private_rls": true,
+      "private_worker_functions": [
+        {
+          "acl": "{postgres=X/postgres,service_role=X/postgres}",
+          "name": "claim_web_push_deliveries",
+          "search_path": [
+            "search_path=pg_catalog, public"
+          ],
+          "security_definer": true
+        },
+        {
+          "acl": "{postgres=X/postgres,service_role=X/postgres}",
+          "name": "prepare_web_push_delivery",
+          "search_path": [
+            "search_path=pg_catalog, public"
+          ],
+          "security_definer": true
+        },
+        {
+          "acl": "{postgres=X/postgres,service_role=X/postgres}",
+          "name": "prune_web_push_transport",
+          "search_path": [
+            "search_path=pg_catalog, public"
+          ],
+          "security_definer": true
+        }
+      ],
+      "source_hashes_match": true,
+      "vault_names": [
+        "web_push_wake_tendev",
+        "web_push_url_tendev"
+      ]
+    }
+  }
+]

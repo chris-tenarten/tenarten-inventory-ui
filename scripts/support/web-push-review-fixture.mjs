@@ -15,6 +15,7 @@ export async function pushReviewRpc(name,body,actor,control){
  if(control.pushDelay&&name==='register_my_web_push_subscription')await new Promise(r=>setTimeout(r,control.pushDelay));
  if(control.pushFailure)return{status:503,data:{message:'Simulated offline registration failure'}};
  if(name==='resolve_my_push_notification'){const e=events.get(body.p_id);return{status:200,data:e?.user_id===actor?(e.notification_type==='inbox_message'?{kind:'dm',conversation_user_id:e.metadata.conversation_user_id}:{kind:'mention',job_id:e.metadata.job_id,update_id:e.metadata.update_id}):null};}
+ if(name==='can_view_my_web_push_settings')return{status:200,data:true};
  if(name==='get_my_web_push_configuration')return{status:200,data:control.pushUnconfigured?null:{environment:'local-review',public_key:'BA'+'A'.repeat(85),key_version:'review-only'}};
  if(name==='register_my_web_push_subscription'){
   const endpoint=body.p_subscription?.endpoint;

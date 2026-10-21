@@ -174,3 +174,8 @@ export async function setPushPreviews(account: string, enabled: boolean) {
  const updated = await rpc<boolean>("set_my_web_push_previews", { p_id: current.id, p_generation: current.generation, p_enabled: enabled }, account);
  if (!updated) throw new Error("Device registration changed. Check this device again.");
 }
+
+/** Server-approved cohort visibility, independent of browser support and delivery flags. */
+export function pushSettingsAccess(account: string) {
+  return rpc<boolean>('can_view_my_web_push_settings', {}, account);
+}

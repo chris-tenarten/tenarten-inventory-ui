@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "settings stay hidden outside the server-approved rollout cohort",
+    "settings fail closed when cohort visibility cannot be verified",
+    "cold DM recovers unavailable lookup without manual Retry",
+    "cold mention launch preserves authorized Job Update destination",
+    "wrong account cannot resolve prior-account destination",
+    "expired session signs in before resolving notification without animation"
+  ],
+  "pageErrors": [],
+  "external": [],
+  "simulatedBanners": true,
+  "realDevicePushes": 0
+}
