@@ -1,0 +1,820 @@
+{
+  "status": "RELEASED_BOTH",
+  "sha": "051f23b81947577c2f4a91fb863df372342622bb",
+  "base": "af04478658cac754c716e9a66758b12ccb8e8ab9",
+  "acceptedCandidate": "baa2acdacf58170b07fb3d8f5eae519e06f122e1",
+  "canonical": {
+    "main": "051f23b81947577c2f4a91fb863df372342622bb",
+    "dev": "051f23b81947577c2f4a91fb863df372342622bb",
+    "originMain": "051f23b81947577c2f4a91fb863df372342622bb",
+    "originDev": "051f23b81947577c2f4a91fb863df372342622bb"
+  },
+  "targets": {
+    "tendev": {
+      "deployment": "6e794e8a-175c-41a8-9d3f-76ea442dfd41",
+      "revision": "051f23b81947577c2f4a91fb863df372342622bb",
+      "branding": "TenDev / RESEARCH & DEVELOPMENT",
+      "servedAssets": 49,
+      "holdTimingsMs": [
+        1859
+      ],
+      "checks": [
+        "unauthenticated startup reaches sign-in",
+        "full sequence, 1.85-second hold and continuous mounted entrance",
+        "desktop skip, editable-space guard, keyboard access and session replay protection",
+        "mobile tap skip and small viewport",
+        "readiness delay cannot be bypassed after decorative progress reaches 100",
+        "reduced motion has no sparks or decorative hold",
+        "asset failure enters ready application without decorative hold",
+        "initialization failure exposes recovery UI without decorative hold",
+        "denied account exposes real access error without startup",
+        "Manpower progressive history preserved on the integrated served source"
+      ],
+      "build": {
+        "target": "tendev",
+        "builds": 1,
+        "passed": true,
+        "devBranding": true,
+        "branding": "TenDev / RESEARCH & DEVELOPMENT",
+        "envLocalExcluded": true,
+        "productionSupabase": true,
+        "reviewToolsExcluded": true
+      },
+      "verified": [
+        {
+          "route": "/",
+          "sha256": "1c1b89b73ba2b05e212a0fa07bab37cf8ee6a2a4c32d76cab5045b1778b0277a",
+          "bytes": 17193
+        },
+        {
+          "route": "/samples",
+          "sha256": "a605676492925eaeb09e9d4b780d025cb5850bf9fc127d699eda31e2deec0ae3",
+          "bytes": 17896
+        },
+        {
+          "route": "/proposals",
+          "sha256": "ca67d265242f6508fa30461d2a41594cd1268acee4342ad22b3d37f64346a872",
+          "bytes": 17245
+        },
+        {
+          "route": "/purchasing",
+          "sha256": "52a652985edbab05b357de8ad61ee9511e6a359bc002bccad5a4d528896a88b4",
+          "bytes": 17236
+        },
+        {
+          "route": "/my-work",
+          "sha256": "82a439ac03fac6a20df7bb6d1e8e2d47df5a76d34c286becb3fd694d04842008",
+          "bytes": 17208
+        },
+        {
+          "route": "/manpower-reporting",
+          "sha256": "da16d3657073cb330109451e2d31b661c97dea5c82f52159aa1a8f8b899b792c",
+          "bytes": 17468
+        },
+        {
+          "route": "/inventory",
+          "sha256": "33088b3e9e5be9457f9af43924e4462619459f966a982414bb6e3e4ef75782f0",
+          "bytes": 17262
+        },
+        {
+          "route": "/activity",
+          "sha256": "6bbc37291ed5b3817f19a6aadd4f94c6c544d188c10b1d8c15c3673ad800a689",
+          "bytes": 17277
+        },
+        {
+          "route": "/material-usage",
+          "sha256": "26fbf74fcd09c92c591c7d45d3f572db1c1a091a30e03441be943bd1fdb6741f",
+          "bytes": 17090
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "sha256": "c2db6835e4d3828c114363235ad7faf23931c80faf0f81313e3f44342513df82",
+          "bytes": 429
+        },
+        {
+          "route": "/_next/static/css/a632ea6d66d23051.css",
+          "sha256": "c77a96326dcece19b2de69d09675b6bc149a324dd211aeab26294245e2e9f778",
+          "bytes": 3104
+        },
+        {
+          "route": "/_next/static/css/22b810803b81f585.css",
+          "sha256": "ed224052735906f3da41ef3e876b00891002b60880917076902e2e7de5b181a2",
+          "bytes": 150057
+        },
+        {
+          "route": "/_next/static/chunks/webpack-9109bd685f6b543f.js",
+          "sha256": "6a4d155a48a5a2b9c96306d6d72b14c500304d3b22064db48bb305c095763773",
+          "bytes": 5206
+        },
+        {
+          "route": "/_next/static/chunks/87c73c54-014124adcece3495.js",
+          "sha256": "fff033123beeda4121dcc57c4a60a349eb309be98df891e762231e88d3a1dac6",
+          "bytes": 199868
+        },
+        {
+          "route": "/_next/static/chunks/1968-e0da7aecae39157b.js",
+          "sha256": "29b5d7e67d071fc0f50b6629e6404c949bed488ff947b2f15ec65a03300c2578",
+          "bytes": 222358
+        },
+        {
+          "route": "/_next/static/chunks/main-app-0fd4f2329dcbe21b.js",
+          "sha256": "0e3865294bddaf71b4143f6a5aec6c43ef57f1fee34143701bfeb745affe9e42",
+          "bytes": 525
+        },
+        {
+          "route": "/_next/static/chunks/75504863-b1d072d957b37a8c.js",
+          "sha256": "ee2d45f691185662d3bd51852d5ee1c9df8ea27026bdbaf83c0d50bb196f0b8d",
+          "bytes": 52991
+        },
+        {
+          "route": "/_next/static/chunks/9241-c403f33e34ed9583.js",
+          "sha256": "59c1b3d342230582b6f6d9d3fa07cb3697a5a845f584c1ad1f67d16523a7d6e8",
+          "bytes": 161442
+        },
+        {
+          "route": "/_next/static/chunks/5587-fc5af8c76df14222.js",
+          "sha256": "3594f0697df8c9fb9375af9821372e8ff74db087c4768244d84f1c4cc7c129cc",
+          "bytes": 8730
+        },
+        {
+          "route": "/_next/static/chunks/5604-ad9f3eb2fbf68dd8.js",
+          "sha256": "75f22db7ee77dd0e7359aae3ac81961ea36447fd59dbc9ec4624d1c3d6f59089",
+          "bytes": 14055
+        },
+        {
+          "route": "/_next/static/chunks/9317-68b584397df22e8a.js",
+          "sha256": "0e46e47ead03bc909c15b8bb652383fb9ce43567c370fa69ca07e032444f89f3",
+          "bytes": 9410
+        },
+        {
+          "route": "/_next/static/chunks/9547-fdc04b4893ec9bf8.js",
+          "sha256": "79a0f9fd7b3987add5283921df142379e957a3ea1e81a59a07d8c156cdf4e539",
+          "bytes": 10770
+        },
+        {
+          "route": "/_next/static/chunks/6238-a0c2f59971996b6a.js",
+          "sha256": "fdd8948c8e9ea7bf4c6dcba10fad18cb87787f96ef2e4dd8d17484c37396c239",
+          "bytes": 19169
+        },
+        {
+          "route": "/_next/static/chunks/app/layout-1af7f6be407d81bb.js",
+          "sha256": "6a87dd9b390849f3405077e0a9b3668c6de41082d5ecde44180c91d99fe24c30",
+          "bytes": 83674
+        },
+        {
+          "route": "/_next/static/chunks/3763-64a780f8962143f9.js",
+          "sha256": "5c244c886ac225d1f13b1dbdbbfe911ce8d6fd0ee39522ff7d8818d09a7f6d8d",
+          "bytes": 11281
+        },
+        {
+          "route": "/_next/static/chunks/6408-030662ff622be07c.js",
+          "sha256": "61a2f21e1cf6b488be57d4c168616378a5bb65c09691f1c81d8861aa632c4008",
+          "bytes": 10820
+        },
+        {
+          "route": "/_next/static/chunks/147-bc9d441f94eb0df3.js",
+          "sha256": "702b60c4213004ebec1b0c3c6df4c08ad0ae06f6032e56624444cad75b879196",
+          "bytes": 22123
+        },
+        {
+          "route": "/_next/static/chunks/8669-a5ce4799cb9bba59.js",
+          "sha256": "90279067b2b87f0d7ed56fee3aee511cf4012ead73f73a56d6cab6f5c4785d9c",
+          "bytes": 27585
+        },
+        {
+          "route": "/_next/static/chunks/9917-667e05092c9f269e.js",
+          "sha256": "f604bde175857cdfe297071b9cf798ec36cdd237ee1f70f506516c3f637ca1a2",
+          "bytes": 11940
+        },
+        {
+          "route": "/_next/static/chunks/app/page-9f0fee10994bec36.js",
+          "sha256": "d67782ba11ff338cd02d19b013d6e54640e155770909786f0e69336f5c52ac12",
+          "bytes": 391503
+        },
+        {
+          "route": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+          "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+          "bytes": 112594
+        },
+        {
+          "route": "/_next/static/chunks/2639-20b349371500dd7c.js",
+          "sha256": "de3cb09d1378a64637b64110283ce1e051a2ac701c1543c479b3aa0648ce47a5",
+          "bytes": 7495
+        },
+        {
+          "route": "/_next/static/chunks/6098-5c2ff2fc3f356219.js",
+          "sha256": "3a2794b4cacc82c0b768a7a029977eb06195c3c7b20e5dd2a7a4287899f3f9b7",
+          "bytes": 57041
+        },
+        {
+          "route": "/_next/static/chunks/6067-d51a965b9ba5710a.js",
+          "sha256": "ac63d599f24e64d41ed15bd24e1361db0428b0db3ec0af6abbef58ee9c985da8",
+          "bytes": 23138
+        },
+        {
+          "route": "/_next/static/chunks/app/samples/page-798acf42cf038fec.js",
+          "sha256": "1ae8a2415359961696315859055741731b18c76f59b0ab77eddecde4df48de28",
+          "bytes": 162003
+        },
+        {
+          "route": "/_next/static/css/009e8344dd0776ae.css",
+          "sha256": "8631d49a898c9b7a4652c29f3d4fed82199abb4d080d7ef007dc6b3f92eff93c",
+          "bytes": 3694
+        },
+        {
+          "route": "/_next/static/chunks/6081-317caea06cbedbfc.js",
+          "sha256": "5fc868445d97dfa20e0b13d2ced2a5262d406435c964e499522d30e759079424",
+          "bytes": 13203
+        },
+        {
+          "route": "/_next/static/chunks/app/proposals/page-1282467fafba2362.js",
+          "sha256": "73eba861cebb38963cd711ea8ed4493ef51be6836095fead90f35697ed1a805a",
+          "bytes": 90483
+        },
+        {
+          "route": "/_next/static/chunks/app/purchasing/page-54700faee6f45aed.js",
+          "sha256": "3b8cb55d9194717f4d4d6d0bddfe47273f80655a311cc74b52caf575f4d4923c",
+          "bytes": 100861
+        },
+        {
+          "route": "/_next/static/chunks/7036-1012c8b5634a7a88.js",
+          "sha256": "c8455822c180602ccca5e57f4a4beb30e6d956e5c61001f7afdabe2ac53df2cf",
+          "bytes": 8177
+        },
+        {
+          "route": "/_next/static/chunks/app/my-work/page-47cdeb6231e7ed16.js",
+          "sha256": "3449de54acfa31d31936d970e988fe2bfc997e47e573973c82ba71c7b72463cc",
+          "bytes": 74310
+        },
+        {
+          "route": "/_next/static/chunks/app/manpower-reporting/page-a0d2be8bbc310620.js",
+          "sha256": "9d771578f7f1b8efec3c4354ed6a203a9c5aa66e15e26b9f248a6b67dd270aad",
+          "bytes": 108260
+        },
+        {
+          "route": "/_next/static/css/d12f0aca13423a71.css",
+          "sha256": "b2ae794f2337f9f5d2719b6c15998dbfc6bf8711b8840b08e5fefadcaa99a445",
+          "bytes": 7816
+        },
+        {
+          "route": "/_next/static/chunks/app/inventory/page-e67ae9eb35f731fa.js",
+          "sha256": "44d15cc0f27042b64c422bbaf767e3b7770a3993236865ced54904fa41a4cd5b",
+          "bytes": 117624
+        },
+        {
+          "route": "/_next/static/chunks/app/activity/page-6a779815723d9b07.js",
+          "sha256": "a88ac8ccd6fcf6ae33c8ab06a87963cb96f88269ef0ee82960968295caf31129",
+          "bytes": 23888
+        },
+        {
+          "route": "/_next/static/chunks/app/material-usage/page-0ea0641e10475622.js",
+          "sha256": "b70ee8d1c38d8fb46f05ba88e896dcd82ed275e9205afe8b83a15b6fd99f2843",
+          "bytes": 48831
+        },
+        {
+          "route": "/tenarten-logo-gold-welcome.webp",
+          "sha256": "535e48b4e120f1a4857ac1ec2b78144c32d3fe2839d3e3c09e5a30312dc2b6a8",
+          "bytes": 309740
+        },
+        {
+          "route": "/tenarten-logo-steel-welcome.webp",
+          "sha256": "9072eb074e96dd3162098288f7ce5854a1ed4fa127395ffd2677259242d8cc69",
+          "bytes": 279024
+        },
+        {
+          "route": "/tenarten-logo-terrazzo-welcome.webp",
+          "sha256": "a28b4be52fd40cc184baf4f2702a728f461751a954f768d6136cac0f5ab4e427",
+          "bytes": 230618
+        }
+      ]
+    },
+    "tenops": {
+      "deployment": "2f5e90a3-e120-4cde-9b39-afd29eca703f",
+      "revision": "051f23b81947577c2f4a91fb863df372342622bb",
+      "branding": "TenOps / OPERATIONS CONTROL",
+      "servedAssets": 49,
+      "holdTimingsMs": [],
+      "checks": [
+        "unauthenticated startup reaches sign-in",
+        "full sequence, 1.85-second hold and continuous mounted entrance",
+        "desktop skip, editable-space guard, keyboard access and session replay protection",
+        "mobile tap skip and small viewport",
+        "readiness delay cannot be bypassed after decorative progress reaches 100",
+        "reduced motion has no sparks or decorative hold",
+        "asset failure enters ready application without decorative hold",
+        "initialization failure exposes recovery UI without decorative hold",
+        "denied account exposes real access error without startup",
+        "Manpower progressive history preserved on the integrated served source"
+      ],
+      "build": {
+        "target": "tenops",
+        "builds": 1,
+        "passed": true,
+        "devBranding": false,
+        "branding": "TenOps / OPERATIONS CONTROL",
+        "envLocalExcluded": true,
+        "productionSupabase": true,
+        "reviewToolsExcluded": true
+      },
+      "verified": [
+        {
+          "route": "/",
+          "sha256": "b422e017c18152ddfe15e86cf4c30f86e12d53fca4bcf1a705d3390725dc3c8f",
+          "bytes": 15920
+        },
+        {
+          "route": "/samples",
+          "sha256": "0b8a96b02b695300e1f2e702c59a9b23bc69633dca496a8fd00ea832d09e3cdd",
+          "bytes": 16623
+        },
+        {
+          "route": "/proposals",
+          "sha256": "0fd1bea634a7aa9b4a99e81e69e05f5b17226d1f97fb13fd66d4477c01408b72",
+          "bytes": 15972
+        },
+        {
+          "route": "/purchasing",
+          "sha256": "1a1abff88f4107627f8d74afa6ca74091aea10a09492ec0e3e804d7847f4f788",
+          "bytes": 15963
+        },
+        {
+          "route": "/my-work",
+          "sha256": "f4cfb0782b82c6e066d2bb512465be50b80dcfacb8efb9321ab6961ebf725a6e",
+          "bytes": 15935
+        },
+        {
+          "route": "/manpower-reporting",
+          "sha256": "4a3223096d279fede4525ea201782ad47006bc5b41e003c8e1a3c923c96fd7b1",
+          "bytes": 16195
+        },
+        {
+          "route": "/inventory",
+          "sha256": "9234b5e05d0adf2ce7ec3b38a21828dae5ef9c293002d3088bf8529218da01d1",
+          "bytes": 15989
+        },
+        {
+          "route": "/activity",
+          "sha256": "ba28dd50396df41103ab836d38c543fdb99182a2c6dc344f20b9774da6af2385",
+          "bytes": 16004
+        },
+        {
+          "route": "/material-usage",
+          "sha256": "d4634ff96a94708076ebe2381b14db5e83b7fd86a0c081fecf328d51ae9598f4",
+          "bytes": 15817
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "sha256": "f24cfc0cd69f7f52f309ef3b6b4e98510e22c75b45c0a79bf5924e570fba5654",
+          "bytes": 439
+        },
+        {
+          "route": "/_next/static/css/a632ea6d66d23051.css",
+          "sha256": "c77a96326dcece19b2de69d09675b6bc149a324dd211aeab26294245e2e9f778",
+          "bytes": 3104
+        },
+        {
+          "route": "/_next/static/css/22b810803b81f585.css",
+          "sha256": "ed224052735906f3da41ef3e876b00891002b60880917076902e2e7de5b181a2",
+          "bytes": 150057
+        },
+        {
+          "route": "/_next/static/chunks/webpack-a9af7b3e98477fe7.js",
+          "sha256": "97578e9188601fbf0730b8d1280b5f03d5f239266ac4e8cb59b5613878b0a2cb",
+          "bytes": 5206
+        },
+        {
+          "route": "/_next/static/chunks/87c73c54-014124adcece3495.js",
+          "sha256": "fff033123beeda4121dcc57c4a60a349eb309be98df891e762231e88d3a1dac6",
+          "bytes": 199868
+        },
+        {
+          "route": "/_next/static/chunks/1968-e0da7aecae39157b.js",
+          "sha256": "29b5d7e67d071fc0f50b6629e6404c949bed488ff947b2f15ec65a03300c2578",
+          "bytes": 222358
+        },
+        {
+          "route": "/_next/static/chunks/main-app-0fd4f2329dcbe21b.js",
+          "sha256": "0e3865294bddaf71b4143f6a5aec6c43ef57f1fee34143701bfeb745affe9e42",
+          "bytes": 525
+        },
+        {
+          "route": "/_next/static/chunks/75504863-b1d072d957b37a8c.js",
+          "sha256": "ee2d45f691185662d3bd51852d5ee1c9df8ea27026bdbaf83c0d50bb196f0b8d",
+          "bytes": 52991
+        },
+        {
+          "route": "/_next/static/chunks/9241-c403f33e34ed9583.js",
+          "sha256": "59c1b3d342230582b6f6d9d3fa07cb3697a5a845f584c1ad1f67d16523a7d6e8",
+          "bytes": 161442
+        },
+        {
+          "route": "/_next/static/chunks/5587-fc5af8c76df14222.js",
+          "sha256": "3594f0697df8c9fb9375af9821372e8ff74db087c4768244d84f1c4cc7c129cc",
+          "bytes": 8730
+        },
+        {
+          "route": "/_next/static/chunks/5604-ad9f3eb2fbf68dd8.js",
+          "sha256": "75f22db7ee77dd0e7359aae3ac81961ea36447fd59dbc9ec4624d1c3d6f59089",
+          "bytes": 14055
+        },
+        {
+          "route": "/_next/static/chunks/9317-68b584397df22e8a.js",
+          "sha256": "0e46e47ead03bc909c15b8bb652383fb9ce43567c370fa69ca07e032444f89f3",
+          "bytes": 9410
+        },
+        {
+          "route": "/_next/static/chunks/9547-b80ede164ed6a478.js",
+          "sha256": "43c6f86de671dad38ee33be6f9c3e17075d6a2231550527d3f0335d0751c05e8",
+          "bytes": 10778
+        },
+        {
+          "route": "/_next/static/chunks/6238-a0c2f59971996b6a.js",
+          "sha256": "fdd8948c8e9ea7bf4c6dcba10fad18cb87787f96ef2e4dd8d17484c37396c239",
+          "bytes": 19169
+        },
+        {
+          "route": "/_next/static/chunks/app/layout-c4caa8633e0fef78.js",
+          "sha256": "fe3779c89509bb0c423cb5fc0c14f0a51280c3a2a5e1a7d8dcb2c8c18c4edbcd",
+          "bytes": 83727
+        },
+        {
+          "route": "/_next/static/chunks/3763-64a780f8962143f9.js",
+          "sha256": "5c244c886ac225d1f13b1dbdbbfe911ce8d6fd0ee39522ff7d8818d09a7f6d8d",
+          "bytes": 11281
+        },
+        {
+          "route": "/_next/static/chunks/6408-030662ff622be07c.js",
+          "sha256": "61a2f21e1cf6b488be57d4c168616378a5bb65c09691f1c81d8861aa632c4008",
+          "bytes": 10820
+        },
+        {
+          "route": "/_next/static/chunks/147-bc9d441f94eb0df3.js",
+          "sha256": "702b60c4213004ebec1b0c3c6df4c08ad0ae06f6032e56624444cad75b879196",
+          "bytes": 22123
+        },
+        {
+          "route": "/_next/static/chunks/8669-a5ce4799cb9bba59.js",
+          "sha256": "90279067b2b87f0d7ed56fee3aee511cf4012ead73f73a56d6cab6f5c4785d9c",
+          "bytes": 27585
+        },
+        {
+          "route": "/_next/static/chunks/9917-667e05092c9f269e.js",
+          "sha256": "f604bde175857cdfe297071b9cf798ec36cdd237ee1f70f506516c3f637ca1a2",
+          "bytes": 11940
+        },
+        {
+          "route": "/_next/static/chunks/app/page-336dc0152f6c0137.js",
+          "sha256": "fa8f0855734178c17c6631df6133f9ac3ff5b9207db7e49315fbf3aa507a4065",
+          "bytes": 391442
+        },
+        {
+          "route": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+          "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+          "bytes": 112594
+        },
+        {
+          "route": "/_next/static/chunks/2639-20b349371500dd7c.js",
+          "sha256": "de3cb09d1378a64637b64110283ce1e051a2ac701c1543c479b3aa0648ce47a5",
+          "bytes": 7495
+        },
+        {
+          "route": "/_next/static/chunks/6098-6e8a0a9005c27158.js",
+          "sha256": "0577f2f7974052ea56d77882fbb2c481815ae638a5c41f0882ada55ddf8c6503",
+          "bytes": 57049
+        },
+        {
+          "route": "/_next/static/chunks/6067-d51a965b9ba5710a.js",
+          "sha256": "ac63d599f24e64d41ed15bd24e1361db0428b0db3ec0af6abbef58ee9c985da8",
+          "bytes": 23138
+        },
+        {
+          "route": "/_next/static/chunks/app/samples/page-b174aed0827c6eb4.js",
+          "sha256": "95dba0944cd410152bd79936bf58c02ddd9a90389e9d0e1f271155a36b6af6e7",
+          "bytes": 162003
+        },
+        {
+          "route": "/_next/static/css/009e8344dd0776ae.css",
+          "sha256": "8631d49a898c9b7a4652c29f3d4fed82199abb4d080d7ef007dc6b3f92eff93c",
+          "bytes": 3694
+        },
+        {
+          "route": "/_next/static/chunks/6081-317caea06cbedbfc.js",
+          "sha256": "5fc868445d97dfa20e0b13d2ced2a5262d406435c964e499522d30e759079424",
+          "bytes": 13203
+        },
+        {
+          "route": "/_next/static/chunks/app/proposals/page-3a7eb3eeb9d86304.js",
+          "sha256": "a07d9399c3aa7519651c3e571a90f7ab70c02182e34ce9d4f0c03de39f1fc7c5",
+          "bytes": 90491
+        },
+        {
+          "route": "/_next/static/chunks/app/purchasing/page-c1467af84657b391.js",
+          "sha256": "a6c00f0bfdad91e077dc5643f60d9a561eee9aa9cf35283652ffdcd322b1ed66",
+          "bytes": 100861
+        },
+        {
+          "route": "/_next/static/chunks/7036-1012c8b5634a7a88.js",
+          "sha256": "c8455822c180602ccca5e57f4a4beb30e6d956e5c61001f7afdabe2ac53df2cf",
+          "bytes": 8177
+        },
+        {
+          "route": "/_next/static/chunks/app/my-work/page-1a935c6ad82f639d.js",
+          "sha256": "bb6e7dbd3b346e10bce52074b7207baa679838b97dc61467d220ed17c863be65",
+          "bytes": 74318
+        },
+        {
+          "route": "/_next/static/chunks/app/manpower-reporting/page-e09bbe08c73f7784.js",
+          "sha256": "826f9b4f7c831977ac1849473090647dd58e2b8a2c049995087d050b09c1c3e5",
+          "bytes": 108258
+        },
+        {
+          "route": "/_next/static/css/d12f0aca13423a71.css",
+          "sha256": "b2ae794f2337f9f5d2719b6c15998dbfc6bf8711b8840b08e5fefadcaa99a445",
+          "bytes": 7816
+        },
+        {
+          "route": "/_next/static/chunks/app/inventory/page-d6f1b2394e833ff1.js",
+          "sha256": "10dd9cdb441ee48af3411e7bcf272a3970229850e00f773db8339cfcf1c57ba2",
+          "bytes": 117626
+        },
+        {
+          "route": "/_next/static/chunks/app/activity/page-260861fd4d2d85f3.js",
+          "sha256": "07fecd54a556c363baad1a87371d954cedbe5dd1f3587d895ad8e3715a8a7b67",
+          "bytes": 23890
+        },
+        {
+          "route": "/_next/static/chunks/app/material-usage/page-62b8fd881810c728.js",
+          "sha256": "d96864088cf2dcfe0539e312d662bcfad4b058cd1ac549aca0517e394ce187ba",
+          "bytes": 48831
+        },
+        {
+          "route": "/tenarten-logo-gold-welcome.webp",
+          "sha256": "535e48b4e120f1a4857ac1ec2b78144c32d3fe2839d3e3c09e5a30312dc2b6a8",
+          "bytes": 309740
+        },
+        {
+          "route": "/tenarten-logo-steel-welcome.webp",
+          "sha256": "9072eb074e96dd3162098288f7ce5854a1ed4fa127395ffd2677259242d8cc69",
+          "bytes": 279024
+        },
+        {
+          "route": "/tenarten-logo-terrazzo-welcome.webp",
+          "sha256": "a28b4be52fd40cc184baf4f2702a728f461751a954f768d6136cac0f5ab4e427",
+          "bytes": 230618
+        }
+      ],
+      "smokeEvidence": {
+        "priorPassedChecks": [
+          "unauthenticated startup reaches sign-in",
+          "full sequence, 1.85-second hold and continuous mounted entrance",
+          "desktop skip, editable-space guard, keyboard access and session replay protection",
+          "mobile tap skip and small viewport",
+          "readiness delay cannot be bypassed after decorative progress reaches 100"
+        ],
+        "recoveryPassedChecks": [
+          "reduced motion has no sparks or decorative hold",
+          "asset failure enters ready application without decorative hold",
+          "initialization failure exposes recovery UI without decorative hold",
+          "denied account exposes real access error without startup",
+          "Manpower progressive history preserved on the integrated served source"
+        ],
+        "normalHoldEvidence": "Original full-sequence assertion passed at source constant 1850 ms; exact timing value was not written before the unrelated later assertion failure."
+      }
+    }
+  },
+  "preflight": {
+    "passed": true,
+    "paths": 35,
+    "allAcceptedPathsExact": true,
+    "correction": "git show execFileSync buffered binary output replaced by streamed git cat-file blob SHA-256; Git blob identity checks retained",
+    "acceptedAssetsUnmodified": true
+  },
+  "rollback": {
+    "mainRef": "rollback/startup-terrazzo-20261020-main",
+    "devRef": "rollback/startup-terrazzo-20261020-dev",
+    "sha": "af04478658cac754c716e9a66758b12ccb8e8ab9",
+    "previousDeployments": {
+      "tendev": {
+        "id": "f20e4894-b098-49da-842a-3659d66056ca",
+        "sha": "af04478658cac754c716e9a66758b12ccb8e8ab9",
+        "url": "https://f20e4894.tendev.pages.dev",
+        "branch": "dev"
+      },
+      "tenops": {
+        "id": "8b3d7b4f-cea2-4547-9059-4e9d38cb2026",
+        "sha": "af04478658cac754c716e9a66758b12ccb8e8ab9",
+        "url": "https://8b3d7b4f.tenops.pages.dev",
+        "branch": "main"
+      }
+    },
+    "bundle": ".tmp-startup-release/accepted-051f23b.bundle",
+    "bundleSha256": "0a50f317af3767a8240087b06e31c6604cce9cc3a2e36327f3c0654eec50030d"
+  },
+  "automaticBuilds": {
+    "tenops": [
+      {
+        "id": "0b085e6b-89cc-4b3f-916c-6d06ee4e9869",
+        "branch": "main",
+        "skipped": true
+      },
+      {
+        "id": "846e696a-5ea0-4a67-88af-787bfcde4321",
+        "branch": "dev",
+        "skipped": true
+      }
+    ],
+    "tendev": [
+      {
+        "id": "bc9014bb-0381-4e40-b3f8-781989de12a0",
+        "branch": "main",
+        "skipped": true
+      },
+      {
+        "id": "32c01e4b-1711-4d88-960c-8fd90ffb5617",
+        "branch": "dev",
+        "skipped": true
+      }
+    ]
+  },
+  "riskTier": 3,
+  "testingLevel": "Focused Level 2 integration and served-bundle gates; accepted visual evidence reused",
+  "acceptedHoldMs": 1850,
+  "configurationUnchanged": true,
+  "manpowerAndPerformanceSourcePreserved": true,
+  "authAndSupabaseSourceUnchanged": true,
+  "migrationsApplied": 0,
+  "hostedBusinessWrites": 0,
+  "backendRequestsForwarded": 0,
+  "allAligned": true,
+  "limitations": [
+    "Auth/data calls intercepted with synthetic fixtures; no live-account/business-data verification.",
+    "Focus/visibility/auth events simulated; no new physical OS/Home Screen certification."
+  ],
+  "releaseComplete": true,
+  "releaseGatesComplete": true,
+  "sourceRevisionsAligned": true,
+  "reducedMotionRecovery": {
+    "classification": "Incorrect transient-visibility test expectation; no application defect",
+    "oldAssertion": "await page.goto(origin+'/'); await expect(div[data-welcome-hero]).toBeVisible()",
+    "oldTimeoutMs": 5000,
+    "failureSnapshot": "Authenticated application already visible; temporary overlay absent",
+    "correction": "Observe lifecycle before navigation and assert reduced media, readiness, prompt dismissal, interactive application and absence of transformation/hold/skip rather than post-load overlay presence",
+    "scope": "Local release smoke helper only",
+    "normalHoldUnchangedMs": 1850,
+    "tenDev": [
+      {
+        "media": true,
+        "loadAt": 792,
+        "trace": [
+          {
+            "at": 191.80000000074506,
+            "phase": "absent",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 715,
+            "phase": "opening",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 764,
+            "phase": "opening",
+            "ready": true,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 1202,
+            "phase": "entrance",
+            "ready": true,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 1377,
+            "phase": "absent",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          }
+        ],
+        "readyToEntranceMs": 613,
+        "dismissedBeforeLoad": false
+      }
+    ],
+    "tenOps": [
+      {
+        "media": true,
+        "loadAt": 1262,
+        "trace": [
+          {
+            "at": 226.69999999925494,
+            "phase": "absent",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 1129,
+            "phase": "opening",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 1185,
+            "phase": "opening",
+            "ready": true,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 1618,
+            "phase": "entrance",
+            "ready": true,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 1794,
+            "phase": "absent",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          }
+        ],
+        "readyToEntranceMs": 609,
+        "dismissedBeforeLoad": false
+      }
+    ],
+    "controlledCosmeticDelayReproduction": [
+      {
+        "media": true,
+        "loadAt": 2475,
+        "trace": [
+          {
+            "at": 209.69999999925494,
+            "phase": "absent",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 751,
+            "phase": "opening",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 822,
+            "phase": "opening",
+            "ready": true,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 1251,
+            "phase": "entrance",
+            "ready": true,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 1428,
+            "phase": "absent",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          }
+        ],
+        "readyToEntranceMs": 606,
+        "dismissedBeforeLoad": true,
+        "controlledArtworkDelayMs": 2000
+      }
+    ],
+    "priorTenOpsGroupsReused": 5,
+    "affectedAndRemainingTenOpsGroupsPassed": 5,
+    "remainingTenOpsGroups": [
+      "reduced motion has no sparks or decorative hold",
+      "asset failure enters ready application without decorative hold",
+      "initialization failure exposes recovery UI without decorative hold",
+      "denied account exposes real access error without startup",
+      "Manpower progressive history preserved on the integrated served source"
+    ],
+    "allRecoveryPageErrors": [],
+    "allRecoveryUnexpectedExternal": [],
+    "backendRequestsForwarded": 0,
+    "applicationFilesChanged": 0,
+    "newBuilds": 0,
+    "newPushes": 0,
+    "newDeployments": 0,
+    "existingOAuthRefreshed": true,
+    "oauthScopesUnchanged": true,
+    "previousPartialReceipt": ".tmp-startup-release/partial-release-before-reduced-recovery.json"
+  }
+}

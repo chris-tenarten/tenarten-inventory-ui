@@ -1,0 +1,37 @@
+{
+  "observed_at": "2026-10-20T16:09:48.328Z",
+  "scope": "Historical read-only attachment/OCR investigation; anonymized retention summary, not a new hosted audit.",
+  "job_count": 43,
+  "attachment_count": 177,
+  "pdf_count": 175,
+  "pdf_pages": 187,
+  "download_failures": 0,
+  "inspection_errors": 0,
+  "findings": {
+    "blend_table_pdfs": 15,
+    "jobs_with_blend_tables": 12,
+    "per_batch_formula_pdfs": 3,
+    "additional_jobs_with_per_batch_formulas": 3,
+    "additional_workbooks_with_blend_calculations": 1,
+    "matched_attachment_records": 19,
+    "notes": [
+      "Matching attachment records used category other rather than blend_sheet.",
+      "Some source-document Job/Work Order identifiers differed from their linked record or filename.",
+      "Three newer-layout sheets shared an issue date; provenance beyond document contents was not established.",
+      "One reviewed PDF rendered blank."
+    ]
+  },
+  "retention": {
+    "raw_identifiers_omitted": true,
+    "original_sha256": "713b8e6aa39e5970a2d5d4b3c4190d9ea4b44e13603d08163fb2353a3d34382c",
+    "original_bytes": 11110,
+    "private_original": "Original workspace only: .git/private-archives/2026-10-21-source-control-hygiene/2026-10-20-production-job-blend-attachments.json",
+    "contents_not_committed": [
+      "Job identifiers and names",
+      "attachment filenames",
+      "Storage paths",
+      "local download paths"
+    ],
+    "note": "Exact original preserved privately with restoration metadata; unavailable in a fresh clone."
+  }
+}

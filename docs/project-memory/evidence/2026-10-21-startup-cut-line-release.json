@@ -1,0 +1,824 @@
+{
+  "status": "RELEASED_BOTH",
+  "allAligned": true,
+  "releaseGatesComplete": true,
+  "canonical": {
+    "main": "83d0343bf1058dd0a6f21f4abaca194de5211498",
+    "dev": "83d0343bf1058dd0a6f21f4abaca194de5211498",
+    "originMain": "83d0343bf1058dd0a6f21f4abaca194de5211498",
+    "originDev": "83d0343bf1058dd0a6f21f4abaca194de5211498"
+  },
+  "base": "73fe7a94cfeefa355aa8e912a9bcb524436b2442",
+  "committedCorrection": "83d0343bf1058dd0a6f21f4abaca194de5211498",
+  "files": [
+    "docs/project-memory/2026-10-21-startup-cut-line-local.md",
+    "docs/project-memory/evidence/2026-10-21-startup-cut-line-local.json",
+    "src/components/welcome-sparks.mjs"
+  ],
+  "targets": {
+    "tendev": {
+      "deployment": "fa7dcd82-adc5-408e-a619-2f205aef91ab",
+      "servedRevision": "83d0343bf1058dd0a6f21f4abaca194de5211498",
+      "branding": "TenDev / RESEARCH & DEVELOPMENT",
+      "assets": 62,
+      "verified": [
+        {
+          "route": "/",
+          "sha256": "8d1ea51a37163371dd749c8fcbe15131838466d61df1a7afe9682bad8c977bbf",
+          "bytes": 17565
+        },
+        {
+          "route": "/contacts",
+          "sha256": "0ac708922f708bcf75cd8e47f255658f26afc35a47a0f5e8b7b5aa62651ab0d2",
+          "bytes": 16832
+        },
+        {
+          "route": "/settings",
+          "sha256": "cbb93ea6de9d9124941588a573d29e488128a90d3c9424d3f559559370d2dc3b",
+          "bytes": 17029
+        },
+        {
+          "route": "/pre-production",
+          "sha256": "d3ab04229431eeb26bf6c8a5756f5eb342442ecb937f43bbb7607ca5a1949e12",
+          "bytes": 18148
+        },
+        {
+          "route": "/samples",
+          "sha256": "d872b107a5216739377d05465e8649a4f2c4d7489a1cb8dde33c5c1c2fd834ab",
+          "bytes": 17616
+        },
+        {
+          "route": "/proposals",
+          "sha256": "04bb9ed8e4e582d840b7113910298cb143735456b44b95e2492132d42f10b566",
+          "bytes": 17356
+        },
+        {
+          "route": "/purchasing",
+          "sha256": "e42428db6b3dc8408db53eb278c95b51117857fcb1db2f2be81cc9941bb9c819",
+          "bytes": 16904
+        },
+        {
+          "route": "/my-work",
+          "sha256": "7f85d77bfb81c1e65f7a3e5f334b8f0aa3c48a788c01a8c7550902e5afe9fef3",
+          "bytes": 16925
+        },
+        {
+          "route": "/manpower-reporting",
+          "sha256": "6cdacc7ec1a3aa592ca5db4d88e3106fa6076254e72ae7b9a9f08a49cf5ea470",
+          "bytes": 17136
+        },
+        {
+          "route": "/inventory",
+          "sha256": "7f2e56da0d8c83db11255399d2b062bfb447c9ff2c8330a21a6a6c062af83cd6",
+          "bytes": 16930
+        },
+        {
+          "route": "/activity",
+          "sha256": "97962b777343e2356370a2192cd47742a07073484350097700dff8aa66016463",
+          "bytes": 16945
+        },
+        {
+          "route": "/material-usage",
+          "sha256": "dd9e20eeb7873566edf03bca5e558e30a8e19c091ea3f537aa93df6c2bd36a85",
+          "bytes": 16758
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "sha256": "c2db6835e4d3828c114363235ad7faf23931c80faf0f81313e3f44342513df82",
+          "bytes": 429
+        },
+        {
+          "route": "/sw.js",
+          "sha256": "cc79b86fa2fa1f492d0b83eef7ae0de0f6c0741ea972287faadc64ae624f9a07",
+          "bytes": 1588
+        },
+        {
+          "route": "/_next/static/css/67824e3bc6e39433.css",
+          "sha256": "69cc60c3dd8e59ed7fd931a5343fb585867a415e3c0a95ffe6bdb9364cff8fd5",
+          "bytes": 154871
+        },
+        {
+          "route": "/_next/static/chunks/webpack-3113c7ca689e6e04.js",
+          "sha256": "afd0eb5c374e4334386ebb8a756291043df5e759b20df317c70d04d6c16c0eb3",
+          "bytes": 5252
+        },
+        {
+          "route": "/_next/static/chunks/87c73c54-014124adcece3495.js",
+          "sha256": "fff033123beeda4121dcc57c4a60a349eb309be98df891e762231e88d3a1dac6",
+          "bytes": 199868
+        },
+        {
+          "route": "/_next/static/chunks/1968-e0da7aecae39157b.js",
+          "sha256": "29b5d7e67d071fc0f50b6629e6404c949bed488ff947b2f15ec65a03300c2578",
+          "bytes": 222358
+        },
+        {
+          "route": "/_next/static/chunks/main-app-0fd4f2329dcbe21b.js",
+          "sha256": "0e3865294bddaf71b4143f6a5aec6c43ef57f1fee34143701bfeb745affe9e42",
+          "bytes": 525
+        },
+        {
+          "route": "/_next/static/chunks/75504863-b1d072d957b37a8c.js",
+          "sha256": "ee2d45f691185662d3bd51852d5ee1c9df8ea27026bdbaf83c0d50bb196f0b8d",
+          "bytes": 52991
+        },
+        {
+          "route": "/_next/static/chunks/9241-c403f33e34ed9583.js",
+          "sha256": "59c1b3d342230582b6f6d9d3fa07cb3697a5a845f584c1ad1f67d16523a7d6e8",
+          "bytes": 161442
+        },
+        {
+          "route": "/_next/static/chunks/5587-fc5af8c76df14222.js",
+          "sha256": "3594f0697df8c9fb9375af9821372e8ff74db087c4768244d84f1c4cc7c129cc",
+          "bytes": 8730
+        },
+        {
+          "route": "/_next/static/chunks/5604-ad9f3eb2fbf68dd8.js",
+          "sha256": "75f22db7ee77dd0e7359aae3ac81961ea36447fd59dbc9ec4624d1c3d6f59089",
+          "bytes": 14055
+        },
+        {
+          "route": "/_next/static/chunks/2980-866c15552a37286f.js",
+          "sha256": "4fbfb64551b98b8b543a7f01287ad657bd3d6cc2fb85bd345bfd0809cd9cc0ac",
+          "bytes": 10183
+        },
+        {
+          "route": "/_next/static/chunks/3675-747a12e1da575188.js",
+          "sha256": "9b96a93c19185b5c7e891fad400b51479086ad98a26c37481a1eb0a4cf6391d7",
+          "bytes": 15593
+        },
+        {
+          "route": "/_next/static/chunks/6238-186f58791bf2e7e6.js",
+          "sha256": "da1d179e99ba31245f95a211f5e5d3c7bf503802f4bcca28674177e60c7aa3d5",
+          "bytes": 20673
+        },
+        {
+          "route": "/_next/static/chunks/app/layout-d772f175378efca0.js",
+          "sha256": "0a5410358fa8a6e66e9da947906a44cd14c450bc0b3f828fdc2d32ca5b6a92ad",
+          "bytes": 88104
+        },
+        {
+          "route": "/_next/static/chunks/3763-64a780f8962143f9.js",
+          "sha256": "5c244c886ac225d1f13b1dbdbbfe911ce8d6fd0ee39522ff7d8818d09a7f6d8d",
+          "bytes": 11281
+        },
+        {
+          "route": "/_next/static/chunks/6408-030662ff622be07c.js",
+          "sha256": "61a2f21e1cf6b488be57d4c168616378a5bb65c09691f1c81d8861aa632c4008",
+          "bytes": 10820
+        },
+        {
+          "route": "/_next/static/chunks/147-bc9d441f94eb0df3.js",
+          "sha256": "702b60c4213004ebec1b0c3c6df4c08ad0ae06f6032e56624444cad75b879196",
+          "bytes": 22123
+        },
+        {
+          "route": "/_next/static/chunks/4388-34325c683a574eb2.js",
+          "sha256": "d18209835818a74eca1a8100710f42de7a0fb16bafb3fbdef65fc6e839b68ffe",
+          "bytes": 13451
+        },
+        {
+          "route": "/_next/static/chunks/8669-065a935ba59328ce.js",
+          "sha256": "75fe6e23d49a0f10ec2d70ffc3668d637c0594e999dcab790903c96e9e7a1394",
+          "bytes": 29089
+        },
+        {
+          "route": "/_next/static/chunks/7312-63619be9882e7d1b.js",
+          "sha256": "fa74f39724b7609fb46d05874b5a14fd777e0e8d767b859e4025d1c8fd034df5",
+          "bytes": 27143
+        },
+        {
+          "route": "/_next/static/chunks/2447-5c3afd4ed7c9fd13.js",
+          "sha256": "88fec27115f5933c5c091f0120a7d7a7f6c5ba0d5beeeab98fdf8652f5aff0eb",
+          "bytes": 11980
+        },
+        {
+          "route": "/_next/static/chunks/9917-667e05092c9f269e.js",
+          "sha256": "f604bde175857cdfe297071b9cf798ec36cdd237ee1f70f506516c3f637ca1a2",
+          "bytes": 11940
+        },
+        {
+          "route": "/_next/static/chunks/app/page-8d1a85999efd7d18.js",
+          "sha256": "3f448ead5c351f534bcf8d2bde47ea973b3f6ca8d59922a8fe378209a14bf98c",
+          "bytes": 356191
+        },
+        {
+          "route": "/_next/static/css/9611c0b375fc73f6.css",
+          "sha256": "3c1602937e830228e309d4abd4b495e23b953f8468f04f0499e64c58226b984b",
+          "bytes": 4400
+        },
+        {
+          "route": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+          "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+          "bytes": 112594
+        },
+        {
+          "route": "/_next/static/chunks/app/contacts/page-71ac5c24b0fd4ac8.js",
+          "sha256": "b28e133880c1d39b310a44c3c8e7b568f2b256dbc04f1bd9bc137d8a91f12f65",
+          "bytes": 9789
+        },
+        {
+          "route": "/_next/static/chunks/app/settings/page-eace2282f6a8c415.js",
+          "sha256": "8c05c9ddd1f50ce2397151a2d552040843f7ea53786c2722ed7fa662a2145c63",
+          "bytes": 52436
+        },
+        {
+          "route": "/_next/static/chunks/app/pre-production/layout-89b6e909248fe0db.js",
+          "sha256": "5f7ee85246b2d331a11fc98e37ac4f9713cb64a93e87cd0ec9df3c02cdfd2a18",
+          "bytes": 692
+        },
+        {
+          "route": "/_next/static/chunks/2639-20b349371500dd7c.js",
+          "sha256": "de3cb09d1378a64637b64110283ce1e051a2ac701c1543c479b3aa0648ce47a5",
+          "bytes": 7495
+        },
+        {
+          "route": "/_next/static/chunks/8044-d0c32905482a6a4b.js",
+          "sha256": "f11cee0f8573b093bf14d492b0b54442c89bbb43edca12fa5533c48482fd1503",
+          "bytes": 47882
+        },
+        {
+          "route": "/_next/static/chunks/6081-317caea06cbedbfc.js",
+          "sha256": "5fc868445d97dfa20e0b13d2ced2a5262d406435c964e499522d30e759079424",
+          "bytes": 13203
+        },
+        {
+          "route": "/_next/static/chunks/app/pre-production/page-c5f0ef05e0b1f2de.js",
+          "sha256": "b367eae35aa27c64866fd13011f01600fd1abf90854120951af448793d875104",
+          "bytes": 40505
+        },
+        {
+          "route": "/_next/static/css/6faf42657f96bc11.css",
+          "sha256": "acee344d20516b0f5ab0b8d091abfcfab0eaebed8afbdc0a719b43e5c57f0788",
+          "bytes": 850
+        },
+        {
+          "route": "/_next/static/chunks/8235-54f80ae86e3d9016.js",
+          "sha256": "c21d98908a5fbfb16e33cdeef1c027146562e9a0794c98078858183287ee03d2",
+          "bytes": 23710
+        },
+        {
+          "route": "/_next/static/chunks/app/samples/page-65a4d783932a4304.js",
+          "sha256": "9d1d8c4a3bef0bcde5ff5f0a63ea40d63d349147708013684e4f56414e0248d4",
+          "bytes": 162072
+        },
+        {
+          "route": "/_next/static/css/009e8344dd0776ae.css",
+          "sha256": "8631d49a898c9b7a4652c29f3d4fed82199abb4d080d7ef007dc6b3f92eff93c",
+          "bytes": 3694
+        },
+        {
+          "route": "/_next/static/chunks/4876-93925982fcdf51ad.js",
+          "sha256": "d3f3fe6b25aee4f07460cb8f9e927e9fafdf0ea3e96edcc0c66907a52658cb1c",
+          "bytes": 6003
+        },
+        {
+          "route": "/_next/static/chunks/app/proposals/page-814952ea83983305.js",
+          "sha256": "d661a25d66bc9dff2f22b5a3b2d825b732203f353a211d458d9314ab599731d2",
+          "bytes": 77550
+        },
+        {
+          "route": "/_next/static/chunks/app/purchasing/page-487b90bcda4dc4c2.js",
+          "sha256": "e2dba7ed3c436fc778e65396f299188ea3af653d56f212279f61de06e07b91d2",
+          "bytes": 102420
+        },
+        {
+          "route": "/_next/static/chunks/285-fef5b514ddc3ef00.js",
+          "sha256": "7936797f159fab6e58a1f6702e9ce39c0e238420ed41aa47228eb9928a2441ce",
+          "bytes": 8488
+        },
+        {
+          "route": "/_next/static/chunks/app/my-work/page-bb411c53eef1ae52.js",
+          "sha256": "799166571a782003193ae986fdbe5c95f2f5ab0149ff6298ec1babb646d44bf9",
+          "bytes": 65303
+        },
+        {
+          "route": "/_next/static/chunks/app/manpower-reporting/page-eb50ff2b905528ee.js",
+          "sha256": "0d530b90877ee9b01a6077b4873201d6050f694480f7f46a8c90fea11a7419c5",
+          "bytes": 109777
+        },
+        {
+          "route": "/_next/static/css/d12f0aca13423a71.css",
+          "sha256": "b2ae794f2337f9f5d2719b6c15998dbfc6bf8711b8840b08e5fefadcaa99a445",
+          "bytes": 7816
+        },
+        {
+          "route": "/_next/static/chunks/app/inventory/page-014ff96ccdc0968d.js",
+          "sha256": "b39fff148a8613eedf88d722fa25beecc172aa9fa81b596ef754abeaced5ad20",
+          "bytes": 119143
+        },
+        {
+          "route": "/_next/static/chunks/app/activity/page-d8446cf8c6256f64.js",
+          "sha256": "8ead62121309fe9abcbca8500273641a876fe6168624f49bf2a6759a2f210492",
+          "bytes": 25407
+        },
+        {
+          "route": "/_next/static/chunks/app/material-usage/page-e647dd5ca4969e62.js",
+          "sha256": "af3a349b7db5aa39347d8ceba6e9c1c82a03623790aa5bb4d4f1ec1a8ffd547a",
+          "bytes": 50348
+        },
+        {
+          "route": "/tenarten-logo-gold-welcome.webp",
+          "sha256": "535e48b4e120f1a4857ac1ec2b78144c32d3fe2839d3e3c09e5a30312dc2b6a8",
+          "bytes": 309740
+        },
+        {
+          "route": "/tenarten-logo-steel-welcome.webp",
+          "sha256": "9072eb074e96dd3162098288f7ce5854a1ed4fa127395ffd2677259242d8cc69",
+          "bytes": 279024
+        },
+        {
+          "route": "/tenarten-logo-terrazzo-welcome.webp",
+          "sha256": "a28b4be52fd40cc184baf4f2702a728f461751a954f768d6136cac0f5ab4e427",
+          "bytes": 230618
+        }
+      ],
+      "build": {
+        "target": "tendev",
+        "builds": 1,
+        "passed": true,
+        "devBranding": true,
+        "branding": "TenDev / RESEARCH & DEVELOPMENT",
+        "envLocalExcluded": true,
+        "productionSupabase": true,
+        "reviewToolsExcluded": true
+      },
+      "smoke": {
+        "target": "tendev",
+        "origin": "https://tendev.pages.dev",
+        "actualServedBundle": true,
+        "checks": [
+          "full sequence, 888 ms hold and continuous mounted entrance"
+        ],
+        "reducedEvidence": [],
+        "cutLineEvidence": [
+          {
+            "pixel": [
+              207,
+              230
+            ],
+            "rgba": [
+              14,
+              10,
+              8,
+              247
+            ]
+          }
+        ],
+        "holdTimingsMs": [
+          898
+        ],
+        "acceptedHoldMs": 888,
+        "pageErrors": [],
+        "unexpectedExternal": [],
+        "controlledSyntheticBackend": true,
+        "authAndDataIntercepted": true,
+        "backendRequestsForwarded": 0,
+        "hostedBusinessWrites": 0,
+        "physicalFocusTest": false,
+        "liveAccountTest": false
+      },
+      "automaticRecords": [
+        {
+          "id": "96a2f9be-e861-4cf4-9416-c84a2a67c43b",
+          "branch": "main",
+          "skipped": true
+        },
+        {
+          "id": "7b036fcc-c3b9-4ac9-9566-9a9f14797981",
+          "branch": "dev",
+          "skipped": true
+        }
+      ]
+    },
+    "tenops": {
+      "deployment": "3816d5e9-eaea-4a5b-9b8b-d90c57f57057",
+      "servedRevision": "83d0343bf1058dd0a6f21f4abaca194de5211498",
+      "branding": "TenOps / OPERATIONS CONTROL",
+      "assets": 62,
+      "verified": [
+        {
+          "route": "/",
+          "sha256": "1deb76f4a044ca8396da9f0228fda93f42cff23ca6ed31e0dc616be05c541fd8",
+          "bytes": 16292
+        },
+        {
+          "route": "/contacts",
+          "sha256": "b780e5e4cf8395b16ab52855d2f56c848e41ed769be1838c6766cc627e53acaa",
+          "bytes": 15559
+        },
+        {
+          "route": "/settings",
+          "sha256": "2968b2457e2403d8a0e78da51028cfc547cfd73b69dae542076e0ecb6eef99d8",
+          "bytes": 15756
+        },
+        {
+          "route": "/pre-production",
+          "sha256": "22f8a967691ca26e87a47d14a674854b991390c7a6f6a229289f38d4cc2e26ca",
+          "bytes": 16875
+        },
+        {
+          "route": "/samples",
+          "sha256": "0bbabf5ab44ffb80aaf2cc5d93c248a2afffeeb617a673c02f112c26d92821cd",
+          "bytes": 16343
+        },
+        {
+          "route": "/proposals",
+          "sha256": "c2ee4e0ea6955d22df4be98fd8c62dcfbeef249e91edb2592900423dd455ed6e",
+          "bytes": 16083
+        },
+        {
+          "route": "/purchasing",
+          "sha256": "b4fb25e12defb8187dd9204c89819ff980bc56396dd6881fafa0b481df2237b0",
+          "bytes": 15631
+        },
+        {
+          "route": "/my-work",
+          "sha256": "80f70481495bb9fbae394334b1560e8f8cbcad108cae609106bd60acb2fffec5",
+          "bytes": 15652
+        },
+        {
+          "route": "/manpower-reporting",
+          "sha256": "458b77a5aa3512695bc4be625662c57cce0016b5224435ad8e00d4d53d9c1ead",
+          "bytes": 15863
+        },
+        {
+          "route": "/inventory",
+          "sha256": "87104bdd6d2ca912d55bf53a25214accda6bd44d179da8ac14b1e37323089485",
+          "bytes": 15657
+        },
+        {
+          "route": "/activity",
+          "sha256": "8d24370e922bdb26688ef32db12f8ae36ee0f2c0b24ad3af1d1c8387f8d8567d",
+          "bytes": 15672
+        },
+        {
+          "route": "/material-usage",
+          "sha256": "78422cbbdacca4e40f421f24263bdf2f1a90cef3ce38fcb7af5f414386fa0f14",
+          "bytes": 15485
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "sha256": "f24cfc0cd69f7f52f309ef3b6b4e98510e22c75b45c0a79bf5924e570fba5654",
+          "bytes": 439
+        },
+        {
+          "route": "/sw.js",
+          "sha256": "cc79b86fa2fa1f492d0b83eef7ae0de0f6c0741ea972287faadc64ae624f9a07",
+          "bytes": 1588
+        },
+        {
+          "route": "/_next/static/css/67824e3bc6e39433.css",
+          "sha256": "69cc60c3dd8e59ed7fd931a5343fb585867a415e3c0a95ffe6bdb9364cff8fd5",
+          "bytes": 154871
+        },
+        {
+          "route": "/_next/static/chunks/webpack-2c2cdd754a2ae417.js",
+          "sha256": "f2f03d7c0683fffaf5bdfecb22e6ea9958835af89a68b28352fb17d81df50944",
+          "bytes": 5252
+        },
+        {
+          "route": "/_next/static/chunks/87c73c54-014124adcece3495.js",
+          "sha256": "fff033123beeda4121dcc57c4a60a349eb309be98df891e762231e88d3a1dac6",
+          "bytes": 199868
+        },
+        {
+          "route": "/_next/static/chunks/1968-e0da7aecae39157b.js",
+          "sha256": "29b5d7e67d071fc0f50b6629e6404c949bed488ff947b2f15ec65a03300c2578",
+          "bytes": 222358
+        },
+        {
+          "route": "/_next/static/chunks/main-app-0fd4f2329dcbe21b.js",
+          "sha256": "0e3865294bddaf71b4143f6a5aec6c43ef57f1fee34143701bfeb745affe9e42",
+          "bytes": 525
+        },
+        {
+          "route": "/_next/static/chunks/75504863-b1d072d957b37a8c.js",
+          "sha256": "ee2d45f691185662d3bd51852d5ee1c9df8ea27026bdbaf83c0d50bb196f0b8d",
+          "bytes": 52991
+        },
+        {
+          "route": "/_next/static/chunks/9241-c403f33e34ed9583.js",
+          "sha256": "59c1b3d342230582b6f6d9d3fa07cb3697a5a845f584c1ad1f67d16523a7d6e8",
+          "bytes": 161442
+        },
+        {
+          "route": "/_next/static/chunks/5587-fc5af8c76df14222.js",
+          "sha256": "3594f0697df8c9fb9375af9821372e8ff74db087c4768244d84f1c4cc7c129cc",
+          "bytes": 8730
+        },
+        {
+          "route": "/_next/static/chunks/5604-ad9f3eb2fbf68dd8.js",
+          "sha256": "75f22db7ee77dd0e7359aae3ac81961ea36447fd59dbc9ec4624d1c3d6f59089",
+          "bytes": 14055
+        },
+        {
+          "route": "/_next/static/chunks/2980-866c15552a37286f.js",
+          "sha256": "4fbfb64551b98b8b543a7f01287ad657bd3d6cc2fb85bd345bfd0809cd9cc0ac",
+          "bytes": 10183
+        },
+        {
+          "route": "/_next/static/chunks/3675-517d3b3bbde31502.js",
+          "sha256": "1bc407368a2626927c2f8b81d12b79e0571a55917851691c8e146d6d6f1d18ae",
+          "bytes": 15601
+        },
+        {
+          "route": "/_next/static/chunks/6238-186f58791bf2e7e6.js",
+          "sha256": "da1d179e99ba31245f95a211f5e5d3c7bf503802f4bcca28674177e60c7aa3d5",
+          "bytes": 20673
+        },
+        {
+          "route": "/_next/static/chunks/app/layout-a77403bdd9477598.js",
+          "sha256": "d9b8b960b387be8f592d3bfb9235f455b2e0691e92917988f49f5324f201e46c",
+          "bytes": 88158
+        },
+        {
+          "route": "/_next/static/chunks/3763-64a780f8962143f9.js",
+          "sha256": "5c244c886ac225d1f13b1dbdbbfe911ce8d6fd0ee39522ff7d8818d09a7f6d8d",
+          "bytes": 11281
+        },
+        {
+          "route": "/_next/static/chunks/6408-030662ff622be07c.js",
+          "sha256": "61a2f21e1cf6b488be57d4c168616378a5bb65c09691f1c81d8861aa632c4008",
+          "bytes": 10820
+        },
+        {
+          "route": "/_next/static/chunks/147-bc9d441f94eb0df3.js",
+          "sha256": "702b60c4213004ebec1b0c3c6df4c08ad0ae06f6032e56624444cad75b879196",
+          "bytes": 22123
+        },
+        {
+          "route": "/_next/static/chunks/4388-34325c683a574eb2.js",
+          "sha256": "d18209835818a74eca1a8100710f42de7a0fb16bafb3fbdef65fc6e839b68ffe",
+          "bytes": 13451
+        },
+        {
+          "route": "/_next/static/chunks/8669-065a935ba59328ce.js",
+          "sha256": "75fe6e23d49a0f10ec2d70ffc3668d637c0594e999dcab790903c96e9e7a1394",
+          "bytes": 29089
+        },
+        {
+          "route": "/_next/static/chunks/7312-63619be9882e7d1b.js",
+          "sha256": "fa74f39724b7609fb46d05874b5a14fd777e0e8d767b859e4025d1c8fd034df5",
+          "bytes": 27143
+        },
+        {
+          "route": "/_next/static/chunks/2447-5c3afd4ed7c9fd13.js",
+          "sha256": "88fec27115f5933c5c091f0120a7d7a7f6c5ba0d5beeeab98fdf8652f5aff0eb",
+          "bytes": 11980
+        },
+        {
+          "route": "/_next/static/chunks/9917-667e05092c9f269e.js",
+          "sha256": "f604bde175857cdfe297071b9cf798ec36cdd237ee1f70f506516c3f637ca1a2",
+          "bytes": 11940
+        },
+        {
+          "route": "/_next/static/chunks/app/page-20ea8e306b701b07.js",
+          "sha256": "52e3ff0838f3b4b6a8e0c6617115a4b8e371ea3964db3a08d360e3b3114f42af",
+          "bytes": 356130
+        },
+        {
+          "route": "/_next/static/css/9611c0b375fc73f6.css",
+          "sha256": "3c1602937e830228e309d4abd4b495e23b953f8468f04f0499e64c58226b984b",
+          "bytes": 4400
+        },
+        {
+          "route": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+          "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+          "bytes": 112594
+        },
+        {
+          "route": "/_next/static/chunks/app/contacts/page-2d2ecea018c0a942.js",
+          "sha256": "ce9751ce7cf45a3b0e68d8f2fb13970e203de86d183aadf313169b0c788cda39",
+          "bytes": 9789
+        },
+        {
+          "route": "/_next/static/chunks/app/settings/page-bd787b52d8c1656c.js",
+          "sha256": "64b1ca394e1ea8944e595d1bd35511a995f43cadc7a30b6a57a0f4180d8f7593",
+          "bytes": 52432
+        },
+        {
+          "route": "/_next/static/chunks/app/pre-production/layout-37947ce72edcaa43.js",
+          "sha256": "c7fa3603f18be53b89cee320aae7b58c9ca0ddad2589c0c5a4d2a867647735b2",
+          "bytes": 692
+        },
+        {
+          "route": "/_next/static/chunks/2639-20b349371500dd7c.js",
+          "sha256": "de3cb09d1378a64637b64110283ce1e051a2ac701c1543c479b3aa0648ce47a5",
+          "bytes": 7495
+        },
+        {
+          "route": "/_next/static/chunks/8044-d0c32905482a6a4b.js",
+          "sha256": "f11cee0f8573b093bf14d492b0b54442c89bbb43edca12fa5533c48482fd1503",
+          "bytes": 47882
+        },
+        {
+          "route": "/_next/static/chunks/6081-317caea06cbedbfc.js",
+          "sha256": "5fc868445d97dfa20e0b13d2ced2a5262d406435c964e499522d30e759079424",
+          "bytes": 13203
+        },
+        {
+          "route": "/_next/static/chunks/app/pre-production/page-b16595adbbe52183.js",
+          "sha256": "ae5f74eed40fb7b62d484cd39474458d00a16c13c55dc760e239a04418ebfc8b",
+          "bytes": 40503
+        },
+        {
+          "route": "/_next/static/css/6faf42657f96bc11.css",
+          "sha256": "acee344d20516b0f5ab0b8d091abfcfab0eaebed8afbdc0a719b43e5c57f0788",
+          "bytes": 850
+        },
+        {
+          "route": "/_next/static/chunks/8235-54f80ae86e3d9016.js",
+          "sha256": "c21d98908a5fbfb16e33cdeef1c027146562e9a0794c98078858183287ee03d2",
+          "bytes": 23710
+        },
+        {
+          "route": "/_next/static/chunks/app/samples/page-45f95c35a9e1e120.js",
+          "sha256": "a0f0c6f510b600f973c8479cb19ea6337c7c83d19ba1a72581417ca1354c5907",
+          "bytes": 162072
+        },
+        {
+          "route": "/_next/static/css/009e8344dd0776ae.css",
+          "sha256": "8631d49a898c9b7a4652c29f3d4fed82199abb4d080d7ef007dc6b3f92eff93c",
+          "bytes": 3694
+        },
+        {
+          "route": "/_next/static/chunks/4876-93925982fcdf51ad.js",
+          "sha256": "d3f3fe6b25aee4f07460cb8f9e927e9fafdf0ea3e96edcc0c66907a52658cb1c",
+          "bytes": 6003
+        },
+        {
+          "route": "/_next/static/chunks/app/proposals/page-33d1504e89b86f8f.js",
+          "sha256": "0a1eb7477cc8d1406a91d96cc1ab5ff4e1ad58283d01292d673de6a583e856b5",
+          "bytes": 77550
+        },
+        {
+          "route": "/_next/static/chunks/app/purchasing/page-11c438729e1d9c55.js",
+          "sha256": "c15650699891e0391a434267a5b58b4f8b6bb3d69604c25ad28a06095828b2f2",
+          "bytes": 102420
+        },
+        {
+          "route": "/_next/static/chunks/285-fef5b514ddc3ef00.js",
+          "sha256": "7936797f159fab6e58a1f6702e9ce39c0e238420ed41aa47228eb9928a2441ce",
+          "bytes": 8488
+        },
+        {
+          "route": "/_next/static/chunks/app/my-work/page-1cdde0d41d8b8733.js",
+          "sha256": "9ebcea2b9c361a363b23674b03cb0cddc48802ce82e298bc0190c832bef4d5ec",
+          "bytes": 65301
+        },
+        {
+          "route": "/_next/static/chunks/app/manpower-reporting/page-ccef032d3bac4309.js",
+          "sha256": "1ea399fdf244fc5140e35f848b8e73de94eb727af73f610d6ccbdddbd19e228d",
+          "bytes": 109777
+        },
+        {
+          "route": "/_next/static/css/d12f0aca13423a71.css",
+          "sha256": "b2ae794f2337f9f5d2719b6c15998dbfc6bf8711b8840b08e5fefadcaa99a445",
+          "bytes": 7816
+        },
+        {
+          "route": "/_next/static/chunks/app/inventory/page-6ec62e75dd5be940.js",
+          "sha256": "9e606fa8256b0944a2194f69cedb640c605e112234acf05139f0df43e919f71b",
+          "bytes": 119143
+        },
+        {
+          "route": "/_next/static/chunks/app/activity/page-959a3d6d173dc6ac.js",
+          "sha256": "589cda40a8d21ae675f1aa458799d15c622d2b5b07c861e10d623633faebd620",
+          "bytes": 25407
+        },
+        {
+          "route": "/_next/static/chunks/app/material-usage/page-728484a35ce25dc0.js",
+          "sha256": "223c92e9660957c0968682da40e2da6cf0c33cd97640f1bfda9088ce97babf59",
+          "bytes": 50348
+        },
+        {
+          "route": "/tenarten-logo-gold-welcome.webp",
+          "sha256": "535e48b4e120f1a4857ac1ec2b78144c32d3fe2839d3e3c09e5a30312dc2b6a8",
+          "bytes": 309740
+        },
+        {
+          "route": "/tenarten-logo-steel-welcome.webp",
+          "sha256": "9072eb074e96dd3162098288f7ce5854a1ed4fa127395ffd2677259242d8cc69",
+          "bytes": 279024
+        },
+        {
+          "route": "/tenarten-logo-terrazzo-welcome.webp",
+          "sha256": "a28b4be52fd40cc184baf4f2702a728f461751a954f768d6136cac0f5ab4e427",
+          "bytes": 230618
+        }
+      ],
+      "build": {
+        "target": "tenops",
+        "passed": true,
+        "builds": 0,
+        "reusedCompletedLocalBuild": true,
+        "reusedFrom": ".worktrees/startup-cut-line/out",
+        "devBranding": false,
+        "branding": "TenOps / OPERATIONS CONTROL",
+        "envLocalExcluded": true,
+        "productionSupabase": true,
+        "reviewToolsExcluded": true,
+        "artifactFiles": 266
+      },
+      "smoke": {
+        "target": "tenops",
+        "origin": "https://tenops.pages.dev",
+        "actualServedBundle": true,
+        "checks": [
+          "full sequence, 888 ms hold and continuous mounted entrance"
+        ],
+        "reducedEvidence": [],
+        "cutLineEvidence": [
+          {
+            "pixel": [
+              207,
+              230
+            ],
+            "rgba": [
+              14,
+              10,
+              8,
+              247
+            ]
+          }
+        ],
+        "holdTimingsMs": [
+          898
+        ],
+        "acceptedHoldMs": 888,
+        "pageErrors": [],
+        "unexpectedExternal": [],
+        "controlledSyntheticBackend": true,
+        "authAndDataIntercepted": true,
+        "backendRequestsForwarded": 0,
+        "hostedBusinessWrites": 0,
+        "physicalFocusTest": false,
+        "liveAccountTest": false
+      },
+      "automaticRecords": [
+        {
+          "id": "adb937b3-6313-4fff-a636-4952a79ef9b2",
+          "branch": "main",
+          "skipped": true
+        },
+        {
+          "id": "b3f3845b-49d7-4026-a96d-04477aebfebf",
+          "branch": "dev",
+          "skipped": true
+        }
+      ]
+    }
+  },
+  "riskTier": 1,
+  "testingLevel": 1,
+  "scope": "Remove only early completed-cut expiry; retain black cut through existing steel-separation boundary.",
+  "preserved": {
+    "preSplitSparkRate": 0.6,
+    "crestHoldMs": 888,
+    "fadeMs": 850,
+    "plateSeparationSpeed": true,
+    "mobileFooter": true,
+    "updateRemoval": true,
+    "productionWebPush": true,
+    "contacts": true,
+    "backendConfiguration": true
+  },
+  "reusedEvidence": {
+    "localCanvasProbe": true,
+    "identicalActive800msFrame": true,
+    "priorLocalPlayback": true,
+    "mobileLayoutAndStartupEvidenceFrom73fe7a9": true
+  },
+  "newBrandedBuilds": 1,
+  "tenopsCorrectedBuildReused": true,
+  "configurationChanges": 0,
+  "migrationsApplied": 0,
+  "hostedBusinessWrites": 0,
+  "rollback": {
+    "refs": [
+      "rollback/startup-cut-line-20261021-main",
+      "rollback/startup-cut-line-20261021-dev"
+    ],
+    "sha": "73fe7a94cfeefa355aa8e912a9bcb524436b2442",
+    "previousDeployments": {
+      "tendev": {
+        "id": "0f593b04-f798-40e3-8c9a-fb9b19642529",
+        "sha": "73fe7a94cfeefa355aa8e912a9bcb524436b2442",
+        "url": "https://0f593b04.tendev.pages.dev"
+      },
+      "tenops": {
+        "id": "1037a632-f68e-436a-9a04-65ca98db7708",
+        "sha": "73fe7a94cfeefa355aa8e912a9bcb524436b2442",
+        "url": "https://1037a632.tenops.pages.dev"
+      }
+    },
+    "bundle": ".tmp-cut-line/accepted-release.bundle",
+    "bundleSha256": "cd33cb2db2ead68d371195fd15c06e8fbe97e177ec6d981b2b066cd08ac9ec40"
+  },
+  "rootCheckoutPreserved": "051f23b81947577c2f4a91fb863df372342622bb",
+  "limitations": [
+    "Live frontend checks used existing intercepted synthetic Auth/data fixtures, not physical iPhone or live-account certification.",
+    "No live Web Push send repeated; code, service-worker bytes and backend configuration unchanged."
+  ]
+}

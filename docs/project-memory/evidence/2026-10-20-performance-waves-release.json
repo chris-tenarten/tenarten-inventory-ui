@@ -1,0 +1,892 @@
+{
+  "status": "RELEASED_BOTH",
+  "sha": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+  "canonical": {
+    "main": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+    "dev": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+    "originMain": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+    "originDev": "01e5e839fdba0256023077cf1d85c2d4dd15212c"
+  },
+  "projects": {
+    "tendev": {
+      "sha": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+      "deployment": "903e8a1c-80e8-444e-8419-f9d418dc682c",
+      "url": "https://tendev.pages.dev",
+      "configurationUnchanged": true
+    },
+    "tenops": {
+      "sha": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+      "deployment": "495fbfac-e142-4230-b6b7-eabe99b9114e",
+      "url": "https://tenops.pages.dev",
+      "configurationUnchanged": true
+    }
+  },
+  "deploymentOrder": [
+    "tendev",
+    "tenops"
+  ],
+  "riskTier": 3,
+  "testingLevel": 3,
+  "scope": "Accepted Waves 1–4 plus selected-period Manpower refinement; no additional application edits",
+  "boundary": {
+    "base": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "sha": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+    "files": [
+      "docs/project-memory/2026-10-19-list-production-wave2.md",
+      "docs/project-memory/2026-10-19-manpower-inventory-wave4.md",
+      "docs/project-memory/2026-10-19-messaging-notification-wave1.md",
+      "docs/project-memory/2026-10-19-performance-integration.md",
+      "docs/project-memory/2026-10-19-samples-workspace-wave3.md",
+      "docs/project-memory/2026-10-20-manpower-recent-records.md",
+      "docs/project-memory/evidence/2026-10-19-awareness-after.json",
+      "docs/project-memory/evidence/2026-10-19-awareness-before.json",
+      "docs/project-memory/evidence/2026-10-19-awareness-validation.json",
+      "docs/project-memory/evidence/2026-10-19-integration-awareness.json",
+      "docs/project-memory/evidence/2026-10-19-integration-browser.json",
+      "docs/project-memory/evidence/2026-10-19-integration-hosted-observations.json",
+      "docs/project-memory/evidence/2026-10-19-integration-live-guard.json",
+      "docs/project-memory/evidence/2026-10-19-integration-security-catalog.json",
+      "docs/project-memory/evidence/2026-10-19-integration-source-boundary.json",
+      "docs/project-memory/evidence/2026-10-19-integration-validation.json",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-after.json",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-before.json",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-local-lifecycle.json",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-profile.json",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-validation.json",
+      "docs/project-memory/evidence/2026-10-19-wave2-after.json",
+      "docs/project-memory/evidence/2026-10-19-wave2-before.json",
+      "docs/project-memory/evidence/2026-10-19-wave2-browser.json",
+      "docs/project-memory/evidence/2026-10-19-wave2-stress.json",
+      "docs/project-memory/evidence/2026-10-19-wave2-validation.json",
+      "docs/project-memory/evidence/2026-10-19-wave4-browser-after.json",
+      "docs/project-memory/evidence/2026-10-19-wave4-browser-before.json",
+      "docs/project-memory/evidence/2026-10-19-wave4-retrieval.json",
+      "docs/project-memory/evidence/2026-10-19-wave4-validation.json",
+      "docs/project-memory/evidence/2026-10-20-manpower-baseline-measurement.json",
+      "docs/project-memory/evidence/2026-10-20-manpower-refinement-boundary.json",
+      "docs/project-memory/evidence/2026-10-20-manpower-refinement-browser.json",
+      "docs/project-memory/evidence/2026-10-20-manpower-refinement-measurement.json",
+      "docs/project-memory/evidence/2026-10-20-manpower-review-origin.json",
+      "scripts/inspect-integration-hosted-readonly.mjs",
+      "scripts/measure-manpower-refinement.mjs",
+      "scripts/open-performance-integration-review.mjs",
+      "scripts/open-wave4-review.mjs",
+      "scripts/start-performance-integration-review.mts",
+      "scripts/start-sample-job-update-review.mts",
+      "scripts/start-samples-wave3-browser.mjs",
+      "scripts/start-wave2-review.mts",
+      "scripts/start-wave4-review.mjs",
+      "scripts/support/integration-security-readonly.sql",
+      "scripts/support/wave2-fixture.mjs",
+      "scripts/support/wave4-fixture.mjs",
+      "scripts/verify-awareness-browser.mjs",
+      "scripts/verify-coalesced-read.mts",
+      "scripts/verify-integration-live-guard.mjs",
+      "scripts/verify-manpower-refinement-browser.mjs",
+      "scripts/verify-performance-integration-browser.mjs",
+      "scripts/verify-samples-access-refresh.mjs",
+      "scripts/verify-samples-wave3-local-lifecycle.mjs",
+      "scripts/verify-samples-wave3.mjs",
+      "scripts/verify-wave2-browser.mjs",
+      "scripts/verify-wave2-retrieval.mts",
+      "scripts/verify-wave4-browser.mjs",
+      "scripts/verify-wave4-retrieval.mts",
+      "src/app/activity/page.tsx",
+      "src/app/inventory/page.tsx",
+      "src/components/AccountNotifications.tsx",
+      "src/components/GlobalMessaging.tsx",
+      "src/lib/coalesced-read.ts",
+      "src/lib/scoped-rows.ts",
+      "src/modules/inventory/retrieval.ts",
+      "src/modules/manpower/ManpowerAnalytics.tsx",
+      "src/modules/manpower/ManpowerWorkspace.tsx",
+      "src/modules/manpower/manpower.ts",
+      "src/modules/manpower/work-target.ts",
+      "src/modules/material-usage/MaterialUsageHistory.tsx",
+      "src/modules/material-usage/MaterialUsageWorkspace.tsx",
+      "src/modules/material-usage/actions.ts",
+      "src/modules/my-work/InboxDialog.tsx",
+      "src/modules/my-work/messaging/awareness.ts",
+      "src/modules/production/ProductionWorkspace.tsx",
+      "src/modules/production/components/ActivityStrip.tsx",
+      "src/modules/production/components/JobUpdatesIndicator.tsx",
+      "src/modules/production/components/ProductionQueue.tsx",
+      "src/modules/production/components/ProductionTable.tsx",
+      "src/modules/production/jobs.ts",
+      "src/modules/proposals/ProposalPanel.tsx",
+      "src/modules/proposals/queries.ts",
+      "src/modules/purchasing/PurchaseOrderEditor.tsx",
+      "src/modules/purchasing/PurchasingWorkspace.tsx",
+      "src/modules/purchasing/catalog.ts",
+      "src/modules/purchasing/queries.ts",
+      "src/modules/samples/SampleVersionHistory.tsx",
+      "src/modules/samples/SampleWorkspace.tsx",
+      "src/modules/samples/queries.ts"
+    ],
+    "applicationPaths": [
+      "src/app/activity/page.tsx",
+      "src/app/inventory/page.tsx",
+      "src/components/AccountNotifications.tsx",
+      "src/components/GlobalMessaging.tsx",
+      "src/lib/coalesced-read.ts",
+      "src/lib/scoped-rows.ts",
+      "src/modules/inventory/retrieval.ts",
+      "src/modules/manpower/ManpowerAnalytics.tsx",
+      "src/modules/manpower/ManpowerWorkspace.tsx",
+      "src/modules/manpower/manpower.ts",
+      "src/modules/manpower/work-target.ts",
+      "src/modules/material-usage/MaterialUsageHistory.tsx",
+      "src/modules/material-usage/MaterialUsageWorkspace.tsx",
+      "src/modules/material-usage/actions.ts",
+      "src/modules/my-work/InboxDialog.tsx",
+      "src/modules/my-work/messaging/awareness.ts",
+      "src/modules/production/ProductionWorkspace.tsx",
+      "src/modules/production/components/ActivityStrip.tsx",
+      "src/modules/production/components/JobUpdatesIndicator.tsx",
+      "src/modules/production/components/ProductionQueue.tsx",
+      "src/modules/production/components/ProductionTable.tsx",
+      "src/modules/production/jobs.ts",
+      "src/modules/proposals/ProposalPanel.tsx",
+      "src/modules/proposals/queries.ts",
+      "src/modules/purchasing/PurchaseOrderEditor.tsx",
+      "src/modules/purchasing/PurchasingWorkspace.tsx",
+      "src/modules/purchasing/catalog.ts",
+      "src/modules/purchasing/queries.ts",
+      "src/modules/samples/SampleVersionHistory.tsx",
+      "src/modules/samples/SampleWorkspace.tsx",
+      "src/modules/samples/queries.ts"
+    ],
+    "hashes": {
+      "docs/project-memory/2026-10-19-list-production-wave2.md": "d217f4390f379f3dfb2da800634b7f22f9ccf624bdadf71621ddd02be00e1593",
+      "docs/project-memory/2026-10-19-manpower-inventory-wave4.md": "b04abd47283cfbcafbf64c2246920f488cacd073b1c4f144613238ecd5a96144",
+      "docs/project-memory/2026-10-19-messaging-notification-wave1.md": "135e3a077fc9d57df0fffde3b570f5d6ed46a4da7d2c8541888bd4c4a799018c",
+      "docs/project-memory/2026-10-19-performance-integration.md": "fef81b0e3ae51a4d00763d35b73e60bb1d6e7109752fe2265e5ea25a3ef2922d",
+      "docs/project-memory/2026-10-19-samples-workspace-wave3.md": "beb4622e272c60bc8880ca11790cb8bbf6f9da7b9a169a0446f4f93d34e64c34",
+      "docs/project-memory/2026-10-20-manpower-recent-records.md": "46f7c63c0984818a2a45934312d2eff5d11497e277b66f86e4e1de12fbee4fd1",
+      "docs/project-memory/evidence/2026-10-19-awareness-after.json": "0dc04faa1ad884911be48f957ad5a83234ced2be8c147c8c0f812da0d3e7be38",
+      "docs/project-memory/evidence/2026-10-19-awareness-before.json": "e51de9d30a4a646f7488e8a42fed9776ca7f06f6aea8e0b359cc490514ad3295",
+      "docs/project-memory/evidence/2026-10-19-awareness-validation.json": "3e923a0fee663b8301a0e9979c7921027e8114d7d9c6345ea03f7ad08d0cdb67",
+      "docs/project-memory/evidence/2026-10-19-integration-awareness.json": "9d3b3c2be5940f23d622f040d6f8dd4a251520a297ea873030a4d6c8fed9fa5d",
+      "docs/project-memory/evidence/2026-10-19-integration-browser.json": "5bf4cd3fa43b78060be44d9f108cde815a236a00321a26b8396a6c6643603321",
+      "docs/project-memory/evidence/2026-10-19-integration-hosted-observations.json": "f5c9f6cda293f944b40540192225b60ec9e0eb7ca5514e2a495fe8455287216f",
+      "docs/project-memory/evidence/2026-10-19-integration-live-guard.json": "bbaf695840ad89cac4d039533e29a7ddc6d230997ff96706817118faf9763ca4",
+      "docs/project-memory/evidence/2026-10-19-integration-security-catalog.json": "471f587c841823b708f38220e7f46830545951d1f5d9daa987e064f872b7526f",
+      "docs/project-memory/evidence/2026-10-19-integration-source-boundary.json": "c65be563495762d12c7aad0062f443431d98844d852c6265b28d9b6ac8803428",
+      "docs/project-memory/evidence/2026-10-19-integration-validation.json": "7f3620020cbef1f578e200448fb373f80aceaa5ebca5569eade2dcd33c44ffac",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-after.json": "420abfce3a7f9103866e6b5bc396dbdd05847b79df5e4992333b95efc7486eb0",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-before.json": "9a188a6d166ac5a103010973f2ca63b08e2f2e62224d12560f99082d6c50cad4",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-local-lifecycle.json": "4988025b4ecf823c4cbd8d75a2254b143b585dd0fedac1e85afca0da407cf404",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-profile.json": "ce590f24d1288a1a31f06321f6d586151f53414160ee8cb86dda22b8fc488fc4",
+      "docs/project-memory/evidence/2026-10-19-samples-wave3-validation.json": "cfb178bf5f0b5729379f8c6eab4bf288bf9faf8c31db77952de1bc26db78fa1d",
+      "docs/project-memory/evidence/2026-10-19-wave2-after.json": "ee96a8aa1e5bba843d193f2d60ea2f2832a05427e8d97466f7918c6362061c08",
+      "docs/project-memory/evidence/2026-10-19-wave2-before.json": "1b3f68bbca60444bda93f0801f816c38891a100e4d673cb2df33f5a4c60d8942",
+      "docs/project-memory/evidence/2026-10-19-wave2-browser.json": "97f3ccd7964ce371a5d8a070cd4b432475544175dd491f77509f842a99ccc73d",
+      "docs/project-memory/evidence/2026-10-19-wave2-stress.json": "bbe1e949ae06f7fd2ba4df301bad1fd9b586297d6da2c28847792b4ab5c3d2a8",
+      "docs/project-memory/evidence/2026-10-19-wave2-validation.json": "b76da3dd7c0f6eb854fd200235fa2fe335d09cac38f410fb3b2c97111a49a0b7",
+      "docs/project-memory/evidence/2026-10-19-wave4-browser-after.json": "3881a2ca7ef0c783725ae1d4002260c3af18dd4711695bc71966070ebd0917d4",
+      "docs/project-memory/evidence/2026-10-19-wave4-browser-before.json": "b21870e80a432abac4fce00bfa9e4fccebf63d993732998ceaf612e6ce9a9048",
+      "docs/project-memory/evidence/2026-10-19-wave4-retrieval.json": "68a39909eb35f43374776e146bcc14aac5cd82cc2474af21a95b17e0fbcb3eed",
+      "docs/project-memory/evidence/2026-10-19-wave4-validation.json": "a3ca3cc3ae43c60bb1bd5e69ca4eeb16d87f7412e3989ac5d6b93595513327d0",
+      "docs/project-memory/evidence/2026-10-20-manpower-baseline-measurement.json": "c9725c22758e0940480cf42d40251bc4fe76260048815c602b858285454f0a5b",
+      "docs/project-memory/evidence/2026-10-20-manpower-refinement-boundary.json": "5780e02cf8bcb402a791eab8eaf8a4d4286eee8443555c2b35e111f487aec1c1",
+      "docs/project-memory/evidence/2026-10-20-manpower-refinement-browser.json": "0042aa2f6bd84cc0c8c197596497bdbfe078d9cf265e300f65b67e5c741d2c47",
+      "docs/project-memory/evidence/2026-10-20-manpower-refinement-measurement.json": "531e3c2781112b93af2365cee69d88d1f2cd0bfdfa6087ea13bc5d24e110a8ca",
+      "docs/project-memory/evidence/2026-10-20-manpower-review-origin.json": "1e5d55d77b88484a5717ffa0022d9069fd499acffee68e0da22166f38697acb6",
+      "scripts/inspect-integration-hosted-readonly.mjs": "4816f96bdfeda0178a8e788b94b75df2acc5f59f655e6ddcf34f9437ed21d8fa",
+      "scripts/measure-manpower-refinement.mjs": "beda2485543734d2e84e5e1a53e6f42a12966050bd373a0f994246d11adccdb3",
+      "scripts/open-performance-integration-review.mjs": "719e4b3726cdb2ed0d6571a3099ee8730c751e72bb028fcd99895e2b7fc05cd4",
+      "scripts/open-wave4-review.mjs": "fc1e46820b763f809abcacc56f4fca39477a74695fa6a61875d0a0b1572a6919",
+      "scripts/start-performance-integration-review.mts": "3f2ce41a849aa3cdb130c674e21f92389a670f120dda72497df6efd94825f103",
+      "scripts/start-sample-job-update-review.mts": "56ad3eea0b3b98482a65fe403f1652f6f4b5fa668527771dc5868a33d51851eb",
+      "scripts/start-samples-wave3-browser.mjs": "33ebabebad9d5a42228a50b80c23d2d72a791d4c18b6ad413e5cf7325c12baf0",
+      "scripts/start-wave2-review.mts": "88b7908867093f10f67db9bc1a04c363908d04d249bd8474dc5054825118be51",
+      "scripts/start-wave4-review.mjs": "ee0816e0bdf7238d8bf25c7396208efe6e4ce29859c8e65ab423f691295a276d",
+      "scripts/support/integration-security-readonly.sql": "bda88a96ad519fbcad319b8e3d59a6a8d0a223585f2e1c44fe843943fef01981",
+      "scripts/support/wave2-fixture.mjs": "2b7de360c52b045a7b460ff438e33106a4afe46bb2f9da54ba09b029c92d160e",
+      "scripts/support/wave4-fixture.mjs": "74a1a00da755ea901f0351849ca38f6f163a5806728c80632ebbca43c4c95cb2",
+      "scripts/verify-awareness-browser.mjs": "3da4bc5c8f5531a1f5d902f78a3e782ada6056b05ae1763c83afe9f01b8f4bdd",
+      "scripts/verify-coalesced-read.mts": "4d19273768e01ece21077ef363eb26ec77cac864ac47232d0c2e0e0131146337",
+      "scripts/verify-integration-live-guard.mjs": "401fcc0fd048ab55cf76c6737c8e57f73d48315d7e96eab2a14c518552298e16",
+      "scripts/verify-manpower-refinement-browser.mjs": "cb7c8f63d2085e0d286b799e12b52e3e4bc6aa57a4c7cb0301505279988ea3cc",
+      "scripts/verify-performance-integration-browser.mjs": "3c0d20bada981419bd75d8b6de646748d66741e6883cf59c0a3097160e236489",
+      "scripts/verify-samples-access-refresh.mjs": "f5bc21cf94082610076307ffff391265b72ed4dc9112b9159d89e5d7b38664f0",
+      "scripts/verify-samples-wave3-local-lifecycle.mjs": "234d5dd06f3f854048822330044e32f3502f3851a37658793730b1baea499941",
+      "scripts/verify-samples-wave3.mjs": "6aebf777acebfe5b31b0c4a344aea00b0b272f4aed9e830d5f96417a164c2613",
+      "scripts/verify-wave2-browser.mjs": "18bc6f8a4479be5113e97f660dbd30bbb4bb10cb1f0055574d833379766f0649",
+      "scripts/verify-wave2-retrieval.mts": "3dfd67d22a3703b8a25c7e1a495338e7a5d20d7f52c8e49b6b008cd73ac2b071",
+      "scripts/verify-wave4-browser.mjs": "062d4ae47b0e9fc2006a42ed9650d3c2577034332ce72032b35b08f7cf515476",
+      "scripts/verify-wave4-retrieval.mts": "bd8542170dc219bcadf2a9eda3465947ad8883886ebbd44cd932ac86506b1aa1",
+      "src/app/activity/page.tsx": "36de9532aeddee8a933a6cab6eaa1e82837f79c5e6183e069c342fabe00794a6",
+      "src/app/inventory/page.tsx": "e0809142b5a9a1e2aaed1b63290f19f61150d47b934aa14e77d0a29ffd6bb14c",
+      "src/components/AccountNotifications.tsx": "22525d4218d73b8058fc713e2deeff0bb26a561cf2217d1a200b03818bc028a4",
+      "src/components/GlobalMessaging.tsx": "2c2fbb71d01c7d676bfd618b02d8f28ee018e2c6a86e5298e5209aba9ee928d7",
+      "src/lib/coalesced-read.ts": "467a5e76390ad54f811b88e4d98ef9368ce6778e4dbaf2c0ce5e99f4733f1bc5",
+      "src/lib/scoped-rows.ts": "634c0cba08eb7676bffc25fdd45db11a35a25e60a9085ab6918d88159747de8d",
+      "src/modules/inventory/retrieval.ts": "6dac03c6b589da2f45474ad4ab8c24dd0724b648f5f8f88c63b5a0c67d6dce6c",
+      "src/modules/manpower/ManpowerAnalytics.tsx": "0ab20c0a69e8e26dfc13a3d9a60de64a8ffdf9e6869976f70b6df741caf8a001",
+      "src/modules/manpower/ManpowerWorkspace.tsx": "b233da01716c95ef2761a87c4930eab6e49a471e2265fbba0f1755b171362691",
+      "src/modules/manpower/manpower.ts": "04411f05127c0ff81f5080b47b9992746f982ddc8ee72fa319a7074e0e283cf1",
+      "src/modules/manpower/work-target.ts": "bf7d309c930499a2235c649e4827904d0591866327472edae1c38ce9429cdf4f",
+      "src/modules/material-usage/MaterialUsageHistory.tsx": "8a74f048450f4abbf5512f072d888dbfb68f8901adae856f3bd2a0b6554f0ddb",
+      "src/modules/material-usage/MaterialUsageWorkspace.tsx": "1c82effa53ce6fd975dff3f6c93c3e567e66c132964bc03a77b9b89ff9d0e63d",
+      "src/modules/material-usage/actions.ts": "f9dd9be9c2d48e7faa2b0ba8abb531ef0dde44412e04a0841f2ab6fb814a21d6",
+      "src/modules/my-work/InboxDialog.tsx": "f2877235a3c29f2c1a1d5273584dcc4e0365dace83430543a5dfe98a1a0a4c1a",
+      "src/modules/my-work/messaging/awareness.ts": "b71b94e7df62fdb6cdcaf1ba31a9ec27948d8931b5b08319f4c2a1841b781b29",
+      "src/modules/production/ProductionWorkspace.tsx": "a31410ddec13b03533e86d2440ad4b389fafb526ce553eed7a777a6c340d6e44",
+      "src/modules/production/components/ActivityStrip.tsx": "a365186a4ed6886a9c5cd561b8d070b76cbd28a5db568835eb5fa1a599fe5932",
+      "src/modules/production/components/JobUpdatesIndicator.tsx": "b32f9a754dd227089eeb2078567c4a1eb54afed950c648cd6750476b4c17aad0",
+      "src/modules/production/components/ProductionQueue.tsx": "a597763aec958aa4861ec443980a639244125f6e70d42c936b98759338b6a0c8",
+      "src/modules/production/components/ProductionTable.tsx": "dd43095ec327f7e3f3e19993a70296be66fbe09b58573e2d151d8d6859be9d58",
+      "src/modules/production/jobs.ts": "57e2f002d27a5dc4d6bcd9965d90806ed09cbd39705e934a1bf2c25784394c2e",
+      "src/modules/proposals/ProposalPanel.tsx": "4fc090da9456ed8ca08695fe5d0e6c73bf1c4e7fa8d16209cca3dab84fcd7875",
+      "src/modules/proposals/queries.ts": "837ef0421bdf336b642bfd91137a771c86387b9c4dce114272b7c21b5f65112e",
+      "src/modules/purchasing/PurchaseOrderEditor.tsx": "28ce1b95a6f11e9d9f25f95d0b981d6d8c2c9b2ab818b6bf846344d968882fd7",
+      "src/modules/purchasing/PurchasingWorkspace.tsx": "b8001cc33695f4b824d0f5f9877c2a005463aaf5125e83fb20b49402937392b4",
+      "src/modules/purchasing/catalog.ts": "586f386ca776686e5a550e172060839316c80eb4aa9b9e8faf8ede78cfe6d8fb",
+      "src/modules/purchasing/queries.ts": "e01640325ac4ae5d32a4f18b67e2d403bbcae40c25f789730839652241a7f15c",
+      "src/modules/samples/SampleVersionHistory.tsx": "e8763a20aa36b8059917a42a358c1e6a64fd72cb171298f75d10021c43f2f04d",
+      "src/modules/samples/SampleWorkspace.tsx": "79d3466045b194d7eb706d463d8085288adefe07fc23107b29a260057814e925",
+      "src/modules/samples/queries.ts": "e480fc1cdac1c5cdb067b100ad49f5678bcb0fbe982a59e0c0e8b5604fae21fb"
+    },
+    "authAndSupabaseSourceUnchanged": true,
+    "remoteMainDev": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "previousDeployments": {
+      "tendev": {
+        "id": "f547c6af-3d85-44be-80b0-db8176883a03",
+        "sha": "da21615ad6f06727e4f18a75c65331a7266d2404",
+        "url": "https://f547c6af.tendev.pages.dev",
+        "branch": "dev"
+      },
+      "tenops": {
+        "id": "5b940dda-5110-4045-8a7c-a18c18a3125b",
+        "sha": "da21615ad6f06727e4f18a75c65331a7266d2404",
+        "url": "https://5b940dda.tenops.pages.dev",
+        "branch": "main"
+      }
+    }
+  },
+  "builds": {
+    "tendev": {
+      "target": "tendev",
+      "builds": 1,
+      "passed": true,
+      "devBranding": true,
+      "branding": "TenDev / RESEARCH & DEVELOPMENT",
+      "envLocalExcluded": true,
+      "productionSupabase": true,
+      "reviewToolsExcluded": true
+    },
+    "tenops": {
+      "target": "tenops",
+      "builds": 1,
+      "passed": true,
+      "devBranding": false,
+      "branding": "TenOps / OPERATIONS CONTROL",
+      "envLocalExcluded": true,
+      "productionSupabase": true,
+      "reviewToolsExcluded": true
+    }
+  },
+  "skippedAutomaticBuilds": {
+    "tenops": [
+      {
+        "id": "8f123018-b62f-4b17-a07c-430377b188b9",
+        "branch": "dev",
+        "skipped": true
+      },
+      {
+        "id": "139a57fb-344f-4ac6-acc0-9fccaa2574f7",
+        "branch": "main",
+        "skipped": true
+      }
+    ],
+    "tendev": [
+      {
+        "id": "2b7b6f1b-62d1-4a37-941e-d56d6250ca9c",
+        "branch": "dev",
+        "skipped": true
+      },
+      {
+        "id": "2caf9416-6626-42bf-9a54-832bae20a0ca",
+        "branch": "main",
+        "skipped": true
+      }
+    ]
+  },
+  "served": {
+    "tendev": {
+      "target": "tendev",
+      "sha": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+      "deployment": "903e8a1c-80e8-444e-8419-f9d418dc682c",
+      "created": "2026-10-20T15:28:47.879362Z",
+      "branding": "TenDev / RESEARCH & DEVELOPMENT",
+      "reviewGuardsInactive": true,
+      "verified": [
+        {
+          "route": "/",
+          "sha256": "e8a3b8668db882a9c5bc8fca7262114d134604706a46a53c36191894e862bc9a",
+          "bytes": 17184
+        },
+        {
+          "route": "/samples",
+          "sha256": "8b532e16c8effad08943a35b4784c771c1e35d3608a6f94e0f5f87a6ed16ad53",
+          "bytes": 17887
+        },
+        {
+          "route": "/proposals",
+          "sha256": "ec0c659dd85936473b07cb56c86cc6701508d2a48bc689a503ff3851fd6ded23",
+          "bytes": 17236
+        },
+        {
+          "route": "/purchasing",
+          "sha256": "8c89af625544a29cb876f2cfc0d0a92f1ebbef5026b659114b1cc008c29647e9",
+          "bytes": 17227
+        },
+        {
+          "route": "/my-work",
+          "sha256": "407d00c7b4d10330c14aef3207900a7a397ff83a39125deabd41b8414bd6ca99",
+          "bytes": 17199
+        },
+        {
+          "route": "/manpower-reporting",
+          "sha256": "baef3c9cb27a6cf36701b0c5688897e628264e3471e4f3a710f0bba63a782251",
+          "bytes": 17459
+        },
+        {
+          "route": "/inventory",
+          "sha256": "74a255063f863c81e563a3147ec65192a09e0d11001c6acabbb49781412792e4",
+          "bytes": 17253
+        },
+        {
+          "route": "/activity",
+          "sha256": "942750c0dd57ee1aa406978343487e283307cdb51da23a1dfbaf24b507a027f2",
+          "bytes": 17268
+        },
+        {
+          "route": "/material-usage",
+          "sha256": "285c6f7328de0a94c82172b38d468c9ff9959630bd288048aceb24c6af861304",
+          "bytes": 17081
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "sha256": "c2db6835e4d3828c114363235ad7faf23931c80faf0f81313e3f44342513df82",
+          "bytes": 429
+        },
+        {
+          "route": "/_next/static/css/a632ea6d66d23051.css",
+          "sha256": "c77a96326dcece19b2de69d09675b6bc149a324dd211aeab26294245e2e9f778",
+          "bytes": 3104
+        },
+        {
+          "route": "/_next/static/css/72c2982c8b6a4ac2.css",
+          "sha256": "0f05e2c9d6c6c6418c35897643088b806c6b780a03d1a0a625e12cc20893378a",
+          "bytes": 149829
+        },
+        {
+          "route": "/_next/static/chunks/webpack-f65d6d3615d59d00.js",
+          "sha256": "cb9985582b87e4ac4a563d6a9a0499ae540b031cb23148f4c509fd04d0f291c7",
+          "bytes": 5206
+        },
+        {
+          "route": "/_next/static/chunks/87c73c54-014124adcece3495.js",
+          "sha256": "fff033123beeda4121dcc57c4a60a349eb309be98df891e762231e88d3a1dac6",
+          "bytes": 199868
+        },
+        {
+          "route": "/_next/static/chunks/1968-e0da7aecae39157b.js",
+          "sha256": "29b5d7e67d071fc0f50b6629e6404c949bed488ff947b2f15ec65a03300c2578",
+          "bytes": 222358
+        },
+        {
+          "route": "/_next/static/chunks/main-app-0fd4f2329dcbe21b.js",
+          "sha256": "0e3865294bddaf71b4143f6a5aec6c43ef57f1fee34143701bfeb745affe9e42",
+          "bytes": 525
+        },
+        {
+          "route": "/_next/static/chunks/75504863-b1d072d957b37a8c.js",
+          "sha256": "ee2d45f691185662d3bd51852d5ee1c9df8ea27026bdbaf83c0d50bb196f0b8d",
+          "bytes": 52991
+        },
+        {
+          "route": "/_next/static/chunks/9241-c403f33e34ed9583.js",
+          "sha256": "59c1b3d342230582b6f6d9d3fa07cb3697a5a845f584c1ad1f67d16523a7d6e8",
+          "bytes": 161442
+        },
+        {
+          "route": "/_next/static/chunks/5587-fc5af8c76df14222.js",
+          "sha256": "3594f0697df8c9fb9375af9821372e8ff74db087c4768244d84f1c4cc7c129cc",
+          "bytes": 8730
+        },
+        {
+          "route": "/_next/static/chunks/5604-ad9f3eb2fbf68dd8.js",
+          "sha256": "75f22db7ee77dd0e7359aae3ac81961ea36447fd59dbc9ec4624d1c3d6f59089",
+          "bytes": 14055
+        },
+        {
+          "route": "/_next/static/chunks/9317-68b584397df22e8a.js",
+          "sha256": "0e46e47ead03bc909c15b8bb652383fb9ce43567c370fa69ca07e032444f89f3",
+          "bytes": 9410
+        },
+        {
+          "route": "/_next/static/chunks/9547-fdc04b4893ec9bf8.js",
+          "sha256": "79a0f9fd7b3987add5283921df142379e957a3ea1e81a59a07d8c156cdf4e539",
+          "bytes": 10770
+        },
+        {
+          "route": "/_next/static/chunks/6238-a0c2f59971996b6a.js",
+          "sha256": "fdd8948c8e9ea7bf4c6dcba10fad18cb87787f96ef2e4dd8d17484c37396c239",
+          "bytes": 19169
+        },
+        {
+          "route": "/_next/static/chunks/app/layout-cfff956d1dcd45e9.js",
+          "sha256": "4a2a9ee3aa26dcfbb2626a7975d13ea28119e9ef2cd260294925d461f2194ce6",
+          "bytes": 73925
+        },
+        {
+          "route": "/_next/static/chunks/3763-64a780f8962143f9.js",
+          "sha256": "5c244c886ac225d1f13b1dbdbbfe911ce8d6fd0ee39522ff7d8818d09a7f6d8d",
+          "bytes": 11281
+        },
+        {
+          "route": "/_next/static/chunks/6408-030662ff622be07c.js",
+          "sha256": "61a2f21e1cf6b488be57d4c168616378a5bb65c09691f1c81d8861aa632c4008",
+          "bytes": 10820
+        },
+        {
+          "route": "/_next/static/chunks/147-bc9d441f94eb0df3.js",
+          "sha256": "702b60c4213004ebec1b0c3c6df4c08ad0ae06f6032e56624444cad75b879196",
+          "bytes": 22123
+        },
+        {
+          "route": "/_next/static/chunks/8669-a5ce4799cb9bba59.js",
+          "sha256": "90279067b2b87f0d7ed56fee3aee511cf4012ead73f73a56d6cab6f5c4785d9c",
+          "bytes": 27585
+        },
+        {
+          "route": "/_next/static/chunks/9917-667e05092c9f269e.js",
+          "sha256": "f604bde175857cdfe297071b9cf798ec36cdd237ee1f70f506516c3f637ca1a2",
+          "bytes": 11940
+        },
+        {
+          "route": "/_next/static/chunks/app/page-e9f5f18fa94e6709.js",
+          "sha256": "059c4668c0f1f128ede6c39279722fcd6fd24df4579de4e20d3499fee8622b44",
+          "bytes": 391503
+        },
+        {
+          "route": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+          "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+          "bytes": 112594
+        },
+        {
+          "route": "/_next/static/chunks/2639-20b349371500dd7c.js",
+          "sha256": "de3cb09d1378a64637b64110283ce1e051a2ac701c1543c479b3aa0648ce47a5",
+          "bytes": 7495
+        },
+        {
+          "route": "/_next/static/chunks/6098-5c2ff2fc3f356219.js",
+          "sha256": "3a2794b4cacc82c0b768a7a029977eb06195c3c7b20e5dd2a7a4287899f3f9b7",
+          "bytes": 57041
+        },
+        {
+          "route": "/_next/static/chunks/6067-d51a965b9ba5710a.js",
+          "sha256": "ac63d599f24e64d41ed15bd24e1361db0428b0db3ec0af6abbef58ee9c985da8",
+          "bytes": 23138
+        },
+        {
+          "route": "/_next/static/chunks/app/samples/page-c54e0d0c71f19667.js",
+          "sha256": "7cade45bf0b300e421b6d3cfea22bbdd2e674cfad3955f605c4f20ff48ec190d",
+          "bytes": 162003
+        },
+        {
+          "route": "/_next/static/css/009e8344dd0776ae.css",
+          "sha256": "8631d49a898c9b7a4652c29f3d4fed82199abb4d080d7ef007dc6b3f92eff93c",
+          "bytes": 3694
+        },
+        {
+          "route": "/_next/static/chunks/6081-317caea06cbedbfc.js",
+          "sha256": "5fc868445d97dfa20e0b13d2ced2a5262d406435c964e499522d30e759079424",
+          "bytes": 13203
+        },
+        {
+          "route": "/_next/static/chunks/app/proposals/page-582d281e25b68f5d.js",
+          "sha256": "99625298a8fd96cfb6746bb578b7a1716bc7dec0f58f5776faf1034dc5514d1d",
+          "bytes": 90481
+        },
+        {
+          "route": "/_next/static/chunks/app/purchasing/page-b2bd10dc070e7429.js",
+          "sha256": "742ef8392af2e8221264c8407b447a6a2a92329d0e7b3bfc94e30a80ae2069c9",
+          "bytes": 100861
+        },
+        {
+          "route": "/_next/static/chunks/7036-1012c8b5634a7a88.js",
+          "sha256": "c8455822c180602ccca5e57f4a4beb30e6d956e5c61001f7afdabe2ac53df2cf",
+          "bytes": 8177
+        },
+        {
+          "route": "/_next/static/chunks/app/my-work/page-9e756af7bc44703f.js",
+          "sha256": "003e5f40e01131bef7ac48a0a967e7411f251f2fcecf198254e8d988e4f8bad6",
+          "bytes": 74310
+        },
+        {
+          "route": "/_next/static/chunks/app/manpower-reporting/page-e43efae205a22369.js",
+          "sha256": "62d3da422455bf1e629c98fc181899b8feccccaef5347c7f88465d864e16e51e",
+          "bytes": 105300
+        },
+        {
+          "route": "/_next/static/css/d12f0aca13423a71.css",
+          "sha256": "b2ae794f2337f9f5d2719b6c15998dbfc6bf8711b8840b08e5fefadcaa99a445",
+          "bytes": 7816
+        },
+        {
+          "route": "/_next/static/chunks/app/inventory/page-8eb21dda08027432.js",
+          "sha256": "77219a2b38a87a1f2ab6a51a6f968c3179d2f814ec5e746c74da7b186c85e372",
+          "bytes": 117626
+        },
+        {
+          "route": "/_next/static/chunks/app/activity/page-5eee93950a4d4bfa.js",
+          "sha256": "c54d64b2f3c5a738eca60d62939a038a5256dcc0b980d3e6802906092a58ba0a",
+          "bytes": 23888
+        },
+        {
+          "route": "/_next/static/chunks/app/material-usage/page-30156fb7b509b940.js",
+          "sha256": "52d01feaf9c8c7391714dab441456469851df7263844177d839cd7aea2fa5cd6",
+          "bytes": 48831
+        }
+      ]
+    },
+    "tenops": {
+      "target": "tenops",
+      "sha": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+      "deployment": "495fbfac-e142-4230-b6b7-eabe99b9114e",
+      "created": "2026-10-20T15:30:28.006787Z",
+      "branding": "TenOps / OPERATIONS CONTROL",
+      "reviewGuardsInactive": true,
+      "verified": [
+        {
+          "route": "/",
+          "sha256": "0f2fcc844e256babc04f6d0ac38dd27bbf31d2e3d68d9e1500e35a032f53160d",
+          "bytes": 15919
+        },
+        {
+          "route": "/samples",
+          "sha256": "436e18551e8e3761cf3da122181aba6c5fdbd7a401fb601f642eba9bd0e4f0d9",
+          "bytes": 16622
+        },
+        {
+          "route": "/proposals",
+          "sha256": "c7aa0c73c7585fbf734c737019b326200de0d165629944768b6e831a3c9255e7",
+          "bytes": 15971
+        },
+        {
+          "route": "/purchasing",
+          "sha256": "8be98878ea0d9a8856855325072e24c5329fd30455b2530fe99d570f61a04c75",
+          "bytes": 15962
+        },
+        {
+          "route": "/my-work",
+          "sha256": "48f92bbd4d83123feed30c4365c20e55818739c5ad0592854d1678868d103ee9",
+          "bytes": 15934
+        },
+        {
+          "route": "/manpower-reporting",
+          "sha256": "313bbebfda3321c39c9e8fd2cd53230ec368de6d8510e3213c360a17c80a94bd",
+          "bytes": 16194
+        },
+        {
+          "route": "/inventory",
+          "sha256": "21e1f8f7802fab4cec3526078b8fd140d6c21ed01c2107b772945667f75641de",
+          "bytes": 15988
+        },
+        {
+          "route": "/activity",
+          "sha256": "aba5ea302e63868e61681a574ed558c5239e3e159e037710db22e6bb1ad79d5d",
+          "bytes": 16003
+        },
+        {
+          "route": "/material-usage",
+          "sha256": "ec3749a5efed50bda2a95575c91102ef14e2932bb1aaaa5def45e166930cf0da",
+          "bytes": 15816
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "sha256": "f24cfc0cd69f7f52f309ef3b6b4e98510e22c75b45c0a79bf5924e570fba5654",
+          "bytes": 439
+        },
+        {
+          "route": "/_next/static/css/a632ea6d66d23051.css",
+          "sha256": "c77a96326dcece19b2de69d09675b6bc149a324dd211aeab26294245e2e9f778",
+          "bytes": 3104
+        },
+        {
+          "route": "/_next/static/css/72c2982c8b6a4ac2.css",
+          "sha256": "0f05e2c9d6c6c6418c35897643088b806c6b780a03d1a0a625e12cc20893378a",
+          "bytes": 149829
+        },
+        {
+          "route": "/_next/static/chunks/webpack-a9af7b3e98477fe7.js",
+          "sha256": "97578e9188601fbf0730b8d1280b5f03d5f239266ac4e8cb59b5613878b0a2cb",
+          "bytes": 5206
+        },
+        {
+          "route": "/_next/static/chunks/87c73c54-014124adcece3495.js",
+          "sha256": "fff033123beeda4121dcc57c4a60a349eb309be98df891e762231e88d3a1dac6",
+          "bytes": 199868
+        },
+        {
+          "route": "/_next/static/chunks/1968-e0da7aecae39157b.js",
+          "sha256": "29b5d7e67d071fc0f50b6629e6404c949bed488ff947b2f15ec65a03300c2578",
+          "bytes": 222358
+        },
+        {
+          "route": "/_next/static/chunks/main-app-0fd4f2329dcbe21b.js",
+          "sha256": "0e3865294bddaf71b4143f6a5aec6c43ef57f1fee34143701bfeb745affe9e42",
+          "bytes": 525
+        },
+        {
+          "route": "/_next/static/chunks/75504863-b1d072d957b37a8c.js",
+          "sha256": "ee2d45f691185662d3bd51852d5ee1c9df8ea27026bdbaf83c0d50bb196f0b8d",
+          "bytes": 52991
+        },
+        {
+          "route": "/_next/static/chunks/9241-c403f33e34ed9583.js",
+          "sha256": "59c1b3d342230582b6f6d9d3fa07cb3697a5a845f584c1ad1f67d16523a7d6e8",
+          "bytes": 161442
+        },
+        {
+          "route": "/_next/static/chunks/5587-fc5af8c76df14222.js",
+          "sha256": "3594f0697df8c9fb9375af9821372e8ff74db087c4768244d84f1c4cc7c129cc",
+          "bytes": 8730
+        },
+        {
+          "route": "/_next/static/chunks/5604-ad9f3eb2fbf68dd8.js",
+          "sha256": "75f22db7ee77dd0e7359aae3ac81961ea36447fd59dbc9ec4624d1c3d6f59089",
+          "bytes": 14055
+        },
+        {
+          "route": "/_next/static/chunks/9317-9ec24a34436b16ea.js",
+          "sha256": "43e160d95242d24e09f9867839d521b88cc939d93ac6c97265cd49a05cafca94",
+          "bytes": 9410
+        },
+        {
+          "route": "/_next/static/chunks/9547-b80ede164ed6a478.js",
+          "sha256": "43c6f86de671dad38ee33be6f9c3e17075d6a2231550527d3f0335d0751c05e8",
+          "bytes": 10778
+        },
+        {
+          "route": "/_next/static/chunks/6238-a0c2f59971996b6a.js",
+          "sha256": "fdd8948c8e9ea7bf4c6dcba10fad18cb87787f96ef2e4dd8d17484c37396c239",
+          "bytes": 19169
+        },
+        {
+          "route": "/_next/static/chunks/app/layout-0dea3b80a10ff5ab.js",
+          "sha256": "e955d64aad37019c37077dc632ef694a1d61f1a5b5fe61a971e1a26c225b2649",
+          "bytes": 73980
+        },
+        {
+          "route": "/_next/static/chunks/3763-64a780f8962143f9.js",
+          "sha256": "5c244c886ac225d1f13b1dbdbbfe911ce8d6fd0ee39522ff7d8818d09a7f6d8d",
+          "bytes": 11281
+        },
+        {
+          "route": "/_next/static/chunks/6408-030662ff622be07c.js",
+          "sha256": "61a2f21e1cf6b488be57d4c168616378a5bb65c09691f1c81d8861aa632c4008",
+          "bytes": 10820
+        },
+        {
+          "route": "/_next/static/chunks/147-bc9d441f94eb0df3.js",
+          "sha256": "702b60c4213004ebec1b0c3c6df4c08ad0ae06f6032e56624444cad75b879196",
+          "bytes": 22123
+        },
+        {
+          "route": "/_next/static/chunks/8669-a5ce4799cb9bba59.js",
+          "sha256": "90279067b2b87f0d7ed56fee3aee511cf4012ead73f73a56d6cab6f5c4785d9c",
+          "bytes": 27585
+        },
+        {
+          "route": "/_next/static/chunks/9917-667e05092c9f269e.js",
+          "sha256": "f604bde175857cdfe297071b9cf798ec36cdd237ee1f70f506516c3f637ca1a2",
+          "bytes": 11940
+        },
+        {
+          "route": "/_next/static/chunks/app/page-a824077ba4c79fd7.js",
+          "sha256": "1583c028cd8a5c6c1e0af425222bc9318ad90a9bdc08a7283809025332aec8a9",
+          "bytes": 391442
+        },
+        {
+          "route": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+          "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+          "bytes": 112594
+        },
+        {
+          "route": "/_next/static/chunks/2639-06ff51586a58fc2a.js",
+          "sha256": "c79a842ce8a94f0f196ca60fcb8fc6662e465d1275f32588f0b32c4ab7795875",
+          "bytes": 7495
+        },
+        {
+          "route": "/_next/static/chunks/6098-6e8a0a9005c27158.js",
+          "sha256": "0577f2f7974052ea56d77882fbb2c481815ae638a5c41f0882ada55ddf8c6503",
+          "bytes": 57049
+        },
+        {
+          "route": "/_next/static/chunks/6067-d51a965b9ba5710a.js",
+          "sha256": "ac63d599f24e64d41ed15bd24e1361db0428b0db3ec0af6abbef58ee9c985da8",
+          "bytes": 23138
+        },
+        {
+          "route": "/_next/static/chunks/app/samples/page-0fc7f2ad0c07ce90.js",
+          "sha256": "33a71fe96323260c5c93e81a9b772fb9208c22a2dc88cff6a39ed14718057557",
+          "bytes": 162003
+        },
+        {
+          "route": "/_next/static/css/009e8344dd0776ae.css",
+          "sha256": "8631d49a898c9b7a4652c29f3d4fed82199abb4d080d7ef007dc6b3f92eff93c",
+          "bytes": 3694
+        },
+        {
+          "route": "/_next/static/chunks/6081-317caea06cbedbfc.js",
+          "sha256": "5fc868445d97dfa20e0b13d2ced2a5262d406435c964e499522d30e759079424",
+          "bytes": 13203
+        },
+        {
+          "route": "/_next/static/chunks/app/proposals/page-c22111bef9c278b0.js",
+          "sha256": "283cdb19288c98f4396f004bfaa873459c10c90c058ad47b93d618f715930686",
+          "bytes": 90491
+        },
+        {
+          "route": "/_next/static/chunks/app/purchasing/page-8562900461848f6f.js",
+          "sha256": "ff9126ff5aee9ee9e506aee8aa57f58df177407add91af18d8e2bded62b27f12",
+          "bytes": 100861
+        },
+        {
+          "route": "/_next/static/chunks/7036-1012c8b5634a7a88.js",
+          "sha256": "c8455822c180602ccca5e57f4a4beb30e6d956e5c61001f7afdabe2ac53df2cf",
+          "bytes": 8177
+        },
+        {
+          "route": "/_next/static/chunks/app/my-work/page-5658111a58b55316.js",
+          "sha256": "daf2492a7d0ecb32a2fca031eef592676c9a9446908b87eea8d21451262fa77c",
+          "bytes": 74318
+        },
+        {
+          "route": "/_next/static/chunks/app/manpower-reporting/page-f404bc9c63d4fe47.js",
+          "sha256": "99962b1515488d1a265e5c11569fd944a26fd7132343cb9547dee8f01f3b199a",
+          "bytes": 105300
+        },
+        {
+          "route": "/_next/static/css/d12f0aca13423a71.css",
+          "sha256": "b2ae794f2337f9f5d2719b6c15998dbfc6bf8711b8840b08e5fefadcaa99a445",
+          "bytes": 7816
+        },
+        {
+          "route": "/_next/static/chunks/app/inventory/page-bb2287291b2f35de.js",
+          "sha256": "6a322fa8131457dc3805554d2e04622a798d24760b14a477d3b66d239aab1992",
+          "bytes": 117626
+        },
+        {
+          "route": "/_next/static/chunks/app/activity/page-816a935f49deffc8.js",
+          "sha256": "86a6e2beaa00ef5ced60cb518cea3c0d69f17cdb9071c59dbf60ba6020ebd4dc",
+          "bytes": 23890
+        },
+        {
+          "route": "/_next/static/chunks/app/material-usage/page-3c2bd780d712a20e.js",
+          "sha256": "72ca7bb92eb1b6a76d8981f5f3e2332d049ae299ee002bdc0da09458c38ea2d8",
+          "bytes": 48831
+        }
+      ]
+    }
+  },
+  "smoke": {
+    "tendev": {
+      "target": "tendev",
+      "actualServedBundle": true,
+      "checks": [
+        "Unauthenticated startup reaches sign-in",
+        "Production Job Queue and Inspector access",
+        "Complete Proposal retrieval",
+        "Complete purchasing list retrieval",
+        "Sample library and unsaved Draft Formulation access",
+        "Continuing-session SIGNED_IN/focus check preserves workspace without restoration replay",
+        "Messaging opens and authorized unread reads settle",
+        "Automatic selected-period Manpower, period switches and explicit complete-history access",
+        "Inventory initial quantities and navigation"
+      ],
+      "controlledSyntheticBackend": true,
+      "backendTarget": "https://vxdxjhazkqhpkwdqtobp.supabase.co",
+      "backendRequestsForwarded": 0,
+      "hostedBusinessWrites": 0,
+      "authAndDataIntercepted": true,
+      "physicalFocusTest": false,
+      "liveAccountTest": false,
+      "pageErrors": [],
+      "unexpectedExternal": []
+    },
+    "tenops": {
+      "target": "tenops",
+      "actualServedBundle": true,
+      "checks": [
+        "Unauthenticated startup reaches sign-in",
+        "Production Job Queue and Inspector access",
+        "Complete Proposal retrieval",
+        "Complete purchasing list retrieval",
+        "Sample library and unsaved Draft Formulation access",
+        "Continuing-session SIGNED_IN/focus check preserves workspace without restoration replay",
+        "Messaging opens and authorized unread reads settle",
+        "Automatic selected-period Manpower, period switches and explicit complete-history access",
+        "Inventory initial quantities and navigation"
+      ],
+      "controlledSyntheticBackend": true,
+      "backendTarget": "https://vxdxjhazkqhpkwdqtobp.supabase.co",
+      "backendRequestsForwarded": 0,
+      "hostedBusinessWrites": 0,
+      "authAndDataIntercepted": true,
+      "physicalFocusTest": false,
+      "liveAccountTest": false,
+      "pageErrors": [],
+      "unexpectedExternal": []
+    }
+  },
+  "rollback": {
+    "mainRef": "rollback/performance-20261020-main",
+    "devRef": "rollback/performance-20261020-dev",
+    "sha": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "previousDeployments": {
+      "tendev": {
+        "id": "f547c6af-3d85-44be-80b0-db8176883a03",
+        "sha": "da21615ad6f06727e4f18a75c65331a7266d2404",
+        "url": "https://f547c6af.tendev.pages.dev",
+        "branch": "dev"
+      },
+      "tenops": {
+        "id": "5b940dda-5110-4045-8a7c-a18c18a3125b",
+        "sha": "da21615ad6f06727e4f18a75c65331a7266d2404",
+        "url": "https://5b940dda.tenops.pages.dev",
+        "branch": "main"
+      }
+    },
+    "bundle": ".tmp-performance-release/accepted-01e5e83.bundle",
+    "bundleSha256": "3ed10678439f6c9cd56eda635ba09e5f26c0709cc10f104db71bcf80228b0a6e",
+    "bundleVerified": true
+  },
+  "originalCandidateRefs": {
+    "perf/messaging-notification-wave1": "71f6915bd66eeb079b4adcae1f234cc37174dca6",
+    "perf/list-production-wave2": "8f264712813cf7d7deb848e721cae40949c4f8f9",
+    "perf/samples-workspace-wave3": "d310e4f2d28c0688705d933e896705c113af607e",
+    "perf/manpower-inventory-wave4": "1dc57a3f4c35f1d3f31312191f84df1052dc695c"
+  },
+  "authSourceUnchanged": true,
+  "supabaseSourceAndConfigurationUnchanged": true,
+  "migrationsApplied": 0,
+  "hostedBusinessWrites": 0,
+  "permissionsChanged": false,
+  "newCredentials": false,
+  "forcePush": false,
+  "liveAccountSmoke": false,
+  "physicalTabRefocusNewlyCertified": false,
+  "productionLatencyGainsEstablished": false,
+  "limitations": [
+    "Browser checks use actual served assets with controlled synthetic Auth/data interception, not a live authenticated hosted-data session.",
+    "Physical multi-tab acceptance is inherited from existing unchanged auth evidence, not newly certified.",
+    "Reply to Message remains deferred."
+  ],
+  "releaseReceiptsLocalOnly": true
+}

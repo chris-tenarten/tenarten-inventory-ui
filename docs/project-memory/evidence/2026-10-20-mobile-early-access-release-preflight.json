@@ -1,0 +1,35 @@
+{
+  "status": "STOPPED_BEFORE_MOBILE_INTEGRATION",
+  "verifiedAt": "2026-10-20T19:11:45.441Z",
+  "riskTier": 3,
+  "candidate": "e9cfb5aca64c52dfcbd015a9b68e9becd5002a0f",
+  "canonical": "051f23b81947577c2f4a91fb863df372342622bb",
+  "targets": [
+    {
+      "project": "tendev",
+      "deployment": "6e794e8a-175c-41a8-9d3f-76ea442dfd41",
+      "revision": "051f23b81947577c2f4a91fb863df372342622bb",
+      "publicRootMatchesAcceptedExport": true,
+      "rootSha256": "1c1b89b73ba2b05e212a0fa07bab37cf8ee6a2a4c32d76cab5045b1778b0277a",
+      "completedSmoke": "10 groups passed"
+    },
+    {
+      "project": "tenops",
+      "deployment": "2f5e90a3-e120-4cde-9b39-afd29eca703f",
+      "revision": "051f23b81947577c2f4a91fb863df372342622bb",
+      "publicRootMatchesAcceptedExport": true,
+      "rootSha256": "b422e017c18152ddfe15e86cf4c30f86e12d53fca4bcf1a705d3390725dc3c8f",
+      "completedSmoke": "5 groups passed; reduced-motion gate failed; remaining groups not run"
+    }
+  ],
+  "reason": "Mandatory user stop: startup release remains incomplete at TenOps reduced-motion smoke gate.",
+  "deploymentHeadsFreshlyVerified": true,
+  "remoteMainDevFreshlyVerified": true,
+  "sourceAligned": true,
+  "releaseFullyValidated": false,
+  "mobileIntegrationPerformed": false,
+  "gitWrites": false,
+  "deploymentsPerformed": 0,
+  "hostedBusinessWrites": 0,
+  "originalCandidatePreserved": true
+}

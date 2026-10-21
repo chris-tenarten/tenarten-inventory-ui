@@ -1,0 +1,112 @@
+{
+  "status": "STOPPED_BEFORE_MANUAL_DEPLOYMENT",
+  "releaseComplete": false,
+  "allAligned": false,
+  "blocker": "Mandatory automatic Pages build skip verification incomplete: main-branch trigger records for the promoted SHA remain unavailable; dev records are confirmed skipped.",
+  "canonical": {
+    "main": "73fe7a94cfeefa355aa8e912a9bcb524436b2442",
+    "dev": "73fe7a94cfeefa355aa8e912a9bcb524436b2442",
+    "remote": "73fe7a94cfeefa355aa8e912a9bcb524436b2442\trefs/heads/dev\n73fe7a94cfeefa355aa8e912a9bcb524436b2442\trefs/heads/main"
+  },
+  "accepted": "8a1ebaa34d761ea638a6bdfd12f2c3f961212536",
+  "base": "2d1ea4e7a2c3b93dc19b6176623def3ff1995cf4",
+  "targets": {
+    "tendev": {
+      "deployment": "b31f0306-a86d-493f-a5bc-9b1b6632fbb7",
+      "servedRevision": "11293b3e68783fdcea0364ea406de0828af75f63",
+      "sourceUnchanged": true,
+      "latestStage": "success",
+      "matchingAutomaticRecords": [
+        {
+          "id": "ed033266-75ff-4243-a3cc-b032ecc59364",
+          "skipped": true,
+          "branch": "dev"
+        }
+      ]
+    },
+    "tenops": {
+      "deployment": "1e7419b9-0432-4756-b733-26dae5a41617",
+      "servedRevision": "11293b3e68783fdcea0364ea406de0828af75f63",
+      "sourceUnchanged": true,
+      "latestStage": "success",
+      "matchingAutomaticRecords": [
+        {
+          "id": "0410a8e4-d313-43c5-9da7-ecc39b7fbb1b",
+          "skipped": true,
+          "branch": "dev"
+        }
+      ]
+    }
+  },
+  "builds": {
+    "tendev": {
+      "target": "tendev",
+      "builds": 1,
+      "passed": true,
+      "devBranding": true,
+      "branding": "TenDev / RESEARCH & DEVELOPMENT",
+      "envLocalExcluded": true,
+      "productionSupabase": true,
+      "reviewToolsExcluded": true
+    },
+    "tenops": {
+      "target": "tenops",
+      "builds": 1,
+      "passed": true,
+      "devBranding": false,
+      "branding": "TenOps / OPERATIONS CONTROL",
+      "envLocalExcluded": true,
+      "productionSupabase": true,
+      "reviewToolsExcluded": true
+    }
+  },
+  "candidateEvidenceReused": {
+    "layoutCombinations": 27,
+    "startupGroups": 4
+  },
+  "localReleaseSmoke": {
+    "target": "tendev",
+    "origin": "http://localhost:3374",
+    "actualServedBundle": false,
+    "checks": [
+      "mobile maintenance: compact safe-area navigation and legacy UPDATE retirement"
+    ],
+    "reducedEvidence": [],
+    "holdTimingsMs": [],
+    "acceptedHoldMs": 888,
+    "pageErrors": [],
+    "unexpectedExternal": [],
+    "controlledSyntheticBackend": true,
+    "authAndDataIntercepted": true,
+    "backendRequestsForwarded": 0,
+    "hostedBusinessWrites": 0,
+    "physicalFocusTest": false,
+    "liveAccountTest": false
+  },
+  "rollback": {
+    "refs": [
+      "rollback/mobile-nav-20261021-main",
+      "rollback/mobile-nav-20261021-dev"
+    ],
+    "sha": "2d1ea4e7a2c3b93dc19b6176623def3ff1995cf4",
+    "previousDeployments": {
+      "tendev": {
+        "id": "b31f0306-a86d-493f-a5bc-9b1b6632fbb7",
+        "sha": "11293b3e68783fdcea0364ea406de0828af75f63",
+        "url": "https://b31f0306.tendev.pages.dev"
+      },
+      "tenops": {
+        "id": "1e7419b9-0432-4756-b733-26dae5a41617",
+        "sha": "11293b3e68783fdcea0364ea406de0828af75f63",
+        "url": "https://1e7419b9.tenops.pages.dev"
+      }
+    },
+    "bundle": ".tmp-mobile-nav-release/accepted-release.bundle"
+  },
+  "manualDeploymentAttempts": 0,
+  "hostedBusinessWrites": 0,
+  "configurationChanges": 0,
+  "rootCheckoutPreserved": "051f23b81947577c2f4a91fb863df372342622bb",
+  "supersededBy": "docs/project-memory/2026-10-21-mobile-nav-release.md",
+  "resolved": true
+}
