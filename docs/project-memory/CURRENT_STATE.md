@@ -1,6 +1,6 @@
 # Current State
 
-Dated snapshot: **October 21, 2026, 3:36 p.m. America/Chicago**. Reinspect relevant Git and hosted facts before acting. This is an index of status and evidence, not a transcript or a new source of Product authority. Status meanings and the compact handoff are in the [execution standard](../project/ENGINEERING_EXECUTION_STANDARD.md#compact-handoff-and-status).
+Dated snapshot: **October 21, 2026, 3:51 p.m. America/Chicago**. Reinspect relevant Git and hosted facts before acting. This is an index of status and evidence, not a transcript or a new source of Product authority. Status meanings and the compact handoff are in the [execution standard](../project/ENGINEERING_EXECUTION_STANDARD.md#compact-handoff-and-status).
 
 ## Independently verified release boundary
 
@@ -12,7 +12,9 @@ Fresh `git fetch origin --no-prune`, `git ls-remote origin refs/heads/main refs/
 | TenDev canonical Pages deployment (`dev`) | `bc73f0d1-4938-4d75-b825-fb16b87ec31d`; runtime `c99316c1ec30463c40333a3f725857b0de6eb9f8`; success |
 | TenOps canonical Pages deployment (`main`) | `20538973-44e1-4d9e-87bf-52b0b0b66ab1`; runtime `c99316c1ec30463c40333a3f725857b0de6eb9f8`; success |
 
-Both projects were queried directly through the Cloudflare project API at **20:36 UTC**. This is fresh control-plane evidence, not a new browser/served-byte or hosted database audit. Git comparison confirms `64ded3e` is one documentation/evidence-only commit after `c99316c`; no runtime-source difference or redeployment requirement follows from that gap. The [Web Push GA receipt](2026-10-21-web-push-general-availability.md#executed-release) retains the release's served-byte, worker and migration evidence; those historical checks were not rerun here.
+Both projects were rechecked directly through the Cloudflare project API at **20:49 UTC**. At **20:51 UTC**, fresh public GETs for each canonical domain's `/`, `/settings`, `/manifest.webmanifest` and `/sw.js`, plus all **25 referenced runtime assets per environment**, matched SHA-256 values in the retained environment-specific GA artifact manifests. Each domain's root also matched its current deployment URL. This confirms the served GA export as well as control-plane identity; no browser workflow, build, application test, worker execution or hosted database audit was run. The [executed GA receipt](2026-10-21-web-push-general-availability.md#executed-release) owns the earlier worker/migration acceptance evidence.
+
+**Release order reconciled against the actual Git graph:** `372a7007` mobile UI polish (October 21, 14:24 CDT) → `29d1930` diagnostics → `c99316c` Web Push GA (14:47 CDT) → `64ded3e` release documentation (14:53 CDT). The completed mobile-polish receipt recorded both environments at `372a7007` at 14:30 CDT; that was an earlier deployment, not a release after GA. All three mobile application files (`globals.css`, `InboxDialog.tsx`, `MyWorkPage.tsx`) are byte-identical between `372a7007` and the served `c99316c` revision. Thus mobile polish is included in today's verified runtime. `64ded3e` is one documentation/evidence-only commit after runtime, with no runtime-source difference or redeployment requirement.
 
 The root workspace remains detached at `051f23b` to preserve overlapping local research/receipts; it is not canonical HEAD. This continuity candidate reuses `.worktrees/web-push-ga` on local branch `docs/continuity-refresh-20261021`, based on `64ded3e`; no main/dev promotion or push is included. Reinspect rather than infer branch state from a directory name. TenDev branding does not prove backend isolation; the GA receipt records the shared Supabase project and distinct rollout flags.
 
@@ -58,7 +60,7 @@ The repository includes later Bid, Sample, Messaging and Web Push migration fami
 
 | Work | Status and next boundary |
 | --- | --- |
-| Continuity refresh | **Accepted approach; implemented documentation candidate**, awaiting review of this local commit. Only the five existing entry-point documents change. No application work or release authorized. |
+| Continuity refresh | **Accepted structure**, implemented locally in `e0d4884`. This follow-up only reconciles Current State and release references with fresh Git, Cloudflare and public served-byte observations. No application work, main/dev promotion or release authorized. |
 | Mobile UI, Contacts and Web Push | **Accepted and deployed** within the canonical runtime above. GA includes the earlier accepted UI/release boundaries; consult the [executed GA receipt](2026-10-21-web-push-general-availability.md#executed-release) for the runtime boundary. The [mobile navigation](2026-10-21-mobile-nav-announcement-retirement.md) and [mobile polish](2026-10-21-mobile-responsive-polish-review.md) records describe their earlier candidate stages, not deployment proof. Per-release receipts remain historical snapshots, not claims that each old SHA is today's global runtime. |
 | Group Messaging | **Proposed next workstream**; no implementation/acceptance contract is supplied by this continuity refresh. Product scope, privacy and acceptance remain the next decision. |
 | Bids collaboration/reminders | Accepted Early Access UI is closed; collaboration backend, attachments, tasks and reminder activation are **deferred**, with a preserved implemented candidate. [Bids closure](2026-10-13-bids-workstream-closure.md) owns the exact split and future gates. Its former temporary worktree paths are historical; branch refs survive housekeeping. |
