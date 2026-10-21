@@ -1,0 +1,21 @@
+[
+  {
+    "diagnosis": {
+      "cron": {
+        "active": false,
+        "command": "select public.dispatch_tenops_web_push();",
+        "id": 2,
+        "schedule": "* * * * *"
+      },
+      "cron_runs": null,
+      "pending": 0,
+      "transport": false,
+      "wake": {
+        "content": "{\"status\":\"worker_failed\"}",
+        "error": null,
+        "status": 503,
+        "timed_out": false
+      }
+    }
+  }
+]

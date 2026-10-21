@@ -1,0 +1,10 @@
+[
+  {
+    "schedule": {
+      "active": false,
+      "id": 2,
+      "name": "tenops-web-push",
+      "schedule": "* * * * *"
+    }
+  }
+]

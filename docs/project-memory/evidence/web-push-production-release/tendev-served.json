@@ -1,0 +1,30 @@
+{
+  "url": "https://tendev.pages.dev",
+  "sha": "11293b3e68783fdcea0364ea406de0828af75f63",
+  "deployment": "b31f0306-a86d-493f-a5bc-9b1b6632fbb7",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "exactExport": true
+    },
+    {
+      "path": "/settings",
+      "status": 200,
+      "exactExport": true
+    },
+    {
+      "path": "/sw.js",
+      "status": 200,
+      "exactExport": true
+    },
+    {
+      "path": "/manifest.webmanifest",
+      "status": 200,
+      "exactExport": true
+    }
+  ],
+  "exactRuntimeAssets": 26,
+  "reviewRoutes404": true,
+  "configurationUnchanged": true
+}

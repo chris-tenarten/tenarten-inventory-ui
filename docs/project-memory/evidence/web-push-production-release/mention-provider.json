@@ -1,0 +1,19 @@
+{
+  "active_push_cron": 0,
+  "deliveries": [
+    {
+      "attempts": 1,
+      "environment": "tenops",
+      "id": "7e2d8a01-3950-4ae7-bac4-80712b35687b",
+      "outcome": null,
+      "owner_regular": true,
+      "state": "leased"
+    }
+  ],
+  "notification_id": "1d353f50-5034-4d56-b5ac-627104436aa4",
+  "wake": {
+    "content": "{\"status\":\"worker_failed\"}",
+    "status_code": 503,
+    "timed_out": false
+  }
+}

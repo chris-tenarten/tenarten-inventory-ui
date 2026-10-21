@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-10-21T15:12:59.941084+00:00",
+  "device": "User-operated iPhone Home Screen PWA at https://tenops.pages.dev",
+  "osAndModel": "Not reported; no model/version inference",
+  "regularAccountRegistration": "User confirmed Registered on this device; hosted owner/environment/version/previews verified",
+  "dm": {
+    "phoneState": "fully closed and locked",
+    "providerWorkerAttempt": 1,
+    "userConfirmation": "Correct conversation opened directly; no Retry or animation",
+    "firstTapAccepted": true
+  },
+  "mention": {
+    "phoneState": "fully closed and locked",
+    "initialResult": "No notification yet; actual worker 503 left lease pending",
+    "recovery": "Same notification/source, expired lease reclaimed; attempt 2 submitted",
+    "userConfirmation": "Appeared; correct Job Update opened directly without Retry or animation"
+  },
+  "ongoingAuthorization": "Keep two-account Production delivery active with scoped Cron",
+  "availabilityExpandedBeyondTwoAccounts": false,
+  "physicalDenialExpiredSessionOfflineCleanup": "Not tested here; prior local evidence reused, not physical acceptance",
+  "additionalTestNotificationsAfterTwoPhysicalEvents": 0
+}

@@ -1,0 +1,17 @@
+{
+  "deliveries": [
+    {
+      "attempts": 2,
+      "environment": "tenops",
+      "outcome": "accepted",
+      "owner_regular": true,
+      "state": "submitted"
+    }
+  ],
+  "notification_id": "1d353f50-5034-4d56-b5ac-627104436aa4",
+  "wake": {
+    "content": "{\"claimed\":1,\"submitted\":1,\"skipped\":0,\"failed\":0}",
+    "status": 200,
+    "timed_out": false
+  }
+}

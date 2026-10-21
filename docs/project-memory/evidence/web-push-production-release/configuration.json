@@ -1,0 +1,14 @@
+[
+  {
+    "configured": {
+      "pilot_accounts": 0,
+      "production_registration": false,
+      "production_transport": false,
+      "rollout_accounts": 2,
+      "rollout_jobs": 1,
+      "vapid_public_match": true,
+      "vault_hmac_match": true,
+      "worker_enabled": false
+    }
+  }
+]

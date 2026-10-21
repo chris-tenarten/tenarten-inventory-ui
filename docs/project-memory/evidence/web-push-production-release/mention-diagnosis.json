@@ -1,0 +1,19 @@
+[
+  {
+    "diagnosis": {
+      "attempts": 1,
+      "lease_expired": true,
+      "outcome": null,
+      "run_count": 3,
+      "source_authorized": true,
+      "source_kind": "mention",
+      "state": "leased",
+      "transport": false,
+      "wake_response": {
+        "content": "{\"status\":\"worker_failed\"}",
+        "error": null,
+        "status": 503
+      }
+    }
+  }
+]

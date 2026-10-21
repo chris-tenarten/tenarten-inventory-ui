@@ -1,0 +1,19 @@
+{
+  "active_push_cron": 0,
+  "deliveries": [
+    {
+      "attempts": 1,
+      "environment": "tenops",
+      "id": "2ed8cff9-3549-466c-97f8-64aeac347da5",
+      "outcome": "accepted",
+      "owner_regular": true,
+      "state": "submitted"
+    }
+  ],
+  "notification_id": "8cffc5bd-645a-4609-83ef-0accfc15b332",
+  "wake": {
+    "content": "{\"claimed\":1,\"submitted\":1,\"skipped\":0,\"failed\":0}",
+    "status_code": 200,
+    "timed_out": false
+  }
+}

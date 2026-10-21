@@ -1,0 +1,19 @@
+[
+  {
+    "isolation": {
+      "active_push_cron": 0,
+      "approved_jobs": 1,
+      "cohort_accounts": 2,
+      "developer_visibility": true,
+      "enabled_devices": 0,
+      "new_private_rls": true,
+      "outside_configuration_null": true,
+      "outside_registration_denied": true,
+      "outside_visibility": false,
+      "private_browser_grants": 0,
+      "production_registration": true,
+      "production_transport": false,
+      "regular_visibility": true
+    }
+  }
+]

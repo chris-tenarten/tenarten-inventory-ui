@@ -1,0 +1,10 @@
+[
+  {
+    "event": {
+      "kind": "mention",
+      "notification_id": "1d353f50-5034-4d56-b5ac-627104436aa4",
+      "source_id": "d2254d70-a9d2-4290-ab4e-23dac604682d",
+      "wake_request_id": 630
+    }
+  }
+]

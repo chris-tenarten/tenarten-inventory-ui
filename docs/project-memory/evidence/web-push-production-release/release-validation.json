@@ -1,0 +1,21 @@
+{
+  "tier": 3,
+  "testingLevel": 3,
+  "browserGroups": 6,
+  "databaseDeltaGroups": 14,
+  "typescript": "passed",
+  "targetedLint": "passed",
+  "localBuild": "passed",
+  "realTenDevBuild": "passed",
+  "realTenOpsBuild": "passed",
+  "diffCheck": "passed",
+  "original33Groups": "reused; not rerun",
+  "newAccountsCreated": 0,
+  "authenticationChanges": 0,
+  "temporaryLocalPrivateMaterialRemoved": true,
+  "approvedCohortCount": 2,
+  "activeDevices": 1,
+  "scopedCronActive": true,
+  "phoneFirstTapDM": "passed by explicit user observation",
+  "phoneMentionTap": "passed by explicit user observation; recovered worker attempt2"
+}

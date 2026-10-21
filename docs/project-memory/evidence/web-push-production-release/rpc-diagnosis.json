@@ -1,0 +1,24 @@
+{
+  "serverCredentialKeptInMemory": true,
+  "activationRunConsumed": true,
+  "results": [
+    {
+      "rpc": "consume_web_push_run",
+      "status": 200,
+      "code": null,
+      "elapsedMs": 976
+    },
+    {
+      "rpc": "claim_web_push_deliveries",
+      "status": 200,
+      "code": null,
+      "elapsedMs": 255
+    },
+    {
+      "rpc": "prune_web_push_transport",
+      "status": 204,
+      "code": null,
+      "elapsedMs": 328
+    }
+  ]
+}

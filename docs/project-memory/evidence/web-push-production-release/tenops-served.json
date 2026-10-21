@@ -1,0 +1,30 @@
+{
+  "url": "https://tenops.pages.dev",
+  "sha": "11293b3e68783fdcea0364ea406de0828af75f63",
+  "deployment": "1e7419b9-0432-4756-b733-26dae5a41617",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "exactExport": true
+    },
+    {
+      "path": "/settings",
+      "status": 200,
+      "exactExport": true
+    },
+    {
+      "path": "/sw.js",
+      "status": 200,
+      "exactExport": true
+    },
+    {
+      "path": "/manifest.webmanifest",
+      "status": 200,
+      "exactExport": true
+    }
+  ],
+  "exactRuntimeAssets": 26,
+  "reviewRoutes404": true,
+  "configurationUnchanged": true
+}

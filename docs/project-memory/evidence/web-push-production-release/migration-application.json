@@ -1,0 +1,15 @@
+[
+  {
+    "applied": {
+      "applied_versions": [
+        "20261021120000",
+        "20261021130000"
+      ],
+      "enabled_registration": 0,
+      "enabled_transport": 0,
+      "production_dispatcher": true,
+      "rollout_accounts": 0,
+      "rollout_jobs": 0
+    }
+  }
+]
