@@ -1662,7 +1662,8 @@ html[data-appearance="dark"] .manpower-bulk-action:disabled {
   [data-mobile-unlocked] .desktop-domain-nav, [data-mobile-unlocked] [data-shell-primary-nav] > div > span[aria-hidden] { display: none; }
   /* Fixed chrome owns the bottom inset; reserve it once in page content. */
   body:has([data-mobile-unlocked]) { padding-bottom: 0; }
-  [data-mobile-unlocked] { --tenops-mobile-tab-height: 52px; }
+  /* Keep the controls compact; the home-gesture inset is additional to this row. */
+  [data-mobile-unlocked] { --tenops-mobile-tab-height: 44px; }
   [data-mobile-unlocked] main { padding-bottom: calc(var(--tenops-mobile-tab-height) + 9px + env(safe-area-inset-bottom)); }
   [data-mobile-navigation] { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: var(--tenops-mobile-tab-height); height: calc(var(--tenops-mobile-tab-height) + 1px + env(safe-area-inset-bottom)); align-items: start; position: fixed; z-index: 95; bottom: 0; left: 0; right: 0; padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); border-top: 1px solid var(--border-default,#bac5d0); background: var(--surface-primary,#f2f5f8); }
   [data-mobile-navigation] > a, [data-mobile-navigation] > button { display: flex; flex-direction: column; justify-content: center; align-items: center; height: var(--tenops-mobile-tab-height); min-height: 44px; min-width: 0; margin: 0; padding: 0; border: 0; border-radius: 0; appearance: none; gap: 3px; font-size: 11px; line-height: 14px; font-weight: 700; color: var(--text-secondary,#475569); }

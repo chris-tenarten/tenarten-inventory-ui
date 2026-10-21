@@ -1,0 +1,199 @@
+{
+  "baseline": "83d0343bf1058dd0a6f21f4abaca194de5211498",
+  "checkedAt": "2026-10-21T17:41:01.551Z",
+  "productionDeployment": {
+    "id": "3816d5e9-eaea-4a5b-9b8b-d90c57f57057",
+    "sha": "83d0343bf1058dd0a6f21f4abaca194de5211498",
+    "status": "success"
+  },
+  "network": [
+    {
+      "mode": "desktop",
+      "path": "/",
+      "status": 200,
+      "htmlMatches": true,
+      "htmlSha256": "1deb76f4a044ca8396da9f0228fda93f42cff23ca6ed31e0dc616be05c541fd8",
+      "chunkCount": 22,
+      "allChunksMatch": true,
+      "legacyAnnouncementPresent": false,
+      "headers": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "etag": null,
+        "age": null,
+        "cf-cache-status": null,
+        "vary": null,
+        "last-modified": null,
+        "content-type": "text/html; charset=utf-8"
+      }
+    },
+    {
+      "mode": "desktop",
+      "path": "/index.html",
+      "status": 200,
+      "htmlMatches": true,
+      "htmlSha256": "1deb76f4a044ca8396da9f0228fda93f42cff23ca6ed31e0dc616be05c541fd8",
+      "chunkCount": 22,
+      "allChunksMatch": true,
+      "legacyAnnouncementPresent": false,
+      "headers": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "etag": null,
+        "age": null,
+        "cf-cache-status": null,
+        "vary": null,
+        "last-modified": null,
+        "content-type": "text/html; charset=utf-8"
+      }
+    },
+    {
+      "mode": "iphone",
+      "path": "/",
+      "status": 200,
+      "htmlMatches": true,
+      "htmlSha256": "1deb76f4a044ca8396da9f0228fda93f42cff23ca6ed31e0dc616be05c541fd8",
+      "chunkCount": 22,
+      "allChunksMatch": true,
+      "legacyAnnouncementPresent": false,
+      "headers": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "etag": null,
+        "age": null,
+        "cf-cache-status": null,
+        "vary": null,
+        "last-modified": null,
+        "content-type": "text/html; charset=utf-8"
+      }
+    },
+    {
+      "mode": "iphone",
+      "path": "/index.html",
+      "status": 200,
+      "htmlMatches": true,
+      "htmlSha256": "1deb76f4a044ca8396da9f0228fda93f42cff23ca6ed31e0dc616be05c541fd8",
+      "chunkCount": 22,
+      "allChunksMatch": true,
+      "legacyAnnouncementPresent": false,
+      "headers": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "etag": null,
+        "age": null,
+        "cf-cache-status": null,
+        "vary": null,
+        "last-modified": null,
+        "content-type": "text/html; charset=utf-8"
+      }
+    }
+  ],
+  "worker": {
+    "headers": {
+      "cache-control": "no-cache",
+      "etag": "W/\"c1bce6fc612e75db80834c719fd31295\"",
+      "age": null,
+      "cf-cache-status": null,
+      "vary": null,
+      "last-modified": null,
+      "content-type": "application/javascript"
+    },
+    "matches": true,
+    "fetchHandler": false
+  },
+  "before": {
+    "requestedMode": "browser",
+    "standaloneMedia": false,
+    "viewport": {
+      "innerWidth": 393,
+      "innerHeight": 793,
+      "visualHeight": 793,
+      "scale": 1,
+      "offsetTop": 0
+    },
+    "nav": {
+      "height": 87,
+      "top": 706,
+      "bottom": 793,
+      "row": "52px",
+      "paddingBottom": "34px",
+      "borderTop": "1px",
+      "position": "fixed"
+    },
+    "messagesHeight": 52,
+    "bodyPaddingBottom": "0px",
+    "mainPaddingBottom": "95px"
+  },
+  "layout": {
+    "checks": [
+      "36 viewport/inset/display-size combinations",
+      "44px touch rows with aligned Messages slot",
+      "selected More remains above safe area",
+      "single bottom content inset",
+      "Jobs/My Work/More/Contacts/Messages navigation preserved",
+      "announcement absent and bell retained",
+      "no refocus startup replay"
+    ],
+    "totalCases": 36,
+    "displaySizes": [
+      "compact",
+      "default",
+      "large"
+    ],
+    "columns": [
+      "width",
+      "height",
+      "bottomInset",
+      "leftInset",
+      "rightInset",
+      "footerHeight",
+      "messagesHeight",
+      "contentBottomPadding"
+    ],
+    "viewports": [
+      [375,667,0,0,0,45,44,53],
+      [375,812,34,0,0,79,44,87],
+      [390,844,34,0,0,79,44,87],
+      [393,793,34,0,0,79,44,87],
+      [402,815,34,0,0,79,44,87],
+      [440,894,34,0,0,79,44,87],
+      [430,932,34,0,0,79,44,87],
+      [667,375,0,0,0,45,44,53],
+      [812,375,21,44,44,66,44,74],
+      [852,393,21,59,59,66,44,74],
+      [874,402,21,62,62,66,44,74],
+      [956,440,21,62,62,66,44,74]
+    ],
+    "errors": [],
+    "physicalIphone": false
+  },
+  "startup": {
+    "brand": "TenOps",
+    "origin": "http://localhost:3000",
+    "checks": [
+      "full sequence, 0.888-second hold and continuous mounted entrance"
+    ],
+    "errors": [],
+    "external": [],
+    "notes": [
+      "Focus/visibility events and continuing auth events are simulated. Physical OS tab suspension and Home Screen launch require manual review."
+    ]
+  },
+  "checks": {
+    "productionBuild": "passed",
+    "typescript": "passed",
+    "targetedEslint": "passed",
+    "diffCheck": "passed",
+    "independentDiffEvidenceReview": "passed"
+  },
+  "deviceReports": [
+    "iPhone 15 Pro; default 100% Safari Page Zoom",
+    "Canonical URL and full reload still showed old authenticated UI",
+    "Authenticated Private and regular Safari showed new UI with diagnostic query",
+    "Plain canonical URL then showed new UI in both authenticated regular and Private Safari"
+  ],
+  "limitations": [
+    "Physical installed-PWA layout not instrumented",
+    "Exact stale-document cache layer not captured on device",
+    "WebKit not installed",
+    "Standalone media override did not activate; not counted as standalone test"
+  ],
+  "rawLocalEvidence": "/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-pwa-safari/",
+  "deploymentPerformed": false
+}

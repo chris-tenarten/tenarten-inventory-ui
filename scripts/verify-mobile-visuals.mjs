@@ -13,17 +13,17 @@ try{
   await expect(page.locator('[data-performance-announcement]')).toHaveCount(0);await expect(page.getByRole('button',{name:"What's New in TenOps",exact:true})).toHaveCount(0);
   await expect(page.locator('[data-account-notifications]')).toBeVisible();
   const cd=await context.newCDPSession(page),measurements=[];
-  for(const [width,height,bottom,left,right] of [[375,667,0,0,0],[375,812,34,0,0],[390,844,34,0,0],[393,852,34,0,0],[430,932,34,0,0],[667,375,0,0,0],[812,375,21,44,44],[844,390,21,47,47],[932,430,21,59,59]]){
+  for(const [width,height,bottom,left,right] of [[375,667,0,0,0],[375,812,34,0,0],[390,844,34,0,0],[393,793,34,0,0],[402,815,34,0,0],[440,894,34,0,0],[430,932,34,0,0],[667,375,0,0,0],[812,375,21,44,44],[852,393,21,59,59],[874,402,21,62,62],[956,440,21,62,62]]){
    await page.setViewportSize({width,height});await cd.send('Emulation.setSafeAreaInsetsOverride',{insets:{top:0,bottom,left,right}});
    for(const display of ['compact','default','large']){
     await page.evaluate(v=>document.documentElement.dataset.displaySize=v,display);await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
-    const n=await nav.boundingBox(),m=await msg.boundingBox();assert(Math.abs(n.height-(53+bottom))<1);assert(Math.abs(n.y+n.height-height)<1);
+    const n=await nav.boundingBox(),m=await msg.boundingBox();assert(Math.abs(n.height-(45+bottom))<1);assert(Math.abs(n.y+n.height-height)<1);
     for(const item of [nav.getByRole('link',{name:'Jobs',exact:true}),nav.getByRole('link',{name:'My Work',exact:true}),msg,nav.getByRole('button',{name:'More',exact:true})]){
-     const b=await item.boundingBox();assert.equal(b.height,52);assert(b.width>=44);assert(b.x>=left&&b.x+b.width<=width-right+.5);assert(Math.abs(b.y+b.height-(height-bottom))<1);
+     const b=await item.boundingBox();assert.equal(b.height,44);assert(b.width>=44);assert(b.x>=left&&b.x+b.width<=width-right+.5);assert(Math.abs(b.y+b.height-(height-bottom))<1);
      assert(await item.evaluate(el=>{const b=el.getBoundingClientRect();return el.contains(document.elementFromPoint(b.x+b.width/2,b.y+b.height/2));}));
     }
     assert(Math.abs(m.y-(n.y+1))<1);
-    const css=await page.evaluate(()=>({bodyPadding:getComputedStyle(document.body).paddingBottom,mainPadding:parseFloat(getComputedStyle(document.querySelector('main')).paddingBottom),scale:visualViewport.scale,overflow:document.documentElement.scrollWidth>innerWidth}));assert.equal(css.bodyPadding,'0px');assert.equal(css.mainPadding,61+bottom);assert.equal(css.scale,1);assert(!css.overflow);
+    const css=await page.evaluate(()=>({bodyPadding:getComputedStyle(document.body).paddingBottom,mainPadding:parseFloat(getComputedStyle(document.querySelector('main')).paddingBottom),scale:visualViewport.scale,overflow:document.documentElement.scrollWidth>innerWidth}));assert.equal(css.bodyPadding,'0px');assert.equal(css.mainPadding,53+bottom);assert.equal(css.scale,1);assert(!css.overflow);
     measurements.push({width,height,bottom,left,right,display,nav:n,messages:m,...css});
    }
    await page.screenshot({path:out+'/'+width+'x'+height+'.png'});
@@ -32,9 +32,9 @@ try{
   await nav.getByRole('button',{name:'More',exact:true}).click();const more=page.getByRole('dialog',{name:'More destinations'});await expect(more).toBeVisible();await page.getByRole('button',{name:'Close More',exact:true}).click();await expect(more).toHaveCount(0);
   await nav.getByRole('link',{name:'My Work',exact:true}).click();await expect(page).toHaveURL(/my-work/);await expect(nav.getByRole('link',{name:'My Work',exact:true})).toHaveAttribute('aria-current','page');await nav.getByRole('link',{name:'Jobs',exact:true}).click();await expect(page).toHaveURL(origin+'/');
   await msg.click();await expect(page.locator('#my-work-inbox-title')).toBeVisible();await page.getByRole('button',{name:'Close Inbox',exact:true}).click();
-  await nav.getByRole('button',{name:'More',exact:true}).click();await more.getByRole('link',{name:'Contacts',exact:true}).click();await expect(page).toHaveURL(/contacts/);await expect(nav.getByRole('button',{name:'More',exact:true})).toHaveAttribute('aria-current','page');await expect(nav.getByRole('button',{name:'More',exact:true})).toHaveJSProperty('offsetHeight',52);await page.screenshot({path:out+'/selected-more.png'});
+  await nav.getByRole('button',{name:'More',exact:true}).click();await more.getByRole('link',{name:'Contacts',exact:true}).click();await expect(page).toHaveURL(/contacts/);await expect(nav.getByRole('button',{name:'More',exact:true})).toHaveAttribute('aria-current','page');await expect(nav.getByRole('button',{name:'More',exact:true})).toHaveJSProperty('offsetHeight',44);await page.screenshot({path:out+'/selected-more.png'});
   await page.evaluate(()=>{window.dispatchEvent(new Event('focus'));document.dispatchEvent(new Event('visibilitychange'));});await expect(page.locator('div[data-welcome-hero]')).toHaveCount(0);
-  assert.deepEqual(errors,[]);writeFileSync(out+'/validation.json',JSON.stringify({measurements,checks:['27 viewport/inset/display-size combinations','52px touch rows with aligned Messages slot','selected More remains above safe area','single bottom content inset','Jobs/My Work/More/Contacts/Messages navigation preserved','announcement absent and bell retained','no refocus startup replay'],errors,physicalIphone:false},null,2));console.log('PASS 27 mobile layout combinations and focused navigation checks');
+  assert.deepEqual(errors,[]);writeFileSync(out+'/validation.json',JSON.stringify({measurements,checks:['36 viewport/inset/display-size combinations','44px touch rows with aligned Messages slot','selected More remains above safe area','single bottom content inset','Jobs/My Work/More/Contacts/Messages navigation preserved','announcement absent and bell retained','no refocus startup replay'],errors,physicalIphone:false},null,2));console.log('PASS 36 mobile layout combinations and focused navigation checks');
  }else{
  await page.clock.setFixedTime(new Date('2026-10-20T12:00:00Z'));await page.goto('http://localhost:3020');await expect(page.getByRole('button',{name:'Open Wave Job 0',exact:true})).toBeVisible();await expect(page.getByRole('button',{name:/Open Job Updates for LOCAL-0/}).first()).toBeVisible();await shot('jobs-portrait');
  const msg=page.getByRole('button',{name:'Messaging',exact:true});const box=await msg.boundingBox();assert(await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.closest('button')?.getAttribute('aria-label')==='Messaging',{x:box.x+box.width/2,y:box.y+box.height/2}));checks.push('Messages visible and receives touch in its bottom navigation slot');
