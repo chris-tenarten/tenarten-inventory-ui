@@ -1,0 +1,206 @@
+{
+  "baseline": "83623d6da1242b813c8c17a9de5d8d43435f04f8",
+  "branch": "fix/mobile-responsive-polish",
+  "riskTier": 2,
+  "testingLevel": 1,
+  "scope": [
+    "src/app/globals.css",
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/my-work/MyWorkPage.tsx",
+    "scripts/verify-mobile-visuals.mjs"
+  ],
+  "checks": {
+    "productionBuild": "pass",
+    "typescript": "pass",
+    "targetedEslint": "pass",
+    "diffCheck": "pass",
+    "independentReview": "no blocker"
+  },
+  "browser": {
+    "baseline": false,
+    "measurements": [
+      {
+        "width": 320,
+        "height": 568,
+        "bottom": 0,
+        "taskWidths": [
+          {
+            "width": 296,
+            "scroll": 291,
+            "client": 291
+          },
+          {
+            "width": 296,
+            "scroll": 291,
+            "client": 291
+          },
+          {
+            "width": 296,
+            "scroll": 291,
+            "client": 291
+          }
+        ],
+        "footer": {
+          "rowBackground": "rgb(239, 246, 255)",
+          "fillBackground": "rgb(239, 246, 255)",
+          "fillBottom": 568,
+          "height": 0
+        }
+      },
+      {
+        "width": 393,
+        "height": 793,
+        "bottom": 34,
+        "taskWidths": [
+          {
+            "width": 369,
+            "scroll": 364,
+            "client": 364
+          },
+          {
+            "width": 369,
+            "scroll": 364,
+            "client": 364
+          },
+          {
+            "width": 369,
+            "scroll": 364,
+            "client": 364
+          }
+        ],
+        "footer": {
+          "rowBackground": "rgb(239, 246, 255)",
+          "fillBackground": "rgb(239, 246, 255)",
+          "fillBottom": 793,
+          "height": 34
+        }
+      },
+      {
+        "width": 430,
+        "height": 873,
+        "bottom": 34,
+        "taskWidths": [
+          {
+            "width": 406,
+            "scroll": 401,
+            "client": 401
+          },
+          {
+            "width": 406,
+            "scroll": 401,
+            "client": 401
+          },
+          {
+            "width": 406,
+            "scroll": 401,
+            "client": 401
+          }
+        ],
+        "footer": {
+          "rowBackground": "rgb(239, 246, 255)",
+          "fillBackground": "rgb(239, 246, 255)",
+          "fillBottom": 873,
+          "height": 34
+        }
+      },
+      {
+        "width": 852,
+        "height": 393,
+        "bottom": 21,
+        "taskWidths": [
+          {
+            "width": 686,
+            "scroll": 681,
+            "client": 681
+          },
+          {
+            "width": 686,
+            "scroll": 681,
+            "client": 681
+          },
+          {
+            "width": 686,
+            "scroll": 681,
+            "client": 681
+          }
+        ],
+        "footer": {
+          "rowBackground": "rgb(239, 246, 255)",
+          "fillBackground": "rgb(239, 246, 255)",
+          "fillBottom": 393,
+          "height": 21
+        }
+      },
+      {
+        "width": 1280,
+        "height": 900,
+        "bottom": 0,
+        "taskWidths": [
+          {
+            "width": 1072,
+            "scroll": 1067,
+            "client": 1067
+          },
+          {
+            "width": 1072,
+            "scroll": 1067,
+            "client": 1067
+          },
+          {
+            "width": 1072,
+            "scroll": 1067,
+            "client": 1067
+          }
+        ]
+      }
+    ],
+    "failures": [],
+    "pageErrors": [],
+    "external": [],
+    "checks": [
+      "Task cards and primary actions fit",
+      "New message button and label fit",
+      "Conversation timestamps and body fit",
+      "Recipient/composer/Send fit without sending",
+      "44px controls and safe-area height unchanged",
+      "Matching icon/label alignment",
+      "Navigation and unsent composer remain usable"
+    ],
+    "noHostedRequests": true,
+    "noAccountsCreated": true
+  },
+  "appearance": {
+    "checks": [
+      {
+        "theme": "light",
+        "ratio": 6.157973971775643,
+        "fg": "rgb(29, 78, 216)",
+        "bg": "rgb(239, 246, 255)",
+        "fill": "rgb(239, 246, 255)",
+        "fillBottom": 793,
+        "rowHeight": 44
+      },
+      {
+        "theme": "dark",
+        "ratio": 6.191868127810845,
+        "fg": "rgb(147, 197, 253)",
+        "bg": "rgb(36, 59, 99)",
+        "fill": "rgb(36, 59, 99)",
+        "fillBottom": 793,
+        "rowHeight": 44
+      }
+    ],
+    "physicalIphone": false
+  },
+  "baselineRecordedFailures": 33,
+  "verifierCommand": "MOBILE_POLISH_ONLY=true MOBILE_NAV_EVIDENCE=<evidence-directory> node scripts/verify-mobile-visuals.mjs",
+  "reviewOrigin": "http://localhost:3000/my-work",
+  "limitations": [
+    "Chromium emulation; no new physical iPhone/Safari approval",
+    "Software keyboard not verified",
+    "Short landscape composer uses pane scrolling"
+  ],
+  "noPush": true,
+  "noDeployment": true,
+  "noHostedMutations": true
+}
