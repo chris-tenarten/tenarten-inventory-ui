@@ -1,5 +1,12 @@
 // Actual exported application; synthetic local fixture only. No hosted traffic.
 import assert from 'node:assert/strict';
+import { SPARK_PLAYBACK_RATE, STEEL_SPLIT_START_MS, SPARK_SLOWDOWN_EXTRA_MS, REVEAL_DURATION_MS, revealPlaybackTime } from '../src/lib/welcome-reveal-timing.mjs';
+assert.equal(SPARK_PLAYBACK_RATE, 0.6);
+assert.equal(revealPlaybackTime(1000), 600);
+assert.equal(revealPlaybackTime(STEEL_SPLIT_START_MS / SPARK_PLAYBACK_RATE), STEEL_SPLIT_START_MS);
+assert.equal(revealPlaybackTime(REVEAL_DURATION_MS), 3500);
+assert(Math.abs(revealPlaybackTime(STEEL_SPLIT_START_MS / SPARK_PLAYBACK_RATE + 100) - STEEL_SPLIT_START_MS - 100) < 1e-9);
+assert(Math.abs(SPARK_SLOWDOWN_EXTRA_MS - 1086.666666666667) < 1e-9);
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {chromium,expect} from '@playwright/test';
 import {session,userId} from './support/wave4-fixture.mjs';

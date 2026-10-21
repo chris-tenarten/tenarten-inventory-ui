@@ -1,9 +1,41 @@
-import assert from 'node:assert/strict';import{writeFileSync}from'node:fs';import{chromium,expect}from'@playwright/test';
-const browser=await chromium.launch(),context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true}),page=await context.newPage(),dir='docs/mobile-early-access/screenshots';const checks=[];
+import assert from 'node:assert/strict';import{mkdirSync,writeFileSync}from'node:fs';import{chromium,expect}from'@playwright/test';
+const browser=await chromium.launch({channel:'chrome'}),context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true}),page=await context.newPage(),dir='docs/mobile-early-access/screenshots';const checks=[];
 const shot=name=>page.screenshot({path:`${dir}/${name}.png`});
 const luminance=rgb=>rgb.match(/[\d.]+/g).slice(0,3).map(Number).map(x=>{const c=x/255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4;}).reduce((n,c,i)=>n+c*[.2126,.7152,.0722][i],0);
 async function contrast(selector){const colors=await page.locator(selector).evaluate(e=>({fg:getComputedStyle(e).color,bg:getComputedStyle(e).backgroundColor}));const a=luminance(colors.fg),b=luminance(colors.bg);assert((Math.max(a,b)+.05)/(Math.min(a,b)+.05)>=4.5,JSON.stringify(colors));}
 try{
+
+ if(process.env.MOBILE_NAV_ONLY==='true'){
+  const origin=process.env.MOBILE_REVIEW_ORIGIN||'http://localhost:3000',out=process.env.MOBILE_NAV_EVIDENCE||'output/mobile-nav';mkdirSync(out,{recursive:true});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await context.addInitScript(()=>sessionStorage.setItem('tenops.welcomeHeroPlayed:00000000-0000-4000-8000-000000900041','true'));
+  await page.goto(origin+'/');const nav=page.locator('[data-mobile-navigation]'),msg=page.getByRole('button',{name:'Messaging',exact:true});await expect(nav).toBeVisible();
+  await expect(page.locator('[data-performance-announcement]')).toHaveCount(0);await expect(page.getByRole('button',{name:"What's New in TenOps",exact:true})).toHaveCount(0);
+  await expect(page.locator('[data-account-notifications]')).toBeVisible();
+  const cd=await context.newCDPSession(page),measurements=[];
+  for(const [width,height,bottom,left,right] of [[375,667,0,0,0],[375,812,34,0,0],[390,844,34,0,0],[393,852,34,0,0],[430,932,34,0,0],[667,375,0,0,0],[812,375,21,44,44],[844,390,21,47,47],[932,430,21,59,59]]){
+   await page.setViewportSize({width,height});await cd.send('Emulation.setSafeAreaInsetsOverride',{insets:{top:0,bottom,left,right}});
+   for(const display of ['compact','default','large']){
+    await page.evaluate(v=>document.documentElement.dataset.displaySize=v,display);await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+    const n=await nav.boundingBox(),m=await msg.boundingBox();assert(Math.abs(n.height-(53+bottom))<1);assert(Math.abs(n.y+n.height-height)<1);
+    for(const item of [nav.getByRole('link',{name:'Jobs',exact:true}),nav.getByRole('link',{name:'My Work',exact:true}),msg,nav.getByRole('button',{name:'More',exact:true})]){
+     const b=await item.boundingBox();assert.equal(b.height,52);assert(b.width>=44);assert(b.x>=left&&b.x+b.width<=width-right+.5);assert(Math.abs(b.y+b.height-(height-bottom))<1);
+     assert(await item.evaluate(el=>{const b=el.getBoundingClientRect();return el.contains(document.elementFromPoint(b.x+b.width/2,b.y+b.height/2));}));
+    }
+    assert(Math.abs(m.y-(n.y+1))<1);
+    const css=await page.evaluate(()=>({bodyPadding:getComputedStyle(document.body).paddingBottom,mainPadding:parseFloat(getComputedStyle(document.querySelector('main')).paddingBottom),scale:visualViewport.scale,overflow:document.documentElement.scrollWidth>innerWidth}));assert.equal(css.bodyPadding,'0px');assert.equal(css.mainPadding,61+bottom);assert.equal(css.scale,1);assert(!css.overflow);
+    measurements.push({width,height,bottom,left,right,display,nav:n,messages:m,...css});
+   }
+   await page.screenshot({path:out+'/'+width+'x'+height+'.png'});
+  }
+  await page.setViewportSize({width:390,height:844});await cd.send('Emulation.setSafeAreaInsetsOverride',{insets:{top:47,bottom:34,left:0,right:0}});
+  await nav.getByRole('button',{name:'More',exact:true}).click();const more=page.getByRole('dialog',{name:'More destinations'});await expect(more).toBeVisible();await page.getByRole('button',{name:'Close More',exact:true}).click();await expect(more).toHaveCount(0);
+  await nav.getByRole('link',{name:'My Work',exact:true}).click();await expect(page).toHaveURL(/my-work/);await expect(nav.getByRole('link',{name:'My Work',exact:true})).toHaveAttribute('aria-current','page');await nav.getByRole('link',{name:'Jobs',exact:true}).click();await expect(page).toHaveURL(origin+'/');
+  await msg.click();await expect(page.locator('#my-work-inbox-title')).toBeVisible();await page.getByRole('button',{name:'Close Inbox',exact:true}).click();
+  await nav.getByRole('button',{name:'More',exact:true}).click();await more.getByRole('link',{name:'Contacts',exact:true}).click();await expect(page).toHaveURL(/contacts/);await expect(nav.getByRole('button',{name:'More',exact:true})).toHaveAttribute('aria-current','page');await expect(nav.getByRole('button',{name:'More',exact:true})).toHaveJSProperty('offsetHeight',52);await page.screenshot({path:out+'/selected-more.png'});
+  await page.evaluate(()=>{window.dispatchEvent(new Event('focus'));document.dispatchEvent(new Event('visibilitychange'));});await expect(page.locator('div[data-welcome-hero]')).toHaveCount(0);
+  assert.deepEqual(errors,[]);writeFileSync(out+'/validation.json',JSON.stringify({measurements,checks:['27 viewport/inset/display-size combinations','52px touch rows with aligned Messages slot','selected More remains above safe area','single bottom content inset','Jobs/My Work/More/Contacts/Messages navigation preserved','announcement absent and bell retained','no refocus startup replay'],errors,physicalIphone:false},null,2));console.log('PASS 27 mobile layout combinations and focused navigation checks');
+ }else{
  await page.clock.setFixedTime(new Date('2026-10-20T12:00:00Z'));await page.goto('http://localhost:3020');await expect(page.getByRole('button',{name:'Open Wave Job 0',exact:true})).toBeVisible();await expect(page.getByRole('button',{name:/Open Job Updates for LOCAL-0/}).first()).toBeVisible();await shot('jobs-portrait');
  const msg=page.getByRole('button',{name:'Messaging',exact:true});const box=await msg.boundingBox();assert(await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.closest('button')?.getAttribute('aria-label')==='Messaging',{x:box.x+box.width/2,y:box.y+box.height/2}));checks.push('Messages visible and receives touch in its bottom navigation slot');
  await page.getByRole('button',{name:'More',exact:true}).click();await contrast('.mobile-more');await shot('more-portrait');await page.getByRole('button',{name:'Close More'}).click();
@@ -12,4 +44,5 @@ try{
  await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'Overview',exact:true}).click();await page.getByRole('button',{name:'Open Wave Job 0',exact:true}).click();await expect(page.locator('[data-mobile-detail]')).toBeVisible();await shot('inspector-light');await page.evaluate(()=>document.documentElement.dataset.appearance='dark');await shot('inspector-portrait');await page.setViewportSize({width:844,height:390});await shot('inspector-landscape');await page.getByRole('button',{name:'Close',exact:true}).click();checks.push('Actual Job Inspector portrait/landscape screenshots');
  await page.setViewportSize({width:390,height:844});await page.goto('http://localhost:3020/pre-production');await page.getByRole('button',{name:'Planning',exact:true}).click();await page.getByRole('button',{name:'Open full-screen Timeline'}).click();await page.getByRole('button',{name:'Select Mobile Bid Project 0',exact:true}).click();await page.locator('.mobile-timeline').getByRole('button',{name:'Locate',exact:true}).click();await contrast('.mobile-timeline');await shot('bids-timeline-portrait');await page.getByRole('button',{name:'Exit',exact:true}).click();checks.push('Bids uses the same themed surface and fixed bar labels');
  writeFileSync('docs/mobile-early-access/visuals.json',JSON.stringify({checks,physicalIPhone:false},null,2));console.log(checks.join('\n'));
+}
 }finally{await browser.close();}

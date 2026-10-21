@@ -1,0 +1,1057 @@
+{
+  "baseline": "2d1ea4e7a2c3b93dc19b6176623def3ff1995cf4",
+  "acceptedSparks": "59381a83f9540baff3134a41b4c807ee16ef9570",
+  "riskTier": 2,
+  "testingLevel": 2,
+  "productionBuildIncludingTypescript": "passed",
+  "targetedEslint": "passed",
+  "diffCheck": "passed",
+  "acceptedSparksSourceIdentity": "four accepted source/verifier files match 59381a8 exactly",
+  "baselineMeasurements": [
+    {
+      "display": "default",
+      "viewport": {
+        "innerHeight": 844,
+        "innerWidth": 390,
+        "visual": {
+          "height": 844,
+          "width": 390,
+          "scale": 1,
+          "offsetTop": 0
+        }
+      },
+      "nav": {
+        "tag": "NAV",
+        "text": "JobsMy WorkMore",
+        "top": 749,
+        "bottom": 844,
+        "width": 390,
+        "height": 95,
+        "padding": "0px 0px 34px",
+        "transform": "none",
+        "zoom": "1",
+        "lineHeight": "24px",
+        "fontSize": "16px",
+        "position": "fixed"
+      },
+      "tabs": [
+        {
+          "tag": "A",
+          "text": "Jobs",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "16.5px",
+          "fontSize": "11px",
+          "position": "static"
+        },
+        {
+          "tag": "A",
+          "text": "My Work",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "16.5px",
+          "fontSize": "11px",
+          "position": "static"
+        },
+        {
+          "tag": "SPAN",
+          "text": "",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "24px",
+          "fontSize": "16px",
+          "position": "static"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "More",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "16.5px",
+          "fontSize": "11px",
+          "position": "static"
+        }
+      ],
+      "messages": {
+        "tag": "DIV",
+        "text": "MessagesRecent messagesNo conversations yet.Open full MessagingMessage sidebar",
+        "top": 750,
+        "bottom": 810,
+        "width": 97.5,
+        "height": 60,
+        "padding": "0px",
+        "transform": "none",
+        "zoom": "1",
+        "lineHeight": "24px",
+        "fontSize": "16px",
+        "position": "fixed"
+      },
+      "bodyPadding": "47px 0px 34px",
+      "mainPadding": "98px"
+    },
+    {
+      "display": "compact",
+      "viewport": {
+        "innerHeight": 844,
+        "innerWidth": 390,
+        "visual": {
+          "height": 844,
+          "width": 390,
+          "scale": 1,
+          "offsetTop": 0
+        }
+      },
+      "nav": {
+        "tag": "NAV",
+        "text": "JobsMy WorkMore",
+        "top": 749,
+        "bottom": 844,
+        "width": 390,
+        "height": 95,
+        "padding": "0px 0px 34px",
+        "transform": "none",
+        "zoom": "1",
+        "lineHeight": "24px",
+        "fontSize": "16px",
+        "position": "fixed"
+      },
+      "tabs": [
+        {
+          "tag": "A",
+          "text": "Jobs",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "16.5px",
+          "fontSize": "11px",
+          "position": "static"
+        },
+        {
+          "tag": "A",
+          "text": "My Work",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "16.5px",
+          "fontSize": "11px",
+          "position": "static"
+        },
+        {
+          "tag": "SPAN",
+          "text": "",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "24px",
+          "fontSize": "16px",
+          "position": "static"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "More",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "16.5px",
+          "fontSize": "11px",
+          "position": "static"
+        }
+      ],
+      "messages": {
+        "tag": "DIV",
+        "text": "MessagesRecent messagesNo conversations yet.Open full MessagingMessage sidebar",
+        "top": 750,
+        "bottom": 810,
+        "width": 97.5,
+        "height": 60,
+        "padding": "0px",
+        "transform": "none",
+        "zoom": "1",
+        "lineHeight": "24px",
+        "fontSize": "16px",
+        "position": "fixed"
+      },
+      "bodyPadding": "47px 0px 34px",
+      "mainPadding": "98px"
+    },
+    {
+      "display": "large",
+      "viewport": {
+        "innerHeight": 844,
+        "innerWidth": 390,
+        "visual": {
+          "height": 844,
+          "width": 390,
+          "scale": 1,
+          "offsetTop": 0
+        }
+      },
+      "nav": {
+        "tag": "NAV",
+        "text": "JobsMy WorkMore",
+        "top": 749,
+        "bottom": 844,
+        "width": 390,
+        "height": 95,
+        "padding": "0px 0px 34px",
+        "transform": "none",
+        "zoom": "1",
+        "lineHeight": "24px",
+        "fontSize": "16px",
+        "position": "fixed"
+      },
+      "tabs": [
+        {
+          "tag": "A",
+          "text": "Jobs",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "16.5px",
+          "fontSize": "11px",
+          "position": "static"
+        },
+        {
+          "tag": "A",
+          "text": "My Work",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "16.5px",
+          "fontSize": "11px",
+          "position": "static"
+        },
+        {
+          "tag": "SPAN",
+          "text": "",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "24px",
+          "fontSize": "16px",
+          "position": "static"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "More",
+          "top": 750,
+          "bottom": 810,
+          "width": 97.5,
+          "height": 60,
+          "padding": "0px",
+          "transform": "none",
+          "zoom": "1",
+          "lineHeight": "16.5px",
+          "fontSize": "11px",
+          "position": "static"
+        }
+      ],
+      "messages": {
+        "tag": "DIV",
+        "text": "MessagesRecent messagesNo conversations yet.Open full MessagingMessage sidebar",
+        "top": 750,
+        "bottom": 810,
+        "width": 97.5,
+        "height": 60,
+        "padding": "0px",
+        "transform": "none",
+        "zoom": "1",
+        "lineHeight": "24px",
+        "fontSize": "16px",
+        "position": "fixed"
+      },
+      "bodyPadding": "47px 0px 34px",
+      "mainPadding": "98px"
+    }
+  ],
+  "layout": {
+    "measurements": [
+      {
+        "width": 375,
+        "height": 667,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "display": "compact",
+        "nav": {
+          "x": 0,
+          "y": 614,
+          "width": 375,
+          "height": 53
+        },
+        "messages": {
+          "x": 187.5,
+          "y": 615,
+          "width": 93.75,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 61,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 375,
+        "height": 667,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "display": "default",
+        "nav": {
+          "x": 0,
+          "y": 614,
+          "width": 375,
+          "height": 53
+        },
+        "messages": {
+          "x": 187.5,
+          "y": 615,
+          "width": 93.75,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 61,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 375,
+        "height": 667,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "display": "large",
+        "nav": {
+          "x": 0,
+          "y": 614,
+          "width": 375,
+          "height": 53
+        },
+        "messages": {
+          "x": 187.5,
+          "y": 615,
+          "width": 93.75,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 61,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 375,
+        "height": 812,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "compact",
+        "nav": {
+          "x": 0,
+          "y": 725,
+          "width": 375,
+          "height": 87
+        },
+        "messages": {
+          "x": 187.5,
+          "y": 726,
+          "width": 93.75,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 375,
+        "height": 812,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "default",
+        "nav": {
+          "x": 0,
+          "y": 725,
+          "width": 375,
+          "height": 87
+        },
+        "messages": {
+          "x": 187.5,
+          "y": 726,
+          "width": 93.75,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 375,
+        "height": 812,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "large",
+        "nav": {
+          "x": 0,
+          "y": 725,
+          "width": 375,
+          "height": 87
+        },
+        "messages": {
+          "x": 187.5,
+          "y": 726,
+          "width": 93.75,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "compact",
+        "nav": {
+          "x": 0,
+          "y": 757,
+          "width": 390,
+          "height": 87
+        },
+        "messages": {
+          "x": 195,
+          "y": 758,
+          "width": 97.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "default",
+        "nav": {
+          "x": 0,
+          "y": 757,
+          "width": 390,
+          "height": 87
+        },
+        "messages": {
+          "x": 195,
+          "y": 758,
+          "width": 97.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "large",
+        "nav": {
+          "x": 0,
+          "y": 757,
+          "width": 390,
+          "height": 87
+        },
+        "messages": {
+          "x": 195,
+          "y": 758,
+          "width": 97.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 393,
+        "height": 852,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "compact",
+        "nav": {
+          "x": 0,
+          "y": 765,
+          "width": 393,
+          "height": 87
+        },
+        "messages": {
+          "x": 196.5,
+          "y": 766,
+          "width": 98.25,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 393,
+        "height": 852,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "default",
+        "nav": {
+          "x": 0,
+          "y": 765,
+          "width": 393,
+          "height": 87
+        },
+        "messages": {
+          "x": 196.5,
+          "y": 766,
+          "width": 98.25,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 393,
+        "height": 852,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "large",
+        "nav": {
+          "x": 0,
+          "y": 765,
+          "width": 393,
+          "height": 87
+        },
+        "messages": {
+          "x": 196.5,
+          "y": 766,
+          "width": 98.25,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 430,
+        "height": 932,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "compact",
+        "nav": {
+          "x": 0,
+          "y": 845,
+          "width": 430,
+          "height": 87
+        },
+        "messages": {
+          "x": 215,
+          "y": 846,
+          "width": 107.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 430,
+        "height": 932,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "default",
+        "nav": {
+          "x": 0,
+          "y": 845,
+          "width": 430,
+          "height": 87
+        },
+        "messages": {
+          "x": 215,
+          "y": 846,
+          "width": 107.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 430,
+        "height": 932,
+        "bottom": 34,
+        "left": 0,
+        "right": 0,
+        "display": "large",
+        "nav": {
+          "x": 0,
+          "y": 845,
+          "width": 430,
+          "height": 87
+        },
+        "messages": {
+          "x": 215,
+          "y": 846,
+          "width": 107.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 95,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 667,
+        "height": 375,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "display": "compact",
+        "nav": {
+          "x": 0,
+          "y": 322,
+          "width": 667,
+          "height": 53
+        },
+        "messages": {
+          "x": 333.5,
+          "y": 323,
+          "width": 166.75,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 61,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 667,
+        "height": 375,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "display": "default",
+        "nav": {
+          "x": 0,
+          "y": 322,
+          "width": 667,
+          "height": 53
+        },
+        "messages": {
+          "x": 333.5,
+          "y": 323,
+          "width": 166.75,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 61,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 667,
+        "height": 375,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "display": "large",
+        "nav": {
+          "x": 0,
+          "y": 322,
+          "width": 667,
+          "height": 53
+        },
+        "messages": {
+          "x": 333.5,
+          "y": 323,
+          "width": 166.75,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 61,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 812,
+        "height": 375,
+        "bottom": 21,
+        "left": 44,
+        "right": 44,
+        "display": "compact",
+        "nav": {
+          "x": 0,
+          "y": 301,
+          "width": 812,
+          "height": 74
+        },
+        "messages": {
+          "x": 406,
+          "y": 302,
+          "width": 181,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 82,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 812,
+        "height": 375,
+        "bottom": 21,
+        "left": 44,
+        "right": 44,
+        "display": "default",
+        "nav": {
+          "x": 0,
+          "y": 301,
+          "width": 812,
+          "height": 74
+        },
+        "messages": {
+          "x": 406,
+          "y": 302,
+          "width": 181,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 82,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 812,
+        "height": 375,
+        "bottom": 21,
+        "left": 44,
+        "right": 44,
+        "display": "large",
+        "nav": {
+          "x": 0,
+          "y": 301,
+          "width": 812,
+          "height": 74
+        },
+        "messages": {
+          "x": 406,
+          "y": 302,
+          "width": 181,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 82,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 844,
+        "height": 390,
+        "bottom": 21,
+        "left": 47,
+        "right": 47,
+        "display": "compact",
+        "nav": {
+          "x": 0,
+          "y": 316,
+          "width": 844,
+          "height": 74
+        },
+        "messages": {
+          "x": 422,
+          "y": 317,
+          "width": 187.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 82,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 844,
+        "height": 390,
+        "bottom": 21,
+        "left": 47,
+        "right": 47,
+        "display": "default",
+        "nav": {
+          "x": 0,
+          "y": 316,
+          "width": 844,
+          "height": 74
+        },
+        "messages": {
+          "x": 422,
+          "y": 317,
+          "width": 187.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 82,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 844,
+        "height": 390,
+        "bottom": 21,
+        "left": 47,
+        "right": 47,
+        "display": "large",
+        "nav": {
+          "x": 0,
+          "y": 316,
+          "width": 844,
+          "height": 74
+        },
+        "messages": {
+          "x": 422,
+          "y": 317,
+          "width": 187.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 82,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 932,
+        "height": 430,
+        "bottom": 21,
+        "left": 59,
+        "right": 59,
+        "display": "compact",
+        "nav": {
+          "x": 0,
+          "y": 356,
+          "width": 932,
+          "height": 74
+        },
+        "messages": {
+          "x": 466,
+          "y": 357,
+          "width": 203.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 82,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 932,
+        "height": 430,
+        "bottom": 21,
+        "left": 59,
+        "right": 59,
+        "display": "default",
+        "nav": {
+          "x": 0,
+          "y": 356,
+          "width": 932,
+          "height": 74
+        },
+        "messages": {
+          "x": 466,
+          "y": 357,
+          "width": 203.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 82,
+        "scale": 1,
+        "overflow": false
+      },
+      {
+        "width": 932,
+        "height": 430,
+        "bottom": 21,
+        "left": 59,
+        "right": 59,
+        "display": "large",
+        "nav": {
+          "x": 0,
+          "y": 356,
+          "width": 932,
+          "height": 74
+        },
+        "messages": {
+          "x": 466,
+          "y": 357,
+          "width": 203.5,
+          "height": 52
+        },
+        "bodyPadding": "0px",
+        "mainPadding": 82,
+        "scale": 1,
+        "overflow": false
+      }
+    ],
+    "checks": [
+      "27 viewport/inset/display-size combinations",
+      "52px touch rows with aligned Messages slot",
+      "selected More remains above safe area",
+      "single bottom content inset",
+      "Jobs/My Work/More/Contacts/Messages navigation preserved",
+      "announcement absent and bell retained",
+      "no refocus startup replay"
+    ],
+    "errors": [],
+    "physicalIphone": false
+  },
+  "startup": {
+    "target": "tenops",
+    "origin": "http://localhost:3373",
+    "actualServedBundle": false,
+    "checks": [
+      "full sequence, 888 ms hold and continuous mounted entrance",
+      "desktop skip, editable-space guard, keyboard access and session replay protection",
+      "mobile tap skip and small viewport",
+      "reduced motion has no sparks or decorative hold"
+    ],
+    "reducedEvidence": [
+      {
+        "media": true,
+        "loadAt": 59,
+        "trace": [
+          {
+            "at": 5.800000004470348,
+            "phase": "absent",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 88,
+            "phase": "opening",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 126,
+            "phase": "opening",
+            "ready": true,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 580,
+            "phase": "entrance",
+            "ready": true,
+            "skip": false,
+            "terrazzoVisible": false
+          },
+          {
+            "at": 757,
+            "phase": "absent",
+            "ready": false,
+            "skip": false,
+            "terrazzoVisible": false
+          }
+        ],
+        "readyToEntranceMs": 631,
+        "dismissedBeforeLoad": false,
+        "controlledArtworkDelayMs": 0
+      }
+    ],
+    "holdTimingsMs": [
+      902
+    ],
+    "acceptedHoldMs": 888,
+    "pageErrors": [],
+    "unexpectedExternal": [],
+    "controlledSyntheticBackend": true,
+    "authAndDataIntercepted": true,
+    "backendRequestsForwarded": 0,
+    "hostedBusinessWrites": 0,
+    "physicalFocusTest": false,
+    "liveAccountTest": false
+  },
+  "legacyAnnouncementBuildHits": [],
+  "reviewOrigin": "http://localhost:3000/__review/",
+  "hostedAccountsCreated": 0,
+  "hostedBusinessWrites": 0,
+  "pushed": false,
+  "deployed": false,
+  "limitations": [
+    "Chrome touch/safe-area emulation, not physical iPhone Safari certification.",
+    "No live account/device Web Push send test; corresponding source is unchanged."
+  ]
+}

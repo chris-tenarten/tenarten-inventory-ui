@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { revealPlaybackTime } from "@/lib/welcome-reveal-timing.mjs";
 import { createWelcomeSparks } from "./welcome-sparks.mjs";
 
 // iTenify's three opaque plate exits and bounded spark field, registered to
@@ -9,6 +10,8 @@ import { createWelcomeSparks } from "./welcome-sparks.mjs";
 export default function TerrazzoReveal({ elapsed, active, onAssetError }: {
   elapsed: number; active: boolean; onAssetError: () => void;
 }) {
+  // Plate exits resume at their original speed after the slowed cutting phase.
+  elapsed = revealPlaybackTime(elapsed);
   const root = useRef<HTMLDivElement>(null);
   const mark = useRef<HTMLDivElement>(null);
   const front = useRef<HTMLCanvasElement>(null);
