@@ -10,10 +10,18 @@ Implementation state, in descending order: actual repository and Git state; narr
 
 Chris alone approves material product/UX decisions, migration application, Production data mutation, destructive operations, privacy/RBAC policy changes, pushing or releasing `main`, Production deployment, external announcements, and major scope expansion.
 
+## Continuity and scoped execution
+
+- Start with this file, `docs/project/PROJECT_MANIFEST.md`, and `docs/project-memory/CURRENT_STATE.md`; use `docs/README.md` for task-specific references. Keep Product Canon in the manifest and focused dated decisions, engineering practice in the execution standard, and verified status in Current State. Do not create another bootstrap or parallel memory system.
+- Product/Architecture owns intended behavior, priorities and acceptance; implementation establishes what code and verified hosted systems actually do. Carry the relevant advisory decision/date/reference into the compact handoff in `docs/project/ENGINEERING_EXECUTION_STANDARD.md`. If the advisory thread is unavailable, state the missing context rather than reconstructing decisions from code or a transcript dump.
+- Default workflow: **prompt → iterate → approve → release**. Complete authorized scoped work and resolve routine engineering choices without repeated permission requests. Ask for unresolved Product decisions, changed scope or an action outside existing authorization. Candidate acceptance is not migration, push or deployment authorization.
+- Label work as proposed, implemented, accepted, deployed or deferred using the execution standard; include the exact boundary and evidence. Preserve historical receipts and add supersession links instead of rewriting their original claims.
+
 ## Working-tree and release discipline
 
 - Inspect branch, status, relevant source, migrations, and release boundary first.
 - Preserve unrelated dirty work. Do not discard, rewrite, stage, or commit it.
+- Reuse a suitable workspace and existing verifier/fixture before creating another. Record task-owned artifacts and review-server ports. Retire only authorized, verified disposable files/processes after checking live use, dependencies, unique history and evidence; skip ambiguous targets. Do not blanket-clean or hide the evidence directory.
 - Dev may intentionally contain unreleased work. Promote only an approved boundary; selective cherry-pick is valid. Never merge `dev` wholesale merely because it is ahead.
 - Do not commit, push, deploy, apply migrations, or mutate hosted data without the applicable authorization.
 - Chris's manual candidate review uses the actual TenOps application at `http://localhost:3000`. Reserve arbitrary ports for internal validation. Inspect port 3000 ownership before replacing a process; stop only a confirmed obsolete TenOps process. Use a safe functional review data source and validate the exact `localhost` origin, including library loading, creation and document generation. Explain any necessary port exception.

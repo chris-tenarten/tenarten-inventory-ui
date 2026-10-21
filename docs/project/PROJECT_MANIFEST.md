@@ -3,7 +3,7 @@
 TenOps models operations, not software. The application should evolve around how work moves through the business rather than around isolated screens, tables, or features.
 
 > **Canonical project constitution**
-> Read this document before planning, reviewing, or implementing TenOps work. Then inspect the current repository and relevant live schema. This document defines durable product intent and engineering direction; source code and migrations define implemented behavior.
+> Read this document before planning, reviewing, or implementing TenOps work. Then inspect the current repository and relevant live schema. This document defines durable product intent and engineering direction; Git/source and narrowly verified hosted state establish implemented and deployed behavior.
 
 Implementation passes also follow [`ENGINEERING_EXECUTION_STANDARD.md`](./ENGINEERING_EXECUTION_STANDARD.md) for autonomous execution, validation, browser testing, migration discipline, and completion reporting.
 
@@ -16,6 +16,12 @@ TenOps is not a generic ERP, project-management clone, low-code builder, or recr
 Use the authority and evidence hierarchy in the repository-root [`AGENTS.md`](../../AGENTS.md). In short: Chris and the canonical Product/Architecture context own current product intent; repository/Git state and narrowly verified hosted behavior own implementation reality; this manifest defines enduring product and architecture direction. Historical notes and conversation summaries are evidence, not authority.
 
 Identify discrepancies before extending the system. Do not preserve stale behavior merely because an older document describes it.
+
+### Product Canon and advisory context
+
+This manifest owns enduring Product Canon: operational purpose, accepted principles and domain boundaries. Focused dated decisions own scoped acceptance; [Current State](../project-memory/CURRENT_STATE.md) indexes present priorities, deployed work and deferred boundaries. Do not duplicate their receipts here.
+
+Product/Architecture decides intended behavior, priorities and acceptance; Codex resolves engineering choices within the authorized contract and reports implementation evidence. Capture the relevant decision/date/reference, scope and acceptance criteria from **TenOps — Advisory & Implementation** using the [compact handoff](ENGINEERING_EXECUTION_STANDARD.md#compact-handoff-and-status). If that context is unavailable, identify the gap. Historical notes and implemented behavior do not manufacture Product approval.
 
 ## 2. Vision
 
@@ -76,7 +82,7 @@ Current users include office administrators, production planners, warehouse staf
 - **Shop display:** future simplified weekly production board with minimal interaction and strong distance readability.
 - **Leadership mobile:** future purpose-built status, risk, and KPI experience rather than a responsive copy of desktop tables.
 
-The abandoned responsive/PWA experiment is not part of the product. Future mobile work begins with task-specific information architecture, not a squeezed desktop UI.
+The earlier abandoned responsive/PWA experiment is historical. Subsequent accepted Mobile Early Access and Web Push work are recorded in Current State and their dated receipts. Continue task-specific mobile information architecture while preserving desktop capability; broader phone parity remains outside that accepted scope.
 
 ## 5. Operational workflow model
 
@@ -124,7 +130,7 @@ Total hours derive from AM plus PM and are not stored. Client-side search covers
 
 Job attachments are private storage objects with relational metadata. Users can upload multiple files, open and remove them, and access them through the shared Inspector. Attachment counts remain visible near job identity.
 
-Purchase Orders, Proposals, and Transmittals are implemented structured document domains. Draft/preview behavior is separated from immutable issuance/history and retryable private PDF generation where applicable. Generic Proposal creation can exist independently of a Production Job and must be reused by future Pre-Production work. A generic Sample Form Generator remains planned and must not be implemented before its Product Acceptance Contract.
+Purchase Orders, Proposals, and Transmittals are implemented structured document domains. Draft/preview behavior is separated from immutable issuance/history and retryable private PDF generation where applicable. Generic Proposal creation can exist independently of a Production Job and must be reused by future Pre-Production work. Samples and Batch/Working Pour tooling now exist under later scoped decisions. Reuse those domains; new Bid/Sample lifecycle changes still require the applicable Product Acceptance Contract. Historical discovery holds do not erase subsequently accepted scope.
 
 ### Operational reporting
 
@@ -188,7 +194,7 @@ Inventory is implemented primarily in `src/app/inventory/page.tsx`, coordinating
 
 ### Manpower module
 
-`src/modules/manpower` owns types, Supabase helpers, and workspace behavior. Entries load as one report collection; filtering, grouping, and totals are client-derived.
+`src/modules/manpower` owns types, Supabase helpers, and workspace behavior. Selected-period data and complete historical groups load progressively under the accepted retrieval contract; filtering, grouping and totals must preserve complete authorized coverage.
 
 ### Shared shell and access gate
 
@@ -337,7 +343,7 @@ Status badges, Timeline bars, and legends use shared mappings. On Hold uses a st
 
 ### Responsive direction
 
-Desktop remains authoritative. Tablet receives deliberate future adaptations. Phone becomes a leadership/light-action experience. Do not remove desktop capability for superficial mobile compatibility.
+Desktop supports dense operational work; accepted mobile workflows have their own task-focused navigation and interaction. Tablet and broader leadership/phone capabilities require scoped Product decisions. Do not remove desktop capability for superficial mobile compatibility.
 
 ### Production interaction standards
 
@@ -444,18 +450,7 @@ Evaluate future Production work against these standards before adding workflows 
 
 Verification is proportional to risk and distinguishes inspection from runtime proof.
 
-Baseline Production commands:
-
-```text
-npm run build
-npm run lint
-node scripts/verify-production-update-normalization.mjs
-node scripts/verify-production-schedule-staging.mjs
-git diff --check
-git status --short
-```
-
-Run targeted ESLint on changed TypeScript. Repository-wide lint currently has known `react-hooks/set-state-in-effect` baseline findings and image warnings; report them without broadening scoped work to fix them.
+Use the risk tiers/testing levels in [AGENTS.md](../../AGENTS.md) and the [execution standard](ENGINEERING_EXECUTION_STANDARD.md#validation-discipline). Select existing verifiers for the changed behavior and adjacent blast radius; do not automatically repeat historical domain gates or broaden lint to unrelated files. Review valid worker evidence before rerunning it. Documentation-only work needs scoped diff, links and factual checks, not builds or application tests. Report unrelated baseline failures without expanding scope.
 
 For behavior changes:
 
@@ -483,31 +478,22 @@ Before commit or promotion:
 
 ## 14. Git and deployment workflow
 
-Normal flow is:
+Follow **prompt → iterate → approve → release** and the authorization boundaries in AGENTS. Inspect actual local/remote refs and intended deployment targets before acting.
 
-```text
-dev → main → Cloudflare Production
-```
-
-- Develop and commit on `dev` unless explicitly directed otherwise.
-- Push and verify `origin/dev` before promotion.
-- Merge `dev` into `main` with a merge commit after verification.
-- Build and run domain verifiers again on `main` before pushing.
-- Cloudflare Production deploys from `main`.
-- Report the full `main` hash expected to deploy; do not claim success without Cloudflare evidence.
-- Never force push, reset, rebase, delete branches, or rewrite history without explicit authorization.
-- Preserve unrelated local work and stage only intended paths.
-- Never commit `.env.local`, credentials, caches, logs, screenshots, or scratch files.
-
-Feature branches are not the default. Use one only when explicitly required.
+- Reuse a suitable clean workspace; isolate work from unrelated dirty or unreleased candidates. Local commits, pushes, migrations and deployments each require the applicable authorization.
+- `dev` may contain intentional unreleased work. Promote only the exact accepted boundary; selective integration is valid. Never merge all of `dev` merely because it is ahead.
+- TenDev and TenOps are separate Cloudflare projects; branding does not establish backend isolation. Verify actual project configuration. Use the specifically approved target/order and required candidate checks.
+- Report canonical Git SHA separately from each deployed runtime SHA, deployment ID and observation date. A documentation-only commit may be ahead of runtime without requiring deployment.
+- Preserve history, recovery refs and unrelated changes. Stage explicit paths; never commit credentials, private configuration or disposable caches. Review generated evidence individually before retaining it.
+- No force push, reset, rebase, branch deletion or destructive cleanup without explicit authorization.
 
 ## 15. Current roadmap
 
-Roadmap order may respond to operational need, but current direction is:
+These are direction and backlog categories, not implementation authorization or a current release ledger. Current priorities and verified status belong in [Current State](../project-memory/CURRENT_STATE.md); scoped later decisions supersede older blanket holds without authorizing unrelated expansion.
 
 ### Near term
 
-1. Define the Pre-Production Bid/Sample Product Acceptance Contract; implementation is not yet authorized.
+1. Resolve outstanding Bid/Sample semantics before new lifecycle work; retain later scoped accepted behavior and closures.
 2. Reuse generic Proposal and Vendor Catalog foundations rather than creating parallel domains.
 3. Continue production stabilization, security verification, and focused regression protection.
 4. Extract Inventory domain logic before substantial receiving/reservation expansion.
@@ -515,7 +501,7 @@ Roadmap order may respond to operational need, but current direction is:
 
 ### Operational expansion
 
-1. Pre-Production Bid pipeline and generic Sample Form generation after Product acceptance.
+1. Further Bid/Sample lifecycle integration only after its Product Acceptance Contract; reuse existing implementations.
 2. Daily Production and configurable output metrics.
 3. Actual-versus-estimated labor and material reporting.
 4. Production KPIs and bottleneck visibility.
@@ -523,9 +509,9 @@ Roadmap order may respond to operational need, but current direction is:
 
 ### Platform maturity
 
-1. Real authentication and RBAC.
-2. Least-privilege RLS and server authorization.
-3. Authenticated actor identity for audit and approvals.
+1. Maintain existing authentication/RBAC and verify remaining least-privilege boundaries.
+2. Extend server authorization only under scoped security review.
+3. Preserve authenticated actor identity and historical audit compatibility.
 4. Dedicated leadership mobile experience.
 5. Tablet-focused workflows.
 6. TV-friendly weekly Shop View with minimal interaction and optional job-file access.
@@ -543,13 +529,9 @@ Roadmap order may respond to operational need, but current direction is:
 
 ### Security
 
-- Client-side access and approval are not secure.
-- Anonymous mutation policies are too permissive.
-- Actor attribution is user-entered rather than authenticated.
-- Letter of Transmittal uses narrowly scoped anonymous RPCs, private
-  canonical/internal tables, sanitized history, and exact-origin CORS. This
-  remains an internal MVP boundary, not caller authentication; Supabase Auth
-  and RBAC are deferred.
+- Auth/RBAC and later enforcement work exist. Older anonymous/client-only MVP descriptions are historical, not current blanket findings.
+- Verify grants, RLS, RPCs, Storage, Realtime and actor attribution for the actual target and changed surface; implementation or migration-ledger presence alone proves neither deployment nor security.
+- Client-side gates and CORS are not authorization. Preserve participant privacy; administrative lifecycle authority is not permission to read private content routinely.
 
 ### Application structure
 
@@ -564,16 +546,18 @@ Roadmap order may respond to operational need, but current direction is:
 - Live schema history predates checked-in migrations; inspection remains essential.
 - Material readiness is broad job state rather than derived requirements.
 - Labor intensity uses inclusive calendar days without capacity, holiday, or planned-workday modeling.
-- Some planned forms, including the generic Sample Form, remain unimplemented; Proposal, Purchase Order, and Transmittal foundations are implemented.
-- Permanent deletion lacks authenticated, dependency-aware durable audit.
+- Reuse implemented document/Sample foundations; resolve remaining lifecycle relationships through scoped Product contracts.
+- Destructive lifecycle controls are domain-specific; inspect dependencies, participant privacy and durable audit rather than generalizing one module's cleanup authority.
 
 ### UX
 
 - Desktop is stronger than tablet and phone.
-- Manpower group-name editing needs accessible contrast.
-- A dedicated polish pass should reduce border weight, nested boxes, and inconsistent hierarchy without redesigning workflows.
+- Historical UI observations need reproduction against the current accepted interface before being treated as open defects.
+- Further polish should preserve accepted workflow, density and hierarchy within an explicit scope.
 
 ## 17. Working agreements
+
+Use the compact handoff and **prompt → iterate → approve → release** workflow in the execution standard. Resolve routine authorized engineering choices without repeated permission requests; escalate material Product ambiguity or actions outside authorization. Candidate acceptance does not authorize release.
 
 Before work:
 
@@ -592,6 +576,7 @@ While working:
 - never apply migrations to an unidentified environment
 - prefer forward fixes over rewriting applied history
 - update docs only when identity, architecture, workflow, or reality materially changes
+- reuse workspaces and existing harnesses; record task-owned artifacts/ports and retire only authorized, verified disposable output after dependency/evidence checks
 
 When finishing:
 
@@ -613,4 +598,6 @@ Keep separate only documents that benefit from focused detail:
 - complex workflow specifications too detailed for this constitution
 - durable architecture decision records for consequential tradeoffs
 
-When a separate document conflicts with this manifest or current implementation, update or retire it. Do not create another bootstrap document. Future context transfer begins with this file and repository inspection.
+Keep one owner per fact: this manifest for enduring direction; `CURRENT_STATE.md` for dated current status; AGENTS for authority/approval boundaries; the execution standard for handoffs and execution; focused dated records for decisions and evidence. `docs/README.md` is the navigation index. Blueprint/Learnings preserve rationale and observations, not a second execution policy.
+
+When guidance conflicts, follow the AGENTS authority hierarchy and reconcile the affected summary. Preserve historical records with dated supersession links and their original evidence limits. Review important untracked receipts for selective retention and sensitivity before adding them; do not delete or commit a whole evidence directory indiscriminately. Do not create another bootstrap document. Future context transfer begins with these existing records and repository inspection.

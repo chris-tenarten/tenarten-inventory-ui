@@ -1,6 +1,23 @@
 # TenOps Engineering Execution Standard
 
-This document defines reusable execution standards for implementation work across TenOps. The Project Manifest remains the product and architecture authority; this document governs how scoped changes are inspected, implemented, validated, and reported.
+This document governs scoped inspection, implementation, validation and reporting. Follow the authority hierarchy in [AGENTS.md](../../AGENTS.md): Chris and Product/Architecture own intended behavior and acceptance; the [Project Manifest](PROJECT_MANIFEST.md) records durable direction; Git/source and narrowly verified hosted state establish implementation reality.
+
+## Compact handoff and status
+
+Reuse the relevant existing decision/candidate/release record. Carry only:
+
+- Objective and approved behavior, with advisory decision/date/reference; name unavailable context.
+- Scope, exclusions, invariants and acceptance criteria.
+- Exact base/candidate SHA, branch/worktree and target environment where relevant.
+- Status, explicit authorization boundary and stop point.
+- Validation actually performed, evidence links and remaining uncertainty.
+- Next action or Product decision, including the responsible owner.
+
+Use precise status claims: **proposed** means not yet implementation-authorized; **implemented** means code exists at the named boundary; **accepted** means Chris accepted the named behavior/candidate; **deployed** requires target, runtime SHA and observed deployment evidence; **deferred** means preserved outside the active scope. These may coexist for different parts of one feature. Acceptance is not deployment permission; migration files may be created, applied and verified at different times. An unmatched branch is not automatically active work.
+
+## Default workflow
+
+**Prompt → iterate → approve → release.** Establish the compact scope/authorization, then complete and validate a concrete candidate. Reuse evidence when still applicable; return the exact candidate and remaining acceptance items. Chris approves material Product decisions and release actions under AGENTS. Execute only the approved release boundary, then update the existing receipt and Current State with actual outcomes. Documentation-only work ends after scoped review and its authorized commit; no application release is implied.
 
 ## Autonomous execution
 
@@ -51,10 +68,10 @@ Repair
   ↓
 Re-run affected validation
   ↓
-One broader validation pass near completion
+Required risk-appropriate completion checks
 ```
 
-Do not repeatedly run the full browser suite or production build after every small edit. Run the broader suite once near completion when practical, then clearly separate new failures from unrelated pre-existing failures.
+Use the testing levels in AGENTS for the delta and adjacent blast radius. Do not repeatedly run full suites or builds after small edits; broaden checks for a concrete dependency or risk. Documentation-only changes need scoped diff, link and factual review, not builds or application tests. Report unrelated baseline failures separately.
 
 Do not automatically rerun a relevant deterministic verifier that a worker already passed. Review the diff, architecture, verifier coverage, and evidence first. Rerun only when evidence is missing, implementation changed afterward, the result is suspicious, security/data risk warrants independent verification, or the exact release candidate requires the check.
 
@@ -65,6 +82,12 @@ Release execution operates on the already accepted candidate. Confirm the exact 
 Schema changes use new forward migrations. Previously applied migrations are immutable. Preserve existing data, ownership, grants, RLS, constraints, canonical relationships, and controlled `search_path` behavior.
 
 Local implementation work may create migration files but must never modify a Production database without Chris's explicit approval. Repository presence does not prove that a migration was applied; completion reports must distinguish created, applied, and verified states. Make migrations safely rerunnable where practical without hiding predecessor incompatibility.
+
+## Workspace and artifact closure
+
+Reuse a suitable existing checkout, review harness and fixture. For new isolation, prefer a sibling worktree outside the repository; inspect its base, branch and dirty state first. Keep raw generated output in task-scoped scratch storage, with task ownership and ports/PIDs recorded.
+
+Keep concise release receipts and selected sanitized evidence; preserve research, dirty work, recovery refs and failed/stopped checkpoints. Review links, shared-helper dependencies, sensitivity and live consumers before proposing adoption, archival or removal. Untracked does not mean disposable. Commit selected explicit paths only when authorized. Retire disposable task output/processes within authorization; skip ambiguous targets and report them. No blanket ignore, clean or prune operation substitutes for review.
 
 ## Completion reporting
 
@@ -77,5 +100,7 @@ Use a consistent completion report containing:
 5. Browser tests and workflows actually exercised
 6. Assumptions
 7. Deferred work or known limitations
+8. Implemented/accepted/deployed status, exact Git/runtime boundaries and next decision
+9. Final workspace state and disposition of task artifacts/processes
 
 Never claim browser testing from code inspection or migration deployment from a checked-in SQL file. Keep the user-facing report concise: acceptance status, material decisions, migration requirement, security/data concerns, validation evidence, remaining Product-level acceptance, and exact approval requested. Do not reproduce routine worker or command transcripts. End with any manual actions required from the user.

@@ -1,35 +1,21 @@
 # TenOps Project Memory
 
-This directory preserves the product, workflow, and data-model context required to evolve TenOps coherently.
-
-The source code and database migrations remain the implementation source of truth. These documents explain the intent behind the implementation, the business workflows it supports, and the principles that should remain stable even when feature order changes.
+Project Memory preserves intent, current reality, business workflows and structure. Reuse these existing owners; this index is not another Product Canon or changelog.
 
 ## Start here
 
-Read in this order:
+1. [AGENTS.md](../AGENTS.md): authority, approval and preservation boundaries.
+2. [Project Manifest](project/PROJECT_MANIFEST.md): compact Product Canon, enduring direction and architecture.
+3. [Current State](project-memory/CURRENT_STATE.md): dated canonical/deployed boundaries, active work, limitations and receipt links. Verify relevant facts before acting.
+4. [Engineering Execution Standard](project/ENGINEERING_EXECUTION_STANDARD.md): compact advisory/implementation handoff, prompt → iterate → approve → release, proportionate checks and workspace closure.
+5. Read only the relevant [workflow](workflows/), [schema](schemas/) and [architecture](architecture/) references, plus scoped decisions or release receipts linked from Current State.
 
-1. `project-memory/BLUEPRINT.md`
-2. `project-memory/CURRENT_STATE.md`
-3. The workflow document relevant to the task
-4. The schema document relevant to the task
-5. `architecture/DATA_MODEL.md`
-6. `architecture/DESIGN_PATTERNS.md`
-7. `project-memory/LEARNINGS.md`
+[Blueprint](project-memory/BLUEPRINT.md) retains product rationale; [Learnings](project-memory/LEARNINGS.md) retains observations. Historical engineering suggestions there yield to AGENTS and the execution standard. [Open Questions](project-memory/OPEN_QUESTIONS.md) records unresolved decisions and dated exceptions; it is not a current release ledger or automatic authorization.
 
-## What belongs here
+## Authority and continuity
 
-Project Memory records four kinds of knowledge:
+Follow the separate Product-intent and implementation-evidence hierarchies in AGENTS. Chris's current decision and the canonical **TenOps — Advisory & Implementation** context govern intent; actual Git/source and narrowly verified hosted state establish implementation reality. A checked-in migration does not prove application, and accepted code does not prove deployment.
 
-- **Identity** — what TenOps is and how it should behave
-- **Reality** — what currently exists
-- **Business workflow** — how work is actually performed
-- **Structure** — how entities, reports, and references relate
+Record only the relevant approved decision, date/reference, scope and acceptance criteria for a handoff. Link supporting records instead of copying conversations or entire evidence bundles. If the advisory conversation is unavailable, identify that limit explicitly.
 
-It intentionally does not contain a rigid roadmap. Feature order is allowed to change based on operational need, office momentum, and user feedback.
-
-## Source-of-truth hierarchy
-
-1. Supabase migrations and the live database define actual database structure.
-2. Source code defines current application behavior.
-3. Project Memory defines architectural intent and workflow expectations.
-4. If these disagree, identify the discrepancy before extending the system.
+Update the manifest for enduring direction, Current State for material status changes, and the focused existing record for detailed evidence. Preserve original dates and supersession links. New documentation commits may legitimately be ahead of a deployed runtime; report both SHAs.
