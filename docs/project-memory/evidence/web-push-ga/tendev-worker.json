@@ -1,0 +1,10 @@
+{
+  "slug": "send-web-push-tendev",
+  "id": "0248da3c-43fe-44e5-84f9-71f35422c401",
+  "version": 26,
+  "status": "ACTIVE",
+  "verify_jwt": false,
+  "previousVersion": 25,
+  "unsignedStatus": 503,
+  "diagnosticsIncluded": true
+}

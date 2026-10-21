@@ -1,0 +1,43 @@
+{
+  "cron": [
+    {
+      "active": true,
+      "command": "select public.dispatch_tenops_web_push();",
+      "id": 2,
+      "name": "tenops-web-push",
+      "schedule": "* * * * *"
+    }
+  ],
+  "migration_applied": true,
+  "pending": 0,
+  "private_helpers": true,
+  "private_subscriptions": true,
+  "registration": [
+    {
+      "enabled": false,
+      "environment": "tendev"
+    },
+    {
+      "enabled": true,
+      "environment": "tenops"
+    }
+  ],
+  "transports": [
+    {
+      "activated_at": "2026-10-21T13:03:02.924188+00:00",
+      "enabled": false,
+      "environment": "tendev"
+    },
+    {
+      "activated_at": "2026-10-21T15:06:51.616647+00:00",
+      "enabled": true,
+      "environment": "tenops"
+    }
+  ],
+  "activeAccountsVerified": 7,
+  "noncohortRegistrationValidation": true,
+  "existingRegistrationsPreserved": true,
+  "unchangedScopedCron": true,
+  "noAutomaticDeviceOptIn": true,
+  "noTestNotificationsSent": true
+}

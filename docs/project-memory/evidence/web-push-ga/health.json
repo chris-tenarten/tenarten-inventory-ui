@@ -1,0 +1,49 @@
+{
+  "pending": 0,
+  "recent_cron": [
+    {
+      "end_time": "2026-10-21T19:52:00.221617+00:00",
+      "start_time": "2026-10-21T19:52:00.174544+00:00",
+      "status": "succeeded"
+    },
+    {
+      "end_time": "2026-10-21T19:51:00.24323+00:00",
+      "start_time": "2026-10-21T19:51:00.178273+00:00",
+      "status": "succeeded"
+    }
+  ],
+  "recent_wakes": [
+    {
+      "consumed": true,
+      "created_at": "2026-10-21T19:52:00.196124+00:00"
+    },
+    {
+      "consumed": true,
+      "created_at": "2026-10-21T19:51:00.21424+00:00"
+    }
+  ],
+  "since": "2026-10-21T19:50:42.381Z",
+  "snapshot_at": "2026-10-21T19:52:25.905868+00:00",
+  "worker_responses": [
+    {
+      "counts": {
+        "claimed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "submitted": 0
+      },
+      "created_at": "2026-10-21T19:51:00.24659+00:00",
+      "status": 200
+    },
+    {
+      "counts": {
+        "claimed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "submitted": 0
+      },
+      "created_at": "2026-10-21T19:52:00.227156+00:00",
+      "status": 200
+    }
+  ]
+}

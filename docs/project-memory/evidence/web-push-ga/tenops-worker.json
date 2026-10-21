@@ -1,0 +1,10 @@
+{
+  "slug": "send-web-push-tenops",
+  "id": "3449d184-907b-4a78-bb1c-e94f095643ee",
+  "version": 15,
+  "status": "ACTIVE",
+  "verify_jwt": false,
+  "previousVersion": 14,
+  "unsignedStatus": 401,
+  "diagnosticsIncluded": true
+}

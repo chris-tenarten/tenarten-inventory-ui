@@ -1,0 +1,9 @@
+{
+  "active_accounts": 7,
+  "cron_preserved": true,
+  "eligible_accounts": 7,
+  "tendev_transport_off": true,
+  "version": "20261021190000",
+  "registrationsPreserved": true,
+  "migrationSha256": "44f6f0c9805354e9fd0e7b6d97405df4d16471c39a6dfe9e3c6e311c915cd14c"
+}
