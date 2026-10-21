@@ -1,0 +1,2564 @@
+{
+  "purpose": "Exact disposition of the existing 267-file Source Control inventory; no new repository audit.",
+  "baseline": "4f0228f8d6247a1fea93027b5d22cdcd5add27f5",
+  "release_retention_commit": "ff651578a25f7f4fd1d2b327e2a011faf6a7c5bb",
+  "research_retention_commit": "527c5b53e4016620f7bbf24a816d6fc742aae22a",
+  "summary": {
+    "base": "4f0228f8d6247a1fea93027b5d22cdcd5add27f5",
+    "retained_commit": "527c5b53e4016620f7bbf24a816d6fc742aae22a",
+    "original_target_files": 267,
+    "exact_originals_committed": 263,
+    "private_originals_preserved": 1,
+    "anonymized_summaries_committed": 1,
+    "canonical_duplicate_copies_removed": 1,
+    "disposable_zip_wrappers_removed": 2,
+    "disposable_bytes_removed": 2691378,
+    "root_documentation_untracked_after": 0
+  },
+  "private_original_archive": ".git/private-archives/2026-10-21-source-control-hygiene/2026-10-20-production-job-blend-attachments.json",
+  "private_archive_scope": "Local original workspace only; user-only 0700 directory and 0600 files; restoration metadata retained beside the original.",
+  "files": [
+    {
+      "path": "docs/audits/2026-10-19-comprehensive-handoff.zip",
+      "bytes": 57044,
+      "sha256": "7c122e0408820d819335a5fc8a46dfed26178094591834cd461af956637da0fa",
+      "disposition": "remove redundant reproducible wrapper"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/README.md",
+      "bytes": 506,
+      "sha256": "52e309c76a3ebcd67c664f381610840e434de3fc0e2b88c7473a8b0c83f6f3e5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/README.md",
+      "retained_sha256": "52e309c76a3ebcd67c664f381610840e434de3fc0e2b88c7473a8b0c83f6f3e5"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/REPORT.md",
+      "bytes": 74598,
+      "sha256": "bf5d77bd660e1fe5634f7446bc07edd596def5b30a654d03358d65ddfdae3c4b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/REPORT.md",
+      "retained_sha256": "bf5d77bd660e1fe5634f7446bc07edd596def5b30a654d03358d65ddfdae3c4b"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/SHA256SUMS.txt",
+      "bytes": 1196,
+      "sha256": "85f76377deb2dae76c46bf567b498a5e36f67f93c65128f42d8b527384042165",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/SHA256SUMS.txt",
+      "retained_sha256": "85f76377deb2dae76c46bf567b498a5e36f67f93c65128f42d8b527384042165"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/git-branches.txt",
+      "bytes": 11081,
+      "sha256": "c30521654f178555272109164a2c88d69d2b80a6ac6f64fe3b537ead744e349e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/git-branches.txt",
+      "retained_sha256": "c30521654f178555272109164a2c88d69d2b80a6ac6f64fe3b537ead744e349e"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/initial-status.txt",
+      "bytes": 288,
+      "sha256": "4dc96487286499333a352a98121f3e8f78ace3ebfc5214d3e9200b9b3ae8104c",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/initial-status.txt",
+      "retained_sha256": "4dc96487286499333a352a98121f3e8f78ace3ebfc5214d3e9200b9b3ae8104c"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/query-call-sites.md",
+      "bytes": 19744,
+      "sha256": "690c69699d32f3de942891e228532f22ad3bc6470d73271c293766cb2c7d0b9a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/query-call-sites.md",
+      "retained_sha256": "690c69699d32f3de942891e228532f22ad3bc6470d73271c293766cb2c7d0b9a"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/repository-facts.json",
+      "bytes": 5365,
+      "sha256": "ac319a76450d02928193ace662146326236aa42030ed330327b8cd26bc0d3f83",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/repository-facts.json",
+      "retained_sha256": "ac319a76450d02928193ace662146326236aa42030ed330327b8cd26bc0d3f83"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/retrieval-ancestry.json",
+      "bytes": 137,
+      "sha256": "77fcd634c43e7f049b20bc5a21fd5b59c91d0ff09891783f0412d11771745d33",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/retrieval-ancestry.json",
+      "retained_sha256": "77fcd634c43e7f049b20bc5a21fd5b59c91d0ff09891783f0412d11771745d33"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/reused-evidence.md",
+      "bytes": 3078,
+      "sha256": "3a9ead102a348798ca8bd9ebf1b77dfbcab48acf05b8ee5a1213368489b7826e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/reused-evidence.md",
+      "retained_sha256": "3a9ead102a348798ca8bd9ebf1b77dfbcab48acf05b8ee5a1213368489b7826e"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/routes-and-size.md",
+      "bytes": 2469,
+      "sha256": "1794a31a4b7ec160366cbf689c8631a30337d75a3e6153fa78dbaa6a7ba714ef",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/routes-and-size.md",
+      "retained_sha256": "1794a31a4b7ec160366cbf689c8631a30337d75a3e6153fa78dbaa6a7ba714ef"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/sample-matcher-branches.json",
+      "bytes": 2879,
+      "sha256": "951e4f96e6b243679a491d3b526caeb523cb905fc4871e54af066d8156bd7f06",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/sample-matcher-branches.json",
+      "retained_sha256": "951e4f96e6b243679a491d3b526caeb523cb905fc4871e54af066d8156bd7f06"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/sql-declarations.md",
+      "bytes": 122693,
+      "sha256": "a0e12c41b47e3ab41afb3b869debedd8619bc24260748b253d4ae30bf6e23d66",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/sql-declarations.md",
+      "retained_sha256": "a0e12c41b47e3ab41afb3b869debedd8619bc24260748b253d4ae30bf6e23d66"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/validation.json",
+      "bytes": 861,
+      "sha256": "ed07c4bc119a190705bff90edb5437f4cda3677fe80ba804e36c6bc8ceba3ed0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/validation.json",
+      "retained_sha256": "ed07c4bc119a190705bff90edb5437f4cda3677fe80ba804e36c6bc8ceba3ed0"
+    },
+    {
+      "path": "docs/audits/2026-10-19-comprehensive/evidence/worktrees.txt",
+      "bytes": 6385,
+      "sha256": "064765cbb809c2b9afd763d7b65af381a837043d48644d9673358f2633cfe7a8",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/worktrees.txt",
+      "retained_sha256": "064765cbb809c2b9afd763d7b65af381a837043d48644d9673358f2633cfe7a8"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-handoff.zip",
+      "bytes": 2634334,
+      "sha256": "8ba514fc94d721bd0b548794f9cbec89a40da7833109e0a0d600678588dcb1d6",
+      "disposition": "remove redundant reproducible wrapper"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline-handoff.zip",
+      "bytes": 1373999,
+      "sha256": "6dd0a8fd59ad3f8f856a3397dcc9743d69ace2fdab7294804bf6a79e4a9ed984",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline-handoff.zip",
+      "retained_sha256": "6dd0a8fd59ad3f8f856a3397dcc9743d69ace2fdab7294804bf6a79e4a9ed984"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline-refinement-handoff.zip",
+      "bytes": 4755115,
+      "sha256": "22bac22dd77081b2c6f7da54025a61d6fbc1a9c5c55b142970368d1f1e51d2be",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline-refinement-handoff.zip",
+      "retained_sha256": "22bac22dd77081b2c6f7da54025a61d6fbc1a9c5c55b142970368d1f1e51d2be"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/README.md",
+      "bytes": 3903,
+      "sha256": "af4e62acce3ff3675e891dbc13ce8f8e893924c0d914e09acf42061dcc8897c3",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/README.md",
+      "retained_sha256": "af4e62acce3ff3675e891dbc13ce8f8e893924c0d914e09acf42061dcc8897c3"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/REPORT.md",
+      "bytes": 33781,
+      "sha256": "6eec06b3a2c37afd4676887d1873b162308f22c381d5cdd2d1d3ed2a0ec4cdf0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/REPORT.md",
+      "retained_sha256": "6eec06b3a2c37afd4676887d1873b162308f22c381d5cdd2d1d3ed2a0ec4cdf0"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/SHA256SUMS.txt",
+      "bytes": 15747,
+      "sha256": "80f97970d531327c1b5cb9f707aa1d50aa778038cc9974346c76fa2d30317652",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/SHA256SUMS.txt",
+      "retained_sha256": "80f97970d531327c1b5cb9f707aa1d50aa778038cc9974346c76fa2d30317652"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/build.mjs",
+      "bytes": 3394,
+      "sha256": "d20d97206130b820e8cd62497e1c6495c8cba5e49bc29e3a8e6ffd8f5081548f",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/build.mjs",
+      "retained_sha256": "d20d97206130b820e8cd62497e1c6495c8cba5e49bc29e3a8e6ffd8f5081548f"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/dist/app.css",
+      "bytes": 26414,
+      "sha256": "537f4286694775dd0accfdf3c956af8f540387024573b3d8de99ad10e3bc45cf",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/dist/app.css",
+      "retained_sha256": "537f4286694775dd0accfdf3c956af8f540387024573b3d8de99ad10e3bc45cf"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/dist/app.js",
+      "bytes": 696598,
+      "sha256": "a50674c1890984b389be447cf64d868ef56607ada17fcebb380519205cc1162d",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/dist/app.js",
+      "retained_sha256": "a50674c1890984b389be447cf64d868ef56607ada17fcebb380519205cc1162d"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/dist/index.html",
+      "bytes": 312,
+      "sha256": "71d82df1b6afd4abc7cf349fce36c6a710812a4ee03b429ffce3cf51a86de21e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/dist/index.html",
+      "retained_sha256": "71d82df1b6afd4abc7cf349fce36c6a710812a4ee03b429ffce3cf51a86de21e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/dist/reference.css",
+      "bytes": 62165,
+      "sha256": "e0724aab1fd65c1d0b6a7289ed376e254885a00dd4e31cd3f6e5c7c6eb6bc33e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/dist/reference.css",
+      "retained_sha256": "e0724aab1fd65c1d0b6a7289ed376e254885a00dd4e31cd3f6e5c7c6eb6bc33e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/dist/reference.html",
+      "bytes": 327,
+      "sha256": "fe2237f50bf0e3791193a3f105212d25e37c763f94c4212569a3ec60f377a6eb",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/dist/reference.html",
+      "retained_sha256": "fe2237f50bf0e3791193a3f105212d25e37c763f94c4212569a3ec60f377a6eb"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/dist/reference.js",
+      "bytes": 796165,
+      "sha256": "d3b5f7e6256925bbe12af0e3390aa70f517eb276a4d12837cfdd1e4a56ea9e80",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/dist/reference.js",
+      "retained_sha256": "d3b5f7e6256925bbe12af0e3390aa70f517eb276a4d12837cfdd1e4a56ea9e80"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/evidence/adapters.json",
+      "bytes": 855,
+      "sha256": "e34bfdffcd8369e2fa7fd0725e3c6bd4f0bcfabacbe1713370540a89ccbb90e4",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/evidence/adapters.json",
+      "retained_sha256": "e34bfdffcd8369e2fa7fd0725e3c6bd4f0bcfabacbe1713370540a89ccbb90e4"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/evidence/browser.json",
+      "bytes": 13339,
+      "sha256": "60748d6faa94ddfe70dcc613c9530d6acd022d22ead5a3518d72b7e1a0751c5b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/evidence/browser.json",
+      "retained_sha256": "60748d6faa94ddfe70dcc613c9530d6acd022d22ead5a3518d72b7e1a0751c5b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/evidence/bundle-inputs.json",
+      "bytes": 120672,
+      "sha256": "e88f70d7cb549832d989821af79f24b21ddf6977841586f8be79fd35595a6c44",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/evidence/bundle-inputs.json",
+      "retained_sha256": "e88f70d7cb549832d989821af79f24b21ddf6977841586f8be79fd35595a6c44"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/evidence/initial-windows.json",
+      "bytes": 3979,
+      "sha256": "37ce69e3abbf8a62302b659f7de112e0bf9b2f720f72eefc246f70d97a5619c7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/evidence/initial-windows.json",
+      "retained_sha256": "37ce69e3abbf8a62302b659f7de112e0bf9b2f720f72eefc246f70d97a5619c7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/evidence/source-boundary.json",
+      "bytes": 4179,
+      "sha256": "6a5000658068c2a05d288a4ac2dd8d6ffa747f4fd601ee47efd296011b205db9",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/evidence/source-boundary.json",
+      "retained_sha256": "6a5000658068c2a05d288a4ac2dd8d6ffa747f4fd601ee47efd296011b205db9"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/evidence/source-capabilities.md",
+      "bytes": 48385,
+      "sha256": "d8af02c24ef9cdf59efbd10c99a2204f697b75a7bf633c6e5a1b52cedc1e30bc",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/evidence/source-capabilities.md",
+      "retained_sha256": "d8af02c24ef9cdf59efbd10c99a2204f697b75a7bf633c6e5a1b52cedc1e30bc"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/evidence/validation.json",
+      "bytes": 1157,
+      "sha256": "540c34e02790ecfb3399af50f327102bbeb357358dc0ede6541c3ae61ef32f3f",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/evidence/validation.json",
+      "retained_sha256": "540c34e02790ecfb3399af50f327102bbeb357358dc0ede6541c3ae61ef32f3f"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/prototype/adapters.mjs",
+      "bytes": 4108,
+      "sha256": "ed60c92b40ccfa70ea91542b1ddfe6dde4059de5e0151380c5705d1297333f80",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/prototype/adapters.mjs",
+      "retained_sha256": "ed60c92b40ccfa70ea91542b1ddfe6dde4059de5e0151380c5705d1297333f80"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/prototype/app.jsx",
+      "bytes": 33747,
+      "sha256": "e0b3bef4b54fe8dd75887ce5f0b5287dab526fc9926165001ddd633a50a68e2c",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/prototype/app.jsx",
+      "retained_sha256": "e0b3bef4b54fe8dd75887ce5f0b5287dab526fc9926165001ddd633a50a68e2c"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/prototype/fixtures.mjs",
+      "bytes": 3577,
+      "sha256": "92472256c0daff143e18ac4ddc2f2582bfb843d3f885dbaea99bd21565936a35",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/prototype/fixtures.mjs",
+      "retained_sha256": "92472256c0daff143e18ac4ddc2f2582bfb843d3f885dbaea99bd21565936a35"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/prototype/offline-stubs.jsx",
+      "bytes": 555,
+      "sha256": "c5f8e8ae1bdbbcca4d3626da2a3d668a5ec9db5eb92513d1e2dd8e6f420b5b33",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/prototype/offline-stubs.jsx",
+      "retained_sha256": "c5f8e8ae1bdbbcca4d3626da2a3d668a5ec9db5eb92513d1e2dd8e6f420b5b33"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/prototype/reference.jsx",
+      "bytes": 2053,
+      "sha256": "506d788ae78e1450d8c4a66cde3bd9c19343eb2a76da07f0dbb01e672e3ea8d1",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/prototype/reference.jsx",
+      "retained_sha256": "506d788ae78e1450d8c4a66cde3bd9c19343eb2a76da07f0dbb01e672e3ea8d1"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/prototype/semantics.mjs",
+      "bytes": 2017,
+      "sha256": "604b00495105ab804c1ee7532be1d194c6e97fcf2a8d2f15384e2b42a2011178",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/prototype/semantics.mjs",
+      "retained_sha256": "604b00495105ab804c1ee7532be1d194c6e97fcf2a8d2f15384e2b42a2011178"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/prototype/style.css",
+      "bytes": 15287,
+      "sha256": "8f0d24c01b9b9603fcaa0f5341fd5619bf00b5ca870d3308bda3635d71222cf1",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/prototype/style.css",
+      "retained_sha256": "8f0d24c01b9b9603fcaa0f5341fd5619bf00b5ca870d3308bda3635d71222cf1"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/REPORT.md",
+      "bytes": 17589,
+      "sha256": "149a2addc3114443fada508547dc3744413195b999a1ad634ef84be7edaf713e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/REPORT.md",
+      "retained_sha256": "149a2addc3114443fada508547dc3744413195b999a1ad634ef84be7edaf713e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/evidence/adapters.json",
+      "bytes": 1073,
+      "sha256": "cc2ff1ea90a80cd5f0956740532a4f9e5fc66c0fcfaa7dc1716efb1abdaef59b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/evidence/adapters.json",
+      "retained_sha256": "cc2ff1ea90a80cd5f0956740532a4f9e5fc66c0fcfaa7dc1716efb1abdaef59b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/evidence/browser.json",
+      "bytes": 23029,
+      "sha256": "3b50269e5ab37c31f9321834545256b0a61a86664945ce195d590d2b16a2b90e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/evidence/browser.json",
+      "retained_sha256": "3b50269e5ab37c31f9321834545256b0a61a86664945ce195d590d2b16a2b90e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/evidence/bundle-inputs.json",
+      "bytes": 121012,
+      "sha256": "d6c8c37b718c418e7eed85121a9a971314b234fc8225e7771449e09398364e4d",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/evidence/bundle-inputs.json",
+      "retained_sha256": "d6c8c37b718c418e7eed85121a9a971314b234fc8225e7771449e09398364e4d"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/evidence/preserved-initial.json",
+      "bytes": 4984,
+      "sha256": "9afa959e516b9558c1680a99ea94b0529720f2154eae95cc15ff46bb5eb5c9c4",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/evidence/preserved-initial.json",
+      "retained_sha256": "9afa959e516b9558c1680a99ea94b0529720f2154eae95cc15ff46bb5eb5c9c4"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/evidence/source-boundary.json",
+      "bytes": 1818,
+      "sha256": "51af5abd7e983796b16e7e3849932f67cbdb168947116fff6298561c5e3f23cd",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/evidence/source-boundary.json",
+      "retained_sha256": "51af5abd7e983796b16e7e3849932f67cbdb168947116fff6298561c5e3f23cd"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/evidence/validation.json",
+      "bytes": 1528,
+      "sha256": "99319c0a957ed664927b19193951ab2809756100cea34ee2540f09c1cf993346",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/evidence/validation.json",
+      "retained_sha256": "99319c0a957ed664927b19193951ab2809756100cea34ee2540f09c1cf993346"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/evidence/visual-semantics-source.md",
+      "bytes": 27422,
+      "sha256": "b36cc5e1a58cb11983be993e84a011df99a14c9d6e7dd54794053205d563ccce",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/evidence/visual-semantics-source.md",
+      "retained_sha256": "b36cc5e1a58cb11983be993e84a011df99a14c9d6e7dd54794053205d563ccce"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-combined-legend.png",
+      "bytes": 67445,
+      "sha256": "908f773d56627ad135142b934bfaee8432cd037a7a692dd908508936c5768e32",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-combined-legend.png",
+      "retained_sha256": "908f773d56627ad135142b934bfaee8432cd037a7a692dd908508936c5768e32"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-combined-production-selected.png",
+      "bytes": 63371,
+      "sha256": "66e810b73faf675c89eb742a1a8dbe0812586f276a6eb34f841e37f3fa62d3a4",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-combined-production-selected.png",
+      "retained_sha256": "66e810b73faf675c89eb742a1a8dbe0812586f276a6eb34f841e37f3fa62d3a4"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-date-review.png",
+      "bytes": 43543,
+      "sha256": "197072b0e96caa5bebf46c3a7f1f829860958b19dedf55d9f07b02cf9ef11898",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-date-review.png",
+      "retained_sha256": "197072b0e96caa5bebf46c3a7f1f829860958b19dedf55d9f07b02cf9ef11898"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-detail.png",
+      "bytes": 36683,
+      "sha256": "18d5f80507470e5a1104cd24229da50fffd0e00283fcb314ac9e25dd9640a48c",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-detail.png",
+      "retained_sha256": "18d5f80507470e5a1104cd24229da50fffd0e00283fcb314ac9e25dd9640a48c"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-expanded-names.png",
+      "bytes": 32000,
+      "sha256": "291fdf74ee68edacd3bb84e052b6c9e2932d072d899fb40487aca8291df86d27",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-expanded-names.png",
+      "retained_sha256": "291fdf74ee68edacd3bb84e052b6c9e2932d072d899fb40487aca8291df86d27"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-landscape-selected.png",
+      "bytes": 44652,
+      "sha256": "570a09b0dbab38b3bf01f053b591396028bc832883e3e26a0618f2ce29db8cfa",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-landscape-selected.png",
+      "retained_sha256": "570a09b0dbab38b3bf01f053b591396028bc832883e3e26a0618f2ce29db8cfa"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-landscape.png",
+      "bytes": 31821,
+      "sha256": "e677895fbdcc54d78dfd770ff76ea0dbc9023ecfdccd694330126d2f58cbc231",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-landscape.png",
+      "retained_sha256": "e677895fbdcc54d78dfd770ff76ea0dbc9023ecfdccd694330126d2f58cbc231"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-local-edit.png",
+      "bytes": 55310,
+      "sha256": "70577a3ce3240f3931e97499e19732191498644a6887713d7c427b854e010f29",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-local-edit.png",
+      "retained_sha256": "70577a3ce3240f3931e97499e19732191498644a6887713d7c427b854e010f29"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-panned-zoomed.png",
+      "bytes": 49298,
+      "sha256": "e56b43c302dc3802db2cc909c5dfaed29f70663fc60493d4702df7e426366411",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-panned-zoomed.png",
+      "retained_sha256": "e56b43c302dc3802db2cc909c5dfaed29f70663fc60493d4702df7e426366411"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-planning-only-inspection.png",
+      "bytes": 61607,
+      "sha256": "861b297f088e4063f68827fe62f8792719e1f17410ebfb1bce8af8effdc421bc",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-planning-only-inspection.png",
+      "retained_sha256": "861b297f088e4063f68827fe62f8792719e1f17410ebfb1bce8af8effdc421bc"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-portrait.png",
+      "bytes": 49457,
+      "sha256": "9a74893f7f4d66f78a976c4a009ad6a09791c33a31666e84a1094cc813084d4e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-portrait.png",
+      "retained_sha256": "9a74893f7f4d66f78a976c4a009ad6a09791c33a31666e84a1094cc813084d4e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-projection-legend.png",
+      "bytes": 59371,
+      "sha256": "40ec7404c038f1a8d92a951ffa86769e92fbe159fef30e951d7ee6a041b6dd1b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-projection-legend.png",
+      "retained_sha256": "40ec7404c038f1a8d92a951ffa86769e92fbe159fef30e951d7ee6a041b6dd1b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-read-only.png",
+      "bytes": 57112,
+      "sha256": "dda5fccf46fd8e8e88880145021a93fcbc91df6ad269d778e760c8625f872787",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-read-only.png",
+      "retained_sha256": "dda5fccf46fd8e8e88880145021a93fcbc91df6ad269d778e760c8625f872787"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-selected-identity.png",
+      "bytes": 57087,
+      "sha256": "e6321c849beb39cb52df5d733c90acc170c2fc75af9bfed1c19b7a2c801acadc",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-selected-identity.png",
+      "retained_sha256": "e6321c849beb39cb52df5d733c90acc170c2fc75af9bfed1c19b7a2c801acadc"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/bids-selected.png",
+      "bytes": 54129,
+      "sha256": "dd567f6a95cb4b40cc244f96974c27906239e0fb0e5c6a442eaa36a260ebf44b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/bids-selected.png",
+      "retained_sha256": "dd567f6a95cb4b40cc244f96974c27906239e0fb0e5c6a442eaa36a260ebf44b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/landscape-safe-area-legend.png",
+      "bytes": 59195,
+      "sha256": "7d47c4f1b026d35a510755bd6034d129c4dd974a8a0f0a2a0b3969be74f5e1de",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/landscape-safe-area-legend.png",
+      "retained_sha256": "7d47c4f1b026d35a510755bd6034d129c4dd974a8a0f0a2a0b3969be74f5e1de"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/launcher.png",
+      "bytes": 54126,
+      "sha256": "3668291c15be444b935d8795b251618a7a5e9ef29212ff7728c4ce937903e3c7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/launcher.png",
+      "retained_sha256": "3668291c15be444b935d8795b251618a7a5e9ef29212ff7728c4ce937903e3c7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/portrait-safe-area.png",
+      "bytes": 59467,
+      "sha256": "150331cbf8f3015442d24a5c1b46875cdc8d7f94048a8b47ca4611438fad0283",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/portrait-safe-area.png",
+      "retained_sha256": "150331cbf8f3015442d24a5c1b46875cdc8d7f94048a8b47ca4611438fad0283"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-320.png",
+      "bytes": 37083,
+      "sha256": "7549db98071bf7ebc2e468480f543690eff4c3177ee15a9d9b13f068e7c96cb7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-320.png",
+      "retained_sha256": "7549db98071bf7ebc2e468480f543690eff4c3177ee15a9d9b13f068e7c96cb7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-430.png",
+      "bytes": 67604,
+      "sha256": "66ccfe01fb29ecd9620fb3f5d3300543cf26d314c0075a6278adcebc522b692a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-430.png",
+      "retained_sha256": "66ccfe01fb29ecd9620fb3f5d3300543cf26d314c0075a6278adcebc522b692a"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-date-review.png",
+      "bytes": 39865,
+      "sha256": "edef0ad4a12d9444ba0c213e5e98e5002e7fe308aa9b2fa87a9f18bcf323ef1e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-date-review.png",
+      "retained_sha256": "edef0ad4a12d9444ba0c213e5e98e5002e7fe308aa9b2fa87a9f18bcf323ef1e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-delivery-inspection.png",
+      "bytes": 51379,
+      "sha256": "75ec06c5dda4e75c99463f469474ee92f5cb64e89fa8c4ae1b703ac9a63cb6d7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-delivery-inspection.png",
+      "retained_sha256": "75ec06c5dda4e75c99463f469474ee92f5cb64e89fa8c4ae1b703ac9a63cb6d7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-detail.png",
+      "bytes": 60369,
+      "sha256": "3b84e6f665612e064ed8e3263295f4f60554cc5140b7b361d5e4c658d003a722",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-detail.png",
+      "retained_sha256": "3b84e6f665612e064ed8e3263295f4f60554cc5140b7b361d5e4c658d003a722"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-expanded-names.png",
+      "bytes": 37828,
+      "sha256": "24d67850b44ccd30180eceaed20a301da3b29cf446f92736168df3543eecc6ef",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-expanded-names.png",
+      "retained_sha256": "24d67850b44ccd30180eceaed20a301da3b29cf446f92736168df3543eecc6ef"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-landscape-indicator.png",
+      "bytes": 62342,
+      "sha256": "00582008ac1a938546c335cb8a2ced911150f05196f15c5e20d301f1209189c1",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-landscape-indicator.png",
+      "retained_sha256": "00582008ac1a938546c335cb8a2ced911150f05196f15c5e20d301f1209189c1"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-landscape-selected.png",
+      "bytes": 51702,
+      "sha256": "97cabe3ccdf2b9b4df461017e9a98069b194c206f98eaaaea3003c69bf9612fa",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-landscape-selected.png",
+      "retained_sha256": "97cabe3ccdf2b9b4df461017e9a98069b194c206f98eaaaea3003c69bf9612fa"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-landscape.png",
+      "bytes": 34291,
+      "sha256": "315f7de57eb5167b0c16b77b96003234ea6ddbe9b497a24ae01e5e0898c26ca7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-landscape.png",
+      "retained_sha256": "315f7de57eb5167b0c16b77b96003234ea6ddbe9b497a24ae01e5e0898c26ca7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-legend.png",
+      "bytes": 62718,
+      "sha256": "96ae6f3b4ce23f8d3c528b57c58ba9e649365ec1a2d0fde0ea6b0ad7ce0e1eb9",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-legend.png",
+      "retained_sha256": "96ae6f3b4ce23f8d3c528b57c58ba9e649365ec1a2d0fde0ea6b0ad7ce0e1eb9"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-local-edit.png",
+      "bytes": 69747,
+      "sha256": "f097e03e23e496f12f6fe3e37f0b78184a0f1d1ab986265d1dba5ebd7b546744",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-local-edit.png",
+      "retained_sha256": "f097e03e23e496f12f6fe3e37f0b78184a0f1d1ab986265d1dba5ebd7b546744"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-panned-zoomed.png",
+      "bytes": 56324,
+      "sha256": "d225aff609cce1e7a9d622fcbaeb191c543de6032bcb5ce6badca735c3196d26",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-panned-zoomed.png",
+      "retained_sha256": "d225aff609cce1e7a9d622fcbaeb191c543de6032bcb5ce6badca735c3196d26"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-pause-inspection.png",
+      "bytes": 64307,
+      "sha256": "b66717d3e6f702db66863fdcef31d672e4d276c66920cdc15874da3091c7d62b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-pause-inspection.png",
+      "retained_sha256": "b66717d3e6f702db66863fdcef31d672e4d276c66920cdc15874da3091c7d62b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-phase-inspection.png",
+      "bytes": 65049,
+      "sha256": "4b19e4fafde1fa9e0004b0f220ea0ddb76673a7a7e2ccf109dd8c650d24106ad",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-phase-inspection.png",
+      "retained_sha256": "4b19e4fafde1fa9e0004b0f220ea0ddb76673a7a7e2ccf109dd8c650d24106ad"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-portrait.png",
+      "bytes": 60932,
+      "sha256": "9e01bd3b92b88b98fd105595d6fb7ad2345061c43ac4a5b586109b006de98fee",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-portrait.png",
+      "retained_sha256": "9e01bd3b92b88b98fd105595d6fb7ad2345061c43ac4a5b586109b006de98fee"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/production-selected.png",
+      "bytes": 63060,
+      "sha256": "9e5f9b821c047dd2fe960c61ecc97c3debf3793e8f3aef05e8344dc680e63aa2",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/production-selected.png",
+      "retained_sha256": "9e5f9b821c047dd2fe960c61ecc97c3debf3793e8f3aef05e8344dc680e63aa2"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/reference-bids.png",
+      "bytes": 65165,
+      "sha256": "a56272fb5846e50718b693e482be3c643f522f46078db62ee351e04e3f8a37e5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/reference-bids.png",
+      "retained_sha256": "a56272fb5846e50718b693e482be3c643f522f46078db62ee351e04e3f8a37e5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/reference-production.png",
+      "bytes": 52659,
+      "sha256": "7b26ed563bb9ec5400e7d1aab7374c7170a0a65c2941081b1ece83ed6e50e777",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/reference-production.png",
+      "retained_sha256": "7b26ed563bb9ec5400e7d1aab7374c7170a0a65c2941081b1ece83ed6e50e777"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/selection-after-pan.png",
+      "bytes": 63758,
+      "sha256": "d0d884f832eaba96cc1b872a502ebc7328215b80052152886df4083e85cec11a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/selection-after-pan.png",
+      "retained_sha256": "d0d884f832eaba96cc1b872a502ebc7328215b80052152886df4083e85cec11a"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/refinement/screenshots/short-viewport.png",
+      "bytes": 45756,
+      "sha256": "8805669f0c79316fbea8e0c5e33783c93f81882183fca84509cb0519eebc173c",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/refinement/screenshots/short-viewport.png",
+      "retained_sha256": "8805669f0c79316fbea8e0c5e33783c93f81882183fca84509cb0519eebc173c"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/README.md",
+      "bytes": 4129,
+      "sha256": "57771973929133b7ed65a1fb388d61493ae4f1c662303170edf6a7caf3004413",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/README.md",
+      "retained_sha256": "57771973929133b7ed65a1fb388d61493ae4f1c662303170edf6a7caf3004413"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/REPORT.md",
+      "bytes": 33781,
+      "sha256": "6eec06b3a2c37afd4676887d1873b162308f22c381d5cdd2d1d3ed2a0ec4cdf0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/REPORT.md",
+      "retained_sha256": "6eec06b3a2c37afd4676887d1873b162308f22c381d5cdd2d1d3ed2a0ec4cdf0"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/SHA256SUMS.txt",
+      "bytes": 4551,
+      "sha256": "c9a868135ecd0ecb699161dcba5a7bca7d6dd78656283e3321d079acd3d9c737",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/SHA256SUMS.txt",
+      "retained_sha256": "c9a868135ecd0ecb699161dcba5a7bca7d6dd78656283e3321d079acd3d9c737"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/build.mjs",
+      "bytes": 3029,
+      "sha256": "450d4e5016c33ee0060b946315ac4deb9d83ea6d86c3a4c9b1d71cac48ff4756",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/build.mjs",
+      "retained_sha256": "450d4e5016c33ee0060b946315ac4deb9d83ea6d86c3a4c9b1d71cac48ff4756"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/dist/app.css",
+      "bytes": 13144,
+      "sha256": "82c240b2d1a1b5615cc38e8ded81e74adbcfde6440254cf6d8f4584477ea9605",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/dist/app.css",
+      "retained_sha256": "82c240b2d1a1b5615cc38e8ded81e74adbcfde6440254cf6d8f4584477ea9605"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/dist/app.js",
+      "bytes": 675981,
+      "sha256": "2f18043caf234fe3c7f3521060fe352043291bf273a18cd90529e96d250f45dd",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/dist/app.js",
+      "retained_sha256": "2f18043caf234fe3c7f3521060fe352043291bf273a18cd90529e96d250f45dd"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/dist/index.html",
+      "bytes": 312,
+      "sha256": "71d82df1b6afd4abc7cf349fce36c6a710812a4ee03b429ffce3cf51a86de21e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/dist/index.html",
+      "retained_sha256": "71d82df1b6afd4abc7cf349fce36c6a710812a4ee03b429ffce3cf51a86de21e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/dist/reference.css",
+      "bytes": 62165,
+      "sha256": "e0724aab1fd65c1d0b6a7289ed376e254885a00dd4e31cd3f6e5c7c6eb6bc33e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/dist/reference.css",
+      "retained_sha256": "e0724aab1fd65c1d0b6a7289ed376e254885a00dd4e31cd3f6e5c7c6eb6bc33e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/dist/reference.html",
+      "bytes": 327,
+      "sha256": "fe2237f50bf0e3791193a3f105212d25e37c763f94c4212569a3ec60f377a6eb",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/dist/reference.html",
+      "retained_sha256": "fe2237f50bf0e3791193a3f105212d25e37c763f94c4212569a3ec60f377a6eb"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/dist/reference.js",
+      "bytes": 795750,
+      "sha256": "27a2d4df252f1b3ce39b127a3f6a21e4a7ac9b0b2e602cda3f124742dfb8eb98",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/dist/reference.js",
+      "retained_sha256": "27a2d4df252f1b3ce39b127a3f6a21e4a7ac9b0b2e602cda3f124742dfb8eb98"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/evidence/adapters.json",
+      "bytes": 855,
+      "sha256": "e34bfdffcd8369e2fa7fd0725e3c6bd4f0bcfabacbe1713370540a89ccbb90e4",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/evidence/adapters.json",
+      "retained_sha256": "e34bfdffcd8369e2fa7fd0725e3c6bd4f0bcfabacbe1713370540a89ccbb90e4"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/evidence/browser.json",
+      "bytes": 13339,
+      "sha256": "60748d6faa94ddfe70dcc613c9530d6acd022d22ead5a3518d72b7e1a0751c5b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/evidence/browser.json",
+      "retained_sha256": "60748d6faa94ddfe70dcc613c9530d6acd022d22ead5a3518d72b7e1a0751c5b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/evidence/bundle-inputs.json",
+      "bytes": 120672,
+      "sha256": "e88f70d7cb549832d989821af79f24b21ddf6977841586f8be79fd35595a6c44",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/evidence/bundle-inputs.json",
+      "retained_sha256": "e88f70d7cb549832d989821af79f24b21ddf6977841586f8be79fd35595a6c44"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/evidence/initial-windows.json",
+      "bytes": 3979,
+      "sha256": "37ce69e3abbf8a62302b659f7de112e0bf9b2f720f72eefc246f70d97a5619c7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/evidence/initial-windows.json",
+      "retained_sha256": "37ce69e3abbf8a62302b659f7de112e0bf9b2f720f72eefc246f70d97a5619c7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/evidence/source-boundary.json",
+      "bytes": 4179,
+      "sha256": "6a5000658068c2a05d288a4ac2dd8d6ffa747f4fd601ee47efd296011b205db9",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/evidence/source-boundary.json",
+      "retained_sha256": "6a5000658068c2a05d288a4ac2dd8d6ffa747f4fd601ee47efd296011b205db9"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/evidence/source-capabilities.md",
+      "bytes": 48385,
+      "sha256": "d8af02c24ef9cdf59efbd10c99a2204f697b75a7bf633c6e5a1b52cedc1e30bc",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/evidence/source-capabilities.md",
+      "retained_sha256": "d8af02c24ef9cdf59efbd10c99a2204f697b75a7bf633c6e5a1b52cedc1e30bc"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/evidence/validation.json",
+      "bytes": 1157,
+      "sha256": "540c34e02790ecfb3399af50f327102bbeb357358dc0ede6541c3ae61ef32f3f",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/evidence/validation.json",
+      "retained_sha256": "540c34e02790ecfb3399af50f327102bbeb357358dc0ede6541c3ae61ef32f3f"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/prototype/adapters.mjs",
+      "bytes": 3960,
+      "sha256": "e6118156b18d5c819b12d072199d6078c15acfe9f878717012047ced92611528",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/prototype/adapters.mjs",
+      "retained_sha256": "e6118156b18d5c819b12d072199d6078c15acfe9f878717012047ced92611528"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/prototype/app.jsx",
+      "bytes": 25905,
+      "sha256": "c8ea40f803a38592bfc6b0d08d95caf01263021be2dcfe67d7e55418bdc2ace0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/prototype/app.jsx",
+      "retained_sha256": "c8ea40f803a38592bfc6b0d08d95caf01263021be2dcfe67d7e55418bdc2ace0"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/prototype/fixtures.mjs",
+      "bytes": 3139,
+      "sha256": "7f0f1bfb7e187ed7891bfeaca5c5c5740bf8edc81103c8b2523090e6421ecdc0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/prototype/fixtures.mjs",
+      "retained_sha256": "7f0f1bfb7e187ed7891bfeaca5c5c5740bf8edc81103c8b2523090e6421ecdc0"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/prototype/offline-stubs.jsx",
+      "bytes": 555,
+      "sha256": "c5f8e8ae1bdbbcca4d3626da2a3d668a5ec9db5eb92513d1e2dd8e6f420b5b33",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/prototype/offline-stubs.jsx",
+      "retained_sha256": "c5f8e8ae1bdbbcca4d3626da2a3d668a5ec9db5eb92513d1e2dd8e6f420b5b33"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/prototype/reference.jsx",
+      "bytes": 2053,
+      "sha256": "506d788ae78e1450d8c4a66cde3bd9c19343eb2a76da07f0dbb01e672e3ea8d1",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/prototype/reference.jsx",
+      "retained_sha256": "506d788ae78e1450d8c4a66cde3bd9c19343eb2a76da07f0dbb01e672e3ea8d1"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/prototype/style.css",
+      "bytes": 9541,
+      "sha256": "68e28a56281f2cde1e8dac9cacbc018eee2194f9f682408c4e03e3bbaf8a86c5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/prototype/style.css",
+      "retained_sha256": "68e28a56281f2cde1e8dac9cacbc018eee2194f9f682408c4e03e3bbaf8a86c5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-combined-production-selected.png",
+      "bytes": 62106,
+      "sha256": "d1b7fe08af66e55351cbc590a09f38048e81854c712dd449e80d5d0ef9f704b5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-combined-production-selected.png",
+      "retained_sha256": "d1b7fe08af66e55351cbc590a09f38048e81854c712dd449e80d5d0ef9f704b5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-date-review.png",
+      "bytes": 42555,
+      "sha256": "7a0685458810447697676a43e3a88a861a20927456e834ed56be423a63fae599",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-date-review.png",
+      "retained_sha256": "7a0685458810447697676a43e3a88a861a20927456e834ed56be423a63fae599"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-detail.png",
+      "bytes": 35617,
+      "sha256": "c5848a11993d2ab0bb104f10b023a070f76e7e62cf2a6c44ce7ed0eebe1e26f0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-detail.png",
+      "retained_sha256": "c5848a11993d2ab0bb104f10b023a070f76e7e62cf2a6c44ce7ed0eebe1e26f0"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-landscape-selected.png",
+      "bytes": 40485,
+      "sha256": "4ed07d32b167213a483ca8b783f6a8f6dd4dc4714e49f020b75b27f10d9b9e79",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-landscape-selected.png",
+      "retained_sha256": "4ed07d32b167213a483ca8b783f6a8f6dd4dc4714e49f020b75b27f10d9b9e79"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-landscape.png",
+      "bytes": 30322,
+      "sha256": "95f77b1763141dc670b655729f7e696b9a4889bf79cf7be37dd7d73e3ecfd065",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-landscape.png",
+      "retained_sha256": "95f77b1763141dc670b655729f7e696b9a4889bf79cf7be37dd7d73e3ecfd065"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-local-edit.png",
+      "bytes": 53507,
+      "sha256": "3586a23793924df655755fcd091b9144987b0b84aefc82836347b9008f9f9d43",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-local-edit.png",
+      "retained_sha256": "3586a23793924df655755fcd091b9144987b0b84aefc82836347b9008f9f9d43"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-panned-zoomed.png",
+      "bytes": 47777,
+      "sha256": "3c4a2ab5ff3841be9ed138aaa0d7a9f42b72f64e8ac114c0815996aabf374500",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-panned-zoomed.png",
+      "retained_sha256": "3c4a2ab5ff3841be9ed138aaa0d7a9f42b72f64e8ac114c0815996aabf374500"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-portrait.png",
+      "bytes": 49818,
+      "sha256": "0e0273e296b65d049bb4a629fcf429a90a45eb8f4f94f65e2a93a6804a2bf43a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-portrait.png",
+      "retained_sha256": "0e0273e296b65d049bb4a629fcf429a90a45eb8f4f94f65e2a93a6804a2bf43a"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-read-only.png",
+      "bytes": 56568,
+      "sha256": "dfdcc8431aedff6152db0567c60104346914240f97e0590d506cbeed47662a26",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-read-only.png",
+      "retained_sha256": "dfdcc8431aedff6152db0567c60104346914240f97e0590d506cbeed47662a26"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-selected.png",
+      "bytes": 51318,
+      "sha256": "607b422c58e98c96e02612a3e003f64e6fdfcae954acf88c2b054d176a2ee976",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/bids-selected.png",
+      "retained_sha256": "607b422c58e98c96e02612a3e003f64e6fdfcae954acf88c2b054d176a2ee976"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/launcher.png",
+      "bytes": 54126,
+      "sha256": "3668291c15be444b935d8795b251618a7a5e9ef29212ff7728c4ce937903e3c7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/launcher.png",
+      "retained_sha256": "3668291c15be444b935d8795b251618a7a5e9ef29212ff7728c4ce937903e3c7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-320.png",
+      "bytes": 34401,
+      "sha256": "c87b4b3b8688acd363d37019855dbbdb749a7ca9cc9e395e4872ec295914f27b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-320.png",
+      "retained_sha256": "c87b4b3b8688acd363d37019855dbbdb749a7ca9cc9e395e4872ec295914f27b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-430.png",
+      "bytes": 58729,
+      "sha256": "11c0814e81c3d4dba8ece1ebd3a2e2a2229e0885ba944f6004818b7ae21c5847",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-430.png",
+      "retained_sha256": "11c0814e81c3d4dba8ece1ebd3a2e2a2229e0885ba944f6004818b7ae21c5847"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-date-review.png",
+      "bytes": 40496,
+      "sha256": "563564b85814039fdadfedcdc3843678afb78d0b7b9769134a90a4c48061e8c9",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-date-review.png",
+      "retained_sha256": "563564b85814039fdadfedcdc3843678afb78d0b7b9769134a90a4c48061e8c9"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-detail.png",
+      "bytes": 50212,
+      "sha256": "ad3303c304207ce0dfaf49f171264f653ac968ace20b6e9a2206a4005c55d0ce",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-detail.png",
+      "retained_sha256": "ad3303c304207ce0dfaf49f171264f653ac968ace20b6e9a2206a4005c55d0ce"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-landscape-selected.png",
+      "bytes": 42605,
+      "sha256": "041b77e9d9d904a98104951c40e9f9343f5631c4d91ede704ed51b7de9919958",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-landscape-selected.png",
+      "retained_sha256": "041b77e9d9d904a98104951c40e9f9343f5631c4d91ede704ed51b7de9919958"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-landscape.png",
+      "bytes": 28501,
+      "sha256": "821bf6c4b97fca089ab69dcf3d31a196da7498cf26a676e3e50a2f4e227b51c4",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-landscape.png",
+      "retained_sha256": "821bf6c4b97fca089ab69dcf3d31a196da7498cf26a676e3e50a2f4e227b51c4"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-local-edit.png",
+      "bytes": 59771,
+      "sha256": "4e96f004f91446c7f76a6b7e9cddfbc45e7f03ba7b0b4ea08b6e87d9e4f91ff5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-local-edit.png",
+      "retained_sha256": "4e96f004f91446c7f76a6b7e9cddfbc45e7f03ba7b0b4ea08b6e87d9e4f91ff5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-panned-zoomed.png",
+      "bytes": 50052,
+      "sha256": "9a9b324e0021f5a3e1e73cf81bf67d529100d9235fb0f0b00638b2bed3d1c8f0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-panned-zoomed.png",
+      "retained_sha256": "9a9b324e0021f5a3e1e73cf81bf67d529100d9235fb0f0b00638b2bed3d1c8f0"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-portrait.png",
+      "bytes": 52940,
+      "sha256": "bd44c36e61bcbdeef8f1aeb60d860e65bbf93b0516d08af6ed853542e6aa22f2",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-portrait.png",
+      "retained_sha256": "bd44c36e61bcbdeef8f1aeb60d860e65bbf93b0516d08af6ed853542e6aa22f2"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-selected.png",
+      "bytes": 55123,
+      "sha256": "9fbed49f1b04ed4437beef248f98df47fcffd54b9b13ef60b18908f99e55d09a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/production-selected.png",
+      "retained_sha256": "9fbed49f1b04ed4437beef248f98df47fcffd54b9b13ef60b18908f99e55d09a"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/reference-bids.png",
+      "bytes": 65165,
+      "sha256": "a56272fb5846e50718b693e482be3c643f522f46078db62ee351e04e3f8a37e5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/reference-bids.png",
+      "retained_sha256": "a56272fb5846e50718b693e482be3c643f522f46078db62ee351e04e3f8a37e5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/reference-production.png",
+      "bytes": 52659,
+      "sha256": "7b26ed563bb9ec5400e7d1aab7374c7170a0a65c2941081b1ece83ed6e50e777",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/screenshots/reference-production.png",
+      "retained_sha256": "7b26ed563bb9ec5400e7d1aab7374c7170a0a65c2941081b1ece83ed6e50e777"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/serve.mjs",
+      "bytes": 1591,
+      "sha256": "c2e9a9ab35d5d1172ac5e5b65b1481ba7c7b38bdd63a9aabf7eb6d0907d04668",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/serve.mjs",
+      "retained_sha256": "c2e9a9ab35d5d1172ac5e5b65b1481ba7c7b38bdd63a9aabf7eb6d0907d04668"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/validate-package.py",
+      "bytes": 3520,
+      "sha256": "657b3b5eb14156e5e03f11af41666907ef050c7d912e0c1ea1788152c04c8b30",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/validate-package.py",
+      "retained_sha256": "657b3b5eb14156e5e03f11af41666907ef050c7d912e0c1ea1788152c04c8b30"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/verify-adapters.mjs",
+      "bytes": 3288,
+      "sha256": "af3a2352dbdfe4ba071ad81039724ceb31eab3ed5e5159970aee8145c1fd9faf",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/verify-adapters.mjs",
+      "retained_sha256": "af3a2352dbdfe4ba071ad81039724ceb31eab3ed5e5159970aee8145c1fd9faf"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/revisions/01-initial/verify.cjs",
+      "bytes": 9992,
+      "sha256": "fc4c4c84f64b558916ee27629b326c26fac96616fd41c0356d806d8fe6c2a043",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/revisions/01-initial/verify.cjs",
+      "retained_sha256": "fc4c4c84f64b558916ee27629b326c26fac96616fd41c0356d806d8fe6c2a043"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-combined-production-selected.png",
+      "bytes": 62106,
+      "sha256": "d1b7fe08af66e55351cbc590a09f38048e81854c712dd449e80d5d0ef9f704b5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-combined-production-selected.png",
+      "retained_sha256": "d1b7fe08af66e55351cbc590a09f38048e81854c712dd449e80d5d0ef9f704b5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-date-review.png",
+      "bytes": 42555,
+      "sha256": "7a0685458810447697676a43e3a88a861a20927456e834ed56be423a63fae599",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-date-review.png",
+      "retained_sha256": "7a0685458810447697676a43e3a88a861a20927456e834ed56be423a63fae599"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-detail.png",
+      "bytes": 35617,
+      "sha256": "c5848a11993d2ab0bb104f10b023a070f76e7e62cf2a6c44ce7ed0eebe1e26f0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-detail.png",
+      "retained_sha256": "c5848a11993d2ab0bb104f10b023a070f76e7e62cf2a6c44ce7ed0eebe1e26f0"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-landscape-selected.png",
+      "bytes": 40485,
+      "sha256": "4ed07d32b167213a483ca8b783f6a8f6dd4dc4714e49f020b75b27f10d9b9e79",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-landscape-selected.png",
+      "retained_sha256": "4ed07d32b167213a483ca8b783f6a8f6dd4dc4714e49f020b75b27f10d9b9e79"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-landscape.png",
+      "bytes": 30322,
+      "sha256": "95f77b1763141dc670b655729f7e696b9a4889bf79cf7be37dd7d73e3ecfd065",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-landscape.png",
+      "retained_sha256": "95f77b1763141dc670b655729f7e696b9a4889bf79cf7be37dd7d73e3ecfd065"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-local-edit.png",
+      "bytes": 53507,
+      "sha256": "3586a23793924df655755fcd091b9144987b0b84aefc82836347b9008f9f9d43",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-local-edit.png",
+      "retained_sha256": "3586a23793924df655755fcd091b9144987b0b84aefc82836347b9008f9f9d43"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-panned-zoomed.png",
+      "bytes": 47777,
+      "sha256": "3c4a2ab5ff3841be9ed138aaa0d7a9f42b72f64e8ac114c0815996aabf374500",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-panned-zoomed.png",
+      "retained_sha256": "3c4a2ab5ff3841be9ed138aaa0d7a9f42b72f64e8ac114c0815996aabf374500"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-portrait.png",
+      "bytes": 49818,
+      "sha256": "0e0273e296b65d049bb4a629fcf429a90a45eb8f4f94f65e2a93a6804a2bf43a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-portrait.png",
+      "retained_sha256": "0e0273e296b65d049bb4a629fcf429a90a45eb8f4f94f65e2a93a6804a2bf43a"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-read-only.png",
+      "bytes": 56568,
+      "sha256": "dfdcc8431aedff6152db0567c60104346914240f97e0590d506cbeed47662a26",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-read-only.png",
+      "retained_sha256": "dfdcc8431aedff6152db0567c60104346914240f97e0590d506cbeed47662a26"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/bids-selected.png",
+      "bytes": 51318,
+      "sha256": "607b422c58e98c96e02612a3e003f64e6fdfcae954acf88c2b054d176a2ee976",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/bids-selected.png",
+      "retained_sha256": "607b422c58e98c96e02612a3e003f64e6fdfcae954acf88c2b054d176a2ee976"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/launcher.png",
+      "bytes": 54126,
+      "sha256": "3668291c15be444b935d8795b251618a7a5e9ef29212ff7728c4ce937903e3c7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/launcher.png",
+      "retained_sha256": "3668291c15be444b935d8795b251618a7a5e9ef29212ff7728c4ce937903e3c7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-320.png",
+      "bytes": 34401,
+      "sha256": "c87b4b3b8688acd363d37019855dbbdb749a7ca9cc9e395e4872ec295914f27b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-320.png",
+      "retained_sha256": "c87b4b3b8688acd363d37019855dbbdb749a7ca9cc9e395e4872ec295914f27b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-430.png",
+      "bytes": 58729,
+      "sha256": "11c0814e81c3d4dba8ece1ebd3a2e2a2229e0885ba944f6004818b7ae21c5847",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-430.png",
+      "retained_sha256": "11c0814e81c3d4dba8ece1ebd3a2e2a2229e0885ba944f6004818b7ae21c5847"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-date-review.png",
+      "bytes": 40496,
+      "sha256": "563564b85814039fdadfedcdc3843678afb78d0b7b9769134a90a4c48061e8c9",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-date-review.png",
+      "retained_sha256": "563564b85814039fdadfedcdc3843678afb78d0b7b9769134a90a4c48061e8c9"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-detail.png",
+      "bytes": 50212,
+      "sha256": "ad3303c304207ce0dfaf49f171264f653ac968ace20b6e9a2206a4005c55d0ce",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-detail.png",
+      "retained_sha256": "ad3303c304207ce0dfaf49f171264f653ac968ace20b6e9a2206a4005c55d0ce"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-landscape-selected.png",
+      "bytes": 42605,
+      "sha256": "041b77e9d9d904a98104951c40e9f9343f5631c4d91ede704ed51b7de9919958",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-landscape-selected.png",
+      "retained_sha256": "041b77e9d9d904a98104951c40e9f9343f5631c4d91ede704ed51b7de9919958"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-landscape.png",
+      "bytes": 28501,
+      "sha256": "821bf6c4b97fca089ab69dcf3d31a196da7498cf26a676e3e50a2f4e227b51c4",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-landscape.png",
+      "retained_sha256": "821bf6c4b97fca089ab69dcf3d31a196da7498cf26a676e3e50a2f4e227b51c4"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-local-edit.png",
+      "bytes": 59771,
+      "sha256": "4e96f004f91446c7f76a6b7e9cddfbc45e7f03ba7b0b4ea08b6e87d9e4f91ff5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-local-edit.png",
+      "retained_sha256": "4e96f004f91446c7f76a6b7e9cddfbc45e7f03ba7b0b4ea08b6e87d9e4f91ff5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-panned-zoomed.png",
+      "bytes": 50052,
+      "sha256": "9a9b324e0021f5a3e1e73cf81bf67d529100d9235fb0f0b00638b2bed3d1c8f0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-panned-zoomed.png",
+      "retained_sha256": "9a9b324e0021f5a3e1e73cf81bf67d529100d9235fb0f0b00638b2bed3d1c8f0"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-portrait.png",
+      "bytes": 52940,
+      "sha256": "bd44c36e61bcbdeef8f1aeb60d860e65bbf93b0516d08af6ed853542e6aa22f2",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-portrait.png",
+      "retained_sha256": "bd44c36e61bcbdeef8f1aeb60d860e65bbf93b0516d08af6ed853542e6aa22f2"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/production-selected.png",
+      "bytes": 55123,
+      "sha256": "9fbed49f1b04ed4437beef248f98df47fcffd54b9b13ef60b18908f99e55d09a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/production-selected.png",
+      "retained_sha256": "9fbed49f1b04ed4437beef248f98df47fcffd54b9b13ef60b18908f99e55d09a"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/reference-bids.png",
+      "bytes": 65165,
+      "sha256": "a56272fb5846e50718b693e482be3c643f522f46078db62ee351e04e3f8a37e5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/reference-bids.png",
+      "retained_sha256": "a56272fb5846e50718b693e482be3c643f522f46078db62ee351e04e3f8a37e5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/screenshots/reference-production.png",
+      "bytes": 52659,
+      "sha256": "7b26ed563bb9ec5400e7d1aab7374c7170a0a65c2941081b1ece83ed6e50e777",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/screenshots/reference-production.png",
+      "retained_sha256": "7b26ed563bb9ec5400e7d1aab7374c7170a0a65c2941081b1ece83ed6e50e777"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/serve.mjs",
+      "bytes": 1591,
+      "sha256": "c2e9a9ab35d5d1172ac5e5b65b1481ba7c7b38bdd63a9aabf7eb6d0907d04668",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/serve.mjs",
+      "retained_sha256": "c2e9a9ab35d5d1172ac5e5b65b1481ba7c7b38bdd63a9aabf7eb6d0907d04668"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/validate-package.py",
+      "bytes": 229,
+      "sha256": "0c1969352e53301c08e48d3ae7074823f5292a4c0bf6c73d1ab5fabc40aa8ba2",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/validate-package.py",
+      "retained_sha256": "0c1969352e53301c08e48d3ae7074823f5292a4c0bf6c73d1ab5fabc40aa8ba2"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/validate-refinement.py",
+      "bytes": 4755,
+      "sha256": "814f4aa75147d33e284f6ba80490fa1cb7f2517634f96317d4ae26e5dd711927",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/validate-refinement.py",
+      "retained_sha256": "814f4aa75147d33e284f6ba80490fa1cb7f2517634f96317d4ae26e5dd711927"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/verify-adapters.mjs",
+      "bytes": 3288,
+      "sha256": "af3a2352dbdfe4ba071ad81039724ceb31eab3ed5e5159970aee8145c1fd9faf",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/verify-adapters.mjs",
+      "retained_sha256": "af3a2352dbdfe4ba071ad81039724ceb31eab3ed5e5159970aee8145c1fd9faf"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/verify-refinement-adapters.mjs",
+      "bytes": 4611,
+      "sha256": "de16ee0b0fb5c1ee0dfdd775d8fa78565a6a4cd4c293401b8d15dd101d01386a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/verify-refinement-adapters.mjs",
+      "retained_sha256": "de16ee0b0fb5c1ee0dfdd775d8fa78565a6a4cd4c293401b8d15dd101d01386a"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/verify-refinement.cjs",
+      "bytes": 18901,
+      "sha256": "5c80b142d3bd00a38baee5b28abfc6dc56c012d353c5b1c047d2603b32b47e53",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/verify-refinement.cjs",
+      "retained_sha256": "5c80b142d3bd00a38baee5b28abfc6dc56c012d353c5b1c047d2603b32b47e53"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile-timeline/verify.cjs",
+      "bytes": 9992,
+      "sha256": "fc4c4c84f64b558916ee27629b326c26fac96616fd41c0356d806d8fe6c2a043",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile-timeline/verify.cjs",
+      "retained_sha256": "fc4c4c84f64b558916ee27629b326c26fac96616fd41c0356d806d8fe6c2a043"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/README.md",
+      "bytes": 3825,
+      "sha256": "2932bc319f3dbfb12d045450409cffb714b0e6c1df7067c9bd9fc66c46f5e806",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/README.md",
+      "retained_sha256": "2932bc319f3dbfb12d045450409cffb714b0e6c1df7067c9bd9fc66c46f5e806"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/REPORT.md",
+      "bytes": 41451,
+      "sha256": "7b312aff223970eeeb987c2ced1ec3e6ffbd0a92fac631af81eb8dfb70bd2104",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/REPORT.md",
+      "retained_sha256": "7b312aff223970eeeb987c2ced1ec3e6ffbd0a92fac631af81eb8dfb70bd2104"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/SHA256SUMS.txt",
+      "bytes": 6145,
+      "sha256": "d252a9543000c39d04dc7a06752bb01c03c66104edd6cd4fb1e0d78395c2c2f3",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/SHA256SUMS.txt",
+      "retained_sha256": "d252a9543000c39d04dc7a06752bb01c03c66104edd6cd4fb1e0d78395c2c2f3"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/baseline-browser.json",
+      "bytes": 218140,
+      "sha256": "55b08db2595918057736feb66c227397f281f4744993576cf099576db1d37a17",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/baseline-browser.json",
+      "retained_sha256": "55b08db2595918057736feb66c227397f281f4744993576cf099576db1d37a17"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/capture.cjs",
+      "bytes": 1700,
+      "sha256": "bf6a0a166547744973e8a1cfd1807aea4c8c1d7f8ecb6a807178eb008b48b17c",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/capture.cjs",
+      "retained_sha256": "bf6a0a166547744973e8a1cfd1807aea4c8c1d7f8ecb6a807178eb008b48b17c"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/interact.cjs",
+      "bytes": 2878,
+      "sha256": "d3f19195972f7c2e86ede03860b872df7121384000971cf66aa025bee14f4507",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/interact.cjs",
+      "retained_sha256": "d3f19195972f7c2e86ede03860b872df7121384000971cf66aa025bee14f4507"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/interactions.json",
+      "bytes": 78514,
+      "sha256": "1ee4b100ee5083c03f0ee54fdc84f96e8fadcf6a6d3034e473dd278cef7aa689",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/interactions.json",
+      "retained_sha256": "1ee4b100ee5083c03f0ee54fdc84f96e8fadcf6a6d3034e473dd278cef7aa689"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/local-requests.json",
+      "bytes": 425297,
+      "sha256": "029ec2927328890f640014846ea43f14c3aea37d0a13a1c4a4e1300fed3d17b4",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/local-requests.json",
+      "retained_sha256": "029ec2927328890f640014846ea43f14c3aea37d0a13a1c4a4e1300fed3d17b4"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/local-review-server.mjs",
+      "bytes": 7158,
+      "sha256": "442bfb04a8f3d7e80a5dc91a442784a7ec3f1e74c7a92d41c8fb49064b2d93bf",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/local-review-server.mjs",
+      "retained_sha256": "442bfb04a8f3d7e80a5dc91a442784a7ec3f1e74c7a92d41c8fb49064b2d93bf"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/repository-boundary.json",
+      "bytes": 2467,
+      "sha256": "0caf409c2d695b30bfe38666c8ea832bfc430f3e8759aa69265729618fccddbb",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/repository-boundary.json",
+      "retained_sha256": "0caf409c2d695b30bfe38666c8ea832bfc430f3e8759aa69265729618fccddbb"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/responsive.cjs",
+      "bytes": 1833,
+      "sha256": "02af882fa18339c8f43f4c356e132f9acdbd74189f6406d6987bacc86c7a5b3e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/responsive.cjs",
+      "retained_sha256": "02af882fa18339c8f43f4c356e132f9acdbd74189f6406d6987bacc86c7a5b3e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/responsive.json",
+      "bytes": 23135,
+      "sha256": "1d4eb1fede010de021858a699863281b72fa0bf6b9b5e3dea87e858c937e9c0b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/responsive.json",
+      "retained_sha256": "1d4eb1fede010de021858a699863281b72fa0bf6b9b5e3dea87e858c937e9c0b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/sample-fixture.json",
+      "bytes": 7190,
+      "sha256": "8ca49cdccc4f9c61b5bdeebc55565f45d514a2d05ea4a524ce7fbb45f6dc3fe4",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/sample-fixture.json",
+      "retained_sha256": "8ca49cdccc4f9c61b5bdeebc55565f45d514a2d05ea4a524ce7fbb45f6dc3fe4"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/source-index.md",
+      "bytes": 17322,
+      "sha256": "58a8663241e25ab0fc9a5b0fdfaf57d5802ad4514e506bcb7e965746a8244381",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/source-index.md",
+      "retained_sha256": "58a8663241e25ab0fc9a5b0fdfaf57d5802ad4514e506bcb7e965746a8244381"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/validation.json",
+      "bytes": 699,
+      "sha256": "2ce04e088323c6e6661db460a77916319143e4d08771da6d71ab4932645a21ab",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/validation.json",
+      "retained_sha256": "2ce04e088323c6e6661db460a77916319143e4d08771da6d71ab4932645a21ab"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/workflows.cjs",
+      "bytes": 6383,
+      "sha256": "1520e48d72e0abb83a0ed76ccca673588a0b75fffa5bd9cbd3b2778f4a69d8a6",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/workflows.cjs",
+      "retained_sha256": "1520e48d72e0abb83a0ed76ccca673588a0b75fffa5bd9cbd3b2778f4a69d8a6"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/evidence/workflows.json",
+      "bytes": 89091,
+      "sha256": "31b269a4df2b6c64be541c938c52e1f8874167aa95f119b478677760f51eecc1",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/workflows.json",
+      "retained_sha256": "31b269a4df2b6c64be541c938c52e1f8874167aa95f119b478677760f51eecc1"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/proposals/mobile-patterns.png",
+      "bytes": 181676,
+      "sha256": "ca4e02d3a7cc33baa78bf948980ef34efec9be9bbe11e4e53a9dd15527cd42fb",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/proposals/mobile-patterns.png",
+      "retained_sha256": "ca4e02d3a7cc33baa78bf948980ef34efec9be9bbe11e4e53a9dd15527cd42fb"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/proposals/mobile-patterns.svg",
+      "bytes": 7551,
+      "sha256": "915cd06b9e33db87e763dfa84d82cabf66d5f56b5aacf7389e71fc6fe0d406bf",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/proposals/mobile-patterns.svg",
+      "retained_sha256": "915cd06b9e33db87e763dfa84d82cabf66d5f56b5aacf7389e71fc6fe0d406bf"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/activity-390.png",
+      "bytes": 43350,
+      "sha256": "3109c1dafcd1a74320486aa5eb2fd6c35186d3c5990ebd3d178e34ec3718e7f8",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/activity-390.png",
+      "retained_sha256": "3109c1dafcd1a74320486aa5eb2fd6c35186d3c5990ebd3d178e34ec3718e7f8"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/browser-back-from-job.png",
+      "bytes": 50560,
+      "sha256": "6d03d33f92670481059c350e24a2ed4e4ce3208e0e68108df4cd41e7f0ddec38",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/browser-back-from-job.png",
+      "retained_sha256": "6d03d33f92670481059c350e24a2ed4e4ce3208e0e68108df4cd41e7f0ddec38"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/catalog-390.png",
+      "bytes": 71456,
+      "sha256": "bc80dafbe330cc4ae6fec008fad06cc6a9c17f4ffc1cf938bd17deb8cf2fad72",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/catalog-390.png",
+      "retained_sha256": "bc80dafbe330cc4ae6fec008fad06cc6a9c17f4ffc1cf938bd17deb8cf2fad72"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/color-label-dialog.png",
+      "bytes": 78705,
+      "sha256": "d819cec5f06ab6839ef9a1363dd1ce5ad66c176c9a6c67f992dfd8176bfbaac1",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/color-label-dialog.png",
+      "retained_sha256": "d819cec5f06ab6839ef9a1363dd1ce5ad66c176c9a6c67f992dfd8176bfbaac1"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/conversation.png",
+      "bytes": 31825,
+      "sha256": "a70c6751c2e1300441ff2ac6ab629425b2bafc8d54cede7cad81dec6f3869802",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/conversation.png",
+      "retained_sha256": "a70c6751c2e1300441ff2ac6ab629425b2bafc8d54cede7cad81dec6f3869802"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/home-320.png",
+      "bytes": 39342,
+      "sha256": "b4a9f20c23d76e3e3d6b2d24e2e2cdefbad423cf8b03896f447431555cdc722b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/home-320.png",
+      "retained_sha256": "b4a9f20c23d76e3e3d6b2d24e2e2cdefbad423cf8b03896f447431555cdc722b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/home-390.png",
+      "bytes": 62534,
+      "sha256": "fa2158012a1973787667502b303980c1c42bc5066ce8fa2b3adfef5624d4b55e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/home-390.png",
+      "retained_sha256": "fa2158012a1973787667502b303980c1c42bc5066ce8fa2b3adfef5624d4b55e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/home-430.png",
+      "bytes": 72175,
+      "sha256": "5b4959f5cec982bdc9eefb374e875e8c6ea98cd93ef03bc9105e24d857233d0d",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/home-430.png",
+      "retained_sha256": "5b4959f5cec982bdc9eefb374e875e8c6ea98cd93ef03bc9105e24d857233d0d"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/inventory-390.png",
+      "bytes": 50503,
+      "sha256": "3a4ab08642156c00a8465bbc09ba5d5baf3d2c648fe3d91c7c346eaee94493a7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/inventory-390.png",
+      "retained_sha256": "3a4ab08642156c00a8465bbc09ba5d5baf3d2c648fe3d91c7c346eaee94493a7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/job-files-tab.png",
+      "bytes": 52085,
+      "sha256": "aaf2a14e36f284150eda99bd3c693a1ff568957abf302bb54b42c2a51ab2f691",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/job-files-tab.png",
+      "retained_sha256": "aaf2a14e36f284150eda99bd3c693a1ff568957abf302bb54b42c2a51ab2f691"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/job-inspector.png",
+      "bytes": 75996,
+      "sha256": "fd7e11341f7f608106b7544de8d139e27a39d399e529401a3dd88498962cb5a6",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/job-inspector.png",
+      "retained_sha256": "fd7e11341f7f608106b7544de8d139e27a39d399e529401a3dd88498962cb5a6"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/job-updates-tab.png",
+      "bytes": 62349,
+      "sha256": "f91b0e181ae9dc9b61824de19e29f31f9e879474747841b66234414dd6c9ef9b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/job-updates-tab.png",
+      "retained_sha256": "f91b0e181ae9dc9b61824de19e29f31f9e879474747841b66234414dd6c9ef9b"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/job-updates.png",
+      "bytes": 71488,
+      "sha256": "a91379e833b3bd1af780d1fedbe86d8f6024e6eb697369deaf631a601bedd6c5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/job-updates.png",
+      "retained_sha256": "a91379e833b3bd1af780d1fedbe86d8f6024e6eb697369deaf631a601bedd6c5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/manpower-expanded.png",
+      "bytes": 74986,
+      "sha256": "9794c83f699c61e10d1a3a32fc90cb98e04079aea95e5f4d20b40d06ef7c211e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/manpower-expanded.png",
+      "retained_sha256": "9794c83f699c61e10d1a3a32fc90cb98e04079aea95e5f4d20b40d06ef7c211e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/manpower-reporting-390.png",
+      "bytes": 71105,
+      "sha256": "b0454a78ccb7302dced3b9810cfad2ecfb30b5863ad40c958f9e97439934f88d",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/manpower-reporting-390.png",
+      "retained_sha256": "b0454a78ccb7302dced3b9810cfad2ecfb30b5863ad40c958f9e97439934f88d"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/material-usage-390.png",
+      "bytes": 82201,
+      "sha256": "87014f4fb459e531abaeb947f41f55639fad1f8afeb8c20d73bb346d1b566dd2",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/material-usage-390.png",
+      "retained_sha256": "87014f4fb459e531abaeb947f41f55639fad1f8afeb8c20d73bb346d1b566dd2"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/message-back.png",
+      "bytes": 19620,
+      "sha256": "68a9a09b43640c0674a75fa5dc2dfee9842a7e254c702f69670a7565359433f3",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/message-back.png",
+      "retained_sha256": "68a9a09b43640c0674a75fa5dc2dfee9842a7e254c702f69670a7565359433f3"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/message-compose.png",
+      "bytes": 31369,
+      "sha256": "1cee979fdb59801c3b5dd4dc8975c575d30572f3d303b27bae18e0667a51413d",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/message-compose.png",
+      "retained_sha256": "1cee979fdb59801c3b5dd4dc8975c575d30572f3d303b27bae18e0667a51413d"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/message-photo-queued.png",
+      "bytes": 35874,
+      "sha256": "befec4e336b7b5be3eb71d99da9623f640f4574f029a444c1808c7378d1cb9a5",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/message-photo-queued.png",
+      "retained_sha256": "befec4e336b7b5be3eb71d99da9623f640f4574f029a444c1808c7378d1cb9a5"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/message-short-viewport.png",
+      "bytes": 30163,
+      "sha256": "e5ffa21d038fd84761df1be5aa5cf2d64423208c66273fbde11a0220526a9d30",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/message-short-viewport.png",
+      "retained_sha256": "e5ffa21d038fd84761df1be5aa5cf2d64423208c66273fbde11a0220526a9d30"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/messaging-list.png",
+      "bytes": 16868,
+      "sha256": "b7fc0ca30a255c0241919e0eb95d717a255a0a54d3cd25eb8464d7a0dbe4d2bd",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/messaging-list.png",
+      "retained_sha256": "b7fc0ca30a255c0241919e0eb95d717a255a0a54d3cd25eb8464d7a0dbe4d2bd"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/messaging-populated.png",
+      "bytes": 19599,
+      "sha256": "6885118f7619abf527dd3ec044333747bacd686ccfaf9a1bd1b3b0b43d450230",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/messaging-populated.png",
+      "retained_sha256": "6885118f7619abf527dd3ec044333747bacd686ccfaf9a1bd1b3b0b43d450230"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/my-work-390.png",
+      "bytes": 56874,
+      "sha256": "0e3888c83daa4fba7b8f8ce97555b294364454e3425d9ee6d974a126a0da0f88",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/my-work-390.png",
+      "retained_sha256": "0e3888c83daa4fba7b8f8ce97555b294364454e3425d9ee6d974a126a0da0f88"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/navigation-menu.png",
+      "bytes": 62559,
+      "sha256": "d1d5751247552686bcf8885a4a85a961ca31f0850c7d0dfda23a9ebe05d5efaa",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/navigation-menu.png",
+      "retained_sha256": "d1d5751247552686bcf8885a4a85a961ca31f0850c7d0dfda23a9ebe05d5efaa"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/notifications.png",
+      "bytes": 61321,
+      "sha256": "c1d720ea4e5a4d35046dd0c031a49fb2fe58f3aee5a93f9511732a89f618e873",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/notifications.png",
+      "retained_sha256": "c1d720ea4e5a4d35046dd0c031a49fb2fe58f3aee5a93f9511732a89f618e873"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/po-editor.png",
+      "bytes": 67519,
+      "sha256": "447eed2e12b3c6f89270635e81dc2f92714cd486ff2b69fbcae20b21dcd8f3af",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/po-editor.png",
+      "retained_sha256": "447eed2e12b3c6f89270635e81dc2f92714cd486ff2b69fbcae20b21dcd8f3af"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/po-overflow-metrics.png",
+      "bytes": 67519,
+      "sha256": "447eed2e12b3c6f89270635e81dc2f92714cd486ff2b69fbcae20b21dcd8f3af",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/po-overflow-metrics.png",
+      "retained_sha256": "447eed2e12b3c6f89270635e81dc2f92714cd486ff2b69fbcae20b21dcd8f3af"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/pre-production-390.png",
+      "bytes": 35453,
+      "sha256": "706b07e0d532f5a6df93317520547abb4c205f86bcd2df83007340834b5f02ca",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/pre-production-390.png",
+      "retained_sha256": "706b07e0d532f5a6df93317520547abb4c205f86bcd2df83007340834b5f02ca"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/production-390.png",
+      "bytes": 62559,
+      "sha256": "d1d5751247552686bcf8885a4a85a961ca31f0850c7d0dfda23a9ebe05d5efaa",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/production-390.png",
+      "retained_sha256": "d1d5751247552686bcf8885a4a85a961ca31f0850c7d0dfda23a9ebe05d5efaa"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/production-filters.png",
+      "bytes": 60540,
+      "sha256": "fd0b701d52fcbefb87e524ff143fbb8dd30ae5892c3a5662fb9a9863ab2e1912",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/production-filters.png",
+      "retained_sha256": "fd0b701d52fcbefb87e524ff143fbb8dd30ae5892c3a5662fb9a9863ab2e1912"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/proposal-editor.png",
+      "bytes": 37596,
+      "sha256": "ee3643deaf96108183fdff6afc873320ddbc76ab3c4d8fa845355bf162870bbf",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/proposal-editor.png",
+      "retained_sha256": "ee3643deaf96108183fdff6afc873320ddbc76ab3c4d8fa845355bf162870bbf"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/proposals-390.png",
+      "bytes": 34644,
+      "sha256": "534316a850c6a58d031ecca970a04b2a6683193e4763c7e731f0c9305bf56acf",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/proposals-390.png",
+      "retained_sha256": "534316a850c6a58d031ecca970a04b2a6683193e4763c7e731f0c9305bf56acf"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/purchasing-390.png",
+      "bytes": 59642,
+      "sha256": "96dc49e6a52afdc732cbf89164e970b8a59dc3e5648ac5ef141804c273e43851",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/purchasing-390.png",
+      "retained_sha256": "96dc49e6a52afdc732cbf89164e970b8a59dc3e5648ac5ef141804c273e43851"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/sample-calculation.png",
+      "bytes": 70512,
+      "sha256": "cd2f92cce73ee7572174fada6ecb9386585869c02a830ebe1d15f2cf60001111",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/sample-calculation.png",
+      "retained_sha256": "cd2f92cce73ee7572174fada6ecb9386585869c02a830ebe1d15f2cf60001111"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/sample-formulation.png",
+      "bytes": 68662,
+      "sha256": "932616a9e98d41e67d7901da62f35e53c960a9a0bb2cfc5d33da3aa693312a63",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/sample-formulation.png",
+      "retained_sha256": "932616a9e98d41e67d7901da62f35e53c960a9a0bb2cfc5d33da3aa693312a63"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/sample-label-actions.png",
+      "bytes": 70512,
+      "sha256": "cd2f92cce73ee7572174fada6ecb9386585869c02a830ebe1d15f2cf60001111",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/sample-label-actions.png",
+      "retained_sha256": "cd2f92cce73ee7572174fada6ecb9386585869c02a830ebe1d15f2cf60001111"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/samples-390.png",
+      "bytes": 52265,
+      "sha256": "d2a077b62c9bcb6d1eb99e2d1f30bc6c656fa20949a6d7ec9624a936bd1e0ccd",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/samples-390.png",
+      "retained_sha256": "d2a077b62c9bcb6d1eb99e2d1f30bc6c656fa20949a6d7ec9624a936bd1e0ccd"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/samples-debug.png",
+      "bytes": 52241,
+      "sha256": "2261f3a725b358317a0d20a952da348ea4942c5859c42f1f1d1208e867330cbd",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/samples-debug.png",
+      "retained_sha256": "2261f3a725b358317a0d20a952da348ea4942c5859c42f1f1d1208e867330cbd"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/settings-390.png",
+      "bytes": 56646,
+      "sha256": "a2768da1b073ebcae4ad8ee9b60268243e8da32fb34579ee9dc25fb3f9834b65",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/settings-390.png",
+      "retained_sha256": "a2768da1b073ebcae4ad8ee9b60268243e8da32fb34579ee9dc25fb3f9834b65"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/task-compose-expanded.png",
+      "bytes": 56792,
+      "sha256": "3b6b8dce02b62a296a4238c86569dba68430a90826ecda3b24ad8d48cbc19917",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/task-compose-expanded.png",
+      "retained_sha256": "3b6b8dce02b62a296a4238c86569dba68430a90826ecda3b24ad8d48cbc19917"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/task-details.png",
+      "bytes": 38492,
+      "sha256": "f52a4ca4d59df31d4d25ef9b1dfdb091cc170f728a5e63c322281bd78933978f",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/task-details.png",
+      "retained_sha256": "f52a4ca4d59df31d4d25ef9b1dfdb091cc170f728a5e63c322281bd78933978f"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/tasks-controls.png",
+      "bytes": 56874,
+      "sha256": "0e3888c83daa4fba7b8f8ce97555b294364454e3425d9ee6d974a126a0da0f88",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/tasks-controls.png",
+      "retained_sha256": "0e3888c83daa4fba7b8f8ce97555b294364454e3425d9ee6d974a126a0da0f88"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/timeline-landscape.png",
+      "bytes": 35871,
+      "sha256": "6f1aeeda563caa222d6f7fd8ce64b9ad8b63af3fcea051b2e371478feddfd2e7",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/timeline-landscape.png",
+      "retained_sha256": "6f1aeeda563caa222d6f7fd8ce64b9ad8b63af3fcea051b2e371478feddfd2e7"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/timeline-portrait.png",
+      "bytes": 58901,
+      "sha256": "f520433240e4948677fb969e6caebaaec98064a77e955dd3c80d90564475900e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/timeline-portrait.png",
+      "retained_sha256": "f520433240e4948677fb969e6caebaaec98064a77e955dd3c80d90564475900e"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/transactions-390.png",
+      "bytes": 46410,
+      "sha256": "a4f4601ba57c2e1a3d4f73356fcc8a5e0bbc2ea9f1c15ec3e5f31f3c3729fde0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/transactions-390.png",
+      "retained_sha256": "a4f4601ba57c2e1a3d4f73356fcc8a5e0bbc2ea9f1c15ec3e5f31f3c3729fde0"
+    },
+    {
+      "path": "docs/audits/2026-10-20-mobile/screenshots/transmittals-390.png",
+      "bytes": 51685,
+      "sha256": "2bc26f084a261f99e77319307b282bdd1a62177a47ed3b70dece4df3e7f37133",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/transmittals-390.png",
+      "retained_sha256": "2bc26f084a261f99e77319307b282bdd1a62177a47ed3b70dece4df3e7f37133"
+    },
+    {
+      "path": "docs/project-memory/2026-10-19-auth-tab-refocus-release.md",
+      "bytes": 2214,
+      "sha256": "0eff8eb618527f86f79c95fc42c347513d40e18cd75c298cabae2fe78907f091",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-19-auth-tab-refocus-release.md",
+      "retained_sha256": "0eff8eb618527f86f79c95fc42c347513d40e18cd75c298cabae2fe78907f091"
+    },
+    {
+      "path": "docs/project-memory/2026-10-19-samples-loading-loop-dual-release.md",
+      "bytes": 3547,
+      "sha256": "61f0543b0013a36796efb88213b0438cde7434d41ea1c995f841de3e5e973296",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-19-samples-loading-loop-dual-release.md",
+      "retained_sha256": "61f0543b0013a36796efb88213b0438cde7434d41ea1c995f841de3e5e973296"
+    },
+    {
+      "path": "docs/project-memory/2026-10-20-announcement-expiry-release.md",
+      "bytes": 3609,
+      "sha256": "5b5ae1a67a270cdad585daef5ea610343a3442701cdd296bf175ab0dd3207b4f",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-20-announcement-expiry-release.md",
+      "retained_sha256": "5b5ae1a67a270cdad585daef5ea610343a3442701cdd296bf175ab0dd3207b4f"
+    },
+    {
+      "path": "docs/project-memory/2026-10-20-contacts-release.md",
+      "bytes": 4193,
+      "sha256": "2c648d8a2d0be0f6e0c4f1089b192bda07e4717cc66f8bf632d5220a261a7b45",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-20-contacts-release.md",
+      "retained_sha256": "2c648d8a2d0be0f6e0c4f1089b192bda07e4717cc66f8bf632d5220a261a7b45"
+    },
+    {
+      "path": "docs/project-memory/2026-10-20-ios-web-push-architecture.md",
+      "bytes": 37069,
+      "sha256": "a98350502f9be29b55e7b54db1daacde37df420604c83727d2dea81cb72ea444",
+      "disposition": "reuse exact existing canonical file",
+      "retainedPath": "docs/project-memory/2026-10-20-ios-web-push-architecture.md"
+    },
+    {
+      "path": "docs/project-memory/2026-10-20-manpower-progressive-release.md",
+      "bytes": 11531,
+      "sha256": "0529e7f37404d6cca60fd86f89109d4030df19ba61d2546c1ead8a97bbef5158",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-20-manpower-progressive-release.md",
+      "retained_sha256": "0529e7f37404d6cca60fd86f89109d4030df19ba61d2546c1ead8a97bbef5158"
+    },
+    {
+      "path": "docs/project-memory/2026-10-20-mobile-early-access-release.md",
+      "bytes": 4720,
+      "sha256": "9ac9ca9ca42fbd0def82073d42b52eba87e8c5ee26bb9d920751f2bd8c408fa0",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-20-mobile-early-access-release.md",
+      "retained_sha256": "9ac9ca9ca42fbd0def82073d42b52eba87e8c5ee26bb9d920751f2bd8c408fa0"
+    },
+    {
+      "path": "docs/project-memory/2026-10-20-performance-waves-release.md",
+      "bytes": 7031,
+      "sha256": "bfc337b94d262ce2ebce8ebfb266c638ec3bc247aa77a657e885a7123e71802a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-20-performance-waves-release.md",
+      "retained_sha256": "bfc337b94d262ce2ebce8ebfb266c638ec3bc247aa77a657e885a7123e71802a"
+    },
+    {
+      "path": "docs/project-memory/2026-10-20-startup-hold-888-release.md",
+      "bytes": 4755,
+      "sha256": "82d21cb6e6d7f5901068ec4028cc75f81ba39b669a5e912e2b4fb74e5d402864",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-20-startup-hold-888-release.md",
+      "retained_sha256": "82d21cb6e6d7f5901068ec4028cc75f81ba39b669a5e912e2b4fb74e5d402864"
+    },
+    {
+      "path": "docs/project-memory/2026-10-20-startup-terrazzo-release.md",
+      "bytes": 7569,
+      "sha256": "eaba480758744d9b4fd904be556e398f59906f1a097b9addd51b8c8bfc770ca8",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-20-startup-terrazzo-release.md",
+      "retained_sha256": "eaba480758744d9b4fd904be556e398f59906f1a097b9addd51b8c8bfc770ca8"
+    },
+    {
+      "path": "docs/project-memory/2026-10-21-mobile-footer-44-release.md",
+      "bytes": 2452,
+      "sha256": "d4bda424117911cf848e41918fbdf5eaa7eae2440a11819455fded2a915cc9da",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-21-mobile-footer-44-release.md",
+      "retained_sha256": "d4bda424117911cf848e41918fbdf5eaa7eae2440a11819455fded2a915cc9da"
+    },
+    {
+      "path": "docs/project-memory/2026-10-21-mobile-nav-release-stopped.md",
+      "bytes": 2894,
+      "sha256": "cd51058fe6af909c5c80b10d36fd10e7cb04abb7bffd21b4b4fc7cd9757e4a7d",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-21-mobile-nav-release-stopped.md",
+      "retained_sha256": "cd51058fe6af909c5c80b10d36fd10e7cb04abb7bffd21b4b4fc7cd9757e4a7d"
+    },
+    {
+      "path": "docs/project-memory/2026-10-21-mobile-nav-release.md",
+      "bytes": 4627,
+      "sha256": "1b772b086311ff4ae7543d27c1d8748257494e17a71abe6862efdf738861703b",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-21-mobile-nav-release.md",
+      "retained_sha256": "1b772b086311ff4ae7543d27c1d8748257494e17a71abe6862efdf738861703b"
+    },
+    {
+      "path": "docs/project-memory/2026-10-21-mobile-responsive-polish-release.md",
+      "bytes": 3467,
+      "sha256": "414a619e814ca6d99cbc1109cbd6c32144b43cd890bf2cb26be18ad1135effca",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-21-mobile-responsive-polish-release.md",
+      "retained_sha256": "414a619e814ca6d99cbc1109cbd6c32144b43cd890bf2cb26be18ad1135effca"
+    },
+    {
+      "path": "docs/project-memory/2026-10-21-mobile-safe-area-background-release.md",
+      "bytes": 2605,
+      "sha256": "72cc23ac83e33bf4debb79369ff24cb8cb6e5ac6fcb13a3df829e0d3fdd50d24",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-21-mobile-safe-area-background-release.md",
+      "retained_sha256": "72cc23ac83e33bf4debb79369ff24cb8cb6e5ac6fcb13a3df829e0d3fdd50d24"
+    },
+    {
+      "path": "docs/project-memory/2026-10-21-repository-housekeeping-review.txt",
+      "bytes": 351457,
+      "sha256": "7fbb0c823a3f7203f4b65d45b8274ed5ee653b7462406d80d84455744246eb7c",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-21-repository-housekeeping-review.txt",
+      "retained_sha256": "7fbb0c823a3f7203f4b65d45b8274ed5ee653b7462406d80d84455744246eb7c"
+    },
+    {
+      "path": "docs/project-memory/2026-10-21-startup-cut-line-release.md",
+      "bytes": 3713,
+      "sha256": "085834ca30ec3e6cf1ca6d9add94ee7d3c0e093a63fa7db0d2fae998ef483d37",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/2026-10-21-startup-cut-line-release.md",
+      "retained_sha256": "085834ca30ec3e6cf1ca6d9add94ee7d3c0e093a63fa7db0d2fae998ef483d37"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-19-auth-tab-refocus-release.json",
+      "bytes": 16928,
+      "sha256": "bad8027d0d6e751a5d067ea82db028a88bf813ba950b598326432f8b09b3dabc",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-19-auth-tab-refocus-release.json",
+      "retained_sha256": "bad8027d0d6e751a5d067ea82db028a88bf813ba950b598326432f8b09b3dabc"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-19-samples-loading-loop-dual-release.json",
+      "bytes": 17765,
+      "sha256": "2823c98f9bb3a877b960baacd603a95485954fac028ec37bd311cee33ca38144",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-19-samples-loading-loop-dual-release.json",
+      "retained_sha256": "2823c98f9bb3a877b960baacd603a95485954fac028ec37bd311cee33ca38144"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-20-announcement-expiry-release.json",
+      "bytes": 28205,
+      "sha256": "2440d6de33c89c7d8b4de4c6250fe85ce60c4a7084a63f6ed422f9ce648c26bb",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-20-announcement-expiry-release.json",
+      "retained_sha256": "2440d6de33c89c7d8b4de4c6250fe85ce60c4a7084a63f6ed422f9ce648c26bb"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-20-contacts-release.json",
+      "bytes": 20638,
+      "sha256": "1fd75fc47c273da8b268311cf3949a4ef1bc16bf13b6534d5fc08d26c640b0ef",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-20-contacts-release.json",
+      "retained_sha256": "1fd75fc47c273da8b268311cf3949a4ef1bc16bf13b6534d5fc08d26c640b0ef"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-20-manpower-progressive-release.json",
+      "bytes": 29952,
+      "sha256": "012b4c37e6da223da7b0fbb24d54810d7f2133e33d4ec44c36d476400309d620",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-20-manpower-progressive-release.json",
+      "retained_sha256": "012b4c37e6da223da7b0fbb24d54810d7f2133e33d4ec44c36d476400309d620"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-20-mobile-early-access-release-preflight.json",
+      "bytes": 1388,
+      "sha256": "09695a7ad3b019079643c3d451b8be3b711d5447d9a981cdd8c71441349a5bff",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-20-mobile-early-access-release-preflight.json",
+      "retained_sha256": "09695a7ad3b019079643c3d451b8be3b711d5447d9a981cdd8c71441349a5bff"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-20-mobile-early-access-release.json",
+      "bytes": 30261,
+      "sha256": "45a3d80b20a04634a8455901ed6a869fceccfe780324c1f451f765bc7f5cc3e9",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-20-mobile-early-access-release.json",
+      "retained_sha256": "45a3d80b20a04634a8455901ed6a869fceccfe780324c1f451f765bc7f5cc3e9"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-20-performance-waves-release.json",
+      "bytes": 43853,
+      "sha256": "6d12ad892359023a4b699b07a5ea633cafae519ec6c897f3263c1fcb5f25bfdb",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-20-performance-waves-release.json",
+      "retained_sha256": "6d12ad892359023a4b699b07a5ea633cafae519ec6c897f3263c1fcb5f25bfdb"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-20-production-job-blend-attachments.json",
+      "bytes": 11110,
+      "sha256": "713b8e6aa39e5970a2d5d4b3c4190d9ea4b44e13603d08163fb2353a3d34382c",
+      "disposition": "private original plus committed anonymized findings",
+      "retainedPath": "docs/project-memory/evidence/2026-10-20-production-job-blend-attachments.json",
+      "retained_sha256": "1c13515825b9e51ae01c7dbfb88fe215619cc524a4c1757fe5f9198f0dc441b2"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-20-startup-hold-888-release.json",
+      "bytes": 30245,
+      "sha256": "3b5a112b8546d179266c4ca5e7b355ba20bfed006a02141919c134ffafb7901e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-20-startup-hold-888-release.json",
+      "retained_sha256": "3b5a112b8546d179266c4ca5e7b355ba20bfed006a02141919c134ffafb7901e"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-20-startup-terrazzo-release.json",
+      "bytes": 30513,
+      "sha256": "5960025c1eb03f28c00b4a277a6ef60ae983159ef32b2eda2260f54ab570b1bb",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-20-startup-terrazzo-release.json",
+      "retained_sha256": "5960025c1eb03f28c00b4a277a6ef60ae983159ef32b2eda2260f54ab570b1bb"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-21-mobile-footer-44-release.json",
+      "bytes": 31852,
+      "sha256": "cb0c068f4226537647ed268a96c7c3df8bd1b541458c157567d9e1b5516ae307",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-21-mobile-footer-44-release.json",
+      "retained_sha256": "cb0c068f4226537647ed268a96c7c3df8bd1b541458c157567d9e1b5516ae307"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-21-mobile-nav-release-stopped.json",
+      "bytes": 3585,
+      "sha256": "b3acbc1cfe08f5bef64085e4b3c34b7662e032aa642e5a4e2b9c1453b06f9678",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-21-mobile-nav-release-stopped.json",
+      "retained_sha256": "b3acbc1cfe08f5bef64085e4b3c34b7662e032aa642e5a4e2b9c1453b06f9678"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-21-mobile-nav-release.json",
+      "bytes": 35503,
+      "sha256": "cac4d502772e1863d9adb306e32567e012256182640f22adaddbc835d50dcc8f",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-21-mobile-nav-release.json",
+      "retained_sha256": "cac4d502772e1863d9adb306e32567e012256182640f22adaddbc835d50dcc8f"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-21-mobile-responsive-polish-release.json",
+      "bytes": 35899,
+      "sha256": "d294a0c2940fbec02983a44662f4b8d6e42eb6a7e33f9803bdded8261ffd74af",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-21-mobile-responsive-polish-release.json",
+      "retained_sha256": "d294a0c2940fbec02983a44662f4b8d6e42eb6a7e33f9803bdded8261ffd74af"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-21-mobile-safe-area-background-release.json",
+      "bytes": 31948,
+      "sha256": "e3f0976b40fdd543a7d257b43e723fa3b55176997bb4780f3778604c88f1571a",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-21-mobile-safe-area-background-release.json",
+      "retained_sha256": "e3f0976b40fdd543a7d257b43e723fa3b55176997bb4780f3778604c88f1571a"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-21-startup-cut-line-release.json",
+      "bytes": 30455,
+      "sha256": "b258cb594d09f79af71a5ebd13508d73c6c488d15ddc6dc5193bcea430db9c1e",
+      "disposition": "commit exact original",
+      "retainedPath": "docs/project-memory/evidence/2026-10-21-startup-cut-line-release.json",
+      "retained_sha256": "b258cb594d09f79af71a5ebd13508d73c6c488d15ddc6dc5193bcea430db9c1e"
+    }
+  ],
+  "removed_wrapper_proof": [
+    {
+      "source": "docs/audits/2026-10-19-comprehensive-handoff.zip",
+      "bytes": 57044,
+      "members": [
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/README.md",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/README.md",
+          "sha256": "52e309c76a3ebcd67c664f381610840e434de3fc0e2b88c7473a8b0c83f6f3e5"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/REPORT.md",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/REPORT.md",
+          "sha256": "bf5d77bd660e1fe5634f7446bc07edd596def5b30a654d03358d65ddfdae3c4b"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/SHA256SUMS.txt",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/SHA256SUMS.txt",
+          "sha256": "85f76377deb2dae76c46bf567b498a5e36f67f93c65128f42d8b527384042165"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/git-branches.txt",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/git-branches.txt",
+          "sha256": "c30521654f178555272109164a2c88d69d2b80a6ac6f64fe3b537ead744e349e"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/initial-status.txt",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/initial-status.txt",
+          "sha256": "4dc96487286499333a352a98121f3e8f78ace3ebfc5214d3e9200b9b3ae8104c"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/query-call-sites.md",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/query-call-sites.md",
+          "sha256": "690c69699d32f3de942891e228532f22ad3bc6470d73271c293766cb2c7d0b9a"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/repository-facts.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/repository-facts.json",
+          "sha256": "ac319a76450d02928193ace662146326236aa42030ed330327b8cd26bc0d3f83"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/retrieval-ancestry.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/retrieval-ancestry.json",
+          "sha256": "77fcd634c43e7f049b20bc5a21fd5b59c91d0ff09891783f0412d11771745d33"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/reused-evidence.md",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/reused-evidence.md",
+          "sha256": "3a9ead102a348798ca8bd9ebf1b77dfbcab48acf05b8ee5a1213368489b7826e"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/routes-and-size.md",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/routes-and-size.md",
+          "sha256": "1794a31a4b7ec160366cbf689c8631a30337d75a3e6153fa78dbaa6a7ba714ef"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/sample-matcher-branches.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/sample-matcher-branches.json",
+          "sha256": "951e4f96e6b243679a491d3b526caeb523cb905fc4871e54af066d8156bd7f06"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/sql-declarations.md",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/sql-declarations.md",
+          "sha256": "a0e12c41b47e3ab41afb3b869debedd8619bc24260748b253d4ae30bf6e23d66"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/validation.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/validation.json",
+          "sha256": "ed07c4bc119a190705bff90edb5437f4cda3677fe80ba804e36c6bc8ceba3ed0"
+        },
+        {
+          "source": "docs/audits/2026-10-19-comprehensive/evidence/worktrees.txt",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-19-comprehensive/evidence/worktrees.txt",
+          "sha256": "064765cbb809c2b9afd763d7b65af381a837043d48644d9673358f2633cfe7a8"
+        }
+      ]
+    },
+    {
+      "source": "docs/audits/2026-10-20-mobile-handoff.zip",
+      "bytes": 2634334,
+      "members": [
+        {
+          "source": "docs/audits/2026-10-20-mobile/README.md",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/README.md",
+          "sha256": "2932bc319f3dbfb12d045450409cffb714b0e6c1df7067c9bd9fc66c46f5e806"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/REPORT.md",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/REPORT.md",
+          "sha256": "7b312aff223970eeeb987c2ced1ec3e6ffbd0a92fac631af81eb8dfb70bd2104"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/SHA256SUMS.txt",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/SHA256SUMS.txt",
+          "sha256": "d252a9543000c39d04dc7a06752bb01c03c66104edd6cd4fb1e0d78395c2c2f3"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/baseline-browser.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/baseline-browser.json",
+          "sha256": "55b08db2595918057736feb66c227397f281f4744993576cf099576db1d37a17"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/capture.cjs",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/capture.cjs",
+          "sha256": "bf6a0a166547744973e8a1cfd1807aea4c8c1d7f8ecb6a807178eb008b48b17c"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/interact.cjs",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/interact.cjs",
+          "sha256": "d3f19195972f7c2e86ede03860b872df7121384000971cf66aa025bee14f4507"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/interactions.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/interactions.json",
+          "sha256": "1ee4b100ee5083c03f0ee54fdc84f96e8fadcf6a6d3034e473dd278cef7aa689"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/local-requests.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/local-requests.json",
+          "sha256": "029ec2927328890f640014846ea43f14c3aea37d0a13a1c4a4e1300fed3d17b4"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/local-review-server.mjs",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/local-review-server.mjs",
+          "sha256": "442bfb04a8f3d7e80a5dc91a442784a7ec3f1e74c7a92d41c8fb49064b2d93bf"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/repository-boundary.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/repository-boundary.json",
+          "sha256": "0caf409c2d695b30bfe38666c8ea832bfc430f3e8759aa69265729618fccddbb"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/responsive.cjs",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/responsive.cjs",
+          "sha256": "02af882fa18339c8f43f4c356e132f9acdbd74189f6406d6987bacc86c7a5b3e"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/responsive.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/responsive.json",
+          "sha256": "1d4eb1fede010de021858a699863281b72fa0bf6b9b5e3dea87e858c937e9c0b"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/sample-fixture.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/sample-fixture.json",
+          "sha256": "8ca49cdccc4f9c61b5bdeebc55565f45d514a2d05ea4a524ce7fbb45f6dc3fe4"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/source-index.md",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/source-index.md",
+          "sha256": "58a8663241e25ab0fc9a5b0fdfaf57d5802ad4514e506bcb7e965746a8244381"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/validation.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/validation.json",
+          "sha256": "2ce04e088323c6e6661db460a77916319143e4d08771da6d71ab4932645a21ab"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/workflows.cjs",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/workflows.cjs",
+          "sha256": "1520e48d72e0abb83a0ed76ccca673588a0b75fffa5bd9cbd3b2778f4a69d8a6"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/evidence/workflows.json",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/evidence/workflows.json",
+          "sha256": "31b269a4df2b6c64be541c938c52e1f8874167aa95f119b478677760f51eecc1"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/proposals/mobile-patterns.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/proposals/mobile-patterns.png",
+          "sha256": "ca4e02d3a7cc33baa78bf948980ef34efec9be9bbe11e4e53a9dd15527cd42fb"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/proposals/mobile-patterns.svg",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/proposals/mobile-patterns.svg",
+          "sha256": "915cd06b9e33db87e763dfa84d82cabf66d5f56b5aacf7389e71fc6fe0d406bf"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/activity-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/activity-390.png",
+          "sha256": "3109c1dafcd1a74320486aa5eb2fd6c35186d3c5990ebd3d178e34ec3718e7f8"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/browser-back-from-job.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/browser-back-from-job.png",
+          "sha256": "6d03d33f92670481059c350e24a2ed4e4ce3208e0e68108df4cd41e7f0ddec38"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/catalog-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/catalog-390.png",
+          "sha256": "bc80dafbe330cc4ae6fec008fad06cc6a9c17f4ffc1cf938bd17deb8cf2fad72"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/color-label-dialog.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/color-label-dialog.png",
+          "sha256": "d819cec5f06ab6839ef9a1363dd1ce5ad66c176c9a6c67f992dfd8176bfbaac1"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/conversation.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/conversation.png",
+          "sha256": "a70c6751c2e1300441ff2ac6ab629425b2bafc8d54cede7cad81dec6f3869802"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/home-320.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/home-320.png",
+          "sha256": "b4a9f20c23d76e3e3d6b2d24e2e2cdefbad423cf8b03896f447431555cdc722b"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/home-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/home-390.png",
+          "sha256": "fa2158012a1973787667502b303980c1c42bc5066ce8fa2b3adfef5624d4b55e"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/home-430.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/home-430.png",
+          "sha256": "5b4959f5cec982bdc9eefb374e875e8c6ea98cd93ef03bc9105e24d857233d0d"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/inventory-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/inventory-390.png",
+          "sha256": "3a4ab08642156c00a8465bbc09ba5d5baf3d2c648fe3d91c7c346eaee94493a7"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/job-files-tab.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/job-files-tab.png",
+          "sha256": "aaf2a14e36f284150eda99bd3c693a1ff568957abf302bb54b42c2a51ab2f691"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/job-inspector.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/job-inspector.png",
+          "sha256": "fd7e11341f7f608106b7544de8d139e27a39d399e529401a3dd88498962cb5a6"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/job-updates-tab.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/job-updates-tab.png",
+          "sha256": "f91b0e181ae9dc9b61824de19e29f31f9e879474747841b66234414dd6c9ef9b"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/job-updates.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/job-updates.png",
+          "sha256": "a91379e833b3bd1af780d1fedbe86d8f6024e6eb697369deaf631a601bedd6c5"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/manpower-expanded.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/manpower-expanded.png",
+          "sha256": "9794c83f699c61e10d1a3a32fc90cb98e04079aea95e5f4d20b40d06ef7c211e"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/manpower-reporting-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/manpower-reporting-390.png",
+          "sha256": "b0454a78ccb7302dced3b9810cfad2ecfb30b5863ad40c958f9e97439934f88d"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/material-usage-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/material-usage-390.png",
+          "sha256": "87014f4fb459e531abaeb947f41f55639fad1f8afeb8c20d73bb346d1b566dd2"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/message-back.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/message-back.png",
+          "sha256": "68a9a09b43640c0674a75fa5dc2dfee9842a7e254c702f69670a7565359433f3"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/message-compose.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/message-compose.png",
+          "sha256": "1cee979fdb59801c3b5dd4dc8975c575d30572f3d303b27bae18e0667a51413d"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/message-photo-queued.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/message-photo-queued.png",
+          "sha256": "befec4e336b7b5be3eb71d99da9623f640f4574f029a444c1808c7378d1cb9a5"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/message-short-viewport.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/message-short-viewport.png",
+          "sha256": "e5ffa21d038fd84761df1be5aa5cf2d64423208c66273fbde11a0220526a9d30"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/messaging-list.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/messaging-list.png",
+          "sha256": "b7fc0ca30a255c0241919e0eb95d717a255a0a54d3cd25eb8464d7a0dbe4d2bd"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/messaging-populated.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/messaging-populated.png",
+          "sha256": "6885118f7619abf527dd3ec044333747bacd686ccfaf9a1bd1b3b0b43d450230"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/my-work-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/my-work-390.png",
+          "sha256": "0e3888c83daa4fba7b8f8ce97555b294364454e3425d9ee6d974a126a0da0f88"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/navigation-menu.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/navigation-menu.png",
+          "sha256": "d1d5751247552686bcf8885a4a85a961ca31f0850c7d0dfda23a9ebe05d5efaa"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/notifications.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/notifications.png",
+          "sha256": "c1d720ea4e5a4d35046dd0c031a49fb2fe58f3aee5a93f9511732a89f618e873"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/po-editor.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/po-editor.png",
+          "sha256": "447eed2e12b3c6f89270635e81dc2f92714cd486ff2b69fbcae20b21dcd8f3af"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/po-overflow-metrics.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/po-overflow-metrics.png",
+          "sha256": "447eed2e12b3c6f89270635e81dc2f92714cd486ff2b69fbcae20b21dcd8f3af"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/pre-production-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/pre-production-390.png",
+          "sha256": "706b07e0d532f5a6df93317520547abb4c205f86bcd2df83007340834b5f02ca"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/production-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/production-390.png",
+          "sha256": "d1d5751247552686bcf8885a4a85a961ca31f0850c7d0dfda23a9ebe05d5efaa"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/production-filters.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/production-filters.png",
+          "sha256": "fd0b701d52fcbefb87e524ff143fbb8dd30ae5892c3a5662fb9a9863ab2e1912"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/proposal-editor.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/proposal-editor.png",
+          "sha256": "ee3643deaf96108183fdff6afc873320ddbc76ab3c4d8fa845355bf162870bbf"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/proposals-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/proposals-390.png",
+          "sha256": "534316a850c6a58d031ecca970a04b2a6683193e4763c7e731f0c9305bf56acf"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/purchasing-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/purchasing-390.png",
+          "sha256": "96dc49e6a52afdc732cbf89164e970b8a59dc3e5648ac5ef141804c273e43851"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/sample-calculation.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/sample-calculation.png",
+          "sha256": "cd2f92cce73ee7572174fada6ecb9386585869c02a830ebe1d15f2cf60001111"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/sample-formulation.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/sample-formulation.png",
+          "sha256": "932616a9e98d41e67d7901da62f35e53c960a9a0bb2cfc5d33da3aa693312a63"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/sample-label-actions.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/sample-label-actions.png",
+          "sha256": "cd2f92cce73ee7572174fada6ecb9386585869c02a830ebe1d15f2cf60001111"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/samples-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/samples-390.png",
+          "sha256": "d2a077b62c9bcb6d1eb99e2d1f30bc6c656fa20949a6d7ec9624a936bd1e0ccd"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/samples-debug.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/samples-debug.png",
+          "sha256": "2261f3a725b358317a0d20a952da348ea4942c5859c42f1f1d1208e867330cbd"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/settings-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/settings-390.png",
+          "sha256": "a2768da1b073ebcae4ad8ee9b60268243e8da32fb34579ee9dc25fb3f9834b65"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/task-compose-expanded.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/task-compose-expanded.png",
+          "sha256": "3b6b8dce02b62a296a4238c86569dba68430a90826ecda3b24ad8d48cbc19917"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/task-details.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/task-details.png",
+          "sha256": "f52a4ca4d59df31d4d25ef9b1dfdb091cc170f728a5e63c322281bd78933978f"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/tasks-controls.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/tasks-controls.png",
+          "sha256": "0e3888c83daa4fba7b8f8ce97555b294364454e3425d9ee6d974a126a0da0f88"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/timeline-landscape.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/timeline-landscape.png",
+          "sha256": "6f1aeeda563caa222d6f7fd8ce64b9ad8b63af3fcea051b2e371478feddfd2e7"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/timeline-portrait.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/timeline-portrait.png",
+          "sha256": "f520433240e4948677fb969e6caebaaec98064a77e955dd3c80d90564475900e"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/transactions-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/transactions-390.png",
+          "sha256": "a4f4601ba57c2e1a3d4f73356fcc8a5e0bbc2ea9f1c15ec3e5f31f3c3729fde0"
+        },
+        {
+          "source": "docs/audits/2026-10-20-mobile/screenshots/transmittals-390.png",
+          "retainedPath": "docs/audits/retained-2026-10-21/2026-10-20-mobile/screenshots/transmittals-390.png",
+          "sha256": "2bc26f084a261f99e77319307b282bdd1a62177a47ed3b70dece4df3e7f37133"
+        }
+      ]
+    }
+  ],
+  "validation_limits": "No application builds/tests, hosted reads/mutations, deployments, policy rewrites, or research-worktree changes. Original artifact whitespace/chronology preserved.",
+  "source_control": "After Git refresh, VS Code pending-change badge cleared (0); root documentation untracked count is 0. Preserved nested Git worktree directories remain separate."
+}

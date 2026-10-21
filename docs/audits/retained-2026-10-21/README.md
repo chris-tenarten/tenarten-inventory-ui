@@ -23,3 +23,21 @@ python3 -m zipfile -c 2026-10-20-mobile-handoff.zip 2026-10-20-mobile
 ```
 
 This reproduces archive contents; container timestamps/compression are not asserted to reproduce identical ZIP bytes. Keep the retained Timeline ZIPs and package manifests unchanged.
+
+## Source Control retention receipt
+
+Baseline: `4f0228f`; local branch `docs/source-control-hygiene-20261021`. No canonical promotion or push is included. [The disposition manifest](MANIFEST.json) records all 267 original paths, hashes, retained destinations and the two ZIP member comparisons.
+
+| Original disposition | Files |
+| --- | ---: |
+| Exact originals committed: 231 archived research files plus 32 release/evidence/history files | 263 |
+| Exact private investigation original preserved; anonymized findings committed | 1 |
+| Exact architecture duplicate already canonical; reused existing Git copy | 1 |
+| Unreferenced comprehensive/mobile ZIP wrappers removed after all 79 members matched retained Git files | 2 |
+| Total original files resolved | 267 |
+
+Release/evidence/history retention commit: `ff651578a25f7f4fd1d2b327e2a011faf6a7c5bb`. Research retention commit: `527c5b53e4016620f7bbf24a816d6fc742aae22a`. The release group includes fourteen completed report/JSON pairs, the stopped mobile-navigation pair, stopped mobile preflight, housekeeping history and the anonymized attachment-investigation summary. [Current State](../../project-memory/CURRENT_STATE.md#receipt-retention-completed-october-21) indexes the retained records.
+
+All 263 exact originals were checked against committed Git blobs before removing their old untracked copies. The duplicate architecture file also matched canonical Git. The attachment investigation's original identifiers and Storage/download paths remain only in the verified private archive under `.git/private-archives/2026-10-21-source-control-hygiene/`; the portable summary retains aggregate findings and provenance. That private original is unavailable in a fresh clone.
+
+Only the two reproducible ZIP containers were discarded (2,691,378 bytes). Referenced generated previews/screenshots and distinct Timeline ZIP history were retained. Historical TSV trailing tabs and original claims were preserved without normalization. No blanket ignore or blanket clean was used. Root application source and every other worktree were preserved; the pre-existing nested `.worktrees/` Git entries remain separate from the resolved documentation files. VS Code showed zero pending changes after refresh; this receipt is completed in the same local hygiene branch.
