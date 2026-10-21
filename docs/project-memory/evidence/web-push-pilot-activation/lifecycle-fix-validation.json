@@ -1,0 +1,13 @@
+{
+  "candidate": "77a8d6e768f661bec69b571601207f69b01183e6",
+  "lifecycleGroups": 9,
+  "entryGroups": 8,
+  "typescript": "passed",
+  "targetedLint": "passed",
+  "diffCheck": "passed",
+  "syntheticBuild": "passed",
+  "realTenDevBuild": "passed",
+  "databaseContractsChanged": false,
+  "newDatabaseBatteryRun": false,
+  "physicalRevalidation": "pending"
+}

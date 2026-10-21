@@ -136,7 +136,8 @@ export function roleHasCapability(role: AppRole, capability: Capability) {
 export const READ_CAPABILITIES: readonly Capability[] = [
   "readOperationalData", "viewIntake", "previewOperationalDocuments", "accessDevelopmentEnvironment",
 ];
-export function accountHasCapability(role: AppRole, capability: Capability, readOnly: boolean, messagingWrite: boolean, productionBlendManage = false, sampleLabelsGenerate = false) {
+export function accountHasCapability(role: AppRole, capability: Capability, readOnly: boolean, messagingWrite: boolean, productionBlendManage = false, sampleLabelsGenerate = false, jobUpdatesPost = false) {
+  if (capability === "postJobUpdate" && jobUpdatesPost && !readOnly) return true;
   if (capability === "sample_labels.generate") return role === "admin" || sampleLabelsGenerate;
   if (capability === "production_blend.manage") return role === "admin" || productionBlendManage;
   if (capability === "messaging.write" && readOnly) return messagingWrite;

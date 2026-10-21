@@ -1,0 +1,35 @@
+{
+  "active_push_cron": 0,
+  "cohort_count": 2,
+  "devices": [
+    {
+      "enabled": false,
+      "environment": "tendev",
+      "generation": 2,
+      "owner": "approved_recipient",
+      "revoked_at": "2026-10-20T21:38:53.076259+00:00"
+    },
+    {
+      "enabled": true,
+      "environment": "tendev",
+      "generation": 1,
+      "owner": "approved_recipient",
+      "revoked_at": null
+    }
+  ],
+  "environments": [
+    {
+      "environment": "tendev",
+      "key_version": "tendev-pilot-v1",
+      "origin": "https://tendev.pages.dev",
+      "registration_enabled": true
+    }
+  ],
+  "job_count": 1,
+  "transport": [
+    {
+      "enabled": false,
+      "environment": "tendev"
+    }
+  ]
+}

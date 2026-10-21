@@ -12,5 +12,8 @@
   "cronCreated": false,
   "decorativeStartup": "User explicitly confirmed no decorative startup on notification entry",
   "duplicateRecoveryWake": "zero claimed/submitted; accepted DM remains attempt 1",
-  "deliveryPaused": true
+  "deliveryPaused": true,
+  "correctedReopen": "Final user clarification: Registered on this device; Enable greyed out; Delivery inactive in this environment. Correct registration state after reopening confirmed.",
+  "serverAfterCorrectedReopen": "Newer regular-account TenDev subscription remains enabled generation 1; registration configuration true; transport false; no active push Cron.",
+  "mention": "Attempt refused by existing postJobUpdate authorization for developer; no mention/event created. Awaiting choice of permitted regular-account self-mention."
 }

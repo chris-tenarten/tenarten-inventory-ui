@@ -24,6 +24,7 @@ export type AppUserProfile = {
   messagingWrite: boolean;
   productionBlendManage: boolean;
   sampleLabelsGenerate: boolean;
+  jobUpdatesPost?: boolean;
 };
 
 export type AccountAccessStatus = "pending" | "allowed" | "denied" | "failed";
@@ -64,6 +65,7 @@ function normalizeProfile(value: unknown): AppUserProfile | null {
     messagingWrite: source.messaging_write === true,
     productionBlendManage: source.production_blend_manage === true,
     sampleLabelsGenerate: source.sample_labels_generate === true,
+    jobUpdatesPost: source.job_updates_post === true,
   };
 }
 
@@ -210,7 +212,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const can = useCallback((capability: Capability) => {
     if (!session) return RBAC_MODE === "compatibility" && READ_CAPABILITIES.includes(capability);
     if (accessStatus !== "allowed" || !profile?.isActive || profile.userId !== session.user.id) return false;
-    return accountHasCapability(profile.role, capability, profile.readOnly, profile.messagingWrite, profile.productionBlendManage, profile.sampleLabelsGenerate);
+    return accountHasCapability(profile.role, capability, profile.readOnly, profile.messagingWrite, profile.productionBlendManage, profile.sampleLabelsGenerate, profile.jobUpdatesPost);
   }, [accessStatus, profile, session]);
 
   const value = useMemo<AuthContextValue>(() => ({

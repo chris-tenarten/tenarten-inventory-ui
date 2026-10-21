@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "new flag defaults off and no role-wide grant exists",
+    "exact approved account gains posting; other developer does not",
+    "posting does not imply edit, assignment or user administration",
+    "inactive and read-only accounts remain denied",
+    "owner access response appends flag without exposing other accounts",
+    "anonymous cannot read access response or mutate the new flag",
+    "client matches the scoped server policy and preserves existing role grants",
+    "grant can be removed without changing role or credentials"
+  ],
+  "engine": "PostgreSQL 17.6 (Debian 17.6-2.pgdg13+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "hostedChanges": 0,
+  "network": "none",
+  "scope": "Existing Stage B bootstrap; only account posting permission delta"
+}

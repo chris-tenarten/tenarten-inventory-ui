@@ -5,7 +5,8 @@ export const container='tenops-push-stage-b-db';
 export const sql=q=>execFileSync('docker',['exec','-i',container,'psql','-qAt','-U','postgres','-v','ON_ERROR_STOP=1'],{input:q,encoding:'utf8',stdio:['pipe','pipe','pipe']}).trim();
 export const A='00000000-0000-4000-8000-000000000010',B='00000000-0000-4000-8000-000000000020';
 export const actor=(id,q,role='authenticated')=>sql(`begin;set local role ${role};select set_config('request.jwt.claim.sub','${id}',true);select set_config('request.headers','{"origin":"https://tenops.example"}',true);${q};commit;`).split('\n').slice(2).join('\n');
-const pilotOnly=process.env.WEB_PUSH_DATABASE_FOCUS==='pilot';
+const focus=process.env.WEB_PUSH_DATABASE_FOCUS;
+const pilotOnly=Boolean(focus);
 const checks=[];const check=(name,work)=>{if(pilotOnly)return;work();checks.push(name);console.log('PASS '+name);};
 const deny=work=>assert.throws(work);
 // Only this purpose-created, network-isolated disposable container is reset.
@@ -65,6 +66,7 @@ sql(migration('20261020210000_web_push_transport.sql'));
 sql(`drop policy my_work_messages_participant_select on my_work_messages;
 create policy my_work_messages_participant_select on my_work_messages for select to authenticated using(exists(select 1 from app_users a where a.user_id=auth.uid() and a.is_active) and (sender_user_id=auth.uid() or(recipient_user_id=auth.uid() and delivery_status='ready')));
 grant select on app_users,jobs,job_updates to authenticated;`);
+if(focus==='posting'){await import('./support/web-push-posting-permission.mjs');process.exit(0);}
 if(pilotOnly){await import('./support/web-push-pilot-database.mjs');process.exit(0);}
 const fresh={...sub,endpoint:'https://web.push.apple.com/fresh-test'};
 const device=JSON.parse(register(B,fresh,'00000000-0000-4000-8000-000000000031')).id;
