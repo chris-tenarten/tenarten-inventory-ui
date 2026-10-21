@@ -1,0 +1,232 @@
+{
+  "baseline": "c490747c08404a3b2877538404d9af8bf98460a6",
+  "riskTier": 1,
+  "testingLevel": 1,
+  "footerBefore": {
+    "viewport": {
+      "innerWidth": 393,
+      "innerHeight": 793,
+      "scale": 1
+    },
+    "footer": {
+      "height": 79,
+      "bottom": 793,
+      "paddingBottom": "34px",
+      "background": "rgb(255, 255, 255)"
+    },
+    "selected": {
+      "height": 44,
+      "bottom": 759,
+      "background": "rgb(25, 54, 95)",
+      "pseudoContent": "none"
+    },
+    "safeAreaOwner": {
+      "tag": "NAV",
+      "mobileNavigation": true,
+      "background": "rgb(255, 255, 255)"
+    }
+  },
+  "applicationChange": "Selected control background extends through bottom safe area using a pointer-events:none pseudo-element; all dimensions unchanged",
+  "physicalDevice": {
+    "model": "iPhone 15 Pro",
+    "os": "iOS 26.6.1",
+    "url": "https://tenops.pages.dev/",
+    "standalone": true,
+    "displayStandalone": true,
+    "viewport": {
+      "width": 393,
+      "height": 793,
+      "visualHeight": 793,
+      "scale": 1,
+      "dpr": 3
+    },
+    "layoutScript": "/_next/static/chunks/app/layout-8c5c3ff75b515a0a.js",
+    "css": "/_next/static/css/84d202a076eb9b29.css",
+    "loadedFactory": {
+      "id": "71323",
+      "cutCondition": "if(e<t.start||e>1630)continue",
+      "completedPathExpiry": false
+    },
+    "workerRegistrations": [],
+    "cacheStorageNames": [],
+    "cutSamples": [
+      {
+        "ms": 2400,
+        "phase": "transform",
+        "pixel": [
+          207,
+          230
+        ],
+        "rgba": [
+          14,
+          10,
+          8,
+          247
+        ]
+      },
+      {
+        "ms": 2600,
+        "phase": "transform",
+        "pixel": [
+          207,
+          230
+        ],
+        "rgba": [
+          14,
+          10,
+          8,
+          247
+        ]
+      }
+    ],
+    "replayCompleted": true,
+    "productConfirmedCutVisible": true,
+    "preview": {
+      "footerHeight": 79,
+      "controlHeight": 44,
+      "fillHeight": 34,
+      "fillColor": "rgb(25, 54, 95)",
+      "fillBottom": 793,
+      "viewportBottom": 793,
+      "productConfirmedCorrect": true,
+      "removedAfterReview": true,
+      "startupOverlayAbsentAfterCleanup": true
+    }
+  },
+  "served": {
+    "checkedAt": "2026-10-21T18:29:44.492Z",
+    "deployment": {
+      "id": "e183bfd2-02a6-47c0-94be-e39fdfb22e0f",
+      "sha": "c490747c08404a3b2877538404d9af8bf98460a6",
+      "status": "success"
+    },
+    "matchedSourceRevision": "c490747c08404a3b2877538404d9af8bf98460a6",
+    "routes": [
+      {
+        "route": "/",
+        "sha256": "c49717768239b3f792fa914f8f7c4cc8209e8814ec8e9394bc39dd0020ea9e6e",
+        "matchesCurrentArtifact": true,
+        "cacheControl": "public, max-age=0, must-revalidate"
+      },
+      {
+        "route": "/my-work",
+        "sha256": "5ea9e7dc1f67a425ab3d2c402f1f7d250c8487ba9fc6e649af4bd7828ebb7d2a",
+        "matchesCurrentArtifact": true,
+        "cacheControl": "public, max-age=0, must-revalidate"
+      },
+      {
+        "route": "/inventory",
+        "sha256": "a4efd0dbbb2f8cedfb4dc60231f0ba7cd2bc45be73125195f2feea2c1850907d",
+        "matchesCurrentArtifact": true,
+        "cacheControl": "public, max-age=0, must-revalidate"
+      },
+      {
+        "route": "/install/dashboard",
+        "sha256": "588dd30d4613d7939d5d927a38d85215d43c9eaf1b1fa9aa8c5c2b82d765ed4f",
+        "matchesCurrentArtifact": true,
+        "cacheControl": "public, max-age=0, must-revalidate"
+      },
+      {
+        "route": "/install/my-work",
+        "sha256": "28383f60d7837a7278e30c4d725d88a770dd5b05b908548405e192af23ac841c",
+        "matchesCurrentArtifact": true,
+        "cacheControl": "public, max-age=0, must-revalidate"
+      },
+      {
+        "route": "/manifest.webmanifest",
+        "sha256": "f24cfc0cd69f7f52f309ef3b6b4e98510e22c75b45c0a79bf5924e570fba5654",
+        "matchesCurrentArtifact": true,
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "manifest": {
+          "id": "/my-work",
+          "start_url": "/",
+          "scope": "/"
+        }
+      },
+      {
+        "route": "/manifest-dashboard.webmanifest",
+        "sha256": "17183f8726a79485e6bc63ce7eac16ef7af0b5a4a8c1473bf741f321012f4c47",
+        "matchesCurrentArtifact": true,
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "manifest": {
+          "id": "/",
+          "start_url": "/",
+          "scope": "/"
+        }
+      },
+      {
+        "route": "/sw.js",
+        "sha256": "cc79b86fa2fa1f492d0b83eef7ae0de0f6c0741ea972287faadc64ae624f9a07",
+        "matchesCurrentArtifact": true,
+        "cacheControl": "no-cache"
+      }
+    ],
+    "clientAssetCount": 29,
+    "allClientAssetsMatch": true
+  },
+  "validation": {
+    "cases": 36,
+    "checks": [
+      "36 viewport/inset/display-size combinations",
+      "unchanged 44px touch rows and 79px portrait footer",
+      "selected background extends through safe area to viewport bottom",
+      "icons and labels remain above gesture area",
+      "Jobs/My Work/Inventory/Contacts/Messages navigation preserved",
+      "light/dark portrait/landscape selected More coverage",
+      "announcement absent and bell retained",
+      "no refocus startup replay"
+    ],
+    "errors": [],
+    "allFillEndsAtViewportBottom": true,
+    "allFooterHeightsPreserved": true,
+    "freshLandscape": {
+      "nav": {
+        "x": 0,
+        "y": 327,
+        "width": 852,
+        "height": 66,
+        "top": 327,
+        "right": 852,
+        "bottom": 393,
+        "left": 0
+      },
+      "selected": {
+        "x": 609.5,
+        "y": 328,
+        "width": 183.5,
+        "height": 44,
+        "top": 328,
+        "right": 793,
+        "bottom": 372,
+        "left": 609.5
+      },
+      "fill": {
+        "background": "rgb(25, 54, 95)",
+        "height": "21px",
+        "top": "44px"
+      },
+      "viewport": {
+        "width": 852,
+        "height": 393,
+        "visualHeight": 393,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "hit": "More"
+    },
+    "productionBuild": "passed",
+    "typescript": "passed",
+    "targetedEslint": "passed",
+    "diffCheck": "passed",
+    "newTestHarness": false
+  },
+  "startupSourceChanged": false,
+  "authSourceChanged": false,
+  "workerOrManifestChanged": false,
+  "hostedBusinessWrites": 0,
+  "deployed": false,
+  "limitations": [
+    "Earlier missing-line observation was not captured; physical inspected app and replay now show corrected code and visible line, so historical cause is not established.",
+    "No cache clearing, automatic update/reload logic or installation identity change added."
+  ]
+}
