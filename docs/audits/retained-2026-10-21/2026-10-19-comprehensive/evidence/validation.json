@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-19",
+  "scope": "documentation-only audit",
+  "head": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "packageLinks": "passed",
+  "literalPaths": "passed; historical Matcher paths verified against branch tree",
+  "json": "passed",
+  "trackedApplicationDiff": [],
+  "preExistingDirtyFilesPreserved": true,
+  "notRun": [
+    "build",
+    "application tests",
+    "browser",
+    "authenticated hosted requests",
+    "database introspection",
+    "migrations",
+    "deployment"
+  ],
+  "finalStatus": [
+    "?? docs/audits/",
+    "?? docs/project-memory/2026-10-19-auth-tab-refocus-release.md",
+    "?? docs/project-memory/2026-10-19-samples-loading-loop-dual-release.md",
+    "?? docs/project-memory/evidence/2026-10-19-auth-tab-refocus-release.json",
+    "?? docs/project-memory/evidence/2026-10-19-samples-loading-loop-dual-release.json"
+  ]
+}

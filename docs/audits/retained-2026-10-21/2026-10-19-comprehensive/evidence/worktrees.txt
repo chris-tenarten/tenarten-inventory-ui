@@ -1,0 +1,44 @@
+/Users/chrisngo/source/repos/tenarten-inventory-ui                                                     da21615 [dev]
+/private/tmp/tenops-auth-startup-hotfix                                                                a79e13d [fix/auth-startup-resolution]
+/private/tmp/tenops-bids-crm-ux-overhaul                                                               8ac1dba [feature/bids-crm-ux-overhaul] prunable
+/private/tmp/tenops-bids-early-access-release                                                          4597d80 [release/bids-early-access-staged] prunable
+/private/tmp/tenops-combined-release                                                                   6249f69 [release/customer-list-update-header] prunable
+/private/tmp/tenops-connected-navigation                                                               f1d3489 [feature/connected-operations-navigation] prunable
+/private/tmp/tenops-customer-dialog-hotfix                                                             ace3df5 [feature/customer-dialog-hotfix] prunable
+/private/tmp/tenops-dymo-print-qol                                                                     ba776a1 [feature/dymo-print-qol] prunable
+/private/tmp/tenops-lot-reconciliation/source                                                          3e9d78d [fix/lot-auth-regression] prunable
+/private/tmp/tenops-messaging-drafts                                                                   7f819d2 [feature/messaging-draft-persistence] prunable
+/private/tmp/tenops-messaging-production/source                                                        7f819d2 (detached HEAD) prunable
+/private/tmp/tenops-operator-release/git                                                               1866efe [release/sample-operator-ux] prunable
+/private/tmp/tenops-performance-header                                                                 5a8f35d [feature/performance-header-polish] prunable
+/private/tmp/tenops-production-blend-v1                                                                e3c0318 [feature/production-blend-v1] prunable
+/private/tmp/tenops-production-contacts                                                                3191e61 [feature/production-contact-configuration] prunable
+/private/tmp/tenops-pwa-root-release                                                                   84c8446 [release/pwa-root-launch] prunable
+/private/tmp/tenops-sample-color-plate-label-generator                                                 5351642 [feature/sample-color-plate-label-generator] prunable
+/private/tmp/tenops-sample-generation-fix                                                              095f321 [fix/sample-generation-decimals] prunable
+/private/tmp/tenops-sample-geometry-release                                                            d473ca8 (detached HEAD) prunable
+/private/tmp/tenops-sample-hotfix-release                                                              095f321 (detached HEAD) prunable
+/private/tmp/tenops-sample-job-attachments                                                             7f819d2 [feature/sample-job-attachments] prunable
+/private/tmp/tenops-sample-match                                                                       a32a4b3 [feature/sample-match-assistant] prunable
+/private/tmp/tenops-sample-match-tendev                                                                950dd71 [release/sample-match-tendev] prunable
+/private/tmp/tenops-sample-matcher-ux                                                                  97bc487 [feature/sample-matcher-ux] prunable
+/private/tmp/tenops-sample-operator-ux                                                                 4e0886f [feature/sample-operator-ux] prunable
+/private/tmp/tenops-sample-pour-planning                                                               d473ca8 [feature/sample-pour-planning] prunable
+/private/tmp/tenops-sample-shop-scaling                                                                5ee2ae8 [feature/sample-shop-scaling] prunable
+/private/tmp/tenops-shop-release/git                                                                   d8f65d8 [release/sample-shop-scaling] prunable
+/Users/chrisngo/Documents/Codex/2026-10-07/referenced-chatgpt-conversation-this-is-an/work/tenops-mrp  8255a1e [demo/closed-loop-mrp]
+/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-auth-hotfix-release/source                     a79e13d (detached HEAD)
+/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-auth-refocus-release/tendev                    da21615 (detached HEAD)
+/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-auth-refocus-release/tenops                    da21615 (detached HEAD)
+/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-auth-refocus/source                            da21615 [fix/auth-continuing-session-refocus]
+/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-sample-auth-loop/source                        f9230b9 [fix/samples-access-refresh-loop]
+/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-samples-dual-release/tendev                    f9230b9 (detached HEAD)
+/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-samples-dual-release/tenops                    f9230b9 (detached HEAD)
+/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-tendev-canonical-release/source                a79e13d (detached HEAD)
+/Users/chrisngo/source/worktrees/tenops/project-assets-archive-20261016                                13c4e26 [archive/tenarten-project-assets-20261016]
+/Users/chrisngo/source/worktrees/tenops/sample-inspector-post-release                                  0375b8a [release/sample-inspector-post]
+/Users/chrisngo/source/worktrees/tenops/sample-job-updates                                             56ef9e4 [feature/sample-job-updates-recovered]
+/Users/chrisngo/source/worktrees/tenops/sample-post-button-polish                                      0375b8a [feature/sample-post-button-polish]
+/Users/chrisngo/source/worktrees/tenops/sample-post-spotlight                                          1b790af [feature/sample-post-spotlight]
+/Users/chrisngo/source/worktrees/tenops/sample-post-to-job-release                                     350c556 [release/sample-post-to-job]
+/Users/chrisngo/source/worktrees/tenops/sample-spotlight-release                                       b04d194 [release/sample-spotlight]

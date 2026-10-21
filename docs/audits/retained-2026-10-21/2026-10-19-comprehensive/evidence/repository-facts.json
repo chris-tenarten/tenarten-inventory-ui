@@ -1,0 +1,200 @@
+{
+  "head": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "refs": {
+    "main": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "dev": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "origin/main": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "origin/dev": "da21615ad6f06727e4f18a75c65331a7266d2404"
+  },
+  "trackedFiles": 1094,
+  "sourceFiles": 307,
+  "migrationFiles": 145,
+  "scripts": 315,
+  "largestSource": [
+    {
+      "path": "src/app/inventory/page.tsx",
+      "lines": 3798,
+      "bytes": 185400
+    },
+    {
+      "path": "src/app/globals.css",
+      "lines": 1642,
+      "bytes": 51826
+    },
+    {
+      "path": "src/modules/purchasing/PurchaseOrderEditor.tsx",
+      "lines": 1572,
+      "bytes": 67109
+    },
+    {
+      "path": "src/modules/samples/SampleWorkspace.tsx",
+      "lines": 1553,
+      "bytes": 88710
+    },
+    {
+      "path": "src/modules/production/components/ProductionJobInspector.tsx",
+      "lines": 1524,
+      "bytes": 70974
+    },
+    {
+      "path": "src/modules/production/components/ProductionGantt.tsx",
+      "lines": 1452,
+      "bytes": 104445
+    },
+    {
+      "path": "src/app/transactions/page.tsx",
+      "lines": 1171,
+      "bytes": 51550
+    },
+    {
+      "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+      "lines": 1162,
+      "bytes": 84733
+    },
+    {
+      "path": "src/modules/production/ProductionWorkspace.tsx",
+      "lines": 1131,
+      "bytes": 77786
+    },
+    {
+      "path": "src/modules/production/components/ProductionTable.tsx",
+      "lines": 1122,
+      "bytes": 64243
+    },
+    {
+      "path": "src/modules/production/components/JobUpdatesPanel.tsx",
+      "lines": 970,
+      "bytes": 39427
+    },
+    {
+      "path": "src/app/catalog/page.tsx",
+      "lines": 902,
+      "bytes": 39519
+    },
+    {
+      "path": "src/modules/production/jobs.ts",
+      "lines": 736,
+      "bytes": 30652
+    },
+    {
+      "path": "src/modules/material-usage/MaterialUsageEditor.tsx",
+      "lines": 723,
+      "bytes": 34210
+    },
+    {
+      "path": "src/app/client-layout-shell.tsx",
+      "lines": 558,
+      "bytes": 25699
+    },
+    {
+      "path": "src/app/activity/page.tsx",
+      "lines": 454,
+      "bytes": 21674
+    },
+    {
+      "path": "src/modules/my-work/MyWorkPage.tsx",
+      "lines": 444,
+      "bytes": 66327
+    },
+    {
+      "path": "src/modules/purchasing/CatalogItemEditor.tsx",
+      "lines": 415,
+      "bytes": 15020
+    },
+    {
+      "path": "src/modules/planning/PlanningPanel.tsx",
+      "lines": 403,
+      "bytes": 26402
+    },
+    {
+      "path": "src/modules/production/components/ProductionJobCreator.tsx",
+      "lines": 386,
+      "bytes": 32083
+    },
+    {
+      "path": "src/components/AccountNotifications.tsx",
+      "lines": 357,
+      "bytes": 24751
+    },
+    {
+      "path": "src/modules/samples/SampleFormulationConfigurator.tsx",
+      "lines": 353,
+      "bytes": 20100
+    },
+    {
+      "path": "src/modules/manpower/manpower.ts",
+      "lines": 348,
+      "bytes": 16484
+    },
+    {
+      "path": "src/components/WelcomeHero.tsx",
+      "lines": 334,
+      "bytes": 15916
+    },
+    {
+      "path": "src/modules/transmittals/JobTransmittalPanel.tsx",
+      "lines": 320,
+      "bytes": 26503
+    }
+  ],
+  "publicRootChecks": {
+    "tenops": {
+      "url": "https://tenops.pages.dev/",
+      "bytes": 15919,
+      "sha256": "20aa75e36f94c47034abb300e1ca8b5b779337a3268d78e2f7f7c0d4a5d645e1",
+      "matchesReleaseReceipt": true
+    },
+    "tendev": {
+      "url": "https://tendev.pages.dev/",
+      "bytes": 17184,
+      "sha256": "4c669653e31487feb50b5653b5500cd18597284825ff2e3a07e546f65dd2bf13",
+      "matchesReleaseReceipt": true
+    }
+  },
+  "historicalServedAssets": {
+    "tenops": [
+      {
+        "route": "/_next/static/chunks/app/layout-3f94f613d99a78fc.js",
+        "sha256": "f1b0cb9abf1f13f3de893924069a885ba35695f795f4a639a00ecdf8510d145c",
+        "bytes": 71869
+      },
+      {
+        "route": "/_next/static/chunks/app/page-3feee22e2e769a1b.js",
+        "sha256": "d1aea914051aa5794e50f6f5ee8f765e96b001bb154f201231d3697ea46027f1",
+        "bytes": 390265
+      },
+      {
+        "route": "/_next/static/chunks/app/samples/page-2c90faa5b008dd61.js",
+        "sha256": "f75af0fc2e2cae304dd2dbe7ed39b6c104f5c573c7116803aedd3f280be62a98",
+        "bytes": 160825
+      },
+      {
+        "route": "/_next/static/chunks/app/my-work/page-6a6d0e8199bc6cf8.js",
+        "sha256": "47d731f7f3553739c8a6fd500e036917346ed972003336fb68e5e8642780c231",
+        "bytes": 74318
+      }
+    ],
+    "tendev": [
+      {
+        "route": "/_next/static/chunks/app/layout-6a0341055caaa303.js",
+        "sha256": "0029c43e60bcaf33b5f188b27c882e159d17474f527eb4820442861342894a16",
+        "bytes": 71809
+      },
+      {
+        "route": "/_next/static/chunks/app/page-798950b0971e0d48.js",
+        "sha256": "05a4217cf42e28fa23fb42c14ae85173bc5c6f998b55a0189a5fdf3c3deeb5dc",
+        "bytes": 390324
+      },
+      {
+        "route": "/_next/static/chunks/app/samples/page-bd3a40ed0964420d.js",
+        "sha256": "3fb3d8707ef2c44f025b55955a254a51b6e44574dd5efc9346f1e6efa5294dde",
+        "bytes": 160825
+      },
+      {
+        "route": "/_next/static/chunks/app/my-work/page-e97680cf48daad6f.js",
+        "sha256": "41859a03dfe58aa788610a1a0e48d8db765bc3375fa5895635f0d82cc900dfc5",
+        "bytes": 74310
+      }
+    ]
+  }
+}

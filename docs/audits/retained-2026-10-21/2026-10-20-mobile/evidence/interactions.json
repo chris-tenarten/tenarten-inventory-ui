@@ -1,0 +1,2502 @@
+[
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_app_access",
+    "status": 200,
+    "body": "[{\"user_id\":\"00000000-0000-4000-8000-000000900001\",\"display_name\":\"Review A\",\"role\":\"admin\",\"is_active\":true,\"read_only\":false,\"messaging_write\":true,\"production_blend_manage\":false,\"sample_labels_generate\":true}]"
+  },
+  {
+    "console": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  },
+  {
+    "console": "WebSocket connection to 'ws://localhost:3017/realtime/v1/websocket?apikey=local-review-public-key&vsn=2.0.0' failed: Connection closed before receiving a handshake response"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/ensure_my_welcome_notification",
+    "status": 403,
+    "body": "{\"message\":\"Local review is read-only\"}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_account_preferences",
+    "status": 200,
+    "body": "{\"manpower_recent_labor_expanded\":true}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_app_access",
+    "status": 200,
+    "body": "[{\"user_id\":\"00000000-0000-4000-8000-000000900001\",\"display_name\":\"Review A\",\"role\":\"admin\",\"is_active\":true,\"read_only\":false,\"messaging_write\":true,\"production_blend_manage\":false,\"sample_labels_generate\":true}]"
+  },
+  {
+    "console": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_samples",
+    "status": 200,
+    "body": "[{\"sample\":{\"id\":\"00000000-0000-4000-8000-000000710001\",\"sample_name\":\"Mobile review terrazzo\",\"bid_id\":\"\",\"job_id\":\"\",\"requested_by\":\"\",\"requested_date\":\"2026-10-20\",\"project_name\":\"Local synthetic review\",\"prepared_by\":\"Review Operator\",\"customer_name\":\"\",\"color_plate_number\":\"T26-901-A\",\"finish_requested\":\"\",\"sample_size\":\"\",\"sample_quantity\":\"\",\"notes\":\"\",\"filler\":\"\",\"sealer\":\"\",\"resin_supplier\":\"\",\"resin_color_number\":\"\",\"more_notes\":\"\",\"approved_date\":\"\",\"created_by_user_id\":\"\",\"creator_na"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_bids?order=updated_at.desc%2Cid.asc&offset=0&limit=500",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_account_notification_history",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/ensure_my_welcome_notification",
+    "status": 403,
+    "body": "{\"message\":\"Local review is read-only\"}"
+  },
+  {
+    "name": "samples-debug",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRE-PRODUCTION TOOLS\nSample Formula Workspace\n\nBuild, save, and compare working formulas without requiring a Production Job.\n\nNew Sample\nFormulation Profiles\nSAMPLE DRAFT LIBRARY\nMobile review terrazzo\nLocal synthetic review · T26-901-A\nReview aggregate A 1 · Review aggregate B 1 · 5:1 resin\nReview Operator · Draft\nDraft · 0 versions",
+    "controls": [
+      {
+        "text": "UPDATE",
+        "label": "What's New in TenOps"
+      },
+      {
+        "text": "",
+        "label": "Open My Work tools"
+      },
+      {
+        "text": "",
+        "label": "Messaging"
+      },
+      {
+        "text": "",
+        "label": "Open Messaging menu"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Notifications"
+      },
+      {
+        "text": "RA\nADMIN",
+        "label": "Account menu for Review A, Admin"
+      },
+      {
+        "text": "New Sample",
+        "label": null
+      },
+      {
+        "text": "Formulation Profiles",
+        "label": null
+      },
+      {
+        "text": "Mobile review terrazzo\nLocal synthetic review · T26-901-A\nReview aggregate A 1 · Review aggregate B 1 · 5:1 resin\nReview Operator · Draft\nDraft · 0 versions",
+        "label": null
+      }
+    ]
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_app_access",
+    "status": 200,
+    "body": "[{\"user_id\":\"00000000-0000-4000-8000-000000900001\",\"display_name\":\"Review A\",\"role\":\"admin\",\"is_active\":true,\"read_only\":false,\"messaging_write\":true,\"production_blend_manage\":false,\"sample_labels_generate\":true}]"
+  },
+  {
+    "console": "WebSocket connection to 'ws://localhost:3017/realtime/v1/websocket?apikey=local-review-public-key&vsn=2.0.0' failed: Connection closed before receiving a handshake response"
+  },
+  {
+    "console": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/ensure_my_welcome_notification",
+    "status": 403,
+    "body": "{\"message\":\"Local review is read-only\"}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_account_preferences",
+    "status": 200,
+    "body": "{\"manpower_recent_labor_expanded\":true}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_account_notification_history",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_unseen_job_update_jobs",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "console": "WebSocket connection to 'ws://localhost:3017/realtime/v1/websocket?apikey=local-review-public-key&vsn=2.0.0' failed: Connection closed before receiving a handshake response"
+  },
+  {
+    "name": "job-inspector",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRODUCTION PIPELINE\nMONTHLY SNAPSHOT\nPRODUCTION REPORTING\nProduction Pipeline\n\nUse the table to manage the Production Pipeline and the Timeline to plan scheduled work.\n\nNEW JOB\nVIEW\nOVERVIEW\nTABLE\nTIMELINE\nSORT\nSTATUS\nRECENTLY ADDED\nDEADLINE\nFILTERS\nAll active jobs scheduled\n·\n0 need attention\nACTIVE JOBS20\nSCHEDULED20\nSHOWING20\nOpen job details\n26-1000\nRetrieval Job 0\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n228.8h reported\n·\nMaterial use linked\nOpen job details\n26-1001\nRetrieval Job 1\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1002\nRetrieval Job 2\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1003\nRetrieval Job 3\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1004\nRetrieval Job 4\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1005\nRetrieval Job 5\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1006\nRetrieval Job 6\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1007\nRetrieval Job 7\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1008\nRetrieval Job 8\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1009\nRetrieval Job 9\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1010\nRetrieval Job 10\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1011\nRetrieval Job 11\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1012\nRetrieval Job 12\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1013\nRetrieval Job 13\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1014\nRetrieval Job 14\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1015\nRetrieval Job 15\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1016\nRetrieval Job 16\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1017\nRetrieval Job 17\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1018\nRetrieval Job 18\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1019\nRetrieval Job 19\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\n26-1000\nRetrieval Job 0\nIN PRODUCTION\nPlanning Complete — Required planning details are complete. Material readiness and production status are tracked separately.\nClose\nDetails\nJob Updates (0)\nFiles\nRecent Changes\nPRODUCTION HISTORY\nTotal Job Labor 228.8h\n\nOne canonical Job with lifecycle-specific status, schedule, and attributed Manpower labor.\n\nOriginal Production\n· in production\nCURRENT LIFECYCLE\n228.8h\n\nProduction 2026-10-01 – 2026-10-31 · Labor includes legacy rows that cannot be distinguished from explicit Original Production attribution.\n\nJob number\nProject name\nCustomer\nProject contact details\nDOCUMENTS\nTransmittal\nCreate or manage this Job’s canonical transmittal.\nPurchasing\nOpen purchasing context for this Production Job.\nPLANNING\nPlanned start\nPlanned finish\nRequested delivery\nEstimated labor\nEstimated calendar days\nProduction status\nNot Started\nOn Deck\nIn Production\nOn Hold\nShipped\nComplete\nCancelled\nMaterial status\nUnknown\nNot Ready\nOrdered\nReady\nJOB DETAILS\nWork order\nEstimate number\nColor plate number\nApproval date\nSample submitted\nDeposit date\nContract value\nResin / Chip PO\nNot recorded\nRemarks\nADMIN CLEANUP\n\nOnly empty or disposable Jobs without operational history can be permanently deleted.\n\nPermanently delete Job\n2 UNSAVED FIELDS\nDISCARD\nSAVE CHANGES",
+    "controls": [
+      {
+        "text": "UPDATE",
+        "label": "What's New in TenOps"
+      },
+      {
+        "text": "",
+        "label": "Open My Work tools"
+      },
+      {
+        "text": "",
+        "label": "Messaging"
+      },
+      {
+        "text": "",
+        "label": "Open Messaging menu"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Notifications"
+      },
+      {
+        "text": "RA\nADMIN",
+        "label": "Account menu for Review A, Admin"
+      },
+      {
+        "text": "PRODUCTION PIPELINE",
+        "label": null
+      },
+      {
+        "text": "MONTHLY SNAPSHOT",
+        "label": null
+      },
+      {
+        "text": "NEW JOB",
+        "label": null
+      },
+      {
+        "text": "OVERVIEW",
+        "label": null
+      },
+      {
+        "text": "TABLE",
+        "label": null
+      },
+      {
+        "text": "TIMELINE",
+        "label": null
+      },
+      {
+        "text": "STATUS",
+        "label": null
+      },
+      {
+        "text": "RECENTLY ADDED",
+        "label": null
+      },
+      {
+        "text": "DEADLINE",
+        "label": null
+      },
+      {
+        "text": "FILTERS",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Refresh jobs"
+      },
+      {
+        "text": "All active jobs scheduled\n·\n0 need attention",
+        "label": null
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 0"
+      },
+      {
+        "text": "228.8h reported",
+        "label": null
+      },
+      {
+        "text": "Material use linked",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1000: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1000: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1000"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 1"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1001: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1001: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1001"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 2"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1002: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1002: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1002"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 3"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1003: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1003: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1003"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 4"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1004: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1004: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1004"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 5"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1005: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1005: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1005"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 6"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1006: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1006: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1006"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 7"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1007: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1007: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1007"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 8"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1008: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1008: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1008"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 9"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1009: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1009: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1009"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 10"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1010: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1010: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1010"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 11"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1011: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1011: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1011"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 12"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1012: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1012: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1012"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 13"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1013: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1013: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1013"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 14"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1014: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1014: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1014"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 15"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1015: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1015: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1015"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 16"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1016: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1016: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1016"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 17"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1017: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1017: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1017"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 18"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1018: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1018: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1018"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 19"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1019: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1019: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1019"
+      },
+      {
+        "text": "",
+        "label": "Edit project name"
+      },
+      {
+        "text": "Close",
+        "label": null
+      },
+      {
+        "text": "Details",
+        "label": null
+      },
+      {
+        "text": "Job Updates (0)",
+        "label": null
+      },
+      {
+        "text": "Files",
+        "label": null
+      },
+      {
+        "text": "Recent Changes",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Select customer"
+      },
+      {
+        "text": "",
+        "label": "Manage Customer List"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "Transmittal\nCreate or manage this Job’s canonical transmittal.",
+        "label": null
+      },
+      {
+        "text": "Purchasing\nOpen purchasing context for this Production Job.",
+        "label": null
+      },
+      {
+        "text": "Permanently delete Job",
+        "label": null
+      },
+      {
+        "text": "DISCARD",
+        "label": null
+      },
+      {
+        "text": "SAVE CHANGES",
+        "label": null
+      }
+    ]
+  },
+  {
+    "console": "WebSocket connection to 'ws://localhost:3017/realtime/v1/websocket?apikey=local-review-public-key&vsn=2.0.0' failed: Connection closed before receiving a handshake response"
+  },
+  {
+    "name": "job-updates",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRODUCTION PIPELINE\nMONTHLY SNAPSHOT\nPRODUCTION REPORTING\nProduction Pipeline\n\nUse the table to manage the Production Pipeline and the Timeline to plan scheduled work.\n\nNEW JOB\nVIEW\nOVERVIEW\nTABLE\nTIMELINE\nSORT\nSTATUS\nRECENTLY ADDED\nDEADLINE\nFILTERS\nAll active jobs scheduled\n·\n0 need attention\nACTIVE JOBS20\nSCHEDULED20\nSHOWING20\nOpen job details\n26-1000\nRetrieval Job 0\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n228.8h reported\n·\nMaterial use linked\nOpen job details\n26-1001\nRetrieval Job 1\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1002\nRetrieval Job 2\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1003\nRetrieval Job 3\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1004\nRetrieval Job 4\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1005\nRetrieval Job 5\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1006\nRetrieval Job 6\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1007\nRetrieval Job 7\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1008\nRetrieval Job 8\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1009\nRetrieval Job 9\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1010\nRetrieval Job 10\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1011\nRetrieval Job 11\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1012\nRetrieval Job 12\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1013\nRetrieval Job 13\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1014\nRetrieval Job 14\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1015\nRetrieval Job 15\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1016\nRetrieval Job 16\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1017\nRetrieval Job 17\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1018\nRetrieval Job 18\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1019\nRetrieval Job 19\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\n26-1000\nRetrieval Job 0\nIN PRODUCTION\nPlanning Complete — Required planning details are complete. Material readiness and production status are tracked separately.\nClose\nDetails\nJob Updates (0)\nFiles\nRecent Changes\nPRODUCTION HISTORY\nTotal Job Labor 228.8h\n\nOne canonical Job with lifecycle-specific status, schedule, and attributed Manpower labor.\n\nOriginal Production\n· in production\nCURRENT LIFECYCLE\n228.8h\n\nProduction 2026-10-01 – 2026-10-31 · Labor includes legacy rows that cannot be distinguished from explicit Original Production attribution.\n\nJob number\nProject name\nCustomer\nProject contact details\nDOCUMENTS\nTransmittal\nCreate or manage this Job’s canonical transmittal.\nPurchasing\nOpen purchasing context for this Production Job.\nPLANNING\nPlanned start\nPlanned finish\nRequested delivery\nEstimated labor\nEstimated calendar days\nProduction status\nNot Started\nOn Deck\nIn Production\nOn Hold\nShipped\nComplete\nCancelled\nMaterial status\nUnknown\nNot Ready\nOrdered\nReady\nJOB DETAILS\nWork order\nEstimate number\nColor plate number\nApproval date\nSample submitted\nDeposit date\nContract value\nResin / Chip PO\nNot recorded\nRemarks\nADMIN CLEANUP\n\nOnly empty or disposable Jobs without operational history can be permanently deleted.\n\nPermanently delete Job\n2 UNSAVED FIELDS\nDISCARD\nSAVE CHANGES",
+    "controls": [
+      {
+        "text": "UPDATE",
+        "label": "What's New in TenOps"
+      },
+      {
+        "text": "",
+        "label": "Open My Work tools"
+      },
+      {
+        "text": "",
+        "label": "Messaging"
+      },
+      {
+        "text": "",
+        "label": "Open Messaging menu"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Notifications"
+      },
+      {
+        "text": "RA\nADMIN",
+        "label": "Account menu for Review A, Admin"
+      },
+      {
+        "text": "PRODUCTION PIPELINE",
+        "label": null
+      },
+      {
+        "text": "MONTHLY SNAPSHOT",
+        "label": null
+      },
+      {
+        "text": "NEW JOB",
+        "label": null
+      },
+      {
+        "text": "OVERVIEW",
+        "label": null
+      },
+      {
+        "text": "TABLE",
+        "label": null
+      },
+      {
+        "text": "TIMELINE",
+        "label": null
+      },
+      {
+        "text": "STATUS",
+        "label": null
+      },
+      {
+        "text": "RECENTLY ADDED",
+        "label": null
+      },
+      {
+        "text": "DEADLINE",
+        "label": null
+      },
+      {
+        "text": "FILTERS",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Refresh jobs"
+      },
+      {
+        "text": "All active jobs scheduled\n·\n0 need attention",
+        "label": null
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 0"
+      },
+      {
+        "text": "228.8h reported",
+        "label": null
+      },
+      {
+        "text": "Material use linked",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1000: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1000: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1000"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 1"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1001: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1001: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1001"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 2"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1002: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1002: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1002"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 3"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1003: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1003: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1003"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 4"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1004: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1004: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1004"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 5"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1005: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1005: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1005"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 6"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1006: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1006: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1006"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 7"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1007: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1007: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1007"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 8"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1008: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1008: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1008"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 9"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1009: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1009: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1009"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 10"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1010: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1010: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1010"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 11"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1011: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1011: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1011"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 12"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1012: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1012: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1012"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 13"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1013: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1013: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1013"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 14"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1014: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1014: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1014"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 15"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1015: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1015: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1015"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 16"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1016: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1016: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1016"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 17"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1017: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1017: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1017"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 18"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1018: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1018: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1018"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 19"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1019: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1019: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1019"
+      },
+      {
+        "text": "",
+        "label": "Edit project name"
+      },
+      {
+        "text": "Close",
+        "label": null
+      },
+      {
+        "text": "Details",
+        "label": null
+      },
+      {
+        "text": "Job Updates (0)",
+        "label": null
+      },
+      {
+        "text": "Files",
+        "label": null
+      },
+      {
+        "text": "Recent Changes",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Select customer"
+      },
+      {
+        "text": "",
+        "label": "Manage Customer List"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "Transmittal\nCreate or manage this Job’s canonical transmittal.",
+        "label": null
+      },
+      {
+        "text": "Purchasing\nOpen purchasing context for this Production Job.",
+        "label": null
+      },
+      {
+        "text": "Permanently delete Job",
+        "label": null
+      },
+      {
+        "text": "DISCARD",
+        "label": null
+      },
+      {
+        "text": "SAVE CHANGES",
+        "label": null
+      }
+    ]
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_app_access",
+    "status": 200,
+    "body": "[{\"user_id\":\"00000000-0000-4000-8000-000000900001\",\"display_name\":\"Review A\",\"role\":\"admin\",\"is_active\":true,\"read_only\":false,\"messaging_write\":true,\"production_blend_manage\":false,\"sample_labels_generate\":true}]"
+  },
+  {
+    "console": "WebSocket connection to 'ws://localhost:3017/realtime/v1/websocket?apikey=local-review-public-key&vsn=2.0.0' failed: Connection closed before receiving a handshake response"
+  },
+  {
+    "console": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/ensure_my_welcome_notification",
+    "status": 403,
+    "body": "{\"message\":\"Local review is read-only\"}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_account_preferences",
+    "status": 200,
+    "body": "{\"manpower_recent_labor_expanded\":true}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_work_task_groups",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_work_tasks",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_work_task_group_memberships",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_account_notification_history",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "console": "WebSocket connection to 'ws://localhost:3017/realtime/v1/websocket?apikey=local-review-public-key&vsn=2.0.0' failed: Connection closed before receiving a handshake response"
+  },
+  {
+    "name": "tasks-controls",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nWorkload · 0 open · No estimates yet\n0 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nNothing open\nAdd a task when something comes up.",
+    "controls": [
+      {
+        "text": "UPDATE",
+        "label": "What's New in TenOps"
+      },
+      {
+        "text": "",
+        "label": "Open My Work tools"
+      },
+      {
+        "text": "",
+        "label": "Messaging"
+      },
+      {
+        "text": "",
+        "label": "Open Messaging menu"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Notifications"
+      },
+      {
+        "text": "RA\nADMIN",
+        "label": "Account menu for Review A, Admin"
+      },
+      {
+        "text": "Task Groups",
+        "label": null
+      },
+      {
+        "text": "Toolbox",
+        "label": "Open Toolbox"
+      },
+      {
+        "text": "Today",
+        "label": null
+      },
+      {
+        "text": "All Tasks",
+        "label": null
+      },
+      {
+        "text": "My Tasks",
+        "label": null
+      },
+      {
+        "text": "Shared Tasks",
+        "label": null
+      },
+      {
+        "text": "Workload · 0 open · No estimates yet",
+        "label": null
+      }
+    ]
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_work_conversations_v11",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_work_inbox_recipients",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_work_inbox_recipients",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_work_conversations_v11",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "name": "messaging-list",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nWorkload · 0 open · No estimates yet\n0 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nNothing open\nAdd a task when something comes up.\nInbox\n\nPrivate conversations\n\nNew message\n\nNo conversations yet.\nStart with New message.",
+    "controls": [
+      {
+        "text": "UPDATE",
+        "label": "What's New in TenOps"
+      },
+      {
+        "text": "",
+        "label": "Open My Work tools"
+      },
+      {
+        "text": "",
+        "label": "Messaging"
+      },
+      {
+        "text": "",
+        "label": "Open Messaging menu"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Notifications"
+      },
+      {
+        "text": "RA\nADMIN",
+        "label": "Account menu for Review A, Admin"
+      },
+      {
+        "text": "Task Groups",
+        "label": null
+      },
+      {
+        "text": "Toolbox",
+        "label": "Open Toolbox"
+      },
+      {
+        "text": "Today",
+        "label": null
+      },
+      {
+        "text": "All Tasks",
+        "label": null
+      },
+      {
+        "text": "My Tasks",
+        "label": null
+      },
+      {
+        "text": "Shared Tasks",
+        "label": null
+      },
+      {
+        "text": "Workload · 0 open · No estimates yet",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Close Inbox"
+      },
+      {
+        "text": "New message",
+        "label": null
+      }
+    ]
+  },
+  {
+    "name": "message-compose",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nWorkload · 0 open · No estimates yet\n0 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nNothing open\nAdd a task when something comes up.\nInbox\n\nPrivate conversations\n\nNew message\nTo\nChoose a TenOps user\n\nSelect a recipient to start a conversation.\n\nAttach, paste images/files, or drop files here. 50 MB per file · 200 MB per message. Clipboard support varies by browser.\n\nAttach\nSend",
+    "controls": [
+      {
+        "text": "UPDATE",
+        "label": "What's New in TenOps"
+      },
+      {
+        "text": "",
+        "label": "Open My Work tools"
+      },
+      {
+        "text": "",
+        "label": "Messaging"
+      },
+      {
+        "text": "",
+        "label": "Open Messaging menu"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Notifications"
+      },
+      {
+        "text": "RA\nADMIN",
+        "label": "Account menu for Review A, Admin"
+      },
+      {
+        "text": "Task Groups",
+        "label": null
+      },
+      {
+        "text": "Toolbox",
+        "label": "Open Toolbox"
+      },
+      {
+        "text": "Today",
+        "label": null
+      },
+      {
+        "text": "All Tasks",
+        "label": null
+      },
+      {
+        "text": "My Tasks",
+        "label": null
+      },
+      {
+        "text": "Shared Tasks",
+        "label": null
+      },
+      {
+        "text": "Workload · 0 open · No estimates yet",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Close Inbox"
+      },
+      {
+        "text": "",
+        "label": "Back to conversations"
+      },
+      {
+        "text": "Send",
+        "label": null
+      }
+    ]
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_app_access",
+    "status": 200,
+    "body": "[{\"user_id\":\"00000000-0000-4000-8000-000000900001\",\"display_name\":\"Review A\",\"role\":\"admin\",\"is_active\":true,\"read_only\":false,\"messaging_write\":true,\"production_blend_manage\":false,\"sample_labels_generate\":true}]"
+  },
+  {
+    "console": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  },
+  {
+    "console": "WebSocket connection to 'ws://localhost:3017/realtime/v1/websocket?apikey=local-review-public-key&vsn=2.0.0' failed: Connection closed before receiving a handshake response"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/ensure_my_welcome_notification",
+    "status": 403,
+    "body": "{\"message\":\"Local review is read-only\"}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_account_preferences",
+    "status": 200,
+    "body": "{\"manpower_recent_labor_expanded\":true}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_account_notification_history",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_unseen_job_update_jobs",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "name": "notifications",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRODUCTION PIPELINE\nMONTHLY SNAPSHOT\nPRODUCTION REPORTING\nProduction Pipeline\n\nUse the table to manage the Production Pipeline and the Timeline to plan scheduled work.\n\nNEW JOB\nVIEW\nOVERVIEW\nTABLE\nTIMELINE\nSORT\nSTATUS\nRECENTLY ADDED\nDEADLINE\nFILTERS\nAll active jobs scheduled\n·\n0 need attention\nACTIVE JOBS20\nSCHEDULED20\nSHOWING20\nOpen job details\n26-1000\nRetrieval Job 0\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n228.8h reported\n·\nMaterial use linked\nOpen job details\n26-1001\nRetrieval Job 1\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1002\nRetrieval Job 2\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1003\nRetrieval Job 3\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1004\nRetrieval Job 4\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1005\nRetrieval Job 5\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1006\nRetrieval Job 6\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1007\nRetrieval Job 7\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1008\nRetrieval Job 8\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1009\nRetrieval Job 9\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1010\nRetrieval Job 10\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1011\nRetrieval Job 11\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1012\nRetrieval Job 12\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1013\nRetrieval Job 13\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1014\nRetrieval Job 14\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1015\nRetrieval Job 15\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1016\nRetrieval Job 16\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1017\nRetrieval Job 17\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1018\nRetrieval Job 18\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1019\nRetrieval Job 19\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nNotifications\nUNREAD\nALL\nYou're all caught up.",
+    "controls": [
+      {
+        "text": "UPDATE",
+        "label": "What's New in TenOps"
+      },
+      {
+        "text": "",
+        "label": "Open My Work tools"
+      },
+      {
+        "text": "",
+        "label": "Messaging"
+      },
+      {
+        "text": "",
+        "label": "Open Messaging menu"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Notifications"
+      },
+      {
+        "text": "RA\nADMIN",
+        "label": "Account menu for Review A, Admin"
+      },
+      {
+        "text": "PRODUCTION PIPELINE",
+        "label": null
+      },
+      {
+        "text": "MONTHLY SNAPSHOT",
+        "label": null
+      },
+      {
+        "text": "NEW JOB",
+        "label": null
+      },
+      {
+        "text": "OVERVIEW",
+        "label": null
+      },
+      {
+        "text": "TABLE",
+        "label": null
+      },
+      {
+        "text": "TIMELINE",
+        "label": null
+      },
+      {
+        "text": "STATUS",
+        "label": null
+      },
+      {
+        "text": "RECENTLY ADDED",
+        "label": null
+      },
+      {
+        "text": "DEADLINE",
+        "label": null
+      },
+      {
+        "text": "FILTERS",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Refresh jobs"
+      },
+      {
+        "text": "All active jobs scheduled\n·\n0 need attention",
+        "label": null
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 0"
+      },
+      {
+        "text": "228.8h reported",
+        "label": null
+      },
+      {
+        "text": "Material use linked",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1000: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1000: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1000"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 1"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1001: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1001: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1001"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 2"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1002: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1002: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1002"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 3"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1003: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1003: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1003"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 4"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1004: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1004: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1004"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 5"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1005: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1005: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1005"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 6"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1006: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1006: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1006"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 7"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1007: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1007: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1007"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 8"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1008: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1008: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1008"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 9"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1009: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1009: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1009"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 10"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1010: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1010: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1010"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 11"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1011: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1011: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1011"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 12"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1012: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1012: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1012"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 13"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1013: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1013: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1013"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 14"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1014: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1014: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1014"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 15"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1015: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1015: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1015"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 16"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1016: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1016: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1016"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 17"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1017: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1017: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1017"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 18"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1018: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1018: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1018"
+      },
+      {
+        "text": "Open job details",
+        "label": "Open Retrieval Job 19"
+      },
+      {
+        "text": "225h reported",
+        "label": null
+      },
+      {
+        "text": "No material use",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Open Job Updates for 26-1019: No job updates"
+      },
+      {
+        "text": "",
+        "label": "Open Project Files for 26-1019: 0 attachments"
+      },
+      {
+        "text": "",
+        "label": "New task for 26-1019"
+      },
+      {
+        "text": "",
+        "label": "Close Notifications"
+      },
+      {
+        "text": "UNREAD",
+        "label": null
+      },
+      {
+        "text": "ALL",
+        "label": null
+      }
+    ]
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_app_access",
+    "status": 200,
+    "body": "[{\"user_id\":\"00000000-0000-4000-8000-000000900001\",\"display_name\":\"Review A\",\"role\":\"admin\",\"is_active\":true,\"read_only\":false,\"messaging_write\":true,\"production_blend_manage\":false,\"sample_labels_generate\":true}]"
+  },
+  {
+    "console": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  },
+  {
+    "console": "WebSocket connection to 'ws://localhost:3017/realtime/v1/websocket?apikey=local-review-public-key&vsn=2.0.0' failed: Connection closed before receiving a handshake response"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/ensure_my_welcome_notification",
+    "status": 403,
+    "body": "{\"message\":\"Local review is read-only\"}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_account_preferences",
+    "status": 200,
+    "body": "{\"manpower_recent_labor_expanded\":true}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_account_notification_history",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "name": "po-editor",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPURCHASING\nPurchase Orders\n\nStructured chip and aggregate purchasing drafts.\n\nVendors & Contacts\n+ New Purchase Order\nALL\nDRAFT\nISSUED\nPRIOR REVISIONS\nNo matching Purchase Orders. Create the first chip purchasing draft when ready.\nDraft and issued Purchase Orders. Issued records retain permanent snapshot-generated PDFs; Pending Receivals and Inventory changes are not active.\nPURCHASE ORDER · DRAFT\nNew Purchase Order\n9999-Final suffix assigned on first save\nPDF Text Size\nCompact\nStandard\nLarge\nPreview Draft PDF\nClose\nDOCUMENT TEMPLATE\nTenOps\nLegacy (Classic)\nTenOps — Current streamlined TenOps layout.\nJOB REFERENCE / LINK PRODUCTION JOB\nGeneral / multiple jobs\n26-1000 — Retrieval Job 0 — In Production\n26-1001 — Retrieval Job 1 — In Production\n26-1002 — Retrieval Job 2 — In Production\n26-1003 — Retrieval Job 3 — In Production\n26-1004 — Retrieval Job 4 — In Production\n26-1005 — Retrieval Job 5 — In Production\n26-1006 — Retrieval Job 6 — In Production\n26-1007 — Retrieval Job 7 — In Production\n26-1008 — Retrieval Job 8 — In Production\n26-1009 — Retrieval Job 9 — In Production\n26-1010 — Retrieval Job 10 — In Production\n26-1011 — Retrieval Job 11 — In Production\n26-1012 — Retrieval Job 12 — In Production\n26-1013 — Retrieval Job 13 — In Production\n26-1014 — Retrieval Job 14 — In Production\n26-1015 — Retrieval Job 15 — In Production\n26-1016 — Retrieval Job 16 — In Production\n26-1017 — Retrieval Job 17 — In Production\n26-1018 — Retrieval Job 18 — In Production\n26-1019 — Retrieval Job 19 — In Production\nJOB NUMBER\nPURCHASE ORDER NUMBER\nPRODUCTION PO REFERENCE\nDo not update a Job PO reference\nResin PO\nChip PO\n\nThe selected Job reference is populated only after this PO is successfully issued.\n\nVENDOR\n▾\nManage Vendors & Contacts\nPO DATE\nDATE REQUESTED\nPO ORIGINATED BY\nVENDOR ADDRESS\nVENDOR CONTACT\nSHIP TO\nPAYMENT TERMS\nAUTHORIZED BY\nPURCHASE ORDER LINE 1\nDuplicate\nRemove\nAllocate\nEntirely unallocated · 0 order units general stock\nMATERIAL TYPE\nChip / Aggregate\nResin\nPigment\nFiller\nOther\n\nChoose a material type before editing or searching this line.\n\nSEARCH CATALOG\n\nSearch to populate this line from the catalog.\n\nMATERIAL\nVENDOR SKU\nCONTAINER SIZE\nSelect a Catalog package size\nCONTAINER\nNot specified\npail\ndrum\nbag\nbox\ncase\ntote\nOther\nQUANTITY\nUNIT COST\nPRICE BASIS\nLINE TOTAL\nDESCRIPTION\nView Historical Prices\n+ Add Chip Line+ Add Resin Line+ Add Pigment Line+ Add Filler Line+ Add Other Line\nPurchase Order Summary\nSubtotal\n$0.00\nDISCOUNT %SALES TAX %FREIGHT\nTotal\n$0.00\nADDITIONAL NOTES & SPECIAL CONDITIONS\nINTERNAL NOTES · NOT PRINTED\nSave Draft\n\nSaving does not issue a PO, create a PDF, or create Pending Receivals.",
+    "controls": [
+      {
+        "text": "UPDATE",
+        "label": "What's New in TenOps"
+      },
+      {
+        "text": "",
+        "label": "Open My Work tools"
+      },
+      {
+        "text": "",
+        "label": "Messaging"
+      },
+      {
+        "text": "",
+        "label": "Open Messaging menu"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Notifications"
+      },
+      {
+        "text": "RA\nADMIN",
+        "label": "Account menu for Review A, Admin"
+      },
+      {
+        "text": "Vendors & Contacts",
+        "label": null
+      },
+      {
+        "text": "+ New Purchase Order",
+        "label": null
+      },
+      {
+        "text": "ALL",
+        "label": null
+      },
+      {
+        "text": "DRAFT",
+        "label": null
+      },
+      {
+        "text": "ISSUED",
+        "label": null
+      },
+      {
+        "text": "PRIOR REVISIONS",
+        "label": null
+      },
+      {
+        "text": "Compact",
+        "label": null
+      },
+      {
+        "text": "Standard",
+        "label": null
+      },
+      {
+        "text": "Large",
+        "label": null
+      },
+      {
+        "text": "Preview Draft PDF",
+        "label": null
+      },
+      {
+        "text": "Close",
+        "label": null
+      },
+      {
+        "text": "▾",
+        "label": "Browse choices"
+      },
+      {
+        "text": "Manage Vendors & Contacts",
+        "label": null
+      },
+      {
+        "text": "Duplicate",
+        "label": null
+      },
+      {
+        "text": "Remove",
+        "label": null
+      },
+      {
+        "text": "Allocate",
+        "label": null
+      },
+      {
+        "text": "Chip / Aggregate",
+        "label": null
+      },
+      {
+        "text": "Resin",
+        "label": null
+      },
+      {
+        "text": "Pigment",
+        "label": null
+      },
+      {
+        "text": "Filler",
+        "label": null
+      },
+      {
+        "text": "Other",
+        "label": null
+      },
+      {
+        "text": "View Historical Prices",
+        "label": null
+      },
+      {
+        "text": "+ Add Chip Line",
+        "label": null
+      },
+      {
+        "text": "+ Add Resin Line",
+        "label": null
+      },
+      {
+        "text": "+ Add Pigment Line",
+        "label": null
+      },
+      {
+        "text": "+ Add Filler Line",
+        "label": null
+      },
+      {
+        "text": "+ Add Other Line",
+        "label": null
+      },
+      {
+        "text": "Save Draft",
+        "label": null
+      }
+    ]
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_app_access",
+    "status": 200,
+    "body": "[{\"user_id\":\"00000000-0000-4000-8000-000000900001\",\"display_name\":\"Review A\",\"role\":\"admin\",\"is_active\":true,\"read_only\":false,\"messaging_write\":true,\"production_blend_manage\":false,\"sample_labels_generate\":true}]"
+  },
+  {
+    "console": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/ensure_my_welcome_notification",
+    "status": 403,
+    "body": "{\"message\":\"Local review is read-only\"}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/get_my_account_preferences",
+    "status": 200,
+    "body": "{\"manpower_recent_labor_expanded\":true}"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/has_proposal_access",
+    "status": 200,
+    "body": "true"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/list_my_account_notification_history",
+    "status": 200,
+    "body": "[]"
+  },
+  {
+    "console": "WebSocket connection to 'ws://localhost:3017/realtime/v1/websocket?apikey=local-review-public-key&vsn=2.0.0' failed: Connection closed before receiving a handshake response"
+  },
+  {
+    "console": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  },
+  {
+    "url": "http://localhost:3017/rest/v1/rpc/create_proposal",
+    "status": 403,
+    "body": "{\"message\":\"Local review is read-only\"}"
+  },
+  {
+    "name": "proposal-editor",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nCOMMERCIAL TOOLS\nProposal Generator\n\nCreate and manage Proposals independently from Production Jobs.\n\nCOMMERCIAL TOOLS\nProposal Generator\n\nGeneric Proposal workspace\n\nUnable to create Proposal.\nProposal history\nCreate Proposal\nNo Proposals are linked to this workspace.",
+    "controls": [
+      {
+        "text": "UPDATE",
+        "label": "What's New in TenOps"
+      },
+      {
+        "text": "",
+        "label": "Open My Work tools"
+      },
+      {
+        "text": "",
+        "label": "Messaging"
+      },
+      {
+        "text": "",
+        "label": "Open Messaging menu"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Notifications"
+      },
+      {
+        "text": "RA\nADMIN",
+        "label": "Account menu for Review A, Admin"
+      },
+      {
+        "text": "",
+        "label": null
+      },
+      {
+        "text": "",
+        "label": "Close"
+      },
+      {
+        "text": "Create Proposal",
+        "label": null
+      }
+    ]
+  }
+]

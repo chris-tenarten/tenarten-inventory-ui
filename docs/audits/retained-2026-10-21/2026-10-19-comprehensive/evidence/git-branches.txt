@@ -1,0 +1,69 @@
+  archive/dev-dirty-snapshot-20260921              2d68e6c Archive pre-reconciliation dev worktree
+  archive/dev-pre-reconciliation-20260921          087b576 Clarify Sample filler adjustment guidance
+  archive/po-text-size-release-evidence-20260921   30fd386 Archive PO text-size Production release evidence
+  archive/sample-v4-preserved-a51c1c4              a51c1c4 Correct Sample V4 density profile semantics
++ archive/tenarten-project-assets-20261016         13c4e26 (/Users/chrisngo/source/worktrees/tenops/project-assets-archive-20261016) [CF-Pages-Skip] [CI Skip] archive: preserve approved Tenarten project assets locally
+  candidate/manpower-reporting-polish-20260921     cd11cc0 Add bounded bulk Product Category assignment to Manpower
+  candidate/unified-catalog-browser-gate           6b09cc4 Clarify Sample filler adjustment guidance
++ demo/closed-loop-mrp                             8255a1e (/Users/chrisngo/Documents/Codex/2026-10-07/referenced-chatgpt-conversation-this-is-an/work/tenops-mrp) docs: preserve historical sample and blend evidence
+  demo/rapid-screenshots-20260929                  907e4e7 [origin/dev: behind 63] perf(messaging): prefetch recent history on bounded conversation intent
+* dev                                              da21615 [origin/dev] fix(auth): preserve verified continuing sessions on refocus [CF-Pages-Skip] [CI Skip]
++ feature/bids-crm-ux-overhaul                     8ac1dba (/private/tmp/tenops-bids-crm-ux-overhaul) [origin/dev: ahead 1, behind 22] Add local Bid collaboration tasks and Central Time reminders
++ feature/connected-operations-navigation          f1d3489 (/private/tmp/tenops-connected-navigation) Make Blend Inventory comparison opt-in and capture immutable availability
++ feature/customer-dialog-hotfix                   ace3df5 (/private/tmp/tenops-customer-dialog-hotfix) [origin/main: behind 9] [CF-Pages-Skip] [CI Skip] fix(production): isolate nested customer dialogs and restore management entry
++ feature/dymo-print-qol                           ba776a1 (/private/tmp/tenops-dymo-print-qol) [origin/main: behind 12] [CF-Pages-Skip] [CI Skip] feat(samples): add dismissible DYMO first-use printing tip
+  feature/generator-audience-ux                    79e7d2d feat(samples): clarify live Batch summary and consolidate Notes
+  feature/geometry-profile-library-v1              42188e7 [origin/dev: ahead 1, behind 62] feat(proposals): add versioned geometry profile library
+  feature/intake-projected-planning                181ab83 Checkpoint local Intake projected planning and guarded Job conversion
+  feature/messaging-attachment-operations          20171a5 Prepare isolated Messaging cleanup and release operations
++ feature/messaging-draft-persistence              7f819d2 (/private/tmp/tenops-messaging-drafts) [origin/dev: behind 8] [CF-Pages-Skip] [CI Skip] feat(messaging): preserve account-scoped conversation drafts
+  feature/messaging-large-attachments              5cbc69d Align Messaging attachments with Free-plan 50 MB file limits
++ feature/performance-header-polish                5a8f35d (/private/tmp/tenops-performance-header) [origin/main: ahead 2, behind 11] feat(ui): preserve accepted blue UPDATE header for combined review
+  feature/po-sample-generators                     17679d7 Add PO Job allocations and managed Sample profiles with guarded receiving
++ feature/production-blend-v1                      e3c0318 (/private/tmp/tenops-production-blend-v1) Add Admin-only Production Blend planning and captured shop sheets
++ feature/production-contact-configuration         3191e61 (/private/tmp/tenops-production-contacts) [origin/main: ahead 1, behind 11] feat(production): prepare accepted customer list and protected contact snapshots
+  feature/production-mvp                           611644e [origin/feature/production-mvp] fix: harden production editing and inspector workflows
+  feature/proposal-generator-v2                    18901d0 feat(proposals): add native estimating and proposal v2
++ feature/sample-color-plate-label-generator       5351642 (/private/tmp/tenops-sample-color-plate-label-generator) [origin/main: behind 13] [CF-Pages-Skip] [CI Skip] fix(pwa): retain released root launch behavior
++ feature/sample-job-attachments                   7f819d2 (/private/tmp/tenops-sample-job-attachments) [origin/main: behind 8] [CF-Pages-Skip] [CI Skip] feat(messaging): preserve account-scoped conversation drafts
++ feature/sample-job-updates-recovered             56ef9e4 (/Users/chrisngo/source/worktrees/tenops/sample-job-updates) test(samples): qualify recovered Job Update publishing contracts
++ feature/sample-match-assistant                   a32a4b3 (/private/tmp/tenops-sample-match) [origin/main: ahead 1, behind 20] feat(toolbox): add local experimental Sample Match Assistant
++ feature/sample-matcher-ux                        97bc487 (/private/tmp/tenops-sample-matcher-ux) feat(sample-matcher): add bounded automatic chip detection POC
++ feature/sample-operator-ux                       4e0886f (/private/tmp/tenops-sample-operator-ux) [origin/main: ahead 1, behind 16] feat(samples): simplify operator preparation workflow
++ feature/sample-post-button-polish                0375b8a (/Users/chrisngo/source/worktrees/tenops/sample-post-button-polish) [CF-Pages-Skip] [CI Skip] feat(samples): post generated documents from Inspector
++ feature/sample-post-spotlight                    1b790af (/Users/chrisngo/source/worktrees/tenops/sample-post-spotlight) [CF-Pages-Skip] [CI Skip] feat(messaging): prepare trusted rich Sample spotlight
++ feature/sample-pour-planning                     d473ca8 (/private/tmp/tenops-sample-pour-planning) [origin/main: behind 25] fix(samples): surface validation and verify pour planning integrity
++ feature/sample-shop-scaling                      5ee2ae8 (/private/tmp/tenops-sample-shop-scaling) [origin/main: behind 18] fix: clarify sample preparation overrides and blank input feedback
+  feature/unified-material-catalog-search          2e1139e Preserve unified Specialty Catalog candidate
++ fix/auth-continuing-session-refocus              da21615 (/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-auth-refocus/source) fix(auth): preserve verified continuing sessions on refocus [CF-Pages-Skip] [CI Skip]
++ fix/auth-startup-resolution                      a79e13d (/private/tmp/tenops-auth-startup-hotfix) [CF-Pages-Skip] [CI Skip] fix(auth): resolve access explicitly and reject stale profiles
++ fix/lot-auth-regression                          3e9d78d (/private/tmp/tenops-lot-reconciliation/source) [origin/main: behind 20] [CF-Pages-Skip] test(transmittals): preserve hotfix and verify authenticated Edge requests
++ fix/sample-generation-decimals                   095f321 (/private/tmp/tenops-sample-generation-fix) feat(samples): add sanitized generation failure diagnostics
++ fix/samples-access-refresh-loop                  f9230b9 (/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-sample-auth-loop/source) [CF-Pages-Skip] [CI Skip] fix(auth): keep verified same-session refresh from remounting Samples
+  fix/shared-overlay-layering                      e31f1af fix(ui): unify inspector header geometry and overlay layers
+  main                                             da21615 [origin/main] fix(auth): preserve verified continuing sessions on refocus [CF-Pages-Skip] [CI Skip]
+  perf/loading-first-batch                         c22d298 [origin/dev: behind 66] docs(perf): record completed candidate and focused validation
+  perf/messaging-thread-latency                    907e4e7 perf(messaging): prefetch recent history on bounded conversation intent
+  perf/pdf-preview-optimization                    7fb3219 Retain PO preview presets in session cache
+  records/geometry-profile-v1-freeze               5ee2b95 docs: freeze accepted geometry profile V1 release candidate
+  records/manpower-polish-release-20260921         4536702 Record accepted exact Manpower polish Production release
+  records/manpower-polish-release-attempt-20260921 2b1a453 Record stopped Manpower polish release and verified client rollback
+  records/manpower-product-categories-20260921     c393fda Record verified Manpower Product Category Production release
++ release/bids-early-access-staged                 4597d80 (/private/tmp/tenops-bids-early-access-release) Release safe Bids Early Access UX with explicit collaboration previews
+  release/customer-header-production               cb5fc4c [CF-Pages-Skip] [CI Skip] feat(production): release Customer List, protected contacts and UPDATE header
++ release/customer-list-update-header              6249f69 (/private/tmp/tenops-combined-release) docs(release): prepare customer list and UPDATE header approval packet
+  release/manpower-product-categories-20260921     8406728 Add Manpower Product Categories and freeze hosted release gate
+  release/performance-cache-key-correction         128a367 [origin/release/performance-cache-key-correction] Key PDF previews by rendered content
+  release/performance-production-integration       01c117e Retain PO preview presets in session cache
+  release/performance-ratio-normalization          9ac4520 [origin/release/performance-ratio-normalization] Normalize supported Sample mix ratios
+  release/po-pdf-text-size-20260918                8307f53 Freeze PO PDF text-size candidate and hosted gate evidence
+  release/po-text-size-production                  3284e91 [origin/main: behind 97] Freeze PO PDF text-size candidate and hosted gate evidence
+  release/proposal-job-integrity-20260827          a0e6d44 fix: attach Proposal totals to line items
++ release/pwa-root-launch                          84c8446 (/private/tmp/tenops-pwa-root-release) [origin/main: ahead 1, behind 15] fix(pwa): launch installed Production app at root [CI Skip]
++ release/sample-inspector-post                    0375b8a (/Users/chrisngo/source/worktrees/tenops/sample-inspector-post-release) [CF-Pages-Skip] [CI Skip] feat(samples): post generated documents from Inspector
++ release/sample-match-tendev                      950dd71 (/private/tmp/tenops-sample-match-tendev) [origin/dev: ahead 2, behind 16] fix(toolbox): prepare Sample Match Assistant for TenDev mobile review
++ release/sample-operator-ux                       1866efe (/private/tmp/tenops-operator-release/git) feat(samples): simplify operator preparation workflow [CI Skip]
++ release/sample-post-to-job                       350c556 (/Users/chrisngo/source/worktrees/tenops/sample-post-to-job-release) [CF-Pages-Skip] [CI Skip] fix(samples): deny anonymous Job Update RPC execution
++ release/sample-shop-scaling                      d8f65d8 (/private/tmp/tenops-shop-release/git) [CF-Pages-Skip] release: isolated Sample preparation scaling
++ release/sample-spotlight                         b04d194 (/Users/chrisngo/source/worktrees/tenops/sample-spotlight-release) [CF-Pages-Skip] [CI Skip] fix(messaging): normalize release prerequisite line endings
+  release/sample-v4-density-production             c679c94 Correct Sample V4 density profile semantics

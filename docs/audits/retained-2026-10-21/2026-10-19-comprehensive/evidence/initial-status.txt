@@ -1,0 +1,4 @@
+?? docs/project-memory/2026-10-19-auth-tab-refocus-release.md
+?? docs/project-memory/2026-10-19-samples-loading-loop-dual-release.md
+?? docs/project-memory/evidence/2026-10-19-auth-tab-refocus-release.json
+?? docs/project-memory/evidence/2026-10-19-samples-loading-loop-dual-release.json

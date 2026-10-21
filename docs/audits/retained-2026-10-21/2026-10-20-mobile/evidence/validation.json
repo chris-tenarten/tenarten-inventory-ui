@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-20 America/Chicago",
+  "markdown_local_links_checked": 29,
+  "broken_links": [],
+  "javascript_syntax_exit_codes": {
+    "capture.cjs": 0,
+    "responsive.cjs": 0,
+    "interact.cjs": 0,
+    "workflows.cjs": 0,
+    "local-review-server.mjs": 0
+  },
+  "route_captures": 15,
+  "actual_app_screenshots": 46,
+  "proposal_board_visually_inspected": true,
+  "application_build_or_tests_run": false,
+  "reason": "Read-only audit; application source unchanged. Focused browser/source/artifact checks only.",
+  "webkit": "Unavailable binary; not passed",
+  "audit_server": "Stopped; occupied port 3000 never replaced",
+  "hosted_reads_or_writes": "None; synthetic local transport only"
+}

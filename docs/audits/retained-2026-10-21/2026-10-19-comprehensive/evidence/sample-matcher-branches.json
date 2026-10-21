@@ -1,0 +1,71 @@
+{
+  "main": {
+    "sha": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "matchingPaths": []
+  },
+  "dev": {
+    "sha": "da21615ad6f06727e4f18a75c65331a7266d2404",
+    "matchingPaths": []
+  },
+  "feature/sample-match-assistant": {
+    "sha": "a32a4b381b83af29483278a8c5a63ebf560768dc",
+    "matchingPaths": [
+      "docs/project-memory/2026-10-13-sample-match-assistant.md",
+      "scripts/start-sample-match-review.mjs",
+      "scripts/verify-sample-match-browser.mjs",
+      "scripts/verify-sample-match.ts",
+      "src/app/toolbox/sample-match/page.tsx",
+      "src/lib/sample-match/access.ts",
+      "src/lib/sample-match/engine.ts",
+      "src/modules/sample-match/SampleMatchWorkspace.tsx"
+    ]
+  },
+  "release/sample-match-tendev": {
+    "sha": "950dd714da215eaf5a3ad0b351aa344b80e09064",
+    "matchingPaths": [
+      "docs/project-memory/2026-10-13-sample-match-assistant.md",
+      "scripts/start-sample-match-review.mjs",
+      "scripts/verify-sample-match-browser.mjs",
+      "scripts/verify-sample-match-mobile.mjs",
+      "scripts/verify-sample-match.ts",
+      "src/app/toolbox/sample-match/page.tsx",
+      "src/lib/sample-match/access.ts",
+      "src/lib/sample-match/engine.ts",
+      "src/modules/sample-match/SampleMatchWorkspace.tsx"
+    ]
+  },
+  "feature/sample-matcher-ux": {
+    "sha": "97bc4871f8e5b7a2cadbb64788ad409ba69e2275",
+    "matchingPaths": [
+      "docs/project-memory/2026-10-13-sample-match-assistant.md",
+      "docs/project-memory/2026-10-13-sample-matcher-chip-poc.md",
+      "docs/project-memory/2026-10-13-sample-matcher-nickel-review.md",
+      "docs/project-memory/2026-10-13-sample-matcher-touch-hotfix.md",
+      "docs/project-memory/2026-10-13-sample-matcher-ux-review.md",
+      "scripts/start-sample-match-review.mjs",
+      "scripts/start-sample-matcher-review.mjs",
+      "scripts/verify-sample-match-browser.mjs",
+      "scripts/verify-sample-match-mobile.mjs",
+      "scripts/verify-sample-match.ts",
+      "scripts/verify-sample-matcher-browser.mjs",
+      "scripts/verify-sample-matcher-chips-browser.mjs",
+      "scripts/verify-sample-matcher-chips.ts",
+      "scripts/verify-sample-matcher-nickel-browser.mjs",
+      "scripts/verify-sample-matcher-nickel.ts",
+      "scripts/verify-sample-matcher-touch.mjs",
+      "scripts/verify-sample-matcher.ts",
+      "src/app/toolbox/sample-match/page.tsx",
+      "src/lib/sample-match/access.ts",
+      "src/lib/sample-match/chip-detection.ts",
+      "src/lib/sample-match/color-analysis.ts",
+      "src/lib/sample-match/engine.ts",
+      "src/lib/sample-match/geometry.ts",
+      "src/lib/sample-match/nickel.ts",
+      "src/lib/sample-match/report.ts",
+      "src/modules/sample-match/ChipResults.tsx",
+      "src/modules/sample-match/PhotoWorkspace.tsx",
+      "src/modules/sample-match/SampleMatchWorkspace.tsx",
+      "src/modules/sample-match/sample-matcher.css"
+    ]
+  }
+}

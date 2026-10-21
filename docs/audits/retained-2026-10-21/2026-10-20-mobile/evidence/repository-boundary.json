@@ -1,0 +1,15 @@
+{
+  "branch": "dev",
+  "head": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+  "main": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+  "origin_main": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "origin_dev": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "status": "?? .worktrees/\n?? docs/audits/\n?? docs/project-memory/2026-10-19-auth-tab-refocus-release.md\n?? docs/project-memory/2026-10-19-samples-loading-loop-dual-release.md\n?? docs/project-memory/evidence/2026-10-19-auth-tab-refocus-release.json\n?? docs/project-memory/evidence/2026-10-19-samples-loading-loop-dual-release.json",
+  "performance": "01e5e83 perf(manpower): show selected-period records with progressive history [CF-Pages-Skip] [CI Skip]\ne902bf3 chore(perf): verify integrated waves and hosted read-only boundaries [CF-Pages-Skip] [CI Skip]\nc43f0c7 perf(operations): defer reporting and receival history [CF-Pages-Skip] [CI Skip]\ne4c0e92 perf(samples): parallelize draft initialization and guard stale reads [CF-Pages-Skip] [CI Skip]\n0fcf9f0 perf: complete operational lists and scope Production activity\ne7bcd95 perf(messaging): coalesce account-owned awareness retrieval",
+  "performance_delta": ".../2026-10-20-manpower-recent-records.md          | 56 +++++++++++++\n .../2026-10-20-manpower-baseline-measurement.json  | 27 +++++++\n .../2026-10-20-manpower-refinement-boundary.json   | 16 ++++\n .../2026-10-20-manpower-refinement-browser.json    | 17 ++++\n ...2026-10-20-manpower-refinement-measurement.json | 27 +++++++\n .../2026-10-20-manpower-review-origin.json         | 11 +++\n scripts/measure-manpower-refinement.mjs            | 24 ++++++\n scripts/start-performance-integration-review.mts   |  6 ++\n scripts/verify-manpower-refinement-browser.mjs     | 72 +++++++++++++++++\n scripts/verify-performance-integration-browser.mjs |  6 +-\n src/modules/manpower/ManpowerAnalytics.tsx         | 37 ++-------\n src/modules/manpower/ManpowerWorkspace.tsx         | 93 +++++++++++++++++-----\n 12 files changed, 341 insertions(+), 51 deletions(-)",
+  "export_source": "da21615ad6f06727e4f18a75c65331a7266d2404",
+  "export_source_status": "",
+  "audit_date": "2026-10-20 America/Chicago",
+  "export_index_sha256": "7be2466af5c2706427542b65750993ae11b715d6b9260714e4b535be0ba4b28b",
+  "note": "Existing canonical local API export reused; no new build. Static source worktree is clean. JS localhost API port rewritten by isolated adapter from 3000 to 3017; synthetic session only."
+}

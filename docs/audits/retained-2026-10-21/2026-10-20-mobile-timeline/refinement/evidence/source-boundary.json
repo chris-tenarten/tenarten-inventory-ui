@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-20 America/Chicago",
+  "risk": "Tier 2 isolated prototype refinement",
+  "head": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+  "branch": "dev",
+  "refs": [
+    "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+    "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+    "01e5e839fdba0256023077cf1d85c2d4dd15212c"
+  ],
+  "tracked_diff": [],
+  "source": [
+    {
+      "path": "src/modules/production/components/ProductionGantt.tsx",
+      "sha256": "87cfa0b0be87e17a0e93739943ade2b0654c2b7ed87dce60c8f5002602b23b18",
+      "matches_HEAD": true
+    },
+    {
+      "path": "src/modules/pre-production/IntakePlanningTimeline.tsx",
+      "sha256": "a91364dcd04e8a7f1653e8cd78f76932cc769feb2630ea44614bc0c73900e155",
+      "matches_HEAD": true
+    },
+    {
+      "path": "src/modules/planning/phase-visuals.ts",
+      "sha256": "996cbdc2473f4c9761c0ba56c75e89778aa831412574eb5165f0b12ce1c8c98d",
+      "matches_HEAD": true
+    },
+    {
+      "path": "src/modules/production/status-visuals.ts",
+      "sha256": "4f1b62869e8cf33772f36901df608dcb24f4e678bb82ce24b7a54107f02ac80b",
+      "matches_HEAD": true
+    },
+    {
+      "path": "src/modules/planning/progress.mjs",
+      "sha256": "62a4c947bb472191107bbd0f3432b326fae3bf4f23d6321e4264ccb3ebccdf79",
+      "matches_HEAD": true
+    },
+    {
+      "path": "src/app/globals.css",
+      "sha256": "5a4a05c14c7879adcc8f4477fad81b8167d7cccd474fd24a6efba62b056ce40b",
+      "matches_HEAD": true
+    },
+    {
+      "path": "src/modules/pre-production/planning-model.ts",
+      "sha256": "b0eae334bef5fcca7c65dfc4c740f06ee71a1cfefb015c6b9185935c5b1bd28c",
+      "matches_HEAD": true
+    },
+    {
+      "path": "src/modules/pre-production/planning.ts",
+      "sha256": "48ea219009bbb39b6700182bf1b006d61f115dc84cd37c43ea74cf7373df63f5",
+      "matches_HEAD": true
+    }
+  ]
+}

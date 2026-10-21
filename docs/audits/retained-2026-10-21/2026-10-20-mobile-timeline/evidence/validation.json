@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-20 America/Chicago",
+  "risk": "Tier 2 isolated prototype; focused behavior and helper validation, not application release gates",
+  "browser_groups_passed": 17,
+  "adapter_groups_passed": 6,
+  "client_errors": [],
+  "unexpected_external_destinations": [],
+  "screenshots": 23,
+  "local_links_checked": 11,
+  "broken_links": [],
+  "script_syntax_exit_codes": {
+    "serve.mjs": 0,
+    "build.mjs": 0,
+    "verify.cjs": 0,
+    "verify-adapters.mjs": 0,
+    "prototype/adapters.mjs": 0,
+    "prototype/fixtures.mjs": 0
+  },
+  "forbidden_data_auth_modules": [],
+  "hosted_config_or_secret_patterns": [],
+  "tracked_source_diff": "",
+  "git_diff_check": 0,
+  "visual_review": [
+    "Production/Bids portrait",
+    "Production landscape",
+    "Bids Combined source controls",
+    "date review"
+  ],
+  "server": "Left running at http://localhost:3018 for Product review",
+  "port_3000": "Not stopped or replaced",
+  "device_limits": "Chromium touch emulation only. Physical Safari/Home Screen/edge gestures/keyboard unverified.",
+  "package": "Compiled artifact runnable with Node standard library; rebuild requires repository dependencies"
+}

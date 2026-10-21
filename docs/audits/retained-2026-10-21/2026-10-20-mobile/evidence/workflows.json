@@ -1,0 +1,1328 @@
+[
+  {
+    "name": "sample-formulation",
+    "url": "http://localhost:3017/samples",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRE-PRODUCTION TOOLS\nSample Formula Workspace\n\nBuild, save, and compare working formulas without requiring a Production Job.\n\nNew Sample\nFormulation Profiles\nCURRENT DRAFT\nDuplicate\nClose\nSave Changes\nGenerate Sample Work Order\nPost to Job\nPRINT COLOR PLATE LABEL\nPlan Production Blend →\n1 item needs attention:\nProduction formulation: Edge Function returned a non-2xx status code\nDraft saving and document generation have different requirements.\nT26-901-A · Synthetic review Edit Sample details\nPrepare Sample\nView Batch Formula\nSample Plate\nPOUR DIMENSIONS\nFinished Plates · 4 pcs · 6″ × 6″ × 0.375″\nWorking Pour\nWorking Pour Width\nWorking Pour Length\nThickness\ninches · shared with finished plates\nWorking Pour Units\ninches\nfeet\nConverts width and length; preserves physical size.\n\n1 SF · 0.03125 CFT · 55 oz chips\n\nVolume alone does not establish that pieces fit or allow for cutting and finishing.\n\nCalculation details\nSuggest Pour Size\nAdvanced calculation settings\n\nFiller canonical Batch requirement is unresolved\n\nPart A canonical Batch requirement is unresolved\n\nPart B canonical Batch requirement is unresolved\n\nComplete canonical component authority is required\n\nShop Preparation\nMaterial\nAmount to prepare\nAGGREGATES\n\nReview aggregate A\n\n25% · 1\n\n13.75 oz\nEdit\nDetails\nfor Review aggregate A\n\nReview aggregate B\n\n25% · 1\n\n13.75 oz\nEdit\nDetails\nfor Review aggregate B\n\nReview aggregate C\n\n25% · 1\n\n13.75 oz\nEdit\nDetails\nfor Review aggregate C\n\nReview aggregate D\n\n15% · 1\n\n8.25 oz\nEdit\nDetails\nfor Review aggregate D\n\nReview aggregate E\n\n10% · 1\n\n5.5 oz\nEdit\nDetails\nfor Review aggregate E\nFILLER & BINDER\n\nReview filler\n\nFiller\n\n18 oz\nEdit\n\nCalculated: unavailable — canonical Batch requirement unresolved\n\nDetails\nfor Review filler\n\nReview binder\n\nResin\n\n15 fl oz\nEdit\n\nCalculated: unavailable — canonical Batch requirement unresolved\n\nDetails\nfor Review binder\n\nReview hardener\n\nHardener\n\n3 fl oz\n\nCalculated: unavailable — canonical Batch requirement unresolved\n\nCalculated from Resin at 5:1.\n\nDetails\nfor Review hardener\n\nChip Mix: 55 oz · 100% / 100%\n\nBatch formula · materials, percentages and sourcing\nProduction planning\nBack to formulation\n\nConfigure the material requirement, then generate the shop sheet.\n\nBased on current saved formulation · Synthetic review\n\nLoad formulation\nLast generated\n\nNo generated Blend Sheets yet.\n\nView generated sheets in Documents\n\nEdge Function returned a non-2xx status code\n\nDocuments / History\nDelete Draft",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 1055,
+      "scrollers": [
+        {
+          "tag": "H2",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 95
+        },
+        {
+          "tag": "LEGEND",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 109
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 146
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 146
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 147
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 147
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 146
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 96
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 109
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 126
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        }
+      ]
+    }
+  },
+  {
+    "name": "sample-calculation",
+    "url": "http://localhost:3017/samples",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRE-PRODUCTION TOOLS\nSample Formula Workspace\n\nBuild, save, and compare working formulas without requiring a Production Job.\n\nNew Sample\nFormulation Profiles\nCURRENT DRAFT\nDuplicate\nClose\nSave Changes\nGenerate Sample Work Order\nPost to Job\nPRINT COLOR PLATE LABEL\nPlan Production Blend →\n1 item needs attention:\nProduction formulation: Edge Function returned a non-2xx status code\nDraft saving and document generation have different requirements.\nT26-901-A · Synthetic review Edit Sample details\nPrepare Sample\nView Batch Formula\nSample Plate\nPOUR DIMENSIONS\nFinished Plates · 4 pcs · 6″ × 6″ × 0.375″\nWorking Pour\nWorking Pour Width\nWorking Pour Length\nThickness\ninches · shared with finished plates\nWorking Pour Units\ninches\nfeet\nConverts width and length; preserves physical size.\n\n1 SF · 0.03125 CFT · 55 oz chips\n\nVolume alone does not establish that pieces fit or allow for cutting and finishing.\n\nCalculation details\nSuggest Pour Size\nClose Calculation Settings\nCUSTOM SAMPLE CALCULATION\nBatch reference chip loading\nlb/CFT · captured Batch reference, unaffected by shop quantities\nResin : Hardener Ratio\n5:1\n4:1\nSynthetic review default\nUse settings for future new Samples\n\nFiller canonical Batch requirement is unresolved\n\nPart A canonical Batch requirement is unresolved\n\nPart B canonical Batch requirement is unresolved\n\nComplete canonical component authority is required\n\nShop Preparation\nMaterial\nAmount to prepare\nAGGREGATES\n\nReview aggregate A\n\n25% · 1\n\n13.75 oz\nEdit\nDetails\nfor Review aggregate A\n\nReview aggregate B\n\n25% · 1\n\n13.75 oz\nEdit\nDetails\nfor Review aggregate B\n\nReview aggregate C\n\n25% · 1\n\n13.75 oz\nEdit\nDetails\nfor Review aggregate C\n\nReview aggregate D\n\n15% · 1\n\n8.25 oz\nEdit\nDetails\nfor Review aggregate D\n\nReview aggregate E\n\n10% · 1\n\n5.5 oz\nEdit\nDetails\nfor Review aggregate E\nFILLER & BINDER\n\nReview filler\n\nFiller\n\n18 oz\nEdit\n\nCalculated: unavailable — canonical Batch requirement unresolved\n\nDetails\nfor Review filler\n\nReview binder\n\nResin\n\n15 fl oz\nEdit\n\nCalculated: unavailable — canonical Batch requirement unresolved\n\nDetails\nfor Review binder\n\nReview hardener\n\nHardener\n\n3 fl oz\n\nCalculated: unavailable — canonical Batch requirement unresolved\n\nCalculated from Resin at 5:1.\n\nDetails\nfor Review hardener\n\nChip Mix: 55 oz · 100% / 100%\n\nBatch formula · materials, percentages and sourcing\nProduction planning\nBack to formulation\n\nConfigure the material requirement, then generate the shop sheet.\n\nBased on current saved formulation · Synthetic review\n\nLoad formulation\nLast generated\n\nNo generated Blend Sheets yet.\n\nView generated sheets in Documents\n\nEdge Function returned a non-2xx status code\n\nDocuments / History\nDelete Draft",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 1072,
+      "scrollers": [
+        {
+          "tag": "H2",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 95
+        },
+        {
+          "tag": "LEGEND",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 109
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 146
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 146
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 147
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 147
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 146
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 96
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 109
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 126
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        }
+      ]
+    }
+  },
+  {
+    "name": "sample-label-actions",
+    "url": "http://localhost:3017/samples",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRE-PRODUCTION TOOLS\nSample Formula Workspace\n\nBuild, save, and compare working formulas without requiring a Production Job.\n\nNew Sample\nFormulation Profiles\nCURRENT DRAFT\nDuplicate\nClose\nSave Changes\nGenerate Sample Work Order\nPost to Job\nPRINT COLOR PLATE LABEL\nPlan Production Blend →\n1 item needs attention:\nProduction formulation: Edge Function returned a non-2xx status code\nDraft saving and document generation have different requirements.\nT26-901-A · Synthetic review Edit Sample details\nPrepare Sample\nView Batch Formula\nSample Plate\nPOUR DIMENSIONS\nFinished Plates · 4 pcs · 6″ × 6″ × 0.375″\nWorking Pour\nWorking Pour Width\nWorking Pour Length\nThickness\ninches · shared with finished plates\nWorking Pour Units\ninches\nfeet\nConverts width and length; preserves physical size.\n\n1 SF · 0.03125 CFT · 55 oz chips\n\nVolume alone does not establish that pieces fit or allow for cutting and finishing.\n\nCalculation details\nSuggest Pour Size\nClose Calculation Settings\nCUSTOM SAMPLE CALCULATION\nBatch reference chip loading\nlb/CFT · captured Batch reference, unaffected by shop quantities\nResin : Hardener Ratio\n5:1\n4:1\nSynthetic review default\nUse settings for future new Samples\n\nFiller canonical Batch requirement is unresolved\n\nPart A canonical Batch requirement is unresolved\n\nPart B canonical Batch requirement is unresolved\n\nComplete canonical component authority is required\n\nShop Preparation\nMaterial\nAmount to prepare\nAGGREGATES\n\nReview aggregate A\n\n25% · 1\n\n13.75 oz\nEdit\nDetails\nfor Review aggregate A\n\nReview aggregate B\n\n25% · 1\n\n13.75 oz\nEdit\nDetails\nfor Review aggregate B\n\nReview aggregate C\n\n25% · 1\n\n13.75 oz\nEdit\nDetails\nfor Review aggregate C\n\nReview aggregate D\n\n15% · 1\n\n8.25 oz\nEdit\nDetails\nfor Review aggregate D\n\nReview aggregate E\n\n10% · 1\n\n5.5 oz\nEdit\nDetails\nfor Review aggregate E\nFILLER & BINDER\n\nReview filler\n\nFiller\n\n18 oz\nEdit\n\nCalculated: unavailable — canonical Batch requirement unresolved\n\nDetails\nfor Review filler\n\nReview binder\n\nResin\n\n15 fl oz\nEdit\n\nCalculated: unavailable — canonical Batch requirement unresolved\n\nDetails\nfor Review binder\n\nReview hardener\n\nHardener\n\n3 fl oz\n\nCalculated: unavailable — canonical Batch requirement unresolved\n\nCalculated from Resin at 5:1.\n\nDetails\nfor Review hardener\n\nChip Mix: 55 oz · 100% / 100%\n\nBatch formula · materials, percentages and sourcing\nProduction planning\nBack to formulation\n\nConfigure the material requirement, then generate the shop sheet.\n\nBased on current saved formulation · Synthetic review\n\nLoad formulation\nLast generated\n\nNo generated Blend Sheets yet.\n\nView generated sheets in Documents\n\nEdge Function returned a non-2xx status code\n\nDocuments / History\nDelete Draft",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 1072,
+      "scrollers": [
+        {
+          "tag": "H2",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 95
+        },
+        {
+          "tag": "LEGEND",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 109
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 146
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 146
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 147
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 147
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 146
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 96
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 109
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 126
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        },
+        {
+          "tag": "INPUT",
+          "cls": "mt-1 h-12 w-full min-w-0 rounded-sm border border-slate-300 bg-white px-3 text-base outline-none focus:border-blue-700 f",
+          "width": 138,
+          "scrollWidth": 181
+        }
+      ]
+    }
+  },
+  {
+    "name": "job-updates-tab",
+    "url": "http://localhost:3017/",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRODUCTION PIPELINE\nMONTHLY SNAPSHOT\nPRODUCTION REPORTING\nProduction Pipeline\n\nUse the table to manage the Production Pipeline and the Timeline to plan scheduled work.\n\nNEW JOB\nVIEW\nOVERVIEW\nTABLE\nTIMELINE\nSORT\nSTATUS\nRECENTLY ADDED\nDEADLINE\nFILTERS\nAll active jobs scheduled\n·\n0 need attention\nACTIVE JOBS20\nSCHEDULED20\nSHOWING20\nOpen job details\n26-1000\nRetrieval Job 0\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n228.8h reported\n·\nMaterial use linked\nOpen job details\n26-1001\nRetrieval Job 1\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1002\nRetrieval Job 2\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1003\nRetrieval Job 3\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1004\nRetrieval Job 4\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1005\nRetrieval Job 5\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1006\nRetrieval Job 6\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1007\nRetrieval Job 7\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1008\nRetrieval Job 8\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1009\nRetrieval Job 9\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1010\nRetrieval Job 10\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1011\nRetrieval Job 11\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1012\nRetrieval Job 12\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1013\nRetrieval Job 13\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1014\nRetrieval Job 14\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1015\nRetrieval Job 15\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1016\nRetrieval Job 16\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1017\nRetrieval Job 17\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1018\nRetrieval Job 18\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1019\nRetrieval Job 19\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\n26-1000\nRetrieval Job 0\nIN PRODUCTION\nPlanning Complete — Required planning details are complete. Material readiness and production status are tracked separately.\nClose\nDetails\nJob Updates (0)\nFiles\nRecent Changes\nLAST UPDATED\nNo updates yet\nUpdate history\nNo Job Updates have been posted yet.\nPost a job update\nPosting as Review\nJob update\nAttach files (optional)\nPOST UPDATE\n2 UNSAVED FIELDS\nDISCARD\nSAVE CHANGES",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 2094,
+      "scrollers": [
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "LABEL",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 79
+        },
+        {
+          "tag": "INPUT",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 187
+        }
+      ]
+    }
+  },
+  {
+    "name": "job-files-tab",
+    "url": "http://localhost:3017/",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRODUCTION PIPELINE\nMONTHLY SNAPSHOT\nPRODUCTION REPORTING\nProduction Pipeline\n\nUse the table to manage the Production Pipeline and the Timeline to plan scheduled work.\n\nNEW JOB\nVIEW\nOVERVIEW\nTABLE\nTIMELINE\nSORT\nSTATUS\nRECENTLY ADDED\nDEADLINE\nFILTERS\nAll active jobs scheduled\n·\n0 need attention\nACTIVE JOBS20\nSCHEDULED20\nSHOWING20\nOpen job details\n26-1000\nRetrieval Job 0\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n228.8h reported\n·\nMaterial use linked\nOpen job details\n26-1001\nRetrieval Job 1\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1002\nRetrieval Job 2\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1003\nRetrieval Job 3\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1004\nRetrieval Job 4\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1005\nRetrieval Job 5\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1006\nRetrieval Job 6\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1007\nRetrieval Job 7\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1008\nRetrieval Job 8\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1009\nRetrieval Job 9\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1010\nRetrieval Job 10\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1011\nRetrieval Job 11\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1012\nRetrieval Job 12\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1013\nRetrieval Job 13\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1014\nRetrieval Job 14\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1015\nRetrieval Job 15\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1016\nRetrieval Job 16\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1017\nRetrieval Job 17\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1018\nRetrieval Job 18\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1019\nRetrieval Job 19\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\n26-1000\nRetrieval Job 0\nIN PRODUCTION\nPlanning Complete — Required planning details are complete. Material readiness and production status are tracked separately.\nClose\nDetails\nJob Updates (0)\nFiles\nRecent Changes\nATTACHMENTS\n0 files\nDocument type\nOther\nEstimate\nWork Order\nBlend Sheet\nShop Drawing\nCut Ticket\nColor Plate\nSample / Approval\nPurchase Order\nPhoto\nAdd Attachment\nNo files attached yet.\n2 UNSAVED FIELDS\nDISCARD\nSAVE CHANGES",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 2091,
+      "scrollers": [
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "INPUT",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 187
+        }
+      ]
+    }
+  },
+  {
+    "name": "browser-back-from-job",
+    "url": "http://localhost:3017/samples",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRE-PRODUCTION TOOLS\nSample Formula Workspace\n\nBuild, save, and compare working formulas without requiring a Production Job.\n\nNew Sample\nFormulation Profiles\nSAMPLE DRAFT LIBRARY\nMobile review terrazzo\nLocal synthetic review · T26-901-A\nReview aggregate A 1 · Review aggregate B 1 · 5:1 resin\nReview Operator · Draft\nDraft · 0 versions",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 248,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "SPAN",
+          "cls": "mt-0.5 block truncate text-xs text-slate-500",
+          "width": 174,
+          "scrollWidth": 215
+        },
+        {
+          "tag": "SPAN",
+          "cls": "mt-1 block truncate text-xs font-medium text-slate-700",
+          "width": 174,
+          "scrollWidth": 353
+        }
+      ]
+    }
+  },
+  {
+    "name": "task-compose-expanded",
+    "url": "http://localhost:3017/my-work",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nNotes\nDue\nEstimated time\nMinutes\nHours\nDays\nJob\nShare\nKeep private\nTask color\nAdd attachments\nAdd task\nUnable to verify complete planning data. Refresh and retry.\nWorkload · 1 open · ~30m estimated\n1 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nReview sample finish\nPrivate\n30m\nTomorrow",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 424,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "mt-2 flex max-w-full flex-nowrap overflow-x-auto border-b border-slate-300 [scrollbar-width:none] [&::-webkit-scrollbar]",
+          "width": 366,
+          "scrollWidth": 439
+        },
+        {
+          "tag": "INPUT",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 199
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 62
+        }
+      ]
+    }
+  },
+  {
+    "name": "task-details",
+    "url": "http://localhost:3017/my-work",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nNotes\nDue\nEstimated time\nMinutes\nHours\nDays\nJob\nShare\nKeep private\nTask color\nAdd attachments\nAdd task\nUnable to verify complete planning data. Refresh and retry.\nWorkload · 1 open · ~30m estimated\n1 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nReview sample finish\nPrivate\n30m\nTomorrow\nTASK DETAILS\nEdit task\nTitle\nNotes\nDue date\nEstimated time\nMinutes\nHours\nDays\nShare with\nKeep private\nJob\nTask Group\nUngrouped\nTask color\nAttachments\nAdd attachments\n\nPhotos, PDFs, and Office files · 25 MB max\n\nAdmin cleanup\n\nPermanently removes this task and its task-owned attachments and metadata. This cannot be undone.\n\nPermanently delete task\nCancel\nSave task",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 506,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "mt-2 flex max-w-full flex-nowrap overflow-x-auto border-b border-slate-300 [scrollbar-width:none] [&::-webkit-scrollbar]",
+          "width": 366,
+          "scrollWidth": 439
+        },
+        {
+          "tag": "INPUT",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 199
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 62
+        },
+        {
+          "tag": "INPUT",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 199
+        }
+      ]
+    }
+  },
+  {
+    "name": "messaging-populated",
+    "url": "http://localhost:3017/my-work",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nWorkload · 1 open · ~30m estimated\n1 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nReview sample finish\nPrivate\n30m\nTomorrow\nInbox\n\nPrivate conversations\n\nNew message\nRC\nReview Colleague\nOct 20, 7:00 AM\nPlease review the finish.\n1",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 384,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "mt-2 flex max-w-full flex-nowrap overflow-x-auto border-b border-slate-300 [scrollbar-width:none] [&::-webkit-scrollbar]",
+          "width": 366,
+          "scrollWidth": 439
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 62
+        }
+      ]
+    }
+  },
+  {
+    "name": "conversation",
+    "url": "http://localhost:3017/my-work",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nWorkload · 1 open · ~30m estimated\n1 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nReview sample finish\nPrivate\n30m\nTomorrow\nInbox\n\nPrivate conversations\n\nRC\nReview Colleague\nmember\nTUE, OCT 20\nPlease review the finish.\n7:00 AM\n\nAttach, paste images/files, or drop files here. 50 MB per file · 200 MB per message. Clipboard support varies by browser.\n\nAttach\nSend",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 419,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "mt-2 flex max-w-full flex-nowrap overflow-x-auto border-b border-slate-300 [scrollbar-width:none] [&::-webkit-scrollbar]",
+          "width": 366,
+          "scrollWidth": 439
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 62
+        },
+        {
+          "tag": "INPUT",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 174
+        }
+      ]
+    }
+  },
+  {
+    "name": "message-photo-queued",
+    "url": "http://localhost:3017/my-work",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nWorkload · 1 open · ~30m estimated\n1 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nReview sample finish\nPrivate\n30m\nTomorrow\nInbox\n\nPrivate conversations\n\nRC\nReview Colleague\nmember\nTUE, OCT 20\nPlease review the finish.\n7:00 AM\nreview-photo.png\n67 B\n\nAttach, paste images/files, or drop files here. 50 MB per file · 200 MB per message. Clipboard support varies by browser.\n\nAttach\nSend",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 432,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "mt-2 flex max-w-full flex-nowrap overflow-x-auto border-b border-slate-300 [scrollbar-width:none] [&::-webkit-scrollbar]",
+          "width": 366,
+          "scrollWidth": 439
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 62
+        },
+        {
+          "tag": "INPUT",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 174
+        }
+      ]
+    }
+  },
+  {
+    "name": "message-short-viewport",
+    "url": "http://localhost:3017/my-work",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nWorkload · 1 open · ~30m estimated\n1 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nReview sample finish\nPrivate\n30m\nTomorrow\nInbox\n\nPrivate conversations\n\nRC\nReview Colleague\nmember\nTUE, OCT 20\nPlease review the finish.\n7:00 AM\nreview-photo.png\n67 B\n\nAttach, paste images/files, or drop files here. 50 MB per file · 200 MB per message. Clipboard support varies by browser.\n\nAttach\nSend",
+    "metrics": {
+      "width": 390,
+      "height": 500,
+      "docWidth": 390,
+      "dom": 432,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "mt-2 flex max-w-full flex-nowrap overflow-x-auto border-b border-slate-300 [scrollbar-width:none] [&::-webkit-scrollbar]",
+          "width": 366,
+          "scrollWidth": 439
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 62
+        },
+        {
+          "tag": "INPUT",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 174
+        }
+      ]
+    }
+  },
+  {
+    "name": "message-back",
+    "url": "http://localhost:3017/my-work",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPERSONAL WORKSPACE\nMy Work\n\nYour tasks, all in one place.\n\nTask Groups\nToolbox\nToday\nAll Tasks\nMy Tasks\nShared Tasks\nYour private tasks and participant-visible Shared Tasks together.\nWorkload · 1 open · ~30m estimated\n1 open\nGroup\nNone\nDue Date\nJob\nEffort\nSort tasks\nRecommended\nDue Date\nRecently Added\nEstimated time: shortest first\nEstimated time: longest first\nColor\nJob\nReview sample finish\nPrivate\n30m\nTomorrow\nInbox\n\nPrivate conversations\n\nNew message\nRC\nReview Colleague\nOct 20, 7:00 AM\nPlease review the finish.\n1",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 384,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "mt-2 flex max-w-full flex-nowrap overflow-x-auto border-b border-slate-300 [scrollbar-width:none] [&::-webkit-scrollbar]",
+          "width": 366,
+          "scrollWidth": 439
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 62
+        }
+      ]
+    }
+  },
+  {
+    "name": "production-filters",
+    "url": "http://localhost:3017/",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPRODUCTION PIPELINE\nMONTHLY SNAPSHOT\nPRODUCTION REPORTING\nProduction Pipeline\n\nUse the table to manage the Production Pipeline and the Timeline to plan scheduled work.\n\nNEW JOB\nVIEW\nOVERVIEW\nTABLE\nTIMELINE\nSORT\nSTATUS\nRECENTLY ADDED\nDEADLINE\nFILTERS\nSCHEDULE\nScheduled\nUnscheduled\nPRODUCTION STATUS\nNot Started\nOn Deck\nIn Production\nOn Hold\nShipped\nComplete\nCancelled\nInclude Archived\nCLEAR FILTERS\nAll active jobs scheduled\n·\n0 need attention\nACTIVE JOBS20\nSCHEDULED20\nSHOWING20\nOpen job details\n26-1000\nRetrieval Job 0\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n228.8h reported\n·\nMaterial use linked\nOpen job details\n26-1001\nRetrieval Job 1\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1002\nRetrieval Job 2\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1003\nRetrieval Job 3\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1004\nRetrieval Job 4\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1005\nRetrieval Job 5\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1006\nRetrieval Job 6\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1007\nRetrieval Job 7\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1008\nRetrieval Job 8\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1009\nRetrieval Job 9\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1010\nRetrieval Job 10\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1011\nRetrieval Job 11\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1012\nRetrieval Job 12\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1013\nRetrieval Job 13\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1014\nRetrieval Job 14\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1015\nRetrieval Job 15\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1016\nRetrieval Job 16\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1017\nRetrieval Job 17\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1018\nRetrieval Job 18\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use\nOpen job details\n26-1019\nRetrieval Job 19\nLocal fixture\nIN PRODUCTION\nSCHEDULE\nOct 1 – Oct 31\nDELIVERY\nNov 1\nPlanning Complete\nMaterial: Ready\n·\n40h estimated\n·\n225h reported\n·\nNo material use",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 2064,
+      "scrollers": [
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 116
+        }
+      ]
+    }
+  },
+  {
+    "name": "production-controls",
+    "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Timeline', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"h-9 min-w-0 rounded-sm px-1 text-[9px] font-bold uppercase tracking-[0.05em] focus-visible:ring-2 focus-visible:ring-blue-600 sm:text-[10px] lg:px-4 lg:tracking-[0.09em] text-slate-600 hover:bg-white\">Timeline</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"mt-4 flex items-center gap-2 border-t border-slate-200 pt-4 text-sm text-slate-700\">…</label> from <div class=\"relative min-w-0 lg:shrink-0 col-span-2\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <label class=\"mt-4 flex items-center gap-2 border-t border-slate-200 pt-4 text-sm text-slate-700\">…</label> from <div class=\"relative min-w-0 lg:shrink-0 col-span-2\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 100ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div data-shell-branding=\"true\" class=\"flex min-h-11 min-w-0 items-center gap-3 pr-12 sm:min-h-0 sm:pr-0\">…</div> from <header data-shell-header=\"true\" class=\"sticky top-0 z-[100] border-b border-slate-200 bg-[#f2f5f8] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200\">…</header> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 100ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not stable\u001b[22m\n\u001b[2m  2 × retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"fixed left-2 right-2 top-32 z-40 border border-slate-400 bg-white p-4 shadow-xl sm:absolute sm:left-auto sm:right-0 sm:top-11 sm:w-72\">…</div> from <div class=\"relative min-w-0 lg:shrink-0 col-span-2\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label class=\"mt-4 flex items-center gap-2 border-t border-slate-200 pt-4 text-sm text-slate-700\">…</label> from <div class=\"relative min-w-0 lg:shrink-0 col-span-2\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div data-shell-branding=\"true\" class=\"flex min-h-11 min-w-0 items-center gap-3 pr-12 sm:min-h-0 sm:pr-0\">…</div> from <header data-shell-header=\"true\" class=\"sticky top-0 z-[100] border-b border-slate-200 bg-[#f2f5f8] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200\">…</header> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m      - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div data-shell-branding=\"true\" class=\"flex min-h-11 min-w-0 items-center gap-3 pr-12 sm:min-h-0 sm:pr-0\">…</div> from <header data-shell-header=\"true\" data-compact-header=\"true\" class=\"sticky top-0 z-[100] border-b border-slate-200 bg-[#f2f5f8] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200\">…</header> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"fixed left-2 right-2 top-32 z-40 border border-slate-400 bg-white p-4 shadow-xl sm:absolute sm:left-auto sm:right-0 sm:top-11 sm:w-72\">…</div> from <div class=\"relative min-w-0 lg:shrink-0 col-span-2\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n"
+  },
+  {
+    "name": "manpower-expanded",
+    "url": "http://localhost:3017/manpower-reporting",
+    "text": "abs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n\n\t\t\nSelect Product Category\nSlabs\n\t\n+ ADD\nSelect worker\nFixture Worker\n\t\n+ ADD\nSelect task\nGrinding\n\t\nUnlinked\n\t\t\t3.75\t\n10/14/26 Group 1\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 10\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 11\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 12\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 13\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 14\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 15\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 16\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 17\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 18\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 19\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 2\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 20\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 21\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 22\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 23\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 24\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 25\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 26\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 27\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 28\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 29\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 3\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 30\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 31\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 32\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 33\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 34\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 35\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 36\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 37\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 38\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 39\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 4\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 40\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 41\nMixed\n285 entries\nAM 641.3 hrs\nPM 427.5 hrs\nTOTAL 1068.75 hrs\n10/14/26 Group 5\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 6\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 7\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 8\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs\n10/14/26 Group 9\nMixed\n286 entries\nAM 643.5 hrs\nPM 429.0 hrs\nTOTAL 1072.50 hrs",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 10356,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "SPAN",
+          "cls": "sr-only",
+          "width": 1,
+          "scrollWidth": 130
+        },
+        {
+          "tag": "DIV",
+          "cls": "overflow-x-auto",
+          "width": 364,
+          "scrollWidth": 1480
+        }
+      ]
+    }
+  },
+  {
+    "name": "po-overflow-metrics",
+    "url": "http://localhost:3017/purchasing",
+    "text": "TenOps\nOPERATIONS CONTROL\nUPDATE\nRA\nADMIN\nPURCHASING\nPurchase Orders\n\nStructured chip and aggregate purchasing drafts.\n\nVendors & Contacts\n+ New Purchase Order\nALL\nDRAFT\nISSUED\nPRIOR REVISIONS\nNo matching Purchase Orders. Create the first chip purchasing draft when ready.\nDraft and issued Purchase Orders. Issued records retain permanent snapshot-generated PDFs; Pending Receivals and Inventory changes are not active.\nPURCHASE ORDER · DRAFT\nNew Purchase Order\n9999-Final suffix assigned on first save\nPDF Text Size\nCompact\nStandard\nLarge\nPreview Draft PDF\nClose\nDOCUMENT TEMPLATE\nTenOps\nLegacy (Classic)\nTenOps — Current streamlined TenOps layout.\nJOB REFERENCE / LINK PRODUCTION JOB\nGeneral / multiple jobs\n26-1000 — Retrieval Job 0 — In Production\n26-1001 — Retrieval Job 1 — In Production\n26-1002 — Retrieval Job 2 — In Production\n26-1003 — Retrieval Job 3 — In Production\n26-1004 — Retrieval Job 4 — In Production\n26-1005 — Retrieval Job 5 — In Production\n26-1006 — Retrieval Job 6 — In Production\n26-1007 — Retrieval Job 7 — In Production\n26-1008 — Retrieval Job 8 — In Production\n26-1009 — Retrieval Job 9 — In Production\n26-1010 — Retrieval Job 10 — In Production\n26-1011 — Retrieval Job 11 — In Production\n26-1012 — Retrieval Job 12 — In Production\n26-1013 — Retrieval Job 13 — In Production\n26-1014 — Retrieval Job 14 — In Production\n26-1015 — Retrieval Job 15 — In Production\n26-1016 — Retrieval Job 16 — In Production\n26-1017 — Retrieval Job 17 — In Production\n26-1018 — Retrieval Job 18 — In Production\n26-1019 — Retrieval Job 19 — In Production\nJOB NUMBER\nPURCHASE ORDER NUMBER\nPRODUCTION PO REFERENCE\nDo not update a Job PO reference\nResin PO\nChip PO\n\nThe selected Job reference is populated only after this PO is successfully issued.\n\nVENDOR\n▾\nManage Vendors & Contacts\nPO DATE\nDATE REQUESTED\nPO ORIGINATED BY\nVENDOR ADDRESS\nVENDOR CONTACT\nSHIP TO\nPAYMENT TERMS\nAUTHORIZED BY\nPURCHASE ORDER LINE 1\nDuplicate\nRemove\nAllocate\nEntirely unallocated · 0 order units general stock\nMATERIAL TYPE\nChip / Aggregate\nResin\nPigment\nFiller\nOther\n\nChoose a material type before editing or searching this line.\n\nSEARCH CATALOG\n\nSearch to populate this line from the catalog.\n\nMATERIAL\nVENDOR SKU\nCONTAINER SIZE\nSelect a Catalog package size\nCONTAINER\nNot specified\npail\ndrum\nbag\nbox\ncase\ntote\nOther\nQUANTITY\nUNIT COST\nPRICE BASIS\nLINE TOTAL\nDESCRIPTION\nView Historical Prices\n+ Add Chip Line+ Add Resin Line+ Add Pigment Line+ Add Filler Line+ Add Other Line\nPurchase Order Summary\nSubtotal\n$0.00\nDISCOUNT %SALES TAX %FREIGHT\nTotal\n$0.00\nADDITIONAL NOTES & SPECIAL CONDITIONS\nINTERNAL NOTES · NOT PRINTED\nSave Draft\n\nSaving does not issue a PO, create a PDF, or create Pending Receivals.",
+    "metrics": {
+      "width": 390,
+      "height": 844,
+      "docWidth": 390,
+      "dom": 434,
+      "scrollers": [
+        {
+          "tag": "DIV",
+          "cls": "flex w-full items-center lg:w-auto lg:justify-end",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "NAV",
+          "cls": "flex min-w-0 flex-1 items-center justify-between overflow-visible sm:justify-start sm:gap-1 lg:flex-none",
+          "width": 366,
+          "scrollWidth": 385
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "relative shrink-0",
+          "width": 50,
+          "scrollWidth": 280
+        },
+        {
+          "tag": "DIV",
+          "cls": "fixed inset-x-0 bottom-0 z-[90] overflow-y-auto bg-slate-950/40 p-2",
+          "width": 390,
+          "scrollWidth": 459
+        },
+        {
+          "tag": "DIV",
+          "cls": "mx-auto min-h-full max-w-[1500px] bg-[#eef1f4] shadow-2xl",
+          "width": 374,
+          "scrollWidth": 451
+        },
+        {
+          "tag": "DIV",
+          "cls": "grid gap-4 p-3 lg:grid-cols-[1fr_320px]",
+          "width": 374,
+          "scrollWidth": 451
+        }
+      ]
+    }
+  },
+  {
+    "name": "webkit",
+    "error": "browserType.launch: Executable doesn't exist at /Users/chrisngo/Library/Caches/ms-playwright/webkit-2311/pw_run.sh\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
+  }
+]

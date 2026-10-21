@@ -1,0 +1,30 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "name": "Module adapters retain different planning-only display policy",
+      "passed": true
+    },
+    {
+      "name": "Bids remain Bids; lost/converted excluded and undated retained",
+      "passed": true
+    },
+    {
+      "name": "Combined view delegates Production editing to its own context",
+      "passed": true
+    },
+    {
+      "name": "Repeated Production staging uses incremental phase translation",
+      "passed": true
+    },
+    {
+      "name": "Module date shifts preserve inclusive span across month and DST boundary",
+      "passed": true
+    },
+    {
+      "name": "Presentation adapters do not mutate source fixtures or create Jobs",
+      "passed": true
+    }
+  ],
+  "note": "Local prototype adapter compatibility only. No database, authorization or hosted lifecycle certification."
+}

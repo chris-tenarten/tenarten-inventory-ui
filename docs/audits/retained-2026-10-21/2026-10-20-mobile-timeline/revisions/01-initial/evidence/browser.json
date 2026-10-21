@@ -1,0 +1,610 @@
+{
+  "checks": [
+    {
+      "name": "production single-finger pan from bar; no schedule change",
+      "passed": true
+    },
+    {
+      "name": "production pinch keeps focal date; does not select or edit",
+      "passed": true
+    },
+    {
+      "name": "production visible scale and Today; tap selection and Back restore map",
+      "passed": true
+    },
+    {
+      "name": "production long press selects without edit",
+      "passed": true
+    },
+    {
+      "name": "production explicit date edit + review remains local",
+      "passed": true
+    },
+    {
+      "name": "bids single-finger pan from bar; no schedule change",
+      "passed": true
+    },
+    {
+      "name": "bids pinch keeps focal date; does not select or edit",
+      "passed": true
+    },
+    {
+      "name": "bids visible scale and Today; tap selection and Back restore map",
+      "passed": true
+    },
+    {
+      "name": "bids long press selects without edit",
+      "passed": true
+    },
+    {
+      "name": "bids explicit date edit + review remains local",
+      "passed": true
+    },
+    {
+      "name": "Bids Combined: Production reference cannot edit projected window",
+      "passed": true
+    },
+    {
+      "name": "Read-only persona blocks edits in both modules",
+      "passed": true
+    },
+    {
+      "name": "Unsaved draft browser Back can be cancelled",
+      "passed": true
+    },
+    {
+      "name": "Search empty recovery; filters preserve source semantics",
+      "passed": true
+    },
+    {
+      "name": "Narrow viewport and orientation retain date center",
+      "passed": true
+    },
+    {
+      "name": "Original renderers mount with synthetic offline shims",
+      "passed": true
+    },
+    {
+      "name": "HTTP denies business POST; no backend or external requests",
+      "passed": true
+    }
+  ],
+  "screens": [
+    {
+      "name": "launcher",
+      "url": "http://localhost:3018/",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": null,
+        "dom": 24,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-portrait",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 738,
+          "fraction": 0.8744075829383886
+        },
+        "dom": 160,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-panned-zoomed",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 738,
+          "fraction": 0.8744075829383886
+        },
+        "dom": 174,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-detail",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 196,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-selected",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 171,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-landscape-selected",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 844,
+        "height": 390,
+        "documentWidth": 844,
+        "documentHeight": 390,
+        "map": {
+          "x": 0,
+          "y": 45,
+          "width": 844,
+          "height": 300,
+          "fraction": 0.7692307692307693
+        },
+        "dom": 144,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-landscape",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 844,
+        "height": 390,
+        "documentWidth": 844,
+        "documentHeight": 390,
+        "map": {
+          "x": 0,
+          "y": 45,
+          "width": 844,
+          "height": 300,
+          "fraction": 0.7692307692307693
+        },
+        "dom": 133,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-date-review",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 189,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-local-edit",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 174,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-portrait",
+      "url": "http://localhost:3018/bids",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 738,
+          "fraction": 0.8744075829383886
+        },
+        "dom": 138,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-panned-zoomed",
+      "url": "http://localhost:3018/bids",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 738,
+          "fraction": 0.8744075829383886
+        },
+        "dom": 141,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-detail",
+      "url": "http://localhost:3018/bids",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 167,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-selected",
+      "url": "http://localhost:3018/bids",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 149,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-landscape-selected",
+      "url": "http://localhost:3018/bids",
+      "metrics": {
+        "width": 844,
+        "height": 390,
+        "documentWidth": 844,
+        "documentHeight": 390,
+        "map": {
+          "x": 0,
+          "y": 45,
+          "width": 844,
+          "height": 300,
+          "fraction": 0.7692307692307693
+        },
+        "dom": 133,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-landscape",
+      "url": "http://localhost:3018/bids",
+      "metrics": {
+        "width": 844,
+        "height": 390,
+        "documentWidth": 844,
+        "documentHeight": 390,
+        "map": {
+          "x": 0,
+          "y": 45,
+          "width": 844,
+          "height": 300,
+          "fraction": 0.7692307692307693
+        },
+        "dom": 122,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-date-review",
+      "url": "http://localhost:3018/bids",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 167,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-local-edit",
+      "url": "http://localhost:3018/bids",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 152,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-combined-production-selected",
+      "url": "http://localhost:3018/bids?source=combined",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 151,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "bids-read-only",
+      "url": "http://localhost:3018/bids?readonly=1",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 390,
+          "height": 601,
+          "fraction": 0.7120853080568721
+        },
+        "dom": 135,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-320",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 320,
+        "height": 568,
+        "documentWidth": 320,
+        "documentHeight": 568,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 320,
+          "height": 462,
+          "fraction": 0.8133802816901409
+        },
+        "dom": 129,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "production-430",
+      "url": "http://localhost:3018/production",
+      "metrics": {
+        "width": 430,
+        "height": 932,
+        "documentWidth": 430,
+        "documentHeight": 932,
+        "map": {
+          "x": 0,
+          "y": 53,
+          "width": 430,
+          "height": 826,
+          "fraction": 0.8862660944206009
+        },
+        "dom": 168,
+        "verticalScrollers": []
+      }
+    },
+    {
+      "name": "reference-production",
+      "url": "http://localhost:3018/reference.html",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 1060,
+        "map": null,
+        "dom": 8602,
+        "verticalScrollers": [
+          "relative max-h-[calc(100dvh-9rem)] overflow-auto "
+        ]
+      }
+    },
+    {
+      "name": "reference-bids",
+      "url": "http://localhost:3018/reference.html",
+      "metrics": {
+        "width": 390,
+        "height": 844,
+        "documentWidth": 390,
+        "documentHeight": 1091,
+        "map": null,
+        "dom": 1186,
+        "verticalScrollers": [
+          "max-h-[65dvh] min-w-0 overflow-auto border border-slate-300 bg-white"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "path": "/",
+      "method": "GET"
+    },
+    {
+      "path": "/app.css",
+      "method": "GET"
+    },
+    {
+      "path": "/app.js",
+      "method": "GET"
+    },
+    {
+      "path": "/production",
+      "method": "GET"
+    },
+    {
+      "path": "/app.css",
+      "method": "GET"
+    },
+    {
+      "path": "/app.js",
+      "method": "GET"
+    },
+    {
+      "path": "/bids",
+      "method": "GET"
+    },
+    {
+      "path": "/app.css",
+      "method": "GET"
+    },
+    {
+      "path": "/app.js",
+      "method": "GET"
+    },
+    {
+      "path": "/bids",
+      "method": "GET"
+    },
+    {
+      "path": "/app.css",
+      "method": "GET"
+    },
+    {
+      "path": "/app.js",
+      "method": "GET"
+    },
+    {
+      "path": "/production",
+      "method": "GET"
+    },
+    {
+      "path": "/app.css",
+      "method": "GET"
+    },
+    {
+      "path": "/app.js",
+      "method": "GET"
+    },
+    {
+      "path": "/bids",
+      "method": "GET"
+    },
+    {
+      "path": "/app.css",
+      "method": "GET"
+    },
+    {
+      "path": "/app.js",
+      "method": "GET"
+    },
+    {
+      "path": "/bids",
+      "method": "GET"
+    },
+    {
+      "path": "/app.css",
+      "method": "GET"
+    },
+    {
+      "path": "/app.js",
+      "method": "GET"
+    },
+    {
+      "path": "/production",
+      "method": "GET"
+    },
+    {
+      "path": "/app.css",
+      "method": "GET"
+    },
+    {
+      "path": "/app.js",
+      "method": "GET"
+    },
+    {
+      "path": "/reference.html",
+      "method": "GET"
+    },
+    {
+      "path": "/reference.css",
+      "method": "GET"
+    },
+    {
+      "path": "/reference.js",
+      "method": "GET"
+    }
+  ],
+  "blocked": [],
+  "result": "PASS"
+}

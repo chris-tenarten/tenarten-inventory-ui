@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-20 America/Chicago",
+  "risk": "Tier 2 isolated prototype refinement; focused checks, not an application release gate",
+  "head": "01e5e839fdba0256023077cf1d85c2d4dd15212c",
+  "tracked_application_diff": "",
+  "browser_groups_passed": 26,
+  "adapter_groups_passed": 8,
+  "refinement_screenshots": 38,
+  "preserved_initial_files_verified": 50,
+  "initial_report_and_original_evidence_unchanged": true,
+  "local_links_checked": 51,
+  "broken_links": [],
+  "syntax_exit_codes": {
+    "serve.mjs": 0,
+    "build.mjs": 0,
+    "verify-refinement.cjs": 0,
+    "verify-refinement-adapters.mjs": 0,
+    "prototype/adapters.mjs": 0,
+    "prototype/fixtures.mjs": 0,
+    "prototype/semantics.mjs": 0
+  },
+  "forbidden_auth_data_modules": [],
+  "secret_or_hosted_configuration_patterns": [],
+  "client_errors": [],
+  "unexpected_external_requests": [],
+  "git_diff_check": 0,
+  "visual_review": [
+    "Production portrait",
+    "phase inspection",
+    "landscape pause inspection with visible actions",
+    "Key and source status patterns",
+    "Bids selected identity"
+  ],
+  "safe_area_validation": "Chromium CDP override: portrait top 24/bottom 20; landscape left/right 40/bottom 20. Physical Safari not verified.",
+  "server": "Existing localhost:3018 process retained for review; no port 3000 process replaced",
+  "build": "Isolated research bundle only; no application Production build or broad suite",
+  "readiness": "Product review and operator/physical-iPhone pilot required before implementation acceptance"
+}
