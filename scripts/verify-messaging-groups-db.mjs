@@ -41,8 +41,9 @@ ${read('supabase/migrations/20260925120000_messaging_large_attachments.sql').rep
 // implementations without pretending fixture bodies have the hosted predecessor hashes.
 const v11=read('supabase/migrations/20260925200000_messaging_v11.sql');
 run(database,v11.slice(v11.indexOf('create function public.guard_my_work_message_job_retirement()')).replace(/commit;\s*$/,''));
-run(database,read('supabase/migrations/20261022120000_messaging_groups_replies.sql'));
 const permission=read('supabase/migrations/20261005120000_read_only_messaging_write.sql');
+if(process.argv.includes('--hosted-guard-compatibility'))run(database,permission.slice(permission.indexOf('do $$declare f record; definition text;',permission.indexOf('-- Explicit RPC entry guards')),permission.indexOf('create trigger tenops_storage_bucket_write_guard')));
+run(database,read('supabase/migrations/20261022120000_messaging_groups_replies.sql'));
 run(database,permission.slice(permission.indexOf('create function public.guard_tenops_messaging_write()'),permission.indexOf('-- Explicit RPC entry guards'))
 .replace(/create function public.guard_tenops_notification_write\(\)[^]*?end;\$\$;/,'')
 .replace('create trigger tenops_notification_write_guard','create trigger tenops_notification_write_guard'));
@@ -50,6 +51,24 @@ const uid=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const [a,b,c,outsider,admin,inactive]=[10,11,12,13,14,15].map(uid);
 run(database,`insert into app_users(user_id,display_name,role,is_active) values ${[a,b,c,outsider,admin,inactive].map((id,i)=>`('${id}','Fixture ${i}','${i===4?'admin':'member'}',${i!==5})`).join(',')};`);
 const as=(actor,sql,ok=true)=>run(database,`begin;set local role authenticated;set local request.jwt.claim.sub='${actor}';set local request.jwt.claim.role='authenticated';${sql};commit;`,ok);
+if(process.argv.includes('--hosted-guard-compatibility')){
+ const source=run(database,"select prosrc from pg_proc where oid='recover_my_work_attachment_transfer(uuid)'::regprocedure");
+ assert.match(source,/\bBEGIN\b/);assert(!source.includes('public.is_my_work_group_member(group_id)'));
+ const g=as(a,`select save_my_work_message_group(null,'Guard compatibility',array['${a}','${b}','${c}']::uuid[])`);
+ const message=as(b,`select send_my_work_message_v12('${g}','Synthetic removed-sender message')`);
+ const draft=uid(50),files=JSON.stringify([{id:uid(51),name:'guard-test.txt',size:3,contentType:'text/plain'}]);
+ as(b,`select begin_my_work_attachment_transfer_v12('${draft}','${g}','Synthetic private draft',null,'${files}'::jsonb,null)`);
+ as(a,`select save_my_work_message_group('${g}','Guard compatibility',array['${a}','${c}']::uuid[])`);
+ assert.equal(JSON.parse(as(b,`select recover_my_work_attachment_transfer('${draft}')`)).body,'Synthetic private draft','Reproduce pre-correction leak under released uppercase BEGIN shape');
+ const metadata=()=>run(database,`select json_agg(json_build_object('name',proname,'owner',proowner,'acl',proacl,'config',proconfig,'securityDefiner',prosecdef) order by proname) from pg_proc where oid=any(array['recover_my_work_attachment_transfer(uuid)'::regprocedure,'my_work_attachment_transfer_status(uuid)'::regprocedure,'edit_my_work_inbox_message(uuid,text)'::regprocedure])`);
+ const before=metadata(),fix=read('supabase/migrations/20261022140000_messaging_removed_sender_entry_guards.sql');run(database,fix);assert.equal(metadata(),before);
+ as(b,`select recover_my_work_attachment_transfer('${draft}')`,false);as(b,`select my_work_attachment_transfer_status('${draft}')`,false);as(b,`select edit_my_work_inbox_message('${message}','Removed edit')`,false);
+ const dm=uid(52);as(b,`select begin_my_work_attachment_transfer_v12('${dm}','${a}','Unchanged direct draft',null,'${files}'::jsonb,null)`.replace(uid(51),uid(53)));
+ assert.equal(JSON.parse(as(b,`select recover_my_work_attachment_transfer('${dm}')`)).body,'Unchanged direct draft');
+ assert.equal(as(c,`select count(*) from my_work_messages where id='${message}'`),'1');
+ run(database,fix);assert.equal(metadata(),before);
+ console.log('PASS focused uppercase-BEGIN regression: original leak reproduced; forward correction denies removed sender recovery/status/edit; direct recovery and current-member history preserved; owners/ACL/search paths unchanged; correction repeat-safe.');
+}else{
 const g=as(a,`select save_my_work_message_group(null,'Shop team',array['${a}','${b}','${c}']::uuid[])`);
 assert.match(g,/^[\da-f-]{36}$/);
 const m=as(b,`select send_my_work_message_v12('${g}','Group original')`);
@@ -114,4 +133,5 @@ as(c,`select send_my_work_message_v12('${g}','Read-only denial')`,false);
 run(database,`update app_users set messaging_write=true where user_id='${c}';`);
 as(c,`select send_my_work_message_v12('${g}','Explicit Messaging permission')`);
 console.log('PASS PostgreSQL: migration, member/outsider/Admin/inactive RLS, owner management, group + DM replies, cross-conversation denial, unread receipts, attachment publication/Storage visibility/recovery, removal/rejoin, deletion fallback, push source authority. No login accounts or live notifications.');
+}
 }finally{run('postgres',`drop database ${database} with (force);`);}

@@ -1,0 +1,56 @@
+{
+  "status": "blocked-before-hosted-mutation",
+  "acceptedCandidate": "bf86a7147212a8c8fda689f294bf048e45ea8410",
+  "hostedGroupTablesPresent": false,
+  "authorizedMigrationsApplied": [],
+  "privacyBlocker": [
+    {
+      "function": "edit_my_work_inbox_message(uuid,text)",
+      "firstBegin": "BEGIN",
+      "candidateLowercaseReplacementMatches": false,
+      "definitionSha256": "a2a80b948b423f1318fc4a688bf68ac8f2b4792b1bda6c7c61018c5a55a9bd1c"
+    },
+    {
+      "function": "recover_my_work_attachment_transfer(uuid)",
+      "firstBegin": "BEGIN",
+      "candidateLowercaseReplacementMatches": false,
+      "definitionSha256": "42d9a84cbe1e8138c0bcdd4988a785897af55b13a431571430a7e70009609e2a"
+    }
+  ],
+  "proposedCorrection": "20261022140000_messaging_removed_sender_entry_guards.sql",
+  "localRegressionPassed": true,
+  "hostedMutations": 0,
+  "pushes": 0,
+  "deploymentsChanged": 0,
+  "signedUrl600SecondsApproved": true,
+  "physicalIphoneTest": "User will test after full Production release; no test notification sent",
+  "deployments": {
+    "tendev": {
+      "id": "7ec743a2-d57a-49dd-8bf1-4a23f28bebad",
+      "sha": "daa79324531476f91e9e2be9e254050335e895c9",
+      "url": "https://7ec743a2.tendev.pages.dev"
+    },
+    "tenops": {
+      "id": "6cc7ff0f-c77d-4fb9-b579-1fc80638223b",
+      "sha": "daa79324531476f91e9e2be9e254050335e895c9",
+      "url": "https://6cc7ff0f.tenops.pages.dev"
+    }
+  },
+  "workers": [
+    {
+      "slug": "send-web-push-tendev",
+      "version": 26,
+      "id": "0248da3c-43fe-44e5-84f9-71f35422c401",
+      "status": "ACTIVE",
+      "verify_jwt": false
+    },
+    {
+      "slug": "send-web-push-tenops",
+      "version": 15,
+      "id": "3449d184-907b-4a78-bb1c-e94f095643ee",
+      "status": "ACTIVE",
+      "verify_jwt": false
+    }
+  ],
+  "cloudflareSessionRefreshed": true
+}
