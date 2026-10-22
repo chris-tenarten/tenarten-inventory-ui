@@ -1,0 +1,18 @@
+{
+  "target": "tendev",
+  "sha": "f8f78c5e6dbaec955e3600aa0276e657a85e9290",
+  "passed": true,
+  "builds": 1,
+  "sourceFiles": 1770,
+  "artifactFiles": 266,
+  "sourceArchiveSha256": "b59d1384aca6c3203bcacafae2f3267c281151ddeae452f79ed9820de5777c15",
+  "sourceManifestSha256": "5912db538df843b929b1cb99d88526101ec05bc5e0a6f43597c0e652198027f2",
+  "artifactManifestSha256": "eeea746e98ba61e8f2c0533dbe2fbc5924fd56b99ef5148807c9c77545d60a17",
+  "projectConfigSha256": "18d2777c5819230ebdda9b0e65d8d40eca00dc5314cc614ca0d3063bb0135432",
+  "devBranding": true,
+  "productionSupabase": true,
+  "envLocalExcluded": true,
+  "localFixtureMarkersExcluded": true,
+  "outputDirectory": "/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-push-reliability-release/tendev/out",
+  "buildLog": "/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-push-reliability-release/tendev-build.log"
+}

@@ -1,0 +1,102 @@
+{
+  "accounts": [
+    {
+      "active": true,
+      "devices": [
+        {
+          "created_at": "2026-10-21T14:44:19.634983+00:00",
+          "delivery_eligible": false,
+          "enabled": false,
+          "expiry": null,
+          "generation": 2,
+          "id": "2752428c-70e0-4dd4-9842-d383eb253d66",
+          "previews": true,
+          "revoked_at": "2026-10-22T01:08:34.540887+00:00"
+        },
+        {
+          "created_at": "2026-10-22T18:37:27.727801+00:00",
+          "delivery_eligible": true,
+          "enabled": true,
+          "expiry": null,
+          "generation": 1,
+          "id": "c756a352-18f9-4851-964b-0de51443ddf6",
+          "previews": true,
+          "revoked_at": null
+        }
+      ],
+      "eligible": true,
+      "name": "Chris Ngo"
+    },
+    {
+      "active": true,
+      "devices": [
+        {
+          "created_at": "2026-10-22T18:39:58.67041+00:00",
+          "delivery_eligible": true,
+          "enabled": true,
+          "expiry": null,
+          "generation": 1,
+          "id": "9e05bbec-4127-4003-a35b-a8db0f6cc271",
+          "previews": true,
+          "revoked_at": null
+        }
+      ],
+      "eligible": true,
+      "name": "Patrick Soldow"
+    },
+    {
+      "active": true,
+      "devices": [
+        {
+          "created_at": "2026-10-21T22:10:24.914427+00:00",
+          "delivery_eligible": true,
+          "enabled": true,
+          "expiry": null,
+          "generation": 1,
+          "id": "a928d70f-050e-4a66-9b03-1dda3e2600ae",
+          "previews": true,
+          "revoked_at": null
+        }
+      ],
+      "eligible": true,
+      "name": "Marcos Alvarado"
+    },
+    {
+      "active": true,
+      "devices": [
+        {
+          "created_at": "2026-10-21T20:42:03.587275+00:00",
+          "delivery_eligible": true,
+          "enabled": true,
+          "expiry": null,
+          "generation": 1,
+          "id": "3e108472-706e-4be7-9855-0ea051c10d3a",
+          "previews": true,
+          "revoked_at": null
+        }
+      ],
+      "eligible": true,
+      "name": "Anthony Iorio"
+    },
+    {
+      "active": true,
+      "devices": [
+        {
+          "created_at": "2026-10-22T13:52:10.210462+00:00",
+          "delivery_eligible": true,
+          "enabled": true,
+          "expiry": null,
+          "generation": 1,
+          "id": "668afeef-1f8f-4c1b-891a-8318df88e976",
+          "previews": true,
+          "revoked_at": null
+        }
+      ],
+      "eligible": true,
+      "name": "Giovanni Coppola"
+    }
+  ],
+  "cron_active": true,
+  "snapshot_at": "2026-10-22T19:34:18.538005+00:00",
+  "transport_enabled": true
+}

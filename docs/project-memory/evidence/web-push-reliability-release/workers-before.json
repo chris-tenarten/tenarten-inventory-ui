@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "send-web-push-tendev",
+    "version": 27,
+    "status": "ACTIVE",
+    "id": "0248da3c-43fe-44e5-84f9-71f35422c401"
+  },
+  {
+    "slug": "send-web-push-tenops",
+    "version": 16,
+    "status": "ACTIVE",
+    "id": "3449d184-907b-4a78-bb1c-e94f095643ee"
+  }
+]

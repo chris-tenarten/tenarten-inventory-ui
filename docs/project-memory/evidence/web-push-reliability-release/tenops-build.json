@@ -1,0 +1,18 @@
+{
+  "target": "tenops",
+  "sha": "f8f78c5e6dbaec955e3600aa0276e657a85e9290",
+  "passed": true,
+  "builds": 1,
+  "sourceFiles": 1770,
+  "artifactFiles": 266,
+  "sourceArchiveSha256": "b59d1384aca6c3203bcacafae2f3267c281151ddeae452f79ed9820de5777c15",
+  "sourceManifestSha256": "5912db538df843b929b1cb99d88526101ec05bc5e0a6f43597c0e652198027f2",
+  "artifactManifestSha256": "eab8b3d7fd06095c21fb5fe0d8c555046e232c31f52bbc73405d9af097855eb1",
+  "projectConfigSha256": "f52ea907ffd36211ab1fdf4c71f9d75665506b841697f33fe533642a92155629",
+  "devBranding": false,
+  "productionSupabase": true,
+  "envLocalExcluded": true,
+  "localFixtureMarkersExcluded": true,
+  "outputDirectory": "/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-push-reliability-release/tenops/out",
+  "buildLog": "/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-push-reliability-release/tenops-build.log"
+}

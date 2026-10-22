@@ -50,3 +50,23 @@ Reused root dev workspace and existing fixtures. Isolated archive/build/browser 
 ## Authorized release preparation
 
 Product authorized release of accepted source `09d548c` on October 22. Canonical main/dev are reconciled at `28d2a00`; the accepted change is its direct descendant. Release archives exclude unrelated working-tree investigations. Hosted preflight confirms the expected status-function predecessor, migration absence, eight subscription records, TenOps transport and scoped Cron active, and unchanged workers (Production v16 / TenDev v27). Apply only `20261022160000`, preserve registrations atomically, verify owner/origin/privacy contracts, then deploy TenDev before TenOps. Prior 24 controller, five database, 12 component-browser groups and static checks remain valid; only environment builds and essential hosted release checks are required.
+
+
+## Executed release — October 22, 2026
+
+**Deployed.** Product's explicit October 22 release authorization supersedes the earlier local-only gate. Accepted source `09d548c20e6ce17166e6e6924e1d98218fb6e04a` is included unchanged in runtime release `f8f78c5e6dbaec955e3600aa0276e657a85e9290`; its sole additional change is the release-preparation documentation/automatic-build skip boundary. Both canonical branches were fast-forwarded from verified `28d2a00`, preserving Contacts, UPDATE expiration, startup timing and Group Messaging.
+
+Migration `20261022160000` was applied atomically to shared project `vxdxjhazkqhpkwdqtobp`, after verifying the actual predecessor definition and migration-ledger absence. All eight subscription rows (including private material) and transport rows compared equal inside the transaction; only a boolean result was exported. Migration version, checksum and application result are in [migration evidence](evidence/web-push-reliability-release/migration.json). Hosted authenticated-role read-only probes for the five existing owners confirmed status metadata, wrong-owner denial, wrong-origin denial, and no raw subscription fields. Anonymous/service-role grants remain denied; authenticated grant, owner, transport, Cron and worker identities/versions remain unchanged. See [authorization evidence](evidence/web-push-reliability-release/authorization.json).
+
+Deployment order and exact IDs:
+
+| Environment | Runtime | Deployment |
+| --- | --- | --- |
+| [TenDev](https://tendev.pages.dev) | `f8f78c5` | `05d7fc2e-91e6-45d3-8735-a299e5c3cdc0` |
+| [TenOps](https://tenops.pages.dev) | `f8f78c5` | `1af9bf7e-3a5f-4989-a04b-cbacb64c13b4` |
+
+Clean Git archives used each environment's existing public build configuration, excluding dirty/untracked files and local review configuration. Real-environment builds passed; each served origin matched 38 exported HTML, runtime/chunk, manifest and service-worker artifacts, including the changed auth/Settings code. Mobile browser checks on both hosted origins confirmed the normal unauthenticated gate with zero page errors, external requests or hosted writes. Prior 24 controller, five database and 12 component-browser groups were reused. No new framework or broad regression cycle.
+
+At 19:34:18 UTC (2:34 p.m. Chicago), Chris, Patrick, Marcos, Gio and Anthony each retained one enabled, unexpired generation-1 Production registration, previews on, delivery eligible; Chris's historical revoked device remains revoked. [Final registration snapshot](evidence/web-push-reliability-release/production-status.json). No re-registration is required. Production transport and scoped one-minute Cron remain active; TenDev delivery remains disabled; workers remain Production v16 / TenDev v27. No keys, workers, schedules, authentication or enrollment settings were changed. No live messages or test pushes were sent. Physical iPhone verification of transient-auth recovery after this release remains unperformed; hosted/browser checks do not establish physical presentation.
+
+Release artifacts live in `.tmp-push-reliability-release/`; no review server was started or existing process stopped. Unrelated dirty investigation/Contacts records and existing worktrees were preserved. This executed receipt supersedes only the earlier candidate/deployment status, not historical investigation findings.
