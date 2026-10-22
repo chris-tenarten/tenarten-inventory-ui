@@ -23,7 +23,7 @@ export function startMessagingGroupsFixture(){
  const calls=[];
  const server=createServer(async(req,res)=>{
   const origin=req.headers.origin;
-  const send=(status,data,headers={})=>{res.writeHead(status,{'content-type':'application/json','cache-control':'no-store',...(origin?{'access-control-allow-origin':origin}:{}),'access-control-allow-headers':'authorization,apikey,content-type,x-client-info,prefer,range,range-unit,tus-resumable,upload-length,upload-metadata,upload-offset,x-upsert,x-signature','access-control-allow-methods':'GET,HEAD,POST,PATCH,OPTIONS','access-control-expose-headers':'content-range,location,upload-offset,tus-resumable',...headers});res.end(JSON.stringify(data));};
+  const send=(status,data,headers={})=>{res.writeHead(status,{'content-type':'application/json','cache-control':'no-store',...(origin?{'access-control-allow-origin':origin}:{}),'access-control-allow-headers':'authorization,apikey,content-type,content-profile,accept-profile,x-supabase-api-version,x-client-info,prefer,range,range-unit,tus-resumable,upload-length,upload-metadata,upload-offset,x-upsert,x-signature','access-control-allow-methods':'GET,HEAD,POST,PATCH,OPTIONS','access-control-expose-headers':'content-range,location,upload-offset,tus-resumable',...headers});res.end(JSON.stringify(data));};
   if(!['127.0.0.1:55592','localhost:55592'].includes(req.headers.host)||origin&&origin!=='http://localhost:3000')return send(403,{message:'Local review origin only'});
   if(req.method==='OPTIONS')return send(200,{});
   const url=new URL(req.url,REVIEW_API_URL);
