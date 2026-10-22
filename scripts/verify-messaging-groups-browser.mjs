@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {mkdirSync} from 'node:fs';
 import {chromium} from '@playwright/test';
 import {reviewSession} from './support/messaging-groups-review-fixture.mjs';
+if(process.argv.includes('--integration')){await import('./support/messaging-groups-integration-browser.mjs');process.exit(0);}
 const browser=await chromium.launch({headless:true});
 const dir='.tmp-messaging-groups-review';mkdirSync(dir,{recursive:true});
 try{

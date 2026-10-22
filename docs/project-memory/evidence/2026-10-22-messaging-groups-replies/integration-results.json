@@ -1,0 +1,24 @@
+{
+  "checks": [
+    "existing DM cannot convert through group RPC, direct API or privileged UPDATE; new member cannot read DM history",
+    "real authorized channels synchronize send/history/unread across three accounts and a second device; foreign topic and outsider events denied",
+    "real Storage upload/finalization/signed download and durable attachment reply; draft and outsider access denied",
+    "actual outbox fan-out targets only other authorized members; TenOps/TenDev device deduplication and owner-authenticated group deep links",
+    "prepare rechecks membership after claim, respects device preview preference; removal revokes history, new signed URLs and notification deep links",
+    "real worker claim/prepare/recheck/finish with mock encryption/provider; removed recipient never submitted",
+    "direct-message push source and destination remain unchanged",
+    "actual mention helper/source/deep-link/queue and DM behavior preserved; TenDev sender and Job allowlists still enforced"
+  ],
+  "realServices": [
+    "Auth existing-account sign-in",
+    "PostgREST",
+    "PostgreSQL RLS",
+    "private Realtime sockets",
+    "Storage upload/sign/download",
+    "push database queue and worker orchestration"
+  ],
+  "providerNetworkRequests": 0,
+  "authAccountsCreated": 0,
+  "hostedMutations": false,
+  "group": "a277b9fc-d93e-4863-b2d8-dcd049b4e77d"
+}

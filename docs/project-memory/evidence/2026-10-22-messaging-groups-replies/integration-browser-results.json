@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "desktop/mobile real-account send, reply, reload/quote navigation and TUS attachment synchronization without API mocks",
+    "real receipt convergence and removed-member open conversation clears on Realtime membership event",
+    "real authenticated cold notification deep links open group and DM, deny wrong account, and preserve mention Job destination"
+  ],
+  "origin": "http://localhost:3000",
+  "apiMocks": false,
+  "realRealtime": true,
+  "realStorage": true,
+  "externalRequests": 0,
+  "pageErrors": 0
+}

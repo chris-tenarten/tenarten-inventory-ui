@@ -1,0 +1,7 @@
+{
+  "localOnly": true,
+  "newSigningDeniedAfterRemoval": true,
+  "previouslyIssuedUrlStillValid": true,
+  "testedTtlSeconds": 600,
+  "policy": "Existing signed bearer URLs expire naturally; membership removal does not revoke already issued URLs."
+}

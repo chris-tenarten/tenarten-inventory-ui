@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
+if(process.argv.includes('--integration')){await import('./support/messaging-groups-integration.mjs');process.exit(0);}
 const docker='/Applications/Docker.app/Contents/Resources/bin/docker',container='supabase_db_tenops-contact-review';
 const database='tenops_messaging_groups_'+Date.now();
 const run=(db,input,ok=true)=>{const r=spawnSync(docker,['exec','-i',container,'psql','-X','-qAt','-v','ON_ERROR_STOP=1','-U','postgres','-d',db],{input,encoding:'utf8'});if(ok)assert.equal(r.status,0,r.stderr);else assert.notEqual(r.status,0,'Expected access denial');return r.stdout.trim();};
