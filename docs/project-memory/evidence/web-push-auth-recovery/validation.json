@@ -1,0 +1,17 @@
+{
+  "base": "28d2a00b46d05c7af4cc71a9c2ee3c808978a90d",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "scope": "Focused auth/device/status contract delta; historical worker and physical acceptance reused where unchanged",
+  "typescript": "pass",
+  "targetedEslint": "pass",
+  "diffCheck": "pass",
+  "isolatedProductionBuild": "pass",
+  "databaseMigrationAppliedHosted": false,
+  "realPushRequests": 0,
+  "reviewPort": 3379,
+  "existingPort3000Preserved": true,
+  "artifactSourceMatch": true,
+  "taskServerStopped": true,
+  "taskDatabaseStopped": true
+}

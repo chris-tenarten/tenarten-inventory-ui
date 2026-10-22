@@ -46,7 +46,7 @@ export async function preparePushWorker() {
 }
 function within<T>(work: PromiseLike<T>): Promise<T> {
   return new Promise((resolve, reject) => {
-    const timer = window.setTimeout(() => reject(new Error('Device update timed out. Retry Disable on this device.')), 4500);
+    const timer = window.setTimeout(() => reject(new Error('Device request timed out. Check your connection and retry.')), 4500);
     Promise.resolve(work).then(resolve, reject).finally(() => window.clearTimeout(timer));
   });
 }
@@ -79,9 +79,15 @@ async function cleanup(account: string | null, expectedId?: string) {
 /** Called before explicit sign-out, while the old session is still valid. Never blocks sign-out on failure. */
 export async function releasePushDevice() {
   ++epoch;
-  const previous = owner;
+  const previous = owner ?? binding()?.owner ?? null;
   owner = null;
   await queue(() => cleanup(previous)).catch(() => {});
+}
+/** Temporary verification failure blocks client operations without destroying opt-in. */
+export function suspendPushAccount() {
+  deliveryAccount = null;
+  owner = null;
+  ++epoch;
 }
 /** Auth resolution invalidates pending work synchronously; I/O is deferred outside auth callbacks. */
 export function setPushAccount(next: string | null) {
@@ -92,7 +98,7 @@ export function setPushAccount(next: string | null) {
   void queue(async () => {
     if (owner !== next) return;
     const current = binding();
-    if ((current && current.owner !== next) || !next) await cleanup(next);
+    if ((current && current.owner !== next) || !next) await cleanup(next ?? current?.owner ?? null);
     if (next) {
       for (const value of stored<DeviceBinding[]>(pendingKey, []).filter(row => row.owner === next)) await revoke(value);
     }
@@ -102,8 +108,12 @@ export async function inspectPushDevice(account: string): Promise<PushState> {
   const support = deviceSupport();
   const result: PushState = { ...support, registered: false, configured: false, error: '' };
   if (!support.supported) return result;
+  const request = epoch;
+  const verified = () => { if (request !== epoch || owner !== account) throw new Error('Unable to verify this device until your account is verified.'); };
   try {
-    const config = await rpc<PushConfiguration | null>('get_my_web_push_configuration');
+    verified();
+    const config = await rpc<PushConfiguration | null>('get_my_web_push_configuration', {}, account);
+    verified();
     result.configured = Boolean(config?.public_key);
     const current = binding();
     if (current?.owner !== account) {
@@ -114,17 +124,28 @@ export async function inspectPushDevice(account: string): Promise<PushState> {
       return result;
     }
     const registration = await within(navigator.serviceWorker.getRegistration('/'));
-    const subscription = await registration?.pushManager.getSubscription();
+    const subscription = registration ? await within(registration.pushManager.getSubscription()) : null;
+    verified();
     if (support.permission !== 'granted' || !subscription || (subscription.expirationTime !== null && subscription.expirationTime <= Date.now())) {
       await queue(() => cleanup(account, current.id));
       return result;
     }
-    const status = await rpc<{ enabled: boolean; generation: number; show_previews: boolean; delivery_enabled: boolean } | null>('get_my_web_push_subscription', { p_id: current.id });
+    const status = await rpc<{ enabled: boolean; generation: number; show_previews: boolean; delivery_enabled: boolean; endpoint_hash?: string; environment?: string; key_version?: string } | null>('get_my_web_push_subscription', { p_id: current.id }, account);
+    verified();
+    if (status?.enabled && status.generation === current.generation) {
+      const digest = await within(crypto.subtle.digest('SHA-256', new TextEncoder().encode(subscription.endpoint)));
+      verified();
+      const fingerprint = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+      if (status.endpoint_hash !== fingerprint) {
+        throw new Error('Unable to verify this browser subscription against its registration. No registration was changed.');
+      }
+    }
     result.registered = status?.enabled === true && status.generation === current.generation;
     result.previews = status?.show_previews !== false;
     result.deliveryActive = status?.delivery_enabled === true;
     deliveryAccount = result.registered && status?.delivery_enabled ? account : null;
-    if (!result.registered) await queue(() => cleanup(account, current.id));
+    // A status check never replaces or revokes a server binding on mismatch.
+    // Explicit Disable remains available for owner-driven recovery.
   } catch (cause) { deliveryAccount = null; result.error = cause instanceof Error ? cause.message : 'Unable to check this device.'; }
   return result;
 }

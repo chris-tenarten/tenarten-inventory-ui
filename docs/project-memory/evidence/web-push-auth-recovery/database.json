@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "status migration preserves existing subscription and generation",
+    "owner receives exact endpoint SHA-256 and environment/key version, no raw subscription material",
+    "foreign owner, wrong origin and nonbrowser roles cannot read status",
+    "expired subscription and disabled delivery are truthfully reported",
+    "owner revocation and inactive-account denial remain enforced"
+  ],
+  "hostedChanges": 0,
+  "realPushes": 0
+}

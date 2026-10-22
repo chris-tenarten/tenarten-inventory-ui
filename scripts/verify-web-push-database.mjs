@@ -26,6 +26,19 @@ const id='00000000-0000-4000-8000-000000000030',key='BA'+'A'.repeat(85),auth='A'
 sql(`insert into web_push_environments values('prod','https://tenops.example','${key}','v1',true)`);
 const sub={endpoint:'https://web.push.apple.com/local-test',keys:{p256dh:key,auth},expirationTime:null};
 const register=(owner,value=sub,device=id)=>actor(owner,`select register_my_web_push_subscription('${device}','prod','v1','${JSON.stringify(value)}')`);
+if(focus==='registration'){
+ sql("alter table web_push_subscriptions add column show_previews boolean not null default true;create table web_push_transport(environment text primary key,enabled boolean);insert into web_push_transport values('prod',true)");
+ register(A);const before=sql('select md5(row_to_json(s)::text) from web_push_subscriptions s');
+ sql(readFileSync('supabase/migrations/20261022160000_web_push_registration_verification.sql','utf8'));
+ const status=()=>JSON.parse(actor(A,`select get_my_web_push_subscription('${id}')`));const out=[];
+ const test=(name,work)=>{work();out.push(name);console.log('PASS '+name);};
+ test('status migration preserves existing subscription and generation',()=>assert.equal(sql('select md5(row_to_json(s)::text) from web_push_subscriptions s'),before));
+ test('owner receives exact endpoint SHA-256 and environment/key version, no raw subscription material',()=>{const row=status();assert.equal(row.enabled,true);assert.equal(row.generation,1);assert.equal(row.environment,'prod');assert.equal(row.key_version,'v1');assert.equal(row.endpoint_hash,sql(`select encode(sha256(convert_to('${sub.endpoint}','UTF8')),'hex')`));assert.deepEqual(Object.keys(row).sort(),['delivery_enabled','enabled','endpoint_hash','environment','generation','key_version','show_previews'].sort());});
+ test('foreign owner, wrong origin and nonbrowser roles cannot read status',()=>{assert.equal(actor(B,`select get_my_web_push_subscription('${id}') is null`),'t');assert.equal(sql(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${A}',true);select set_config('request.headers','{"origin":"https://wrong.invalid"}',true);select get_my_web_push_subscription('${id}') is null;rollback;`).split('\n').at(-1),'t');for(const role of['anon','service_role'])deny(()=>actor(A,`select get_my_web_push_subscription('${id}')`,role));});
+ test('expired subscription and disabled delivery are truthfully reported',()=>{sql("update web_push_subscriptions set expiration_time=clock_timestamp()-interval '1 second';update web_push_transport set enabled=false");assert.equal(status().enabled,false);assert.equal(status().delivery_enabled,false);sql('update web_push_subscriptions set expiration_time=null');});
+ test('owner revocation and inactive-account denial remain enforced',()=>{actor(A,`select revoke_my_web_push_subscription('${id}',1)`);assert.equal(status().enabled,false);assert.equal(status().generation,2);sql(`update app_users set is_active=false where user_id='${A}'`);deny(status);});
+ const folder=process.env.WEB_PUSH_EVIDENCE_DIR;mkdirSync(folder,{recursive:true});writeFileSync(folder+'/database.json',JSON.stringify({checks:out,hostedChanges:0,realPushes:0},null,2));process.exit(0);
+}
 check('read-only active owner can register without messaging-write grant',()=>assert.equal(JSON.parse(register(A)).generation,1));
 check('duplicate registration is idempotent',()=>assert.equal(JSON.parse(register(A)).id,id));
 check('direct subscription reads denied to authenticated, anonymous and service roles',()=>{for(const role of ['authenticated','anon','service_role'])deny(()=>actor(A,'select * from web_push_subscriptions',role));});

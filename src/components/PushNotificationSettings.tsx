@@ -10,13 +10,16 @@ export default function PushNotificationSettings() {
   const [state, setState] = useState<PushState | null>(null);
   const [config, setConfig] = useState<PushConfiguration | null>(null);
   const [visibleFor, setVisibleFor] = useState<string>();
+  const [checking, setChecking] = useState(true);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const generation = useRef(0);
   const refresh = useCallback(async () => {
     const request = ++generation.current;
+    setChecking(true); setState(null); setConfig(null);
+    try {
     if (!account) { setState(null); setConfig(null); setVisibleFor(undefined); return; }
-    const allowed = await pushSettingsAccess(account).catch(() => false);
+    const allowed = await pushSettingsAccess(account);
     if (generation.current !== request) return;
     setVisibleFor(allowed ? account : undefined);
     if (!allowed) { setState(null); setConfig(null); return; }
@@ -27,6 +30,11 @@ export default function PushNotificationSettings() {
     setState(next); setConfig(configuration);
     // Ready before a future click; no permission request or subscription on mount.
     if (next.supported && !next.needsInstall && configuration) await preparePushWorker().catch(() => {});
+    } catch {
+      if (generation.current === request) setState({ ...deviceSupport(), registered: false, configured: false, error: 'Unable to verify this device. Check your connection and retry.' });
+    } finally {
+      if (generation.current === request) setChecking(false);
+    }
   }, [account]);
   useEffect(() => {
     const timer = window.setTimeout(() => { void refresh(); }, 0);
@@ -48,21 +56,29 @@ export default function PushNotificationSettings() {
       .catch(cause => { if (request === generation.current) setMessage(cause instanceof Error ? cause.message : 'Unable to update this device.'); })
       .finally(() => { setBusy(false); void refresh(); });
   }
-  if (!account || visibleFor !== account) return null;
+  if (!account) return null;
+  if (visibleFor !== account) {
+    if (!checking && !state?.error) return null;
+    return <section id="notifications" className="mt-6 border border-slate-300 bg-white p-4" aria-labelledby="push-settings-title">
+      <h2 id="push-settings-title" className="text-lg font-bold text-slate-950">Device notifications</h2>
+      <p role="status" className="mt-3 text-sm">{checking ? 'Checking this device…' : 'Unable to verify registration'}</p>
+      {!checking ? <button type="button" onClick={() => { void refresh(); }} className="mt-3 min-h-11 underline">Check again</button> : null}
+    </section>;
+  }
   return <section id="notifications" className="mt-6 scroll-mt-20 border border-slate-300 bg-white p-4" aria-labelledby="push-settings-title">
     <h2 id="push-settings-title" className="text-lg font-bold text-slate-950">Device notifications</h2>
     <p className="mt-1 text-sm text-slate-600">Enable this device for direct messages and Job Update mentions.</p>
-    {!account ? <p className="mt-3 text-sm text-slate-600">Sign in with an active TenOps account to manage this device.</p> : !state ? <p role="status" className="mt-3 text-sm">Checking this device…</p> : <>
+    {!account ? <p className="mt-3 text-sm text-slate-600">Sign in with an active TenOps account to manage this device.</p> : checking || !state ? <p role="status" className="mt-3 text-sm">Checking this device…</p> : <>
       <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
         <div><dt className="font-semibold">Browser</dt><dd>{state.supported ? 'Supported' : 'Not supported'}</dd></div>
         <div><dt className="font-semibold">Installation</dt><dd>{state.installed ? 'Home Screen app' : state.needsInstall ? 'Home Screen installation needed' : 'Browser tab'}</dd></div>
         <div><dt className="font-semibold">Permission</dt><dd>{state.permission === 'default' ? 'Not requested' : state.permission === 'granted' ? 'Allowed' : state.permission === 'denied' ? 'Blocked' : 'Unavailable'}</dd></div>
       </dl>
-      <p className="mt-3 text-sm font-semibold">{state.registered ? 'Registered on this device' : 'Not registered on this device'}</p>
+      <p className="mt-3 text-sm font-semibold">{state.error ? 'Unable to verify registration' : state.registered ? 'Registered on this device' : 'Not registered on this device'}</p>
       {state.registered && !state.deliveryActive ? <p className="mt-2 text-sm text-slate-600">Delivery is inactive in this environment.</p> : null}
       {state.needsInstall ? <p className="mt-2 text-sm text-slate-600">In Safari, open Share, choose Add to Home Screen, then open TenOps from its Home Screen icon.</p> : null}
       {state.permission === 'denied' ? <p className="mt-2 text-sm text-slate-600">Allow notifications in your browser settings or iPhone Settings → Notifications for this Home Screen app. Return here and retry.</p> : null}
-      {!state.configured && state.supported ? <p className="mt-2 text-sm text-slate-600">Device registration is not available in this environment yet. You can still disable an existing registration.</p> : null}
+      {!state.configured && state.supported && !state.error ? <p className="mt-2 text-sm text-slate-600">Device registration is not available in this environment yet. You can still disable an existing registration.</p> : null}
       <div className="mt-4 flex flex-wrap gap-2">
         <button type="button" disabled={busy || !state.supported || state.needsInstall || state.permission === 'denied' || !config || state.registered} onClick={() => change(true)} className="min-h-11 border border-blue-700 bg-blue-50 px-3 text-sm font-semibold text-blue-900 disabled:opacity-50">{busy ? 'Updating…' : 'Enable notifications on this device'}</button>
         <button type="button" disabled={busy} onClick={() => change(false)} className="min-h-11 border border-slate-400 px-3 text-sm font-semibold disabled:opacity-50">Disable on this device</button>

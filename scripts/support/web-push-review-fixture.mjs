@@ -1,5 +1,6 @@
 // Local-only synthetic subscription adapter; never imported by application source.
 // Browser vendor APIs are simulated. The actual /sw.js still registers normally.
+import {createHash} from 'node:crypto';
 import {payloadFor} from '../../supabase/functions/send-web-push/core.mjs';
 const events=new Map();
 const rows=new Map();
@@ -25,7 +26,7 @@ export async function pushReviewRpc(name,body,actor,control){
   return{status:200,data:{id:row.id,generation:row.generation}};
  }
  const row=rows.get(body.p_id);
- if(name==='get_my_web_push_subscription')return{status:200,data:row?.owner===actor?{enabled:row.enabled,generation:row.generation,show_previews:row.previews,delivery_enabled:true}:null};
+ if(name==='get_my_web_push_subscription')return{status:200,data:row?.owner===actor?{enabled:row.enabled,generation:row.generation,show_previews:row.previews,delivery_enabled:true,endpoint_hash:createHash('sha256').update(row.endpoint).digest('hex'),environment:'local-review',key_version:'review-only'}:null};
  if(name==='set_my_web_push_previews'){if(row?.owner===actor&&row.enabled&&row.generation===body.p_generation){row.previews=body.p_enabled;return{status:200,data:true};}return{status:200,data:false};}
  if(name==='revoke_my_web_push_subscription'){
   if(row?.owner===actor&&row.generation===body.p_generation&&row.enabled){row.enabled=false;row.generation++;}return{status:200,data:!(row?.owner===actor&&row.enabled)};

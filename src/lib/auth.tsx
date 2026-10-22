@@ -3,7 +3,7 @@
 import type { Session, User } from "@supabase/supabase-js";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { releasePushDevice, setPushAccount } from "@/lib/web-push";
+import { releasePushDevice, setPushAccount, suspendPushAccount } from "@/lib/web-push";
 import { BRANDING } from "@/lib/dev-branding.mjs";
 import {
   type AppRole,
@@ -124,7 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (cause) {
       if (!current()) return;
-      setPushAccount(null);
+      suspendPushAccount();
       verifiedSession.current = null;
       setProfile(null);
       const detail = cause && typeof cause === "object" && "message" in cause && typeof cause.message === "string" ? cause.message : "Please refresh and retry.";
@@ -134,8 +134,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Invalidate old requests immediately, before deferring any authenticated RPC.
-  const beginResolution = useCallback((nextSession: Session | null, continuing = false, preservePendingPushSession = false) => {
-    if (!nextSession || (currentSession.current && (currentSession.current.user.id !== nextSession.user.id || (!continuing && !preservePendingPushSession)))) setPushAccount(null);
+  const beginResolution = useCallback((nextSession: Session | null, continuing = false, preservePendingPushSession = false, revokePush = false) => {
+    if (revokePush || !nextSession || (currentSession.current && currentSession.current.user.id !== nextSession.user.id)) setPushAccount(null);
+    else if (!continuing && !preservePendingPushSession) suspendPushAccount();
     const request = ++generation.current;
     currentSession.current = nextSession;
     setSession(nextSession);
@@ -164,6 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }).catch(() => {
       if (!mounted.current || generation.current !== bootstrap) return;
       setProfile(null);
+      suspendPushAccount();
       setProfileError("Unable to restore your TenOps session. Please refresh and retry.");
       setAccessStatus("failed");
       setReady(true);
@@ -183,7 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const preservePendingPushSession = !callbackFlow && !verifiedSession.current
         && (event === "SIGNED_IN" || event === "TOKEN_REFRESHED")
         && sameAuthSession(currentSession.current, nextSession);
-      const request = beginResolution(nextSession, continuing, preservePendingPushSession);
+      const request = beginResolution(nextSession, continuing, preservePendingPushSession, callbackFlow || event === "PASSWORD_RECOVERY");
       // Supabase holds its auth-token lock while this callback runs.
       if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
       authChangeProfileTimer = window.setTimeout(() => {

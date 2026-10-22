@@ -1,0 +1,30 @@
+{
+  "checks": [
+    "mount and account verification never request permission",
+    "explicit click requests permission synchronously and registers",
+    "stored browser metadata excludes subscription material",
+    "same account resolution preserves registration",
+    "temporary verification failure preserves opt-in and same-owner recovery",
+    "stalled browser subscription lookup times out without clearing registration",
+    "missing or revoked server status is not registered and does not mutate browser binding",
+    "existing matching endpoint stays registered when the enrollment key version changes",
+    "endpoint mismatch and status failure are unverified without revoking healthy opt-in",
+    "account change after suspension never carries old binding to new account",
+    "real sign-out still revokes after temporary suspension",
+    "confirmed account denial revokes the suspended owner binding",
+    "disable revokes generation and local subscription",
+    "denied permission causes no registration",
+    "expired browser subscription is cleaned up",
+    "permission revocation is reconciled",
+    "offline revoke keeps token-free tombstone and removes local subscription",
+    "unsubscribe failure still revokes server and allows retry",
+    "logout is not held by an unanswered permission prompt",
+    "late registration after account change cannot attach to new owner",
+    "new account has an independent fresh registration",
+    "previous account retry drains only its own revocations",
+    "unsupported and uninstalled iPhone states are explicit",
+    "worker and Stage A migration preserve cache/privacy boundaries"
+  ],
+  "databaseExecution": "Controller simulation only; see separate database execution evidence",
+  "realPushRequests": 0
+}

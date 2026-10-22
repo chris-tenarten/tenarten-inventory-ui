@@ -20,7 +20,7 @@ supabase.rpc=(name,args)=>({setHeader(){return this;},abortSignal:async()=>{
  if(name==='register_my_web_push_subscription'){
   registerCalls++;const owner=actor;
   if(registrationHold)await registrationHold;
-  rows.set(args.p_id,{owner,generation:1,enabled:true});return{data:{id:args.p_id,generation:1}};
+  rows.set(args.p_id,{owner,generation:1,enabled:true,endpoint_hash:Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(args.p_subscription.endpoint))).toString('hex'),environment:config.environment,key_version:config.key_version});return{data:{id:args.p_id,generation:1}};
  }
  const row=rows.get(args.p_id);
  if(name==='get_my_web_push_subscription')return{data:row?.owner===actor?row:null};
@@ -36,6 +36,40 @@ await run('mount and account verification never request permission',async()=>{pu
 await run('explicit click requests permission synchronously and registers',async()=>{const work=push.enablePushDevice('A',config);assert.equal(permissionCalls,1);await work;assert.equal((await push.inspectPushDevice('A')).registered,true);});
 await run('stored browser metadata excludes subscription material',async()=>{const stored=values.get('tenops.push.device.v1');assert(stored);assert(!/endpoint|p256dh|public_key|access_token/.test(stored));});
 await run('same account resolution preserves registration',async()=>{push.setPushAccount('A');await flush();assert.equal((await push.inspectPushDevice('A')).registered,true);});
+await run('temporary verification failure preserves opt-in and same-owner recovery',async()=>{
+ const before=values.get('tenops.push.device.v1'),id=JSON.parse(before).id,local=subscription,revokes=revokeCalls;
+ push.suspendPushAccount();await flush();assert.equal(values.get('tenops.push.device.v1'),before);assert.equal(subscription,local);assert.equal(rows.get(id).enabled,true);assert.equal(revokeCalls,revokes);
+ await assert.rejects(push.enablePushDevice('A',config),/Verify your account/);
+ push.setPushAccount('A');await flush();assert.equal((await push.inspectPushDevice('A')).registered,true);assert.equal(values.get('tenops.push.device.v1'),before);assert.equal(revokeCalls,revokes);
+});
+await run('stalled browser subscription lookup times out without clearing registration',async()=>{
+ const before=values.get('tenops.push.device.v1'),local=subscription,get=registration.pushManager.getSubscription,timer=window.setTimeout;let deadline;
+ registration.pushManager.getSubscription=()=>new Promise(()=>{});window.setTimeout=(callback,ms)=>{deadline=ms;return timer(callback,5);};
+ try{const status=await push.inspectPushDevice('A');assert(status.error.includes('timed out'));assert.equal(deadline,4500);assert.equal(subscription,local);assert.equal(values.get('tenops.push.device.v1'),before);}finally{registration.pushManager.getSubscription=get;window.setTimeout=timer;}
+});
+await run('missing or revoked server status is not registered and does not mutate browser binding',async()=>{
+ const before=values.get('tenops.push.device.v1'),id=JSON.parse(before).id,row={...rows.get(id)},local=subscription;
+ rows.delete(id);assert.equal((await push.inspectPushDevice('A')).registered,false);rows.set(id,{...row,enabled:false,generation:2});assert.equal((await push.inspectPushDevice('A')).registered,false);assert.equal(subscription,local);assert.equal(values.get('tenops.push.device.v1'),before);rows.set(id,row);assert.equal((await push.inspectPushDevice('A')).registered,true);
+});
+await run('existing matching endpoint stays registered when the enrollment key version changes',async()=>{
+ const original=config.key_version;config.key_version='future-version';try{assert.equal((await push.inspectPushDevice('A')).registered,true);}finally{config.key_version=original;}
+});
+await run('endpoint mismatch and status failure are unverified without revoking healthy opt-in',async()=>{
+ const binding=values.get('tenops.push.device.v1'),id=JSON.parse(binding).id,original=subscription;
+ subscription=freshSubscription();const mismatch=await push.inspectPushDevice('A');assert.equal(mismatch.registered,false);assert.match(mismatch.error,/Unable to verify/);assert.equal(rows.get(id).enabled,true);assert.equal(values.get('tenops.push.device.v1'),binding);
+ subscription=original;failRpc=true;const offline=await push.inspectPushDevice('A');assert(offline.error);assert.equal(rows.get(id).enabled,true);assert.equal(subscription,original);failRpc=false;assert.equal((await push.inspectPushDevice('A')).registered,true);
+});
+await run('account change after suspension never carries old binding to new account',async()=>{
+ push.suspendPushAccount();actor='B';push.setPushAccount('B');await flush();assert.equal(subscription,null);assert(!values.has('tenops.push.device.v1'));assert.equal((await push.inspectPushDevice('B')).registered,false);
+ actor='A';push.setPushAccount('A');await flush();await push.enablePushDevice('A',config);
+});
+await run('real sign-out still revokes after temporary suspension',async()=>{
+ const id=JSON.parse(values.get('tenops.push.device.v1')).id;push.suspendPushAccount();await push.releasePushDevice();assert.equal(subscription,null);assert(!values.has('tenops.push.device.v1'));
+ assert.equal(rows.get(id).enabled,false);push.setPushAccount('A');await flush();await push.enablePushDevice('A',config);
+});
+await run('confirmed account denial revokes the suspended owner binding',async()=>{
+ const id=JSON.parse(values.get('tenops.push.device.v1')).id;push.suspendPushAccount();push.setPushAccount(null);await flush();assert.equal(rows.get(id).enabled,false);assert.equal(subscription,null);push.setPushAccount('A');await flush();await push.enablePushDevice('A',config);
+});
 await run('disable revokes generation and local subscription',async()=>{const id=JSON.parse(values.get('tenops.push.device.v1')).id;await push.disablePushDevice('A');assert.equal(rows.get(id).enabled,false);assert.equal(rows.get(id).generation,2);assert.equal(subscription,null);});
 await run('denied permission causes no registration',async()=>{permission='denied';const before=registerCalls;await assert.rejects(push.enablePushDevice('A',config),/not allowed/);assert.equal(registerCalls,before);});
 await run('expired browser subscription is cleaned up',async()=>{permission='granted';await push.enablePushDevice('A',config);subscription.expirationTime=Date.now()-1;assert.equal((await push.inspectPushDevice('A')).registered,false);assert.equal(subscription,null);});

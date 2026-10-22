@@ -1,0 +1,20 @@
+{
+  "passed": 12,
+  "checks": [
+    "push binding survives profile failure and same-account recovery with access closed",
+    "confirmed access denial still clears push binding",
+    "identity change rejects old active result while next identity denied",
+    "late old error cannot revoke newer allowed identity",
+    "sign-out rejects pending active result",
+    "mismatched returned identity fails closed",
+    "explicit sign-out revokes push before ending the authenticated session",
+    "password recovery retains deliberate device cleanup",
+    "same-login token rotation failure blocks access and recovers without revocation",
+    "Settings initial verification failure offers neutral retry without enrollment controls",
+    "Settings checking, confirmed and unavailable states preserve a healthy registration",
+    "Settings endpoint mismatch stays unverified; confirmed server revocation is not registered"
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "hostedWrites": 0
+}
