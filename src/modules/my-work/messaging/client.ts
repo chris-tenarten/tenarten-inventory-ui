@@ -9,7 +9,7 @@ async function rpc<T>(name:string,args:Record<string,unknown>):Promise<T> {
   return data as T;
 }
 export const transport: Transport = {
-  begin: draft=>rpc('begin_my_work_attachment_transfer',{p_id:draft.id,p_recipient:draft.recipient,p_body:draft.body,p_job:draft.job||null,p_files:draft.entries}),
+  begin: draft=>rpc('begin_my_work_attachment_transfer_v12',{p_id:draft.id,p_recipient:draft.recipient,p_body:draft.body,p_job:draft.job||null,p_files:draft.entries,p_reply:draft.replyTo||null}),
   status: id=>rpc('my_work_attachment_transfer_status',{p_id:id}),
   heartbeat:id=>rpc('heartbeat_my_work_attachment_transfer',{p_id:id}),
   preview:async(_id,entry,file,signal)=>{
@@ -48,12 +48,13 @@ const emit=()=>listeners.forEach(listener=>listener());
 export const subscribeTransfer=(listener:()=>void)=>{listeners.add(listener);return()=>{listeners.delete(listener);};};
 export const getTransfer=()=>current;
 export const serverTransfer=()=>null;
-export function startTransfer(userId:string,recipient:string,body:string,job:string,files:File[]) {
+export function startTransfer(userId:string,recipient:string,body:string,job:string,files:File[],replyTo?:string) {
   if(transferPending(current))throw new Error('Finish or cancel the existing attachment transfer first.');
   actor=userId;
   let previous:string|null=null;try{previous=sessionStorage.getItem(recoveryKey(userId));}catch{/* unavailable */}
   if(previous){void recoverTransfer(userId);throw new Error('Checking the previous attachment transfer. Retry shortly; no new message was created.');}
   current=new MessageTransfer(files,recipient,body,job,transport);
+  current.draft.replyTo=replyTo;
   saveRecovery(actor,current.draft.id);
   trackCompletion(current);
   emit();

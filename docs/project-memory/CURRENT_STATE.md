@@ -90,3 +90,7 @@ The [research archive and retention receipt](../audits/retained-2026-10-21/READM
 - [Execution standard](../project/ENGINEERING_EXECUTION_STANDARD.md): handoff/workflow and proportionate checks.
 - [Open Questions](OPEN_QUESTIONS.md): unresolved decisions and dated exceptions; not a release ledger.
 - [Documentation index](../README.md): focused workflow/schema/architecture references; Blueprint and Learnings retain rationale and observations.
+
+## Local Messaging groups/replies candidate — 2026-10-22
+
+[Groups and replies candidate](2026-10-22-messaging-groups-replies-candidate.md) extends the existing Messaging table/attachment/notification paths with creator-managed groups, membership RLS, per-user unread receipts and same-conversation reply references. Built on `dev` from `daa7932`; localhost Product acceptance is pending. The forward migration and updated Web Push worker are local-only and require separate hosted/release approval. See the candidate record for actual local verification and remaining Realtime/Storage/iPhone release gates.

@@ -8,6 +8,10 @@ export const isTenOpsSystemInboxUser = (userId: string) => userId === TENOPS_SYS
 
 export type InboxMessage = {
   id: string;
+  groupId?: string;
+  isReply?: boolean;
+  replyToMessageId?: string;
+  reply?: {id:string;senderName:string;body:string;hasAttachments:boolean}|null;
   senderUserId: string;
   senderName: string;
   recipientUserId: string;
@@ -25,26 +29,30 @@ export type InboxMessage = {
 export type InboxAttachment = { id: string; messageId: string; storagePath: string; originalFilename: string; contentType: string; byteSize: number; createdAt: string; previewUrl: string; preview?: PreviewMetadata | null };
 
 type InboxMessageRow = {
+  group_id?:string; is_reply?:boolean; reply_to_message_id?:string; reply?:InboxMessage["reply"];
   id: string; sender_user_id: string; sender_name: string; recipient_user_id: string; recipient_name: string;
   body: string; job_id: string | null; job_number: string | null; job_name: string | null; read_at: string | null; created_at: string; edited_at: string | null;
 };
 
-export type ConversationSummary={userId:string;name:string;role:string;unread:number;latest:{id:string;createdAt:string;body:string}};
+export type ConversationSummary={groupId?:string;creatorUserId?:string;memberIds?:string[];userId:string;name:string;role:string;unread:number;latest:{id:string;createdAt:string;body:string}};
 export async function loadConversationSummaries():Promise<ConversationSummary[]>{
-  const {data,error}=await supabase.rpc("list_my_work_conversations_v11");if(error)throw error;return data??[];
+  const {data,error}=await supabase.rpc("list_my_work_conversations_v12");if(error)throw error;return data??[];
 }
 export type MessageCursor={createdAt:string;id:string};
 export async function loadMessagePage(peer:string,before?:MessageCursor,ids?:string[]):Promise<InboxMessage[]>{
-  const {data,error}=await supabase.rpc("list_my_work_message_page_v11",{p_peer:peer,p_before_time:before?.createdAt??null,p_before_id:before?.id??null,p_ids:ids??null});
+  const {data,error}=await supabase.rpc("list_my_work_message_page_v12",{p_peer:peer,p_before_time:before?.createdAt??null,p_before_id:before?.id??null,p_ids:ids??null});
   if(error)throw error;
   return (data??[]).map((row:InboxMessageRow&{attachments:Array<{id:string;message_id:string;storage_path:string;original_filename:string;content_type:string;byte_size:number;created_at:string;preview:PreviewMetadata|null}>}):InboxMessage=>({
-    id:row.id,senderUserId:row.sender_user_id,senderName:row.sender_name,recipientUserId:row.recipient_user_id,recipientName:row.recipient_name,
+    id:row.id,groupId:row.group_id,isReply:row.is_reply,replyToMessageId:row.reply_to_message_id,reply:row.reply,senderUserId:row.sender_user_id,senderName:row.sender_name,recipientUserId:row.recipient_user_id,recipientName:row.recipient_name,
     body:row.body,jobId:row.job_id??"",jobNumber:row.job_number??"",jobName:row.job_name??"",readAt:row.read_at??"",createdAt:row.created_at,editedAt:row.edited_at??"",
     attachments:row.attachments.map(a=>({id:a.id,messageId:a.message_id,storagePath:a.storage_path,originalFilename:a.original_filename,contentType:a.content_type,byteSize:Number(a.byte_size),createdAt:a.created_at,previewUrl:"",preview:a.preview})),
   }));
 }
 
-export async function loadInboxUnreadCount(recipientUserId:string){const{count,error}=await supabase.from("my_work_messages").select("id",{count:"exact",head:true}).eq("recipient_user_id",recipientUserId).eq("delivery_status","ready").is("read_at",null);if(error)throw error;return count??0;}
+export async function loadInboxUnreadCount(){return (await loadConversationSummaries()).reduce((sum,row)=>sum+row.unread,0);}
+
+export async function saveMessageGroup(id:string|null,name:string,members:string[]){const{data,error}=await supabase.rpc("save_my_work_message_group",{p_id:id,p_name:name,p_members:members});if(error)throw error;return String(data);}
+
 
 export async function loadInboxRecipients(): Promise<WorkCollaborator[]> {
   const { data, error } = await supabase.rpc("list_my_work_inbox_recipients");
@@ -52,8 +60,8 @@ export async function loadInboxRecipients(): Promise<WorkCollaborator[]> {
   return ((data ?? []) as Array<{ user_id: string; display_name: string; role: string }>).map((row) => ({ userId: row.user_id, displayName: row.display_name, role: row.role }));
 }
 
-export async function sendInboxMessage(recipientUserId: string, body: string) {
-  const { data, error } = await supabase.rpc("send_my_work_inbox_message", { p_recipient_user_id: recipientUserId, p_body: body, p_job_id: null });
+export async function sendInboxMessage(recipientUserId: string, body: string, replyTo?:string) {
+  const { data, error } = await supabase.rpc("send_my_work_message_v12", { p_peer: recipientUserId, p_body: body, p_reply: replyTo||null });
   if (error) throw error;
   return String(data);
 }
@@ -65,8 +73,8 @@ export async function openInboxAttachment(attachment:InboxAttachment){
   document.body.appendChild(link);link.click();link.remove();
 }
 
-export async function markInboxConversationRead(otherUserId: string) {
-  const { error } = await supabase.rpc("mark_my_work_inbox_conversation_read", { p_other_user_id: otherUserId });
+export async function markInboxConversationRead(otherUserId: string, ids:string[]) {
+  const { error } = await supabase.rpc("mark_my_work_conversation_read_v12", { p_peer: otherUserId,p_ids:ids });
   if (error) throw error;
 }
 

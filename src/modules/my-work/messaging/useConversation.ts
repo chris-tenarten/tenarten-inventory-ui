@@ -19,7 +19,7 @@ export function mergeMessages(current: InboxMessage[], rows: InboxMessage[], rem
   return [...map.values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
 }
 type Stream = {
-  owner: string; peer: string; alive: boolean; tail: Promise<void>; messages: InboxMessage[];
+  group?:boolean; owner: string; peer: string; alive: boolean; tail: Promise<void>; messages: InboxMessage[];
   cursor?: MessageCursor; older: boolean; loadedOlder: boolean; pending: Set<string>;
   authoritative: boolean; scheduled: boolean; timer?: ReturnType<typeof setTimeout>; fallback?: ReturnType<typeof setTimeout>;
 };
@@ -27,13 +27,13 @@ const stream = (owner = '', peer = ''): Stream => ({ owner, peer, alive: !!owner
   tail: Promise.resolve(), messages: [], older: false, loadedOlder: false, pending: new Set(), authoritative: false, scheduled: false });
 
 /** Serial authoritative reads; cached content never waits for channel establishment. */
-export function useConversation(peer: string, owner: string, onError: (message: string) => void) {
+export function useConversation(peer: string, owner: string, onError: (message: string) => void, group = false) {
   const cache = useRef(recentThreads);
   const state = useRef<Stream>(stream());
   const [view, setView] = useState({ owner: '', peer: '', messages: [] as InboxMessage[], loading: false, hasOlder: false });
   const publish = useCallback((s: Stream, loading?: boolean) => {
     if (!s.alive || state.current !== s) return;
-    if (s.authoritative) cache.current.put(s.owner, s.peer, s.messages, s.older);
+    if (s.authoritative && !s.group) cache.current.put(s.owner, s.peer, s.messages, s.older);
     setView(previous => ({ owner: s.owner, peer: s.peer, messages: s.messages,
       hasOlder: s.older, loading: loading ?? previous.loading }));
   }, []);
@@ -53,6 +53,7 @@ export function useConversation(peer: string, owner: string, onError: (message: 
         const prefetched = !s.authoritative ? intentPrefetch.take(s.owner, s.peer) : undefined;
         const rows = await (prefetched ?? loadMessagePage(s.peer));
         if (!s.alive) return;
+        if(rows.some(row=>!!row.groupId))s.group=true;
         // Replace the authoritative recent interval, retaining loaded older pages.
         const boundary = rows[0];
         const overlaps = rows.some(row => s.messages.some(existing => existing.id === row.id));
@@ -88,8 +89,8 @@ export function useConversation(peer: string, owner: string, onError: (message: 
     // Cache ownership follows Auth events, never a possibly stale component prop.
     intentPrefetch.cancel();
     if (!owner) { cache.current.clear(); intentPrefetch.reset(''); }
-    const s = stream(owner, peer); state.current = s;
-    const cached = cache.current.get(owner, peer);
+    const s = stream(owner, peer); s.group=group; state.current = s;
+    const cached = group ? undefined : cache.current.get(owner, peer);
     if (cached) { s.authoritative = true; s.messages = cached.messages; s.older = cached.hasOlder; s.cursor = s.messages[0]; }
     setView({ owner, peer, messages: s.messages, loading: s.alive, hasOlder: s.older });
     if (s.alive) {
@@ -99,7 +100,7 @@ export function useConversation(peer: string, owner: string, onError: (message: 
       else void refresh();
     }
     return () => { intentPrefetch.cancel(); s.alive = false; s.pending.clear(); clearTimeout(s.timer); clearTimeout(s.fallback); };
-  }, [owner, peer, refresh]);
+  }, [owner, peer, refresh, group]);
   const setMessages = useCallback((update: SetStateAction<InboxMessage[]>) => {
     const s = state.current;
     if (!s.alive || s.owner !== owner || s.peer !== peer) return;
@@ -139,11 +140,37 @@ export function useConversation(peer: string, owner: string, onError: (message: 
       s.messages = mergeMessages(s.messages, rows); publish(s);
     } finally { publish(s, false); }
   }), [enqueue, publish]);
+  const reveal = useCallback(async (id: string) => {
+    let found = false;
+    await enqueue(async s => {
+      publish(s, true);
+      try {
+        const original = await loadMessagePage(s.peer, undefined, [id]);
+        if (!s.alive) return;
+        if (!original.length) { s.messages = s.messages.filter(row => row.id !== id); return; }
+        if (s.messages.some(row => row.id === id)) { s.messages = mergeMessages(s.messages, original); found = true; return; }
+        // Load the complete intervening range through the same serial page stream.
+        // Reconnect reconciliation can then retain and revalidate the original.
+        let cursor = s.cursor ?? s.messages[0];
+        while (s.alive && cursor) {
+          const rows = await loadMessagePage(s.peer, cursor);
+          if (!s.alive || !rows.length || rows[0].id === cursor.id) break;
+          s.messages = mergeMessages(s.messages, rows);
+          s.cursor = rows[0]; s.older = rows.length === 40; s.loadedOlder = true;
+          publish(s, true);
+          if (rows.some(row => row.id === id)) { found = true; break; }
+          if (rows.length < 40) break;
+          cursor = rows[0];
+        }
+      } finally { publish(s, false); }
+    });
+    return found;
+  }, [enqueue, publish]);
   const prefetch = useCallback((target: string) => {
     if (target !== peer) intentPrefetch.intent(owner, target);
   }, [owner, peer]);
   const cancelPrefetch = useCallback(() => intentPrefetch.cancel(), []);
   const matches = view.owner === owner && view.peer === peer;
   return { prefetch, cancelPrefetch, messages: matches ? view.messages : [], setMessages,
-    loading: !matches ? !!peer && !!owner : view.loading, hasOlder: matches && view.hasOlder, older, refresh, reconcile };
+    loading: !matches ? !!peer && !!owner : view.loading, hasOlder: matches && view.hasOlder, older, refresh, reconcile, reveal };
 }

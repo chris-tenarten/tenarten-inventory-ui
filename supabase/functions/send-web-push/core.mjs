@@ -11,7 +11,7 @@ export function clean(value,limit=140){
 }
 export function payloadFor(row){
  const source=row.source,preview=row.previews===true;
- const title=preview?(source.kind==='dm'?`${clean(source.sender,50)||'TenOps'} · Direct Message`:`Mentioned by ${clean(source.sender,45)||'a colleague'} · ${clean(source.job,32)||'Job Update'}`):(source.kind==='dm'?'New TenOps message':'New TenOps mention');
+ const title=preview?(['dm','group'].includes(source.kind)?source.kind==='group'?`${clean(source.group_name,50)||'TenOps group'} · ${clean(source.sender,45)||'New message'}`:`${clean(source.sender,50)||'TenOps'} · Direct Message`:`Mentioned by ${clean(source.sender,45)||'a colleague'} · ${clean(source.job,32)||'Job Update'}`):(['dm','group'].includes(source.kind)?'New TenOps message':'New TenOps mention');
  const body=preview?(source.attachment_only?'Sent an attachment':clean(source.text)||'Open TenOps to view this notification.'):'Open TenOps to view this notification.';
  return{v:1,id:row.notification_id,kind:source.kind,title,body,url:`/?pushNotificationId=${encodeURIComponent(row.notification_id)}`,tag:`tenops:${row.notification_id}`};
 }

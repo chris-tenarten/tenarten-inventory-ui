@@ -1,7 +1,7 @@
 import { BINARY_TYPE, INBOX_ATTACHMENT_BUCKET, previewType, resumableEndpoint, validateFiles } from './files';
 
 export type Entry = { id: string; name: string; size: number; contentType: string; lastModified?: number };
-export type Draft = { id: string; recipient: string; body: string; job: string; entries: Entry[] };
+export type Draft = { replyTo?:string; id: string; recipient: string; body: string; job: string; entries: Entry[] };
 export type TransferState = { phase: 'preparing'|'uploading'|'retrying'|'finalizing'|'failed'|'canceling'|'canceled'|'sent'; uploaded: number; total: number; fileIndex: number; fileUploaded: number; error: string };
 export type Transport = {
   begin(draft: Draft): Promise<void>;

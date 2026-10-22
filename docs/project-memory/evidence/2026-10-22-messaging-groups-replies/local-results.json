@@ -1,0 +1,44 @@
+{
+  "baseline": "daa7932",
+  "branch": "dev",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "database": "Disposable local PostgreSQL; actual migration/RLS/functions; JWT claims; no Auth accounts",
+  "databasePassed": [
+    "group member, outsider, unrelated Admin, inactive access",
+    "creator-only management and shared history",
+    "DM/group replies and cross-conversation rejection",
+    "per-user unread receipts and system read compatibility",
+    "attachment reservation/publication, metadata checks, Storage SELECT policy and recovery",
+    "removed-member sender denial, rejoin history, push suppression and destination denial",
+    "Admin deletion audit and unavailable-original tombstone",
+    "read-only Messaging assignment enforcement",
+    "pre-upgrade DM attachment transfer resume through V12"
+  ],
+  "browser": "Production export on exact http://localhost:3000; loopback HTTP/TUS fixture; existing ephemeral review session",
+  "browserPassed": [
+    "desktop 1440px and mobile 390px",
+    "DM replies and deleted quote fallback",
+    "group creation, rename, participant removal",
+    "group send and reply",
+    "shared attachment transfer through TUS fixture",
+    "reload and independent browser-context persistence",
+    "quote navigation across 85-message history",
+    "no page errors, viewport overflow or external HTTP requests"
+  ],
+  "otherPassed": [
+    "production build",
+    "TypeScript",
+    "targeted ESLint",
+    "git diff --check",
+    "Web Push worker regression incl. group/generic payloads"
+  ],
+  "notRun": [
+    "hosted schema or migration verification",
+    "real local Realtime socket/Storage-service delivery",
+    "physical iPhone delivery or live notification dispatch"
+  ],
+  "hostedMutations": false,
+  "liveNotifications": false,
+  "deployments": false
+}

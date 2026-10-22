@@ -1,5 +1,5 @@
 import { CoalescedRead } from '@/lib/coalesced-read';
-import { loadConversationSummaries, loadInboxRecipients, loadInboxUnreadCount } from '../inbox';
+import { loadConversationSummaries, loadInboxRecipients } from '../inbox';
 
 /** One owner per mounted authenticated shell account. No private module cache.
  * Brief reuse bridges shell/menu/dialog opens; meaningful changes always refresh. */
@@ -9,7 +9,7 @@ export class MessagingAwareness {
   readonly unread: CoalescedRead<number>;
 
   constructor(readonly userId: string) {
-    this.unread = new CoalescedRead(() => loadInboxUnreadCount(userId), 2000);
+    this.unread = new CoalescedRead(async () => (await this.summaries.read()).reduce((sum,row)=>sum+row.unread,0), 2000);
   }
 
   overview(refresh = false) {

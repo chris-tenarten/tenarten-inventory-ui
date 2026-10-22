@@ -11,6 +11,8 @@ const row={id,notification_id:id,environment,endpoint:'https://web.push.apple.co
 await run('informative and generic payloads, HTML/control/markup stripping',()=>{
  assert.equal(clean('<b>Please</b>\n**verify** [readiness](https://example.invalid)\u202e'),'Please verify readiness');
  assert.equal(Array.from(clean('💠'.repeat(200))).length,140);
+ assert.equal(payloadFor({...row,source:{...row.source,kind:'group',group_name:'Shop team'}}).title,'Shop team · Alex Operator');
+ assert.equal(payloadFor({...row,previews:false,source:{...row.source,kind:'group',group_name:'Private group'}}).title,'New TenOps message');
  assert.equal(payloadFor(row).title,'Alex Operator · Direct Message');assert(!payloadFor({...row,previews:false}).body.includes('plate'));
  assert.equal(payloadFor({...row,source:{kind:'mention',sender:'Blair Lead',job:'26-1042',text:'Please verify material readiness.'}}).title,'Mentioned by Blair Lead · 26-1042');
  assert.equal(payloadFor({...row,source:{...row.source,attachment_only:true}}).body,'Sent an attachment');

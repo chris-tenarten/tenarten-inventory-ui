@@ -94,6 +94,13 @@ export default function GlobalMessaging(){
   useEffect(()=>{if(!menuOpen)return;const pointer=(event:PointerEvent)=>{if(!menuRef.current?.contains(event.target as Node))setMenuOpen(false);};const key=(event:KeyboardEvent)=>{if(event.key==="Escape")setMenuOpen(false);};document.addEventListener("pointerdown",pointer);document.addEventListener("keydown",key);return()=>{document.removeEventListener("pointerdown",pointer);document.removeEventListener("keydown",key);};},[menuOpen]);
   useEffect(()=>{if(!auth.profile?.isActive)return;const params=new URLSearchParams(window.location.search);if(params.get("inbox")!=="1"&&!params.get("inboxUserId"))return;const timer=window.setTimeout(()=>openModal(params.get("inboxUserId")??""),0);params.delete("inbox");params.delete("inboxUserId");const query=params.toString();window.history.replaceState({},"",`${window.location.pathname}${query?`?${query}`:""}${window.location.hash}`);return()=>window.clearTimeout(timer);},[auth.profile?.isActive,openModal,pathname]);
 
+  useEffect(()=>{if(!currentUserId)return;let active=true;let channel:ReturnType<typeof supabase.channel>|undefined;
+    const refresh=()=>{awareness.invalidateOverview();window.dispatchEvent(new Event("tenops:messaging-changed"));if(awarenessVisibleRef.current)loadRecent(true);else refreshUnread();};
+    void supabase.auth.getSession().then(async({data:{session}})=>{if(!active||!session)return;await supabase.realtime.setAuth(session.access_token);if(!active)return;channel=supabase.channel(`my-work-inbox:${currentUserId}`,{config:{private:true}}).on("broadcast",{event:"overview_changed"},refresh).subscribe(status=>{if(status==="SUBSCRIBED")refresh();});});
+    const resume=()=>{if(document.visibilityState==="visible")refresh();};
+    window.addEventListener("focus",resume);document.addEventListener("visibilitychange",resume);
+    return()=>{active=false;if(channel)void supabase.removeChannel(channel);window.removeEventListener("focus",resume);document.removeEventListener("visibilitychange",resume);};
+  },[awareness,currentUserId,loadRecent,refreshUnread]);
   if(!auth.isAuthenticated||!auth.profile?.isActive)return null;
   const showMenu=()=>{setMenuOpen(true);loadRecent();};
   const toggleSidebar=()=>{if(window.matchMedia("(max-width: 767px)").matches){openModal();return;}const next=!sidebarOpen;if(next)loadRecent();else setSidebarExpanded(false);setSidebarOpen(next);window.sessionStorage.setItem(SIDEBAR_SESSION_KEY,next?"shown":"hidden");setMenuOpen(false);};
