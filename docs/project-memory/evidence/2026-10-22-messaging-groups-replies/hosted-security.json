@@ -1,0 +1,23 @@
+{
+  "currentMemberHistoryPreserved": true,
+  "dmDestinationImmutable": true,
+  "dmParticipantIsolationPreserved": true,
+  "existingAccountsOnly": true,
+  "realAuthenticatedRole": true,
+  "removedSenderBodyAndManifestDenied": true,
+  "removedSenderHistoryAndAttachmentMetadataDenied": true,
+  "removedSenderStatusAndEditDenied": true,
+  "storageObjectSelectAndNewSigningEligibilityDenied": true,
+  "transactionWillRollback": true,
+  "anonSendDenied": true,
+  "bucketLimit": 50000000,
+  "bucketPrivate": true,
+  "groups": 0,
+  "privateHelperDenied": true,
+  "recoveryGuard": true,
+  "noFixtureRowsCommitted": true,
+  "noNotificationOrOutboxRowsCommitted": true,
+  "signedUrlExpirySeconds": 600,
+  "expiryPolicyUnchanged": true,
+  "storageApiTransport": "Existing passing real Storage integration reused; hosted signing eligibility tested through actual authenticated Storage RLS."
+}

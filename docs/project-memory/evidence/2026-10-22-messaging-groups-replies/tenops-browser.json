@@ -1,0 +1,11 @@
+{
+  "target": "tenops",
+  "passed": true,
+  "actualHostedOrigin": "https://tenops.pages.dev",
+  "normalAuthGateVisible": true,
+  "mobileViewport": 390,
+  "pageErrors": [],
+  "unexpectedExternal": [],
+  "hostedWrites": [],
+  "accountOrDeviceEnrollment": false
+}

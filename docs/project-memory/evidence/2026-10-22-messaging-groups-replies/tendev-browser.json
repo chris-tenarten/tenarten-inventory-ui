@@ -1,0 +1,11 @@
+{
+  "target": "tendev",
+  "passed": true,
+  "actualHostedOrigin": "https://tendev.pages.dev",
+  "normalAuthGateVisible": true,
+  "mobileViewport": 390,
+  "pageErrors": [],
+  "unexpectedExternal": [],
+  "hostedWrites": [],
+  "accountOrDeviceEnrollment": false
+}

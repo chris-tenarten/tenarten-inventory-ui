@@ -1,0 +1,30 @@
+[
+  {
+    "slug": "send-web-push-tendev",
+    "id": "0248da3c-43fe-44e5-84f9-71f35422c401",
+    "previousVersion": 26,
+    "version": 27,
+    "status": "ACTIVE",
+    "verify_jwt": false,
+    "unsignedStatus": 503,
+    "groupPayloadPresent": true,
+    "existingDiagnosticsPresent": true,
+    "sourceSha256": "8a52d32bc5f7a93e4ff31def90ac6f8d87a92441bf33b663fa6b8adf5af1eba3",
+    "sourceBytes": 9920384,
+    "runtimeHash": "17299e2f48d24c097f03822529a974955fd5dc3f"
+  },
+  {
+    "slug": "send-web-push-tenops",
+    "id": "3449d184-907b-4a78-bb1c-e94f095643ee",
+    "previousVersion": 15,
+    "version": 16,
+    "status": "ACTIVE",
+    "verify_jwt": false,
+    "unsignedStatus": 401,
+    "groupPayloadPresent": true,
+    "existingDiagnosticsPresent": true,
+    "sourceSha256": "6d421fbd0be1b667e65ef820d4aa3001126cf17513b8f14e1cbbb64cd50802b9",
+    "sourceBytes": 9920379,
+    "runtimeHash": "17299e2f48d24c097f03822529a974955fd5dc3f"
+  }
+]

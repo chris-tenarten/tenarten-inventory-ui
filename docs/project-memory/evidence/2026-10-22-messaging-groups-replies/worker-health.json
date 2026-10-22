@@ -1,0 +1,113 @@
+{
+  "pending": 0,
+  "recentCron": [
+    {
+      "end_time": "2026-10-22T16:37:00.261649+00:00",
+      "start_time": "2026-10-22T16:37:00.205373+00:00",
+      "status": "succeeded"
+    },
+    {
+      "end_time": "2026-10-22T16:36:00.305463+00:00",
+      "start_time": "2026-10-22T16:36:00.215491+00:00",
+      "status": "succeeded"
+    },
+    {
+      "end_time": "2026-10-22T16:35:00.315957+00:00",
+      "start_time": "2026-10-22T16:35:00.228612+00:00",
+      "status": "succeeded"
+    }
+  ],
+  "recentWakes": [
+    {
+      "consumed": true,
+      "createdAt": "2026-10-22T16:37:00.226651+00:00"
+    },
+    {
+      "consumed": true,
+      "createdAt": "2026-10-22T16:36:00.249351+00:00"
+    },
+    {
+      "consumed": true,
+      "createdAt": "2026-10-22T16:35:00.267177+00:00"
+    }
+  ],
+  "since": "2026-10-22T16:29:04.079Z",
+  "snapshotAt": "2026-10-22T16:37:47.545753+00:00",
+  "workerResponses": [
+    {
+      "counts": null,
+      "createdAt": "2026-10-22T16:30:00.447566+00:00",
+      "status": 503
+    },
+    {
+      "counts": {
+        "claimed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "submitted": 0
+      },
+      "createdAt": "2026-10-22T16:31:00.255905+00:00",
+      "status": 200
+    },
+    {
+      "counts": {
+        "claimed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "submitted": 0
+      },
+      "createdAt": "2026-10-22T16:32:00.471843+00:00",
+      "status": 200
+    },
+    {
+      "counts": {
+        "claimed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "submitted": 0
+      },
+      "createdAt": "2026-10-22T16:33:00.245965+00:00",
+      "status": 200
+    },
+    {
+      "counts": {
+        "claimed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "submitted": 0
+      },
+      "createdAt": "2026-10-22T16:34:00.309063+00:00",
+      "status": 200
+    },
+    {
+      "counts": {
+        "claimed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "submitted": 0
+      },
+      "createdAt": "2026-10-22T16:35:00.321935+00:00",
+      "status": 200
+    },
+    {
+      "counts": {
+        "claimed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "submitted": 0
+      },
+      "createdAt": "2026-10-22T16:36:00.3109+00:00",
+      "status": 200
+    },
+    {
+      "counts": {
+        "claimed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "submitted": 0
+      },
+      "createdAt": "2026-10-22T16:37:00.267437+00:00",
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "versions": [
+    "20261022120000",
+    "20261022130000",
+    "20261022140000"
+  ],
+  "atomicOrderedApplication": true,
+  "groupTable": "my_work_message_groups",
+  "groupRows": 0,
+  "removedSenderGuardsPresent": true,
+  "devicesPreserved": true,
+  "transportAndCronPreserved": true,
+  "ownersGrantsSearchPathsPreserved": true,
+  "existingEnqueuePrepareAndGaPolicyUnchanged": true,
+  "privateBucket": true,
+  "migrations": [
+    {
+      "file": "20261022120000_messaging_groups_replies.sql",
+      "sha256": "0a8dd986f9cb7f149e819ec2cb9c5c0e15815f9e1e414038167a7d85b7ef2401"
+    },
+    {
+      "file": "20261022130000_messaging_group_integration.sql",
+      "sha256": "2c2df72f0909ad18550e749a5909d57fb62fcb6ec8b257f488bb713224c03f5e"
+    },
+    {
+      "file": "20261022140000_messaging_removed_sender_entry_guards.sql",
+      "sha256": "c47690bdf18c697f9aed1ee1c913ebcbd20f7d3889b2d5e4fff28fdc79099245"
+    }
+  ]
+}
