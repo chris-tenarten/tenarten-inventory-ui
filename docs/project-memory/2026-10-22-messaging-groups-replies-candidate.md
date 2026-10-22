@@ -51,3 +51,9 @@ Review URL: **http://localhost:3000**. `node scripts/start-messaging-groups-revi
 The obsolete Contacts review static server on port 3000 was identified by PID, command and checkout before being stopped. Only this existing dev checkout serves the candidate. Original unrelated `.worktrees/` and Contacts cleanup evidence remain untouched.
 
 Requested next step: Product acceptance of the local candidate. No permission to push, promote main, apply hosted migrations, deploy or send live notifications is implied.
+
+## Group-header refinement — 2026-10-22
+
+Group headers now show participant names directly beneath the group name, using “You” for the current user and existing collaborator display names for others. Groups of up to four show all names in one truncating line; larger groups show the first three with a fixed `+N more` count. The full list remains available in the header tooltip and participant details. The entire group header is a keyboard-accessible button opening the existing details/management dialog; the separate Participants link is removed. DM headers, membership contracts and creator-only permissions are unchanged.
+
+Tier 1 / Testing Level 1: production build, TypeScript, targeted ESLint and diff check passed. The localhost browser verifier passed at desktop 1440px and mobile 390px, including visible small-group names, large-group truncation without viewport overflow, keyboard activation, creator editing and noncreator read-only details. The adjacent DM/group messaging regression scenario also passed. Updated small-group screenshots are linked above; see [desktop large group](evidence/2026-10-22-messaging-groups-replies/desktop-large-group.png) and [mobile large group](evidence/2026-10-22-messaging-groups-replies/mobile-large-group.png). No migration/backend change or deployment.

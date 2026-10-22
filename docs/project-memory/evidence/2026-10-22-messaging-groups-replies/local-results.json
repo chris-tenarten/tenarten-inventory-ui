@@ -40,5 +40,20 @@
   ],
   "hostedMutations": false,
   "liveNotifications": false,
-  "deployments": false
+  "deployments": false,
+  "headerRefinement": {
+    "riskTier": 1,
+    "testingLevel": 1,
+    "passed": [
+      "names beneath group name on desktop/mobile",
+      "whole header opens details by click and keyboard",
+      "large groups truncate with visible +N more count",
+      "noncreator name disabled and no management save",
+      "TypeScript",
+      "targeted ESLint",
+      "diff check",
+      "production build"
+    ],
+    "backendChanged": false
+  }
 }

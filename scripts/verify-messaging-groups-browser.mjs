@@ -33,10 +33,12 @@ for(const mobile of [false,true]){
  await page.getByRole('textbox',{name:'Group name',exact:true}).fill(name);
  await page.getByLabel('Draft Review Bob',{exact:true}).check();await page.getByLabel('Draft Review Carol',{exact:true}).check();
  await page.getByRole('button',{name:'Create group',exact:true}).click();await page.getByText(name,{exact:true}).last().waitFor();
+ await page.locator('[data-group-header-participants]').filter({hasText:'Draft Review Bob'}).waitFor();
+ assert((await page.locator('[data-group-header-participants]').innerText()).includes('Draft Review Carol'));
  await send(name+' first message');
  const first=page.locator('article').filter({has:page.getByText(name+' first message',{exact:true})});
  await first.getByRole('button',{name:'Message actions',exact:true}).click();await page.getByRole('button',{name:'Reply',exact:true}).click();await send(name+' reply');
- await page.getByRole('button',{name:'Participants',exact:true}).click();await page.getByRole('textbox',{name:'Group name',exact:true}).fill(name+' renamed');
+ await page.getByRole('button',{name:'View group participants',exact:true}).click();await page.getByRole('textbox',{name:'Group name',exact:true}).fill(name+' renamed');
  await page.getByLabel('Draft Review Carol',{exact:true}).uncheck();await page.getByRole('button',{name:'Save group',exact:true}).click();
  await page.getByText(name+' renamed',{exact:true}).last().waitFor();
  await page.getByLabel('Attach files',{exact:true}).setInputFiles({name:'shared-note.txt',mimeType:'text/plain',buffer:Buffer.from('Local fixture only')});
@@ -46,6 +48,14 @@ for(const mobile of [false,true]){
  const reply=page.locator('article').filter({has:page.getByText(name+' reply',{exact:true})});
  await reply.getByRole('button').filter({hasText:name+' first message'}).click();
  await page.screenshot({path:dir+`/${mobile?'mobile':'desktop'}.png`,fullPage:true});
+ await page.route('**/rest/v1/rpc/list_my_work_conversations_v12',async route=>{const response=await route.fetch();const rows=await response.json();for(const row of rows)if(row.groupId){row.memberIds=[reviewSession.user.id,'00000000-0000-4000-8000-000000900022','00000000-0000-4000-8000-000000900023',...['00000000-0000-4000-8000-000000950001','00000000-0000-4000-8000-000000950002','00000000-0000-4000-8000-000000950003']];row.creatorUserId='00000000-0000-4000-8000-000000900022';}await route.fulfill({response,json:rows});});
+ await page.evaluate(()=>window.dispatchEvent(new Event('tenops:messaging-changed')));
+ await page.locator('[data-group-header-participants]').getByText('+3 more',{exact:true}).waitFor();
+ await page.screenshot({path:dir+`/${mobile?'mobile':'desktop'}-large-group.png`,fullPage:true});
+ await page.getByRole('button',{name:'View group participants',exact:true}).focus();await page.keyboard.press('Enter');
+ assert(await page.getByRole('textbox',{name:'Group name',exact:true}).isDisabled(),'Noncreator cannot rename');
+ assert.equal(await page.getByRole('button',{name:'Save group',exact:true}).count(),0,'Noncreator has no management save');
+ await page.getByRole('button',{name:'Close',exact:true}).click();
  assert(await page.locator('body').evaluate(el=>el.scrollWidth<=window.innerWidth),'No viewport overflow');
  assert.deepEqual(external,[]);assert.deepEqual(errors,[]);
  console.log(`PASS ${mobile?'mobile 390px':'desktop 1440px'} actual localhost:3000: DM reply + original navigation, deleted fallback, group creation/name/participants, send/reply, shared attachment through TUS fixture, reload persistence, quote navigation, no page errors/outbound requests.`);
