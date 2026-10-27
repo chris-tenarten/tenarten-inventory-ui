@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import {usePathname} from 'next/navigation';
 import {useEffect,useRef,useState} from 'react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
@@ -22,32 +23,130 @@ async function invoke<T>(body:Record<string,unknown>):Promise<T>{
  const {data,error}=await supabase.functions.invoke('tenbot',{body,signal:AbortSignal.timeout(20000)});
  if(error){const detail='context' in error&&error.context instanceof Response?await error.context.json().catch(()=>null):null;throw new Error(detail?.error||'TenBot is unavailable. The rest of TenOps remains available.');}return data;
 }
-export default function TenbotWorkspace(){const auth=useAuth();
- if(!auth.ready||auth.accessStatus==='pending')return <p className="p-6">Checking account access…</p>;
- if(!auth.isAuthenticated||!auth.accessAllowed||!auth.can('readOperationalData'))return <p className="p-6">Sign in with an authorized TenOps account to use TenBot.</p>;
- return <Workspace key={auth.profile?.userId} reviewAllowed={auth.can('manageUsers')} identity={auth.profile?.displayName||'Your account'}/>;
+type ModuleContext={label:string;module:string;examples:string[]};
+function moduleContext(pathname:string):ModuleContext{
+ // Only fixed module labels leave this component. No record IDs, search params or content.
+ const section=pathname.split('/')[1];
+ const general=['How do I create a group conversation?','Can I set a recurring task?'];
+ switch(section){
+  case 'settings':return {label:'Settings',module:'Settings',examples:['How do I enable notifications on my phone?',...general.slice(0,1)]};
+  case 'my-work':return {label:'My Work',module:'My Work',examples:general};
+  case 'samples':return {label:'Samples',module:'Intake',examples:['How do I attach a sample to a bid?','Can I estimate material lead times from a blend sheet?']};
+  case 'pre-production':return {label:'Intake',module:'Intake',examples:['How do I attach a sample to a bid?','Can I estimate material lead times from a blend sheet?']};
+  case 'contacts':return {label:'Contacts',module:'Contacts',examples:["Where do I find a customer's previous jobs?",general[0]]};
+  case 'inventory':case 'activity':return {label:'Inventory',module:'Inventory',examples:['Can I estimate material lead times from a blend sheet?',general[0]]};
+  case 'purchasing':case 'catalog':return {label:'Purchasing',module:'Purchasing',examples:['Can I estimate material lead times from a blend sheet?',general[0]]};
+  case '':case 'production':return {label:'Production',module:'Production',examples:['Can I share a job in a message?',general[0]]};
+  default:return {label:'TenOps',module:'General',examples:general};
+ }
 }
-function Workspace({reviewAllowed,identity}:{reviewAllowed:boolean;identity:string}){
- const [question,setQuestion]=useState(''),[messages,setMessages]=useState<{question:string;answer:Answer}[]>([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[draft,setDraft]=useState<Draft|null>(null),[confirmed,setConfirmed]=useState(false),[notice,setNotice]=useState(''),[tab,setTab]=useState('chat'),[items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState(''),[notes,setNotes]=useState<Record<string,string>>({});
- const end=useRef<HTMLDivElement>(null);
- useEffect(()=>{if(messages.length)end.current?.scrollIntoView({block:'nearest'});},[messages]);
- async function ask(){if(busy||!question.trim())return;const current=question;setBusy(true);setError('');setNotice('');try{const response=await invoke<Answer>({action:'ask',question:current,context:messages.slice(-2).map(m=>m.question)});setMessages(m=>[...m.slice(-7),{question:current,answer:response}]);setQuestion('');}catch(e){setError(e instanceof Error?e.message:'TenBot unavailable.');}finally{setBusy(false);}}
- async function makeDraft(){const original=question.trim()||messages.at(-1)?.question;if(!original)return;setBusy(true);setError('');try{const r=await invoke<Answer>({action:'draft',question:original});setDraft({capability:original,problem:'',desired:'',module:'General',original,summary:r.summary||'',summaryKind:r.summary?'AI-generated':'Employee-written',context:''});setConfirmed(false);}catch(e){setError(e instanceof Error?e.message:'Draft unavailable.');}finally{setBusy(false);}}
- async function submit(){if(!draft||!confirmed)return;setBusy(true);setError('');try{await invoke({action:'submit',draft,confirmed});setDraft(null);setConfirmed(false);setNotice('Suggestion submitted to Product. It has not been approved or added to the roadmap.');}catch(e){setError(e instanceof Error?e.message:'Submission failed.');}finally{setBusy(false);}}
- async function load(status=filter,module=moduleFilter){setBusy(true);setError('');try{const r=await invoke<{items:Feedback[]}>({action:'list',status,module});setItems(r.items);}catch(e){setItems([]);setError(e instanceof Error?e.message:'Feedback unavailable.');}finally{setBusy(false);}}
- async function review(id:string,status:string){setBusy(true);setError('');try{await invoke({action:'review',id,status,note:notes[id]||''});await load();}catch(e){setError(e instanceof Error?e.message:'Review failed.');}finally{setBusy(false);}}
- return <main className="mx-auto max-w-5xl px-3 py-5 pb-28 sm:px-6 md:pb-5" aria-label="TenBot workspace">
-  <div className="mb-5 flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-widest text-slate-500">TenOps guide</p><h1 className="text-2xl font-bold text-slate-950">Ask TenBot</h1><p className="mt-1 text-sm text-slate-600">Find your way around TenOps. Shape an idea for what comes next.</p></div>{reviewAllowed?<div className="flex gap-2"><button className="min-h-11 rounded border px-3" onClick={()=>{setTab('chat');setError('');}}>Guide</button><button className="min-h-11 rounded border px-3" onClick={()=>{setTab('feedback');void load();}}>Product feedback</button></div>:null}</div>
-  <p className="mb-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">{process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL?'Local candidate · AI is not activated in this review. Guide excerpts are searched directly.':'Answers use verified guide excerpts. Each response identifies whether AI inference was used.'} TenBot cannot read business records or take operational actions. Please keep private business information out of questions.</p>
-  {error?<p role="alert" className="mb-3 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</p>:null}{notice?<p role="status" className="mb-3 rounded bg-green-50 p-3 text-sm">{notice}</p>:null}
-  {tab==='chat'?<>
-  <div className="mb-3 flex flex-wrap gap-2">{['How do I create a group conversation?','How do I enable notifications on my phone?','Can I set a recurring task?','Can I estimate material lead times from a blend sheet?'].map(q=><button key={q} disabled={busy} onClick={()=>setQuestion(q)} className="min-h-11 rounded-full border border-slate-300 bg-white px-3 py-2 text-left text-xs text-slate-700">{q}</button>)}</div>
-  <div role="log" aria-label="TenBot conversation" aria-live="polite" className="max-h-[48dvh] min-h-24 space-y-4 overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-slate-50 p-3 sm:p-5">
-   {!messages.length?<p className="py-4 text-sm text-slate-500">A little guidance, one question at a time. Ask about an existing workflow or describe a capability you need.</p>:null}
-   {messages.map((m,i)=><article key={i} className="space-y-3"><p className="ml-8 whitespace-pre-wrap break-words rounded-lg bg-slate-800 px-4 py-3 text-sm text-white">{m.question}</p><div className="mr-2 space-y-3 rounded-lg border bg-white p-4 text-sm"><p>{m.answer.message}</p>{!m.answer.sources.length?<p>I cannot verify that workflow for your account. You can draft a suggestion below.</p>:null}{m.answer.sources.map(s=><div key={s.id} className="border-t pt-3"><div className="flex flex-wrap gap-2"><strong>{s.title}</strong><span className="rounded bg-slate-100 px-2 text-xs">{s.status==='deployed'?'Released · permission checked':s.status==='local'?'Local · unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span></div><p className="mt-2 whitespace-pre-wrap">{s.guidance}</p>{s.path?<p className="mt-2 font-medium">{s.path}</p>:null}{s.route?<Link className="mt-2 inline-block min-h-11 py-3 font-semibold text-blue-800 underline" href={s.route}>Open {s.route==='/settings'?'Settings':'My Work'}</Link>:null}<p className="mt-1 text-xs text-slate-500">Source: {s.source}</p></div>)}<p className="text-xs text-slate-500">Deployed knowledge: {m.answer.snapshot.revision} · checked {m.answer.snapshot.verifiedAt} · {m.answer.mode==='ai'?'AI-selected guidance':'Direct guide search'}</p></div></article>)}<div ref={end}/>
+export default function TenbotWorkspace({visible}:{visible:boolean}){
+ const auth=useAuth(),pathname=usePathname();
+ if(!auth.ready||auth.accessStatus==='pending')return <p className="p-4">Checking account access…</p>;
+ if(!auth.isAuthenticated||!auth.accessAllowed||!auth.can('readOperationalData'))return <p className="p-4">Sign in with an authorized TenOps account to use TenBot.</p>;
+ return <Workspace key={auth.profile?.userId} visible={visible} currentModule={moduleContext(pathname)} reviewAllowed={auth.can('manageUsers')} identity={auth.profile?.displayName||'Your account'}/>;
+}
+function Workspace({reviewAllowed,identity,currentModule,visible}:{reviewAllowed:boolean;identity:string;currentModule:ModuleContext;visible:boolean}){
+ const [question,setQuestion]=useState('');
+ const [messages,setMessages]=useState<{question:string;answer:Answer}[]>([]);
+ const [busy,setBusy]=useState(false),[error,setError]=useState('');
+ const [draft,setDraft]=useState<Draft|null>(null),[confirmed,setConfirmed]=useState(false);
+ const [notice,setNotice]=useState(''),[tab,setTab]=useState('chat');
+ const [items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState('');
+ const [notes,setNotes]=useState<Record<string,string>>({});
+ const scroll=useRef<HTMLDivElement>(null);
+ const draftForm=useRef<HTMLFormElement>(null);
+ const drafting=Boolean(draft);
+ useEffect(()=>{
+  if(drafting&&scroll.current&&draftForm.current?.getClientRects().length){
+   scroll.current.scrollTop=draftForm.current.offsetTop;
+   draftForm.current.querySelector('textarea')?.focus({preventScroll:true});
+  }
+ },[drafting]);
+ useEffect(()=>{if(visible&&!draft&&scroll.current)scroll.current.scrollTop=scroll.current.scrollHeight;},[messages,visible,draft]);
+ const context=()=>[`Current module: ${currentModule.label}`,...messages.slice(-1).map(m=>m.question)];
+ async function ask(){
+  if(busy||!question.trim())return;
+  const current=question;setBusy(true);setError('');setNotice('');
+  try{const response=await invoke<Answer>({action:'ask',question:current,context:context()});setMessages(m=>[...m.slice(-7),{question:current,answer:response}]);setQuestion('');}
+  catch(e){setError(e instanceof Error?e.message:'TenBot unavailable.');}finally{setBusy(false);}
+ }
+ async function makeDraft(){
+  const original=question.trim()||messages.at(-1)?.question;if(!original)return;
+  setBusy(true);setError('');
+  try{const r=await invoke<Answer>({action:'draft',question:original,context:context()});setDraft({capability:original,problem:'',desired:'',module:currentModule.module,original,summary:r.summary||'',summaryKind:r.summary?'AI-generated':'Employee-written',context:''});setConfirmed(false);}
+  catch(e){setError(e instanceof Error?e.message:'Draft unavailable.');}finally{setBusy(false);}
+ }
+ async function submit(){
+  if(!draft||!confirmed)return;setBusy(true);setError('');
+  try{await invoke({action:'submit',draft,confirmed});setDraft(null);setConfirmed(false);setNotice('Suggestion submitted to Product. It has not been approved or added to the roadmap.');}
+  catch(e){setError(e instanceof Error?e.message:'Submission failed.');}finally{setBusy(false);}
+ }
+ async function load(status=filter,module=moduleFilter){
+  setBusy(true);setError('');try{const r=await invoke<{items:Feedback[]}>({action:'list',status,module});setItems(r.items);}
+  catch(e){setItems([]);setError(e instanceof Error?e.message:'Feedback unavailable.');}finally{setBusy(false);}
+ }
+ async function review(id:string,status:string){
+  setBusy(true);setError('');try{await invoke({action:'review',id,status,note:notes[id]||''});await load();}
+  catch(e){setError(e instanceof Error?e.message:'Review failed.');}finally{setBusy(false);}
+ }
+ return <section className="flex min-h-0 flex-1 flex-col" aria-label="TenBot workspace">
+  <div className="shrink-0 border-b border-slate-200 px-3 py-2">
+   <p className="text-xs text-slate-600">Current module: {currentModule.label}</p>
+   <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+    {reviewAllowed?<><button type="button" className="min-h-9 rounded border px-2" onClick={()=>{setTab('chat');setError('');}}>Guide</button><button type="button" className="min-h-9 rounded border px-2" disabled={busy} onClick={()=>{setTab('feedback');void load();}}>Product feedback</button></>:null}
+    <button type="button" disabled={busy} onClick={()=>{setMessages([]);setDraft(null);setQuestion('');setError('');setNotice('');}} className="ml-auto min-h-9 px-1 text-slate-500">Clear conversation</button>
+   </div>
   </div>
-  <form onSubmit={e=>{e.preventDefault();void ask();}} className="mt-3 space-y-2"><label className="block text-sm font-semibold" htmlFor="tenbot-question">Your question</label><textarea id="tenbot-question" onFocus={e=>{if(window.matchMedia("(max-width: 767px)").matches)e.currentTarget.scrollIntoView({block:"center"});}} disabled={busy} value={question} onChange={e=>setQuestion(e.target.value)} maxLength={1200} rows={2} className={field} placeholder="How do I…? Can I…?"/><div className="flex flex-wrap gap-2"><button disabled={busy||!question.trim()} className="tenops-selected-surface min-h-11 rounded px-4 font-semibold disabled:opacity-50">{busy?'Working…':'Ask TenBot'}</button><button type="button" disabled={busy||(!question.trim()&&!messages.length)} onClick={()=>void makeDraft()} className="min-h-11 rounded border px-3 disabled:opacity-50">Draft a feature suggestion</button><button type="button" disabled={busy} onClick={()=>{setMessages([]);setDraft(null);setQuestion('');setError('');}} className="min-h-11 px-3 text-sm">Clear conversation</button></div></form>
-  {draft?<form onSubmit={e=>{e.preventDefault();void submit();}} className="mt-6 space-y-3 rounded-lg border bg-white p-4" aria-label="Feature suggestion draft"><h2 className="text-lg font-bold">Review your suggestion</h2><p className="text-sm text-slate-600">Submitter: {identity}. Only this draft will be saved; your chat is not stored.</p>{([['capability','Requested capability'],['problem','Current workflow or problem'],['desired','Desired behavior'],['context','Optional context and frequency'],['original','Original wording'],['summary',draft.summaryKind+' summary']] as const).map(([k,label])=><label key={k} className="block text-sm">{label}<textarea readOnly={k==='original'} required={k!=='context'&&k!=='summary'} maxLength={k==='summary'?800:1200} value={draft[k]} onChange={e=>setDraft({...draft,[k]:e.target.value})} className={field}/></label>)}<label className="block text-sm">Affected module<select className={field} value={draft.module} onChange={e=>setDraft({...draft,module:e.target.value})}>{modules.map(m=><option key={m}>{m}</option>)}</select></label><label className="flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" required checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/>I reviewed this draft and want to submit it to Product.</label><button disabled={busy||!confirmed} className="tenops-selected-surface min-h-11 rounded px-4 disabled:opacity-50">Submit suggestion</button><button type="button" className="min-h-11 px-4" onClick={()=>setDraft(null)}>Cancel</button></form>:null}
-  </>:<section aria-label="Product feedback inbox"><div className="mb-4 flex flex-wrap gap-3"><label>Status<select className={field} value={filter} onChange={e=>{setFilter(e.target.value);void load(e.target.value,moduleFilter);}}><option value="">All statuses</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><label>Module<select className={field} value={moduleFilter} onChange={e=>{setModuleFilter(e.target.value);void load(filter,e.target.value);}}><option value="">All modules</option>{modules.map(m=><option key={m}>{m}</option>)}</select></label><button className="min-h-11 self-end rounded border px-3" disabled={busy} onClick={()=>void load()}>Refresh</button></div>{!items.length?<p className="py-6 text-sm text-slate-500">{busy?'Loading feedback…':'No submissions match these filters.'}</p>:null}{items.map(item=><article key={item.id} className="mb-4 space-y-3 break-words rounded-lg border bg-white p-4"><h2 className="font-bold">{item.draft.capability}</h2><p className="text-xs text-slate-500">{item.submitter_name} · {item.created_at.slice(0,10)} · {item.draft.module} · {item.status}</p>{(['original','problem','desired','summary','context'] as const).map(k=><p key={k} className="whitespace-pre-wrap text-sm"><strong>{k==='summary'?item.draft.summaryKind+' summary':k}: </strong>{item.draft[k]||'—'}</p>)}<label className="block text-sm">Review note<textarea className={field} maxLength={1200} value={notes[item.id]||''} onChange={e=>setNotes({...notes,[item.id]:e.target.value})}/></label><div className="flex flex-wrap gap-2">{statuses.filter(s=>s!==item.status).map(s=><button disabled={busy} key={s} className="min-h-11 rounded border px-3 text-xs" onClick={()=>void review(item.id,s)}>Mark {s}</button>)}</div><details><summary className="min-h-11 cursor-pointer py-3 text-sm">Request history</summary>{item.history.map(h=><p key={h.id} className="py-1 text-xs">{h.created_at} · {h.status} · {h.note}</p>)}</details></article>)}</section>}
- </main>;
+  {error?<p role="alert" className="shrink-0 border-b border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
+  {notice?<p role="status" className="shrink-0 bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
+  {tab==='chat'?<>
+   <div ref={scroll} data-tenbot-scroll className="tenbot-scroll relative flex-1 space-y-3 p-3">
+    <p className="text-xs text-slate-500">{process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL?'Guide search only · AI is not activated in this review.':'Responses identify whether AI inference was used.'} Please keep private business details out of questions.</p>
+    {!messages.length?<><p className="text-sm text-slate-600">A little guidance while you work. Ask how something works or describe a capability you need.</p><div className="flex flex-col gap-2">{currentModule.examples.map(q=><button type="button" key={q} disabled={busy} onClick={()=>setQuestion(q)} className="min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-xs text-slate-700">{q}</button>)}</div></>:null}
+    <div role="log" aria-label="TenBot conversation" aria-live="polite" className="space-y-4">
+     {messages.map((m,i)=><article key={i} className="space-y-2">
+      <p className="ml-6 whitespace-pre-wrap break-words rounded-lg bg-slate-800 px-3 py-2 text-sm text-white">{m.question}</p>
+      <div className="space-y-3 rounded-lg border bg-white p-3 text-sm">
+       <p>{m.answer.message}</p>
+       {!m.answer.sources.length?<p>I cannot verify that workflow for your account. You can draft a suggestion below.</p>:null}
+       {m.answer.sources.map(s=><div key={s.id} className="border-t pt-2">
+        <strong>{s.title}</strong><span className="ml-2 rounded bg-slate-100 px-1 text-xs">{s.status==='deployed'?'Released · permission checked':s.status==='local'?'Local · unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span>
+        <p className="mt-2 whitespace-pre-wrap">{s.guidance}</p>{s.path?<p className="mt-2 font-medium">{s.path}</p>:null}
+        {s.route?<Link className="inline-block min-h-11 py-3 font-semibold text-blue-800 underline" href={s.route}>Open {s.route==='/settings'?'Settings':'My Work'}</Link>:null}
+        <p className="text-xs text-slate-500">Source: {s.source}</p>
+       </div>)}
+       <p className="text-xs text-slate-500">Deployed knowledge: {m.answer.snapshot.revision} · checked {m.answer.snapshot.verifiedAt} · {m.answer.mode==='ai'?'AI-selected guidance':'Direct guide search'}</p>
+      </div>
+     </article>)}
+    </div>
+    {draft?<form ref={draftForm} onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3 rounded-lg border bg-white p-3" aria-label="Feature suggestion draft">
+     <h3 className="font-bold">Review your suggestion</h3><p className="text-xs text-slate-600">Submitter: {identity}. Only this draft will be saved; your chat is not stored.</p>
+     {([['capability','Requested capability'],['problem','Current workflow or problem'],['desired','Desired behavior'],['context','Optional context and frequency'],['original','Original wording'],['summary',draft.summaryKind+' summary']] as const).map(([k,label])=><label key={k} className="block text-sm">{label}<textarea readOnly={k==='original'} required={k!=='context'&&k!=='summary'} maxLength={k==='summary'?800:1200} value={draft[k]} onChange={e=>setDraft({...draft,[k]:e.target.value})} className={field}/></label>)}
+     <label className="block text-sm">Affected module<select className={field} value={draft.module} onChange={e=>setDraft({...draft,module:e.target.value})}>{modules.map(m=><option key={m}>{m}</option>)}</select></label>
+     <label className="flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" required checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/>I reviewed this draft and want to submit it to Product.</label>
+     <button disabled={busy||!confirmed} className="tenops-selected-surface min-h-11 rounded px-3 disabled:opacity-50">Submit suggestion</button><button type="button" className="min-h-11 px-3" onClick={()=>setDraft(null)}>Cancel</button>
+    </form>:null}
+   </div>
+   <form onSubmit={e=>{e.preventDefault();void ask();}} className="shrink-0 space-y-2 border-t border-slate-200 bg-white p-3">
+    <label className="sr-only" htmlFor="tenbot-question">Your question</label>
+    <textarea id="tenbot-question" disabled={busy} value={question} onChange={e=>setQuestion(e.target.value)} maxLength={1200} rows={2} className={field} placeholder="How do I…? Can I…?"/>
+    <div className="flex flex-wrap gap-2"><button disabled={busy||!question.trim()} className="tenops-selected-surface min-h-11 rounded px-3 text-sm font-semibold disabled:opacity-50">{busy?'Working…':'Ask TenBot'}</button><button type="button" disabled={busy||(!question.trim()&&!messages.length)} onClick={()=>void makeDraft()} className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Draft a feature suggestion</button></div>
+   </form>
+  </>:<section className="tenbot-scroll flex-1 p-3" aria-label="Product feedback inbox">
+   <div className="mb-3 flex flex-wrap gap-2 text-xs">
+    <label className="min-w-0 flex-1">Status<select disabled={busy} className={field} value={filter} onChange={e=>{setFilter(e.target.value);void load(e.target.value,moduleFilter);}}><option value="">All statuses</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
+    <label className="min-w-0 flex-1">Module<select disabled={busy} className={field} value={moduleFilter} onChange={e=>{setModuleFilter(e.target.value);void load(filter,e.target.value);}}><option value="">All modules</option>{modules.map(m=><option key={m}>{m}</option>)}</select></label>
+    <button className="min-h-11 self-end rounded border px-2" disabled={busy} onClick={()=>void load()}>Refresh</button>
+   </div>
+   {!items.length?<p className="py-5 text-sm text-slate-500">{busy?'Loading feedback…':'No submissions match these filters.'}</p>:null}
+   {items.map(item=><article key={item.id} className="mb-3 space-y-3 break-words rounded-lg border bg-white p-3">
+    <h3 className="font-bold">{item.draft.capability}</h3><p className="text-xs text-slate-500">{item.submitter_name} · {item.created_at.slice(0,10)} · {item.draft.module} · {item.status}</p>
+    {(['original','problem','desired','summary','context'] as const).map(k=><p key={k} className="whitespace-pre-wrap text-sm"><strong>{k==='summary'?item.draft.summaryKind+' summary':k}: </strong>{item.draft[k]||'—'}</p>)}
+    <label className="block text-sm">Review note<textarea className={field} maxLength={1200} value={notes[item.id]||''} onChange={e=>setNotes({...notes,[item.id]:e.target.value})}/></label>
+    <div className="flex flex-wrap gap-2">{statuses.filter(s=>s!==item.status).map(s=><button disabled={busy} key={s} className="min-h-11 rounded border px-2 text-xs" onClick={()=>void review(item.id,s)}>Mark {s}</button>)}</div>
+    <details><summary className="min-h-11 cursor-pointer py-3 text-sm">Request history</summary>{item.history.map(h=><p key={h.id} className="py-1 text-xs">{h.created_at} · {h.status} · {h.note}</p>)}</details>
+   </article>)}
+  </section>}
+ </section>;
 }

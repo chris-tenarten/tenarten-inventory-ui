@@ -112,3 +112,7 @@ Never claim browser testing from code inspection or migration deployment from a 
 ## TenBot scoped handoff — October 27, 2026
 
 [TenBot local candidate](../project-memory/2026-10-27-tenbot-candidate.md) carries Chris's attached Product Implementation authorization: integrated read-only guidance, versioned capability registry, provider boundary and confirmed Product feedback. Tier 3 / Testing Level 3; local dev commit and localhost review only. Intake remains a separate unreleased candidate. Separate Advisory context is unavailable. Product acceptance, reviewer-role choice and provider activation are the next boundaries; no hosted migration/configuration, push or deployment is authorized.
+
+### TenBot floating UI follow-up — October 27
+
+Chris's floating-assistant Product decision supersedes the dedicated-page UI in the original TenBot candidate. [Scoped UI refinement and evidence](../project-memory/2026-10-27-tenbot-candidate.md#floating-assistant-ux-refinement--october-27-2026) use existing dev/local review, Tier 2 / Testing Level 2, unchanged backend contracts and a local commit. Product review is the next boundary; no deployment authorization.

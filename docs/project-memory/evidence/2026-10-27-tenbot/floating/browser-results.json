@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "origin": "http://localhost:3000",
+  "errors": [],
+  "networkOrigins": [
+    "http://localhost:3000",
+    "http://localhost:55593"
+  ],
+  "checked": [
+    "persistent launcher on My Work",
+    "nonmodal desktop panel containment",
+    "guide provenance and released workflow",
+    "allowlisted module context without query or record identifier",
+    "chat, unfinished question and unconfirmed draft survive minimize/reopen",
+    "conversation and draft survive real Next Link route changes",
+    "underlying desktop shell navigation usable with panel open",
+    "explicit draft confirmation",
+    "administrator feedback submission, status, history and reload persistence",
+    "mobile launcher and sheet above navigation",
+    "mobile Jobs/My Work/More navigation usable with sheet open",
+    "conversation retained through mobile route changes",
+    "mobile viewport containment and focused input clearance",
+    "simulated VisualViewport keyboard resize (physical keyboard acceptance remains manual)",
+    "budget failure UI",
+    "conversation remains memory-only across full reload",
+    "legacy /tenbot opens the shared assistant",
+    "existing Sample library",
+    "existing Sample document generation"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "status": "implemented locally; pending Product review",
+  "base": "d6b3ec90781d1692ea34e52427a8e40d67b44b4e",
+  "tier": 2,
+  "testingLevel": 2,
+  "scope": "floating assistant UI; existing backend reused",
+  "checks": {
+    "focusedBrowser": "passed",
+    "typescript": "passed",
+    "targetedEslint": "passed",
+    "diff": "passed",
+    "productionExport": "passed fresh-cache Webpack build"
+  },
+  "review": "independent diff/evidence review passed after mobile More stacking and draft-scroll corrections",
+  "keyboard": "simulated VisualViewport height=500; physical-device acceptance pending",
+  "backendChanges": false,
+  "migrations": false,
+  "hostedChanges": false,
+  "reviewOrigin": "http://localhost:3000",
+  "adapterPort": 55593,
+  "artifacts": "/private/tmp/tenops-tenbot-review/",
+  "initialBuildFailure": "Webpack WasmHash cache path; prior generated cache preserved, fresh-cache build passed"
+}
