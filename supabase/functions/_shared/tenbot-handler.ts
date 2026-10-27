@@ -18,7 +18,7 @@ export async function handleTenbot(body:Record<string,unknown>,userId:string,cal
  if(body.action==='review')return {result:await call(caller,'tenbot_review_feedback',{p_id:body.id,p_status:body.status,p_note:body.note||''})};
  if(!['ask','draft'].includes(String(body.action)))throw new TenbotError('Unknown TenBot action.');
  const permissions=new Set<string>();
- for(const permission of new Set(registry.map(e=>e.permission)))if(await call(caller,'has_app_capability',{p_capability:permission})===true)permissions.add(permission);
+ for(const permission of new Set(registry.flatMap(e=>[e.permission,...e.additionalPermissions||[]])))if(await call(caller,'has_app_capability',{p_capability:permission})===true)permissions.add(permission);
  let reservation:unknown=null;
  try{const result=await answer(body,permissions,provider,async()=>{reservation=await call(service,'tenbot_reserve_usage',{p_user:userId,p_monthly_usd:budget});});
  if(reservation)await call(service,'tenbot_finish_usage',{p_id:reservation,p_outcome:'completed'});return result;

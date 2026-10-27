@@ -1,0 +1,31 @@
+{
+  "riskTier": 2,
+  "testingLevel": 2,
+  "localOnly": true,
+  "realInferenceCalls": 0,
+  "passed": [
+    "scripts/verify-tenbot.mts --core-only",
+    "scripts/verify-tenbot-browser.mjs --contacts-coverage-only (17 focused groups, final artifact)",
+    "application TypeScript via final webpack build",
+    "shared Edge TypeScript",
+    "targeted ESLint including changed Edge/UI/verifier files",
+    "browser verifier node --check",
+    "final local Production webpack export",
+    "git diff --check",
+    "independent scoped review after topic/action anchor correction"
+  ],
+  "permissionEvidence": {
+    "snapshot": "f8f78c5",
+    "required": [
+      "writeBusinessData",
+      "editProductionJobDetails"
+    ],
+    "contactsSourceMatchesCurrent": true
+  },
+  "limitations": [
+    "no new real-model answer evaluation",
+    "synthetic local browser Auth/RPC fixtures",
+    "no hosted schema/RLS or customer write certification",
+    "no physical iPhone testing"
+  ]
+}

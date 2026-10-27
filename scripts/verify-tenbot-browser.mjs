@@ -2,7 +2,8 @@ import {chromium, expect} from '@playwright/test';
 import assert from 'node:assert/strict';
 import {mkdirSync, writeFileSync, readFileSync} from 'node:fs';
 
-if (process.argv.includes('--communication-only') || process.argv.length === 2) {
+const contactsCoverageOnly = process.argv.includes('--contacts-coverage-only');
+if (contactsCoverageOnly || process.argv.includes('--communication-only') || process.argv.length === 2) {
   await verifyCommunication();
   process.exit(0);
 }
@@ -12,19 +13,30 @@ if (process.argv.includes('--communication-only') || process.argv.length === 2) 
 // replay captured real evaluations. No request in this branch reaches inference.
 async function verifyCommunication() {
   const origin = 'http://localhost:3000';
-  const directory = '/private/tmp/tenops-tenbot-review/communication';
-  const evaluation = JSON.parse(readFileSync(`${directory}/evaluation.json`, 'utf8'));
-  const outputs = evaluation.outputs.filter(item => ['ai', 'verified', 'guide'].includes(item.answer?.mode));
+  const communicationDirectory = '/private/tmp/tenops-tenbot-review/communication';
+  const directory = contactsCoverageOnly ? '/private/tmp/tenops-tenbot-review/contacts-coverage' : communicationDirectory;
+  const evaluation = JSON.parse(readFileSync(`${communicationDirectory}/evaluation.json`, 'utf8'));
+  const coverage = contactsCoverageOnly ? JSON.parse(readFileSync(`${directory}/evaluation.json`, 'utf8')).outputs : [];
+  const outputs = [...evaluation.outputs.filter(item => !coverage.some(updated => updated.question === item.question)), ...coverage].filter(item => ['ai', 'verified', 'guide'].includes(item.answer?.mode));
   assert(outputs.length >= 2, 'Captured candidate answers are required');
   const group = outputs.find(item => item.answer.sources.some(source => source.id === 'group'));
   const navigation = outputs.find(item => item.answer.sources.some(source => source.route === '/contacts' || source.route === '/settings'));
   const unavailable = outputs.find(item => item.answer.sources.some(source => source.id === 'material-lead'));
   const manpowerQuestion = 'how do i filter by jobs in manpower reporting';
   const manpower = outputs.find(item => item.question === manpowerQuestion);
+  const customerQuestion = 'how do i edit a saved customers details';
+  const customer = coverage.find(item => item.id === 'customer-edit');
+  const deniedCustomers = coverage.filter(item => ['customer-denied-write', 'customer-denied-edit'].includes(item.id));
   assert(group && navigation && unavailable, 'Capture must include a supported workflow, another module link and unreleased Intake capability');
   assert(manpower && manpower.answer.mode === 'verified' && !manpower.answer.sources.length, 'Captured Manpower regression must have no verified guide source or model prose');
   assert.equal(group.answer.mode, 'ai', 'Supported workflow replay must come from a real conversational inference');
   assert.equal(navigation.answer.mode, 'ai', 'Supported navigation replay must come from a real conversational inference');
+  if (contactsCoverageOnly) {
+    assert(customer && customer.question === customerQuestion && customer.answer.resolution === 'available' && customer.answer.sources.some(source => source.id === 'customer-edit'), 'Core fixture must cover the exact Contacts question with its released guide');
+    assert.equal(deniedCustomers.length, 2, 'Both Contacts write and edit capability denials must be covered');
+    assert(deniedCustomers.every(item => item.question === customerQuestion && item.answer.resolution === 'permission-denied' && !item.answer.sources.length), 'Denied fixtures must omit protected instructions and links');
+    assert.equal(manpower.answer.resolution, 'documentation-missing', 'No verified Manpower guide must remain a documentation gap');
+  }
   mkdirSync(directory, {recursive: true});
   const browser = await chromium.launch({headless: true});
   const checked = [], requestEvidence = [], errors = [];
@@ -129,7 +141,7 @@ async function verifyCommunication() {
         answer = payload;
         await input.fill(question);
         await workspace.getByRole('button', {name: 'Ask TenBot', exact: true}).click();
-        await expect(conversation.getByText(question, {exact: true})).toBeVisible();
+        await expect(conversation.getByText(question, {exact: true}).last()).toBeVisible();
         await expect(workspace.getByRole('button', {name: 'Working…', exact: true})).toHaveCount(0);
         const request = assistantCalls.filter(call => call.action === 'ask').at(-1);
         const moduleLabel = {'/my-work': 'My Work', '/settings': 'Settings', '/contacts': 'Contacts', '/manpower-reporting': 'Manpower Reporting'}[new URL(page.url()).pathname];
@@ -137,8 +149,12 @@ async function verifyCommunication() {
         assert(request.context.length <= 2 && Object.keys(request).every(key => ['action', 'question', 'context'].includes(key)), 'Assistant input stays limited to module label and bounded employee question context');
       };
       const contained = async () => {
-        const box = await panel.boundingBox();
-        assert(box && box.x >= 0 && box.y >= 0 && box.x + box.width <= page.viewportSize().width + 1 && box.y + box.height <= page.viewportSize().height + 1, `Communication fits viewport: ${JSON.stringify(box)}`);
+        // The existing communication sheet measures visualViewport on resize.
+        // Wait for that browser event rather than reading the old frame's height.
+        await expect.poll(async () => {
+          const box = await panel.boundingBox();
+          return Boolean(box && box.x >= 0 && box.y >= 0 && box.x + box.width <= page.viewportSize().width + 1 && box.y + box.height <= page.viewportSize().height + 1);
+        }, {message: 'Communication fits viewport after its resize measurement'}).toBe(true);
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'No horizontal viewport overflow');
       };
       try {
@@ -223,6 +239,37 @@ async function verifyCommunication() {
         await ask('How do I create a group while AI is unavailable?', {...group.answer, mode: 'guide', fallback: true});
         await expect(conversation.getByText('AI is unavailable right now. Here’s guidance from the TenOps Guide.', {exact: true}).last()).toBeVisible();
         checked.push('unreleased Intake stays unavailable with no invented navigation', 'deterministic direct-guide fallback remains usable');
+        if (contactsCoverageOnly) {
+          await ask(customerQuestion, customer.answer);
+          const savedCustomer = conversation.locator('article').filter({hasText: customerQuestion}).last();
+          await expect(savedCustomer.getByText('Edit a saved customer’s details', {exact: true})).toBeVisible();
+          await expect(savedCustomer.getByText('Available', {exact: true})).toBeVisible();
+          await expect(savedCustomer.getByText('Source: TenOps Guide', {exact: true})).toBeVisible();
+          await expect(savedCustomer.getByRole('link', {name: 'Open Contacts', exact: true})).toHaveAttribute('href', '/contacts');
+          await expect(savedCustomer).toContainText('Customer Inspector');
+          await expect(savedCustomer).toContainText('Save Changes');
+          if (customer.answer.mode === 'ai') await savedCustomer.getByText('Read TenOps Guide', {exact: true}).click();
+          await expect(savedCustomer).toContainText('Additional Information (Optional)');
+          await page.screenshot({path: `${directory}/desktop-customer-edit.png`});
+          await savedCustomer.getByRole('link', {name: 'Open Contacts', exact: true}).click();
+          await expect(page).toHaveURL(`${origin}/contacts`);
+          await expect(workspace.getByText('Current module: Contacts', {exact: true})).toBeVisible();
+          checked.push('exact saved-customer question identifies released Customer Inspector controls, attribution and Contacts navigation');
+          for (const denied of deniedCustomers) {
+            await ask(customerQuestion, denied.answer);
+            const response = conversation.locator('article').filter({hasText: customerQuestion}).last();
+            await expect(response.getByText(denied.answer.message, {exact: true})).toBeVisible();
+            await expect(response).toContainText('exists in TenOps');
+            await expect(response).toContainText('does not have permission');
+            await expect(response.getByRole('link')).toHaveCount(0);
+            await expect(response).not.toContainText('Source: TenOps Guide');
+            await expect(response).not.toContainText('Customer Inspector');
+            await expect(response).not.toContainText('Save Changes');
+            await expect(workspace.getByRole('button', {name: 'Draft a feature suggestion', exact: true})).toHaveCount(0);
+          }
+          await page.screenshot({path: `${directory}/desktop-customer-permission.png`});
+          checked.push('each missing Contacts capability gives an access explanation without restricted steps, links or feature suggestion');
+        }
         await page.screenshot({path: `${directory}/desktop-communication.png`});
         await page.setViewportSize({width: 390, height: 844});
         await contained();
@@ -232,7 +279,16 @@ async function verifyCommunication() {
         await expect(panel.getByRole('tab', {name: 'Messages', exact: true})).toHaveAttribute('aria-selected', 'true');
         await expect(composer).toHaveValue('Keep private group composer draft');
         await panel.getByRole('tab', {name: 'Ask TenBot', exact: true}).click();
-        await expect(conversation.getByText(group.question, {exact: true})).toBeAttached();
+        await expect(conversation.getByText(contactsCoverageOnly ? customerQuestion : group.question, {exact: true}).last()).toBeAttached();
+        if (contactsCoverageOnly) {
+          await ask(customerQuestion, customer.answer);
+          const mobileCustomer = conversation.locator('article').filter({hasText: customerQuestion}).last();
+          await expect(mobileCustomer.getByRole('link', {name: 'Open Contacts', exact: true})).toBeVisible();
+          await expect(mobileCustomer).toContainText('Customer Inspector');
+          await contained();
+          await page.screenshot({path: `${directory}/mobile-customer-edit.png`});
+          checked.push('saved-customer guidance and Contacts link remain usable in the existing mobile communication sheet');
+        }
         await input.fill('Mobile unfinished question');
         await input.focus();
         await page.setViewportSize({width: 390, height: 500});
@@ -247,7 +303,7 @@ async function verifyCommunication() {
         await expect(page.getByRole('button', {name: 'Notifications', exact: true}).getByLabel('1 unread notifications', {exact: true})).toBeVisible();
         checked.push('mobile Messages entry preserves existing composer and assistant conversation', '390px and reduced keyboard viewport fit without horizontal overflow', 'Notifications unread badge remains independent');
         // Exact reported regression: a generic Jobs token must not turn an
-        // unsupported Manpower question into Contacts guidance or consume AI.
+        // unverified Manpower question into Contacts guidance or consume AI.
         await page.setViewportSize({width: 1440, height: 1000});
         await page.goto(`${origin}/manpower-reporting?reviewRecord=synthetic-private-record`);
         await expect(messagingButton).toBeVisible();
@@ -255,14 +311,14 @@ async function verifyCommunication() {
         await expect(workspace.getByText('Current module: Manpower Reporting', {exact: true})).toBeVisible();
         await ask(manpowerQuestion, manpower.answer);
         const unknown = conversation.locator('article').filter({hasText: manpowerQuestion});
-        await expect(unknown).toContainText('I cannot verify that workflow for your account.');
+        await expect(unknown.getByText(manpower.answer.message, {exact: true})).toBeVisible();
         await expect(unknown.getByRole('link')).toHaveCount(0);
         await expect(unknown).not.toContainText('Contacts');
         await expect(unknown).not.toContainText('Source: TenOps Guide');
         await expect(unknown).not.toContainText('AI is unavailable');
-        await expect(workspace.getByRole('button', {name: 'Draft a feature suggestion', exact: true})).toBeEnabled();
+        await expect(workspace.getByRole('button', {name: 'Draft a feature suggestion', exact: true})).toHaveCount(0);
         await page.screenshot({path: `${directory}/manpower-unknown-guide.png`});
-        checked.push('exact Manpower Jobs-filter question admits unverified guidance without unrelated Contacts source, link or AI claim');
+        checked.push('exact Manpower Jobs-filter question reports missing documentation without unrelated Contacts source, link, AI claim or feature suggestion');
         for (const call of assistantCalls) {
           const serialized = JSON.stringify(call);
           assert(!serialized.includes(privateBody) && !serialized.includes('Keep private group composer draft') && !serialized.includes('synthetic-private-record'), 'Assistant payload excludes private Messaging and route contents');
@@ -280,7 +336,7 @@ async function verifyCommunication() {
       }
     }
     assert.deepEqual(errors, []);
-    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, inferenceCalls: 0, replaySource: 'evaluation.json', checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
+    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, inferenceCalls: 0, replaySource: contactsCoverageOnly ? ['../communication/evaluation.json', 'evaluation.json'] : 'evaluation.json', checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
     console.log(`TenBot communication browser checks passed (${checked.length} focused assertions; zero inference calls).`);
   } finally { await browser.close(); }
 }

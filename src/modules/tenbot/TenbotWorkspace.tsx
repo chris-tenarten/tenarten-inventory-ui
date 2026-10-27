@@ -5,7 +5,7 @@ import {useEffect,useRef,useState} from 'react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
-type Answer={mode:string;message:string;sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean};
+type Answer={mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
 type Feedback={id:string;submitter_name:string;status:string;created_at:string;draft:Draft;history:{id:number;status:string;note:string;created_at:string}[]};
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;perAccountMinuteLimit:number;monthReservedUsd:number;monthlyBudgetUsd:number};
@@ -60,6 +60,8 @@ function Workspace({reviewAllowed,identity,currentModule,visible}:{reviewAllowed
  const scroll=useRef<HTMLDivElement>(null);
  const draftForm=useRef<HTMLFormElement>(null);
  const drafting=Boolean(draft);
+ const lastAnswer=messages.at(-1)?.answer;
+ const offerSuggestion=Boolean(question.trim())||Boolean(lastAnswer?.sources.length&&lastAnswer.sources[0].status!=='unknown'&&lastAnswer.resolution!=='documentation-missing'&&lastAnswer.resolution!=='permission-denied');
  useEffect(()=>{
   if(drafting&&scroll.current&&draftForm.current?.getClientRects().length){
    scroll.current.scrollTop=draftForm.current.offsetTop;
@@ -113,7 +115,7 @@ function Workspace({reviewAllowed,identity,currentModule,visible}:{reviewAllowed
       <p className="ml-6 whitespace-pre-wrap break-words rounded-lg bg-slate-800 px-3 py-2 text-sm text-white">{m.question}</p>
       <div className="space-y-3 rounded-lg border bg-white p-3 text-sm">
        <p className="whitespace-pre-wrap">{m.answer.mode==='guide'?(m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."):m.answer.message}</p>
-       {!m.answer.sources.length&&m.answer.mode==='guide'?<p>I cannot verify that workflow for your account. You can draft a suggestion below.</p>:null}
+       {!m.answer.sources.length&&m.answer.mode==='guide'?<p>The TenOps Guide does not have enough verified information to confirm that workflow. Please check with Product.</p>:null}
        {m.answer.sources.map(s=><div key={s.id} className="border-t pt-2">
         <strong>{s.title}</strong><span className="ml-2 rounded bg-slate-100 px-1 text-xs">{s.availability==='partial'?'Partly available':s.status==='deployed'?'Available':s.status==='local'?'Unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span>
         {m.answer.mode==='ai'?<>{s.constraints?.map(rule=><p key={rule} className="mt-2 text-xs text-slate-600">{rule}</p>)}<details className="mt-2"><summary className="min-h-11 cursor-pointer py-3 text-xs text-slate-600">Read TenOps Guide</summary><p className="whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p></details></>:m.answer.mode==='verified'?null:<p className="mt-2 whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p>}{s.path?<p className="mt-2 font-medium">{s.path}</p>:null}
@@ -134,7 +136,7 @@ function Workspace({reviewAllowed,identity,currentModule,visible}:{reviewAllowed
    <form onSubmit={e=>{e.preventDefault();void ask();}} className="shrink-0 space-y-2 border-t border-slate-200 bg-white p-3">
     <label className="sr-only" htmlFor="tenbot-question">Your question</label>
     <textarea id="tenbot-question" disabled={busy} value={question} onChange={e=>setQuestion(e.target.value)} maxLength={1200} rows={2} className={field} placeholder="How do I…? Can I…?"/>
-    <div className="flex flex-wrap gap-2"><button disabled={busy||!question.trim()} className="tenops-selected-surface min-h-11 rounded px-3 text-sm font-semibold disabled:opacity-50">{busy?'Working…':'Ask TenBot'}</button><button type="button" disabled={busy||(!question.trim()&&!messages.length)} onClick={()=>void makeDraft()} className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Draft a feature suggestion</button></div>
+    <div className="flex flex-wrap gap-2"><button disabled={busy||!question.trim()} className="tenops-selected-surface min-h-11 rounded px-3 text-sm font-semibold disabled:opacity-50">{busy?'Working…':'Ask TenBot'}</button>{offerSuggestion?<button type="button" disabled={busy} onClick={()=>void makeDraft()} className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Draft a feature suggestion</button>:null}</div>
    </form>
   </>:<section className="tenbot-scroll flex-1 p-3" aria-label="Product feedback inbox">
    {reviewAllowed?<section aria-label="Shared TenBot usage" className="mb-3 space-y-1 rounded border bg-slate-50 p-3 text-xs">

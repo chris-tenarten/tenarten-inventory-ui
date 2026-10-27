@@ -8,7 +8,7 @@ import {answer,cloudflareProvider,groundedProse} from '../supabase/functions/_sh
 import {retrieve,registry} from '../supabase/functions/_shared/tenbot-knowledge';
 import {handleTenbot} from '../supabase/functions/_shared/tenbot-handler';
 import {startIntakeDatabase,sql,docker,asUser,literal,json,admin,member} from './support/intake-materials-database.mjs';
-const all=new Set(['readOperationalData','messaging.write','viewIntake']);
+const all=new Set(['readOperationalData','messaging.write','viewIntake','writeBusinessData','editProductionJobDetails']);
 let reserved=0;const reserve=async()=>{reserved++;};
 const guide=await answer({action:'ask',question:'How do I create a group conversation?'},all,null,reserve);assert.equal(guide.mode,'guide');assert.equal('receipt' in guide.snapshot,false);assert.equal(guide.sources[0].id,'group');assert.equal(reserved,0);
 assert.equal(retrieve('recurring task',all)[0].status,'unknown');assert.equal(retrieve('material lead times blend sheet',all)[0].status,'local');
@@ -16,7 +16,9 @@ assert.equal(retrieve('personal DM',new Set(['readOperationalData'])).length,0);
 // Shared record words and explicit module names are not evidence for a workflow.
 // No Manpower guide is registered; this must not become Contacts guidance.
 const manpowerQuestion='how do i filter by jobs in manpower reporting';
+const customerEditQuestion='how do i edit a saved customers details';
 for(const question of [manpowerQuestion,'How do I filter existing Jobs?','How do I filter Jobs in Inventory?','How do I filter customer Jobs in Manpower Reporting?'])assert.deepEqual(retrieve(question,all),[]);
+for(const question of ['How do I update a Job?','How do I change my email address?','How do I find saved customers Jobs?'])assert(!retrieve(question,all).some(entry=>entry.id==='customer-edit'));
 for(const [question,id,status] of [
  ['How do I create a group conversation?','group','deployed'],
  ['Can I share a Job inside a message?','share-job','unknown'],
@@ -28,6 +30,8 @@ for(const [question,id,status] of [
  ['Can I use automatic supplier prediction and forecasting?','intake-future','planned'],
  ['How do I attach a sample to a bid?','sample-bid','unknown'],
  ['How do I find a customer’s Jobs in Contacts?','customer-history','deployed'],
+ [customerEditQuestion,'customer-edit','deployed'],
+ ['How do I edit a customer in Contacts?','customer-edit','deployed'],
  ['How do I create a group in Messaging?','group','deployed'],
  ['How do I enable iPhone notifications in Settings?','notifications','deployed'],
  ['Can Intake estimate material lead times?','material-lead','local'],
@@ -36,7 +40,31 @@ for(const [question,id,status] of [
 ] as const){const entry=retrieve(question,all)[0];assert.equal(entry?.id,id);assert.equal(entry.status,status);}
 const beforeMissingGuide=reserved;let missingGuideCalls=0;
 const missingGuide=await answer({action:'ask',question:manpowerQuestion,context:['Current module: Manpower Reporting']},all,{name:'no missing-guide inference',infer:async()=>{missingGuideCalls++;throw Error('No inference allowed');}},reserve);
-assert.equal(missingGuide.mode,'verified');assert.deepEqual(missingGuide.sources,[]);assert.match(missingGuide.message,/cannot verify/);assert.equal(missingGuideCalls,0);assert.equal(reserved,beforeMissingGuide);
+assert.equal(missingGuide.mode,'verified');assert.equal(missingGuide.resolution,'documentation-missing');assert.deepEqual(missingGuide.sources,[]);assert.match(missingGuide.message,/not have enough verified information/);assert.doesNotMatch(missingGuide.message,/draft|suggestion|feature request/i);assert.equal(missingGuideCalls,0);assert.equal(reserved,beforeMissingGuide);
+// Exact reported Contacts question: missing coverage, not an absent feature.
+// Both released edit capabilities are required; denial cannot substitute Jobs.
+const editGuide=await answer({action:'ask',question:customerEditQuestion},all,null,reserve);
+assert.equal(editGuide.resolution,'available');assert.equal(editGuide.sources[0].id,'customer-edit');assert.equal(editGuide.sources[0].route,'/contacts');assert.match(editGuide.sources[0].guidance,/Customer Inspector/);assert.match(editGuide.sources[0].guidance,/Save Changes/);assert.match(editGuide.sources[0].guidance,/Existing Jobs and Proposals keep their captured information/);
+for(const excluded of ['writeBusinessData','editProductionJobDetails']){
+ const permissions=new Set([...all].filter(permission=>permission!==excluded));
+ assert.deepEqual(retrieve(customerEditQuestion,permissions),[]);
+ for(const provider of [null,{name:'never infer denied access',infer:async()=>{throw Error('Denied access must not infer');}}]){
+  const denied=await answer({action:'ask',question:customerEditQuestion},permissions,provider,reserve);
+  assert.equal(denied.resolution,'permission-denied');assert.equal(denied.mode,'verified');assert.deepEqual(denied.sources,[]);assert.match(denied.message,/exists in TenOps.*does not have permission/);assert.doesNotMatch(denied.message,/Save Changes|Customer Inspector|suggestion|feature request/);
+ }
+}
+assert.equal(reserved,beforeMissingGuide,'Documentation gaps and denied permissions must not reserve inference');
+const editProse='Open Toolbox, then Resources and Contacts. Search for the beginning of the customer’s company name and select the company name to open Customer Inspector. Edit Customer / Company Name or expand Additional Information (Optional) for Contact Name, Phone Number or Email Address, then choose Save Changes.';
+const editAnswer=await answer({action:'ask',question:customerEditQuestion+' SYNTHETIC_PRIVATE',context:['Current module: Contacts','SYNTHETIC_PRIVATE']},all,{name:'edit conversation fixture',infer:async input=>{
+ assert.equal(input.question,'Edit a saved customer’s details');assert.deepEqual(input.context,['Current module: Contacts']);assert.deepEqual(input.excerpts.map(entry=>entry.id),['customer-edit']);assert(!JSON.stringify(input).includes('SYNTHETIC_PRIVATE'));return {ids:['customer-edit'],answer:editProse};
+}},reserve);
+assert.equal(editAnswer.mode,'ai');assert.equal(editAnswer.message,editProse);assert.equal(editAnswer.resolution,'available');
+// Handler permission checks, not client claims, resolve both edit capabilities.
+const permissionChecks:string[]=[];
+const deniedHandler=await handleTenbot({action:'ask',question:customerEditQuestion,permissions:[...all]},admin,async(name,args)=>{
+ assert.equal(name,'has_app_capability');const permission=String(args?.p_capability);permissionChecks.push(permission);return {data:permission!=='writeBusinessData',error:null};
+},async()=>{throw Error('Denied handler must not reserve');},null,.2);
+assert.equal((deniedHandler as typeof editAnswer).resolution,'permission-denied');assert(permissionChecks.includes('writeBusinessData')&&permissionChecks.includes('editProductionJobDetails'));
 const crossModule=await answer({action:'ask',question:'How do I create a group conversation?',context:['Current module: My Work']},all,null,reserve);
 assert.equal(crossModule.sources[0].id,'group');
 for(const entry of registry){assert.ok(readFileSync(entry.evidence.split('#')[0]));if(entry.route)assert.ok(readFileSync('src/app'+entry.route+'/page.tsx'));if(entry.status!=='deployed')assert.equal(entry.route,null);}
@@ -63,8 +91,9 @@ const spoken=await answer({action:'ask',question:'Create a group conversation SY
 assert.equal(spoken.message,prose);assert.equal(spoken.sources[0].availability,'available');assert(spoken.sources[0].constraints.some(rule=>rule.startsWith('Only the creator')));
 const neverInfer={name:'must stay local',infer:async()=>{throw Error('A deterministic restriction must not call AI');}};
 const beforeNegative=reserved;
-for(const [question,expected] of [['add someone existing personal DM','partial'],['estimate material lead times blend sheet','unreleased'],['automatic supplier prediction forecast','planned'],['share Job message','unverified']] as const){
- const result=await answer({action:'ask',question},all,neverInfer,reserve);assert.equal(result.mode,'verified');assert.equal(result.sources[0].availability,expected);
+for(const [question,expected,resolution] of [['add someone existing personal DM','partial','partial'],['estimate material lead times blend sheet','unreleased','unavailable'],['automatic supplier prediction forecast','planned','unavailable'],['share Job message','unverified','documentation-missing']] as const){
+ const result=await answer({action:'ask',question},all,neverInfer,reserve);assert.equal(result.mode,'verified');assert.equal(result.sources[0].availability,expected);assert.equal(result.resolution,resolution);
+ if(resolution==='documentation-missing')assert.doesNotMatch(result.message,/draft|suggestion|feature request/i);
 }
 assert.equal((await answer({action:'ask',question:'personal DM'},new Set(['readOperationalData']),neverInfer,reserve)).sources.length,0);
 assert.equal(reserved,beforeNegative,'Restrictions and missing permissions consume no inference');

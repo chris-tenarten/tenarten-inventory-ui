@@ -1,21 +1,27 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
-import {retrieve,snapshot,type CapabilityEntry} from './tenbot-knowledge.ts';
+import {matchGuides,hasGuidePermission,snapshot,type CapabilityEntry} from './tenbot-knowledge.ts';
 export class TenbotError extends Error {constructor(message:string,public status=400){super(message);}}
 export type InferenceInput={question:string;context:string[];excerpts:{id:string;title:string;guidance:string;status:string}[];draft:boolean};
 export interface InferenceProvider {name:string; infer(input:InferenceInput):Promise<unknown>}
-export type Answer={mode:string;message:string;snapshot:Pick<typeof snapshot,'revision'|'verifiedAt'>;sources:{id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability:string;constraints:string[]}[];summary:string|null};
+export type Answer={mode:string;message:string;resolution:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';snapshot:Pick<typeof snapshot,'revision'|'verifiedAt'>;sources:{id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability:string;constraints:string[]}[];summary:string|null};
 export function bounded(value:unknown,max:number,required=true):string{if(typeof value!=='string'||value.length>max||(required&&!value.trim()))throw new TenbotError('Please shorten or complete the request.');return value.trim();}
 export async function answer(body:Record<string,unknown>,permissions:Set<string>,provider:InferenceProvider|null,reserve:()=>Promise<void>):Promise<Answer>{
  const question=bounded(body.question,1200),draft=body.action==='draft';
  const context=Array.isArray(body.context)?body.context.slice(-2).map(v=>bounded(v,1200)):[];
- const entries=retrieve(question,permissions);
- const result=(selected:CapabilityEntry[],mode:string,message:string,summary:string|null=null):Answer=>({mode,message,snapshot:{revision:snapshot.revision,verifiedAt:snapshot.verifiedAt},sources:selected.map(publicSource),summary});
+ const matches=matchGuides(question),primary=matches[0];
+ const permitted=primary&&hasGuidePermission(primary,permissions);
+ const resolution:Answer['resolution']=!primary?'documentation-missing':!permitted?'permission-denied':primary.status==='unknown'?'documentation-missing':availability(primary)==='available'?'available':availability(primary)==='partial'?'partial':'unavailable';
+ const entries=matches.filter(entry=>hasGuidePermission(entry,permissions)).slice(0,3);
+ const result=(selected:CapabilityEntry[],mode:string,message:string,summary:string|null=null):Answer=>({mode,message,resolution,snapshot:{revision:snapshot.revision,verifiedAt:snapshot.verifiedAt},sources:selected.map(publicSource),summary});
+ // A failed search is neither proof of an unavailable feature nor a reason to
+ // suggest one. Denied primary matches must not fall through to weaker guides.
+ if(!draft&&!primary)return result([],'verified','The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.');
+ if(!draft&&!permitted)return result([],'verified',primary.status==='deployed'?`${primary.title} exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.`:'Your account does not have permission to access guidance for that workflow. Ask an administrator to review your access.');
  if(!provider)return result(entries,'guide','Here is guidance from the TenOps Guide.');
- const primary=entries[0];
  // Availability is a deterministic decision, never a model-selected claim.
  // Known restrictions need no external call and cannot be replaced by a weaker match.
- if(!draft&&(!primary||availability(primary)!=='available'))return result(primary?[primary]:[],'verified',primary?plainGuide(primary.guidance):'I cannot verify that workflow for your account. You can draft a feature suggestion.');
+ if(!draft&&availability(primary)!=='available')return result([primary],'verified',plainGuide(primary.guidance));
  await reserve();
  let raw:unknown;
  try{raw=await provider.infer({question:primary?.title||'No verified guide match',context:context.filter(text=>/^Current module: (TenOps|Production|My Work|Settings|Contacts|Intake|Samples|Inventory|Purchasing|Manpower Reporting)$/.test(text)),excerpts:(draft?entries:[primary]).map(({id,title,guidance,status})=>({id,title,guidance,status})),draft});}catch{throw new TenbotError('TenBot AI is unavailable. Please retry later; the rest of TenOps is available.',503);}
