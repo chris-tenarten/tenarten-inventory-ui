@@ -1,0 +1,26 @@
+{
+  "method": "Human source-grounding review of the four captured real local requests. Post-capture guard replays are explicitly labeled and do not represent new inference.",
+  "turns": [
+    {
+      "id": "rework-manpower",
+      "assessment": "Helpful grounded prose after correcting an overly strict punctuation guard. Gives actual Create Rework and Job labor review steps across both supplied workflows.",
+      "limitations": "The prose omits completed/unarchived/no-active-cycle prerequisites and history-loading limits; authoritative source caveats remain visible. Original guard failure and no-call acceptance replay are preserved."
+    },
+    {
+      "id": "rework-manpower-followup",
+      "assessment": "Real conversational follow-up was not validated: provider failed and direct search returned the honest documentation-gap fallback.",
+      "limitations": "Captured input also lost the prior assistant transcript because its plain > breadcrumb was rejected by the old assistant-text privacy filter. A later focused no-model regression verifies that corrected filtering preserves the transcript and both topics; no replacement real call was made."
+    },
+    {
+      "id": "contacts-group-feature",
+      "assessment": "Correctly identifies Contacts editing, group creation and unverified recurring tasks across three supplied sources. Clear but incomplete workflow prose.",
+      "limitations": "Contacts navigation omits Resources → Contacts and Save Changes; group instructions omit the final Create group confirmation. Complete verified source paths/guidance are still supplied. The inference prompt was clarified afterward; no claim of a new real evaluation of that prompt."
+    },
+    {
+      "id": "contacts-group-feature-followup",
+      "assessment": "Model accuracy failure: phrasing claims someone can be added to an existing personal DM through creating a new group, contradicting the partial capability contract. Corrected guard rejects this unchanged raw response and returns the verified direct-guide fallback.",
+      "limitations": "The initial accepted AI answer, unchanged raw model response, and explicit post-capture rejection/fallback are retained. Existing Jobs/Proposals preservation was correctly stated, but the invalid DM claim makes the combined generated answer unacceptable."
+    }
+  ],
+  "conclusion": "Four bounded real requests yielded two useful but imperfect generated answers, one provider failure, and one inaccurate generated answer now rejected. Multi-turn real-model quality remains incompletely validated. All 20 existing local reservations are consumed; no cap bypass or additional call was made."
+}

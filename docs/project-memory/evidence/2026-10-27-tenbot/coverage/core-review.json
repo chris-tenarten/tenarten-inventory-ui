@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "command": "./node_modules/.bin/tsx scripts/verify-tenbot.mts --core-only",
+  "realInferenceCalls": 0,
+  "hostedQueries": 0,
+  "databaseBranchesUnchanged": true,
+  "databaseBranchSuffixSha256": "10f835285da4bd9cc19278421a060a258cc5d0ed06728d9c906555ade7740e64",
+  "maintainedExampleCount": 89,
+  "validated": [
+    "Every maintained example selects its workflow first, supports direct-search fallback and has existing source files at released snapshot bc628bd.",
+    "Exact Rework, Manpower Job-filtering and Contacts-editing questions return the released workflows.",
+    "Unknown requested actions retain an honest direct fallback; a model may ask a source-free clarification without implying a supported workflow.",
+    "Unsupported action verbs survive privacy projection rather than becoming false-supported questions.",
+    "Read-only/permission-denied workflows and disabled Planning do not invoke inference or reserve usage.",
+    "Existing has_proposal_access RPC and business-write gate are enforced without an invented app-capability alias or client-claimed permissions.",
+    "Actual privacy-filtered question and bounded own-assistant transcript reach inference; source titles do not replace the question.",
+    "One answer may reason across Rework and Manpower sources, and a pronoun-only follow-up retains the prior workflow.",
+    "Blocked private records/credentials stay local without provider calls.",
+    "Only supplied unique source IDs are accepted; bounded prose rejects unsafe metadata, invented controls/routes, privileged execution claims and known permission/privacy-rule reversals.",
+    "A permitted customer-history source cannot authorize imperative editing instructions for denied customer editing. Denied model input contains no restricted controls or steps.",
+    "Administrator aggregate usage checks and feature-draft confirmation entry point remain intact."
+  ],
+  "reviewedContracts": [
+    "Handler resolves existing authenticated RPC permission checks for precisely the current conversation guide candidates; shared reservation/finish actions remain unchanged.",
+    "Permitted source instructions and denied public title/state metadata are separated before provider dispatch. Server-owned notices retain restrictions even if the model omits a source.",
+    "Direct fallback uses strict/expanded direct matches; high-recall related guides are reserved for conversational interpretation and do not manufacture direct availability.",
+    "Projection accepts only fixed module labels and bounded Employee/TenBot own-exchange shapes. It rejects pasted transcript/record/credential shapes and removes names, identifiers and URLs.",
+    "Provider remains one bounded request after reservation, fixed model/options, existing shared/burst/monthly/free allowance safeguards and direct-guide fallback."
+  ],
+  "limitations": [
+    "Regex output guards reject demonstrated errors; they do not prove semantic entailment for arbitrary model prose.",
+    "Vocabulary/shape privacy filtering cannot semantically distinguish every private phrase made solely of ordinary workflow words. The application does not retrieve business records, DMs, group messages or official notices into TenBot context.",
+    "Actual model quality and multi-turn behavior require the separately bounded real evaluation; this verifier uses mocks only."
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "passed": true,
+  "origin": "http://localhost:3000",
+  "outputs": [
+    {
+      "question": "how do i initiate a rework for a job?",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": true
+      }
+    },
+    {
+      "question": "how do i filter by jobs in manpower reporting",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "manpower-job-filter",
+            "title": "Filter Manpower Reporting by Job",
+            "status": "deployed",
+            "guidance": "Employees with business-write access can filter labor by Production Job. Open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates. Search and filters are not exhaustive until all available history is loaded. Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production.",
+            "path": "Reporting → Manpower Reporting → Job labor review",
+            "route": "/manpower-reporting",
+            "source": "Manpower Reporting guide · released workflow verified October 27",
+            "availability": "available",
+            "constraints": [
+              "Employees with business-write access can filter labor by Production Job.",
+              "Use Clear job filter or All reporting groups to reset.",
+              "Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates.",
+              "Search and filters are not exhaustive until all available history is loaded.",
+              "Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": true
+      }
+    },
+    {
+      "question": "how do i edit a saved customers details",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information.",
+            "path": "Toolbox → Resources → Contacts → Search customers → customer name → Customer Inspector → Save Changes",
+            "route": "/contacts",
+            "source": "Contacts guide · released October 20",
+            "availability": "available",
+            "constraints": [
+              "Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes.",
+              "Existing Jobs and Proposals keep their captured information."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": true
+      }
+    },
+    {
+      "question": "How do I export payroll in Manpower Reporting?",
+      "answer": {
+        "mode": "verified",
+        "message": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": true
+      }
+    }
+  ],
+  "usage": {
+    "dayStart": "2026-10-27T00:00:00+00:00",
+    "dayFailed": 8,
+    "dayResetAt": "2026-10-28T00:00:00+00:00",
+    "monthStart": "2026-10-01T00:00:00+00:00",
+    "dayCompleted": 12,
+    "sharedDayUsed": 20,
+    "sharedDayLimit": 20,
+    "monthReservedUsd": 0.2,
+    "sharedDayRemaining": 0,
+    "perAccountMinuteLimit": 6,
+    "monthlyBudgetUsd": 0.2
+  },
+  "newInferenceCalls": 0
+}

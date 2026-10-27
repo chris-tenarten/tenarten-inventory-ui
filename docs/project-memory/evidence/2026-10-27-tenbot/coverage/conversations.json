@@ -1,0 +1,475 @@
+{
+  "outputs": [
+    {
+      "id": "rework-manpower",
+      "question": "how do i initiate a rework for a job? Also, how do i filter by jobs in manpower reporting?",
+      "context": [
+        "Current module: Production"
+      ],
+      "input": {
+        "question": "how do i initiate a rework for a job also how do i filter by jobs in manpower reporting",
+        "context": [
+          "Current module: Production"
+        ],
+        "excerpts": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking."
+          },
+          {
+            "id": "manpower-job-filter",
+            "title": "Filter Manpower Reporting by Job",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees with business-write access can filter labor by Production Job. Open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates. Search and filters are not exhaustive until all available history is loaded. Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "production-rework-create",
+          "manpower-job-filter"
+        ],
+        "answer": "To initiate a rework for a job, open the job in Production, select Create Rework, choose a reason, describe the rework scope, enter the intake/return date, and select Create Rework. To filter by jobs in manpower reporting, open Reporting > Manpower Reporting, choose the job in Job labor review, and use the Clear job filter or All reporting groups to reset. Then, select a job and use the Product Category filter to narrow products.",
+        "summary": "Draft a new rework request with a clear reason and scope description."
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To initiate a rework for a job, open the job in Production, select Create Rework, choose a reason, describe the rework scope, enter the intake/return date, and select Create Rework. To filter by jobs in manpower reporting, open Reporting > Manpower Reporting, choose the job in Job labor review, and use the Clear job filter or All reporting groups to reset. Then, select a job and use the Product Category filter to narrow products.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "manpower-job-filter",
+            "title": "Filter Manpower Reporting by Job",
+            "status": "deployed",
+            "guidance": "Employees with business-write access can filter labor by Production Job. Open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates. Search and filters are not exhaustive until all available history is loaded. Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production.",
+            "path": "Reporting → Manpower Reporting → Job labor review",
+            "route": "/manpower-reporting",
+            "source": "Manpower Reporting guide · released workflow verified October 27",
+            "availability": "available",
+            "constraints": [
+              "Employees with business-write access can filter labor by Production Job.",
+              "Use Clear job filter or All reporting groups to reset.",
+              "Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates.",
+              "Search and filters are not exhaustive until all available history is loaded.",
+              "Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "at": "2026-10-27T19:45:03.407Z",
+      "before": 16,
+      "after": 17,
+      "originalGuardError": "TenBot could not verify the answer wording.",
+      "initialFallbackAnswer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "manpower-job-filter",
+            "title": "Filter Manpower Reporting by Job",
+            "status": "deployed",
+            "guidance": "Employees with business-write access can filter labor by Production Job. Open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates. Search and filters are not exhaustive until all available history is loaded. Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production.",
+            "path": "Reporting → Manpower Reporting → Job labor review",
+            "route": "/manpower-reporting",
+            "source": "Manpower Reporting guide · released workflow verified October 27",
+            "availability": "available",
+            "constraints": [
+              "Employees with business-write access can filter labor by Production Job.",
+              "Use Clear job filter or All reporting groups to reset.",
+              "Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates.",
+              "Search and filters are not exhaustive until all available history is loaded.",
+              "Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": true
+      },
+      "guardReplay": {
+        "at": "2026-10-27T19:46:12.603Z",
+        "method": "Captured original model output replayed through corrected core validation using a mock provider and no-op reservation hook. No provider dispatch or usage-ledger write.",
+        "externalInferenceCalls": 0,
+        "usageReservations": 0,
+        "originalRawUnchanged": true,
+        "accepted": true
+      }
+    },
+    {
+      "id": "rework-manpower-followup",
+      "question": "What if that button is missing, and can a read-only employee use that Job filter?",
+      "context": [
+        "Current module: Production",
+        "Conversation context:\nEmployee: how do i initiate a rework for a job? Also, how do i filter by jobs in manpower reporting?\nTenBot: To initiate a rework for a job, open the job in Production, select Create Rework, choose a reason, describe the rework scope, enter the intake/return date, and select Create Rework. To filter by jobs in manpower reporting, open Reporting > Manpower Reporting, choose the job in Job labor review, and use the Clear job filter or All reporting groups to reset. Then, select a job and use the Product Category filter to narrow products."
+      ],
+      "input": {
+        "question": "what if that button is missing and can a read only employee use that job filter",
+        "context": [
+          "Current module: Production"
+        ],
+        "excerpts": [],
+        "draft": false
+      },
+      "error": "TenBot AI is unavailable. Please retry later; the rest of TenOps is available.",
+      "answer": {
+        "mode": "verified",
+        "message": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": true
+      },
+      "at": "2026-10-27T19:47:17.331Z",
+      "before": 17,
+      "after": 18
+    },
+    {
+      "id": "contacts-group-feature",
+      "question": "How do I edit a saved customers details and create a group conversation? Can My Work tasks repeat weekly?",
+      "context": [
+        "Current module: My Work"
+      ],
+      "input": {
+        "question": "how do i edit a saved customers details and create a group conversation can my work tasks repeat weekly",
+        "context": [
+          "Current module: My Work"
+        ],
+        "excerpts": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information."
+          },
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes."
+          },
+          {
+            "id": "recurring",
+            "title": "Recurring tasks",
+            "status": "unknown",
+            "guidance": "Account decision: unverified. The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "customer-edit",
+          "group",
+          "recurring"
+        ],
+        "answer": "To edit a saved customer's details, open Toolbox, search for the customer's company name, select the company, and edit the details in Customer Inspector. To create a group conversation, open Messaging, choose New group, enter a group name, and select participants. For recurring tasks, check with Product as the feature's status is unverified.",
+        "summary": "Draft a request to Product to verify the recurring tasks feature."
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To edit a saved customer's details, open Toolbox, search for the customer's company name, select the company, and edit the details in Customer Inspector. To create a group conversation, open Messaging, choose New group, enter a group name, and select participants. For recurring tasks, check with Product as the feature's status is unverified.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information.",
+            "path": "Toolbox → Resources → Contacts → Search customers → customer name → Customer Inspector → Save Changes",
+            "route": "/contacts",
+            "source": "Contacts guide · released October 20",
+            "availability": "available",
+            "constraints": [
+              "Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes."
+            ]
+          },
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging groups and replies · released October 22",
+            "availability": "available",
+            "constraints": [
+              "Only the creator can rename the group or add/remove participants.",
+              "Current members share the full history; removed members lose access.",
+              "Previously signed attachment links may remain usable for up to ten minutes."
+            ]
+          },
+          {
+            "id": "recurring",
+            "title": "Recurring tasks",
+            "status": "unknown",
+            "guidance": "The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product.",
+            "path": "",
+            "route": null,
+            "source": "Deployed capability review · October 27",
+            "availability": "unverified",
+            "constraints": [
+              "The TenOps Guide does not have enough verified information to confirm recurring tasks.",
+              "This does not mean the feature is unavailable."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product."
+        ],
+        "suggestionAllowed": false
+      },
+      "at": "2026-10-27T19:48:55.760Z",
+      "before": 18,
+      "after": 19
+    },
+    {
+      "id": "contacts-group-feature-followup",
+      "question": "Will that update existing Jobs and Proposals too? Can I add someone to an existing personal DM? Please draft a feature request for weekly tasks.",
+      "context": [
+        "Current module: My Work",
+        "Conversation context:\nEmployee: How do I edit a saved customers details and create a group conversation? Can My Work tasks repeat weekly?\nTenBot: To edit a saved customer's details, open Toolbox, search for the customer's company name, select the company, and edit the details in Customer Inspector. To create a group conversation, open Messaging, choose New group, enter a group name, and select participants. For recurring tasks, check with Product as the feature's status is unverified."
+      ],
+      "input": {
+        "question": "will that update existing jobs and proposals too can i add someone to an existing personal dm please draft a feature request for weekly tasks",
+        "context": [
+          "Current module: My Work",
+          "Conversation context:\nEmployee: how do i edit a saved customers details and create a group conversation can my work tasks repeat weekly\nTenBot: to edit a saved customer s details open toolbox search for the customer s company name select the company and edit the details in customer inspector to create a group conversation open messaging choose new group enter a group name and select participants for recurring tasks check with product as the feature s status is"
+        ],
+        "excerpts": [
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Account decision: partial. Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group."
+          },
+          {
+            "id": "recurring",
+            "title": "Recurring tasks",
+            "status": "unknown",
+            "guidance": "Account decision: unverified. The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product."
+          },
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "dm",
+          "recurring",
+          "customer-edit"
+        ],
+        "answer": "You can add someone to an existing personal DM by creating a new group and inviting the person. However, existing jobs and proposals will not be updated. To edit a saved customer's details, open Toolbox, search for the customer's company name, select the company, and edit in Customer Inspector. Recurring tasks are not verified, so check with Product for more information. To create a weekly task, check with Product as well. Draft a feature request for weekly tasks.",
+        "summary": "Draft a feature request for weekly tasks, including the ability to add someone to an existing personal DM and recurring tasks."
+      },
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "partial",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging privacy contract · released October 22",
+            "availability": "partial",
+            "constraints": [
+              "Partially: you can start a new group, but you cannot add a third person to a personal DM.",
+              "The old DM stays private and its history is not copied into the group."
+            ]
+          },
+          {
+            "id": "recurring",
+            "title": "Recurring tasks",
+            "status": "unknown",
+            "guidance": "The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product.",
+            "path": "",
+            "route": null,
+            "source": "Deployed capability review · October 27",
+            "availability": "unverified",
+            "constraints": [
+              "The TenOps Guide does not have enough verified information to confirm recurring tasks.",
+              "This does not mean the feature is unavailable."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+          "The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product."
+        ],
+        "suggestionAllowed": true,
+        "fallback": true
+      },
+      "at": "2026-10-27T19:49:32.886Z",
+      "before": 19,
+      "after": 20,
+      "initialAIAnswer": {
+        "mode": "ai",
+        "message": "You can add someone to an existing personal DM by creating a new group and inviting the person. However, existing jobs and proposals will not be updated. To edit a saved customer's details, open Toolbox, search for the customer's company name, select the company, and edit in Customer Inspector. Recurring tasks are not verified, so check with Product for more information. To create a weekly task, check with Product as well. Draft a feature request for weekly tasks.",
+        "resolution": "partial",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging privacy contract · released October 22",
+            "availability": "partial",
+            "constraints": [
+              "Partially: you can start a new group, but you cannot add a third person to a personal DM.",
+              "The old DM stays private and its history is not copied into the group."
+            ]
+          },
+          {
+            "id": "recurring",
+            "title": "Recurring tasks",
+            "status": "unknown",
+            "guidance": "The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product.",
+            "path": "",
+            "route": null,
+            "source": "Deployed capability review · October 27",
+            "availability": "unverified",
+            "constraints": [
+              "The TenOps Guide does not have enough verified information to confirm recurring tasks.",
+              "This does not mean the feature is unavailable."
+            ]
+          },
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information.",
+            "path": "Toolbox → Resources → Contacts → Search customers → customer name → Customer Inspector → Save Changes",
+            "route": "/contacts",
+            "source": "Contacts guide · released October 20",
+            "availability": "available",
+            "constraints": [
+              "Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes.",
+              "Existing Jobs and Proposals keep their captured information."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+          "The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product."
+        ],
+        "suggestionAllowed": true
+      },
+      "error": "TenBot could not verify the answer wording.",
+      "guardRejection": {
+        "at": "2026-10-27T19:51:35.041Z",
+        "status": 502,
+        "message": "TenBot could not verify the answer wording.",
+        "method": "Captured original response replayed through corrected DM guard using a mock provider and no-op reservation hook, then direct-guide fallback. No provider dispatch or usage-ledger write.",
+        "externalInferenceCalls": 0,
+        "usageReservations": 0,
+        "originalRawUnchanged": true,
+        "initialAIAnswerRetained": true
+      }
+    }
+  ],
+  "qualityReview": {
+    "method": "Human source-grounding review of the four captured real local requests. Post-capture guard replays are explicitly labeled and do not represent new inference.",
+    "turns": [
+      {
+        "id": "rework-manpower",
+        "assessment": "Helpful grounded prose after correcting an overly strict punctuation guard. Gives actual Create Rework and Job labor review steps across both supplied workflows.",
+        "limitations": "The prose omits completed/unarchived/no-active-cycle prerequisites and history-loading limits; authoritative source caveats remain visible. Original guard failure and no-call acceptance replay are preserved."
+      },
+      {
+        "id": "rework-manpower-followup",
+        "assessment": "Real conversational follow-up was not validated: provider failed and direct search returned the honest documentation-gap fallback.",
+        "limitations": "Captured input also lost the prior assistant transcript because its plain > breadcrumb was rejected by the old assistant-text privacy filter. A later focused no-model regression verifies that corrected filtering preserves the transcript and both topics; no replacement real call was made."
+      },
+      {
+        "id": "contacts-group-feature",
+        "assessment": "Correctly identifies Contacts editing, group creation and unverified recurring tasks across three supplied sources. Clear but incomplete workflow prose.",
+        "limitations": "Contacts navigation omits Resources → Contacts and Save Changes; group instructions omit the final Create group confirmation. Complete verified source paths/guidance are still supplied. The inference prompt was clarified afterward; no claim of a new real evaluation of that prompt."
+      },
+      {
+        "id": "contacts-group-feature-followup",
+        "assessment": "Model accuracy failure: phrasing claims someone can be added to an existing personal DM through creating a new group, contradicting the partial capability contract. Corrected guard rejects this unchanged raw response and returns the verified direct-guide fallback.",
+        "limitations": "The initial accepted AI answer, unchanged raw model response, and explicit post-capture rejection/fallback are retained. Existing Jobs/Proposals preservation was correctly stated, but the invalid DM claim makes the combined generated answer unacceptable."
+      }
+    ],
+    "conclusion": "Four bounded real requests yielded two useful but imperfect generated answers, one provider failure, and one inaccurate generated answer now rejected. Multi-turn real-model quality remains incompletely validated. All 20 existing local reservations are consumed; no cap bypass or additional call was made."
+  }
+}

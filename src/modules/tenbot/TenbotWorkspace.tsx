@@ -5,13 +5,14 @@ import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
-type Answer={mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean};
+type Answer={mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
 type Feedback={id:string;submitter_name:string;status:string;created_at:string;draft:Draft;history:{id:number;status:string;note:string;created_at:string}[]};
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;perAccountMinuteLimit:number;monthReservedUsd:number;monthlyBudgetUsd:number};
 const statuses=['New','Needs Clarification','Under Consideration','Backlogged','Declined','Shipped'];
 const modules=['General','Messaging','My Work','Intake','Production','Inventory','Purchasing','Contacts','Settings'];
 const field='min-h-11 w-full rounded border border-slate-300 bg-white px-3 py-2 text-base';
+const routeLabels:Record<string,string>={'/my-work':'My Work','/settings':'Settings','/contacts':'Contacts','/production':'Production','/manpower-reporting':'Manpower Reporting','/inventory':'Inventory','/activity':'Inventory Activity','/samples':'Samples','/proposals':'Proposals'};
 async function invoke<T>(body:Record<string,unknown>,owner:string):Promise<T>{
  const {data:sessionData}=await supabase.auth.getSession();
  if(!owner||sessionData.session?.user.id!==owner)throw new Error('Your account changed. Reopen TenBot to continue.');
@@ -45,6 +46,20 @@ type Turn={id:number;question:string;createdAt:string;answeredAt?:string;answer:
 type AssistantEntry={id:string;createdAt:string;content:ReactNode};
 export type TenbotConversation={available:boolean;busy:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;activityKey:string};
 const messageTime=(value:string)=>new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date(value));
+function conversationContext(label:string,messages:Turn[]){
+ const fixedModule=`Current module: ${label}`,prefix='Conversation context:\n';
+ let previous='';
+ // Only this account's completed assistant exchanges enter follow-up context.
+ // Never include official notices, employee conversations, files or source metadata.
+ for(const turn of messages.filter(item=>item.answer).slice(-2).reverse()){
+  const answer=turn.answer!;
+  const prose=answer.mode==='guide'?answer.sources.map(source=>source.guidance).join(' ')||answer.message:answer.message;
+  const exchange=`Employee: ${turn.question.slice(0,450)}\nTenBot: ${prose.slice(0,650)}`;
+  const next=previous?`${exchange}\n${previous}`:exchange;
+  if(fixedModule.length+prefix.length+next.length<=1200)previous=next;
+ }
+ return [fixedModule,...(previous?[prefix+previous]:[])];
+}
 
 // InboxDialog owns this hook for one authenticated account. It accepts only an
 // explicitly submitted question, never Messaging history, recipients or records.
@@ -72,7 +87,7 @@ export function useTenbotConversation():TenbotConversation{
    draftForm.current.querySelector('textarea')?.focus({preventScroll:true});
   }
  },[drafting]);
- const context=()=>[`Current module: ${currentModule.label}`,...messages.filter(m=>m.answer).slice(-1).map(m=>m.question)];
+ const context=()=>conversationContext(currentModule.label,messages);
  const request=<T,>(body:Record<string,unknown>)=>invoke<T>(body,owner);
  function begin(){if(!available||lock.current)return false;lock.current=true;setBusy(true);setError('');return true;}
  function finish(){lock.current=false;setBusy(false);}
@@ -128,11 +143,12 @@ export function useTenbotConversation():TenbotConversation{
     <p className="text-xs font-semibold text-slate-600">TenBot · Assistant</p>
     {m.answer?<>
      <p className="whitespace-pre-wrap break-words leading-relaxed text-slate-800">{m.answer.mode==='guide'?(m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."):m.answer.message}</p>
+     {m.answer.notices?.filter(note=>note!==m.answer?.message&&!m.answer?.sources.some(source=>source.constraints?.includes(note))).map(note=><p key={note} className="text-xs text-slate-600">{note}</p>)}
      {!m.answer.sources.length&&m.answer.mode==='guide'?<p>The TenOps Guide does not have enough verified information to confirm that workflow. Please check with Product.</p>:null}
      {m.answer.sources.map(s=><div key={s.id} className="border-t pt-2">
-      <strong>{s.title}</strong><span className="ml-2 rounded bg-slate-100 px-1 text-xs">{s.availability==='partial'?'Partly available':s.status==='deployed'?'Available':s.status==='local'?'Unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span>
+      <strong>{s.title}</strong><span className="ml-2 rounded bg-slate-100 px-1 text-xs">{s.availability==='unavailable'?'Not enabled':s.availability==='partial'?'Partly available':s.status==='deployed'?'Available':s.status==='local'?'Unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span>
       {m.answer?.mode==='ai'?<>{s.constraints?.map(rule=><p key={rule} className="mt-2 text-xs text-slate-600">{rule}</p>)}<details className="mt-2"><summary className="min-h-11 cursor-pointer py-3 text-xs text-slate-600">Read TenOps Guide</summary><p className="whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p></details></>:m.answer?.mode==='verified'?null:<p className="mt-2 whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p>}{s.path?<p className="mt-2 font-medium">{s.path}</p>:null}
-      {s.route?<Link className="inline-block min-h-11 py-3 font-semibold text-blue-800 underline" href={s.route}>Open {s.route==='/settings'?'Settings':s.route==='/contacts'?'Contacts':'My Work'}</Link>:null}
+      {s.route?<Link className="inline-block min-h-11 py-3 font-semibold text-blue-800 underline" href={s.route}>Open {routeLabels[s.route]||'workflow'}</Link>:null}
      </div>)}
      {m.answer.sources.length?<p className="text-xs text-slate-500">Source: TenOps Guide</p>:null}
     </>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">Working…</p>}
@@ -141,7 +157,7 @@ export function useTenbotConversation():TenbotConversation{
  const history=available?<div role="log" aria-label="TenBot conversation" aria-live="polite">{entries.map(entry=><div key={entry.id}>{entry.content}</div>)}</div>:null;
  const controls=(question:string):ReactNode=>{
   if(!available)return null;
-  const offerSuggestion=Boolean(question.trim())||Boolean(lastAnswer?.sources.length&&lastAnswer.sources[0].status!=='unknown'&&lastAnswer.resolution!=='documentation-missing'&&lastAnswer.resolution!=='permission-denied');
+  const offerSuggestion=Boolean(question.trim())||Boolean(lastAnswer?.suggestionAllowed)||Boolean(lastAnswer?.sources.length&&lastAnswer.sources[0].status!=='unknown'&&lastAnswer.resolution!=='documentation-missing'&&lastAnswer.resolution!=='permission-denied');
   return <div className="space-y-3" data-tenbot-controls>
    {error?<p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
    {notice?<p role="status" className="rounded bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}

@@ -1,5 +1,6 @@
 import {
   MODEL,
+  INFERENCE_CONTRACT,
   inferenceRequest,
   parseInferenceOutput,
   type InferenceInput,
@@ -95,7 +96,7 @@ const worker = {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.headers.has('origin') || !authorized(request, env.TENBOT_PILOT_BRIDGE_KEY)) return json({ error: 'Forbidden' }, 403);
     const path = new URL(request.url).pathname;
-    if (path === '/health' && request.method === 'GET') return json({ ready: true });
+    if (path === '/health' && request.method === 'GET') return json({ ready: true, model: MODEL, inferenceContract: INFERENCE_CONTRACT });
     if (path !== '/infer') return json({ error: 'Not found' }, 404);
     if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
     let body: InferenceInput;

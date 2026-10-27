@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Node fixture shares untyped SQL helpers.
-// @ts-nocheck -- Local-only adapter; only canonical guide excerpts reach AI.
+// @ts-nocheck -- Local-only adapter; only privacy-filtered workflow intent, own-assistant context and vetted excerpts reach AI.
 import {createServer} from 'node:http';
 import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
 import {sql,literal,json,asUser,admin,docker,startIntakeDatabase} from './support/intake-materials-database.mjs';
@@ -19,7 +19,7 @@ else sql(container,'begin;'+migration.slice(migration.indexOf('create function p
 const sharedUsage=readFileSync('supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql','utf8');
 sql(container,sharedUsage.replace('create function public.tenbot_usage_summary','create or replace function public.tenbot_usage_summary'));
 if(process.argv.includes('--refresh-only')){console.log('Local TenBot RPCs refreshed; feedback preserved.');process.exit(0);}
-const rpc=(role='authenticated')=>async(name,args={})=>{try{if(!/^(has_app_capability|tenbot_[a-z_]+)$/.test(name))throw Error('Unsupported local RPC');const expression=`public.${name}(${Object.entries(args).map(([k,v])=>`${k}=>${typeof v==='object'?json(v):typeof v==='boolean'?String(v):v===null?'null':literal(v)}`).join(',')})`;const query=asUser('select to_jsonb('+expression+')',admin,role);
+const rpc=(role='authenticated')=>async(name,args={})=>{try{if(!/^(has_app_capability|has_proposal_access|tenbot_[a-z_]+)$/.test(name))throw Error('Unsupported local RPC');const expression=`public.${name}(${Object.entries(args).map(([k,v])=>`${k}=>${typeof v==='object'?json(v):typeof v==='boolean'?String(v):v===null?'null':literal(v)}`).join(',')})`;const query=asUser('select to_jsonb('+expression+')',admin,role);
  const raw=sql(container,query);
  return {data:raw?JSON.parse(raw):null,error:null};}catch(e){return {data:null,error:{message:e.message}};}};
 const server=createServer(async(req,res)=>{

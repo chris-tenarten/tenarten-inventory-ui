@@ -1,0 +1,833 @@
+{
+  "releasedRevision": "bc628bd",
+  "entries": 34,
+  "workflows": [
+    {
+      "id": "group",
+      "permission": "messaging.write",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "dm",
+      "permission": "messaging.write",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "notifications",
+      "permission": "readOperationalData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/components/PushNotificationSettings.tsx",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "recurring",
+      "permission": "readOperationalData",
+      "additionalPermissions": [],
+      "status": "unknown",
+      "availability": null,
+      "sourceFiles": []
+    },
+    {
+      "id": "share-job",
+      "permission": "messaging.write",
+      "additionalPermissions": [],
+      "status": "unknown",
+      "availability": null,
+      "sourceFiles": []
+    },
+    {
+      "id": "sample-bid",
+      "permission": "viewIntake",
+      "additionalPermissions": [],
+      "status": "unknown",
+      "availability": null,
+      "sourceFiles": []
+    },
+    {
+      "id": "customer-history",
+      "permission": "readOperationalData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/production/contacts/ContactsWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/contacts/queries.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "customer-edit",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [
+        "editProductionJobDetails"
+      ],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/production/contacts/CustomerInspector.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/contacts/ContactsWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261014190000_production_contact_configuration.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "material-lead",
+      "permission": "viewIntake",
+      "additionalPermissions": [],
+      "status": "local",
+      "availability": null,
+      "sourceFiles": []
+    },
+    {
+      "id": "intake-future",
+      "permission": "viewIntake",
+      "additionalPermissions": [],
+      "status": "planned",
+      "availability": null,
+      "sourceFiles": []
+    },
+    {
+      "id": "production-find-job",
+      "permission": "readOperationalData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "production-create-job",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/production/components/ProductionJobCreator.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/jobs.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261014222000_preserve_archived_project_contact_refresh.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "production-schedule",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/components/ProductionJobInspector.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/components/ScheduleReviewDialog.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/schedule-staging.ts",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/schedule-batch-contract.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "production-rework-create",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/production/components/ReworkQuickAction.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/components/CreateReworkDialog.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/components/ProductionJobInspector.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/rework.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260817_003_production_rework_cycles.sql",
+          "exists": true
+        },
+        {
+          "path": "docs/architecture/production-rework.md",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "production-rework-status",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/production/components/ProductionJobInspector.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/jobs.ts",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/status-visuals.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260817_003_production_rework_cycles.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "production-files",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/production/components/ProductionJobInspector.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/jobs.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "planning-phase",
+      "permission": "readOperationalData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": "unavailable",
+      "sourceFiles": [
+        {
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/production/components/ProductionJobInspector.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/planning/timeline-model.mjs",
+          "exists": true
+        },
+        {
+          "path": "src/modules/planning/PlanningPanel.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/planning/PlanningPhaseEditor.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/planning/data.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "planning-items",
+      "permission": "readOperationalData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": "unavailable",
+      "sourceFiles": [
+        {
+          "path": "src/modules/planning/timeline-model.mjs",
+          "exists": true
+        },
+        {
+          "path": "src/modules/planning/PlanningPanel.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/planning/PlanningItemEditor.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/planning/progress.mjs",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "manpower-job-filter",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/components/BusinessWriteControls.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/manpower/manpower.ts",
+          "exists": true
+        },
+        {
+          "path": "src/app/client-layout-shell.tsx",
+          "exists": true
+        },
+        {
+          "path": "docs/project-memory/2026-10-20-manpower-progressive-release.md",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "manpower-record-labor",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/manpower/product-reporting.ts",
+          "exists": true
+        },
+        {
+          "path": "src/modules/manpower/work-target.ts",
+          "exists": true
+        },
+        {
+          "path": "src/components/BusinessWriteControls.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/lib/rbac.ts",
+          "exists": true
+        },
+        {
+          "path": "docs/project-memory/2026-10-20-manpower-progressive-release.md",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "inventory-stock-search",
+      "permission": "readOperationalData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/app/inventory/page.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/inventory/retrieval.ts",
+          "exists": true
+        },
+        {
+          "path": "src/app/client-layout-shell.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/lib/rbac.ts",
+          "exists": true
+        },
+        {
+          "path": "docs/project-memory/2026-10-19-manpower-inventory-wave4.md",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "inventory-pending-create",
+      "permission": "adjustInventory",
+      "additionalPermissions": [
+        "writeBusinessData"
+      ],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/app/inventory/page.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/components/BusinessWriteControls.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/lib/rbac.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260923160200_partial_pending_receipts.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "inventory-pending-receive",
+      "permission": "receiveInventory",
+      "additionalPermissions": [
+        "writeBusinessData"
+      ],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/app/inventory/page.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/components/BusinessWriteControls.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/lib/rbac.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260923160200_partial_pending_receipts.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "inventory-stock-reservation",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/app/inventory/page.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/components/BusinessWriteControls.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/lib/rbac.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260721_001_atomic_inventory_reservations.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "inventory-stock-movement",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/app/inventory/page.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/components/BusinessWriteControls.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/lib/rbac.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "inventory-activity",
+      "permission": "readOperationalData",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/app/activity/page.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/inventory/retrieval.ts",
+          "exists": true
+        },
+        {
+          "path": "src/app/client-layout-shell.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/lib/rbac.ts",
+          "exists": true
+        },
+        {
+          "path": "docs/project-memory/2026-10-19-manpower-inventory-wave4.md",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "sample-save",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [
+        "readOperationalData"
+      ],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/components/ToolboxLauncher.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/samples/SampleWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/samples/SampleResinSystemSelector.tsx",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261006190000_sample_color_plate_allocation.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "sample-work-order",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [
+        "readOperationalData"
+      ],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/components/ToolboxLauncher.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/samples/SampleWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/samples/sample-errors.ts",
+          "exists": true
+        },
+        {
+          "path": "src/modules/samples/sample-validation-view.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261001010000_sample_batch_first_authority.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "proposal-create",
+      "permission": "proposal.access",
+      "additionalPermissions": [
+        "writeBusinessData"
+      ],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/components/ToolboxLauncher.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/proposals/ProposalWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/proposals/ProposalPanel.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/proposals/queries.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260827_004_proposal_generator_v1.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260828_014_generic_proposal_creation.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "proposal-issue-revise",
+      "permission": "proposal.access",
+      "additionalPermissions": [
+        "writeBusinessData"
+      ],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/components/ToolboxLauncher.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/proposals/ProposalWorkspace.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/proposals/ProposalPanel.tsx",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260827_004_proposal_generator_v1.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260908_004_proposal_generator_v2.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "my-work-create",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [
+        "readOperationalData"
+      ],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/my-work/MyWorkPage.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/my-work/queries.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260827_012_my_work_mvp.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260831_021_my_work_task_estimated_time.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "my-work-complete",
+      "permission": "writeBusinessData",
+      "additionalPermissions": [
+        "readOperationalData"
+      ],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/my-work/MyWorkPage.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/my-work/queries.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20260827_012_my_work_mvp.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "message-reply",
+      "permission": "messaging.write",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261022140000_messaging_removed_sender_entry_guards.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "message-attachments",
+      "permission": "messaging.write",
+      "additionalPermissions": [],
+      "status": "deployed",
+      "availability": null,
+      "sourceFiles": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "exists": true
+        },
+        {
+          "path": "src/modules/my-work/messaging/useAttachmentQueue.ts",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+          "exists": true
+        },
+        {
+          "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+          "exists": true
+        }
+      ]
+    }
+  ],
+  "verifiedSourcePathReferences": 122,
+  "verifiedUniqueSourcePaths": 62,
+  "entriesWithoutSourceFiles": [
+    "recurring",
+    "share-job",
+    "sample-bid",
+    "material-lead",
+    "intake-future"
+  ],
+  "scope": "Exact Git-tree existence plus focused permission-source inspection; no claim of fresh hosted policy/record verification.",
+  "permissionReview": {
+    "contacts": "Saved shared customer editing requires writeBusinessData and editProductionJobDetails via can_manage_production_contacts(true).",
+    "proposals": "has_proposal_access is a separate active-admin/explicit-grant RPC, not an app capability; handler correctly calls it for proposal.access. Business-write guards apply separately.",
+    "pendingReceivals": "Creation/edit require adjustInventory; receiving requires receiveInventory; generic business-write restriction remains.",
+    "manpowerJobFilter": "Job labor review is a BusinessSelect, so its current control requires writeBusinessData; ordinary Search manpower uses an input.",
+    "productionReworkPlanningFiles": "Generic Business controls/write guards match actual released source; named role-only capabilities are not newly asserted.",
+    "samples": "Sample save/issue use BusinessButton; existing operational-read RPC/storage boundary retained.",
+    "myWork": "Participant ownership remains enforced by existing RPC/RLS; read/write capabilities do not grant access to others private tasks.",
+    "messaging": "Existing messaging.write plus conversation participant/creator rules; no new service or authority assumed."
+  }
+}

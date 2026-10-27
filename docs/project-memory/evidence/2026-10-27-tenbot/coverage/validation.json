@@ -1,0 +1,25 @@
+{
+  "tier": 3,
+  "testingLevel": 3,
+  "status": "local safeguards and focused checks passed; real answer quality mixed and pending Product review",
+  "commands": {
+    "node --import tsx scripts/verify-tenbot.mts --core-only": "passed:89examples and focused behavior/grounding guards",
+    "node --import tsx scripts/verify-tenbot.mts --pilot-local-only": "passed:sharedcap/fallback/auth/origin; real reservations preserved",
+    "node --import tsx scripts/verify-tenbot-ai-binding.mts": "passed:49mock binding/privacy cases",
+    "node scripts/verify-tenbot-browser.mjs --knowledge-coverage-only": "passed:24groups;4captured outcomes replayed;0newinference/pageerrors/unexpectedorigins",
+    "tsc --noEmit": "passed:application and separately shared Edge files",
+    "eslint --no-ignore selected changed source/verifier paths": "passed",
+    "git diff --check": "passed",
+    "local-review-environment npm run build -- --webpack": "passed:final UI artifact"
+  },
+  "realEvaluation": {
+    "reservationAttempts": 4,
+    "providerResponses": 3,
+    "usefulButImperfect": 2,
+    "providerFailure": 1,
+    "inaccurateResponseNowGuarded": 1,
+    "afterFixRealRetest": "not performed:existingday/monthceilings exhausted"
+  },
+  "scope": "No hosted migrations/mutations, employee messages, budget increase, paid activation, push or deployment. Existing database policy branches unchanged; prior relevant feedback/RLS evidence reused. Physical iPhone keyboard/Web Push remain manual.",
+  "actualLocalApi": "Passed exact Rework/Manpower/Contacts, unrelated-action honest fallback and administrator aggregate at preserved 20 reservations; zero inference."
+}

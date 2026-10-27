@@ -3,6 +3,7 @@ import {readFileSync,writeFileSync,mkdirSync,appendFileSync,readdirSync,existsSy
 import {randomBytes} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
+import {projectConversation} from '../../supabase/functions/_shared/tenbot-privacy.ts';
 export const pilotDirectory='/private/tmp/tenops-tenbot-review/ai-pilot';
 export const pilotAccount='1c3296a9dced221746eb605be66df0f3';
 export const pilotModel='@cf/meta/llama-3.1-8b-instruct-fp8';
@@ -68,11 +69,11 @@ export function pilotProvider(){
   if(active)throw Error('One pilot request at a time');
   active=true;
   try{
+  const safe=guideOnlyInput(input);
   const ready=JSON.parse(readFileSync(path.join(pilotDirectory,'ready.json'),'utf8'));
   if(ready.plan!=='Workers Free'||!freshConfirmation(ready.freePlanConfirmedAt))throw Error('Free-only verification expired');
   // Leave time for direct search before the existing browser's 20s deadline.
   const usage=await dailyAiUsage(4000);if(usage.nominalRemainingNeurons<pilotCaps.neuronHeadroom+pilotCaps.conservativeNeuronsPerRequest)throw Error('Free allowance headroom reached');
-  const safe=guideOnlyInput(input);
   const started=Date.now();const response=await fetch(bridge.url+'/infer',{method:'POST',headers:{'Content-Type':'application/json','x-tenbot-pilot-key':bridge.key},body:JSON.stringify(safe),signal:AbortSignal.timeout(10000)});
   if(!response.ok)throw Error('Remote binding unavailable');
   const text=await response.text();if(text.length>16000)throw Error('Oversized binding result');const value=JSON.parse(text);
@@ -81,10 +82,12 @@ export function pilotProvider(){
   }finally{active=false;}
  }};
 }
-// Retrieval stays local. Neither raw employee wording nor previous chat leaves
-// this process, including names, record contents, arbitrary secrets or URLs.
-// The model explains a vetted guide topic; original wording remains local.
+// Defense in depth: preserve privacy-filtered actual intent and own-assistant
+// context, rather than replacing the request with a canonical guide title.
+// The shared projection documents its vocabulary/shape guard's limits.
 export function guideOnlyInput(input){
  if(input.draft)throw Error('Feature drafts remain employee-written in this pilot');
- return {question:input.excerpts[0]?.title||'No verified guide match',draft:false,excerpts:input.excerpts,context:input.context.filter(text=>/^Current module: (TenOps|Production|My Work|Settings|Contacts|Intake|Samples|Inventory|Purchasing|Manpower Reporting)$/.test(text))};
+ const projected=projectConversation(input.question,input.context);
+ if(!projected.question)throw Error('No safe workflow question; use local guide fallback');
+ return {...projected,draft:false,excerpts:input.excerpts};
 }
