@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-27T18:02:12.476Z",
+  "aggregate": {
+    "status": 200,
+    "answer": {
+      "usage": {
+        "dayStart": "2026-10-27T00:00:00+00:00",
+        "dayFailed": 6,
+        "dayResetAt": "2026-10-28T00:00:00+00:00",
+        "monthStart": "2026-10-01T00:00:00+00:00",
+        "dayCompleted": 10,
+        "sharedDayUsed": 16,
+        "sharedDayLimit": 20,
+        "monthReservedUsd": 0.16,
+        "sharedDayRemaining": 4,
+        "perAccountMinuteLimit": 6,
+        "monthlyBudgetUsd": 0.2
+      }
+    }
+  },
+  "cloudflare": {
+    "checkedAt": "2026-10-27T18:02:12.156Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 56.17753557488322,
+    "reportedRequests": 12,
+    "nominalRemainingNeurons": 9943.822464425117
+  },
+  "analyticsCaveat": "Account-shared analytics can lag. Failed/reserved attempts remain counted in the local conservative budget."
+}

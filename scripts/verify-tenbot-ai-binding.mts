@@ -91,7 +91,7 @@ try {
   assert.deepEqual(projected, { ...input, question: input.excerpts[0].title });
   assert.equal(JSON.stringify(projected).includes(privateText), false, 'raw wording and prior conversation stay local');
   assert.equal(raw.question, privateText, 'projection does not rewrite employee input');
-  for (const moduleLabel of ['TenOps', 'Production', 'My Work', 'Settings', 'Contacts', 'Intake', 'Samples', 'Inventory', 'Purchasing']) {
+  for (const moduleLabel of ['TenOps', 'Production', 'My Work', 'Settings', 'Contacts', 'Intake', 'Samples', 'Inventory', 'Purchasing', 'Manpower Reporting']) {
     assert.deepEqual(guideOnlyInput({ ...raw, context: ['Current module: ' + moduleLabel] }).context, ['Current module: ' + moduleLabel]);
   }
   assert.deepEqual(guideOnlyInput({ ...raw, excerpts: [] }), { question: 'No verified guide match', draft: false, excerpts: [], context: ['Current module: My Work'] });

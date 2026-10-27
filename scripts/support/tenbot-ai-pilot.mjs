@@ -1,18 +1,29 @@
 // Local Product pilot only. Wrangler credentials never enter the binding payload.
-import {readFileSync,writeFileSync,mkdirSync,appendFileSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,appendFileSync,readdirSync,existsSync} from 'node:fs';
 import {randomBytes} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
 import path from 'node:path';
 export const pilotDirectory='/private/tmp/tenops-tenbot-review/ai-pilot';
 export const pilotAccount='1c3296a9dced221746eb605be66df0f3';
 export const pilotModel='@cf/meta/llama-3.1-8b-instruct-fp8';
-export const pilotCaps={perUserDay:12,totalDay:20,perMinute:6,monthlyUsd:0.20,neuronHeadroom:2000,conservativeNeuronsPerRequest:200};
-// Called only with the server's fixed fixture identity and server-built SQL.
-export function pilotReservationQuery(query,user){
- if(!/^[0-9a-f-]{36}$/.test(user))throw Error('Invalid local identity');
- return `begin; do $$ begin perform pg_advisory_xact_lock(27120001); if (select count(*) from public.tenbot_usage where created_at >= date_trunc('day',now() at time zone 'UTC') at time zone 'UTC') >= ${pilotCaps.totalDay} or (select count(*) from public.tenbot_usage where user_id='${user}'::uuid and created_at >= date_trunc('day',now() at time zone 'UTC') at time zone 'UTC') >= ${pilotCaps.perUserDay} then raise exception 'Local pilot daily cap reached'; end if; end $$; ${query}; commit;`;
-}
+export const pilotCaps={totalDay:20,perMinute:6,monthlyUsd:0.20,neuronHeadroom:2000,conservativeNeuronsPerRequest:200};
 function freshConfirmation(value){const stamp=Date.parse(value);return Number.isFinite(stamp)&&stamp<=Date.now()&&Date.now()-stamp<=8*60*60*1000;}
-export function oauthToken(){const text=readFileSync('/Users/chrisngo/.wrangler/config/default.toml','utf8');const token=text.match(/^oauth_token\s*=\s*"([^"]+)"/m)?.[1];if(!token)throw Error('Wrangler login unavailable');return token;}
+export function existingWrangler(){
+ const root='/Users/chrisngo/.npm/_npx';
+ for(const id of readdirSync(root)){const dir=path.join(root,id,'node_modules/wrangler');if(existsSync(path.join(dir,'package.json'))&&JSON.parse(readFileSync(path.join(dir,'package.json'),'utf8')).version==='4.151.0')return path.join(dir,'bin/wrangler.js');}
+ throw Error('Existing Wrangler 4.151.0 unavailable; no package installed automatically');
+}
+export function oauthToken(){
+ const file='/Users/chrisngo/.wrangler/config/default.toml';let text=readFileSync(file,'utf8');
+ const fresh=()=>Date.parse(text.match(/^expiration_time\s*=\s*"([^"]+)"/m)?.[1])>Date.now()+5000;
+ if(!fresh()){
+  // Use Wrangler's existing refresh flow; never implement or log credentials.
+  // Four seconds leaves room for quota/inference/fallback inside the UI deadline.
+  execFileSync(process.execPath,[existingWrangler(),'whoami'],{stdio:'ignore',timeout:4000,env:{...process.env,CI:'true',WRANGLER_SEND_METRICS:'false'}});
+  text=readFileSync(file,'utf8');if(!fresh())throw Error('Wrangler authentication unavailable');
+ }
+ const token=text.match(/^oauth_token\s*=\s*"([^"]+)"/m)?.[1];if(!token)throw Error('Wrangler login unavailable');return token;
+}
 async function cloudflare(route,body,timeoutMs=10000){
  const response=await fetch('https://api.cloudflare.com/client/v4/'+route,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+oauthToken(),...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(timeoutMs)});
  const value=await response.json();if(!response.ok||value.success===false||value.errors?.length)throw Error('Cloudflare verification unavailable');return value;
@@ -72,8 +83,8 @@ export function pilotProvider(){
 }
 // Retrieval stays local. Neither raw employee wording nor previous chat leaves
 // this process, including names, record contents, arbitrary secrets or URLs.
-// This pilot evaluates model selection of vetted guidance, not free-form prose.
+// The model explains a vetted guide topic; original wording remains local.
 export function guideOnlyInput(input){
  if(input.draft)throw Error('Feature drafts remain employee-written in this pilot');
- return {question:input.excerpts[0]?.title||'No verified guide match',draft:false,excerpts:input.excerpts,context:input.context.filter(text=>/^Current module: (TenOps|Production|My Work|Settings|Contacts|Intake|Samples|Inventory|Purchasing)$/.test(text))};
+ return {question:input.excerpts[0]?.title||'No verified guide match',draft:false,excerpts:input.excerpts,context:input.context.filter(text=>/^Current module: (TenOps|Production|My Work|Settings|Contacts|Intake|Samples|Inventory|Purchasing|Manpower Reporting)$/.test(text))};
 }

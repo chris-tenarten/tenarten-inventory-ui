@@ -29,7 +29,6 @@ import { useAccountPreferences } from '@/lib/account-preferences';
 import AccountAccessPanel from '@/components/AccountAccessPanel';
 import AccountNotifications, { type WelcomeNotificationStatus } from '@/components/AccountNotifications';
 import GlobalMessaging from '@/components/GlobalMessaging';
-import FloatingTenbot from '@/modules/tenbot/FloatingTenbot';
 import WelcomeHero from '@/components/WelcomeHero';
 import PushNotificationEntry from '@/components/PushNotificationEntry';
 import { toolboxMenuSections } from '@/components/ToolboxLauncher';
@@ -561,7 +560,6 @@ export default function ClientLayoutShell({
           </div>
         )}
       </main>
-      {shellUnlocked && auth.can("readOperationalData") ? <FloatingTenbot key={auth.profile?.userId}/> : null}
     </div>
   );
 }

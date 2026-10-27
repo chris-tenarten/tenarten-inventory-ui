@@ -1,0 +1,293 @@
+{
+  "at": "2026-10-27T17:39:05.741Z",
+  "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+  "start": {
+    "ready": true,
+    "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+    "plan": "Workers Free",
+    "planEvidence": "Chris confirmed in Billing dashboard",
+    "freePlanConfirmedAt": "2026-10-27T17:06:00.714Z",
+    "checkedAt": "2026-10-27T17:35:53.513Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 25.04873846657574,
+    "reportedRequests": 6,
+    "nominalRemainingNeurons": 9974.951261533424,
+    "caps": {
+      "totalDay": 20,
+      "perMinute": 6,
+      "monthlyUsd": 0.2,
+      "neuronHeadroom": 2000,
+      "conservativeNeuronsPerRequest": 200
+    }
+  },
+  "outputs": [
+    {
+      "question": "How do I create a group conversation?",
+      "status": 200,
+      "durationMs": 3259,
+      "answer": {
+        "mode": "ai",
+        "message": "Open Messaging from the app header, choose New group, enter a group name, select at least one other participant, and choose Create group.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging groups and replies · released October 22",
+            "availability": "available",
+            "constraints": [
+              "Only the creator can rename the group or add/remove participants.",
+              "Current members share the full history; removed members lose access.",
+              "Previously signed attachment links may remain usable for up to ten minutes."
+            ]
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "Can I share a Job inside a message?",
+      "status": 200,
+      "durationMs": 222,
+      "answer": {
+        "mode": "verified",
+        "message": "I cannot verify a dedicated Share Job control in Messaging. Tell me what Job context you want to share and I can help draft a suggestion. Do not paste private Job records here.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "share-job",
+            "title": "Share a Job in a message",
+            "status": "unknown",
+            "guidance": "I cannot verify a dedicated Share Job control in Messaging. Tell me what Job context you want to share and I can help draft a suggestion. Do not paste private Job records here.",
+            "path": "",
+            "route": null,
+            "source": "Messaging capability review · October 27",
+            "availability": "unverified",
+            "constraints": [
+              "I cannot verify a dedicated Share Job control in Messaging.",
+              "Do not paste private Job records here."
+            ]
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "How do I enable iPhone notifications?",
+      "status": 200,
+      "durationMs": 4588,
+      "at": "2026-10-27T17:50:07.097Z",
+      "answer": {
+        "mode": "ai",
+        "message": "Open TenOps in Safari, add to Home Screen, open the app, go to Settings, find device notifications, enable and allow the system permission prompt.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "notifications",
+            "title": "Enable phone notifications",
+            "status": "deployed",
+            "guidance": "On iPhone, open TenOps in Safari, choose Share → Add to Home Screen, then open the Home Screen app. In Settings, find device notifications and choose Enable notifications on this device. Allow the system permission prompt. If permission was denied, allow notifications in iPhone Settings and retry. Device registration does not guarantee that every notification will be presented.",
+            "path": "Settings → device notifications",
+            "route": "/settings",
+            "source": "Device notification guide · reliability release October 22",
+            "availability": "available",
+            "constraints": [
+              "Allow the system permission prompt.",
+              "If permission was denied, allow notifications in iPhone Settings and retry.",
+              "Device registration does not guarantee that every notification will be presented."
+            ]
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "Can I estimate lead times from a Blend Sheet?",
+      "status": 200,
+      "durationMs": 249,
+      "answer": {
+        "mode": "verified",
+        "message": "This capability is implemented in a local candidate and has not been released to employees. Do not rely on it as an available TenOps workflow. Supplier lead-time guidance remains subject to verified inputs and Product acceptance.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "material-lead",
+            "title": "Material requirements and lead-time guidance",
+            "status": "local",
+            "guidance": "This capability is implemented in a local candidate and has not been released to employees. Do not rely on it as an available TenOps workflow. Supplier lead-time guidance remains subject to verified inputs and Product acceptance.",
+            "path": "",
+            "route": null,
+            "source": "Intake candidate · pending Product acceptance",
+            "availability": "unreleased",
+            "constraints": [
+              "This capability is implemented in a local candidate and has not been released to employees.",
+              "Do not rely on it as an available TenOps workflow."
+            ]
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "How do I find an existing customer's Jobs?",
+      "status": 200,
+      "durationMs": 3809,
+      "at": "2026-10-27T18:02:11.981Z",
+      "answer": {
+        "mode": "ai",
+        "message": "Open Contacts, search for the customer's company name, choose Linked Jobs, select a Job to open it, and view visible Production Jobs linked to that customer.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "customer-history",
+            "title": "Find a customer’s previous Jobs",
+            "status": "deployed",
+            "guidance": "Open Contacts and search for the beginning of the customer’s company name. Choose Linked Jobs beside that customer, then select a Job to open it. This shows only visible Production Jobs linked to that directory customer. Historical customer text and Bid names do not establish a link; Proposal customer details are independent snapshots.",
+            "path": "Contacts → Search customers → Linked Jobs → select a Job",
+            "route": "/contacts",
+            "source": "Contacts guide · deployed release verified October 22",
+            "availability": "available",
+            "constraints": [
+              "This shows only visible Production Jobs linked to that directory customer.",
+              "Historical customer text and Bid names do not establish a link; Proposal customer details are independent snapshots."
+            ]
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "Can I add someone to an existing personal DM?",
+      "status": 200,
+      "durationMs": 244,
+      "answer": {
+        "mode": "verified",
+        "message": "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging privacy contract · released October 22",
+            "availability": "partial",
+            "constraints": [
+              "Partially: you can start a new group, but you cannot add a third person to a personal DM.",
+              "The old DM stays private and its history is not copied into the group."
+            ]
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "Can I use automatic supplier prediction and forecasting?",
+      "status": 200,
+      "durationMs": 236,
+      "answer": {
+        "mode": "verified",
+        "message": "Further Intake intelligence is planned or deferred; I cannot describe it as available. A feature suggestion can capture the problem and desired behavior.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "intake-future",
+            "title": "Further Intake intelligence",
+            "status": "planned",
+            "guidance": "Further Intake intelligence is planned or deferred; I cannot describe it as available. A feature suggestion can capture the problem and desired behavior.",
+            "path": "",
+            "route": null,
+            "source": "Intake deferred boundaries",
+            "availability": "planned",
+            "constraints": [
+              "Further Intake intelligence is planned or deferred; I cannot describe it as available."
+            ]
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "How do I attach a sample to a bid?",
+      "status": 200,
+      "durationMs": 262,
+      "answer": {
+        "mode": "verified",
+        "message": "I cannot verify the exact deployed controls for attaching a Sample to a Bid. Please check with Product before relying on a workflow description.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "sample-bid",
+            "title": "Attach a Sample to a Bid",
+            "status": "unknown",
+            "guidance": "I cannot verify the exact deployed controls for attaching a Sample to a Bid. Please check with Product before relying on a workflow description.",
+            "path": "",
+            "route": null,
+            "source": "Intake workflow verification · October 27",
+            "availability": "unverified",
+            "constraints": [
+              "I cannot verify the exact deployed controls for attaching a Sample to a Bid."
+            ]
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "how do i filter by jobs in manpower reporting",
+      "status": 200,
+      "durationMs": 410,
+      "at": "2026-10-27T18:09:10.657Z",
+      "answer": {
+        "mode": "verified",
+        "message": "I cannot verify that workflow for your account. You can draft a feature suggestion.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [],
+        "summary": null
+      }
+    }
+  ],
+  "finalizedAt": "2026-10-27T18:02:11.986Z",
+  "initialRun": "evaluation-initial.json",
+  "correctiveEvidence": "diagnostic-evaluation.json",
+  "correction": "Accepted source-grounded navigation words go/view and ordinary permission-prompt instruction; critical access/history/availability/guarantee claims remain guarded.",
+  "authenticationCorrection": "Expired existing Wrangler OAuth caused allowance-verification 401 and safe fallback. Existing Wrangler whoami refreshed the session; local helper now reuses that bounded refresh flow without changing the Free-plan confirmation.",
+  "manpowerRegression": {
+    "beforeSharedUsed": 16,
+    "afterSharedUsed": 16,
+    "inferenceCalls": 0
+  }
+}

@@ -1,34 +1,15 @@
-/* Only TenBot's own surfaces; no backdrop, body lock or application focus trap. */
-.tenbot-launcher {
- position: fixed; z-index: 108; right: 20px; bottom: 20px;
- display: flex; align-items: center; gap: 8px; min-height: 44px;
- padding: 10px 16px; border: 1px solid #34435b; border-radius: 999px;
- background: #172554; color: white; font-size: 13px; font-weight: 700;
- box-shadow: 0 4px 16px #0f172a24;
-}
-.tenbot-launcher:hover { background: #25396c; }
-[data-tenbot-floating][data-open=true] .tenbot-launcher { visibility: hidden; }
-.tenbot-panel {
- position: fixed; z-index: 108; right: 20px; bottom: 20px;
- display: flex; flex-direction: column; width: min(420px,calc(100vw - 40px));
- height: min(700px,calc(100dvh - var(--tenops-shell-header-height,72px) - 40px));
- overflow: hidden; border: 1px solid var(--border-default,#bac5d0); border-radius: 16px;
- background: var(--surface-page,#eef1f4); color: var(--text-primary,#0f172a);
- box-shadow: 0 12px 48px #0f172a33;
-}
-.tenbot-panel[hidden] { display: none; }
-.tenbot-panel:focus { outline: none; }
-.tenbot-panel-header { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; padding: 8px 10px 8px 16px; background: #172554; color: white; }
-.tenbot-panel button:focus-visible, .tenbot-launcher:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+/* TenBot shares the existing communication shell; it adds no fixed launcher. */
+.tenbot-integrated { background: var(--surface-page,#eef1f4); color: var(--text-primary,#0f172a); }
+.tenbot-integrated > section { width: 100%; max-width: 56rem; align-self: center; }
+.tenbot-integrated textarea, .tenbot-integrated select { font-size: 16px; }
+.tenbot-integrated textarea { scroll-margin-block: 16px; }
+.tenbot-integrated button:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
 .tenbot-scroll { overscroll-behavior: contain; overflow-y: auto; overflow-x: hidden; min-height: 0; scrollbar-gutter: stable; }
-.tenbot-panel textarea, .tenbot-panel select { font-size: 16px; }
-.tenbot-panel textarea { scroll-margin-block: 16px; }
 @media (max-width:767px), (max-width:1023px) and (pointer:coarse) {
- .tenbot-launcher { right: max(12px,env(safe-area-inset-right)); bottom: calc(var(--tenops-mobile-tab-height,44px) + env(safe-area-inset-bottom) + 13px); padding: 10px 14px; }
- .tenbot-panel {
-  right: max(8px,env(safe-area-inset-right)); left: max(8px,env(safe-area-inset-left)); width: auto;
-  bottom: max(calc(var(--tenops-mobile-tab-height,44px) + env(safe-area-inset-bottom) + 9px),calc(var(--tenbot-keyboard-inset,0px) + 8px));
-  height: min(76dvh,calc(var(--tenbot-visible-height,100dvh) - var(--tenops-shell-header-height,56px) - var(--tenops-mobile-tab-height,44px) - env(safe-area-inset-bottom) - 24px));
-  border-radius: 16px 16px 10px 10px;
+ .tenops-communication-overlay {
+  top: var(--communication-visible-top,0px); bottom: auto;
+  height: var(--communication-visible-height,100dvh); padding: 0;
  }
+ .tenops-communication-panel { height: 100%; max-height: 100%; border-radius: 0; padding-top: env(safe-area-inset-top); }
+ .tenbot-integrated > section > form:last-child { padding-bottom: max(.75rem,env(safe-area-inset-bottom)); }
 }

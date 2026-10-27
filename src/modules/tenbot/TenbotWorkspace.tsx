@@ -4,10 +4,11 @@ import {usePathname} from 'next/navigation';
 import {useEffect,useRef,useState} from 'react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
-type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string};
+type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
 type Answer={mode:string;message:string;sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
 type Feedback={id:string;submitter_name:string;status:string;created_at:string;draft:Draft;history:{id:number;status:string;note:string;created_at:string}[]};
+type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;perAccountMinuteLimit:number;monthReservedUsd:number;monthlyBudgetUsd:number};
 const statuses=['New','Needs Clarification','Under Consideration','Backlogged','Declined','Shipped'];
 const modules=['General','Messaging','My Work','Intake','Production','Inventory','Purchasing','Contacts','Settings'];
 const field='min-h-11 w-full rounded border border-slate-300 bg-white px-3 py-2 text-base';
@@ -31,6 +32,7 @@ function moduleContext(pathname:string):ModuleContext{
  switch(section){
   case 'settings':return {label:'Settings',module:'Settings',examples:['How do I enable notifications on my phone?',...general.slice(0,1)]};
   case 'my-work':return {label:'My Work',module:'My Work',examples:general};
+  case 'manpower-reporting':return {label:'Manpower Reporting',module:'Production',examples:general};
   case 'samples':return {label:'Samples',module:'Intake',examples:['How do I attach a sample to a bid?','Can I estimate material lead times from a blend sheet?']};
   case 'pre-production':return {label:'Intake',module:'Intake',examples:['How do I attach a sample to a bid?','Can I estimate material lead times from a blend sheet?']};
   case 'contacts':return {label:'Contacts',module:'Contacts',examples:["Where do I find a customer's previous jobs?",general[0]]};
@@ -53,6 +55,7 @@ function Workspace({reviewAllowed,identity,currentModule,visible}:{reviewAllowed
  const [draft,setDraft]=useState<Draft|null>(null),[confirmed,setConfirmed]=useState(false);
  const [notice,setNotice]=useState(''),[tab,setTab]=useState('chat');
  const [items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState('');
+ const [usage,setUsage]=useState<Usage|null>(null),[usageError,setUsageError]=useState('');
  const [notes,setNotes]=useState<Record<string,string>>({});
  const scroll=useRef<HTMLDivElement>(null);
  const draftForm=useRef<HTMLFormElement>(null);
@@ -83,6 +86,7 @@ function Workspace({reviewAllowed,identity,currentModule,visible}:{reviewAllowed
   catch(e){setError(e instanceof Error?e.message:'Submission failed.');}finally{setBusy(false);}
  }
  async function load(status=filter,module=moduleFilter){
+  if(reviewAllowed)void invoke<{usage:Usage}>({action:'usage'}).then(r=>{setUsage(r.usage);setUsageError('');}).catch(()=>{setUsage(null);setUsageError('Usage is unavailable.');});
   setBusy(true);setError('');try{const r=await invoke<{items:Feedback[]}>({action:'list',status,module});setItems(r.items);}
   catch(e){setItems([]);setError(e instanceof Error?e.message:'Feedback unavailable.');}finally{setBusy(false);}
  }
@@ -108,11 +112,11 @@ function Workspace({reviewAllowed,identity,currentModule,visible}:{reviewAllowed
      {messages.map((m,i)=><article key={i} className="space-y-2">
       <p className="ml-6 whitespace-pre-wrap break-words rounded-lg bg-slate-800 px-3 py-2 text-sm text-white">{m.question}</p>
       <div className="space-y-3 rounded-lg border bg-white p-3 text-sm">
-       <p>{m.answer.mode==='guide'?(m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."):m.answer.message}</p>
-       {!m.answer.sources.length?<p>I cannot verify that workflow for your account. You can draft a suggestion below.</p>:null}
+       <p className="whitespace-pre-wrap">{m.answer.mode==='guide'?(m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."):m.answer.message}</p>
+       {!m.answer.sources.length&&m.answer.mode==='guide'?<p>I cannot verify that workflow for your account. You can draft a suggestion below.</p>:null}
        {m.answer.sources.map(s=><div key={s.id} className="border-t pt-2">
-        <strong>{s.title}</strong><span className="ml-2 rounded bg-slate-100 px-1 text-xs">{s.status==='deployed'?'Available':s.status==='local'?'Unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span>
-        <p className="mt-2 whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p>{s.path?<p className="mt-2 font-medium">{s.path}</p>:null}
+        <strong>{s.title}</strong><span className="ml-2 rounded bg-slate-100 px-1 text-xs">{s.availability==='partial'?'Partly available':s.status==='deployed'?'Available':s.status==='local'?'Unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span>
+        {m.answer.mode==='ai'?<>{s.constraints?.map(rule=><p key={rule} className="mt-2 text-xs text-slate-600">{rule}</p>)}<details className="mt-2"><summary className="min-h-11 cursor-pointer py-3 text-xs text-slate-600">Read TenOps Guide</summary><p className="whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p></details></>:m.answer.mode==='verified'?null:<p className="mt-2 whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p>}{s.path?<p className="mt-2 font-medium">{s.path}</p>:null}
         {s.route?<Link className="inline-block min-h-11 py-3 font-semibold text-blue-800 underline" href={s.route}>Open {s.route==='/settings'?'Settings':s.route==='/contacts'?'Contacts':'My Work'}</Link>:null}
        </div>)}
        {m.answer.sources.length?<p className="text-xs text-slate-500">Source: TenOps Guide</p>:null}
@@ -133,6 +137,10 @@ function Workspace({reviewAllowed,identity,currentModule,visible}:{reviewAllowed
     <div className="flex flex-wrap gap-2"><button disabled={busy||!question.trim()} className="tenops-selected-surface min-h-11 rounded px-3 text-sm font-semibold disabled:opacity-50">{busy?'Working…':'Ask TenBot'}</button><button type="button" disabled={busy||(!question.trim()&&!messages.length)} onClick={()=>void makeDraft()} className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Draft a feature suggestion</button></div>
    </form>
   </>:<section className="tenbot-scroll flex-1 p-3" aria-label="Product feedback inbox">
+   {reviewAllowed?<section aria-label="Shared TenBot usage" className="mb-3 space-y-1 rounded border bg-slate-50 p-3 text-xs">
+    <h3 className="font-semibold">Shared AI usage</h3>
+    {usage?<><p>{usage.sharedDayUsed} of {usage.sharedDayLimit} shared attempts used today · {usage.sharedDayRemaining} remaining.</p><p>Resets at midnight UTC. Burst limit: {usage.perAccountMinuteLimit} per minute per account.</p><p>Monthly reservation: ${Number(usage.monthReservedUsd).toFixed(2)} of ${Number(usage.monthlyBudgetUsd).toFixed(2)}. These limits do not enable paid inference.</p></>:<p>{usageError||'Loading usage…'}</p>}
+   </section>:null}
    <div className="mb-3 flex flex-wrap gap-2 text-xs">
     <label className="min-w-0 flex-1">Status<select disabled={busy} className={field} value={filter} onChange={e=>{setFilter(e.target.value);void load(e.target.value,moduleFilter);}}><option value="">All statuses</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
     <label className="min-w-0 flex-1">Module<select disabled={busy} className={field} value={moduleFilter} onChange={e=>{setModuleFilter(e.target.value);void load(filter,e.target.value);}}><option value="">All modules</option>{modules.map(m=><option key={m}>{m}</option>)}</select></label>
