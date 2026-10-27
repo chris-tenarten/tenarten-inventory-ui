@@ -150,3 +150,36 @@ Release isolation was established read-only: include Intake commits `00ce91a`, `
 Fresh remote `main` and `dev` both remain `e5382f11223efb927b4242849af8c084522f8c56`. No release SHA was created or pushed; no new deployment ID exists. Exactly `20261026100000_historical_sample_import.sql`, `20261026110000_bid_accepted_scope.sql`, `20261026120000_bid_scope_production_handoff.sql` remain approved for the eventual release, **not applied by this attempt**. Hosted predecessor definitions, partial-object/ledger state, RLS/grants, private Storage and Edge bundling remain unverified rather than failed. No material hosted migration conflict is claimed from local inspection.
 
 No builds, broad suite reruns, hosted queries/mutations, device/transport/config changes, original data changes, notifications or AI infrastructure activation occurred. TenBot and pre-existing dirty Web Push/Contacts records remain untouched. **Status: Product-accepted; release blocked by a confirmed Edge trust-boundary defect; stopped for Product review.**
+
+## Security correction and release resumption — October 27, 2026
+
+Chris explicitly authorized the narrow handler correction, local commit and release continuation once its security regression passed. Correction `74f799b` binds authenticated actor, loaded owned import ID and computed digest explicitly and allowlists only the three transcription parameters. `verify-historical-import-boundary.mts` passed ten actual-handler cases plus real privileged PostgreSQL creation, injected-parameter rejection, unchanged decoy/originals, retry and bad-digest denial. Prior candidate validation is reused. No UI, calculation, migration or permission contract changed.
+
+Read-only hosted preflight passed for exactly the three approved Intake migrations. Required predecessor bodies match released source, fixed search paths/owners/grants are compatible, no partial objects/ledger entries exist, and hosted Storage policies deny authenticated cross-bucket updates. Supabase project, existing Pages targets and Web Push workers/configuration are confirmed. This isolated release is parented to canonical `e5382f1`, contains the accepted Intake candidate plus the narrow correction, and excludes all TenBot source, migrations and AI activation. Dirty local dev remains separate.
+
+Status: **Product-accepted; security correction verified; authorized release in progress.** Apply only the three approved migrations, verify hosted security and preserved data, update only the existing Sample/Proposal Edge functions, then deploy TenDev and verify before TenOps. Actual application/deployment evidence will be appended after execution. Separate Advisory context remains unavailable; Chris's explicit decisions govern this boundary.
+
+## Executed Intake release — October 27, 2026
+
+**Deployed to TenDev, then TenOps.** Chris authorized the minimal security correction and immediate release continuation after its regression passed. Correction `74f799bda418b154498773140b9e393c814c4e76` contains only the handler allowlist/server-bound actor/import/digest and focused regression. Ten actual-handler cases and the actual privileged PostgreSQL import RPC passed, including injected/extra parameters, preserved transcription, retry, unchanged originals and digest rejection. This supersedes the stopped preflight above; Product acceptance of `5a7159c` is preserved.
+
+Isolated runtime **`bc628bdafea374f6a5fd446d7e924ff9d65918bf`**, parented to canonical `e5382f1`, contains the accepted Intake changes plus that correction. The shared shell takes only Intake's Early Access removal. All unfinished TenBot commits, migrations, messaging integration and AI infrastructure remain excluded; the dirty local dev checkout and its parallel TenBot commits were preserved. Only explicit isolated SHAs were promoted, never local dev wholesale. Existing Git-archive/environment-config/artifact-hash/Pages workflow was reused without a new worktree.
+
+At **2026-10-27T18:34:02.022169+00:00**, exactly these approved migrations committed in one guarded repeatable-read transaction:
+
+1. `20261026100000_historical_sample_import.sql`
+2. `20261026110000_bid_accepted_scope.sql`
+3. `20261026120000_bid_scope_production_handoff.sql`
+
+Actual predecessor bodies matched their correct released sources. Immediate preconditions rejected drift/partial state; postconditions confirmed all existing protected rows, other Storage buckets and unrelated migration entries unchanged atomically. Existing Sample/Proposal/Job/Inventory data and issued snapshots were neither rewritten nor backfilled. Only aggregate checksums left PostgreSQL. Hosted checks passed for service-only persistence, denied direct digest bypass, read-only capture RLS, private original Storage, immutable retention, retained predecessor bodies, existing policies/triggers and unchanged Web Push transport/Cron.
+
+Only existing Edge functions were updated: **generate-sample-pdf v50** (`aca8265a-5cc1-4dd8-b4df-e28a4b6e524e`) and **generate-proposal-pdf v38** (`0c25a597-ca3f-4dfe-9007-ae76ea14bce1`). Both remain ACTIVE with JWT verification enabled; downloaded bundles contain the accepted source/correction and retention guard, OPTIONS succeeds for both origins, and anonymous requests are denied. Prior bundles are retained privately. Other Edge functions are unchanged; Web Push remains TenDev v27 / TenOps v16.
+
+| Target | Runtime | Deployment ID |
+| --- | --- | --- |
+| [TenDev](https://tendev.pages.dev) | `bc628bd` | `60a6ba08-2ef3-4dd6-9b25-d68bb9016101` |
+| [TenOps](https://tenops.pages.dev) | `bc628bd` | `4bd400e3-dc15-47d1-8e50-adf595b4c6c9` |
+
+Both real-environment exports passed with identical source manifests, correct target branding, existing backend configuration and no local fixtures/TenBot runtime. Each served origin matched **41** expected HTML/runtime/chunk/manifest/service-worker artifacts. Mobile browser checks on Intake, Samples, Proposals, Inventory and My Work showed normal auth gates, zero page errors, unexpected external calls or hosted writes. Prior signed-in synthetic workflow tests were reused; no live import, document issuance, Bid conversion, device enrollment, notification or test push was performed. Physical-device and populated-historical-Excel limits remain unchanged.
+
+Final read-only checks at **2026-10-27T18:49:48.678Z** confirmed migration checksums, no TenBot migrations or additional Edge infrastructure, unchanged Pages configuration and Web Push transport/Cron/workers, and the expected deployed SHAs/IDs. Independent evidence review passed. Sanitized outcomes are under `production_release` in the existing [evidence receipt](evidence/2026-10-27-intake-material-intelligence.json); private task artifacts remain in `.tmp-intake-graduation-release/`. No broad test rerun or unrelated change. Documentation-only receipt promotion uses build-skip markers; runtime remains `bc628bd`.
