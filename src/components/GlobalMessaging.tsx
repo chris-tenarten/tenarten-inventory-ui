@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { ChevronDown, Inbox, Send, Sparkles, X } from "lucide-react";
+import { ChevronDown, Inbox, Send, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Component, useCallback, useEffect, useMemo, useRef, useState, type ErrorInfo, type ReactNode } from "react";
 import { createPortal } from "react-dom";
@@ -11,6 +11,7 @@ import { isTenOpsSystemInboxUser, tenbotConversations, TENOPS_SYSTEM_INBOX_USER_
 import { MessagingAwareness } from "@/modules/my-work/messaging/awareness";
 import { InvalidatedRead } from "@/lib/coalesced-read";
 import type { WorkCollaborator } from "@/modules/my-work/types";
+import { TenbotAvatar } from "@/modules/tenbot/TenbotAvatar";
 import { OPEN_TENBOT_EVENT } from "@/modules/tenbot/events";
 import "@/modules/tenbot/tenbot.css";
 
@@ -112,7 +113,7 @@ export default function GlobalMessaging(){
   if(!currentUserId||!auth.isAuthenticated||!auth.profile?.isActive)return null;
   const showMenu=()=>{setMenuOpen(true);loadRecent();};
   const toggleSidebar=()=>{if(window.matchMedia("(max-width: 767px)").matches){openModal();return;}const next=!sidebarOpen;if(next)loadRecent();else setSidebarExpanded(false);setSidebarOpen(next);window.sessionStorage.setItem(SIDEBAR_SESSION_KEY,next?"shown":"hidden");setMenuOpen(false);};
-  const recentList=(compact=false)=><>{recentLoading&&!conversations.length?<p className="px-4 py-6 text-center text-xs text-slate-500">Loading recent messages…</p>:conversations.slice(0,compact?10:4).map(conversation=><button key={conversation.userId} type="button" onClick={()=>openModal(conversation.userId)} className="flex w-full gap-2 border-b border-slate-200 px-3 py-3 text-left hover:bg-slate-50"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold ${conversation.isSystem?"tenops-selected-surface":"border-slate-300 bg-slate-50"}`}>{conversation.isSystem?<Sparkles className="h-3.5 w-3.5"/>:initials(conversation.name)}</span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><strong className="truncate text-xs">{conversation.name}</strong>{conversation.latest.createdAt?<time className="shrink-0 text-[9px] text-slate-400">{recentTime(conversation.latest.createdAt)}</time>:null}</span><span className="mt-1 flex items-center gap-2"><span className="min-w-0 flex-1 truncate text-[11px] text-slate-500">{conversation.latest.body}</span>{conversation.unread?<span className="inline-flex min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold text-white">{conversation.unread}</span>:null}</span></span></button>)}{!recentLoading&&!conversations.length?<p className="px-4 py-6 text-center text-xs text-slate-500">No conversations yet.</p>:null}</>;
+  const recentList=(compact=false)=><>{recentLoading&&!conversations.length?<p className="px-4 py-6 text-center text-xs text-slate-500">Loading recent messages…</p>:conversations.slice(0,compact?10:4).map(conversation=><button key={conversation.userId} type="button" onClick={()=>openModal(conversation.userId)} className="flex w-full gap-2 border-b border-slate-200 px-3 py-3 text-left hover:bg-slate-50"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${conversation.isSystem?"":"border border-slate-300 bg-slate-50"}`}>{conversation.isSystem?<TenbotAvatar className="h-full w-full"/>:initials(conversation.name)}</span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><strong className="truncate text-xs">{conversation.name}</strong>{conversation.latest.createdAt?<time className="shrink-0 text-[9px] text-slate-400">{recentTime(conversation.latest.createdAt)}</time>:null}</span><span className="mt-1 flex items-center gap-2"><span className="min-w-0 flex-1 truncate text-[11px] text-slate-500">{conversation.latest.body}</span>{conversation.unread?<span className="inline-flex min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold text-white">{conversation.unread}</span>:null}</span></span></button>)}{!recentLoading&&!conversations.length?<p className="px-4 py-6 text-center text-xs text-slate-500">No conversations yet.</p>:null}</>;
 
   return <>
     <div data-messaging-navigation ref={menuRef} className="relative flex shrink-0" onMouseEnter={()=>{if(!window.matchMedia("(max-width: 767px), (max-width: 1023px) and (pointer: coarse)").matches)showMenu();}} onMouseLeave={()=>setMenuOpen(false)} onFocus={()=>{if(!window.matchMedia("(max-width: 767px), (max-width: 1023px) and (pointer: coarse)").matches)showMenu();}} onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget))setMenuOpen(false);}}>

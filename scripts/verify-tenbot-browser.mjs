@@ -4,11 +4,12 @@ import {mkdirSync, writeFileSync, readFileSync, existsSync} from 'node:fs';
 
 const privacyOnly=process.argv.includes('--privacy-only');
 const presentationOnly=process.argv.includes('--presentation-only');
+const iconOnly=process.argv.includes('--icon-only');
 const conversationOnly = process.argv.includes('--conversation-only') || process.argv.length === 2;
 const refinementOnly = process.argv.includes('--refinement-only');
 const liveInferenceOnce = refinementOnly && process.argv.includes('--live-inference-once');
 const knowledgeCoverageOnly = process.argv.includes('--knowledge-coverage-only') || refinementOnly;
-if (presentationOnly || privacyOnly || conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
+if (iconOnly || presentationOnly || privacyOnly || conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
   await verifyConversation();
   process.exit(0);
 }
@@ -18,7 +19,7 @@ if (presentationOnly || privacyOnly || conversationOnly || knowledgeCoverageOnly
 // pass one ordinary Messaging Send through the existing actual local adapter.
 async function verifyConversation() {
   const origin = 'http://localhost:3000', endpoint = 'http://localhost:55593';
-  const directory = `/private/tmp/tenops-tenbot-review/${presentationOnly ? 'polish/browser' : privacyOnly ? 'privacy/browser' : refinementOnly ? 'refinement/browser' : knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
+  const directory = `/private/tmp/tenops-tenbot-review/${iconOnly ? 'icon/browser' : presentationOnly ? 'polish/browser' : privacyOnly ? 'privacy/browser' : refinementOnly ? 'refinement/browser' : knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
   const captured = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/communication/evaluation.json', 'utf8')).outputs;
   const coverage = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/contacts-coverage/evaluation.json', 'utf8')).outputs;
   const workflowCoverageFile = `/private/tmp/tenops-tenbot-review/${refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'}`;
@@ -63,7 +64,7 @@ async function verifyConversation() {
   ].map(message => ({...message, created_at: stamp, read_at: null, attachments: message.id === officialId ? [{id: '00000000-0000-4000-8000-000000910003', message_id: officialId, storage_path: officialStorage, original_filename: officialFilename, content_type: 'application/pdf', byte_size: 128, created_at: stamp, preview: null}] : []}));
   const rowsFor = (messages, peer) => messages.filter(message => message.group_id ? message.group_id === peer : message.sender_user_id === peer || message.recipient_user_id === peer);
   try {
-    for (const admin of [true, false]) {
+    for (const admin of iconOnly?[true]:[true, false]) {
       const context = await browser.newContext({viewport: {width: 1440, height: 1000}});
       const calls = [], assistantCalls = [], messages = structuredClone(initialMessages), realtime = [], blocked = [];
       let answer = group.answer, holdNextAsk = false, failNextAsk = false, releasePending, activeUserId = user, authUserOverride, releaseProfile, switchedProfileSeen = false, nextAskLive = false;
@@ -180,6 +181,57 @@ async function verifyConversation() {
         await expect(page.getByRole('region', {name: 'TenBot workspace', exact: true})).toHaveCount(0);
         await expect(page.locator('.tenbot-launcher')).toHaveCount(0);
         await choose('TenBot');
+        if(iconOnly){
+          const avatar=async(locator,size)=>{
+            await expect(locator).toHaveCount(1);await expect(locator).toBeVisible();
+            await expect(locator).toHaveAttribute('aria-hidden','true');await expect(locator).toHaveAttribute('focusable','false');
+            const box=await locator.boundingBox();assert.equal(box.width,size);assert.equal(box.height,size);
+            const drawing=await locator.evaluate(el=>({viewBox:el.getAttribute('viewBox'),circle:getComputedStyle(el.querySelector('circle')).fill,strokes:Array.from(el.querySelectorAll('[stroke]')).map(path=>getComputedStyle(path).stroke)}));
+            assert(drawing.viewBox&&drawing.circle!=='none'&&drawing.strokes.includes('rgb(255, 255, 255)'),'Scalable navy badge retains white outline');
+            return drawing;
+          };
+          const captureThemes=async(name,check)=>{
+            let previous;
+            for(const appearance of ['light','dark']){
+              await page.evaluate(value=>document.documentElement.dataset.appearance=value,appearance);
+              const drawing=await check();if(previous&&drawing)assert.deepEqual(drawing,previous,'TenBot icon contrast stays stable across appearances');previous=drawing;
+              if(await panel.isVisible())await contained();
+              assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Icon surface has no viewport overflow');
+              await page.screenshot({path:`${directory}/${name}-${appearance}.png`,animations:'disabled'});
+            }
+          };
+          const row=panel.locator('aside').getByRole('button').filter({has:page.getByText('TenBot',{exact:true})});
+          const headerAvatar=panel.locator('[data-tenbot-avatar]').last();
+          await captureThemes('desktop-conversation',async()=>{
+            await avatar(row.locator('[data-tenbot-avatar]'),36);
+            await expect(panel.locator('[data-tenbot-avatar]')).toHaveCount(2);
+            await expect(panel.locator('.lucide-sparkles')).toHaveCount(0);
+            return avatar(headerAvatar,32);
+          });
+          const svg=await headerAvatar.evaluate(el=>el.outerHTML);
+          await panel.getByRole('button',{name:'Close Inbox',exact:true}).click();
+          await messagingButton.hover();const menu=page.getByRole('menu',{name:'Messaging menu',exact:true});await expect(menu).toBeVisible();await expect(menu.locator('..')).toHaveCSS('opacity','1');
+          await captureThemes('desktop-recent-menu',()=>avatar(menu.locator('[data-tenbot-avatar]'),32));
+          await menu.getByRole('switch',{name:'Message sidebar',exact:true}).click();
+          await page.getByRole('button',{name:'Expand message sidebar',exact:true}).click();await expect(panel).toBeVisible();await choose('TenBot');
+          await captureThemes('desktop-sidebar',()=>avatar(headerAvatar,32));
+          await panel.getByRole('button',{name:'Close Inbox',exact:true}).click();
+          await page.setViewportSize({width:390,height:844});await messagingButton.click();await expect(panel).toBeVisible();await expect(input).toBeVisible();
+          await expect(panel.getByText('Updating conversation…',{exact:true})).toHaveCount(0);
+          await captureThemes('mobile-conversation',()=>avatar(headerAvatar,32));
+          await panel.getByRole('button',{name:'Back to conversations',exact:true}).click();
+          await captureThemes('mobile-conversation-list',()=>avatar(row.locator('[data-tenbot-avatar]'),36));
+          await choose('Draft Review Bob');await expect(panel.locator('[data-tenbot-avatar]')).toHaveCount(1);
+          await expect(panel.locator('[data-tenbot-avatar]').last()).not.toBeVisible();
+          await expect(history.getByText(privateBody,{exact:true})).toBeVisible();
+          assert.equal(assistantCalls.length,0,'Icon rendering makes no assistant service calls');
+          assert(!calls.some(call=>call.name==='send_my_work_message_v12'),'Icon rendering sends no employee messages');
+          await page.setViewportSize({width:600,height:360});
+          await page.setContent(`<main style="display:flex;gap:24px;padding:24px;font:14px system-ui">${['#fff','#172033'].map(background=>`<section style="background:${background};color:${background==='#fff'?'#172033':'#fff'};padding:24px;display:flex;gap:16px">${[24,32,36].map(size=>`<figure style="margin:0;text-align:center">${svg.replace(/class="[^"]*"/,'').replace(/\s(?:width|height)="[^"]*"/g,'').replace('<svg ',`<svg width="${size}" height="${size}" `)}<figcaption>${size}px</figcaption></figure>`).join('')}</section>`).join('')}</main>`);
+          await page.screenshot({path:`${directory}/avatar-sizes.png`});
+          checked.push('approved rotary-tool avatar in desktop recent menu, full conversation row/header and sidebar','mobile conversation/list retain 32px/36px avatar sizing and viewport containment','navy/white contrast survives existing light/dark appearance','actual SVG renders at 24px/32px/36px; ordinary employee avatar remains initials','zero assistant calls or employee sends');
+          continue;
+        }
         if(presentationOnly){
           const actionMenu=panel.getByLabel('TenBot conversation actions',{exact:true});
           const action=async name=>{await actionMenu.click();await panel.getByRole('button',{name,exact:true}).click();};
@@ -554,7 +606,7 @@ async function verifyConversation() {
     assert.deepEqual(errors, []);
     assert(liveInferenceCalls <= 1,'At most one real UI inference per run');
     if (liveInferenceOnce) assert(liveRecord?.answer?.mode === 'ai','Live UI review must produce actual inference evidence');
-    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, presentationOnly, inferenceCalls: liveInferenceCalls, liveInferenceReceipt:liveInferenceOnce?'live-ui-answer.json':null, actualConversationalReplays: replayActualConversations ? actualConversations.length : 0, actualReplayModes: replayActualConversations ? actualConversations.map(item => ({id: item.id, mode: item.answer.mode, fallback: item.answer.fallback === true, evaluationError: Boolean(item.error)})) : [], replaySource: ['communication/evaluation.json', 'contacts-coverage/evaluation.json', ...(presentationOnly?['refinement/selected-model.json']:[]), ...(knowledgeCoverageOnly ? [refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'] : []), ...(replayActualConversations ? [refinementOnly ? 'refinement/selected-model.json' : 'coverage/conversations.json'] : [])], checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; recorded model failures/fallbacks remain distinct from accepted AI prose. Live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
+    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, iconOnly, presentationOnly, inferenceCalls: liveInferenceCalls, liveInferenceReceipt:liveInferenceOnce?'live-ui-answer.json':null, actualConversationalReplays: replayActualConversations ? actualConversations.length : 0, actualReplayModes: replayActualConversations ? actualConversations.map(item => ({id: item.id, mode: item.answer.mode, fallback: item.answer.fallback === true, evaluationError: Boolean(item.error)})) : [], replaySource: ['communication/evaluation.json', 'contacts-coverage/evaluation.json', ...(presentationOnly?['refinement/selected-model.json']:[]), ...(knowledgeCoverageOnly ? [refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'] : []), ...(replayActualConversations ? [refinementOnly ? 'refinement/selected-model.json' : 'coverage/conversations.json'] : [])], checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; recorded model failures/fallbacks remain distinct from accepted AI prose. Live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
     console.log(`TenBot Inbox conversation browser checks passed (${checked.length} focused assertions; ${liveInferenceCalls} real inference calls).`);
   } finally {await browser.close();}
 }
