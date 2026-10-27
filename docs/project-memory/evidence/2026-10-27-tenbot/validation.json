@@ -1,0 +1,30 @@
+{
+  "status": "implemented locally; pending Product acceptance",
+  "base": "00ce91a",
+  "remoteMainDev": "e5382f11223efb927b4242849af8c084522f8c56",
+  "knowledgeRuntime": "f8f78c5e6dbaec955e3600aa0276e657a85e9290",
+  "tier": 3,
+  "testingLevel": 3,
+  "deterministicAndDatabase": "passed scripts/verify-tenbot.mts",
+  "browser": "passed scripts/verify-tenbot-browser.mjs",
+  "typescript": "passed",
+  "targetedLint": "passed, including explicitly unignored Edge files",
+  "productionExport": "passed Webpack",
+  "provider": "not activated; no live-model evaluation",
+  "hostedChanges": false,
+  "reviewOrigin": "http://localhost:3000",
+  "reviewAdapterPort": 55593,
+  "limits": [
+    "SQL roles/disposable PostgreSQL do not establish hosted Supabase gateway compatibility",
+    "No physical mobile keyboard or device acceptance",
+    "Actual Cloudflare inference and account quota not tested",
+    "Shared workspace contains separately edited Intake files excluded from this commit"
+  ],
+  "reviewContainer": "tenops-tenbot-review",
+  "productionReadOnlyVerification": {
+    "route": "https://tenops.pages.dev/my-work",
+    "sha256": "77323ba231462c59a149986e9b5926b0780dd7369580cb2d191f44c3936a8808",
+    "matchesReleasedReceipt": true
+  },
+  "finalCoreValidation": "passed --core-only after public receipt-path redaction"
+}

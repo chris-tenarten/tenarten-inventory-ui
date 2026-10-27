@@ -486,6 +486,7 @@ export default function ClientLayoutShell({
                 <div className="flex shrink-0 items-center">
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
                   <span className="desktop-domain-nav"><MyWorkNav pathname={pathname} /></span>
+                  <Link href="/tenbot" className="inline-flex min-h-11 items-center rounded border border-slate-300 px-3 text-xs font-semibold text-slate-700">Ask TenBot</Link>
                   <GlobalMessaging key={auth.profile?.userId??'signed-out'} />
                   <AccountNotifications key={`notifications:${auth.profile?.userId ?? "signed-out"}`} onWelcomeChange={setWelcomeStatus} onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   {auth.isAuthenticated && auth.profile?.isActive ? <div ref={accountMenuRef} data-account-identity className="relative">

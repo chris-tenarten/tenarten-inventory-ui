@@ -108,3 +108,7 @@ Never claim browser testing from code inspection or migration deployment from a 
 ## Current scoped handoff — October 27, 2026
 
 [Intake graduation / material intelligence](../project-memory/2026-10-27-intake-graduation-material-intelligence.md) carries Chris's October 26/27 Product Implementation authority, canonical dev base, invariants, Tier 3 validation and local review boundary. Its October 27 UX refinement records the subsequent explicit author-in-Samples/reference-in-Intake decision, optional Production quantities, shared input reuse and focused compatibility evidence on `00ce91a`. Work is local on dev; the stop point is Product acceptance. Local commit authorization does not include push, main promotion, hosted migrations, Production writes, notifications or deployment. The separate Advisory conversation was unavailable.
+
+## TenBot scoped handoff — October 27, 2026
+
+[TenBot local candidate](../project-memory/2026-10-27-tenbot-candidate.md) carries Chris's attached Product Implementation authorization: integrated read-only guidance, versioned capability registry, provider boundary and confirmed Product feedback. Tier 3 / Testing Level 3; local dev commit and localhost review only. Intake remains a separate unreleased candidate. Separate Advisory context is unavailable. Product acceptance, reviewer-role choice and provider activation are the next boundaries; no hosted migration/configuration, push or deployment is authorized.
