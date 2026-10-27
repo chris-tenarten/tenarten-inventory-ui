@@ -543,5 +543,271 @@
       }
     },
     "status": "authorized release in progress"
+  },
+  "production_release": {
+    "status": "deployed to TenDev then TenOps",
+    "date": "2026-10-27",
+    "accepted": "5a7159ca8d5ffad4052b8cfe018b119eaecf5529",
+    "securityCorrection": "74f799bda418b154498773140b9e393c814c4e76",
+    "runtime": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+    "baseline": "e5382f11223efb927b4242849af8c084522f8c56",
+    "sourceIsolation": {
+      "intakeOnly": true,
+      "tenbotAndAiExcluded": true,
+      "mixedShellFrom": "00ce91a",
+      "localDevPreserved": true
+    },
+    "securityRegression": {
+      "commit": "74f799bda418b154498773140b9e393c814c4e76",
+      "command": "./node_modules/.bin/tsx scripts/verify-historical-import-boundary.mts",
+      "result": "passed",
+      "handlerCases": 10,
+      "realPrivilegedPostgresRpc": true,
+      "trustedActorImportDigest": true,
+      "editableTranscriptionPreserved": true,
+      "retryAndBadDigestChecked": true,
+      "existingOriginalsUnchanged": true,
+      "hostedTraffic": false,
+      "independentReview": "passed"
+    },
+    "priorValidationReused": true,
+    "migration": {
+      "applied_at": "2026-10-27T18:34:02.022169+00:00",
+      "captureRlsReadOnly": true,
+      "directDigestBypassDenied": true,
+      "existingRowsPreservedAtomically": true,
+      "newCaptureTablesEmpty": true,
+      "otherStorageBucketsPreserved": true,
+      "privateBucketCreated": true,
+      "release_sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "retainedPredecessorsUnchanged": true,
+      "serviceOnlyPersistence": true,
+      "unrelatedLedgerUnchanged": true,
+      "versions": [
+        "20261026100000",
+        "20261026110000",
+        "20261026120000"
+      ],
+      "project": "vxdxjhazkqhpkwdqtobp",
+      "migrations": [
+        {
+          "file": "20261026100000_historical_sample_import.sql",
+          "version": "20261026100000",
+          "sha256": "ccac4d685188e59c2dc23696e326d65b1aa71218e51b4b66b35012d7f89ac35f"
+        },
+        {
+          "file": "20261026110000_bid_accepted_scope.sql",
+          "version": "20261026110000",
+          "sha256": "57fef9390fe54577df2a464f544b1de495494c45800a8594131ce491f1d3da0c"
+        },
+        {
+          "file": "20261026120000_bid_scope_production_handoff.sql",
+          "version": "20261026120000",
+          "sha256": "485eb06f150cac1eb0606275a16fa8bf1fdd105674c3e5934ab3f92c34c01d4b"
+        }
+      ]
+    },
+    "hostedSecurity": {
+      "versions": [
+        "20261026100000",
+        "20261026110000",
+        "20261026120000"
+      ],
+      "predecessorsPreserved": true,
+      "serviceOnlyPersist": true,
+      "authenticatedDigestBypassDenied": true,
+      "captureTablesReadOnlyRls": true,
+      "privateOriginalStorage": true,
+      "immutableRetentionTriggers": true,
+      "existingPoliciesTriggersUnchanged": true,
+      "webPushTransportCronUnchanged": true,
+      "readOnly": true
+    },
+    "edgeFunctions": [
+      {
+        "slug": "generate-sample-pdf",
+        "id": "aca8265a-5cc1-4dd8-b4df-e28a4b6e524e",
+        "previousVersion": 49,
+        "version": 50,
+        "status": "ACTIVE",
+        "verify_jwt": true,
+        "releaseSha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "bundleSha256": "d4a0716c73b1fda161baaee8dc5bac9812c3ebdf53a18f50db356ef68802e163",
+        "bundleBytes": 30391915,
+        "acceptedSourcePresent": true,
+        "securityCorrectionPresent": true,
+        "options": [
+          {
+            "origin": "https://tendev.pages.dev",
+            "options": 204
+          },
+          {
+            "origin": "https://tenops.pages.dev",
+            "options": 204
+          }
+        ],
+        "anonymousDenied": 403,
+        "noBusinessWrites": true
+      },
+      {
+        "slug": "generate-proposal-pdf",
+        "id": "0c25a597-ca3f-4dfe-9007-ae76ea14bce1",
+        "previousVersion": 37,
+        "version": 38,
+        "status": "ACTIVE",
+        "verify_jwt": true,
+        "releaseSha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "bundleSha256": "69df4ebf75c503e5c7d2649448ac28e4977c39b2fb0ad6324ae4c8955c77cb2f",
+        "bundleBytes": 33965495,
+        "acceptedSourcePresent": true,
+        "securityCorrectionPresent": false,
+        "options": [
+          {
+            "origin": "https://tendev.pages.dev",
+            "options": 204
+          },
+          {
+            "origin": "https://tenops.pages.dev",
+            "options": 204
+          }
+        ],
+        "anonymousDenied": 403,
+        "noBusinessWrites": true
+      }
+    ],
+    "deployments": {
+      "tendev": {
+        "sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "id": "60a6ba08-2ef3-4dd6-9b25-d68bb9016101",
+        "url": "https://tendev.pages.dev",
+        "created": "2026-10-27T18:43:25.153561Z",
+        "verifiedAssets": 41,
+        "changedChunks": 5,
+        "brandingCorrect": true,
+        "configPreserved": true,
+        "serviceWorkerHeaders": true
+      },
+      "tenops": {
+        "sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "id": "4bd400e3-dc15-47d1-8e50-adf595b4c6c9",
+        "url": "https://tenops.pages.dev",
+        "created": "2026-10-27T18:46:47.701679Z",
+        "verifiedAssets": 41,
+        "changedChunks": 5,
+        "brandingCorrect": true,
+        "configPreserved": true,
+        "serviceWorkerHeaders": true
+      }
+    },
+    "browser": {
+      "tendev": {
+        "target": "tendev",
+        "passed": true,
+        "actualHostedOrigin": "https://tendev.pages.dev",
+        "normalAuthGateVisible": true,
+        "mobileViewport": 390,
+        "pageErrors": [],
+        "unexpectedExternal": [],
+        "hostedWrites": [],
+        "accountOrDeviceEnrollment": false
+      },
+      "tenops": {
+        "target": "tenops",
+        "passed": true,
+        "actualHostedOrigin": "https://tenops.pages.dev",
+        "normalAuthGateVisible": true,
+        "mobileViewport": 390,
+        "pageErrors": [],
+        "unexpectedExternal": [],
+        "hostedWrites": [],
+        "accountOrDeviceEnrollment": false
+      }
+    },
+    "builds": {
+      "tendev": {
+        "sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "passed": true,
+        "sourceArchiveSha256": "20ba60f133acd819bcbb71f7ede72d7db0d32aed68b7507aaf2b536727d1f103",
+        "sourceManifestSha256": "50338dbefa57723e98811dcf396f9352112b1d0cbd6a069eea3086a5b0bc17d8",
+        "artifactManifestSha256": "be5cc4a7d884aed7e167eee26baec64803b6e5c959246de9879e3dfc3122aa8c",
+        "productionBackend": true,
+        "localConfigurationExcluded": true,
+        "fixtureMarkersExcluded": true
+      },
+      "tenops": {
+        "sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "passed": true,
+        "sourceArchiveSha256": "20ba60f133acd819bcbb71f7ede72d7db0d32aed68b7507aaf2b536727d1f103",
+        "sourceManifestSha256": "50338dbefa57723e98811dcf396f9352112b1d0cbd6a069eea3086a5b0bc17d8",
+        "artifactManifestSha256": "0b59b8dd91e07fedea945196600221e1a41ef2690155d9e9c7a65304cfe9afb2",
+        "productionBackend": true,
+        "localConfigurationExcluded": true,
+        "fixtureMarkersExcluded": true
+      }
+    },
+    "finalHostedCheck": {
+      "passed": true,
+      "checkedAt": "2026-10-27T18:49:48.678Z",
+      "sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "approvedMigrationHashesMatch": true,
+      "unreleasedAiMigrationsAbsent": true,
+      "noExtraEdgeInfrastructure": true,
+      "unrelatedFunctionsUnchanged": true,
+      "webPushTransportCronUnchanged": true,
+      "webPushWorkers": [
+        {
+          "slug": "send-web-push-tendev",
+          "version": 27,
+          "status": "ACTIVE",
+          "id": "0248da3c-43fe-44e5-84f9-71f35422c401",
+          "verify_jwt": false
+        },
+        {
+          "slug": "send-web-push-tenops",
+          "version": 16,
+          "status": "ACTIVE",
+          "id": "3449d184-907b-4a78-bb1c-e94f095643ee",
+          "verify_jwt": false
+        }
+      ],
+      "pagesConfigurationPreserved": true,
+      "deployments": {
+        "tendev": {
+          "id": "60a6ba08-2ef3-4dd6-9b25-d68bb9016101",
+          "sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+          "url": "https://tendev.pages.dev"
+        },
+        "tenops": {
+          "id": "4bd400e3-dc15-47d1-8e50-adf595b4c6c9",
+          "sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+          "url": "https://tenops.pages.dev"
+        }
+      },
+      "edgeFunctions": [
+        {
+          "slug": "generate-sample-pdf",
+          "id": "aca8265a-5cc1-4dd8-b4df-e28a4b6e524e",
+          "version": 50,
+          "verify_jwt": true
+        },
+        {
+          "slug": "generate-proposal-pdf",
+          "id": "0c25a597-ca3f-4dfe-9007-ae76ea14bce1",
+          "version": 38,
+          "verify_jwt": true
+        }
+      ],
+      "businessRecordWrites": false
+    },
+    "independentEvidenceReview": "passed; exact boundary, migration/security/preservation and deployment ordering checked without redundant reruns",
+    "limits": [
+      "Hosted browser verification exercised normal unauthenticated mobile gates; prior synthetic signed-in import/PDF/conversion tests were reused",
+      "Protected-row equality was proven atomically during migrations, not across subsequent employee activity",
+      "Physical iPhone acceptance and representative populated historical Excel coverage remain unchanged limits"
+    ],
+    "notificationsSent": false,
+    "liveBusinessRecordsUsedForTests": false,
+    "aiInfrastructureActivated": false,
+    "artifacts": ".tmp-intake-graduation-release; private snapshots/bundles and local source/artifact archives retained outside Git"
   }
 }
