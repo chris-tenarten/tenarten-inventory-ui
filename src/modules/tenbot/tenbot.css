@@ -1,9 +1,4 @@
-/* TenBot shares the existing communication shell; it adds no fixed launcher. */
-.tenbot-integrated { background: var(--surface-page,#eef1f4); color: var(--text-primary,#0f172a); }
-.tenbot-integrated > section { width: 100%; max-width: 56rem; align-self: center; }
-.tenbot-integrated textarea, .tenbot-integrated select { font-size: 16px; }
-.tenbot-integrated textarea { scroll-margin-block: 16px; }
-.tenbot-integrated button:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+/* Shared Messaging viewport support, including the TenBot conversation. */
 .tenbot-scroll { overscroll-behavior: contain; overflow-y: auto; overflow-x: hidden; min-height: 0; scrollbar-gutter: stable; }
 @media (max-width:767px), (max-width:1023px) and (pointer:coarse) {
  .tenops-communication-overlay {
@@ -11,5 +6,4 @@
   height: var(--communication-visible-height,100dvh); padding: 0;
  }
  .tenops-communication-panel { height: 100%; max-height: 100%; border-radius: 0; padding-top: env(safe-area-inset-top); }
- .tenbot-integrated > section > form:last-child { padding-bottom: max(.75rem,env(safe-area-inset-bottom)); }
 }

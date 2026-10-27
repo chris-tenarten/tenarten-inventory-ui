@@ -2,76 +2,61 @@ import {chromium, expect} from '@playwright/test';
 import assert from 'node:assert/strict';
 import {mkdirSync, writeFileSync, readFileSync} from 'node:fs';
 
-const contactsCoverageOnly = process.argv.includes('--contacts-coverage-only');
-if (contactsCoverageOnly || process.argv.includes('--communication-only') || process.argv.length === 2) {
-  await verifyCommunication();
+const conversationOnly = process.argv.includes('--conversation-only') || process.argv.length === 2;
+if (conversationOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
+  await verifyConversation();
   process.exit(0);
 }
 
-// The actual application bundle, with the existing localhost auth/data fixture.
-// Messaging uses the established groups fixture's row shapes; TenBot responses
-// replay captured real evaluations. No request in this branch reaches inference.
-async function verifyCommunication() {
-  const origin = 'http://localhost:3000';
-  const communicationDirectory = '/private/tmp/tenops-tenbot-review/communication';
-  const directory = contactsCoverageOnly ? '/private/tmp/tenops-tenbot-review/contacts-coverage' : communicationDirectory;
-  const evaluation = JSON.parse(readFileSync(`${communicationDirectory}/evaluation.json`, 'utf8'));
-  const coverage = contactsCoverageOnly ? JSON.parse(readFileSync(`${directory}/evaluation.json`, 'utf8')).outputs : [];
-  const outputs = [...evaluation.outputs.filter(item => !coverage.some(updated => updated.question === item.question)), ...coverage].filter(item => ['ai', 'verified', 'guide'].includes(item.answer?.mode));
-  assert(outputs.length >= 2, 'Captured candidate answers are required');
-  const group = outputs.find(item => item.answer.sources.some(source => source.id === 'group'));
-  const navigation = outputs.find(item => item.answer.sources.some(source => source.route === '/contacts' || source.route === '/settings'));
-  const unavailable = outputs.find(item => item.answer.sources.some(source => source.id === 'material-lead'));
-  const manpowerQuestion = 'how do i filter by jobs in manpower reporting';
-  const manpower = outputs.find(item => item.question === manpowerQuestion);
-  const customerQuestion = 'how do i edit a saved customers details';
+// Exercise the actual localhost application using the established Messaging
+// fixture shapes and captured guide answers. No replay reaches model inference.
+async function verifyConversation() {
+  const origin = 'http://localhost:3000', endpoint = 'http://localhost:55593';
+  const directory = '/private/tmp/tenops-tenbot-review/conversation';
+  const captured = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/communication/evaluation.json', 'utf8')).outputs;
+  const coverage = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/contacts-coverage/evaluation.json', 'utf8')).outputs;
+  const group = captured.find(item => item.answer?.mode === 'ai' && item.answer.sources.some(source => source.id === 'group'));
+  const unavailable = captured.find(item => item.answer?.sources.some(source => source.id === 'material-lead'));
   const customer = coverage.find(item => item.id === 'customer-edit');
   const deniedCustomers = coverage.filter(item => ['customer-denied-write', 'customer-denied-edit'].includes(item.id));
-  assert(group && navigation && unavailable, 'Capture must include a supported workflow, another module link and unreleased Intake capability');
-  assert(manpower && manpower.answer.mode === 'verified' && !manpower.answer.sources.length, 'Captured Manpower regression must have no verified guide source or model prose');
-  assert.equal(group.answer.mode, 'ai', 'Supported workflow replay must come from a real conversational inference');
-  assert.equal(navigation.answer.mode, 'ai', 'Supported navigation replay must come from a real conversational inference');
-  if (contactsCoverageOnly) {
-    assert(customer && customer.question === customerQuestion && customer.answer.resolution === 'available' && customer.answer.sources.some(source => source.id === 'customer-edit'), 'Core fixture must cover the exact Contacts question with its released guide');
-    assert.equal(deniedCustomers.length, 2, 'Both Contacts write and edit capability denials must be covered');
-    assert(deniedCustomers.every(item => item.question === customerQuestion && item.answer.resolution === 'permission-denied' && !item.answer.sources.length), 'Denied fixtures must omit protected instructions and links');
-    assert.equal(manpower.answer.resolution, 'documentation-missing', 'No verified Manpower guide must remain a documentation gap');
-  }
+  const manpower = coverage.find(item => item.id === 'manpower');
+  assert(group && unavailable && customer && manpower && deniedCustomers.length === 2, 'Existing conversational and Contacts fixtures are required');
   mkdirSync(directory, {recursive: true});
   const browser = await chromium.launch({headless: true});
   const checked = [], requestEvidence = [], errors = [];
   const user = '00000000-0000-0000-0000-000000000010';
+  const system = '00000000-0000-0000-0000-000000000001';
   const bob = '00000000-0000-4000-8000-000000900022';
   const carol = '00000000-0000-4000-8000-000000900023';
   const groupId = '00000000-0000-4000-8000-000000930000';
+  const officialId = '00000000-0000-4000-8000-000000910002';
   const stamp = '2026-10-15T00:00:00Z';
   const privateBody = 'Synthetic private message sentinel — never assistant context';
+  const officialBody = 'Synthetic official system notice — never assistant context';
+  const groupBody = 'Synthetic private group message — never assistant context';
+  const officialFilename = 'Synthetic official attachment sentinel.pdf', officialStorage = 'synthetic-official-storage-sentinel';
   const peers = [{userId: bob, name: 'Draft Review Bob', role: 'member'}, {userId: carol, name: 'Draft Review Carol', role: 'member'}];
   const initialMessages = [
     {id: '00000000-0000-4000-8000-000000910000', sender_user_id: bob, sender_name: peers[0].name, recipient_user_id: user, body: privateBody},
-    {id: '00000000-0000-4000-8000-000000910001', sender_user_id: carol, sender_name: peers[1].name, group_id: groupId, recipient_user_id: null, body: 'Synthetic existing group message'},
-  ].map(message => ({...message, created_at: stamp, read_at: null, attachments: []}));
-  const sensitive = calls => calls.filter(call => /^(list_my_work_message_page|mark_my_work_conversation_read|send_my_work_message|save_my_work_message_group|begin_my_work_attachment)/.test(call.name));
-
+    {id: '00000000-0000-4000-8000-000000910001', sender_user_id: carol, sender_name: peers[1].name, group_id: groupId, recipient_user_id: null, body: groupBody},
+    {id: officialId, sender_user_id: system, sender_name: 'TenOps', recipient_user_id: user, body: officialBody},
+  ].map(message => ({...message, created_at: stamp, read_at: null, attachments: message.id === officialId ? [{id: '00000000-0000-4000-8000-000000910003', message_id: officialId, storage_path: officialStorage, original_filename: officialFilename, content_type: 'application/pdf', byte_size: 128, created_at: stamp, preview: null}] : []}));
+  const rowsFor = (messages, peer) => messages.filter(message => message.group_id ? message.group_id === peer : message.sender_user_id === peer || message.recipient_user_id === peer);
   try {
     for (const admin of [true, false]) {
       const context = await browser.newContext({viewport: {width: 1440, height: 1000}});
-      const calls = [], assistantCalls = [], messages = structuredClone(initialMessages), blocked = [], realtime = [];
-      let answer = group.answer;
+      const calls = [], assistantCalls = [], messages = structuredClone(initialMessages), realtime = [], blocked = [];
+      let answer = group.answer, holdNextAsk = false, failNextAsk = false, releasePending, activeUserId = user, authUserOverride, releaseProfile, switchedProfileSeen = false;
       await context.routeWebSocket('**/realtime/v1/websocket*', socket => {
         socket.onMessage(raw => {
-          // The installed Supabase serializer sends client broadcasts as kind-3
-          // binary frames: six length/encoding bytes, then refs/topic/event/meta.
           if (Buffer.isBuffer(raw) && raw[0] === 3) {
-            const topicOffset = 7 + raw[1] + raw[2];
-            const payloadOffset = topicOffset + raw[3] + raw[4] + raw[5];
+            const topicOffset = 7 + raw[1] + raw[2], payloadOffset = topicOffset + raw[3] + raw[4] + raw[5];
             const payload = raw[6] === 1 ? JSON.parse(raw.subarray(payloadOffset).toString()) : {};
             realtime.push({topic: raw.subarray(topicOffset, topicOffset + raw[3]).toString(), event: 'broadcast', typing: payload.typing === true});
             return;
           }
           const frame = JSON.parse(String(raw));
           const message = Array.isArray(frame) ? {join_ref: frame[0], ref: frame[1], topic: frame[2], event: frame[3], payload: frame[4]} : frame;
-          // Retain only activity metadata, never auth tokens or message bodies.
           realtime.push({topic: message.topic, event: message.event, typing: message.payload?.payload?.typing === true});
           if (!['phx_join', 'heartbeat', 'phx_leave'].includes(message.event)) return;
           const reply = {...message, event: 'phx_reply', payload: {status: 'ok', response: {postgres_changes: []}}};
@@ -80,37 +65,41 @@ async function verifyCommunication() {
       });
       await context.route('**/*', async route => {
         const request = route.request(), url = new URL(request.url());
-        if (!['blob:', 'data:'].includes(url.protocol) && ![origin, 'http://localhost:55593'].includes(url.origin)) {
-          blocked.push(url.origin);
-          return route.abort('blockedbyclient');
-        }
+        if (!['blob:', 'data:'].includes(url.protocol) && ![origin, endpoint].includes(url.origin)) {blocked.push(url.origin);return route.abort('blockedbyclient');}
         const fulfill = value => route.fulfill({status: 200, contentType: 'application/json', headers: {'Access-Control-Allow-Origin': origin}, body: JSON.stringify(value)});
         if (request.method() === 'OPTIONS') return route.fulfill({status: 204, headers: {'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'authorization,content-type', 'Access-Control-Allow-Methods': 'POST,OPTIONS'}});
-        if (url.origin === 'http://localhost:55593') {
-          assert.equal(request.method(), 'POST');
-          const body = request.postDataJSON(); assistantCalls.push(body);
-          if (body.action === 'ask') return fulfill(answer);
-          if (body.action === 'draft') return fulfill({...group.answer, summary: null});
+        if (url.origin === endpoint) {
+          const body = request.postDataJSON();assistantCalls.push(body);
+          if (body.action === 'ask') {
+            if (failNextAsk) {failNextAsk = false;return route.fulfill({status: 503, contentType: 'application/json', headers: {'Access-Control-Allow-Origin': origin}, body: JSON.stringify({error: 'Synthetic temporary assistant failure.'})});}
+            const response = answer;
+            if (holdNextAsk) {holdNextAsk = false;await new Promise(resolve => {releasePending = resolve;});}
+            return fulfill(response);
+          }
+          if (body.action === 'draft') return fulfill({...unavailable.answer, summary: null});
+          if (body.action === 'submit') return fulfill({id: 'synthetic-confirmed-feedback'});
           if (body.action === 'usage') return fulfill({usage: {sharedDayUsed: 8, sharedDayLimit: 20, sharedDayRemaining: 12, perAccountMinuteLimit: 6, monthReservedUsd: 0.08, monthlyBudgetUsd: 0.2}});
           if (body.action === 'list') return fulfill({items: []});
           throw new Error(`Unexpected assistant action: ${body.action}`);
         }
+        if (url.pathname === '/auth/v1/user' && authUserOverride) return fulfill(authUserOverride);
         if (url.pathname.startsWith('/rest/v1/rpc/')) {
-          const name = url.pathname.split('/').at(-1);
-          const body = request.postDataJSON(); calls.push({name, body});
-          if (!admin && name === 'get_my_app_access') return fulfill([{user_id: user, display_name: 'Local developer fixture', role: 'developer', is_active: true, read_only: false, messaging_write: true}]);
-          if (name === 'list_my_work_conversations_v12') return fulfill([...peers, {userId: groupId, groupId, name: 'Existing shop group', role: 'Group', creatorUserId: user, memberIds: [user, bob, carol]}].map(peer => {
-            const rows = messages.filter(message => message.group_id ? message.group_id === peer.userId : message.sender_user_id === peer.userId || message.recipient_user_id === peer.userId);
-            const latest = rows.at(-1);
+          const name = url.pathname.split('/').at(-1), body = request.postDataJSON();calls.push({name, body});
+          if (activeUserId !== user && name === 'get_my_app_access') {
+            if (!switchedProfileSeen) {switchedProfileSeen = true;await new Promise(resolve => {releaseProfile = resolve;});}
+            return fulfill([{user_id: activeUserId, display_name: 'Switched synthetic account', role: 'admin', is_active: true, read_only: false, messaging_write: true}]);
+          }
+          if (activeUserId !== user && ['list_my_work_conversations_v12', 'list_my_work_message_page_v12'].includes(name)) return fulfill([]);
+          if (!admin && name === 'get_my_app_access') return fulfill([{user_id: user, display_name: 'Local developer fixture', role: 'developer', is_active: true, read_only: true, messaging_write: false}]);
+          if (name === 'list_my_work_conversations_v12') return fulfill([...peers, {userId: system, name: 'TenOps', role: 'System'}, {userId: groupId, groupId, name: 'Existing shop group', role: 'Group', creatorUserId: user, memberIds: [user, bob, carol]}].map(peer => {
+            const rows = rowsFor(messages, peer.userId), latest = rows.at(-1);
             return {...peer, unread: rows.filter(message => message.sender_user_id !== user && !message.read_at).length, latest: {id: latest?.id || peer.userId, createdAt: latest?.created_at || stamp, body: latest?.body || 'No messages yet'}};
           }));
           if (name === 'list_my_work_inbox_recipients') return fulfill(peers.map(peer => ({user_id: peer.userId, display_name: peer.name, role: peer.role})));
-          if (name === 'list_my_work_message_page_v12') return fulfill(messages.filter(message => (message.group_id ? message.group_id === body.p_peer : message.sender_user_id === body.p_peer || message.recipient_user_id === body.p_peer) && (!body.p_ids || body.p_ids.includes(message.id))));
-          if (name === 'mark_my_work_conversation_read_v12') {
-            for (const message of messages) if (body.p_ids.includes(message.id)) message.read_at = stamp;
-            return fulfill(null);
-          }
+          if (name === 'list_my_work_message_page_v12') return fulfill(rowsFor(messages, body.p_peer).filter(message => !body.p_ids || body.p_ids.includes(message.id)));
+          if (name === 'mark_my_work_conversation_read_v12') {for (const message of messages) if (body.p_ids.includes(message.id)) message.read_at = stamp;return fulfill(null);}
           if (name === 'send_my_work_message_v12') {
+            assert.notEqual(body.p_peer, system, 'Assistant questions never use the employee-message RPC');
             const id = `00000000-0000-4000-8000-${String(920000 + messages.length).padStart(12, '0')}`;
             messages.push({id, sender_user_id: user, sender_name: 'Local Admin', recipient_user_id: body.p_peer === groupId ? null : body.p_peer, group_id: body.p_peer === groupId ? groupId : null, body: body.p_body, created_at: new Date().toISOString(), read_at: stamp, attachments: []});
             return fulfill(id);
@@ -119,226 +108,188 @@ async function verifyCommunication() {
         }
         return route.continue();
       });
-      const page = await context.newPage();
-      page.on('pageerror', error => errors.push(error.message));
-      const panel = page.getByRole('dialog', {name: 'Communication', exact: true});
-      const workspace = panel.getByRole('region', {name: 'TenBot workspace', exact: true});
-      const conversation = workspace.getByRole('log', {name: 'TenBot conversation', exact: true});
-      const input = workspace.getByLabel('Your question', {exact: true});
-      const messagesPanel = panel.getByRole('tabpanel', {name: 'Messages', exact: true});
-      const history = messagesPanel.locator('[data-message-history]');
+      const page = await context.newPage();page.on('pageerror', error => errors.push(error.message));
+      const panel = page.getByRole('dialog', {name: 'Inbox', exact: true});
+      const history = panel.locator('[data-message-history]');
+      const conversation = history.getByRole('log', {name: 'TenBot conversation', exact: true});
+      const input = panel.getByRole('textbox', {name: 'Message', exact: true});
       const messagingButton = page.getByRole('button', {name: 'Messaging', exact: true});
-      const openAssistant = async () => {
-        const menu = page.getByRole('button', {name: 'Open Messaging menu', exact: true});
-        // Existing desktop navigation opens on hover/focus; clicking an already
-        // hovered toggle closes it. Mobile keeps the existing click behavior.
-        if (page.viewportSize().width >= 768) await menu.hover(); else await menu.click();
-        await page.getByRole('menuitem', {name: 'Ask TenBot', exact: true}).click();
-        await expect(panel.getByRole('tab', {name: 'Ask TenBot', exact: true})).toHaveAttribute('aria-selected', 'true');
-        await expect(workspace).toBeVisible();
+      const choose = async name => {
+        await panel.locator('aside').getByRole('button').filter({has: page.getByText(name, {exact: true})}).click();
+        await expect(input).toBeVisible();
+        await expect(panel.getByText('Loading recent messages…', {exact: true})).toHaveCount(0);
+        await expect(panel.getByText('Updating conversation…', {exact: true})).toHaveCount(0);
       };
-      const ask = async (question, payload) => {
-        answer = payload;
-        await input.fill(question);
-        await workspace.getByRole('button', {name: 'Ask TenBot', exact: true}).click();
+      const askCount = () => assistantCalls.filter(call => call.action === 'ask').length;
+      const ask = async (question, payload, keyboard = true) => {
+        answer = payload;const before = askCount();await input.fill(question);
+        if (keyboard) await input.press('Enter');else await panel.getByRole('button', {name: 'Send', exact: true}).click();
+        await expect.poll(askCount).toBe(before + 1);
         await expect(conversation.getByText(question, {exact: true}).last()).toBeVisible();
-        await expect(workspace.getByRole('button', {name: 'Working…', exact: true})).toHaveCount(0);
+        await expect(input).toHaveValue('');
         const request = assistantCalls.filter(call => call.action === 'ask').at(-1);
         const moduleLabel = {'/my-work': 'My Work', '/settings': 'Settings', '/contacts': 'Contacts', '/manpower-reporting': 'Manpower Reporting'}[new URL(page.url()).pathname];
         assert.equal(request.context[0], `Current module: ${moduleLabel}`);
         assert(request.context.length <= 2 && Object.keys(request).every(key => ['action', 'question', 'context'].includes(key)), 'Assistant input stays limited to module label and bounded employee question context');
       };
       const contained = async () => {
-        // The existing communication sheet measures visualViewport on resize.
-        // Wait for that browser event rather than reading the old frame's height.
-        await expect.poll(async () => {
-          const box = await panel.boundingBox();
-          return Boolean(box && box.x >= 0 && box.y >= 0 && box.x + box.width <= page.viewportSize().width + 1 && box.y + box.height <= page.viewportSize().height + 1);
-        }, {message: 'Communication fits viewport after its resize measurement'}).toBe(true);
+        await expect.poll(async () => {const box = await panel.boundingBox();return Boolean(box && box.x >= 0 && box.y >= 0 && box.x + box.width <= page.viewportSize().width + 1 && box.y + box.height <= page.viewportSize().height + 1);}).toBe(true);
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'No horizontal viewport overflow');
       };
       try {
-        await page.goto(`${origin}/my-work?reviewRecord=synthetic-private-record`);
-        await page.waitForLoadState('networkidle');
-        await expect(messagingButton).toBeVisible();
+        await page.goto(`${origin}/my-work?reviewRecord=synthetic-private-record`);await page.waitForLoadState('networkidle');
+        await expect(messagingButton.getByLabel('3 unread messages', {exact: true})).toBeVisible();
+        await messagingButton.click();await expect(panel).toBeVisible();await contained();
+        await expect(panel.getByRole('tablist')).toHaveCount(0);
+        await expect(page.getByRole('menuitem', {name: 'Ask TenBot', exact: true})).toHaveCount(0);
+        await expect(page.getByRole('region', {name: 'TenBot workspace', exact: true})).toHaveCount(0);
         await expect(page.locator('.tenbot-launcher')).toHaveCount(0);
-        await expect(messagingButton.getByLabel('2 unread messages', {exact: true})).toBeVisible();
-        await openAssistant();
-        await contained();
-        await expect(messagesPanel).toBeHidden();
-        assert.equal(sensitive(calls).length, 0, 'Opening Ask TenBot must not read or mark private conversations');
-        assert.equal(realtime.filter(frame => frame.topic?.includes('my-work-typing:')).length, 0, 'Opening Ask TenBot must not subscribe to private typing');
-        await expect(messagingButton.getByLabel('2 unread messages', {exact: true})).toBeVisible();
+        await choose('TenBot');
+        const official = history.locator(`#message-${officialId}`);
+        await expect(official.getByText(officialBody, {exact: true})).toBeVisible();
+        await expect(official).toContainText('TenOps system message');
+        await expect(official.getByText(officialFilename, {exact: true})).toBeVisible();
+        await expect(official.getByRole('button', {name: 'Download', exact: true})).toBeVisible();
+        await expect(official.getByRole('button', {name: 'Message actions', exact: true})).toHaveCount(0);
+        await expect(input).toHaveAttribute('enterkeyhint', 'send');
+        await expect(panel.getByLabel('Attach files', {exact: true})).toHaveCount(0);
+        assert(calls.filter(call => call.name === 'list_my_work_message_page_v12').every(call => call.body.p_peer === system), 'Opening TenBot reads only its existing official system history');
+        assert(!realtime.some(frame => frame.topic?.includes('my-work-typing:')), 'TenBot does not subscribe to employee typing');
+        checked.push('TenBot appears in ordinary Inbox without separate tab, menu action, launcher or workspace', 'official system notice and attachment are preserved with explicit label and no employee message actions');
         await ask(group.question, group.answer);
         await expect(conversation.getByText(group.answer.message, {exact: true})).toBeVisible();
         await expect(conversation.getByRole('link', {name: 'Open My Work', exact: true})).toHaveAttribute('href', '/my-work');
         await expect(conversation.getByText('Source: TenOps Guide', {exact: true})).toBeVisible();
         const chat = await conversation.innerText();
-        assert(!chat.includes(group.answer.snapshot.revision));
-        assert(!/\b[0-9a-f]{8}-[0-9a-f-]{27,}\b|capability snapshot|AI-selected guidance|\b2026-10-27\b/i.test(chat), 'No technical metadata in employee chat');
-        if (admin) await page.screenshot({path: `${directory}/desktop-natural-prose.png`});
+        assert(!chat.includes(group.answer.snapshot.revision) && !/\b[0-9a-f]{8}-[0-9a-f-]{27,}\b|capability snapshot|AI-selected guidance|\b2026-10-27\b/i.test(chat), 'Employee chat omits diagnostic metadata');
+        const sentBefore = askCount();await input.press('Enter');await input.fill('   ');await input.press('Enter');await input.fill('IME draft');
+        await input.dispatchEvent('keydown', {key: 'Enter', code: 'Enter', isComposing: true});
+        await input.dispatchEvent('keydown', {key: 'Enter', code: 'Enter', keyCode: 229});
+        await input.dispatchEvent('keydown', {key: 'Enter', code: 'Enter', repeat: true});
+        await expect(input).toHaveValue('IME draft');assert.equal(askCount(), sentBefore);
+        await input.fill('First line');await input.press('Shift+Enter');await input.type('Second line');await expect(input).toHaveValue('First line\nSecond line');assert.equal(askCount(), sentBefore);await input.fill('');
+        checked.push('Enter sends one assistant request; empty, composing and repeated Enter do not send; Shift+Enter preserves a newline');
         if (!admin) {
-          await expect(workspace.getByRole('button', {name: 'Product feedback', exact: true})).toHaveCount(0);
-          await expect(workspace.getByRole('region', {name: 'Shared TenBot usage', exact: true})).toHaveCount(0);
-          assert(!assistantCalls.some(call => call.action === 'usage'), 'Nonadmin does not request aggregate usage');
-          checked.push('authorized nonadmin can ask, with aggregate usage controls absent');
-          continue;
+          await expect(panel.getByRole('button', {name: 'Product feedback', exact: true})).toHaveCount(0);
+          assert(!assistantCalls.some(call => call.action === 'usage'));await choose('Draft Review Bob');await expect(input).toBeDisabled();checked.push('authorized read-only account can ask TenBot without Messaging write or administrator usage access');continue;
         }
-        checked.push('existing desktop Messaging menu opens dedicated assistant tab without a permanent launcher', 'opening assistant leaves private messages unread and unread badge unchanged', 'captured real conversational prose, fixed source link and clean employee attribution');
-        await workspace.getByRole('button', {name: 'Product feedback', exact: true}).click();
-        const usage = workspace.getByRole('region', {name: 'Shared TenBot usage', exact: true});
-        await expect(usage).toContainText('8 of 20 shared attempts used today · 12 remaining.');
-        await expect(usage).toContainText('6 per minute per account.');
-        await expect(usage).toContainText('Monthly reservation: $0.08 of $0.20.');
-        assert(!/Draft Review Bob|Draft Review Carol|Synthetic private message|[0-9a-f]{8}-[0-9a-f-]{27}/i.test(await usage.innerText()), 'Admin usage shows aggregates without account identities or private content');
-        await page.screenshot({path: `${directory}/administrator-usage.png`});
-        await workspace.getByRole('button', {name: 'Guide', exact: true}).click();
-        checked.push('administrator sees shared aggregate usage, burst limit and monthly budget without account detail');
-        await ask(navigation.question, navigation.answer);
-        await workspace.getByRole('button', {name: 'Draft a feature suggestion', exact: true}).click();
-        const draft = workspace.getByRole('form', {name: 'Feature suggestion draft'});
-        await expect(draft).toBeVisible();
-        await draft.getByLabel('Current workflow or problem').fill('Preserve this synthetic feature draft');
-        await input.fill('Preserve this unfinished question');
-        await panel.getByRole('tab', {name: 'Messages', exact: true}).click();
-        await expect(workspace).toBeHidden();
-        await messagesPanel.getByRole('button').filter({has: page.getByText('Draft Review Bob', {exact: true})}).click();
-        await expect(history.getByText(privateBody, {exact: true})).toBeVisible();
-        const composer = messagesPanel.getByRole('textbox', {name: 'Message', exact: true});
-        await composer.fill('Synthetic DM send after assistant');
-        await messagesPanel.getByRole('button', {name: 'Send', exact: true}).click();
-        await expect(history.getByText('Synthetic DM send after assistant', {exact: true})).toBeVisible();
-        await messagesPanel.getByRole('button').filter({has: page.getByText('Existing shop group', {exact: true})}).click();
-        await expect(history.getByText('Synthetic existing group message', {exact: true})).toBeVisible();
-        await expect.poll(() => messages.find(message => message.group_id === groupId).read_at).toBe(stamp);
-        await composer.fill('Keep private group composer draft');
-        const before = sensitive(calls).length;
-        const beforeRealtime = realtime.length;
-        await panel.getByRole('tab', {name: 'Ask TenBot', exact: true}).click();
-        await expect(input).toHaveValue('Preserve this unfinished question');
-        await expect(draft.getByLabel('Current workflow or problem')).toHaveValue('Preserve this synthetic feature draft');
-        await page.evaluate(() => { window.dispatchEvent(new Event('tenops:messaging-changed')); window.dispatchEvent(new Event('tenops:notifications-changed')); });
-        await page.waitForTimeout(900);
-        assert.equal(sensitive(calls).length, before, 'Assistant tab suspends private message reads, read receipts and composer operations');
-        assert(!realtime.slice(beforeRealtime).some(frame => frame.typing || frame.event === 'phx_join' && frame.topic?.includes('my-work-typing:')), 'Assistant tab does not broadcast typing or subscribe to private conversation channels');
-        await panel.getByRole('button', {name: 'Close Inbox', exact: true}).click();
-        await openAssistant();
-        await expect(input).toHaveValue('Preserve this unfinished question');
-        await expect(draft.getByLabel('Current workflow or problem')).toHaveValue('Preserve this synthetic feature draft');
-        const destination = navigation.answer.sources.find(source => source.route === '/contacts' || source.route === '/settings').route;
-        await conversation.getByRole('link', {name: destination === '/contacts' ? 'Open Contacts' : 'Open Settings', exact: true}).click();
-        await expect(page).toHaveURL(`${origin}${destination}`);
-        await expect(input).toHaveValue('Preserve this unfinished question');
-        await expect(draft.getByLabel('Current workflow or problem')).toHaveValue('Preserve this synthetic feature draft');
-        await draft.getByRole('button', {name: 'Cancel', exact: true}).click();
-        checked.push('existing DM send and group history remain functional', 'assistant tab suspends private message reads and receipts', 'chat, unfinished question and unsubmitted feature draft persist across tab, close and route navigation');
-        await ask(unavailable.question, unavailable.answer);
-        await expect(conversation.getByText('Unreleased', {exact: true})).toBeVisible();
+        await page.screenshot({path: `${directory}/desktop-tenbot-conversation.png`});
+        const retryQuestion = 'How do I create a group after a temporary service failure?';
+        failNextAsk = true;await input.fill(retryQuestion);await input.press('Enter');
+        await expect(conversation.getByRole('alert')).toContainText('TenBot could not answer. Use Send to retry.');await expect(input).toHaveValue(retryQuestion);
+        await ask(retryQuestion, group.answer);await expect(conversation.getByText(retryQuestion, {exact: true})).toHaveCount(1);await expect(conversation.getByRole('alert')).toHaveCount(0);
+        checked.push('failed assistant send preserves its question and Send retry updates one conversation turn');
+        await ask(unavailable.question, unavailable.answer, false);
         await expect(conversation.getByText(unavailable.answer.message, {exact: true})).toBeVisible();
         await expect(conversation.getByRole('link', {name: /Open Intake/})).toHaveCount(0);
+        await panel.getByRole('button', {name: 'Draft a feature suggestion', exact: true}).click();
+        const draft = panel.getByRole('form', {name: 'Feature suggestion draft', exact: true});
+        await draft.getByLabel('Current workflow or problem').fill('Preserve this synthetic feature draft');
+        await draft.getByLabel('Desired behavior').fill('Describe verified functionality clearly');
+        await expect(draft.getByRole('button', {name: 'Submit suggestion', exact: true})).toBeDisabled();
+        await input.fill('Retained TenBot composer draft');
+        await choose('Draft Review Bob');await expect(history.getByText(privateBody, {exact: true})).toBeVisible();
+        const dmBefore = calls.filter(call => call.name === 'send_my_work_message_v12').length;
+        await input.fill('Synthetic DM send after assistant');await input.press('Enter');
+        await expect(history.getByText('Synthetic DM send after assistant', {exact: true})).toBeVisible();
+        assert.equal(calls.filter(call => call.name === 'send_my_work_message_v12').length, dmBefore + 1);
+        await input.fill('DM first');await input.press('Shift+Enter');await input.type('DM second');await expect(input).toHaveValue('DM first\nDM second');
+        await choose('Existing shop group');await expect(history.getByText(groupBody, {exact: true})).toBeVisible();
+        await panel.getByRole('button', {name: 'View group participants', exact: true}).click();
+        const members = page.getByRole('dialog', {name: 'Group participants', exact: true});
+        await expect(members).not.toContainText('TenBot');await members.getByRole('button', {name: 'Close', exact: true}).click();
+        await choose('TenBot');await expect(input).toHaveValue('Retained TenBot composer draft');await expect(draft.getByLabel('Current workflow or problem')).toHaveValue('Preserve this synthetic feature draft');
+        await panel.getByRole('button', {name: 'Close Inbox', exact: true}).click();await messagingButton.click();await expect(panel).toBeVisible();
+        await expect(draft.getByLabel('Current workflow or problem')).toHaveValue('Preserve this synthetic feature draft');
+        await draft.getByRole('checkbox').check();await draft.getByRole('button', {name: 'Submit suggestion', exact: true}).click();
+        await expect(panel.getByText('Suggestion submitted to Product. It has not been approved or added to the roadmap.', {exact: true})).toBeVisible();
+        assert.equal(assistantCalls.filter(call => call.action === 'submit').length, 1);
+        await input.fill('');checked.push('DM Enter and Shift+Enter behavior, group history and membership remain separate', 'assistant composer and confirmed feature draft persist across thread changes and close/reopen');
+        await panel.getByRole('button', {name: 'Product feedback', exact: true}).click();
+        const usage = panel.getByRole('region', {name: 'Shared TenBot usage', exact: true});
+        await expect(usage).toContainText('8 of 20 shared attempts used today · 12 remaining.');await expect(usage).toContainText('6 per minute per account.');await expect(usage).toContainText('Monthly reservation: $0.08 of $0.20.');
+        assert(!/Draft Review Bob|Draft Review Carol|Synthetic private message|[0-9a-f]{8}-[0-9a-f-]{27}/i.test(await usage.innerText()));
+        await panel.getByRole('button', {name: 'Product feedback', exact: true}).click();checked.push('administrator usage remains aggregate and inline');
         await ask('How do I create a group while AI is unavailable?', {...group.answer, mode: 'guide', fallback: true});
-        await expect(conversation.getByText('AI is unavailable right now. Here’s guidance from the TenOps Guide.', {exact: true}).last()).toBeVisible();
-        checked.push('unreleased Intake stays unavailable with no invented navigation', 'deterministic direct-guide fallback remains usable');
-        if (contactsCoverageOnly) {
-          await ask(customerQuestion, customer.answer);
-          const savedCustomer = conversation.locator('article').filter({hasText: customerQuestion}).last();
-          await expect(savedCustomer.getByText('Edit a saved customer’s details', {exact: true})).toBeVisible();
-          await expect(savedCustomer.getByText('Available', {exact: true})).toBeVisible();
-          await expect(savedCustomer.getByText('Source: TenOps Guide', {exact: true})).toBeVisible();
-          await expect(savedCustomer.getByRole('link', {name: 'Open Contacts', exact: true})).toHaveAttribute('href', '/contacts');
-          await expect(savedCustomer).toContainText('Customer Inspector');
-          await expect(savedCustomer).toContainText('Save Changes');
-          if (customer.answer.mode === 'ai') await savedCustomer.getByText('Read TenOps Guide', {exact: true}).click();
-          await expect(savedCustomer).toContainText('Additional Information (Optional)');
-          await page.screenshot({path: `${directory}/desktop-customer-edit.png`});
-          await savedCustomer.getByRole('link', {name: 'Open Contacts', exact: true}).click();
-          await expect(page).toHaveURL(`${origin}/contacts`);
-          await expect(workspace.getByText('Current module: Contacts', {exact: true})).toBeVisible();
-          checked.push('exact saved-customer question identifies released Customer Inspector controls, attribution and Contacts navigation');
-          for (const denied of deniedCustomers) {
-            await ask(customerQuestion, denied.answer);
-            const response = conversation.locator('article').filter({hasText: customerQuestion}).last();
-            await expect(response.getByText(denied.answer.message, {exact: true})).toBeVisible();
-            await expect(response).toContainText('exists in TenOps');
-            await expect(response).toContainText('does not have permission');
-            await expect(response.getByRole('link')).toHaveCount(0);
-            await expect(response).not.toContainText('Source: TenOps Guide');
-            await expect(response).not.toContainText('Customer Inspector');
-            await expect(response).not.toContainText('Save Changes');
-            await expect(workspace.getByRole('button', {name: 'Draft a feature suggestion', exact: true})).toHaveCount(0);
-          }
-          await page.screenshot({path: `${directory}/desktop-customer-permission.png`});
-          checked.push('each missing Contacts capability gives an access explanation without restricted steps, links or feature suggestion');
+        await expect(conversation.getByText('AI is unavailable right now. Here’s guidance from the TenOps Guide.', {exact: true})).toBeVisible();
+        await ask(customer.question, customer.answer);
+        let customerResponse = conversation.getByRole('article', {name: 'TenBot assistant reply', exact: true}).last();
+        await expect(customerResponse).toContainText('Customer Inspector');await expect(customerResponse).toContainText('Save Changes');
+        await expect(customerResponse.getByRole('link', {name: 'Open Contacts', exact: true})).toHaveAttribute('href', '/contacts');
+        await customerResponse.getByRole('link', {name: 'Open Contacts', exact: true}).click();await expect(page).toHaveURL(`${origin}/contacts`);
+        await expect(conversation.getByText(customer.question, {exact: true})).toBeAttached();
+        for (const denied of deniedCustomers) {
+          await ask(customer.question, denied.answer);const response = conversation.getByRole('article', {name: 'TenBot assistant reply', exact: true}).last();
+          await expect(response).toContainText('does not have permission');await expect(response.getByRole('link')).toHaveCount(0);await expect(response).not.toContainText('Customer Inspector');
+          await expect(panel.getByRole('button', {name: 'Draft a feature suggestion', exact: true})).toHaveCount(0);
         }
-        await page.screenshot({path: `${directory}/desktop-communication.png`});
-        await page.setViewportSize({width: 390, height: 844});
-        await contained();
-        await panel.getByRole('button', {name: 'Close Inbox', exact: true}).click();
-        await expect(page.getByRole('navigation', {name: 'Mobile navigation', exact: true})).toBeVisible();
-        await messagingButton.click();
-        await expect(panel.getByRole('tab', {name: 'Messages', exact: true})).toHaveAttribute('aria-selected', 'true');
-        await expect(composer).toHaveValue('Keep private group composer draft');
-        await panel.getByRole('tab', {name: 'Ask TenBot', exact: true}).click();
-        await expect(conversation.getByText(contactsCoverageOnly ? customerQuestion : group.question, {exact: true}).last()).toBeAttached();
-        if (contactsCoverageOnly) {
-          await ask(customerQuestion, customer.answer);
-          const mobileCustomer = conversation.locator('article').filter({hasText: customerQuestion}).last();
-          await expect(mobileCustomer.getByRole('link', {name: 'Open Contacts', exact: true})).toBeVisible();
-          await expect(mobileCustomer).toContainText('Customer Inspector');
-          await contained();
-          await page.screenshot({path: `${directory}/mobile-customer-edit.png`});
-          checked.push('saved-customer guidance and Contacts link remain usable in the existing mobile communication sheet');
-        }
-        await input.fill('Mobile unfinished question');
-        await input.focus();
-        await page.setViewportSize({width: 390, height: 500});
-        await contained();
-        await expect(input).toBeInViewport();
-        await expect(workspace.getByRole('button', {name: 'Ask TenBot', exact: true})).toBeInViewport();
-        await page.screenshot({path: `${directory}/mobile-keyboard-viewport.png`});
-        await page.setViewportSize({width: 390, height: 844});
-        await page.screenshot({path: `${directory}/mobile-communication.png`});
-        await panel.getByRole('button', {name: 'Close Inbox', exact: true}).click();
-        await expect(page.locator('.tenbot-launcher')).toHaveCount(0);
-        await expect(page.getByRole('button', {name: 'Notifications', exact: true}).getByLabel('1 unread notifications', {exact: true})).toBeVisible();
-        checked.push('mobile Messages entry preserves existing composer and assistant conversation', '390px and reduced keyboard viewport fit without horizontal overflow', 'Notifications unread badge remains independent');
-        // Exact reported regression: a generic Jobs token must not turn an
-        // unverified Manpower question into Contacts guidance or consume AI.
-        await page.setViewportSize({width: 1440, height: 1000});
-        await page.goto(`${origin}/manpower-reporting?reviewRecord=synthetic-private-record`);
-        await expect(messagingButton).toBeVisible();
-        await openAssistant();
-        await expect(workspace.getByText('Current module: Manpower Reporting', {exact: true})).toBeVisible();
-        await ask(manpowerQuestion, manpower.answer);
-        const unknown = conversation.locator('article').filter({hasText: manpowerQuestion});
-        await expect(unknown.getByText(manpower.answer.message, {exact: true})).toBeVisible();
-        await expect(unknown.getByRole('link')).toHaveCount(0);
-        await expect(unknown).not.toContainText('Contacts');
-        await expect(unknown).not.toContainText('Source: TenOps Guide');
-        await expect(unknown).not.toContainText('AI is unavailable');
-        await expect(workspace.getByRole('button', {name: 'Draft a feature suggestion', exact: true})).toHaveCount(0);
-        await page.screenshot({path: `${directory}/manpower-unknown-guide.png`});
-        checked.push('exact Manpower Jobs-filter question reports missing documentation without unrelated Contacts source, link, AI claim or feature suggestion');
+        checked.push('source attribution, direct-guide fallback, Contacts navigation and permission-specific guidance remain intact');
+        // A pending assistant response belongs to TenBot even if another thread
+        // is selected while the request is outstanding.
+        answer = group.answer;holdNextAsk = true;const beforePending = askCount(), pendingQuestion = 'How do I create a group while a response is pending?';
+        const pendingResponse = page.waitForResponse(response => response.url().startsWith(endpoint) && response.request().postDataJSON()?.question === pendingQuestion);
+        await input.fill(pendingQuestion);await input.press('Enter');await expect.poll(askCount).toBe(beforePending + 1);
+        await input.dispatchEvent('keydown', {key: 'Enter', code: 'Enter'});assert.equal(askCount(), beforePending + 1);
+        await choose('Draft Review Bob');await expect(input).toHaveValue('DM first\nDM second');
+        releasePending();await (await pendingResponse).json();await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));await expect(history.getByText(privateBody, {exact: true})).toBeVisible();await expect(history.getByText(group.answer.message, {exact: true})).toHaveCount(0);
+        await choose('TenBot');await expect(conversation.getByText(pendingQuestion, {exact: true})).toBeVisible();await expect(conversation.getByRole('article', {name: 'TenBot assistant reply', exact: true}).last()).toContainText(group.answer.message);
+        checked.push('a duplicate submit during inference is ignored and late prose never renders in a private thread');
+        await page.setViewportSize({width: 390, height: 844});await contained();
+        await panel.getByRole('button', {name: 'Back to conversations', exact: true}).click();await choose('TenBot');
+        await ask(customer.question, customer.answer);customerResponse = conversation.getByRole('article', {name: 'TenBot assistant reply', exact: true}).last();
+        await expect(customerResponse.getByRole('link', {name: 'Open Contacts', exact: true})).toBeVisible();
+        await input.fill('Mobile unfinished question');await input.focus();await page.setViewportSize({width: 390, height: 500});await contained();await expect(input).toBeInViewport();await expect(panel.getByRole('button', {name: 'Send', exact: true})).toBeInViewport();
+        await page.screenshot({path: `${directory}/mobile-keyboard-conversation.png`});await page.setViewportSize({width: 390, height: 844});
+        await panel.getByRole('button', {name: 'Back to conversations', exact: true}).click();await choose('Draft Review Bob');await expect(input).toHaveValue('DM first\nDM second');
+        await panel.getByRole('button', {name: 'Back to conversations', exact: true}).click();await choose('TenBot');await expect(input).toHaveValue('Mobile unfinished question');
+        await page.screenshot({path: `${directory}/mobile-tenbot-conversation.png`});
+        checked.push('mobile conversation selection/back, separate drafts and reduced keyboard viewport stay usable');
+        await page.setViewportSize({width: 1440, height: 1000});await page.goto(`${origin}/manpower-reporting?reviewRecord=synthetic-private-record`);await messagingButton.click();await choose('TenBot');
+        await ask(manpower.question, manpower.answer);const unknown = conversation.getByRole('article', {name: 'TenBot assistant reply', exact: true}).last();
+        await expect(unknown.getByText(manpower.answer.message, {exact: true})).toBeVisible();await expect(unknown.getByRole('link')).toHaveCount(0);await expect(unknown).not.toContainText('Contacts');await expect(unknown).not.toContainText('Source: TenOps Guide');await expect(panel.getByRole('button', {name: 'Draft a feature suggestion', exact: true})).toHaveCount(0);
+        checked.push('exact Manpower question remains a documentation gap without substituted Contacts guidance or feature suggestion');
         for (const call of assistantCalls) {
-          const serialized = JSON.stringify(call);
-          assert(!serialized.includes(privateBody) && !serialized.includes('Keep private group composer draft') && !serialized.includes('synthetic-private-record'), 'Assistant payload excludes private Messaging and route contents');
+          const serialized = JSON.stringify(call);assert(![privateBody, officialBody, officialFilename, officialStorage, groupBody, 'DM first', 'synthetic-private-record'].some(secret => serialized.includes(secret)), 'Assistant context excludes private employee/group messages, official rows and route record contents');
         }
-        assert.equal(messages.filter(message => message.body === 'Synthetic DM send after assistant').length, 1);
-        assert.equal(calls.filter(call => call.name === 'save_my_work_message_group').length, 0, 'Assistant never becomes a group participant');
+        assert.equal(calls.filter(call => call.name === 'save_my_work_message_group').length, 0);
+        assert(!calls.some(call => call.name === 'send_my_work_message_v12' && call.body.p_peer === system));
+        await panel.getByRole('button', {name: 'Close Inbox', exact: true}).click();await expect(page.getByRole('button', {name: 'Notifications', exact: true}).getByLabel('1 unread notifications', {exact: true})).toBeVisible();
+        checked.push('TenBot questions use only the assistant service and no private Messaging or official notice context', 'notification unread count remains independent');
+        // Change only this browser's synthetic auth session. A result started by
+        // the old owner must not reappear after the account controller resets.
+        await messagingButton.click();await choose('TenBot');
+        const ownerQuestion = 'How do I create a group before an account switch?';
+        answer = group.answer;holdNextAsk = true;const beforeOwner = askCount();
+        const ownerResponse = page.waitForResponse(response => response.url().startsWith(endpoint) && response.request().postDataJSON()?.question === ownerQuestion);
+        await input.fill(ownerQuestion);await input.press('Enter');await expect.poll(askCount).toBe(beforeOwner + 1);
+        activeUserId = '00000000-0000-0000-0000-000000000011';
+        authUserOverride = await page.evaluate(nextId => ({...JSON.parse(localStorage.getItem('sb-localhost-auth-token')).user, id: nextId, email: 'switched-fixture@example.invalid'}), activeUserId);
+        await page.evaluate(nextUser => {
+          const key = 'sb-localhost-auth-token', previous = localStorage.getItem(key), next = JSON.parse(previous);
+          const parts = next.access_token.split('.'), claims = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+          claims.sub = nextUser.id;next.user = nextUser;parts[1] = btoa(JSON.stringify(claims)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');next.access_token = parts.join('.');
+          const value = JSON.stringify(next);localStorage.setItem(key, value);
+          // Supabase's existing cross-tab mechanism uses BroadcastChannel.
+          const channel = new BroadcastChannel(key);channel.postMessage({event: 'SIGNED_IN', session: next});channel.close();
+        }, authUserOverride);
+        await expect.poll(() => switchedProfileSeen).toBe(true);await expect(conversation.getByText(ownerQuestion, {exact: true})).toHaveCount(0);
+        releasePending();await (await ownerResponse).json();releaseProfile();
+        await expect(messagingButton).toBeVisible();await messagingButton.click();await expect(panel).toBeVisible();await choose('TenBot');
+        await expect(conversation.getByText(ownerQuestion, {exact: true})).toHaveCount(0);await expect(conversation.getByRole('article', {name: 'TenBot assistant reply', exact: true})).toHaveCount(0);
+        await expect(input).toBeEnabled();
+        checked.push('synthetic account switch discards the previous owner conversation and its pending response');
       } catch (error) {
         await page.screenshot({path: `${directory}/failure.png`, fullPage: true}).catch(() => {});
         writeFileSync(`${directory}/failure.txt`, `${await page.locator('body').innerText()}\n${error.stack}`);
-        writeFileSync(`${directory}/failure-requests.json`, JSON.stringify({calls, realtime, assistantCalls}, null, 2));
-        throw error;
+        writeFileSync(`${directory}/failure-requests.json`, JSON.stringify({calls, realtime, assistantCalls}, null, 2));throw error;
       } finally {
-        requestEvidence.push({admin, calls, realtime, assistantActions: assistantCalls.map(call => call.action), blockedOrigins: [...new Set(blocked)]});
-        await context.close();
+        releasePending?.();releaseProfile?.();requestEvidence.push({admin, calls, realtime, assistantActions: assistantCalls.map(call => call.action), blockedOrigins: [...new Set(blocked)]});await context.close();
       }
     }
     assert.deepEqual(errors, []);
-    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, inferenceCalls: 0, replaySource: contactsCoverageOnly ? ['../communication/evaluation.json', 'evaluation.json'] : 'evaluation.json', checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
-    console.log(`TenBot communication browser checks passed (${checked.length} focused assertions; zero inference calls).`);
-  } finally { await browser.close(); }
+    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, inferenceCalls: 0, replaySource: ['../communication/evaluation.json', '../contacts-coverage/evaluation.json'], checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
+    console.log(`TenBot Inbox conversation browser checks passed (${checked.length} focused assertions; zero inference calls).`);
+  } finally {await browser.close();}
 }
 
 const origin = 'http://localhost:3000';
