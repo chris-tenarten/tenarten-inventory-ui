@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Node fixture shares untyped SQL helpers.
-// @ts-nocheck -- Local-only adapter; only privacy-filtered workflow intent, own-assistant context and vetted excerpts reach AI.
+// @ts-nocheck -- Local-only adapter; explicit employee input, owner-scoped history and vetted guide excerpts reach AI.
 import {createServer} from 'node:http';
 import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
 import {sql,literal,json,asUser,admin,docker,startIntakeDatabase} from './support/intake-materials-database.mjs';
@@ -21,10 +21,13 @@ sql(container,sharedUsage.replace('create function public.tenbot_usage_summary',
 const measuredUsage=readFileSync('supabase/migrations/20261027140000_tenbot_measured_free_pool.sql','utf8');
 if(!sql(container,"select column_name from information_schema.columns where table_schema='public' and table_name='tenbot_usage' and column_name='reserved_neurons'"))sql(container,measuredUsage);
 else sql(container,'begin;'+measuredUsage.slice(measuredUsage.indexOf('create function public.tenbot_usage_policy')).replaceAll('create function public.tenbot_','create or replace function public.tenbot_'));
+const conversationMigration=readFileSync('supabase/migrations/20261027150000_tenbot_private_conversations.sql','utf8');
+if(!sql(container,"select to_regclass('public.tenbot_conversations')"))sql(container,conversationMigration);
+else sql(container,'begin;'+conversationMigration.slice(conversationMigration.indexOf('create function public.tenbot_load_conversation')).replaceAll('create function public.tenbot_','create or replace function public.tenbot_'));
 if(process.argv.includes('--refresh-only')){console.log('Local TenBot RPCs refreshed; feedback preserved.');process.exit(0);}
 const rpc=(role='authenticated')=>async(name,args={})=>{try{if(!/^(has_app_capability|has_proposal_access|tenbot_[a-z_]+)$/.test(name))throw Error('Unsupported local RPC');const expression=`public.${name}(${Object.entries(args).map(([k,v])=>`${k}=>${v===null?'null':typeof v==='object'?json(v):typeof v==='boolean'?String(v):literal(v)}`).join(',')})`;const query=asUser('select to_jsonb('+expression+')',admin,role);
  const raw=sql(container,query);
- return {data:raw?JSON.parse(raw):null,error:null};}catch(e){return {data:null,error:{message:e.message}};}};
+ return {data:raw?JSON.parse(raw):null,error:null};}catch{return {data:null,error:{message:'Local operation unavailable'}};}};
 const server=createServer(async(req,res)=>{
  const headers={'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,content-type','Access-Control-Allow-Methods':'POST,OPTIONS'};
  const send=(status,body)=>res.writeHead(status,headers).end(JSON.stringify(body));

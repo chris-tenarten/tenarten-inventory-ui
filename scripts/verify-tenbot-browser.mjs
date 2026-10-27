@@ -2,11 +2,12 @@ import {chromium, expect} from '@playwright/test';
 import assert from 'node:assert/strict';
 import {mkdirSync, writeFileSync, readFileSync, existsSync} from 'node:fs';
 
+const privacyOnly=process.argv.includes('--privacy-only');
 const conversationOnly = process.argv.includes('--conversation-only') || process.argv.length === 2;
 const refinementOnly = process.argv.includes('--refinement-only');
 const liveInferenceOnce = refinementOnly && process.argv.includes('--live-inference-once');
 const knowledgeCoverageOnly = process.argv.includes('--knowledge-coverage-only') || refinementOnly;
-if (conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
+if (privacyOnly || conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
   await verifyConversation();
   process.exit(0);
 }
@@ -16,7 +17,7 @@ if (conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contac
 // pass one ordinary Messaging Send through the existing actual local adapter.
 async function verifyConversation() {
   const origin = 'http://localhost:3000', endpoint = 'http://localhost:55593';
-  const directory = `/private/tmp/tenops-tenbot-review/${refinementOnly ? 'refinement/browser' : knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
+  const directory = `/private/tmp/tenops-tenbot-review/${privacyOnly ? 'privacy/browser' : refinementOnly ? 'refinement/browser' : knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
   const captured = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/communication/evaluation.json', 'utf8')).outputs;
   const coverage = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/contacts-coverage/evaluation.json', 'utf8')).outputs;
   const workflowCoverageFile = `/private/tmp/tenops-tenbot-review/${refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'}`;
@@ -103,10 +104,11 @@ async function verifyConversation() {
               return fulfill(liveRecord.answer);
             }
             if (failNextAsk) {failNextAsk = false;return route.fulfill({status: 503, contentType: 'application/json', headers: {'Access-Control-Allow-Origin': origin}, body: JSON.stringify({error: 'Synthetic temporary assistant failure.'})});}
-            const response = answer;
+            const response = privacyOnly?{...answer,conversationId:'00000000-0000-4000-8000-000000000777'}:answer;
             if (holdNextAsk) {holdNextAsk = false;await new Promise(resolve => {releasePending = resolve;});}
             return fulfill(response);
           }
+          if (body.action === 'clear') return fulfill({cleared:true});
           if (body.action === 'draft') return fulfill({...unavailable.answer, summary: null});
           if (body.action === 'submit') return fulfill({id: 'synthetic-confirmed-feedback'});
           if (body.action === 'usage') return fulfill({usage: {sharedDayUsed: 47, sharedDayLimit: 300, sharedDayRemaining: 253, sharedMonthUsed: 47, sharedMonthLimit: 6000, sharedMonthRemaining: 5953, perAccountMinuteLimit: 6, dayNeuronLimit: 8000, dayAccountedNeurons: 4750.5, monthNeuronLimit: 240000, monthAccountedNeurons: 4750.5, dayMeasuredInputTokens: 27000, dayMeasuredOutputTokens: 4300, dayUnmeasuredAttempts: 20}});
@@ -161,7 +163,7 @@ async function verifyConversation() {
         const request = assistantCalls.filter(call => call.action === 'ask').at(-1);
         const moduleLabel = {'/my-work': 'My Work', '/settings': 'Settings', '/contacts': 'Contacts', '/manpower-reporting': 'Manpower Reporting'}[new URL(page.url()).pathname];
         assert.equal(request.context[0], `Current module: ${moduleLabel}`);
-        assert(request.context.length <= 2 && Object.keys(request).every(key => ['action', 'question', 'context'].includes(key)), 'Assistant input stays limited to module label and bounded employee question context');
+        assert(request.context.length === 1 && Object.keys(request).every(key => ['action', 'question', 'context','conversationId'].includes(key)), 'Assistant input stays limited to module label and bounded employee question context');
         assert(request.context.join('').length <= 1200, 'Module and own assistant follow-up context remain bounded together');
       };
       const contained = async () => {
@@ -177,6 +179,66 @@ async function verifyConversation() {
         await expect(page.getByRole('region', {name: 'TenBot workspace', exact: true})).toHaveCount(0);
         await expect(page.locator('.tenbot-launcher')).toHaveCount(0);
         await choose('TenBot');
+        if(privacyOnly){
+          await expect(panel.getByText(/text you submit.*configured AI provider/)).toBeVisible();
+          const pasted='Customer: Synthetic customer\nMessage excerpt: the customer is not ready and the job is complete';
+          await ask(pasted,group.answer);
+          assert.equal(assistantCalls.filter(c=>c.action==='ask').at(-1).conversationId,undefined);
+          await ask('What if that group button is missing?',group.answer);
+          assert.equal(assistantCalls.filter(c=>c.action==='ask').at(-1).conversationId,'00000000-0000-4000-8000-000000000777');
+          assert(assistantCalls.filter(c=>c.action==='ask').every(c=>c.context.length===1&&!c.context[0].includes(pasted)));
+          await panel.getByRole('button',{name:'Draft a feature suggestion',exact:true}).click();
+          const form=panel.getByRole('form',{name:'Feature suggestion draft',exact:true});
+          await expect(form.getByLabel('Requested capability',{exact:true})).toHaveValue('');
+          await expect(form.getByLabel('Request wording to share',{exact:true})).toHaveValue('');
+          await expect(form.getByLabel('Optional context and frequency',{exact:true})).toHaveValue('');
+          await expect(form.getByRole('button',{name:'Submit suggestion',exact:true})).toBeDisabled();
+          await form.getByLabel('Requested capability',{exact:true}).fill('Clearer group entry');
+          await form.getByLabel('Current workflow or problem',{exact:true}).fill('Hard to find');
+          await form.getByLabel('Desired behavior',{exact:true}).fill('Clearer entry');
+          await form.getByLabel('Request wording to share',{exact:true}).fill('Make group entry easier to find');
+          await form.getByRole('checkbox').check();await form.getByLabel(/^Desired behavior/).fill('Clearer confirmed entry');
+          await expect(form.getByRole('button',{name:'Submit suggestion',exact:true})).toBeDisabled();
+          await form.getByRole('checkbox').check();await form.getByRole('button',{name:'Submit suggestion',exact:true}).click();
+          await expect(form).toHaveCount(0);
+          const submitted=assistantCalls.find(c=>c.action==='submit');assert(submitted.confirmed);assert(!JSON.stringify(submitted).includes(pasted));
+          await panel.getByRole('button',{name:'Clear assistant chat',exact:true}).click();
+          await expect(conversation.getByText(pasted,{exact:true})).toHaveCount(0);
+          assert.equal(assistantCalls.find(c=>c.action==='clear').conversationId,'00000000-0000-4000-8000-000000000777');
+          await ask('How do I create a group conversation?',group.answer);
+          assert.equal(assistantCalls.filter(c=>c.action==='ask').at(-1).conversationId,undefined);
+          for(const call of assistantCalls)assert(!JSON.stringify(call).includes(privateBody)&&!JSON.stringify(call).includes(groupBody));
+          await page.setViewportSize({width:390,height:844});await contained();
+          await page.screenshot({path:`${directory}/privacy-${admin?'admin':'restricted'}-mobile.png`});
+          checked.push('provider disclosure visible; explicit pasted text sends without automatic employee-message retrieval','follow-up sends only conversation ID and fixed module label','feedback fields do not inherit private chat; deliberate confirmation required','Clear assistant chat clears server handle and display; next ask starts fresh','mobile controls remain usable and private Messaging content stays out of requests');
+          await page.setViewportSize({width:1440,height:1000});
+          await panel.getByRole('button',{name:'Close Inbox',exact:true}).click();
+        // Change only this browser's synthetic auth session. A result started by
+        // the old owner must not reappear after the account controller resets.
+        await messagingButton.click();await choose('TenBot');
+        const ownerQuestion = 'How do I create a group before an account switch?';
+        answer = group.answer;holdNextAsk = true;const beforeOwner = askCount();
+        const ownerResponse = page.waitForResponse(response => response.url().startsWith(endpoint) && response.request().postDataJSON()?.question === ownerQuestion);
+        await input.fill(ownerQuestion);await input.press('Enter');await expect.poll(askCount).toBe(beforeOwner + 1);
+        activeUserId = '00000000-0000-0000-0000-000000000011';
+        authUserOverride = await page.evaluate(nextId => ({...JSON.parse(localStorage.getItem('sb-localhost-auth-token')).user, id: nextId, email: 'switched-fixture@example.invalid'}), activeUserId);
+        await page.evaluate(nextUser => {
+          sessionStorage.setItem('tenops.welcomeHeroPlayed:'+nextUser.id,'true');
+          const key = 'sb-localhost-auth-token', previous = localStorage.getItem(key), next = JSON.parse(previous);
+          const parts = next.access_token.split('.'), claims = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+          claims.sub = nextUser.id;next.user = nextUser;parts[1] = btoa(JSON.stringify(claims)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');next.access_token = parts.join('.');
+          const value = JSON.stringify(next);localStorage.setItem(key, value);
+          // Supabase's existing cross-tab mechanism uses BroadcastChannel.
+          const channel = new BroadcastChannel(key);channel.postMessage({event: 'SIGNED_IN', session: next});channel.close();
+        }, authUserOverride);
+        await expect.poll(() => switchedProfileSeen).toBe(true);await expect(conversation.getByText(ownerQuestion, {exact: true})).toHaveCount(0);
+        releasePending();await (await ownerResponse).json();releaseProfile();
+        await expect(messagingButton).toBeVisible();await messagingButton.click();await expect(panel).toBeVisible();await choose('TenBot');
+        await expect(conversation.getByText(ownerQuestion, {exact: true})).toHaveCount(0);await expect(conversation.getByRole('article', {name: 'TenBot assistant reply', exact: true})).toHaveCount(0);
+        await expect(input).toBeEnabled();
+        checked.push('synthetic account switch discards the previous owner conversation and its pending response');
+          continue;
+        }
         const official = history.locator(`#message-${officialId}`);
         await expect(official.getByText(officialBody, {exact: true})).toBeVisible();
         await expect(official).toContainText('TenOps system message');
@@ -386,6 +448,7 @@ async function verifyConversation() {
         activeUserId = '00000000-0000-0000-0000-000000000011';
         authUserOverride = await page.evaluate(nextId => ({...JSON.parse(localStorage.getItem('sb-localhost-auth-token')).user, id: nextId, email: 'switched-fixture@example.invalid'}), activeUserId);
         await page.evaluate(nextUser => {
+          sessionStorage.setItem('tenops.welcomeHeroPlayed:'+nextUser.id,'true');
           const key = 'sb-localhost-auth-token', previous = localStorage.getItem(key), next = JSON.parse(previous);
           const parts = next.access_token.split('.'), claims = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
           claims.sub = nextUser.id;next.user = nextUser;parts[1] = btoa(JSON.stringify(claims)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');next.access_token = parts.join('.');

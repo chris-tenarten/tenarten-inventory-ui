@@ -7,7 +7,15 @@ import {pilotDirectory} from './support/tenbot-ai-pilot.mjs';
 import {answer,cloudflareProvider,groundedProse,requiredInferencePermissions,type InferenceInput,type InferenceProvider} from '../supabase/functions/_shared/tenbot-core';
 import {retrieve,registry,snapshot,conversationGuides,knowledgeEntries,knowledgeSnapshot,hasGuidePermission} from '../supabase/functions/_shared/tenbot-knowledge';
 import {generatedKnowledge} from '../supabase/functions/_shared/tenbot-knowledge-snapshot';
-import {handleTenbot} from '../supabase/functions/_shared/tenbot-handler';
+import {handleTenbot as actualHandleTenbot} from '../supabase/functions/_shared/tenbot-handler';
+// These pre-existing unit cases isolate capability/metering behavior. Actual
+// owner history and SQL enforcement are tested by verify-tenbot-privacy.mts.
+const handleTenbot=(...args:Parameters<typeof actualHandleTenbot>)=>{
+ const caller=args[2],service=args[3];
+ args[3]=async(name,values)=>name==='tenbot_append_conversation_turn'?{data:true,error:null}:service(name,values);
+ args[2]=async(name,values)=>name==='tenbot_load_conversation'?{data:{ok:true,id:'00000000-0000-4000-8000-000000000777',ownerId:args[1],version:0,turns:[]},error:null}:name==='tenbot_append_conversation_turn'?{data:true,error:null}:caller(name,values);
+ return actualHandleTenbot(...args);
+};
 import {projectConversation} from '../supabase/functions/_shared/tenbot-privacy';
 import {startIntakeDatabase,sql,docker,asUser,literal,json,admin,member} from './support/intake-materials-database.mjs';
 
@@ -272,7 +280,7 @@ const prose='You can start the conversation right from Messaging. Choose New gro
 const conversationalQuestion='How do I create a group conversation? Explain the steps, please.';
 const spoken=await answer({action:'ask',question:conversationalQuestion,context:['Current module: My Work']},all,fixture({ids:['group'],answer:prose,summary:''},input=>{
  assert.match(input.question,/how do i create a group conversation/i);
- assert.match(input.question,/explain the steps please/i);
+ assert.match(input.question,/explain the steps, please/i);
  assert.notEqual(input.question,entry('group').title);assert.deepEqual(input.context,['Current module: My Work']);
  assert(input.excerpts.some(source=>source.id==='group'));assert(input.excerpts.length<=4);
 }),reserve);
@@ -291,11 +299,11 @@ assert.equal(multi.message,multiProse);
 for(const id of ['production-rework-create','manpower-job-filter'])assert(multi.sources.some(source=>source.id===id));
 const ownExchange='Conversation context:\nEmployee: How do I initiate Rework for a Job?\nTenBot: Open the completed Job in Production and choose Create Rework.';
 assert(conversationGuides('What if I do not see that button?',['Current module: Production',ownExchange]).some(candidate=>candidate.id==='production-rework-create'));
-const followup=await answer({action:'ask',question:'What if I do not see that button?',context:['Current module: Production',ownExchange]},all,fixture({ids:['production-rework-create'],answer:'Check that the Job is complete, unarchived, and has no active Rework cycle. If those conditions are met, ask an administrator to review your access.'},input=>{
- assert.equal(input.question,'what if i do not see that button');
- assert(input.context.some(text=>text.startsWith('Conversation context:\nEmployee: how do i initiate rework')));
+const followup=await answer({action:'ask',question:'What if I do not see that button?',context:['Current module: Production']},all,fixture({ids:['production-rework-create'],answer:'Check that the Job is complete, unarchived, and has no active Rework cycle. If those conditions are met, ask an administrator to review your access.'},input=>{
+ assert.equal(input.question,'What if I do not see that button?');
+ assert(input.context.some(text=>text.startsWith('Conversation context:\nEmployee: How do I initiate Rework')));
  assert(input.excerpts.some(source=>source.id==='production-rework-create'));
-}),reserve);
+}),reserve,[ownExchange]);
 assert.match(followup.message,/unarchived/);
 const clarification=await answer({action:'ask',question:groupQuestion},all,fixture({ids:[],answer:'Are you starting a new group or trying to add someone to an existing DM?'}),reserve);
 assert.match(clarification.message,/\?$/);
@@ -335,16 +343,15 @@ for(const prose of [
 const actualRejectedQwenShare="You cannot share a job directly via a native 'Share Job' control in Messaging. However, you can type the job reference as text in a message or attach a file you're authorized to share. Creating a group doesn't share a job. Keep private job records out of Messaging.";
 await assert.rejects(answer({action:'ask',question:shareJobQuestion},all,fixture({ids:['share-job','knowledge-messaging'],answer:actualRejectedQwenShare}),reserve),/Job sharing wording|Messaging privacy wording|verify/i);
 
-// An input rejected by privacy projection must fall back locally without a
-// provider call or reservation. No record/credential content enters inference.
-const beforePrivate:number=reserved;
+// Product permits explicitly submitted business/message text for this user's answer.
 const privateQuestion='How do I create a group conversation?\nCustomer: Synthetic Acme\nInvoice: 8821';
-const privateResult=await answer({action:'ask',question:privateQuestion},all,noInference,reserve);
-assert.notEqual(privateResult.mode,'ai');assert.equal(reserved,beforePrivate);
+const privateResult=await answer({action:'ask',question:privateQuestion},all,fixture({ids:['group'],answer:prose},input=>assert.equal(input.question,privateQuestion)),reserve);
+assert.equal(privateResult.mode,'ai');
 assert.deepEqual(retrieve('How do I edit my password in Contacts?',all),[]);
-const credentialResult=await answer({action:'ask',question:'How do I edit my password in Contacts?'},all,noInference,reserve);
+const beforeCredential=reserved;
+const credentialResult=await answer({action:'ask',question:'How do I edit my password in Contacts?'},all,fixture({ids:[],answer:'I cannot verify that account workflow from the supplied sources.'}),reserve);
 assert.equal(credentialResult.resolution,'documentation-missing');assert.deepEqual(credentialResult.sources,[]);
-assert.match(credentialResult.message,/credentials|verified|confirm/i);assert.equal(reserved,beforePrivate);
+assert.match(credentialResult.message,/credentials|verif|confirm/i);assert.equal(reserved,beforeCredential+1);
 
 // Output guards permit ordinary reasoning but reject bad source references,
 // invented controls/links/metadata, privilege reversals and execution claims.

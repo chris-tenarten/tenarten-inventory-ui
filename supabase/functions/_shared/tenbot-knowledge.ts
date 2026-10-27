@@ -169,7 +169,7 @@ export const registry:CapabilityEntry[] = [
   "permission": "messaging.write",
   "route": null,
   "path": "",
-  "guidance": "I cannot verify a native Share Job control or Job card in Messaging. This is a documentation limit, not proof that the feature is absent. Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send. Creating a group by itself does not share a Job. Keep private Job records out of TenBot.",
+  "guidance": "I cannot verify a native Share Job control or Job card in Messaging. This is a documentation limit, not proof that the feature is absent. Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send. Creating a group by itself does not share a Job. TenBot does not independently retrieve private Job records. You may explicitly submit text for your own answer; the configured AI provider processes that text.",
   "source": "Messaging capability review · October 27",
   "evidence": "docs/project-memory/2026-10-22-messaging-groups-replies-candidate.md#executed-release--2026-10-22",
   "requiredTerms": [
@@ -1479,7 +1479,7 @@ export const registry:CapabilityEntry[] = [
   "permission": "messaging.write",
   "route": "/my-work",
   "path": "Messaging → authorized DM or group → Attach → Send",
-  "guidance": "Employees with Messaging participation permission can send attachments inside an authorized DM or group. Open Messaging and the conversation, choose Attach, and select files. Supported browsers also allow pasting images or files, or dropping them into the composer. Review the attachments, optionally add text, then choose Send. Limits are 50 MB per file and 200 MB per message. Clipboard support varies by browser. The transfer must finish before the attachment message is delivered. Attachments remain subject to the conversation's access rules; do not send private records to TenBot.",
+  "guidance": "Employees with Messaging participation permission can send attachments inside an authorized DM or group. Open Messaging and the conversation, choose Attach, and select files. Supported browsers also allow pasting images or files, or dropping them into the composer. Review the attachments, optionally add text, then choose Send. Limits are 50 MB per file and 200 MB per message. Clipboard support varies by browser. The transfer must finish before the attachment message is delivered. Attachments remain subject to the conversation's access rules; TenBot does not independently retrieve those attachments; explicitly submitted text is processed for your own answer.",
   "source": "Messaging attachment guide · deployed application",
   "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
   "sourceFiles": [

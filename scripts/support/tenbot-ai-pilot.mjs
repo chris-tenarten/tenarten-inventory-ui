@@ -3,7 +3,6 @@ import {readFileSync,writeFileSync,mkdirSync,appendFileSync,readdirSync,existsSy
 import {randomBytes,randomUUID} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
-import {projectConversation} from '../../supabase/functions/_shared/tenbot-privacy.ts';
 import {inferenceRequest} from '../../supabase/functions/_shared/tenbot-core.ts';
 import {allowedModels,defaultModel,isAllowedModel,measuredUsage,reserveForRequest,usagePolicy} from '../../supabase/functions/_shared/tenbot-models.ts';
 export const pilotDirectory='/private/tmp/tenops-tenbot-review/ai-pilot';
@@ -160,12 +159,10 @@ export function pilotProvider({model=pilotModel}={}){
   }
  }};
 }
-// Defense in depth: preserve privacy-filtered actual intent and own-assistant
-// context, rather than replacing the request with a canonical guide title.
-// The shared projection documents its vocabulary/shape guard's limits.
+// This server-only provider receives handler-authorized owner history, never
+// caller-replayed turns or independently retrieved business records.
 export function guideOnlyInput(input){
  if(input.draft)throw Error('Feature drafts remain employee-written in this pilot');
- const projected=projectConversation(input.question,input.context);
- if(!projected.question)throw Error('No safe workflow question; use local guide fallback');
- return {...projected,draft:false,excerpts:input.excerpts};
+ if(typeof input.question!=='string'||!input.question.trim()||input.question.length>1200||!Array.isArray(input.context)||input.context.length>2||input.context.some(item=>typeof item!=='string'||item.length>1200))throw Error('Invalid assistant input');
+ return {question:input.question,context:input.context,draft:false,excerpts:input.excerpts};
 }

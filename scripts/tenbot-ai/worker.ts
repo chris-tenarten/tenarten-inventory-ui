@@ -109,11 +109,8 @@ const worker = {
       const result = await env.AI.run(model, inferenceRequest(body,model));
       let output:unknown;
       try{output=parseInferenceOutput(result);}catch{
-        // Keep actual model formatting failures inspectable only on this
-        // authenticated local bridge; the application rejects this envelope.
-        const value=result as {response?:unknown;choices?:{message?:{content?:unknown}}[]};
-        const raw=value?.response??value?.choices?.[0]?.message?.content;
-        output={invalidFormat:true,rawResponse:typeof raw==='string'?raw.slice(0,6000):''};
+        // Return only a format marker; raw provider prose may contain private input.
+        output={invalidFormat:true};
       }
       return json({ output, usage: safeUsage(result) });
     } catch {

@@ -5,7 +5,7 @@ import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
-type Answer={mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean};
+type Answer={conversationId?:string;mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
 type Feedback={id:string;submitter_name:string;status:string;created_at:string;draft:Draft;history:{id:number;status:string;note:string;created_at:string}[]};
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;sharedMonthLimit:number;sharedMonthUsed:number;sharedMonthRemaining:number;perAccountMinuteLimit:number;dayNeuronLimit:number;dayAccountedNeurons:number;monthNeuronLimit:number;monthAccountedNeurons:number;dayMeasuredInputTokens:number;dayMeasuredOutputTokens:number;dayUnmeasuredAttempts:number};
@@ -46,21 +46,6 @@ type Turn={id:number;question:string;createdAt:string;answeredAt?:string;answer:
 type AssistantEntry={id:string;createdAt:string;content:ReactNode};
 export type TenbotConversation={available:boolean;busy:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;activityKey:string};
 const messageTime=(value:string)=>new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date(value));
-function conversationContext(label:string,messages:Turn[]){
- const fixedModule=`Current module: ${label}`,prefix='Conversation context:\n';
- let previous='';
- // Only this account's completed assistant exchanges enter follow-up context.
- // Never include official notices, employee conversations, files or source metadata.
- for(const turn of messages.filter(item=>item.answer).slice(-2).reverse()){
-  const answer=turn.answer!;
-  const prose=answer.mode==='guide'?answer.sources.map(source=>source.guidance).join(' ')||answer.message:answer.message;
-  const exchange=`Employee: ${turn.question.slice(0,450)}\nTenBot: ${prose.slice(0,650)}`;
-  const next=previous?`${exchange}\n${previous}`:exchange;
-  if(fixedModule.length+prefix.length+next.length<=1200)previous=next;
- }
- return [fixedModule,...(previous?[prefix+previous]:[])];
-}
-
 // InboxDialog owns this hook for one authenticated account. It accepts only an
 // explicitly submitted question, never Messaging history, recipients or records.
 export function useTenbotConversation():TenbotConversation{
@@ -78,6 +63,8 @@ export function useTenbotConversation():TenbotConversation{
  const [usage,setUsage]=useState<Usage|null>(null),[usageError,setUsageError]=useState('');
  const [notes,setNotes]=useState<Record<string,string>>({});
  const lock=useRef(false),sequence=useRef(0);
+ const conversation=useRef<{owner:string;id?:string}>({owner});
+ if(conversation.current.owner!==owner)conversation.current={owner};
  const draftForm=useRef<HTMLFormElement>(null);
  const drafting=Boolean(draft);
  const lastAnswer=messages.at(-1)?.answer;
@@ -87,8 +74,18 @@ export function useTenbotConversation():TenbotConversation{
    draftForm.current.querySelector('textarea')?.focus({preventScroll:true});
   }
  },[drafting]);
- const context=()=>conversationContext(currentModule.label,messages);
- const request=<T,>(body:Record<string,unknown>)=>invoke<T>(body,owner);
+ const context=()=>[`Current module: ${currentModule.label}`];
+ const request=async<T,>(body:Record<string,unknown>)=>{
+  const chat=body.action==='ask'||body.action==='draft';
+  try{
+   const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&conversation.current.id?{conversationId:conversation.current.id}:{})},owner);
+   if(chat&&conversation.current.owner===owner&&result.conversationId)conversation.current.id=result.conversationId;
+   return result;
+  }catch(e){
+   if(e instanceof Error&&/^Conversation (unavailable|changed)/.test(e.message)&&conversation.current.owner===owner)conversation.current={owner};
+   throw e;
+  }
+ };
  function begin(){if(!available||lock.current)return false;lock.current=true;setBusy(true);setError('');return true;}
  function finish(){lock.current=false;setBusy(false);}
  async function send(question:string):Promise<boolean>{
@@ -112,13 +109,24 @@ export function useTenbotConversation():TenbotConversation{
  }
  async function makeDraft(question:string){
   const original=question.trim()||messages.at(-1)?.question;if(!original||!begin())return;
-  try{const r=await request<Answer>({action:'draft',question:original,context:context()});setDraft({capability:original,problem:'',desired:'',module:currentModule.module,original,summary:r.summary||'',summaryKind:r.summary?'AI-generated':'Employee-written',context:''});setConfirmed(false);}
+  try{const r=await request<Answer>({action:'draft',question:original,context:context()});setDraft({capability:'',problem:'',desired:'',module:currentModule.module,original:'',summary:r.summary||'',summaryKind:r.summary?'AI-generated':'Employee-written',context:''});setConfirmed(false);}
   catch(e){setError(e instanceof Error?e.message:'Draft unavailable.');}finally{finish();}
  }
  async function submit(){
   if(!draft||!confirmed||!begin())return;
   try{await request({action:'submit',draft,confirmed});setDraft(null);setConfirmed(false);setNotice('Suggestion submitted to Product. It has not been approved or added to the roadmap.');}
   catch(e){setError(e instanceof Error?e.message:'Submission failed.');}finally{finish();}
+ }
+ function editDraft(key:keyof Draft,value:string){
+  if(!draft)return;
+  setDraft({...draft,[key]:value,...(key==='summary'?{summaryKind:'Employee-written'}:{})});setConfirmed(false);
+ }
+ async function clear(){
+  if(!begin())return;
+  try{
+   if(conversation.current.id)await request({action:'clear',conversationId:conversation.current.id});
+   conversation.current={owner};setMessages([]);setDraft(null);setError('');setNotice('');
+  }catch{setError('TenBot could not clear this conversation. Retry.');}finally{finish();}
  }
  async function refreshFeedback(status:string,module:string){
   await Promise.all([
@@ -159,17 +167,19 @@ export function useTenbotConversation():TenbotConversation{
   if(!available)return null;
   const offerSuggestion=Boolean(question.trim())||Boolean(lastAnswer?.suggestionAllowed)||Boolean(lastAnswer?.sources.length&&lastAnswer.sources[0].status!=='unknown'&&lastAnswer.resolution!=='documentation-missing'&&lastAnswer.resolution!=='permission-denied');
   return <div className="space-y-3" data-tenbot-controls>
+   <p className="text-xs text-slate-600">When AI is available, text you submit and recent private TenBot turns are processed by the configured AI provider. TenBot does not independently read messages, tasks or restricted records. Private TenBot history expires after eight hours without a new turn.</p>
    {error?<p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
    {notice?<p role="status" className="rounded bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
    <div className="flex flex-wrap items-center gap-2 text-xs">
     {offerSuggestion?<button type="button" disabled={busy} onClick={()=>void makeDraft(question)} className="min-h-11 rounded border px-3 disabled:opacity-50">Draft a feature suggestion</button>:null}
     {reviewAllowed?<button type="button" className="min-h-11 rounded border px-3" disabled={busy} aria-expanded={showFeedback} onClick={()=>{setShowFeedback(value=>!value);if(!showFeedback)void load();}}>Product feedback</button>:null}
-    {messages.length||draft?<button type="button" disabled={busy} onClick={()=>{setMessages([]);setDraft(null);setError('');setNotice('');}} className="min-h-11 px-1 text-slate-500">Clear assistant chat</button>:null}
+    {messages.length||draft?<button type="button" disabled={busy} onClick={()=>void clear()} className="min-h-11 px-1 text-slate-500">Clear assistant chat</button>:null}
    </div>
    {draft?<form ref={draftForm} onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3 rounded-lg border bg-white p-3" aria-label="Feature suggestion draft">
-    <h3 className="font-bold">Review your suggestion</h3><p className="text-xs text-slate-600">Submitter: {identity}. Only this draft will be saved; your assistant chat is not stored.</p>
-    {([['capability','Requested capability'],['problem','Current workflow or problem'],['desired','Desired behavior'],['context','Optional context and frequency'],['original','Original wording'],['summary',draft.summaryKind+' summary']] as const).map(([k,label])=><label key={k} className="block text-sm">{label}<textarea readOnly={k==='original'} required={k!=='context'&&k!=='summary'} maxLength={k==='summary'?800:1200} value={draft[k]} onChange={e=>setDraft({...draft,[k]:e.target.value})} className={field}/></label>)}
-    <label className="block text-sm">Affected module<select className={field} value={draft.module} onChange={e=>setDraft({...draft,module:e.target.value})}>{modules.map(m=><option key={m}>{m}</option>)}</select></label>
+    <h3 className="font-bold">Review your suggestion</h3><p className="text-xs text-slate-600">Submitter: {identity}. Only this reviewed draft is shared with Product.</p>
+    <p className="text-sm text-slate-600">Only the fields you review and confirm here are shared with Product. Your private conversation and pasted context are not attached.</p>
+    {([['capability','Requested capability'],['problem','Current workflow or problem'],['desired','Desired behavior'],['context','Optional context and frequency'],['original','Request wording to share'],['summary',draft.summaryKind+' summary']] as const).map(([k,label])=><label key={k} className="block text-sm">{label}<textarea required={k!=='context'&&k!=='summary'} maxLength={k==='summary'?800:1200} value={draft[k]} onChange={e=>editDraft(k,e.target.value)} className={field}/></label>)}
+    <label className="block text-sm">Affected module<select className={field} value={draft.module} onChange={e=>editDraft('module',e.target.value)}>{modules.map(m=><option key={m}>{m}</option>)}</select></label>
     <label className="flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" required checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/>I reviewed this draft and want to submit it to Product.</label>
     <button disabled={busy||!confirmed} className="tenops-selected-surface min-h-11 rounded px-3 disabled:opacity-50">Submit suggestion</button><button type="button" className="min-h-11 px-3" onClick={()=>setDraft(null)}>Cancel</button>
    </form>:null}

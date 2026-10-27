@@ -26,8 +26,9 @@ Deno.serve(async(request:Request)=>{
  // requires a separately reviewed free-only boundary and release.
  const model=Deno.env.get('TENBOT_CF_MODEL')||MODEL;
  const provider=Deno.env.get('TENBOT_AI_ENABLED')==='true'&&account&&token&&isAllowedModel(model)?cloudflareProvider(account,token,fetch,model):null;
- // Privileged client is confined to two usage RPCs, never handed to inference.
+ // Privileged client is confined to metering and a write-only assistant-turn RPC, never handed to inference.
  const service=createClient(url,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false}});
- return reply(await handleTenbot(body,data.user.id,(n,a)=>caller.rpc(n,a),(n,a)=>service.rpc(n,a),provider));
+ const serverWrites=new Set(['tenbot_reserve_usage','tenbot_finish_usage','tenbot_append_conversation_turn']);
+ return reply(await handleTenbot(body,data.user.id,(n,a)=>caller.rpc(n,a),(n,a)=>serverWrites.has(n)?service.rpc(n,a):Promise.resolve({data:null,error:{message:'Metering action unavailable'}}),provider));
  }catch(e){return reply({error:e instanceof TenbotError?e.message:'TenBot is temporarily unavailable.'},e instanceof TenbotError?e.status:503);}
 });
