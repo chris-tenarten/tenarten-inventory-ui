@@ -1,4 +1,5 @@
 // @ts-nocheck -- Deno Edge Function; validated through its local renderer fixture.
+import {handleBidScope} from '../_shared/bid-scope-handler.ts';
 import {diagnosticResponse} from '../_shared/sample-diagnostics.mjs';
 import { handleProductionBlend } from '../_shared/production-blend-handler.ts';
 import {renderAudienceSample,AUDIENCE_SAMPLE_VERSION} from '../_shared/sample-audience-pdf.ts';
@@ -227,6 +228,7 @@ if (typeof Deno !== "undefined") Deno.serve(async (req) => {
       if (writeError || writable !== true) return failure(new Error("Business write access denied."),403);
     }
     stage='request-validation';
+    if ((action.startsWith("scope-") || action==='historical-complete')) return handleBidScope({user,service:createClient(url,serviceKey),body,headers});
     if (action.startsWith("blend-")) return handleProductionBlend({user,service:createClient(url,serviceKey),body,headers});
     if (action === "delete") {
       const sampleId = String(body.sampleId || "");

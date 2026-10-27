@@ -104,3 +104,7 @@ Use a consistent completion report containing:
 9. Final workspace state and disposition of task artifacts/processes
 
 Never claim browser testing from code inspection or migration deployment from a checked-in SQL file. Keep the user-facing report concise: acceptance status, material decisions, migration requirement, security/data concerns, validation evidence, remaining Product-level acceptance, and exact approval requested. Do not reproduce routine worker or command transcripts. End with any manual actions required from the user.
+
+## Current scoped handoff — October 27, 2026
+
+[Intake graduation / material intelligence](../project-memory/2026-10-27-intake-graduation-material-intelligence.md) carries Chris's October 26/27 Product Implementation authority, canonical dev base, invariants, Tier 3 validation and local review boundary. Work is local on dev; the stop point is Product acceptance. Local commit authorization does not include push, main promotion, hosted migrations, Production writes, notifications or deployment. The separate Advisory conversation was unavailable.

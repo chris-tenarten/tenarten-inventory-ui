@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-27",
+  "status": "implemented locally; pending Product acceptance",
+  "base": "e5382f11223efb927b4242849af8c084522f8c56",
+  "risk_tier": 3,
+  "testing_level": 3,
+  "hosted_mutations": false,
+  "hosted_verification": false,
+  "migrations": {
+    "20261026100000_historical_sample_import.sql": "ccac4d685188e59c2dc23696e326d65b1aa71218e51b4b66b35012d7f89ac35f",
+    "20261026110000_bid_accepted_scope.sql": "57fef9390fe54577df2a464f544b1de495494c45800a8594131ce491f1d3da0c",
+    "20261026120000_bid_scope_production_handoff.sql": "485eb06f150cac1eb0606275a16fa8bf1fdd105674c3e5934ab3f92c34c01d4b"
+  },
+  "database": {
+    "command": "./node_modules/.bin/tsx scripts/verify-intake-materials.mts",
+    "result": "passed",
+    "engine": "disposable PostgreSQL 17.6",
+    "coverage": [
+      "real RPC/grant/RLS enforcement",
+      "capability-authorized non-employee acceptance",
+      "inactive/read-only/unauthorized/anonymous denial",
+      "trusted persistence and immutable captures",
+      "scope yield, Batch reuse, package-fallback exclusion",
+      "shared-stock accounting across unit factors",
+      "historical numbering, import retry, verification bypass denial",
+      "retention preflight and unrelated Storage lifecycle",
+      "Won/deposit conversion, retry and handoff"
+    ],
+    "limits": "Focused canonical dependency replay, bounded Inventory fixture, not a hosted schema clone"
+  },
+  "browser": {
+    "workflow": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "errors": [],
+      "checked": [
+        "scope preview",
+        "Proposal selection",
+        "exact material mapping",
+        "immutable acceptance",
+        "read-only availability",
+        "mobile containment",
+        "conversion",
+        "Sample library",
+        "Excel import review/save",
+        "working PDF action"
+      ]
+    },
+    "final_export": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "checks": [
+        "exact final export",
+        "capture provenance",
+        "converted handoff retained",
+        "issued Sample document viewer"
+      ]
+    },
+    "production_handoff": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "canonicalJobInspector": true,
+      "acceptedScopeVisible": true
+    }
+  },
+  "build": {
+    "command": "NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000 NEXT_PUBLIC_SUPABASE_ANON_KEY=local-review-only NEXT_PUBLIC_DEV_BRANDING=true npm run build -- --webpack",
+    "result": "passed",
+    "note": "Turbopack stalled; final Webpack hash/cache failure recovered by moving only .next/cache/webpack aside, preserving it in /private/tmp/tenops-intake-webpack-cache-20261027"
+  },
+  "typescript": "passed",
+  "targeted_eslint": "passed",
+  "diff_check": "passed",
+  "historical_sources": [
+    "original blank Excel Sample form template: missing identity/rows flagged",
+    "historical Sample PDF: five aggregate rows / 100%",
+    "historical Blend PDF: ten aggregate rows / 100%"
+  ],
+  "limitations": [
+    "No populated supported-layout historical Excel workbook available",
+    "No OCR, legacy .xls or bulk import",
+    "No fresh hosted compatibility/Storage transport/Edge deployment proof"
+  ],
+  "pdf": {
+    "actual_generated_bytes": true,
+    "identity": "T26-497-A",
+    "pages": 1,
+    "native_thumbnail_visually_inspected": true
+  },
+  "artifacts": "/private/tmp/tenops-intake-materials-review; no historical originals copied into Git"
+}

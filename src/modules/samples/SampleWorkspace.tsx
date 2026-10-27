@@ -3,6 +3,7 @@ import {useMobileNavigationGuard} from '@/components/mobile/useMobileNavigationG
 import dynamic from "next/dynamic";
 const ColorPlateLabelEditor = dynamic(() => import("./ColorPlateLabelEditor"), { ssr: false });
 
+import HistoricalImport from '@/modules/intake-materials/HistoricalImport';
 import TechnicalDetails from './TechnicalDetails';
 import {generationDiagnostic,readGenerationDiagnostic,type GenerationDiagnostic} from '../../../supabase/functions/_shared/sample-diagnostics.mjs';
 
@@ -689,6 +690,7 @@ export default function SampleWorkspace() {
             New Sample
           </BusinessButton>
         </div>
+        <HistoricalImport/>
         <OperationalProfilesSettings/>
         {error && !draft && (
           <div
