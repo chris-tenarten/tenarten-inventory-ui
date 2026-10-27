@@ -19,3 +19,5 @@ Follow the separate Product-intent and implementation-evidence hierarchies in AG
 Record only the relevant approved decision, date/reference, scope and acceptance criteria for a handoff. Link supporting records instead of copying conversations or entire evidence bundles. If the advisory conversation is unavailable, identify that limit explicitly.
 
 Update the manifest for enduring direction, Current State for material status changes, and the focused existing record for detailed evidence. Preserve original dates and supersession links. New documentation commits may legitimately be ahead of a deployed runtime; report both SHAs.
+
+TenBot's local [knowledge/inference review](project-memory/2026-10-27-tenbot-candidate.md#knowledge-and-inference-refinement--october-27-2026) describes the release-pinned source export, shared free-only budget and actual model comparison. To update its server-only knowledge after a verified release, follow that record, then run `npm run tenbot:knowledge` and `npm run verify:tenbot-knowledge`.

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "rework",
+    "inputSha256": "552fda9c89f05bede93a8cbb84a20f9b1704222bb5f8917f808d77858f45a752",
+    "promptSha256": "a2675d4c08b12cdf70e0ac74af96330d28497f7e0fefaed645ff74f9f7f01870"
+  },
+  {
+    "id": "rework-followup",
+    "inputSha256": "78343c29f7bfbec3d33c722582631f3001b0a54c58b1749afccbbcf8047fc34e",
+    "promptSha256": "c6cd8ac705d73a5ac5da531ee09f12dc85001f4f2e3d6ea299a43026fae86742"
+  },
+  {
+    "id": "manpower",
+    "inputSha256": "be0a04651f8ca9a2e1046001cd4784789064acfca0880c46175a0c7c006d8813",
+    "promptSha256": "7b53af8bff4aeb864cf4b13fb203fc6799352644e4d97d7f41419470795726c7"
+  },
+  {
+    "id": "customer",
+    "inputSha256": "dc7cfcaffc89c975ca8f3d23fcb691bb5b82dafbeb6925bae18a562ccd0df42f",
+    "promptSha256": "49637adcad54cf93672491a5a52d4039b91ca7a0ff8d0c71b044c42e119a334d"
+  },
+  {
+    "id": "group",
+    "inputSha256": "6d63764422dbbdc42658e29225127be43a8f7556ced9ab0c44882ef764ff2b32",
+    "promptSha256": "2d776160822a0be1edc80c514d694b83740e4c4224d3bb29c07f92ed55ab2731"
+  },
+  {
+    "id": "group-followup",
+    "inputSha256": "814fb442139dc1972aca82c9f8f5776c4452b34d35b62ea5c90fb87d15e50626",
+    "promptSha256": "bc0d1aa7d17e484a10a2c250d31b43208cf2f4acc666600a278ecf3ef19d3f4e"
+  },
+  {
+    "id": "sample-bid",
+    "inputSha256": "833718c1f7e2644fd11469b5eb142ab0fa567d9a6d4133ec653c37bebcc0cd86",
+    "promptSha256": "1f2e6ece7e99d8cd9d7e3a0c53111bf7fa2de4e610806b114d93bfa5542bb4fd"
+  },
+  {
+    "id": "share-job",
+    "inputSha256": "c91caafabeee45658f608ecf5eab4028467c0bd8a72c053fb9c567fd50f2b861",
+    "promptSha256": "6a32843868c32c26c78fba42762ce2b8a4376bc333e01d209690e7ab33f732aa"
+  },
+  {
+    "id": "lead-times",
+    "inputSha256": "f1e5a73c907d67ece960a44f8a504905cf0875c0e6f1195a45fed1f739055f59",
+    "promptSha256": "6ff6f9206a8754a6d85d153509b041c8ac9e32df5dbaa30e33b163b2aa6f28db"
+  }
+]

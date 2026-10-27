@@ -1,0 +1,46 @@
+{
+  "kind": "Actual prior output replay; no new model request",
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "id": "share-job",
+  "initialMode": "ai",
+  "initialMessage": "You cannot share a job directly via a native 'Share Job' control in Messaging. However, you can type the job reference as text in a message or attach a file you're authorized to share. Creating a group doesn't share a job. Keep private job records out of Messaging.",
+  "postCorrection": {
+    "rejected": true,
+    "error": "TenBot could not verify the Job sharing wording.",
+    "fallbackMode": "guide",
+    "fallback": {
+      "mode": "guide",
+      "message": "Here is guidance from the TenOps Guide.",
+      "resolution": "documentation-missing",
+      "snapshot": {
+        "revision": "bc628bd",
+        "verifiedAt": "2026-10-27"
+      },
+      "sources": [
+        {
+          "id": "share-job",
+          "title": "Share a Job in a message",
+          "status": "unknown",
+          "guidance": "I cannot verify a native Share Job control or Job card in Messaging. This is a documentation limit, not proof that the feature is absent. Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send. Creating a group by itself does not share a Job. Keep private Job records out of TenBot.",
+          "path": "",
+          "route": null,
+          "source": "Messaging capability review · October 27",
+          "availability": "unverified",
+          "constraints": [
+            "I cannot verify a native Share Job control or Job card in Messaging.",
+            "This is a documentation limit, not proof that the feature is absent.",
+            "Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send.",
+            "Creating a group by itself does not share a Job.",
+            "Keep private Job records out of TenBot."
+          ]
+        }
+      ],
+      "summary": null,
+      "notices": [
+        "I cannot verify a native Share Job control or Job card in Messaging. This is a documentation limit, not proof that the feature is absent. Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send. Creating a group by itself does not share a Job. Keep private Job records out of TenBot."
+      ],
+      "suggestionAllowed": false
+    }
+  },
+  "inferenceCalls": 0
+}

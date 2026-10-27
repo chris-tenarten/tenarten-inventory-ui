@@ -8,11 +8,11 @@ type Source={id:string;title:string;status:string;guidance:string;path:string;ro
 type Answer={mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
 type Feedback={id:string;submitter_name:string;status:string;created_at:string;draft:Draft;history:{id:number;status:string;note:string;created_at:string}[]};
-type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;perAccountMinuteLimit:number;monthReservedUsd:number;monthlyBudgetUsd:number};
+type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;sharedMonthLimit:number;sharedMonthUsed:number;sharedMonthRemaining:number;perAccountMinuteLimit:number;dayNeuronLimit:number;dayAccountedNeurons:number;monthNeuronLimit:number;monthAccountedNeurons:number;dayMeasuredInputTokens:number;dayMeasuredOutputTokens:number;dayUnmeasuredAttempts:number};
 const statuses=['New','Needs Clarification','Under Consideration','Backlogged','Declined','Shipped'];
 const modules=['General','Messaging','My Work','Intake','Production','Inventory','Purchasing','Contacts','Settings'];
 const field='min-h-11 w-full rounded border border-slate-300 bg-white px-3 py-2 text-base';
-const routeLabels:Record<string,string>={'/my-work':'My Work','/settings':'Settings','/contacts':'Contacts','/production':'Production','/manpower-reporting':'Manpower Reporting','/inventory':'Inventory','/activity':'Inventory Activity','/samples':'Samples','/proposals':'Proposals'};
+const routeLabels:Record<string,string>={'/':'Production','/my-work':'My Work','/settings':'Settings','/contacts':'Contacts','/production':'Production','/manpower-reporting':'Manpower Reporting','/inventory':'Inventory','/activity':'Inventory Activity','/samples':'Samples','/proposals':'Proposals'};
 async function invoke<T>(body:Record<string,unknown>,owner:string):Promise<T>{
  const {data:sessionData}=await supabase.auth.getSession();
  if(!owner||sessionData.session?.user.id!==owner)throw new Error('Your account changed. Reopen TenBot to continue.');
@@ -21,9 +21,9 @@ async function invoke<T>(body:Record<string,unknown>,owner:string):Promise<T>{
  const localFixture=typeof window!=='undefined'&&window.location.origin==='http://localhost:3000'&&sessionData.session?.access_token.endsWith('.local');
  const endpoint=process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL||(localFixture?'http://localhost:55593':undefined);
  if(endpoint&&typeof window!=='undefined'&&window.location.hostname==='localhost'){
- const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${sessionData.session?.access_token||''}`},body:JSON.stringify(body),signal:AbortSignal.timeout(20000)});const value=await r.json();if(!r.ok)throw new Error(value.error||'TenBot unavailable.');return value;
+ const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${sessionData.session?.access_token||''}`},body:JSON.stringify(body),signal:AbortSignal.timeout(35000)});const value=await r.json();if(!r.ok)throw new Error(value.error||'TenBot unavailable.');return value;
  }
- const {data,error}=await supabase.functions.invoke('tenbot',{body,headers:{Authorization:`Bearer ${sessionData.session.access_token}`},signal:AbortSignal.timeout(20000)});
+ const {data,error}=await supabase.functions.invoke('tenbot',{body,headers:{Authorization:`Bearer ${sessionData.session.access_token}`},signal:AbortSignal.timeout(35000)});
  if(error){const detail='context' in error&&error.context instanceof Response?await error.context.json().catch(()=>null):null;throw new Error(detail?.error||'TenBot is unavailable. The rest of TenOps remains available.');}return data;
 }
 type ModuleContext={label:string;module:string};
@@ -176,7 +176,7 @@ export function useTenbotConversation():TenbotConversation{
    {reviewAllowed&&showFeedback?<section aria-label="Product feedback inbox" className="space-y-3 rounded border bg-white p-3">
     <section aria-label="Shared TenBot usage" className="space-y-1 rounded border bg-slate-50 p-3 text-xs">
      <h3 className="font-semibold">Shared AI usage</h3>
-     {usage?<><p>{usage.sharedDayUsed} of {usage.sharedDayLimit} shared attempts used today · {usage.sharedDayRemaining} remaining.</p><p>Resets at midnight UTC. Burst limit: {usage.perAccountMinuteLimit} per minute per account.</p><p>Monthly reservation: ${Number(usage.monthReservedUsd).toFixed(2)} of ${Number(usage.monthlyBudgetUsd).toFixed(2)}. These limits do not enable paid inference.</p></>:<p>{usageError||'Loading usage…'}</p>}
+     {usage?<><p>{usage.sharedDayUsed} of {usage.sharedDayLimit} shared attempts used today · {usage.sharedDayRemaining} remaining.</p><p>{usage.sharedMonthUsed} of {usage.sharedMonthLimit} shared attempts used this month.</p><p>Resets at midnight UTC. Burst limit: {usage.perAccountMinuteLimit} per minute per account.</p><p>Internal daily inference budget: {Number(usage.dayAccountedNeurons).toLocaleString()} of {Number(usage.dayNeuronLimit).toLocaleString()} Neurons. Monthly: {Number(usage.monthAccountedNeurons).toLocaleString()} of {Number(usage.monthNeuronLimit).toLocaleString()}.</p><p>Measured tokens today: {Number(usage.dayMeasuredInputTokens).toLocaleString()} input / {Number(usage.dayMeasuredOutputTokens).toLocaleString()} output. Token-derived Neurons are estimates; {usage.dayUnmeasuredAttempts} unmeasured attempts retain conservative reservations. These internal limits are separate from Cloudflare’s actual account usage and do not enable paid inference.</p></>:<p>{usageError||'Loading usage…'}</p>}
     </section>
     <div className="flex flex-wrap gap-2 text-xs">
      <label className="min-w-0 flex-1">Status<select disabled={busy} className={field} value={filter} onChange={e=>{setFilter(e.target.value);void load(e.target.value,moduleFilter);}}><option value="">All statuses</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>

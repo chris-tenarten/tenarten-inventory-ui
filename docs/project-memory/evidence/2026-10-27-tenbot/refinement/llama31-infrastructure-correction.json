@@ -1,0 +1,334 @@
+{
+  "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+  "inferenceContract": "knowledge-v3",
+  "outputs": [
+    {
+      "id": "group-followup",
+      "prior": "group",
+      "infrastructureCorrection": true,
+      "question": "Can I add someone to my existing DM instead?",
+      "context": [
+        "Current module: My Work",
+        "Conversation context:\nEmployee: How do I create a group conversation?\nTenBot: To create a group conversation, open Messaging from the app header, choose New group, enter a group name, select at least one other participant, and choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history, while removed members lose access."
+      ],
+      "input": {
+        "question": "can i add someone to my existing dm instead",
+        "context": [
+          "Current module: My Work",
+          "Conversation context:\nEmployee: how do i create a group conversation\nTenBot: to create a group conversation open messaging from the app header choose new group enter a group name select at least one other participant and choose create group only the creator can rename the group or add remove participants current members share the full history while removed members lose access"
+        ],
+        "excerpts": [
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Account decision: partial. Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group."
+          },
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes."
+          },
+          {
+            "id": "message-reply",
+            "title": "Reply to a specific employee message",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees with Messaging participation permission can reply inside a DM or group they are authorized to access. Open Messaging and the conversation, open Message actions on an ordinary employee message, and choose Reply. Type your reply and choose Send. The quoted preview links back to the original when it remains available to you. Replies stay in the same authorized conversation; they do not share the message with another conversation. Official system messages do not offer ordinary employee message actions."
+          },
+          {
+            "id": "message-attachments",
+            "title": "Send files or images in an employee conversation",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees with Messaging participation permission can send attachments inside an authorized DM or group. Open Messaging and the conversation, choose Attach, and select files. Supported browsers also allow pasting images or files, or dropping them into the composer. Review the attachments, optionally add text, then choose Send. Limits are 50 MB per file and 200 MB per message. Clipboard support varies by browser. The transfer must finish before the attachment message is delivered. Attachments remain subject to the conversation's access rules; do not send private records to TenBot."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "dm",
+          "group",
+          "message-reply",
+          "message-attachments"
+        ],
+        "answer": "You can't add someone to an existing DM, but you can create a new group conversation and add the person to that. To do this, open Messaging from the app header, choose New group, enter a group name, select the person you want to add, and choose Create group. The old DM will remain private and its history won't be copied into the group.",
+        "summary": "Consider creating a new group conversation instead of trying to add someone to an existing DM."
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "You can't add someone to an existing DM, but you can create a new group conversation and add the person to that. To do this, open Messaging from the app header, choose New group, enter a group name, select the person you want to add, and choose Create group. The old DM will remain private and its history won't be copied into the group.",
+        "resolution": "partial",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging privacy contract · released October 22",
+            "availability": "partial",
+            "constraints": [
+              "Partially: you can start a new group, but you cannot add a third person to a personal DM.",
+              "The old DM stays private and its history is not copied into the group."
+            ]
+          },
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging groups and replies · released October 22",
+            "availability": "available",
+            "constraints": [
+              "Only the creator can rename the group or add/remove participants.",
+              "Current members share the full history; removed members lose access.",
+              "Previously signed attachment links may remain usable for up to ten minutes."
+            ]
+          },
+          {
+            "id": "message-reply",
+            "title": "Reply to a specific employee message",
+            "status": "deployed",
+            "guidance": "Employees with Messaging participation permission can reply inside a DM or group they are authorized to access. Open Messaging and the conversation, open Message actions on an ordinary employee message, and choose Reply. Type your reply and choose Send. The quoted preview links back to the original when it remains available to you. Replies stay in the same authorized conversation; they do not share the message with another conversation. Official system messages do not offer ordinary employee message actions.",
+            "path": "Messaging → conversation → Message actions → Reply → Send",
+            "route": "/my-work",
+            "source": "Messaging reply guide · released conversation contract",
+            "availability": "available",
+            "constraints": [
+              "Employees with Messaging participation permission can reply inside a DM or group they are authorized to access.",
+              "Replies stay in the same authorized conversation; they do not share the message with another conversation.",
+              "Official system messages do not offer ordinary employee message actions."
+            ]
+          },
+          {
+            "id": "message-attachments",
+            "title": "Send files or images in an employee conversation",
+            "status": "deployed",
+            "guidance": "Employees with Messaging participation permission can send attachments inside an authorized DM or group. Open Messaging and the conversation, choose Attach, and select files. Supported browsers also allow pasting images or files, or dropping them into the composer. Review the attachments, optionally add text, then choose Send. Limits are 50 MB per file and 200 MB per message. Clipboard support varies by browser. The transfer must finish before the attachment message is delivered. Attachments remain subject to the conversation's access rules; do not send private records to TenBot.",
+            "path": "Messaging → authorized DM or group → Attach → Send",
+            "route": "/my-work",
+            "source": "Messaging attachment guide · deployed application",
+            "availability": "available",
+            "constraints": [
+              "Employees with Messaging participation permission can send attachments inside an authorized DM or group.",
+              "The transfer must finish before the attachment message is delivered.",
+              "Attachments remain subject to the conversation's access rules; do not send private records to TenBot."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group."
+        ],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 7689,
+      "providerDurationMs": 7406,
+      "usage": [
+        {
+          "at": "2026-10-27T20:30:46.565Z",
+          "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+          "durationMs": 7403,
+          "usage": {
+            "prompt_tokens": 858,
+            "completion_tokens": 113,
+            "total_tokens": 971
+          },
+          "estimatedNeurons": 14.774,
+          "reservedNeurons": 84
+        }
+      ],
+      "at": "2026-10-27T20:30:46.650Z",
+      "ledgerBefore": {
+        "attempts": 29,
+        "completed": 18,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4251.065,
+        "inputTokens": 5874,
+        "outputTokens": 847
+      },
+      "ledgerAfter": {
+        "attempts": 30,
+        "completed": 19,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4265.839,
+        "inputTokens": 6732,
+        "outputTokens": 960
+      }
+    },
+    {
+      "id": "share-job",
+      "infrastructureCorrection": true,
+      "question": "Can I share a Job directly in Messaging?",
+      "context": [
+        "Current module: My Work"
+      ],
+      "input": {
+        "question": "can i share a job directly in messaging",
+        "context": [
+          "Current module: My Work"
+        ],
+        "excerpts": [
+          {
+            "id": "share-job",
+            "title": "Share a Job in a message",
+            "status": "unknown",
+            "guidance": "Account decision: unverified. The TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging. This does not mean the feature is unavailable. Please check with Product. Do not paste private Job records here."
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A dedicated Share Job control is not verified; do not invent it. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "share-job",
+          "knowledge-messaging"
+        ],
+        "answer": "The feature to share a job directly in Messaging is unverified, so it's not confirmed to be available. You can check with Product for more information. As an alternative, you can create a separate group to share the job with others, but the old personal DM history will remain private and won't be copied.",
+        "summary": "Consider drafting a submission to request the Share Job feature in Messaging."
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "The feature to share a job directly in Messaging is unverified, so it's not confirmed to be available. You can check with Product for more information. As an alternative, you can create a separate group to share the job with others, but the old personal DM history will remain private and won't be copied.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "share-job",
+            "title": "Share a Job in a message",
+            "status": "unknown",
+            "guidance": "The TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging. This does not mean the feature is unavailable. Please check with Product. Do not paste private Job records here.",
+            "path": "",
+            "route": null,
+            "source": "Messaging capability review · October 27",
+            "availability": "unverified",
+            "constraints": [
+              "The TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging.",
+              "This does not mean the feature is unavailable.",
+              "Do not paste private Job records here."
+            ]
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A dedicated Share Job control is not verified; do not invent it. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation.",
+              "Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied.",
+              "A dedicated Share Job control is not verified; do not invent it.",
+              "- My Work and Inbox are participant/private domains.",
+              "Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "The TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging. This does not mean the feature is unavailable. Please check with Product. Do not paste private Job records here."
+        ],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 10861,
+      "providerDurationMs": 10552,
+      "usage": [
+        {
+          "at": "2026-10-27T20:31:01.011Z",
+          "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+          "durationMs": 10550,
+          "usage": {
+            "prompt_tokens": 583,
+            "completion_tokens": 93,
+            "total_tokens": 676
+          },
+          "estimatedNeurons": 10.463,
+          "reservedNeurons": 64
+        }
+      ],
+      "at": "2026-10-27T20:31:01.104Z",
+      "ledgerBefore": {
+        "attempts": 30,
+        "completed": 19,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4265.839,
+        "inputTokens": 6732,
+        "outputTokens": 960
+      },
+      "ledgerAfter": {
+        "attempts": 31,
+        "completed": 20,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4276.302,
+        "inputTokens": 7315,
+        "outputTokens": 1053
+      }
+    }
+  ],
+  "analyticsBefore": {
+    "checkedAt": "2026-10-27T20:28:45.817Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 200.10762912407517,
+    "reportedRequests": 23,
+    "nominalRemainingNeurons": 9799.892370875925,
+    "cached": true,
+    "cacheExpiresAt": "2026-10-27T20:33:45.817Z",
+    "guardJournalNeurons": 0,
+    "guardedRemainingNeurons": 7799.892370875925
+  },
+  "analyticsAfter": {
+    "checkedAt": "2026-10-27T20:28:45.817Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 200.10762912407517,
+    "reportedRequests": 23,
+    "nominalRemainingNeurons": 9799.892370875925,
+    "cached": true,
+    "cacheExpiresAt": "2026-10-27T20:33:45.817Z",
+    "guardJournalNeurons": 25.237,
+    "guardedRemainingNeurons": 7774.655370875926
+  },
+  "ledgerBefore": {
+    "attempts": 29,
+    "completed": 18,
+    "failed": 11,
+    "legacyReservedUsd": 0.2,
+    "accountedNeurons": 4251.065,
+    "inputTokens": 5874,
+    "outputTokens": 847
+  },
+  "startedAt": "2026-10-27T20:30:38.833Z",
+  "ledgerAfter": {
+    "attempts": 31,
+    "completed": 20,
+    "failed": 11,
+    "legacyReservedUsd": 0.2,
+    "accountedNeurons": 4276.302,
+    "inputTokens": 7315,
+    "outputTokens": 1053
+  },
+  "finishedAt": "2026-10-27T20:31:01.237Z"
+}

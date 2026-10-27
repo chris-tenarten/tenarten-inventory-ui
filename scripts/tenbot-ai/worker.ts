@@ -5,6 +5,7 @@ import {
   parseInferenceOutput,
   type InferenceInput,
 } from '../../supabase/functions/_shared/tenbot-core';
+import {allowedModels,isAllowedModel} from '../../supabase/functions/_shared/tenbot-models';
 
 interface Env {
   AI: { run(model: string, input: ReturnType<typeof inferenceRequest>): Promise<unknown> };
@@ -30,7 +31,7 @@ function validInput(value: unknown): value is InferenceInput {
   if (!object(value) || Object.keys(value).some(key => !['question', 'context', 'excerpts', 'draft'].includes(key))) return false;
   if (!text(value.question, 1200) || typeof value.draft !== 'boolean') return false;
   if (!Array.isArray(value.context) || value.context.length > 2 || value.context.some(item => !text(item, 1200))) return false;
-  if (!Array.isArray(value.excerpts) || value.excerpts.length > 3) return false;
+  if (!Array.isArray(value.excerpts) || value.excerpts.length > 4 || value.excerpts.reduce((size,item)=>size+(object(item)&&typeof item.guidance==='string'?item.guidance.length:0),0)>8000) return false;
   return value.excerpts.every(item => object(item)
     && Object.keys(item).every(key => ['id', 'title', 'guidance', 'status'].includes(key))
     && text(item.id, 80) && text(item.title, 160) && text(item.guidance, 3000)
@@ -96,15 +97,25 @@ const worker = {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.headers.has('origin') || !authorized(request, env.TENBOT_PILOT_BRIDGE_KEY)) return json({ error: 'Forbidden' }, 403);
     const path = new URL(request.url).pathname;
-    if (path === '/health' && request.method === 'GET') return json({ ready: true, model: MODEL, inferenceContract: INFERENCE_CONTRACT });
+    if (path === '/health' && request.method === 'GET') return json({ ready: true, model: MODEL, models: allowedModels, inferenceContract: INFERENCE_CONTRACT });
     if (path !== '/infer') return json({ error: 'Not found' }, 404);
     if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
+    const model=request.headers.get('x-tenbot-model')??MODEL;
+    if(!isAllowedModel(model))return json({error:'Model not allowed'},400);
     let body: InferenceInput;
     try { body = await readInput(request); }
     catch (error) { return json({ error: 'Invalid pilot request' }, error instanceof InputError ? error.status : 400); }
     try {
-      const result = await env.AI.run(MODEL, inferenceRequest(body));
-      return json({ output: parseInferenceOutput(result), usage: safeUsage(result) });
+      const result = await env.AI.run(model, inferenceRequest(body,model));
+      let output:unknown;
+      try{output=parseInferenceOutput(result);}catch{
+        // Keep actual model formatting failures inspectable only on this
+        // authenticated local bridge; the application rejects this envelope.
+        const value=result as {response?:unknown;choices?:{message?:{content?:unknown}}[]};
+        const raw=value?.response??value?.choices?.[0]?.message?.content;
+        output={invalidFormat:true,rawResponse:typeof raw==='string'?raw.slice(0,6000):''};
+      }
+      return json({ output, usage: safeUsage(result) });
     } catch {
       return json({ error: 'AI inference unavailable' }, 503);
     }

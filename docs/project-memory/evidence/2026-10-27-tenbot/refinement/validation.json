@@ -1,0 +1,33 @@
+{
+  "tier": 3,
+  "testingLevel": 3,
+  "scope": "Focused changed inference, privacy, released-source, measured budget and adjacent Messaging behavior; no broad audit/framework.",
+  "commands": {
+    "node --import tsx scripts/verify-tenbot.mts": "passed by implementation agent: disposable PostgreSQL Auth/RBAC/feedback, preservation, rates/tamper, old/new grants, burst/day/month/concurrency/reset/admin aggregates",
+    "node --import tsx scripts/verify-tenbot.mts --core-only": "passed final core:89 maintained examples,16 generated module chunks,37-file provenance, exact regressions and demonstrated wording/permission/deployment bypass guards",
+    "node --import tsx scripts/verify-tenbot.mts --pilot-local-only": "passed actual adapter cap/fallback/auth/origin;0model calls;temporary cap fixtures removed,20legacy rows retained",
+    "node --import tsx scripts/verify-tenbot-ai-binding.mts": "passed75mock boundary/dispatch/privacy/model/cache/journal cases;no network",
+    "npm run verify:tenbot-knowledge": "passed deterministic pinned export",
+    "node scripts/verify-tenbot-browser.mjs --refinement-only --live-inference-once": "passed25groups,1actualUIinference,9capturedreplays(8AI/1guardfallback),0pageerrors/unexpectedorigins",
+    "tsc --noEmit": "passed application, serial after export",
+    "shared Edge TypeScript": "passed all shared TenBot sources; Deno-hosted handler execution not claimed",
+    "targeted eslint --no-ignore": "passed changed source/generator/verifier/Edge entry paths",
+    "git diff --check": "passed",
+    "safe localhost review env npm run build -- --webpack": "passed final UI artifact; subsequent changes only server-shared prompt/guards/tests/docs"
+  },
+  "independentReview": "Final EM review passed; original Phase and Item Planning bypass found and corrected with exact/slash/hyphen focused regressions. No duplicated DB/model testing.",
+  "migration": "20261027140000 created/applied/verified only disposable local PostgreSQL;zero hosted migrations",
+  "actualInference": {
+    "modelCalls": 36,
+    "preAIAnalyticsFailures": 4,
+    "tokenDerivedEstimatedNeurons": 593.333,
+    "cloudflareAccountReportedNeurons": 690.3531877947971,
+    "checkedAt": "2026-10-27T20:54:07.114Z"
+  },
+  "limits": [
+    "Synthetic browser RPCs establish UI isolation, not new hosted RLS or physical iPhone/Web Push verification.",
+    "Real answer quality is mixed:Rework final confirmation prose incomplete; unsafe native-sharing absence/privacy prose rejected and falls back.",
+    "No post-correction synthetic prose is counted as real model success."
+  ],
+  "bareManualReview": "passed direct localhost3000/my-work Messaging\u2192TenBot composer, no intercept/auth injection by verifier,0sends/inference/pageerrors;established server local session;Intake server unchanged"
+}

@@ -3,30 +3,34 @@ import assert from 'node:assert/strict';
 import {mkdirSync, writeFileSync, readFileSync, existsSync} from 'node:fs';
 
 const conversationOnly = process.argv.includes('--conversation-only') || process.argv.length === 2;
-const knowledgeCoverageOnly = process.argv.includes('--knowledge-coverage-only');
+const refinementOnly = process.argv.includes('--refinement-only');
+const liveInferenceOnce = refinementOnly && process.argv.includes('--live-inference-once');
+const knowledgeCoverageOnly = process.argv.includes('--knowledge-coverage-only') || refinementOnly;
 if (conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
   await verifyConversation();
   process.exit(0);
 }
 
 // Exercise the actual localhost application using the established Messaging
-// fixture shapes and captured guide answers. No replay reaches model inference.
+// fixture shapes and captured answers. Only the explicit refinement flag may
+// pass one ordinary Messaging Send through the existing actual local adapter.
 async function verifyConversation() {
   const origin = 'http://localhost:3000', endpoint = 'http://localhost:55593';
-  const directory = `/private/tmp/tenops-tenbot-review/${knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
+  const directory = `/private/tmp/tenops-tenbot-review/${refinementOnly ? 'refinement/browser' : knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
   const captured = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/communication/evaluation.json', 'utf8')).outputs;
   const coverage = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/contacts-coverage/evaluation.json', 'utf8')).outputs;
-  const workflowCoverage = knowledgeCoverageOnly ? JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/coverage/evaluation.json', 'utf8')).outputs : [];
-  const actualConversationsFile = '/private/tmp/tenops-tenbot-review/coverage/conversations.json';
+  const workflowCoverageFile = `/private/tmp/tenops-tenbot-review/${refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'}`;
+  const workflowCoverage = knowledgeCoverageOnly ? JSON.parse(readFileSync(workflowCoverageFile, 'utf8')).outputs : [];
+  const actualConversationsFile = `/private/tmp/tenops-tenbot-review/${refinementOnly ? 'refinement/selected-model.json' : 'coverage/conversations.json'}`;
   const actualConversations = knowledgeCoverageOnly && existsSync(actualConversationsFile) ? JSON.parse(readFileSync(actualConversationsFile, 'utf8')).outputs : [];
-  const replayActualConversations = actualConversations.length === 4;
+  const replayActualConversations = actualConversations.length === (refinementOnly ? 9 : 4);
   const workflowCase = id => {
     const item = workflowCoverage.find(candidate => candidate.id === id);
     assert(item?.question && item.answer, `Captured workflow coverage case ${id} is required`);
     return item;
   };
   const group = captured.find(item => item.answer?.mode === 'ai' && item.answer.sources.some(source => source.id === 'group'));
-  const unavailable = captured.find(item => item.answer?.sources.some(source => source.id === 'material-lead'));
+  const unavailable = refinementOnly ? workflowCase('unsupported-feature-request') : captured.find(item => item.answer?.sources.some(source => source.id === 'material-lead'));
   const customer = coverage.find(item => item.id === 'customer-edit');
   const deniedCustomers = coverage.filter(item => ['customer-denied-write', 'customer-denied-edit'].includes(item.id));
   const manpower = knowledgeCoverageOnly ? workflowCase('manpower') : coverage.find(item => item.id === 'manpower');
@@ -34,6 +38,10 @@ async function verifyConversation() {
   mkdirSync(directory, {recursive: true});
   const browser = await chromium.launch({headless: true});
   const checked = [], requestEvidence = [], errors = [];
+  const liveFile = `${directory}/live-ui-answer.json`;
+  let liveRecord = liveInferenceOnce && existsSync(liveFile) ? JSON.parse(readFileSync(liveFile,'utf8')) : null;
+  if (liveInferenceOnce && liveRecord && !liveRecord.answer) throw Error('A live UI request was already attempted; inspect its receipt before any further inference.');
+  let liveInferenceCalls = 0;
   const user = '00000000-0000-0000-0000-000000000010';
   const system = '00000000-0000-0000-0000-000000000001';
   const bob = '00000000-0000-4000-8000-000000900022';
@@ -56,7 +64,7 @@ async function verifyConversation() {
     for (const admin of [true, false]) {
       const context = await browser.newContext({viewport: {width: 1440, height: 1000}});
       const calls = [], assistantCalls = [], messages = structuredClone(initialMessages), realtime = [], blocked = [];
-      let answer = group.answer, holdNextAsk = false, failNextAsk = false, releasePending, activeUserId = user, authUserOverride, releaseProfile, switchedProfileSeen = false;
+      let answer = group.answer, holdNextAsk = false, failNextAsk = false, releasePending, activeUserId = user, authUserOverride, releaseProfile, switchedProfileSeen = false, nextAskLive = false;
       await context.routeWebSocket('**/realtime/v1/websocket*', socket => {
         socket.onMessage(raw => {
           if (Buffer.isBuffer(raw) && raw[0] === 3) {
@@ -81,6 +89,19 @@ async function verifyConversation() {
         if (url.origin === endpoint) {
           const body = request.postDataJSON();assistantCalls.push(body);
           if (body.action === 'ask') {
+            if (nextAskLive) {
+              nextAskLive = false;assert(admin && liveInferenceOnce,'Only explicit administrator refinement review may reach actual inference');
+              if (!liveRecord) {
+                liveRecord = {startedAt:new Date().toISOString(),request:body,status:'started'};
+                writeFileSync(liveFile,JSON.stringify(liveRecord,null,2));
+                liveInferenceCalls++;
+                const actual = await route.fetch({maxRetries:0,maxRedirects:0,timeout:35000});
+                const actualAnswer = await actual.json();
+                liveRecord = {...liveRecord,status:actual.status(),answer:actualAnswer,completedAt:new Date().toISOString()};
+                writeFileSync(liveFile,JSON.stringify(liveRecord,null,2));
+              }
+              return fulfill(liveRecord.answer);
+            }
             if (failNextAsk) {failNextAsk = false;return route.fulfill({status: 503, contentType: 'application/json', headers: {'Access-Control-Allow-Origin': origin}, body: JSON.stringify({error: 'Synthetic temporary assistant failure.'})});}
             const response = answer;
             if (holdNextAsk) {holdNextAsk = false;await new Promise(resolve => {releasePending = resolve;});}
@@ -88,7 +109,7 @@ async function verifyConversation() {
           }
           if (body.action === 'draft') return fulfill({...unavailable.answer, summary: null});
           if (body.action === 'submit') return fulfill({id: 'synthetic-confirmed-feedback'});
-          if (body.action === 'usage') return fulfill({usage: {sharedDayUsed: 8, sharedDayLimit: 20, sharedDayRemaining: 12, perAccountMinuteLimit: 6, monthReservedUsd: 0.08, monthlyBudgetUsd: 0.2}});
+          if (body.action === 'usage') return fulfill({usage: {sharedDayUsed: 47, sharedDayLimit: 300, sharedDayRemaining: 253, sharedMonthUsed: 47, sharedMonthLimit: 6000, sharedMonthRemaining: 5953, perAccountMinuteLimit: 6, dayNeuronLimit: 8000, dayAccountedNeurons: 4750.5, monthNeuronLimit: 240000, monthAccountedNeurons: 4750.5, dayMeasuredInputTokens: 27000, dayMeasuredOutputTokens: 4300, dayUnmeasuredAttempts: 20}});
           if (body.action === 'list') return fulfill({items: []});
           throw new Error(`Unexpected assistant action: ${body.action}`);
         }
@@ -203,7 +224,8 @@ async function verifyConversation() {
         await ask(retryQuestion, group.answer);await expect(conversation.getByText(retryQuestion, {exact: true})).toHaveCount(1);await expect(conversation.getByRole('alert')).toHaveCount(0);
         checked.push('failed assistant send preserves its question and Send retry updates one conversation turn with bounded own-exchange follow-up context');
         await ask(unavailable.question, unavailable.answer, false);
-        await expect(conversation.getByText(unavailable.answer.message, {exact: true})).toBeVisible();
+        if (unavailable.answer.mode === 'guide') await expect(conversation.getByText('Here’s what I found in the TenOps Guide.', {exact: true}).last()).toBeVisible();
+        else await expect(conversation.getByText(unavailable.answer.message, {exact: true})).toBeVisible();
         await expect(conversation.getByRole('link', {name: /Open Intake/})).toHaveCount(0);
         await panel.getByRole('button', {name: 'Draft a feature suggestion', exact: true}).click();
         const draft = panel.getByRole('form', {name: 'Feature suggestion draft', exact: true});
@@ -230,7 +252,7 @@ async function verifyConversation() {
         await input.fill('');checked.push('DM Enter and Shift+Enter behavior, group history and membership remain separate', 'assistant composer and confirmed feature draft persist across thread changes and close/reopen');
         await panel.getByRole('button', {name: 'Product feedback', exact: true}).click();
         const usage = panel.getByRole('region', {name: 'Shared TenBot usage', exact: true});
-        await expect(usage).toContainText('8 of 20 shared attempts used today · 12 remaining.');await expect(usage).toContainText('6 per minute per account.');await expect(usage).toContainText('Monthly reservation: $0.08 of $0.20.');
+        await expect(usage).toContainText('47 of 300 shared attempts used today · 253 remaining.');await expect(usage).toContainText('47 of 6000 shared attempts used this month.');await expect(usage).toContainText('6 per minute per account.');await expect(usage).toContainText('4,750.5 of 8,000 Neurons');await expect(usage).toContainText('Monthly: 4,750.5 of 240,000');await expect(usage).toContainText('27,000 input / 4,300 output');await expect(usage).toContainText('20 unmeasured attempts retain conservative reservations');await expect(usage).toContainText('separate from Cloudflare’s actual account usage');await expect(usage).not.toContainText('$0.20');
         assert(!/Draft Review Bob|Draft Review Carol|Synthetic private message|[0-9a-f]{8}-[0-9a-f-]{27}/i.test(await usage.innerText()));
         await panel.getByRole('button', {name: 'Product feedback', exact: true}).click();checked.push('administrator usage remains aggregate and inline');
         await ask('How do I create a group while AI is unavailable?', {...group.answer, mode: 'guide', fallback: true});
@@ -300,20 +322,33 @@ async function verifyConversation() {
           await page.screenshot({path: `${directory}/mobile-workflow-guidance.png`});await page.setViewportSize({width: 1440, height: 1000});
           checked.push('released Sample creation guidance and source navigation fit the existing mobile conversation');
           if (replayActualConversations) {
+            const renderedAnswers = new Map();
             for (const [index, item] of actualConversations.entries()) {
-              if (index % 2 === 0) await panel.getByRole('button', {name: 'Clear assistant chat', exact: true}).click();
+              if (refinementOnly ? !item.prior : index % 2 === 0) await panel.getByRole('button', {name: 'Clear assistant chat', exact: true}).click();
+              const useLive = liveInferenceOnce && item.id === 'rework';
+              if (useLive) nextAskLive = true;
               await ask(item.question, item.answer);
+              if (useLive) {
+                await expect.poll(()=>Boolean(liveRecord?.answer),{timeout:35000}).toBe(true);
+                assert.equal(liveRecord.status,200,'Actual local assistant request succeeds');
+                assert.equal(liveRecord.answer.mode,'ai','Actual ordinary Messaging Send reaches working inference');
+                assert.notEqual(liveRecord.answer.fallback,true,'Live inference is distinguished from direct-search fallback');
+                assert.equal(liveRecord.request.question,item.question);
+              }
+              const displayed = useLive ? liveRecord.answer : item.answer;
+              renderedAnswers.set(item.id,displayed);
               const response = conversation.getByRole('article', {name: 'TenBot assistant reply', exact: true}).last();
-              if (item.answer.mode === 'guide') await expect(response).toContainText(item.answer.fallback ? 'AI is unavailable right now.' : 'Here’s what I found in the TenOps Guide.');
-              else await expect(response.getByText(item.answer.message, {exact: true})).toBeVisible();
-              for (const source of item.answer.sources) {
+              if (displayed.mode === 'guide') await expect(response).toContainText(displayed.fallback ? 'AI is unavailable right now.' : 'Here’s what I found in the TenOps Guide.');
+              else await expect(response.getByText(displayed.message, {exact: true})).toBeVisible();
+              for (const source of displayed.sources) {
                 await expect(response.getByText(source.title, {exact: true})).toBeVisible();
                 if (source.route) await expect(response.locator(`a[href="${source.route}"]`).first()).toBeVisible();
               }
-              if (item.answer.sources.length) await expect(response).toContainText('Source: TenOps Guide');
-              if (index % 2 === 1) {
-                const previous = actualConversations[index - 1], request = assistantCalls.filter(call => call.action === 'ask').at(-1);
-                const prose = previous.answer.mode === 'guide' ? previous.answer.sources.map(source => source.guidance).join(' ') || previous.answer.message : previous.answer.message;
+              if (displayed.sources.length) await expect(response).toContainText('Source: TenOps Guide');
+              if (refinementOnly ? Boolean(item.prior) : index % 2 === 1) {
+                const previous = refinementOnly ? actualConversations.find(previous => previous.id === item.prior) : actualConversations[index - 1], request = assistantCalls.filter(call => call.action === 'ask').at(-1);
+                const previousAnswer = renderedAnswers.get(previous.id) || previous.answer;
+                const prose = previousAnswer.mode === 'guide' ? previousAnswer.sources.map(source => source.guidance).join(' ') || previousAnswer.message : previousAnswer.message;
                 assert(request.context[1]?.includes(`Employee: ${previous.question.slice(0,450)}`) && request.context[1].includes(`TenBot: ${prose.slice(0,650)}`), 'Actual evaluation follow-up replays retain their own previous question and answer');
               }
               if (index === 0) {
@@ -327,7 +362,8 @@ async function verifyConversation() {
             await expect(panel.getByRole('button', {name: 'Send', exact: true})).toBeInViewport();
             await conversation.getByRole('article', {name: 'TenBot assistant reply', exact: true}).last().getByText('TenBot · Assistant', {exact: true}).scrollIntoViewIfNeeded();
             await page.screenshot({path: `${directory}/mobile-conversational-followup.png`});await page.setViewportSize({width: 1440, height: 1000});
-            checked.push('four captured conversation evaluation turns, including recorded failures and fallbacks, replay with source links and own-dialogue follow-ups without new inference');
+            if (liveInferenceOnce) checked.push('one ordinary Messaging Enter/Send uses actual local adapter inference, renders its actual answer and supplies actual own-answer follow-up context');
+            checked.push(`${actualConversations.length} captured conversation evaluation turns, including recorded failures and fallbacks, replay with source links and own-dialogue follow-ups without new inference`);
           }
         } else {
           await expect(manpowerResponse.getByText(manpower.answer.message, {exact: true})).toBeVisible();await expect(manpowerResponse.getByRole('link')).toHaveCount(0);await expect(manpowerResponse).not.toContainText('Contacts');await expect(manpowerResponse).not.toContainText('Source: TenOps Guide');await expect(panel.getByRole('button', {name: 'Draft a feature suggestion', exact: true})).toHaveCount(0);
@@ -372,8 +408,10 @@ async function verifyConversation() {
       }
     }
     assert.deepEqual(errors, []);
-    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, inferenceCalls: 0, actualConversationalReplays: replayActualConversations ? 4 : 0, actualReplayModes: replayActualConversations ? actualConversations.map(item => ({id: item.id, mode: item.answer.mode, fallback: item.answer.fallback === true, evaluationError: Boolean(item.error)})) : [], replaySource: ['communication/evaluation.json', 'contacts-coverage/evaluation.json', ...(knowledgeCoverageOnly ? ['coverage/evaluation.json'] : []), ...(replayActualConversations ? ['coverage/conversations.json'] : [])], checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; recorded model failures/fallbacks remain distinct from accepted AI prose. Live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
-    console.log(`TenBot Inbox conversation browser checks passed (${checked.length} focused assertions; zero inference calls).`);
+    assert(liveInferenceCalls <= 1,'At most one real UI inference per run');
+    if (liveInferenceOnce) assert(liveRecord?.answer?.mode === 'ai','Live UI review must produce actual inference evidence');
+    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, inferenceCalls: liveInferenceCalls, liveInferenceReceipt:liveInferenceOnce?'live-ui-answer.json':null, actualConversationalReplays: replayActualConversations ? actualConversations.length : 0, actualReplayModes: replayActualConversations ? actualConversations.map(item => ({id: item.id, mode: item.answer.mode, fallback: item.answer.fallback === true, evaluationError: Boolean(item.error)})) : [], replaySource: ['communication/evaluation.json', 'contacts-coverage/evaluation.json', ...(knowledgeCoverageOnly ? [refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'] : []), ...(replayActualConversations ? [refinementOnly ? 'refinement/selected-model.json' : 'coverage/conversations.json'] : [])], checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; recorded model failures/fallbacks remain distinct from accepted AI prose. Live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
+    console.log(`TenBot Inbox conversation browser checks passed (${checked.length} focused assertions; ${liveInferenceCalls} real inference calls).`);
   } finally {await browser.close();}
 }
 

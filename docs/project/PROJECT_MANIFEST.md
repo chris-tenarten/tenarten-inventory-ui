@@ -60,6 +60,10 @@ TenOps is not a generic form builder. Core transaction shapes remain controlled:
 
 Business reference lists may be configurable. Fundamental data shapes should not be arbitrary.
 
+### TenBot guides employees through verified TenOps behavior
+
+TenBot is a conversational AI assistant in the existing Messaging conversation, separate from employee participants and official system-message authority. It may synthesize multiple release-verified knowledge sources and its own private assistant dialogue. Capability and permission decisions remain deterministic; missing documentation does not establish that a feature is absent. It must distinguish deployed, partial, planned and unverified behavior, preserve useful attribution and confirmed feature feedback, and keep employee messages, private business records and credentials outside inference. A shared free-only operating pool, account burst protection and global budgets govern inference; direct guidance remains available when inference is unavailable.
+
 ### Allow incomplete operational handoff
 
 A job may enter Production before every identifier, material detail, or schedule date exists. Project name is the minimum identity. The UI should expose missing planning information without blocking useful early entry.

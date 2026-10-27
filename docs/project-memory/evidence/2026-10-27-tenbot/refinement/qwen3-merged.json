@@ -1,0 +1,1154 @@
+{
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "outputs": [
+    {
+      "id": "rework",
+      "infrastructureCorrection": false,
+      "question": "How do I initiate Rework for a Job?",
+      "context": [
+        "Current module: Production"
+      ],
+      "input": {
+        "question": "how do i initiate rework for a job",
+        "context": [
+          "Current module: Production"
+        ],
+        "excerpts": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking."
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Account decision: available. Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "production-rework-create",
+          "knowledge-rework"
+        ],
+        "answer": "To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake or return date. Only one rework cycle can be active at a time. Rework remains on the same job and does not change its original status or dates.",
+        "summary": "Open the job, select 'Create Rework,' provide details, and confirm."
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake or return date. Only one rework cycle can be active at a time. Rework remains on the same job and does not change its original status or dates.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel",
+            "path": "Production → Job → Create Rework",
+            "route": "/",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative.",
+              "The original lifecycle remains on jobs; Rework never overwrites its status or planned dates.",
+              "Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 2239,
+      "providerDurationMs": 1905,
+      "usage": [
+        {
+          "at": "2026-10-27T20:33:17.450Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1902,
+          "usage": {
+            "prompt_tokens": 709,
+            "completion_tokens": 110,
+            "total_tokens": 819
+          },
+          "estimatedNeurons": 6.632,
+          "reservedNeurons": 38
+        }
+      ],
+      "at": "2026-10-27T20:33:17.538Z",
+      "ledgerBefore": {
+        "attempts": 40,
+        "completed": 29,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4621.312,
+        "inputTokens": 14784,
+        "outputTokens": 1765
+      },
+      "ledgerAfter": {
+        "attempts": 41,
+        "completed": 30,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4627.944,
+        "inputTokens": 15493,
+        "outputTokens": 1875
+      }
+    },
+    {
+      "id": "rework-followup",
+      "prior": "rework",
+      "infrastructureCorrection": false,
+      "question": "What if I cannot see that button?",
+      "context": [
+        "Current module: Production",
+        "Conversation context:\nEmployee: How do I initiate Rework for a Job?\nTenBot: To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake or return date. Only one rework cycle can be active at a time. Rework remains on the same job and does not change its original status or dates."
+      ],
+      "input": {
+        "question": "what if i cannot see that button",
+        "context": [
+          "Current module: Production",
+          "Conversation context:\nEmployee: how do i initiate rework for a job\nTenBot: to initiate rework for a job open the completed and unarchived production job then select choose a reason describe the rework scope and enter the intake or return date only one rework cycle can be active at a time rework remains on the same job and does not change its original status or dates"
+        ],
+        "excerpts": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking."
+          },
+          {
+            "id": "production-rework-status",
+            "title": "Complete or cancel Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can update the active Rework lifecycle. Open its Job in Production, open Details, change Production status to Complete or Cancelled, then choose Save changes. Save other Job-detail changes separately before changing Rework status. This updates the active Rework cycle, not the original Production lifecycle. Completed or cancelled Rework is historical and cannot be changed. Existing Rework history remains attached to the same Job."
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Account decision: available. Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "production-rework-create",
+          "knowledge-rework"
+        ],
+        "answer": "If you cannot see the 'Create Rework' button, ensure the job is complete, unarchived, and has no active rework cycle. The button appears only when these conditions are met. Check the job details and try again.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "If you cannot see the 'Create Rework' button, ensure the job is complete, unarchived, and has no active rework cycle. The button appears only when these conditions are met. Check the job details and try again.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel",
+            "path": "Production → Job → Create Rework",
+            "route": "/",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative.",
+              "The original lifecycle remains on jobs; Rework never overwrites its status or planned dates.",
+              "Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1555,
+      "providerDurationMs": 1111,
+      "usage": [
+        {
+          "at": "2026-10-27T20:33:28.091Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1107,
+          "usage": {
+            "prompt_tokens": 900,
+            "completion_tokens": 70,
+            "total_tokens": 970
+          },
+          "estimatedNeurons": 6.296,
+          "reservedNeurons": 43
+        }
+      ],
+      "at": "2026-10-27T20:33:28.195Z",
+      "ledgerBefore": {
+        "attempts": 41,
+        "completed": 30,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4627.944,
+        "inputTokens": 15493,
+        "outputTokens": 1875
+      },
+      "ledgerAfter": {
+        "attempts": 42,
+        "completed": 31,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4634.24,
+        "inputTokens": 16393,
+        "outputTokens": 1945
+      }
+    },
+    {
+      "id": "manpower",
+      "infrastructureCorrection": false,
+      "question": "How do I filter Manpower Reporting by Job?",
+      "context": [
+        "Current module: Manpower Reporting"
+      ],
+      "input": {
+        "question": "how do i filter manpower reporting by job",
+        "context": [
+          "Current module: Manpower Reporting"
+        ],
+        "excerpts": [
+          {
+            "id": "manpower-job-filter",
+            "title": "Filter Manpower Reporting by Job",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees with business-write access can filter labor by Production Job. Open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates. Search and filters are not exhaustive until all available history is loaded. Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production."
+          },
+          {
+            "id": "knowledge-manpower",
+            "title": "Manpower Reporting work identity and filters",
+            "status": "deployed",
+            "guidance": "Account decision: available. Job dropdown filtering uses business-write-gated controls in the released UI. Read-only accounts retain search/authorized deep-link review. Reporting groups are not Jobs. Manpower Reporting records labor by reporting group, work date, worker, task, work identity, AM hours, PM hours, notes, and attribution. Persistent reporting groups organize entry and review; they are not jobs. Work identity is either a Production job or temporary label, never both. Workers and tasks are stable references with display order and active state. Historical references are deactivated rather than deleted. Total hours derive from AM plus PM and are not stored. Client-side search covers group, date, worker, task, job name/number, temporary label, notes, and entered-by. Search changes displayed rows and totals without changing persistence or ordering. Static source interface text (labels do not establish a click sequence or additional permissions): Not Linked to Production · Edit group name · Reporting group name · Save · Cancel · Add · + Add · Name · Order · Status · Actions · Active · Edit · Preserved label from an imported or unlinked labor entry. · Imported Label · Choose Production job · + Replace imported label · Back · Enter imported or unlinked label · Production Job · + Add temporary job label · Product Category · Notes · Saved · Error · Retry · Deselect all · Reporting Group · Bulk Product Category · Worker · Task · Operations Reporting · Manpower Reporting · Record shop labor by job, worker, task, and work date. · Manpower Settings · Refresh · Close settings · Manpower vocabularies · Job labor review · All reporting groups · Selected Production job · Search manpower · Clear filters before creating an empty group · New Group · Create · Clear job filter · Product Category filter · All Products · Uncategorized · Clear filters to create an empty group or change a whole group’s Job. · Choose one Product Category per line. Split hours across separate lines when labor belongs to different products. · Retry older groups · Retry period · Retry reporting · Add New Line · This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline. · This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked. · Empty group selected · Clear selection · Delete Empty Group · Select · Work Date · Job · AM Hours · PM Hours · Total · New"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "manpower-job-filter",
+          "knowledge-manpower"
+        ],
+        "answer": "To filter manpower reporting by job, open 'Manpower Reporting' and select a 'Job' from the 'Job labor review' dropdown. This will narrow the view to labor related to that specific job. You can use the 'Clear job filter' option to reset. Read-only users can search or use deep links but cannot change the job selection. Product Category filters can further narrow results.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To filter manpower reporting by job, open 'Manpower Reporting' and select a 'Job' from the 'Job labor review' dropdown. This will narrow the view to labor related to that specific job. You can use the 'Clear job filter' option to reset. Read-only users can search or use deep links but cannot change the job selection. Product Category filters can further narrow results.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "manpower-job-filter",
+            "title": "Filter Manpower Reporting by Job",
+            "status": "deployed",
+            "guidance": "Employees with business-write access can filter labor by Production Job. Open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates. Search and filters are not exhaustive until all available history is loaded. Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production.",
+            "path": "Reporting → Manpower Reporting → Job labor review",
+            "route": "/manpower-reporting",
+            "source": "Manpower Reporting guide · released workflow verified October 27",
+            "availability": "available",
+            "constraints": [
+              "Employees with business-write access can filter labor by Production Job.",
+              "Use Clear job filter or All reporting groups to reset.",
+              "Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates.",
+              "Search and filters are not exhaustive until all available history is loaded.",
+              "Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production."
+            ]
+          },
+          {
+            "id": "knowledge-manpower",
+            "title": "Manpower Reporting work identity and filters",
+            "status": "deployed",
+            "guidance": "Job dropdown filtering uses business-write-gated controls in the released UI. Read-only accounts retain search/authorized deep-link review. Reporting groups are not Jobs. Manpower Reporting records labor by reporting group, work date, worker, task, work identity, AM hours, PM hours, notes, and attribution. Persistent reporting groups organize entry and review; they are not jobs. Work identity is either a Production job or temporary label, never both. Workers and tasks are stable references with display order and active state. Historical references are deactivated rather than deleted. Total hours derive from AM plus PM and are not stored. Client-side search covers group, date, worker, task, job name/number, temporary label, notes, and entered-by. Search changes displayed rows and totals without changing persistence or ordering. Static source interface text (labels do not establish a click sequence or additional permissions): Not Linked to Production · Edit group name · Reporting group name · Save · Cancel · Add · + Add · Name · Order · Status · Actions · Active · Edit · Preserved label from an imported or unlinked labor entry. · Imported Label · Choose Production job · + Replace imported label · Back · Enter imported or unlinked label · Production Job · + Add temporary job label · Product Category · Notes · Saved · Error · Retry · Deselect all · Reporting Group · Bulk Product Category · Worker · Task · Operations Reporting · Manpower Reporting · Record shop labor by job, worker, task, and work date. · Manpower Settings · Refresh · Close settings · Manpower vocabularies · Job labor review · All reporting groups · Selected Production job · Search manpower · Clear filters before creating an empty group · New Group · Create · Clear job filter · Product Category filter · All Products · Uncategorized · Clear filters to create an empty group or change a whole group’s Job. · Choose one Product Category per line. Split hours across separate lines when labor belongs to different products. · Retry older groups · Retry period · Retry reporting · Add New Line · This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline. · This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked. · Empty group selected · Clear selection · Delete Empty Group · Select · Work Date · Job · AM Hours · PM Hours · Total · New",
+            "path": "Manpower Reporting → Job / Search",
+            "route": "/manpower-reporting",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Read-only accounts retain search/authorized deep-link review.",
+              "Reporting groups are not Jobs.",
+              "Persistent reporting groups organize entry and review; they are not jobs.",
+              "Work identity is either a Production job or temporary label, never both.",
+              "Historical references are deactivated rather than deleted.",
+              "Total hours derive from AM plus PM and are not stored.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Not Linked to Production · Edit group name · Reporting group name · Save · Cancel · Add · + Add · Name · Order · Status · Actions · Active · Edit · Preserved label from an imported or unlinked labor entry.",
+              "· Imported Label · Choose Production job · + Replace imported label · Back · Enter imported or unlinked label · Production Job · + Add temporary job label · Product Category · Notes · Saved · Error · Retry · Deselect all · Reporting Group · Bulk Product Category · Worker · Task · Operations Reporting · Manpower Reporting · Record shop labor by job, worker, task, and work date.",
+              "· Manpower Settings · Refresh · Close settings · Manpower vocabularies · Job labor review · All reporting groups · Selected Production job · Search manpower · Clear filters before creating an empty group · New Group · Create · Clear job filter · Product Category filter · All Products · Uncategorized · Clear filters to create an empty group or change a whole group’s Job.",
+              "· This manpower group is not linked to a Production job.",
+              "Labor recorded here will not appear in Production until a job is linked."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1532,
+      "providerDurationMs": 1166,
+      "usage": [
+        {
+          "at": "2026-10-27T20:33:39.513Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1163,
+          "usage": {
+            "prompt_tokens": 1032,
+            "completion_tokens": 101,
+            "total_tokens": 1133
+          },
+          "estimatedNeurons": 7.851,
+          "reservedNeurons": 47
+        }
+      ],
+      "at": "2026-10-27T20:33:39.602Z",
+      "ledgerBefore": {
+        "attempts": 42,
+        "completed": 31,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4634.24,
+        "inputTokens": 16393,
+        "outputTokens": 1945
+      },
+      "ledgerAfter": {
+        "attempts": 43,
+        "completed": 32,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4642.091,
+        "inputTokens": 17425,
+        "outputTokens": 2046
+      }
+    },
+    {
+      "id": "customer",
+      "contextSource": null,
+      "infrastructureCorrection": true,
+      "completionRun": false,
+      "question": "How do I edit an existing customer?",
+      "context": [
+        "Current module: Contacts"
+      ],
+      "input": {
+        "question": "how do i edit an existing customer",
+        "context": [
+          "Current module: Contacts"
+        ],
+        "excerpts": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information."
+          },
+          {
+            "id": "knowledge-contacts",
+            "title": "Shared Contacts and Customer Inspector",
+            "status": "deployed",
+            "guidance": "Account decision: available. Saved customer editing requires existing business-write and customer-detail editing permissions. Future selections use updated directory values; existing Jobs/issued Proposals retain their captured values. Customer search and Linked Jobs are available separately with operational-read access. Static source interface text (labels do not establish a click sequence or additional permissions): Manage Customer List · Close · Search customers · Search managed customers · No customers found. · Previous · Next · + Add New Customer · Cancel · Customer / Company Name * · Customer / Company Name · Additional Information (Optional) · Saved contact (optional) · Saved contact · None / enter a new contact · Previous contacts · Next contacts · Contact Name · Phone Number · Email Address · Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information. · Lead/Admin access is required to edit or remove a saved customer. · Remove From List · Back to list"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "customer-edit",
+          "knowledge-contacts"
+        ],
+        "answer": "To edit an existing customer, go to Toolbox → Resources → Contacts. Search for the customer's company name, then select it to open Customer Inspector. Edit the Customer/Company Name or expand Additional Information to edit Contact Name, Phone Number, or Email Address. Choose Save Changes. Note: Lead/Admin access is required to edit a customer. Existing Jobs and Proposals will retain their captured information, while future selections will use the updated details.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To edit an existing customer, go to Toolbox → Resources → Contacts. Search for the customer's company name, then select it to open Customer Inspector. Edit the Customer/Company Name or expand Additional Information to edit Contact Name, Phone Number, or Email Address. Choose Save Changes. Note: Lead/Admin access is required to edit a customer. Existing Jobs and Proposals will retain their captured information, while future selections will use the updated details.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information.",
+            "path": "Toolbox → Resources → Contacts → Search customers → customer name → Customer Inspector → Save Changes",
+            "route": "/contacts",
+            "source": "Contacts guide · released October 20",
+            "availability": "available",
+            "constraints": [
+              "Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes.",
+              "Existing Jobs and Proposals keep their captured information."
+            ]
+          },
+          {
+            "id": "knowledge-contacts",
+            "title": "Shared Contacts and Customer Inspector",
+            "status": "deployed",
+            "guidance": "Saved customer editing requires existing business-write and customer-detail editing permissions. Future selections use updated directory values; existing Jobs/issued Proposals retain their captured values. Customer search and Linked Jobs are available separately with operational-read access. Static source interface text (labels do not establish a click sequence or additional permissions): Manage Customer List · Close · Search customers · Search managed customers · No customers found. · Previous · Next · + Add New Customer · Cancel · Customer / Company Name * · Customer / Company Name · Additional Information (Optional) · Saved contact (optional) · Saved contact · None / enter a new contact · Previous contacts · Next contacts · Contact Name · Phone Number · Email Address · Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information. · Lead/Admin access is required to edit or remove a saved customer. · Remove From List · Back to list",
+            "path": "Toolbox → Resources → Contacts → Customer Inspector",
+            "route": "/contacts",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Saved customer editing requires existing business-write and customer-detail editing permissions.",
+              "Customer search and Linked Jobs are available separately with operational-read access.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Manage Customer List · Close · Search customers · Search managed customers · No customers found.",
+              "Existing Jobs and Proposals keep their captured information.",
+              "· Lead/Admin access is required to edit or remove a saved customer."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 2202,
+      "providerDurationMs": 1904,
+      "usage": [
+        {
+          "at": "2026-10-27T20:37:32.467Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1901,
+          "usage": {
+            "prompt_tokens": 698,
+            "completion_tokens": 108,
+            "total_tokens": 806
+          },
+          "estimatedNeurons": 6.52,
+          "reservedNeurons": 39
+        }
+      ],
+      "at": "2026-10-27T20:37:32.542Z",
+      "ledgerBefore": {
+        "attempts": 45,
+        "completed": 32,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4717.091,
+        "inputTokens": 17425,
+        "outputTokens": 2046
+      },
+      "ledgerAfter": {
+        "attempts": 46,
+        "completed": 33,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4723.611,
+        "inputTokens": 18123,
+        "outputTokens": 2154
+      }
+    },
+    {
+      "id": "group",
+      "contextSource": null,
+      "infrastructureCorrection": true,
+      "completionRun": false,
+      "question": "How do I create a group conversation?",
+      "context": [
+        "Current module: My Work"
+      ],
+      "input": {
+        "question": "how do i create a group conversation",
+        "context": [
+          "Current module: My Work"
+        ],
+        "excerpts": [
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes."
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A dedicated Share Job control is not verified; do not invent it. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "group",
+          "knowledge-messaging"
+        ],
+        "answer": "To create a group conversation, open Messaging from the app header, choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can manage the group. Adding a third person to a personal DM is not supported; create a separate group instead.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To create a group conversation, open Messaging from the app header, choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can manage the group. Adding a third person to a personal DM is not supported; create a separate group instead.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging groups and replies · released October 22",
+            "availability": "available",
+            "constraints": [
+              "Only the creator can rename the group or add/remove participants.",
+              "Current members share the full history; removed members lose access.",
+              "Previously signed attachment links may remain usable for up to ten minutes."
+            ]
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A dedicated Share Job control is not verified; do not invent it. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation.",
+              "Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied.",
+              "A dedicated Share Job control is not verified; do not invent it.",
+              "- My Work and Inbox are participant/private domains.",
+              "Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1395,
+      "providerDurationMs": 1110,
+      "usage": [
+        {
+          "at": "2026-10-27T20:37:42.953Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1107,
+          "usage": {
+            "prompt_tokens": 605,
+            "completion_tokens": 79,
+            "total_tokens": 684
+          },
+          "estimatedNeurons": 5.206,
+          "reservedNeurons": 36
+        }
+      ],
+      "at": "2026-10-27T20:37:43.048Z",
+      "ledgerBefore": {
+        "attempts": 46,
+        "completed": 33,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4723.611,
+        "inputTokens": 18123,
+        "outputTokens": 2154
+      },
+      "ledgerAfter": {
+        "attempts": 47,
+        "completed": 34,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4728.817,
+        "inputTokens": 18728,
+        "outputTokens": 2233
+      }
+    },
+    {
+      "id": "group-followup",
+      "prior": "group",
+      "contextSource": "qwen3-infrastructure-correction.json",
+      "infrastructureCorrection": false,
+      "completionRun": true,
+      "question": "Can I add someone to my existing DM instead?",
+      "context": [
+        "Current module: My Work",
+        "Conversation context:\nEmployee: How do I create a group conversation?\nTenBot: To create a group conversation, open Messaging from the app header, choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can manage the group. Adding a third person to a personal DM is not supported; create a separate group instead."
+      ],
+      "input": {
+        "question": "can i add someone to my existing dm instead",
+        "context": [
+          "Current module: My Work",
+          "Conversation context:\nEmployee: how do i create a group conversation\nTenBot: to create a group conversation open messaging from the app header choose new group enter a group name select at least one other participant then choose create group only the creator can manage the group adding a third person to a personal dm is not supported create a separate group instead"
+        ],
+        "excerpts": [
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Account decision: partial. Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group."
+          },
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes."
+          },
+          {
+            "id": "message-reply",
+            "title": "Reply to a specific employee message",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees with Messaging participation permission can reply inside a DM or group they are authorized to access. Open Messaging and the conversation, open Message actions on an ordinary employee message, and choose Reply. Type your reply and choose Send. The quoted preview links back to the original when it remains available to you. Replies stay in the same authorized conversation; they do not share the message with another conversation. Official system messages do not offer ordinary employee message actions."
+          },
+          {
+            "id": "message-attachments",
+            "title": "Send files or images in an employee conversation",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees with Messaging participation permission can send attachments inside an authorized DM or group. Open Messaging and the conversation, choose Attach, and select files. Supported browsers also allow pasting images or files, or dropping them into the composer. Review the attachments, optionally add text, then choose Send. Limits are 50 MB per file and 200 MB per message. Clipboard support varies by browser. The transfer must finish before the attachment message is delivered. Attachments remain subject to the conversation's access rules; do not send private records to TenBot."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "dm",
+          "group"
+        ],
+        "answer": "You cannot add a third person to an existing personal DM. To include more people, create a new group conversation instead. The original DM remains private and its history is not copied into the group.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "You cannot add a third person to an existing personal DM. To include more people, create a new group conversation instead. The original DM remains private and its history is not copied into the group.",
+        "resolution": "partial",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging privacy contract · released October 22",
+            "availability": "partial",
+            "constraints": [
+              "Partially: you can start a new group, but you cannot add a third person to a personal DM.",
+              "The old DM stays private and its history is not copied into the group."
+            ]
+          },
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging groups and replies · released October 22",
+            "availability": "available",
+            "constraints": [
+              "Only the creator can rename the group or add/remove participants.",
+              "Current members share the full history; removed members lose access.",
+              "Previously signed attachment links may remain usable for up to ten minutes."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group."
+        ],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1281,
+      "providerDurationMs": 995,
+      "usage": [
+        {
+          "at": "2026-10-27T20:37:54.151Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 993,
+          "usage": {
+            "prompt_tokens": 865,
+            "completion_tokens": 56,
+            "total_tokens": 921
+          },
+          "estimatedNeurons": 5.708,
+          "reservedNeurons": 43
+        }
+      ],
+      "at": "2026-10-27T20:37:54.232Z",
+      "ledgerBefore": {
+        "attempts": 47,
+        "completed": 34,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4728.817,
+        "inputTokens": 18728,
+        "outputTokens": 2233
+      },
+      "ledgerAfter": {
+        "attempts": 48,
+        "completed": 35,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4734.525,
+        "inputTokens": 19593,
+        "outputTokens": 2289
+      }
+    },
+    {
+      "id": "sample-bid",
+      "contextSource": null,
+      "infrastructureCorrection": false,
+      "completionRun": true,
+      "question": "How do I attach a Sample to a Bid?",
+      "context": [
+        "Current module: Intake"
+      ],
+      "input": {
+        "question": "how do i attach a sample to a bid",
+        "context": [
+          "Current module: Intake"
+        ],
+        "excerpts": [
+          {
+            "id": "sample-bid",
+            "title": "Attach a Sample to a Bid",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Intake and select the Bid. In Tools, choose Open related Samples. In Bid-context Samples, choose an Existing standalone Sample, then Link Sample. A Sample already linked to another Bid cannot be moved by this action. To make a new Sample instead, choose Create Sample in the Bid’s Tools; the established generator retains Bid, Customer and Project context, then save the Sample. The Sample editor also provides Bid context when saving a draft. Existing generated documents are not changed by linking. Existing Intake-management, operational-read and business-write permissions are required."
+          },
+          {
+            "id": "knowledge-sample-bid",
+            "title": "Bid-context Samples and existing Sample links",
+            "status": "deployed",
+            "guidance": "Account decision: available. The released Bid-context Samples screen links an existing standalone Sample with Existing standalone Sample → Link Sample. A Sample already linked to another Bid cannot be reassigned by this action. Create Sample in Bid Tools starts a new canonical Sample with Bid, Customer and Project context. Existing generated documents are not changed. Static source interface text (labels do not establish a click sequence or additional permissions): Create Proposal · Open the Proposal Generator for this Bid. · Create Sample · Start a Sample in the established generator with this Bid attached. · Open related Proposals · Review and manage this Bid’s Proposals. · Open related Samples · Review Samples and Blend Sheets in their existing workspace. · Bid Tools · Tools · Use the established generators with this Bid in context. · Bid-context Samples · Create a new canonical Sample with this Bid’s Customer and Project, or link an existing standalone Sample. · Existing standalone Sample · Select Sample"
+          },
+          {
+            "id": "knowledge-samples",
+            "title": "Samples, formulations, Batch and Blend Sheets",
+            "status": "deployed",
+            "guidance": "Account decision: available. Samples and Blend Sheets use the established generator and saved/issued revisions. Production Blend management actions require a separate explicit permission. Imported shop quantities do not automatically establish Batch authority. Only supplied source text establishes a workflow; a control label alone is not a sequence. Static source interface text (labels do not establish a click sequence or additional permissions): Sample Work Order · Working Sheet · Sample Formula Workspace · New Sample · Bid-context Samples · Create a new canonical Sample with this Bid’s Customer and Project, or link an existing standalone Sample. · Existing standalone Sample · Select Sample · Start Sample formulation tutorial · Guide me · Duplicate · Close · Sample actions · Draft saving and document generation have different requirements. · Edit Sample details · Formulation setup · Sample context · Color Plate / Formula # · Suggested by TenOps · editable · assigned when saved · Another Sample uses an equivalent Color Plate identifier. Review before saving. · Date Initiated · Prepared By · Prepared By is required to generate a Sample Work Order. · Approved Date · Bid context · Standalone / no Bid · Notes · Legacy context · Retained historical metadata. Physical dimensions and piece count are set in Sample Plate. · Historical name · Historical size · Historical quantity · Historical additional notes · Retained with this Sample and included in generated documents. Use Notes above for new instructions. · View quantities as · Prepare Sample · Sample Plate · Materials and setup · Resin Supplier · Resin Color / # and the Resin row contain different descriptions. Choose which value to keep in both fields before saving. · Use Resin Color / # for both · Use Resin row for both · Chip Mix · Color / Material · Size · Type · Vendor · Actions · Add Aggregate · Details · Formula Role · Aggregate · Filler · Resin · Hardener · Other · Color · No role-matching results. · No Catalog match. Keep the authored Color as a manual value. · Current formulation Filler (lb) · Enter a nonnegative Filler quantity that leaves a positive Chip Mix. · Restore Profile Default · Edit amount in Prepare Sample. · Documents / History · Recent Documents · Sample Work Order · Sample Work Orders · View · No generated Sample Work Orders yet. · Generated Sample documents are protected from deletion. · Discard · Tenarten Sample Work Order · Save this Sample? · You have unsaved formula changes. Save them, discard them, or keep editing. · Keep Editing"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "sample-bid",
+          "knowledge-sample-bid",
+          "knowledge-samples"
+        ],
+        "answer": "To attach a sample to a bid, open the bid in Intake, go to Tools, and select 'Open related Samples.' Choose an existing standalone sample and click 'Link Sample.' If you need to create a new sample, select 'Create Sample' in the Bid’s Tools. This will start a new sample with the bid's context. Note that a sample already linked to another bid cannot be moved. Existing documents are not changed by linking."
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To attach a sample to a bid, open the bid in Intake, go to Tools, and select 'Open related Samples.' Choose an existing standalone sample and click 'Link Sample.' If you need to create a new sample, select 'Create Sample' in the Bid’s Tools. This will start a new sample with the bid's context. Note that a sample already linked to another bid cannot be moved. Existing documents are not changed by linking.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "sample-bid",
+            "title": "Attach a Sample to a Bid",
+            "status": "deployed",
+            "guidance": "Open Intake and select the Bid. In Tools, choose Open related Samples. In Bid-context Samples, choose an Existing standalone Sample, then Link Sample. A Sample already linked to another Bid cannot be moved by this action. To make a new Sample instead, choose Create Sample in the Bid’s Tools; the established generator retains Bid, Customer and Project context, then save the Sample. The Sample editor also provides Bid context when saving a draft. Existing generated documents are not changed by linking. Existing Intake-management, operational-read and business-write permissions are required.",
+            "path": "Intake → Bid → Tools → Open related Samples → Existing standalone Sample → Link Sample",
+            "route": "/pre-production",
+            "source": "TenOps Samples and Intake · deployed October 27",
+            "availability": "available",
+            "constraints": [
+              "A Sample already linked to another Bid cannot be moved by this action.",
+              "Existing generated documents are not changed by linking.",
+              "Existing Intake-management, operational-read and business-write permissions are required."
+            ]
+          },
+          {
+            "id": "knowledge-sample-bid",
+            "title": "Bid-context Samples and existing Sample links",
+            "status": "deployed",
+            "guidance": "The released Bid-context Samples screen links an existing standalone Sample with Existing standalone Sample → Link Sample. A Sample already linked to another Bid cannot be reassigned by this action. Create Sample in Bid Tools starts a new canonical Sample with Bid, Customer and Project context. Existing generated documents are not changed. Static source interface text (labels do not establish a click sequence or additional permissions): Create Proposal · Open the Proposal Generator for this Bid. · Create Sample · Start a Sample in the established generator with this Bid attached. · Open related Proposals · Review and manage this Bid’s Proposals. · Open related Samples · Review Samples and Blend Sheets in their existing workspace. · Bid Tools · Tools · Use the established generators with this Bid in context. · Bid-context Samples · Create a new canonical Sample with this Bid’s Customer and Project, or link an existing standalone Sample. · Existing standalone Sample · Select Sample",
+            "path": "Intake → Bid → Tools → Open related Samples",
+            "route": "/pre-production",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "A Sample already linked to another Bid cannot be reassigned by this action.",
+              "Existing generated documents are not changed.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Create Proposal · Open the Proposal Generator for this Bid."
+            ]
+          },
+          {
+            "id": "knowledge-samples",
+            "title": "Samples, formulations, Batch and Blend Sheets",
+            "status": "deployed",
+            "guidance": "Samples and Blend Sheets use the established generator and saved/issued revisions. Production Blend management actions require a separate explicit permission. Imported shop quantities do not automatically establish Batch authority. Only supplied source text establishes a workflow; a control label alone is not a sequence. Static source interface text (labels do not establish a click sequence or additional permissions): Sample Work Order · Working Sheet · Sample Formula Workspace · New Sample · Bid-context Samples · Create a new canonical Sample with this Bid’s Customer and Project, or link an existing standalone Sample. · Existing standalone Sample · Select Sample · Start Sample formulation tutorial · Guide me · Duplicate · Close · Sample actions · Draft saving and document generation have different requirements. · Edit Sample details · Formulation setup · Sample context · Color Plate / Formula # · Suggested by TenOps · editable · assigned when saved · Another Sample uses an equivalent Color Plate identifier. Review before saving. · Date Initiated · Prepared By · Prepared By is required to generate a Sample Work Order. · Approved Date · Bid context · Standalone / no Bid · Notes · Legacy context · Retained historical metadata. Physical dimensions and piece count are set in Sample Plate. · Historical name · Historical size · Historical quantity · Historical additional notes · Retained with this Sample and included in generated documents. Use Notes above for new instructions. · View quantities as · Prepare Sample · Sample Plate · Materials and setup · Resin Supplier · Resin Color / # and the Resin row contain different descriptions. Choose which value to keep in both fields before saving. · Use Resin Color / # for both · Use Resin row for both · Chip Mix · Color / Material · Size · Type · Vendor · Actions · Add Aggregate · Details · Formula Role · Aggregate · Filler · Resin · Hardener · Other · Color · No role-matching results. · No Catalog match. Keep the authored Color as a manual value. · Current formulation Filler (lb) · Enter a nonnegative Filler quantity that leaves a positive Chip Mix. · Restore Profile Default · Edit amount in Prepare Sample. · Documents / History · Recent Documents · Sample Work Order · Sample Work Orders · View · No generated Sample Work Orders yet. · Generated Sample documents are protected from deletion. · Discard · Tenarten Sample Work Order · Save this Sample? · You have unsaved formula changes. Save them, discard them, or keep editing. · Keep Editing",
+            "path": "Samples → Sample Draft Library",
+            "route": "/samples",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Production Blend management actions require a separate explicit permission.",
+              "Imported shop quantities do not automatically establish Batch authority.",
+              "Only supplied source text establishes a workflow; a control label alone is not a sequence.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Sample Work Order · Working Sheet · Sample Formula Workspace · New Sample · Bid-context Samples · Create a new canonical Sample with this Bid’s Customer and Project, or link an existing standalone Sample.",
+              "· Date Initiated · Prepared By · Prepared By is required to generate a Sample Work Order.",
+              "· Approved Date · Bid context · Standalone / no Bid · Notes · Legacy context · Retained historical metadata.",
+              "· Historical name · Historical size · Historical quantity · Historical additional notes · Retained with this Sample and included in generated documents.",
+              "Choose which value to keep in both fields before saving.",
+              "Keep the authored Color as a manual value.",
+              "· Documents / History · Recent Documents · Sample Work Order · Sample Work Orders · View · No generated Sample Work Orders yet.",
+              "Save them, discard them, or keep editing.",
+              "· Keep Editing"
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 2447,
+      "providerDurationMs": 1653,
+      "usage": [
+        {
+          "at": "2026-10-27T20:38:06.535Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1651,
+          "usage": {
+            "prompt_tokens": 1248,
+            "completion_tokens": 114,
+            "total_tokens": 1362
+          },
+          "estimatedNeurons": 9.247,
+          "reservedNeurons": 52
+        }
+      ],
+      "at": "2026-10-27T20:38:06.682Z",
+      "ledgerBefore": {
+        "attempts": 48,
+        "completed": 35,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4734.525,
+        "inputTokens": 19593,
+        "outputTokens": 2289
+      },
+      "ledgerAfter": {
+        "attempts": 49,
+        "completed": 36,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4743.772,
+        "inputTokens": 20841,
+        "outputTokens": 2403
+      }
+    },
+    {
+      "id": "share-job",
+      "contextSource": null,
+      "infrastructureCorrection": false,
+      "completionRun": true,
+      "question": "Can I share a Job directly in Messaging?",
+      "context": [
+        "Current module: My Work"
+      ],
+      "input": {
+        "question": "can i share a job directly in messaging",
+        "context": [
+          "Current module: My Work"
+        ],
+        "excerpts": [
+          {
+            "id": "share-job",
+            "title": "Share a Job in a message",
+            "status": "unknown",
+            "guidance": "Account decision: unverified. The TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging. This does not mean the feature is unavailable. Please check with Product. Do not paste private Job records here."
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A dedicated Share Job control is not verified; do not invent it. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "share-job",
+          "knowledge-messaging"
+        ],
+        "answer": "The ability to directly share a job in messaging is unverified. While you can send messages and attachments in authorized conversations, there is no confirmed dedicated 'Share Job' control in Messaging. Check with Product for more details. Do not paste private job records.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "The ability to directly share a job in messaging is unverified. While you can send messages and attachments in authorized conversations, there is no confirmed dedicated 'Share Job' control in Messaging. Check with Product for more details. Do not paste private job records.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "share-job",
+            "title": "Share a Job in a message",
+            "status": "unknown",
+            "guidance": "The TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging. This does not mean the feature is unavailable. Please check with Product. Do not paste private Job records here.",
+            "path": "",
+            "route": null,
+            "source": "Messaging capability review · October 27",
+            "availability": "unverified",
+            "constraints": [
+              "The TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging.",
+              "This does not mean the feature is unavailable.",
+              "Do not paste private Job records here."
+            ]
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A dedicated Share Job control is not verified; do not invent it. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation.",
+              "Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied.",
+              "A dedicated Share Job control is not verified; do not invent it.",
+              "- My Work and Inbox are participant/private domains.",
+              "Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "The TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging. This does not mean the feature is unavailable. Please check with Product. Do not paste private Job records here."
+        ],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1125,
+      "providerDurationMs": 816,
+      "usage": [
+        {
+          "at": "2026-10-27T20:38:16.993Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 813,
+          "usage": {
+            "prompt_tokens": 586,
+            "completion_tokens": 71,
+            "total_tokens": 657
+          },
+          "estimatedNeurons": 4.874,
+          "reservedNeurons": 36
+        }
+      ],
+      "at": "2026-10-27T20:38:17.104Z",
+      "ledgerBefore": {
+        "attempts": 49,
+        "completed": 36,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4743.772,
+        "inputTokens": 20841,
+        "outputTokens": 2403
+      },
+      "ledgerAfter": {
+        "attempts": 50,
+        "completed": 37,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4748.646,
+        "inputTokens": 21427,
+        "outputTokens": 2474
+      }
+    },
+    {
+      "id": "lead-times",
+      "contextSource": null,
+      "infrastructureCorrection": false,
+      "completionRun": true,
+      "question": "Can TenOps estimate material lead times?",
+      "context": [
+        "Current module: Intake"
+      ],
+      "input": {
+        "question": "can tenops estimate material lead times",
+        "context": [
+          "Current module: Intake"
+        ],
+        "excerpts": [
+          {
+            "id": "material-lead",
+            "title": "Material requirements and lead-time guidance",
+            "status": "deployed",
+            "guidance": "Account decision: partial. Partly: released material-assessment services can combine exact saved Sample or issued Blend authority, reviewed Inventory mappings, catalog supplier evidence and documented manual lead-time estimates. Available stock, reservations, incoming ETAs and shortages remain distinct. Unknown evidence stays unknown; incoming supply is not on-hand stock. This is not automatic lead-time prediction from a Blend Sheet and does not promise a Production date. The current Bid Inspector does not expose the retained material-assessment editor, so I cannot provide an employee-facing assessment-button workflow. Formulations and Blend Sheets stay in Samples; ask Product about the assessment workflow. Assessment does not create reservations, orders or stock changes."
+          },
+          {
+            "id": "knowledge-material-assessment",
+            "title": "Material requirements, supply evidence and lead-time boundaries",
+            "status": "deployed",
+            "guidance": "Account decision: partial. Released retained scope/material services can calculate requirements from exact saved Sample/issued Blend authority and reviewed quantity/unit mappings, then distinguish available stock, own-Job reservations, reservations elsewhere, incoming supply and on-hand shortages. Supplier/catalog lead-time evidence or documented manual estimates may support assessment; unknown evidence remains unknown. Current Bid Inspector does not mount a material-assessment editor or Refresh read-only availability control. There is no verified automatic Blend Sheet lead-time prediction or promised Production date. No stock, reservation, order or material-status mutation occurs through read-only assessment. Formulations and Blend Sheets are authored in Samples; use existing supplier/catalog context and ask Product about an employee-facing assessment workflow."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "material-lead",
+          "knowledge-material-assessment"
+        ],
+        "answer": "TenOps can estimate material lead times using saved Sample or issued Blend authority, reviewed mappings, and documented manual estimates. However, it does not automatically predict lead times from a Blend Sheet or guarantee a Production date. The current system does not support an employee-facing assessment workflow or automatic updates to stock, reservations, or orders. You may need to consult Product for further details on the assessment process.",
+        "summary": "TenOps can estimate material lead times with manual input and existing data, but no automatic prediction or workflow is available."
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "TenOps can estimate material lead times using saved Sample or issued Blend authority, reviewed mappings, and documented manual estimates. However, it does not automatically predict lead times from a Blend Sheet or guarantee a Production date. The current system does not support an employee-facing assessment workflow or automatic updates to stock, reservations, or orders. You may need to consult Product for further details on the assessment process.",
+        "resolution": "partial",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "material-lead",
+            "title": "Material requirements and lead-time guidance",
+            "status": "deployed",
+            "guidance": "Partly: released material-assessment services can combine exact saved Sample or issued Blend authority, reviewed Inventory mappings, catalog supplier evidence and documented manual lead-time estimates. Available stock, reservations, incoming ETAs and shortages remain distinct. Unknown evidence stays unknown; incoming supply is not on-hand stock. This is not automatic lead-time prediction from a Blend Sheet and does not promise a Production date. The current Bid Inspector does not expose the retained material-assessment editor, so I cannot provide an employee-facing assessment-button workflow. Formulations and Blend Sheets stay in Samples; ask Product about the assessment workflow. Assessment does not create reservations, orders or stock changes.",
+            "path": "",
+            "route": null,
+            "source": "TenOps material assessment boundaries · deployed October 27",
+            "availability": "partial",
+            "constraints": [
+              "Unknown evidence stays unknown; incoming supply is not on-hand stock.",
+              "This is not automatic lead-time prediction from a Blend Sheet and does not promise a Production date.",
+              "The current Bid Inspector does not expose the retained material-assessment editor, so I cannot provide an employee-facing assessment-button workflow.",
+              "Assessment does not create reservations, orders or stock changes."
+            ]
+          },
+          {
+            "id": "knowledge-material-assessment",
+            "title": "Material requirements, supply evidence and lead-time boundaries",
+            "status": "deployed",
+            "guidance": "Released retained scope/material services can calculate requirements from exact saved Sample/issued Blend authority and reviewed quantity/unit mappings, then distinguish available stock, own-Job reservations, reservations elsewhere, incoming supply and on-hand shortages. Supplier/catalog lead-time evidence or documented manual estimates may support assessment; unknown evidence remains unknown. Current Bid Inspector does not mount a material-assessment editor or Refresh read-only availability control. There is no verified automatic Blend Sheet lead-time prediction or promised Production date. No stock, reservation, order or material-status mutation occurs through read-only assessment. Formulations and Blend Sheets are authored in Samples; use existing supplier/catalog context and ask Product about an employee-facing assessment workflow.",
+            "path": "",
+            "route": null,
+            "source": "TenOps verified application knowledge",
+            "availability": "partial",
+            "constraints": [
+              "Current Bid Inspector does not mount a material-assessment editor or Refresh read-only availability control.",
+              "No stock, reservation, order or material-status mutation occurs through read-only assessment."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "Partly: released material-assessment services can combine exact saved Sample or issued Blend authority, reviewed Inventory mappings, catalog supplier evidence and documented manual lead-time estimates. Available stock, reservations, incoming ETAs and shortages remain distinct. Unknown evidence stays unknown; incoming supply is not on-hand stock. This is not automatic lead-time prediction from a Blend Sheet and does not promise a Production date. The current Bid Inspector does not expose the retained material-assessment editor, so I cannot provide an employee-facing assessment-button workflow. Formulations and Blend Sheets stay in Samples; ask Product about the assessment workflow. Assessment does not create reservations, orders or stock changes.",
+          "Released retained scope/material services can calculate requirements from exact saved Sample/issued Blend authority and reviewed quantity/unit mappings, then distinguish available stock, own-Job reservations, reservations elsewhere, incoming supply and on-hand shortages. Supplier/catalog lead-time evidence or documented manual estimates may support assessment; unknown evidence remains unknown. Current Bid Inspector does not mount a material-assessment editor or Refresh read-only availability control. There is no verified automatic Blend Sheet lead-time prediction or promised Production date. No stock, reservation, order or material-status mutation occurs through read-only assessment. Formulations and Blend Sheets are authored in Samples; use existing supplier/catalog context and ask Product about an employee-facing assessment workflow."
+        ],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 2245,
+      "providerDurationMs": 1404,
+      "usage": [
+        {
+          "at": "2026-10-27T20:38:29.413Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1401,
+          "usage": {
+            "prompt_tokens": 701,
+            "completion_tokens": 123,
+            "total_tokens": 824
+          },
+          "estimatedNeurons": 6.991,
+          "reservedNeurons": 40
+        }
+      ],
+      "at": "2026-10-27T20:38:29.488Z",
+      "ledgerBefore": {
+        "attempts": 50,
+        "completed": 37,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4748.646,
+        "inputTokens": 21427,
+        "outputTokens": 2474
+      },
+      "ledgerAfter": {
+        "attempts": 51,
+        "completed": 38,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4755.637,
+        "inputTokens": 22128,
+        "outputTokens": 2597
+      }
+    }
+  ],
+  "provenance": [
+    "qwen3.json",
+    "qwen3-infrastructure-correction.json",
+    "qwen3-completion.json"
+  ]
+}

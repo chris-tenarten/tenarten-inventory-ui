@@ -1,3 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
+// @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
+import {generatedKnowledge,knowledgeSnapshot} from './tenbot-knowledge-snapshot.ts';
+export {knowledgeSnapshot};
+
 // Employee-safe workflow excerpts only. Never import this server registry into the client bundle.
 // Release evidence, sourceFiles and examples are internal maintenance checks.
 export const snapshot = {
@@ -6,7 +11,7 @@ export const snapshot = {
 };
 export type CapabilityEntry = {
  id:string; title:string; modules:string[]; terms:string; requiredTerms:string[][];
- status:'deployed'|'local'|'planned'|'unknown'; availability?:'unavailable';
+ status:'deployed'|'local'|'planned'|'unknown'; availability?:'unavailable'|'partial';
  permission:string; additionalPermissions?:string[]; route:string|null; path:string;
  guidance:string; source:string; evidence:string; sourceFiles:string[]; examples:string[];
 };
@@ -164,7 +169,7 @@ export const registry:CapabilityEntry[] = [
   "permission": "messaging.write",
   "route": null,
   "path": "",
-  "guidance": "The TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging. This does not mean the feature is unavailable. Please check with Product. Do not paste private Job records here.",
+  "guidance": "I cannot verify a native Share Job control or Job card in Messaging. This is a documentation limit, not proof that the feature is absent. Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send. Creating a group by itself does not share a Job. Keep private Job records out of TenBot.",
   "source": "Messaging capability review · October 27",
   "evidence": "docs/project-memory/2026-10-22-messaging-groups-replies-candidate.md#executed-release--2026-10-22",
   "requiredTerms": [
@@ -188,7 +193,12 @@ export const registry:CapabilityEntry[] = [
   "examples": [
    "Can I share a Job inside a message?"
   ],
-  "sourceFiles": []
+  "sourceFiles": [
+   "src/modules/my-work/InboxDialog.tsx",
+   "src/modules/my-work/messaging/useAttachmentQueue.ts",
+   "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+   "supabase/migrations/20261005120000_read_only_messaging_write.sql"
+  ]
  },
  {
   "id": "sample-bid",
@@ -198,13 +208,13 @@ export const registry:CapabilityEntry[] = [
   ],
   "title": "Attach a Sample to a Bid",
   "terms": "attach link sample bid samples",
-  "status": "unknown",
+  "status": "deployed",
   "permission": "viewIntake",
-  "route": null,
-  "path": "",
-  "guidance": "I cannot verify the exact deployed controls for attaching a Sample to a Bid. Please check with Product before relying on a workflow description.",
-  "source": "Intake workflow verification · October 27",
-  "evidence": "docs/project-memory/2026-10-13-bids-workstream-closure.md",
+  "route": "/pre-production",
+  "path": "Intake → Bid → Tools → Open related Samples → Existing standalone Sample → Link Sample",
+  "guidance": "Open Intake and select the Bid. In Tools, choose Open related Samples. In Bid-context Samples, choose an Existing standalone Sample, then Link Sample. A Sample already linked to another Bid cannot be moved by this action. To make a new Sample instead, choose Create Sample in the Bid’s Tools; the established generator retains Bid, Customer and Project context, then save the Sample. The Sample editor also provides Bid context when saving a draft. Existing generated documents are not changed by linking. Existing Intake-management, operational-read and business-write permissions are required.",
+  "source": "TenOps Samples and Intake · deployed October 27",
+  "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
   "requiredTerms": [
    [
     "sample",
@@ -222,7 +232,18 @@ export const registry:CapabilityEntry[] = [
   "examples": [
    "How do I attach a Sample to a Bid?"
   ],
-  "sourceFiles": []
+  "sourceFiles": [
+   "src/modules/pre-production/BidTools.tsx",
+   "src/modules/samples/SampleWorkspace.tsx",
+   "src/modules/samples/queries.ts",
+   "supabase/migrations/20260923215900_intake_early_access.sql",
+   "supabase/migrations/20261005120000_read_only_messaging_write.sql"
+  ],
+  "additionalPermissions": [
+   "accessIntake",
+   "readOperationalData",
+   "writeBusinessData"
+  ]
  },
  {
   "id": "customer-history",
@@ -322,13 +343,13 @@ export const registry:CapabilityEntry[] = [
   ],
   "title": "Material requirements and lead-time guidance",
   "terms": "estimate material lead time times blend sheet inventory readiness accepted scope requirements intake",
-  "status": "local",
+  "status": "deployed",
   "permission": "viewIntake",
   "route": null,
   "path": "",
-  "guidance": "This workflow has no verified released employee-facing guidance. Do not rely on it as an available TenOps workflow. Supplier lead-time guidance remains subject to verified inputs and Product acceptance.",
-  "source": "Intake candidate · pending Product acceptance",
-  "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+  "guidance": "The current Bid Inspector does not expose a material lead-time estimator. A Blend Sheet does not automatically predict supplier delivery or promise a Production date. I cannot verify another employee-facing estimator from these sources. Released retained assessment services can combine exact saved Sample or issued Blend authority, reviewed Inventory mappings, catalog supplier evidence and documented manual lead-time estimates; that backend capability does not establish a UI workflow. Supplier/catalog lead-time information and documented manual estimates are useful evidence, while missing evidence stays unknown. On-hand stock, reservations, incoming ETAs and shortages remain distinct; incoming supply is not on-hand stock. Assessment does not create reservations, orders or stock changes. Ask Product about the employee-facing assessment workflow.",
+  "source": "TenOps material assessment boundaries · deployed October 27",
+  "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
   "requiredTerms": [
    [
     "material",
@@ -348,7 +369,17 @@ export const registry:CapabilityEntry[] = [
   "examples": [
    "Can I estimate lead times from a Blend Sheet?"
   ],
-  "sourceFiles": []
+  "sourceFiles": [
+   "src/modules/intake-materials/requirements.ts",
+   "src/modules/intake-materials/data.ts",
+   "src/modules/pre-production/BidWorkspace.tsx",
+   "supabase/migrations/20261026110000_bid_accepted_scope.sql"
+  ],
+  "availability": "partial",
+  "additionalPermissions": [
+   "readOperationalData",
+   "proposal.access"
+  ]
  },
  {
   "id": "intake-future",
@@ -1464,6 +1495,8 @@ export const registry:CapabilityEntry[] = [
   ]
  }
 ];
+export const knowledgeEntries=generatedKnowledge as CapabilityEntry[];
+
 const stop=new Set('how do i can a an the to in is it my on of for me you someone'.split(' '));
 // Explicit module names constrain guide relevance. Current-route context does
 // not: an employee can ask about another module while working elsewhere.
@@ -1521,17 +1554,33 @@ export function conversationMatches(text:string){
  return [...new Map([...matchGuides(expand(text)),...clauses.flatMap(clause=>matchGuides(clause))].map(entry=>[entry.id,entry])).values()];
 }
 export function conversationGuides(question:string,context:string[]=[]):CapabilityEntry[]{
- const direct=conversationMatches;
  const related=(text:string)=>{
   const query=expand(text),words=new Set(query.match(/[a-z]+/g)||[]);
   const named=moduleNames.filter(([,pattern])=>pattern.test(query)).map(([name])=>name);
   return registry.filter(entry=>entry.requiredTerms[0].some(word=>words.has(word)&&!genericRecordWords.has(word))&&(!named.length||entry.modules.some(module=>named.includes(module))))
+   .filter(entry=>[...words].filter(word=>specificActions.has(word)).every(word=>entry.terms.split(' ').includes(word)))
    .map(entry=>({entry,score:entry.terms.split(' ').filter(word=>words.has(word)&&!genericRecordWords.has(word)&&!genericActionWords.has(word)).length}))
    .filter(item=>item.score>0).sort((a,b)=>b.score-a.score).map(item=>item.entry);
  };
- const current=direct(question);
+ const generated=(text:string)=>{
+  const query=expand(text),words=[...new Set(query.match(/[a-z]+/g)||[])].filter(word=>word.length>2&&!stop.has(word)&&!genericRecordWords.has(word)&&!genericActionWords.has(word));
+  const named=moduleNames.filter(([,pattern])=>pattern.test(query)).map(([name])=>name);
+  if(/\b(?:purchase orders?|po)\b/.test(query))named.push('purchasing');
+  if(/\bbids?\b/.test(query))named.push('intake');
+  if(!named.length&&/\b(?:customers?|company|contacts?)\b/.test(query))named.push('contacts');
+  if(/\b(?:timeline|scheduled|scheduling)\b/.test(query))named.push('timeline');
+  return knowledgeEntries.filter(entry=>!named.length||entry.modules.some(module=>named.includes(module)))
+   .filter(entry=>!(/\blead[- ]?times?\b/.test(query)&&entry.id!=='knowledge-material-assessment'))
+   .map(entry=>({entry,score:words.reduce((score,word)=>score+(entry.terms.split(' ').includes(word)?3:entry.guidance.toLowerCase().includes(word)?0.1:0),0)+(named.includes(entry.id.replace(/^knowledge-/,''))?1:0)}))
+   .filter(item=>item.score>=3).sort((a,b)=>b.score-a.score).map(item=>item.entry);
+ };
+ const current=conversationMatches(question);
+ const broad=generated(question);
  const fallback=current.length?[]:related(question);
  const followup=!current.length||/\b(?:that|it|they|those|them|same|instead)\b|\bwhat about\b/i.test(question);
- const previous=followup?context.filter(item=>item.startsWith('Conversation context:\n')).flatMap(item=>[...item.matchAll(/(?:^|\n)Employee: ([^\n]*)/g)].reverse().flatMap(match=>direct(match[1]).concat(related(match[1])))):[];
- return [...new Map([...current,...fallback,...previous].map(entry=>[entry.id,entry])).values()].slice(0,3);
+ const previousQuestions=followup?context.filter(item=>item.startsWith('Conversation context:\n')).flatMap(item=>[...item.matchAll(/(?:^|\n)Employee: ([^\n]*)/g)].reverse().map(match=>match[1])):[];
+ const previous=previousQuestions.flatMap(text=>conversationMatches(text).concat(related(text),generated(text)));
+ // Exact workflows come first when known; broader release-pinned sources add
+ // facts for intent interpretation and synthesis without changing direct search.
+ return [...new Map([...current,...broad.slice(0,current.length?2:3),...fallback,...previous].map(entry=>[entry.id,entry])).values()].slice(0,4);
 }

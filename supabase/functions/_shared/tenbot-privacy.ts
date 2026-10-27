@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
-import {registry} from './tenbot-knowledge.ts';
+import {registry,knowledgeEntries} from './tenbot-knowledge.ts';
 
 const modules=new Set(['TenOps','Production','Rework','Planning','My Work','Settings','Contacts','Intake','Samples','Proposals','Inventory','Purchasing','Manpower Reporting']);
 const intentWords=new Set(('a an the i me my mine we us our ours you your yours he she it its they them their this that these those '+
@@ -20,7 +20,7 @@ const intentWords=new Set(('a an the i me my mine we us our ours you your yours 
  'way ways workflow workflows work works working visible').split(/\s+/));
 // Public workflow vocabulary preserves employee intent without accepting an
 // arbitrary dictionary. It deliberately excludes provenance/evidence paths.
-const vocabulary=new Set(registry.flatMap(entry=>(entry.title+' '+entry.terms+' '+entry.guidance+' '+entry.path).toLowerCase().match(/[a-z]+/g)||[]));
+const vocabulary=new Set([...registry,...knowledgeEntries].flatMap(entry=>(entry.title+' '+entry.terms+' '+entry.guidance+' '+entry.path).toLowerCase().match(/[a-z]+/g)||[]));
 const secret=/\b(?:authorization|bearer|password|passwd|credentials?|api[ _-]?key|access[ _-]?token|refresh[ _-]?token|service[ _-]?role|client[ _-]?secret|private[ _-]?key|secret)\b|-----BEGIN|\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\./i;
 const pastedMessage=/\b(?:employee|customer|client|private|direct|dm|group|inbox)\s+(?:message|conversation|transcript)\s*[:=]|\b(?:said|wrote)\s*[:=]/i;
 const structured=/[{}\[\]<>|\t]|(?:^|[\n;,])\s*[a-z_][a-z0-9_ -]{0,35}\s*[:=]\s*\S/i;

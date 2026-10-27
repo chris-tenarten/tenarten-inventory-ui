@@ -18,8 +18,11 @@ else sql(container,'begin;'+migration.slice(migration.indexOf('create function p
 // all prior reservations; no user receives a separate daily allocation.
 const sharedUsage=readFileSync('supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql','utf8');
 sql(container,sharedUsage.replace('create function public.tenbot_usage_summary','create or replace function public.tenbot_usage_summary'));
+const measuredUsage=readFileSync('supabase/migrations/20261027140000_tenbot_measured_free_pool.sql','utf8');
+if(!sql(container,"select column_name from information_schema.columns where table_schema='public' and table_name='tenbot_usage' and column_name='reserved_neurons'"))sql(container,measuredUsage);
+else sql(container,'begin;'+measuredUsage.slice(measuredUsage.indexOf('create function public.tenbot_usage_policy')).replaceAll('create function public.tenbot_','create or replace function public.tenbot_'));
 if(process.argv.includes('--refresh-only')){console.log('Local TenBot RPCs refreshed; feedback preserved.');process.exit(0);}
-const rpc=(role='authenticated')=>async(name,args={})=>{try{if(!/^(has_app_capability|has_proposal_access|tenbot_[a-z_]+)$/.test(name))throw Error('Unsupported local RPC');const expression=`public.${name}(${Object.entries(args).map(([k,v])=>`${k}=>${typeof v==='object'?json(v):typeof v==='boolean'?String(v):v===null?'null':literal(v)}`).join(',')})`;const query=asUser('select to_jsonb('+expression+')',admin,role);
+const rpc=(role='authenticated')=>async(name,args={})=>{try{if(!/^(has_app_capability|has_proposal_access|tenbot_[a-z_]+)$/.test(name))throw Error('Unsupported local RPC');const expression=`public.${name}(${Object.entries(args).map(([k,v])=>`${k}=>${v===null?'null':typeof v==='object'?json(v):typeof v==='boolean'?String(v):literal(v)}`).join(',')})`;const query=asUser('select to_jsonb('+expression+')',admin,role);
  const raw=sql(container,query);
  return {data:raw?JSON.parse(raw):null,error:null};}catch(e){return {data:null,error:{message:e.message}};}};
 const server=createServer(async(req,res)=>{

@@ -1,0 +1,164 @@
+{
+  "selectedModel": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "inferenceContract": "knowledge-v4",
+  "baselineComparison": {
+    "actualModelCalls": 27,
+    "tokenDerivedNeurons": 532.637,
+    "evidence": "comparison.json"
+  },
+  "refinedSourceEvaluation": {
+    "actualModelCalls": 5,
+    "acceptedAtCapture": 5,
+    "knownUnacceptableShareClaim": true,
+    "tokenDerivedNeurons": 33.456,
+    "evidence": "final-review.json"
+  },
+  "finalPromptEvaluation": {
+    "actualModelCalls": 3,
+    "acceptedAI": 2,
+    "safetyFallback": 1,
+    "tokenDerivedNeurons": 20.254,
+    "evidence": "prompt-validation.json"
+  },
+  "totalActualModelCallsBeforeOneUI": 35,
+  "totalPreAIVerificationFailures": 4,
+  "currentSelectedTurns": [
+    {
+      "id": "rework",
+      "evaluationStage": "prompt-validation.json",
+      "mode": "ai",
+      "fallback": false,
+      "currentGuardReplay": {
+        "inferenceContract": "knowledge-v4",
+        "realInferenceCalls": 0,
+        "error": null,
+        "modeUnchanged": true
+      }
+    },
+    {
+      "id": "rework-followup",
+      "evaluationStage": "prompt-validation.json",
+      "mode": "ai",
+      "fallback": false,
+      "currentGuardReplay": {
+        "inferenceContract": "knowledge-v4",
+        "realInferenceCalls": 0,
+        "error": null,
+        "modeUnchanged": true
+      }
+    },
+    {
+      "id": "manpower",
+      "evaluationStage": "qwen3-merged.json",
+      "mode": "ai",
+      "fallback": false,
+      "currentGuardReplay": {
+        "inferenceContract": "knowledge-v4",
+        "realInferenceCalls": 0,
+        "error": null,
+        "modeUnchanged": true
+      }
+    },
+    {
+      "id": "customer",
+      "evaluationStage": "qwen3-merged.json",
+      "mode": "ai",
+      "fallback": false,
+      "currentGuardReplay": {
+        "inferenceContract": "knowledge-v4",
+        "realInferenceCalls": 0,
+        "error": null,
+        "modeUnchanged": true
+      }
+    },
+    {
+      "id": "group",
+      "evaluationStage": "qwen3-merged.json",
+      "mode": "ai",
+      "fallback": false,
+      "currentGuardReplay": {
+        "inferenceContract": "knowledge-v4",
+        "realInferenceCalls": 0,
+        "error": null,
+        "modeUnchanged": true
+      }
+    },
+    {
+      "id": "group-followup",
+      "evaluationStage": "qwen3-merged.json",
+      "mode": "ai",
+      "fallback": false,
+      "currentGuardReplay": {
+        "inferenceContract": "knowledge-v4",
+        "realInferenceCalls": 0,
+        "error": null,
+        "modeUnchanged": true
+      }
+    },
+    {
+      "id": "sample-bid",
+      "evaluationStage": "final-review.json",
+      "mode": "ai",
+      "fallback": false,
+      "currentGuardReplay": {
+        "inferenceContract": "knowledge-v4",
+        "realInferenceCalls": 0,
+        "error": null,
+        "modeUnchanged": true
+      }
+    },
+    {
+      "id": "share-job",
+      "evaluationStage": "prompt-validation.json",
+      "mode": "guide",
+      "fallback": true,
+      "currentGuardReplay": {
+        "inferenceContract": "knowledge-v4",
+        "realInferenceCalls": 0,
+        "error": "TenBot could not verify the Messaging privacy wording.",
+        "modeUnchanged": true
+      }
+    },
+    {
+      "id": "lead-times",
+      "evaluationStage": "final-review.json",
+      "mode": "ai",
+      "fallback": false,
+      "currentGuardReplay": {
+        "inferenceContract": "knowledge-v4",
+        "realInferenceCalls": 0,
+        "error": null,
+        "modeUnchanged": true
+      }
+    }
+  ],
+  "limitations": [
+    "Rework prose still omits the final Create Rework confirmation despite explicit prompting. Full verified guide remains available.",
+    "Share Job generation remains unreliable: final actual v4 prose claimed an unavailable native feature and broadened assistant privacy to ordinary Messaging. Deterministic guard rejects it and the employee receives direct-guide fallback.",
+    "Real own-conversation followups work for Rework and DM; this small cohort does not establish all conversation quality.",
+    "Per-model Neurons are estimates calculated from actual returned token counts; direct Cloudflare account telemetry is separate and may lag.",
+    "No model-quality retry or synthetic corrected AI answer is reported as a successful model response."
+  ],
+  "liveOrdinaryMessaging": {
+    "actualModelCalls": 1,
+    "mode": "ai",
+    "fallback": false,
+    "evidence": "browser/live-ui-answer.json",
+    "providerTelemetry": [
+      {
+        "at": "2026-10-27T20:52:51.591Z",
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "durationMs": 1216,
+        "usage": {
+          "prompt_tokens": 812,
+          "completion_tokens": 106,
+          "total_tokens": 918
+        },
+        "estimatedNeurons": 6.986,
+        "reservedNeurons": 41
+      }
+    ]
+  },
+  "totalActualModelCalls": 36,
+  "totalTokenDerivedNeurons": 593.333
+}
