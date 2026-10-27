@@ -359,5 +359,64 @@
       "desktopMobileScreenshots": true,
       "pageErrors": []
     }
+  },
+  "production_release_preflight": {
+    "date": "2026-10-27",
+    "accepted_candidate": "5a7159ca8d5ffad4052b8cfe018b119eaecf5529",
+    "product_accepted": true,
+    "authority": "Chris explicitly authorized isolated Intake migration/release, TenDev before TenOps; stop on material conflict or unsafe dependency; no TenBot or AI activation",
+    "status": "stopped; confirmed unsafe Edge trust boundary",
+    "risk_tier": 3,
+    "remote_main": "e5382f11223efb927b4242849af8c084522f8c56",
+    "remote_dev": "e5382f11223efb927b4242849af8c084522f8c56",
+    "release_sha": null,
+    "deployment_ids": {},
+    "approved_migrations": {
+      "20261026100000_historical_sample_import.sql": "ccac4d685188e59c2dc23696e326d65b1aa71218e51b4b66b35012d7f89ac35f",
+      "20261026110000_bid_accepted_scope.sql": "57fef9390fe54577df2a464f544b1de495494c45800a8594131ce491f1d3da0c",
+      "20261026120000_bid_scope_production_handoff.sql": "485eb06f150cac1eb0606275a16fa8bf1fdd105674c3e5934ab3f92c34c01d4b"
+    },
+    "applied_migrations": [],
+    "blocker": {
+      "source": "supabase/functions/_shared/bid-scope-handler.ts:15",
+      "detail": "trailing caller-controlled body.payload overrides trusted p_actor, p_import_id and p_sha256 in the service-only persist_historical_sample call",
+      "impact": "authenticated actor/import/digest validation can be bypassed at Edge argument assembly; RPC impersonates supplied actor",
+      "existing_coverage_gap": "direct-database checks did not exercise untrusted Edge payload assembly",
+      "local_proof": {
+        "confirmed": true,
+        "mode": "local real handler with spy service RPC; no database or network",
+        "checkedOwnedOriginal": true,
+        "actorOverridden": true,
+        "importOverridden": true,
+        "computedDigestOverridden": true,
+        "privilegedRpcReached": true,
+        "responseStatus": 200,
+        "hostedReads": 0,
+        "hostedWrites": 0
+      },
+      "required_correction": "allowlist p_sample/p_rows/p_sample_name and bind protected parameters explicitly; focused handler injection regression",
+      "source_fix_made": false
+    },
+    "isolation_plan": {
+      "include": [
+        "00ce91a",
+        "d689bc1",
+        "1842912",
+        "5a7159c"
+      ],
+      "exclude": "all TenBot commits, dirty work, migrations, Workers AI/inference configuration",
+      "mixed_shell": "00ce91a blob, Intake Early Access badge removal only",
+      "method": "existing isolated Git index and git-archive environment export workflow; no dirty dev switch or wholesale merge"
+    },
+    "independent_review": "separate release boundary and migration/Edge contract reviewers; unsafe handler confirmed independently by root",
+    "completed_tests_reused": true,
+    "new_check": "one necessary local real-handler security probe with spy service RPC; exited 0 confirming vulnerability",
+    "hosted_compatibility": "not performed after unsafe dependency was found",
+    "hosted_queries": 0,
+    "hosted_mutations": 0,
+    "push": false,
+    "deployment": false,
+    "ai_infrastructure_activation": false,
+    "unrelated_dirty_work_preserved": true
   }
 }
