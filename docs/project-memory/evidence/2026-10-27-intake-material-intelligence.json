@@ -92,7 +92,7 @@
     "date": "2026-10-27",
     "base": "00ce91aa9238266f7a4fe424a7ac03c6b7080aab",
     "status": "implemented locally; pending Product acceptance",
-    "authority": "Chris: TENOPS — INTAKE GRADUATION UX REFINEMENT; author once in Samples, reference in Intake, calculate in shared services, execute in Production",
+    "authority": "Chris: TENOPS \u2014 INTAKE GRADUATION UX REFINEMENT; author once in Samples, reference in Intake, calculate in shared services, execute in Production",
     "risk_tier": 3,
     "testing_level": "focused Level 3 for changed defaults and capture compatibility",
     "migrations_added": false,
@@ -154,7 +154,7 @@
   "inspector_simplification": {
     "date": "2026-10-27",
     "reviewed_dev_tip": "64d7900c261d5d107845c0cb9328570a9d5e1a45",
-    "authority": "Chris: TENOPS — INTAKE GRADUATION: SIMPLIFY BID INSPECTOR",
+    "authority": "Chris: TENOPS \u2014 INTAKE GRADUATION: SIMPLIFY BID INSPECTOR",
     "status": "implemented locally; pending Product review",
     "risk_tier": 2,
     "testing_level": 2,
@@ -231,5 +231,133 @@
       "Historical populated-Excel limitation unchanged"
     ],
     "artifacts": "/private/tmp/tenops-intake-materials-review; browser-related-records-results.json, related-records-final-review.json, related-records-final-desktop.png, related-records-final-mobile.png; prior assertion-failure artifacts retained"
+  },
+  "product_reconciliation": {
+    "date": "2026-10-27",
+    "intake_base": "1842912",
+    "authority": "Chris: TENOPS \u2014 INTAKE GRADUATION: PRODUCT RECONCILIATION",
+    "status": "implemented locally; pending Product acceptance",
+    "risk_tier": 2,
+    "testing_level": 2,
+    "production_comparison": {
+      "canonical_refs": "e5382f11223efb927b4242849af8c084522f8c56 (fresh remote main/dev)",
+      "receipt_runtime": "f8f78c5 (October 22 released-runtime receipt)",
+      "public_probe": "headers-only HTTP 200, no hosted business reads",
+      "scope": "Production Queue/Inspector conventions, shared detail navigation, MobileTimeline, document viewer, Updates/Files/activity; no deferred branch merge"
+    },
+    "removed_from_intake": [
+      "scope/material authoring",
+      "governing selectors and approval ceremony",
+      "pending/unresolved completion counts",
+      "deferred task/mention preview"
+    ],
+    "restored": [
+      "contextual Proposal/Sample generator Tools",
+      "read-only associated records and existing accepted revisions",
+      "ordinary CRM activity independent of planning fields"
+    ],
+    "small_parity_fixes": [
+      "queue search/sort/refresh/loading/empty states",
+      "shared mobile Back, title wrapping, touch targets and safe areas",
+      "New Bid short-viewport sizing and initial Overview tab",
+      "Inspector-local errors",
+      "Update persistence/retry and posting protection",
+      "File preview response races and lifecycle activity refresh without discarding edits",
+      "Timeline source loading/error/retry/empty readiness",
+      "canonical Related Records Job link refreshes after conversion without optional summary metadata"
+    ],
+    "database_smoke": {
+      "result": "passed",
+      "command_kind": "one-off node --input-type=module smoke using existing intake-materials-database.mjs fixture and canonical RPCs",
+      "evidence": "exec session 77011, completion chunk b9b666 stdout; disposable tenops-intake-adapter-check-<pid> stopped in finally",
+      "outcome": {
+        "proposalCreated": true,
+        "linked": 1,
+        "estimateVersion": "proposal-estimate-v2",
+        "storageReadable": 1,
+        "fileActivity": [
+          "created",
+          "file_added",
+          "file_removed"
+        ]
+      }
+    },
+    "retained_backend": [
+      "immutable version/Proposal/source captures",
+      "historical original import/verification/numbering",
+      "shared canonical requirements and Inventory/supplier assessment",
+      "atomic canonical Job handoff and Won/deposit gate"
+    ],
+    "identified_cleanup_candidates_not_deleted": [
+      "governingSources / selectionKeys / governingLines selector helpers",
+      "Intake scope-preview/scope-accept authoring entry points; compatibility services and Production caller retained"
+    ],
+    "optional_summary": "intake_workflow_summaries remains optional for converted-Job queue hint only; no completion counts or mandatory loading dependency",
+    "deferred": [
+      "Bid mentions and Update attachments",
+      "linked tasks/reminders/notifications",
+      "resolve/seen and richer edit/delete lifecycle"
+    ],
+    "migrations_added_or_removed": false,
+    "schema_or_rpc_contract_changes": false,
+    "calculation_changes": false,
+    "permission_changes": false,
+    "issued_documents_changed": false,
+    "unrelated_tenbot_preserved": true,
+    "hosted_verification": false,
+    "hosted_business_reads_or_mutations": false,
+    "hosted_migrations": false,
+    "push_or_deployment": false,
+    "typescript": "passed after final export",
+    "targeted_eslint": "passed",
+    "diff_check": "passed",
+    "webpack_export": {
+      "result": "passed",
+      "settings": "localhost-only backend",
+      "recovery": "known WasmHash cache failure; preserved cache at /private/tmp/tenops-intake-reconciliation-webpack-cache-20261027123456, then clean export passed"
+    },
+    "independent_review": "passed; collaboration, released conventions, contextual generators, readonly records, request cancellation, initial Overview tab and final relationship refresh reviewed; docs wording corrected",
+    "limits": [
+      "No new full role/RLS audit: prior lifecycle/RLS receipt retained; Proposal-denied UI is a response simulation",
+      "No new hosted/Storage transport/Edge compatibility proof",
+      "Populated historical Excel acceptance limitation unchanged",
+      "Mobile checks are Chromium viewport/safe-area layout, not physical iPhone acceptance"
+    ],
+    "review_origin": "http://localhost:3000/pre-production",
+    "artifacts": "/private/tmp/tenops-intake-materials-review; no historical business originals or credentials copied into Git",
+    "browser": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "errors": [],
+      "checked": [
+        "optional metadata cannot block CRM",
+        "queue search/sort/refresh",
+        "readonly records and no governing/approval/editor workflow",
+        "Bid save and unsaved protections",
+        "Update failure/retry and posting protection",
+        "file upload/preview/race/fullscreen/removal and lifecycle refresh",
+        "Tools launch established generators",
+        "actual Bid-context Proposal creation",
+        "actual Sample creation with Bid/project/customer",
+        "Timeline loading/failure/retry/empty and viewport controls",
+        "shared mobile Back/safe areas and touch creation",
+        "ordinary conversion without documents",
+        "retained snapshot unchanged and atomic handoff",
+        "Inventory assessment preserved off-Inspector",
+        "Proposal tool access gate",
+        "historical importer and Sample PDF retained"
+      ]
+    },
+    "final_review": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "activeSyntheticBid": true,
+      "canonicalRelatedProposal": true,
+      "canonicalRelatedSample": true,
+      "readOnlyRelatedRecords": true,
+      "toolsReady": true,
+      "desktopMobileScreenshots": true,
+      "pageErrors": []
+    }
   }
 }

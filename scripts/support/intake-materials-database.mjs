@@ -13,8 +13,9 @@ export function startIntakeDatabase(name){
  sql(name,'drop table bids cascade;drop table jobs cascade;alter table app_users add column created_at timestamptz default now(),add column updated_at timestamptz default now();');
  sql(name,read('20260818_001_rbac_identity_infrastructure.sql').split('create or replace function public.get_my_app_user()')[0]+'commit;');
  for(const f of ['20260713_002_production_mvp_jobs.sql','20260716_002_atomic_production_schedule_batch.sql','20260901_001_preproduction_bids.sql','20260901_002_bid_operational_context.sql','20260901_003_bid_files.sql','20260713_003_job_attachments.sql','20260827_004_proposal_generator_v1.sql'])sql(name,read(f));
- sql(name,'alter table proposals alter column job_id drop not null;');
- // Relationship behavior is replayed from its real migration; unused creation paths resolve lazily.
+ // The established contextual Proposal generator uses the real generic/V2 authoring contracts.
+ // Replay their canonical dependencies instead of inventing a local create/estimate response.
+ for(const f of ['20260827_006_proposal_commercial_defaults.sql','20260827_007_proposal_acceptance_defaults.sql','20260827_008_proposal_commercial_clarifications.sql','20260827_010_proposal_standard_commercial_defaults.sql','20260828_014_generic_proposal_creation.sql','20260908_004_proposal_generator_v2.sql'])sql(name,read(f));
  sql(name,read('20260902_002_bid_proposal_relationships.sql'));
  sql(name,read('20260901_004_admin_canonical_cleanup.sql'));
  sql(name,read('20260902_003_bid_delete_runtime_fix.sql'));
@@ -33,6 +34,7 @@ export function startIntakeDatabase(name){
  create policy fixture_job_read on public.jobs for select to authenticated using(public.has_app_capability('readOperationalData'));
  create policy fixture_supply_read on inventory_items for select to authenticated using(public.has_app_capability('readOperationalData'));
  create policy fixture_supply_read on pending_receivals for select to authenticated using(public.has_app_capability('readOperationalData'));
+ alter table storage.objects add column metadata jsonb not null default '{}'::jsonb;
  alter table storage.objects enable row level security;grant usage on schema storage to authenticated;grant select,insert,update,delete on storage.objects to authenticated;
  `);
  sql(name,read('20261006160000_sample_color_plate_validation.sql'));

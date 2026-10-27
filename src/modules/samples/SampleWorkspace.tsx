@@ -235,6 +235,8 @@ export default function SampleWorkspace() {
     const revision = draftRevision.current;
     const canInitialize = () => active && mounted.current && draftRevision.current === revision;
     const report = (caught: unknown) => { if (active && (caught as Error)?.name !== "AbortError") showOperationError(caught, "load"); };
+    const bidOptions = loadBids().then(items => { if (active) setBids(items); return items; });
+    void bidOptions.catch(report);
     // A new draft needs neither the library nor its historical snapshots.
     void reload().then(items => {
       if (!canInitialize() || initialContext.open === "new") return;
@@ -242,21 +244,22 @@ export default function SampleWorkspace() {
       if (target) { setDraft(target); setDraftBaseline(JSON.stringify(target)); }
     }).catch(report);
     if (initialContext.open === "new") {
-      void Promise.all([loadSampleFormulationDefault(), suggestSampleColorPlateNumber()])
-        .then(([formulation, number]) => {
+      void Promise.all([loadSampleFormulationDefault(), suggestSampleColorPlateNumber(), initialContext.bid ? bidOptions : Promise.resolve([])])
+        .then(([formulation, number, contextBids]) => {
           if (!canInitialize()) return;
-          const local = applyResinIdentity(newLocalSample({preparedBy: preparedBy.current, formulation}), formulation);
+          const bid = contextBids.find(item => item.id === initialContext.bid);
+          if (initialContext.bid && !bid) throw new Error("The linked Bid is unavailable. Open the Bid and try Create Sample again.");
+          const local = applyResinIdentity(newLocalSample({preparedBy: preparedBy.current, bidId: bid?.id, projectName: bid?.projectName, customerName: bid?.customer, formulation}), formulation);
           local.colorPlateNumber = number; local.colorPlateNumberSource = "automatic";
           setQuantityViewState({record: null, view: "working"});
           setDraft(local); setDraftBaseline(JSON.stringify(local));
         }).catch(report);
     }
     // Each independent option source can become usable even if another fails.
-    void loadBids().then(items => { if (active) setBids(items); }).catch(report);
     void loadProductionJobOptions({includeArchived: true}).then(items => { if (active) setJobs(items); }).catch(report);
     void loadVendors().then(items => { if (active) setVendors(items); }).catch(report);
     return () => { active = false; };
-  }, [initialContext.open, reload, showOperationError, setDraft]);
+  }, [initialContext.bid, initialContext.open, reload, showOperationError, setDraft]);
   const catalogRole = catalogRow === null ? undefined : draft?.blendRows[catalogRow]?.componentRole;
   const catalogSearchKey = JSON.stringify([catalogRow, catalogRole, catalogQuery]);
   const [catalogResultKey, setCatalogResultKey] = useState("");
