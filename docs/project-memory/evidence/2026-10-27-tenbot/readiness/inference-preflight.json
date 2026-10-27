@@ -1,0 +1,43 @@
+{
+  "ready": true,
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "availableModels": [
+    "@cf/meta/llama-3.1-8b-instruct-fp8",
+    "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+    "@cf/qwen/qwen3-30b-a3b-fp8"
+  ],
+  "catalog": [
+    {
+      "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+      "listed": true
+    },
+    {
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "listed": true
+    },
+    {
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "listed": true
+    }
+  ],
+  "plan": "Workers Free",
+  "planEvidence": "Chris confirmed Workers Free in current Product request",
+  "freePlanConfirmedAt": "2026-10-27T20:15:51.309Z",
+  "checkedAt": "2026-10-27T23:12:42.456Z",
+  "dayStart": "2026-10-27T00:00:00.000Z",
+  "reportedNeurons": 811.808162922971,
+  "reportedRequests": 66,
+  "nominalRemainingNeurons": 9188.191837077029,
+  "caps": {
+    "sharedDayLimit": 300,
+    "sharedMonthLimit": 6000,
+    "perAccountMinuteLimit": 6,
+    "dailyNeuronLimit": 8000,
+    "monthlyNeuronLimit": 240000,
+    "freeDailyNeurons": 10000,
+    "neuronHeadroom": 2000,
+    "totalDay": 300,
+    "perMinute": 6,
+    "monthlyUsd": 0
+  }
+}

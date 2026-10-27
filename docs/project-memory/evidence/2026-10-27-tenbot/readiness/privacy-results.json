@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "policy": "Explicit user text permitted; no independent private-record retrieval; authenticated owner history and deliberate feedback sharing",
+  "checks": [
+    "forward correction preserves nonempty predecessor feedback history and usage ledger",
+    "explicitly submitted ordinary-word/business/message text is processed and stored only in own assistant history",
+    "submitted business dates and quoted names remain usable without a blanket sensitive-text ban",
+    "other-account Admin and inactive cannot load append or clear owner conversation",
+    "foreign ids and caller-forged prior turns rejected before inference",
+    "follow-up context comes from server-owned turns and never crosses account boundaries",
+    "configured-provider invalid AI summary rejected without persistence",
+    "valid generated summary saved only after deliberate confirmation; private chat is not attached",
+    "rejected handler/direct-RPC feedback does not persist or appear in PostgreSQL error logs",
+    "private history tables deny direct access and service role cannot execute history RPC",
+    "injection cannot select private records or forge citations; service has only metering and write-only assistant-turn operations",
+    "stale turn writes rejected and Clear assistant chat deletes owner history",
+    "reply-derived follow-up relevance never inherits stale capability claims or grants authority"
+  ],
+  "checkCount": 13,
+  "providerRequests": 7,
+  "externalModelCalls": 0,
+  "realPostgreSQL": true,
+  "realCloudflareSerializer": true,
+  "rejectedInputAbsentFromDatabaseLogs": true,
+  "migration": "20261027150000_tenbot_private_conversations.sql",
+  "sourceHashes": [
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "20b2b62343c40f61ea6c1d1b79a5fb43beeb79ed17903058a1b133881eed6d90"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "sha256": "c12841e37f9f92dfef1ef2d30d46486b9af49865d79cd009726fd5e99eb04692"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-privacy.ts",
+      "sha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf"
+    }
+  ],
+  "limits": [
+    "No perfect semantic private-content detection claimed",
+    "PostgreSQL SET ROLE/JWT-sub fixture, not full HTTP Auth transport",
+    "No hosted schema/log configuration audit; infrastructure configured to log all statements/parameters remains a release concern",
+    "Permitted chat text intentionally persists in owner-scoped bounded history and may be processed by the configured provider"
+  ]
+}

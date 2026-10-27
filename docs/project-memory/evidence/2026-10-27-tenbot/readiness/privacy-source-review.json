@@ -1,0 +1,115 @@
+{
+  "base": "a936aa5",
+  "head": "d01fe7ba36159aefc4e4ddb8322697836b6bbea5",
+  "sourceHashes": [
+    {
+      "path": "scripts/start-tenbot-review.mts",
+      "receiptSha256": "9e3d47a6cfcc2d20233096bd074cb4ec76545a808bda0c28b090d318725495e8",
+      "currentSha256": "9e3d47a6cfcc2d20233096bd074cb4ec76545a808bda0c28b090d318725495e8",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/support/tenbot-ai-pilot.mjs",
+      "receiptSha256": "158dad1fa5231daf260d9aae8f271bad700c41c0b788dbf987f93d5ca1c3fb9c",
+      "currentSha256": "158dad1fa5231daf260d9aae8f271bad700c41c0b788dbf987f93d5ca1c3fb9c",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/tenbot-ai/worker.ts",
+      "receiptSha256": "821cbc842ca427f75e580ee931d4dec9153bab743fb0537728aeef69b1399256",
+      "currentSha256": "821cbc842ca427f75e580ee931d4dec9153bab743fb0537728aeef69b1399256",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/tenbot-knowledge/manifest.mjs",
+      "receiptSha256": "6809d492984ce8c2df333d0cfabff78076bfb6557391774760e82fd7e5f29761",
+      "currentSha256": "6809d492984ce8c2df333d0cfabff78076bfb6557391774760e82fd7e5f29761",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/verify-tenbot-ai-binding.mts",
+      "receiptSha256": "70d496fa82ed0bb75972714fb777b49e571c754dd92bc7513da0b735245ee0b6",
+      "currentSha256": "70d496fa82ed0bb75972714fb777b49e571c754dd92bc7513da0b735245ee0b6",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/verify-tenbot-browser.mjs",
+      "receiptSha256": "bdc6929c9bea9b93306cf9a9089a6280d4792ed62c7212c59a4d7882e15dd196",
+      "currentSha256": "7539b58f2a6216329d069d965083b95f8b4f03d1f16793447939c7c6bfad2813",
+      "unchanged": false
+    },
+    {
+      "path": "scripts/verify-tenbot-privacy.mts",
+      "receiptSha256": "ccb6e9daaf2833fa6037e1e39e1fca311011b291127be5565ba13f7d4843bf03",
+      "currentSha256": "22f44ef15ae2c612a43382309b9d5f1ca6d111f605ff2344d1ef255025926b7b",
+      "unchanged": false
+    },
+    {
+      "path": "scripts/verify-tenbot.mts",
+      "receiptSha256": "fdd2ab281704cd5fa4453ee24a43fda96551d10c55f613ac25f4c0ed92a4ea7f",
+      "currentSha256": "daa6f17914eb6c901e7656c4c1038239b2755c4f0c321394cf6f4e61ee02dd10",
+      "unchanged": false
+    },
+    {
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "receiptSha256": "fc790752e1188a358249c8bd06950ab8c8133e5c4e8c5079520cd48d6bdf2662",
+      "currentSha256": "86d9d1c4cc0a2638b8e1398012a6655e47629c9b3c686074d742e132d8b2e97f",
+      "unchanged": false
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "receiptSha256": "77d4722725611173c5015e9a5d3147bb90cd71f82ed83296ef1e21d02187b84a",
+      "currentSha256": "fa6fa6024597cd6665856e53a242b506e12330ab439edcebb60d870df80039b8",
+      "unchanged": false
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "receiptSha256": "fd9f60ddb0edce8df9b891bf1c9ea303e1a251df6b30e8ef89eff25f177b191a",
+      "currentSha256": "c12841e37f9f92dfef1ef2d30d46486b9af49865d79cd009726fd5e99eb04692",
+      "unchanged": false
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "receiptSha256": "20b2b62343c40f61ea6c1d1b79a5fb43beeb79ed17903058a1b133881eed6d90",
+      "currentSha256": "20b2b62343c40f61ea6c1d1b79a5fb43beeb79ed17903058a1b133881eed6d90",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "receiptSha256": "3a31e34896f01d0b6723e2a134c7967066c03b4a5cc17ff84cd16dfe55e9fd39",
+      "currentSha256": "3a31e34896f01d0b6723e2a134c7967066c03b4a5cc17ff84cd16dfe55e9fd39",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "receiptSha256": "49e79da0c26f077b75908f701ab69b4593bd3112c632ca47a260b1a621dab779",
+      "currentSha256": "70670a4f5bee4ac950e382fae48893eb74a7ee034d4632a582ffba4a5fc3671b",
+      "unchanged": false
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-privacy.ts",
+      "receiptSha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf",
+      "currentSha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "receiptSha256": "95da5bc87b96e14d1079d99cceedd6db0387748bead4bf9301a317a2fc750abe",
+      "currentSha256": "95da5bc87b96e14d1079d99cceedd6db0387748bead4bf9301a317a2fc750abe",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+      "receiptSha256": "81652bd3e335d2fe29d5b26012727eabaed765dc7950e2979b7fd2891ee53b3b",
+      "currentSha256": "81652bd3e335d2fe29d5b26012727eabaed765dc7950e2979b7fd2891ee53b3b",
+      "unchanged": true
+    }
+  ],
+  "allMigrationsAndFixtureHelpersUnchanged": true,
+  "ordinaryEvidenceReused": {
+    "path": "docs/project-memory/evidence/2026-10-27-tenbot-privacy-correction.json",
+    "checks": 7,
+    "metadataSha256": "f14ac16d844265fb142db943c35a945285c64054690a70642e5c3f05fdd1475f",
+    "notRerun": true
+  }
+}

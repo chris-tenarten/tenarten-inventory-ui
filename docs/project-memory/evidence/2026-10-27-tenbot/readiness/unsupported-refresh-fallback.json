@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-27T23:25:52.341076+00:00",
+  "question": "Can TenOps automatically file payroll taxes from Manpower Reporting?",
+  "origin": "http://localhost:3000",
+  "status": 200,
+  "durationMs": 3064,
+  "response": {
+    "mode": "verified",
+    "message": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+    "resolution": "documentation-missing",
+    "snapshot": {
+      "revision": "bc628bd",
+      "verifiedAt": "2026-10-27"
+    },
+    "sources": [],
+    "summary": null,
+    "notices": [],
+    "suggestionAllowed": false,
+    "fallback": true
+  },
+  "newMeasuredCalls": [],
+  "passed": true,
+  "interpretation": "Actual recheck returned deterministic documentation-missing through direct fallback; not claimed as successful generated AI prose. Exact captured categorical-denial replacement separately proved in focused fixture regression."
+}

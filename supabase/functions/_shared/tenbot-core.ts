@@ -114,6 +114,17 @@ function guardCapabilityClaims(text:string,entries:CapabilityEntry[],permissions
  }
 }
 const missing='The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.';
+// Broad related sources can explain a supported portion, but without a
+// verified precise match they cannot authorize a categorical feature denial.
+// Keep evidence-qualified uncertainty distinct from an assertion of absence.
+function categoricalAbsence(text:string){
+ return text.split(/(?<=[.!?;])\s+|\bbut\b|\bhowever\b/i).some(clause=>{
+  // Leading uncertainty cannot cancel a later explicit denial in this clause.
+  return /^\s*no\s*[,!.]/i.test(clause)
+   ||/\b(?:tenops|(?:this|the) (?:app|application|module|feature|system)|it|that)\s+(?:does not|doesn't|cannot|can't)\s+(?!(?:verify|confirm|determine|establish)\b)/i.test(clause)
+   ||/\b(?:there (?:is|are)|there's)\s+no\b|\bno\b[^.!?;]{0,100}\bexists?\b|\b(?:is|are|remains?)\s+(?:unavailable|unsupported|absent|not (?:available|supported|possible|implemented|enabled))\b/i.test(clause);
+ });
+}
 function denied(entry:CapabilityEntry){return entry.status==='deployed'?`${entry.title} exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.`:'Your account does not have permission to access guidance for that workflow. Ask an administrator to review your access.';}
 export async function answer(body:Record<string,unknown>,permissions:Set<string>,provider:InferenceProvider|null,reserve:(input:InferenceInput)=>Promise<void>,serverHistory:string[]=[]):Promise<Answer>{
  const input=resolveInput(body,serverHistory),{question,projected,directEntries}=input,draft=body.action==='draft';
@@ -151,6 +162,7 @@ export async function answer(body:Record<string,unknown>,permissions:Set<string>
  }
  const text=groundedProse(output.answer,selected,[question,...serverHistory].join('\n'));
  guardCapabilityClaims(text,entries,permissions,question);
+ if(resolution==='documentation-missing'&&categoricalAbsence(text))return {...result([],'verified',missing),resolution:'documentation-missing',notices:[],suggestionAllowed:false};
  if(!selected.some(entry=>availability(entry)==='available'||availability(entry)==='partial')){
   if(/\b(?:open|choose|select|click|tap|go to|save changes|create rework|create group)\b/i.test(text))throw new TenbotError('TenBot could not verify the answer wording.',502);
  }

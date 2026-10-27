@@ -1,0 +1,204 @@
+{
+  "proposalOnly": true,
+  "base": "178587454fb87aec8b5a76730714ec1b2973ac69",
+  "baseRuntime": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+  "candidate": "Final local readiness commit containing this evidence; see Git and final report",
+  "runtimePaths": [
+    "package.json",
+    "scripts/generate-tenbot-knowledge.mjs",
+    "scripts/start-tenbot-ai-pilot.mjs",
+    "scripts/start-tenbot-review.mts",
+    "scripts/support/tenbot-ai-pilot.mjs",
+    "scripts/tenbot-ai/worker.ts",
+    "scripts/tenbot-ai/wrangler.jsonc",
+    "scripts/tenbot-knowledge/external-reconciliation.json",
+    "scripts/tenbot-knowledge/manifest.mjs",
+    "scripts/verify-tenbot-ai-binding.mts",
+    "scripts/verify-tenbot-browser.mjs",
+    "scripts/verify-tenbot-privacy.mts",
+    "scripts/verify-tenbot.mts",
+    "src/app/tenbot/page.tsx",
+    "src/components/GlobalMessaging.tsx",
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/my-work/inbox.ts",
+    "src/modules/tenbot/TenbotAvatar.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/events.ts",
+    "src/modules/tenbot/tenbot.css",
+    "supabase/functions/_shared/tenbot-core.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-knowledge.ts",
+    "supabase/functions/_shared/tenbot-models.ts",
+    "supabase/functions/_shared/tenbot-privacy.ts",
+    "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+    "supabase/functions/tenbot/index.ts",
+    "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+    "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+    "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+    "supabase/migrations/20261027150000_tenbot_private_conversations.sql"
+  ],
+  "omittedWhitespaceOnly": [
+    "src/app/client-layout-shell.tsx"
+  ],
+  "migrations": [
+    {
+      "path": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15"
+    },
+    {
+      "path": "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+      "sha256": "b007ee3a5234876709c5d82c3269d78921a613815940df59669f5ce78548c435"
+    },
+    {
+      "path": "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+      "sha256": "3985d2912af54957c35f36bbb61374b4ff334f950bdc436da393b0aaa5c6bcaf"
+    },
+    {
+      "path": "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+      "sha256": "81652bd3e335d2fe29d5b26012727eabaed765dc7950e2979b7fd2891ee53b3b"
+    }
+  ],
+  "exclude": [
+    "unrelated dirty paths",
+    "pre-existing worktrees",
+    "Intake history already released",
+    "local fixtures/bridge keys/credentials",
+    "bulk dev promotion"
+  ],
+  "baseCandidate": "d01fe7ba36159aefc4e4ddb8322697836b6bbea5",
+  "files": [
+    {
+      "path": "package.json",
+      "sha256": "268ae147717f6fc98efa373a5fa6d9e69a26279b484f0fe16b8a97f85d70d9c9"
+    },
+    {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "sha256": "13b52ecd5021808275c8fc65dc7e7213c73a25a8ddc8cbe21e970c9c03de6c17"
+    },
+    {
+      "path": "scripts/start-tenbot-ai-pilot.mjs",
+      "sha256": "a9597f0502e8ce7d0e2ea6b70f36711a7137c7dad334b76220fc2e1c0ce3fcef"
+    },
+    {
+      "path": "scripts/start-tenbot-review.mts",
+      "sha256": "9e3d47a6cfcc2d20233096bd074cb4ec76545a808bda0c28b090d318725495e8"
+    },
+    {
+      "path": "scripts/support/tenbot-ai-pilot.mjs",
+      "sha256": "158dad1fa5231daf260d9aae8f271bad700c41c0b788dbf987f93d5ca1c3fb9c"
+    },
+    {
+      "path": "scripts/tenbot-ai/worker.ts",
+      "sha256": "821cbc842ca427f75e580ee931d4dec9153bab743fb0537728aeef69b1399256"
+    },
+    {
+      "path": "scripts/tenbot-ai/wrangler.jsonc",
+      "sha256": "17b01a224484febf244f3c0cd6f42f478514550e57dd044e7947af08af32a749"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/external-reconciliation.json",
+      "sha256": "3e7572f2c00ddd32e43302e2c729386827acb0496b86700367e7f99028e671fe"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/manifest.mjs",
+      "sha256": "6809d492984ce8c2df333d0cfabff78076bfb6557391774760e82fd7e5f29761"
+    },
+    {
+      "path": "scripts/verify-tenbot-ai-binding.mts",
+      "sha256": "70d496fa82ed0bb75972714fb777b49e571c754dd92bc7513da0b735245ee0b6"
+    },
+    {
+      "path": "scripts/verify-tenbot-browser.mjs",
+      "sha256": "7539b58f2a6216329d069d965083b95f8b4f03d1f16793447939c7c6bfad2813"
+    },
+    {
+      "path": "scripts/verify-tenbot-privacy.mts",
+      "sha256": "22f44ef15ae2c612a43382309b9d5f1ca6d111f605ff2344d1ef255025926b7b"
+    },
+    {
+      "path": "scripts/verify-tenbot.mts",
+      "sha256": "170597dd4b5a8dcb8488e4f71eec80b97ef8308225e80e889d3856cb63aefa9e"
+    },
+    {
+      "path": "src/app/tenbot/page.tsx",
+      "sha256": "b2e9407c974c6a35e04b06ccb1f7e042ab7c6aca454bebfdfe1ce71a420f2dae"
+    },
+    {
+      "path": "src/components/GlobalMessaging.tsx",
+      "sha256": "b754f6cffedfbdd53375bd5ecc9eb7d44f099b2437347c7619bdcc5a826617a0"
+    },
+    {
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "sha256": "86d9d1c4cc0a2638b8e1398012a6655e47629c9b3c686074d742e132d8b2e97f"
+    },
+    {
+      "path": "src/modules/my-work/inbox.ts",
+      "sha256": "526e3e995d1f845b0e76ca4e341da0d1dff624fffe440ccb2dde8bb4aaeb41ac"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotAvatar.tsx",
+      "sha256": "5c77c0f6d588ca238465d387a0defa2326d8f0d83dd372f134424006744eeaf5"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "fa6fa6024597cd6665856e53a242b506e12330ab439edcebb60d870df80039b8"
+    },
+    {
+      "path": "src/modules/tenbot/events.ts",
+      "sha256": "b265b46dad8e9267a64e4bdcc5aa3570d1a232fab2b8247e4f845bf1a4f771ec"
+    },
+    {
+      "path": "src/modules/tenbot/tenbot.css",
+      "sha256": "7f9cdddc9eca6fb58d84321c593b719d59cc40c18e0a587c7415ce8fc020f586"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "sha256": "149e36d922e47972cfba9349b8e89a2da2f733fe214b8902a519a46ac9630aca"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "20b2b62343c40f61ea6c1d1b79a5fb43beeb79ed17903058a1b133881eed6d90"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "sha256": "3a31e34896f01d0b6723e2a134c7967066c03b4a5cc17ff84cd16dfe55e9fd39"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "sha256": "70670a4f5bee4ac950e382fae48893eb74a7ee034d4632a582ffba4a5fc3671b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-models.ts",
+      "sha256": "cbf127a0692b07053021e72e4331ced03ecf820e35b12a851a18554d813e915f"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-privacy.ts",
+      "sha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "95da5bc87b96e14d1079d99cceedd6db0387748bead4bf9301a317a2fc750abe"
+    },
+    {
+      "path": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15"
+    },
+    {
+      "path": "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+      "sha256": "b007ee3a5234876709c5d82c3269d78921a613815940df59669f5ce78548c435"
+    },
+    {
+      "path": "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+      "sha256": "3985d2912af54957c35f36bbb61374b4ff334f950bdc436da393b0aaa5c6bcaf"
+    },
+    {
+      "path": "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+      "sha256": "81652bd3e335d2fe29d5b26012727eabaed765dc7950e2979b7fd2891ee53b3b"
+    }
+  ]
+}

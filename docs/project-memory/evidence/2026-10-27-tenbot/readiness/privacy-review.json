@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS_LOCAL_FOCUSED_PRIVACY_REVIEW",
+  "head": "d01fe7ba36159aefc4e4ddb8322697836b6bbea5",
+  "baseline": "a936aa5",
+  "actualRun": {
+    "command": "TENBOT_PRIVACY_OUTPUT=/private/tmp/tenops-tenbot-review/readiness/privacy ./node_modules/.bin/tsx scripts/verify-tenbot-privacy.mts",
+    "checks": 13,
+    "realPostgreSQL": true,
+    "realHandler": true,
+    "realCloudflareSerializer": true,
+    "mockProviderRequests": 7,
+    "externalModelCalls": 0,
+    "actualHostedTransportTest": false,
+    "freshDisposableDatabase": true,
+    "existingReviewDataReset": false,
+    "receipt": "/private/tmp/tenops-tenbot-review/readiness/privacy/results.json"
+  },
+  "verifierDelta": {
+    "path": "scripts/verify-tenbot-privacy.mts",
+    "sha256": "22f44ef15ae2c612a43382309b9d5f1ca6d111f605ff2344d1ef255025926b7b",
+    "change": "Configurable evidence destination preserves historical receipts; one adversarial reply-derived relevance case rejects stale grants before inference",
+    "targetedEslint": "passed",
+    "diffCheck": "passed",
+    "fixtureCorrection": "First extended run failed on the guest-only read_only constraint; synthetic actor corrected to guest and final thirteen-group run passed"
+  },
+  "ordinaryEvidenceReused": {
+    "path": "docs/project-memory/evidence/2026-10-27-tenbot-privacy-correction.json",
+    "checks": 7,
+    "metadataSha256": "f14ac16d844265fb142db943c35a945285c64054690a70642e5c3f05fdd1475f",
+    "notRerun": true
+  },
+  "unchangedPrivacyBoundaries": [
+    "authenticated handler",
+    "Edge user verification and fixed service RPC allowlist",
+    "private history and feedback SQL migration",
+    "privacy input and summary validators",
+    "Cloudflare bridge and pilot adapter"
+  ],
+  "supplementReview": {
+    "mode": "focused read-only review after source freeze; no additional verifier rerun",
+    "files": [
+      {
+        "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+        "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+        "sha256": "70670a4f5bee4ac950e382fae48893eb74a7ee034d4632a582ffba4a5fc3671b"
+      }
+    ],
+    "entries": 24,
+    "pinnedSourceMetadataRecords": 57,
+    "packageSha256": "63c356867c92eaac60256610b90cf177afa77629b595c94099a3b885e62522c4",
+    "findings": "Static curated employee guidance and provenance only. No runtime data source, new retrieval operation, credential or private employee/business content introduced. Existing per-entry permission gates apply; task/message entries preserve participant privacy and deny administrative reading bypass. Three module aliases change relevance only."
+  },
+  "findings": {
+    "knownCodeSecurityBlockers": [],
+    "relevanceAuthority": "History may affect static source selection, never grant permissions or become capability authority. Focused stale-own-reply case confirms deterministic Rework denial with no inference or sources.",
+    "providerContext": "Question plus fixed module label and authenticated bounded own history; only static permission-filtered guidance; no tools/database/private DM-task retrieval; input remains untrusted in one user JSON message.",
+    "feedback": "Shareable fields require deliberate confirmation and strict validation; private chat is not automatically attached; unauthorized feedback review denied."
+  },
+  "unverifiedDeploymentGates": [
+    "Hosted full Auth/PostgREST/Edge transport and exact release configuration",
+    "Hosted SQL statements/parameters and diagnostics logging settings",
+    "Configured AI provider retention/diagnostic policy"
+  ],
+  "limits": [
+    "These unverified deployment gates are not demonstrated defects and do not change the passing local privacy result.",
+    "Logical eight-hour history expiry uses lazy owner cleanup; infrastructure backups are outside that guarantee.",
+    "Service-role credentials retain inherent authority elsewhere; TenBot confines its use to fixed metering and write-only turn operations.",
+    "No perfect semantic DLP or model source-entailment guarantee is claimed."
+  ],
+  "actions": {
+    "hostedMutation": false,
+    "push": false,
+    "deployment": false,
+    "paidActivation": false,
+    "newFramework": false,
+    "newWorktree": false
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS_FOCUSED_FINAL_EM_REVIEW",
+  "finding": "Leading uncertainty caused a same-clause unsupported feature denial to escape categoricalAbsence and remain AI prose",
+  "reproduced": {
+    "command": "./node_modules/.bin/tsx scripts/verify-tenbot.mts --core-only",
+    "result": "FAIL as expected before correction: actual ai versus expected verified",
+    "case": "I cannot verify that workflow, so TenOps does not support payroll tax filing."
+  },
+  "correction": "Removed blanket leading-uncertainty early return. Explicit absence patterns run even when uncertainty occurs earlier in the clause. Added comma-so and conjunction regressions in the existing verifier.",
+  "validation": {
+    "command": "./node_modules/.bin/tsx scripts/verify-tenbot.mts --core-only",
+    "passed": true,
+    "workflowExamples": 113,
+    "generatedModuleChunks": 16,
+    "newModelCalls": 0,
+    "databaseRun": false,
+    "priorPrivacyDatabaseEvidence": "Reused 13-group results.json for unchanged handler/auth/history/provider/feedback boundaries; no database rerun"
+  },
+  "scope": [
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "sha256": "149e36d922e47972cfba9349b8e89a2da2f733fe214b8902a519a46ac9630aca"
+    },
+    {
+      "path": "scripts/verify-tenbot.mts",
+      "sha256": "170597dd4b5a8dcb8488e4f71eec80b97ef8308225e80e889d3856cb63aefa9e"
+    }
+  ],
+  "knownCodeSecurityBlockers": [],
+  "limits": [
+    "This is a narrow unsupported-negative guard, not perfect semantic entailment.",
+    "Unsupported positive prose remains subject to existing grounding and permission guards; no new general entailment system was introduced.",
+    "Hosted transport, logging and provider retention remain unverified deployment gates, not demonstrated defects."
+  ],
+  "notChanged": [
+    "model",
+    "prompt",
+    "permissions",
+    "schema",
+    "provider/history authorization"
+  ]
+}

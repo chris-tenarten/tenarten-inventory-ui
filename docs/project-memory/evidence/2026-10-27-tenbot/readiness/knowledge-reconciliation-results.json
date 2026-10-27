@@ -1,0 +1,58 @@
+{
+  "passed": true,
+  "modelCalls": 0,
+  "hostedQueries": 0,
+  "databaseChanges": 0,
+  "packageSha256": "63c356867c92eaac60256610b90cf177afa77629b595c94099a3b885e62522c4",
+  "packageRecordCount": 96,
+  "sourceAudit": "package-source-audit.json",
+  "packagePinnedSourceFilesVerified": 126,
+  "packageArtifactHashesVerified": 2,
+  "retainedGeneratedSources": 16,
+  "retainedExistingWorkflows": 34,
+  "addedSupplementalWorkflows": 24,
+  "supplementedExternalRecords": 28,
+  "supplementalPinnedSourceFiles": 57,
+  "mapping": {
+    "existing": 41,
+    "supplemented": 28,
+    "deferred": 25,
+    "rejected": 2
+  },
+  "checks": [
+    "tsx scripts/verify-tenbot.mts --core-only: passed 16 generated sources,113 maintained examples,96-record mapping,provenance/gates/module isolation",
+    "git diff --check: passed"
+  ],
+  "actualSourceCorrections": [
+    "Bid Save Bid confirmation label",
+    "Sample Formula checkpoints and previews/Save Version/Use as Current Draft",
+    "Historical import/transcription and explicit Blend-gated verification split",
+    "Bid Plan Later conversion does not require schedule grant",
+    "Pending Receival projection has adjustInventory wrapper gate",
+    "Transmittal Generate & Download and immutable confirmation/history retry"
+  ],
+  "limits": [
+    "No new hosted/RLS/PDF/device/Excel acceptance",
+    "No model or private data access",
+    "41 existing disposition records map supported overlap; finer deferred coverage is explicit",
+    "Runtime source frozen before root inference readiness probe"
+  ],
+  "files": [
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "sha256": "70670a4f5bee4ac950e382fae48893eb74a7ee034d4632a582ffba4a5fc3671b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec"
+    },
+    {
+      "path": "scripts/verify-tenbot.mts",
+      "sha256": "1b3dffd58a5828d3c8c64692dfbdcc4ba04a2092b55f7d803cce09425a614ec4"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/external-reconciliation.json",
+      "sha256": "3e7572f2c00ddd32e43302e2c729386827acb0496b86700367e7f99028e671fe"
+    }
+  ]
+}

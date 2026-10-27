@@ -1,0 +1,85 @@
+{
+  "readOnly": true,
+  "noPrivateContent": true,
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "at": "2026-10-27T23:13:04.398Z",
+  "database": {
+    "app_users_columns": [
+      {
+        "name": "user_id",
+        "notNull": true,
+        "type": "uuid"
+      },
+      {
+        "name": "display_name",
+        "notNull": true,
+        "type": "text"
+      },
+      {
+        "name": "is_active",
+        "notNull": true,
+        "type": "boolean"
+      }
+    ],
+    "app_users_user_id_unique": true,
+    "at": "2026-10-27T23:13:05.505637+00:00",
+    "auth_uid": true,
+    "gen_random_uuid": true,
+    "predecessors": [
+      {
+        "anon": true,
+        "authenticated": true,
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definer": true,
+        "digest": "ae6b0fa1f2e5e1655b79014a0e50266f",
+        "owner": "postgres",
+        "service_role": true,
+        "signature": "has_app_capability(text)"
+      },
+      {
+        "anon": false,
+        "authenticated": true,
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definer": true,
+        "digest": "e3db326eaa5105820560ec6927445ee5",
+        "owner": "postgres",
+        "service_role": true,
+        "signature": "has_proposal_access()"
+      }
+    ],
+    "roles": [
+      "anon",
+      "authenticated",
+      "postgres",
+      "service_role"
+    ],
+    "tenbot_functions": [],
+    "tenbot_migrations": [],
+    "tenbot_tables": [],
+    "webPushCron": [
+      {
+        "active": true,
+        "commandDigest": "0707ae395467ae49b0d849c85fbfed51",
+        "id": 2,
+        "name": "tenops-web-push",
+        "schedule": "* * * * *"
+      }
+    ],
+    "webPushCronMatchesReleased": true,
+    "webPushTransport": [
+      {
+        "digest": "67de5777107e3b56bbda578b4383a55f",
+        "environment": "tendev"
+      },
+      {
+        "digest": "394450127940262e7f85b8fc867f638d",
+        "environment": "tenops"
+      }
+    ],
+    "webPushTransportMatchesReleased": true
+  }
+}

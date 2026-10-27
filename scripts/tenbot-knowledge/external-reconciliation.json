@@ -1,0 +1,1445 @@
+{
+  "schemaVersion": 1,
+  "packageId": "tenops-deployed-knowledge-20261027",
+  "packageSha256": "63c356867c92eaac60256610b90cf177afa77629b595c94099a3b885e62522c4",
+  "runtimeRevision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+  "packageReceiptRevision": "178587454fb87aec8b5a76730714ec1b2973ac69",
+  "existingGeneratedReceiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be",
+  "recordCount": 96,
+  "dispositions": {
+    "deferred": 25,
+    "supplemented": 28,
+    "existing": 41,
+    "rejected": 2
+  },
+  "retainedArchitecture": {
+    "preciseExisting": 34,
+    "generatedExisting": 16,
+    "supplemental": 24,
+    "supplementedPackageRecords": 28
+  },
+  "limits": [
+    "Existing disposition maps the supported overlap; reasons explicitly preserve finer coverage gaps. It does not assert every detail in that broad package record is available to TenBot.",
+    "Package evidence establishes immutable source alignment and previous release receipts; this is not fresh hosted policy, private-data, physical-device or populated-Excel verification.",
+    "Neither package prose nor application control labels establish new Product intent or permissions.",
+    "Existing 34 precise workflows and 16 generated release sources remain authoritative. Recurrence unknown and accepted TenBot/privacy decisions supersede older package claims."
+  ],
+  "corrections": [
+    "Mounted Sample version controls are Formula checkpoints and previews, Save Version, Preview checkpoint and Use as Current Draft; old package breadcrumb corrected.",
+    "Bid editor confirmation is Save Bid; generic package Save wording corrected.",
+    "Historical transcription and explicit verification split: only verification requires Production Blend management grant.",
+    "Unscheduled conversion retains Plan in Production Later without scheduleProduction; committed dates remain gated.",
+    "Pending Receival projection adds adjustInventory from released 20260824_001 wrapper contract; package issue/write-only projection is incomplete.",
+    "Transmittal confirmation uses mounted Generate & Download and immutable confirmation, with History retry.",
+    "No package-only browser observations or private records become runtime knowledge."
+  ],
+  "records": [
+    {
+      "id": "access-account",
+      "title": "Sign in, set up or reset an individual account",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Authentication/recovery guidance excluded from this bounded workflow supplement; current matcher deliberately refuses credential queries. Requires a separately scoped safe account-help change.",
+      "sourceFiles": [
+        "src/app/client-layout-shell.tsx",
+        "src/components/AccountAccessPanel.tsx",
+        "src/lib/auth.tsx"
+      ]
+    },
+    {
+      "id": "access-roles",
+      "title": "Understand roles, explicit grants and read-only access",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Conditional role, explicit grant and read-only policy descriptions cannot replace runtime capability checks; existing server permission decisions retained.",
+      "sourceFiles": [
+        "src/lib/auth.tsx",
+        "src/lib/rbac.ts",
+        "supabase/migrations/20261005120000_read_only_messaging_write.sql"
+      ]
+    },
+    {
+      "id": "admin-users",
+      "title": "Administer users, explicit access and reviewed legacy assignments",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Admin/Developer conditional role policy and access-management operations require finer source/gate review; no admin data or permission change authorized here.",
+      "sourceFiles": [
+        "src/components/AdminSettingsPanel.tsx",
+        "src/components/LegacyJobUpdateEnrollment.tsx"
+      ]
+    },
+    {
+      "id": "catalog-search-and-annotations",
+      "title": "Find materials and maintain Catalog annotations",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-catalog"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/app/catalog/page.tsx",
+        "src/components/BusinessWriteControls.tsx",
+        "src/components/ToolboxLauncher.tsx",
+        "src/lib/rbac.ts"
+      ]
+    },
+    {
+      "id": "contacts-browse",
+      "title": "Browse customer companies, contact people and linked Jobs",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "customer-history",
+        "knowledge-contacts"
+      ],
+      "reason": "Existing Customer Inspector and linked Production Jobs guidance retained.",
+      "sourceFiles": [
+        "docs/project-memory/2026-10-20-contacts-release.md",
+        "src/modules/production/contacts/ContactsWorkspace.tsx",
+        "src/modules/production/contacts/queries.ts"
+      ]
+    },
+    {
+      "id": "contacts-manage",
+      "title": "Add a saved customer or manage shared company/contact details",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "customer-edit",
+        "knowledge-contacts"
+      ],
+      "reason": "Editing guidance retained. Adding directory companies/people remains a finer coverage gap; no new grant inferred.",
+      "sourceFiles": [
+        "src/modules/production/contacts/CustomerInspector.tsx",
+        "src/modules/production/contacts/queries.ts",
+        "supabase/migrations/20261014210000_production_customer_list.sql"
+      ]
+    },
+    {
+      "id": "contacts-project-snapshot",
+      "title": "Select a customer and maintain a separate Job contact capture",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "knowledge-contacts",
+        "customer-history"
+      ],
+      "reason": "Shared-directory versus document/history snapshot boundary retained; full Job contact-capture sequence is not newly claimed.",
+      "sourceFiles": [
+        "src/modules/production/contacts/ContactsWorkspace.tsx",
+        "src/modules/production/contacts/ProjectContactEditor.tsx",
+        "supabase/migrations/20261014220000_protected_job_contacts.sql"
+      ]
+    },
+    {
+      "id": "daily-production-disabled",
+      "title": "Daily Production is not available yet",
+      "packageAvailability": "disabled",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Mounted disabled navigation item is source-verified, but adding a separate negative capability guide is unnecessary for the accepted precise workflow integration.",
+      "sourceFiles": [
+        "docs/workflows/DAILY_PRODUCTION.md",
+        "src/app/client-layout-shell.tsx"
+      ]
+    },
+    {
+      "id": "intake-convert",
+      "title": "Convert Won Bid with deposit to Production",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-intake-convert"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/pre-production/BidPlanningCard.tsx",
+        "src/modules/pre-production/planning-data.ts",
+        "supabase/migrations/20260923220000_intake_projected_planning.sql",
+        "supabase/migrations/20261026120000_bid_scope_production_handoff.sql"
+      ]
+    },
+    {
+      "id": "intake-details",
+      "title": "Edit Bid details and activity",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-intake-bid"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/pre-production/BidWorkspace.tsx",
+        "src/modules/pre-production/queries.ts"
+      ]
+    },
+    {
+      "id": "intake-files",
+      "title": "Bid working files and photos",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-intake-activity"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/pre-production/BidWorkspace.tsx",
+        "src/modules/pre-production/queries.ts"
+      ]
+    },
+    {
+      "id": "intake-planning",
+      "title": "Projected Intake and combined planning",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "knowledge-intake-timeline"
+      ],
+      "reason": "Projected windows and combined Timeline already have generated deployed source context.",
+      "sourceFiles": [
+        "artifact:browser-verification.json",
+        "src/modules/pre-production/BidPlanningCard.tsx",
+        "src/modules/pre-production/IntakePlanningTimeline.tsx",
+        "src/modules/pre-production/planning-data.ts",
+        "src/modules/pre-production/planning-model.ts"
+      ]
+    },
+    {
+      "id": "intake-queue",
+      "title": "Browse and create Bids",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-intake-bid"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "artifact:browser-verification.json",
+        "src/app/client-layout-shell.tsx",
+        "src/modules/pre-production/BidWorkspace.tsx"
+      ]
+    },
+    {
+      "id": "intake-related-tools",
+      "title": "Related Records and generator Tools",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "sample-bid",
+        "knowledge-sample-bid",
+        "knowledge-intake",
+        "proposal-create"
+      ],
+      "reason": "Existing linked-Sample and separate Proposal grant guidance retained. Related-record conditional access is not flattened into a union permission.",
+      "sourceFiles": [
+        "src/modules/pre-production/BidRelatedRecords.tsx",
+        "src/modules/pre-production/BidTools.tsx"
+      ]
+    },
+    {
+      "id": "intake-retained-services",
+      "title": "Retained scope/material intelligence boundary",
+      "packageAvailability": "partial",
+      "disposition": "existing",
+      "targets": [
+        "material-lead",
+        "intake-future",
+        "knowledge-material-assessment"
+      ],
+      "reason": "Existing deployed-versus-retained-service boundary remains authoritative; no editor is advertised.",
+      "sourceFiles": [
+        "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+        "src/modules/intake-materials/JobScopeHandoff.tsx",
+        "src/modules/intake-materials/data.ts",
+        "src/modules/pre-production/BidWorkspace.tsx"
+      ]
+    },
+    {
+      "id": "intake-updates",
+      "title": "Add Bid Updates",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-intake-activity"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/pre-production/BidWorkspace.tsx",
+        "src/modules/pre-production/queries.ts"
+      ]
+    },
+    {
+      "id": "inventory-activity-history",
+      "title": "Review Inventory Activity",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "inventory-activity"
+      ],
+      "reason": "Existing exact Inventory Activity workflow retained.",
+      "sourceFiles": [
+        "src/app/activity/page.tsx"
+      ]
+    },
+    {
+      "id": "inventory-browse-lots",
+      "title": "Browse current Inventory and lots",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "inventory-stock-search",
+        "knowledge-inventory"
+      ],
+      "reason": "Existing exact stock and lot search workflow retained.",
+      "sourceFiles": [
+        "src/app/inventory/page.tsx"
+      ]
+    },
+    {
+      "id": "inventory-correct-material-details",
+      "title": "Correct lot details and add notes",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "knowledge-inventory"
+      ],
+      "reason": "Broader released Inventory source retained. Fine lot-correction instructions are not added due legacy authorization qualification.",
+      "sourceFiles": [
+        "src/app/inventory/page.tsx",
+        "src/components/BusinessWriteControls.tsx"
+      ]
+    },
+    {
+      "id": "inventory-legacy-transactions",
+      "title": "Legacy stock movement route",
+      "packageAvailability": "legacy",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Legacy stock movement route is superseded by current Inventory and Activity guidance; excluded to avoid conflicting navigation.",
+      "sourceFiles": [
+        "docs/project-memory/CURRENT_STATE.md",
+        "src/app/transactions/page.tsx"
+      ]
+    },
+    {
+      "id": "inventory-record-movement",
+      "title": "Record stock intake, outtake or count correction",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "inventory-stock-movement"
+      ],
+      "reason": "Existing exact intake/outtake guidance retained; no legacy exact-count admin instruction imported.",
+      "sourceFiles": [
+        "src/app/inventory/page.tsx",
+        "src/components/BusinessWriteControls.tsx"
+      ]
+    },
+    {
+      "id": "inventory-reserve-and-release",
+      "title": "Reserve part/all of a lot or return it to general stock",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "inventory-stock-reservation"
+      ],
+      "reason": "Existing canonical-versus-temporary reservation workflow retained.",
+      "sourceFiles": [
+        "src/app/inventory/page.tsx",
+        "src/components/BusinessWriteControls.tsx",
+        "src/lib/rbac.ts"
+      ]
+    },
+    {
+      "id": "manpower-enter-and-correct-labor",
+      "title": "Enter or correct Manpower labor",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "manpower-record-labor",
+        "manpower-job-filter",
+        "knowledge-manpower"
+      ],
+      "reason": "Existing work-identity, AM/PM hours and Job filter guidance retained; no new category/settings mutation inferred.",
+      "sourceFiles": [
+        "src/components/BusinessWriteControls.tsx",
+        "src/modules/manpower/ManpowerWorkspace.tsx",
+        "src/modules/manpower/manpower.ts"
+      ]
+    },
+    {
+      "id": "manpower-groups-and-bulk-corrections",
+      "title": "Organize Manpower groups and apply bounded corrections",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Useful finer coverage remains deferred: partial failures, complete-group loading and deletion/identity subactions need distinct action-specific guidance; not imported wholesale.",
+      "sourceFiles": [
+        "src/components/BusinessWriteControls.tsx",
+        "src/modules/manpower/ManpowerWorkspace.tsx",
+        "src/modules/manpower/manpower.ts"
+      ]
+    },
+    {
+      "id": "manpower-history-and-analytics",
+      "title": "Review complete labor history and product analytics",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-manpower-history"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/manpower/ManpowerAnalytics.tsx",
+        "src/modules/manpower/ManpowerWorkspace.tsx",
+        "src/modules/manpower/manpower.ts"
+      ]
+    },
+    {
+      "id": "manpower-reference-settings",
+      "title": "Maintain workers, tasks and Product Categories",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Worker/task/category settings contain distinct role and capability gates; retained as a documented fine-grained coverage gap.",
+      "sourceFiles": [
+        "src/components/BusinessWriteControls.tsx",
+        "src/lib/rbac.ts",
+        "src/modules/manpower/ManpowerWorkspace.tsx",
+        "src/modules/manpower/manpower.ts"
+      ]
+    },
+    {
+      "id": "material-usage-canonical-defaults",
+      "title": "Apply Job defaults without rewriting report history",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Useful identity/default synchronization detail is deferred; new Material Usage guide intentionally covers normal report persistence and immutable historical identity boundaries only.",
+      "sourceFiles": [
+        "src/components/BusinessWriteControls.tsx",
+        "src/modules/material-usage/MaterialUsageEditor.tsx",
+        "src/modules/material-usage/actions.ts",
+        "src/modules/material-usage/canonical-job-defaults.ts"
+      ]
+    },
+    {
+      "id": "material-usage-find-history",
+      "title": "Find and reopen Material Usage history",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-material-usage"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/material-usage/MaterialUsageHistory.tsx",
+        "src/modules/material-usage/MaterialUsageWorkspace.tsx",
+        "src/modules/material-usage/actions.ts"
+      ]
+    },
+    {
+      "id": "material-usage-record-report",
+      "title": "Create, edit or delete a Material Usage report",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-material-usage"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "docs/workflows/MATERIAL_USAGE.md",
+        "src/components/BusinessWriteControls.tsx",
+        "src/modules/material-usage/MaterialUsageEditor.tsx",
+        "src/modules/material-usage/actions.ts"
+      ]
+    },
+    {
+      "id": "messaging-attachments",
+      "title": "Send, preview, download or retry message attachments",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "message-attachments"
+      ],
+      "reason": "Existing exact authorized employee attachment flow retained.",
+      "sourceFiles": [
+        "docs/project-memory/2026-10-22-messaging-groups-replies-candidate.md",
+        "src/modules/my-work/InboxDialog.tsx",
+        "src/modules/my-work/inbox.ts",
+        "src/modules/my-work/messaging/client.ts",
+        "src/modules/my-work/messaging/files.ts",
+        "src/modules/my-work/messaging/transfer.ts"
+      ]
+    },
+    {
+      "id": "messaging-drafts",
+      "title": "Recover browser-local unsent message text",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-message-drafts"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/lib/drafts/textDraft.ts",
+        "src/lib/drafts/useTextDraft.ts",
+        "src/modules/my-work/InboxDialog.tsx"
+      ]
+    },
+    {
+      "id": "messaging-groups",
+      "title": "Create or manage a creator-owned message group",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "group",
+        "dm",
+        "knowledge-messaging"
+      ],
+      "reason": "Existing creator-only group maintenance and personal-DM privacy boundary retained.",
+      "sourceFiles": [
+        "docs/project-memory/2026-10-22-messaging-groups-replies-candidate.md",
+        "src/modules/my-work/InboxDialog.tsx",
+        "supabase/migrations/20261022120000_messaging_groups_replies.sql"
+      ]
+    },
+    {
+      "id": "messaging-open-unread",
+      "title": "Open Messaging and review personal unread conversations",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "knowledge-messaging"
+      ],
+      "reason": "Existing released Messaging navigation and participant source retained; no new mark-read routine imported.",
+      "sourceFiles": [
+        "src/components/GlobalMessaging.tsx",
+        "src/modules/my-work/InboxDialog.tsx",
+        "src/modules/my-work/inbox.ts",
+        "supabase/migrations/20261022120000_messaging_groups_replies.sql"
+      ]
+    },
+    {
+      "id": "messaging-privacy-cleanup",
+      "title": "Messaging privacy and Admin permanent deletion",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Admin permanent deletion is separate from routine participant reading; destructive cleanup prose excluded from employee guidance expansion.",
+      "sourceFiles": [
+        "src/modules/my-work/InboxDialog.tsx",
+        "src/modules/my-work/inbox.ts",
+        "supabase/migrations/20260831_016_my_work_inbox.sql",
+        "supabase/migrations/20260831_020_my_work_lifecycle_admin_cleanup.sql"
+      ]
+    },
+    {
+      "id": "messaging-reply-edit",
+      "title": "Reply within a conversation or edit your own sent message",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-message-edit"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "docs/project-memory/2026-10-22-messaging-groups-replies-candidate.md",
+        "src/modules/my-work/InboxDialog.tsx",
+        "supabase/migrations/20260831_020_my_work_lifecycle_admin_cleanup.sql",
+        "supabase/migrations/20261022120000_messaging_groups_replies.sql"
+      ]
+    },
+    {
+      "id": "messaging-send",
+      "title": "Send a direct message or a message in a group",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "group",
+        "dm",
+        "message-attachments",
+        "knowledge-messaging"
+      ],
+      "reason": "Existing direct/group participant controls and file Send guidance retained. Ordinary employee conversation context stays separate from TenBot.",
+      "sourceFiles": [
+        "src/modules/my-work/InboxDialog.tsx",
+        "supabase/migrations/20261022120000_messaging_groups_replies.sql"
+      ]
+    },
+    {
+      "id": "messaging-typing",
+      "title": "See private direct-message typing activity",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Participant-private ephemeral typing is ancillary guidance; omitted to avoid overfilling primary context for send/reply questions.",
+      "sourceFiles": [
+        "src/modules/my-work/InboxDialog.tsx",
+        "supabase/migrations/20260831_019_private_my_work_typing_broadcast.sql"
+      ]
+    },
+    {
+      "id": "navigation-desktop",
+      "title": "Find modules in desktop navigation",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Global navigation overview overlaps existing module paths; no duplicate broad navigation card.",
+      "sourceFiles": [
+        "src/app/client-layout-shell.tsx"
+      ]
+    },
+    {
+      "id": "navigation-mobile",
+      "title": "Use Mobile Early Access navigation",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Mobile Early Access parity/physical-device limits remain existing release evidence; no broad new mobile navigation guide added.",
+      "sourceFiles": [
+        "src/app/client-layout-shell.tsx",
+        "src/app/install/InstallTargetPage.tsx",
+        "src/app/install/dashboard/page.tsx",
+        "src/app/install/my-work/page.tsx",
+        "src/components/mobile/MobileNavigation.tsx"
+      ]
+    },
+    {
+      "id": "navigation-toolbox",
+      "title": "Open generators and reference resources",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Owning workflow paths directly include Toolbox destinations; no duplicate general launcher source card.",
+      "sourceFiles": [
+        "src/components/ToolboxLauncher.tsx"
+      ]
+    },
+    {
+      "id": "notifications-account",
+      "title": "Read personal notifications and open related work",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Personal bell read/unread guidance is a useful remaining fine-grained coverage gap; device notification guidance is already maintained.",
+      "sourceFiles": [
+        "src/components/AccountNotifications.tsx",
+        "src/lib/web-push.ts"
+      ]
+    },
+    {
+      "id": "pending-receivals-plan-and-edit",
+      "title": "Add and manage expected material",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "inventory-pending-create"
+      ],
+      "reason": "Existing exact expected-material workflow retained.",
+      "sourceFiles": [
+        "src/app/inventory/page.tsx",
+        "src/lib/rbac.ts"
+      ]
+    },
+    {
+      "id": "pending-receivals-receive",
+      "title": "Receive all or part of expected material",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "inventory-pending-receive"
+      ],
+      "reason": "Existing exact full/partial receipt workflow retained.",
+      "sourceFiles": [
+        "src/app/inventory/page.tsx",
+        "src/lib/rbac.ts"
+      ]
+    },
+    {
+      "id": "pending-receivals-undo-latest",
+      "title": "Undo the latest eligible receipt",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Receipt reversal is a high-risk operation with lineage/stock-state requirements. Existing normal receiving retained; no new reversal instructions imported.",
+      "sourceFiles": [
+        "src/app/inventory/page.tsx",
+        "src/lib/rbac.ts"
+      ]
+    },
+    {
+      "id": "production-admin-delete-disposable-job",
+      "title": "Permanently delete an eligible disposable Job",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Destructive permanent cleanup and protected dependencies intentionally excluded from ordinary employee workflow supplement.",
+      "sourceFiles": [
+        "src/modules/production/ProductionWorkspace.tsx",
+        "src/modules/production/components/ProductionJobInspector.tsx",
+        "src/modules/production/jobs.ts"
+      ]
+    },
+    {
+      "id": "production-archive-and-restore",
+      "title": "Archive or restore finished Jobs",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-job-archive"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/lib/rbac.ts",
+        "src/modules/production/components/MonthlySnapshot.tsx",
+        "src/modules/production/components/ProductionJobInspector.tsx",
+        "src/modules/production/jobs.ts"
+      ]
+    },
+    {
+      "id": "production-browse-and-readiness",
+      "title": "Browse Production and identify planning gaps",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "production-find-job",
+        "knowledge-production"
+      ],
+      "reason": "Existing exact search and broader derived-readiness knowledge retained.",
+      "sourceFiles": [
+        "src/app/production/page.tsx",
+        "src/modules/production/ProductionWorkspace.tsx",
+        "src/modules/production/material-status.ts",
+        "src/modules/production/readiness.ts"
+      ]
+    },
+    {
+      "id": "production-create-job",
+      "title": "Create a Production Job",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "production-create-job"
+      ],
+      "reason": "Existing exact canonical Production Job creation workflow retained.",
+      "sourceFiles": [
+        "src/components/BusinessWriteControls.tsx",
+        "src/lib/rbac.ts",
+        "src/modules/production/ProductionWorkspace.tsx",
+        "src/modules/production/components/ProductionJobCreator.tsx",
+        "src/modules/production/jobs.ts"
+      ]
+    },
+    {
+      "id": "production-edit-job-details",
+      "title": "Update Job details and status",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "knowledge-production"
+      ],
+      "reason": "Existing broad production source retained. Routine/elevated/Rework subactions remain separately gated; no union-authorized edit guide added.",
+      "sourceFiles": [
+        "src/components/BusinessWriteControls.tsx",
+        "src/lib/rbac.ts",
+        "src/modules/production/ProductionWorkspace.tsx",
+        "src/modules/production/components/ProductionJobInspector.tsx",
+        "src/modules/production/jobs.ts"
+      ]
+    },
+    {
+      "id": "production-import-documents",
+      "title": "Create or update a Job from production documents",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Useful existing importer remains a coverage gap: matching/attach-only/update choices have distinct create/edit/upload capabilities; package union would unnecessarily gate every path.",
+      "sourceFiles": [
+        "src/lib/rbac.ts",
+        "src/modules/production/ProductionWorkspace.tsx",
+        "src/modules/production/components/ProductionJobCreator.tsx"
+      ]
+    },
+    {
+      "id": "production-job-files-and-recent-changes",
+      "title": "Use Job Files and Recent Changes",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "production-files",
+        "knowledge-production"
+      ],
+      "reason": "Existing exact supporting-files guidance retained; broader Recent Changes context is not a second Files card.",
+      "sourceFiles": [
+        "src/lib/rbac.ts",
+        "src/modules/production/components/ProductionJobInspector.tsx",
+        "src/modules/production/jobs.ts"
+      ]
+    },
+    {
+      "id": "production-job-updates",
+      "title": "Post, assign and resolve Job Updates",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Useful remaining coverage gap: post/assign/resolve/edit/delete/files require separate capabilities. Seven-way package union is not imported as an instruction permission.",
+      "sourceFiles": [
+        "src/lib/rbac.ts",
+        "src/modules/production/components/JobUpdatesPanel.tsx",
+        "src/modules/production/job-update-editing.ts",
+        "src/modules/production/jobs.ts",
+        "supabase/migrations/20260819_001_job_update_account_collaboration.sql",
+        "supabase/migrations/20260821_001_job_update_deletion.sql"
+      ]
+    },
+    {
+      "id": "production-monthly-snapshot",
+      "title": "Review the Monthly Snapshot",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-monthly-snapshot"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/production/ProductionWorkspace.tsx",
+        "src/modules/production/components/MonthlySnapshot.tsx",
+        "src/modules/production/snapshot.ts"
+      ]
+    },
+    {
+      "id": "production-planning-disabled",
+      "title": "Planning phases/items are disabled in deployed TenOps",
+      "packageAvailability": "disabled",
+      "disposition": "existing",
+      "targets": [
+        "planning-phase",
+        "planning-items",
+        "knowledge-production",
+        "knowledge-intake-timeline"
+      ],
+      "reason": "Existing verified disabled Phase/Item Planning gates retained; ordinary Production and Intake timelines remain separate.",
+      "sourceFiles": [
+        "artifact:release-flags.json",
+        "docs/workflows/PRODUCTION_PIPELINE.md",
+        "src/modules/production/ProductionWorkspace.tsx",
+        "src/modules/production/components/ProductionJobInspector.tsx"
+      ]
+    },
+    {
+      "id": "production-rework-cycle",
+      "title": "Track a Rework cycle on the same Job",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "production-rework-create",
+        "production-rework-status",
+        "knowledge-rework"
+      ],
+      "reason": "Existing completed-Job prerequisite, final Create Rework confirmation and one-active-cycle guidance retained.",
+      "sourceFiles": [
+        "src/lib/rbac.ts",
+        "src/modules/production/components/CreateReworkDialog.tsx",
+        "src/modules/production/components/ProductionJobInspector.tsx",
+        "src/modules/production/components/ReworkQuickAction.tsx",
+        "src/modules/production/jobs.ts"
+      ]
+    },
+    {
+      "id": "production-schedule-and-timeline",
+      "title": "Plan and save Production schedules",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "production-schedule",
+        "knowledge-timeline"
+      ],
+      "reason": "Existing staged scheduling workflow retained. Package union incorrectly combines ordinary schedule and additional Rework permissions; not imported.",
+      "sourceFiles": [
+        "docs/workflows/PRODUCTION_PIPELINE.md",
+        "src/lib/rbac.ts",
+        "src/modules/production/ProductionWorkspace.tsx"
+      ]
+    },
+    {
+      "id": "proposals-customer",
+      "title": "Compose customer Proposal values",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "proposal-create",
+        "knowledge-proposals"
+      ],
+      "reason": "Existing Proposal/Estimate snapshot source and separate Proposal grant retained; no unmounted drawing helper advertised.",
+      "sourceFiles": [
+        "src/modules/proposals/EstimateProposalApplyActions.tsx",
+        "src/modules/proposals/ProposalCustomerEditor.tsx"
+      ]
+    },
+    {
+      "id": "proposals-defaults",
+      "title": "Version Estimating Defaults",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Versioned estimating-defaults changes are separate calculation/authorization scope; no new estimate semantics introduced.",
+      "sourceFiles": [
+        "src/modules/proposals/EstimatingDefaultsPanel.tsx",
+        "src/modules/proposals/queries.ts"
+      ]
+    },
+    {
+      "id": "proposals-estimate",
+      "title": "Build an internal Estimate",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "proposal-create",
+        "knowledge-proposals"
+      ],
+      "reason": "Existing internal Estimate context retained; finer estimating/defaults calculation instructions not added in bounded integration.",
+      "sourceFiles": [
+        "src/modules/proposals/EstimateEditor.tsx",
+        "src/modules/proposals/queries.ts"
+      ]
+    },
+    {
+      "id": "proposals-issue-revise",
+      "title": "Issue, preview and revise Proposals",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "proposal-issue-revise"
+      ],
+      "reason": "Existing exact issuance/revision guide retained without package Admin-deletion union.",
+      "sourceFiles": [
+        "src/modules/proposals/ProposalPanel.tsx",
+        "src/modules/proposals/queries.ts",
+        "supabase/functions/generate-proposal-pdf/index.ts"
+      ]
+    },
+    {
+      "id": "proposals-workspace",
+      "title": "Standalone, Bid and Job Proposals",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "proposal-create",
+        "knowledge-proposals"
+      ],
+      "reason": "Existing standalone Proposal and separate Proposal access boundary retained.",
+      "sourceFiles": [
+        "src/modules/proposals/ProposalPanel.tsx",
+        "src/modules/proposals/ProposalWorkspace.tsx",
+        "supabase/migrations/20260827_004_proposal_generator_v1.sql"
+      ]
+    },
+    {
+      "id": "purchasing-allocations",
+      "title": "Allocate ordered units to Jobs",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-po-allocations"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/purchasing/LineAllocations.tsx",
+        "src/modules/purchasing/mutations.ts"
+      ]
+    },
+    {
+      "id": "purchasing-cleanup",
+      "title": "Remove draft or eligible issued test PO",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Destructive draft/issued-test cleanup and Admin-only endpoint excluded from ordinary procurement guidance.",
+      "sourceFiles": [
+        "src/modules/purchasing/PurchaseOrderEditor.tsx",
+        "src/modules/purchasing/mutations.ts",
+        "supabase/functions/generate-purchase-order-pdf/index.ts"
+      ]
+    },
+    {
+      "id": "purchasing-issue",
+      "title": "Issue PO and recover permanent PDF",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-po-issue"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/purchasing/PurchaseOrderEditor.tsx",
+        "src/modules/purchasing/mutations.ts",
+        "supabase/functions/generate-purchase-order-pdf/index.ts"
+      ]
+    },
+    {
+      "id": "purchasing-library",
+      "title": "Purchase Order library and drafts",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-po-draft"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "docs/workflows/PURCHASING.md",
+        "src/modules/purchasing/PurchasingWorkspace.tsx",
+        "src/modules/purchasing/mutations.ts"
+      ]
+    },
+    {
+      "id": "purchasing-materials",
+      "title": "Mixed Chip and Resin PO lines",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "knowledge-purchasing"
+      ],
+      "reason": "Existing mixed-material source context retained; no duplicate PO draft card.",
+      "sourceFiles": [
+        "docs/workflows/PURCHASING.md",
+        "src/modules/purchasing/PurchaseOrderEditor.tsx"
+      ]
+    },
+    {
+      "id": "purchasing-preview",
+      "title": "Save and preview a draft PO PDF",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-po-draft"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/purchasing/PurchaseOrderEditor.tsx",
+        "src/modules/purchasing/mutations.ts",
+        "supabase/functions/generate-purchase-order-pdf/index.ts"
+      ]
+    },
+    {
+      "id": "purchasing-pricing",
+      "title": "Catalog tiers and issued price history",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "knowledge-purchasing"
+      ],
+      "reason": "Existing purchasing source retained; detailed tier/history/catalog-maintenance instructions remain a finer coverage gap.",
+      "sourceFiles": [
+        "docs/workflows/PURCHASING.md",
+        "src/modules/purchasing/PurchaseOrderEditor.tsx"
+      ]
+    },
+    {
+      "id": "purchasing-receivals",
+      "title": "Create Pending Receivals from issued PO",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-po-receivals"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/purchasing/PendingReceivalsReviewDialog.tsx",
+        "src/modules/purchasing/PurchaseOrderEditor.tsx",
+        "src/modules/purchasing/mutations.ts"
+      ]
+    },
+    {
+      "id": "purchasing-vendors",
+      "title": "Maintain Vendors, Contacts and Catalog items",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Useful reference-maintenance coverage deferred to a separately gated write/maintain guide; search/PO draft instructions do not grant catalog administration.",
+      "sourceFiles": [
+        "docs/workflows/PURCHASING.md",
+        "src/modules/purchasing/PurchasingWorkspace.tsx",
+        "src/modules/purchasing/mutations.ts"
+      ]
+    },
+    {
+      "id": "push-enable-device",
+      "title": "Enable Web Push notifications on this device",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "notifications",
+        "knowledge-notifications"
+      ],
+      "reason": "Existing iPhone/install/permission/device-registration workflow retained.",
+      "sourceFiles": [
+        "docs/project-memory/2026-10-22-web-push-registration-reliability.md",
+        "src/components/PushNotificationSettings.tsx",
+        "src/lib/web-push.ts"
+      ]
+    },
+    {
+      "id": "push-registration-recovery",
+      "title": "Check and recover truthful device notification registration",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "notifications",
+        "knowledge-notifications"
+      ],
+      "reason": "Existing truthful registration/failure limits retained; no new physical-device or hosted delivery claim.",
+      "sourceFiles": [
+        "docs/project-memory/2026-10-22-web-push-registration-reliability.md",
+        "src/components/PushNotificationSettings.tsx",
+        "src/lib/web-push.ts"
+      ]
+    },
+    {
+      "id": "releases-communications",
+      "title": "Read TenOps system/release communications",
+      "packageAvailability": "deployed",
+      "disposition": "rejected",
+      "targets": [],
+      "reason": "Package predates accepted TenBot integration and describes the system conversation as never an assistant surface. Accepted TenBot shares the conversation with distinct owner-scoped assistant turns; old package claim is superseded.",
+      "sourceFiles": [
+        "src/components/AccountNotifications.tsx",
+        "src/modules/my-work/InboxDialog.tsx",
+        "supabase/migrations/20260831_018_durable_release_communications.sql"
+      ]
+    },
+    {
+      "id": "samples-author",
+      "title": "Create and save a Batch-first formulation",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "sample-save",
+        "knowledge-samples"
+      ],
+      "reason": "Existing exact Sample creation/save guide retained.",
+      "sourceFiles": [
+        "src/modules/samples/SampleWorkspace.tsx",
+        "src/modules/samples/queries.ts"
+      ]
+    },
+    {
+      "id": "samples-batch-shop",
+      "title": "Canonical Batch and Shop Preparation",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "sample-save",
+        "sample-work-order",
+        "knowledge-samples",
+        "knowledge-blend"
+      ],
+      "reason": "Existing Batch authority and preparation/output boundaries retained; no control-label-only click sequence added.",
+      "sourceFiles": [
+        "docs/project-memory/2026-10-01-sample-batch-first-authority.md",
+        "src/modules/samples/SamplePreparationList.tsx",
+        "src/modules/samples/SampleWorkspace.tsx"
+      ]
+    },
+    {
+      "id": "samples-copy-cleanup",
+      "title": "Duplicate or remove a Sample",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Duplicate and remove/issued-delete operations have different gates and effects; combined package record is not imported.",
+      "sourceFiles": [
+        "src/lib/rbac.ts",
+        "src/modules/samples/SampleWorkspace.tsx"
+      ]
+    },
+    {
+      "id": "samples-historical-import",
+      "title": "Import and verify historical Samples",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-historical-import",
+        "workflow-historical-verify"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "artifact:browser-verification.json",
+        "src/modules/intake-materials/HistoricalImport.tsx",
+        "supabase/migrations/20261026100000_historical_sample_import.sql"
+      ]
+    },
+    {
+      "id": "samples-issue",
+      "title": "Generate and recover Sample Work Orders",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "sample-work-order"
+      ],
+      "reason": "Existing exact generate/Retry PDF guide retained.",
+      "sourceFiles": [
+        "src/modules/samples/SampleWorkspace.tsx",
+        "src/modules/samples/queries.ts"
+      ]
+    },
+    {
+      "id": "samples-labels",
+      "title": "Print a Color Plate label",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-sample-label"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/lib/rbac.ts",
+        "src/modules/samples/ColorPlateLabelEditor.tsx"
+      ]
+    },
+    {
+      "id": "samples-library",
+      "title": "Sample library and Bid context",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "sample-bid",
+        "sample-save",
+        "knowledge-sample-bid"
+      ],
+      "reason": "Existing standalone Sample library and existing-Sample Bid link guidance retained.",
+      "sourceFiles": [
+        "src/components/ToolboxLauncher.tsx",
+        "src/modules/samples/SampleWorkspace.tsx"
+      ]
+    },
+    {
+      "id": "samples-post-job",
+      "title": "Post a Sample document to a Job",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Useful remaining coverage gap: destination Job/file/update permissions must be separated; package union is conservative but too broad for a normal post guide.",
+      "sourceFiles": [
+        "src/modules/samples/PostSampleToJob.tsx",
+        "src/modules/samples/SampleWorkspace.tsx",
+        "src/modules/samples/post-to-job.ts"
+      ]
+    },
+    {
+      "id": "samples-pour-planning",
+      "title": "Suggest a Working Pour size",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-sample-pour"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/samples/SamplePourPlanner.tsx"
+      ]
+    },
+    {
+      "id": "samples-production-blend",
+      "title": "Plan and generate Production Blend Sheets",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "knowledge-blend"
+      ],
+      "reason": "Existing separate explicit Production Blend grant and working-versus-issued boundaries retained.",
+      "sourceFiles": [
+        "src/lib/rbac.ts",
+        "src/modules/samples/ProductionBatchOutput.tsx"
+      ]
+    },
+    {
+      "id": "samples-profiles",
+      "title": "Manage formulation profiles",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Admin-or-Developer profile authorization cannot be faithfully represented by package manageUsers conjunction; no synthetic role policy imported.",
+      "sourceFiles": [
+        "src/modules/samples/OperationalProfileManager.tsx",
+        "src/modules/samples/OperationalProfilesSettings.tsx"
+      ]
+    },
+    {
+      "id": "samples-versions",
+      "title": "Working sheets and saved versions",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-sample-versions"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/samples/SampleVersionHistory.tsx",
+        "src/modules/samples/queries.ts"
+      ]
+    },
+    {
+      "id": "settings-preferences",
+      "title": "Change appearance, display size and language",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-appearance"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/app/settings/page.tsx",
+        "src/lib/account-preferences.tsx",
+        "src/lib/appearance.tsx"
+      ]
+    },
+    {
+      "id": "tasks-admin-cleanup",
+      "title": "Permanently clean up a task as an Admin",
+      "packageAvailability": "deployed",
+      "disposition": "deferred",
+      "targets": [],
+      "reason": "Admin deletion authority does not authorize private content reading; destructive administrative lifecycle guide excluded.",
+      "sourceFiles": [
+        "src/modules/my-work/MyWorkPage.tsx",
+        "src/modules/my-work/queries.ts",
+        "supabase/migrations/20260831_020_my_work_lifecycle_admin_cleanup.sql"
+      ]
+    },
+    {
+      "id": "tasks-attachments",
+      "title": "Attach, open or remove private task files",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-task-files"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/my-work/MyWorkPage.tsx",
+        "src/modules/my-work/queries.ts",
+        "supabase/migrations/20260831_015_my_work_task_attachments.sql"
+      ]
+    },
+    {
+      "id": "tasks-create",
+      "title": "Create a private task or share one task with another user",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "my-work-create"
+      ],
+      "reason": "Existing exact private/shared participant task creation flow retained.",
+      "sourceFiles": [
+        "src/modules/my-work/MyWorkPage.tsx",
+        "src/modules/my-work/queries.ts",
+        "supabase/migrations/20260831_021_my_work_task_estimated_time.sql"
+      ]
+    },
+    {
+      "id": "tasks-edit-complete",
+      "title": "Edit, complete or reopen a participant task",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "my-work-complete"
+      ],
+      "reason": "Existing exact complete/reopen task flow retained; creator-only sharing restrictions remain.",
+      "sourceFiles": [
+        "src/modules/my-work/MyWorkPage.tsx",
+        "supabase/migrations/20260831_021_my_work_task_estimated_time.sql"
+      ]
+    },
+    {
+      "id": "tasks-effort-workload",
+      "title": "Estimate effort and review personal/delegated workload",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-task-effort"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/my-work/MyWorkPage.tsx",
+        "supabase/migrations/20260831_021_my_work_task_estimated_time.sql"
+      ]
+    },
+    {
+      "id": "tasks-groups",
+      "title": "Organize tasks into personal Task Groups and colors",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-task-groups"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/my-work/MyWorkPage.tsx",
+        "supabase/migrations/20260902_004_my_work_task_groups.sql"
+      ]
+    },
+    {
+      "id": "tasks-recurrence-unavailable",
+      "title": "Recurring tasks are not available in the released My Work model",
+      "packageAvailability": "disabled",
+      "disposition": "rejected",
+      "targets": [],
+      "reason": "Package asserts unavailable from missing recurrence source. Accepted current registry keeps recurring tasks unknown/documentation-missing; preserve that stronger Product boundary.",
+      "sourceFiles": [
+        "src/modules/my-work/MyWorkPage.tsx",
+        "src/modules/my-work/queries.ts",
+        "src/modules/my-work/types.ts"
+      ]
+    },
+    {
+      "id": "tasks-views",
+      "title": "Review Today, All Tasks, My Tasks and Shared Tasks",
+      "packageAvailability": "deployed",
+      "disposition": "existing",
+      "targets": [
+        "my-work-complete",
+        "my-work-create"
+      ],
+      "reason": "Existing private versus shared/all view explanations retained; no duplicate task-view card.",
+      "sourceFiles": [
+        "src/modules/my-work/MyWorkPage.tsx"
+      ]
+    },
+    {
+      "id": "transmittals-context",
+      "title": "Job-linked or standalone Transmittal",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-transmittal"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "docs/workflows/LETTER_OF_TRANSMITTAL.md",
+        "src/modules/transmittals/TransmittalWorkspace.tsx",
+        "supabase/functions/generate-job-transmittal-pdf/index.ts"
+      ]
+    },
+    {
+      "id": "transmittals-issue",
+      "title": "Compose, issue and recover Transmittal PDF",
+      "packageAvailability": "deployed",
+      "disposition": "supplemented",
+      "targets": [
+        "workflow-transmittal"
+      ],
+      "reason": "Consolidated into concise reviewed precise workflow(s), with mounted-source labels and action-specific permissions.",
+      "sourceFiles": [
+        "src/modules/transmittals/JobTransmittalPanel.tsx",
+        "src/modules/transmittals/mutations.ts",
+        "supabase/functions/generate-job-transmittal-pdf/index.ts"
+      ]
+    }
+  ]
+}

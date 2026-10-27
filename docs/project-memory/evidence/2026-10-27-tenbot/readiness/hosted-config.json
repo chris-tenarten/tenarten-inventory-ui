@@ -1,0 +1,113 @@
+{
+  "readOnly": true,
+  "noPrivateContent": true,
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "at": "2026-10-27T23:10:36.143Z",
+  "edge": {
+    "tenbot": [],
+    "preserved": [
+      {
+        "slug": "generate-proposal-pdf",
+        "id": "0c25a597-ca3f-4dfe-9007-ae76ea14bce1",
+        "version": 38,
+        "status": "ACTIVE",
+        "verify_jwt": true
+      },
+      {
+        "slug": "generate-sample-pdf",
+        "id": "aca8265a-5cc1-4dd8-b4df-e28a4b6e524e",
+        "version": 50,
+        "status": "ACTIVE",
+        "verify_jwt": true
+      },
+      {
+        "slug": "send-web-push-tendev",
+        "id": "0248da3c-43fe-44e5-84f9-71f35422c401",
+        "version": 27,
+        "status": "ACTIVE",
+        "verify_jwt": false
+      },
+      {
+        "slug": "send-web-push-tenops",
+        "id": "3449d184-907b-4a78-bb1c-e94f095643ee",
+        "version": 16,
+        "status": "ACTIVE",
+        "verify_jwt": false
+      }
+    ]
+  },
+  "tenbotSecretPresence": {
+    "TENBOT_ALLOWED_ORIGINS": false,
+    "TENBOT_AI_ENABLED": false,
+    "TENBOT_CF_ACCOUNT_ID": false,
+    "TENBOT_CF_AI_TOKEN": false,
+    "TENBOT_CF_MODEL": false
+  },
+  "runtimeSecretPresence": {
+    "SUPABASE_URL": true,
+    "SUPABASE_ANON_KEY": true,
+    "SUPABASE_SERVICE_ROLE_KEY": true
+  },
+  "pages": {
+    "tendev": {
+      "branch": "dev",
+      "deployment": {
+        "id": "60a6ba08-2ef3-4dd6-9b25-d68bb9016101",
+        "sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "status": "success"
+      },
+      "configDigest": "18d2777c5819230ebdda9b0e65d8d40eca00dc5314cc614ca0d3063bb0135432",
+      "productionEnvironmentNames": [
+        "NEXT_PUBLIC_DARK_PROTOTYPE",
+        "NEXT_PUBLIC_DEV_BRANDING",
+        "NEXT_PUBLIC_EARLY_ACCESS",
+        "NEXT_PUBLIC_ENABLE_PLANNING",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL"
+      ],
+      "supabaseUrl": "https://vxdxjhazkqhpkwdqtobp.supabase.co",
+      "aiBindings": null,
+      "buildConfig": {
+        "buildCommand": "npm run build",
+        "destination": "out",
+        "root": ""
+      },
+      "gitIntegration": {
+        "type": "github",
+        "productionBranch": "dev",
+        "productionDeploymentsEnabled": true
+      }
+    },
+    "tenops": {
+      "branch": "main",
+      "deployment": {
+        "id": "4bd400e3-dc15-47d1-8e50-adf595b4c6c9",
+        "sha": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "status": "success"
+      },
+      "configDigest": "f52ea907ffd36211ab1fdf4c71f9d75665506b841697f33fe533642a92155629",
+      "productionEnvironmentNames": [
+        "NEXT_PUBLIC_ENABLE_PLANNING",
+        "NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL"
+      ],
+      "supabaseUrl": "https://vxdxjhazkqhpkwdqtobp.supabase.co",
+      "aiBindings": null,
+      "buildConfig": {
+        "buildCommand": "npm run build",
+        "destination": "out",
+        "root": ""
+      },
+      "gitIntegration": {
+        "type": "github",
+        "productionBranch": "main",
+        "productionDeploymentsEnabled": true
+      }
+    }
+  },
+  "workersPlanSubscriptions": {
+    "verified": false,
+    "error": "Cloudflare read failed: 403"
+  }
+}

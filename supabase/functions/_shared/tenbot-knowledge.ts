@@ -1,6 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
 import {generatedKnowledge,knowledgeSnapshot} from './tenbot-knowledge-snapshot.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
+// @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
+import {workflowSupplement} from './tenbot-workflow-supplement.ts';
 export {knowledgeSnapshot};
 
 // Employee-safe workflow excerpts only. Never import this server registry into the client bundle.
@@ -1493,7 +1496,8 @@ export const registry:CapabilityEntry[] = [
    "Can I send images in a DM?",
    "How do I paste a photo into a Messaging conversation?"
   ]
- }
+ },
+ ...workflowSupplement,
 ];
 export const knowledgeEntries=generatedKnowledge as CapabilityEntry[];
 
@@ -1513,6 +1517,9 @@ const moduleNames:[string,RegExp][]=[
  ['proposals',/\bproposals?\b/],
  ['inventory',/\binventory\b/],
  ['purchasing',/\bpurchasing\b/],
+ ['catalog',/\bcatalog\b/],
+ ['material-usage',/\bmaterial[ -]+usage\b/],
+ ['transmittals',/\btransmittals?\b/],
  ['production',/\b(?:in|from|using) (?:the )?production\b|\bproduction (?:module|workspace|pipeline)\b/],
 ];
 const genericRecordWords=new Set(['job','jobs','project','projects','existing']);

@@ -7,6 +7,7 @@ import {pilotDirectory} from './support/tenbot-ai-pilot.mjs';
 import {answer,resolveInput,cloudflareProvider,groundedProse,requiredInferencePermissions,type InferenceInput,type InferenceProvider} from '../supabase/functions/_shared/tenbot-core';
 import {retrieve,registry,snapshot,conversationGuides,knowledgeEntries,knowledgeSnapshot,hasGuidePermission} from '../supabase/functions/_shared/tenbot-knowledge';
 import {generatedKnowledge} from '../supabase/functions/_shared/tenbot-knowledge-snapshot';
+import {workflowSupplement,workflowSupplementSnapshot,workflowSupplementSources} from '../supabase/functions/_shared/tenbot-workflow-supplement';
 import {handleTenbot as actualHandleTenbot} from '../supabase/functions/_shared/tenbot-handler';
 // These pre-existing unit cases isolate capability/metering behavior. Actual
 // owner history and SQL enforcement are tested by verify-tenbot-privacy.mts.
@@ -50,6 +51,61 @@ for(const source of generatedSources.values()){
  const bytes=execFileSync('git',['show',`${source.revision}:${source.path}`]);
  assert.equal(createHash('sha256').update(bytes).digest('hex'),source.sha256);
 }
+// Selective external-package integration remains pinned and server-owned;
+// broad package permission projections cannot replace action-specific gates.
+assert.equal(workflowSupplementSnapshot.packageSha256,'63c356867c92eaac60256610b90cf177afa77629b595c94099a3b885e62522c4');
+assert.equal(workflowSupplementSnapshot.revision,knowledgeSnapshot.revision);
+assert.equal(workflowSupplement.length,workflowSupplementSnapshot.entryCount);
+assert.equal(workflowSupplementSources.length,workflowSupplementSnapshot.sourceCount);
+assert.equal(new Set(registry.map(source=>source.id)).size,registry.length);
+const reconciliation=JSON.parse(readFileSync('scripts/tenbot-knowledge/external-reconciliation.json','utf8')) as {
+ packageSha256:string;runtimeRevision:string;recordCount:number;
+ records:{id:string;disposition:string;targets:string[];reason:string}[];
+};
+assert.equal(reconciliation.packageSha256,workflowSupplementSnapshot.packageSha256);
+assert.equal(reconciliation.runtimeRevision,knowledgeSnapshot.revision);
+assert.equal(reconciliation.recordCount,96);assert.equal(reconciliation.records.length,96);
+assert.equal(new Set(reconciliation.records.map(record=>record.id)).size,96);
+const allSourceIds=new Set([...registry,...knowledgeEntries].map(source=>source.id));
+for(const record of reconciliation.records){
+ assert(['existing','supplemented','deferred','rejected'].includes(record.disposition),record.id);
+ assert(record.reason.trim());
+ for(const target of record.targets)assert(allSourceIds.has(target),target);
+ if(record.disposition==='supplemented')assert.deepEqual(record.targets,workflowSupplement.filter(source=>source.externalRecordIds.includes(record.id)).map(source=>source.id));
+}
+for(const id of ['tasks-recurrence-unavailable','releases-communications'])assert.equal(reconciliation.records.find(record=>record.id===id)?.disposition,'rejected');
+const supplementalPaths=new Set(workflowSupplementSources.map(source=>source.path));
+for(const source of workflowSupplementSources){
+ assert.equal(source.revision,knowledgeSnapshot.revision);
+ assert.equal(execFileSync('git',['rev-parse',`${source.revision}:${source.path}`],{encoding:'utf8'}).trim(),source.blob);
+ assert.equal(createHash('sha256').update(execFileSync('git',['show',`${source.revision}:${source.path}`])).digest('hex'),source.sha256);
+}
+for(const source of workflowSupplement){
+ assert(source.guidance.length<=1600,source.id);
+ assert(source.externalRecordIds.length>0);
+ for(const path of source.sourceFiles)assert(supplementalPaths.has(path),path);
+ assert.doesNotMatch(source.guidance,/NEXT_PUBLIC_|service_role|Bearer|https?:|\b[a-f0-9]{40,64}\b|\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i);
+ for(const permission of [source.permission,...source.additionalPermissions||[]]){
+  assert(!hasGuidePermission(source,new Set([...all].filter(value=>value!==permission))),`${source.id}: ${permission}`);
+ }
+}
+const supplement=(id:string)=>{const source=workflowSupplement.find(source=>source.id===id);assert(source,id);return source;};
+const withoutSchedule=new Set([...all].filter(permission=>permission!=='scheduleProduction'));
+assert(hasGuidePermission(supplement('workflow-intake-convert'),withoutSchedule),'Plan Later conversion does not require scheduling');
+assert(!supplement('workflow-historical-import').additionalPermissions?.includes('production_blend.manage'));
+assert(supplement('workflow-historical-verify').additionalPermissions?.includes('production_blend.manage'));
+assert(supplement('workflow-po-receivals').additionalPermissions?.includes('adjustInventory'));
+assert.match(supplement('workflow-sample-versions').path,/Formula checkpoints and previews/);
+assert.match(supplement('workflow-intake-bid').guidance,/Save Bid/);
+for(const [question,module] of [
+ ['How do I record a Material Usage report?','material-usage'],
+ ['How do I create a Letter of Transmittal?','transmittals'],
+ ['How do I search the material Catalog?','catalog'],
+] as const){
+ assert(conversationGuides(question).length>0);
+ for(const source of conversationGuides(question))assert(source.modules.includes(module),`${question}: ${source.id}`);
+}
+for(const question of ['How do I export Material Usage to payroll?','How do I train the Catalog?','How do I sync a Transmittal to Salesforce?'])assert.deepEqual(retrieve(question,all),[],question);
 for(const source of knowledgeEntries){
  assert.equal(source.status,'deployed');assert(source.guidance.length<=3000);
  assert.doesNotMatch(source.guidance,/production_rework_cycles|scope_details|original:<job|rework:<|NEXT_PUBLIC_|service_role|Bearer|https?:|\b[a-f0-9]{40,64}\b|\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i);
@@ -77,9 +133,12 @@ for(const [question,id,prose] of [
  ['What happens if the Purchase Order PDF fails after issuing?','knowledge-purchasing','PDF failure does not undo Purchase Order issuance. The issued record keeps its status so generation can be retried.'],
  ['How does purchasing become pending receivals?','knowledge-purchasing','Pending Receivals creation is explicit after the permanent Purchase Order PDF is generated. Incoming material becomes on-hand Inventory only after receiving.'],
 ] as const){
- assert.deepEqual(retrieve(question,all),[]);
+ const supplementalMatch=retrieve(question,all)[0];
+ if(question.includes('pending receivals'))assert.equal(supplementalMatch?.id,'workflow-po-receivals');
+ else assert.equal(supplementalMatch,undefined);
  const fallback=await answer({action:'ask',question},all,null,reserve);
- assert.equal(fallback.mode,'verified');assert.equal(fallback.resolution,'documentation-missing');assert.deepEqual(fallback.sources,[]);
+ if(supplementalMatch){assert.equal(fallback.mode,'guide');assert.equal(fallback.sources[0]?.id,supplementalMatch.id);}
+ else{assert.equal(fallback.mode,'verified');assert.equal(fallback.resolution,'documentation-missing');assert.deepEqual(fallback.sources,[]);}
  assert(conversationGuides(question).some(source=>source.id===id));
  const ai=await answer({action:'ask',question},all,fixture({ids:[id],answer:prose},input=>{
   assert(input.excerpts.some(source=>source.id===id));assert(input.excerpts.length<=4);
@@ -374,6 +433,38 @@ assert(resolveInput({question:'Can I do that before the Job is complete?'},[mult
 const clarification=await answer({action:'ask',question:groupQuestion},all,fixture({ids:[],answer:'Are you starting a new group or trying to add someone to an existing DM?'}),reserve);
 assert.match(clarification.message,/\?$/);
 await assert.rejects(answer({action:'ask',question:groupQuestion},all,fixture({ids:[],answer:'Choose Export payroll and download the invoices.'}),reserve),/verify|ungrounded|wording/i);
+
+// A real Qwen answer inferred feature absence from unrelated Manpower
+// sources. Missing precise coverage must stay unknown, including a bare No.
+const payrollQuestion='Can TenOps automatically file payroll taxes from Manpower Reporting?';
+assert.deepEqual(resolveInput({question:payrollQuestion}).directEntries,[]);
+const payrollSourceIds=['knowledge-manpower','manpower-record-labor'];
+const capturedPayrollError='TenOps does not automatically file payroll taxes from Manpower Reporting. Employees with business-write access can record labor in Manpower Reporting, but payroll tax filing is a separate process outside of this module. No automated tax filing functionality is described in the provided sources.';
+for(const prose of [
+ capturedPayrollError,
+ 'No, that is not supported.',
+ 'There is no automatic payroll tax filing in Manpower Reporting.',
+ 'Automatic payroll tax filing is unavailable in TenOps.',
+ 'TenOps cannot file payroll taxes.',
+ 'I cannot verify that workflow. However, TenOps does not support payroll tax filing.',
+ 'I cannot verify that workflow, so TenOps does not support payroll tax filing.',
+ 'I cannot confirm that workflow and there is no automatic payroll tax filing in TenOps.',
+]){
+ const reply=await answer({action:'ask',question:payrollQuestion},all,fixture({ids:payrollSourceIds,answer:prose}),reserve);
+ assert.equal(reply.mode,'verified',prose);assert.equal(reply.resolution,'documentation-missing');
+ assert.deepEqual(reply.sources,[]);assert.deepEqual(reply.notices,[]);assert.equal(reply.suggestionAllowed,false);
+ assert.match(reply.message,/not have enough verified information/);
+ assert.doesNotMatch(reply.message,/does not automatically file|not supported|outside of this module/);
+}
+const cautiousPayrollProse='I cannot verify automatic payroll tax filing from the supplied sources. Manpower Reporting supports recording labor by worker, task and work date. Please check with Product about payroll tax filing.';
+const cautiousPayroll=await answer({action:'ask',question:payrollQuestion},all,fixture({ids:payrollSourceIds,answer:cautiousPayrollProse}),reserve);
+assert.equal(cautiousPayroll.mode,'ai');assert.equal(cautiousPayroll.message,cautiousPayrollProse);
+assert.equal(cautiousPayroll.resolution,'documentation-missing');assert.equal(cautiousPayroll.suggestionAllowed,false);
+// Authoritative precise negative/partial flows retain their original result.
+const documentedDmNo=await answer({action:'ask',question:'Can I add a third person to a personal DM?'},all,fixture({ids:['dm'],answer:'No, you cannot add a third person to a personal DM. Create a new group instead.'}),reserve);
+assert.equal(documentedDmNo.mode,'ai');assert.equal(documentedDmNo.resolution,'partial');
+const documentedLeadNo=await answer({action:'ask',question:'Can TenOps estimate material lead time?'},all,null,reserve);
+assert.equal(documentedLeadNo.resolution,'partial');assert.equal(documentedLeadNo.sources[0]?.id,'material-lead');
 
 // Unknown native Job sharing must stay unknown, including negative feature
 // claims. TenBot's input restriction is not a ban on authorized Messaging.
