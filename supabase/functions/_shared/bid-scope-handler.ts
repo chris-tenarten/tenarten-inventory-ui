@@ -12,7 +12,8 @@ export async function handleBidScope({user,service,body,headers}: {user:any;serv
    const bytes=await user.storage.from('historical-samples').download(original.data.storage_path);if(bytes.error)throw bytes.error;
    if(bytes.data.size!==Number(original.data.byte_size))throw new Error('Original size differs from recorded evidence');
    const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await bytes.data.arrayBuffer()))).map(n=>n.toString(16).padStart(2,'0')).join('');
-   const result=await service.rpc('persist_historical_sample',{p_actor:actor.data.user.id,p_import_id:body.importId,p_sha256:digest,...body.payload});if(result.error)throw result.error;return reply(result.data);
+   // Only transcription fields are editable; privileged identity/evidence parameters stay server-bound.
+   const result=await service.rpc('persist_historical_sample',{p_actor:actor.data.user.id,p_import_id:original.data.id,p_sha256:digest,p_sample:body.payload?.p_sample,p_rows:body.payload?.p_rows,p_sample_name:body.payload?.p_sample_name});if(result.error)throw result.error;return reply(result.data);
   }
   if(body.action==='scope-assess'){
    const record=await user.from('bid_scope_captures').select('*').eq('id',body.scopeId).single();if(record.error||!record.data)throw new Error('Accepted scope is unavailable');
