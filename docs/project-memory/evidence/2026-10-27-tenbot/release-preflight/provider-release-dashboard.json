@@ -1,0 +1,41 @@
+{
+  "observedAt": "2026-10-27T23:39:44.813Z",
+  "readOnly": true,
+  "inferenceCalls": 0,
+  "account": "1c3296a9dced221746eb605be66df0f3",
+  "method": "Authenticated existing Chrome native UI through CUA",
+  "url": "https://dash.cloudflare.com/1c3296a9dced221746eb605be66df0f3/workers/plans",
+  "workersFreeVerified": true,
+  "evidence": {
+    "pageHeading": "Workers plans",
+    "freeCard": {
+      "heading": "Free",
+      "price": "$0",
+      "button": "Current plan",
+      "buttonDisabled": true
+    },
+    "paidCard": {
+      "heading": "Paid",
+      "price": "$5 / month + usage",
+      "button": "Upgrade"
+    },
+    "workersAiTable": {
+      "free": "10,000 neurons / day",
+      "paid": "$0.011 / thousand neurons"
+    }
+  },
+  "apiSubscriptionRead": {
+    "httpStatus": 403,
+    "scopeMissing": "Billing Read"
+  },
+  "dedicatedProviderCredentialAvailable": false,
+  "credentialSearchBoundary": "Process environment; repository root .env.local key names; five specifically named Cloudflare/Workers AI keychain services. No credentials printed/copied.",
+  "remainingGate": "A dedicated account-scoped Workers AI Read/Edit token must be supplied or provisioned through an authorized private flow. Human Wrangler OAuth must stay local-only.",
+  "actions": {
+    "upgrade": false,
+    "purchase": false,
+    "tokenCreate": false,
+    "settingsChange": false,
+    "aiCall": false
+  }
+}

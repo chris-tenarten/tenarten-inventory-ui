@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-10-27T23:39:00.280Z",
+  "readOnly": true,
+  "inferenceCalls": 0,
+  "account": "1c3296a9dced221746eb605be66df0f3",
+  "oauth": {
+    "expiration": "2026-10-28T00:25:21.168Z",
+    "scopes": [
+      "user:read",
+      "offline_access",
+      "account:read",
+      "workers:write",
+      "workers_kv:write",
+      "workers_routes:write",
+      "workers_scripts:write",
+      "workers_tail:read",
+      "d1:write",
+      "pages:write",
+      "zone:read",
+      "ssl_certs:write",
+      "ai:write",
+      "ai-search:write",
+      "ai-search:run",
+      "websearch.run",
+      "agent-memory:write",
+      "queues:write",
+      "pipelines:write",
+      "secrets_store:write",
+      "artifacts:write",
+      "flagship:write",
+      "containers:write",
+      "cloudchamber:write",
+      "connectivity:admin",
+      "email_routing:write",
+      "email_sending:write",
+      "browser:write",
+      "challenge-widgets.write"
+    ],
+    "billingReadScopePresent": false
+  },
+  "subscriptions": {
+    "httpStatus": 403,
+    "success": false,
+    "currentWorkersFreeVerified": false,
+    "errorCodes": [
+      10000
+    ]
+  },
+  "dedicatedProviderCredential": {
+    "environmentNames": [],
+    "configuredFiles": [
+      {
+        "path": ".env.local",
+        "names": []
+      }
+    ],
+    "namedKeychainEntries": [
+      {
+        "service": "TENBOT_CF_AI_TOKEN",
+        "present": false
+      },
+      {
+        "service": "Cloudflare Workers AI",
+        "present": false
+      },
+      {
+        "service": "CLOUDFLARE_API_TOKEN",
+        "present": false
+      },
+      {
+        "service": "Cloudflare API Token",
+        "present": false
+      },
+      {
+        "service": "cloudflare",
+        "present": false
+      }
+    ]
+  }
+}

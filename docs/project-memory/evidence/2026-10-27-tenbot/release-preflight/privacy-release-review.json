@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "status": "RELEASE_STOPPED_BEFORE_HOSTED_MUTATION",
+  "acceptedCandidate": "4c2e1fa7a470ef2a7749ba298be5d87645010000",
+  "independentConfirmedBlocker": {
+    "kind": "hosted-runtime-compatibility",
+    "finding": "Automatic direct guidance fallback exists only in the localhost pilot adapter. Hosted inference quota, provider and grounding errors return an HTTP error instead of the accepted direct guidance response.",
+    "sourceProof": [
+      {"path":"supabase/functions/_shared/tenbot-handler.ts","detail":"call maps reserve denial to 429; answer/provider failures remain 502/503. Catch reconciles failed reservation and rethrows."},
+      {"path":"supabase/functions/tenbot/index.ts","lines":"32-33","detail":"Returns handleTenbot directly, then catch returns error JSON and the same TenbotError HTTP status. It never repeats null-provider guidance."},
+      {"path":"scripts/start-tenbot-review.mts","lines":"44-49","detail":"Only the pilot adapter catches ask errors 429/502/503 and invokes authorized handleTenbot again with provider null, setting fallback:true."},
+      {"path":"src/modules/tenbot/TenbotWorkspace.tsx","detail":"invoke rejects HTTP/function errors; send sets an error turn and returns false. There is no client-side direct guide recovery."}
+    ],
+    "existingTestEvidence": [
+      {"path":"scripts/verify-tenbot.mts","lines":"573-585","detail":"Core actual-handler metering fixture expects provider-failed and invalid-output invocations to reject; it does not test a hosted fallback wrapper."},
+      {"path":"scripts/verify-tenbot.mts","lines":"609-616","detail":"HTTP guide fallback assertion targets localhost:55593, the pilot adapter, rather than the hosted Edge entry."}
+    ],
+    "boundary": "AI-disabled provider-null direct guidance works. The compatibility failure occurs with configured/active inference and quota/provider/guard failure.",
+    "reproductionBasis": "Independent source call-chain inspection plus existing passing core rejection and localhost fallback fixtures; no new test framework or hosted invocation."
+  },
+  "hostedReadOnlyPreflight": {
+    "receipt": "/private/tmp/tenops-tenbot-review/release/privacy-preflight.json",
+    "migrations": "Four exact approved bytes match 4c2e1fa in order 20261027120000, 20261027130000, 20261027140000, 20261027150000",
+    "ledgerTablesFunctions": "All four absent; no partial TenBot objects",
+    "prerequisites": "Passed exact predecessor hashes/owner/security-definer/search_path/authenticated grant comparison, canonical app_users column/unique key metadata, auth.uid/gen_random_uuid/role/schema-create prerequisites",
+    "functionAndSecrets": "TenBot function and all five TenBot configuration secret names absent",
+    "recordReads": "No private/business/employee/message/task content read"
+  },
+  "loggingObserved": {
+    "postgres": {
+      "log_statement": "ddl",
+      "log_duration": "off",
+      "log_min_duration_statement": "-1",
+      "log_min_duration_sample": "-1",
+      "log_parameter_max_length_on_error": "0",
+      "pgaudit.log": "none",
+      "pgaudit.log_parameter": "off",
+      "auto_explain.log_min_duration": "10000 ms",
+      "auto_explain.log_parameter_max_length": "-1",
+      "auto_explain.sample_rate": "1",
+      "auto_explain.log_nested_statements": "off"
+    },
+    "interpretation": "Ordinary statement/error parameter capture is limited by observed settings, but the active ten-second slow-query logger retains an unrestricted parameter-length setting. A narrow synthetic transport/log check remains necessary before claiming prompt/response absence from all hosted diagnostics. No actual private-content log leak was observed or queried.",
+    "postgrest": "Initial metadata request used config/postgrest and returned 404; actual PostgREST logging configuration is not verified. Correct documented endpoint /postgrest was identified but not queried because release stop arrived.",
+    "edge": "Not deployed. Application source has generic caught errors and no prompt/response console logging. Hosted invocation capture/retention is not certified.",
+    "noLogContentReads": true,
+    "noLoggingConfigurationMutation": true
+  },
+  "laterSafeHostedProbePlan": {
+    "notExecuted": true,
+    "authFixtures": "Inspected reusable QA helpers explicitly target local Supabase; no safe existing hosted QA credential pair was identified. Do not create an employee, reset a password, mint impersonation credentials, or enumerate private account content to fill that gap.",
+    "safeActualAuth": "Use an already authorized current hosted QA/user session and verify auth.getUser without printing token/identity. A second existing authorized QA session is required to claim actual cross-account HTTP isolation. SQL SET ROLE/JWT-sub probes alone are not full Auth transport evidence.",
+    "afterSeparateContinuation": [
+      "Keep AI disabled initially. Check missing/invalid JWT denial, exact configured Origin/CORS, POST-only, no-store and streamed body bounds with synthetic payloads.",
+      "Using the selected existing session, ask one synthetic documented question, capture only a synthetic TenBot conversation identifier/result summary, and clear that owned conversation. Do not load ordinary Messaging or Tasks.",
+      "With a second existing authorized QA session, attempt only that synthetic foreign conversation identifier; expect unavailable/denial, no inference and no source leak. Never probe an actual employee conversation identifier.",
+      "Replay caller-forged history, direct history-table access and append RPC denial using only synthetic markers. Unconfirmed/invalid feedback must produce no new feedback row; authorized review should never fetch unrelated existing feedback content.",
+      "Root may prepare rollback-only SQL using known safe existing QA identities and synthetic TenBot rows to verify grants, expiry, Clear, stale versions and aggregate-only usage. Roll back all synthetic writes; do not alter ordinary users/grants/business rows.",
+      "Check diagnostic capture using only a unique synthetic marker and filtered aggregate booleans/counts for the exact invocation/time; do not retrieve broad log messages, SQL parameters, employee content or credentials.",
+      "After the separately approved free-inference configuration and fallback correction, test one bounded synthetic success and warranted controlled failure without resetting/refunding the usage ledger."
+    ],
+    "reuse": [".tmp-messaging-groups-release/lib.mjs read-only query/management transport","scripts/verify-tenbot-privacy.mts existing thirteen local database/handler cases","scripts/support/messaging-groups-integration.mjs as local actual Auth pattern only"]
+  },
+  "actions": {"hostedMutations":0,"migrationApplications":0,"sourceEdits":0,"secretChanges":0,"pushes":0,"deployments":0,"newInferenceCalls":0,"newEmployeeAccounts":0},
+  "stop": "Further hosted checks and source edits stopped at root instruction after independent fallback confirmation."
+}

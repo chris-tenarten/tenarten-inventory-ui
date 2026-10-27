@@ -1,0 +1,564 @@
+{
+  "passed": true,
+  "readOnly": true,
+  "base": "178587454fb87aec8b5a76730714ec1b2973ac69",
+  "candidate": "4c2e1fa7a470ef2a7749ba298be5d87645010000",
+  "closureFiles": 43,
+  "localImportsVerified": 83,
+  "unresolved": [],
+  "files": [
+    "src/app/tenbot/page.tsx",
+    "src/components/GlobalMessaging.tsx",
+    "src/lib/auth.tsx",
+    "src/lib/coalesced-read.ts",
+    "src/lib/complete-rows.ts",
+    "src/lib/dev-branding.mjs",
+    "src/lib/drafts/textDraft.ts",
+    "src/lib/drafts/useTextDraft.ts",
+    "src/lib/rbac.ts",
+    "src/lib/supabase.ts",
+    "src/lib/web-push.ts",
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/my-work/inbox.ts",
+    "src/modules/my-work/messaging/AttachmentImageViewer.tsx",
+    "src/modules/my-work/messaging/InlinePreview.tsx",
+    "src/modules/my-work/messaging/TransferPanel.tsx",
+    "src/modules/my-work/messaging/awareness.ts",
+    "src/modules/my-work/messaging/client.ts",
+    "src/modules/my-work/messaging/files.ts",
+    "src/modules/my-work/messaging/intentPrefetch.ts",
+    "src/modules/my-work/messaging/preview.ts",
+    "src/modules/my-work/messaging/queue.ts",
+    "src/modules/my-work/messaging/recentThreads.ts",
+    "src/modules/my-work/messaging/transfer.ts",
+    "src/modules/my-work/messaging/useAttachmentQueue.ts",
+    "src/modules/my-work/messaging/useConversation.ts",
+    "src/modules/my-work/types.ts",
+    "src/modules/production/contacts/model.ts",
+    "src/modules/production/job-options.ts",
+    "src/modules/production/job-reference.ts",
+    "src/modules/production/status-visuals.ts",
+    "src/modules/production/types.ts",
+    "src/modules/tenbot/TenbotAvatar.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/events.ts",
+    "supabase/functions/_shared/tenbot-core.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-knowledge.ts",
+    "supabase/functions/_shared/tenbot-models.ts",
+    "supabase/functions/_shared/tenbot-privacy.ts",
+    "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "imports": [
+    {
+      "from": "supabase/functions/_shared/tenbot-handler.ts",
+      "specifier": "./tenbot-core.ts",
+      "resolved": "supabase/functions/_shared/tenbot-core.ts",
+      "blob": "b17a89e8cea0a95c11f820cbf1cd278fc1caa67f"
+    },
+    {
+      "from": "supabase/functions/_shared/tenbot-handler.ts",
+      "specifier": "./tenbot-privacy.ts",
+      "resolved": "supabase/functions/_shared/tenbot-privacy.ts",
+      "blob": "bdd4ec1ddeb90994f5ad6a24cf09c1713c519066"
+    },
+    {
+      "from": "supabase/functions/_shared/tenbot-core.ts",
+      "specifier": "./tenbot-knowledge.ts",
+      "resolved": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "blob": "60ff64570c6e2ec0a1b333b0467fce64266266fc"
+    },
+    {
+      "from": "supabase/functions/_shared/tenbot-core.ts",
+      "specifier": "./tenbot-privacy.ts",
+      "resolved": "supabase/functions/_shared/tenbot-privacy.ts",
+      "blob": "bdd4ec1ddeb90994f5ad6a24cf09c1713c519066"
+    },
+    {
+      "from": "supabase/functions/_shared/tenbot-core.ts",
+      "specifier": "./tenbot-models.ts",
+      "resolved": "supabase/functions/_shared/tenbot-models.ts",
+      "blob": "286c1971e1c7f527c0cdf398c55eff628aeee8f9"
+    },
+    {
+      "from": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "specifier": "./tenbot-knowledge-snapshot.ts",
+      "resolved": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "blob": "208dcdf72bebb34c780418ac94d6c0e1db12b185"
+    },
+    {
+      "from": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "specifier": "./tenbot-workflow-supplement.ts",
+      "resolved": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "blob": "66c8b1f7186923b9ccf5a973b5ee03a2bd323f60"
+    },
+    {
+      "from": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "specifier": "./tenbot-knowledge.ts",
+      "resolved": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "blob": "60ff64570c6e2ec0a1b333b0467fce64266266fc"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/lib/auth",
+      "resolved": "src/lib/auth.tsx",
+      "blob": "e0348f96373847dfb7a7038764da27bf896b50e9"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/lib/supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/modules/my-work/inbox",
+      "resolved": "src/modules/my-work/inbox.ts",
+      "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/modules/my-work/messaging/awareness",
+      "resolved": "src/modules/my-work/messaging/awareness.ts",
+      "blob": "a31170dc31ef62618ae75e7254695a7583c9e59a"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/lib/coalesced-read",
+      "resolved": "src/lib/coalesced-read.ts",
+      "blob": "6d3b3410955423271d925ecdd28f7d0d6e38eb01"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/modules/my-work/types",
+      "resolved": "src/modules/my-work/types.ts",
+      "blob": "06d60fa2a40f2f97cb43d54d4c4544e3954ad517"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/modules/tenbot/TenbotAvatar",
+      "resolved": "src/modules/tenbot/TenbotAvatar.tsx",
+      "blob": "e32a0b77d9dc06001619c6cd79c220da6c523a00"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/modules/tenbot/events",
+      "resolved": "src/modules/tenbot/events.ts",
+      "blob": "f3bdcaaeafecc513dda10cd41f9d7e924569645e"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/modules/tenbot/tenbot.css",
+      "resolved": "src/modules/tenbot/tenbot.css",
+      "blob": "a25764d66723d0f2a55c490807e0da47bae0b8be"
+    },
+    {
+      "from": "src/components/GlobalMessaging.tsx",
+      "specifier": "@/modules/my-work/InboxDialog",
+      "resolved": "src/modules/my-work/InboxDialog.tsx",
+      "blob": "ec56f09b87d4b7dbeb2e47265a50858cad107aad"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./messaging/AttachmentImageViewer",
+      "resolved": "src/modules/my-work/messaging/AttachmentImageViewer.tsx",
+      "blob": "c0cf0fc219969ab4b2ebc09c890c9ae14b84fe21"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "@/lib/auth",
+      "resolved": "src/lib/auth.tsx",
+      "blob": "e0348f96373847dfb7a7038764da27bf896b50e9"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "@/lib/supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "@/modules/production/job-options",
+      "resolved": "src/modules/production/job-options.ts",
+      "blob": "fb3f83fc1d77132535270deea5b2c1d34f17929f"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./inbox",
+      "resolved": "src/modules/my-work/inbox.ts",
+      "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./types",
+      "resolved": "src/modules/my-work/types.ts",
+      "blob": "06d60fa2a40f2f97cb43d54d4c4544e3954ad517"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./messaging/files",
+      "resolved": "src/modules/my-work/messaging/files.ts",
+      "blob": "ceea85003c0b5df14ec173f7dfa0a2a54945858a"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./messaging/client",
+      "resolved": "src/modules/my-work/messaging/client.ts",
+      "blob": "80f855337b73fec8251f99e1f8598439606a789e"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./messaging/useAttachmentQueue",
+      "resolved": "src/modules/my-work/messaging/useAttachmentQueue.ts",
+      "blob": "3f1dc898072a8c4b6d699105612fde7b556bc7f2"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./messaging/InlinePreview",
+      "resolved": "src/modules/my-work/messaging/InlinePreview.tsx",
+      "blob": "a732cfb12f36d217a6407d7ed31ca723675ad9ef"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./messaging/useConversation",
+      "resolved": "src/modules/my-work/messaging/useConversation.ts",
+      "blob": "230abca45447ba34fb3a1a15894b467e918c70a7"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./messaging/TransferPanel",
+      "resolved": "src/modules/my-work/messaging/TransferPanel.tsx",
+      "blob": "b6d3a50a74a0238ed700a133157b5cdacc6d65d3"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "./messaging/awareness",
+      "resolved": "src/modules/my-work/messaging/awareness.ts",
+      "blob": "a31170dc31ef62618ae75e7254695a7583c9e59a"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "@/lib/coalesced-read",
+      "resolved": "src/lib/coalesced-read.ts",
+      "blob": "6d3b3410955423271d925ecdd28f7d0d6e38eb01"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "@/lib/drafts/useTextDraft",
+      "resolved": "src/lib/drafts/useTextDraft.ts",
+      "blob": "72eb08bad9e5f58b50de0ddfd128051bccf8b48f"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "@/modules/tenbot/TenbotAvatar",
+      "resolved": "src/modules/tenbot/TenbotAvatar.tsx",
+      "blob": "e32a0b77d9dc06001619c6cd79c220da6c523a00"
+    },
+    {
+      "from": "src/modules/my-work/InboxDialog.tsx",
+      "specifier": "@/modules/tenbot/TenbotWorkspace",
+      "resolved": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "blob": "688a13f05135f0ed77d281e96d134ab80ca4748c"
+    },
+    {
+      "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "specifier": "@/lib/auth",
+      "resolved": "src/lib/auth.tsx",
+      "blob": "e0348f96373847dfb7a7038764da27bf896b50e9"
+    },
+    {
+      "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "specifier": "@/lib/supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/lib/auth.tsx",
+      "specifier": "@/lib/supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/lib/auth.tsx",
+      "specifier": "@/lib/web-push",
+      "resolved": "src/lib/web-push.ts",
+      "blob": "1836c05408088a9778c383c5a0653bf765741ac5"
+    },
+    {
+      "from": "src/lib/auth.tsx",
+      "specifier": "@/lib/dev-branding.mjs",
+      "resolved": "src/lib/dev-branding.mjs",
+      "blob": "1841543f2190e39ff79b28a2726b7afc8ee47ccc"
+    },
+    {
+      "from": "src/lib/auth.tsx",
+      "specifier": "@/lib/rbac",
+      "resolved": "src/lib/rbac.ts",
+      "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c"
+    },
+    {
+      "from": "src/lib/web-push.ts",
+      "specifier": "./supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/lib/drafts/useTextDraft.ts",
+      "specifier": "./textDraft",
+      "resolved": "src/lib/drafts/textDraft.ts",
+      "blob": "e0cf9938a40b45cd52fc1c7d4725ba3c1157959b"
+    },
+    {
+      "from": "src/modules/my-work/messaging/awareness.ts",
+      "specifier": "@/lib/coalesced-read",
+      "resolved": "src/lib/coalesced-read.ts",
+      "blob": "6d3b3410955423271d925ecdd28f7d0d6e38eb01"
+    },
+    {
+      "from": "src/modules/my-work/messaging/awareness.ts",
+      "specifier": "../inbox",
+      "resolved": "src/modules/my-work/inbox.ts",
+      "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+    },
+    {
+      "from": "src/modules/my-work/inbox.ts",
+      "specifier": "./messaging/preview",
+      "resolved": "src/modules/my-work/messaging/preview.ts",
+      "blob": "72cfe2248f4e3378c9b3b4492125d906bdf2b69f"
+    },
+    {
+      "from": "src/modules/my-work/inbox.ts",
+      "specifier": "./messaging/files",
+      "resolved": "src/modules/my-work/messaging/files.ts",
+      "blob": "ceea85003c0b5df14ec173f7dfa0a2a54945858a"
+    },
+    {
+      "from": "src/modules/my-work/inbox.ts",
+      "specifier": "@/lib/supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/modules/my-work/inbox.ts",
+      "specifier": "./types",
+      "resolved": "src/modules/my-work/types.ts",
+      "blob": "06d60fa2a40f2f97cb43d54d4c4544e3954ad517"
+    },
+    {
+      "from": "src/modules/my-work/messaging/preview.ts",
+      "specifier": "./files",
+      "resolved": "src/modules/my-work/messaging/files.ts",
+      "blob": "ceea85003c0b5df14ec173f7dfa0a2a54945858a"
+    },
+    {
+      "from": "src/modules/my-work/messaging/TransferPanel.tsx",
+      "specifier": "@/lib/auth",
+      "resolved": "src/lib/auth.tsx",
+      "blob": "e0348f96373847dfb7a7038764da27bf896b50e9"
+    },
+    {
+      "from": "src/modules/my-work/messaging/TransferPanel.tsx",
+      "specifier": "./files",
+      "resolved": "src/modules/my-work/messaging/files.ts",
+      "blob": "ceea85003c0b5df14ec173f7dfa0a2a54945858a"
+    },
+    {
+      "from": "src/modules/my-work/messaging/TransferPanel.tsx",
+      "specifier": "./client",
+      "resolved": "src/modules/my-work/messaging/client.ts",
+      "blob": "80f855337b73fec8251f99e1f8598439606a789e"
+    },
+    {
+      "from": "src/modules/my-work/messaging/TransferPanel.tsx",
+      "specifier": "./transfer",
+      "resolved": "src/modules/my-work/messaging/transfer.ts",
+      "blob": "009f5be8a47c3270b55cdc865a6ed54e7a89b749"
+    },
+    {
+      "from": "src/modules/my-work/messaging/transfer.ts",
+      "specifier": "./files",
+      "resolved": "src/modules/my-work/messaging/files.ts",
+      "blob": "ceea85003c0b5df14ec173f7dfa0a2a54945858a"
+    },
+    {
+      "from": "src/modules/my-work/messaging/client.ts",
+      "specifier": "@/lib/supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/modules/my-work/messaging/client.ts",
+      "specifier": "./preview",
+      "resolved": "src/modules/my-work/messaging/preview.ts",
+      "blob": "72cfe2248f4e3378c9b3b4492125d906bdf2b69f"
+    },
+    {
+      "from": "src/modules/my-work/messaging/client.ts",
+      "specifier": "./files",
+      "resolved": "src/modules/my-work/messaging/files.ts",
+      "blob": "ceea85003c0b5df14ec173f7dfa0a2a54945858a"
+    },
+    {
+      "from": "src/modules/my-work/messaging/client.ts",
+      "specifier": "./transfer",
+      "resolved": "src/modules/my-work/messaging/transfer.ts",
+      "blob": "009f5be8a47c3270b55cdc865a6ed54e7a89b749"
+    },
+    {
+      "from": "src/modules/my-work/messaging/useConversation.ts",
+      "specifier": "@/lib/supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/modules/my-work/messaging/useConversation.ts",
+      "specifier": "../inbox",
+      "resolved": "src/modules/my-work/inbox.ts",
+      "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+    },
+    {
+      "from": "src/modules/my-work/messaging/useConversation.ts",
+      "specifier": "./recentThreads",
+      "resolved": "src/modules/my-work/messaging/recentThreads.ts",
+      "blob": "d7e234a2ab93f7fb70b352e2143cb939c0f3d2cc"
+    },
+    {
+      "from": "src/modules/my-work/messaging/useConversation.ts",
+      "specifier": "./intentPrefetch",
+      "resolved": "src/modules/my-work/messaging/intentPrefetch.ts",
+      "blob": "df4b4182926ee946be6785418f007da411bae6c8"
+    },
+    {
+      "from": "src/modules/my-work/messaging/intentPrefetch.ts",
+      "specifier": "../inbox",
+      "resolved": "src/modules/my-work/inbox.ts",
+      "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+    },
+    {
+      "from": "src/modules/my-work/messaging/intentPrefetch.ts",
+      "specifier": "./recentThreads",
+      "resolved": "src/modules/my-work/messaging/recentThreads.ts",
+      "blob": "d7e234a2ab93f7fb70b352e2143cb939c0f3d2cc"
+    },
+    {
+      "from": "src/modules/my-work/messaging/recentThreads.ts",
+      "specifier": "../inbox",
+      "resolved": "src/modules/my-work/inbox.ts",
+      "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+    },
+    {
+      "from": "src/modules/my-work/messaging/InlinePreview.tsx",
+      "specifier": "@/lib/supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/modules/my-work/messaging/InlinePreview.tsx",
+      "specifier": "./files",
+      "resolved": "src/modules/my-work/messaging/files.ts",
+      "blob": "ceea85003c0b5df14ec173f7dfa0a2a54945858a"
+    },
+    {
+      "from": "src/modules/my-work/messaging/InlinePreview.tsx",
+      "specifier": "./preview",
+      "resolved": "src/modules/my-work/messaging/preview.ts",
+      "blob": "72cfe2248f4e3378c9b3b4492125d906bdf2b69f"
+    },
+    {
+      "from": "src/modules/my-work/messaging/useAttachmentQueue.ts",
+      "specifier": "./queue",
+      "resolved": "src/modules/my-work/messaging/queue.ts",
+      "blob": "e196cb02760795a949890889f55b418265522858"
+    },
+    {
+      "from": "src/modules/my-work/messaging/queue.ts",
+      "specifier": "./files",
+      "resolved": "src/modules/my-work/messaging/files.ts",
+      "blob": "ceea85003c0b5df14ec173f7dfa0a2a54945858a"
+    },
+    {
+      "from": "src/modules/production/job-options.ts",
+      "specifier": "@/lib/complete-rows",
+      "resolved": "src/lib/complete-rows.ts",
+      "blob": "78a65bccc4f39ba80b52eea5fedd5f2d1cf627a1"
+    },
+    {
+      "from": "src/modules/production/job-options.ts",
+      "specifier": "../../lib/supabase",
+      "resolved": "src/lib/supabase.ts",
+      "blob": "3b071113a689e254077ef3a662873b8a7a3febd2"
+    },
+    {
+      "from": "src/modules/production/job-options.ts",
+      "specifier": "./job-reference",
+      "resolved": "src/modules/production/job-reference.ts",
+      "blob": "8919760d2ac53a564b2d3bbc1d0894a418193c56"
+    },
+    {
+      "from": "src/modules/production/job-options.ts",
+      "specifier": "./status-visuals",
+      "resolved": "src/modules/production/status-visuals.ts",
+      "blob": "b973ac7a60b3a2ac6a2d22991691894cd2c8925f"
+    },
+    {
+      "from": "src/modules/production/job-options.ts",
+      "specifier": "./types",
+      "resolved": "src/modules/production/types.ts",
+      "blob": "80503354361f61c32de27789b96659b91d4bc4bd"
+    },
+    {
+      "from": "src/modules/production/types.ts",
+      "specifier": "./contacts/model",
+      "resolved": "src/modules/production/contacts/model.ts",
+      "blob": "1506574656114dcf5b30bf6a68d5edeb1eba9c38"
+    },
+    {
+      "from": "src/modules/production/status-visuals.ts",
+      "specifier": "./types",
+      "resolved": "src/modules/production/types.ts",
+      "blob": "80503354361f61c32de27789b96659b91d4bc4bd"
+    },
+    {
+      "from": "src/modules/my-work/messaging/AttachmentImageViewer.tsx",
+      "specifier": "../inbox",
+      "resolved": "src/modules/my-work/inbox.ts",
+      "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+    },
+    {
+      "from": "supabase/functions/tenbot/index.ts",
+      "specifier": "../_shared/tenbot-handler.ts",
+      "resolved": "supabase/functions/_shared/tenbot-handler.ts",
+      "blob": "79e8ffd5aaef6a2b7c8cc6cbe21650d5345aaae8"
+    },
+    {
+      "from": "supabase/functions/tenbot/index.ts",
+      "specifier": "../_shared/tenbot-core.ts",
+      "resolved": "supabase/functions/_shared/tenbot-core.ts",
+      "blob": "b17a89e8cea0a95c11f820cbf1cd278fc1caa67f"
+    },
+    {
+      "from": "supabase/functions/tenbot/index.ts",
+      "specifier": "../_shared/tenbot-models.ts",
+      "resolved": "supabase/functions/_shared/tenbot-models.ts",
+      "blob": "286c1971e1c7f527c0cdf398c55eff628aeee8f9"
+    },
+    {
+      "from": "src/app/tenbot/page.tsx",
+      "specifier": "@/modules/tenbot/events",
+      "resolved": "src/modules/tenbot/events.ts",
+      "blob": "f3bdcaaeafecc513dda10cd41f9d7e924569645e"
+    }
+  ],
+  "edgeFiles": [
+    "supabase/functions/_shared/tenbot-core.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-knowledge.ts",
+    "supabase/functions/_shared/tenbot-models.ts",
+    "supabase/functions/_shared/tenbot-privacy.ts",
+    "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+    "supabase/functions/tenbot/index.ts"
+  ]
+}
