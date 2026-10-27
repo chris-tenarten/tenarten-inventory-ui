@@ -31,6 +31,8 @@ const workspace = panel.getByRole('region', {name: 'TenBot workspace', exact: tr
 const input = workspace.getByLabel('Your question', {exact: true});
 const conversation = workspace.getByRole('log', {name: 'TenBot conversation', exact: true});
 const checked = [];
+const metadataOnly = process.argv.includes('--metadata-only');
+const answerPayloads = [];
 
 async function openAssistant() {
   // Only the launcher is visible while the workspace is minimized.
@@ -42,10 +44,12 @@ async function openAssistant() {
 async function ask(question, module) {
   await input.fill(question);
   const before = asks.length;
+  const response = page.waitForResponse(r => r.url() === endpoint && r.request().method() === 'POST');
   await workspace.getByRole('button', {name: 'Ask TenBot', exact: true}).click();
+  answerPayloads.push(await (await response).json());
   await expect(conversation.getByText(question, {exact: true})).toBeVisible();
   await expect(workspace.getByRole('button', {name: 'Working…', exact: true})).toHaveCount(0);
-  await expect(conversation.getByText(/Deployed knowledge:/).last()).toBeVisible();
+  await expect(conversation.getByText('Source: TenOps Guide', {exact: true}).last()).toBeVisible();
   assert.equal(asks.length, before + 1);
   const request = asks.at(-1);
   assert.equal(request.context[0], `Current module: ${module}`);
@@ -73,15 +77,41 @@ try {
   await ask('How do I create a group conversation?', 'My Work');
   await expect(conversation.getByText(/Choose New group, enter a group name/)).toBeVisible();
   await expect(conversation.getByRole('link', {name: 'Open My Work'})).toHaveAttribute('href', '/my-work');
-  await expect(conversation.getByText(/not an AI-generated answer/)).toBeVisible();
+  await expect(conversation.getByText('Here’s what I found in the TenOps Guide.', {exact: true})).toBeVisible();
   await conversation.getByText('How do I create a group conversation?', {exact: true}).scrollIntoViewIfNeeded();
   await page.screenshot({path: `${output}/desktop-floating-guide.png`});
   checked.push('persistent launcher on My Work', 'nonmodal desktop panel containment', 'guide provenance and released workflow', 'allowlisted module context without query or record identifier');
 
+  if (metadataOnly) {
+    const assertCleanChat = async () => {
+      const text = await conversation.innerText();
+      assert(!/Deployed knowledge|AI-selected guidance|Direct guide search|capability snapshot|inference|\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b/i.test(text), 'Employee chat must omit technical metadata');
+      for (const payload of answerPayloads) {
+        assert(payload.snapshot.revision && payload.snapshot.verifiedAt, 'Internal provenance stays intact');
+        assert(!text.includes(payload.snapshot.revision), 'Revision must not appear in employee chat');
+        for (const source of payload.sources) assert(!text.includes(source.source), 'Internal verification source titles stay internal');
+      }
+    };
+    await assertCleanChat();
+    await page.screenshot({path: `${output}/metadata-desktop.png`});
+    await ask('Can I set a recurring task?', 'My Work');
+    await expect(conversation.getByText(/cannot verify recurring tasks/)).toBeVisible();
+    await assertCleanChat();
+    await page.setViewportSize({width: 390, height: 844});
+    await ask('How do I enable notifications on my phone?', 'My Work');
+    await expect(conversation.getByRole('link', {name: 'Open Settings'})).toHaveAttribute('href', '/settings');
+    await assertCleanChat();
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    await conversation.locator('article').last().scrollIntoViewIfNeeded();
+    await page.screenshot({path: `${output}/metadata-mobile.png`});
+    assert.deepEqual(errors, []);
+    writeFileSync(`${output}/metadata-results.json`, JSON.stringify({passed: true, origin, errors, checked: ['simple TenOps Guide attribution','no visible revisions, verification dates or technical labels','internal response provenance retained','unknown capability wording preserved','desktop and mobile rendering','module link preserved'], networkOrigins: [...new Set(requests)]}, null, 2));
+    console.log('TenBot employee metadata presentation passed on desktop/mobile.');
+  } else {
   await ask('Can I add someone to an existing personal DM?', 'My Work');
   await expect(conversation.getByText(/cannot add a third person/)).toBeVisible();
   await ask('Can I estimate material lead times from a blend sheet?', 'My Work');
-  await expect(conversation.getByText('Local · unreleased', {exact: true})).toBeVisible();
+  await expect(conversation.getByText('Unreleased', {exact: true})).toBeVisible();
   await ask('How do I enable notifications on my phone?', 'My Work');
   await expect(conversation.getByText(/Add to Home Screen/)).toBeVisible();
   await ask('Can I set a recurring task?', 'My Work');
@@ -234,6 +264,7 @@ try {
   assert.deepEqual(errors, []);
   writeFileSync(`${output}/browser-results.json`, JSON.stringify({passed: true, origin, errors, networkOrigins: [...new Set(requests)], checked}, null, 2));
   console.log('TenBot floating desktop/mobile browser workflows passed at exact localhost:3000.');
+  }
 } catch (error) {
   await page.screenshot({path: `${output}/failure.png`, fullPage: true}).catch(() => {});
   writeFileSync(`${output}/failure.txt`, `${await page.locator('body').innerText()}\n${error.stack}`);

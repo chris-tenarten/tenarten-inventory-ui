@@ -102,21 +102,20 @@ function Workspace({reviewAllowed,identity,currentModule,visible}:{reviewAllowed
   {notice?<p role="status" className="shrink-0 bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
   {tab==='chat'?<>
    <div ref={scroll} data-tenbot-scroll className="tenbot-scroll relative flex-1 space-y-3 p-3">
-    <p className="text-xs text-slate-500">{process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL?'Guide search only · AI is not activated in this review.':'Responses identify whether AI inference was used.'} Please keep private business details out of questions.</p>
+    <p className="text-xs text-slate-500">{process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL?'AI is not connected in this local review.':'Ask about TenOps workflows and capabilities.'} Please keep private business details out of questions.</p>
     {!messages.length?<><p className="text-sm text-slate-600">A little guidance while you work. Ask how something works or describe a capability you need.</p><div className="flex flex-col gap-2">{currentModule.examples.map(q=><button type="button" key={q} disabled={busy} onClick={()=>setQuestion(q)} className="min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-xs text-slate-700">{q}</button>)}</div></>:null}
     <div role="log" aria-label="TenBot conversation" aria-live="polite" className="space-y-4">
      {messages.map((m,i)=><article key={i} className="space-y-2">
       <p className="ml-6 whitespace-pre-wrap break-words rounded-lg bg-slate-800 px-3 py-2 text-sm text-white">{m.question}</p>
       <div className="space-y-3 rounded-lg border bg-white p-3 text-sm">
-       <p>{m.answer.message}</p>
+       <p>{m.answer.mode==='guide'?"Here’s what I found in the TenOps Guide.":m.answer.message}</p>
        {!m.answer.sources.length?<p>I cannot verify that workflow for your account. You can draft a suggestion below.</p>:null}
        {m.answer.sources.map(s=><div key={s.id} className="border-t pt-2">
-        <strong>{s.title}</strong><span className="ml-2 rounded bg-slate-100 px-1 text-xs">{s.status==='deployed'?'Released · permission checked':s.status==='local'?'Local · unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span>
-        <p className="mt-2 whitespace-pre-wrap">{s.guidance}</p>{s.path?<p className="mt-2 font-medium">{s.path}</p>:null}
+        <strong>{s.title}</strong><span className="ml-2 rounded bg-slate-100 px-1 text-xs">{s.status==='deployed'?'Available':s.status==='local'?'Unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span>
+        <p className="mt-2 whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p>{s.path?<p className="mt-2 font-medium">{s.path}</p>:null}
         {s.route?<Link className="inline-block min-h-11 py-3 font-semibold text-blue-800 underline" href={s.route}>Open {s.route==='/settings'?'Settings':'My Work'}</Link>:null}
-        <p className="text-xs text-slate-500">Source: {s.source}</p>
        </div>)}
-       <p className="text-xs text-slate-500">Deployed knowledge: {m.answer.snapshot.revision} · checked {m.answer.snapshot.verifiedAt} · {m.answer.mode==='ai'?'AI-selected guidance':'Direct guide search'}</p>
+       {m.answer.sources.length?<p className="text-xs text-slate-500">Source: TenOps Guide</p>:null}
       </div>
      </article>)}
     </div>

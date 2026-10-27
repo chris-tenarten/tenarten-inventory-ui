@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "origin": "http://localhost:3000",
+  "errors": [],
+  "checked": [
+    "simple TenOps Guide attribution",
+    "no visible revisions, verification dates or technical labels",
+    "internal response provenance retained",
+    "unknown capability wording preserved",
+    "desktop and mobile rendering",
+    "module link preserved"
+  ],
+  "networkOrigins": [
+    "http://localhost:3000",
+    "http://localhost:55593"
+  ]
+}

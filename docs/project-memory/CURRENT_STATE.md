@@ -120,3 +120,8 @@ Chris's subsequent October 27 UX refinement on `00ce91a` simplifies the Inspecto
 ### TenBot floating UX refinement — October 27 local candidate
 
 Chris's subsequent Product decision replaces the dedicated-page interaction with an authenticated application-wide launcher and nonmodal desktop panel/mobile bottom sheet. Chat, unfinished questions and confirmed-draft editing state survive minimize/reopen and normal route changes; only fixed module labels provide context. Existing guide/provider/feedback and server authorization contracts are reused. [Updated Product review and focused UI evidence](2026-10-27-tenbot-candidate.md#floating-assistant-ux-refinement--october-27-2026) at `http://localhost:3000/my-work`; `/tenbot` opens the same assistant. Tier 2 / Testing Level 2 browser, TypeScript, targeted lint, diff and export checks passed. Physical mobile keyboard acceptance remains manual. **Implemented locally on dev, pending Product acceptance; no backend/migration/hosted change, push or deployment.**
+
+
+### TenBot floating UI accepted; metadata polish — October 27
+
+Chris Product-accepted floating candidate `6a21ce4` and authorized a local UI-only polish removing engineering metadata from employee chat. [Polish and focused evidence](2026-10-27-tenbot-candidate.md#employee-chat-metadata-polish--october-27-2026) retain internal provenance/version checks, simple TenOps Guide attribution and all existing retrieval/permission/capability/feedback/inference behavior. Tier 1 / Testing Level 1 desktop/mobile presentation, TypeScript, targeted lint, diff and export checks passed. Implemented locally on dev, with no push or deployment.

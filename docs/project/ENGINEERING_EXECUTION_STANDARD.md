@@ -116,3 +116,8 @@ Never claim browser testing from code inspection or migration deployment from a 
 ### TenBot floating UI follow-up — October 27
 
 Chris's floating-assistant Product decision supersedes the dedicated-page UI in the original TenBot candidate. [Scoped UI refinement and evidence](../project-memory/2026-10-27-tenbot-candidate.md#floating-assistant-ux-refinement--october-27-2026) use existing dev/local review, Tier 2 / Testing Level 2, unchanged backend contracts and a local commit. Product review is the next boundary; no deployment authorization.
+
+
+### TenBot metadata polish — October 27
+
+Chris accepted the floating UI at `6a21ce4` and authorized the smallest employee-facing metadata correction, local validation and dev commit. [Scoped presentation polish](../project-memory/2026-10-27-tenbot-candidate.md#employee-chat-metadata-polish--october-27-2026) uses Tier 1 / Testing Level 1 and preserves backend/provenance, capabilities, permissions, feedback and inference state. No deployment authorization.
