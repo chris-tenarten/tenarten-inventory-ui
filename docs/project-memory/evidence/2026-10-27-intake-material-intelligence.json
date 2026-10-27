@@ -1,0 +1,547 @@
+{
+  "date": "2026-10-27",
+  "status": "implemented locally; pending Product acceptance",
+  "base": "e5382f11223efb927b4242849af8c084522f8c56",
+  "risk_tier": 3,
+  "testing_level": 3,
+  "hosted_mutations": false,
+  "hosted_verification": false,
+  "migrations": {
+    "20261026100000_historical_sample_import.sql": "ccac4d685188e59c2dc23696e326d65b1aa71218e51b4b66b35012d7f89ac35f",
+    "20261026110000_bid_accepted_scope.sql": "57fef9390fe54577df2a464f544b1de495494c45800a8594131ce491f1d3da0c",
+    "20261026120000_bid_scope_production_handoff.sql": "485eb06f150cac1eb0606275a16fa8bf1fdd105674c3e5934ab3f92c34c01d4b"
+  },
+  "database": {
+    "command": "./node_modules/.bin/tsx scripts/verify-intake-materials.mts",
+    "result": "passed",
+    "engine": "disposable PostgreSQL 17.6",
+    "coverage": [
+      "real RPC/grant/RLS enforcement",
+      "capability-authorized non-employee acceptance",
+      "inactive/read-only/unauthorized/anonymous denial",
+      "trusted persistence and immutable captures",
+      "scope yield, Batch reuse, package-fallback exclusion",
+      "shared-stock accounting across unit factors",
+      "historical numbering, import retry, verification bypass denial",
+      "retention preflight and unrelated Storage lifecycle",
+      "Won/deposit conversion, retry and handoff"
+    ],
+    "limits": "Focused canonical dependency replay, bounded Inventory fixture, not a hosted schema clone"
+  },
+  "browser": {
+    "workflow": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "errors": [],
+      "checked": [
+        "scope preview",
+        "Proposal selection",
+        "exact material mapping",
+        "immutable acceptance",
+        "read-only availability",
+        "mobile containment",
+        "conversion",
+        "Sample library",
+        "Excel import review/save",
+        "working PDF action"
+      ]
+    },
+    "final_export": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "checks": [
+        "exact final export",
+        "capture provenance",
+        "converted handoff retained",
+        "issued Sample document viewer"
+      ]
+    },
+    "production_handoff": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "canonicalJobInspector": true,
+      "acceptedScopeVisible": true
+    }
+  },
+  "build": {
+    "command": "NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000 NEXT_PUBLIC_SUPABASE_ANON_KEY=local-review-only NEXT_PUBLIC_DEV_BRANDING=true npm run build -- --webpack",
+    "result": "passed",
+    "note": "Turbopack stalled; final Webpack hash/cache failure recovered by moving only .next/cache/webpack aside, preserving it in /private/tmp/tenops-intake-webpack-cache-20261027"
+  },
+  "typescript": "passed",
+  "targeted_eslint": "passed",
+  "diff_check": "passed",
+  "historical_sources": [
+    "original blank Excel Sample form template: missing identity/rows flagged",
+    "historical Sample PDF: five aggregate rows / 100%",
+    "historical Blend PDF: ten aggregate rows / 100%"
+  ],
+  "limitations": [
+    "No populated supported-layout historical Excel workbook available",
+    "No OCR, legacy .xls or bulk import",
+    "No fresh hosted compatibility/Storage transport/Edge deployment proof"
+  ],
+  "pdf": {
+    "actual_generated_bytes": true,
+    "identity": "T26-497-A",
+    "pages": 1,
+    "native_thumbnail_visually_inspected": true
+  },
+  "artifacts": "/private/tmp/tenops-intake-materials-review; no historical originals copied into Git",
+  "ux_refinement": {
+    "date": "2026-10-27",
+    "base": "00ce91aa9238266f7a4fe424a7ac03c6b7080aab",
+    "status": "implemented locally; pending Product acceptance",
+    "authority": "Chris: TENOPS — INTAKE GRADUATION UX REFINEMENT; author once in Samples, reference in Intake, calculate in shared services, execute in Production",
+    "risk_tier": 3,
+    "testing_level": "focused Level 3 for changed defaults and capture compatibility",
+    "migrations_added": false,
+    "backfill": false,
+    "hosted_mutations": false,
+    "push_or_deployment": false,
+    "pure_checks": {
+      "command": "./node_modules/.bin/tsx scripts/verify-intake-reference-planning.mts",
+      "result": "passed",
+      "coverage": [
+        "canonical calculation parity",
+        "saved Blend full plan reuse",
+        "commercial and production independence",
+        "explicit Batch/yield precedence",
+        "invalid/unknown/overflow handling",
+        "legacy compatibility",
+        "source input nonmutation"
+      ]
+    },
+    "browser": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "errors": [],
+      "checked": [
+        "clean optional scope navigation",
+        "ordinary Bid save/Updates/Files without material fields",
+        "unresolved advisory acceptance",
+        "commercial and Production quantities separate",
+        "technical overrides collapsed and reset by reference change",
+        "issued Blend plan reused without input reentry",
+        "canonical Batch requirements with blank technical inputs",
+        "prior capture immutable",
+        "read-only availability and shortage",
+        "mobile containment",
+        "atomic current-scope handoff",
+        "ordinary conversion with open untouched optional scope and no planning",
+        "Sample library/import entry and working PDF action"
+      ]
+    },
+    "typescript": "passed after export completed",
+    "targeted_eslint": "passed",
+    "diff_check": "passed",
+    "webpack_export": "passed with localhost-only backend settings",
+    "em_diff_review": "passed; calculation defaults, primary/secondary UX, compatibility, clean dirty state and converted editor reviewed",
+    "limitations": [
+      "Earlier full RLS/import verification retained; no broad unrelated rerun",
+      "No new hosted compatibility verification",
+      "Populated historical Excel limitation unchanged",
+      "Mobile Inspector checked; ordinary New Bid creation checked on desktop. Existing bottom mobile navigation intercepted the unchanged New Bid dialog button at 390x844; no unrelated shell redesign."
+    ],
+    "preserved": [
+      "issued documents and captures",
+      "existing editors and Samples import",
+      "permissions and Production conversion",
+      "unrelated TenBot source/navigation/docs/scripts/migration and prior dirty receipts"
+    ],
+    "artifacts": "/private/tmp/tenops-intake-materials-review; browser-refinement-results.json, desktop-scope-refined.png, mobile-scope-refined.png; earlier failed assertion artifacts retained"
+  },
+  "inspector_simplification": {
+    "date": "2026-10-27",
+    "reviewed_dev_tip": "64d7900c261d5d107845c0cb9328570a9d5e1a45",
+    "authority": "Chris: TENOPS — INTAKE GRADUATION: SIMPLIFY BID INSPECTOR",
+    "status": "implemented locally; pending Product review",
+    "risk_tier": 2,
+    "testing_level": 2,
+    "ui": "Related Records & Handoff replaces scope/calculation editor and duplicate cards; selectors only for governing records",
+    "migrations_added": false,
+    "backfill": false,
+    "backend_engine_changed": false,
+    "owning_interfaces_changed": false,
+    "hosted_verification": false,
+    "hosted_mutations": false,
+    "push_or_deployment": false,
+    "helper_checks": {
+      "command": "./node_modules/.bin/tsx scripts/verify-intake-related-records.mts",
+      "result": "passed",
+      "coverage": [
+        "retained quantities/assumptions/mapping evidence",
+        "multiple finishes per revision",
+        "mapping index rebasing when retained records move",
+        "replacement reset and unresolved fallback",
+        "immutable source captions and safe canonical Sample identity",
+        "no input mutation"
+      ]
+    },
+    "browser": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "errors": [],
+      "checked": [
+        "scope/calculation editor absent",
+        "compact exact governing selectors only",
+        "ordinary save/Updates/Files without records",
+        "accepted Proposal and Sample/Blend revision provenance",
+        "canonical owning-module links",
+        "shared requirements calculated behind selection",
+        "existing planning/mapping and prior capture preserved",
+        "read-only Inventory assessment service retained",
+        "unsaved Bid fields preserved",
+        "deposit/conversion readiness",
+        "desktop/mobile containment",
+        "atomic latest-selection handoff",
+        "conversion without records/planning",
+        "Proposal access independent from Sample navigation",
+        "existing Sample/import/PDF workflow"
+      ]
+    },
+    "final_export": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "finalExport": true,
+      "activeBid": true,
+      "governingRevisionsSelected": true,
+      "planningEditorAbsent": true,
+      "refreshDisabledDuringSelection": true,
+      "errors": []
+    },
+    "typescript": "passed",
+    "targeted_eslint": "passed",
+    "diff_check": "passed",
+    "webpack_export": "passed with localhost-only backend settings",
+    "independent_diff_review": "passed; core integration, reference preservation, mappings, module routes, permission gates and minimal Blend metadata reads inspected",
+    "preserved": [
+      "version-bound immutable captures",
+      "historical import and numbering",
+      "shared requirements and read-only Inventory assessment",
+      "atomic canonical Job handoff",
+      "Sample/Proposal/Blend/Inventory/Production interfaces",
+      "unrelated TenBot commits and pre-existing dirty receipts"
+    ],
+    "limits": [
+      "No new hosted compatibility/Storage/Edge verification",
+      "Earlier broad RLS/import/lifecycle evidence retained without unrelated reruns",
+      "Proposal-denied UI check is a browser response simulation, not a new role/RLS audit",
+      "Exact governing revision remains labeled; Sample links open the existing owner editor/history",
+      "Historical populated-Excel limitation unchanged"
+    ],
+    "artifacts": "/private/tmp/tenops-intake-materials-review; browser-related-records-results.json, related-records-final-review.json, related-records-final-desktop.png, related-records-final-mobile.png; prior assertion-failure artifacts retained"
+  },
+  "product_reconciliation": {
+    "date": "2026-10-27",
+    "intake_base": "1842912",
+    "authority": "Chris: TENOPS — INTAKE GRADUATION: PRODUCT RECONCILIATION",
+    "status": "implemented locally; pending Product acceptance",
+    "risk_tier": 2,
+    "testing_level": 2,
+    "production_comparison": {
+      "canonical_refs": "e5382f11223efb927b4242849af8c084522f8c56 (fresh remote main/dev)",
+      "receipt_runtime": "f8f78c5 (October 22 released-runtime receipt)",
+      "public_probe": "headers-only HTTP 200, no hosted business reads",
+      "scope": "Production Queue/Inspector conventions, shared detail navigation, MobileTimeline, document viewer, Updates/Files/activity; no deferred branch merge"
+    },
+    "removed_from_intake": [
+      "scope/material authoring",
+      "governing selectors and approval ceremony",
+      "pending/unresolved completion counts",
+      "deferred task/mention preview"
+    ],
+    "restored": [
+      "contextual Proposal/Sample generator Tools",
+      "read-only associated records and existing accepted revisions",
+      "ordinary CRM activity independent of planning fields"
+    ],
+    "small_parity_fixes": [
+      "queue search/sort/refresh/loading/empty states",
+      "shared mobile Back, title wrapping, touch targets and safe areas",
+      "New Bid short-viewport sizing and initial Overview tab",
+      "Inspector-local errors",
+      "Update persistence/retry and posting protection",
+      "File preview response races and lifecycle activity refresh without discarding edits",
+      "Timeline source loading/error/retry/empty readiness",
+      "canonical Related Records Job link refreshes after conversion without optional summary metadata"
+    ],
+    "database_smoke": {
+      "result": "passed",
+      "command_kind": "one-off node --input-type=module smoke using existing intake-materials-database.mjs fixture and canonical RPCs",
+      "evidence": "exec session 77011, completion chunk b9b666 stdout; disposable tenops-intake-adapter-check-<pid> stopped in finally",
+      "outcome": {
+        "proposalCreated": true,
+        "linked": 1,
+        "estimateVersion": "proposal-estimate-v2",
+        "storageReadable": 1,
+        "fileActivity": [
+          "created",
+          "file_added",
+          "file_removed"
+        ]
+      }
+    },
+    "retained_backend": [
+      "immutable version/Proposal/source captures",
+      "historical original import/verification/numbering",
+      "shared canonical requirements and Inventory/supplier assessment",
+      "atomic canonical Job handoff and Won/deposit gate"
+    ],
+    "identified_cleanup_candidates_not_deleted": [
+      "governingSources / selectionKeys / governingLines selector helpers",
+      "Intake scope-preview/scope-accept authoring entry points; compatibility services and Production caller retained"
+    ],
+    "optional_summary": "intake_workflow_summaries remains optional for converted-Job queue hint only; no completion counts or mandatory loading dependency",
+    "deferred": [
+      "Bid mentions and Update attachments",
+      "linked tasks/reminders/notifications",
+      "resolve/seen and richer edit/delete lifecycle"
+    ],
+    "migrations_added_or_removed": false,
+    "schema_or_rpc_contract_changes": false,
+    "calculation_changes": false,
+    "permission_changes": false,
+    "issued_documents_changed": false,
+    "unrelated_tenbot_preserved": true,
+    "hosted_verification": false,
+    "hosted_business_reads_or_mutations": false,
+    "hosted_migrations": false,
+    "push_or_deployment": false,
+    "typescript": "passed after final export",
+    "targeted_eslint": "passed",
+    "diff_check": "passed",
+    "webpack_export": {
+      "result": "passed",
+      "settings": "localhost-only backend",
+      "recovery": "known WasmHash cache failure; preserved cache at /private/tmp/tenops-intake-reconciliation-webpack-cache-20261027123456, then clean export passed"
+    },
+    "independent_review": "passed; collaboration, released conventions, contextual generators, readonly records, request cancellation, initial Overview tab and final relationship refresh reviewed; docs wording corrected",
+    "limits": [
+      "No new full role/RLS audit: prior lifecycle/RLS receipt retained; Proposal-denied UI is a response simulation",
+      "No new hosted/Storage transport/Edge compatibility proof",
+      "Populated historical Excel acceptance limitation unchanged",
+      "Mobile checks are Chromium viewport/safe-area layout, not physical iPhone acceptance"
+    ],
+    "review_origin": "http://localhost:3000/pre-production",
+    "artifacts": "/private/tmp/tenops-intake-materials-review; no historical business originals or credentials copied into Git",
+    "browser": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "errors": [],
+      "checked": [
+        "optional metadata cannot block CRM",
+        "queue search/sort/refresh",
+        "readonly records and no governing/approval/editor workflow",
+        "Bid save and unsaved protections",
+        "Update failure/retry and posting protection",
+        "file upload/preview/race/fullscreen/removal and lifecycle refresh",
+        "Tools launch established generators",
+        "actual Bid-context Proposal creation",
+        "actual Sample creation with Bid/project/customer",
+        "Timeline loading/failure/retry/empty and viewport controls",
+        "shared mobile Back/safe areas and touch creation",
+        "ordinary conversion without documents",
+        "retained snapshot unchanged and atomic handoff",
+        "Inventory assessment preserved off-Inspector",
+        "Proposal tool access gate",
+        "historical importer and Sample PDF retained"
+      ]
+    },
+    "final_review": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "activeSyntheticBid": true,
+      "canonicalRelatedProposal": true,
+      "canonicalRelatedSample": true,
+      "readOnlyRelatedRecords": true,
+      "toolsReady": true,
+      "desktopMobileScreenshots": true,
+      "pageErrors": []
+    }
+  },
+  "production_release_preflight": {
+    "date": "2026-10-27",
+    "accepted_candidate": "5a7159ca8d5ffad4052b8cfe018b119eaecf5529",
+    "product_accepted": true,
+    "authority": "Chris explicitly authorized isolated Intake migration/release, TenDev before TenOps; stop on material conflict or unsafe dependency; no TenBot or AI activation",
+    "status": "stopped; confirmed unsafe Edge trust boundary",
+    "risk_tier": 3,
+    "remote_main": "e5382f11223efb927b4242849af8c084522f8c56",
+    "remote_dev": "e5382f11223efb927b4242849af8c084522f8c56",
+    "release_sha": null,
+    "deployment_ids": {},
+    "approved_migrations": {
+      "20261026100000_historical_sample_import.sql": "ccac4d685188e59c2dc23696e326d65b1aa71218e51b4b66b35012d7f89ac35f",
+      "20261026110000_bid_accepted_scope.sql": "57fef9390fe54577df2a464f544b1de495494c45800a8594131ce491f1d3da0c",
+      "20261026120000_bid_scope_production_handoff.sql": "485eb06f150cac1eb0606275a16fa8bf1fdd105674c3e5934ab3f92c34c01d4b"
+    },
+    "applied_migrations": [],
+    "blocker": {
+      "source": "supabase/functions/_shared/bid-scope-handler.ts:15",
+      "detail": "trailing caller-controlled body.payload overrides trusted p_actor, p_import_id and p_sha256 in the service-only persist_historical_sample call",
+      "impact": "authenticated actor/import/digest validation can be bypassed at Edge argument assembly; RPC impersonates supplied actor",
+      "existing_coverage_gap": "direct-database checks did not exercise untrusted Edge payload assembly",
+      "local_proof": {
+        "confirmed": true,
+        "mode": "local real handler with spy service RPC; no database or network",
+        "checkedOwnedOriginal": true,
+        "actorOverridden": true,
+        "importOverridden": true,
+        "computedDigestOverridden": true,
+        "privilegedRpcReached": true,
+        "responseStatus": 200,
+        "hostedReads": 0,
+        "hostedWrites": 0
+      },
+      "required_correction": "allowlist p_sample/p_rows/p_sample_name and bind protected parameters explicitly; focused handler injection regression",
+      "source_fix_made": false
+    },
+    "isolation_plan": {
+      "include": [
+        "00ce91a",
+        "d689bc1",
+        "1842912",
+        "5a7159c"
+      ],
+      "exclude": "all TenBot commits, dirty work, migrations, Workers AI/inference configuration",
+      "mixed_shell": "00ce91a blob, Intake Early Access badge removal only",
+      "method": "existing isolated Git index and git-archive environment export workflow; no dirty dev switch or wholesale merge"
+    },
+    "independent_review": "separate release boundary and migration/Edge contract reviewers; unsafe handler confirmed independently by root",
+    "completed_tests_reused": true,
+    "new_check": "one necessary local real-handler security probe with spy service RPC; exited 0 confirming vulnerability",
+    "hosted_compatibility": "not performed after unsafe dependency was found",
+    "hosted_queries": 0,
+    "hosted_mutations": 0,
+    "push": false,
+    "deployment": false,
+    "ai_infrastructure_activation": false,
+    "unrelated_dirty_work_preserved": true
+  },
+  "security_correction": {
+    "commit": "74f799bda418b154498773140b9e393c814c4e76",
+    "command": "./node_modules/.bin/tsx scripts/verify-historical-import-boundary.mts",
+    "result": "passed",
+    "handlerCases": 10,
+    "realPrivilegedPostgresRpc": true,
+    "trustedActorImportDigest": true,
+    "editableTranscriptionPreserved": true,
+    "retryAndBadDigestChecked": true,
+    "existingOriginalsUnchanged": true,
+    "hostedTraffic": false,
+    "independentReview": "passed"
+  },
+  "release_preparation": {
+    "accepted": "5a7159ca8d5ffad4052b8cfe018b119eaecf5529",
+    "correction": "74f799bda418b154498773140b9e393c814c4e76",
+    "baseline": "e5382f11223efb927b4242849af8c084522f8c56",
+    "isolatedIntakeOnly": true,
+    "noTenbotOrAi": true,
+    "hostedPreflight": {
+      "at": "2026-10-27T18:26:11.219506+00:00",
+      "project": "vxdxjhazkqhpkwdqtobp",
+      "approved": [
+        {
+          "file": "20261026100000_historical_sample_import.sql",
+          "sha256": "ccac4d685188e59c2dc23696e326d65b1aa71218e51b4b66b35012d7f89ac35f"
+        },
+        {
+          "file": "20261026110000_bid_accepted_scope.sql",
+          "sha256": "57fef9390fe54577df2a464f544b1de495494c45800a8594131ce491f1d3da0c"
+        },
+        {
+          "file": "20261026120000_bid_scope_production_handoff.sql",
+          "sha256": "485eb06f150cac1eb0606275a16fa8bf1fdd105674c3e5934ab3f92c34c01d4b"
+        }
+      ],
+      "preconditionsPassed": true,
+      "predecessors": [
+        {
+          "signature": "convert_bid_to_production(uuid,timestamp with time zone,text,date,date,text)",
+          "digest": "404405a0040752a61f4a57b9755a29d4",
+          "owner": "postgres",
+          "config": [
+            "search_path=pg_catalog, public"
+          ],
+          "acl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ]
+        },
+        {
+          "signature": "prepare_admin_delete_bid(uuid)",
+          "digest": "5c39eb2148c7c564d4e605bb6c57954c",
+          "owner": "postgres",
+          "config": [
+            "search_path=pg_catalog, public"
+          ],
+          "acl": [
+            "postgres=X/postgres",
+            "service_role=X/postgres",
+            "authenticated=X/postgres"
+          ]
+        },
+        {
+          "signature": "prepare_admin_delete_sample(uuid)",
+          "digest": "98b326e9eea47a3a2c756f78d212bb1a",
+          "owner": "postgres",
+          "config": [
+            "search_path=pg_catalog, public"
+          ],
+          "acl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ]
+        }
+      ],
+      "noHostedBusinessReadContent": true,
+      "readOnly": true,
+      "edgeFunctions": [
+        {
+          "slug": "generate-proposal-pdf",
+          "version": 37,
+          "status": "ACTIVE",
+          "id": "0c25a597-ca3f-4dfe-9007-ae76ea14bce1",
+          "verify_jwt": true
+        },
+        {
+          "slug": "generate-sample-pdf",
+          "version": 49,
+          "status": "ACTIVE",
+          "id": "aca8265a-5cc1-4dd8-b4df-e28a4b6e524e",
+          "verify_jwt": true
+        },
+        {
+          "slug": "send-web-push-tendev",
+          "version": 27,
+          "status": "ACTIVE",
+          "id": "0248da3c-43fe-44e5-84f9-71f35422c401",
+          "verify_jwt": false
+        },
+        {
+          "slug": "send-web-push-tenops",
+          "version": 16,
+          "status": "ACTIVE",
+          "id": "3449d184-907b-4a78-bb1c-e94f095643ee",
+          "verify_jwt": false
+        }
+      ],
+      "deployments": {
+        "tendev": {
+          "id": "05d7fc2e-91e6-45d3-8735-a299e5c3cdc0",
+          "sha": "f8f78c5e6dbaec955e3600aa0276e657a85e9290",
+          "branch": "dev"
+        },
+        "tenops": {
+          "id": "1af9bf7e-3a5f-4989-a04b-cbacb64c13b4",
+          "sha": "f8f78c5e6dbaec955e3600aa0276e657a85e9290",
+          "branch": "main"
+        }
+      }
+    },
+    "status": "authorized release in progress"
+  }
+}

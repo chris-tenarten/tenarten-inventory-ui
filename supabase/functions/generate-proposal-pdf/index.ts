@@ -286,6 +286,9 @@ if (typeof Deno !== 'undefined') Deno.serve(async (request) => {
       ]);
       if (admin?.role !== 'admin' || admin?.is_active !== true) return json({ error: 'Only an active Admin may delete an issued Proposal.' }, 403, headers);
       if ((revisions ?? 0) > 0) return json({ error: 'A Proposal with revisions cannot be deleted.' }, 409, headers);
+      const retained = await service.from('bid_scope_captures').select('id', { count: 'exact', head: true }).eq('proposal_id', id);
+      if (retained.error) return json({ error: 'Accepted-scope retention could not be checked; no records or files were removed.' }, 409, headers);
+      if ((retained.count ?? 0) > 0) return json({ error: 'This Proposal is retained by accepted Bid scope and cannot be deleted.' }, 409, headers);
       if (document?.storage_path) {
         const removed = await service.storage.from(String(document.storage_bucket || 'proposal-documents')).remove([String(document.storage_path)]);
         if (removed.error) return json({ error: 'The generated Proposal PDF could not be removed; no records were deleted.' }, 500, headers);

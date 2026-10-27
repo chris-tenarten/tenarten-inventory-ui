@@ -15,14 +15,15 @@ import IntakePlanningTimeline from './IntakePlanningTimeline';
 export default function IntakePlanning({ bids, onSelectBid, onChanged }: { bids: Bid[]; onSelectBid(bid: Bid): void; onChanged(): Promise<unknown> }) {
   const auth=useAuth();
   const [mode,setMode]=useState<PlanningMode>('intake');
-  const [records,setRecords]=useState<BidPlanning[]>([]);
-  const [jobs,setJobs]=useState<ProductionScheduleJob[]>([]);
-  const [phases,setPhases]=useState<PlanningPhase[]>([]);
-  const [loaded,setLoaded]=useState(false);
-  const [loadedFor,setLoadedFor]=useState<{bids:Bid[];revision:number;role:string|undefined}|null>(null);
-  const [error,setError]=useState(''),[revision,setRevision]=useState(0);
+  const [revision,setRevision]=useState(0);
+  const [intakeResult,setIntakeResult]=useState<{bids:Bid[];revision:number;records:BidPlanning[];error:string}|null>(null);
+  const [productionResult,setProductionResult]=useState<{bids:Bid[];revision:number;role:string|undefined;jobs:ProductionScheduleJob[];phases:PlanningPhase[];error:string}|null>(null);
   const request=useRef<{bids: Bid[];revision:number;role: string | undefined;promise:Promise<[ProductionScheduleJob[],PlanningPhase[]]>}|null>(null);
-  useEffect(()=>{let live=true;void loadBidPlanning().then(rows=>{if(live){setRecords(rows);setLoaded(true);}}).catch(e=>{if(live)setError(e.message);});return()=>{live=false;};},[bids,revision]);
+  useEffect(()=>{
+    let live=true;
+    void loadBidPlanning().then(records=>{if(live)setIntakeResult({bids,revision,records,error:''});}).catch(e=>{if(live)setIntakeResult({bids,revision,records:[],error:e instanceof Error?e.message:'Unable to load projected windows.'});});
+    return()=>{live=false;};
+  },[bids,revision]);
   useEffect(()=>{
     if(mode==='intake')return;
     let live=true;
@@ -33,15 +34,21 @@ export default function IntakePlanning({ bids, onSelectBid, onChanged }: { bids:
         return [visible,loadedPhases] as [ProductionScheduleJob[],PlanningPhase[]];
       })};
     }
-    void request.current.promise.then(([nextJobs,nextPhases])=>{if(live){setJobs(nextJobs);setPhases(nextPhases);setLoadedFor({bids,revision,role:auth.profile?.role});}}).catch(e=>{request.current=null;if(live)setError(e.message);});
+    const pending=request.current;
+    void pending.promise.then(([jobs,phases])=>{if(live)setProductionResult({bids,revision,role:auth.profile?.role,jobs,phases,error:''});}).catch(e=>{if(request.current===pending)request.current=null;if(live)setProductionResult({bids,revision,role:auth.profile?.role,jobs:[],phases:[],error:e instanceof Error?e.message:'Unable to load Production planning.'});});
     return()=>{live=false;};
   },[mode,bids,revision,auth.profile?.role]);
-  const productionLoaded=loadedFor?.bids===bids&&loadedFor.revision===revision&&loadedFor.role===auth.profile?.role;
-  const all=useMemo(()=>normalizePlanning(bids,records,productionLoaded?jobs:[],productionLoaded?phases:[]),[bids,records,jobs,phases,productionLoaded]);
+  const intakeCurrent=intakeResult?.bids===bids&&intakeResult.revision===revision;
+  const productionCurrent=productionResult?.bids===bids&&productionResult.revision===revision&&productionResult.role===auth.profile?.role;
+  const intakeError=intakeCurrent?intakeResult.error:'';
+  const productionError=productionCurrent?productionResult.error:'';
+  const loaded=intakeCurrent&&!intakeError,productionLoaded=productionCurrent&&!productionError;
+  const all=useMemo(()=>normalizePlanning(loaded?bids:[],loaded?intakeResult.records:[],productionLoaded?productionResult.jobs:[],productionLoaded?productionResult.phases:[]),[bids,intakeResult,productionResult,loaded,productionLoaded]);
   const items=useMemo(()=>planningForMode(all,mode),[all,mode]);
-  const refresh=async()=>{setError('');setRevision(v=>v+1);};
+  const refresh=async()=>{setRevision(v=>v+1);};
   return <div className="min-w-0">
-    {error&&<p role="alert" className="mt-2 text-sm text-red-700">{error}</p>}
-    <IntakePlanningTimeline bids={bids} onSelectBid={onSelectBid} onChanged={onChanged} mode={mode} setMode={setMode} items={items} loaded={loaded} productionLoaded={productionLoaded} onRefresh={refresh}/>
+    {intakeError&&mode!=='production'&&<p role="alert" className="mt-2 text-sm text-red-700">Projected windows could not be loaded: {intakeError} Use Refresh planning to retry.</p>}
+    {productionError&&mode!=='intake'&&<p role="alert" className="mt-2 text-sm text-red-700">Production planning could not be loaded: {productionError} Use Refresh planning to retry.</p>}
+    <IntakePlanningTimeline bids={bids} onSelectBid={onSelectBid} onChanged={onChanged} mode={mode} setMode={setMode} items={items} loaded={loaded} productionLoaded={productionLoaded} loading={!intakeCurrent} productionLoading={!productionCurrent} onRefresh={refresh}/>
   </div>;
 }

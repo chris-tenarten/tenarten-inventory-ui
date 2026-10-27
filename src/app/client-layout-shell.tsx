@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import MobileNavigation, {guardMobileNavigation} from '@/components/mobile/MobileNavigation';
-import EarlyAccessBadge from '@/components/EarlyAccessBadge';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { BookOpen, Factory, Hammer } from 'lucide-react';
@@ -242,7 +241,7 @@ function DomainNav({
                 }}
                 className={`${ItemIcon ? 'flex items-start gap-3' : 'block'} px-4 py-3 transition ${dropdownItemClass(itemActive)}`}
               >
-                {ItemIcon ? <><span className="mt-0.5 shrink-0"><ItemIcon /></span><span className="min-w-0"><span className="flex flex-wrap items-center gap-2 text-sm font-bold">{t(item.labelKey)}{item.href === '/pre-production' && <EarlyAccessBadge/>}</span><span className="mt-0.5 block text-xs font-medium text-slate-500">{t(item.descriptionKey)}</span></span></> : <><div className="text-sm font-bold">{t(item.labelKey)}</div><div className="mt-0.5 text-xs font-medium text-slate-500">{t(item.descriptionKey)}</div></>}
+                {ItemIcon ? <><span className="mt-0.5 shrink-0"><ItemIcon /></span><span className="min-w-0"><span className="flex flex-wrap items-center gap-2 text-sm font-bold">{t(item.labelKey)}</span><span className="mt-0.5 block text-xs font-medium text-slate-500">{t(item.descriptionKey)}</span></span></> : <><div className="text-sm font-bold">{t(item.labelKey)}</div><div className="mt-0.5 text-xs font-medium text-slate-500">{t(item.descriptionKey)}</div></>}
               </Link>
             );
           })}

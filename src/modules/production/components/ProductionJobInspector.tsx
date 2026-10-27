@@ -1,4 +1,5 @@
 "use client";
+import JobScopeHandoff from '@/modules/intake-materials/JobScopeHandoff';
 import ProjectContactEditor from '../contacts/ProjectContactEditor';
 import type { ProjectContact } from '../contacts/model';
 import { useProductionDialogScrollLock } from '../contacts/ProductionDialog';
@@ -898,6 +899,7 @@ export default function ProductionJobInspector({
         >
           {activeSection === "details" && (
             <>
+              <JobScopeHandoff jobId={job.id}/>
               <section className="mt-4 rounded-sm border border-slate-200 bg-slate-50 p-3" aria-labelledby="production-history-title">
                 <div className="flex items-center justify-between gap-3">
                   <h3 id="production-history-title" className="text-xs font-bold uppercase tracking-[0.1em] text-slate-700">Production History</h3>
