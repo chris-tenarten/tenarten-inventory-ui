@@ -1,0 +1,45 @@
+{
+  "tier": 2,
+  "testingLevel": 2,
+  "base": "a936aa5",
+  "implemented": "Active-topic source resolution and final conversation UI simplification, local only",
+  "commands": {
+    "node --import tsx scripts/verify-tenbot.mts --core-only": "passed89workflowexamples+16generatedchunks/provenance+focuseddependent-topic/topic-switch/generated-only/unknown/multiline/bounded-history/eligibility/permission/planned-date cases",
+    "node --import tsx scripts/verify-tenbot-ai-binding.mts": "passed59mockbinding/privacycases;no network",
+    "node scripts/verify-tenbot-browser.mjs --presentation-only": "passed4focusedgroups;desktop/mobile/source/menu/disclosure/composer/keyboard/fallback/denial/DM checks;0inference/pageerrors",
+    "node scripts/verify-tenbot-browser.mjs --privacy-only": "passed12focusedgroups;fullinfo/confirmedfeedback/ownerisolation/clear;0inference/pageerrors",
+    "application TypeScript": "passedimplementationcheckandfinalNextbuild",
+    "shared Edge TypeScript": "passedchangedsharedsource",
+    "targeted ESLint": "passedchangedUI/retrieval/core/verifiers",
+    "safe local-review npm run build -- --webpack": "passedfinalUIexport;noUIchangesafterward",
+    "git diff --check": "passed"
+  },
+  "review": "Independent scoped EM review passed; generated/unknown topic switches, same-parent module wording, planned-date guard overreach and multiline bounded history corrected with focused regressions. Final UI review preserved disclosure/confirmation/normal Messaging behavior.",
+  "actualInference": {
+    "calls": 4,
+    "inputTokens": 3926,
+    "outputTokens": 502,
+    "tokenDerivedEstimatedNeurons": 33.459,
+    "result": "Correct source relevance, but actual pre-completion Qwen answer contradicted the prerequisite. Final guard rejects and fallback was observed; exact question now returns a permission-gated verified prerequisite decision, not claimed as successful AI."
+  },
+  "preserved": [
+    "Qwen3 selection",
+    "knowledge generator and generated snapshot",
+    "shared/burst/free-only budgets",
+    "Messaging RPC/data contracts",
+    "owner-history/privacy/employee consent policy",
+    "confirmed feature feedback"
+  ],
+  "localReview": {
+    "application": "http://localhost:3000/my-work",
+    "applicationPid": 77605,
+    "adapterPort": 55593,
+    "bridgePort": 55594,
+    "note": "Original port3000process ended;existing synthetic server restored,newfixture,old tenops-intake-review-44028 remains running. No old local data removed."
+  },
+  "limits": [
+    "Synthetic browser RPCs establish presentation/interaction/isolation, not new hosted RLS or physical-device delivery evidence.",
+    "Real Qwen eligibility contradiction remains preserved; the exact No is deterministic verified behavior.",
+    "No new migrations, hosted changes, push, paid activation or deployment."
+  ]
+}

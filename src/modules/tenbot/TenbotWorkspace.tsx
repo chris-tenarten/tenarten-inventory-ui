@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
+import {MoreHorizontal} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
@@ -44,8 +45,10 @@ function moduleContext(pathname:string):ModuleContext{
 }
 type Turn={id:number;question:string;createdAt:string;answeredAt?:string;answer:Answer|null;error?:string};
 type AssistantEntry={id:string;createdAt:string;content:ReactNode};
-export type TenbotConversation={available:boolean;busy:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;activityKey:string};
+export type TenbotConversation={available:boolean;busy:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;menu:(question:string)=>ReactNode;disclosure:ReactNode;activityKey:string};
 const messageTime=(value:string)=>new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date(value));
+const guideText=(source:Source)=>source.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide');
+const sourceStatus=(source:Source)=>source.availability==='unavailable'?'Not enabled':source.availability==='partial'?'Partly available':source.status==='deployed'?'Available':source.status==='local'?'Unreleased':source.status==='planned'?'Planned / deferred':'Unable to verify';
 // InboxDialog owns this hook for one authenticated account. It accepts only an
 // explicitly submitted question, never Messaging history, recipients or records.
 export function useTenbotConversation():TenbotConversation{
@@ -66,6 +69,7 @@ export function useTenbotConversation():TenbotConversation{
  const conversation=useRef<{owner:string;id?:string}>({owner});
  if(conversation.current.owner!==owner)conversation.current={owner};
  const draftForm=useRef<HTMLFormElement>(null);
+ const menuRef=useRef<HTMLDetailsElement>(null);
  const drafting=Boolean(draft);
  const lastAnswer=messages.at(-1)?.answer;
  useEffect(()=>{
@@ -150,31 +154,48 @@ export function useTenbotConversation():TenbotConversation{
    </article>},{id:`assistant-answer-${m.id}`,createdAt:m.answeredAt??m.createdAt,content:<article aria-label="TenBot assistant reply" className="relative mb-3 max-w-[88%] space-y-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm">
     <p className="text-xs font-semibold text-slate-600">TenBot · Assistant</p>
     {m.answer?<>
-     <p className="whitespace-pre-wrap break-words leading-relaxed text-slate-800">{m.answer.mode==='guide'?(m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."):m.answer.message}</p>
-     {m.answer.notices?.filter(note=>note!==m.answer?.message&&!m.answer?.sources.some(source=>source.constraints?.includes(note))).map(note=><p key={note} className="text-xs text-slate-600">{note}</p>)}
+     {m.answer.mode==='guide'?<p className="text-xs text-slate-500">{m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."}</p>:null}
+     <p data-tenbot-answer className="whitespace-pre-wrap break-words leading-relaxed text-slate-800">{m.answer.mode==='guide'&&m.answer.sources[0]?guideText(m.answer.sources[0]):m.answer.message}</p>
+     {[...new Set(m.answer.notices)].filter(note=>note!==m.answer?.message&&!(m.answer?.mode==='guide'&&m.answer.sources[0]&&guideText(m.answer.sources[0]).includes(note))).map(note=><p key={note} className="text-xs text-slate-600">{note}</p>)}
      {!m.answer.sources.length&&m.answer.mode==='guide'?<p>The TenOps Guide does not have enough verified information to confirm that workflow. Please check with Product.</p>:null}
-     {m.answer.sources.map(s=><div key={s.id} className="border-t pt-2">
-      <strong>{s.title}</strong><span className="ml-2 rounded bg-slate-100 px-1 text-xs">{s.availability==='unavailable'?'Not enabled':s.availability==='partial'?'Partly available':s.status==='deployed'?'Available':s.status==='local'?'Unreleased':s.status==='planned'?'Planned / deferred':'Unable to verify'}</span>
-      {m.answer?.mode==='ai'?<>{s.constraints?.map(rule=><p key={rule} className="mt-2 text-xs text-slate-600">{rule}</p>)}<details className="mt-2"><summary className="min-h-11 cursor-pointer py-3 text-xs text-slate-600">Read TenOps Guide</summary><p className="whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p></details></>:m.answer?.mode==='verified'?null:<p className="mt-2 whitespace-pre-wrap">{s.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide')}</p>}{s.path?<p className="mt-2 font-medium">{s.path}</p>:null}
-      {s.route?<Link className="inline-block min-h-11 py-3 font-semibold text-blue-800 underline" href={s.route}>Open {routeLabels[s.route]||'workflow'}</Link>:null}
-     </div>)}
-     {m.answer.sources.length?<p className="text-xs text-slate-500">Source: TenOps Guide</p>:null}
+     {m.answer.sources.length?<details data-tenbot-sources className="text-xs">
+      <summary aria-label="Sources for this answer" className="w-fit min-h-9 cursor-pointer py-2 text-slate-500">Sources ({m.answer.sources.length}) · TenOps Guide</summary>
+      <div aria-label="Answer sources" className="space-y-3 border-t border-slate-100 pt-2">
+      {m.answer.sources.map(s=><div key={s.id} data-tenbot-source className="space-y-2 border-l border-slate-200 pl-3 text-slate-600">
+        <p><strong className="font-medium text-slate-700">{s.title}</strong><span className="ml-2 text-[10px] text-slate-500">{sourceStatus(s)}</span></p>
+        <p className="whitespace-pre-wrap leading-relaxed">{guideText(s)}</p>
+        {s.path?<p className="font-medium">{s.path}</p>:null}
+        {s.route?<Link className="inline-block min-h-11 py-3 font-semibold text-blue-800 underline" href={s.route}>Open {routeLabels[s.route]||'workflow'}</Link>:null}
+      </div>)}
+      </div>
+     </details>:null}
     </>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">Working…</p>}
     {m.answeredAt?<time className="block text-[10px] text-slate-400">{messageTime(m.answeredAt)}</time>:null}
    </article>}]):[];
  const history=available?<div role="log" aria-label="TenBot conversation" aria-live="polite">{entries.map(entry=><div key={entry.id}>{entry.content}</div>)}</div>:null;
- const controls=(question:string):ReactNode=>{
+ const menu=(question:string):ReactNode=>{
   if(!available)return null;
   const offerSuggestion=Boolean(question.trim())||Boolean(lastAnswer?.suggestionAllowed)||Boolean(lastAnswer?.sources.length&&lastAnswer.sources[0].status!=='unknown'&&lastAnswer.resolution!=='documentation-missing'&&lastAnswer.resolution!=='permission-denied');
+  const closeMenu=()=>{if(menuRef.current){menuRef.current.open=false;menuRef.current.querySelector('summary')?.focus();}};
+  return <details ref={menuRef} className="relative" onKeyDown={event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeMenu();menuRef.current?.querySelector('summary')?.focus();}}}>
+   <summary aria-label="TenBot conversation actions" className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded text-slate-500 hover:bg-slate-100 [&::-webkit-details-marker]:hidden"><MoreHorizontal className="h-4 w-4"/></summary>
+   <div className="absolute right-0 z-30 mt-1 min-w-52 rounded-md border border-slate-300 bg-white p-1 shadow-lg">
+    {offerSuggestion?<button type="button" disabled={busy} onClick={()=>{closeMenu();void makeDraft(question);}} className="block min-h-11 w-full rounded px-3 text-left text-sm hover:bg-slate-50 disabled:opacity-50">Draft a feature suggestion</button>:null}
+    {reviewAllowed?<button type="button" disabled={busy} aria-expanded={showFeedback} onClick={()=>{closeMenu();setShowFeedback(value=>!value);if(!showFeedback)void load();}} className="block min-h-11 w-full rounded px-3 text-left text-sm hover:bg-slate-50 disabled:opacity-50">Product feedback</button>:null}
+    {messages.length||draft?<button type="button" disabled={busy} onClick={()=>{closeMenu();void clear();}} className="block min-h-11 w-full rounded px-3 text-left text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50">Clear assistant chat</button>:null}
+    {!offerSuggestion&&!reviewAllowed&&!messages.length&&!draft?<p className="px-3 py-2 text-xs text-slate-500">Ask TenBot to start a conversation.</p>:null}
+   </div>
+  </details>;
+ };
+ const disclosure=<details className="text-[10px] text-slate-500">
+  <summary className="w-fit min-h-9 cursor-pointer py-2">AI may process your text and recent TenBot turns · Privacy details</summary>
+  <p className="pb-2 text-xs leading-relaxed">When AI is available, text you submit and recent private TenBot turns are processed by the configured AI provider. TenBot does not independently read messages, tasks or restricted records. Private TenBot history expires after eight hours without a new turn.</p>
+ </details>;
+ const controls=():ReactNode=>{
+  if(!available)return null;
   return <div className="space-y-3" data-tenbot-controls>
-   <p className="text-xs text-slate-600">When AI is available, text you submit and recent private TenBot turns are processed by the configured AI provider. TenBot does not independently read messages, tasks or restricted records. Private TenBot history expires after eight hours without a new turn.</p>
    {error?<p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
    {notice?<p role="status" className="rounded bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
-   <div className="flex flex-wrap items-center gap-2 text-xs">
-    {offerSuggestion?<button type="button" disabled={busy} onClick={()=>void makeDraft(question)} className="min-h-11 rounded border px-3 disabled:opacity-50">Draft a feature suggestion</button>:null}
-    {reviewAllowed?<button type="button" className="min-h-11 rounded border px-3" disabled={busy} aria-expanded={showFeedback} onClick={()=>{setShowFeedback(value=>!value);if(!showFeedback)void load();}}>Product feedback</button>:null}
-    {messages.length||draft?<button type="button" disabled={busy} onClick={()=>void clear()} className="min-h-11 px-1 text-slate-500">Clear assistant chat</button>:null}
-   </div>
    {draft?<form ref={draftForm} onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3 rounded-lg border bg-white p-3" aria-label="Feature suggestion draft">
     <h3 className="font-bold">Review your suggestion</h3><p className="text-xs text-slate-600">Submitter: {identity}. Only this reviewed draft is shared with Product.</p>
     <p className="text-sm text-slate-600">Only the fields you review and confirm here are shared with Product. Your private conversation and pasted context are not attached.</p>
@@ -204,5 +225,5 @@ export function useTenbotConversation():TenbotConversation{
    </section>:null}
   </div>;
  };
- return {available,busy,send,history,entries,controls,activityKey:`${messages.length}:${messages.at(-1)?.id??0}:${busy}:${drafting}:${showFeedback}:${error}:${notice}`};
+ return {available,busy,send,history,entries,controls,menu,disclosure,activityKey:`${messages.length}:${messages.at(-1)?.id??0}:${busy}:${drafting}:${showFeedback}:${error}:${notice}`};
 }

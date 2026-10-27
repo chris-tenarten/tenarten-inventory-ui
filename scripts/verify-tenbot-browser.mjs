@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import {mkdirSync, writeFileSync, readFileSync, existsSync} from 'node:fs';
 
 const privacyOnly=process.argv.includes('--privacy-only');
+const presentationOnly=process.argv.includes('--presentation-only');
 const conversationOnly = process.argv.includes('--conversation-only') || process.argv.length === 2;
 const refinementOnly = process.argv.includes('--refinement-only');
 const liveInferenceOnce = refinementOnly && process.argv.includes('--live-inference-once');
 const knowledgeCoverageOnly = process.argv.includes('--knowledge-coverage-only') || refinementOnly;
-if (privacyOnly || conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
+if (presentationOnly || privacyOnly || conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
   await verifyConversation();
   process.exit(0);
 }
@@ -17,7 +18,7 @@ if (privacyOnly || conversationOnly || knowledgeCoverageOnly || process.argv.inc
 // pass one ordinary Messaging Send through the existing actual local adapter.
 async function verifyConversation() {
   const origin = 'http://localhost:3000', endpoint = 'http://localhost:55593';
-  const directory = `/private/tmp/tenops-tenbot-review/${privacyOnly ? 'privacy/browser' : refinementOnly ? 'refinement/browser' : knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
+  const directory = `/private/tmp/tenops-tenbot-review/${presentationOnly ? 'polish/browser' : privacyOnly ? 'privacy/browser' : refinementOnly ? 'refinement/browser' : knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
   const captured = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/communication/evaluation.json', 'utf8')).outputs;
   const coverage = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/contacts-coverage/evaluation.json', 'utf8')).outputs;
   const workflowCoverageFile = `/private/tmp/tenops-tenbot-review/${refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'}`;
@@ -179,15 +180,95 @@ async function verifyConversation() {
         await expect(page.getByRole('region', {name: 'TenBot workspace', exact: true})).toHaveCount(0);
         await expect(page.locator('.tenbot-launcher')).toHaveCount(0);
         await choose('TenBot');
+        if(presentationOnly){
+          const actionMenu=panel.getByLabel('TenBot conversation actions',{exact:true});
+          const action=async name=>{await actionMenu.click();await panel.getByRole('button',{name,exact:true}).click();};
+          const privacy=panel.locator('[data-messaging-composer] details');
+          const privacyText='When AI is available, text you submit and recent private TenBot turns are processed by the configured AI provider. TenBot does not independently read messages, tasks or restricted records. Private TenBot history expires after eight hours without a new turn.';
+          await expect(privacy.locator('p')).not.toBeVisible();await privacy.locator('summary').press('Enter');
+          await expect(privacy.locator('p')).toHaveText(privacyText);await expect(privacy.locator('p')).toBeVisible();
+          if(admin)await page.screenshot({path:`${directory}/desktop-privacy-details.png`});
+          await privacy.locator('summary').press('Enter');await expect(privacy.locator('p')).not.toBeVisible();
+          await expect(input).toHaveAttribute('rows','1');await expect(input).toHaveAttribute('enterkeyhint','send');
+          const compactHeight=await input.evaluate(el=>el.getBoundingClientRect().height);assert(compactHeight>=44&&compactHeight<60);
+          await input.fill('First line');for(const line of ['Second line','Third line','Fourth line']){await input.press('Shift+Enter');await input.type(line);}
+          await expect(input).toHaveValue('First line\nSecond line\nThird line\nFourth line');
+          assert(await input.evaluate(el=>el.getBoundingClientRect().height)>compactHeight,'TenBot multiline draft grows');
+          if(admin)await page.screenshot({path:`${directory}/desktop-multiline-composer.png`});
+          await input.fill(Array.from({length:20},(_,i)=>`Line ${i}`).join('\n'));assert(await input.evaluate(el=>el.getBoundingClientRect().height)<=161,'Autogrow stays bounded');
+          await input.fill('');await expect.poll(()=>input.evaluate(el=>el.getBoundingClientRect().height)).toBe(compactHeight);
+          const beforeEmpty=askCount();await input.press('Enter');await input.fill('   ');await input.press('Enter');assert.equal(askCount(),beforeEmpty);await input.fill('');
+          await input.fill('IME draft');await input.dispatchEvent('keydown',{key:'Enter',code:'Enter',isComposing:true});await input.dispatchEvent('keydown',{key:'Enter',code:'Enter',keyCode:229});await input.dispatchEvent('keydown',{key:'Enter',code:'Enter',repeat:true});await expect(input).toHaveValue('IME draft');assert.equal(askCount(),beforeEmpty);await input.fill('');
+          if(!admin){
+            await ask(customer.question,deniedCustomers[0].answer);
+            const denied=conversation.getByRole('article',{name:'TenBot assistant reply',exact:true}).last();
+            await expect(denied.locator('[data-tenbot-answer]')).toContainText('does not have permission');
+            await expect(denied.locator('[data-tenbot-sources]')).toHaveCount(0);await expect(denied.getByRole('link')).toHaveCount(0);
+            await actionMenu.click();await expect(panel.getByRole('button',{name:'Product feedback',exact:true})).toHaveCount(0);
+            await expect(panel.getByRole('button',{name:'Draft a feature suggestion',exact:true})).toHaveCount(0);await actionMenu.press('Escape');
+            checked.push('permission denial remains primary, without source instructions or contextual suggestion; restricted account has no Product feedback action');
+            continue;
+          }
+          const selected=JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/refinement/selected-model.json','utf8')).outputs;
+          const capturedGroup=selected.find(item=>item.id==='group');
+          assert(capturedGroup?.answer.mode==='ai'&&capturedGroup.answer.sources.length>1,'Existing multi-source Qwen capture is required');
+          const authoritativeNotice=group.answer.sources[0].constraints[0];
+          const payload={...capturedGroup.answer,notices:[authoritativeNotice,authoritativeNotice]};
+          await ask(capturedGroup.question,payload);
+          let response=conversation.getByRole('article',{name:'TenBot assistant reply',exact:true}).last();
+          const sourceControl=response.locator('[data-tenbot-sources]');
+          await expect(response.locator('[data-tenbot-answer]')).toHaveText(payload.message);await expect(response.getByText(authoritativeNotice,{exact:true})).toBeVisible();
+          await expect(sourceControl).toHaveCount(1);await expect(sourceControl).not.toHaveAttribute('open');
+          await expect(sourceControl.locator('summary')).toHaveText(`Sources (${payload.sources.length}) · TenOps Guide`);
+          await expect(sourceControl.locator('[data-tenbot-source]')).toHaveCount(payload.sources.length);
+          for(const source of payload.sources)await expect(sourceControl.getByText(source.title,{exact:true})).not.toBeVisible();
+          assert(await response.evaluate(element=>Boolean(element.querySelector('[data-tenbot-answer]').compareDocumentPosition(element.querySelector('[data-tenbot-sources]'))&Node.DOCUMENT_POSITION_FOLLOWING)),'Conversation prose precedes one compact provenance control');
+          await response.scrollIntoViewIfNeeded();await page.screenshot({path:`${directory}/desktop-compact-sources.png`});
+          await sourceControl.locator('summary').press('Enter');await expect(sourceControl).toHaveAttribute('open','');
+          for(const source of payload.sources){const entry=sourceControl.locator('[data-tenbot-source]').filter({has:page.getByText(source.title,{exact:true})});await expect(entry.locator('p').nth(1)).toHaveText(source.guidance);await expect(entry).toContainText('Available');if(source.route)await expect(entry.getByRole('link')).toHaveAttribute('href',source.route);}
+          await sourceControl.scrollIntoViewIfNeeded();await page.screenshot({path:`${directory}/desktop-source-detail.png`});await sourceControl.locator('summary').click();
+          await expect(panel.getByRole('button',{name:'Product feedback',exact:true})).toHaveCount(0);await expect(panel.getByRole('button',{name:'Clear assistant chat',exact:true})).toHaveCount(0);
+          await actionMenu.press('Enter');await expect(panel.getByRole('button',{name:'Product feedback',exact:true})).toBeVisible();await page.screenshot({path:`${directory}/desktop-conversation-menu.png`});await actionMenu.press('Escape');
+          await expect(panel).toBeVisible();await expect(actionMenu).toBeFocused();
+          await action('Product feedback');await expect(panel.getByRole('region',{name:'Shared TenBot usage',exact:true})).toContainText('47 of 300 shared attempts');
+          await expect(actionMenu.locator('..')).not.toHaveAttribute('open');await action('Product feedback');
+          await action('Draft a feature suggestion');const form=panel.getByRole('form',{name:'Feature suggestion draft',exact:true});await expect(form).toBeVisible();await expect(form.getByRole('button',{name:'Submit suggestion',exact:true})).toBeDisabled();await form.getByRole('button',{name:'Cancel',exact:true}).click();
+          answer=payload;holdNextAsk=true;const pendingBefore=askCount();await input.fill('How do I create a group while an answer is pending?');await input.press('Enter');await expect.poll(askCount).toBe(pendingBefore+1);await expect(input).toBeDisabled();await expect(panel.getByRole('button',{name:'Sending…',exact:true})).toBeDisabled();await input.dispatchEvent('keydown',{key:'Enter',code:'Enter'});assert.equal(askCount(),pendingBefore+1);releasePending();await expect(input).toHaveValue('');await expect(input).toBeEnabled();
+          checked.push('answer is primary with one collapsed Sources control; expansion reveals all relevant guides/status/navigation; authoritative notices remain visible; secondary header menu retains feedback, clear and confirmed drafting with Escape/focus behavior');
+          await page.setViewportSize({width:390,height:844});await contained();await sourceControl.scrollIntoViewIfNeeded();
+          await page.screenshot({path:`${directory}/mobile-compact-sources.png`});await sourceControl.locator('summary').click();await contained();
+          await sourceControl.locator('[data-tenbot-source]').last().scrollIntoViewIfNeeded();await page.screenshot({path:`${directory}/mobile-source-detail.png`});await sourceControl.locator('summary').press('Enter');
+          await ask('How do I create a group while AI is unavailable?',{...group.answer,mode:'guide',fallback:true});
+          response=conversation.getByRole('article',{name:'TenBot assistant reply',exact:true}).last();
+          await expect(response.locator('[data-tenbot-answer]')).toHaveText(group.answer.sources[0].guidance);await expect(response).toContainText('AI is unavailable right now.');await expect(response.locator('[data-tenbot-sources][open]')).toHaveCount(0);
+          const rework=selected.find(item=>item.id==='rework'),reworkSource=rework?.answer.sources.find(source=>source.id==='production-rework-create');assert(reworkSource,'Existing verified Rework source is required');
+          await ask('How do I initiate Rework?',rework.answer);
+          const eligibility={...rework.answer,mode:'verified',fallback:false,notices:[],sources:[reworkSource],message:'No. Rework requires the Job to be complete, unarchived, and have no active Rework cycle. You cannot initiate Rework before the Job is complete.'};
+          await ask('Can I do that before the Job is complete?',eligibility);response=conversation.getByRole('article',{name:'TenBot assistant reply',exact:true}).last();
+          await expect(response.locator('[data-tenbot-answer]')).toHaveText(eligibility.message);await expect(response.locator('[data-tenbot-sources]')).toHaveCount(1);await expect(response.locator('[data-tenbot-sources][open]')).toHaveCount(0);
+          await response.scrollIntoViewIfNeeded();await page.screenshot({path:`${directory}/mobile-verified-rework-eligibility.png`});
+          await input.focus();await page.setViewportSize({width:390,height:500});await contained();await expect(input).toBeInViewport();await expect(panel.getByRole('button',{name:'Send',exact:true})).toBeInViewport();await page.setViewportSize({width:390,height:844});
+          checked.push('mobile one-control provenance fits existing history; deterministic Rework eligibility remains primary; useful direct fallback and compact multiline composer preserve reduced-keyboard viewport (no-call UI fixtures)');
+          await action('Clear assistant chat');await expect(conversation.getByRole('article',{name:'TenBot assistant reply',exact:true})).toHaveCount(0);
+          await panel.getByRole('button',{name:'Back to conversations',exact:true}).click();await choose('Draft Review Bob');await expect(history.getByText(privateBody,{exact:true})).toBeVisible();
+          await expect(input).toHaveAttribute('rows','3');assert(await input.evaluate(el=>el.style.height)==='','Normal Messaging composer does not retain TenBot sizing');await expect(actionMenu).toHaveCount(0);
+          await input.fill('DM first');await input.press('Shift+Enter');await input.type('DM second');await expect(input).toHaveValue('DM first\nDM second');
+          const dmBefore=calls.filter(call=>call.name==='send_my_work_message_v12').length,assistantBefore=askCount();await input.press('Enter');await expect(history.getByText('DM first\nDM second',{exact:true})).toBeVisible();assert.equal(calls.filter(call=>call.name==='send_my_work_message_v12').length,dmBefore+1);assert.equal(askCount(),assistantBefore);
+          assert(!assistantCalls.some(call=>JSON.stringify(call).includes(privateBody)),'Employee-message content stays outside assistant requests');
+          checked.push('clear uses existing assistant action; normal DM composer sizing/multiline behavior and private content stay separate');
+          continue;
+        }
         if(privacyOnly){
+          await panel.locator('[data-messaging-composer] details summary').press('Enter');
           await expect(panel.getByText(/text you submit.*configured AI provider/)).toBeVisible();
+          await panel.locator('[data-messaging-composer] details summary').press('Enter');
           const pasted='Customer: Synthetic customer\nMessage excerpt: the customer is not ready and the job is complete';
           await ask(pasted,group.answer);
           assert.equal(assistantCalls.filter(c=>c.action==='ask').at(-1).conversationId,undefined);
           await ask('What if that group button is missing?',group.answer);
           assert.equal(assistantCalls.filter(c=>c.action==='ask').at(-1).conversationId,'00000000-0000-4000-8000-000000000777');
           assert(assistantCalls.filter(c=>c.action==='ask').every(c=>c.context.length===1&&!c.context[0].includes(pasted)));
-          await panel.getByRole('button',{name:'Draft a feature suggestion',exact:true}).click();
+          await panel.getByLabel('TenBot conversation actions',{exact:true}).click();await panel.getByRole('button',{name:'Draft a feature suggestion',exact:true}).click();
           const form=panel.getByRole('form',{name:'Feature suggestion draft',exact:true});
           await expect(form.getByLabel('Requested capability',{exact:true})).toHaveValue('');
           await expect(form.getByLabel('Request wording to share',{exact:true})).toHaveValue('');
@@ -202,7 +283,7 @@ async function verifyConversation() {
           await form.getByRole('checkbox').check();await form.getByRole('button',{name:'Submit suggestion',exact:true}).click();
           await expect(form).toHaveCount(0);
           const submitted=assistantCalls.find(c=>c.action==='submit');assert(submitted.confirmed);assert(!JSON.stringify(submitted).includes(pasted));
-          await panel.getByRole('button',{name:'Clear assistant chat',exact:true}).click();
+          await panel.getByLabel('TenBot conversation actions',{exact:true}).click();await panel.getByRole('button',{name:'Clear assistant chat',exact:true}).click();
           await expect(conversation.getByText(pasted,{exact:true})).toHaveCount(0);
           assert.equal(assistantCalls.find(c=>c.action==='clear').conversationId,'00000000-0000-4000-8000-000000000777');
           await ask('How do I create a group conversation?',group.answer);
@@ -473,7 +554,7 @@ async function verifyConversation() {
     assert.deepEqual(errors, []);
     assert(liveInferenceCalls <= 1,'At most one real UI inference per run');
     if (liveInferenceOnce) assert(liveRecord?.answer?.mode === 'ai','Live UI review must produce actual inference evidence');
-    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, inferenceCalls: liveInferenceCalls, liveInferenceReceipt:liveInferenceOnce?'live-ui-answer.json':null, actualConversationalReplays: replayActualConversations ? actualConversations.length : 0, actualReplayModes: replayActualConversations ? actualConversations.map(item => ({id: item.id, mode: item.answer.mode, fallback: item.answer.fallback === true, evaluationError: Boolean(item.error)})) : [], replaySource: ['communication/evaluation.json', 'contacts-coverage/evaluation.json', ...(knowledgeCoverageOnly ? [refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'] : []), ...(replayActualConversations ? [refinementOnly ? 'refinement/selected-model.json' : 'coverage/conversations.json'] : [])], checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; recorded model failures/fallbacks remain distinct from accepted AI prose. Live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
+    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, presentationOnly, inferenceCalls: liveInferenceCalls, liveInferenceReceipt:liveInferenceOnce?'live-ui-answer.json':null, actualConversationalReplays: replayActualConversations ? actualConversations.length : 0, actualReplayModes: replayActualConversations ? actualConversations.map(item => ({id: item.id, mode: item.answer.mode, fallback: item.answer.fallback === true, evaluationError: Boolean(item.error)})) : [], replaySource: ['communication/evaluation.json', 'contacts-coverage/evaluation.json', ...(presentationOnly?['refinement/selected-model.json']:[]), ...(knowledgeCoverageOnly ? [refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'] : []), ...(replayActualConversations ? [refinementOnly ? 'refinement/selected-model.json' : 'coverage/conversations.json'] : [])], checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; recorded model failures/fallbacks remain distinct from accepted AI prose. Live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
     console.log(`TenBot Inbox conversation browser checks passed (${checked.length} focused assertions; ${liveInferenceCalls} real inference calls).`);
   } finally {await browser.close();}
 }

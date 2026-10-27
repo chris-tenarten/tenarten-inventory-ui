@@ -4,7 +4,7 @@ import {randomUUID,createHash} from 'node:crypto';
 import {execFile,execFileSync} from 'node:child_process';
 import {promisify} from 'node:util';
 import {pilotDirectory} from './support/tenbot-ai-pilot.mjs';
-import {answer,cloudflareProvider,groundedProse,requiredInferencePermissions,type InferenceInput,type InferenceProvider} from '../supabase/functions/_shared/tenbot-core';
+import {answer,resolveInput,cloudflareProvider,groundedProse,requiredInferencePermissions,type InferenceInput,type InferenceProvider} from '../supabase/functions/_shared/tenbot-core';
 import {retrieve,registry,snapshot,conversationGuides,knowledgeEntries,knowledgeSnapshot,hasGuidePermission} from '../supabase/functions/_shared/tenbot-knowledge';
 import {generatedKnowledge} from '../supabase/functions/_shared/tenbot-knowledge-snapshot';
 import {handleTenbot as actualHandleTenbot} from '../supabase/functions/_shared/tenbot-handler';
@@ -305,6 +305,72 @@ const followup=await answer({action:'ask',question:'What if I do not see that bu
  assert(input.excerpts.some(source=>source.id==='production-rework-create'));
 }),reserve,[ownExchange]);
 assert.match(followup.message,/unarchived/);
+// Dependent questions keep the active workflow ahead of generic Job/date
+// keywords; standalone requests can still move to another workflow.
+for(const question of [
+ 'Can I do that before the Job is complete?',
+ 'Can I do that before the planned finish date?',
+ 'Can I do that with a planned Job?',
+ 'What about the dates?',
+]){
+ const resolved=resolveInput({action:'ask',question},[ownExchange]);
+ assert.equal(resolved.directEntries[0]?.id,'production-rework-create',question);
+ assert(resolved.entries.length>0&&resolved.entries.every(source=>source.modules.includes('rework')),question);
+ const fallback=await answer({action:'ask',question},all,null,reserve,[ownExchange]);
+ assert.equal(fallback.sources[0]?.id,'production-rework-create');
+ assert.match(fallback.sources[0].guidance,/Job must be complete/);
+ assert(!fallback.sources.some(source=>source.id==='production-schedule'));
+}
+const eligibilityQuestion='Can I do that before the Job is complete?';
+const eligibilityProse='No. Rework requires the Job to be complete, unarchived, and have no active Rework cycle. You cannot initiate Rework before the Job is complete.';
+const eligibility=await answer({action:'ask',question:'Can I do that before the planned finish date?'},all,fixture({ids:['production-rework-create'],answer:eligibilityProse},input=>{
+ assert.equal(input.question,'Can I do that before the planned finish date?','The model receives the actual question, not a rewritten prompt');
+ assert.deepEqual(input.context,[ownExchange]);
+ assert(input.excerpts.every(source=>source.id.startsWith('production-rework')||source.id==='knowledge-rework'));
+}),reserve,[ownExchange]);
+assert.equal(eligibility.message,eligibilityProse);
+const capturedEligibilityError='Yes, you can initiate Rework before the Job is complete, but only if the Job is already marked as complete. Rework can only be created for a completed, unarchived Job with no active Rework cycle.';
+for(const prose of [capturedEligibilityError,'You can initiate Rework before the Job is complete.','Yes, but only if the Job is complete.']){
+ await assert.rejects(answer({action:'ask',question:'Can I initiate Rework before completion?'},all,fixture({ids:['production-rework-create'],answer:prose}),reserve,[ownExchange]),/Rework eligibility wording/);
+}
+const eligibleYes=await answer({action:'ask',question:'Can I initiate Rework for a completed Job?'},all,fixture({ids:['production-rework-create'],answer:'Yes, if the Job is complete, unarchived, and has no active Rework cycle.'}),reserve);
+assert.equal(eligibleYes.mode,'ai','A valid Yes for a completed Job must remain allowed');
+const beforePlannedDate=await answer({action:'ask',question:'Can I do that before the planned finish date?'},all,fixture({ids:['production-rework-create'],answer:'Yes, if the Job is already complete, unarchived, and has no active Rework cycle. Rework preserves the original planned dates.'}),reserve,[ownExchange]);
+assert.equal(beforePlannedDate.mode,'ai','A planned finish date is not the Job completion prerequisite');
+const beforeDecision=await answer({action:'ask',question:eligibilityQuestion},all,noInference,reserve,[ownExchange]);
+assert.equal(beforeDecision.mode,'verified');assert.match(beforeDecision.message,/^No\./);
+assert.deepEqual(beforeDecision.sources.map(source=>source.id),['production-rework-create']);
+assert.match(beforeDecision.message,/complete, unarchived, and have no active Rework/);
+const deniedFollowup=await answer({action:'ask',question:eligibilityQuestion},readOnly,noInference,reserve,[ownExchange]);
+assert.equal(deniedFollowup.resolution,'permission-denied');assert.deepEqual(deniedFollowup.sources,[]);
+for(const [question,expected] of [
+ ['Can I schedule a Job before it is complete?','production-schedule'],
+ ['Can I create a group instead?','group'],
+ ['How do I filter Manpower Reporting by Job?','manpower-job-filter'],
+] as const){
+ const resolved=resolveInput({action:'ask',question},[ownExchange]);
+ assert.equal(resolved.directEntries[0]?.id,expected,question);
+ assert(!resolved.entries.some(source=>source.modules.includes('rework')),question);
+}
+const switchedExchange='Conversation context:\nEmployee: How do I initiate Rework?\nTenBot: Open the completed Job and choose Create Rework.\nEmployee: How do I create a group conversation?\nTenBot: Choose New group and select a participant.';
+assert(resolveInput({question:'Can I rename it?'},[switchedExchange]).entries.every(source=>source.modules.includes('messaging')),'Most recent topic outranks older Rework');
+for(const question of ['Can I do that in Production before the Job is complete?','Can I do that in Rework before the Job is complete?']){
+ const resolved=resolveInput({question},[ownExchange]);
+ assert.equal(resolved.directEntries[0]?.id,'production-rework-create');
+ assert(resolved.entries.every(source=>source.modules.includes('rework')),question);
+}
+const purchaseExchange='Conversation context:\nEmployee: How do I initiate Rework?\nTenBot: Open the completed Job and choose Create Rework.\nEmployee: How do I manage purchase orders?\nTenBot: Purchasing has draft and issued Purchase Orders.';
+const purchaseFollowup=resolveInput({question:'Can I do that?'},[purchaseExchange]);
+assert(purchaseFollowup.entries.length&&purchaseFollowup.entries.every(source=>source.modules.includes('purchasing')),'Generated-only current topic must supersede Rework');
+const unknownExchange=purchaseExchange.replace('How do I manage purchase orders?','How do I tune the CNC machine?').replace('Purchasing has draft and issued Purchase Orders.','That workflow is not verified.');
+assert.deepEqual(resolveInput({question:'Can I do that?'},[unknownExchange]).entries,[],'Unknown new topic must not resurrect Rework');
+const dependentExchange=ownExchange+'\nEmployee: Can I do that with a planned Job?\nTenBot: Rework requires the Job to be complete.';
+assert(resolveInput({question:'What about the dates?'},[dependentExchange]).entries.every(source=>source.modules.includes('rework')),'Dependent chain keeps its active topic');
+const boundedFollowupOnly='Conversation context:\nEmployee: Can I do that before the Job is complete?\nTenBot: Rework can only be created for a completed, unarchived Job with no active Rework cycle.';
+const boundedFollowupEntries=resolveInput({question:'What about the planned dates?'},[boundedFollowupOnly]).entries;
+assert(boundedFollowupEntries.some(source=>source.id.startsWith('production-rework-'))&&boundedFollowupEntries.every(source=>source.modules.includes('rework')),'Retained own reply recovers the active topic when the initial question is outside bounded history');
+const multilineExchange=ownExchange.replace('How do I initiate Rework for a Job?','How do I initiate Rework for a Job?\nI need the eligibility requirements.');
+assert(resolveInput({question:'Can I do that before the Job is complete?'},[multilineExchange]).entries.some(source=>source.id==='production-rework-create'),'Multiline employee questions retain their active topic');
 const clarification=await answer({action:'ask',question:groupQuestion},all,fixture({ids:[],answer:'Are you starting a new group or trying to add someone to an existing DM?'}),reserve);
 assert.match(clarification.message,/\?$/);
 await assert.rejects(answer({action:'ask',question:groupQuestion},all,fixture({ids:[],answer:'Choose Export payroll and download the invoices.'}),reserve),/verify|ungrounded|wording/i);

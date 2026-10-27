@@ -1,0 +1,567 @@
+{
+  "passed": true,
+  "origin": "http://localhost:3000",
+  "presentationOnly": false,
+  "inferenceCalls": 0,
+  "liveInferenceReceipt": null,
+  "actualConversationalReplays": 0,
+  "actualReplayModes": [],
+  "replaySource": [
+    "communication/evaluation.json",
+    "contacts-coverage/evaluation.json"
+  ],
+  "checked": [
+    "provider disclosure visible; explicit pasted text sends without automatic employee-message retrieval",
+    "follow-up sends only conversation ID and fixed module label",
+    "feedback fields do not inherit private chat; deliberate confirmation required",
+    "Clear assistant chat clears server handle and display; next ask starts fresh",
+    "mobile controls remain usable and private Messaging content stays out of requests",
+    "synthetic account switch discards the previous owner conversation and its pending response",
+    "provider disclosure visible; explicit pasted text sends without automatic employee-message retrieval",
+    "follow-up sends only conversation ID and fixed module label",
+    "feedback fields do not inherit private chat; deliberate confirmation required",
+    "Clear assistant chat clears server handle and display; next ask starts fresh",
+    "mobile controls remain usable and private Messaging content stays out of requests",
+    "synthetic account switch discards the previous owner conversation and its pending response"
+  ],
+  "errors": [],
+  "requestEvidence": [
+    {
+      "admin": true,
+      "calls": [
+        {
+          "name": "get_my_app_access",
+          "body": {}
+        },
+        {
+          "name": "ensure_my_welcome_notification",
+          "body": {}
+        },
+        {
+          "name": "get_my_account_preferences",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_task_groups",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_tasks",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_task_group_memberships",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_account_notification_history",
+          "body": {
+            "p_limit": 100
+          }
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_account_notification_history",
+          "body": {
+            "p_limit": 100
+          }
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_inbox_recipients",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_message_page_v12",
+          "body": {
+            "p_peer": "00000000-0000-0000-0000-000000000001",
+            "p_before_time": null,
+            "p_before_id": null,
+            "p_ids": null
+          }
+        },
+        {
+          "name": "mark_my_work_conversation_read_v12",
+          "body": {
+            "p_peer": "00000000-0000-0000-0000-000000000001",
+            "p_ids": [
+              "00000000-0000-4000-8000-000000910002"
+            ]
+          }
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_account_notification_history",
+          "body": {
+            "p_limit": 100
+          }
+        },
+        {
+          "name": "list_my_work_message_page_v12",
+          "body": {
+            "p_peer": "00000000-0000-0000-0000-000000000001",
+            "p_before_time": null,
+            "p_before_id": null,
+            "p_ids": null
+          }
+        },
+        {
+          "name": "get_my_app_access",
+          "body": {}
+        },
+        {
+          "name": "ensure_my_welcome_notification",
+          "body": {}
+        },
+        {
+          "name": "get_my_account_preferences",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_task_groups",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_tasks",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_task_group_memberships",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_account_notification_history",
+          "body": {
+            "p_limit": 100
+          }
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_account_notification_history",
+          "body": {
+            "p_limit": 100
+          }
+        },
+        {
+          "name": "list_my_work_inbox_recipients",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_message_page_v12",
+          "body": {
+            "p_peer": "00000000-0000-0000-0000-000000000001",
+            "p_before_time": null,
+            "p_before_id": null,
+            "p_ids": null
+          }
+        }
+      ],
+      "realtime": [
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-inbox:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-inbox:00000000-0000-0000-0000-000000000010",
+          "event": "access_token",
+          "typing": false
+        },
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-inbox:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000011",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000011",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-inbox:00000000-0000-0000-0000-000000000011",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000011",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000011",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000011",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000011",
+          "event": "phx_leave",
+          "typing": false
+        }
+      ],
+      "assistantActions": [
+        "ask",
+        "ask",
+        "draft",
+        "submit",
+        "clear",
+        "ask",
+        "ask"
+      ],
+      "blockedOrigins": []
+    },
+    {
+      "admin": false,
+      "calls": [
+        {
+          "name": "get_my_app_access",
+          "body": {}
+        },
+        {
+          "name": "get_my_account_preferences",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_task_groups",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_tasks",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_task_group_memberships",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_account_notification_history",
+          "body": {
+            "p_limit": 100
+          }
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_inbox_recipients",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_message_page_v12",
+          "body": {
+            "p_peer": "00000000-0000-0000-0000-000000000001",
+            "p_before_time": null,
+            "p_before_id": null,
+            "p_ids": null
+          }
+        },
+        {
+          "name": "mark_my_work_conversation_read_v12",
+          "body": {
+            "p_peer": "00000000-0000-0000-0000-000000000001",
+            "p_ids": [
+              "00000000-0000-4000-8000-000000910002"
+            ]
+          }
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_account_notification_history",
+          "body": {
+            "p_limit": 100
+          }
+        },
+        {
+          "name": "list_my_work_message_page_v12",
+          "body": {
+            "p_peer": "00000000-0000-0000-0000-000000000001",
+            "p_before_time": null,
+            "p_before_id": null,
+            "p_ids": null
+          }
+        },
+        {
+          "name": "get_my_app_access",
+          "body": {}
+        },
+        {
+          "name": "ensure_my_welcome_notification",
+          "body": {}
+        },
+        {
+          "name": "get_my_account_preferences",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_task_groups",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_tasks",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_task_group_memberships",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_account_notification_history",
+          "body": {
+            "p_limit": 100
+          }
+        },
+        {
+          "name": "list_my_work_conversations_v12",
+          "body": {}
+        },
+        {
+          "name": "list_my_account_notification_history",
+          "body": {
+            "p_limit": 100
+          }
+        },
+        {
+          "name": "list_my_work_inbox_recipients",
+          "body": {}
+        },
+        {
+          "name": "list_my_work_message_page_v12",
+          "body": {
+            "p_peer": "00000000-0000-0000-0000-000000000001",
+            "p_before_time": null,
+            "p_before_id": null,
+            "p_ids": null
+          }
+        }
+      ],
+      "realtime": [
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-inbox:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-inbox:00000000-0000-0000-0000-000000000010",
+          "event": "access_token",
+          "typing": false
+        },
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-inbox:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000010",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000011",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000011",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-inbox:00000000-0000-0000-0000-000000000011",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:global-messaging-badge:00000000-0000-0000-0000-000000000011",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:account-notifications:00000000-0000-0000-0000-000000000011",
+          "event": "phx_leave",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000011",
+          "event": "phx_join",
+          "typing": false
+        },
+        {
+          "topic": "realtime:my-work-system:00000000-0000-0000-0000-000000000011",
+          "event": "phx_leave",
+          "typing": false
+        }
+      ],
+      "assistantActions": [
+        "ask",
+        "ask",
+        "draft",
+        "submit",
+        "clear",
+        "ask",
+        "ask"
+      ],
+      "blockedOrigins": []
+    }
+  ],
+  "limitation": "Synthetic browser RPCs establish UI isolation; recorded model failures/fallbacks remain distinct from accepted AI prose. Live authorization and physical iPhone keyboard/Web Push behavior are separate checks."
+}

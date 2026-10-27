@@ -1553,7 +1553,47 @@ export function conversationMatches(text:string){
  const clauses=expand(text).split(/[?;]|\band\b|\balso\b|(?=\b(?:how do|how can|can i|can my|will that|what if|please draft)\b)/).filter(Boolean);
  return [...new Map([...matchGuides(expand(text)),...clauses.flatMap(clause=>matchGuides(clause))].map(entry=>[entry.id,entry])).values()];
 }
+// Resolve dependent wording only against the recent authenticated assistant
+// topic. Generic dates/state words must not introduce another Job workflow.
+// Explicit workflow requests and module changes still stand on their own.
+const dependentQuestion=/\b(?:that|it|they|those|them|same|instead)\b|\bwhat (?:about|if)\b/i;
+const workflowAction=/\b(?:create|start|initiate|schedule|reschedule|edit|update|change|save|find|search|filter|send|share|attach|receive|adjust|issue|convert|add|remove|delete|export|import)\b/i;
+function namedTopics(text:string){
+ const query=expand(text),named=moduleNames.filter(([,pattern])=>pattern.test(query)).map(([module])=>module);
+ if(/\b(?:purchase orders?|po)\b/.test(query))named.push('purchasing');
+ if(/\bbids?\b/.test(query))named.push('intake');
+ if(!named.length&&/\b(?:customers?|company|contacts?)\b/.test(query))named.push('contacts');
+ if(/\b(?:timeline|scheduled|scheduling)\b/.test(query))named.push('timeline');
+ return named;
+}
+export function conversationQuestion(question:string,context:string[]=[]):string{
+ const follow=(text:string,topic:string)=>{
+  if(!topic||!dependentQuestion.test(text))return expand(text);
+  const current=conversationMatches(text);
+  if(current.length&&workflowAction.test(text))return expand(text);
+  const activeModules=conversationMatches(topic)[0]?.modules||namedTopics(topic);
+  if(namedTopics(text).some(module=>!activeModules.includes(module)))return expand(text);
+  return `${topic} ${expand(text)}`;
+ };
+ // Fold chronologically so a new generated-only or unknown topic supersedes
+ // older authored guides, while a chain of dependent questions keeps its topic.
+ let topic='';
+ for(const text of context.filter(item=>item.startsWith('Conversation context:\n'))){
+  for(const match of text.matchAll(/(?:^|\n)Employee: ([\s\S]*?)\nTenBot: ([^\n]*)/g)){
+   // The bounded history may retain only a pronoun follow-up. Recover its
+   // topic from the accepted own reply using public vocabulary, never its
+   // claims as capability authority or new knowledge.
+   if(!topic&&dependentQuestion.test(match[1]))topic=conversationMatches(match[2])[0]?.title||namedTopics(match[2]).join(' ');
+   topic=follow(match[1],topic);
+  }
+ }
+ if(!topic||!dependentQuestion.test(question))return question;
+ const resolved=follow(question,topic);
+ return resolved===expand(question)?question:resolved;
+}
 export function conversationGuides(question:string,context:string[]=[]):CapabilityEntry[]{
+ const resolved=conversationQuestion(question,context),dependent=resolved!==question;
+ question=resolved;
  const related=(text:string)=>{
   const query=expand(text),words=new Set(query.match(/[a-z]+/g)||[]);
   const named=moduleNames.filter(([,pattern])=>pattern.test(query)).map(([name])=>name);
@@ -1564,23 +1604,18 @@ export function conversationGuides(question:string,context:string[]=[]):Capabili
  };
  const generated=(text:string)=>{
   const query=expand(text),words=[...new Set(query.match(/[a-z]+/g)||[])].filter(word=>word.length>2&&!stop.has(word)&&!genericRecordWords.has(word)&&!genericActionWords.has(word));
-  const named=moduleNames.filter(([,pattern])=>pattern.test(query)).map(([name])=>name);
-  if(/\b(?:purchase orders?|po)\b/.test(query))named.push('purchasing');
-  if(/\bbids?\b/.test(query))named.push('intake');
-  if(!named.length&&/\b(?:customers?|company|contacts?)\b/.test(query))named.push('contacts');
-  if(/\b(?:timeline|scheduled|scheduling)\b/.test(query))named.push('timeline');
+  const named=namedTopics(query);
   return knowledgeEntries.filter(entry=>!named.length||entry.modules.some(module=>named.includes(module)))
    .filter(entry=>!(/\blead[- ]?times?\b/.test(query)&&entry.id!=='knowledge-material-assessment'))
    .map(entry=>({entry,score:words.reduce((score,word)=>score+(entry.terms.split(' ').includes(word)?3:entry.guidance.toLowerCase().includes(word)?0.1:0),0)+(named.includes(entry.id.replace(/^knowledge-/,''))?1:0)}))
    .filter(item=>item.score>=3).sort((a,b)=>b.score-a.score).map(item=>item.entry);
  };
- const current=conversationMatches(question);
- const broad=generated(question);
+ const current=dependent?matchGuides(question):conversationMatches(question);
+ const broad=generated(question).filter(entry=>!current.length||current.some(workflow=>dependent
+  ?workflow.modules.every(module=>entry.modules.includes(module))
+  :workflow.modules.some(module=>entry.modules.includes(module))));
  const fallback=current.length?[]:related(question);
- const followup=!current.length||/\b(?:that|it|they|those|them|same|instead)\b|\bwhat about\b/i.test(question);
- const previousQuestions=followup?context.filter(item=>item.startsWith('Conversation context:\n')).flatMap(item=>[...item.matchAll(/(?:^|\n)Employee: ([^\n]*)/g)].reverse().map(match=>match[1])):[];
- const previous=previousQuestions.flatMap(text=>conversationMatches(text).concat(related(text),generated(text)));
  // Exact workflows come first when known; broader release-pinned sources add
  // facts for intent interpretation and synthesis without changing direct search.
- return [...new Map([...current,...broad.slice(0,current.length?2:3),...fallback,...previous].map(entry=>[entry.id,entry])).values()].slice(0,4);
+ return [...new Map([...current,...broad.slice(0,current.length?2:3),...fallback].map(entry=>[entry.id,entry])).values()].slice(0,4);
 }
