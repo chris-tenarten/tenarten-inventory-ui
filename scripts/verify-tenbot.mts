@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {randomUUID} from 'node:crypto';
+import {pilotReservationQuery,pilotCaps,pilotDirectory} from './support/tenbot-ai-pilot.mjs';
 import {answer,cloudflareProvider} from '../supabase/functions/_shared/tenbot-core';
 import {retrieve,registry} from '../supabase/functions/_shared/tenbot-knowledge';
 import {handleTenbot} from '../supabase/functions/_shared/tenbot-handler';
@@ -21,6 +23,30 @@ assert.deepEqual(await cloudflareProvider('fixture','not-a-secret',fakeFetch).in
 await assert.rejects(handleTenbot({action:'list'},admin,async()=>({data:false,error:null}),async()=>({data:null,error:null}),null,0),/not authorized/);
 console.log('Deterministic retrieval, provenance, provider contract, injection containment, bounds and failure gates passed. No real-model evaluation claimed.');
 if(process.argv.includes('--core-only'))process.exit(0);
+if(process.argv.includes('--pilot-local-only')){
+ // Existing task-owned local fixture only. Seeded cap rows are always rolled
+ // back or removed by their exact generated IDs; real reservations stay intact.
+ const local='tenops-tenbot-review',before=sql(local,'select count(*) from tenbot_usage');
+ const check=pilotReservationQuery('select 1',admin).replace(/^begin;/,'').replace(/commit;$/,'rollback;');
+ for(const [user,count] of [[admin,pilotCaps.perUserDay],[member,pilotCaps.totalDay]] as const){
+  assert.throws(()=>sql(local,`begin;delete from tenbot_usage;insert into tenbot_usage(user_id,reserved_usd,created_at) select ${literal(user)}::uuid,0.01,now()-interval '2 minutes' from generate_series(1,${count});${check}`),/daily cap/);
+  assert.equal(sql(local,'select count(*) from tenbot_usage'),before);
+ }
+ const ids=Array.from({length:pilotCaps.perUserDay},()=>randomUUID());
+ const lines=()=>{try{return readFileSync(pilotDirectory+'/usage.jsonl','utf8').trim().split('\n').length;}catch{return 0;}};
+ const calls=lines();
+ const token='local.'+Buffer.from(JSON.stringify({sub:admin})).toString('base64url')+'.local';
+ const invoke=async(auth=token,origin='http://localhost:3000')=>fetch('http://localhost:55593/',{method:'POST',headers:{Origin:origin,Authorization:'Bearer '+auth,'Content-Type':'application/json'},body:JSON.stringify({action:'ask',question:'How do I create a group conversation?'})});
+ try{
+  sql(local,`insert into tenbot_usage(id,user_id,reserved_usd,created_at) values ${ids.map(id=>`(${literal(id)},${literal(admin)},0.01,now()-interval '2 minutes')`).join(',')}`);
+  const response=await invoke();assert.equal(response.status,200);const result=await response.json();assert.equal(result.mode,'guide');assert.equal(result.fallback,true);assert.equal(result.sources[0].id,'group');
+  assert.equal(lines(),calls,'A capped request must not invoke remote inference');
+  assert.equal((await invoke('invalid')).status,401);assert.equal((await invoke(token,'http://untrusted.local')).status,403);
+ }finally{sql(local,`delete from tenbot_usage where id in (${ids.map(literal).join(',')})`);}
+ assert.equal(sql(local,'select count(*) from tenbot_usage'),before);
+ console.log('Persistent user/total UTC-day caps, atomic rollback, direct-guide fallback, no remote call on cap, local auth/origin isolation and fixture preservation passed.');
+ process.exit(0);
+}
 const name='tenops-tenbot-verify-'+process.pid;
 try{startIntakeDatabase(name);sql(name,readFileSync('supabase/migrations/20261027120000_tenbot_feedback_usage.sql','utf8'));
  const run=(statement:string,id=admin,role='authenticated')=>sql(name,asUser(statement,id,role));

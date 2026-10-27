@@ -1,0 +1,16 @@
+{
+  "name": "tenbot-local-ai-pilot",
+  "main": "worker.ts",
+  "compatibility_date": "2026-10-01",
+  "account_id": "1c3296a9dced221746eb605be66df0f3",
+  "workers_dev": false,
+  "dev": {
+    "ip": "127.0.0.1",
+    "port": 55594,
+    "local_protocol": "http"
+  },
+  "ai": {
+    "binding": "AI",
+    "remote": true
+  }
+}

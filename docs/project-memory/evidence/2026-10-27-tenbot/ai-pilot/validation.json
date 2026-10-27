@@ -1,0 +1,95 @@
+{
+  "status": "implemented locally; pending Product review",
+  "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+  "planEvidence": "Chris confirmed Workers Free in Billing dashboard; OAuth Billing API returns 403",
+  "caps": {
+    "perUserDay": 12,
+    "totalDay": 20,
+    "perMinute": 6,
+    "monthlyUsd": 0.2,
+    "neuronHeadroom": 2000,
+    "conservativeNeuronsPerRequest": 200
+  },
+  "realCalls": 6,
+  "telemetry": [
+    {
+      "at": "2026-10-27T17:08:23.985Z",
+      "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+      "durationMs": 1477,
+      "usage": {
+        "prompt_tokens": 238,
+        "completion_tokens": 13,
+        "total_tokens": 251
+      }
+    },
+    {
+      "at": "2026-10-27T17:08:26.573Z",
+      "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+      "durationMs": 1888,
+      "usage": {
+        "prompt_tokens": 361,
+        "completion_tokens": 20,
+        "total_tokens": 381
+      }
+    },
+    {
+      "at": "2026-10-27T17:08:29.121Z",
+      "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+      "durationMs": 1900,
+      "usage": {
+        "prompt_tokens": 240,
+        "completion_tokens": 29,
+        "total_tokens": 269
+      }
+    },
+    {
+      "at": "2026-10-27T17:08:31.258Z",
+      "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+      "durationMs": 1234,
+      "usage": {
+        "prompt_tokens": 219,
+        "completion_tokens": 25,
+        "total_tokens": 244
+      }
+    },
+    {
+      "at": "2026-10-27T17:08:33.299Z",
+      "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+      "durationMs": 1261,
+      "usage": {
+        "prompt_tokens": 302,
+        "completion_tokens": 16,
+        "total_tokens": 318
+      }
+    },
+    {
+      "at": "2026-10-27T17:12:08.556Z",
+      "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+      "durationMs": 1336,
+      "usage": {
+        "prompt_tokens": 238,
+        "completion_tokens": 13,
+        "total_tokens": 251
+      }
+    }
+  ],
+  "tests": {
+    "deterministicCore": "passed",
+    "persistentDailyCapsAndFallback": "passed; no remote call",
+    "mockBinding": "28 cases plus privacy projection; no network",
+    "typescript": "passed",
+    "eslint": "passed including Edge files --no-ignore",
+    "webpackProductionBuild": "passed with local fixture environment",
+    "browser": "passed; one real AI request; captured customer response replay; synthetic fallback",
+    "independentReview": "privacy, atomic limits, fallback auth and all five actual answers passed",
+    "finalRuntime": "authenticated bridge health and employee-written draft boundary passed; no additional inference"
+  },
+  "limitations": [
+    "Model selects vetted excerpts; no model-written prose or original-question/multi-turn inference evaluated",
+    "Physical iPhone notification presentation not tested",
+    "Analytics account-shared and may lag"
+  ],
+  "hostedDatabaseChanges": false,
+  "paidActivation": false,
+  "deployment": false
+}

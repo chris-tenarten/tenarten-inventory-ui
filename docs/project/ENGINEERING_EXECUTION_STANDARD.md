@@ -121,3 +121,8 @@ Chris's floating-assistant Product decision supersedes the dedicated-page UI in 
 ### TenBot metadata polish — October 27
 
 Chris accepted the floating UI at `6a21ce4` and authorized the smallest employee-facing metadata correction, local validation and dev commit. [Scoped presentation polish](../project-memory/2026-10-27-tenbot-candidate.md#employee-chat-metadata-polish--october-27-2026) uses Tier 1 / Testing Level 1 and preserves backend/provenance, capabilities, permissions, feedback and inference state. No deployment authorization.
+
+
+### TenBot scoped handoff — October 27, 2026
+
+Chris’s explicit “FREE REAL AI INFERENCE PILOT” request and subsequent Workers Free dashboard confirmation authorize the existing dev/local fixture pilot and local commit only; separate Advisory context is unavailable. [Pilot boundary and Product review](../project-memory/2026-10-27-tenbot-candidate.md#free-workers-ai-local-pilot--october-27-2026) carry five actual remote answers, owner-confirmed Free plan plus live catalog/allowance evidence, privacy projection, persistent caps and fallback. Tier 3 / focused Testing Level 3 covers the new external inference/usage boundary; existing feedback/Auth/RBAC/Web Push contracts and migrations are unchanged. Floating UI is Product-accepted; constrained inference is implemented locally, pending Product acceptance. Stop at localhost:3000 Product review. No push, hosted schema/configuration change, paid activation, employee rollout or deployment. Concurrent Intake work and historical receipts remain outside this boundary.

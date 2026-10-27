@@ -4,12 +4,14 @@ import {mkdirSync, writeFileSync, readFileSync} from 'node:fs';
 
 const origin = 'http://localhost:3000';
 const endpoint = 'http://localhost:55593/';
-const output = '/private/tmp/tenops-tenbot-review';
+const aiPilotOnly = process.argv.includes('--ai-pilot-only');
+const output = '/private/tmp/tenops-tenbot-review' + (aiPilotOnly ? '/ai-pilot' : '');
 const fixture = JSON.parse(readFileSync('/private/tmp/tenops-intake-materials-review/server.json', 'utf8'));
 mkdirSync(output, {recursive: true});
 const browser = await chromium.launch({headless: true});
 const page = await browser.newPage({viewport: {width: 1440, height: 1000}});
 const errors = [], requests = [], asks = [];
+let liveAiRequests = 0;
 page.on('pageerror', error => errors.push(error.message));
 page.on('request', request => {
   if (request.url() === endpoint && request.method() === 'POST') {
@@ -20,6 +22,10 @@ page.on('request', request => {
 await page.route('**/*', route => {
   const url = new URL(route.request().url());
   if (['blob:', 'data:'].includes(url.protocol) || [origin, 'http://localhost:55593'].includes(url.origin)) {
+    if (aiPilotOnly && route.request().url() === endpoint && route.request().method() === 'POST' && route.request().postDataJSON().action === 'ask') {
+      liveAiRequests++;
+      if (liveAiRequests > 1) return route.abort('blockedbyclient');
+    }
     requests.push(url.origin);
     return route.continue();
   }
@@ -77,12 +83,89 @@ try {
   await ask('How do I create a group conversation?', 'My Work');
   await expect(conversation.getByText(/Choose New group, enter a group name/)).toBeVisible();
   await expect(conversation.getByRole('link', {name: 'Open My Work'})).toHaveAttribute('href', '/my-work');
-  await expect(conversation.getByText('Here’s what I found in the TenOps Guide.', {exact: true})).toBeVisible();
+  if (aiPilotOnly) {
+    assert.equal(answerPayloads[0].mode, 'ai', 'The first browser request must use real AI');
+    assert.notEqual(answerPayloads[0].fallback, true, 'The live request must not fall back to guide search');
+    await expect(conversation.getByText(answerPayloads[0].message, {exact: true})).toBeVisible();
+  } else {
+    await expect(conversation.getByText('Here’s what I found in the TenOps Guide.', {exact: true})).toBeVisible();
+  }
   await conversation.getByText('How do I create a group conversation?', {exact: true}).scrollIntoViewIfNeeded();
-  await page.screenshot({path: `${output}/desktop-floating-guide.png`});
+  await page.screenshot({path: `${output}/${aiPilotOnly ? 'desktop-real-ai' : 'desktop-floating-guide'}.png`});
   checked.push('persistent launcher on My Work', 'nonmodal desktop panel containment', 'guide provenance and released workflow', 'allowlisted module context without query or record identifier');
 
-  if (metadataOnly) {
+  if (aiPilotOnly) {
+    const replays = [];
+    const assertCleanChat = async () => {
+      const text = await conversation.innerText();
+      assert(!/Deployed knowledge|AI-selected guidance|Direct guide search|capability snapshot|inference|\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b|\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i.test(text), 'Employee chat must omit technical metadata');
+      for (const payload of answerPayloads) {
+        assert(payload.snapshot.revision && payload.snapshot.verifiedAt, 'Internal provenance stays intact');
+        assert(!text.includes(payload.snapshot.revision), 'Revision must remain internal');
+        for (const source of payload.sources) assert(!text.includes(source.source), 'Verification source details stay internal');
+      }
+    };
+    await assertCleanChat();
+    await input.fill('Keep this unfinished pilot question');
+    await panel.getByRole('button', {name: 'Minimize TenBot', exact: true}).click();
+    await expect(panel).toBeHidden();
+    await openAssistant();
+    await expect(input).toHaveValue('Keep this unfinished pilot question');
+    await expect(conversation.getByText('How do I create a group conversation?', {exact: true})).toBeVisible();
+    checked.push('one real remote AI group response', 'simple guide attribution with internal metadata hidden', 'chat and unfinished question survive minimize/reopen');
+
+    // Further UI checks replay captured results or a synthetic fallback. They
+    // never spend another remote request; the outer route also blocks a second.
+    const evaluation = JSON.parse(readFileSync(`${output}/evaluation.json`, 'utf8'));
+    const customer = evaluation.outputs.find(item => item.answer?.sources.some(source => source.id === 'customer-history'));
+    assert(customer && customer.answer.mode === 'ai', 'A captured real customer-history evaluation is required');
+    let replay = customer.answer;
+    await page.route(endpoint, route => {
+      const request = route.request();
+      if (request.method() !== 'POST' || request.postDataJSON().action !== 'ask') return route.continue();
+      return route.fulfill({status: 200, contentType: 'application/json', headers: {'Access-Control-Allow-Origin': origin}, body: JSON.stringify(replay)});
+    });
+    replays.push({kind: 'captured real evaluation replay', question: customer.question, source: 'evaluation.json'});
+    await ask(customer.question, 'My Work');
+    await expect(conversation.getByRole('link', {name: 'Open Contacts', exact: true})).toHaveAttribute('href', '/contacts');
+    await conversation.getByRole('link', {name: 'Open Contacts', exact: true}).click();
+    await expect(page).toHaveURL(`${origin}/contacts`);
+    await expect(panel).toBeVisible();
+    await expect(workspace.getByText('Current module: Contacts', {exact: true})).toBeVisible();
+    await expect(conversation.getByText('How do I create a group conversation?', {exact: true})).toBeVisible();
+    await assertCleanChat();
+    checked.push('captured customer answer renders Contacts link', 'conversation retained through actual Contacts route change');
+
+    await page.setViewportSize({width: 390, height: 844});
+    const mobileNav = page.getByRole('navigation', {name: 'Mobile navigation'});
+    await expect(mobileNav).toBeVisible();
+    let navBox = await mobileNav.boundingBox();
+    assert(navBox);
+    await assertContained(panel, navBox.y);
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'No horizontal mobile overflow');
+    await panel.getByRole('button', {name: 'Minimize TenBot', exact: true}).click();
+    const launcherBox = await page.getByRole('button', {name: 'Ask TenBot', exact: true}).boundingBox();
+    navBox = await mobileNav.boundingBox();
+    assert(launcherBox && navBox && launcherBox.y + launcherBox.height <= navBox.y, 'Mobile launcher clears navigation');
+    await openAssistant();
+    await expect(conversation.getByText(customer.question, {exact: true})).toBeVisible();
+    await conversation.locator('article').last().scrollIntoViewIfNeeded();
+    await page.screenshot({path: `${output}/mobile-customer-replay.png`});
+
+    replay = {...answerPayloads[0], mode: 'guide', fallback: true};
+    replays.push({kind: 'synthetic guide fallback', question: 'Group guidance while AI is unavailable'});
+    await ask('Group guidance while AI is unavailable', 'Contacts');
+    await expect(conversation.getByText('AI is unavailable right now. Here’s guidance from the TenOps Guide.', {exact: true})).toBeVisible();
+    await assertCleanChat();
+    await assertContained(panel, navBox.y);
+    await conversation.locator('article').last().scrollIntoViewIfNeeded();
+    await page.screenshot({path: `${output}/mobile-guide-fallback.png`});
+    checked.push('390px mobile panel and launcher containment above navigation', 'captured customer answer mobile presentation', 'synthetic fallback copy and guide attribution');
+    assert.equal(liveAiRequests, 1, 'Focused pilot browser validation permits exactly one actual remote request');
+    assert.deepEqual(errors, []);
+    writeFileSync(`${output}/browser-results.json`, JSON.stringify({passed: true, origin, errors, liveAiRequests, liveAnswer: answerPayloads[0], replays, checked, networkOrigins: [...new Set(requests)]}, null, 2));
+    console.log('TenBot AI pilot browser checks passed: one real remote request; captured customer replay and synthetic fallback clearly separated.');
+  } else if (metadataOnly) {
     const assertCleanChat = async () => {
       const text = await conversation.innerText();
       assert(!/Deployed knowledge|AI-selected guidance|Direct guide search|capability snapshot|inference|\b[0-9]{4}-[0-9]{2}-[0-9]{2}\b/i.test(text), 'Employee chat must omit technical metadata');
