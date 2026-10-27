@@ -150,5 +150,86 @@
       "unrelated TenBot source/navigation/docs/scripts/migration and prior dirty receipts"
     ],
     "artifacts": "/private/tmp/tenops-intake-materials-review; browser-refinement-results.json, desktop-scope-refined.png, mobile-scope-refined.png; earlier failed assertion artifacts retained"
+  },
+  "inspector_simplification": {
+    "date": "2026-10-27",
+    "reviewed_dev_tip": "64d7900c261d5d107845c0cb9328570a9d5e1a45",
+    "authority": "Chris: TENOPS — INTAKE GRADUATION: SIMPLIFY BID INSPECTOR",
+    "status": "implemented locally; pending Product review",
+    "risk_tier": 2,
+    "testing_level": 2,
+    "ui": "Related Records & Handoff replaces scope/calculation editor and duplicate cards; selectors only for governing records",
+    "migrations_added": false,
+    "backfill": false,
+    "backend_engine_changed": false,
+    "owning_interfaces_changed": false,
+    "hosted_verification": false,
+    "hosted_mutations": false,
+    "push_or_deployment": false,
+    "helper_checks": {
+      "command": "./node_modules/.bin/tsx scripts/verify-intake-related-records.mts",
+      "result": "passed",
+      "coverage": [
+        "retained quantities/assumptions/mapping evidence",
+        "multiple finishes per revision",
+        "mapping index rebasing when retained records move",
+        "replacement reset and unresolved fallback",
+        "immutable source captions and safe canonical Sample identity",
+        "no input mutation"
+      ]
+    },
+    "browser": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "errors": [],
+      "checked": [
+        "scope/calculation editor absent",
+        "compact exact governing selectors only",
+        "ordinary save/Updates/Files without records",
+        "accepted Proposal and Sample/Blend revision provenance",
+        "canonical owning-module links",
+        "shared requirements calculated behind selection",
+        "existing planning/mapping and prior capture preserved",
+        "read-only Inventory assessment service retained",
+        "unsaved Bid fields preserved",
+        "deposit/conversion readiness",
+        "desktop/mobile containment",
+        "atomic latest-selection handoff",
+        "conversion without records/planning",
+        "Proposal access independent from Sample navigation",
+        "existing Sample/import/PDF workflow"
+      ]
+    },
+    "final_export": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "finalExport": true,
+      "activeBid": true,
+      "governingRevisionsSelected": true,
+      "planningEditorAbsent": true,
+      "refreshDisabledDuringSelection": true,
+      "errors": []
+    },
+    "typescript": "passed",
+    "targeted_eslint": "passed",
+    "diff_check": "passed",
+    "webpack_export": "passed with localhost-only backend settings",
+    "independent_diff_review": "passed; core integration, reference preservation, mappings, module routes, permission gates and minimal Blend metadata reads inspected",
+    "preserved": [
+      "version-bound immutable captures",
+      "historical import and numbering",
+      "shared requirements and read-only Inventory assessment",
+      "atomic canonical Job handoff",
+      "Sample/Proposal/Blend/Inventory/Production interfaces",
+      "unrelated TenBot commits and pre-existing dirty receipts"
+    ],
+    "limits": [
+      "No new hosted compatibility/Storage/Edge verification",
+      "Earlier broad RLS/import/lifecycle evidence retained without unrelated reruns",
+      "Proposal-denied UI check is a browser response simulation, not a new role/RLS audit",
+      "Exact governing revision remains labeled; Sample links open the existing owner editor/history",
+      "Historical populated-Excel limitation unchanged"
+    ],
+    "artifacts": "/private/tmp/tenops-intake-materials-review; browser-related-records-results.json, related-records-final-review.json, related-records-final-desktop.png, related-records-final-mobile.png; prior assertion-failure artifacts retained"
   }
 }

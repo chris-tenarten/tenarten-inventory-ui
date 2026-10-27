@@ -111,6 +111,8 @@ Chris authorized scoped implementation and a local dev commit from remote-confir
 
 Chris's subsequent October 27 UX refinement on `00ce91a` simplifies the Inspector to approved references, commercial scope and optional Production Batches. Shared services reuse saved Blend plans and canonical calculations; technical overrides are secondary and missing planning remains advisory. Earlier captures and existing editors/import/Inventory/Production flows are preserved. Focused calculation compatibility, actual localhost behavior and handoff checks passed; no new migration/backfill. [Updated Product review](2026-10-27-intake-graduation-material-intelligence.md#ux-refinement--october-27-2026) is local only, pending acceptance. Unrelated TenBot work remains outside this Intake boundary.
 
+Chris's later October 27 Inspector decision supersedes that scope editor: Related Records & Handoff now shows linked/accepted Proposals, governing Sample/Blend revisions, canonical Job navigation, deposit/conversion readiness and advisory gaps. Only governing-record selection remains in Intake; owning editors and backend calculation/assessment/atomic handoff are retained. Tier 2 focused compatibility/browser checks and localhost export pass. [Updated Product review](2026-10-27-intake-graduation-material-intelligence.md#bid-inspector-simplification--october-27-2026) is implemented locally, pending acceptance; no new migration/backfill or hosted change.
+
 
 ## TenBot — October 27 local candidate
 
