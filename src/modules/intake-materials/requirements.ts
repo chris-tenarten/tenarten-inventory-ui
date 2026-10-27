@@ -3,28 +3,67 @@ import {buildProductionBlend} from '../../../supabase/functions/_shared/producti
 import type {Requirement,ScopeLine,Assessment} from './contracts.ts';
 const n=(v:unknown)=>v!==null&&v!==undefined&&String(v).trim()!==''&&Number.isFinite(Number(v))?Number(v):null;
 const text=(v:unknown)=>v==null?'':String(v);
-export function scopeBatchCount(line:ScopeLine){const q=n(line.quantity),yieldPerBatch=n(line.yieldPerBatch);if(q===null||q<=0||yieldPerBatch===null||yieldPerBatch<=0||!['fractional','whole_up'].includes(line.batchRounding))return null;const count=q/yieldPerBatch;return line.batchRounding==='whole_up'?Math.ceil(count):count;}
+const supplied=(value:unknown)=>text(value).trim()!=='';
+const positive=(value:unknown)=>{const valueNumber=n(value);return valueNumber!==null&&valueNumber>0?valueNumber:null;};
+export function scopeBatchCount(line:ScopeLine){if(line.planningBasis==='reference'&&supplied(line.productionBatches))return positive(line.productionBatches);const q=n(line.quantity),yieldPerBatch=n(line.yieldPerBatch);if(q===null||q<=0||yieldPerBatch===null||yieldPerBatch<=0||!['fractional','whole_up'].includes(line.batchRounding))return null;const count=q/yieldPerBatch;return line.batchRounding==='whole_up'?Math.ceil(count):count;}
+export type ScopePlan={batchCount:number|null;plannedQuantity:number|null;blendSize:number|null;thickness:number|null;overage:number|null;basis:string;issues:string[]};
+/** Resolve planning inputs from immutable references, without authoring a formulation. */
+export function resolveScopePlan(line:ScopeLine,snapshot:Record<string,unknown>):ScopePlan{
+ const state=(snapshot.formulation_state??snapshot.formulation??{}) as Record<string,unknown>;
+ const issues:string[]=[];
+ if(line.planningBasis!=='reference'){
+  const batchCount=scopeBatchCount(line),target=positive(resolveBatchFiller(state as unknown as Parameters<typeof resolveBatchFiller>[0]).target);
+  return {batchCount,plannedQuantity:supplied(line.plannedQuantity)?positive(line.plannedQuantity):batchCount!==null&&target!==null?batchCount*target:null,blendSize:positive(line.blendSize),thickness:positive(line.thickness),overage:n(line.overage),basis:'Reviewed scope yield',issues};
+ }
+ const provenance=(snapshot._scope_provenance??{}) as Record<string,unknown>;
+ const saved=(line.sourceKind==='blend'?(provenance.inputs??{}):{}) as Record<string,unknown>;
+ const batchOverride=supplied(line.productionBatches),yieldOverride=supplied(line.yieldPerBatch)||supplied(line.batchRounding);
+ let batchCount=batchOverride?positive(line.productionBatches):yieldOverride?scopeBatchCount(line):positive(saved.batchCount);
+ if(batchCount!==null&&!Number.isFinite(batchCount))batchCount=null;
+ const basis=batchOverride?'Explicit Production Batches':yieldOverride?'Reviewed commercial quantity-to-Batch yield':batchCount!==null?'Captured issued Blend inputs':'Production quantity unresolved';
+ if(batchCount===null)issues.push(batchOverride?'Production Batch quantity must be positive.':yieldOverride?'Scope yield per Batch and rounding choice are unresolved.':'Production Batch quantity is unresolved; enter batches or reference an issued Blend.');
+ const target=positive(resolveBatchFiller(state as unknown as Parameters<typeof resolveBatchFiller>[0]).target);
+ const reuseChipPlan=!batchOverride&&!yieldOverride&&supplied(saved.plannedQuantity);
+ let plannedQuantity=supplied(line.plannedQuantity)?positive(line.plannedQuantity):reuseChipPlan?positive(saved.plannedQuantity):batchCount!==null&&target!==null?batchCount*target:null;
+ if(plannedQuantity!==null&&!Number.isFinite(plannedQuantity)){plannedQuantity=null;issues.push('Production quantities exceed the supported numeric range.');}
+ if(supplied(line.plannedQuantity)&&plannedQuantity===null)issues.push('Chip quantity override must be positive.');
+ else if(reuseChipPlan&&plannedQuantity===null)issues.push('Captured issued Blend chip quantity is unresolved.');
+ const blendSize=supplied(line.blendSize)?positive(line.blendSize):supplied(saved.blendSize)?positive(saved.blendSize):1000;
+ if(blendSize===null)issues.push('Blend size must be positive.');
+ const thickness=positive(supplied(line.thickness)?line.thickness:state.thicknessIn);
+ if(thickness===null)issues.push('Scope thickness is unresolved.');
+ else if(supplied(line.thickness)&&n(state.thicknessIn)!==thickness)issues.push('Scope thickness differs from the captured formulation; review yield before planning.');
+ const overage=supplied(line.overage)?n(line.overage):0;
+ if(overage===null||overage<0)issues.push('Overage percentage must be zero or positive.');
+ return {batchCount,plannedQuantity,blendSize,thickness,overage,basis,issues};
+}
 /** Shared by the preview and authenticated Edge capture. No inventory mutations. */
 export function deriveRequirements(lines:ScopeLine[],sources:Record<string,unknown>[]){
  const requirements:Requirement[]=[],unresolved:string[]=[];
  lines.forEach((line,i)=>{
   const snapshot=sources[i]??{}, state=(snapshot.formulation_state??snapshot.formulation??{}) as Record<string,unknown>;
   const rows=(snapshot.blend_rows??snapshot.blendRows??[]) as Record<string,unknown>[];
-  const missing:string[]=[];
-  if(!(n(line.quantity)!>0)||!line.unit.trim())missing.push('Scope quantity/unit is unresolved.');
-  const batchCount=scopeBatchCount(line);if(batchCount===null)missing.push('Scope yield per Batch and rounding choice are unresolved.');
-  if(!line.assumptions.trim())missing.push('Calculation assumptions are undocumented.');
-  if(!(n(line.thickness)!>0))missing.push('Scope thickness is unresolved.');
-  else if(n(state.thicknessIn)!==n(line.thickness))missing.push('Scope thickness differs from the captured formulation; review yield before planning.');
-  if(n(line.overage)===null||n(line.overage)!<0)missing.push('Overage percentage is unresolved.');
-  const extra=n(line.overage)!>=0?1+n(line.overage)!/100:null;
+  const reference=line.planningBasis==='reference',plan=resolveScopePlan(line,snapshot),missing:string[]=reference?[...plan.issues]:[];
+  if(!(n(line.quantity)!>0)||!line.unit.trim()){
+   if(reference)unresolved.push(`${line.label||`Scope ${i+1}`}: commercial scope quantity/unit is unresolved.`);
+   else missing.push('Scope quantity/unit is unresolved.');
+  }
+  const batchCount=reference?plan.batchCount:scopeBatchCount(line);
+  if(!reference){
+   if(batchCount===null)missing.push('Scope yield per Batch and rounding choice are unresolved.');
+   if(!line.assumptions.trim())missing.push('Calculation assumptions are undocumented.');
+   if(!(n(line.thickness)!>0))missing.push('Scope thickness is unresolved.');
+   else if(n(state.thicknessIn)!==n(line.thickness))missing.push('Scope thickness differs from the captured formulation; review yield before planning.');
+   if(n(line.overage)===null||n(line.overage)!<0)missing.push('Overage percentage is unresolved.');
+  }
+  const overage=reference?plan.overage:n(line.overage),extra=overage!==null&&overage>=0?1+overage/100:null;
   const add=(role:string,material:string,quantity:number|null,unit:string,index:number,issues:string[]=[],vendor='',size='',pkg:number|null=null,packageEvidence:string|null=null)=>{
    const key=`${i}:${role}:${index}`;
    requirements.push({key,scope:line.label||`Scope ${i+1}`,role,material,vendor,size,quantity:missing.length?null:quantity,unit,packageEquivalent:missing.length?null:pkg,packageEvidence,unresolved:[...missing,...issues,...(!material.trim()?['Material identity is unresolved.']:[])],mapping:line.mappings?.[key]});
   };
   try{
    const defaultChip=batchCount===null?null:batchCount*Number(resolveBatchFiller(state as unknown as Parameters<typeof resolveBatchFiller>[0]).target);
-   const model=buildProductionBlend(snapshot,{batchCount:batchCount??'',plannedQuantity:line.plannedQuantity.trim()?line.plannedQuantity:defaultChip??'',blendSize:line.blendSize});
+   const model=buildProductionBlend(snapshot,{batchCount:batchCount??'',plannedQuantity:reference?plan.plannedQuantity??'':line.plannedQuantity.trim()?line.plannedQuantity:defaultChip??'',blendSize:reference?plan.blendSize??'':line.blendSize});
    for(const warning of model.warnings)missing.push(warning);
    model.aggregates.forEach((r:Record<string,unknown>,j:number)=>add('aggregate',text(r.material),extra===null?null:Number(r.totalLb)*extra,'lb',j,[],text(r.vendor),text(r.size),r.packageProvenance==='captured_catalog'&&extra!==null?Number(r.totalBags)*extra:null,r.packageProvenance==='captured_catalog'?'Captured catalog package':null));
    model.filler.forEach((r:Record<string,unknown>,j:number)=>add('filler',text(r.material),r.quantity==null||extra===null?null:Number(r.quantity)*extra,'lb',j,r.quantity==null?['Filler allocation is unresolved.']:[],text(r.vendor),'',extra!==null&&r.package?Number((r.package as Record<string,unknown>).equivalent)*extra:null,r.package?'Captured catalog package':null));

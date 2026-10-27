@@ -87,5 +87,68 @@
     "pages": 1,
     "native_thumbnail_visually_inspected": true
   },
-  "artifacts": "/private/tmp/tenops-intake-materials-review; no historical originals copied into Git"
+  "artifacts": "/private/tmp/tenops-intake-materials-review; no historical originals copied into Git",
+  "ux_refinement": {
+    "date": "2026-10-27",
+    "base": "00ce91aa9238266f7a4fe424a7ac03c6b7080aab",
+    "status": "implemented locally; pending Product acceptance",
+    "authority": "Chris: TENOPS — INTAKE GRADUATION UX REFINEMENT; author once in Samples, reference in Intake, calculate in shared services, execute in Production",
+    "risk_tier": 3,
+    "testing_level": "focused Level 3 for changed defaults and capture compatibility",
+    "migrations_added": false,
+    "backfill": false,
+    "hosted_mutations": false,
+    "push_or_deployment": false,
+    "pure_checks": {
+      "command": "./node_modules/.bin/tsx scripts/verify-intake-reference-planning.mts",
+      "result": "passed",
+      "coverage": [
+        "canonical calculation parity",
+        "saved Blend full plan reuse",
+        "commercial and production independence",
+        "explicit Batch/yield precedence",
+        "invalid/unknown/overflow handling",
+        "legacy compatibility",
+        "source input nonmutation"
+      ]
+    },
+    "browser": {
+      "passed": true,
+      "origin": "http://localhost:3000",
+      "errors": [],
+      "checked": [
+        "clean optional scope navigation",
+        "ordinary Bid save/Updates/Files without material fields",
+        "unresolved advisory acceptance",
+        "commercial and Production quantities separate",
+        "technical overrides collapsed and reset by reference change",
+        "issued Blend plan reused without input reentry",
+        "canonical Batch requirements with blank technical inputs",
+        "prior capture immutable",
+        "read-only availability and shortage",
+        "mobile containment",
+        "atomic current-scope handoff",
+        "ordinary conversion with open untouched optional scope and no planning",
+        "Sample library/import entry and working PDF action"
+      ]
+    },
+    "typescript": "passed after export completed",
+    "targeted_eslint": "passed",
+    "diff_check": "passed",
+    "webpack_export": "passed with localhost-only backend settings",
+    "em_diff_review": "passed; calculation defaults, primary/secondary UX, compatibility, clean dirty state and converted editor reviewed",
+    "limitations": [
+      "Earlier full RLS/import verification retained; no broad unrelated rerun",
+      "No new hosted compatibility verification",
+      "Populated historical Excel limitation unchanged",
+      "Mobile Inspector checked; ordinary New Bid creation checked on desktop. Existing bottom mobile navigation intercepted the unchanged New Bid dialog button at 390x844; no unrelated shell redesign."
+    ],
+    "preserved": [
+      "issued documents and captures",
+      "existing editors and Samples import",
+      "permissions and Production conversion",
+      "unrelated TenBot source/navigation/docs/scripts/migration and prior dirty receipts"
+    ],
+    "artifacts": "/private/tmp/tenops-intake-materials-review; browser-refinement-results.json, desktop-scope-refined.png, mobile-scope-refined.png; earlier failed assertion artifacts retained"
+  }
 }
