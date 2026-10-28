@@ -1,0 +1,172 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T17:50:24.464Z",
+  "priorRuntime": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "targets": {
+    "tendev": {
+      "deployment": "90a74787-a5b4-458f-ba31-4823df1dddd4",
+      "configurationSha256": "18d2777c5819230ebdda9b0e65d8d40eca00dc5314cc614ca0d3063bb0135432",
+      "branch": "dev"
+    },
+    "tenops": {
+      "deployment": "8ef91b61-5e24-4c95-ad8e-ab70359e7ce2",
+      "configurationSha256": "f52ea907ffd36211ab1fdf4c71f9d75665506b841697f33fe533642a92155629",
+      "branch": "main"
+    }
+  },
+  "functions": [
+    {
+      "slug": "monday-material-check",
+      "id": "d733081f-f813-45ef-9317-db933857df3c",
+      "version": 52,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "51da7c50dd73f6d27bcce0496963035757038fdb4ba849ec25fa07aff7866253"
+    },
+    {
+      "slug": "generate-purchase-order-pdf",
+      "id": "4800ff21-d1ab-4cd0-a300-266956929ca8",
+      "version": 57,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "214faff2b7df40548ada2221617e583887623e04efd4cbeb8ef91aa22ce39c7b"
+    },
+    {
+      "slug": "generate-job-transmittal-pdf",
+      "id": "55c0246b-b5a5-4a2e-8d58-18bc9757f1c3",
+      "version": 45,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "40ea701e98e43a935292e92db20cbfcba12ae019c928cbdd78f1b3a133e9c39c"
+    },
+    {
+      "slug": "admin-manage-users",
+      "id": "023a3001-f733-40da-96dc-1c041f0d01dc",
+      "version": 41,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "2620bfe6b2b38edb77cb0da785bbff5cdb2c5a44e03341ba1ac193cc8c960131"
+    },
+    {
+      "slug": "generate-proposal-pdf",
+      "id": "0c25a597-ca3f-4dfe-9007-ae76ea14bce1",
+      "version": 45,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "988676cea2e736c03178637d7749ba0d58521a945fe2dc1088c5e5809f0a89ab"
+    },
+    {
+      "slug": "generate-sample-pdf",
+      "id": "aca8265a-5cc1-4dd8-b4df-e28a4b6e524e",
+      "version": 57,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "aa2e1230c73f925ab0147a035d8e1a0b64d1d2e1523707b21a5f78d4aa497c61"
+    },
+    {
+      "slug": "cleanup-messaging-drafts",
+      "id": "cdc0b169-61b3-4e9e-9217-347b2f961f72",
+      "version": 33,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "02ce8b6f40df6f742d0929fca59c1284bc76fa50103b6c1d7208d760cc72046b"
+    },
+    {
+      "slug": "admin-delete-messaging-message",
+      "id": "3486ee84-dced-45f1-baa9-786a961de0e7",
+      "version": 33,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "28f075c71aa3a5b485b5a4ed02f4ffef1b5cf285eeea4cf766ae35321f4af631"
+    },
+    {
+      "slug": "send-web-push-tendev",
+      "id": "0248da3c-43fe-44e5-84f9-71f35422c401",
+      "version": 34,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "b5a3c4867566f9826b20331fe35ce82f15c4fd6d03d1fbf54385e9e418375b6e"
+    },
+    {
+      "slug": "send-web-push-tenops",
+      "id": "3449d184-907b-4a78-bb1c-e94f095643ee",
+      "version": 23,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "9f04c2cf8de4acfe635786080f4a41aa3a59f7d1c920b628e43e2e33b545be4b"
+    },
+    {
+      "slug": "tenbot",
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 8,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "df92f4ce7780e7705de0cfc72fe1ba40101c7ae50010105dd9eef04b41e4c6e6"
+    }
+  ],
+  "backendFunctions": [
+    {
+      "arguments": "p_bid_id uuid, p_expected_updated_at timestamp with time zone, p_window_choice text, p_start date, p_end date, p_job_number text",
+      "grants": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "convert_bid_to_production",
+      "owner": "postgres",
+      "securityDefiner": true,
+      "definitionSha256": "027bba3584187c99f31ccf290e7246067933727d3a858e0fa8555ef951c16d11"
+    },
+    {
+      "arguments": "p_bid_id uuid, p_expected_updated_at timestamp with time zone, p_window_choice text, p_start date, p_end date, p_job_number text",
+      "grants": "{postgres=X/postgres}",
+      "name": "convert_bid_to_production_before_scope",
+      "owner": "postgres",
+      "securityDefiner": true,
+      "definitionSha256": "c1e4887a12305dff58e26ff45366906aa1e600714151ec8723e1f5ee6ba16bea"
+    },
+    {
+      "arguments": "p_bid_id uuid",
+      "grants": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "create_bid_proposal",
+      "owner": "postgres",
+      "securityDefiner": true,
+      "definitionSha256": "e7981fb368d423a98f9644411ef507a4c9b4537d7b8369d3a4014e26b96a830b"
+    },
+    {
+      "arguments": "p_capability text",
+      "grants": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "has_app_capability",
+      "owner": "postgres",
+      "securityDefiner": true,
+      "definitionSha256": "a89edd19db940ea55a5a8b46c07f58a0916db82dad36fe0a7b642b87a1b4843a"
+    },
+    {
+      "arguments": "",
+      "grants": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "has_proposal_access",
+      "owner": "postgres",
+      "securityDefiner": true,
+      "definitionSha256": "12affc888b91d22eb12961f20db57fd1d5512f6c39a15880db2806f802ba8bdd"
+    },
+    {
+      "arguments": "",
+      "grants": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "list_bids",
+      "owner": "postgres",
+      "securityDefiner": true,
+      "definitionSha256": "823b641561f52431a75ba35743fbe5b52cf26f8e5f6e9b33d5801b17b77e819e"
+    },
+    {
+      "arguments": "p_bid_id uuid",
+      "grants": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "list_samples",
+      "owner": "postgres",
+      "securityDefiner": true,
+      "definitionSha256": "06f6b8b7680689e71e02fd1819ff7a8d30b5163281e79ec0187a47a3b673b41b"
+    }
+  ],
+  "relatedRlsPresent": true,
+  "conversionGuardsPresent": true,
+  "migrationsRequired": [],
+  "configurationChanges": [],
+  "webPushMetadataSha256": "00df2d86554c115195f6090eeb3c8eb22005ad7c7a800c839dbc0f825b3efd4e",
+  "businessRecordsRead": false,
+  "hostedMutations": false
+}
