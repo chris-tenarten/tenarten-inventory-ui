@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-28",
+  "base": "f92662ca037f3659fbaeeea2431add5b24602bb0",
+  "branch": "dev",
+  "status": "implemented locally; placement and Tools removal accepted; styling pending Product acceptance",
+  "riskTier": 1,
+  "testingLevel": 1,
+  "appFilesChanged": [
+    "src/modules/pre-production/BidTools.tsx"
+  ],
+  "sourceSha256": "6c2f1cd37c2142cfb809a0840227ae534a495bd5f09ea20ae1ae59016733476b",
+  "pattern": "Exact ProductionJobInspector documentActionClass container classes, existing responsive grid and typography tokens; semibold title and short subtitle. Production source unchanged. No existing shared ActionCard component.",
+  "checks": [
+    {
+      "command": "npx eslint src/modules/pre-production/BidTools.tsx",
+      "result": "passed"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "result": "passed after build"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "command": "NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000 NEXT_PUBLIC_SUPABASE_ANON_KEY=local-review-public-key NEXT_PUBLIC_RBAC_MODE=enforced RBAC_ENFORCED=true NEXT_PUBLIC_DEV_BRANDING=false npm run build -- --webpack",
+      "result": "passed optimized Production export with local backend settings"
+    },
+    {
+      "command": "node /private/tmp/tenops-intake-materials-review/bid-preparation-style-20261028/review.mjs",
+      "result": "passed six focused visual/navigation groups; no business writes"
+    },
+    {
+      "check": "Source class-set comparison against Production documentActionClass",
+      "result": "identical class set"
+    },
+    {
+      "check": "Desktop/mobile/light/dark and restricted screenshot review",
+      "result": "passed after CSS transitions settled"
+    }
+  ],
+  "browser": {
+    "passed": true,
+    "origin": "http://localhost:3000",
+    "reviewBid": "f935656f-efb9-49d9-bdc6-bb1189985bba",
+    "desktop": [
+      {
+        "x": 710,
+        "y": 275.921875,
+        "width": 342.5,
+        "height": 80,
+        "titleSize": "16px",
+        "titleWeight": "600",
+        "subtitleSize": "14px",
+        "subtitleWeight": "400",
+        "iconWidth": 16,
+        "border": "oklch(0.929 0.013 255.508)",
+        "background": "oklch(0.984 0.003 247.858)"
+      },
+      {
+        "x": 1060.5,
+        "y": 275.921875,
+        "width": 342.5,
+        "height": 80,
+        "titleSize": "16px",
+        "titleWeight": "600",
+        "subtitleSize": "14px",
+        "subtitleWeight": "400",
+        "iconWidth": 16,
+        "border": "oklch(0.929 0.013 255.508)",
+        "background": "oklch(0.984 0.003 247.858)"
+      },
+      {
+        "x": 710,
+        "y": 363.921875,
+        "width": 342.5,
+        "height": 80,
+        "titleSize": "16px",
+        "titleWeight": "600",
+        "subtitleSize": "14px",
+        "subtitleWeight": "400",
+        "iconWidth": 16,
+        "border": "oklch(0.929 0.013 255.508)",
+        "background": "oklch(0.984 0.003 247.858)"
+      },
+      {
+        "x": 1060.5,
+        "y": 363.921875,
+        "width": 342.5,
+        "height": 80,
+        "titleSize": "16px",
+        "titleWeight": "600",
+        "subtitleSize": "14px",
+        "subtitleWeight": "400",
+        "iconWidth": 16,
+        "border": "oklch(0.929 0.013 255.508)",
+        "background": "oklch(0.984 0.003 247.858)"
+      }
+    ],
+    "checks": [
+      "Exact Production card container class set; four semibold titles and descriptions using existing TenOps type tokens,16px icons",
+      "Desktop two columns,80px Production proportions,hover and keyboard focus",
+      "Light/dark screenshots plus390px/360px single-column no-overflow layouts",
+      "All four existing navigation targets and Sample Bid context",
+      "Read-only and Proposal-denied noninteractive states (UI profiles)",
+      "No page errors,external requests or business writes"
+    ],
+    "errors": [],
+    "external": [],
+    "writes": [],
+    "reusedEvidence": "f92662c Level2 creation/save/PDF/conversion checks; unchanged contracts"
+  },
+  "reviewUrl": "http://localhost:3000/pre-production?bid=f935656f-efb9-49d9-bdc6-bb1189985bba",
+  "rawArtifacts": "/private/tmp/tenops-intake-materials-review/bid-preparation-style-20261028",
+  "reviewServer": {
+    "pid": 77605,
+    "port": 3000,
+    "container": "tenops-intake-review-77605",
+    "disposition": "existing fixture/server retained"
+  },
+  "reusedEvidence": "Prior f92662c Level2 creation/save/PDF/conversion checks remain applicable; only BidTools presentation/accessible descriptions changed.",
+  "limits": [
+    "Roles are local browser profile simulations, not new hosted actor/RLS certification.",
+    "Dark styling rendered through the existing appearance attribute, not a test of preference persistence.",
+    "Physical-device Product review remains manual."
+  ],
+  "checkpoints": "Raw typography-token, theme-preference and intermediate-transition checkpoints retained; final checks and screenshots pass without further app changes.",
+  "boundary": "Local dev commit only. No functional/schema/API/ownership/navigation/conversion change, push, deployment or hosted mutation."
+}
