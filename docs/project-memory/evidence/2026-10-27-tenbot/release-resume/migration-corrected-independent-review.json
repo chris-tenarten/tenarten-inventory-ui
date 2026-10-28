@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "reviewedAt": "2026-10-28T02:39:14.244Z",
+  "reviewer": "/root/privacy_readiness",
+  "tier": 3,
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "sqlSha256": "3bf5671216c97da0c9ee45ba3e9c9f63e752609bf90d06a55844f9f051c223b5",
+  "postcheckSqlSha256": "9f3986da056f0c5aceb4067b61c6d6dba0667281e313c45b6843a2f7b772ca42",
+  "driverSha256": "1459b2ac1d1d9ddef5bb06317256a8a7132305e1004e21df1342762be3ea763f",
+  "localExecutionReceipt": {
+    "path": "migration-corrected-local-verification.json",
+    "sha256": "2fde99e3ac25d4e450dbf934bd1bbc1cc05340adc8e80d53035aeb862dffb1ec",
+    "passed": true,
+    "executedBy": "/root/release_requirements",
+    "reusedWithoutDuplicateExecution": true
+  },
+  "correctionScope": {
+    "recordNames": [
+      "f -> v_function_row",
+      "c -> v_relation_row"
+    ],
+    "inventoryOrdering": "Explicit text COLLATE C on both actual and expected arrays for tables, sequences, indexes and types",
+    "normalizedApplyAndPostcheckByteIdenticalToOriginal": true,
+    "originalAcceptedMigrationHashesAndOrderUnchanged": true
+  },
+  "reviewedGuards": [
+    "Actual postgres/project and exact canonical predecessor definitions/owner/search_path/grants",
+    "Absent approved ledger versions, no partial TenBot objects and typed user/auth prerequisites",
+    "One atomic repeatable-read transaction with timeout/ledger lock; four verbatim ledger sources",
+    "Exact 13 final function bodies, signatures, owner, search_path, volatility, defaults and grants",
+    "Service-only metering and append; authenticated owner loader/Clear; service loader/Clear and legacy overloads revoked",
+    "All five new tables empty with direct caller table/column privileges revoked; private-history service direct access revoked",
+    "Exact relation/type inventories, owner policies, validated FKs and no unexpected user triggers",
+    "All existing public physical tuple fingerprints and unrelated metadata/ledger/Web Push/Cron preserved inside same snapshot",
+    "Original failed attempt preserved; explicit distinct corrected mode requires pinned rollback/local/review/fresh-hosted receipts and root authorization",
+    "One corrected attempt; any failure or uncertain result stops without automatic retry"
+  ],
+  "localResult": {
+    "protectedPublicRelations": 36,
+    "securityAndLedgerPassed": true,
+    "metadataAndTuplesPreserved": true
+  },
+  "noHostedCallsByReviewer": true,
+  "noDatabaseRerunByReviewer": true,
+  "noPrivateRecordReads": true,
+  "remainingRootGates": [
+    "Fresh read-only hosted preflight <=15 minutes old",
+    "Explicit corrected application authorization and all pinned logging/provider/build receipts"
+  ],
+  "limitations": [
+    "Independent source/diff/evidence review; actual exact SQL execution is the pinned agent receipt on an established synthetic fixture clone",
+    "Local fixtures do not establish current hosted state; same-transaction preservation excludes concurrent later commits"
+  ]
+}

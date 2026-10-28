@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "configuredAt": "2026-10-28T03:21:28.528Z",
+  "allowedOrigins": [
+    "https://tendev.pages.dev",
+    "https://tenops.pages.dev"
+  ],
+  "aiEnabled": true,
+  "credentialEmitted": false
+}

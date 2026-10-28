@@ -1,0 +1,35 @@
+{
+  "recordedAt": "2026-10-28T02:38:54.412169+00:00",
+  "hostedFailure": {
+    "postgresCode": "42702",
+    "cause": "PL/pgSQL record c conflicts with pg_class SQL alias c",
+    "originalSqlSha256": "6e007b539ae8d3014b7c66f30d4372f54ce1cd27f76fa663673717988f9f59a1",
+    "preservedOriginalArtifacts": [
+      "apply-tenbot.mjs",
+      "apply-tenbot.sql",
+      "postcheck-tenbot.sql",
+      "migration-attempt.json",
+      "migration-failure.json",
+      "migration-reconciliation.json"
+    ]
+  },
+  "subsequentLocalVerifierFailure": {
+    "guard": "Unexpected TenBot relation inventory",
+    "cause": "Catalog name ordering differs from text ordering under database collation; arrays can have equal members in different order",
+    "localTransactionRolledBack": true,
+    "aliasOnlySqlSha256": "f7415ccb87b94212a5207cdf1ab974650fb17dc4c42b2ad5c7ddb5826804cf40",
+    "preservedAliasOnlyArtifacts": [
+      "apply-tenbot-alias-only-local-failure.sql",
+      "postcheck-tenbot-alias-only-local-failure.sql",
+      "prepared-tenbot-alias-only-local-failure.json"
+    ]
+  },
+  "correctionOnly": [
+    "Rename guard records f/c to v_function_row/v_relation_row",
+    "Sort both actual and expected relation/type text inventory arrays explicitly with C collation"
+  ],
+  "normalizedSqlAndPostcheckByteEqualToOriginal": true,
+  "acceptedMigrationSourcesUnchanged": true,
+  "noHostedRequest": true,
+  "localExecutionPassReceipt": "migration-corrected-local-verification.json"
+}

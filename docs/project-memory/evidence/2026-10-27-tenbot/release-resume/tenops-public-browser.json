@@ -1,0 +1,166 @@
+{
+  "passed": true,
+  "startedAt": "2026-10-28T03:39:07.656Z",
+  "checkedAt": "2026-10-28T03:39:12.444Z",
+  "sha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "target": "tenops",
+  "origin": "https://tenops.pages.dev",
+  "deployment": "502d6282-713b-42dd-a5f6-a71f6c585245",
+  "runMode": "public-auth-only",
+  "checked": [
+    {
+      "route": "/my-work",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "normalAuthGateVisible": true,
+      "noHorizontalOverflow": true,
+      "signedInContentVisible": false
+    },
+    {
+      "route": "/tenbot",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "normalAuthGateVisible": true,
+      "noHorizontalOverflow": true,
+      "signedInContentVisible": false
+    },
+    {
+      "route": "/my-work",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "normalAuthGateVisible": true,
+      "noHorizontalOverflow": true,
+      "signedInContentVisible": false
+    },
+    {
+      "route": "/tenbot",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "normalAuthGateVisible": true,
+      "noHorizontalOverflow": true,
+      "signedInContentVisible": false
+    }
+  ],
+  "verifiedLoadedScripts": [
+    {
+      "path": "/_next/static/chunks/webpack-33feec19dde0c575.js",
+      "sha256": "fa118215b2acb48c3570219de4ec5b1cfcad505f9d6fd4f6d4968ef6509a3185"
+    },
+    {
+      "path": "/_next/static/chunks/51ee20cd-14f78c894e6bc5d3.js",
+      "sha256": "dea12d7f6357c0c5dcf45269186d8501fe2c4276640f74d3c65006c4fb043759"
+    },
+    {
+      "path": "/_next/static/chunks/4218-3ed2ca968d556250.js",
+      "sha256": "682c65adabead06ca66f2bf07cd54636995414bb90cadfe9cb30bb6beb6fabce"
+    },
+    {
+      "path": "/_next/static/chunks/8922-c1f11f6021f891a1.js",
+      "sha256": "966cd327cbbf05e3148769ea4f23bf26e0831988c80e366d0aeb1eec40a98d59"
+    },
+    {
+      "path": "/_next/static/chunks/app/my-work/page-b6d2e4266cbc076a.js",
+      "sha256": "781475f105bb76240d919614919bb3573f2da7e8bf052013f9b8968197d28a9d"
+    },
+    {
+      "path": "/_next/static/chunks/3323-f2bc8ef7ed0d6dc9.js",
+      "sha256": "0a955566103d4a9fdc2df28727bbeba58f24007cae0972c24c0d1193f0bdc94e"
+    },
+    {
+      "path": "/_next/static/chunks/4588-73e056d482706e31.js",
+      "sha256": "add272c2da2e8c282adeb437aca44b3ead9ca72db68f185f412bae240ffe78ca"
+    },
+    {
+      "path": "/_next/static/chunks/4489-7bab4ab7e3ba16d2.js",
+      "sha256": "1f7573be0e8710b1f0d701c14607a3cb73f8d2cd9e08bf19b8e8b59920a7dca5"
+    },
+    {
+      "path": "/_next/static/chunks/main-app-ce918aa6e23bde77.js",
+      "sha256": "8b5e4fe254b3714533d6341e09e685cd4961e42daf9973f1f182eab9481a5031"
+    },
+    {
+      "path": "/_next/static/chunks/8776-5c68f3c1b2024981.js",
+      "sha256": "064c3efe2c2b597602929a5b2bd97f253cf9f8de46bde9e5883925d0d33a4bc7"
+    },
+    {
+      "path": "/_next/static/chunks/app/layout-433f61911b58728c.js",
+      "sha256": "0412f26c142cea88bca6a50707447d3c5bc42b4ff7a0e8d93f14a10c6e5a1bc0"
+    },
+    {
+      "path": "/_next/static/chunks/218171cc-f18cd5b2bf1c9400.js",
+      "sha256": "1f73266de5d05ffae731aedadd483bdd1b46fe0643c93c0f87f141173a90e24e"
+    },
+    {
+      "path": "/_next/static/chunks/6339-f46872db9227d41d.js",
+      "sha256": "62e7164d7617a81d60741a932333c1ef0d750301d08bc5dbc89897bfc97604ec"
+    },
+    {
+      "path": "/_next/static/chunks/5085-e8f39c8ca7199321.js",
+      "sha256": "28097874ddcdbecf07b637010f7984d4c9b7e3f0ffe6424cc5760b00fc752e0c"
+    },
+    {
+      "path": "/_next/static/chunks/4024-40383e3697b49594.js",
+      "sha256": "e98d5d027a01afd52bf2779f452a4d32d1148a75e1c77968132130bd697728d8"
+    },
+    {
+      "path": "/_next/static/chunks/9459-8d22b62df1278920.js",
+      "sha256": "8f375aac5e995868e86a76215ad14dec43fe9f507171758ecb708c8fbce588e3"
+    },
+    {
+      "path": "/_next/static/chunks/8835-8087e615b83eff3c.js",
+      "sha256": "f4abae7778085e00cadd623a9ff2c8935c31739b70525fd6b954df5404498cf3"
+    },
+    {
+      "path": "/_next/static/chunks/1182-5a662b8ba1f805c0.js",
+      "sha256": "3f0aafb0031df972f982c3856ea04493a59f5a4a254c6ee0c9169fbbb9fd8a33"
+    },
+    {
+      "path": "/_next/static/chunks/1019-8954792a056c7e6f.js",
+      "sha256": "cc9f39c2df2301060b0d141e1c435c0dddefc642ca4767276afd18f49e24169b"
+    },
+    {
+      "path": "/_next/static/chunks/3351-ac27fd587068a0a0.js",
+      "sha256": "99787188ad7b39af2906396df35df8ea536075cd36cf9aa7d5ab66c185cadec6"
+    },
+    {
+      "path": "/_next/static/chunks/5065-52aed6486f173716.js",
+      "sha256": "1cebb27002b89d046764d52f4ddaf8b279ccc308c205bd074781922dacaab358"
+    },
+    {
+      "path": "/_next/static/chunks/462-46fffd2c4ec7c7bf.js",
+      "sha256": "0e2cc73a0b0fbd13def30207f60125675baecfc905f0b6aad551a3a5f078dc27"
+    },
+    {
+      "path": "/_next/static/chunks/app/page-7bf7a21f4d6e5b98.js",
+      "sha256": "5e2bb7ec58022bcd7bd16111a7780b0b538e2d6dd79acdbba1dae62caceb62a0"
+    },
+    {
+      "path": "/_next/static/chunks/7692-2ab2b4c91b541fd1.js",
+      "sha256": "f23eb0e78b6b1f9f4fec057944bc6d250c572d865ad3c7e0452b5d854ea661f3"
+    },
+    {
+      "path": "/_next/static/chunks/app/tenbot/page-06ca77304a3cb471.js",
+      "sha256": "6a2a7263bd7281e95f37e17cc87e60677d79c70cce4e2995ab985460cfffe2f2"
+    }
+  ],
+  "normalAuthGateVisible": true,
+  "signedInMessagingBrowserVerified": false,
+  "sessionInjected": false,
+  "loginOrAccountMutation": false,
+  "hostedWrites": 0,
+  "privateRecordReads": 0,
+  "assistantRequests": 0,
+  "pageErrors": [],
+  "blockedRequests": [],
+  "serviceWorkersBlocked": true,
+  "exactServedMessagingAssetsReceipt": "tenops-served.json",
+  "limitation": "Fresh unsigned browser contexts verify the public desktop/mobile Auth gate and accepted script bytes. They do not establish signed-in TenDev Messaging/TenBot rendering, owner isolation, or AI behavior."
+}

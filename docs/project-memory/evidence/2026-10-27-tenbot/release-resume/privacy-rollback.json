@@ -1,0 +1,19 @@
+{
+  "checkCount": 5,
+  "checks": [
+    "owner history uses authenticated caller; append is service-only; service history read denied",
+    "second existing authorized actor cannot load, append, Clear or directly read owner history",
+    "service append binds exact owner and rejects stale versions",
+    "only valid explicitly confirmed feedback fields persist; synthetic private chat not attached",
+    "Clear deletes only owned synthetic history; all probe feedback and incidental owner expiry cleanup roll back"
+  ],
+  "otherActorAdmin": false,
+  "passed": true,
+  "privateBusinessOrMessagingReads": false,
+  "roleSimulation": true,
+  "rollbackOnly": true,
+  "twoHttpAccounts": false,
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "checkedAt": "2026-10-28T02:44:44.899Z",
+  "sqlSha256": "1de14001f5e84473119bb4a6c75cd87c4a6cc08bfd017313f45a196dc97cfd83"
+}

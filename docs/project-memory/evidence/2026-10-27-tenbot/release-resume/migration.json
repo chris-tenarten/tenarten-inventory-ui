@@ -1,0 +1,49 @@
+{
+  "appliedAt": "2026-10-28T02:41:40.77095+00:00",
+  "exactFunctionBodiesAndPrivilegesVerified": true,
+  "existingPublicTuplesPreservedWithinRepeatableRead": true,
+  "legacyServiceOverloadsRevoked": true,
+  "newInternalAppUserForeignKeyTriggersOnly": true,
+  "newTenbotTablesEmpty": true,
+  "nonTenbotMetadataPreserved": true,
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "protectedPublicRelations": 109,
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "scopeLimit": "Same-transaction snapshot preservation; concurrent later commits are outside the repeatable-read snapshot",
+  "serviceOnlyMeteringAndAppend": true,
+  "servicePrivateHistoryLoadClearDenied": true,
+  "sharedPolicyVersion": 2,
+  "tupleFingerprintMethod": "ONLY physical tableoid/ctid/xmin, count and sorted MD5; no business-column reads",
+  "unrelatedLedgerPreserved": true,
+  "versions": [
+    "20261027120000",
+    "20261027130000",
+    "20261027140000",
+    "20261027150000"
+  ],
+  "webPushTransportCronPreserved": true,
+  "migrations": [
+    {
+      "file": "20261027120000_tenbot_feedback_usage.sql",
+      "version": "20261027120000",
+      "sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15"
+    },
+    {
+      "file": "20261027130000_tenbot_shared_usage_pool.sql",
+      "version": "20261027130000",
+      "sha256": "b007ee3a5234876709c5d82c3269d78921a613815940df59669f5ce78548c435"
+    },
+    {
+      "file": "20261027140000_tenbot_measured_free_pool.sql",
+      "version": "20261027140000",
+      "sha256": "3985d2912af54957c35f36bbb61374b4ff334f950bdc436da393b0aaa5c6bcaf"
+    },
+    {
+      "file": "20261027150000_tenbot_private_conversations.sql",
+      "version": "20261027150000",
+      "sha256": "81652bd3e335d2fe29d5b26012727eabaed765dc7950e2979b7fd2891ee53b3b"
+    }
+  ],
+  "sqlSha256": "3bf5671216c97da0c9ee45ba3e9c9f63e752609bf90d06a55844f9f051c223b5",
+  "postcheckSha256": "9f3986da056f0c5aceb4067b61c6d6dba0667281e313c45b6843a2f7b772ca42"
+}

@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-28T02:44:09.943Z",
+  "newTablesEmpty": true,
+  "passed": true,
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "securityAndLedgerVerified": true,
+  "versions": [
+    "20261027120000",
+    "20261027130000",
+    "20261027140000",
+    "20261027150000"
+  ],
+  "sqlSha256": "9f3986da056f0c5aceb4067b61c6d6dba0667281e313c45b6843a2f7b772ca42"
+}

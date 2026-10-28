@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T03:24:26.227Z",
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 5,
+    "verify_jwt": true,
+    "status": "ACTIVE"
+  },
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "aiEnabled": true,
+  "allowedOrigins": [
+    "https://tendev.pages.dev",
+    "https://tenops.pages.dev"
+  ],
+  "providerSecretConfigured": true,
+  "ownerHttpIsolationPassed": true,
+  "crossOwnerDenied": true,
+  "adminNoPrivateReadBypass": true,
+  "anonymousDenied": true,
+  "corsPassed": true,
+  "privateContentNotLogged": true,
+  "fallbackSourceDeployed": true,
+  "unrelatedMessagingUnchanged": true,
+  "unrelatedFunctionsUnchanged": true,
+  "webPushTransportCronUnchanged": true,
+  "evidence": [
+    {
+      "file": "migration-postcheck.json",
+      "sha256": "ec2951999ad4a7a35950635927ed3271a9069fe0a71a43ea033fbeae722567fb"
+    },
+    {
+      "file": "privacy-rollback.json",
+      "sha256": "f15eb25bed2ce54792c6d46db105ff309912426f24018378d13bf378375ce0c3"
+    },
+    {
+      "file": "admin-ownership-rollback.json",
+      "sha256": "5d4553534b0639f81aba50d6b966473071fc894f1c5342619c8e0da0c9c888a1"
+    },
+    {
+      "file": "logging-http.json",
+      "sha256": "29faf752329ee0766b9e9de064a950d8ba61939e9028ad86d09818e681da5e75"
+    },
+    {
+      "file": "edge-content-log-aggregate.json",
+      "sha256": "13c450858961b6eda4df2d9f3742b5969aca7496d206aeb459cf6c5943859dec"
+    },
+    {
+      "file": "edge-deployment.json",
+      "sha256": "7a62a931a2b11669992e35b8fcca800e2fdb5f7f3c66eed3d9e83a8e59751f8a"
+    },
+    {
+      "file": "edge-disabled-probe.json",
+      "sha256": "abe805f641074edc59ddc61c26699039380107535a83ae9806b7a50d8edd6e6f"
+    },
+    {
+      "file": "edge-provider-failure-probe.json",
+      "sha256": "6a0df137393592a96a2bcde53d17fe435353a6a1a3b665caa0434476af999656"
+    },
+    {
+      "file": "edge-real-inference-probe.json",
+      "sha256": "f4f1641b92679fab1429a388d99fc66d573d8ba67491559c68c52068a3aed87a"
+    },
+    {
+      "file": "production-origin-probe.json",
+      "sha256": "a698da83fadc7166bbd96c35f2936a4cf370e26f3cdcb31aa4c15bfe70d2965f"
+    },
+    {
+      "file": "edge-source-preservation-production.json",
+      "sha256": "7c778496b6ea252797cbbda589e241a6c26485fd494d23f8d10348e3243dd6ee"
+    }
+  ],
+  "limitations": [
+    "One real authenticated owner over HTTP; existing second-actor and Admin isolation checked through rollback-only SQL role enforcement, not two HTTP sessions.",
+    "Log evidence covers actual effective API-role settings, an eleven-second synthetic argument marker and actual public synthetic TenBot question, not universal log redaction or upstream provider retention.",
+    "Signed-in UI acceptance reused from exact unchanged local components; fresh hosted public Auth and byte verification follow deployment."
+  ]
+}

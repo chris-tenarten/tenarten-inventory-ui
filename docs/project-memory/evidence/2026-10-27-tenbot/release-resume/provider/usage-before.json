@@ -1,0 +1,12 @@
+{
+  "phase": "before",
+  "checkedAt": "2026-10-28T02:48:35.836Z",
+  "dayStart": "2026-10-28T00:00:00.000Z",
+  "reportedNeurons": 0,
+  "reportedRequests": 0,
+  "nominalRemainingNeurons": 10000,
+  "workersPlan": "Free",
+  "planReceipt": "provisioning-receipt.json",
+  "paidActivation": false,
+  "inferenceCallsFromThisMeasurement": 0
+}

@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T03:12:52.791283+00:00",
+  "reviewer": "release_requirements independent review",
+  "scope": "Offline review of frozen Pages Edge-preservation gate correction and Admin registered-module extraction only; this is not a push/deployment/hosted verification receipt.",
+  "reviewed": [
+    {
+      "file": "deployment-common.mjs",
+      "sha256": "e07043592622064103b47583992e2d6fc456a2a175f7ac32f07626a8a5b043f3"
+    },
+    {
+      "file": "edge-admin-extraction.json",
+      "sha256": "14563da8dcd987ca668b6362c7f12ede3aeed0afed49a69d8fc678cb94128c8f"
+    },
+    {
+      "file": "extract-admin-eszip.py",
+      "sha256": "7f6db67224daf5f6df3e91eabbd38c3a7a2678623ae6db9f2013e7e2054eec03"
+    },
+    {
+      "file": "edge-source-baselines.json",
+      "sha256": "dd7452f1c696cb9fdcc1bec733c7760d4c79a07bc590d29776e5075734cdfe54"
+    }
+  ],
+  "checks": {
+    "nodeSyntaxPassed": true,
+    "failedOriginalGuardPreservedAsBackup": true,
+    "exactTenOriginalPlusTenbotInventory": true,
+    "allSourceMethodsExplicitAndPinned": true,
+    "webPushDecodedHistoricalHashRequired": true,
+    "adminRegisteredModuleCompleteOriginalSourceExactCanonical": true,
+    "adminExtractionReceiptAndCurrentBodyHashBound": true,
+    "fiveOlderFunctionsHistoricalImportConfigCompared": true,
+    "intakeWebPushConfigEvidenceBasis": "Accepted complete source graphs and corresponding deno configuration, original deployment-version entrypoint paths, current full configuration pins; not a claim that complete pre-TenBot metadata exists for every function.",
+    "idsStatusJwtStrict": true,
+    "versionsStrictOriginalPlus4TenDevPlus5Production": true,
+    "tenbotInitialPlus3TenDevPlus4Production": true,
+    "productionPinsPreviousProofAndRequiresExactPlus1": true,
+    "productionAllOtherMetadataAndSourceChecksEqual": true,
+    "liveSubsequentMetadataComparedExactlyToPinnedReceipt": true,
+    "unrelatedReleaseGatesRetained": true
+  },
+  "rootIntegrationRequirements": [
+    "Source-proof producer must emit decodedBodySha256 and new registered-Admin extraction fields/method before use; old verify-edge-sources.mjs raw-substring producer is incompatible and must not be run unchanged.",
+    "Root must supply the actual stage-specific pinned proof and preserve the full current configuration fields; Production must pass strict exact comparison after its own authorized origin update.",
+    "Existing WebPush transport/Cron, privacy/logging, owner-auth, provider/free-plan and exact candidate gates remain independently required."
+  ],
+  "limits": [
+    "Admin proof establishes canonical authored TypeScript in the unique registered entrypoint source map and records compiled bytes/hash; it does not claim the historical Oct12 compiled Admin bundle is current.",
+    "Secret-version increments are actual recorded deltas; official implementation does not promise a universal increment rule."
+  ],
+  "hostedCalls": 0,
+  "hostedMutations": 0,
+  "aiCalls": 0,
+  "gateExecution": false,
+  "releaseExecuted": false
+}

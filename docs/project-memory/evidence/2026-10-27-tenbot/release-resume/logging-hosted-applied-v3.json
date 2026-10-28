@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "mode": "--apply",
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "at": "2026-10-28T00:18:37.502321+00:00",
+  "sqlSha256": "2246e2f69d4b39fc3389413ce26ea0c5b9dded592a010fdfba52650a9270ef91",
+  "profile": {
+    "auto_explain.log_min_duration": "-1",
+    "auto_explain.log_parameter_max_length": "0",
+    "log_parameter_max_length": "0",
+    "log_statement": "none",
+    "log_duration": "on",
+    "log_min_error_statement": "panic"
+  },
+  "rolledBack": false,
+  "apiRoleSettingsApplied": true,
+  "nonApiRolesAndGlobalLoggingPreserved": true,
+  "postgrestRefreshRequested": true,
+  "databaseRestart": false,
+  "businessDataMutation": false,
+  "migrationsApplied": 0,
+  "actualHttpVerificationPending": true
+}
