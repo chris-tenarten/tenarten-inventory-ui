@@ -19,6 +19,17 @@ function validDate(value:string){return datePattern.test(value)&&Number.isFinite
 function chicagoDate(now:Date){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);return `${p.find(x=>x.type==='year')?.value}-${p.find(x=>x.type==='month')?.value}-${p.find(x=>x.type==='day')?.value}`;}
 function shiftDate(date:string,days:number){const d=new Date(`${date}T12:00:00Z`);d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10);}
 
+/** Asking how an action works is guidance, even after a live Job lookup.
+ * A saved Job seed must not turn workflow eligibility into a record search. */
+export function isJobWorkflowQuestion(question:string):boolean{
+ const q=question.trim();
+ if(/^\s*(?:how|where)\s+(?:do|does|can|could|should|would)\b/i.test(q)&&!/^\s*how\s+(?:much|many)\b/i.test(q))return true;
+ if(/^\s*(?:can|could|may|should|must)\s+(?:i|we|you|someone|(?:(?:an?|the)\s+)?(?:authorized\s+)?(?:user|receiver|employee))\s+(?:still\s+|also\s+)?(?:create|edit|save|receive|record|reserve|convert|initiate|start|close|link|attach|issue|generate|retry|submit|share|enable|filter|inspect|move|change|delete)\b/i.test(q))return true;
+ if(/^\s*(?:can|could|may|should|must)\b[^?]{0,80}\b(?:be\s+)?convert(?:ed)?\b/i.test(q))return true;
+ if(/^\s*(?:when|if|what if|what happens)\b[^?]{0,100}\b(?:convert(?:ed|ing)?|conversion|handoff)\b/i.test(q))return true;
+ return /^\s*(?:does|will|would|can|could|should)\s+(?:(?:a|the|that|this)\s+)?(?:conversion|handoff)\b/i.test(q);
+}
+
 /** Returns only explicit, bounded reporting periods. Vague forecasts stay unknown. */
 export function jobReportingPeriod(question:string,now=new Date()):{start_date:string;end_date:string}|null{
  const dates=[...question.matchAll(/\b\d{4}-\d{2}-\d{2}\b/g)].map(match=>match[0]);
@@ -49,7 +60,7 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  // Employee-pasted text transformations and workflow questions retain the
  // existing knowledge/conversation system. Neither is a live-record request.
  if(/\b(?:summari[sz]e|rewrite|rephrase|translate|proofread|analy[sz]e|evaluate|explain|review)\b/i.test(q)&&(/\n/.test(q)||/\b(?:pasted|provided|following|this text|this note)\b/i.test(q)))return null;
- if(/\bhow\s+(?:do|can|should|would)\s+(?:i|we)\b|\bwhere\s+(?:do|can|should)\s+(?:i|we)\b/i.test(q)&&!/^\s*how\s+(?:much|many)\b/i.test(q))return null;
+ if(isJobWorkflowQuestion(q)||/\bhow\s+(?:do|can|should|would)\s+(?:i|we)\b|\bwhere\s+(?:do|can|should|would)\s+(?:i|we)\b/i.test(q)&&!/^\s*how\s+(?:much|many)\b/i.test(q))return null;
  const modulePattern='(?:Production(?:\\s+Pipeline)?|Inventory|Intake|Planning|Timeline|Manpower(?:\\s+Reporting)?|TenOps|Messaging|Rework|Purchasing|Samples?|Proposals?|Jobs?)';
  if(new RegExp(`^\\s*(?:what\\s+(?:does|do)|how\\s+(?:does|do))\\s+(?:the\\s+)?${modulePattern}\\s+(?:do|show|work|mean|support|include|offer|help|differ|handle|manage|track)\\b`,'i').test(q))return null;
  const hasJob=/\b(?:jobs?|production|projects?)\b/i.test(q)||Boolean(context&&uuid.test(context.jobId));
@@ -66,6 +77,8 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  const overview=plural&&/\b(?:how many|counts?|overview|by status|scheduled|unscheduled|active|upcoming|completion|complete|finish|finishing|due)\b/i.test(q);
  if(plural&&period&&/\b(?:how many|counts?|completed|finished|shipped)\b/i.test(q)&&!/\b(?:labor|labour|hours|manpower)\b/i.test(q))return {kind:'clarify',message:'Production Job counts describe the current visible Jobs. Historical period counts and status transitions are outside this read-only contract; I can show current counts or upcoming persisted planned completion dates.'};
  if(/\bactive\s+jobs\s+(?:(?:that|which)\s+)?(?:are\s+)?(?:un)?scheduled\b|\b(?:active\s+(?:un)?scheduled|(?:un)?scheduled\s+active)\s+jobs\b/i.test(q))return {kind:'clarify',message:'I can report active Job counts and scheduled or unscheduled Job counts separately. The combined active-and-scheduled filter is outside this first read-only tool contract.'};
+ if(plural&&/\b(?:how many|counts?)\b/i.test(q)&&/\b(?:ready|readiness|ordered|material status|shortages?)\b/i.test(q))return {kind:'clarify',message:'I can report current visible Production Job counts by lifecycle status. Counts filtered by material condition or physical readiness are outside these read-only tools; I can check the recorded material status of a specific Job.'};
+ if(plural&&!/\b(?:how many|counts?|overview|upcoming|finish|finishing|due)\b/i.test(q)&&/\b(?:which|list|show|find)\b/i.test(q)&&/\b(?:on hold|in production|not started|on deck|complete|cancelled|ready|ordered)\b/i.test(q))return {kind:'clarify',message:'I can report current visible Production Job counts by status or look up a specific Job. Listing Jobs filtered by status or material condition is outside these read-only tools.'};
  if(overview)return {kind:'overview',tool:'get_production_overview',args:{...args,...period??{}}};
  const tool=/\b(?:labor|labour|manpower|hours?)\b/i.test(q)?'get_job_labor_summary':/\b(?:scheduled?|unscheduled|planning|planned|dates?|next|completion|finish)\b/i.test(q)?'get_job_planning':'get_job_summary';
  const detailArgs=tool==='get_job_labor_summary'&&period?period:{};
@@ -73,10 +86,16 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  if(directUuid)return {kind:'job',tool,reference:{jobId:directUuid},args:detailArgs,...(includeArchived?{includeArchived:true}:{})};
  // Quotes are the least ambiguous way to preserve a multiword Job name.
  const quoted=q.match(/["“]([^"”\n]{1,120})["”]/)?.[1];
- const numbered=q.match(/\bjob\s+(?:number\s+)?#?\s*([A-Za-z0-9]*\d[A-Za-z0-9._/-]*)\b/i)?.[1];
+ const numbered=q.match(/\bjob\s+(?:number\s+)?#?\s*((?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*)\b/i)?.[1];
  const afterJob=q.match(/\b(?:jobs?|projects?)\s+(?:named\s+|called\s+|for\s+)?(.+?)(?=\s+(?:for|from|between|during|this|last|today|has|is|with|over|in|and)\b|[?!;]|$)/i)?.[1];
  const forTarget=q.match(/\b(?:for|about|of)\s+(?:(?:the\s+)?(?:job|project)\s+)?(.+?)(?=\s+(?:from|between|during|this|last|today|over|and)\b|[?!;]|$)/i)?.[1];
  const candidate=trimReference(quoted||numbered||afterJob||forTarget||'');
+ // A canonical owner-scoped seed resolves ordinary qualitative follow-ups;
+ // descriptive words before “that Job” are not another project name. Multiple
+ // Job references still require an explicit selection rather than a guess.
+ const contextualJob=/\b(?:that|this|same)\s+(?:job|project)\b/i.test(q)&&(q.match(/\b(?:jobs?|projects?)\b/gi)?.length??0)<=1;
+ const pronounSubject=/\b(?:it|its)\b/i.test(q)&&!/\b(?:job|project)\s+\S/i.test(q)&&(!forTarget||/^(?:it|its|that|this|same)\b/i.test(trimReference(forTarget)));
+ if(context&&uuid.test(context.jobId)&&!quoted&&!numbered&&(contextualJob||pronounSubject))return {kind:'job',tool,reference:{jobId:context.jobId},args:detailArgs};
  if(context&&uuid.test(context.jobId)&&!quoted&&!numbered&&(/^(?:it|its|that|this|same)\b/i.test(candidate)||/\b(?:that|this|same)\s+job\b/i.test(q)&&/^(?:have|has|is|does|do|need|needs)$/i.test(candidate)))return {kind:'job',tool,reference:{jobId:context.jobId},args:detailArgs};
  const generic=/^(?:status|overview|counts?|planning|scheduled?|unscheduled|labor|labour|hours?|production|progress|readiness|material|materials|it|that|this|the job|job|jobs|all|all jobs|active jobs|archived jobs)$/i;
  if(candidate&&candidate.length<=120&&!generic.test(candidate)){
@@ -157,6 +176,7 @@ export function buildJobEvidence(result:JobToolResult):JobEvidence{
   for(const [key,title] of [['jobs','Production Jobs in scope'],['active_jobs','Active Production Jobs'],['scheduled','Scheduled Production Jobs across all statuses in scope'],['unscheduled','Unscheduled Production Jobs across all statuses in scope']] as const){const value=count(counts[key]);if(value!==null)add(`overview_${key}`,'count',`${title}: ${value}.`,[title]);}
   for(const [status,value] of Object.entries(object(counts.by_status))){const quantity=count(value),label=statuses[status];if(quantity!==null&&label)add(`overview_status_${status}`,'count',`Production Jobs with recorded status ${label}: ${quantity}.`,['Production Jobs','status',label]);}
   if(Array.isArray(data.upcoming))for(const [i,value] of data.upcoming.slice(0,8).entries()){const row=object(value);add(`upcoming_${i+1}`,'schedule',`Upcoming persisted planned completion: ${clean(row.reference)} on ${clean(row.planned_end,10)}${row.lifecycle==='rework'?' for Rework':''}.`,['Upcoming','persisted','planned','completion',clean(row.reference),...(row.lifecycle==='rework'?['Rework']:[])]);}
+  if(result.complete&&!result.truncated&&Array.isArray(data.upcoming)&&data.upcoming.length===0)add('overview_no_upcoming','schedule','No active Production Jobs in scope have persisted planned completion dates in the requested window.',['No','active','Production Jobs','persisted','planned completion','requested window']);
  }
  const unknowns=result.unknowns.filter(value=>typeof value==='string').map(value=>clean(value,300)).slice(0,12);
  if(result.truncated)unknowns.push('The result is bounded and truncated; omitted records must not be treated as absent.');
@@ -164,13 +184,69 @@ export function buildJobEvidence(result:JobToolResult):JobEvidence{
  if(result.status==='unavailable')unknowns.push('The operational data tool is unavailable; no conclusion can be drawn from missing results.');
  if(result.status==='invalid_request')unknowns.push('The operational request could not be validated.');
  const uniqueUnknowns=[...new Set(unknowns)];
- for(const [i,text] of uniqueUnknowns.slice(0,6).entries())add(`unknown_${i+1}`,'limitation',text,[text]);
+ for(const [i,text] of uniqueUnknowns.slice(0,6).entries()){
+  // Detailed daily/Rework rows must not crowd out the bounded uncertainty
+  // supplied by a partial tool. Keep the existing overall 32-fact bound.
+  if(facts.length>=32){let index=facts.length-1;while(index>=0&&facts[index].kind==='limitation')index--;if(index>=0)facts.splice(index,1);}
+  add(`unknown_${i+1}`,'limitation',text,[text]);
+ }
  return {tool:result.tool,observedAt:result.observed_at,status:result.status,facts,unknowns:uniqueUnknowns,complete:result.complete,truncated:result.truncated,jobContext:job&&uuid.test(job.job_id)?{jobId:job.job_id}:null};
 }
 
 export type OperationalInferenceInput={question:string;context:string[];excerpts:{id:string;title:string;guidance:string;status:string}[];draft:false;operational:{facts:{id:string;text:string}[]}};
+/** Coverage is separate from entailment: true but unrelated facts do not
+ * answer a requested quantity, and recorded Ready is not readiness to start. */
+function requiredAnswerFacts(question:string,evidence:JobEvidence):string[]{
+ if(!question.trim())return [];
+ const q=question.toLocaleLowerCase('en-US'),ids:string[]=[],has=(id:string)=>evidence.facts.some(fact=>fact.id===id);
+ const add=(...values:string[])=>{for(const id of values)if(has(id)&&!ids.includes(id))ids.push(id);};
+ if(evidence.jobContext)add('job_identity');
+ if(evidence.tool==='get_job_labor_summary'){
+  add('labor_total','labor_limit');
+  if(/\b(?:entries|lines|records)\b/.test(q))add('labor_entries');
+  if(/\b(?:latest|last recorded|most recent)\b/.test(q))add('labor_latest');
+  if(!has('labor_total'))for(const fact of evidence.facts.filter(fact=>fact.id.startsWith('unknown_')))add(fact.id);
+ }else if(evidence.tool==='get_production_overview'){
+  if(/\b(?:upcoming|finish|finishes|finishing|completion dates?|due)\b/.test(q)){
+   add('overview_window','overview_no_upcoming');
+   for(const fact of evidence.facts.filter(fact=>fact.id.startsWith('upcoming_')))add(fact.id);
+  }else{
+   if(/\bactive\b/.test(q))add('overview_active_jobs');
+   if(/\bunscheduled\b/.test(q))add('overview_unscheduled');
+   else if(/\bscheduled\b/.test(q))add('overview_scheduled');
+   for(const [status,label] of Object.entries(statuses))if(new RegExp(`\\b${label.replace(/ /g,'\\s+')}\\b`,'i').test(q))add(`overview_status_${status}`);
+   if(/\bby status\b/.test(q))for(const fact of evidence.facts.filter(fact=>fact.id.startsWith('overview_status_')))add(fact.id);
+   if(!ids.length){add('overview_jobs');if(!/\b(?:how many|count)\b/.test(q))add('overview_active_jobs','overview_scheduled','overview_unscheduled');}
+  }
+  if(!ids.length||!evidence.complete)for(const fact of evidence.facts.filter(fact=>fact.id.startsWith('unknown_')))add(fact.id);
+ }else if(evidence.tool==='get_job_planning'){
+  add('job_schedule','job_unscheduled','job_rework','planning_scope');
+  if(/\b(?:next|work|phase|item|progress)\b/.test(q))add('planning_phases_unavailable');
+  if(/\b(?:missing|completeness|setup)\b/.test(q))add('job_planning_readiness','job_planning_missing');
+ }else if(evidence.tool==='get_job_summary'){
+  if(/\b(?:ready|readiness|blockers?|shortages?|risk|start)\b/.test(q)){
+   add('job_material_status','job_planning_readiness','job_rework');
+   if(/\b(?:blockers?|issues?|follow.ups?)\b/.test(q))add('open_follow_ups');
+   add('job_material_ready','job_material_ordered');
+   for(const fact of evidence.facts.filter(fact=>fact.id.startsWith('unknown_')))add(fact.id);
+  }else if(/\bmaterials?\b/.test(q))add('job_material_status','job_material_ready','job_material_ordered');
+  else if(/\b(?:how many|count|number)\b/.test(q)&&/\brework\b/.test(q))add('rework_cycles','active_rework_cycles');
+  else if(/\b(?:follow.ups?|issues?)\b/.test(q))add('open_follow_ups');
+  else add('job_status','job_rework');
+ }
+ return ids;
+}
+function answerFacts(evidence:JobEvidence,question:string){
+ const required=requiredAnswerFacts(question,evidence);
+ return [...required.map(id=>evidence.facts.find(fact=>fact.id===id)!),...evidence.facts.filter(fact=>!required.includes(fact.id))];
+}
+const maxOperationalClaims=6;
+/** Do not reserve inference that cannot satisfy the existing claim bound. */
+export function canExplainOperationally(question:string,evidence:JobEvidence):boolean{
+ return requiredAnswerFacts(question,evidence).length<=maxOperationalClaims;
+}
 export function buildOperationalInferenceInput(question:string,evidence:JobEvidence):OperationalInferenceInput{
- return {question:question.slice(0,1200),context:[],excerpts:[],draft:false,operational:{facts:evidence.facts.map(fact=>({id:fact.id,text:fact.text}))}};
+ return {question:question.slice(0,1200),context:[],excerpts:[],draft:false,operational:{facts:answerFacts(evidence,question).map(fact=>({id:fact.id,text:fact.text}))}};
 }
 
 // Language freedom is deliberately limited to stylistic changes around each
@@ -181,8 +257,8 @@ const tokens=(text:string)=>text.toLocaleLowerCase('en-US').match(/[\p{L}\p{N}]+
 const quantitative=(text:string)=>text.match(/\b\d{4}-\d{2}-\d{2}\b|\b\d+(?:\.\d+)?\b/g)??[];
 const sorted=(values:string[])=>[...values].sort().join('|');
 const dangerous=/\b(?:because|therefore|thus|hence|since|unless|until|although|despite|enough|sufficient|insufficient|healthy|unhealthy|safe|unsafe|risk|risky|delayed|late|early|behind|ahead|bottleneck|overrun|under.?budget|cost|price|profit|margin|forecast|predict|prediction|expected|likely|probably|should|must|will|would|guarantee|guaranteed|percent|percentage|score|fully|finished|done|all set|blocked|unblocked|not ready to|ready to|on track|off track)\b|[%$€£]|https?:|www\.|[<>]/i;
-export function validateOperationalExplanation(raw:unknown,evidence:JobEvidence):{message:string;factIds:string[]}|null{
- const output=object(raw);if(!Array.isArray(output.claims)||output.claims.length<1||output.claims.length>6||Object.keys(output).some(key=>!['claims','ids','summary','answer'].includes(key))||output.answer||output.summary)return null;
+export function validateOperationalExplanation(raw:unknown,evidence:JobEvidence,question=''):{message:string;factIds:string[]}|null{
+ const output=object(raw);if(!Array.isArray(output.claims)||output.claims.length<1||output.claims.length>maxOperationalClaims||Object.keys(output).some(key=>!['claims','ids','summary','answer'].includes(key))||output.answer||output.summary)return null;
  const used=new Set<string>(),claims:string[]=[];
  for(const value of output.claims){
   const claim=object(value);if(Object.keys(claim).some(key=>!['fact_id','text'].includes(key))||typeof claim.fact_id!=='string'||typeof claim.text!=='string'||used.has(claim.fact_id))return null;
@@ -202,11 +278,13 @@ export function validateOperationalExplanation(raw:unknown,evidence:JobEvidence)
   if(sorted(statusTokens(text))!==sorted(statusTokens(fact.text)))return null;
   used.add(fact.id);claims.push(text);
  }
+ if(requiredAnswerFacts(question,evidence).some(id=>!used.has(id)))return null;
  const message=claims.join(' ');return message.length<=1400?{message,factIds:[...used]}:null;
 }
 
-export function renderJobEvidence(evidence:JobEvidence,maxCharacters=1400):string{
- const sentences=evidence.facts.filter(fact=>!fact.id.startsWith('unknown_')).slice(0,16).map(fact=>fact.text),limitations=evidence.unknowns.slice(0,3);
+export function renderJobEvidence(evidence:JobEvidence,maxCharacters=1400,question=''):string{
+ const required=requiredAnswerFacts(question,evidence),selected=question.trim()&&required.length?answerFacts(evidence,question).filter(fact=>required.includes(fact.id)):evidence.facts.filter(fact=>!fact.id.startsWith('unknown_')).slice(0,16);
+ const sentences=selected.map(fact=>fact.text),limitations=evidence.unknowns.filter(text=>!sentences.includes(text)).slice(0,3);
  const caveat=limitations.join(' ').slice(0,Math.min(700,maxCharacters));
  let text='';for(const sentence of sentences){if(text.length+sentence.length+caveat.length+2>maxCharacters)break;text+=(text?' ':'')+sentence;}
  if(caveat)text+=(text?' ':'')+caveat;

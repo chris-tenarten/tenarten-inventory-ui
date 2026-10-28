@@ -1,0 +1,763 @@
+{
+  "base": "ee2baa6",
+  "inferenceContract": "knowledge-v7+jobs-v2",
+  "localSyntheticOnly": true,
+  "initialFocusedRun": [
+    {
+      "id": "Q34",
+      "question": "Where would I inspect old stock movements without recording a new one?",
+      "providerInvoked": true,
+      "rawModelAnswer": "To inspect old stock movements without recording a new one, open Inventory → Inventory Activity. Use Search Inventory Activity to filter by material, vendor, size, quantity, unit, location, reservation, or notes. Select Show → All, Intake, Outtake, or Adjustment to filter transaction types. Open a transaction row to view its details. This is a read-only history and does not record new movements.",
+      "mode": "ai",
+      "fallback": false,
+      "message": "To inspect old stock movements without recording a new one, open Inventory → Inventory Activity. Use Search Inventory Activity to filter by material, vendor, size, quantity, unit, location, reservation, or notes. Select Show → All, Intake, Outtake, or Adjustment to filter transaction types. Open a transaction row to view its details. This is a read-only history and does not record new movements.",
+      "sources": [
+        {
+          "id": "inventory-activity",
+          "title": "Review Inventory transaction history",
+          "guidance": "Employees with operational-read access can review the Inventory transaction ledger. Open Inventory → Inventory Activity. Use Search Inventory Activity to find a transaction by material, vendor, size, quantity, unit, location, reservation or notes. Use Show → All, Intake, Outtake or Adjustment to filter transaction types. Open a transaction row for its details. Activity is a read-only history view; it does not perform a new stock movement. Current on-hand quantities and selected-lot actions are in Current Inventory.",
+          "path": "Inventory → Inventory Activity → Search Inventory Activity"
+        },
+        {
+          "id": "knowledge-inventory",
+          "title": "Inventory balances, reservations and receiving",
+          "guidance": "Viewing is distinct from mutation. Receiving additionally requires receiving permission and business-write permission; adjustments require Inventory adjustment permission and business-write permission. Reservations and movements follow existing write/RLS checks. Incoming stock is not on-hand availability. Pending Receivals represent incoming material. A receival can be unrestricted, linked to a canonical Production job, or assigned a temporary work label. Canonical and temporary reservation identities are mutually exclusive. Receiving preserves material identity, quantity history, location, pallet, notes, and reservation identity. Inventory aggregation includes reservation identity so unrestricted and job-reserved stock never merge incorrectly. Pending Receivals open collapsed with an attention-oriented count. Inventory Activity is transaction history. Catalog is a supporting reference tool.",
+          "path": "Inventory → Pending Receivals / Inventory Activity"
+        }
+      ],
+      "durationMs": 6238,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1005,
+        "outputTokens": 114,
+        "estimatedNeurons": 8.123
+      }
+    },
+    {
+      "id": "Q32",
+      "question": "How would an authorized receiver record only part of an incoming line?",
+      "providerInvoked": true,
+      "rawModelAnswer": "An authorized receiver can record only part of an incoming line by opening Inventory → Pending Receivals, selecting the line, and choosing Receive. Enter the quantity received and confirm. The entered quantity is added to Inventory, while the remaining quantity stays pending. The reservation and other details remain intact. This process requires Inventory-receiving and business-write access.",
+      "mode": "ai",
+      "fallback": false,
+      "message": "An authorized receiver can record only part of an incoming line by opening Inventory → Pending Receivals, selecting the line, and choosing Receive. Enter the quantity received and confirm. The entered quantity is added to Inventory, while the remaining quantity stays pending. The reservation and other details remain intact. This process requires Inventory-receiving and business-write access.",
+      "sources": [
+        {
+          "id": "inventory-pending-receive",
+          "title": "Receive pending material into Inventory",
+          "guidance": "Employees with Inventory-receiving and business-write access can receive incoming material. Open Inventory → Pending Receivals, expand the section and choose Receive on an outstanding line. Enter Received By and Quantity received now, then Confirm Receive. Quantity must be positive and no greater than the remaining amount. Only that quantity enters Inventory; the balance stays pending and the existing reservation carries through. If the result is uncertain, keep the dialog open and retry the same quantity there. Receive selected receives the full remaining quantities of selected rows. Undo latest receipt is a separate Inventory-adjustment action and is blocked if the received stock changed.",
+          "path": "Inventory → Pending Receivals → Receive → Confirm Receive"
+        },
+        {
+          "id": "knowledge-inventory",
+          "title": "Inventory balances, reservations and receiving",
+          "guidance": "Viewing is distinct from mutation. Receiving additionally requires receiving permission and business-write permission; adjustments require Inventory adjustment permission and business-write permission. Reservations and movements follow existing write/RLS checks. Incoming stock is not on-hand availability. Pending Receivals represent incoming material. A receival can be unrestricted, linked to a canonical Production job, or assigned a temporary work label. Canonical and temporary reservation identities are mutually exclusive. Receiving preserves material identity, quantity history, location, pallet, notes, and reservation identity. Inventory aggregation includes reservation identity so unrestricted and job-reserved stock never merge incorrectly. Pending Receivals open collapsed with an attention-oriented count. Inventory Activity is transaction history. Catalog is a supporting reference tool.",
+          "path": "Inventory → Pending Receivals / Inventory Activity"
+        }
+      ],
+      "durationMs": 1733,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1031,
+        "outputTokens": 116,
+        "estimatedNeurons": 8.304
+      }
+    },
+    {
+      "id": "Q07",
+      "question": "New topic: how do I move a Production Job to different planned dates on the Timeline?",
+      "providerInvoked": true,
+      "rawModelAnswer": "To move a Production Job to different planned dates on the Timeline: Open the Job in Production → Job → Details → Planned start/Planned finish. Adjust the dates or drag the bar in the Timeline. Review changes, then choose Save all changes. Ensure finish is on or after start. Save ordinary Inspector details first if prompted. Red scheduling errors block saving; warnings do not. Discard all restores the saved dates. A stale or failed save retains proposals for review.",
+      "mode": "ai",
+      "fallback": false,
+      "message": "To move a Production Job to different planned dates on the Timeline: Open the Job in Production → Job → Details → Planned start/Planned finish. Adjust the dates or drag the bar in the Timeline. Review changes, then choose Save all changes. Ensure finish is on or after start. Save ordinary Inspector details first if prompted. Red scheduling errors block saving; warnings do not. Discard all restores the saved dates. A stale or failed save retains proposals for review.",
+      "sources": [
+        {
+          "id": "production-schedule",
+          "title": "Schedule or reschedule a Production Job",
+          "guidance": "Authorized business writers can stage Production schedules. Open a Job and enter both Planned start and Planned finish in Details, or adjust its bar in Timeline. Review changes, then choose Save all changes. Editing dates or releasing a Timeline drag stages the proposal without saving it. Finish must be on or after start. Save ordinary Inspector details first if prompted. Red scheduling errors block saving; warnings do not. Discard all restores the saved dates. A stale or failed save retains proposals for review rather than silently replacing them.",
+          "path": "Production → Job → Details → Planned start / Planned finish → Review changes → Save all changes"
+        },
+        {
+          "id": "knowledge-timeline",
+          "title": "Production Timeline and staged schedule",
+          "guidance": "Ordinary Production Timeline is available independently of disabled Phase/Item Planning. Staging does not save; approval and explicit confirmation are required. Read-only accounts may view but cannot stage changes. The proposed status bar remains editable, while a neutral dashed ghost identifies its last persisted position. A persistent control above the active view compares saved and proposed dates, days, and labor intensity and provides explicit Save and Discard actions. Table planned dates show the proposal with an unsaved indicator and feed changes into the same staged proposal. Table/Timeline switching and filtering preserve pending Production and Planning changes, while page navigation and browser unload are protected by confirmation. Labor intensity is derived rather than stored. Timeline ranges and their labor denominator both use inclusive calendar days: estimated labor hours divided by every scheduled calendar day. This interim model keeps scheduling honest about possible weekend work without implying that every included weekend is necessarily planned production time. A future shop calendar or job-specific planned-production-day model should replace it. Holiday calendars, workforce capacity, resource leveling, dependency scheduling, and automatic schedule optimization are deferred. Missing, zero, or invalid labor estimates are shown as No labor estimate rather than as zero labor.",
+          "path": "Production → Timeline → Save All / Discard All"
+        }
+      ],
+      "durationMs": 2533,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1283,
+        "outputTokens": 132,
+        "estimatedNeurons": 9.957
+      }
+    },
+    {
+      "id": "Q08",
+      "question": "So letting go of the bar saves it right away?",
+      "providerInvoked": false,
+      "mode": "verified",
+      "fallback": false,
+      "message": "No. Releasing a Timeline drag only stages proposed dates. Review changes, then choose Save all changes and confirm the save. Discard all restores the saved dates.",
+      "sources": [
+        {
+          "id": "production-schedule",
+          "title": "Schedule or reschedule a Production Job",
+          "guidance": "Authorized business writers can stage Production schedules. Open a Job and enter both Planned start and Planned finish in Details, or adjust its bar in Timeline. Review changes, then choose Save all changes. Editing dates or releasing a Timeline drag stages the proposal without saving it. Finish must be on or after start. Save ordinary Inspector details first if prompted. Red scheduling errors block saving; warnings do not. Discard all restores the saved dates. A stale or failed save retains proposals for review rather than silently replacing them.",
+          "path": "Production → Job → Details → Planned start / Planned finish → Review changes → Save all changes"
+        }
+      ],
+      "durationMs": 365,
+      "usage": null
+    },
+    {
+      "id": "Q03",
+      "question": "Switching to Rework: how would I create Rework for a completed Job?",
+      "providerInvoked": true,
+      "rawModelAnswer": "To create Rework for a completed Job, open the Job in Production, select 'Create Rework,' choose a Reason, describe the Rework Scope, enter the Intake/Return Date, and confirm. Only one Rework cycle can be active at a time, and the Job must be complete and unarchived. Rework belongs to the original Job and does not alter its status or dates.",
+      "mode": "guide",
+      "fallback": true,
+      "message": "Here is guidance from the TenOps Guide.",
+      "sources": [
+        {
+          "id": "production-rework-create",
+          "title": "Initiate Job Rework",
+          "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+          "path": "Production → completed Job → Create Rework → Create Rework"
+        }
+      ],
+      "durationMs": 2365,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1046,
+        "outputTokens": 148,
+        "estimatedNeurons": 9.349
+      }
+    },
+    {
+      "id": "Q05",
+      "question": "I filled in the Reason, Scope, and Intake/Return Date. Am I done, or is there a final button to press?",
+      "providerInvoked": true,
+      "rawModelAnswer": "You are not done yet. After entering the Reason, Scope, and Intake/Return Date, you must select the 'Create Rework' button to finalize the action. Ensure the Job is complete, unarchived, and has no active Rework cycle before proceeding.",
+      "mode": "ai",
+      "fallback": false,
+      "message": "You are not done yet. After entering the Reason, Scope, and Intake/Return Date, you must select the 'Create Rework' button to finalize the action. Ensure the Job is complete, unarchived, and has no active Rework cycle before proceeding.",
+      "sources": [
+        {
+          "id": "production-rework-create",
+          "title": "Initiate Job Rework",
+          "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+          "path": "Production → completed Job → Create Rework → Create Rework"
+        },
+        {
+          "id": "knowledge-rework",
+          "title": "Production Rework lifecycle and requirements",
+          "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+          "path": "Production → Job → Create Rework"
+        }
+      ],
+      "durationMs": 1723,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1194,
+        "outputTokens": 77,
+        "estimatedNeurons": 7.869
+      }
+    },
+    {
+      "id": "won-bid",
+      "question": "we just won a bid for a terrazzo job. how do i get it into production, and what happens to the proposal and sample records?",
+      "providerInvoked": true,
+      "rawModelAnswer": "To get the terrazzo job into production, first ensure the Bid is marked as Won with a recorded Deposit Received Date. Then, go to Intake → Bid → Overview → Projected Production Window → Convert to Production. Save any remaining edits and choose Confirm conversion. This creates a Production Job. The Proposal and Sample records remain linked but are no longer part of the Intake process. The Production Job now handles scheduling and operations.",
+      "mode": "guide",
+      "fallback": true,
+      "message": "Here is guidance from the TenOps Guide.",
+      "sources": [
+        {
+          "id": "workflow-intake-convert",
+          "title": "Convert an eligible Bid into one Production Job",
+          "guidance": "Save Won status and Deposit Received Date, then save or discard remaining Bid edits and finish pending file cleanup. In Projected Production Window, choose Convert to Production. Choose Plan in Production Later to leave the Job unscheduled. Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission. Job number is optional and is not allocated automatically. Choose Confirm conversion, then Open Production Job. The handoff creates or returns exactly one canonical Job; retrying does not create another. Accepted scope, formulation verification and material assessment are not prerequisites. Existing Bid and issued-document history remain intact; Production then owns operational scheduling.",
+          "path": "Intake → Bid → Overview → Projected Production Window → Convert to Production"
+        },
+        {
+          "id": "workflow-intake-bid",
+          "title": "Create and maintain an Intake Bid",
+          "guidance": "Open Intake and choose New Bid. Enter Customer and Project Name, then Create Bid. The new Bid starts Active and defaults its owner to you. Open the Bid to edit Overview details and choose Save Bid. Saved Won status plus Deposit Received Date are required for conversion. Creating a Bid does not create a Production Job; unsaved Overview edits are not carried into conversion.",
+          "path": "Intake → Pipeline → New Bid; Bid → Overview"
+        },
+        {
+          "id": "knowledge-intake",
+          "title": "Intake Bids, related records and Production handoff",
+          "guidance": "The Intake graduation runtime is released. Ordinary Bid activity does not require governing documents or manufacturing inputs. Won plus a recorded deposit is the conversion gate; conversion additionally requires Production Job creation permission. Committed carried/new dates require Production scheduling permission. One Bid creates/links one canonical Production Job; no pseudo Job or automatic Job number is fabricated. Author once in Samples, reference in Intake, calculate in shared services, execute in Production. The Bid Inspector has contextual Tools for the established generators and read-only Related Records showing associated Proposals, Samples, existing accepted/retained revisions and the canonical converted Job. Employees need not designate governing documents or complete material-planning fields for ordinary Bid activity. Quantities, formulations and manufacturing inputs stay in their existing owning workflows; existing version provenance and immutable handoff remain compatible. Historical Sample originals and verified revisions are retained; imported shop quantities do not become Batch authority automatically. Shared material assessment reuses Inventory, catalog and purchasing context without creating reservations or orders. Won + recorded deposit remains the conversion gate; missing references, material shortages and planning fields are advisory. See the scoped contract and Current State for implementation/release status.",
+          "path": "Intake → Bid → Overview / Updates / Files / Tools"
+        }
+      ],
+      "durationMs": 2779,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1366,
+        "outputTokens": 147,
+        "estimatedNeurons": 10.798
+      }
+    },
+    {
+      "id": "Q17",
+      "question": "Can it be converted without a Job number or a committed schedule?",
+      "providerInvoked": true,
+      "mode": "operational-ai",
+      "fallback": false,
+      "message": "No visible Production Jobs match the requested search scope.",
+      "sources": [],
+      "durationMs": 1624,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 307,
+        "outputTokens": 28,
+        "estimatedNeurons": 2.274
+      }
+    },
+    {
+      "id": "Q18",
+      "question": "If a conversion times out and is retried, should there be a second Job?",
+      "providerInvoked": true,
+      "rawModelAnswer": "No, retrying a conversion does not create a second Job. The handoff creates or returns exactly one canonical Job. If a conversion times out and is retried, it will either complete the existing Job or fail, but it will not generate a new Job. The same Job is processed again during the retry.",
+      "mode": "ai",
+      "fallback": false,
+      "message": "No, retrying a conversion does not create a second Job. The handoff creates or returns exactly one canonical Job. If a conversion times out and is retried, it will either complete the existing Job or fail, but it will not generate a new Job. The same Job is processed again during the retry.",
+      "sources": [
+        {
+          "id": "workflow-intake-convert",
+          "title": "Convert an eligible Bid into one Production Job",
+          "guidance": "Save Won status and Deposit Received Date, then save or discard remaining Bid edits and finish pending file cleanup. In Projected Production Window, choose Convert to Production. Choose Plan in Production Later to leave the Job unscheduled. Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission. Job number is optional and is not allocated automatically. Choose Confirm conversion, then Open Production Job. The handoff creates or returns exactly one canonical Job; retrying does not create another. Accepted scope, formulation verification and material assessment are not prerequisites. Existing Bid and issued-document history remain intact; Production then owns operational scheduling.",
+          "path": "Intake → Bid → Overview → Projected Production Window → Convert to Production"
+        }
+      ],
+      "durationMs": 2195,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1126,
+        "outputTokens": 80,
+        "estimatedNeurons": 7.646
+      }
+    },
+    {
+      "id": "Q31",
+      "question": "Does a Pending Receival already count as on-hand stock?",
+      "providerInvoked": false,
+      "mode": "verified",
+      "fallback": false,
+      "message": "No. Pending Receivals represent expected incoming material, not on-hand stock. Issuing a Purchase Order or creating a Pending Receival does not receive material. Only the quantity actually received enters Inventory; receiving requires its separate authorization.",
+      "sources": [
+        {
+          "id": "knowledge-inventory",
+          "title": "Incoming material and on-hand Inventory",
+          "guidance": "No. Pending Receivals represent expected incoming material, not on-hand stock. Issuing a Purchase Order or creating a Pending Receival does not receive material. Only the quantity actually received enters Inventory; receiving requires its separate authorization.",
+          "path": "Inventory → Pending Receivals / Current Inventory"
+        }
+      ],
+      "durationMs": 501,
+      "usage": null
+    },
+    {
+      "id": "Q35",
+      "question": "New topic, Purchasing: can an authorized user create an unlinked PO draft, and when does it get a PO number?",
+      "providerInvoked": true,
+      "rawModelAnswer": "Yes, an authorized user can create an unlinked PO draft via Toolbox → Tools → PO Generator. The draft gets a PO number upon the first successful save. The PO remains marked DRAFT until issued, and the number is stable once assigned. Issuance requires confirmation, after which a permanent PDF is generated. The PO number is assigned during the initial save, not during issuance.",
+      "mode": "ai",
+      "fallback": false,
+      "message": "Yes, an authorized user can create an unlinked PO draft via Toolbox → Tools → PO Generator. The draft gets a PO number upon the first successful save. The PO remains marked DRAFT until issued, and the number is stable once assigned. Issuance requires confirmation, after which a permanent PDF is generated. The PO number is assigned during the initial save, not during issuance.",
+      "sources": [
+        {
+          "id": "workflow-po-draft",
+          "title": "Save and preview a Purchase Order draft",
+          "guidance": "Open Toolbox → Tools → PO Generator and create an unlinked draft, or launch a Purchase Order from a Production Job. Enter vendor, document and material details, then Save Draft. The first successful save assigns a stable PO number. Preview Draft PDF saves and reloads the draft before rendering, unless an unchanged cached preview is reused. Preview remains marked DRAFT and does not issue the PO. If rendering fails after saving, reopen the saved draft in the library. Preview access and draft-creation permission are required in addition to business-write permission.",
+          "path": "Toolbox → Tools → PO Generator → Save Draft / Preview Draft PDF"
+        },
+        {
+          "id": "knowledge-purchasing",
+          "title": "Purchase Order drafts, issuance, PDFs and receiving projection",
+          "guidance": "These are generic workflow descriptions; no live financial records or prices are included. Issued documents are immutable and PDF failure does not undo issuance. Pending Receivals creation is explicit after permanent PDF generation; incoming material does not become Inventory until receiving. Phase 1 supports New Purchase Order, draft search/filtering, structured per-line Chip or Resin classification, deterministic line totals and subtotal, save, reopen, and edit. One material-agnostic PO may contain any combination of Chip and Resin lines. The optional PO-level Production Job is a convenience default for the common single-job PO. Linking it snapshots Job Reference and Job Number, defaults a blank Date Requested from the job's requested delivery date, and assigns only currently unassigned lines. It does not overwrite deliberate dates or line assignments, so multi-job POs remain supported. Ship To, Payment Terms, and Authorized By are editable document snapshots rather than fields inferred from Production. Catalog selection proposes identity and packaging defaults without locking fields. Catalog price is labeled potentially outdated and is never applied without an operator action. Changing material preserves a manually entered price for review. Historical pricing will prefer explainable recent issued matches; no average or fabricated history is used. A saved, automatically numbered Draft may be issued after confirmation. Retrying the same revision returns the same issuance rather than producing a duplicate. Stock POs may issue without a Production Job. After issuance succeeds, the editor requests permanent PDF generation. Issuance is never rolled back when document generation fails. The issued record exposes Pending, Generating, Generated, or Failed state; Failed generation retains its error and can be retried. Generated files are opened or downloaded from the original private Storage object. After the permanent document is generated, an operator may review eligible immutable snapshot lines and project selected lines into Pending Receivals. Material, size, category, quantity, unit, ETA, and location remain reviewable operational values. ETA starts blank because the PO requested date cannot reliably prove expected material arrival. Creation is explicit, transactional, and idempotent per issuance line; previously created lines remain visible and only remaining lines can be created. Manual Pending Receival creation and receiving remain independent.",
+          "path": "Purchasing → New Purchase Order"
+        }
+      ],
+      "durationMs": 2105,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1332,
+        "outputTokens": 100,
+        "estimatedNeurons": 9.208
+      }
+    },
+    {
+      "id": "sample-seed",
+      "question": "How do I issue a Sample Work Order?",
+      "providerInvoked": false,
+      "mode": "guide",
+      "fallback": false,
+      "message": "Here is guidance from the TenOps Guide.",
+      "sources": [
+        {
+          "id": "sample-work-order",
+          "title": "Generate a Sample Work Order or retry its PDF",
+          "guidance": "Employees with operational access and business-write permission can generate a Sample Work Order. Open the Sample in Toolbox → Tools → Sample Form Generator. Confirm Prepared By, review the Resin System, preparation quantities and validation messages, then choose Generate Sample Work Order. This saves current changes and captures an issued document before generating its PDF. Complete the required preparation components and reconcile the aggregate blend; draft saving and document generation have different requirements. If document capture succeeds but its PDF fails, use Retry PDF on that existing entry under Sample Work Orders instead of generating another issued document. Ready PDFs use View.",
+          "path": "Toolbox → Tools → Sample Form Generator → open Sample → Generate Sample Work Order"
+        }
+      ],
+      "durationMs": 710,
+      "usage": null
+    },
+    {
+      "id": "Q23",
+      "question": "If the document was captured but opening its PDF failed, should I generate a fresh Work Order?",
+      "providerInvoked": true,
+      "rawModelAnswer": "If document capture succeeds but its PDF fails, use Retry PDF on the existing entry under Sample Work Orders instead of generating another issued document. This avoids creating a fresh Work Order and ensures the correct record is used.",
+      "mode": "ai",
+      "fallback": false,
+      "message": "If document capture succeeds but its PDF fails, use Retry PDF on the existing entry under Sample Work Orders instead of generating another issued document. This avoids creating a fresh Work Order and ensures the correct record is used.",
+      "sources": [
+        {
+          "id": "sample-work-order",
+          "title": "Generate a Sample Work Order or retry its PDF",
+          "guidance": "Employees with operational access and business-write permission can generate a Sample Work Order. Open the Sample in Toolbox → Tools → Sample Form Generator. Confirm Prepared By, review the Resin System, preparation quantities and validation messages, then choose Generate Sample Work Order. This saves current changes and captures an issued document before generating its PDF. Complete the required preparation components and reconcile the aggregate blend; draft saving and document generation have different requirements. If document capture succeeds but its PDF fails, use Retry PDF on that existing entry under Sample Work Orders instead of generating another issued document. Ready PDFs use View.",
+          "path": "Toolbox → Tools → Sample Form Generator → open Sample → Generate Sample Work Order"
+        }
+      ],
+      "durationMs": 2634,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1728,
+        "outputTokens": 57,
+        "estimatedNeurons": 9.73
+      }
+    },
+    {
+      "id": "Q50",
+      "question": "Hypothetically, can an administrator read a synthetic employee's private DMs or My Work tasks just because they are an administrator? Do not retrieve any records.",
+      "providerInvoked": false,
+      "mode": "verified",
+      "fallback": false,
+      "message": "Private Messaging and My Work contents are available only to authorized participants. Administrative lifecycle or cleanup authority does not grant routine reading access. TenBot cannot independently retrieve private DMs or personal tasks. You may explicitly paste text for your own answer; it does not automatically become shared knowledge or Product feedback. Separate authorized Job tools can read only their approved operational fields.",
+      "sources": [
+        {
+          "id": "privacy-my-work-create",
+          "title": "My Work privacy rules",
+          "guidance": "Private Messaging and My Work contents are available only to authorized participants. Administrative lifecycle or cleanup authority does not grant routine reading access. TenBot cannot independently retrieve private DMs or personal tasks. You may explicitly paste text for your own answer; it does not automatically become shared knowledge or Product feedback. Separate authorized Job tools can read only their approved operational fields.",
+          "path": "Participant-only privacy"
+        },
+        {
+          "id": "privacy-knowledge-messaging",
+          "title": "Messaging privacy rules",
+          "guidance": "Private Messaging and My Work contents are available only to authorized participants. Administrative lifecycle or cleanup authority does not grant routine reading access. TenBot cannot independently retrieve private DMs or personal tasks. You may explicitly paste text for your own answer; it does not automatically become shared knowledge or Product feedback. Separate authorized Job tools can read only their approved operational fields.",
+          "path": "Participant-only privacy"
+        }
+      ],
+      "durationMs": 422,
+      "usage": null
+    }
+  ],
+  "correctedIntegrationAndQualitativeRun": [
+    {
+      "id": "bid-seed",
+      "question": "How do I convert a Won Bid to Production?",
+      "providerInvoked": false,
+      "mode": "guide",
+      "fallback": false,
+      "message": "Here is guidance from the TenOps Guide.",
+      "sources": [
+        {
+          "id": "workflow-intake-convert",
+          "title": "Convert an eligible Bid into one Production Job",
+          "guidance": "Save Won status and Deposit Received Date, then save or discard remaining Bid edits and finish pending file cleanup. In Projected Production Window, choose Convert to Production. Choose Plan in Production Later to leave the Job unscheduled. Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission. Job number is optional and is not allocated automatically. Choose Confirm conversion, then Open Production Job. The handoff creates or returns exactly one canonical Job; retrying does not create another. Accepted scope, formulation verification and material assessment are not prerequisites. Existing Bid and issued-document history remain intact; Production then owns operational scheduling.",
+          "path": "Intake → Bid → Overview → Projected Production Window → Convert to Production"
+        },
+        {
+          "id": "workflow-intake-bid",
+          "title": "Create and maintain an Intake Bid",
+          "guidance": "Open Intake and choose New Bid. Enter Customer and Project Name, then Create Bid. The new Bid starts Active and defaults its owner to you. Open the Bid to edit Overview details and choose Save Bid. Saved Won status plus Deposit Received Date are required for conversion. Creating a Bid does not create a Production Job; unsaved Overview edits are not carried into conversion.",
+          "path": "Intake → Pipeline → New Bid; Bid → Overview"
+        },
+        {
+          "id": "knowledge-intake",
+          "title": "Intake Bids, related records and Production handoff",
+          "guidance": "The Intake graduation runtime is released. Ordinary Bid activity does not require governing documents or manufacturing inputs. Won plus a recorded deposit is the conversion gate; conversion additionally requires Production Job creation permission. Committed carried/new dates require Production scheduling permission. One Bid creates/links one canonical Production Job; no pseudo Job or automatic Job number is fabricated. Author once in Samples, reference in Intake, calculate in shared services, execute in Production. The Bid Inspector has contextual Tools for the established generators and read-only Related Records showing associated Proposals, Samples, existing accepted/retained revisions and the canonical converted Job. Employees need not designate governing documents or complete material-planning fields for ordinary Bid activity. Quantities, formulations and manufacturing inputs stay in their existing owning workflows; existing version provenance and immutable handoff remain compatible. Historical Sample originals and verified revisions are retained; imported shop quantities do not become Batch authority automatically. Shared material assessment reuses Inventory, catalog and purchasing context without creating reservations or orders. Won + recorded deposit remains the conversion gate; missing references, material shortages and planning fields are advisory. See the scoped contract and Current State for implementation/release status.",
+          "path": "Intake → Bid → Overview / Updates / Files / Tools"
+        }
+      ],
+      "durationMs": 568,
+      "usage": null
+    },
+    {
+      "id": "Q17",
+      "question": "Can it be converted without a Job number or a committed schedule?",
+      "providerInvoked": false,
+      "mode": "verified",
+      "fallback": false,
+      "message": "Yes, an authorized account can convert an eligible Bid without a Job number or committed schedule. Saved Won status and Deposit Received Date are still required. The Job number is optional and is not allocated automatically. Choose Plan in Production Later to leave it unscheduled; committing carried or new dates additionally requires Production scheduling permission.",
+      "sources": [
+        {
+          "id": "workflow-intake-convert",
+          "title": "Convert an eligible Bid into one Production Job",
+          "guidance": "Save Won status and Deposit Received Date, then save or discard remaining Bid edits and finish pending file cleanup. In Projected Production Window, choose Convert to Production. Choose Plan in Production Later to leave the Job unscheduled. Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission. Job number is optional and is not allocated automatically. Choose Confirm conversion, then Open Production Job. The handoff creates or returns exactly one canonical Job; retrying does not create another. Accepted scope, formulation verification and material assessment are not prerequisites. Existing Bid and issued-document history remain intact; Production then owns operational scheduling.",
+          "path": "Intake → Bid → Overview → Projected Production Window → Convert to Production"
+        }
+      ],
+      "durationMs": 568,
+      "usage": null
+    },
+    {
+      "id": "job-readiness",
+      "question": "Is Job TB-2801 ready to start?",
+      "providerInvoked": true,
+      "mode": "operational",
+      "fallback": true,
+      "message": "Production Job: TB-2801 — TenBot Review North Countertops. Recorded material status: Ordered. Planning completeness: Planning Complete. Ordered means procurement has started; all required material has not been confirmed arrived. Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers.",
+      "sources": [],
+      "durationMs": 3003,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 529,
+        "outputTokens": 134,
+        "estimatedNeurons": 6.531
+      }
+    },
+    {
+      "id": "job-material-followup",
+      "question": "What about materials for that job?",
+      "providerInvoked": true,
+      "mode": "operational-ai",
+      "fallback": false,
+      "message": "Production Job: TB-2801 — TenBot Review North Countertops. Recorded material status: Ordered. Ordered means procurement has started; all required material has not been confirmed arrived. Recorded Production status: In Production. Persisted planned dates: 2026-10-28 through 2026-11-04. Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers.",
+      "sources": [],
+      "durationMs": 3626,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 524,
+        "outputTokens": 159,
+        "estimatedNeurons": 7.27
+      }
+    },
+    {
+      "id": "overview-in-production",
+      "question": "How many Production Jobs are In Production?",
+      "providerInvoked": true,
+      "mode": "operational-ai",
+      "fallback": false,
+      "message": "Production Jobs with recorded status In Production: 2.",
+      "sources": [],
+      "durationMs": 2470,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 712,
+        "outputTokens": 31,
+        "estimatedNeurons": 4.238
+      }
+    },
+    {
+      "id": "overview-by-status",
+      "question": "Give me a Production overview by status.",
+      "providerInvoked": false,
+      "mode": "operational",
+      "fallback": false,
+      "message": "Production Jobs with recorded status Not Started: 2. Production Jobs with recorded status On Deck: 1. Production Jobs with recorded status In Production: 2. Production Jobs with recorded status On Hold: 1. Production Jobs with recorded status Shipped: 0. Production Jobs with recorded status Complete: 0. Production Jobs with recorded status Cancelled: 0.",
+      "sources": [],
+      "durationMs": 663,
+      "usage": null
+    },
+    {
+      "id": "unsupported-material-count",
+      "question": "How many Jobs are ready?",
+      "providerInvoked": false,
+      "mode": "operational",
+      "fallback": false,
+      "message": "I can report current visible Production Job counts by lifecycle status. Counts filtered by material condition or physical readiness are outside these read-only tools; I can check the recorded material status of a specific Job.",
+      "sources": [],
+      "durationMs": 227,
+      "usage": null
+    },
+    {
+      "id": "privacy-after-job",
+      "question": "Does being an Admin let someone routinely read other employees private DMs and tasks without being a participant? Answer the privacy rule only; do not retrieve anything.",
+      "providerInvoked": false,
+      "mode": "verified",
+      "fallback": false,
+      "message": "Private Messaging and My Work contents are available only to authorized participants. Administrative lifecycle or cleanup authority does not grant routine reading access. TenBot cannot independently retrieve private DMs or personal tasks. You may explicitly paste text for your own answer; it does not automatically become shared knowledge or Product feedback. Separate authorized Job tools can read only their approved operational fields.",
+      "sources": [
+        {
+          "id": "privacy-my-work-create",
+          "title": "My Work privacy rules",
+          "guidance": "Private Messaging and My Work contents are available only to authorized participants. Administrative lifecycle or cleanup authority does not grant routine reading access. TenBot cannot independently retrieve private DMs or personal tasks. You may explicitly paste text for your own answer; it does not automatically become shared knowledge or Product feedback. Separate authorized Job tools can read only their approved operational fields.",
+          "path": "Participant-only privacy"
+        },
+        {
+          "id": "privacy-knowledge-messaging",
+          "title": "Messaging privacy rules",
+          "guidance": "Private Messaging and My Work contents are available only to authorized participants. Administrative lifecycle or cleanup authority does not grant routine reading access. TenBot cannot independently retrieve private DMs or personal tasks. You may explicitly paste text for your own answer; it does not automatically become shared knowledge or Product feedback. Separate authorized Job tools can read only their approved operational fields.",
+          "path": "Participant-only privacy"
+        }
+      ],
+      "durationMs": 381,
+      "usage": null
+    }
+  ],
+  "superseded": {
+    "Q17": "Initial focused run incorrectly used live Job lookup. Superseded by actual verified Yes in corrected run and handler regressions."
+  },
+  "finalRecordedAnswerValidation": [
+    {
+      "id": "Q32",
+      "noNewInference": true,
+      "rejected": "TenBot could not verify the workflow wording.",
+      "direct": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "inventory-pending-receive",
+            "title": "Receive pending material into Inventory",
+            "status": "deployed",
+            "guidance": "Employees with Inventory-receiving and business-write access can receive incoming material. Open Inventory → Pending Receivals, expand the section and choose Receive on an outstanding line. Enter Received By and Quantity received now, then Confirm Receive. Quantity must be positive and no greater than the remaining amount. Only that quantity enters Inventory; the balance stays pending and the existing reservation carries through. If the result is uncertain, keep the dialog open and retry the same quantity there. Receive selected receives the full remaining quantities of selected rows. Undo latest receipt is a separate Inventory-adjustment action and is blocked if the received stock changed.",
+            "path": "Inventory → Pending Receivals → Receive → Confirm Receive",
+            "route": "/inventory",
+            "source": "Inventory guide · released workflow verified October 27",
+            "availability": "available",
+            "constraints": [
+              "Employees with Inventory-receiving and business-write access can receive incoming material.",
+              "Quantity must be positive and no greater than the remaining amount.",
+              "Only that quantity enters Inventory; the balance stays pending and the existing reservation carries through.",
+              "If the result is uncertain, keep the dialog open and retry the same quantity there."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "Q03",
+      "noNewInference": true,
+      "rejected": "TenBot could not verify the workflow wording.",
+      "direct": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "won-bid",
+      "noNewInference": true,
+      "rejected": "TenBot could not verify the conversion procedure.",
+      "direct": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "workflow-intake-convert",
+            "title": "Convert an eligible Bid into one Production Job",
+            "status": "deployed",
+            "guidance": "Save Won status and Deposit Received Date, then save or discard remaining Bid edits and finish pending file cleanup. In Projected Production Window, choose Convert to Production. Choose Plan in Production Later to leave the Job unscheduled. Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission. Job number is optional and is not allocated automatically. Choose Confirm conversion, then Open Production Job. The handoff creates or returns exactly one canonical Job; retrying does not create another. Accepted scope, formulation verification and material assessment are not prerequisites. Existing Bid and issued-document history remain intact; Production then owns operational scheduling.",
+            "path": "Intake → Bid → Overview → Projected Production Window → Convert to Production",
+            "route": "/pre-production",
+            "source": "TenOps verified workflow guide",
+            "availability": "available",
+            "constraints": [
+              "Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission.",
+              "Job number is optional and is not allocated automatically.",
+              "The handoff creates or returns exactly one canonical Job; retrying does not create another.",
+              "Accepted scope, formulation verification and material assessment are not prerequisites.",
+              "Existing Bid and issued-document history remain intact; Production then owns operational scheduling."
+            ]
+          },
+          {
+            "id": "workflow-intake-bid",
+            "title": "Create and maintain an Intake Bid",
+            "status": "deployed",
+            "guidance": "Open Intake and choose New Bid. Enter Customer and Project Name, then Create Bid. The new Bid starts Active and defaults its owner to you. Open the Bid to edit Overview details and choose Save Bid. Saved Won status plus Deposit Received Date are required for conversion. Creating a Bid does not create a Production Job; unsaved Overview edits are not carried into conversion.",
+            "path": "Intake → Pipeline → New Bid; Bid → Overview",
+            "route": "/pre-production",
+            "source": "TenOps verified workflow guide",
+            "availability": "available",
+            "constraints": [
+              "The new Bid starts Active and defaults its owner to you.",
+              "Saved Won status plus Deposit Received Date are required for conversion.",
+              "Creating a Bid does not create a Production Job; unsaved Overview edits are not carried into conversion."
+            ]
+          },
+          {
+            "id": "knowledge-intake",
+            "title": "Intake Bids, related records and Production handoff",
+            "status": "deployed",
+            "guidance": "The Intake graduation runtime is released. Ordinary Bid activity does not require governing documents or manufacturing inputs. Won plus a recorded deposit is the conversion gate; conversion additionally requires Production Job creation permission. Committed carried/new dates require Production scheduling permission. One Bid creates/links one canonical Production Job; no pseudo Job or automatic Job number is fabricated. Author once in Samples, reference in Intake, calculate in shared services, execute in Production. The Bid Inspector has contextual Tools for the established generators and read-only Related Records showing associated Proposals, Samples, existing accepted/retained revisions and the canonical converted Job. Employees need not designate governing documents or complete material-planning fields for ordinary Bid activity. Quantities, formulations and manufacturing inputs stay in their existing owning workflows; existing version provenance and immutable handoff remain compatible. Historical Sample originals and verified revisions are retained; imported shop quantities do not become Batch authority automatically. Shared material assessment reuses Inventory, catalog and purchasing context without creating reservations or orders. Won + recorded deposit remains the conversion gate; missing references, material shortages and planning fields are advisory. See the scoped contract and Current State for implementation/release status.",
+            "path": "Intake → Bid → Overview / Updates / Files / Tools",
+            "route": "/pre-production",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Ordinary Bid activity does not require governing documents or manufacturing inputs.",
+              "Won plus a recorded deposit is the conversion gate; conversion additionally requires Production Job creation permission.",
+              "Committed carried/new dates require Production scheduling permission.",
+              "The Bid Inspector has contextual Tools for the established generators and read-only Related Records showing associated Proposals, Samples, existing accepted/retained revisions and the canonical converted Job.",
+              "Employees need not designate governing documents or complete material-planning fields for ordinary Bid activity.",
+              "Historical Sample originals and verified revisions are retained; imported shop quantities do not become Batch authority automatically."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "Q18",
+      "noNewInference": true,
+      "rejected": "TenBot could not verify the workflow wording.",
+      "direct": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "workflow-intake-convert",
+            "title": "Convert an eligible Bid into one Production Job",
+            "status": "deployed",
+            "guidance": "Save Won status and Deposit Received Date, then save or discard remaining Bid edits and finish pending file cleanup. In Projected Production Window, choose Convert to Production. Choose Plan in Production Later to leave the Job unscheduled. Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission. Job number is optional and is not allocated automatically. Choose Confirm conversion, then Open Production Job. The handoff creates or returns exactly one canonical Job; retrying does not create another. Accepted scope, formulation verification and material assessment are not prerequisites. Existing Bid and issued-document history remain intact; Production then owns operational scheduling.",
+            "path": "Intake → Bid → Overview → Projected Production Window → Convert to Production",
+            "route": "/pre-production",
+            "source": "TenOps verified workflow guide",
+            "availability": "available",
+            "constraints": [
+              "Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission.",
+              "Job number is optional and is not allocated automatically.",
+              "The handoff creates or returns exactly one canonical Job; retrying does not create another.",
+              "Accepted scope, formulation verification and material assessment are not prerequisites.",
+              "Existing Bid and issued-document history remain intact; Production then owns operational scheduling."
+            ]
+          },
+          {
+            "id": "workflow-intake-bid",
+            "title": "Create and maintain an Intake Bid",
+            "status": "deployed",
+            "guidance": "Open Intake and choose New Bid. Enter Customer and Project Name, then Create Bid. The new Bid starts Active and defaults its owner to you. Open the Bid to edit Overview details and choose Save Bid. Saved Won status plus Deposit Received Date are required for conversion. Creating a Bid does not create a Production Job; unsaved Overview edits are not carried into conversion.",
+            "path": "Intake → Pipeline → New Bid; Bid → Overview",
+            "route": "/pre-production",
+            "source": "TenOps verified workflow guide",
+            "availability": "available",
+            "constraints": [
+              "The new Bid starts Active and defaults its owner to you.",
+              "Saved Won status plus Deposit Received Date are required for conversion.",
+              "Creating a Bid does not create a Production Job; unsaved Overview edits are not carried into conversion."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    }
+  ],
+  "jobBrowser": [
+    {
+      "question": "What is the current status of Job TB-2801?",
+      "mode": "operational-ai",
+      "fallback": false,
+      "message": "Production Job: TB-2801 — TenBot Review North Countertops. Recorded Production status: In Production. Recorded material status: Ordered. Planning completeness: Planning Complete. Recorded Rework cycles: 0. Unresolved recorded follow-ups: 1."
+    },
+    {
+      "question": "How many recorded labor hours does that job have?",
+      "mode": "operational-ai",
+      "fallback": false,
+      "message": "Recorded labor: 8.3 hours for 2026-09-29 through 2026-10-28. Recorded hours reflect saved Manpower entries; unrecorded work and future labor are unknown. Production Job: TB-2801 — TenBot Review North Countertops. Recorded Production status: In Production. Persisted planned dates: 2026-10-28 through 2026-11-04. Recorded labor entries in this reporting period: 3."
+    },
+    {
+      "question": "How many active Production Jobs are there?",
+      "mode": "operational-ai",
+      "fallback": false,
+      "message": "Active Production Jobs: 6."
+    },
+    {
+      "question": "What is the status of Job \"TenBot Review Shared Name\"?",
+      "mode": "operational",
+      "fallback": false,
+      "message": "Choose the exact Job number or full project name from the matching Jobs. I have not selected a Job. Matching Production Job: TB-2802 — TenBot Review Shared Name; recorded status: On Deck. Matching Production Job: TB-2803 — TenBot Review Shared Name; recorded status: On Hold."
+    },
+    {
+      "question": "What is the status of Job TB-2805?",
+      "mode": "operational-ai",
+      "fallback": false,
+      "message": "Production Job: TB-2805 — TenBot Review Completed With Rework. Recorded Rework status: In Production. The effective lifecycle is Rework 2; the original Job status is Complete. Recorded material status: Ready. Planning completeness: Planning Complete. Recorded Rework cycles: 2."
+    },
+    {
+      "question": "What work is scheduled next for that job?",
+      "mode": "operational",
+      "fallback": true,
+      "message": "Production Job: TB-2805 — TenBot Review Completed With Rework. Persisted planned dates: 2026-10-29 through 2026-11-02. The effective lifecycle is Rework 2; the original Job status is Complete. Planned dates describe saved scheduling; they do not prove completion or readiness. Planning phase detail is disabled in the released application; scheduled next work cannot be inferred from phases. Phase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded."
+    }
+  ],
+  "usage": {
+    "calls": 18,
+    "inputTokens": 16426,
+    "outputTokens": 1975,
+    "tokenDerivedNeurons": 136.169,
+    "paidActivation": false,
+    "incrementalChargeUsd": 0,
+    "analytics": {
+      "checkedAt": "2026-10-28T15:25:49.782Z",
+      "dayStart": "2026-10-28T00:00:00.000Z",
+      "reportedNeurons": 665.9574749469757,
+      "reportedRequests": 76,
+      "nominalRemainingNeurons": 9334.042525053024,
+      "cached": true,
+      "cacheExpiresAt": "2026-10-28T15:30:49.782Z",
+      "guardJournalNeurons": 264.32199999999995,
+      "guardedRemainingNeurons": 7069.720525053024
+    },
+    "unchangedPolicy": {
+      "sharedDaily": 300,
+      "sharedMonthly": 6000,
+      "accountBurstPerMinute": 6,
+      "dailyNeurons": 8000,
+      "monthlyNeurons": 240000,
+      "workersFreeDailyNeurons": 10000
+    }
+  }
+}

@@ -192,8 +192,8 @@ const provider:InferenceProvider={name:'Synthetic local claims provider',reserve
  for(const sentinel of [f.financialSentinel,f.notesSentinel,'SYNTHETIC-WORKER-NEVER-RETRIEVE'])assert(!JSON.stringify(input).includes(sentinel));
  if(providerMode==='outage')throw Error('Synthetic inference outage');
  if(providerMode==='revoke')denyMain(true);
- const fact=input.operational.facts.find(row=>row.id==='labor_total')??input.operational.facts.find(row=>row.id==='job_status')??input.operational.facts[0];assert(fact);
- return {claims:[{fact_id:fact.id,text:providerMode==='invalid'?'Recorded labor: 999 hours for 2026-09-29 through 2026-10-28.':fact.text}]};
+ const facts=input.operational.facts,ids=facts.some(row=>row.id==='labor_total')?['job_identity','labor_total','labor_limit']:['job_identity','job_status','job_rework'];
+ return {claims:ids.flatMap(id=>{const fact=facts.find(row=>row.id===id);return fact?[{fact_id:fact.id,text:providerMode==='invalid'&&id==='labor_total'?'Recorded labor: 999 hours for 2026-09-29 through 2026-10-28.':fact.text}]:[];})};
 }};
 const invoke=async(body:Record<string,unknown>,ai:InferenceProvider|null=null,actor:string=integrationActor)=>await handleTenbot(body,actor,rpc(actor),rpc(actor,true),ai,undefined,createTenbotJobTools(createTenbotJobCaller(container,actor),{now:()=>new Date(f.now)})) as unknown as Record<string,unknown>;
 const live=await invoke({action:'ask',question:'What is the current status of job TB-2801?'},provider);assert.equal(live.mode,'operational-ai');assert(String(live.message).includes('In Production'));

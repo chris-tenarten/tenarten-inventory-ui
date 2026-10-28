@@ -1,0 +1,99 @@
+{
+  "passed": true,
+  "checks": [
+    "Canonical UUID/Job-number lookup and ambiguous exact names preserve all candidates",
+    "Bounded result pagination has stable disjoint pages; archives require explicit inclusion",
+    "Exact controlled fixture UUID is excluded from defaults/overview and requires manageUsers for explicit lookup",
+    "Summary counts only recorded unresolved follow-ups and preserves original versus active Rework lifecycle",
+    "Missing Job facts remain null; released-disabled Planning never queries phase/item records or invents progress",
+    "Labor uses integer hundredths, inclusive Chicago dates, canonical UUID and explicit Rework attribution; unlinked/other/out-of-period rows are excluded",
+    "Overview reuses effective lifecycle, exact status/schedule counts and a bounded upcoming list",
+    "Real authenticated PostgreSQL RLS hides the scoped Job across lookup/summary/planning/labor",
+    "Inactive/revoked memberships fail before record reads on every request; permitted read-only Guest can read",
+    "Partial tools retain safe verified Job facts, unavailable labor invents no totals, and incomplete transport invalidates exact aggregates",
+    "Final capability and scoped-row revocation discard previously fetched facts; malformed null labor suppresses totals and a hanging transport obeys the shared abort deadline",
+    "Strict arguments/search escaping and the fixture bridge reject arbitrary SQL, extra projections, private tables and finance/body fields",
+    "All output carries units/time/source metadata and excludes stored finance/notes/employee sentinels; existing TenBot records are unchanged",
+    "Handler validates synthetic explanation against real tool facts and retains canonical lookup context without live prose",
+    "Same-owner Job follow-up executes fresh tools; incorrect quantitative prose and provider outage return verified deterministic facts",
+    "Handler leaves ambiguous names unselected; another authorized account cannot reuse owner context or replay caller history",
+    "Refresh/follow-up reauthorize after scoped RLS revocation; in-flight grant loss prevents old model facts from publishing",
+    "Service authority is limited to owner context/metering; prior feedback/history/usage/conversation rows stay intact, with no private history in operational model input"
+  ],
+  "checkCount": 18,
+  "realPostgreSQL": true,
+  "container": "tenops-tenbot-review",
+  "roles": [
+    "authenticated"
+  ],
+  "externalModelCalls": 0,
+  "hostedCalls": 0,
+  "prepared": {
+    "container": "tenops-tenbot-review",
+    "applied": [],
+    "fixture": {
+      "now": "2026-10-28T18:00:00.000Z",
+      "actor": "10282026-0000-4000-8000-000000000001",
+      "inactive": "10282026-0000-4000-8000-000000000002",
+      "readOnly": "10282026-0000-4000-8000-000000000003",
+      "main": "10282026-0000-4000-8000-000000000101",
+      "ambiguousA": "10282026-0000-4000-8000-000000000102",
+      "ambiguousB": "10282026-0000-4000-8000-000000000103",
+      "unknown": "10282026-0000-4000-8000-000000000104",
+      "terminal": "10282026-0000-4000-8000-000000000105",
+      "archived": "10282026-0000-4000-8000-000000000106",
+      "hidden": "10282026-0000-4000-8000-000000000107",
+      "devTest": "cba79566-3fde-4910-9cf6-45687db70b01",
+      "completedRework": "10282026-0000-4000-8000-000000000201",
+      "activeRework": "10282026-0000-4000-8000-000000000202",
+      "worker": "10282026-0000-4000-8000-000000000301",
+      "task": "10282026-0000-4000-8000-000000000302",
+      "financialSentinel": "SYNTHETIC-FINANCIAL-NEVER-RETRIEVE",
+      "notesSentinel": "SYNTHETIC-NOTES-NEVER-RETRIEVE"
+    },
+    "preservedTenbotRecords": true
+  },
+  "queryCount": 109,
+  "protectedTenbotRecordsPreserved": true,
+  "scope": "Five read-only Job tools with real local PostgreSQL capability and row authorization; deliberately incomplete transport cases are identified separately.",
+  "limitations": [
+    "SET ROLE/JWT-sub fixture is not hosted HTTP Auth transport",
+    "No live Production records or hosted query plans inspected",
+    "No actual external inference calls",
+    "Planning phases/items remain released-disabled"
+  ],
+  "handlerProviderCalls": 4,
+  "handlerRpcCalls": 35,
+  "newTaskUsageRows": 4,
+  "newTaskConversations": 3,
+  "sources": [
+    {
+      "path": "supabase/functions/_shared/tenbot-job-tools.ts",
+      "sha256": "77f842f86f247de59104b0b8b6849df9daf4fd30a50d9eb374936b91acc7e5a1"
+    },
+    {
+      "path": "supabase/functions/_shared/production-job-facts.mjs",
+      "sha256": "ef01a0c8b341fca3c2762128f08fad3598678de007573abded12b8bc00b47f39"
+    },
+    {
+      "path": "supabase/functions/_shared/labor-hours.mjs",
+      "sha256": "fe42f91ba1e2610e4e771adc8f29721222dd9662919849df15088cd5c99261ab"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "2150fad321ea5c1fd09df86b97876f73c3b248d6d2977fd77e5be38466ff7367"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "sha256": "55913c591c2104865d7bc2f563cd187da7988c9bd8d3752663864e1a0e3d65b7"
+    },
+    {
+      "path": "scripts/support/tenbot-job-database.mjs",
+      "sha256": "22ab2068faf08a66ab544b3561ae03ee94d0dcb0833284a63d8d7be25c3d725f"
+    },
+    {
+      "path": "scripts/verify-tenbot-jobs.mts",
+      "sha256": "f88b33d7b195a543dfde91067be28179731e98c4614f46d99d58c555f5aee491"
+    }
+  ]
+}

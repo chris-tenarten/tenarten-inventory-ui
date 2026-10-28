@@ -1,0 +1,14 @@
+TENBOT REFINEMENT HANDOFF — Independent Production QA, October 28, 2026
+
+Completed 52 real Messaging questions: 30 desktop / 22 phone viewport (393 × 852), using the existing Developer account and released 6cb6cf7. Results: 21 substantive passes, 7 permission-boundary passes, 8 partial, 16 fail. Developer usage ledger: 44 measured inference attempts, including 5 failed/guarded, 390.126 accounted Neurons; no paid activation.
+
+Prioritize:
+1. Q34: a request to inspect stock history is directed through Record Intake/Outtake and falsely described as creating no record. Use Inventory Activity.
+2. Q08/Q17/Q32: preserve schedule staging, optional Bid conversion number/schedule, and supported partial receiving. Do not turn a denied account action into a claim the feature is absent.
+3. Q35: PO number is assigned on first successful draft save, not issuance.
+4. Q50–52: clearly state the participant-only privacy rule and TenBot’s inability to independently retrieve private DMs/tasks. Generic feature-uncertainty must not erase documented policy. No leak or bypass was demonstrated; pasted synthetic summary Q49 passed.
+5. Preserve active workflow, negation and ordinary paraphrases; retain final Create/Save actions; align Available cards with action permissions; remove unrelated/duplicated notices. Q14 invented a group date-range setting; Q05/Q10/Q18/Q23/Q31/Q44 expose retrieval/context gaps.
+
+Retain transcript.json and both source-review files as exact regression evidence. Proposal/PO allocation/Contacts mutation instructions remain limited by this account’s grants. Keep owner-private history, reviewed feedback and Free-only budgets intact.
+
+No implementation, business-data/configuration change, migration, commit, push or deployment was performed. Stop for Product review. This handoff has not been submitted to another thread.

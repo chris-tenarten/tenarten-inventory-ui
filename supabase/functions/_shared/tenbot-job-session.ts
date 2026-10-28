@@ -23,7 +23,7 @@ export function retainedJobIntent(turns:{question:string;answer:string}[]):JobIn
 export function jobHistoryMarker(intent:JobIntent|null):string{return marker+JSON.stringify(intent?.kind==='job'&&'jobId' in intent.reference||intent?.kind==='overview'?intent:null);}
 export function withoutLiveHistory(turns:{question:string;answer:string}[]){return turns.filter(turn=>turn.question!==LIVE_QUESTION&&!turn.answer.startsWith(marker));}
 export type PreparedJobRequest={intent:JobIntent|null;result:JobToolResult|null;evidence:JobEvidence|null;message:string;choices?:{job_id:string;reference:string}[]};
-export async function prepareJobRequest(intent:JobIntent,tools:JobTools):Promise<PreparedJobRequest>{
+export async function prepareJobRequest(intent:JobIntent,tools:JobTools,question=''):Promise<PreparedJobRequest>{
  if(intent.kind==='blocked'||intent.kind==='clarify')return {intent:null,result:null,evidence:null,message:intent.message};
  if(intent.kind==='job'&&'query' in intent.reference){
   const found=await tools.execute('find_jobs',{query:intent.reference.query,include_archived:intent.includeArchived===true});
@@ -38,7 +38,7 @@ export async function prepareJobRequest(intent:JobIntent,tools:JobTools):Promise
  }
  const result=await tools.execute(intent.tool,intent.kind==='job'?{...intent.args,job_id:'jobId' in intent.reference?intent.reference.jobId:''}:intent.args);
  const evidence=buildJobEvidence(result);
- return {intent,result,evidence,message:renderJobEvidence(evidence)};
+ return {intent,result,evidence,message:renderJobEvidence(evidence,1400,question)};
 }
 export function operationalReply(prepared:PreparedJobRequest,message=prepared.message,ai=false,fallback=false){
  const evidence=prepared.evidence;

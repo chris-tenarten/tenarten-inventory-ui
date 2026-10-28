@@ -1,12 +1,12 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
-import {answer,resolveInput,requiredInferencePermissions,TenbotError,type InferenceProvider,type InferenceInput} from './tenbot-core.ts';
+import {answer,resolveInput,requiredInferencePermissions,privacyBoundaryQuestion,TenbotError,type InferenceProvider,type InferenceInput} from './tenbot-core.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
 import {validFeedbackDraft,serverConversationContext,safeText} from './tenbot-privacy.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports.
-import {resolveJobIntent,buildOperationalInferenceInput,validateOperationalExplanation} from './tenbot-job-routing.ts';
+import {resolveJobIntent,buildOperationalInferenceInput,validateOperationalExplanation,canExplainOperationally} from './tenbot-job-routing.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports.
 import {LIVE_QUESTION,retainedJobIntent,jobHistoryMarker,withoutLiveHistory,prepareJobRequest,operationalReply,type JobTools,type PreparedJobRequest} from './tenbot-job-session.ts';
@@ -43,7 +43,7 @@ export async function handleTenbot(body:Record<string,unknown>,userId:string,cal
  }
  if(!['ask','draft','refresh-job'].includes(String(body.action)))throw new TenbotError('Unknown TenBot action.');
  if(body.action==='refresh-job'&&(typeof body.conversationId!=='string'||!uuid.test(body.conversationId)))throw new TenbotError('Invalid refresh request.');
- const permissions=new Set<string>();
+ const permissions=new Set<string>(['readOperationalData']);
  // Resolve only relevant public guide gates; the Proposal workspace has its
  // own existing grant RPC, not an invented app-capability name.
  if(body.action!=='refresh-job')resolveInput(body); // Reject caller-authored prior turns before any history access.
@@ -58,7 +58,7 @@ export async function handleTenbot(body:Record<string,unknown>,userId:string,cal
  }
  const history=serverConversationContext(withoutLiveHistory(conversation.turns));
  const resolved=resolveInput(body,history),matches=[...resolved.entries,...resolved.directEntries];
- const jobIntent=body.action==='ask'?resolveJobIntent(resolved.question,previousLive?.kind==='job'&&'jobId' in previousLive.reference?{jobId:previousLive.reference.jobId}:null):null;
+ const jobIntent=body.action==='ask'&&!privacyBoundaryQuestion(resolved.question)?resolveJobIntent(resolved.question,previousLive?.kind==='job'&&'jobId' in previousLive.reference?{jobId:previousLive.reference.jobId}:null):null;
  for(const permission of jobIntent?[]:requiredInferencePermissions(matches)){
   const allowed=permission==='proposal.access'?await call(caller,'has_proposal_access'):await call(caller,'has_app_capability',{p_capability:permission});
   if(allowed===true)permissions.add(permission);
@@ -86,16 +86,16 @@ export async function handleTenbot(body:Record<string,unknown>,userId:string,cal
  let result;
  try{
   if(jobIntent){
-   prepared=jobTools?await prepareJobRequest(jobIntent,jobTools):{intent:null,result:null,evidence:null,message:'Live Job information is temporarily unavailable. Workflow guidance and the rest of TenOps remain available.'};
+   prepared=jobTools?await prepareJobRequest(jobIntent,jobTools,resolved.question):{intent:null,result:null,evidence:null,message:'Live Job information is temporarily unavailable. Workflow guidance and the rest of TenOps remain available.'};
    result=operationalReply(prepared);
-   if(provider&&prepared.evidence?.facts.length&&!prepared.choices?.length&&['ok','partial'].includes(prepared.evidence.status)){
+   if(provider&&prepared.evidence?.facts.length&&!prepared.choices?.length&&['ok','partial'].includes(prepared.evidence.status)&&canExplainOperationally(resolved.question,prepared.evidence)){
     const input=buildOperationalInferenceInput(resolved.question,prepared.evidence);await reserve(input);
     let raw:unknown;try{raw=await provider.infer(input);}catch{throw new TenbotError('TenBot AI is unavailable.',503);}
-    const validated=validateOperationalExplanation(raw,prepared.evidence);
+    const validated=validateOperationalExplanation(raw,prepared.evidence,resolved.question);
     if(!validated)throw new TenbotError('TenBot could not verify the operational explanation.',502);
     // Inference can outlive a grant or a record change. Reread using the same
     // authenticated caller before publishing; old model prose is never authority.
-    const fresh=jobTools&&prepared.intent?await prepareJobRequest(prepared.intent,jobTools):prepared;
+    const fresh=jobTools&&prepared.intent?await prepareJobRequest(prepared.intent,jobTools,resolved.question):prepared;
     const unchanged=JSON.stringify(fresh.result?.data)===JSON.stringify(prepared.result?.data)&&fresh.result?.status===prepared.result?.status;
     prepared=fresh;result=operationalReply(fresh,unchanged?validated.message:fresh.message,unchanged,!unchanged);
    }
@@ -107,7 +107,7 @@ export async function handleTenbot(body:Record<string,unknown>,userId:string,cal
   // retry the model, or mask an authorization/input/persistence conflict.
   if(!provider||body.action!=='ask'||!(e instanceof TenbotError)||![429,502,503].includes(e.status))throw e;
   if(jobIntent&&prepared){
-   if(jobTools&&prepared.intent)prepared=await prepareJobRequest(prepared.intent,jobTools);
+   if(jobTools&&prepared.intent)prepared=await prepareJobRequest(prepared.intent,jobTools,resolved.question);
    result=operationalReply(prepared,prepared.message,false,true);
   }else result={...await answer(body,permissions,null,async()=>{throw new TenbotError('Direct guidance cannot reserve inference.',503);},history),fallback:true};
  }

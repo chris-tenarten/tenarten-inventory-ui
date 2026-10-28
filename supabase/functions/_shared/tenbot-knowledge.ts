@@ -259,7 +259,7 @@ export const registry:CapabilityEntry[] = [
   "permission": "readOperationalData",
   "route": "/contacts",
   "path": "Contacts → Search customers → Linked Jobs → select a Job",
-  "guidance": "Open Contacts and search for the beginning of the customer’s company name. Choose Linked Jobs beside that customer, then select a Job to open it. This shows only visible Production Jobs linked to that directory customer. Historical customer text and Bid names do not establish a link; Proposal customer details are independent snapshots.",
+  "guidance": "Open Contacts and search for the beginning of the customer’s company name. Choose Linked Jobs beside that customer, then select a Job to open it. This shows only visible Production Jobs linked to that directory customer. Historical customer text and Bid names do not establish a link; Proposal customer details are independent snapshots. Saved directory changes affect future selections; existing Jobs and issued Proposals keep their captured information.",
   "source": "Contacts guide · deployed release verified October 22",
   "evidence": "docs/project-memory/2026-10-22-web-push-registration-reliability.md#executed-release--october-22-2026",
   "requiredTerms": [
@@ -291,7 +291,8 @@ export const registry:CapabilityEntry[] = [
   ],
   "sourceFiles": [
    "src/modules/production/contacts/ContactsWorkspace.tsx",
-   "src/modules/production/contacts/queries.ts"
+   "src/modules/production/contacts/queries.ts",
+   "src/modules/production/contacts/CustomerInspector.tsx"
   ]
  },
  {
@@ -480,6 +481,7 @@ export const registry:CapabilityEntry[] = [
   ],
   "status": "deployed",
   "permission": "writeBusinessData",
+  "additionalPermissions": ["createProductionJob"],
   "route": "/production",
   "path": "Production → New Job → Create Blank Job → Create Job",
   "guidance": "Authorized business writers can create a canonical Production Job. Open Production → New Job → Create Blank Job. Enter Project name, add available Job information, then choose Create Job. Project name is required; other identifiers can be added later. A Job number cannot duplicate an existing Job. Saved customer/contact selections require the existing Production contact-edit permission. Planned dates use the separate staged scheduling workflow; creating the Job does not save a proposed schedule.",
@@ -1531,7 +1533,7 @@ const specificActions=new Set('delete remove export import predict forecast auto
 // entries may supply instructions, links or inference context.
 export function hasGuidePermission(entry:CapabilityEntry,permissions:Set<string>){return [entry.permission,...entry.additionalPermissions||[]].every(permission=>permissions.has(permission));}
 export function matchGuides(question:string){
- const query=question.toLowerCase();
+ const query=expand(question);
  // No released credential/account-editing guidance is maintained here.
  // A Contacts module word cannot turn a password question into Customer edits.
  if(/\b(?:password|passwd|credentials?|login|log in)\b/.test(query))return [];
@@ -1547,9 +1549,21 @@ export function matchGuides(question:string){
  const bidToProduction=/\bbids?\b/.test(query)&&(
   /\b(?:get|move|put|bring|take|convert|hand off)\s+(?:it|that|this|(?:(?:a|the|my|our|this|that|won|existing)\s+)*bids?)\s+(?:into|to)\s+(?:(?:a|the)\s+)?production\b/.test(query)
   ||/\bbid\s+(?:conversion|handoff)\s+(?:into|to)\s+(?:the\s+)?production\b/.test(query));
- const procedure=bidToProduction?registry.filter(e=>e.id==='workflow-intake-convert'
+ const inventoryHistory=/\b(?:inventory|stock)\b/.test(query)&&/\b(?:history|old|past|previous|historical)\b/.test(query)
+  &&/\b(?:inspect|review|view|read|look|search|find|see)\b/.test(query)&&explicitModules.every(module=>module==='inventory');
+ const contactHistory=/\b(?:customer|contact|phone|email|directory)\b/.test(query)&&/\b(?:jobs?|proposals?|snapshots?|captured|historical)\b/.test(query)
+  &&/\b(?:rewrite|affect|preserve|retain|keep|historical|linked)\b/.test(query)&&explicitModules.every(module=>['contacts','proposals','production'].includes(module));
+ const partialReceipt=/\b(?:incoming|pending|receivals?|delivery|deliveries)\b/.test(query)&&/\b(?:partial|receive|receiving|receipt)\b/.test(query)&&explicitModules.every(module=>module==='inventory');
+ const taskGroupComparison=/\btask groups?\b/.test(query)&&/\b(?:shar\w*|messaging)\b/.test(query)&&explicitModules.every(module=>['my-work','messaging'].includes(module));
+ const manpowerPeriod=/\b(?:expanded|reporting) groups?\b/.test(query)&&/\b(?:period|dates?|analytics)\b/.test(query)&&explicitModules.every(module=>module==='manpower');
+ const priority=inventoryHistory?'inventory-activity':contactHistory?'customer-history':partialReceipt?'inventory-pending-receive':taskGroupComparison?'workflow-task-groups':manpowerPeriod?'workflow-manpower-history':bidToProduction?'workflow-intake-convert':null;
+ const procedure=priority?registry.filter(e=>e.id===priority
   &&words.filter(word=>specificActions.has(word)).every(word=>e.terms.split(' ').includes(word))):[];
+ if(inventoryHistory||contactHistory||manpowerPeriod||taskGroupComparison)return procedure;
  const strict=registry.filter(e=>explicitModules.every(module=>e.modules.includes(module)))
+  // Receiving is distinct from adding the incoming expectation, even when
+  // the employee uses the generic verb "record" for the receipt.
+  .filter(e=>!(partialReceipt&&e.id==='inventory-pending-create'))
   // Each required group needs one exact token: editing words and field names
   // alone must not turn unrelated Job/account questions into Contacts advice.
   .filter(e=>!e.requiredTerms||e.requiredTerms.every(group=>group.some(word=>words.includes(word))))
@@ -1565,27 +1579,35 @@ export function retrieve(question:string,permissions:Set<string>){return matchGu
 
 // High-recall context for one conversational request; the model interprets the
 // actual question across these sources. Direct search keeps its strict matcher.
-const expand=(text:string)=>text.toLowerCase().replace(/\bre[- ]work\b/g,'rework').replace(/\bredo\b/g,'rework').replace(/\bkick off\b/g,'initiate').replace(/\brecur\b/g,'recurring').replace(/\bnarrow\b/g,'filter');
+const expand=(text:string)=>text.toLowerCase().replace(/\bre[- ]work\b/g,'rework').replace(/\bredo\b/g,'rework').replace(/\bkick off\b/g,'initiate').replace(/\brecur\b/g,'recurring').replace(/\bnarrow\b/g,'filter')
+ .replace(/\bfliter\b/g,'filter').replace(/\breceivers?\b/g,'receive').replace(/\bonly part\b/g,'partial')
+ .replace(/\bconverted\b/g,'convert').replace(/\bintake\s*\/\s*return\b/g,'return');
 export function conversationMatches(text:string){
  const clauses=expand(text).split(/[?;]|\band\b|\balso\b|(?=\b(?:how do|how can|can i|can my|will that|what if|please draft)\b)/).filter(Boolean);
- return [...new Map([...matchGuides(expand(text)),...clauses.flatMap(clause=>matchGuides(clause))].map(entry=>[entry.id,entry])).values()];
+ const full=matchGuides(expand(text));
+ const matches=[...new Map([...full,...clauses.flatMap(clause=>matchGuides(clause))].map(entry=>[entry.id,entry])).values()];
+ // A preservation/history question can mention issued Proposals without
+ // asking for the unrelated privileged action of issuing a new Proposal.
+ return full[0]?.id==='customer-history'&&/\b(?:rewrite|affect|preserve|retain|captured)\b/i.test(text)
+  ?matches.filter(entry=>entry.permission==='readOperationalData'&&!entry.additionalPermissions?.length):matches;
 }
 // Resolve dependent wording only against the recent authenticated assistant
 // topic. Generic dates/state words must not introduce another Job workflow.
 // Explicit workflow requests and module changes still stand on their own.
-const dependentQuestion=/\b(?:that|it|they|those|them|same|instead)\b|\bwhat (?:about|if)\b/i;
-const workflowAction=/\b(?:create|start|initiate|schedule|reschedule|edit|update|change|save|find|search|filter|send|share|attach|receive|adjust|issue|convert|add|remove|delete|export|import)\b/i;
+const dependentQuestion=/\b(?:that|it|they|those|them|same|instead)\b|\bwhat (?:about|if)\b|\b(?:final (?:button|step)|expanded group|period i picked|conversion.*(?:times? out|retried|retry)|document was captured)\b/i;
+const workflowAction=/\b(?:how (?:do|can|would|should) (?:i|we)|(?:can|may|should) (?:i|we|you)|(?:want|need) to)\s+(?:\w+\s+){0,2}(?:create|start|initiate|schedule|reschedule|edit|update|change|save|find|search|filter|send|share|attach|receive|adjust|issue|convert|add|remove|delete|export|import)\b/i;
 function namedTopics(text:string){
  const query=expand(text),named=moduleNames.filter(([,pattern])=>pattern.test(query)).map(([module])=>module);
  if(/\b(?:purchase orders?|po)\b/.test(query))named.push('purchasing');
  if(/\bbids?\b/.test(query))named.push('intake');
  if(!named.length&&/\b(?:customers?|company|contacts?)\b/.test(query))named.push('contacts');
  if(/\b(?:timeline|scheduled|scheduling)\b/.test(query))named.push('timeline');
+ if(/\b(?:notifications?|iphone|push)\b/.test(query))named.push('settings');
  return named;
 }
 export function conversationQuestion(question:string,context:string[]=[]):string{
  const follow=(text:string,topic:string)=>{
-  if(!topic||!dependentQuestion.test(text))return expand(text);
+  if(!topic||!dependentQuestion.test(text)||/\b(?:new topic|switch(?:ing)? to|back to)\b/i.test(text))return expand(text);
   const current=conversationMatches(text);
   if(current.length&&workflowAction.test(text))return expand(text);
   const activeModules=conversationMatches(topic)[0]?.modules||namedTopics(topic);
@@ -1623,6 +1645,9 @@ export function conversationGuides(question:string,context:string[]=[]):Capabili
   const query=expand(text),words=[...new Set(query.match(/[a-z]+/g)||[])].filter(word=>word.length>2&&!stop.has(word)&&!genericRecordWords.has(word)&&!genericActionWords.has(word));
   const named=namedTopics(query);
   return knowledgeEntries.filter(entry=>!named.length||entry.modules.some(module=>named.includes(module)))
+   // Ordinary Inventory words do not request the distinct retained material
+   // assessment service or its Proposal permission boundary.
+   .filter(entry=>entry.id!=='knowledge-material-assessment'||/\b(?:assessment|requirements?|supply|supplier|procurement|lead[- ]?times?|estimat\w*|guarantee\w*)\b/.test(query))
    .filter(entry=>!(/\blead[- ]?times?\b/.test(query)&&entry.id!=='knowledge-material-assessment'))
    .map(entry=>({entry,score:words.reduce((score,word)=>score+(entry.terms.split(' ').includes(word)?3:entry.guidance.toLowerCase().includes(word)?0.1:0),0)+(named.includes(entry.id.replace(/^knowledge-/,''))?1:0)}))
    .filter(item=>item.score>=3).sort((a,b)=>b.score-a.score).map(item=>item.entry);

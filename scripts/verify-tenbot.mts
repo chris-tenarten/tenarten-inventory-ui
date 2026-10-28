@@ -17,7 +17,7 @@ const handleTenbot=(...args:Parameters<typeof actualHandleTenbot>)=>{
  args[2]=async(name,values)=>name==='tenbot_load_conversation'?{data:{ok:true,id:'00000000-0000-4000-8000-000000000777',ownerId:args[1],version:0,turns:[]},error:null}:name==='tenbot_append_conversation_turn'?{data:true,error:null}:caller(name,values);
  return actualHandleTenbot(...args);
 };
-import {projectConversation} from '../supabase/functions/_shared/tenbot-privacy';
+import {projectConversation,serverConversationContext} from '../supabase/functions/_shared/tenbot-privacy';
 import {startIntakeDatabase,sql,docker,asUser,literal,json,admin,member} from './support/intake-materials-database.mjs';
 
 const all=new Set([...registry,...knowledgeEntries].flatMap(entry=>[entry.permission,...entry.additionalPermissions||[]]));
@@ -32,6 +32,82 @@ const manpowerQuestion='how do i filter by jobs in manpower reporting';
 const reworkQuestion='how do i initiate a rework for a job?';
 const customerEditQuestion='how do i edit a saved customers details';
 const entry=(id:string)=>{const found=registry.find(candidate=>candidate.id===id);assert(found,id);return found;};
+if(process.argv.includes('--qa-core-only')){
+ const qa=JSON.parse(readFileSync('docs/project-memory/evidence/2026-10-28-tenbot-independent-qa/transcript.json','utf8')).turns as {id:string;question:string;actual:string}[];
+ const ids:Record<string,string>={Q03:'production-rework-create',Q14:'workflow-manpower-history',Q32:'inventory-pending-receive',Q34:'inventory-activity',Q35:'workflow-po-draft'};
+ const prior:{question:string;answer:string}[]=[];
+ for(const turn of qa){
+  const history=serverConversationContext(prior);
+  if(ids[turn.id])await assert.rejects(answer({question:turn.question},all,fixture({ids:[ids[turn.id]],answer:turn.actual}),reserve,history),/could not verify/i,turn.id);
+  if(['Q08','Q17','Q31','Q38'].includes(turn.id)){
+   const result=await answer({question:turn.question},all,noInference,reserve,history);
+   assert.equal(result.mode,'verified',turn.id);
+   assert.match(result.message,turn.id==='Q17'?/^Yes\b/:/^No\b/);
+   assert(result.sources.length>0);
+  }
+  prior.push({question:turn.question,answer:turn.actual});
+ }
+ for(const [question,missing] of [['How do I create a blank Production Job?','createProductionJob'],['How would an authorized receiver record only part of an incoming line?','receiveInventory'],['Can an authorized user create an unlinked PO draft?','createPurchaseOrderDraft']] as const){
+  const result=await answer({question},new Set([...all].filter(permission=>permission!==missing)),noInference,reserve);
+  assert.equal(result.mode,'verified');assert.equal(result.resolution,'permission-denied');assert.equal(result.sources.length,0);
+  assert.match(result.message,/exists in TenOps, but your account/);assert.equal(result.notices.length,0);
+ }
+ const historyQuestion='Where would I inspect old stock movements without recording a new one?';
+ const read=await answer({question:historyQuestion},all,fixture({ids:['inventory-activity'],answer:'Open Inventory, then Inventory Activity to review old transactions. Do not use Record Stock to inspect history.'}),reserve);
+ assert.equal(read.mode,'ai','A correct warning about mutation controls must not be rejected');
+ assert.equal((await answer({question:historyQuestion},all,fixture({ids:['inventory-activity'],answer:'Open Inventory Activity and inspect the stock movement history.'}),reserve)).mode,'ai');
+ const receiptQuestion='How would an authorized receiver record only part of an incoming line?';
+ await assert.rejects(answer({question:receiptQuestion},all,fixture({ids:['inventory-pending-receive'],answer:'Choose Receive, enter the quantity, and confirm. The balance stays pending.'}),reserve),/could not verify/i);
+ await assert.rejects(answer({question:receiptQuestion},all,fixture({ids:['inventory-pending-receive'],answer:'Enter Received By and Quantity received now, then Confirm Receive. The quantity must be positive; the remaining balance stays pending.'}),reserve),/could not verify/i);
+ assert.equal((await answer({question:receiptQuestion},all,fixture({ids:['inventory-pending-receive'],answer:'Open Inventory → Pending Receivals and choose Receive. Enter Received By and Quantity received now, then Confirm Receive. Quantity must be positive and no greater than the remaining amount. Only that quantity enters Inventory; the balance stays pending.'}),reserve)).mode,'ai');
+ await assert.rejects(answer({question:'If a Bid conversion times out and is retried, should there be a second Production Job?'},all,fixture({ids:['workflow-intake-convert'],answer:'Retrying will complete the existing Job or fail, but will not create another Job.'}),reserve),/could not verify/i);
+ for(const question of ['Does receiving a Pending Receival count as on-hand stock?','Does received Pending Receival quantity become stock?']){
+  const received=await answer({question},all,fixture({ids:['knowledge-inventory'],answer:'Only actual received quantity enters on-hand Inventory. Pending expected quantities are not stock.'}),reserve);
+  assert.equal(received.mode,'ai','The expected-stock distinction must not negate actual receiving');
+ }
+ const notification=await answer({question:qa.find(turn=>turn.id==='Q48')!.question},all,fixture({ids:['notifications'],answer:'Open TenOps in Safari and use Share → Add to Home Screen, then open the installed app. In Settings enable notifications on this device. Device registration does not guarantee every alert.'}),reserve,serverConversationContext(qa.slice(45,48).map(turn=>({question:turn.question,answer:turn.actual}))));
+ assert(!notification.notices.some(notice=>/DM|group/i.test(notice)));
+ console.log('QA core: harmful workflow prose rejected, explicit prerequisite/state decisions, caller permission denials, safe negative wording and relevant notices passed (no database/model calls).');
+ process.exit(0);
+}
+if(process.argv.includes('--qa-workflows-only')){
+ // Replay the evaluator's own synthetic dialogue against CURRENT code. The
+ // deployed prose is history context, never capability authority.
+ const qa=JSON.parse(readFileSync('docs/project-memory/evidence/2026-10-28-tenbot-independent-qa/transcript.json','utf8')).turns as {id:string;question:string;actual:string}[];
+ const expected=new Map(Object.entries({Q01:'production-create-job',Q03:'production-rework-create',Q05:'production-rework-create',Q08:'production-schedule',Q10:'manpower-job-filter',Q14:'workflow-manpower-history',Q17:'workflow-intake-convert',Q18:'workflow-intake-convert',Q23:'sample-work-order',Q30:'inventory-stock-search',Q32:'inventory-pending-receive',Q34:'inventory-activity',Q35:'workflow-po-draft',Q36:'workflow-po-issue',Q41:'customer-history',Q42:'customer-history',Q44:'workflow-task-groups',Q48:'notifications'}));
+ const turns:{question:string;answer:string}[]=[];
+ for(const turn of qa){
+  const history=serverConversationContext(turns);
+  if(expected.has(turn.id)){
+   const resolved=resolveInput({question:turn.question},history);
+   assert.equal(resolved.directEntries[0]?.id,expected.get(turn.id),turn.id);
+   const direct=await answer({question:turn.question},all,null,reserve,history);
+   assert.equal(direct.sources[0]?.id,expected.get(turn.id),turn.id);
+   if(['Q30','Q32','Q34','Q48'].includes(turn.id))assert(!resolved.entries.some(source=>source.id==='knowledge-material-assessment'),turn.id);
+   if(turn.id==='Q34')assert(!resolved.entries.some(source=>source.id==='inventory-stock-movement'));
+   if(turn.id==='Q41')assert(resolved.entries.every(source=>source.id==='customer-history'));
+   if(turn.id==='Q48')assert(resolved.directEntries.every(source=>source.id==='notifications'));
+  }
+  turns.push({question:turn.question,answer:turn.actual});
+ }
+ for(const question of ['Where would I inspect old stock movements without recording a new one?','I only want to read Inventory history, not change stock. Where do I go?']){
+  const resolved=resolveInput({question});assert.equal(resolved.directEntries[0]?.id,'inventory-activity');
+  assert(!resolved.entries.some(source=>source.id==='inventory-stock-movement'));
+ }
+ for(const question of ['How would an authorized receiver record only part of an incoming line?','Can I receive ten of fifty bags and leave forty pending?'])assert.equal(resolveInput({question}).directEntries[0]?.id,'inventory-pending-receive');
+ const creation=entry('production-create-job');assert(creation.additionalPermissions?.includes('createProductionJob'));
+ assert(!hasGuidePermission(creation,new Set([...all].filter(permission=>permission!=='createProductionJob'))));
+ assert(hasGuidePermission(entry('inventory-activity'),readOnly));assert(hasGuidePermission(entry('customer-history'),readOnly));
+ for(const [question,id] of [[manpowerQuestion,'manpower-job-filter'],[reworkQuestion,'production-rework-create'],[customerEditQuestion,'customer-edit']] as const)assert.equal(resolveInput({question}).directEntries[0]?.id,id);
+ for(const question of ['How do I export Inventory history?','Can I predict future stock movements?'])assert(!retrieve(question,all).some(source=>source.id==='inventory-activity'));
+ assert.match(entry('inventory-activity').guidance,/read-only history/);assert.match(entry('inventory-stock-movement').guidance,/updates Inventory immediately/);
+ assert.match(entry('inventory-pending-receive').guidance,/Only that quantity enters Inventory; the balance stays pending/);
+ assert.match(entry('production-schedule').guidance,/stages the proposal without saving/);
+ assert.match(entry('workflow-intake-convert').guidance,/Job number is optional/);
+ assert.match(entry('workflow-po-draft').guidance,/first successful save assigns a stable PO number/);
+ console.log(`Independent QA workflow reconciliation: ${expected.size} exact current-source/fallback cases, adjacent paraphrases, read/write separation and action permission passed (no database/model calls).`);
+ process.exit(0);
+}
 if(process.argv.includes('--workflow-fidelity-only')){
  const question='we just won a bid for a terrazzo job. how do i get it into production, and what happens to the proposal and sample records?';
  const conversion=entry('workflow-intake-convert');
