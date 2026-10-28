@@ -1,0 +1,2885 @@
+{
+  "passed": true,
+  "at": "2026-10-28T18:41:14.197Z",
+  "origin": "http://localhost:3000",
+  "endpoint": "http://localhost:55595",
+  "mode": "offline-scripted; no model-quality result",
+  "checks": [
+    "Default actual Messaging loads with no experimental controls and no Qwen questions",
+    "Desktop actual Messaging shows model-independent multi-tool Job evidence with explicit scripted/no-execution labels",
+    "Synthetic attachment produces two canonical draft quantities, three held lines, freight exclusion and missing-information questions",
+    "Follow-up retains owner session context and uses explicitly reviewed order metadata without approving writes",
+    "Removing the URL activation query preserves the mounted local agent route; its internal marker never enters requests or Qwen",
+    "390×844 contains the actual panel; blur removes live agent facts and focus neither restores stale facts nor starts inference"
+  ],
+  "responses": [
+    {
+      "request": {
+        "action": "ask",
+        "question": "Investigate Job TB-2801: summarize its recorded status, saved schedule and labor, and explain what remains unknown.",
+        "context": [
+          "Current module: My Work"
+        ],
+        "demoScenario": "job-investigation",
+        "orderDetails": {
+          "orderedBy": "",
+          "orderDate": "",
+          "location": ""
+        }
+      },
+      "status": 200,
+      "answer": {
+        "conversationId": "b059b8fa-88b8-457c-8db0-b8ac1ed132f7",
+        "mode": "agent-experiment",
+        "message": "TB-2801 — TenBot Review North Countertops: recorded status in_production; material status ordered; recorded labor 8.3 hours for 2026-09-29 through 2026-10-28. Saved schedule and planning details were checked. These records do not establish a forecast or physical material sufficiency. No changes were made.",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-agent-poc.v1",
+          "verifiedAt": "2026-10-28T18:41:05.113Z"
+        },
+        "summary": null,
+        "suggestionAllowed": false,
+        "notices": [
+          "Local scripted transport demonstration. This is not an OpenAI or Qwen reasoning result."
+        ],
+        "agent": {
+          "mode": "offline-scripted",
+          "provider": "Local scripted transport (offline demonstration)",
+          "model": "offline-scripted",
+          "status": "completed",
+          "final": {
+            "answer": "TB-2801 — TenBot Review North Countertops: recorded status in_production; material status ordered; recorded labor 8.3 hours for 2026-09-29 through 2026-10-28. Saved schedule and planning details were checked. These records do not establish a forecast or physical material sufficiency. No changes were made.",
+            "observations": [
+              {
+                "text": "TB-2801 — TenBot Review North Countertops has recorded effective status in_production and material status ordered.",
+                "evidence_ids": [
+                  "e2"
+                ]
+              },
+              {
+                "text": "Persisted planning/schedule data was returned for TB-2801 — TenBot Review North Countertops.",
+                "evidence_ids": [
+                  "e3"
+                ]
+              },
+              {
+                "text": "Recorded labor totals 8.3 hours for 2026-09-29 through 2026-10-28; remaining work is unknown.",
+                "evidence_ids": [
+                  "e4"
+                ]
+              }
+            ],
+            "inferences": [],
+            "recommendations": [],
+            "questions": [],
+            "completed_actions": []
+          },
+          "evidence": [
+            {
+              "id": "e1",
+              "tool": "find_jobs",
+              "data": {
+                "tool": "find_jobs",
+                "version": "tenbot-job-read.v1",
+                "status": "ok",
+                "observed_at": "2026-10-28T18:00:00.000Z",
+                "read_started_at": "2026-10-28T18:00:00.000Z",
+                "read_completed_at": "2026-10-28T18:00:00.000Z",
+                "consistency": "best_effort_multi_query",
+                "timezone": "America/Chicago",
+                "filters": {
+                  "query": "TB-2801",
+                  "include_archived": false,
+                  "limit": 10,
+                  "cursor": 0,
+                  "fixture_scope": "excluded_except_exact_admin_lookup"
+                },
+                "units": {
+                  "jobs": "jobs"
+                },
+                "sources": [
+                  {
+                    "relation": "jobs",
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "record_id": "10282026-0000-4000-8000-000000000101",
+                    "record_updated_at": "2026-10-28T17:00:00+00:00",
+                    "observed_at": "2026-10-28T18:00:00.000Z"
+                  }
+                ],
+                "unknowns": [],
+                "complete": true,
+                "truncated": false,
+                "data": {
+                  "jobs": [
+                    {
+                      "job_id": "10282026-0000-4000-8000-000000000101",
+                      "job_number": "TB-2801",
+                      "name": "TenBot Review North Countertops",
+                      "customer": "Synthetic Studio",
+                      "reference": "TB-2801 — TenBot Review North Countertops",
+                      "archived": false,
+                      "original": {
+                        "status": "in_production",
+                        "planned_start": "2026-10-28",
+                        "planned_end": "2026-11-04",
+                        "updated_at": "2026-10-28T17:00:00+00:00"
+                      },
+                      "effective": {
+                        "lifecycle": "original",
+                        "rework_cycle_id": null,
+                        "sequence_number": null,
+                        "status": "in_production",
+                        "planned_start": "2026-10-28",
+                        "planned_end": "2026-11-04",
+                        "updated_at": "2026-10-28T17:00:00+00:00"
+                      },
+                      "material_status": "ordered",
+                      "requested_delivery_date": "2026-11-06",
+                      "readiness": {
+                        "state": "ready",
+                        "label": "Planning Complete",
+                        "missing_fields": []
+                      }
+                    }
+                  ],
+                  "match": "exact",
+                  "has_more": false,
+                  "next_cursor": null
+                }
+              }
+            },
+            {
+              "id": "e2",
+              "tool": "get_job_summary",
+              "data": {
+                "tool": "get_job_summary",
+                "version": "tenbot-job-read.v1",
+                "status": "ok",
+                "observed_at": "2026-10-28T18:00:00.000Z",
+                "read_started_at": "2026-10-28T18:00:00.000Z",
+                "read_completed_at": "2026-10-28T18:00:00.000Z",
+                "consistency": "best_effort_multi_query",
+                "timezone": "America/Chicago",
+                "filters": {
+                  "job_id": "10282026-0000-4000-8000-000000000101",
+                  "lifecycle": "effective_with_original_preserved"
+                },
+                "units": {
+                  "rework_cycles": "cycles",
+                  "active_rework_cycles": "cycles",
+                  "open_follow_ups": "recorded_follow_ups",
+                  "dates": "calendar_date"
+                },
+                "sources": [
+                  {
+                    "relation": "jobs",
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "record_id": "10282026-0000-4000-8000-000000000101",
+                    "record_updated_at": "2026-10-28T17:00:00+00:00",
+                    "observed_at": "2026-10-28T18:00:00.000Z"
+                  },
+                  {
+                    "relation": "production_rework_cycles",
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "observed_at": "2026-10-28T18:00:00.000Z"
+                  },
+                  {
+                    "relation": "job_updates",
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "observed_at": "2026-10-28T18:00:00.000Z"
+                  }
+                ],
+                "unknowns": [
+                  "Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers."
+                ],
+                "complete": true,
+                "truncated": false,
+                "data": {
+                  "job": {
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "job_number": "TB-2801",
+                    "name": "TenBot Review North Countertops",
+                    "customer": "Synthetic Studio",
+                    "reference": "TB-2801 — TenBot Review North Countertops",
+                    "archived": false,
+                    "original": {
+                      "status": "in_production",
+                      "planned_start": "2026-10-28",
+                      "planned_end": "2026-11-04",
+                      "updated_at": "2026-10-28T17:00:00+00:00"
+                    },
+                    "effective": {
+                      "lifecycle": "original",
+                      "rework_cycle_id": null,
+                      "sequence_number": null,
+                      "status": "in_production",
+                      "planned_start": "2026-10-28",
+                      "planned_end": "2026-11-04",
+                      "updated_at": "2026-10-28T17:00:00+00:00"
+                    },
+                    "material_status": "ordered",
+                    "requested_delivery_date": "2026-11-06",
+                    "readiness": {
+                      "state": "ready",
+                      "label": "Planning Complete",
+                      "missing_fields": []
+                    }
+                  },
+                  "counts": {
+                    "rework_cycles": 0,
+                    "active_rework_cycles": 0,
+                    "open_follow_ups": 1
+                  }
+                }
+              }
+            },
+            {
+              "id": "e3",
+              "tool": "get_job_planning",
+              "data": {
+                "tool": "get_job_planning",
+                "version": "tenbot-job-read.v1",
+                "status": "ok",
+                "observed_at": "2026-10-28T18:00:00.000Z",
+                "read_started_at": "2026-10-28T18:00:00.000Z",
+                "read_completed_at": "2026-10-28T18:00:00.000Z",
+                "consistency": "best_effort_multi_query",
+                "timezone": "America/Chicago",
+                "filters": {
+                  "job_id": "10282026-0000-4000-8000-000000000101",
+                  "lifecycle": "effective_with_original_preserved"
+                },
+                "units": {
+                  "dates": "calendar_date"
+                },
+                "sources": [
+                  {
+                    "relation": "jobs",
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "record_id": "10282026-0000-4000-8000-000000000101",
+                    "record_updated_at": "2026-10-28T17:00:00+00:00",
+                    "observed_at": "2026-10-28T18:00:00.000Z"
+                  }
+                ],
+                "unknowns": [
+                  "Phase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded."
+                ],
+                "complete": true,
+                "truncated": false,
+                "data": {
+                  "job": {
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "job_number": "TB-2801",
+                    "name": "TenBot Review North Countertops",
+                    "customer": "Synthetic Studio",
+                    "reference": "TB-2801 — TenBot Review North Countertops",
+                    "archived": false,
+                    "original": {
+                      "status": "in_production",
+                      "planned_start": "2026-10-28",
+                      "planned_end": "2026-11-04",
+                      "updated_at": "2026-10-28T17:00:00+00:00"
+                    },
+                    "effective": {
+                      "lifecycle": "original",
+                      "rework_cycle_id": null,
+                      "sequence_number": null,
+                      "status": "in_production",
+                      "planned_start": "2026-10-28",
+                      "planned_end": "2026-11-04",
+                      "updated_at": "2026-10-28T17:00:00+00:00"
+                    },
+                    "material_status": "ordered",
+                    "requested_delivery_date": "2026-11-06",
+                    "readiness": {
+                      "state": "ready",
+                      "label": "Planning Complete",
+                      "missing_fields": []
+                    }
+                  },
+                  "phases": {
+                    "availability": "disabled",
+                    "reason": "Phase and Item Planning is disabled in the released application."
+                  },
+                  "schedule_is_persisted": true
+                }
+              }
+            },
+            {
+              "id": "e4",
+              "tool": "get_job_labor_summary",
+              "data": {
+                "tool": "get_job_labor_summary",
+                "version": "tenbot-job-read.v1",
+                "status": "ok",
+                "observed_at": "2026-10-28T18:00:00.000Z",
+                "read_started_at": "2026-10-28T18:00:00.000Z",
+                "read_completed_at": "2026-10-28T18:00:00.000Z",
+                "consistency": "best_effort_multi_query",
+                "timezone": "America/Chicago",
+                "filters": {
+                  "job_id": "10282026-0000-4000-8000-000000000101",
+                  "start_date": "2026-09-29",
+                  "end_date": "2026-10-28",
+                  "lifecycle": "effective_with_original_preserved"
+                },
+                "units": {
+                  "total_hours": "hours",
+                  "original_or_unclassified_hours": "hours",
+                  "reworks": "hours",
+                  "daily": "hours",
+                  "entry_count": "recorded_entries",
+                  "dates": "calendar_date"
+                },
+                "sources": [
+                  {
+                    "relation": "jobs",
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "record_id": "10282026-0000-4000-8000-000000000101",
+                    "record_updated_at": "2026-10-28T17:00:00+00:00",
+                    "observed_at": "2026-10-28T18:00:00.000Z"
+                  },
+                  {
+                    "relation": "manpower_entries",
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "observed_at": "2026-10-28T18:00:00.000Z"
+                  }
+                ],
+                "unknowns": [
+                  "These are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified."
+                ],
+                "complete": true,
+                "truncated": false,
+                "data": {
+                  "job": {
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "job_number": "TB-2801",
+                    "name": "TenBot Review North Countertops",
+                    "customer": "Synthetic Studio",
+                    "reference": "TB-2801 — TenBot Review North Countertops",
+                    "archived": false,
+                    "original": {
+                      "status": "in_production",
+                      "planned_start": "2026-10-28",
+                      "planned_end": "2026-11-04",
+                      "updated_at": "2026-10-28T17:00:00+00:00"
+                    },
+                    "effective": {
+                      "lifecycle": "original",
+                      "rework_cycle_id": null,
+                      "sequence_number": null,
+                      "status": "in_production",
+                      "planned_start": "2026-10-28",
+                      "planned_end": "2026-11-04",
+                      "updated_at": "2026-10-28T17:00:00+00:00"
+                    },
+                    "material_status": "ordered",
+                    "requested_delivery_date": "2026-11-06",
+                    "readiness": {
+                      "state": "ready",
+                      "label": "Planning Complete",
+                      "missing_fields": []
+                    }
+                  },
+                  "period": {
+                    "start_date": "2026-09-29",
+                    "end_date": "2026-10-28"
+                  },
+                  "total_hours": 8.3,
+                  "entry_count": 3,
+                  "original_or_unclassified_hours": 8.3,
+                  "reworks": [],
+                  "daily": [
+                    {
+                      "date": "2026-09-29",
+                      "hours": 4
+                    },
+                    {
+                      "date": "2026-09-30",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-01",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-02",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-03",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-04",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-05",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-06",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-07",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-08",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-09",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-10",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-11",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-12",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-13",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-14",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-15",
+                      "hours": 0.3
+                    },
+                    {
+                      "date": "2026-10-16",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-17",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-18",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-19",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-20",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-21",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-22",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-23",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-24",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-25",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-26",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-27",
+                      "hours": 0
+                    },
+                    {
+                      "date": "2026-10-28",
+                      "hours": 4
+                    }
+                  ],
+                  "latest_work_date": "2026-10-28"
+                }
+              }
+            }
+          ],
+          "proposals": [],
+          "trace": [
+            {
+              "event": "model",
+              "round": 1,
+              "outcome": "received",
+              "durationMs": 1,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 1,
+              "name": "discover_capabilities",
+              "outcome": "ok",
+              "durationMs": 119
+            },
+            {
+              "event": "model",
+              "round": 2,
+              "outcome": "received",
+              "durationMs": 1,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 2,
+              "name": "find_jobs",
+              "outcome": "ok",
+              "durationMs": 529
+            },
+            {
+              "event": "model",
+              "round": 3,
+              "outcome": "received",
+              "durationMs": 1,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "get_job_summary",
+              "outcome": "ok",
+              "durationMs": 576
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "get_job_planning",
+              "outcome": "ok",
+              "durationMs": 477
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "get_job_labor_summary",
+              "outcome": "ok",
+              "durationMs": 511
+            },
+            {
+              "event": "model",
+              "round": 4,
+              "outcome": "received",
+              "durationMs": 1,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            }
+          ],
+          "usage": {
+            "inputTokens": 0,
+            "cachedInputTokens": 0,
+            "outputTokens": 0,
+            "costUsd": 0,
+            "reservedUsd": 0
+          },
+          "modelSteps": [
+            {
+              "calls": [
+                {
+                  "id": "scripted_1",
+                  "name": "discover_capabilities",
+                  "arguments": {
+                    "names": [
+                      "find_jobs",
+                      "get_job_summary",
+                      "get_job_planning",
+                      "get_job_labor_summary",
+                      "get_production_overview"
+                    ]
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 1
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_2",
+                  "name": "find_jobs",
+                  "arguments": {
+                    "query": "TB-2801",
+                    "include_archived": false,
+                    "limit": 10,
+                    "cursor": ""
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_3",
+                  "name": "get_job_summary",
+                  "arguments": {
+                    "job_id": "10282026-0000-4000-8000-000000000101"
+                  }
+                },
+                {
+                  "id": "scripted_4",
+                  "name": "get_job_planning",
+                  "arguments": {
+                    "job_id": "10282026-0000-4000-8000-000000000101"
+                  }
+                },
+                {
+                  "id": "scripted_5",
+                  "name": "get_job_labor_summary",
+                  "arguments": {
+                    "job_id": "10282026-0000-4000-8000-000000000101",
+                    "start_date": "",
+                    "end_date": ""
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 1
+            },
+            {
+              "calls": [],
+              "final": {
+                "answer": "TB-2801 — TenBot Review North Countertops: recorded status in_production; material status ordered; recorded labor 8.3 hours for 2026-09-29 through 2026-10-28. Saved schedule and planning details were checked. These records do not establish a forecast or physical material sufficiency. No changes were made.",
+                "observations": [
+                  {
+                    "text": "TB-2801 — TenBot Review North Countertops has recorded effective status in_production and material status ordered.",
+                    "evidence_ids": [
+                      "e2"
+                    ]
+                  },
+                  {
+                    "text": "Persisted planning/schedule data was returned for TB-2801 — TenBot Review North Countertops.",
+                    "evidence_ids": [
+                      "e3"
+                    ]
+                  },
+                  {
+                    "text": "Recorded labor totals 8.3 hours for 2026-09-29 through 2026-10-28; remaining work is unknown.",
+                    "evidence_ids": [
+                      "e4"
+                    ]
+                  }
+                ],
+                "inferences": [],
+                "recommendations": [],
+                "questions": [],
+                "completed_actions": []
+              },
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            }
+          ],
+          "durationMs": 4281,
+          "invoiceAttached": false,
+          "executionAvailable": false
+        }
+      }
+    },
+    {
+      "request": {
+        "action": "clear",
+        "conversationId": "b059b8fa-88b8-457c-8db0-b8ac1ed132f7"
+      },
+      "status": 200,
+      "answer": {
+        "cleared": true
+      }
+    },
+    {
+      "request": {
+        "action": "ask",
+        "question": "Here's the synthetic invoice. Create pending receivals for the materials listed.",
+        "context": [
+          "Current module: My Work"
+        ],
+        "demoScenario": "invoice-preparation",
+        "invoiceId": "synthetic-invoice-1042",
+        "orderDetails": {
+          "orderedBy": "",
+          "orderDate": "",
+          "location": ""
+        }
+      },
+      "status": 200,
+      "answer": {
+        "conversationId": "024b92a3-facf-433e-b626-8ab7148a61ab",
+        "mode": "agent-experiment",
+        "message": "Prepared 2 review-only material drafts; held 3 material lines; excluded 1 freight line. Employee order details still need confirmation. Review the canonical quantities and reasons below. No rows were created; execution is unavailable.",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-agent-poc.v1",
+          "verifiedAt": "2026-10-28T18:41:09.162Z"
+        },
+        "summary": null,
+        "suggestionAllowed": false,
+        "notices": [
+          "Local scripted transport demonstration. This is not an OpenAI or Qwen reasoning result."
+        ],
+        "agent": {
+          "mode": "offline-scripted",
+          "provider": "Local scripted transport (offline demonstration)",
+          "model": "offline-scripted",
+          "status": "completed",
+          "final": {
+            "answer": "Prepared 2 review-only material drafts; held 3 material lines; excluded 1 freight line. Employee order details still need confirmation. Review the canonical quantities and reasons below. No rows were created; execution is unavailable.",
+            "observations": [
+              {
+                "text": "The host prepared 2 draft lines and held 3 lines from the supplied synthetic invoice.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              },
+              {
+                "text": "Freight is excluded from Inventory receivals. Potential duplicates and ambiguous or unmatched materials remain held.",
+                "evidence_ids": [
+                  "e8",
+                  "e7"
+                ]
+              }
+            ],
+            "inferences": [],
+            "recommendations": [
+              {
+                "text": "Review the host-owned proposals against the attachment. Employee approval and a separately authorized execution capability would be required for future writes.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              }
+            ],
+            "questions": [
+              "Who ordered these materials, what was the order date, and which location should receive them? Missing confirmed fields: ordered_by, order_date, location.",
+              "Please resolve the held duplicate, ambiguous catalog match and unmatched material before any future execution."
+            ],
+            "completed_actions": []
+          },
+          "evidence": [
+            {
+              "id": "e1",
+              "tool": "read_invoice",
+              "data": {
+                "synthetic": true,
+                "document_id": "synthetic-invoice-1042",
+                "filename": "SYNTHETIC-supplier-invoice-1042.txt",
+                "media_type": "text/plain",
+                "content_is_untrusted_data": true,
+                "sources": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L1",
+                    "text": "SYNTHETIC BENCHMARK — NOT A REAL SUPPLIER INVOICE"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L2",
+                    "text": "Supplier: T&M Supply"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L3",
+                    "text": "Invoice: SYN-INV-1042"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L4",
+                    "text": "Invoice date: 2026-10-27"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L5",
+                    "text": "Item 1 | AW-1 | Alaska White | #1 | 100 LB"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L6",
+                    "text": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L7",
+                    "text": "Item 3 | GREEN | CC Green | #1 | 2 Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L8",
+                    "text": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L9",
+                    "text": "Item 5 | RES-5 | Clear Resin | Part A | 5 GAL"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L10",
+                    "text": "Freight | Delivery charge | $85.00"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L11",
+                    "text": "END SYNTHETIC INVOICE"
+                  }
+                ],
+                "limitations": [
+                  "Synthetic text attachment only; no photo/PDF/OCR test.",
+                  "Supplier is not manufacturer. Invoice date must never supply order_date automatically.",
+                  "Only read and prepare operations exist; no approval or execution tool."
+                ]
+              }
+            },
+            {
+              "id": "e2",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L5",
+                "extracted": {
+                  "description": "Alaska White",
+                  "quantity": "100",
+                  "unit": "LB",
+                  "size": "#1",
+                  "vendor_sku": "AW-1"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-aw1",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-aw1",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "AW-1",
+                    "material_name": "Alaska White",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e3",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L6",
+                "extracted": {
+                  "description": "Blue Coal",
+                  "quantity": "3",
+                  "unit": "Bag",
+                  "size": "#0",
+                  "vendor_sku": "BC-0"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-bc0",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-bc0",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "BC-0",
+                    "material_name": "Blue Coal",
+                    "size": "#0",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e4",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L7",
+                "extracted": {
+                  "description": "CC Green",
+                  "quantity": "2",
+                  "unit": "Bag",
+                  "size": "#1",
+                  "vendor_sku": "GREEN"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-green-a",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-green-a",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "GREEN",
+                    "material_name": "CC Green",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  },
+                  {
+                    "candidate_id": "standard:synthetic-green-b",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-green-b",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "GREEN",
+                    "material_name": "CC Green",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "25",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "25 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e5",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L8",
+                "extracted": {
+                  "description": "Unlisted Violet",
+                  "quantity": "4",
+                  "unit": "Bag",
+                  "size": "#2",
+                  "vendor_sku": "UNK-99"
+                },
+                "complete": true,
+                "candidates": [],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e6",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L9",
+                "extracted": {
+                  "description": "Clear Resin",
+                  "quantity": "5",
+                  "unit": "GAL",
+                  "size": "Part A",
+                  "vendor_sku": "RES-5"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-res5",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-res5",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "RES-5",
+                    "material_name": "Clear Resin",
+                    "size": "Part A",
+                    "category": "Resin",
+                    "order_unit": "Pail",
+                    "package_quantity": "5",
+                    "package_measure": "GAL",
+                    "container_type": "Pail",
+                    "package_evidence": "5 GAL Pail"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e7",
+              "tool": "check_receival_duplicates",
+              "data": {
+                "synthetic": true,
+                "supplier": "T&M Supply",
+                "document_ref": "SYN-INV-1042",
+                "supplier_source_ref": "synthetic-invoice-1042:L2",
+                "document_source_ref": "synthetic-invoice-1042:L3",
+                "complete": true,
+                "potential_duplicates": [
+                  {
+                    "id": "synthetic-existing-bc0",
+                    "vendor": "T&M Supply",
+                    "material_name": "Blue Coal",
+                    "size": "#0",
+                    "quantity_expected": "3",
+                    "quantity_received": "0",
+                    "unit": "Bag",
+                    "status": "pending"
+                  }
+                ],
+                "limitations": [
+                  "Potential matches use supplier/material/size only.",
+                  "No canonical invoice-reference field exists on general pending receivals; invoice-level idempotency is not established.",
+                  "A potential duplicate remains held; this prototype has no duplicate override or write tool."
+                ]
+              }
+            },
+            {
+              "id": "e8",
+              "tool": "prepare_pending_receivals",
+              "data": {
+                "version": "tenbot-pending-receival-review.v1",
+                "synthetic": true,
+                "document_id": "synthetic-invoice-1042",
+                "filename": "SYNTHETIC-supplier-invoice-1042.txt",
+                "supplier": "T&M Supply",
+                "document_reference": "SYN-INV-1042",
+                "status": "review_only_no_execution",
+                "ready_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L5",
+                    "evidence": "Item 1 | AW-1 | Alaska White | #1 | 100 LB",
+                    "extracted": {
+                      "description": "Alaska White",
+                      "quantity": "100",
+                      "unit": "LB",
+                      "size": "#1",
+                      "vendor_sku": "AW-1"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-aw1",
+                    "proposal": {
+                      "vendor": "T&M Supply",
+                      "material_name": "Alaska White",
+                      "size": "#1",
+                      "category": "Aggregate",
+                      "quantity_expected": "2",
+                      "unit": "Bag",
+                      "location": null,
+                      "ordered_by": null,
+                      "order_date": null,
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-1042",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-aw1"
+                    },
+                    "conversion": {
+                      "source_quantity": "100",
+                      "source_unit": "LB",
+                      "package": "50 LB Bag",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "2",
+                      "result_unit": "Bag"
+                    }
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L9",
+                    "evidence": "Item 5 | RES-5 | Clear Resin | Part A | 5 GAL",
+                    "extracted": {
+                      "description": "Clear Resin",
+                      "quantity": "5",
+                      "unit": "GAL",
+                      "size": "Part A",
+                      "vendor_sku": "RES-5"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-res5",
+                    "proposal": {
+                      "vendor": "T&M Supply",
+                      "material_name": "Clear Resin",
+                      "size": "Part A",
+                      "category": "Resin",
+                      "quantity_expected": "1",
+                      "unit": "Pail",
+                      "location": null,
+                      "ordered_by": null,
+                      "order_date": null,
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-1042",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-res5"
+                    },
+                    "conversion": {
+                      "source_quantity": "5",
+                      "source_unit": "GAL",
+                      "package": "5 GAL Pail",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "1",
+                      "result_unit": "Pail"
+                    }
+                  }
+                ],
+                "held_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L6",
+                    "evidence": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag",
+                    "extracted": {
+                      "description": "Blue Coal",
+                      "quantity": "3",
+                      "unit": "Bag",
+                      "size": "#0",
+                      "vendor_sku": "BC-0"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-bc0",
+                    "reasons": [
+                      "potential_duplicate"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L7",
+                    "evidence": "Item 3 | GREEN | CC Green | #1 | 2 Bag",
+                    "extracted": {
+                      "description": "CC Green",
+                      "quantity": "2",
+                      "unit": "Bag",
+                      "size": "#1",
+                      "vendor_sku": "GREEN"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-green-a",
+                    "reasons": [
+                      "ambiguous_catalog_match"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L8",
+                    "evidence": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+                    "extracted": {
+                      "description": "Unlisted Violet",
+                      "quantity": "4",
+                      "unit": "Bag",
+                      "size": "#2",
+                      "vendor_sku": "UNK-99"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material"
+                    ]
+                  }
+                ],
+                "excluded_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L10",
+                    "reason": "freight",
+                    "evidence": "Freight | Delivery charge | $85.00"
+                  }
+                ],
+                "missing_employee_confirmations": [
+                  "ordered_by",
+                  "order_date",
+                  "location"
+                ],
+                "employee_confirmation_source": "authenticated_owner_session",
+                "other_document_source_refs": [
+                  "synthetic-invoice-1042:L1",
+                  "synthetic-invoice-1042:L4",
+                  "synthetic-invoice-1042:L11"
+                ],
+                "limitations": [
+                  "Model extraction completeness still requires employee review against the document.",
+                  "Invoice date is not order date. No manufacturer substitutes for supplier.",
+                  "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+                  "No rows were created. No execution capability exists."
+                ],
+                "approval_required_before_any_future_execution": true,
+                "execution_available": false
+              }
+            }
+          ],
+          "proposals": [
+            {
+              "evidenceId": "e8",
+              "tool": "prepare_pending_receivals",
+              "proposal": {
+                "version": "tenbot-pending-receival-review.v1",
+                "synthetic": true,
+                "document_id": "synthetic-invoice-1042",
+                "filename": "SYNTHETIC-supplier-invoice-1042.txt",
+                "supplier": "T&M Supply",
+                "document_reference": "SYN-INV-1042",
+                "status": "review_only_no_execution",
+                "ready_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L5",
+                    "evidence": "Item 1 | AW-1 | Alaska White | #1 | 100 LB",
+                    "extracted": {
+                      "description": "Alaska White",
+                      "quantity": "100",
+                      "unit": "LB",
+                      "size": "#1",
+                      "vendor_sku": "AW-1"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-aw1",
+                    "proposal": {
+                      "vendor": "T&M Supply",
+                      "material_name": "Alaska White",
+                      "size": "#1",
+                      "category": "Aggregate",
+                      "quantity_expected": "2",
+                      "unit": "Bag",
+                      "location": null,
+                      "ordered_by": null,
+                      "order_date": null,
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-1042",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-aw1"
+                    },
+                    "conversion": {
+                      "source_quantity": "100",
+                      "source_unit": "LB",
+                      "package": "50 LB Bag",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "2",
+                      "result_unit": "Bag"
+                    }
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L9",
+                    "evidence": "Item 5 | RES-5 | Clear Resin | Part A | 5 GAL",
+                    "extracted": {
+                      "description": "Clear Resin",
+                      "quantity": "5",
+                      "unit": "GAL",
+                      "size": "Part A",
+                      "vendor_sku": "RES-5"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-res5",
+                    "proposal": {
+                      "vendor": "T&M Supply",
+                      "material_name": "Clear Resin",
+                      "size": "Part A",
+                      "category": "Resin",
+                      "quantity_expected": "1",
+                      "unit": "Pail",
+                      "location": null,
+                      "ordered_by": null,
+                      "order_date": null,
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-1042",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-res5"
+                    },
+                    "conversion": {
+                      "source_quantity": "5",
+                      "source_unit": "GAL",
+                      "package": "5 GAL Pail",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "1",
+                      "result_unit": "Pail"
+                    }
+                  }
+                ],
+                "held_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L6",
+                    "evidence": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag",
+                    "extracted": {
+                      "description": "Blue Coal",
+                      "quantity": "3",
+                      "unit": "Bag",
+                      "size": "#0",
+                      "vendor_sku": "BC-0"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-bc0",
+                    "reasons": [
+                      "potential_duplicate"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L7",
+                    "evidence": "Item 3 | GREEN | CC Green | #1 | 2 Bag",
+                    "extracted": {
+                      "description": "CC Green",
+                      "quantity": "2",
+                      "unit": "Bag",
+                      "size": "#1",
+                      "vendor_sku": "GREEN"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-green-a",
+                    "reasons": [
+                      "ambiguous_catalog_match"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L8",
+                    "evidence": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+                    "extracted": {
+                      "description": "Unlisted Violet",
+                      "quantity": "4",
+                      "unit": "Bag",
+                      "size": "#2",
+                      "vendor_sku": "UNK-99"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material"
+                    ]
+                  }
+                ],
+                "excluded_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L10",
+                    "reason": "freight",
+                    "evidence": "Freight | Delivery charge | $85.00"
+                  }
+                ],
+                "missing_employee_confirmations": [
+                  "ordered_by",
+                  "order_date",
+                  "location"
+                ],
+                "employee_confirmation_source": "authenticated_owner_session",
+                "other_document_source_refs": [
+                  "synthetic-invoice-1042:L1",
+                  "synthetic-invoice-1042:L4",
+                  "synthetic-invoice-1042:L11"
+                ],
+                "limitations": [
+                  "Model extraction completeness still requires employee review against the document.",
+                  "Invoice date is not order date. No manufacturer substitutes for supplier.",
+                  "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+                  "No rows were created. No execution capability exists."
+                ],
+                "approval_required_before_any_future_execution": true,
+                "execution_available": false
+              }
+            }
+          ],
+          "trace": [
+            {
+              "event": "model",
+              "round": 1,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 1,
+              "name": "discover_capabilities",
+              "outcome": "ok",
+              "durationMs": 125
+            },
+            {
+              "event": "model",
+              "round": 2,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 2,
+              "name": "read_invoice",
+              "outcome": "ok",
+              "durationMs": 182
+            },
+            {
+              "event": "model",
+              "round": 3,
+              "outcome": "received",
+              "durationMs": 1,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 190
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 170
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 182
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 181
+            },
+            {
+              "event": "model",
+              "round": 4,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 4,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 176
+            },
+            {
+              "event": "model",
+              "round": 5,
+              "outcome": "received",
+              "durationMs": 1,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 5,
+              "name": "check_receival_duplicates",
+              "outcome": "ok",
+              "durationMs": 202
+            },
+            {
+              "event": "model",
+              "round": 6,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 6,
+              "name": "prepare_pending_receivals",
+              "outcome": "ok",
+              "durationMs": 525
+            },
+            {
+              "event": "model",
+              "round": 7,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            }
+          ],
+          "usage": {
+            "inputTokens": 0,
+            "cachedInputTokens": 0,
+            "outputTokens": 0,
+            "costUsd": 0,
+            "reservedUsd": 0
+          },
+          "modelSteps": [
+            {
+              "calls": [
+                {
+                  "id": "scripted_1",
+                  "name": "discover_capabilities",
+                  "arguments": {
+                    "names": [
+                      "read_invoice",
+                      "search_catalog",
+                      "check_receival_duplicates",
+                      "prepare_pending_receivals"
+                    ]
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_2",
+                  "name": "read_invoice",
+                  "arguments": {}
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_3",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L5",
+                    "description": "Alaska White",
+                    "quantity": "100",
+                    "unit": "LB",
+                    "size": "#1",
+                    "vendor_sku": "AW-1"
+                  }
+                },
+                {
+                  "id": "scripted_4",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L6",
+                    "description": "Blue Coal",
+                    "quantity": "3",
+                    "unit": "Bag",
+                    "size": "#0",
+                    "vendor_sku": "BC-0"
+                  }
+                },
+                {
+                  "id": "scripted_5",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L7",
+                    "description": "CC Green",
+                    "quantity": "2",
+                    "unit": "Bag",
+                    "size": "#1",
+                    "vendor_sku": "GREEN"
+                  }
+                },
+                {
+                  "id": "scripted_6",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L8",
+                    "description": "Unlisted Violet",
+                    "quantity": "4",
+                    "unit": "Bag",
+                    "size": "#2",
+                    "vendor_sku": "UNK-99"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_7",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L9",
+                    "description": "Clear Resin",
+                    "quantity": "5",
+                    "unit": "GAL",
+                    "size": "Part A",
+                    "vendor_sku": "RES-5"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_8",
+                  "name": "check_receival_duplicates",
+                  "arguments": {
+                    "supplier": "T&M Supply",
+                    "supplier_source_ref": "synthetic-invoice-1042:L2",
+                    "document_ref": "SYN-INV-1042",
+                    "document_source_ref": "synthetic-invoice-1042:L3"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_9",
+                  "name": "prepare_pending_receivals",
+                  "arguments": {
+                    "selections": [
+                      {
+                        "source_ref": "synthetic-invoice-1042:L5",
+                        "candidate_id": "standard:synthetic-aw1"
+                      },
+                      {
+                        "source_ref": "synthetic-invoice-1042:L6",
+                        "candidate_id": "standard:synthetic-bc0"
+                      },
+                      {
+                        "source_ref": "synthetic-invoice-1042:L7",
+                        "candidate_id": "standard:synthetic-green-a"
+                      },
+                      {
+                        "source_ref": "synthetic-invoice-1042:L8",
+                        "candidate_id": null
+                      },
+                      {
+                        "source_ref": "synthetic-invoice-1042:L9",
+                        "candidate_id": "standard:synthetic-res5"
+                      }
+                    ],
+                    "exclusions": [
+                      {
+                        "source_ref": "synthetic-invoice-1042:L10",
+                        "reason": "freight"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [],
+              "final": {
+                "answer": "Prepared 2 review-only material drafts; held 3 material lines; excluded 1 freight line. Employee order details still need confirmation. Review the canonical quantities and reasons below. No rows were created; execution is unavailable.",
+                "observations": [
+                  {
+                    "text": "The host prepared 2 draft lines and held 3 lines from the supplied synthetic invoice.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "Freight is excluded from Inventory receivals. Potential duplicates and ambiguous or unmatched materials remain held.",
+                    "evidence_ids": [
+                      "e8",
+                      "e7"
+                    ]
+                  }
+                ],
+                "inferences": [],
+                "recommendations": [
+                  {
+                    "text": "Review the host-owned proposals against the attachment. Employee approval and a separately authorized execution capability would be required for future writes.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  }
+                ],
+                "questions": [
+                  "Who ordered these materials, what was the order date, and which location should receive them? Missing confirmed fields: ordered_by, order_date, location.",
+                  "Please resolve the held duplicate, ambiguous catalog match and unmatched material before any future execution."
+                ],
+                "completed_actions": []
+              },
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            }
+          ],
+          "durationMs": 3137,
+          "invoiceAttached": true,
+          "executionAvailable": false
+        }
+      }
+    },
+    {
+      "request": {
+        "action": "ask",
+        "question": "Use the reviewed order details above and prepare the same invoice again for review. Do not execute any changes.",
+        "context": [
+          "Current module: My Work"
+        ],
+        "demoScenario": "invoice-preparation",
+        "invoiceId": "synthetic-invoice-1042",
+        "orderDetails": {
+          "orderedBy": "Synthetic Employee",
+          "orderDate": "2026-10-26",
+          "location": "Denton"
+        },
+        "conversationId": "024b92a3-facf-433e-b626-8ab7148a61ab"
+      },
+      "status": 200,
+      "answer": {
+        "conversationId": "024b92a3-facf-433e-b626-8ab7148a61ab",
+        "mode": "agent-experiment",
+        "message": "Prepared 2 review-only material drafts; held 3 material lines; excluded 1 freight line. Review the canonical quantities and reasons below. No rows were created; execution is unavailable.",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-agent-poc.v1",
+          "verifiedAt": "2026-10-28T18:41:12.983Z"
+        },
+        "summary": null,
+        "suggestionAllowed": false,
+        "notices": [
+          "Local scripted transport demonstration. This is not an OpenAI or Qwen reasoning result."
+        ],
+        "agent": {
+          "mode": "offline-scripted",
+          "provider": "Local scripted transport (offline demonstration)",
+          "model": "offline-scripted",
+          "status": "completed",
+          "final": {
+            "answer": "Prepared 2 review-only material drafts; held 3 material lines; excluded 1 freight line. Review the canonical quantities and reasons below. No rows were created; execution is unavailable.",
+            "observations": [
+              {
+                "text": "The host prepared 2 draft lines and held 3 lines from the supplied synthetic invoice.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              },
+              {
+                "text": "Freight is excluded from Inventory receivals. Potential duplicates and ambiguous or unmatched materials remain held.",
+                "evidence_ids": [
+                  "e8",
+                  "e7"
+                ]
+              }
+            ],
+            "inferences": [],
+            "recommendations": [
+              {
+                "text": "Review the host-owned proposals against the attachment. Employee approval and a separately authorized execution capability would be required for future writes.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              }
+            ],
+            "questions": [
+              "Please resolve the held duplicate, ambiguous catalog match and unmatched material before any future execution."
+            ],
+            "completed_actions": []
+          },
+          "evidence": [
+            {
+              "id": "e1",
+              "tool": "read_invoice",
+              "data": {
+                "synthetic": true,
+                "document_id": "synthetic-invoice-1042",
+                "filename": "SYNTHETIC-supplier-invoice-1042.txt",
+                "media_type": "text/plain",
+                "content_is_untrusted_data": true,
+                "sources": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L1",
+                    "text": "SYNTHETIC BENCHMARK — NOT A REAL SUPPLIER INVOICE"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L2",
+                    "text": "Supplier: T&M Supply"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L3",
+                    "text": "Invoice: SYN-INV-1042"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L4",
+                    "text": "Invoice date: 2026-10-27"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L5",
+                    "text": "Item 1 | AW-1 | Alaska White | #1 | 100 LB"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L6",
+                    "text": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L7",
+                    "text": "Item 3 | GREEN | CC Green | #1 | 2 Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L8",
+                    "text": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L9",
+                    "text": "Item 5 | RES-5 | Clear Resin | Part A | 5 GAL"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L10",
+                    "text": "Freight | Delivery charge | $85.00"
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L11",
+                    "text": "END SYNTHETIC INVOICE"
+                  }
+                ],
+                "limitations": [
+                  "Synthetic text attachment only; no photo/PDF/OCR test.",
+                  "Supplier is not manufacturer. Invoice date must never supply order_date automatically.",
+                  "Only read and prepare operations exist; no approval or execution tool."
+                ]
+              }
+            },
+            {
+              "id": "e2",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L5",
+                "extracted": {
+                  "description": "Alaska White",
+                  "quantity": "100",
+                  "unit": "LB",
+                  "size": "#1",
+                  "vendor_sku": "AW-1"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-aw1",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-aw1",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "AW-1",
+                    "material_name": "Alaska White",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e3",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L6",
+                "extracted": {
+                  "description": "Blue Coal",
+                  "quantity": "3",
+                  "unit": "Bag",
+                  "size": "#0",
+                  "vendor_sku": "BC-0"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-bc0",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-bc0",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "BC-0",
+                    "material_name": "Blue Coal",
+                    "size": "#0",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e4",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L7",
+                "extracted": {
+                  "description": "CC Green",
+                  "quantity": "2",
+                  "unit": "Bag",
+                  "size": "#1",
+                  "vendor_sku": "GREEN"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-green-a",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-green-a",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "GREEN",
+                    "material_name": "CC Green",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  },
+                  {
+                    "candidate_id": "standard:synthetic-green-b",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-green-b",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "GREEN",
+                    "material_name": "CC Green",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "25",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "25 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e5",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L8",
+                "extracted": {
+                  "description": "Unlisted Violet",
+                  "quantity": "4",
+                  "unit": "Bag",
+                  "size": "#2",
+                  "vendor_sku": "UNK-99"
+                },
+                "complete": true,
+                "candidates": [],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e6",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-invoice-1042:L9",
+                "extracted": {
+                  "description": "Clear Resin",
+                  "quantity": "5",
+                  "unit": "GAL",
+                  "size": "Part A",
+                  "vendor_sku": "RES-5"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-res5",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-res5",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "RES-5",
+                    "material_name": "Clear Resin",
+                    "size": "Part A",
+                    "category": "Resin",
+                    "order_unit": "Pail",
+                    "package_quantity": "5",
+                    "package_measure": "GAL",
+                    "container_type": "Pail",
+                    "package_evidence": "5 GAL Pail"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e7",
+              "tool": "check_receival_duplicates",
+              "data": {
+                "synthetic": true,
+                "supplier": "T&M Supply",
+                "document_ref": "SYN-INV-1042",
+                "supplier_source_ref": "synthetic-invoice-1042:L2",
+                "document_source_ref": "synthetic-invoice-1042:L3",
+                "complete": true,
+                "potential_duplicates": [
+                  {
+                    "id": "synthetic-existing-bc0",
+                    "vendor": "T&M Supply",
+                    "material_name": "Blue Coal",
+                    "size": "#0",
+                    "quantity_expected": "3",
+                    "quantity_received": "0",
+                    "unit": "Bag",
+                    "status": "pending"
+                  }
+                ],
+                "limitations": [
+                  "Potential matches use supplier/material/size only.",
+                  "No canonical invoice-reference field exists on general pending receivals; invoice-level idempotency is not established.",
+                  "A potential duplicate remains held; this prototype has no duplicate override or write tool."
+                ]
+              }
+            },
+            {
+              "id": "e8",
+              "tool": "prepare_pending_receivals",
+              "data": {
+                "version": "tenbot-pending-receival-review.v1",
+                "synthetic": true,
+                "document_id": "synthetic-invoice-1042",
+                "filename": "SYNTHETIC-supplier-invoice-1042.txt",
+                "supplier": "T&M Supply",
+                "document_reference": "SYN-INV-1042",
+                "status": "review_only_no_execution",
+                "ready_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L5",
+                    "evidence": "Item 1 | AW-1 | Alaska White | #1 | 100 LB",
+                    "extracted": {
+                      "description": "Alaska White",
+                      "quantity": "100",
+                      "unit": "LB",
+                      "size": "#1",
+                      "vendor_sku": "AW-1"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-aw1",
+                    "proposal": {
+                      "vendor": "T&M Supply",
+                      "material_name": "Alaska White",
+                      "size": "#1",
+                      "category": "Aggregate",
+                      "quantity_expected": "2",
+                      "unit": "Bag",
+                      "location": "Denton",
+                      "ordered_by": "Synthetic Employee",
+                      "order_date": "2026-10-26",
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-1042",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-aw1"
+                    },
+                    "conversion": {
+                      "source_quantity": "100",
+                      "source_unit": "LB",
+                      "package": "50 LB Bag",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "2",
+                      "result_unit": "Bag"
+                    }
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L9",
+                    "evidence": "Item 5 | RES-5 | Clear Resin | Part A | 5 GAL",
+                    "extracted": {
+                      "description": "Clear Resin",
+                      "quantity": "5",
+                      "unit": "GAL",
+                      "size": "Part A",
+                      "vendor_sku": "RES-5"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-res5",
+                    "proposal": {
+                      "vendor": "T&M Supply",
+                      "material_name": "Clear Resin",
+                      "size": "Part A",
+                      "category": "Resin",
+                      "quantity_expected": "1",
+                      "unit": "Pail",
+                      "location": "Denton",
+                      "ordered_by": "Synthetic Employee",
+                      "order_date": "2026-10-26",
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-1042",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-res5"
+                    },
+                    "conversion": {
+                      "source_quantity": "5",
+                      "source_unit": "GAL",
+                      "package": "5 GAL Pail",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "1",
+                      "result_unit": "Pail"
+                    }
+                  }
+                ],
+                "held_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L6",
+                    "evidence": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag",
+                    "extracted": {
+                      "description": "Blue Coal",
+                      "quantity": "3",
+                      "unit": "Bag",
+                      "size": "#0",
+                      "vendor_sku": "BC-0"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-bc0",
+                    "reasons": [
+                      "potential_duplicate"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L7",
+                    "evidence": "Item 3 | GREEN | CC Green | #1 | 2 Bag",
+                    "extracted": {
+                      "description": "CC Green",
+                      "quantity": "2",
+                      "unit": "Bag",
+                      "size": "#1",
+                      "vendor_sku": "GREEN"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-green-a",
+                    "reasons": [
+                      "ambiguous_catalog_match"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L8",
+                    "evidence": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+                    "extracted": {
+                      "description": "Unlisted Violet",
+                      "quantity": "4",
+                      "unit": "Bag",
+                      "size": "#2",
+                      "vendor_sku": "UNK-99"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material"
+                    ]
+                  }
+                ],
+                "excluded_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L10",
+                    "reason": "freight",
+                    "evidence": "Freight | Delivery charge | $85.00"
+                  }
+                ],
+                "missing_employee_confirmations": [],
+                "employee_confirmation_source": "authenticated_owner_session",
+                "other_document_source_refs": [
+                  "synthetic-invoice-1042:L1",
+                  "synthetic-invoice-1042:L4",
+                  "synthetic-invoice-1042:L11"
+                ],
+                "limitations": [
+                  "Model extraction completeness still requires employee review against the document.",
+                  "Invoice date is not order date. No manufacturer substitutes for supplier.",
+                  "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+                  "No rows were created. No execution capability exists."
+                ],
+                "approval_required_before_any_future_execution": true,
+                "execution_available": false
+              }
+            }
+          ],
+          "proposals": [
+            {
+              "evidenceId": "e8",
+              "tool": "prepare_pending_receivals",
+              "proposal": {
+                "version": "tenbot-pending-receival-review.v1",
+                "synthetic": true,
+                "document_id": "synthetic-invoice-1042",
+                "filename": "SYNTHETIC-supplier-invoice-1042.txt",
+                "supplier": "T&M Supply",
+                "document_reference": "SYN-INV-1042",
+                "status": "review_only_no_execution",
+                "ready_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L5",
+                    "evidence": "Item 1 | AW-1 | Alaska White | #1 | 100 LB",
+                    "extracted": {
+                      "description": "Alaska White",
+                      "quantity": "100",
+                      "unit": "LB",
+                      "size": "#1",
+                      "vendor_sku": "AW-1"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-aw1",
+                    "proposal": {
+                      "vendor": "T&M Supply",
+                      "material_name": "Alaska White",
+                      "size": "#1",
+                      "category": "Aggregate",
+                      "quantity_expected": "2",
+                      "unit": "Bag",
+                      "location": "Denton",
+                      "ordered_by": "Synthetic Employee",
+                      "order_date": "2026-10-26",
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-1042",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-aw1"
+                    },
+                    "conversion": {
+                      "source_quantity": "100",
+                      "source_unit": "LB",
+                      "package": "50 LB Bag",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "2",
+                      "result_unit": "Bag"
+                    }
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L9",
+                    "evidence": "Item 5 | RES-5 | Clear Resin | Part A | 5 GAL",
+                    "extracted": {
+                      "description": "Clear Resin",
+                      "quantity": "5",
+                      "unit": "GAL",
+                      "size": "Part A",
+                      "vendor_sku": "RES-5"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-res5",
+                    "proposal": {
+                      "vendor": "T&M Supply",
+                      "material_name": "Clear Resin",
+                      "size": "Part A",
+                      "category": "Resin",
+                      "quantity_expected": "1",
+                      "unit": "Pail",
+                      "location": "Denton",
+                      "ordered_by": "Synthetic Employee",
+                      "order_date": "2026-10-26",
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-1042",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-res5"
+                    },
+                    "conversion": {
+                      "source_quantity": "5",
+                      "source_unit": "GAL",
+                      "package": "5 GAL Pail",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "1",
+                      "result_unit": "Pail"
+                    }
+                  }
+                ],
+                "held_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L6",
+                    "evidence": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag",
+                    "extracted": {
+                      "description": "Blue Coal",
+                      "quantity": "3",
+                      "unit": "Bag",
+                      "size": "#0",
+                      "vendor_sku": "BC-0"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-bc0",
+                    "reasons": [
+                      "potential_duplicate"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L7",
+                    "evidence": "Item 3 | GREEN | CC Green | #1 | 2 Bag",
+                    "extracted": {
+                      "description": "CC Green",
+                      "quantity": "2",
+                      "unit": "Bag",
+                      "size": "#1",
+                      "vendor_sku": "GREEN"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-green-a",
+                    "reasons": [
+                      "ambiguous_catalog_match"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-invoice-1042:L8",
+                    "evidence": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+                    "extracted": {
+                      "description": "Unlisted Violet",
+                      "quantity": "4",
+                      "unit": "Bag",
+                      "size": "#2",
+                      "vendor_sku": "UNK-99"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material"
+                    ]
+                  }
+                ],
+                "excluded_lines": [
+                  {
+                    "source_ref": "synthetic-invoice-1042:L10",
+                    "reason": "freight",
+                    "evidence": "Freight | Delivery charge | $85.00"
+                  }
+                ],
+                "missing_employee_confirmations": [],
+                "employee_confirmation_source": "authenticated_owner_session",
+                "other_document_source_refs": [
+                  "synthetic-invoice-1042:L1",
+                  "synthetic-invoice-1042:L4",
+                  "synthetic-invoice-1042:L11"
+                ],
+                "limitations": [
+                  "Model extraction completeness still requires employee review against the document.",
+                  "Invoice date is not order date. No manufacturer substitutes for supplier.",
+                  "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+                  "No rows were created. No execution capability exists."
+                ],
+                "approval_required_before_any_future_execution": true,
+                "execution_available": false
+              }
+            }
+          ],
+          "trace": [
+            {
+              "event": "model",
+              "round": 1,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 1,
+              "name": "discover_capabilities",
+              "outcome": "ok",
+              "durationMs": 117
+            },
+            {
+              "event": "model",
+              "round": 2,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 2,
+              "name": "read_invoice",
+              "outcome": "ok",
+              "durationMs": 205
+            },
+            {
+              "event": "model",
+              "round": 3,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 163
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 171
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 177
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 167
+            },
+            {
+              "event": "model",
+              "round": 4,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 4,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 157
+            },
+            {
+              "event": "model",
+              "round": 5,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 5,
+              "name": "check_receival_duplicates",
+              "outcome": "ok",
+              "durationMs": 162
+            },
+            {
+              "event": "model",
+              "round": 6,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            },
+            {
+              "event": "tool",
+              "round": 6,
+              "name": "prepare_pending_receivals",
+              "outcome": "ok",
+              "durationMs": 515
+            },
+            {
+              "event": "model",
+              "round": 7,
+              "outcome": "received",
+              "durationMs": 0,
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              }
+            }
+          ],
+          "usage": {
+            "inputTokens": 0,
+            "cachedInputTokens": 0,
+            "outputTokens": 0,
+            "costUsd": 0,
+            "reservedUsd": 0
+          },
+          "modelSteps": [
+            {
+              "calls": [
+                {
+                  "id": "scripted_1",
+                  "name": "discover_capabilities",
+                  "arguments": {
+                    "names": [
+                      "read_invoice",
+                      "search_catalog",
+                      "check_receival_duplicates",
+                      "prepare_pending_receivals"
+                    ]
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_2",
+                  "name": "read_invoice",
+                  "arguments": {}
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_3",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L5",
+                    "description": "Alaska White",
+                    "quantity": "100",
+                    "unit": "LB",
+                    "size": "#1",
+                    "vendor_sku": "AW-1"
+                  }
+                },
+                {
+                  "id": "scripted_4",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L6",
+                    "description": "Blue Coal",
+                    "quantity": "3",
+                    "unit": "Bag",
+                    "size": "#0",
+                    "vendor_sku": "BC-0"
+                  }
+                },
+                {
+                  "id": "scripted_5",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L7",
+                    "description": "CC Green",
+                    "quantity": "2",
+                    "unit": "Bag",
+                    "size": "#1",
+                    "vendor_sku": "GREEN"
+                  }
+                },
+                {
+                  "id": "scripted_6",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L8",
+                    "description": "Unlisted Violet",
+                    "quantity": "4",
+                    "unit": "Bag",
+                    "size": "#2",
+                    "vendor_sku": "UNK-99"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_7",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-invoice-1042:L9",
+                    "description": "Clear Resin",
+                    "quantity": "5",
+                    "unit": "GAL",
+                    "size": "Part A",
+                    "vendor_sku": "RES-5"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_8",
+                  "name": "check_receival_duplicates",
+                  "arguments": {
+                    "supplier": "T&M Supply",
+                    "supplier_source_ref": "synthetic-invoice-1042:L2",
+                    "document_ref": "SYN-INV-1042",
+                    "document_source_ref": "synthetic-invoice-1042:L3"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [
+                {
+                  "id": "scripted_9",
+                  "name": "prepare_pending_receivals",
+                  "arguments": {
+                    "selections": [
+                      {
+                        "source_ref": "synthetic-invoice-1042:L5",
+                        "candidate_id": "standard:synthetic-aw1"
+                      },
+                      {
+                        "source_ref": "synthetic-invoice-1042:L6",
+                        "candidate_id": "standard:synthetic-bc0"
+                      },
+                      {
+                        "source_ref": "synthetic-invoice-1042:L7",
+                        "candidate_id": "standard:synthetic-green-a"
+                      },
+                      {
+                        "source_ref": "synthetic-invoice-1042:L8",
+                        "candidate_id": null
+                      },
+                      {
+                        "source_ref": "synthetic-invoice-1042:L9",
+                        "candidate_id": "standard:synthetic-res5"
+                      }
+                    ],
+                    "exclusions": [
+                      {
+                        "source_ref": "synthetic-invoice-1042:L10",
+                        "reason": "freight"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            },
+            {
+              "calls": [],
+              "final": {
+                "answer": "Prepared 2 review-only material drafts; held 3 material lines; excluded 1 freight line. Review the canonical quantities and reasons below. No rows were created; execution is unavailable.",
+                "observations": [
+                  {
+                    "text": "The host prepared 2 draft lines and held 3 lines from the supplied synthetic invoice.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "Freight is excluded from Inventory receivals. Potential duplicates and ambiguous or unmatched materials remain held.",
+                    "evidence_ids": [
+                      "e8",
+                      "e7"
+                    ]
+                  }
+                ],
+                "inferences": [],
+                "recommendations": [
+                  {
+                    "text": "Review the host-owned proposals against the attachment. Employee approval and a separately authorized execution capability would be required for future writes.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  }
+                ],
+                "questions": [
+                  "Please resolve the held duplicate, ambiguous catalog match and unmatched material before any future execution."
+                ],
+                "completed_actions": []
+              },
+              "usage": {
+                "inputTokens": 0,
+                "cachedInputTokens": 0,
+                "outputTokens": 0,
+                "costUsd": 0,
+                "reservedUsd": 0
+              },
+              "durationMs": 0
+            }
+          ],
+          "durationMs": 3026,
+          "invoiceAttached": true,
+          "executionAvailable": false
+        }
+      }
+    }
+  ],
+  "requests": [
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "ask"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "clear"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "ask"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "ask"
+    }
+  ],
+  "errors": [],
+  "authFixturesInjectedByVerifier": false,
+  "requestInterceptions": 0,
+  "modelInferenceCalls": 0,
+  "databaseWrites": false
+}

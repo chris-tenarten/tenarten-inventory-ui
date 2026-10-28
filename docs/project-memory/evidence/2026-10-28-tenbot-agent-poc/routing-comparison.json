@@ -1,0 +1,44 @@
+{
+  "mode": "Current deterministic routing/prose contract only. No Qwen or OpenAI inference; synthetic fact.",
+  "base": "d3f42a7",
+  "questions": [
+    {
+      "question": "Investigate Job TB-2801: summarize its schedule, labor and recorded material status, and tell me what information is missing.",
+      "currentRouting": {
+        "kind": "job",
+        "tool": "get_job_labor_summary",
+        "reference": {
+          "query": "TB-2801"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "Compare active Jobs using their recorded dates, material status and labor totals.",
+      "currentRouting": {
+        "kind": "overview",
+        "tool": "get_production_overview",
+        "args": {}
+      }
+    },
+    {
+      "question": "Here is an invoice. Create pending receivals for the materials listed.",
+      "currentRouting": null
+    },
+    {
+      "question": "How should I receive a partial delivery in Inventory?",
+      "currentRouting": null
+    }
+  ],
+  "prose": [
+    {
+      "text": "Total labor: 18 hours.",
+      "accepted": true
+    },
+    {
+      "text": "Recorded labor totals 18 hours.",
+      "accepted": false
+    }
+  ],
+  "interpretation": "A compound Job question still selects one detail tool by lexical precedence; safe new vocabulary can fail the prose contract. This isolates architecture constraints and establishes no model-quality ranking. A null route may continue to verified guidance, not an automatic model failure."
+}

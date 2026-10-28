@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "baselineAndCandidateIdentical": true,
+  "baselineMode": "guide",
+  "baselineFallback": true,
+  "mockedProviderCalls": 2,
+  "externalModelCalls": 0,
+  "databaseCalls": 0,
+  "description": "HEAD and candidate both reject invalid model source IDs and return the same safe guide fallback; existing verifier expectation of thrown error predates current fallback behavior."
+}

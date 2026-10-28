@@ -1,0 +1,28 @@
+{
+  "synthetic": true,
+  "document": {
+    "id": "synthetic-invoice-1042",
+    "filename": "SYNTHETIC-supplier-invoice-1042.txt",
+    "mediaType": "text/plain",
+    "synthetic": true,
+    "text": "SYNTHETIC BENCHMARK — NOT A REAL SUPPLIER INVOICE\nSupplier: T&M Supply\nInvoice: SYN-INV-1042\nInvoice date: 2026-10-27\nItem 1 | AW-1 | Alaska White | #1 | 100 LB\nItem 2 | BC-0 | Blue Coal | #0 | 3 Bag\nItem 3 | GREEN | CC Green | #1 | 2 Bag\nItem 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag\nItem 5 | RES-5 | Clear Resin | Part A | 5 GAL\nFreight | Delivery charge | $85.00\nEND SYNTHETIC INVOICE"
+  },
+  "catalog": {
+    "complete": true,
+    "standard": [
+      { "id": "synthetic-aw1", "vendor": "T&M Supply", "vendor_sku": "AW-1", "item_name": "Alaska White", "size": "#1", "category": "Aggregate", "material_class": "Marble chips", "unit": "50 LB Bag" },
+      { "id": "synthetic-bc0", "vendor": "T&M Supply", "vendor_sku": "BC-0", "item_name": "Blue Coal", "size": "#0", "category": "Aggregate", "material_class": "Marble chips", "unit": "50 LB Bag" },
+      { "id": "synthetic-green-a", "vendor": "T&M Supply", "vendor_sku": "GREEN", "item_name": "CC Green", "size": "#1", "category": "Aggregate", "material_class": "Marble chips", "unit": "50 LB Bag" },
+      { "id": "synthetic-green-b", "vendor": "T&M Supply", "vendor_sku": "GREEN", "item_name": "CC Green", "size": "#1", "category": "Aggregate", "material_class": "Marble chips", "unit": "25 LB Bag" },
+      { "id": "synthetic-res5", "vendor": "T&M Supply", "vendor_sku": "RES-5", "item_name": "Clear Resin", "size": "Part A", "category": "Resin", "material_class": "Epoxy", "unit": "5 GAL Pail" }
+    ],
+    "specialty": []
+  },
+  "receivals": {
+    "complete": true,
+    "rows": [
+      { "id": "synthetic-existing-bc0", "vendor": "T&M Supply", "material_name": "Blue Coal", "size": "#0", "quantity_expected": "3", "quantity_received": "0", "unit": "Bag", "status": "pending" }
+    ]
+  },
+  "confirmedMetadataExample": { "orderedBy": "Synthetic Employee", "orderDate": "2026-10-26", "location": "Denton" }
+}

@@ -1,0 +1,177 @@
+{
+  "status": "Local prepare-only PoC review passes; no outstanding security blocker in inspected boundary",
+  "scope": "Independent Tier 3 focused source/authorization review; existing hosted constructor and Qwen source preserved; no hosted Auth or live model-quality certification",
+  "sourceHashes": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "e93f3cfea74e461425e7acdb53fd50b7f14badfe80909ffa83969ef0d8848f23"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "839ed4feb77067721e161694accc8ee5653f8a998b2f12c3e7f27ed6ee9800cc"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "60c8d2238d583906d6a138c25978aa677722c0962602431fe0ac57c72a3030cb"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "9b3d65a3b7339bc8bf10626aa5b129bdac4eacd41e1b424aec817d676a47f91a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "8f9c089f3b752f3b24e6c50b24c4f06f6eaa7febec023eedc142520d13b13910"
+    },
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "e6ce3ef7c4c13573d47f6330c88812c4b918dec540422194e84b980c0c2a44bb"
+    },
+    {
+      "path": "scripts/support/tenbot-agent-scripted.mts",
+      "sha256": "fee1f781a3234e88f555139df326cc59554c4329c6251ff46c99b1f6254058e8"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "376f62a3c7a6c61a74d7dc4aefc22b6b82beef24c8637af5276770a550ff1f11"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent-database.mts",
+      "sha256": "138480e52f9d79e997df185a14f477ea05f462f24977df1466b215c00e8690df"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent-http.mjs",
+      "sha256": "ea24c2d0941f3f784a72e8212850ca1262f3d850a9a39fffb7a2518ded6400b3"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent-browser.mjs",
+      "sha256": "4d3fe469341ef28ed8c1cde2421378444c69bef89b7f8464f349a3c422075a18"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent.mts",
+      "sha256": "068bf1ea6a7cd8135244d3d3e42996ef3d1d7d1dbc7e695cd6d87fe83772826f"
+    }
+  ],
+  "findingFixed": {
+    "problem": "Repeated tool+args or catalog query replaced its prior freshness snapshot while the evidence ledger retained the earlier result. Earlier stale evidence could pass publication.",
+    "fix": "Retain first snapshot and latch differing repeated reads as inconsistent; block publication. Recheck current capabilities after asynchronous freshness reads.",
+    "evidence": "Focused PostgreSQL verifier includes repeated-key regression; final 9 groups and 93 actual authenticated SELECT queries passed."
+  },
+  "verified": [
+    "Actual PostgreSQL SET LOCAL ROLE authenticated/JWT-sub fixture: visible main summary/planning/deterministic labor/overview plus exact UUID lookup.",
+    "Restrictive RLS hidden Job is nondisclosing; inactive membership denied before record queries; read-only Guest allowed read.",
+    "Model-supplied SQL and extra tool fields rejected before record queries; registry exposes read only in PostgreSQL wrapper.",
+    "Freshness rejects changed result, repeated-key inconsistent result and actual inactive-caller delegate denial.",
+    "Existing protected feedback/history/usage/conversation records byte-for-byte unchanged; verifier performs no database writes.",
+    "OpenAI server transport fixed endpoint/model allowlist/store:false/strict functions/strict structured final/request+response bounds/timeouts; paid activation default-off and requires separate flags/key/budget.",
+    "Provider credentials remain server-side; no unrestricted SQL, shell, arbitrary HTTP or execution capability is registered.",
+    "Owner-scoped ephemeral sessions retain employee questions/canonical lookup seeds and explicit employee order details; operational answers/tool results/native model history not retained across requests.",
+    "Invoice proposals are host-owned and review-only; unmatched/ambiguous/duplicate/invalid/package conflicts held; no executor.",
+    "Existing Messaging UI local path requires exact localhost:3000 plus synthetic local session and explicit query flag; host-owned no-execution/completed-none labels visible in source."
+  ],
+  "limits": [
+    "No live OpenAI calls or photo/PDF/OCR interpretation occurred. Scripted outputs do not establish model reasoning quality, inference latency, or actual task cost.",
+    "Known citation IDs establish provenance, not semantic truth. Free answer prose and cited interpretations can still be incorrect; structured completed_actions=[] does not semantically prove every sentence. UI explicitly marks no execution and review required.",
+    "Invoice extraction completeness requires employee comparison with the original; other_document_source_refs and limitations expose unclassified document lines.",
+    "Local .local JWT is intentionally unsigned fixture Auth, not real Auth certification. Real PostgreSQL role/RLS checks supply the focused authorization evidence.",
+    "Local journal accounting is atomic within the one loopback adapter process, not a distributed Production budget ledger. Live activation requires separate Product authorization and configured credentials.",
+    "No general invoice receival execution service exists yet. Manual validated insert contract and PO-specific canonical service must be deliberately reused/refactored only in future authorized scope.",
+    "Parent owns final browser/build/overall validation; independent review did not duplicate historical 18-group lifecycle tests."
+  ],
+  "validation": {
+    "groups": 9,
+    "realPostgreSQLQueries": 93,
+    "databaseMutations": 0,
+    "externalModelCalls": 0,
+    "strictTypeScript": "pass (ES2022 focused verifier/import tree)",
+    "targetedESLint": "pass",
+    "diffCheck": "pass",
+    "evidence": "/private/tmp/tenops-tenbot-agent-poc/database.json"
+  },
+  "adjacentPrivacyVerifierDiagnosis": {
+    "reportedByParent": "Full existing verify-tenbot-privacy.mts fails at line 164 because it expects a thrown rejection for a bad model source ID.",
+    "defaultBodyIdenticalToHEAD": true,
+    "unchangedDependencies": [
+      {
+        "path": "supabase/functions/_shared/tenbot-core.ts",
+        "identicalToHEAD": true
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-privacy.ts",
+        "identicalToHEAD": true
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-models.ts",
+        "identicalToHEAD": true
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+        "identicalToHEAD": true
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-job-session.ts",
+        "identicalToHEAD": true
+      },
+      {
+        "path": "scripts/verify-tenbot-privacy.mts",
+        "identicalToHEAD": true
+      }
+    ],
+    "isolatedReproduction": {
+      "passed": true,
+      "baselineAndCandidateIdentical": true,
+      "baselineMode": "guide",
+      "baselineFallback": true,
+      "mockedProviderCalls": 2,
+      "externalModelCalls": 0,
+      "databaseCalls": 0,
+      "description": "HEAD and candidate both reject invalid model source IDs and return the same safe guide fallback; existing verifier expectation of thrown error predates current fallback behavior."
+    },
+    "policyOnly": {
+      "passed": true,
+      "groups": 6,
+      "exactQaCases": 3,
+      "providerCalls": 0,
+      "toolCalls": 0,
+      "externalModelCalls": 0,
+      "databaseCalls": 0,
+      "retainedLiveContextNotResurrected": true
+    },
+    "classification": "Pre-existing verifier expectation drift. Current HEAD already turns invalid model output into verified guide fallback. Candidate delegates identical default handler behavior. No source or old verifier changed to silence the failure.",
+    "limits": "Full PostgreSQL privacy suite was not rerun independently. Parent reported its stop; this diagnosis uses exact source equality, isolated HEAD/candidate mocked behavior and the existing no-database policy-only gate."
+  },
+  "localAdapterUiGateReview": "Reviewed current exact-localhost plus synthetic-session + explicit query gate, loopback-only adapter with exact Origin, body/action allowlists, fake-admin fixture check, server-only OpenAI key lookup, separate spend opt-in and bounded journal reservation. Existing hosted entrypoint has no experiment constructor. No further blocker found within local-only scope.",
+  "finalDeltaReview": {
+    "status": "No outstanding blocker for the local prepare-only scripted candidate.",
+    "reviewed": [
+      "Invoice package-conflict checks require explicit quantity, measure and container; raw 3 Bag / 2 Bag counts no longer impersonate measured package evidence. Explicit incompatible measured packages remain held.",
+      "Mounted owner-scoped experiment routing persists when navigation removes the URL query. Internal localAgentExperiment marker is stripped from both loopback fetch and hosted function payloads; the hosted fallback was corrected during final review.",
+      "Local accounting rejects negative counters and settled>attempts; startup records hashes of the loaded server source.",
+      "Failure-only HTTP verifier checks exact reviewed source, offline mode and spending=false before 11 rejected probes; zero successful questions, model inference calls or business writes.",
+      "Extended actual Messaging browser receipt passes six groups, including route persistence and internal marker absence from requests; offline script mode, zero model inference or database writes."
+    ],
+    "evidence": {
+      "http": "/private/tmp/tenops-tenbot-agent-poc/http.json",
+      "browser": "/private/tmp/tenops-tenbot-agent-poc/browser/report.json"
+    },
+    "validationScope": "Source diff and existing final receipts reviewed; no duplicate deterministic suite/build/browser/PG reruns performed."
+  },
+  "cacheAccountingDeltaReview": {
+    "status": "No outstanding blocker for local commit; no live API or paid activation occurred.",
+    "reviewed": [
+      "OpenAI price configuration explicitly distinguishes ordinary input, discounted cached reads, total 30-minute cache-write rate and output; invalid or mutable configuration cannot silently activate spend.",
+      "Request pins implicit caching and a 30-minute lifetime. Preflight reserves all conservatively estimated input at that write rate rather than presuming cache hits.",
+      "Settlement separates ordinary input from cached reads and writes, validates nonnegative integer counters and overlap bounds, reconciles supplied 30m/12h partitions, and charges each write token once at its reported lifetime rate.",
+      "Missing/inconsistent cache-write telemetry fails closed and retains the failed-attempt reservation; no unsupported discount is granted.",
+      "Nine focused mocked accounting/adjacent transport tests pass in the supplied receipt. Source and receipt reviewed; tests were not redundantly rerun.",
+      "Durable candidate record clearly separates scripted/mocked proof from live reasoning, model access, token usage, actual per-task cost and hosted Auth. Cost forecasts match stated assumptions and acknowledge the request cap.",
+      "Current restarted loopback server receipt is offline-scripted with spendingAuthorized=false and all loaded server source hashes matching disk."
+    ],
+    "evidence": "/private/tmp/tenops-tenbot-agent-poc/cache-accounting-validation.json",
+    "scope": "Read-only accounting/source and documentation claim review; no tests, network calls, provider calls, credentials or app-source changes by independent review.",
+    "futureLiveLimit": "Actual API account access, caching usage contract and all-step cost/completion remain unverified until a separately authorized live benchmark; local journal is not a distributed Production spending ledger."
+  }
+}

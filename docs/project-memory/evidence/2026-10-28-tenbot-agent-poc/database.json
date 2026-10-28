@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "checks": [
+    "Five-tool registry composes real caller-authorized Job, planning, deterministic labor and overview reads",
+    "Canonical UUID lookup and direct summary reuse the actual read contracts",
+    "Real restrictive RLS hides the Job from lookup and all exact Job wrappers",
+    "Inactive membership denies the agent before model or record reads",
+    "Permitted read-only Guest may investigate and registry exposes no prepare or execution tool",
+    "Strict model schemas reject SQL and unknown fields before PostgreSQL record queries",
+    "Changed result detection rejects stale combined evidence without changing PostgreSQL rows",
+    "A repeated read cannot hide an earlier stale evidence result from publication checks",
+    "Freshness reauthorization detects real inactive-caller denial through an injected delegate"
+  ],
+  "checkCount": 9,
+  "realPostgreSQL": true,
+  "container": "tenops-tenbot-review",
+  "queryCount": 93,
+  "externalModelCalls": 0,
+  "hostedCalls": 0,
+  "databaseMutations": 0,
+  "protectedTenbotRecordsPreserved": true,
+  "protectedStateSha256": "ad11095e36d2dfb877a1eceec235f7393d98a7662ddc013318ea5a93f52299a6",
+  "limits": [
+    "Existing role/JWT-sub PostgreSQL fixture; no full HTTP Auth certification.",
+    "Provider is a scripted local double; no OpenAI/Qwen model-quality claim.",
+    "Changed result and delegate revocation are explicit injected cases; no fixture permissions or records changed."
+  ]
+}

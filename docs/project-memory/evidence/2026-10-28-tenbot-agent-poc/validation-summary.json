@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-28",
+  "base": "d3f42a7",
+  "tier": 3,
+  "testingLevel": "focused Level 3",
+  "candidateStatus": "implemented locally; Product acceptance pending",
+  "openAiLiveCalls": 0,
+  "newQwenLiveCalls": 0,
+  "paidSpendUsd": 0,
+  "operationalDatabaseWrites": 0,
+  "migrations": 0,
+  "hostedChanges": false,
+  "checks": {
+    "runtime": "28 groups passed before cache correction; unaffected groups reused",
+    "cacheAccounting": "9 focused groups passed, five new/four adjacent",
+    "invoice": "20 groups pass",
+    "session": "16 groups pass",
+    "postgresql": "9 groups, 93 authenticated SELECTs, zero mutations",
+    "browser": "6 groups, 3 scripted questions, zero model calls",
+    "http": "11 failure groups, zero successful questions",
+    "existingCore": "pass, 16 chunks/113 examples and existing local checks",
+    "existingPrivacyPolicy": "pass, 6 groups/3 exact QA",
+    "existingFullPrivacy": "baseline expectation drift at line 164; not a suite pass",
+    "typescript": "pass; final optimized export includes TypeScript, focused shared import checks also pass",
+    "eslint": "pass including shared modules with --no-ignore; cache delta separately linted",
+    "optimizedExport": "pass after final UI marker cleanup",
+    "diffCheck": "pass after source/doc/evidence closure",
+    "independentReview": "pass local prepare-only boundary; no live-model or hosted Auth certification"
+  },
+  "unchangedProtectedPaths": {
+    "supabase/functions/tenbot/index.ts": true,
+    "supabase/functions/_shared/tenbot-core.ts": true,
+    "supabase/functions/_shared/tenbot-models.ts": true,
+    "supabase/functions/_shared/tenbot-job-tools.ts": true,
+    "supabase/functions/_shared/tenbot-job-routing.ts": true,
+    "scripts/verify-tenbot-privacy.mts": true
+  },
+  "missingCandidateLinks": [],
+  "fixtureAuth": "unsigned existing local fixture; real PG role/RLS checked separately",
+  "preservedPorts": [
+    3000,
+    55593,
+    55594
+  ],
+  "taskAdapter": {
+    "pid": 49589,
+    "port": 55595,
+    "origin": "http://localhost:3000",
+    "container": "tenops-tenbot-review",
+    "mode": "offline-scripted",
+    "model": "scripted-fixture",
+    "keyConfigured": false,
+    "spendingAuthorized": false,
+    "authorizedBudgetUsd": 0,
+    "existingPortsPreserved": [
+      3000,
+      55593,
+      55594
+    ],
+    "databaseWrites": false,
+    "sourceHashes": [
+      {
+        "path": "supabase/functions/_shared/tenbot-agent.ts",
+        "sha256": "e93f3cfea74e461425e7acdb53fd50b7f14badfe80909ffa83969ef0d8848f23"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-openai.ts",
+        "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+        "sha256": "60c8d2238d583906d6a138c25978aa677722c0962602431fe0ac57c72a3030cb"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "sha256": "9b3d65a3b7339bc8bf10626aa5b129bdac4eacd41e1b424aec817d676a47f91a"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-invoice.ts",
+        "sha256": "839ed4feb77067721e161694accc8ee5653f8a998b2f12c3e7f27ed6ee9800cc"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-handler.ts",
+        "sha256": "8f9c089f3b752f3b24e6c50b24c4f06f6eaa7febec023eedc142520d13b13910"
+      },
+      {
+        "path": "scripts/support/tenbot-agent-scripted.mts",
+        "sha256": "fee1f781a3234e88f555139df326cc59554c4329c6251ff46c99b1f6254058e8"
+      },
+      {
+        "path": "scripts/start-tenbot-agent-review.mts",
+        "sha256": "e6ce3ef7c4c13573d47f6330c88812c4b918dec540422194e84b980c0c2a44bb"
+      }
+    ]
+  },
+  "evidenceFiles": [
+    "baseline-privacy-fallback.json",
+    "session.json",
+    "routing-comparison.json",
+    "invoice-validation.json",
+    "desktop-invoice-reviewed.png",
+    "http.json",
+    "database.json",
+    "cache-accounting-validation.json",
+    "runtime-validation.json",
+    "browser-report.json",
+    "security-review.json",
+    "mobile-invoice.png"
+  ],
+  "securityReviewSourceHashesMatch": true,
+  "evidenceSecretScan": {
+    "patterns": "JWT, long API key, bearer, encrypted continuation field",
+    "suspectFiles": []
+  }
+}

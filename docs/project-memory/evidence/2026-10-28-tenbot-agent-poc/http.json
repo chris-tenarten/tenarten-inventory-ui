@@ -1,0 +1,90 @@
+{
+  "passed": true,
+  "at": "2026-10-28T18:48:58.129Z",
+  "checks": [
+    {
+      "label": "Missing local session denied",
+      "status": 401
+    },
+    {
+      "label": "Different fixture actor denied",
+      "status": 401
+    },
+    {
+      "label": "Non-local bearer rejected by synthetic fixture",
+      "status": 401
+    },
+    {
+      "label": "Different localhost origin denied",
+      "status": 403
+    },
+    {
+      "label": "Read endpoint has no execute action",
+      "status": 400
+    },
+    {
+      "label": "Browser cannot select paid provider",
+      "status": 400
+    },
+    {
+      "label": "Caller-authored history rejected",
+      "status": 400
+    },
+    {
+      "label": "Unknown conversation is opaque",
+      "status": 403
+    },
+    {
+      "label": "Malformed UUID rejected",
+      "status": 400
+    },
+    {
+      "label": "Whole HTTP body bounded",
+      "status": 413
+    },
+    {
+      "label": "Unsupported HTTP method rejected",
+      "status": 405
+    }
+  ],
+  "groups": 11,
+  "successfulQuestions": 0,
+  "modelInferenceCalls": 0,
+  "paidCalls": 0,
+  "businessDatabaseWrites": 0,
+  "authScope": "Unsigned existing synthetic local fixture only; no hosted Auth claim",
+  "sourceHashes": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "e93f3cfea74e461425e7acdb53fd50b7f14badfe80909ffa83969ef0d8848f23"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "60c8d2238d583906d6a138c25978aa677722c0962602431fe0ac57c72a3030cb"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "9b3d65a3b7339bc8bf10626aa5b129bdac4eacd41e1b424aec817d676a47f91a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "839ed4feb77067721e161694accc8ee5653f8a998b2f12c3e7f27ed6ee9800cc"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "8f9c089f3b752f3b24e6c50b24c4f06f6eaa7febec023eedc142520d13b13910"
+    },
+    {
+      "path": "scripts/support/tenbot-agent-scripted.mts",
+      "sha256": "fee1f781a3234e88f555139df326cc59554c4329c6251ff46c99b1f6254058e8"
+    },
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "e6ce3ef7c4c13573d47f6330c88812c4b918dec540422194e84b980c0c2a44bb"
+    }
+  ]
+}

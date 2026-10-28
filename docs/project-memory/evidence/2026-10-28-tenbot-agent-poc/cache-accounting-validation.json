@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "recordedDate": "2026-10-28",
+  "command": "./node_modules/.bin/tsx scripts/verify-tenbot-agent.mts --cache-accounting-only",
+  "outcome": "exit 0",
+  "mode": "offline mocked HTTP only; no inference calls, credentials or database writes",
+  "scope": "Cache accounting correction and directly adjacent transport guards; earlier unrelated passed groups were not rerun.",
+  "officialSources": [
+    "https://developers.openai.com/api/docs/guides/prompt-caching",
+    "https://developers.openai.com/api/docs/models/gpt-6.1-sol",
+    "https://developers.openai.com/api/docs/pricing"
+  ],
+  "correction": "Default implicit 30-minute cache writes have a total rate of 1.25 times ordinary input, replacing ordinary input charges for those tokens. Requests now pin implicit/30m, reservations assume all input incurs the write rate, and settlement reconciles ordinary input, cached reads and write counters. Valid supplied lifetime partitions are accounted separately; absent total write counts cannot refund a reservation.",
+  "groups": 9,
+  "checks": [
+    "OpenAI request is server-only, strict, bounded and excludes hosted execution tools",
+    "native function calls and encrypted reasoning replay across measured mock transport",
+    "request estimate exceeding remaining budget never reserves or fetches",
+    "failed requests without trustworthy usage retain their conservative reservation",
+    "cache accounting: pins automatic caching to the reviewed 30-minute lifetime",
+    "cache accounting: separates ordinary input, discounted reads and total 30-minute write rates",
+    "cache accounting: reconciles mixed write lifetimes without double-counting total writes",
+    "cache accounting: missing, overlapping or inconsistent cache counts retain the failed-attempt reserve",
+    "cache accounting: reservation assumes all eligible input is written rather than discounted"
+  ],
+  "ratesPerMillionUsd": {
+    "gpt-6.1-sol": { "input": 2, "cachedInput": 0.1, "write30m": 2.5, "write12h": 5, "output": 10 },
+    "gpt-6.1-terra": { "input": 1, "cachedInput": 0.05, "write30m": 1.25, "write12h": 2.5, "output": 5 }
+  }
+}

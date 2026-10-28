@@ -10,6 +10,37 @@ type Answer={conversationId?:string;mode:string;message:string;resolution?:'avai
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
 type Feedback={id:string;submitter_name:string;status:string;created_at:string;draft:Draft;history:{id:number;status:string;note:string;created_at:string}[]};
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;sharedMonthLimit:number;sharedMonthUsed:number;sharedMonthRemaining:number;perAccountMinuteLimit:number;dayNeuronLimit:number;dayAccountedNeurons:number;monthNeuronLimit:number;monthAccountedNeurons:number;dayMeasuredInputTokens:number;dayMeasuredOutputTokens:number;dayUnmeasuredAttempts:number};
+type AgentClaim={text:string;evidence_ids:string[]};
+type AgentView={mode:'offline-scripted'|'openai';provider:string;model:string;status:string;durationMs:number;executionAvailable:false;final:{observations:AgentClaim[];inferences:AgentClaim[];recommendations:AgentClaim[];questions:string[];completed_actions:[]}|null;proposals:{evidenceId:string;tool:string;proposal:Record<string,unknown>}[];evidence:{id:string;tool:string;data:unknown}[];trace:{event:string;name?:string;outcome:string;durationMs:number}[];usage:{inputTokens:number;outputTokens:number;costUsd:number;reservedUsd:number}};
+type ExperimentalAnswer=Answer&{agent?:AgentView};
+const objectValue=(value:unknown):Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{};
+const rowsValue=(value:unknown):Record<string,unknown>[]=>Array.isArray(value)?value.map(objectValue):[];
+const displayValue=(value:unknown)=>value===null||value===undefined||value===''?'—':String(value);
+function AgentReview({agent}:{agent:AgentView}){
+ return <section aria-label="Experimental operational answer" className="space-y-3 border-t border-slate-200 pt-3">
+  <p className="rounded bg-amber-50 p-2 text-xs text-amber-900">{agent.mode==='offline-scripted'?'Scripted transport demonstration · no model inference':'Local OpenAI experiment'} · No execution capability</p>
+  {([['observations','Recorded observations'],['inferences','Interpretations'],['recommendations','Suggested next steps']] as const).map(([key,label])=>agent.final?.[key].length?<section key={key}><p className="font-medium">{label}</p><ul className="list-disc space-y-1 pl-5">{agent.final[key].map((claim,index)=><li key={index}>{claim.text} <span className="text-xs text-slate-500">({claim.evidence_ids.join(', ')})</span></li>)}</ul></section>:null)}
+  {agent.final?.questions.length?<section><p className="font-medium">Information needed</p><ul className="list-disc space-y-1 pl-5">{agent.final.questions.map((question,index)=><li key={index}>{question}</li>)}</ul></section>:null}
+  {agent.proposals.map(({evidenceId,proposal})=>{
+   const ready=rowsValue(proposal.ready_lines),held=rowsValue(proposal.held_lines),excluded=rowsValue(proposal.excluded_lines),missing=Array.isArray(proposal.missing_employee_confirmations)?proposal.missing_employee_confirmations:[];
+   return <section key={evidenceId} aria-label="Pending receival proposals" className="space-y-2 rounded border border-slate-300 p-3">
+    <p className="font-semibold">Pending receival proposals · Review only</p><p>{displayValue(proposal.supplier)} · {displayValue(proposal.document_reference)}</p>
+    <p className="text-xs">{ready.length} matched lines · {held.length} held · {excluded.length} excluded. Review against the synthetic document. Pending entries do not count as on-hand stock.</p>
+    {missing.length?<p className="rounded bg-amber-50 p-2 text-xs">Missing employee order details: {missing.map(String).join(', ')}. These proposals remain incomplete.</p>:null}
+    <div className="max-w-full overflow-x-auto"><table className="w-full text-left text-xs"><thead><tr><th className="p-1">Material / size</th><th className="p-1">Quantity</th><th className="p-1">Order details</th></tr></thead><tbody>{ready.map((line,index)=>{const row=objectValue(line.proposal);return <tr key={index} className="border-t"><td className="p-1">{displayValue(row.material_name)} / {displayValue(row.size)}</td><td className="p-1">{displayValue(row.quantity_expected)} {displayValue(row.unit)}</td><td className="p-1">{displayValue(row.ordered_by)} · {displayValue(row.order_date)} · {displayValue(row.location)}</td></tr>;})}</tbody></table></div>
+    {held.length?<ul className="list-disc space-y-1 pl-5 text-xs">{held.map((line,index)=><li key={index}>{displayValue(objectValue(line.extracted).description)}: {Array.isArray(line.reasons)?line.reasons.map(String).join(', ').replaceAll('_',' '):'Needs clarification'}</li>)}</ul>:null}
+    {excluded.length?<p className="text-xs">Excluded: {excluded.map(line=>displayValue(line.reason)).join(', ')}.</p>:null}
+    <p className="text-xs font-medium">No rows created. Employee approval and a separately authorized execution service would be required.</p>
+   </section>;
+  })}
+  <p className="text-xs font-medium">Completed database actions: none.</p>
+  <details className="text-xs text-slate-600"><summary className="min-h-9 cursor-pointer py-2">Experiment evidence and measurements</summary>
+   <p>{agent.provider} · {agent.model} · {agent.status}</p><p>Elapsed {(agent.durationMs/1000).toFixed(2)} s · {agent.trace.filter(row=>row.event==='tool').length} tool attempts · {agent.usage.inputTokens} input / {agent.usage.outputTokens} output tokens · ${agent.usage.costUsd.toFixed(4)} accounted</p>
+   <p>Scripted timings measure local orchestration only. Source references support provenance; free prose and interpretations still require review.</p>
+   {agent.evidence.map(item=><details key={item.id} className="border-t py-1"><summary className="min-h-9 cursor-pointer py-2">{item.id} · {item.tool}</summary><pre className="max-h-72 overflow-auto whitespace-pre-wrap break-all text-[10px]">{JSON.stringify(item.data,null,2)}</pre></details>)}
+  </details>
+ </section>;
+}
 const statuses=['New','Needs Clarification','Under Consideration','Backlogged','Declined','Shipped'];
 const modules=['General','Messaging','My Work','Intake','Production','Inventory','Purchasing','Contacts','Settings'];
 const field='min-h-11 w-full rounded border border-slate-300 bg-white px-3 py-2 text-base';
@@ -20,11 +51,15 @@ async function invoke<T>(body:Record<string,unknown>,owner:string):Promise<T>{
  // Existing loopback fixture tokens cannot authenticate to hosted Supabase.
  // Keep the review adapter usable when another local task rebuilds the shared export.
  const localFixture=typeof window!=='undefined'&&window.location.origin==='http://localhost:3000'&&sessionData.session?.access_token.endsWith('.local');
- const endpoint=process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL||(localFixture?'http://localhost:55593':undefined);
+ // The owner-scoped controller selects this mode once. Route changes must not
+ // silently send experimental questions to the ordinary Qwen adapter.
+ const {localAgentExperiment,...payload}=body;
+ const experiment=localFixture&&localAgentExperiment===true;
+ const endpoint=experiment?'http://localhost:55595':process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL||(localFixture?'http://localhost:55593':undefined);
  if(endpoint&&typeof window!=='undefined'&&window.location.hostname==='localhost'){
- const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${sessionData.session?.access_token||''}`},body:JSON.stringify(body),signal:AbortSignal.timeout(35000)});const value=await r.json();if(!r.ok)throw new Error(value.error||'TenBot unavailable.');return value;
+ const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${sessionData.session?.access_token||''}`},body:JSON.stringify(payload),signal:AbortSignal.timeout(experiment?100000:35000)});const value=await r.json();if(!r.ok)throw new Error(value.error||'TenBot unavailable.');return value;
  }
- const {data,error}=await supabase.functions.invoke('tenbot',{body,headers:{Authorization:`Bearer ${sessionData.session.access_token}`},signal:AbortSignal.timeout(35000)});
+ const {data,error}=await supabase.functions.invoke('tenbot',{body:payload,headers:{Authorization:`Bearer ${sessionData.session.access_token}`},signal:AbortSignal.timeout(35000)});
  if(error){const detail='context' in error&&error.context instanceof Response?await error.context.json().catch(()=>null):null;throw new Error(detail?.error||'TenBot is unavailable. The rest of TenOps remains available.');}return data;
 }
 type ModuleContext={label:string;module:string};
@@ -43,7 +78,7 @@ function moduleContext(pathname:string):ModuleContext{
   default:return {label:'TenOps',module:'General'};
  }
 }
-type Turn={id:number;question:string;createdAt:string;answeredAt?:string;answer:Answer|null;error?:string};
+type Turn={id:number;question:string;createdAt:string;answeredAt?:string;answer:ExperimentalAnswer|null;error?:string};
 type AssistantEntry={id:string;createdAt:string;content:ReactNode};
 export type TenbotConversation={available:boolean;busy:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;menu:(question:string)=>ReactNode;disclosure:ReactNode;activityKey:string};
 const messageTime=(value:string)=>new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date(value));
@@ -64,6 +99,8 @@ export function useTenbotConversation():TenbotConversation{
  const [notice,setNotice]=useState(''),[showFeedback,setShowFeedback]=useState(false);
  const [items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState('');
  const [usage,setUsage]=useState<Usage|null>(null),[usageError,setUsageError]=useState('');
+ const [experiment,setExperiment]=useState(false),[demoScenario,setDemoScenario]=useState('job-investigation'),[invoiceAttached,setInvoiceAttached]=useState(false);
+ const [orderDetails,setOrderDetails]=useState({orderedBy:'',orderDate:'',location:''});
  const [notes,setNotes]=useState<Record<string,string>>({});
  const lock=useRef(false),sequence=useRef(0);
  const conversation=useRef<{owner:string;id?:string}>({owner});
@@ -79,11 +116,16 @@ export function useTenbotConversation():TenbotConversation{
  const accessFingerprint=JSON.stringify(auth.profile);
  const currentAccess=useRef(accessFingerprint);currentAccess.current=accessFingerprint;
  useEffect(()=>{
+  let current=true;setExperiment(false);setInvoiceAttached(false);setOrderDetails({orderedBy:'',orderDate:'',location:''});
+  void supabase.auth.getSession().then(({data})=>{if(current&&data.session?.user.id===owner)setExperiment(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotExperiment')==='1'&&Boolean(data.session.access_token.endsWith('.local')));});
+  return()=>{current=false;};
+ },[owner]);
+ useEffect(()=>{
   // Live facts have no client persistence or reusable response cache.
   liveTurn.current=null;setMessages([]);
  },[owner,available,accessFingerprint]);
  useEffect(()=>{
-  const invalidate=()=>setMessages(turns=>turns.map(turn=>turn.answer?.operational?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
+  const invalidate=()=>setMessages(turns=>turns.map(turn=>turn.answer?.operational||turn.answer?.agent?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
   const refresh=async()=>{
    const live=liveTurn.current,id=conversation.current.id;
    if(!available||!live||live.owner!==owner||!id||!foreground.current||document.visibilityState!=='visible'||liveRefresh.current||lock.current)return;
@@ -112,7 +154,7 @@ export function useTenbotConversation():TenbotConversation{
  const request=async<T,>(body:Record<string,unknown>)=>{
   const chat=body.action==='ask'||body.action==='draft';
   try{
-   const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&conversation.current.id?{conversationId:conversation.current.id}:{})},owner);
+   const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&conversation.current.id?{conversationId:conversation.current.id}:{}),...(experiment?{localAgentExperiment:true}:{})},owner);
    if(chat&&conversation.current.owner===owner&&result.conversationId)conversation.current.id=result.conversationId;
    return result;
   }catch(e){
@@ -132,12 +174,12 @@ export function useTenbotConversation():TenbotConversation{
   const retry=previous?.error&&previous.question===current?previous:undefined;
   const turn:Turn={id:retry?.id??++sequence.current,question:current,createdAt:retry?.createdAt??new Date().toISOString(),answer:null};
   liveTurn.current=null;
-  setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7).map(item=>item.answer?.operational?{...item,answer:null,error:'Live Job facts are refreshed for each request.'}:item),turn]);
+  setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7).map(item=>item.answer?.operational||item.answer?.agent?{...item,answer:null,error:'Live Job facts are refreshed for each request.'}:item),turn]);
   try{
-   const response=await request<Answer>({action:'ask',question:current,context:context()});
+   const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(experiment?{demoScenario,...(invoiceAttached?{invoiceId:'synthetic-invoice-1042'}:{}),orderDetails}:{})});
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
    if(response.operational)liveTurn.current={id:turn.id,owner};
-   if(response.operational&&(!foreground.current||document.visibilityState!=='visible'))return true;
+   if((response.operational||response.agent)&&(!foreground.current||document.visibilityState!=='visible'))return true;
    setMessages(m=>m.map(item=>item.id===turn.id?{...item,answer:response,answeredAt:new Date().toISOString()}:item));
    return true;
   }catch(e){
@@ -191,6 +233,7 @@ export function useTenbotConversation():TenbotConversation{
     {m.answer?<>
      {m.answer.mode==='guide'?<p className="text-xs text-slate-500">{m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."}</p>:null}
      <p data-tenbot-answer className="whitespace-pre-wrap break-words leading-relaxed text-slate-800">{m.answer.mode==='guide'&&m.answer.sources[0]?guideText(m.answer.sources[0]):m.answer.message}</p>
+     {m.answer.agent?<AgentReview agent={m.answer.agent}/>:null}
      {[...new Set(m.answer.notices)].filter(note=>!m.answer?.message.includes(note)&&!(m.answer?.mode==='guide'&&m.answer.sources[0]&&guideText(m.answer.sources[0]).includes(note))).map(note=><p key={note} className="text-xs text-slate-600">{note}</p>)}
      {!m.answer.sources.length&&m.answer.mode==='guide'?<p>The TenOps Guide does not have enough verified information to confirm that workflow. Please check with Product.</p>:null}
      {m.answer.sources.length?<details data-tenbot-sources className="text-xs">
@@ -221,8 +264,8 @@ export function useTenbotConversation():TenbotConversation{
   return <details ref={menuRef} className="relative" onKeyDown={event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeMenu();menuRef.current?.querySelector('summary')?.focus();}}}>
    <summary aria-label="TenBot conversation actions" className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded text-slate-500 hover:bg-slate-100 [&::-webkit-details-marker]:hidden"><MoreHorizontal className="h-4 w-4"/></summary>
    <div className="absolute right-0 z-30 mt-1 min-w-52 rounded-md border border-slate-300 bg-white p-1 shadow-lg">
-    {offerSuggestion?<button type="button" disabled={busy} onClick={()=>{closeMenu();void makeDraft(question);}} className="block min-h-11 w-full rounded px-3 text-left text-sm hover:bg-slate-50 disabled:opacity-50">Draft a feature suggestion</button>:null}
-    {reviewAllowed?<button type="button" disabled={busy} aria-expanded={showFeedback} onClick={()=>{closeMenu();setShowFeedback(value=>!value);if(!showFeedback)void load();}} className="block min-h-11 w-full rounded px-3 text-left text-sm hover:bg-slate-50 disabled:opacity-50">Product feedback</button>:null}
+    {offerSuggestion&&!experiment?<button type="button" disabled={busy} onClick={()=>{closeMenu();void makeDraft(question);}} className="block min-h-11 w-full rounded px-3 text-left text-sm hover:bg-slate-50 disabled:opacity-50">Draft a feature suggestion</button>:null}
+    {reviewAllowed&&!experiment?<button type="button" disabled={busy} aria-expanded={showFeedback} onClick={()=>{closeMenu();setShowFeedback(value=>!value);if(!showFeedback)void load();}} className="block min-h-11 w-full rounded px-3 text-left text-sm hover:bg-slate-50 disabled:opacity-50">Product feedback</button>:null}
     {messages.length||draft?<button type="button" disabled={busy} onClick={()=>{closeMenu();void clear();}} className="block min-h-11 w-full rounded px-3 text-left text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50">Clear assistant chat</button>:null}
     {!offerSuggestion&&!reviewAllowed&&!messages.length&&!draft?<p className="px-3 py-2 text-xs text-slate-500">Ask TenBot to start a conversation.</p>:null}
    </div>
@@ -235,6 +278,12 @@ export function useTenbotConversation():TenbotConversation{
  const controls=():ReactNode=>{
   if(!available)return null;
   return <div className="space-y-3" data-tenbot-controls>
+   {experiment?<details className="rounded border border-amber-200 bg-amber-50 p-2 text-xs" aria-label="Local agent experiment controls"><summary className="min-h-9 cursor-pointer py-2 font-medium">Local agent experiment · Synthetic data · No execution</summary>
+    <p>Offline mode uses explicitly selected scripted test responses. OpenAI requires server credentials and separate spending authorization. Existing Production Qwen is unchanged.</p>
+    <label className="mt-2 block">Scripted test scenario<select aria-label="Scripted test scenario" disabled={busy} value={demoScenario} onChange={event=>setDemoScenario(event.target.value)} className="min-h-11 w-full rounded border bg-white p-2"><option value="job-investigation">Job investigation</option><option value="invoice-preparation">Invoice preparation</option><option value="tool-recovery">Tool failure recovery</option></select></label>
+    <button type="button" disabled={busy} onClick={()=>setInvoiceAttached(true)} className="mt-2 min-h-11 rounded border bg-white px-3">{invoiceAttached?'Synthetic invoice attached':'Attach synthetic invoice'}</button>
+    {invoiceAttached?<div className="mt-2 space-y-2"><p>SYNTHETIC-supplier-invoice-1042.txt. Text fixture only; no photo/PDF interpretation is claimed.</p><p>Enter reviewed order details for this draft. Leave unknown values blank. These fields do not approve database writes.</p>{([['orderedBy','Ordered by'],['orderDate','Order date'],['location','Destination location']] as const).map(([key,label])=><label key={key} className="block">{label}<input aria-label={label} type={key==='orderDate'?'date':'text'} maxLength={120} value={orderDetails[key]} onChange={event=>setOrderDetails(value=>({...value,[key]:event.target.value}))} className="min-h-11 w-full rounded border bg-white p-2"/></label>)}</div>:null}
+   </details>:null}
    {error?<p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
    {notice?<p role="status" className="rounded bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
    {draft?<form ref={draftForm} onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3 rounded-lg border bg-white p-3" aria-label="Feature suggestion draft">

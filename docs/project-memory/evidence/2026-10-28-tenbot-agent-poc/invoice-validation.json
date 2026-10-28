@@ -1,0 +1,38 @@
+{
+  "status": "pass",
+  "command": "./node_modules/.bin/tsx scripts/verify-tenbot-invoice.mts",
+  "recorded_from": "Actual latest verifier output already captured in this implementation session; not rerun for this receipt.",
+  "date": "2026-10-28",
+  "mode": "offline deterministic contract validation; no model or OCR test",
+  "groups": 20,
+  "checks": [
+    "raw synthetic attachment, not pre-extracted model answers",
+    "independent exact quantity conversion, holds ambiguity/unmatched/duplicates, excludes freight",
+    "missing metadata is explicit; invoice date and reader identity never become order metadata",
+    "owner/session binding and read-first evidence boundary",
+    "malformed, negative, zero and invented positive quantities rejected",
+    "SKU/size prefixes cannot impersonate complete source identities",
+    "supplier and full invoice reference require their own labeled evidence",
+    "no arbitrary rows, SQL, actor metadata or fabricated candidate IDs in prepare",
+    "every registered line reviewed exactly once; no forged or repeated refs",
+    "material lines cannot be hidden as freight; freight cannot enter material preparation",
+    "catalog completeness, row identity uniqueness and financial-field projection",
+    "incomplete duplicate checks never establish absence",
+    "tool errors recover by re-reading; failed refresh invalidates older duplicate evidence",
+    "a new catalog extraction invalidates the earlier duplicate snapshot",
+    "incompatible units, missing invoice sizes and supplier mismatch remain held",
+    "nonterminating package divisions are held rather than rounded",
+    "explicit invoice package conflicts are held even when SKU and container unit match",
+    "a matching SKU cannot silently override a conflicting invoice material description",
+    "no executor is discoverable and approval language never expands capabilities",
+    "caller read adapter fixes tables/projections, quotes search grammar and refuses incomplete counts"
+  ],
+  "specific_latest_regressions": {
+    "bare_order_counts": "Blue Coal 3 Bag yields only potential_duplicate; CC Green 2 Bag yields only ambiguous_catalog_match.",
+    "measured_package_conflicts": "Both explicit 25 LB Bag and 5 KG Bag are held against catalog 50 LB Bag.",
+    "correction": "Purchasing parser's unparsed-container fallback does not establish measured package evidence; conflict validation requires parsed quantity, measure and container."
+  },
+  "database_writes": 0,
+  "inference_calls": 0,
+  "paid_api_calls": 0
+}

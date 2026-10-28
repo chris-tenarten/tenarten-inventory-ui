@@ -11,7 +11,20 @@ import {resolveJobIntent,buildOperationalInferenceInput,validateOperationalExpla
 // @ts-ignore -- Deno requires explicit .ts imports.
 import {LIVE_QUESTION,retainedJobIntent,jobHistoryMarker,withoutLiveHistory,prepareJobRequest,operationalReply,type JobTools,type PreparedJobRequest} from './tenbot-job-session.ts';
 type Rpc=(name:string,args?:Record<string,unknown>)=>Promise<{data:unknown;error:unknown}>;
-export async function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,_legacyBudget?:number,jobTools?:JobTools){
+type ExperimentalAgent=(body:Record<string,unknown>,owner:string)=>Promise<unknown>;
+export function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget:number|undefined,jobTools:JobTools|undefined,experimentalAgent:ExperimentalAgent):Promise<unknown>;
+export function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget?:number,jobTools?:JobTools):ReturnType<typeof handleTenbotDefault>;
+export async function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget?:number,jobTools?:JobTools,experimentalAgent?:ExperimentalAgent){
+ // Only the local review adapter supplies this dependency. Hosted construction,
+ // Qwen metering, normal history and all other actions remain unchanged.
+ if(experimentalAgent&&['ask','clear'].includes(String(body.action))){
+  const allowed=await caller('has_app_capability',{p_capability:'readOperationalData'});
+  if(allowed.error||allowed.data!==true)throw new TenbotError('Your account is not authorized.',403);
+  return experimentalAgent(body,userId);
+ }
+ return handleTenbotDefault(body,userId,caller,service,provider,legacyBudget,jobTools);
+}
+async function handleTenbotDefault(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,_legacyBudget?:number,jobTools?:JobTools){
  // Retained call compatibility only; the atomic database policy is authoritative.
  void _legacyBudget;
  const call=async(rpc:Rpc,name:string,args:Record<string,unknown>={})=>{const r=await rpc(name,args);if(r.error)throw new TenbotError(name==='tenbot_reserve_usage'?'TenBot shared usage limit or inference budget reached. Please retry later.':'TenBot could not complete this action.',name==='tenbot_reserve_usage'?429:403);return r.data;};

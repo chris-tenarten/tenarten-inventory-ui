@@ -1,0 +1,25 @@
+{
+  "status": "pass",
+  "mode": "offline session/lifecycle/privacy contract tests; no model reasoning or hosted verification",
+  "groups": 16,
+  "checks": [
+    "normal and experimental handler profiles both gate operational access before dispatch",
+    "caller history, native provider context and extra permissions are rejected before provider creation",
+    "conversation ownership and forged IDs reveal no other employee context",
+    "same-conversation request and clear lock while an investigation is in flight",
+    "only explicit host order metadata enters proposal; invoice date is never order date",
+    "approval text and execute actions cannot acquire any mutation capability",
+    "session history retains owner questions and lookup seeds, never live answers/native tool context",
+    "final Job revocation clears result artifacts and measured model candidate prose",
+    "catalog changes after reasoning clear the prepared proposals and native candidate content",
+    "new duplicate appearing at publication clears prepared proposals",
+    "a later same-query catalog read cannot bless an earlier stale proposal",
+    "a later reread of the same Job cannot bless earlier inconsistent fact evidence",
+    "prepare grant revoked during final freshness check cannot publish the prior draft",
+    "operational grant revoked during final Job reread cannot publish prior facts",
+    "inventory preparation is absent when the employee lacks existing write/adjust grants",
+    "expired conversations cannot be revived by a caller-replayed ID"
+  ],
+  "inference_calls": 0,
+  "database_writes": 0
+}
