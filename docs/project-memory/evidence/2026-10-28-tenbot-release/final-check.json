@@ -1,0 +1,149 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T16:55:20.254Z",
+  "runtimeSha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "acceptedCandidate": "93e7d18aad15e5c06b96f5be265e1a9861398d54",
+  "canonicalParent": "38c0a2a27b2d4a47da6d5df6334fc8a97a2b7567",
+  "projects": {
+    "tendev": {
+      "sha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+      "id": "90a74787-a5b4-458f-ba31-4823df1dddd4",
+      "url": "https://tendev.pages.dev",
+      "verifiedAssets": 47,
+      "publicAuthChecks": 4,
+      "realAnswerModes": [
+        "ai",
+        "operational-ai",
+        "operational-ai",
+        "operational-ai"
+      ]
+    },
+    "tenops": {
+      "sha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+      "id": "8ef91b61-5e24-4c95-ad8e-ab70359e7ce2",
+      "url": "https://tenops.pages.dev",
+      "verifiedAssets": 47,
+      "publicAuthChecks": 4,
+      "realAnswerModes": [
+        "ai",
+        "operational",
+        "operational-ai",
+        "operational-ai"
+      ]
+    }
+  },
+  "tenbot": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 8,
+    "status": "ACTIVE",
+    "verify_jwt": true,
+    "ezbr_sha256": "df92f4ce7780e7705de0cfc72fe1ba40101c7ae50010105dd9eef04b41e4c6e6",
+    "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_49ff50b8-45db-490a-ac29-a1426659589e_7/source/supabase/functions/tenbot/index.ts",
+    "import_map": false
+  },
+  "functionsPreserved": [
+    {
+      "slug": "monday-material-check",
+      "version": 52,
+      "verify_jwt": false,
+      "ezbr_sha256": "51da7c50dd73f6d27bcce0496963035757038fdb4ba849ec25fa07aff7866253"
+    },
+    {
+      "slug": "generate-purchase-order-pdf",
+      "version": 57,
+      "verify_jwt": true,
+      "ezbr_sha256": "214faff2b7df40548ada2221617e583887623e04efd4cbeb8ef91aa22ce39c7b"
+    },
+    {
+      "slug": "generate-job-transmittal-pdf",
+      "version": 45,
+      "verify_jwt": true,
+      "ezbr_sha256": "40ea701e98e43a935292e92db20cbfcba12ae019c928cbdd78f1b3a133e9c39c"
+    },
+    {
+      "slug": "admin-manage-users",
+      "version": 41,
+      "verify_jwt": true,
+      "ezbr_sha256": "2620bfe6b2b38edb77cb0da785bbff5cdb2c5a44e03341ba1ac193cc8c960131"
+    },
+    {
+      "slug": "generate-proposal-pdf",
+      "version": 45,
+      "verify_jwt": true,
+      "ezbr_sha256": "988676cea2e736c03178637d7749ba0d58521a945fe2dc1088c5e5809f0a89ab"
+    },
+    {
+      "slug": "generate-sample-pdf",
+      "version": 57,
+      "verify_jwt": true,
+      "ezbr_sha256": "aa2e1230c73f925ab0147a035d8e1a0b64d1d2e1523707b21a5f78d4aa497c61"
+    },
+    {
+      "slug": "cleanup-messaging-drafts",
+      "version": 33,
+      "verify_jwt": true,
+      "ezbr_sha256": "02ce8b6f40df6f742d0929fca59c1284bc76fa50103b6c1d7208d760cc72046b"
+    },
+    {
+      "slug": "admin-delete-messaging-message",
+      "version": 33,
+      "verify_jwt": true,
+      "ezbr_sha256": "28f075c71aa3a5b485b5a4ed02f4ffef1b5cf285eeea4cf766ae35321f4af631"
+    },
+    {
+      "slug": "send-web-push-tendev",
+      "version": 34,
+      "verify_jwt": false,
+      "ezbr_sha256": "b5a3c4867566f9826b20331fe35ce82f15c4fd6d03d1fbf54385e9e418375b6e"
+    },
+    {
+      "slug": "send-web-push-tenops",
+      "version": 23,
+      "verify_jwt": false,
+      "ezbr_sha256": "9f04c2cf8de4acfe635786080f4a41aa3a59f7d1c920b628e43e2e33b545be4b"
+    }
+  ],
+  "migrationVersions": [
+    "20261027120000",
+    "20261027130000",
+    "20261027140000",
+    "20261027150000"
+  ],
+  "newMigrationsRequired": [],
+  "migrationsApplied": 0,
+  "webPushTransportCronPreserved": true,
+  "apiLoggingPreserved": true,
+  "secretDigestsPreserved": true,
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "workersFreeVerifiedAt": "2026-10-28T16:03:00Z",
+  "paidActivation": false,
+  "usageWindowStart": "2026-10-28T16:28:10.248Z",
+  "callerReleaseUsage": {
+    "accountedNeurons": 90.754,
+    "attempts": 13,
+    "completed": 11,
+    "failed": 2,
+    "inputTokens": 9737,
+    "measuredNeurons": 90.754,
+    "outputTokens": 1500,
+    "reserved": 0,
+    "unmeasured": 0
+  },
+  "accountUsage": {
+    "checkedAt": "2026-10-28T16:55:19.511Z",
+    "dayStart": "2026-10-28T00:00:00.000Z",
+    "reportedNeurons": 809.6024587154388,
+    "reportedRequests": 97,
+    "nominalRemainingNeurons": 9190.397541284561
+  },
+  "incrementalInferenceCostUsd": 0,
+  "limits": [
+    "Actor-scoped ledger window is not per-request attribution; account analytics may lag or include concurrent clients.",
+    "SQL role simulation covers second-owner/Admin isolation; one real existing owner is tested over HTTP.",
+    "Public desktop/mobile Auth and served bytes are fresh; accepted signed-in local UI evidence reused.",
+    "The first hosted lookup failed closed as unavailable; later UUID/number diagnostics and full recheck passed. Cause is unconfirmed; the four-second tool deadline is unchanged.",
+    "Privileged Bid conversion and lead-time smoke questions tested account-specific denial, not a successful privileged procedure or semantic unsupported-answer test.",
+    "Qwen may reject to verified fallback; records are best-effort multi-query, not a transactional snapshot."
+  ]
+}

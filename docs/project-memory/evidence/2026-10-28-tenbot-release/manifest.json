@@ -1,0 +1,132 @@
+{
+  "runtimeSha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "acceptedCandidate": "93e7d18aad15e5c06b96f5be265e1a9861398d54",
+  "canonicalParent": "38c0a2a27b2d4a47da6d5df6334fc8a97a2b7567",
+  "checkedAt": "2026-10-28T16:55:20.254Z",
+  "files": [
+    {
+      "file": "boundary.json",
+      "sha256": "ead01bfb8c931107d4489efcde63b7a0777cbc79f26c0d73a67a94674db479f8",
+      "source": "boundary.json"
+    },
+    {
+      "file": "preflight.json",
+      "sha256": "c8a2171771cf70ae499b549060388760a23c4afae08775d259e28dba4c11088a",
+      "source": "preflight.json"
+    },
+    {
+      "file": "schema-security.json",
+      "sha256": "ac69ef9553689518863f29cf8933a449096719621a7fe3ced052fd279a924baa",
+      "source": "schema-security.json"
+    },
+    {
+      "file": "job-preflight.json",
+      "sha256": "b68f7dced2dddda072e01279f0d253c7fe09a75042a511424bb741eb92e8c9aa",
+      "source": "job-preflight.json"
+    },
+    {
+      "file": "marker-privacy-rollback.json",
+      "sha256": "cc3415846adf2b1215a2cea31358ada0e48af3f0dfc0b472c602ea53b349e261",
+      "source": "marker-privacy-rollback.json"
+    },
+    {
+      "file": "edge-results.json",
+      "sha256": "8a228c37f2eb515318e4a9cc1a32dafce3aaace26b936f56473bb3b8814f79b6",
+      "source": "edge-entry/edge-results.json"
+    },
+    {
+      "file": "disabled-smoke-first-failure.json",
+      "sha256": "91efdfdb241f4b51a473346ab861f240b6c1393aeeb66ca303b57df433f3f726",
+      "source": "disabled-smoke-first-failure.json"
+    },
+    {
+      "file": "hosted-diagnosis.json",
+      "sha256": "876828ad51f4dc4339711d7f92180278f38cc6a2ab0eec7c70f706440778606d",
+      "source": "hosted-diagnosis.json"
+    },
+    {
+      "file": "disabled-smoke.json",
+      "sha256": "68107629bcfb83035af60654b8787d00944d982375b8d76e3a45a5412ed56592",
+      "source": "disabled-smoke.json"
+    },
+    {
+      "file": "enabled-smoke-harness-failure.json",
+      "sha256": "353f9548313dc51f7cd85ac4f39f7915eb83f865b67b027c127e998b11430de1",
+      "source": "enabled-smoke-harness-failure.json"
+    },
+    {
+      "file": "enabled-smoke.json",
+      "sha256": "6dd82eb48d05c31730bed02c1622a7fc4b3f3dab4098deac97299539e6a1630d",
+      "source": "enabled-smoke.json"
+    },
+    {
+      "file": "messaging-smoke.json",
+      "sha256": "a931530cfa3bfdbb982f599fbfd7e5a16d3e1e48adbfbbdc0b79dc747ecb12e4",
+      "source": "messaging-smoke.json"
+    },
+    {
+      "file": "tendev-build.json",
+      "sha256": "f0ed2b2c9427726ca9741781bbfb507578d36188f695d13c296e92621a6856d2",
+      "source": "tendev-build.json"
+    },
+    {
+      "file": "tenops-build.json",
+      "sha256": "616e7fb739e71f7d0c4511547d4442ba6da933e7dfce5c12e2ba87980d514ac0",
+      "source": "tenops-build.json"
+    },
+    {
+      "file": "tendev-served.json",
+      "sha256": "05bbd375a8b35d08d04f52e7564e800d80c61b797190951209988426cacb37a2",
+      "source": "tendev-served.json"
+    },
+    {
+      "file": "tenops-served.json",
+      "sha256": "fbe9f93da769fee99cc89ad097706c5acadc8969c472e941c760593a6b6b0ae4",
+      "source": "tenops-served.json"
+    },
+    {
+      "file": "tendev-public-browser.json",
+      "sha256": "5c9d2feed35d949c84308d2624658c451e2fa3303c88b173a482b26a10b08fe6",
+      "source": "tendev-public-browser.json"
+    },
+    {
+      "file": "tenops-public-browser.json",
+      "sha256": "0b7d3cb73ebd85febbc5a11b6bcb03974417d4062dad6ae7d135718f8f345066",
+      "source": "tenops-public-browser.json",
+      "sourceSha256": "bdbc6b1128b0967242c743dcd56804f0cc910a3d4b7116fe04ebebfa78b727f4",
+      "derived": true,
+      "transformation": "Corrected only the limitation target label from TenDev to TenOps; original source receipt retained privately."
+    },
+    {
+      "file": "tendev-hosted-smoke.json",
+      "sha256": "670f6fde5c0ea3f0a21c30edef765ee51c38ff3047436996bd6d55fd80ef2c55",
+      "source": "tendev-hosted-smoke.json"
+    },
+    {
+      "file": "tenops-hosted-smoke.json",
+      "sha256": "3a7754a1b587351ed348f587c60f6f2cf52017007a72eace514d2185a22552ca",
+      "source": "tenops-hosted-smoke.json"
+    },
+    {
+      "file": "extra-auth.json",
+      "sha256": "12f1a6352079b51270584bc4afdac045b16d22d81aef997093130148ddf85be5",
+      "source": "extra-auth.json"
+    },
+    {
+      "file": "client-secrets-scan.json",
+      "sha256": "81235b519277bca35321adbd290cbb2681b0ea7eee7741b60079bfce7ca5b8bc",
+      "source": "client-secrets-scan.json"
+    },
+    {
+      "file": "final-check.json",
+      "sha256": "1cc6cd6185181c32f5297140b08958dc18512db50aa4ed5a5dbfd6e8ad4d994c",
+      "source": "final-check.json"
+    }
+  ],
+  "scope": "Selected sanitized receipts only. No source manifests with historical email-named paths, environment files, private SQL/actors, bundles, credentials, full Job answers or employee records.",
+  "historicalFailures": [
+    "disabled-smoke-first-failure.json is superseded by two diagnostic reads and disabled-smoke.json. Cause is unconfirmed.",
+    "enabled-smoke-harness-failure.json expected3 turns from the existing2-turn loader. enabled-smoke.json retains the four real answers once and completes remaining checks without repeating them."
+  ],
+  "authorization": "Chris: TENBOT — APPROVED RELEASE, accepted93e7d18; existing dev→main workflow, TenDev beforeTenOps; no paid provider/model-routing change."
+}

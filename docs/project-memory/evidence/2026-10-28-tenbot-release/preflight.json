@@ -1,0 +1,141 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T16:10:13.105Z",
+  "sourceBaseline": "38c0a2a",
+  "hostedRuntime": "6cb6cf7",
+  "functions": [
+    {
+      "slug": "monday-material-check",
+      "id": "d733081f-f813-45ef-9317-db933857df3c",
+      "version": 50,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "51da7c50dd73f6d27bcce0496963035757038fdb4ba849ec25fa07aff7866253"
+    },
+    {
+      "slug": "generate-purchase-order-pdf",
+      "id": "4800ff21-d1ab-4cd0-a300-266956929ca8",
+      "version": 55,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "214faff2b7df40548ada2221617e583887623e04efd4cbeb8ef91aa22ce39c7b"
+    },
+    {
+      "slug": "generate-job-transmittal-pdf",
+      "id": "55c0246b-b5a5-4a2e-8d58-18bc9757f1c3",
+      "version": 43,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "40ea701e98e43a935292e92db20cbfcba12ae019c928cbdd78f1b3a133e9c39c"
+    },
+    {
+      "slug": "admin-manage-users",
+      "id": "023a3001-f733-40da-96dc-1c041f0d01dc",
+      "version": 39,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "2620bfe6b2b38edb77cb0da785bbff5cdb2c5a44e03341ba1ac193cc8c960131"
+    },
+    {
+      "slug": "generate-proposal-pdf",
+      "id": "0c25a597-ca3f-4dfe-9007-ae76ea14bce1",
+      "version": 43,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "988676cea2e736c03178637d7749ba0d58521a945fe2dc1088c5e5809f0a89ab"
+    },
+    {
+      "slug": "generate-sample-pdf",
+      "id": "aca8265a-5cc1-4dd8-b4df-e28a4b6e524e",
+      "version": 55,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "aa2e1230c73f925ab0147a035d8e1a0b64d1d2e1523707b21a5f78d4aa497c61"
+    },
+    {
+      "slug": "cleanup-messaging-drafts",
+      "id": "cdc0b169-61b3-4e9e-9217-347b2f961f72",
+      "version": 31,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "02ce8b6f40df6f742d0929fca59c1284bc76fa50103b6c1d7208d760cc72046b"
+    },
+    {
+      "slug": "admin-delete-messaging-message",
+      "id": "3486ee84-dced-45f1-baa9-786a961de0e7",
+      "version": 31,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "28f075c71aa3a5b485b5a4ed02f4ffef1b5cf285eeea4cf766ae35321f4af631"
+    },
+    {
+      "slug": "send-web-push-tendev",
+      "id": "0248da3c-43fe-44e5-84f9-71f35422c401",
+      "version": 32,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "b5a3c4867566f9826b20331fe35ce82f15c4fd6d03d1fbf54385e9e418375b6e"
+    },
+    {
+      "slug": "send-web-push-tenops",
+      "id": "3449d184-907b-4a78-bb1c-e94f095643ee",
+      "version": 21,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "9f04c2cf8de4acfe635786080f4a41aa3a59f7d1c920b628e43e2e33b545be4b"
+    },
+    {
+      "slug": "tenbot",
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 5,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "5f4891cb8b185826cf9b14d5002a0b97d79f29a077a4380cd850f48b5d7d008b"
+    }
+  ],
+  "pagesConfigurationPreserved": true,
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "secretDigestsMatch": true,
+  "approvedFourMigrationHashesMatch": true,
+  "newMigrations": [],
+  "webPushTransportCronPreserved": true,
+  "apiLogging": {
+    "auto_explain.log_min_duration": "-1",
+    "auto_explain.log_parameter_max_length": "0",
+    "log_duration": "on",
+    "log_min_error_statement": "panic",
+    "log_parameter_max_length": "0",
+    "log_statement": "none"
+  },
+  "inheritedLogging": {
+    "log_error_verbosity": "default",
+    "log_min_duration_sample": "-1",
+    "log_min_duration_statement": "-1",
+    "log_parameter_max_length_on_error": "0",
+    "log_transaction_sample_rate": "0",
+    "pgaudit.log": "none",
+    "pgaudit.log_parameter": "off"
+  },
+  "rlsAndRequiredGrants": true,
+  "rowEstimates": {
+    "job_updates": 11,
+    "jobs": 42,
+    "manpower_entries": 2005,
+    "production_rework_cycles": 1
+  },
+  "usage": {
+    "checkedAt": "2026-10-28T16:10:06.572Z",
+    "dayStart": "2026-10-28T00:00:00.000Z",
+    "reportedNeurons": 718.8607552051544,
+    "reportedRequests": 84,
+    "nominalRemainingNeurons": 9281.139244794846
+  },
+  "workersFree": {
+    "verifiedAt": "2026-10-28T16:03:00Z",
+    "method": "Authenticated existing Workers plans UI reloaded by root; Free $0, disabled Current plan, Workers AI10000/day",
+    "paidActivation": false,
+    "planChanged": false
+  },
+  "businessRecordsRead": false,
+  "mutations": false
+}

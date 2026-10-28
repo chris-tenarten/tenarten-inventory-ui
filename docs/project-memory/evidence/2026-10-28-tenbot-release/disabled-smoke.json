@@ -1,0 +1,99 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T16:27:23.714Z",
+  "sha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "phase": "disabled",
+  "target": "tendev",
+  "origin": "https://tendev.pages.dev",
+  "checks": [
+    "existing HTTP Auth",
+    "requesting caller operational capability",
+    "missingJWT denied",
+    "invalidJWT denied",
+    "unlistedOrigin denied",
+    "callerreplayedhistory denied",
+    "unowned followup denied before facts",
+    "new synthetic owner conversation",
+    "ask200 no-store",
+    "read-only history guidance",
+    "synthetic owner clear",
+    "new synthetic owner conversation",
+    "ask200 no-store",
+    "specificJob deterministic authorized evidence",
+    "live turns retain only server lookup markers",
+    "ask200 no-store",
+    "owner canonical labor followup",
+    "live turns retain only server lookup markers",
+    "foreground refresh no append",
+    "live turns retain only server lookup markers",
+    "caller direct history table denied",
+    "service historyload denied",
+    "caller assistantappend denied",
+    "ask200 no-store",
+    "policy boundary separate from live records",
+    "synthetic owner clear",
+    "new synthetic owner conversation",
+    "ask200 no-store",
+    "overview deterministic authorized facts",
+    "live turns retain only server lookup markers",
+    "synthetic owner clear"
+  ],
+  "answers": [
+    {
+      "question": "How do I inspect old stock movements without recording a new movement?",
+      "mode": "guide",
+      "tool": null,
+      "complete": null,
+      "fallback": false,
+      "elapsedMs": 1464,
+      "sourceIds": [
+        "inventory-activity"
+      ],
+      "publicWorkflowAnswer": "Here is guidance from the TenOps Guide."
+    },
+    {
+      "question": "Specific caller-visible Job status",
+      "mode": "operational",
+      "tool": "get_job_summary",
+      "complete": true,
+      "fallback": false,
+      "elapsedMs": 1794,
+      "sourceIds": []
+    },
+    {
+      "question": "How many recorded labor hours does that Job have?",
+      "mode": "operational",
+      "tool": "get_job_labor_summary",
+      "complete": true,
+      "fallback": false,
+      "elapsedMs": 822,
+      "sourceIds": []
+    },
+    {
+      "question": "Can TenBot retrieve private DMs or personal tasks of another employee?",
+      "mode": "verified",
+      "tool": null,
+      "complete": null,
+      "fallback": false,
+      "elapsedMs": 737,
+      "sourceIds": [
+        "privacy-my-work-create",
+        "privacy-knowledge-messaging"
+      ],
+      "publicWorkflowAnswer": "Private Messaging and My Work contents are available only to authorized participants. Administrative lifecycle or cleanup authority does not grant routine reading access. TenBot cannot independently retrieve private DMs or personal tasks. You may explicitly paste text for your own answer; it does not automatically become shared knowledge or Product feedback. Separate authorized Job tools can read only their approved operational fields."
+    },
+    {
+      "question": "How many Production Jobs are In Production?",
+      "mode": "operational",
+      "tool": "get_production_overview",
+      "complete": true,
+      "fallback": false,
+      "elapsedMs": 924,
+      "sourceIds": []
+    }
+  ],
+  "syntheticConversationsCleared": true,
+  "ordinaryMessagesOrTasksRead": false,
+  "businessWrites": 0,
+  "identitiesOrCredentialsEmitted": false
+}

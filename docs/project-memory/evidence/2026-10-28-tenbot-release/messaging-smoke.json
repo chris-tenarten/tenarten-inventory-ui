@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "sha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "checkedAt": "2026-10-28T16:35:03.051Z",
+  "authenticatedMessagingReadRpc200": true,
+  "emptyRequestedMessageSet": true,
+  "conversationAndUnreadAggregatesStable": true,
+  "messageOrTaskContentsReturned": false,
+  "normalMessagingWrites": 0,
+  "notificationsOrReadMarksChanged": false,
+  "functions": [
+    {
+      "body_hash": "2df3474d8a0ed47d3cedd38a3a18e632",
+      "proname": "can_read_my_work_message"
+    },
+    {
+      "body_hash": "e0f1abe13bf0a398c1baf44e3929085c",
+      "proname": "list_my_work_conversations_v12"
+    },
+    {
+      "body_hash": "0bcccb6460d25a0fc7ce2419d08bb727",
+      "proname": "list_my_work_message_page_v12"
+    },
+    {
+      "body_hash": "1e0cdd2fdb5548efe6bf4ea5c80ae459",
+      "proname": "mark_my_work_conversation_read_v12"
+    },
+    {
+      "body_hash": "85b3250a47e2bcd2871aec9945a6f70e",
+      "proname": "save_my_work_message_group"
+    },
+    {
+      "body_hash": "f348818926d7377459d9a99c76ffbe0f",
+      "proname": "send_my_work_message_v12"
+    }
+  ],
+  "scope": "Actual caller Messaging read RPC and SQL-filtered own unread/summary aggregates only; accepted local normal-DM keyboard/layout evidence reused. No live message sent, employee contents returned or notification changed."
+}

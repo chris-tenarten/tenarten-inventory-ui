@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "sha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "checkedAt": "2026-10-28T16:51:06.317Z",
+  "expiredExistingJwt401": true,
+  "forgedRefreshHistory400": true,
+  "modelCalls": 0,
+  "historyAppends": 0,
+  "privateRecordsRead": false
+}
