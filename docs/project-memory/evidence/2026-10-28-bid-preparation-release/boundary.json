@@ -1,0 +1,104 @@
+{
+  "releaseCommit": "5e28d254b8d674ec64ce2ba347c83108366af936",
+  "parent": "4941d0fd537b4cee3f9419a85b10b7f9fe6dfedb",
+  "tree": "950219102e52ba7975c653aff5b7f8165fed616f",
+  "accepted": "25a9363ea3c4a150a46684dc05b5caab30e305dc",
+  "localBase": "72841ee43b80fb8c0a9d5f5a1361642c8b80e513",
+  "includedCommits": [
+    "f92662ca037f3659fbaeeea2431add5b24602bb0",
+    "25a9363ea3c4a150a46684dc05b5caab30e305dc"
+  ],
+  "paths": [
+    {
+      "path": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "blob": "8fbb81481d1a580e0209dd434aedfaea38b2f8c3",
+      "sha256": "53e17114129fe37305a0571843aa77f69197e1279b6f82492030f1bd859c849e"
+    },
+    {
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "blob": "a18c2a496d7ea0d973cc5278b9d793773c90aa81",
+      "sha256": "dd1cacb57c87c536aa672f0d7d51907905bbd806a2ee6109327be7857eca79e9"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/desktop.png",
+      "blob": "4427c9460274552fae2255f4bad3df3ed56dc8e3",
+      "sha256": "514a296dbee9bc91aeac1899f5b836cf1b15dd856caf8fec08de0529e6720e62"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/mobile.png",
+      "blob": "592079275b06dcc67df40f40a89bdeda889b61cf",
+      "sha256": "b00f4d19c6e89750d3989a004b3ff641a42e352391085bc835be97d5701be6a3"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/style-dark.png",
+      "blob": "d0c71e833bb727f5bbc620712c285327de586752",
+      "sha256": "49168ca2b10724941bed4c36088c5a60825150e874243e2e82828471f3ae9f82"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/style-desktop.png",
+      "blob": "3d5605a3c866e93547bd9e2fc19d83f28e483dce",
+      "sha256": "7aed1c7e426653774a6a98b246e980db40ba5a90a2891da6db1cf23979403fe3"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/style-mobile.png",
+      "blob": "b68fb77f71d5cca14a0ef3638ed5eedffb622433",
+      "sha256": "209840c6aff0b4fdd9af9ce35aaff796a1ae4ccef3484fec7f05a0e7e1588bfb"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/styling-validation.json",
+      "blob": "0a6127732721612338bfdfba58f697dcde91288f",
+      "sha256": "c1fcd997d3139d4bd5c67cedf9773591116915ebc7caf65fe409a749d153adf5"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/validation.json",
+      "blob": "484d515fb419c3734cbd2f1305838d431168f1c5",
+      "sha256": "3abd7231e87ba5e4d52a4c6212ffef0e54de45cb0238fd924eb9a1fb898add65"
+    },
+    {
+      "path": "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+      "blob": "cfb36cdfe879ff43d3fe0326e0bd3f0fe83ec234",
+      "sha256": "9f7f95773e86d12cf5299b0b7557145c464e76c3a6b8731a361d395033d07d28"
+    },
+    {
+      "path": "docs/project/PROJECT_MANIFEST.md",
+      "blob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+      "sha256": "75c1c5c5ca75e9ec8c84cd17a970786ca312904e0b249bb478c641182843043d"
+    },
+    {
+      "path": "scripts/support/bid-preparation-browser.mjs",
+      "blob": "ce22e332c6aa4d651735b67c9490bad06dece842",
+      "sha256": "495788d3bc6d359059f3347918a5252af83fb0dbb937ccf289c38decb6fc7255"
+    },
+    {
+      "path": "scripts/verify-intake-materials-browser.mjs",
+      "blob": "05f0def7fa8d3093f1ae00246bedf4bf568be0d5",
+      "sha256": "b0dae53b0272a5cc5acd5e046cf9317e5fe7ad7ba4d994e2cd2f969640166aaa"
+    },
+    {
+      "path": "src/modules/pre-production/BidTools.tsx",
+      "blob": "b9b30dbeeb869e670de8a79f25b5505773b593a5",
+      "sha256": "6c2f1cd37c2142cfb809a0840227ae534a495bd5f09ea20ae1ae59016733476b"
+    },
+    {
+      "path": "src/modules/pre-production/BidWorkspace.tsx",
+      "blob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+      "sha256": "8d167425d5a8a03b78e968380284ff333ceef0af1a6c680bc309102b14ba15ad"
+    }
+  ],
+  "sourcePaths": [
+    "scripts/support/bid-preparation-browser.mjs",
+    "scripts/verify-intake-materials-browser.mjs",
+    "src/modules/pre-production/BidTools.tsx",
+    "src/modules/pre-production/BidWorkspace.tsx"
+  ],
+  "appPaths": [
+    "src/modules/pre-production/BidTools.tsx",
+    "src/modules/pre-production/BidWorkspace.tsx"
+  ],
+  "migrationsRequired": [],
+  "configurationChanges": [],
+  "ProductionInspectorUnchanged": true,
+  "whitespaceOnlyShellExcluded": true,
+  "localBranchAndIndexPreserved": true,
+  "createdAt": "2026-10-28T17:45:51.935Z"
+}

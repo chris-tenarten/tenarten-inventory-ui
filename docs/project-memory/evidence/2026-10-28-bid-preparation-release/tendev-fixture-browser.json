@@ -1,0 +1,219 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T17:58:58.463Z",
+  "target": "tendev",
+  "mode": "fixture",
+  "sha": "5e28d254b8d674ec64ce2ba347c83108366af936",
+  "origin": "https://tendev.pages.dev",
+  "deployment": "faa8af5a-4e96-43a2-9641-ba6bbefb40f8",
+  "checks": [
+    "Exact hosted frontend: Overview preparation, four Bid URLs, Related Records/handoff placement and no Tools tab (synthetic local API bridge)",
+    "All four generator/library routes and unsaved Sample Bid/customer/project context; no create/save/issue request",
+    "Synthetic Admin/read-only/Proposal-denied card visibility; unchanged permission expressions, not hosted actor/RLS certification",
+    "Synthetic saved active/Won/deposit/unsaved-edit guards and cancellable handoff confirmation; no conversion called, accepted local lifecycle evidence reused",
+    "390px single-column action cards and no Inspector/document horizontal overflow",
+    "Normal Production Inspector opens local canonical Job with Transmittal/Purchasing cards; no Bid Preparation injection"
+  ],
+  "verifiedLoadedAssets": [
+    {
+      "path": "/_next/static/css/15f74ee999edbd3d.css",
+      "sha256": "dc31b71c94026cde2d75f752356e2e0a04884842cf0980ccd5b1a0567747f770"
+    },
+    {
+      "path": "/_next/static/css/6faf42657f96bc11.css",
+      "sha256": "acee344d20516b0f5ab0b8d091abfcfab0eaebed8afbdc0a719b43e5c57f0788"
+    },
+    {
+      "path": "/_next/static/css/d7957608658f4027.css",
+      "sha256": "8c6ff9c23bd26695c0bbe921659a8a9c000e75bc247a50d31b64a9acb66a8679"
+    },
+    {
+      "path": "/_next/static/chunks/webpack-1b707cd55ea7f6b3.js",
+      "sha256": "a7a10a5c4e29debfedd8e31d4075f5dcd203f119cafa05fbbe83661da3203db6"
+    },
+    {
+      "path": "/_next/static/chunks/3714-7946fb603a05859a.js",
+      "sha256": "113f7177b1960b78006677ff403c52fff6e834b92ee30149c8623d6da83a5ca0"
+    },
+    {
+      "path": "/_next/static/chunks/c1b010ae-8cda3ade643e9bbb.js",
+      "sha256": "c32752bea08f16904ade836e4ba91198718d1431ddd417cac6bff0579a65bd65"
+    },
+    {
+      "path": "/_next/static/chunks/6873-ad2c34adfff528fa.js",
+      "sha256": "67955c4c352d441df9fca29f6299c1cacf247879f7b80ef4649f1fb973e87530"
+    },
+    {
+      "path": "/_next/static/chunks/app/pre-production/page-2cb16e2b1c865637.js",
+      "sha256": "a2d75df8074f06147844b1b961d6d5b2948292caa47d3ea8143cbdc2fbe02754"
+    },
+    {
+      "path": "/_next/static/chunks/1297-96df6653792b855b.js",
+      "sha256": "649ea9eea70748b7848d9dc60aca8ef018b76ebb34d410dc10a589a5d5fd3050"
+    },
+    {
+      "path": "/_next/static/chunks/app/pre-production/layout-a8d10200734d8a63.js",
+      "sha256": "5eb135c9750b93276b1cb25160628bff628b92a7314a7fc19f8c1d8e5ec98f79"
+    },
+    {
+      "path": "/_next/static/chunks/app/layout-61ac9d04f728a9d7.js",
+      "sha256": "913db668c82bf58248766c9b1584c206b8c5e30de14c648b7a3d600c70ae60ac"
+    },
+    {
+      "path": "/_next/static/chunks/main-app-a4c21c96cc2bc032.js",
+      "sha256": "6bd1a3c8dc8ce5fa4efa399ad9b9cec216aa79b53ab2ad8c5c7921c549bbdcd8"
+    },
+    {
+      "path": "/_next/static/chunks/1744-456877fe6eee1dee.js",
+      "sha256": "aae261d15afe4a5c0b6d2645717afd9bc165e946eec5990c1c9ec0c71d2ddecb"
+    },
+    {
+      "path": "/_next/static/chunks/537-7f637a9ccda78a65.js",
+      "sha256": "95db838ac68b7c2a8952765faa1e065c1baf4152a19c9a7ef70cf82e16d75bcf"
+    },
+    {
+      "path": "/_next/static/chunks/3139-84b1c5c8a35a29d5.js",
+      "sha256": "4a9fe4d59433195ca2e56224e78ed90a9609787384fb0bdd22a299f4666b9eb1"
+    },
+    {
+      "path": "/_next/static/chunks/434-3e9f1b911e1df5e9.js",
+      "sha256": "fb334a6fd870e0d78ba3555d649b0a327829bd2caa662de9f3a178ba19b1cf49"
+    },
+    {
+      "path": "/_next/static/chunks/4944-9effc5eca9ed4eed.js",
+      "sha256": "dc26d065e1a9ff48c367e645fe9e8ec0028dc901a80b41d3a8f87b0bb169d505"
+    },
+    {
+      "path": "/_next/static/chunks/5971-04bd28b43a7f14be.js",
+      "sha256": "2c9a97d0b1a360ab4b4c32c59180fb3b1d05ac2e911941c477228b3be8aed321"
+    },
+    {
+      "path": "/_next/static/chunks/47222212-23f239a5d73d6cfe.js",
+      "sha256": "789ac4751607b9284e5f41e931c258e34f73bc4064085d5b5f57f7866bebb511"
+    },
+    {
+      "path": "/_next/static/chunks/9384-0204748abe1fb3e0.js",
+      "sha256": "8747482ee69af871645a2a23b20297d8723d36553abdd6bd4eae13c674ae9e30"
+    },
+    {
+      "path": "/_next/static/chunks/2560-84b7131ff085d028.js",
+      "sha256": "c1d234440a0c4112fa93582935f89a0b2c70a9ef833d3d6fd0432b6b00990630"
+    },
+    {
+      "path": "/_next/static/css/9611c0b375fc73f6.css",
+      "sha256": "3c1602937e830228e309d4abd4b495e23b953f8468f04f0499e64c58226b984b"
+    },
+    {
+      "path": "/_next/static/chunks/1053.cf440aa3b8fd2d24.js",
+      "sha256": "bd1aec0aa8d675def44c176a9c0cbb83e6e5b7a8e7032c3dcc7d8f1e1b3a9359"
+    },
+    {
+      "path": "/_next/static/css/009e8344dd0776ae.css",
+      "sha256": "8631d49a898c9b7a4652c29f3d4fed82199abb4d080d7ef007dc6b3f92eff93c"
+    },
+    {
+      "path": "/_next/static/css/d12f0aca13423a71.css",
+      "sha256": "b2ae794f2337f9f5d2719b6c15998dbfc6bf8711b8840b08e5fefadcaa99a445"
+    },
+    {
+      "path": "/_next/static/chunks/app/contacts/page-8db8241f5b53694e.js",
+      "sha256": "5957db539f6038829c85ca53f62b4a12e24b86ff8ba1ad7f90e087c68e8d2a05"
+    },
+    {
+      "path": "/_next/static/chunks/4350-fe070c83536aab29.js",
+      "sha256": "26755793fe106345e65b39e9df861c1f907c410cfabc5be15240db68a55e918f"
+    },
+    {
+      "path": "/_next/static/chunks/app/catalog/page-a76e7c52cfd93641.js",
+      "sha256": "3574007dc790c39046d1dcd7f53e1ab7a4fef302f5efc60c54ca202d1e00edb4"
+    },
+    {
+      "path": "/_next/static/chunks/app/transmittals/page-f07e56e23a27b0ea.js",
+      "sha256": "8dc56ac37014e4a114b95ba3003c82e2a64250d86ae2a792a9916826ebf6b370"
+    },
+    {
+      "path": "/_next/static/chunks/5779-5546161c1fcb7c0d.js",
+      "sha256": "1fe34b9299269d7b0fb3ae2ef65e59c1bb18f6d179a39c548ab06b56fd722eb5"
+    },
+    {
+      "path": "/_next/static/chunks/9065-f17f0b18dceb7b02.js",
+      "sha256": "85504d31386f2411eceb12af19c41c616be8aae15e3538b892813d62b486510b"
+    },
+    {
+      "path": "/_next/static/chunks/app/purchasing/page-7b3267109f70e657.js",
+      "sha256": "8f886a1a7d1e056e30e521e4b27c731149a13ae271856ca33ab893f7c0dc619f"
+    },
+    {
+      "path": "/_next/static/chunks/9911-7c86120b550ba8a2.js",
+      "sha256": "ce7abff485db3f8c53f72b0d192a099bf999ca748c07e4bb16fbb1ba4796853f"
+    },
+    {
+      "path": "/_next/static/chunks/app/proposals/page-ad246fcb086b7121.js",
+      "sha256": "4debffce82d31a45f9b9b85f77dfd6d43d10d8de10341e6dad6c991729974634"
+    },
+    {
+      "path": "/_next/static/chunks/8929-349f05018946e291.js",
+      "sha256": "bc40d8d1b6b4f913bc80155e3ab25827824feecf15df6e89f11cf9696696bf64"
+    },
+    {
+      "path": "/_next/static/chunks/3993-5ba342dd1ad2e0c8.js",
+      "sha256": "23137fe65cdf362b4c1bf037c54a6ca038a87aa1aa7b436b0a3a7705d2879be1"
+    },
+    {
+      "path": "/_next/static/chunks/app/samples/page-7807740e13a11478.js",
+      "sha256": "8c54c9ce1f11564941018a983c1f71a2620e922b577320549e78115fa236f469"
+    },
+    {
+      "path": "/_next/static/chunks/8741-ce0a2dcbd1d9b41f.js",
+      "sha256": "db5e8e58f61910cbb3acef7b16b9cdb7e9038ef2dd1c97fdfba66f3fa68b5c8b"
+    },
+    {
+      "path": "/_next/static/chunks/app/my-work/page-78a5c4ab00cf62c2.js",
+      "sha256": "c987af88f4236067ba6c07498f74ee5cbcff6c9b59cf70eadb38c8381ca82e2e"
+    },
+    {
+      "path": "/_next/static/chunks/app/activity/page-b9bfc11a86e8aaad.js",
+      "sha256": "ef6e2a02a0c5e4897fceac4d4248181f12a15e4392523ea0c94766befe5e94b4"
+    },
+    {
+      "path": "/_next/static/chunks/app/inventory/page-7ea4092cae9ded0f.js",
+      "sha256": "c36fb27591d8b91c54fb8709506d937891726c0e9064b6b1d708f5913c67ae19"
+    },
+    {
+      "path": "/_next/static/chunks/app/material-usage/page-363aae030f1f9dac.js",
+      "sha256": "d5309dfb56088f9da1cd28480646bf76dde9e891e048fcb1ac2aa5d4842319d7"
+    },
+    {
+      "path": "/_next/static/chunks/5307-ac8741000ac28d3d.js",
+      "sha256": "f9901947c3157f592ff2d06c1ea65062727c58185948b401a75c8ba0efc60d46"
+    },
+    {
+      "path": "/_next/static/chunks/app/manpower-reporting/page-94b43820aa987db4.js",
+      "sha256": "68ce35872ce0237fe396e15df173eadd313f6ebd7e6e1747e8b19e035b7886f1"
+    },
+    {
+      "path": "/_next/static/chunks/4796-d94402c509cd22cd.js",
+      "sha256": "92a9762835994c40e0e5a148b1a41aef5de0e841b28fdff86f2d972f11553982"
+    },
+    {
+      "path": "/_next/static/chunks/926-34e9fa653e112405.js",
+      "sha256": "c15d1cb05d121ebe1c0326621ea20ce745f3f62c797f5fe9eab0153a93aedd76"
+    },
+    {
+      "path": "/_next/static/chunks/app/page-bf552be4eaa719a9.js",
+      "sha256": "f21b0ef386d5c5294ae278724c7e15617be510665447e55bcd45689b19b11459"
+    }
+  ],
+  "pageErrors": [],
+  "blockedRequests": [],
+  "hostedBusinessWrites": 0,
+  "hostedAuthWrites": 0,
+  "hostedPrivateRecordReads": 0,
+  "syntheticFixture": true,
+  "actualSignedInHostedWorkflow": false,
+  "serviceWorkersBlocked": true,
+  "outputDirectory": "/private/tmp/tenops-bid-preparation-release-20261028/tendev-fixture-browser-1793210308898",
+  "limitation": "Actual hosted frontend bytes with synthetic auth/capability responses and read-only disposable localhost API bridge. This is UI/navigation/guard validation, not signed-in hosted actor/RLS or actual conversion certification. Accepted local f92662c creation/PDF/one-Job lifecycle evidence reused.",
+  "bridgedReadCount": 239,
+  "suppressedRequestCount": 46
+}

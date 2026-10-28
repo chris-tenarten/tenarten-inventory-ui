@@ -1,0 +1,95 @@
+{
+  "runtimeSha": "5e28d254b8d674ec64ce2ba347c83108366af936",
+  "canonicalParent": "4941d0fd537b4cee3f9419a85b10b7f9fe6dfedb",
+  "acceptedCandidate": "25a9363ea3c4a150a46684dc05b5caab30e305dc",
+  "includedAcceptedDeltas": [
+    "f92662ca037f3659fbaeeea2431add5b24602bb0",
+    "25a9363ea3c4a150a46684dc05b5caab30e305dc"
+  ],
+  "checkedAt": "2026-10-28T18:03:06.528Z",
+  "files": [
+    {
+      "file": "boundary.json",
+      "sha256": "89e2dbee34d3c9ad6129e715fedc1eea12cf51174733dbd38b33688ae1386bb7",
+      "rawSourceSha256": "89e2dbee34d3c9ad6129e715fedc1eea12cf51174733dbd38b33688ae1386bb7"
+    },
+    {
+      "file": "preflight.json",
+      "sha256": "858210c5c03fec457be6044ab03e4de9dfa7e803fcef2a0f7e881e70705de87d",
+      "rawSourceSha256": "858210c5c03fec457be6044ab03e4de9dfa7e803fcef2a0f7e881e70705de87d"
+    },
+    {
+      "file": "tendev-build.json",
+      "sha256": "01e928d41f03a9480f5d816907b1b627eae76a7763a7cfb3d85219640890dcb0",
+      "rawSourceSha256": "01e928d41f03a9480f5d816907b1b627eae76a7763a7cfb3d85219640890dcb0"
+    },
+    {
+      "file": "tenops-build.json",
+      "sha256": "2b13babb980bb3ceaab7d30fea5f385c71c722734d2bf6d03ad6f12386c1ffc3",
+      "rawSourceSha256": "2b13babb980bb3ceaab7d30fea5f385c71c722734d2bf6d03ad6f12386c1ffc3"
+    },
+    {
+      "file": "tendev-served.json",
+      "sha256": "3c6f68d50d2228bd70be57c916b8a93946c8ecdeccdf4f865e18439f8123fd8d",
+      "rawSourceSha256": "3c6f68d50d2228bd70be57c916b8a93946c8ecdeccdf4f865e18439f8123fd8d"
+    },
+    {
+      "file": "tenops-served.json",
+      "sha256": "efe643fd87b7c3145569d4d503916b16e0e3a7ba8814c111274b1ea74366d6be",
+      "rawSourceSha256": "efe643fd87b7c3145569d4d503916b16e0e3a7ba8814c111274b1ea74366d6be"
+    },
+    {
+      "file": "tendev-public-browser.json",
+      "sha256": "a9a6373a00d70036f480994c92a88b8f1ab77b1a46ef8229a33d9ce5ee41dc89",
+      "rawSourceSha256": "a9a6373a00d70036f480994c92a88b8f1ab77b1a46ef8229a33d9ce5ee41dc89"
+    },
+    {
+      "file": "tenops-public-browser.json",
+      "sha256": "a3e46e1657bf0d075fcfcce678541587cbf8644bdd3205c7c9cd40239310cb53",
+      "rawSourceSha256": "a3e46e1657bf0d075fcfcce678541587cbf8644bdd3205c7c9cd40239310cb53"
+    },
+    {
+      "file": "final-check.json",
+      "sha256": "fea85fad477c833737db86a6b554c9875d0a61419079bb4b5eb8e989dc905d11",
+      "rawSourceSha256": "fea85fad477c833737db86a6b554c9875d0a61419079bb4b5eb8e989dc905d11"
+    },
+    {
+      "file": "preflight-checkpoints.json",
+      "sha256": "baf8fbe15f09bd63f9e708b6f69b5db00358a3f8390ae450946169ec1439150c",
+      "rawSourceSha256": "baf8fbe15f09bd63f9e708b6f69b5db00358a3f8390ae450946169ec1439150c"
+    },
+    {
+      "file": "tendev-fixture-browser.json",
+      "sha256": "a288880a755960ca76b6fd42aebb6b06cfc1381cf5615e6f6111ab22422acec3",
+      "rawSourceSha256": "0e0363f33554cf617a0fb46812211c7de0563a1bf173d139d618011c9333351d",
+      "transformation": "Removed synthetic bridge endpoint lists; retained counts, checks, loaded-byte pins and explicit signed-in-hosted limitations. Raw file preserved."
+    },
+    {
+      "file": "tenops-fixture-browser.json",
+      "sha256": "2908c1f2a9c22338fc97bcea151096281dac2ca1fa2265773cae6ef9f7668e17",
+      "rawSourceSha256": "fae294a471ad917682b6c77ed4fd87b068d1da5343267ef05f41ffbccfd1163e",
+      "transformation": "Removed synthetic bridge endpoint lists; retained counts, checks, loaded-byte pins and explicit signed-in-hosted limitations. Raw file preserved."
+    },
+    {
+      "file": "actions.json",
+      "sha256": "53c7d3ee2f30a7b2029c44fa9ae4eb0e2f0cbd707a406edb68b1fc36ad3f9183",
+      "transformation": "Combined four sanitized completed-action receipts; private command logs retained outside version control."
+    },
+    {
+      "file": "hosted-bid-desktop.png",
+      "sha256": "5a295ed233bcdd405982a564358f1a8d194c3516286517f749bd6afcdfa1a725",
+      "scope": "Actual TenOps frontend with synthetic disposable read-only API bridge; no real business content."
+    },
+    {
+      "file": "hosted-production-inspector.png",
+      "sha256": "4f2ee8def7391ec064e52f148bfb2c2514086a79de27e05a9bb0a5a51a63c6f5",
+      "scope": "Actual TenOps frontend with synthetic disposable read-only API bridge; no real business content."
+    }
+  ],
+  "excluded": "Private project/env/database snapshots, credentials, source archives/manifests with historical filenames, build outputs, raw logs and bridge endpoint lists. Raw artifacts retained at /private/tmp/tenops-bid-preparation-release-20261028",
+  "harnessCheckpoints": [
+    "Cloudflare expired OAuth refreshed using existing Wrangler authentication, with no scope/configuration change.",
+    "Conversion verification expanded from public wrapper to its canonical revoked before_scope guard function.",
+    "Fixture browser asset-body lifetime and Notes selector checks corrected only in scratch helper. Failed checkpoints retained; final gates pass without application changes."
+  ]
+}
