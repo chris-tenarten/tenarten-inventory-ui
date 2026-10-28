@@ -1,0 +1,241 @@
+{
+  "passed": true,
+  "actualHostedEntry": true,
+  "realSupabaseSdk": true,
+  "realSharedModules": true,
+  "externalHttpRequests": 0,
+  "inferenceCalls": 0,
+  "realDatabase": false,
+  "checks": [
+    {
+      "name": "Provider disabled uses direct guidance and appends once",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 0,
+      "providerCalls": 0,
+      "appendAttempts": 1,
+      "finishOutcomes": []
+    },
+    {
+      "name": "Actual hosted success meters and appends once",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "completed"
+      ]
+    },
+    {
+      "name": "quota falls back without another model call or conversation reload",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 0,
+      "appendAttempts": 1,
+      "finishOutcomes": []
+    },
+    {
+      "name": "providerFailure falls back without another model call or conversation reload",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "failed"
+      ]
+    },
+    {
+      "name": "invalidProse falls back without another model call or conversation reload",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "failed"
+      ]
+    },
+    {
+      "name": "invalidIds falls back without another model call or conversation reload",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "failed"
+      ]
+    },
+    {
+      "name": "Fallback keeps loaded authenticated owner history and exact version",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "failed"
+      ]
+    },
+    {
+      "name": "Unsupported intent falls back to honest missing documentation without a feature prompt",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "failed"
+      ]
+    },
+    {
+      "name": "Guide permission denial stays deterministic without inference or instructions",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 0,
+      "providerCalls": 0,
+      "appendAttempts": 1,
+      "finishOutcomes": []
+    },
+    {
+      "name": "Invalid authentication remains 401",
+      "auth": 1,
+      "historyLoads": 0,
+      "reservationAttempts": 0,
+      "providerCalls": 0,
+      "appendAttempts": 0,
+      "finishOutcomes": []
+    },
+    {
+      "name": "Operational authorization remains 403",
+      "auth": 1,
+      "historyLoads": 0,
+      "reservationAttempts": 0,
+      "providerCalls": 0,
+      "appendAttempts": 0,
+      "finishOutcomes": []
+    },
+    {
+      "name": "Other-owner conversation remains 403",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 0,
+      "providerCalls": 0,
+      "appendAttempts": 0,
+      "finishOutcomes": []
+    },
+    {
+      "name": "Caller-replayed history remains 400",
+      "auth": 1,
+      "historyLoads": 0,
+      "reservationAttempts": 0,
+      "providerCalls": 0,
+      "appendAttempts": 0,
+      "finishOutcomes": []
+    },
+    {
+      "name": "Unlisted origin remains 403 before authentication",
+      "auth": 0,
+      "historyLoads": 0,
+      "reservationAttempts": 0,
+      "providerCalls": 0,
+      "appendAttempts": 0,
+      "finishOutcomes": []
+    },
+    {
+      "name": "History conflict remains 409 without duplicate append or model retry",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "failed"
+      ]
+    },
+    {
+      "name": "Append authorization remains 403 without fallback",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "failed"
+      ]
+    },
+    {
+      "name": "Successful-answer finish failure is not masked or retried under another outcome",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "completed"
+      ]
+    },
+    {
+      "name": "Failed-provider finish error retains one conservative reservation and safe fallback",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 1,
+      "appendAttempts": 1,
+      "finishOutcomes": [
+        "failed"
+      ]
+    },
+    {
+      "name": "Draft quota failure is not converted into ask fallback",
+      "auth": 1,
+      "historyLoads": 1,
+      "reservationAttempts": 1,
+      "providerCalls": 0,
+      "appendAttempts": 0,
+      "finishOutcomes": []
+    }
+  ],
+  "checkCount": 19,
+  "sources": [
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "sha256": "149e36d922e47972cfba9349b8e89a2da2f733fe214b8902a519a46ac9630aca"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "bfb70b65cf5b923fea03ca51626a17cb0b662078ed25fdcaf5d98a70f80014e4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "sha256": "3a31e34896f01d0b6723e2a134c7967066c03b4a5cc17ff84cd16dfe55e9fd39"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "sha256": "70670a4f5bee4ac950e382fae48893eb74a7ee034d4632a582ffba4a5fc3671b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-models.ts",
+      "sha256": "cbf127a0692b07053021e72e4331ced03ecf820e35b12a851a18554d813e915f"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-privacy.ts",
+      "sha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "95da5bc87b96e14d1079d99cceedd6db0387748bead4bf9301a317a2fc750abe"
+    }
+  ],
+  "limits": [
+    "HTTP/Auth/provider/RPC responses are synthetic; no hosted mutation or real model called.",
+    "Existing local PostgreSQL reservation/privacy evidence is reused; this test proves hosted-entry control flow and serialization."
+  ]
+}

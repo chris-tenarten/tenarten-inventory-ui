@@ -49,8 +49,11 @@ export async function handleTenbot(body:Record<string,unknown>,userId:string,cal
   const allowed=permission==='proposal.access'?await call(caller,'has_proposal_access'):await call(caller,'has_app_capability',{p_capability:permission});
   if(allowed===true)permissions.add(permission);
  }
- let reservation:unknown=null,model:string|null=null,inputForUsage:InferenceInput|null=null;
+ let reservation:unknown=null,model:string|null=null,inputForUsage:InferenceInput|null=null,finishAttempted=false;
  const finish=async(outcome:'completed'|'failed')=>{
+  // A failed finish RPC leaves the reservation conservative. Do not retry it
+  // under another outcome or turn that persistence error into an AI fallback.
+  finishAttempted=true;
   const measured=inputForUsage?provider?.usage?.(inputForUsage):null;
   // Metering is provider-owned server telemetry, never fields from the request
   // or generated prose. Unknown/failed usage retains its original reservation.
@@ -58,20 +61,30 @@ export async function handleTenbot(body:Record<string,unknown>,userId:string,cal
   await call(service,'tenbot_finish_usage',{p_id:reservation,p_outcome:outcome,p_model:model,
    p_input_tokens:valid?measured.inputTokens:null,p_output_tokens:valid?measured.outputTokens:null,p_estimated_neurons:valid?measured.estimatedNeurons:null});
  };
- try{const result=await answer(body,permissions,provider,async(input)=>{
+ try{
+ let result;
+ try{result=await answer(body,permissions,provider,async(input)=>{
   const estimate=provider?.reserveEstimate?.(input);
   if(!estimate||!Number.isFinite(estimate.neurons)||estimate.neurons<=0||!estimate.model)throw new TenbotError('TenBot metering is unavailable. Please use direct search.',503);
   model=estimate.model;
   inputForUsage=input;
   reservation=await call(service,'tenbot_reserve_usage',{p_user:userId,p_model:model,p_reserved_neurons:estimate.neurons});
  },history);
+ }catch(e){
+  if(reservation)await finish('failed').catch(()=>{});
+  // Reuse this authenticated owner's loaded history/version and permissions.
+  // Only inference/answer failures on ask fall back; never reload history,
+  // retry the model, or mask an authorization/input/persistence conflict.
+  if(!provider||body.action!=='ask'||!(e instanceof TenbotError)||![429,502,503].includes(e.status))throw e;
+  result={...await answer(body,permissions,null,async()=>{throw new TenbotError('Direct guidance cannot reserve inference.',503);},history),fallback:true};
+ }
  if(body.action==='ask'){
   const prose=result.mode==='guide'?result.sources.map(source=>source.guidance).join(' ')||result.message:result.message;
   const saved=await call(service,'tenbot_append_conversation_turn',{p_user:userId,p_conversation_id:conversation.id,p_expected_version:conversation.version,p_question:resolved.question,p_answer:prose.slice(0,1600)});
   if(saved!==true)throw new TenbotError('Conversation changed. Reopen TenBot and retry.',409);
  }
- if(reservation)await finish('completed');return {...result,conversationId:conversation.id};
- }catch(e){if(reservation)await finish('failed').catch(()=>{});throw e;}
+ if(reservation&&!finishAttempted)await finish('completed');return {...result,conversationId:conversation.id};
+ }catch(e){if(reservation&&!finishAttempted)await finish('failed').catch(()=>{});throw e;}
 }
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 type Conversation={ok:boolean;id:string;ownerId:string;version:number;turns:{question:string;answer:string}[]};

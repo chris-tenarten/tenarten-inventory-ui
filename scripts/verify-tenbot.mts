@@ -199,13 +199,16 @@ for(const prose of ['You can open Phase and Item Planning to schedule a Job.','Y
  await assert.rejects(answer({action:'ask',question:'What does the Production Pipeline do?'},all,fixture({ids:['knowledge-production'],answer:prose}),reserve),/deployed workflow wording|verify|wording/i,prose);
 }
 const readonlyCalls:string[]=[];
-await assert.rejects(handleTenbot({action:'ask',question:'What does the Production Pipeline do?',permissions:[...all]},admin,async(name,args)=>{
+const readonlyFallback=await handleTenbot({action:'ask',question:'What does the Production Pipeline do?',permissions:[...all]},admin,async(name,args)=>{
  assert.equal(name,'has_app_capability');readonlyCalls.push(String(args?.p_capability));
  return {data:args?.p_capability==='readOperationalData',error:null};
 },async(name)=>({data:name==='tenbot_reserve_usage'?'fixture-reservation':null,error:null}),{
  ...fixture({ids:['knowledge-production'],answer:'You can create a Job in Production.'}),
  reserveEstimate:()=>({model:'@cf/meta/llama-3.1-8b-instruct-fp8',neurons:1}),
-}),/permission wording/i);
+});
+assert.equal('fallback' in readonlyFallback&&readonlyFallback.fallback,true);
+assert.equal('resolution' in readonlyFallback&&readonlyFallback.resolution,'documentation-missing');
+assert.deepEqual('sources' in readonlyFallback&&readonlyFallback.sources,[]);
 assert(readonlyCalls.includes('writeBusinessData'),'Read-source claims need the actual server mutation capability check');
 assert(!readonlyCalls.includes('adjustInventory'),'Unrelated mutation gates should not be queried');
 
@@ -580,7 +583,8 @@ for(const outcome of ['completed','invalid-output','provider-failed'] as const){
  const caller=async()=>({data:true,error:null});
  const service=async(name:string,args?:Record<string,unknown>)=>{calls.push({name,args});return {data:name==='tenbot_reserve_usage'?'fixture-reservation':null,error:null};};
  const invocation=handleTenbot({action:'ask',question:groupQuestion,model:'paid-model',reservedNeurons:0,usage:{inputTokens:0}},admin,caller,service,meteredProvider,100);
- if(outcome==='completed')assert.equal((await invocation as Awaited<ReturnType<typeof answer>>).mode,'ai');else await assert.rejects(invocation);
+ const result=await invocation as Awaited<ReturnType<typeof answer>>&{fallback?:boolean};
+ if(outcome==='completed')assert.equal(result.mode,'ai');else{assert.equal(result.mode,'guide');assert.equal(result.fallback,true);assert.equal(result.sources[0]?.id,'group');}
  assert.deepEqual(calls[0],{name:'tenbot_reserve_usage',args:{p_user:admin,p_model:meteringModel,p_reserved_neurons:250}});
  assert.deepEqual(calls[1],{name:'tenbot_finish_usage',args:{p_id:'fixture-reservation',p_outcome:outcome==='completed'?'completed':'failed',p_model:meteringModel,p_input_tokens:outcome==='provider-failed'?null:1000,p_output_tokens:outcome==='provider-failed'?null:100,p_estimated_neurons:outcome==='provider-failed'?null:16.391}});
 }

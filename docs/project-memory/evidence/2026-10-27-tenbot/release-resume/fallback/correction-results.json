@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-27T23:54:59.845124+00:00",
+  "tier": 3,
+  "scope": "Hosted shared-handler automatic ask fallback on quota/validation/provider failures only",
+  "baseline": "51020a665c0009636550bac740d3f3618d033922",
+  "ownedPaths": [
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "scripts/verify-tenbot.mts",
+    "scripts/verify-tenbot-edge.mjs"
+  ],
+  "sourceHashes": {
+    "supabase/functions/_shared/tenbot-handler.ts": "bfb70b65cf5b923fea03ca51626a17cb0b662078ed25fdcaf5d98a70f80014e4",
+    "scripts/verify-tenbot.mts": "eb227649587ada17a4df55ddef0d4cc713867b2b1ecd1dd3c506b6f10ccd3f7a",
+    "scripts/verify-tenbot-edge.mjs": "7f24f1aa34553623e2e97d5a5f104541c021430a128c50a30f783fea7d3fbcf2"
+  },
+  "checks": {
+    "actualHostedEntry": {
+      "passed": true,
+      "groups": 19,
+      "path": "edge-results.json",
+      "realSdkAndSharedModules": true,
+      "externalRequests": 0
+    },
+    "coreOnly": "PASS 16 generated sources and 113 workflow examples with existing quota/metering/permissions/grounding checks updated for shared fallback",
+    "targetedEslintNoIgnore": "PASS handler/core-verifier/actual-Edge-verifier",
+    "strictSharedTypeScript": "PASS tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --allowImportingTsExtensions --skipLibCheck supabase/functions/_shared/tenbot-handler.ts",
+    "diffCheck": "PASS"
+  },
+  "preserved": [
+    "Same authenticated owner conversation/history/version and server permissions; load once, append once",
+    "No model retry or quota reset/refund",
+    "Failed inference reservation is finalized once as failed when possible; finish error retains conservative reservation",
+    "403/auth,400/input,409/history conflict and draft failures do not become fallback",
+    "Qwen3,knowledge,schema,budgets,Messaging and explicit feedback unchanged"
+  ],
+  "limits": [
+    "Actual hosted entry executes with synthetic HTTP/Auth/RPC/provider responses. No hosted verification is claimed.",
+    "Unchanged SQL reservation/history enforcement evidence is reused; no new database writes or model calls.",
+    "Existing local adapter still has redundant outer fallback; current eligible inference failures are handled in shared handler before that wrapper."
+  ],
+  "modelCalls": 0,
+  "hostedWrites": 0,
+  "builds": 0
+}
