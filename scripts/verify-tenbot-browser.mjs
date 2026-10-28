@@ -5,11 +5,12 @@ import {mkdirSync, writeFileSync, readFileSync, existsSync} from 'node:fs';
 const privacyOnly=process.argv.includes('--privacy-only');
 const presentationOnly=process.argv.includes('--presentation-only');
 const iconOnly=process.argv.includes('--icon-only');
+const keyboardOnly=process.argv.includes('--keyboard-only');
 const conversationOnly = process.argv.includes('--conversation-only') || process.argv.length === 2;
 const refinementOnly = process.argv.includes('--refinement-only');
 const liveInferenceOnce = refinementOnly && process.argv.includes('--live-inference-once');
 const knowledgeCoverageOnly = process.argv.includes('--knowledge-coverage-only') || refinementOnly;
-if (iconOnly || presentationOnly || privacyOnly || conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
+if (keyboardOnly || iconOnly || presentationOnly || privacyOnly || conversationOnly || knowledgeCoverageOnly || process.argv.includes('--contacts-coverage-only') || process.argv.includes('--communication-only')) {
   await verifyConversation();
   process.exit(0);
 }
@@ -19,7 +20,7 @@ if (iconOnly || presentationOnly || privacyOnly || conversationOnly || knowledge
 // pass one ordinary Messaging Send through the existing actual local adapter.
 async function verifyConversation() {
   const origin = 'http://localhost:3000', endpoint = 'http://localhost:55593';
-  const directory = `/private/tmp/tenops-tenbot-review/${iconOnly ? 'icon/browser' : presentationOnly ? 'polish/browser' : privacyOnly ? 'privacy/browser' : refinementOnly ? 'refinement/browser' : knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
+  const directory = `/private/tmp/tenops-tenbot-review/${keyboardOnly ? 'workflow-fidelity/keyboard' : iconOnly ? 'icon/browser' : presentationOnly ? 'polish/browser' : privacyOnly ? 'privacy/browser' : refinementOnly ? 'refinement/browser' : knowledgeCoverageOnly ? 'coverage/browser' : 'conversation'}`;
   const captured = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/communication/evaluation.json', 'utf8')).outputs;
   const coverage = JSON.parse(readFileSync('/private/tmp/tenops-tenbot-review/contacts-coverage/evaluation.json', 'utf8')).outputs;
   const workflowCoverageFile = `/private/tmp/tenops-tenbot-review/${refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'}`;
@@ -64,8 +65,8 @@ async function verifyConversation() {
   ].map(message => ({...message, created_at: stamp, read_at: null, attachments: message.id === officialId ? [{id: '00000000-0000-4000-8000-000000910003', message_id: officialId, storage_path: officialStorage, original_filename: officialFilename, content_type: 'application/pdf', byte_size: 128, created_at: stamp, preview: null}] : []}));
   const rowsFor = (messages, peer) => messages.filter(message => message.group_id ? message.group_id === peer : message.sender_user_id === peer || message.recipient_user_id === peer);
   try {
-    for (const admin of iconOnly?[true]:[true, false]) {
-      const context = await browser.newContext({viewport: {width: 1440, height: 1000}});
+    for (const admin of iconOnly||keyboardOnly?[true]:[true, false]) {
+      const context = await browser.newContext({viewport: {width: 1440, height: 1000},...(keyboardOnly?{isMobile:true,hasTouch:true}:{})});
       const calls = [], assistantCalls = [], messages = structuredClone(initialMessages), realtime = [], blocked = [];
       let answer = group.answer, holdNextAsk = false, failNextAsk = false, releasePending, activeUserId = user, authUserOverride, releaseProfile, switchedProfileSeen = false, nextAskLive = false;
       await context.routeWebSocket('**/realtime/v1/websocket*', socket => {
@@ -181,6 +182,73 @@ async function verifyConversation() {
         await expect(page.getByRole('region', {name: 'TenBot workspace', exact: true})).toHaveCount(0);
         await expect(page.locator('.tenbot-launcher')).toHaveCount(0);
         await choose('TenBot');
+        if(keyboardOnly){
+          const close=panel.getByRole('button',{name:'Close Inbox',exact:true});
+          const back=panel.getByRole('button',{name:'Back to conversations',exact:true});
+          const snapshot=()=>page.evaluate(()=>({body:document.body.style.cssText,rootOverflow:document.documentElement.style.overflow,x:scrollX,y:scrollY}));
+          const viewport=async(height,top=0)=>page.evaluate(({height,top})=>{
+            for(const[name,value]of Object.entries({height,offsetTop:top}))Object.defineProperty(window.visualViewport,name,{configurable:true,value});
+            window.visualViewport.dispatchEvent(new Event('resize'));window.visualViewport.dispatchEvent(new Event('scroll'));
+          },{height,top});
+          const resetViewport=()=>page.evaluate(()=>{delete window.visualViewport.height;delete window.visualViewport.offsetTop;window.visualViewport.dispatchEvent(new Event('resize'));window.visualViewport.dispatchEvent(new Event('scroll'));});
+          const keyboardFit=async(height,top)=>{
+            await expect.poll(async()=>{const[box,field,send]=await Promise.all([panel.boundingBox(),input.boundingBox(),panel.getByRole('button',{name:'Send',exact:true}).boundingBox()]);return Boolean(box&&field&&send&&Math.abs(box.y-top)<=1&&box.height<=height+1&&field.y>=top&&field.y+field.height<=top+height+1&&send.y+send.height<=top+height+1);}).toBe(true);
+          };
+          await close.click();await page.setViewportSize({width:390,height:844});
+          await page.waitForFunction(()=>parseFloat(document.documentElement.style.getPropertyValue('--tenops-shell-header-height'))===document.querySelector('[data-shell-header]').getBoundingClientRect().height);
+          await page.addStyleTag({content:'body { min-height: 2200px !important; }'});
+          await page.evaluate(()=>{document.body.style.setProperty('overscroll-behavior','auto');window.scrollTo(0,240);});
+          const before=await snapshot();assert.equal(before.y,240,'Fixture starts on a scrolled underlying module');
+          const lockPosition=()=>page.evaluate(()=>({x:-parseFloat(document.body.style.left),y:-parseFloat(document.body.style.top)}));
+          let expected=before;
+          const restored=()=>expect.poll(async()=>{const current=await snapshot();return current.body===before.body&&current.rootOverflow===before.rootOverflow&&Math.abs(current.x-expected.x)<=2&&Math.abs(current.y-expected.y)<=2;},{message:'Restore the module styles and scroll position (within mobile CSS-pixel rounding)'}).toBe(true);
+          await messagingButton.click();await expect(input).toBeVisible();
+          await expect.poll(()=>page.evaluate(()=>document.body.style.position)).toBe('fixed');
+          assert(Math.abs(await page.evaluate(()=>parseFloat(document.body.style.top))+before.y)<=2,'Underlying module stays at its previous scroll position');
+          expected={...before,...await lockPosition()};
+          await input.focus();await input.fill('Mobile question first line');await input.press('Shift+Enter');await input.type('second line');
+          await viewport(500,80);await keyboardFit(500,80);
+          await expect(input).toHaveValue('Mobile question first line\nsecond line');
+          const afterEmpty=askCount();await input.fill('  ');await input.press('Enter');assert.equal(askCount(),afterEmpty);
+          await ask('How do I create a group conversation?',{...group.answer,message:Array.from({length:24},(_,i)=>`Synthetic rendered answer line ${i+1}.`).join('\n')});
+          await input.focus();await viewport(430,110);await keyboardFit(430,110);
+          await expect.poll(()=>history.evaluate(el=>el.scrollHeight-el.scrollTop-el.clientHeight)).toBeLessThanOrEqual(1);
+          await history.evaluate(el=>{el.scrollTop=0;el.dispatchEvent(new Event('scroll'));});
+          await viewport(460,95);await keyboardFit(460,95);
+          assert.equal(await history.evaluate(el=>el.scrollTop),0,'Keyboard changes preserve reading an older answer');
+          await input.fill(Array.from({length:12},(_,i)=>`Draft line ${i+1}`).join('\n'));await keyboardFit(460,95);
+          assert(await input.evaluate(el=>el.scrollHeight>el.clientHeight),'Long multiline draft scrolls inside its bounded composer');
+          await page.screenshot({path:`${directory}/mobile-keyboard-pan.png`});
+          await input.evaluate(el=>el.blur());await resetViewport();await keyboardFit(844,0);
+          assert.equal(await page.evaluate(()=>document.body.style.position),'fixed','Keyboard dismissal retains the assistant document lock');
+          await input.fill('TenBot retained mobile draft');await input.focus();await viewport(500,70);
+          await close.click();await expect(panel).toHaveCount(0);
+          await restored();
+          assert(await page.evaluate(()=>document.activeElement?.tagName!=='TEXTAREA'),'Close dismisses the assistant keyboard');
+          await resetViewport();await messagingButton.click();await expect(input).toHaveValue('TenBot retained mobile draft');
+          await expect.poll(()=>page.evaluate(()=>document.body.style.position)).toBe('fixed');
+          expected={...before,...await lockPosition()};
+          await input.focus();await viewport(500,60);await back.click();await restored();
+          await choose('Draft Review Bob');await expect(input).toHaveAttribute('rows','3');assert.equal(await page.evaluate(()=>document.body.style.position),'');
+          const dmBefore=calls.filter(call=>call.name==='send_my_work_message_v12').length,assistantBefore=askCount();
+          await input.fill('DM first');await input.press('Shift+Enter');await input.type('DM second');await expect(input).toHaveValue('DM first\nDM second');await input.press('Enter');
+          await expect(history.getByText('DM first\nDM second',{exact:true})).toBeVisible();assert.equal(calls.filter(call=>call.name==='send_my_work_message_v12').length,dmBefore+1);assert.equal(askCount(),assistantBefore);
+          await resetViewport();await back.click();await choose('TenBot');await expect(input).toHaveValue('TenBot retained mobile draft');
+          expected={...before,...await lockPosition()};
+          await page.setViewportSize({width:1440,height:1000});await restored();
+          await page.setViewportSize({width:390,height:844});await expect.poll(()=>page.evaluate(()=>document.body.style.position)).toBe('fixed');
+          expected={...before,...await lockPosition()};
+          await close.click();await restored();
+          await messagingButton.click();await expect(input).toBeVisible();await ask(customer.question,customer.answer);
+          const linked=conversation.getByRole('article',{name:'TenBot assistant reply',exact:true}).last();await linked.locator('[data-tenbot-sources] summary').click();
+          await input.fill('Draft retained across module navigation');await linked.getByRole('link',{name:'Open Contacts',exact:true}).click();await expect(page).toHaveURL(`${origin}/contacts`);await expect(input).toHaveValue('Draft retained across module navigation');
+          await input.focus();await viewport(480,50);await keyboardFit(480,50);await close.click();await resetViewport();
+          assert.equal(await page.evaluate(()=>document.body.style.position),'');assert.equal(await page.evaluate(()=>document.documentElement.style.overflow),'');
+          assert.equal(await page.evaluate(()=>scrollY),0,'Closing after source navigation does not restore the previous module scroll position');
+          assert(!assistantCalls.some(call=>JSON.stringify(call).includes(privateBody)),'Private Messaging content stays outside assistant requests');
+          checked.push('mobile TenBot locks and restores the scrolled module/styles on close, conversation Back, desktop resize and route navigation','simulated iPhone VisualViewport keyboard height/pan keeps compact and multiline composer/Send visible; dismissal restores full height; recent-history pinning preserves older reading','draft survives close/reopen; empty Enter does not send; Shift+Enter remains multiline','normal DM has no assistant document lock and retains its rows, multiline Enter send and separate RPC/context');
+          continue;
+        }
         if(iconOnly){
           const avatar=async(locator,size)=>{
             await expect(locator).toHaveCount(1);await expect(locator).toBeVisible();
@@ -606,7 +674,7 @@ async function verifyConversation() {
     assert.deepEqual(errors, []);
     assert(liveInferenceCalls <= 1,'At most one real UI inference per run');
     if (liveInferenceOnce) assert(liveRecord?.answer?.mode === 'ai','Live UI review must produce actual inference evidence');
-    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, iconOnly, presentationOnly, inferenceCalls: liveInferenceCalls, liveInferenceReceipt:liveInferenceOnce?'live-ui-answer.json':null, actualConversationalReplays: replayActualConversations ? actualConversations.length : 0, actualReplayModes: replayActualConversations ? actualConversations.map(item => ({id: item.id, mode: item.answer.mode, fallback: item.answer.fallback === true, evaluationError: Boolean(item.error)})) : [], replaySource: ['communication/evaluation.json', 'contacts-coverage/evaluation.json', ...(presentationOnly?['refinement/selected-model.json']:[]), ...(knowledgeCoverageOnly ? [refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'] : []), ...(replayActualConversations ? [refinementOnly ? 'refinement/selected-model.json' : 'coverage/conversations.json'] : [])], checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; recorded model failures/fallbacks remain distinct from accepted AI prose. Live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
+    writeFileSync(`${directory}/browser-results.json`, JSON.stringify({passed: true, origin, keyboardOnly, iconOnly, presentationOnly, inferenceCalls: liveInferenceCalls, liveInferenceReceipt:liveInferenceOnce?'live-ui-answer.json':null, actualConversationalReplays: replayActualConversations ? actualConversations.length : 0, actualReplayModes: replayActualConversations ? actualConversations.map(item => ({id: item.id, mode: item.answer.mode, fallback: item.answer.fallback === true, evaluationError: Boolean(item.error)})) : [], replaySource: ['communication/evaluation.json', 'contacts-coverage/evaluation.json', ...(presentationOnly?['refinement/selected-model.json']:[]), ...(knowledgeCoverageOnly ? [refinementOnly ? 'refinement/browser-fixtures.json' : 'coverage/evaluation.json'] : []), ...(replayActualConversations ? [refinementOnly ? 'refinement/selected-model.json' : 'coverage/conversations.json'] : [])], checked, errors, requestEvidence, limitation: 'Synthetic browser RPCs establish UI isolation; recorded model failures/fallbacks remain distinct from accepted AI prose. Live authorization and physical iPhone keyboard/Web Push behavior are separate checks.'}, null, 2));
     console.log(`TenBot Inbox conversation browser checks passed (${checked.length} focused assertions; ${liveInferenceCalls} real inference calls).`);
   } finally {await browser.close();}
 }

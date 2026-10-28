@@ -2,6 +2,7 @@ import {createClient} from 'npm:@supabase/supabase-js@2.101.1';
 import {handleTenbot} from '../_shared/tenbot-handler.ts';
 import {cloudflareProvider,TenbotError,MODEL} from '../_shared/tenbot-core.ts';
 import {isAllowedModel} from '../_shared/tenbot-models.ts';
+import {createTenbotJobTools} from '../_shared/tenbot-job-tools.ts';
 Deno.serve(async(request:Request)=>{
  const origin=request.headers.get('origin')||'';
  const allowed=(Deno.env.get('TENBOT_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean);
@@ -29,6 +30,6 @@ Deno.serve(async(request:Request)=>{
  // Privileged client is confined to metering and a write-only assistant-turn RPC, never handed to inference.
  const service=createClient(url,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false}});
  const serverWrites=new Set(['tenbot_reserve_usage','tenbot_finish_usage','tenbot_append_conversation_turn']);
- return reply(await handleTenbot(body,data.user.id,(n,a)=>caller.rpc(n,a),(n,a)=>serverWrites.has(n)?service.rpc(n,a):Promise.resolve({data:null,error:{message:'Metering action unavailable'}}),provider));
+ return reply(await handleTenbot(body,data.user.id,(n,a)=>caller.rpc(n,a),(n,a)=>serverWrites.has(n)?service.rpc(n,a):Promise.resolve({data:null,error:{message:'Metering action unavailable'}}),provider,undefined,createTenbotJobTools(caller)));
  }catch(e){return reply({error:e instanceof TenbotError?e.message:'TenBot is temporarily unavailable.'},e instanceof TenbotError?e.status:503);}
 });

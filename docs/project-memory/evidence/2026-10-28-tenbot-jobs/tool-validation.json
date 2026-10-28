@@ -1,0 +1,100 @@
+{
+  "passed_at_recorded_run": true,
+  "recorded_run_completed_at": "2026-10-28T14:02:25.343682+00:00",
+  "copied_at": "2026-10-28T14:02:36.063211+00:00",
+  "status": "Passed; all recorded source hashes match the exact tested source at copy time.",
+  "checkCount": 18,
+  "checks": [
+    "Canonical UUID/Job-number lookup and ambiguous exact names preserve all candidates",
+    "Bounded result pagination has stable disjoint pages; archives require explicit inclusion",
+    "Exact controlled fixture UUID is excluded from defaults/overview and requires manageUsers for explicit lookup",
+    "Summary counts only recorded unresolved follow-ups and preserves original versus active Rework lifecycle",
+    "Missing Job facts remain null; released-disabled Planning never queries phase/item records or invents progress",
+    "Labor uses integer hundredths, inclusive Chicago dates, canonical UUID and explicit Rework attribution; unlinked/other/out-of-period rows are excluded",
+    "Overview reuses effective lifecycle, exact status/schedule counts and a bounded upcoming list",
+    "Real authenticated PostgreSQL RLS hides the scoped Job across lookup/summary/planning/labor",
+    "Inactive/revoked memberships fail before record reads on every request; permitted read-only Guest can read",
+    "Partial tools retain safe verified Job facts, unavailable labor invents no totals, and incomplete transport invalidates exact aggregates",
+    "Final capability and scoped-row revocation discard previously fetched facts; malformed null labor suppresses totals and a hanging transport obeys the shared abort deadline",
+    "Strict arguments/search escaping and the fixture bridge reject arbitrary SQL, extra projections, private tables and finance/body fields",
+    "All output carries units/time/source metadata and excludes stored finance/notes/employee sentinels; existing TenBot records are unchanged",
+    "Handler validates synthetic explanation against real tool facts and retains canonical lookup context without live prose",
+    "Same-owner Job follow-up executes fresh tools; incorrect quantitative prose and provider outage return verified deterministic facts",
+    "Handler leaves ambiguous names unselected; another authorized account cannot reuse owner context or replay caller history",
+    "Refresh/follow-up reauthorize after scoped RLS revocation; in-flight grant loss prevents old model facts from publishing",
+    "Service authority is limited to owner context/metering; prior feedback/history/usage/conversation rows stay intact, with no private history in operational model input"
+  ],
+  "realPostgreSQL": true,
+  "localContainer": "tenops-tenbot-review",
+  "operationalQueryRole": "authenticated",
+  "persistenceRole": "service_role for owner-history and metering RPCs only",
+  "directToolQueryCount": 109,
+  "handlerSyntheticProviderCalls": 4,
+  "handlerRpcCalls": 35,
+  "externalModelCalls": 0,
+  "hostedCalls": 0,
+  "priorTenbotRecordsPreserved": true,
+  "newTaskUsageRowsPreserved": 4,
+  "newTaskConversations": 3,
+  "scope": "Five read-only Job tools with real local PostgreSQL capability and row authorization; deliberately incomplete transport cases are identified separately.",
+  "limitations": [
+    "SET ROLE/JWT-sub fixture is not hosted HTTP Auth transport",
+    "No live Production records or hosted query plans inspected",
+    "No actual external inference calls",
+    "Planning phases/items remain released-disabled"
+  ],
+  "changedSinceRecordedRun": [],
+  "sources": [
+    {
+      "path": "supabase/functions/_shared/tenbot-job-tools.ts",
+      "sha256": "77f842f86f247de59104b0b8b6849df9daf4fd30a50d9eb374936b91acc7e5a1",
+      "current_sha256_at_copy": "77f842f86f247de59104b0b8b6849df9daf4fd30a50d9eb374936b91acc7e5a1",
+      "matches_tested_source": true
+    },
+    {
+      "path": "supabase/functions/_shared/production-job-facts.mjs",
+      "sha256": "ef01a0c8b341fca3c2762128f08fad3598678de007573abded12b8bc00b47f39",
+      "current_sha256_at_copy": "ef01a0c8b341fca3c2762128f08fad3598678de007573abded12b8bc00b47f39",
+      "matches_tested_source": true
+    },
+    {
+      "path": "supabase/functions/_shared/labor-hours.mjs",
+      "sha256": "fe42f91ba1e2610e4e771adc8f29721222dd9662919849df15088cd5c99261ab",
+      "current_sha256_at_copy": "fe42f91ba1e2610e4e771adc8f29721222dd9662919849df15088cd5c99261ab",
+      "matches_tested_source": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "64884f56eba3deb1749c49e36d922d33ddf5941ef9b90d64f6c792a668f24cc2",
+      "current_sha256_at_copy": "64884f56eba3deb1749c49e36d922d33ddf5941ef9b90d64f6c792a668f24cc2",
+      "matches_tested_source": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "sha256": "e9567d77c7325b4ab7f302a8a37062b9e2c8c58c9d9711fcfb84e3a6b681c9e3",
+      "current_sha256_at_copy": "e9567d77c7325b4ab7f302a8a37062b9e2c8c58c9d9711fcfb84e3a6b681c9e3",
+      "matches_tested_source": true
+    },
+    {
+      "path": "scripts/support/tenbot-job-database.mjs",
+      "sha256": "22ab2068faf08a66ab544b3561ae03ee94d0dcb0833284a63d8d7be25c3d725f",
+      "current_sha256_at_copy": "22ab2068faf08a66ab544b3561ae03ee94d0dcb0833284a63d8d7be25c3d725f",
+      "matches_tested_source": true
+    },
+    {
+      "path": "scripts/verify-tenbot-jobs.mts",
+      "sha256": "e6fbc0b4defcdc5580fdcff58827cfade1e8645a368a1b5937c6c3c57202b8d7",
+      "current_sha256_at_copy": "e6fbc0b4defcdc5580fdcff58827cfade1e8645a368a1b5937c6c3c57202b8d7",
+      "matches_tested_source": true
+    }
+  ],
+  "bindingValidation": {
+    "command": "npx tsx scripts/verify-tenbot-ai-binding.mts",
+    "passed": true,
+    "cases": 81,
+    "networkCalls": 0,
+    "source": "scripts/verify-tenbot-ai-binding.mts",
+    "sha256": "74a7c542cbe16d3979c28908e862b60fa69b9e1fbfc45437ac589aeaa706c9e5"
+  },
+  "supersedes": "Earlier selected receipt retained privately; this run includes the final session/archived handling and routing guards."
+}

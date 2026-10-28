@@ -1,0 +1,142 @@
+{
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "actualResponses": 11,
+  "inputTokens": 6657,
+  "outputTokens": 1586,
+  "tokenEstimatedNeurons": 79.125,
+  "rows": [
+    {
+      "at": "2026-10-28T13:57:48.890Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 2025,
+      "usage": {
+        "prompt_tokens": 504,
+        "completion_tokens": 160,
+        "total_tokens": 664
+      },
+      "estimatedNeurons": 7.207,
+      "reservedNeurons": 32
+    },
+    {
+      "at": "2026-10-28T13:59:01.447Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1402,
+      "usage": {
+        "prompt_tokens": 504,
+        "completion_tokens": 160,
+        "total_tokens": 664
+      },
+      "estimatedNeurons": 7.207,
+      "reservedNeurons": 32
+    },
+    {
+      "at": "2026-10-28T13:59:05.236Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1870,
+      "usage": {
+        "prompt_tokens": 861,
+        "completion_tokens": 191,
+        "total_tokens": 1052
+      },
+      "estimatedNeurons": 9.803,
+      "reservedNeurons": 37
+    },
+    {
+      "at": "2026-10-28T13:59:08.142Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 714,
+      "usage": {
+        "prompt_tokens": 637,
+        "completion_tokens": 26,
+        "total_tokens": 663
+      },
+      "estimatedNeurons": 3.739,
+      "reservedNeurons": 35
+    },
+    {
+      "at": "2026-10-28T13:59:13.238Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1649,
+      "usage": {
+        "prompt_tokens": 529,
+        "completion_tokens": 157,
+        "total_tokens": 686
+      },
+      "estimatedNeurons": 7.232,
+      "reservedNeurons": 33
+    },
+    {
+      "at": "2026-10-28T13:59:16.464Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1498,
+      "usage": {
+        "prompt_tokens": 529,
+        "completion_tokens": 165,
+        "total_tokens": 694
+      },
+      "estimatedNeurons": 7.475,
+      "reservedNeurons": 33
+    },
+    {
+      "at": "2026-10-28T14:08:27.949Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 2428,
+      "usage": {
+        "prompt_tokens": 501,
+        "completion_tokens": 193,
+        "total_tokens": 694
+      },
+      "estimatedNeurons": 8.199,
+      "reservedNeurons": 32
+    },
+    {
+      "at": "2026-10-28T14:08:30.823Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1467,
+      "usage": {
+        "prompt_tokens": 858,
+        "completion_tokens": 191,
+        "total_tokens": 1049
+      },
+      "estimatedNeurons": 9.789,
+      "reservedNeurons": 37
+    },
+    {
+      "at": "2026-10-28T14:08:32.851Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 620,
+      "usage": {
+        "prompt_tokens": 682,
+        "completion_tokens": 26,
+        "total_tokens": 708
+      },
+      "estimatedNeurons": 3.947,
+      "reservedNeurons": 36
+    },
+    {
+      "at": "2026-10-28T14:08:37.251Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1742,
+      "usage": {
+        "prompt_tokens": 526,
+        "completion_tokens": 155,
+        "total_tokens": 681
+      },
+      "estimatedNeurons": 7.157,
+      "reservedNeurons": 32
+    },
+    {
+      "at": "2026-10-28T14:08:40.458Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1507,
+      "usage": {
+        "prompt_tokens": 526,
+        "completion_tokens": 162,
+        "total_tokens": 688
+      },
+      "estimatedNeurons": 7.37,
+      "reservedNeurons": 33
+    }
+  ],
+  "scope": "Safe synthetic Job fixture calls only; two complete browser passes plus one initial observer-failure call. All calls/charges preserved. Account telemetry can include concurrent other clients and is not attributed by subtraction."
+}

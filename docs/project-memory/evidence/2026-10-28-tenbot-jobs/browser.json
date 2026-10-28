@@ -1,0 +1,736 @@
+{
+  "passed": true,
+  "at": "2026-10-28T14:08:42.124Z",
+  "origin": "http://localhost:3000",
+  "checks": [
+    "Desktop actual Job resolution, caller-authorized labor follow-up and source details",
+    "Current Production counts render deterministic source facts",
+    "Mobile ambiguous names never select a Job",
+    "Mobile effective Rework and saved schedule distinguish disabled phase detail/readiness",
+    "Background clears live response contents; foreground reauthorizes without inference"
+  ],
+  "responses": [
+    {
+      "request": {
+        "action": "ask",
+        "question": "What is the current status of Job TB-2801?",
+        "context": [
+          "Current module: My Work"
+        ]
+      },
+      "status": 200,
+      "answer": {
+        "mode": "operational",
+        "message": "Production Job: TB-2801 — TenBot Review North Countertops. Recorded Production status: In Production. Persisted planned dates: 2026-10-28 through 2026-11-04. Requested delivery date: 2026-11-06. Recorded material status: Ordered. Ordered means procurement has started; all required material has not been confirmed arrived. Planning completeness: Planning Complete. Recorded Rework cycles: 0. Active Rework cycles: 0. Unresolved recorded follow-ups: 1. Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers.",
+        "resolution": "available",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-job-read.v1",
+          "verifiedAt": "2026-10-28T14:08:28.504Z"
+        },
+        "summary": null,
+        "notices": [
+          "Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers."
+        ],
+        "suggestionAllowed": false,
+        "fallback": true,
+        "operational": {
+          "tool": "get_job_summary",
+          "observedAt": "2026-10-28T14:08:28.504Z",
+          "complete": true,
+          "truncated": false,
+          "facts": [
+            {
+              "id": "job_identity",
+              "text": "Production Job: TB-2801 — TenBot Review North Countertops."
+            },
+            {
+              "id": "job_status",
+              "text": "Recorded Production status: In Production."
+            },
+            {
+              "id": "job_schedule",
+              "text": "Persisted planned dates: 2026-10-28 through 2026-11-04."
+            },
+            {
+              "id": "job_requested_delivery",
+              "text": "Requested delivery date: 2026-11-06."
+            },
+            {
+              "id": "job_material_status",
+              "text": "Recorded material status: Ordered."
+            },
+            {
+              "id": "job_material_ordered",
+              "text": "Ordered means procurement has started; all required material has not been confirmed arrived."
+            },
+            {
+              "id": "job_planning_readiness",
+              "text": "Planning completeness: Planning Complete."
+            },
+            {
+              "id": "rework_cycles",
+              "text": "Recorded Rework cycles: 0."
+            },
+            {
+              "id": "active_rework_cycles",
+              "text": "Active Rework cycles: 0."
+            },
+            {
+              "id": "open_follow_ups",
+              "text": "Unresolved recorded follow-ups: 1."
+            },
+            {
+              "id": "unknown_1",
+              "text": "Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers."
+            }
+          ],
+          "sources": [
+            {
+              "relation": "jobs",
+              "job_id": "10282026-0000-4000-8000-000000000101",
+              "record_id": "10282026-0000-4000-8000-000000000101",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:28.052Z"
+            },
+            {
+              "relation": "production_rework_cycles",
+              "job_id": "10282026-0000-4000-8000-000000000101",
+              "observed_at": "2026-10-28T14:08:28.052Z"
+            },
+            {
+              "relation": "job_updates",
+              "job_id": "10282026-0000-4000-8000-000000000101",
+              "observed_at": "2026-10-28T14:08:28.052Z"
+            }
+          ],
+          "choices": [],
+          "refreshable": true
+        },
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      }
+    },
+    {
+      "request": {
+        "action": "ask",
+        "question": "How many recorded labor hours does that job have?",
+        "context": [
+          "Current module: My Work"
+        ],
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      },
+      "status": 200,
+      "answer": {
+        "mode": "operational-ai",
+        "message": "Recorded labor: 8.3 hours for 2026-09-29 through 2026-10-28. Recorded labor entries in this reporting period: 3. Original or unclassified lifecycle labor: 8.3 hours. Latest recorded labor work date in this reporting period: 2026-10-28. Recorded labor on 2026-10-28: 4 hours. Recorded hours reflect saved Manpower entries; unrecorded work and future labor are unknown.",
+        "resolution": "available",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-job-read.v1",
+          "verifiedAt": "2026-10-28T14:08:31.274Z"
+        },
+        "summary": null,
+        "notices": [
+          "These are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified."
+        ],
+        "suggestionAllowed": false,
+        "fallback": false,
+        "operational": {
+          "tool": "get_job_labor_summary",
+          "observedAt": "2026-10-28T14:08:31.274Z",
+          "complete": true,
+          "truncated": false,
+          "facts": [
+            {
+              "id": "job_identity",
+              "text": "Production Job: TB-2801 — TenBot Review North Countertops."
+            },
+            {
+              "id": "job_status",
+              "text": "Recorded Production status: In Production."
+            },
+            {
+              "id": "job_schedule",
+              "text": "Persisted planned dates: 2026-10-28 through 2026-11-04."
+            },
+            {
+              "id": "job_requested_delivery",
+              "text": "Requested delivery date: 2026-11-06."
+            },
+            {
+              "id": "job_material_status",
+              "text": "Recorded material status: Ordered."
+            },
+            {
+              "id": "job_material_ordered",
+              "text": "Ordered means procurement has started; all required material has not been confirmed arrived."
+            },
+            {
+              "id": "job_planning_readiness",
+              "text": "Planning completeness: Planning Complete."
+            },
+            {
+              "id": "labor_total",
+              "text": "Recorded labor: 8.3 hours for 2026-09-29 through 2026-10-28."
+            },
+            {
+              "id": "labor_entries",
+              "text": "Recorded labor entries in this reporting period: 3."
+            },
+            {
+              "id": "labor_original",
+              "text": "Original or unclassified lifecycle labor: 8.3 hours."
+            },
+            {
+              "id": "labor_latest",
+              "text": "Latest recorded labor work date in this reporting period: 2026-10-28."
+            },
+            {
+              "id": "labor_day_1",
+              "text": "Recorded labor on 2026-10-21: 0 hours."
+            },
+            {
+              "id": "labor_day_2",
+              "text": "Recorded labor on 2026-10-22: 0 hours."
+            },
+            {
+              "id": "labor_day_3",
+              "text": "Recorded labor on 2026-10-23: 0 hours."
+            },
+            {
+              "id": "labor_day_4",
+              "text": "Recorded labor on 2026-10-24: 0 hours."
+            },
+            {
+              "id": "labor_day_5",
+              "text": "Recorded labor on 2026-10-25: 0 hours."
+            },
+            {
+              "id": "labor_day_6",
+              "text": "Recorded labor on 2026-10-26: 0 hours."
+            },
+            {
+              "id": "labor_day_7",
+              "text": "Recorded labor on 2026-10-27: 0 hours."
+            },
+            {
+              "id": "labor_day_8",
+              "text": "Recorded labor on 2026-10-28: 4 hours."
+            },
+            {
+              "id": "labor_limit",
+              "text": "Recorded hours reflect saved Manpower entries; unrecorded work and future labor are unknown."
+            },
+            {
+              "id": "unknown_1",
+              "text": "These are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified."
+            }
+          ],
+          "sources": [
+            {
+              "relation": "jobs",
+              "job_id": "10282026-0000-4000-8000-000000000101",
+              "record_id": "10282026-0000-4000-8000-000000000101",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:30.827Z"
+            },
+            {
+              "relation": "manpower_entries",
+              "job_id": "10282026-0000-4000-8000-000000000101",
+              "observed_at": "2026-10-28T14:08:30.827Z"
+            }
+          ],
+          "choices": [],
+          "refreshable": true
+        },
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      }
+    },
+    {
+      "request": {
+        "action": "ask",
+        "question": "How many active Production Jobs are there?",
+        "context": [
+          "Current module: My Work"
+        ],
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      },
+      "status": 200,
+      "answer": {
+        "mode": "operational-ai",
+        "message": "Active Production Jobs: 6.",
+        "resolution": "available",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-job-read.v1",
+          "verifiedAt": "2026-10-28T14:08:33.236Z"
+        },
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": false,
+        "operational": {
+          "tool": "get_production_overview",
+          "observedAt": "2026-10-28T14:08:33.236Z",
+          "complete": true,
+          "truncated": false,
+          "facts": [
+            {
+              "id": "overview_scope",
+              "text": "Production overview counts describe current visible Jobs in the selected archive scope; the date window applies only to upcoming persisted planned completions."
+            },
+            {
+              "id": "overview_window",
+              "text": "Upcoming planned completion window: 2026-10-28 through 2026-11-26, using America/Chicago calendar dates."
+            },
+            {
+              "id": "overview_jobs",
+              "text": "Production Jobs in scope: 6."
+            },
+            {
+              "id": "overview_active_jobs",
+              "text": "Active Production Jobs: 6."
+            },
+            {
+              "id": "overview_scheduled",
+              "text": "Scheduled Production Jobs across all statuses in scope: 3."
+            },
+            {
+              "id": "overview_unscheduled",
+              "text": "Unscheduled Production Jobs across all statuses in scope: 3."
+            },
+            {
+              "id": "overview_status_not_started",
+              "text": "Production Jobs with recorded status Not Started: 2."
+            },
+            {
+              "id": "overview_status_on_deck",
+              "text": "Production Jobs with recorded status On Deck: 1."
+            },
+            {
+              "id": "overview_status_in_production",
+              "text": "Production Jobs with recorded status In Production: 2."
+            },
+            {
+              "id": "overview_status_on_hold",
+              "text": "Production Jobs with recorded status On Hold: 1."
+            },
+            {
+              "id": "overview_status_shipped",
+              "text": "Production Jobs with recorded status Shipped: 0."
+            },
+            {
+              "id": "overview_status_complete",
+              "text": "Production Jobs with recorded status Complete: 0."
+            },
+            {
+              "id": "overview_status_cancelled",
+              "text": "Production Jobs with recorded status Cancelled: 0."
+            },
+            {
+              "id": "upcoming_1",
+              "text": "Upcoming persisted planned completion: TB-2805 — TenBot Review Completed With Rework on 2026-11-02 for Rework."
+            },
+            {
+              "id": "upcoming_2",
+              "text": "Upcoming persisted planned completion: TB-2802 — TenBot Review Shared Name on 2026-11-03."
+            },
+            {
+              "id": "upcoming_3",
+              "text": "Upcoming persisted planned completion: TB-2801 — TenBot Review North Countertops on 2026-11-04."
+            }
+          ],
+          "sources": [
+            {
+              "relation": "jobs",
+              "observed_at": "2026-10-28T14:08:32.853Z"
+            },
+            {
+              "relation": "production_rework_cycles",
+              "observed_at": "2026-10-28T14:08:32.853Z"
+            }
+          ],
+          "choices": [],
+          "refreshable": true
+        },
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      }
+    },
+    {
+      "request": {
+        "action": "ask",
+        "question": "What is the status of Job \"TenBot Review Shared Name\"?",
+        "context": [
+          "Current module: My Work"
+        ],
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      },
+      "status": 200,
+      "answer": {
+        "mode": "operational",
+        "message": "Choose the exact Job number or full project name from the matching Jobs. I have not selected a Job. Matching Production Job: TB-2802 — TenBot Review Shared Name; recorded status: On Deck. Matching Production Job: TB-2803 — TenBot Review Shared Name; recorded status: On Hold.",
+        "resolution": "available",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-job-read.v1",
+          "verifiedAt": "2026-10-28T14:08:34.086Z"
+        },
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": false,
+        "operational": {
+          "tool": "find_jobs",
+          "observedAt": "2026-10-28T14:08:34.086Z",
+          "complete": true,
+          "truncated": false,
+          "facts": [
+            {
+              "id": "match_1",
+              "text": "Matching Production Job: TB-2802 — TenBot Review Shared Name; recorded status: On Deck."
+            },
+            {
+              "id": "match_2",
+              "text": "Matching Production Job: TB-2803 — TenBot Review Shared Name; recorded status: On Hold."
+            }
+          ],
+          "sources": [
+            {
+              "relation": "jobs",
+              "job_id": "10282026-0000-4000-8000-000000000102",
+              "record_id": "10282026-0000-4000-8000-000000000102",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:33.752Z"
+            },
+            {
+              "relation": "jobs",
+              "job_id": "10282026-0000-4000-8000-000000000103",
+              "record_id": "10282026-0000-4000-8000-000000000103",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:33.752Z"
+            }
+          ],
+          "choices": [
+            {
+              "job_id": "10282026-0000-4000-8000-000000000102",
+              "reference": "TB-2802 — TenBot Review Shared Name"
+            },
+            {
+              "job_id": "10282026-0000-4000-8000-000000000103",
+              "reference": "TB-2803 — TenBot Review Shared Name"
+            }
+          ],
+          "refreshable": true
+        },
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      }
+    },
+    {
+      "request": {
+        "action": "ask",
+        "question": "What is the status of Job TB-2805?",
+        "context": [
+          "Current module: My Work"
+        ],
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      },
+      "status": 200,
+      "answer": {
+        "mode": "operational",
+        "message": "Production Job: TB-2805 — TenBot Review Completed With Rework. Recorded Rework status: In Production. The effective lifecycle is Rework 2; the original Job status is Complete. Persisted planned dates: 2026-10-29 through 2026-11-02. Requested delivery date: 2026-10-09. Recorded material status: Ready. Ready describes the recorded material status; it does not establish complete Job readiness. Planning completeness: Planning Complete. Recorded Rework cycles: 2. Active Rework cycles: 1. Unresolved recorded follow-ups: 0. Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers.",
+        "resolution": "available",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-job-read.v1",
+          "verifiedAt": "2026-10-28T14:08:37.816Z"
+        },
+        "summary": null,
+        "notices": [
+          "Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers."
+        ],
+        "suggestionAllowed": false,
+        "fallback": true,
+        "operational": {
+          "tool": "get_job_summary",
+          "observedAt": "2026-10-28T14:08:37.816Z",
+          "complete": true,
+          "truncated": false,
+          "facts": [
+            {
+              "id": "job_identity",
+              "text": "Production Job: TB-2805 — TenBot Review Completed With Rework."
+            },
+            {
+              "id": "job_status",
+              "text": "Recorded Rework status: In Production."
+            },
+            {
+              "id": "job_rework",
+              "text": "The effective lifecycle is Rework 2; the original Job status is Complete."
+            },
+            {
+              "id": "job_schedule",
+              "text": "Persisted planned dates: 2026-10-29 through 2026-11-02."
+            },
+            {
+              "id": "job_requested_delivery",
+              "text": "Requested delivery date: 2026-10-09."
+            },
+            {
+              "id": "job_material_status",
+              "text": "Recorded material status: Ready."
+            },
+            {
+              "id": "job_material_ready",
+              "text": "Ready describes the recorded material status; it does not establish complete Job readiness."
+            },
+            {
+              "id": "job_planning_readiness",
+              "text": "Planning completeness: Planning Complete."
+            },
+            {
+              "id": "rework_cycles",
+              "text": "Recorded Rework cycles: 2."
+            },
+            {
+              "id": "active_rework_cycles",
+              "text": "Active Rework cycles: 1."
+            },
+            {
+              "id": "open_follow_ups",
+              "text": "Unresolved recorded follow-ups: 0."
+            },
+            {
+              "id": "unknown_1",
+              "text": "Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers."
+            }
+          ],
+          "sources": [
+            {
+              "relation": "jobs",
+              "job_id": "10282026-0000-4000-8000-000000000105",
+              "record_id": "10282026-0000-4000-8000-000000000105",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:37.354Z"
+            },
+            {
+              "relation": "production_rework_cycles",
+              "job_id": "10282026-0000-4000-8000-000000000105",
+              "record_id": "10282026-0000-4000-8000-000000000202",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:37.354Z"
+            },
+            {
+              "relation": "production_rework_cycles",
+              "job_id": "10282026-0000-4000-8000-000000000105",
+              "observed_at": "2026-10-28T14:08:37.354Z"
+            },
+            {
+              "relation": "job_updates",
+              "job_id": "10282026-0000-4000-8000-000000000105",
+              "observed_at": "2026-10-28T14:08:37.354Z"
+            }
+          ],
+          "choices": [],
+          "refreshable": true
+        },
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      }
+    },
+    {
+      "request": {
+        "action": "ask",
+        "question": "What work is scheduled next for that job?",
+        "context": [
+          "Current module: My Work"
+        ],
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      },
+      "status": 200,
+      "answer": {
+        "mode": "operational-ai",
+        "message": "Persisted planned dates: 2026-10-29 through 2026-11-02. Recorded Rework status: In Production. Recorded material status: Ready. Planning completeness: Planning Complete. Planning phase detail is disabled in the released application; scheduled next work cannot be inferred from phases. Phase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded.",
+        "resolution": "available",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-job-read.v1",
+          "verifiedAt": "2026-10-28T14:08:40.841Z"
+        },
+        "summary": null,
+        "notices": [
+          "Phase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded."
+        ],
+        "suggestionAllowed": false,
+        "fallback": false,
+        "operational": {
+          "tool": "get_job_planning",
+          "observedAt": "2026-10-28T14:08:40.841Z",
+          "complete": true,
+          "truncated": false,
+          "facts": [
+            {
+              "id": "job_identity",
+              "text": "Production Job: TB-2805 — TenBot Review Completed With Rework."
+            },
+            {
+              "id": "job_status",
+              "text": "Recorded Rework status: In Production."
+            },
+            {
+              "id": "job_rework",
+              "text": "The effective lifecycle is Rework 2; the original Job status is Complete."
+            },
+            {
+              "id": "job_schedule",
+              "text": "Persisted planned dates: 2026-10-29 through 2026-11-02."
+            },
+            {
+              "id": "job_requested_delivery",
+              "text": "Requested delivery date: 2026-10-09."
+            },
+            {
+              "id": "job_material_status",
+              "text": "Recorded material status: Ready."
+            },
+            {
+              "id": "job_material_ready",
+              "text": "Ready describes the recorded material status; it does not establish complete Job readiness."
+            },
+            {
+              "id": "job_planning_readiness",
+              "text": "Planning completeness: Planning Complete."
+            },
+            {
+              "id": "planning_phases_unavailable",
+              "text": "Planning phase detail is disabled in the released application; scheduled next work cannot be inferred from phases."
+            },
+            {
+              "id": "planning_scope",
+              "text": "Planned dates describe saved scheduling; they do not prove completion or readiness."
+            },
+            {
+              "id": "unknown_1",
+              "text": "Phase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded."
+            }
+          ],
+          "sources": [
+            {
+              "relation": "jobs",
+              "job_id": "10282026-0000-4000-8000-000000000105",
+              "record_id": "10282026-0000-4000-8000-000000000105",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:40.460Z"
+            },
+            {
+              "relation": "production_rework_cycles",
+              "job_id": "10282026-0000-4000-8000-000000000105",
+              "record_id": "10282026-0000-4000-8000-000000000202",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:40.460Z"
+            }
+          ],
+          "choices": [],
+          "refreshable": true
+        },
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      }
+    },
+    {
+      "request": {
+        "action": "refresh-job",
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      },
+      "status": 200,
+      "answer": {
+        "mode": "operational",
+        "message": "Production Job: TB-2805 — TenBot Review Completed With Rework. Recorded Rework status: In Production. The effective lifecycle is Rework 2; the original Job status is Complete. Persisted planned dates: 2026-10-29 through 2026-11-02. Requested delivery date: 2026-10-09. Recorded material status: Ready. Ready describes the recorded material status; it does not establish complete Job readiness. Planning completeness: Planning Complete. Planning phase detail is disabled in the released application; scheduled next work cannot be inferred from phases. Planned dates describe saved scheduling; they do not prove completion or readiness. Phase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded.",
+        "resolution": "available",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-job-read.v1",
+          "verifiedAt": "2026-10-28T14:08:41.841Z"
+        },
+        "summary": null,
+        "notices": [
+          "Phase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded."
+        ],
+        "suggestionAllowed": false,
+        "fallback": false,
+        "operational": {
+          "tool": "get_job_planning",
+          "observedAt": "2026-10-28T14:08:41.841Z",
+          "complete": true,
+          "truncated": false,
+          "facts": [
+            {
+              "id": "job_identity",
+              "text": "Production Job: TB-2805 — TenBot Review Completed With Rework."
+            },
+            {
+              "id": "job_status",
+              "text": "Recorded Rework status: In Production."
+            },
+            {
+              "id": "job_rework",
+              "text": "The effective lifecycle is Rework 2; the original Job status is Complete."
+            },
+            {
+              "id": "job_schedule",
+              "text": "Persisted planned dates: 2026-10-29 through 2026-11-02."
+            },
+            {
+              "id": "job_requested_delivery",
+              "text": "Requested delivery date: 2026-10-09."
+            },
+            {
+              "id": "job_material_status",
+              "text": "Recorded material status: Ready."
+            },
+            {
+              "id": "job_material_ready",
+              "text": "Ready describes the recorded material status; it does not establish complete Job readiness."
+            },
+            {
+              "id": "job_planning_readiness",
+              "text": "Planning completeness: Planning Complete."
+            },
+            {
+              "id": "planning_phases_unavailable",
+              "text": "Planning phase detail is disabled in the released application; scheduled next work cannot be inferred from phases."
+            },
+            {
+              "id": "planning_scope",
+              "text": "Planned dates describe saved scheduling; they do not prove completion or readiness."
+            },
+            {
+              "id": "unknown_1",
+              "text": "Phase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded."
+            }
+          ],
+          "sources": [
+            {
+              "relation": "jobs",
+              "job_id": "10282026-0000-4000-8000-000000000105",
+              "record_id": "10282026-0000-4000-8000-000000000105",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:41.482Z"
+            },
+            {
+              "relation": "production_rework_cycles",
+              "job_id": "10282026-0000-4000-8000-000000000105",
+              "record_id": "10282026-0000-4000-8000-000000000202",
+              "record_updated_at": "2026-10-28T17:00:00+00:00",
+              "observed_at": "2026-10-28T14:08:41.482Z"
+            }
+          ],
+          "choices": [],
+          "refreshable": true
+        },
+        "conversationId": "fb5df013-b1e2-4e71-a9ba-71c84470545b"
+      }
+    }
+  ],
+  "errors": [],
+  "authFixturesInjectedByVerifier": false,
+  "requestInterceptions": 0
+}

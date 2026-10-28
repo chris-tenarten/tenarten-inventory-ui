@@ -6,7 +6,7 @@ import {MoreHorizontal} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
-type Answer={conversationId?:string;mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean};
+type Answer={conversationId?:string;mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean;operational?:{observedAt:string|null;complete:boolean;truncated:boolean;facts:{id:string;text:string}[];refreshable:boolean}};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
 type Feedback={id:string;submitter_name:string;status:string;created_at:string;draft:Draft;history:{id:number;status:string;note:string;created_at:string}[]};
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;sharedMonthLimit:number;sharedMonthUsed:number;sharedMonthRemaining:number;perAccountMinuteLimit:number;dayNeuronLimit:number;dayAccountedNeurons:number;monthNeuronLimit:number;monthAccountedNeurons:number;dayMeasuredInputTokens:number;dayMeasuredOutputTokens:number;dayUnmeasuredAttempts:number};
@@ -67,11 +67,41 @@ export function useTenbotConversation():TenbotConversation{
  const [notes,setNotes]=useState<Record<string,string>>({});
  const lock=useRef(false),sequence=useRef(0);
  const conversation=useRef<{owner:string;id?:string}>({owner});
+ const currentOwner=useRef(owner);currentOwner.current=owner;
+ const liveTurn=useRef<{id:number;owner:string}|null>(null);
+ const liveRefresh=useRef(false);
+ const foreground=useRef(true);
  if(conversation.current.owner!==owner)conversation.current={owner};
  const draftForm=useRef<HTMLFormElement>(null);
  const menuRef=useRef<HTMLDetailsElement>(null);
  const drafting=Boolean(draft);
  const lastAnswer=messages.at(-1)?.answer;
+ const accessFingerprint=JSON.stringify(auth.profile);
+ const currentAccess=useRef(accessFingerprint);currentAccess.current=accessFingerprint;
+ useEffect(()=>{
+  // Live facts have no client persistence or reusable response cache.
+  liveTurn.current=null;setMessages([]);
+ },[owner,available,accessFingerprint]);
+ useEffect(()=>{
+  const invalidate=()=>setMessages(turns=>turns.map(turn=>turn.answer?.operational?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
+  const refresh=async()=>{
+   const live=liveTurn.current,id=conversation.current.id;
+   if(!available||!live||live.owner!==owner||!id||!foreground.current||document.visibilityState!=='visible'||liveRefresh.current||lock.current)return;
+   liveRefresh.current=true;invalidate();
+   try{
+    const result=await invoke<Answer&{expired?:boolean}>({action:'refresh-job',conversationId:id},owner);
+    if(currentOwner.current!==live.owner||liveTurn.current?.id!==live.id||!foreground.current||document.visibilityState!=='visible')return;
+    if(result.expired){liveTurn.current=null;return;}
+    setMessages(turns=>turns.map(turn=>turn.id===live.id?{...turn,answer:result,error:undefined}:turn));
+   }catch{invalidate();}finally{liveRefresh.current=false;}
+  };
+  const blur=()=>{foreground.current=false;invalidate();};
+  const visibility=()=>{if(document.visibilityState!=='visible')blur();else{foreground.current=true;void refresh();}};
+  const focus=()=>{foreground.current=true;void refresh();};
+  window.addEventListener('blur',blur);window.addEventListener('focus',focus);document.addEventListener('visibilitychange',visibility);
+  const timer=window.setInterval(()=>void refresh(),30000);
+  return()=>{clearInterval(timer);window.removeEventListener('blur',blur);window.removeEventListener('focus',focus);document.removeEventListener('visibilitychange',visibility);};
+ },[owner,available]);
  useEffect(()=>{
   if(drafting&&draftForm.current?.getClientRects().length){
    draftForm.current.scrollIntoView({block:'nearest'});
@@ -95,14 +125,19 @@ export function useTenbotConversation():TenbotConversation{
  async function send(question:string):Promise<boolean>{
   const current=question.trim();
   if(!current||current.length>1200||!begin())return false;
+  const requestAccess=currentAccess.current;
   setNotice('');
   const previous=messages.at(-1);
   // Retrying an unsuccessful send updates that turn instead of duplicating it.
   const retry=previous?.error&&previous.question===current?previous:undefined;
   const turn:Turn={id:retry?.id??++sequence.current,question:current,createdAt:retry?.createdAt??new Date().toISOString(),answer:null};
-  setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7),turn]);
+  liveTurn.current=null;
+  setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7).map(item=>item.answer?.operational?{...item,answer:null,error:'Live Job facts are refreshed for each request.'}:item),turn]);
   try{
    const response=await request<Answer>({action:'ask',question:current,context:context()});
+   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
+   if(response.operational)liveTurn.current={id:turn.id,owner};
+   if(response.operational&&(!foreground.current||document.visibilityState!=='visible'))return true;
    setMessages(m=>m.map(item=>item.id===turn.id?{...item,answer:response,answeredAt:new Date().toISOString()}:item));
    return true;
   }catch(e){
@@ -156,7 +191,7 @@ export function useTenbotConversation():TenbotConversation{
     {m.answer?<>
      {m.answer.mode==='guide'?<p className="text-xs text-slate-500">{m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."}</p>:null}
      <p data-tenbot-answer className="whitespace-pre-wrap break-words leading-relaxed text-slate-800">{m.answer.mode==='guide'&&m.answer.sources[0]?guideText(m.answer.sources[0]):m.answer.message}</p>
-     {[...new Set(m.answer.notices)].filter(note=>note!==m.answer?.message&&!(m.answer?.mode==='guide'&&m.answer.sources[0]&&guideText(m.answer.sources[0]).includes(note))).map(note=><p key={note} className="text-xs text-slate-600">{note}</p>)}
+     {[...new Set(m.answer.notices)].filter(note=>!m.answer?.message.includes(note)&&!(m.answer?.mode==='guide'&&m.answer.sources[0]&&guideText(m.answer.sources[0]).includes(note))).map(note=><p key={note} className="text-xs text-slate-600">{note}</p>)}
      {!m.answer.sources.length&&m.answer.mode==='guide'?<p>The TenOps Guide does not have enough verified information to confirm that workflow. Please check with Product.</p>:null}
      {m.answer.sources.length?<details data-tenbot-sources className="text-xs">
       <summary aria-label="Sources for this answer" className="w-fit min-h-9 cursor-pointer py-2 text-slate-500">Sources ({m.answer.sources.length}) · TenOps Guide</summary>
@@ -169,7 +204,13 @@ export function useTenbotConversation():TenbotConversation{
       </div>)}
       </div>
      </details>:null}
-    </>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">Working…</p>}
+     {m.answer.operational?<details data-tenbot-records className="text-xs text-slate-600">
+      <summary className="w-fit min-h-9 cursor-pointer py-2">Production records · {m.answer.operational.complete?'Verified scope':'Partial information'}</summary>
+      {m.answer.operational.observedAt?<p>Checked {new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}).format(new Date(m.answer.operational.observedAt))}</p>:null}
+      <div className="space-y-1 border-t border-slate-100 pt-2">{m.answer.operational.facts.map(fact=><p key={fact.id}>{fact.text}</p>)}</div>
+      {m.answer.operational.truncated?<p>Some records could not be included. Incomplete totals are not presented as exact.</p>:null}
+     </details>:null}
+    </>:m.error?.startsWith('Live Job facts')?<p className="text-xs text-slate-500">Ask again to refresh this live answer.</p>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">Working…</p>}
     {m.answeredAt?<time className="block text-[10px] text-slate-400">{messageTime(m.answeredAt)}</time>:null}
    </article>}]):[];
  const history=available?<div role="log" aria-label="TenBot conversation" aria-live="polite">{entries.map(entry=><div key={entry.id}>{entry.content}</div>)}</div>:null;
@@ -189,7 +230,7 @@ export function useTenbotConversation():TenbotConversation{
  };
  const disclosure=<details className="text-[10px] text-slate-500">
   <summary className="w-fit min-h-9 cursor-pointer py-2">AI may process your text and recent TenBot turns · Privacy details</summary>
-  <p className="pb-2 text-xs leading-relaxed">When AI is available, text you submit and recent private TenBot turns are processed by the configured AI provider. TenBot does not independently read messages, tasks or restricted records. Private TenBot history expires after eight hours without a new turn.</p>
+  <p className="pb-2 text-xs leading-relaxed">When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live answers are refreshed for each request and are not saved in assistant history. TenBot does not independently read private messages, personal tasks or financial information. Other private TenBot history expires after eight hours without a new turn.</p>
  </details>;
  const controls=():ReactNode=>{
   if(!available)return null;

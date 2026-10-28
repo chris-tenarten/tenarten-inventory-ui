@@ -1,0 +1,7 @@
+{
+  "supabase/functions/_shared/tenbot-core.ts": "b879dae6812d2747824e11324c4400f4f4ad3ee80d4ee4f5a20f43c8cfab294f",
+  "supabase/functions/_shared/tenbot-knowledge.ts": "8d27939f3dcccef05c1428bcdb9a565148ee5fe83e65d7939a9a50a13233b444",
+  "src/modules/my-work/InboxDialog.tsx": "202b3763863f515f72a8a5e7ac8322e9cf3fff9d1f762294344e8cbf69b96128",
+  "scripts/verify-tenbot.mts": "288a373bde8b72591340e9b39572b7e3b61fe0af0923f770ade040a457dbd927",
+  "scripts/verify-tenbot-browser.mjs": "264a1eb420020027d65c1265d2fb71b2246fe23ff3d09ba1a5d535a2df7be1c3"
+}

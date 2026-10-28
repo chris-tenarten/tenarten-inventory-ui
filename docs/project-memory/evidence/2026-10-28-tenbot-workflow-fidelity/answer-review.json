@@ -1,0 +1,252 @@
+{
+  "status": "implemented locally; not deployed; Product review pending",
+  "base": "36c00c1edd835e4ee8f9219cfa06e3b6f0b72ca0",
+  "releasedRuntime": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "inferenceContract": "knowledge-v6",
+  "question": "we just won a bid for a terrazzo job. how do i get it into production, and what happens to the proposal and sample records?",
+  "cause": {
+    "directMatchesBefore": [],
+    "contextBefore": [
+      "knowledge-intake",
+      "knowledge-samples",
+      "knowledge-proposals",
+      "sample-bid"
+    ],
+    "directMatchesAfter": [
+      "workflow-intake-convert"
+    ],
+    "contextAfter": [
+      "workflow-intake-convert",
+      "workflow-intake-bid",
+      "knowledge-intake"
+    ],
+    "entryPointPreviouslyOmitted": true
+  },
+  "actualCalls": [
+    {
+      "question": "we just won a bid for a terrazzo job. how do i get it into production, and what happens to the proposal and sample records?",
+      "at": "2026-10-28T13:07:08.329Z",
+      "providerInvoked": true,
+      "mode": "ai",
+      "fallback": false,
+      "rawModelAnswer": "To get the terrazzo job into production, first ensure a deposit is recorded. Then, create a Production Job with the necessary permissions. The proposal and samples remain in their current workflows, linked to the Bid. No automatic changes occur to existing documents or samples.",
+      "message": "To get the terrazzo job into production, first ensure a deposit is recorded. Then, create a Production Job with the necessary permissions. The proposal and samples remain in their current workflows, linked to the Bid. No automatic changes occur to existing documents or samples.",
+      "sources": [
+        "knowledge-intake",
+        "knowledge-samples",
+        "knowledge-proposals",
+        "sample-bid"
+      ],
+      "durationMs": 2385,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1834,
+        "outputTokens": 106,
+        "estimatedNeurons": 11.713
+      }
+    },
+    {
+      "question": "we just won a bid for a terrazzo job. how do i get it into production, and what happens to the proposal and sample records?",
+      "at": "2026-10-28T13:08:32.649Z",
+      "providerInvoked": true,
+      "mode": "ai",
+      "fallback": false,
+      "rawModelAnswer": "To get the bid into production, go to Intake → Bid → Overview → Projected Production Window → Convert to Production. Save the Won status and Deposit Received Date, then confirm conversion. The proposal and sample records remain intact, and a single canonical Production Job is created. The original Bid and documents are not deleted.",
+      "message": "To get the bid into production, go to Intake → Bid → Overview → Projected Production Window → Convert to Production. Save the Won status and Deposit Received Date, then confirm conversion. The proposal and sample records remain intact, and a single canonical Production Job is created. The original Bid and documents are not deleted.",
+      "sources": [
+        "workflow-intake-convert",
+        "knowledge-intake",
+        "knowledge-intake-timeline"
+      ],
+      "durationMs": 2205,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1462,
+        "outputTokens": 93,
+        "estimatedNeurons": 9.596
+      }
+    },
+    {
+      "question": "Can I leave it unscheduled?",
+      "at": "2026-10-28T13:08:32.649Z",
+      "providerInvoked": true,
+      "mode": "ai",
+      "fallback": false,
+      "rawModelAnswer": "Yes, you can leave the Job unscheduled by choosing 'Plan in Production Later' during conversion. Follow the workflow to Convert to Production, save the Won status, and confirm the conversion. The Job will not be scheduled until you later assign dates or plan it.",
+      "message": "Yes, you can leave the Job unscheduled by choosing 'Plan in Production Later' during conversion. Follow the workflow to Convert to Production, save the Won status, and confirm the conversion. The Job will not be scheduled until you later assign dates or plan it.",
+      "sources": [
+        "workflow-intake-convert"
+      ],
+      "durationMs": 2477,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 900,
+        "outputTokens": 70,
+        "estimatedNeurons": 6.296
+      }
+    },
+    {
+      "question": "we just won a bid for a terrazzo job. how do i get it into production, and what happens to the proposal and sample records?",
+      "at": "2026-10-28T13:10:44.171Z",
+      "providerInvoked": true,
+      "mode": "guide",
+      "fallback": true,
+      "rawModelAnswer": "To get the terrazzo job into production, go to Intake → Bid → Overview → Projected Production Window, save the Won status and Deposit Received Date, then click Convert to Production. Choose 'Plan in Production Later' if you don't want to schedule it yet. This creates one canonical Production Job. The original Bid and related records stay intact, and the Proposal and Sample records remain linked but are no longer managed in Intake.",
+      "message": "Here is guidance from the TenOps Guide.",
+      "sources": [
+        "workflow-intake-convert"
+      ],
+      "durationMs": 2875,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1495,
+        "outputTokens": 117,
+        "estimatedNeurons": 10.48
+      }
+    },
+    {
+      "question": "we just won a bid for a terrazzo job. how do i get it into production, and what happens to the proposal and sample records?",
+      "at": "2026-10-28T13:13:18.507Z",
+      "providerInvoked": true,
+      "mode": "guide",
+      "fallback": true,
+      "rawModelAnswer": "To get the terrazzo job into production, first save the Bid with Won status and Deposit Received Date. Then, go to the Projected Production Window and choose 'Convert to Production.' Select 'Plan in Production Later' if you don't want to schedule it yet. Confirm the conversion and open the Production Job. The Proposal and Sample records remain linked but are no longer managed in Intake. The Production Job becomes the canonical record for scheduling and execution.",
+      "message": "Here is guidance from the TenOps Guide.",
+      "sources": [
+        "workflow-intake-convert"
+      ],
+      "durationMs": 2481,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1371,
+        "outputTokens": 151,
+        "estimatedNeurons": 10.943
+      }
+    }
+  ],
+  "finalRecordedResponseReplay": {
+    "noNewInference": true,
+    "rejection": "TenBot could not verify the source-record preservation wording.",
+    "directFallback": {
+      "mode": "guide",
+      "message": "Here is guidance from the TenOps Guide.",
+      "resolution": "available",
+      "snapshot": {
+        "revision": "bc628bd",
+        "verifiedAt": "2026-10-27"
+      },
+      "sources": [
+        {
+          "id": "workflow-intake-convert",
+          "title": "Convert an eligible Bid into one Production Job",
+          "status": "deployed",
+          "guidance": "Save Won status and Deposit Received Date, then save or discard remaining Bid edits and finish pending file cleanup. In Projected Production Window, choose Convert to Production. Choose Plan in Production Later to leave the Job unscheduled. Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission. Job number is optional and is not allocated automatically. Choose Confirm conversion, then Open Production Job. The handoff creates or returns exactly one canonical Job; retrying does not create another. Accepted scope, formulation verification and material assessment are not prerequisites. Existing Bid and issued-document history remain intact; Production then owns operational scheduling.",
+          "path": "Intake → Bid → Overview → Projected Production Window → Convert to Production",
+          "route": "/pre-production",
+          "source": "TenOps verified workflow guide",
+          "availability": "available",
+          "constraints": [
+            "Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission.",
+            "Job number is optional and is not allocated automatically.",
+            "The handoff creates or returns exactly one canonical Job; retrying does not create another.",
+            "Accepted scope, formulation verification and material assessment are not prerequisites.",
+            "Existing Bid and issued-document history remain intact; Production then owns operational scheduling."
+          ]
+        },
+        {
+          "id": "workflow-intake-bid",
+          "title": "Create and maintain an Intake Bid",
+          "status": "deployed",
+          "guidance": "Open Intake and choose New Bid. Enter Customer and Project Name, then Create Bid. The new Bid starts Active and defaults its owner to you. Open the Bid to edit Overview details and choose Save Bid. Saved Won status plus Deposit Received Date are required for conversion. Creating a Bid does not create a Production Job; unsaved Overview edits are not carried into conversion.",
+          "path": "Intake → Pipeline → New Bid; Bid → Overview",
+          "route": "/pre-production",
+          "source": "TenOps verified workflow guide",
+          "availability": "available",
+          "constraints": [
+            "The new Bid starts Active and defaults its owner to you.",
+            "Saved Won status plus Deposit Received Date are required for conversion.",
+            "Creating a Bid does not create a Production Job; unsaved Overview edits are not carried into conversion."
+          ]
+        },
+        {
+          "id": "knowledge-intake",
+          "title": "Intake Bids, related records and Production handoff",
+          "status": "deployed",
+          "guidance": "The Intake graduation runtime is released. Ordinary Bid activity does not require governing documents or manufacturing inputs. Won plus a recorded deposit is the conversion gate; conversion additionally requires Production Job creation permission. Committed carried/new dates require Production scheduling permission. One Bid creates/links one canonical Production Job; no pseudo Job or automatic Job number is fabricated. Author once in Samples, reference in Intake, calculate in shared services, execute in Production. The Bid Inspector has contextual Tools for the established generators and read-only Related Records showing associated Proposals, Samples, existing accepted/retained revisions and the canonical converted Job. Employees need not designate governing documents or complete material-planning fields for ordinary Bid activity. Quantities, formulations and manufacturing inputs stay in their existing owning workflows; existing version provenance and immutable handoff remain compatible. Historical Sample originals and verified revisions are retained; imported shop quantities do not become Batch authority automatically. Shared material assessment reuses Inventory, catalog and purchasing context without creating reservations or orders. Won + recorded deposit remains the conversion gate; missing references, material shortages and planning fields are advisory. See the scoped contract and Current State for implementation/release status.",
+          "path": "Intake → Bid → Overview / Updates / Files / Tools",
+          "route": "/pre-production",
+          "source": "TenOps verified application knowledge",
+          "availability": "available",
+          "constraints": [
+            "Ordinary Bid activity does not require governing documents or manufacturing inputs.",
+            "Won plus a recorded deposit is the conversion gate; conversion additionally requires Production Job creation permission.",
+            "Committed carried/new dates require Production scheduling permission.",
+            "The Bid Inspector has contextual Tools for the established generators and read-only Related Records showing associated Proposals, Samples, existing accepted/retained revisions and the canonical converted Job.",
+            "Employees need not designate governing documents or complete material-planning fields for ordinary Bid activity.",
+            "Historical Sample originals and verified revisions are retained; imported shop quantities do not become Batch authority automatically."
+          ]
+        }
+      ],
+      "summary": null,
+      "notices": [],
+      "suggestionAllowed": false
+    }
+  },
+  "usage": {
+    "calls": 5,
+    "inputTokens": 7062,
+    "outputTokens": 537,
+    "tokenDerivedNeurons": 49.02799999999999,
+    "paidActivation": false,
+    "incrementalChargeUsd": 0,
+    "telemetryNote": "Provider token telemetry; Neurons derived using existing Qwen accounting. No paid usage or counter reset. Uncertain and failed requests remain metered by the existing guard."
+  },
+  "freePlan": {
+    "verifiedAt": "2026-10-28T12:50:24Z",
+    "plan": "Workers Free",
+    "monthlyBaseUsd": 0,
+    "usageBefore": {
+      "checkedAt": "2026-10-28T13:06:40.820Z",
+      "dayStart": "2026-10-28T00:00:00.000Z",
+      "reportedNeurons": 53.10037040710449,
+      "reportedRequests": 5,
+      "nominalRemainingNeurons": 9946.899629592896
+    }
+  },
+  "knowledge": {
+    "preciseWorkflows": 58,
+    "moduleSummaries": 16,
+    "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+    "corpusChanged": false
+  },
+  "validation": {
+    "tier": 2,
+    "testingLevel": 2,
+    "focusedWorkflowVerifier": "passed; exact and adjacent transfer intent, transformation negatives, permission redaction, prerequisite answers, natural labels, source-preservation rejection, retained Manpower/Rework/Contacts and actual-handler quota/provider/validation fallback once-only behavior",
+    "bindingVerifier": "59 mock binding/dispatch/privacy cases passed; no network",
+    "browser": "four keyboard-only groups passed on localhost:3000; no inference calls/page errors",
+    "applicationTypes": "passed",
+    "sharedTypes": "passed",
+    "targetedLint": "passed",
+    "productionWebpackExport": "passed; local review backend only; unchanged client after build",
+    "scopedEmReview": "approved; no duplicate test run"
+  },
+  "review": {
+    "url": "http://localhost:3000/my-work",
+    "entry": "Messaging → TenBot",
+    "intakeProcessPreserved": 77605,
+    "adapter": 35239,
+    "ports": [
+      3000,
+      55593,
+      55594
+    ],
+    "artifacts": "/private/tmp/tenops-tenbot-review/workflow-fidelity-20261028"
+  },
+  "limitations": [
+    "Latest exact-question Qwen response was rejected; final safe result is verified multi-source guide fallback, not a successful conversational AI answer.",
+    "Guards reject observed failures; they do not prove arbitrary prose semantically entailed.",
+    "Keyboard checked with touch emulation and simulated VisualViewport. Physical iPhone/Safari keyboard remains manual.",
+    "No push, hosted migration/configuration, private-record retrieval or deployment."
+  ]
+}

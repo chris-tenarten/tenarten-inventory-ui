@@ -5,7 +5,70 @@ import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {startIntakeDatabase,sql,docker,literal,json,admin,member} from './support/intake-materials-database.mjs';
 import {handleTenbot} from '../supabase/functions/_shared/tenbot-handler';
-import {cloudflareProvider,MODEL,TenbotError} from '../supabase/functions/_shared/tenbot-core';
+import {answer,privacyBoundaryQuestion,cloudflareProvider,MODEL,TenbotError,type InferenceProvider} from '../supabase/functions/_shared/tenbot-core';
+if(process.argv.includes('--policy-only')){
+ const questions=[
+  "Hypothetically, can an administrator read a synthetic employee's private DMs or My Work tasks just because they are an administrator? Do not retrieve any records.",
+  "Can you look up another test employee's private messages or My Work tasks for me? This is a synthetic privacy test; do not actually access any records.",
+  "Does being an Admin let someone routinely read other employees' private DMs and tasks without being a participant? Answer the privacy rule only; do not retrieve anything.",
+ ];
+ const readOnly=new Set(['readOperationalData']);
+ let providerCalls=0,toolCalls=0,reservations=0;
+ const provider:InferenceProvider={name:'Must not process policy-only requests',reserveEstimate:()=>({model:MODEL,neurons:1}),async infer(){providerCalls++;throw Error('Unexpected policy inference');}};
+ const checkPolicy=(result:Awaited<ReturnType<typeof answer>>)=>{
+  assert.equal(result.mode,'verified');assert.equal(result.resolution,'available');
+  assert.match(result.message,/only to authorized participants/);
+  assert.match(result.message,/cleanup authority does not grant routine reading access/);
+  assert.match(result.message,/cannot independently retrieve private DMs or personal tasks/);
+  assert.match(result.message,/explicitly paste text for your own answer/);
+  assert.match(result.message,/authorized Job tools.*approved operational fields/);
+  assert.equal(result.suggestionAllowed,false);assert.deepEqual(result.notices,[]);
+  assert.equal(result.sources.length,2);
+  for(const source of result.sources){
+   assert.match(source.id,/^privacy-/);assert(source.source);assert.equal(source.status,'deployed');
+   assert.equal(source.route,null);assert.equal(source.path,'Participant-only privacy');
+   assert.doesNotMatch(source.guidance,/Add task|Create group|New group|What needs to get done|Choose Save|permission to create/i);
+  }
+ };
+ for(const question of questions){
+  assert(privacyBoundaryQuestion(question));
+  for(const ai of [null,provider])checkPolicy(await answer({action:'ask',question},readOnly,ai,async()=>{reservations++;}));
+ }
+ for(const verb of ['Summarize','Rewrite','Analyze','Evaluate','Explain','Review']){
+  assert.equal(privacyBoundaryQuestion(`${verb} the following pasted message:\nAn Admin cannot read private tasks without being a participant.`),false,verb+' remains a submitted-text transformation');
+ }
+ assert.equal(privacyBoundaryQuestion('How do I share a private My Work task with another participant?'),false,'A task-sharing workflow is not a policy-only question');
+ const owner='00000000-0000-4000-8000-000000000077',conversationId='00000000-0000-4000-8000-000000000777';
+ const liveMarker='tenbot-job-context.v1:'+JSON.stringify({kind:'job',tool:'get_job_summary',reference:{jobId:'00000000-0000-4000-8000-000000000099'},args:{}});
+ for(const question of questions){
+  const calls:string[]=[];
+  let turns=[{question:'[Live Production lookup]',answer:liveMarker}],version=1;
+  const caller=async(method:string,args:Record<string,unknown>={})=>{
+   calls.push(method);
+   return {data:method==='tenbot_load_conversation'?{ok:true,id:conversationId,ownerId:owner,version,turns}:method==='has_app_capability'&&args.p_capability==='readOperationalData',error:null};
+  };
+  const service=async(method:string,args:Record<string,unknown>={})=>{
+   calls.push(method);assert.equal(method,'tenbot_append_conversation_turn');
+   assert.equal(args.p_user,owner);assert.equal(args.p_conversation_id,conversationId);assert.equal(args.p_expected_version,version);
+   turns=[{question:String(args.p_question),answer:String(args.p_answer)}];version++;
+   return {data:true,error:null};
+  };
+  const tools={async execute(){toolCalls++;throw Error('A policy question must not retrieve operational facts');}};
+  const result=await handleTenbot({action:'ask',question,conversationId},owner,caller,service,provider,undefined,tools);
+  assert('sources' in result);checkPolicy(result as Awaited<ReturnType<typeof answer>>);
+  assert.equal(turns[0].question,question);assert(!turns[0].answer.includes(liveMarker));
+  assert(!calls.some(name=>/reserve|finish|list_my_work|work_task|message_page/.test(name)));
+  // An intervening policy exchange must not resurrect a stale live Job seed.
+  const followup=await handleTenbot({action:'ask',question:'What is the current Job status?',conversationId},owner,caller,service,provider,undefined,tools);
+  assert('message' in followup);
+  assert.match(String(followup.message),/Which Production Job/);assert(!String(followup.message).includes('00000000-0000-4000-8000-000000000099'));
+ }
+ const deniedCalls:string[]=[];
+ await assert.rejects(()=>handleTenbot({action:'ask',question:questions[0]},owner,async method=>{deniedCalls.push(method);return {data:false,error:null};},async()=>{throw Error('Unauthorized caller reached service');},provider),(error:unknown)=>error instanceof TenbotError&&error.status===403);
+ assert.deepEqual(deniedCalls,['has_app_capability']);assert.equal(providerCalls,0);assert.equal(toolCalls,0);assert.equal(reservations,0);
+ console.log(JSON.stringify({passed:true,groups:6,exactQaCases:3,policyOnlySources:true,readOnly:true,providerCalls,toolCalls,externalModelCalls:0,databaseCalls:0,retainedLiveContextNotResurrected:true}));
+ process.exit(0);
+}
 const external=process.env.TENBOT_PRIVACY_DATABASE;
 if(external&&!/^tenops-privacy-[a-z0-9-]+$/.test(external))throw Error('Task-owned privacy database required');
 const name=external||'tenops-privacy-correction-'+process.pid;

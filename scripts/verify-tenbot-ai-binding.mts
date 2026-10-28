@@ -28,9 +28,10 @@ const env = {
     assert.deepEqual(Object.keys(request).sort(), ['max_tokens', 'messages', 'temperature']);
     assert.deepEqual(JSON.parse(request.messages[1].content), expectedInput);
     assert.equal(request.messages[0].content.includes('/no_think'),model.startsWith('@cf/qwen/'),'Qwen gets only its documented prompt soft switch');
+    assert.equal(request.messages[0].content.includes('Explain the supplied authorized operational facts'),Boolean(expectedInput.operational),'structured facts select the operational prompt');
     if (mode === 'failure') throw Error('synthetic credential must stay private');
     return {
-      response: mode === 'invalid-json' ? '{' : JSON.stringify({ ids: ['group'], summary: '' }),
+      response: mode === 'invalid-json' ? '{' : JSON.stringify(expectedInput.operational?{claims:[{fact_id:expectedInput.operational.facts[0].id,text:expectedInput.operational.facts[0].text}]}:{ ids: ['group'], summary: '' }),
       usage: mode === 'invalid-usage'
         ? { prompt_tokens: -1, completion_tokens: Infinity, total_tokens: 12, private: 'synthetic secret' }
         : { prompt_tokens: 5, completion_tokens: 7, total_tokens: 12, private: 'synthetic secret' },
@@ -102,6 +103,43 @@ try {
   assert.deepEqual(await (await check('formatting failure omits raw content and retains telemetry',{status:200})).json(),{output:{invalidFormat:true},usage:{prompt_tokens:5,completion_tokens:7,total_tokens:12}});
   mode='failure';
   assert.deepEqual(await (await check('provider failure stays generic',{status:503})).json(),{error:'AI inference unavailable'});
+
+  const operational:InferenceInput={question:'What status and labor are recorded for this Job?',context:[],excerpts:[],draft:false,
+    operational:{facts:[{id:'job_status',text:'Recorded Production status: In Production.'},{id:'labor_total',text:'Recorded labor: 8.3 hours for 2026-09-29 through 2026-10-28.'}]}};
+  const beforeOperationalRejects=calls;
+  for(const body of [
+    {...operational,context:['Current module: Production']},
+    {...operational,excerpts:input.excerpts},
+    {...operational,draft:true},
+    {...operational,operational:null},
+    {...operational,operational:{facts:'unstructured text'}},
+    {...operational,operational:{facts:Array(41).fill({id:'job_status',text:'Recorded status: In Production.'})}},
+    {...operational,operational:{facts:Array.from({length:8},(_,index)=>({id:'fact_'+index,text:'x'.repeat(1000)}))}},
+    {...operational,operational:{facts:[{id:'x'.repeat(81),text:'Recorded status: In Production.'}]}},
+    {...operational,operational:{facts:[{id:'job_status',text:'x'.repeat(1201)}]}},
+    {...operational,operational:{facts:[{id:'job_status',text:'Recorded status: In Production.',source:'caller-selected relation'}]}},
+    {...operational,operational:{facts:operational.operational!.facts,sql:'select forbidden'}},
+    {...operational,operational:{facts:[{id:'job_status',text:' '}]}},
+  ])await check('invalid operational evidence rejects before dispatch',{body:JSON.stringify(body)});
+  assert.equal(calls,beforeOperationalRejects,'invalid operational bounds/fields never dispatch inference');
+  mode='success';expectedInput=operational;
+  const claims=await check('bounded operational facts dispatch the claims prompt',{body:JSON.stringify(operational),status:200});
+  assert.deepEqual(await claims.json(),{output:{claims:[{fact_id:'job_status',text:'Recorded Production status: In Production.'}]},usage:{prompt_tokens:5,completion_tokens:7,total_tokens:12}});
+  expectedInput={...operational,operational:{facts:Array.from({length:40},(_,index)=>({id:'fact_'+index,text:'Recorded status: In Production.'}))}};
+  await check('maximum bounded operational fact count accepted',{body:JSON.stringify(expectedInput),status:200});
+  const boundedOperational=expectedInput;
+  for(const model of allowedModels){
+    const withEvidence=inferenceRequest(boundedOperational,model),withoutEvidence=inferenceRequest({...operational,operational:{facts:[]}},model);
+    assert.deepEqual(JSON.parse(withEvidence.messages[1].content),boundedOperational);
+    assert(reserveForRequest(model,withEvidence).neurons>reserveForRequest(model,withoutEvidence).neurons,'the conservative reservation includes structured evidence bytes');
+    cases++;
+  }
+  assert.deepEqual(guideOnlyInput(operational),operational,'local provider adapter preserves structured operational evidence without guide/history mixing');
+  assert.throws(()=>guideOnlyInput({...operational,context:['Current module: Production']}),/operational evidence/);
+  assert.throws(()=>guideOnlyInput({...operational,excerpts:input.excerpts}),/operational evidence/);
+  assert.throws(()=>guideOnlyInput({...operational,operational:{facts:Array(41).fill({id:'status',text:'Recorded status: In Production.'})}}),/operational evidence/);
+  assert.throws(()=>guideOnlyInput({...operational,operational:{facts:Array.from({length:8},(_,index)=>({id:'fact_'+index,text:'x'.repeat(1000)}))}}),/operational evidence/);
+  cases+=5;expectedInput=input;
 
   for(const model of allowedModels){
     const request=inferenceRequest(input,model),reservation=reserveForRequest(model,request);

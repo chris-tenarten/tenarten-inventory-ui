@@ -12,9 +12,10 @@ import type { ProductionJob } from '../types';
 import { getJobReadiness } from '../readiness';
 import { JobTag } from './JobTag';
 import ProductionStatusBadge from './ProductionStatusBadge';
+import { ACTIVE_PRODUCTION_STATUSES, TERMINAL_PRODUCTION_STATUSES } from '../../../../supabase/functions/_shared/production-job-facts.mjs';
 
-const activeStatuses = new Set(['not_started', 'on_deck', 'in_production', 'on_hold']);
-const terminalStatuses = new Set(['shipped', 'complete', 'cancelled']);
+const activeStatuses = new Set(ACTIVE_PRODUCTION_STATUSES);
+const terminalStatuses = new Set(TERMINAL_PRODUCTION_STATUSES);
 const hours = (value: number) => `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value)}h`;
 const count = (value: number) => new Intl.NumberFormat().format(value);
 const formatDate = (value: string) => new Date(`${value}T12:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });

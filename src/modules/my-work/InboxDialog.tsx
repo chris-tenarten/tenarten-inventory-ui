@@ -110,6 +110,42 @@ export default function InboxDialog({awareness,open:communicationOpen,onClose,cu
     measure();viewport?.addEventListener("resize",measure);viewport?.addEventListener("scroll",measure);window.addEventListener("resize",measure);
     return()=>{viewport?.removeEventListener("resize",measure);viewport?.removeEventListener("scroll",measure);window.removeEventListener("resize",measure);};
   },[assistantAvailable,communicationOpen]);
+  useEffect(()=>{
+    if(!assistantActive||!communicationOpen)return;
+    const mobile=window.matchMedia('(max-width: 767px), (max-width: 1023px) and (pointer: coarse)');
+    const lock=()=>{
+      // iOS can pan the document behind a fixed dialog when its keyboard opens.
+      // Lock only the active assistant, retaining the module's original position
+      // and inline styles; history and multiline drafts keep their own scrolling.
+      const body=document.body,root=document.documentElement;
+      const x=window.scrollX,y=window.scrollY;
+      const pathname=window.location.pathname;
+      const properties=['position','top','left','width','overflow','overscroll-behavior'] as const;
+      const previous=properties.map(name=>[name,body.style.getPropertyValue(name),body.style.getPropertyPriority(name)] as const);
+      const rootOverflow=root.style.getPropertyValue('overflow'),rootPriority=root.style.getPropertyPriority('overflow');
+      body.style.setProperty('position','fixed');body.style.setProperty('top',`${-y}px`);body.style.setProperty('left',`${-x}px`);body.style.setProperty('width','100%');body.style.setProperty('overflow','hidden');body.style.setProperty('overscroll-behavior','none');
+      root.style.setProperty('overflow','hidden');
+      const viewport=window.visualViewport;
+      let frame=0;
+      const keepLatestVisible=()=>{
+        cancelAnimationFrame(frame);
+        frame=requestAnimationFrame(()=>{const scroller=historyRef.current;if(scroller&&nearBottomRef.current)scroller.scrollTop=scroller.scrollHeight;});
+      };
+      viewport?.addEventListener('resize',keepLatestVisible);
+      return()=>{
+        viewport?.removeEventListener('resize',keepLatestVisible);cancelAnimationFrame(frame);
+        const focused=document.activeElement;
+        if(focused instanceof HTMLElement&&overlayRef.current?.contains(focused)&&focused.matches('textarea,input,[contenteditable="true"]'))focused.blur();
+        for(const[name,value,priority]of previous)if(value)body.style.setProperty(name,value,priority);else body.style.removeProperty(name);
+        if(rootOverflow)root.style.setProperty('overflow',rootOverflow,rootPriority);else root.style.removeProperty('overflow');
+        window.scrollTo(x,window.location.pathname===pathname?y:0);
+      };
+    };
+    let release:(()=>void)|undefined;
+    const sync=()=>{if(mobile.matches&&!release)release=lock();else if(!mobile.matches&&release){release();release=undefined;}};
+    sync();mobile.addEventListener('change',sync);
+    return()=>{mobile.removeEventListener('change',sync);release?.();};
+  },[assistantActive,communicationOpen]);
   useEffect(()=>{if(newMessage)composeRef.current?.focus();},[newMessage]);
   useEffect(()=>{if(!typingPeerId||!currentUserId)return;let active=true;let joined=false;let channel:ReturnType<typeof supabase.channel>|null=null;const subscribe=async()=>{const{data:{session}}=await supabase.auth.getSession();if(!active||!session?.access_token)return;await supabase.realtime.setAuth(session.access_token);if(!active)return;const topic=[currentUserId,typingPeerId].sort().join(":");channel=supabase.channel(`my-work-typing:${topic}`,{config:{private:true,broadcast:{self:false}}}).on("broadcast",{event:"typing"},({payload})=>{if(payload?.userId!==typingPeerId)return;window.clearTimeout(remoteTypingTimerRef.current);if(payload.typing!==true){setRemoteTypingUserId("");return;}setRemoteTypingUserId(typingPeerId);remoteTypingTimerRef.current=window.setTimeout(()=>setRemoteTypingUserId(""),2600);});channel.on("broadcast",{event:"message_changed"},({payload})=>{if(typeof payload?.id==="string"){reconcile(payload.id,payload.kind!=="new");queueLoad();}});typingChannelRef.current=channel;channel.subscribe(status=>{if(status==="SUBSCRIBED"){void refresh();if(joined)queueLoad();joined=true;}});};void subscribe();return()=>{active=false;if(canWrite&&channel)void channel.send({type:"broadcast",event:"typing",payload:{userId:currentUserId,typing:false}});typingChannelRef.current=null;window.clearTimeout(typingStopTimerRef.current);window.clearTimeout(remoteTypingTimerRef.current);lastTypingBroadcastRef.current=0;setRemoteTypingUserId("");if(channel)void supabase.removeChannel(channel);};},[canWrite,currentUserId,typingPeerId,reconcile,refresh,queueLoad]);
 

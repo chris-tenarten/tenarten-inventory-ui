@@ -1,0 +1,112 @@
+{
+  "passed": true,
+  "base": "dfdef9d",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "productionBaseline": "6cb6cf7",
+  "tools": {
+    "groups": 18,
+    "queries": 109,
+    "receipt": "tool-validation.json"
+  },
+  "routingGroups": 12,
+  "existingCore": {
+    "chunks": 16,
+    "examples": 113
+  },
+  "bindingCases": 81,
+  "browser": {
+    "groups": 5,
+    "actualModelResponsesFinal": 5,
+    "validatedAI": 3,
+    "deterministicAmbiguity": 1,
+    "fallbacks": 2,
+    "authInjected": false,
+    "requestInterceptions": 0
+  },
+  "checks": {
+    "applicationTypeScript": "pass (final optimized export)",
+    "sharedTypeScript": "pass",
+    "targetedESLint": "pass",
+    "diffCheck": "pass",
+    "optimizedBuild": "pass; loopback review environment, Planning disabled"
+  },
+  "existingChecks": {
+    "rework": "pass",
+    "fixtureVisibility": "pass",
+    "manpowerAccounting": "pass",
+    "readiness": "functional pass; unrelated existing queue-source assertion fails"
+  },
+  "limits": [
+    "Local PostgreSQL SET ROLE/JWT-sub checks do not certify hosted HTTP Auth or query plans",
+    "Best effort multi-query consistency",
+    "30 second foreground refresh, plus immediate access/foreground invalidation; no instantaneous remote revocation guarantee",
+    "Conservative claim validation can return deterministic fallback",
+    "No physical iPhone or hosted employee browser verification"
+  ],
+  "hostedTenOpsMutations": false,
+  "newMigrationFiles": false,
+  "push": false,
+  "deployment": false,
+  "modelUsage": "model-usage.json",
+  "review": {
+    "url": "http://localhost:3000/my-work",
+    "adapter": {
+      "pid": 96245,
+      "port": 55593,
+      "container": "tenops-tenbot-review",
+      "origin": "http://localhost:3000",
+      "provider": "Cloudflare Workers AI remote binding",
+      "caps": {
+        "sharedDayLimit": 300,
+        "sharedMonthLimit": 6000,
+        "perAccountMinuteLimit": 6,
+        "dailyNeuronLimit": 8000,
+        "monthlyNeuronLimit": 240000,
+        "freeDailyNeurons": 10000,
+        "neuronHeadroom": 2000,
+        "totalDay": 300,
+        "perMinute": 6,
+        "monthlyUsd": 0
+      }
+    }
+  },
+  "sources": [
+    {
+      "path": "supabase/functions/_shared/tenbot-job-tools.ts",
+      "sha256": "77f842f86f247de59104b0b8b6849df9daf4fd30a50d9eb374936b91acc7e5a1"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "sha256": "b1ffc5c4a1a3a28e2fda4b79251a53b36d1c0ba31fc1e3e52ec58b2440251b28"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "sha256": "e9567d77c7325b4ab7f302a8a37062b9e2c8c58c9d9711fcfb84e3a6b681c9e3"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "64884f56eba3deb1749c49e36d922d33ddf5941ef9b90d64f6c792a668f24cc2"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "sha256": "e12763de465d826c5dfdc23d0f6ba3d25e9b54bea0481954edbff9e6e5f386a9"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "caac87ed601af5a86048b3b739df69e81cf854a5bd10414b1c4c805f61f30204"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "eb8ea9cfffc5ad70de6a6b709cea924d96a1a70bd9de6ea9e28f18f5185302e8"
+    },
+    {
+      "path": "scripts/tenbot-ai/worker.ts",
+      "sha256": "55a1ab687cefeadc9fd113db7cca5bb394db2af4dde5c7de6b37261d32e8f0fa"
+    },
+    {
+      "path": "scripts/support/tenbot-ai-pilot.mjs",
+      "sha256": "dac8d492000bd587e88e254f67d7571da35e25052bb63426187628612e09bcc9"
+    }
+  ]
+}
