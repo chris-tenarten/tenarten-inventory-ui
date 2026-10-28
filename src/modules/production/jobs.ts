@@ -22,6 +22,7 @@ export { EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary } from './job-update-su
 import { productionValuesEqual } from './update-normalization';
 import type { ProductionScheduleBatchRpcArgs, ProductionScheduleBatchSuccess } from './schedule-batch-contract';
 import { isActiveProductionRework } from './rework';
+import { applyProductionLifecycle } from '../../../supabase/functions/_shared/production-job-facts.mjs';
 import { summarizeLaborLifecycles, type JobLaborLifecycleSummary } from './labor-lifecycle';
 import { canonicalJobNumber,findJobNumberConflict,isJobNumberUniqueViolation,jobNumberConflictMessage } from './job-identifiers';
 
@@ -164,20 +165,7 @@ export async function loadProductionJobs(includeArchived = false): Promise<Produ
   return ((data ?? []) as unknown as ProductionJob[]).map((row) => {
     const job = hydrateProject(row);
     const cycle = activeByJob.get(job.id);
-    if (!cycle) return { ...job, lifecycle_key: `original:${job.id}`, rework_cycle: null };
-    return {
-      ...job,
-      lifecycle_key: `rework:${cycle.id}`,
-      rework_cycle: cycle,
-      original_production_status: job.production_status,
-      original_planned_start: job.planned_start,
-      original_planned_end: job.planned_end,
-      original_updated_at: job.updated_at,
-      production_status: cycle.production_status,
-      planned_start: cycle.planned_start,
-      planned_end: cycle.planned_end,
-      updated_at: cycle.updated_at,
-    };
+    return applyProductionLifecycle(job, cycle ?? null);
   });
 }
 
@@ -202,9 +190,8 @@ export async function loadProductionScheduleJobs(): Promise<ProductionScheduleJo
   for (const cycle of cycles) if (isActiveProductionRework(cycle) && !active.has(cycle.job_id)) active.set(cycle.job_id, cycle);
   return jobs.map(job => {
     const cycle = active.get(job.id);
-    return cycle ? { ...job, lifecycle_key: `rework:${cycle.id}`, rework_cycle: { id: cycle.id },
-      production_status: cycle.production_status, planned_start: cycle.planned_start, planned_end: cycle.planned_end }
-      : { ...job, lifecycle_key: `original:${job.id}`, rework_cycle: null };
+    const effective = applyProductionLifecycle(job, cycle ?? null);
+    return { ...effective, rework_cycle: cycle ? { id: cycle.id } : null };
   });
 }
 

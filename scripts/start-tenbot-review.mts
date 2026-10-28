@@ -6,6 +6,8 @@ import {sql,literal,json,asUser,admin,docker,startIntakeDatabase} from './suppor
 import {handleTenbot} from '../supabase/functions/_shared/tenbot-handler.ts';
 import {TenbotError} from '../supabase/functions/_shared/tenbot-core.ts';
 import {pilotProvider,pilotCaps} from './support/tenbot-ai-pilot.mjs';
+import {createTenbotJobTools} from '../supabase/functions/_shared/tenbot-job-tools.ts';
+import {prepareTenbotJobFixture,createTenbotJobCaller} from './support/tenbot-job-database.mjs';
 const container='tenops-tenbot-review',port=55593,origin='http://localhost:3000';
 const aiPilot=process.argv.includes('--ai-pilot'),provider=aiPilot?pilotProvider():null;
 // Reuse the established disposable fixture in a task-owned store. Other local
@@ -25,6 +27,7 @@ const conversationMigration=readFileSync('supabase/migrations/20261027150000_ten
 if(!sql(container,"select to_regclass('public.tenbot_conversations')"))sql(container,conversationMigration);
 else sql(container,'begin;'+conversationMigration.slice(conversationMigration.indexOf('create function public.tenbot_load_conversation')).replaceAll('create function public.tenbot_','create or replace function public.tenbot_'));
 if(process.argv.includes('--refresh-only')){console.log('Local TenBot RPCs refreshed; feedback preserved.');process.exit(0);}
+prepareTenbotJobFixture(container);
 const rpc=(role='authenticated')=>async(name,args={})=>{try{if(!/^(has_app_capability|has_proposal_access|tenbot_[a-z_]+)$/.test(name))throw Error('Unsupported local RPC');const expression=`public.${name}(${Object.entries(args).map(([k,v])=>`${k}=>${v===null?'null':typeof v==='object'?json(v):typeof v==='boolean'?String(v):literal(v)}`).join(',')})`;const query=asUser('select to_jsonb('+expression+')',admin,role);
  const raw=sql(container,query);
  return {data:raw?JSON.parse(raw):null,error:null};}catch{return {data:null,error:{message:'Local operation unavailable'}};}};
@@ -39,13 +42,7 @@ const server=createServer(async(req,res)=>{
  if(!token.endsWith('.local'))return send(401,{error:'Local review session required.'});
  try{const claims=JSON.parse(Buffer.from(token.split('.')[1],'base64url').toString());if(claims.sub!==admin)throw Error();}catch{return send(401,{error:'Invalid local session.'});}
  try{let raw='';for await(const c of req){raw+=c;if(Buffer.byteLength(raw)>16000)return send(413,{error:'Request too large'});}const body=JSON.parse(raw);
- try{send(200,await handleTenbot(body,admin,rpc(),rpc('service_role'),body.action==='ask'?provider:null,aiPilot?pilotCaps.monthlyUsd:0));}
- catch(e){
-  // Keep existing direct search usable on quota, provider and validation errors.
-  // Authorization and feedback errors retain their original behavior.
-  if(!aiPilot||body.action!=='ask'||!(e instanceof TenbotError)||![429,502,503].includes(e.status))throw e;
-  send(200,{...await handleTenbot(body,admin,rpc(),rpc('service_role'),null,0),fallback:true});
- }
+ send(200,await handleTenbot(body,admin,rpc(),rpc("service_role"),body.action==="ask"?provider:null,aiPilot?pilotCaps.monthlyUsd:0,createTenbotJobTools(createTenbotJobCaller(container,admin))));
  }catch(e){send(e instanceof TenbotError?e.status:500,{error:e instanceof TenbotError?e.message:'Local review request failed.'});}
 });
 mkdirSync('/private/tmp/tenops-tenbot-review',{recursive:true});

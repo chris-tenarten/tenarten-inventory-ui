@@ -28,10 +28,17 @@ function text(value: unknown, max: number): value is string {
 }
 
 function validInput(value: unknown): value is InferenceInput {
-  if (!object(value) || Object.keys(value).some(key => !['question', 'context', 'excerpts', 'draft'].includes(key))) return false;
+  if (!object(value) || Object.keys(value).some(key => !['question', 'context', 'excerpts', 'draft', 'operational'].includes(key))) return false;
   if (!text(value.question, 1200) || typeof value.draft !== 'boolean') return false;
   if (!Array.isArray(value.context) || value.context.length > 2 || value.context.some(item => !text(item, 1200))) return false;
   if (!Array.isArray(value.excerpts) || value.excerpts.length > 4 || value.excerpts.reduce((size,item)=>size+(object(item)&&typeof item.guidance==='string'?item.guidance.length:0),0)>8000) return false;
+  if (value.operational !== undefined) {
+    if (value.draft || value.context.length || value.excerpts.length || !object(value.operational)
+      || Object.keys(value.operational).some(key => key !== 'facts') || !Array.isArray(value.operational.facts)
+      || value.operational.facts.length > 40 || JSON.stringify(value.operational).length > 8000
+      || value.operational.facts.some(fact => !object(fact) || Object.keys(fact).some(key => !['id','text'].includes(key))
+        || !text(fact.id,80) || !text(fact.text,1200))) return false;
+  }
   return value.excerpts.every(item => object(item)
     && Object.keys(item).every(key => ['id', 'title', 'guidance', 'status'].includes(key))
     && text(item.id, 80) && text(item.title, 160) && text(item.guidance, 3000)

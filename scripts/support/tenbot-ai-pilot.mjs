@@ -164,5 +164,6 @@ export function pilotProvider({model=pilotModel}={}){
 export function guideOnlyInput(input){
  if(input.draft)throw Error('Feature drafts remain employee-written in this pilot');
  if(typeof input.question!=='string'||!input.question.trim()||input.question.length>1200||!Array.isArray(input.context)||input.context.length>2||input.context.some(item=>typeof item!=='string'||item.length>1200))throw Error('Invalid assistant input');
- return {question:input.question,context:input.context,draft:false,excerpts:input.excerpts};
+ if(input.operational&&(input.context.length||input.excerpts.length||!Array.isArray(input.operational.facts)||input.operational.facts.length>40||JSON.stringify(input.operational).length>8000))throw Error('Invalid operational evidence');
+ return {question:input.question,context:input.context,draft:false,excerpts:input.excerpts,...(input.operational?{operational:input.operational}:{})};
 }

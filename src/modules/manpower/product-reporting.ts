@@ -4,10 +4,8 @@ export type ProductReference = Pick<ManpowerReference, 'id' | 'display_name' | '
 export type ProductLaborEntry = Pick<ManpowerEntry, 'am_hours' | 'pm_hours' | 'product_category_id' | 'task_id'> & { task: { display_name: string } };
 
 export const UNCATEGORIZED = '__uncategorized__';
-export const entryHundredths = (entry: Pick<ManpowerEntry, 'am_hours' | 'pm_hours'>) =>
-  Math.round(Number(entry.am_hours) * 100) + Math.round(Number(entry.pm_hours) * 100);
-export const laborHours = (entries: Pick<ManpowerEntry, 'am_hours' | 'pm_hours'>[]) =>
-  entries.reduce((sum, entry) => sum + entryHundredths(entry), 0) / 100;
+import { entryHundredths } from '../../../supabase/functions/_shared/labor-hours.mjs';
+export { entryHundredths, laborHours } from '../../../supabase/functions/_shared/labor-hours.mjs';
 export const productKey = (entry: Pick<ManpowerEntry, 'product_category_id'>) => entry.product_category_id ?? UNCATEGORIZED;
 export function productLabel(id: string, categories: ProductReference[]) {
   if (id === UNCATEGORIZED) return 'Uncategorized';

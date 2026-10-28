@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 
 const migration = await readFile('supabase/migrations/20260817_003_production_rework_cycles.sql', 'utf8');
 const jobs = await readFile('src/modules/production/jobs.ts', 'utf8');
+const lifecycle = await readFile('supabase/functions/_shared/production-job-facts.mjs', 'utf8');
 const workspace = await readFile('src/modules/production/ProductionWorkspace.tsx', 'utf8');
 const inspector = await readFile('src/modules/production/components/ProductionJobInspector.tsx', 'utf8');
 const quickAction = await readFile('src/modules/production/components/ReworkQuickAction.tsx', 'utf8');
@@ -37,7 +38,8 @@ for (const signature of [
 assert.match(jobs, /supabase\.rpc\('create_production_rework',[\s\S]*?p_job_id:[\s\S]*?p_reason_category:[\s\S]*?p_scope_details:[\s\S]*?p_intake_date:[\s\S]*?p_created_by:/);
 assert.match(jobs, /supabase\.rpc\('update_production_rework_status',[\s\S]*?p_rework_cycle_id:[\s\S]*?p_production_status:[\s\S]*?p_expected_updated_at:[\s\S]*?p_actor_name:/);
 assert.match(jobs, /supabase\.rpc\('save_production_rework_mixed_schedule_batch', args\)/);
-assert.match(jobs, /lifecycle_key: `rework:\$\{cycle\.id\}`/);
+assert.match(jobs, /applyProductionLifecycle\(job, cycle \?\? null\)/);
+assert.match(lifecycle, /lifecycle_key: `rework:\$\{cycle\.id\}`/);
 assert.match(workspace, /p_rework_proposals: reworkProposals/);
 assert.match(workspace, /ordinaryStaged[\s\S]*!reworkJobIds\.has\(jobId\)/);
 assert.match(workspace, /reworkStaged[\s\S]*reworkJobIds\.has\(jobId\)/);
