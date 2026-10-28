@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T03:21:19.851339+00:00",
+  "sha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "deployment": "b251a485-6f3d-460e-8ab5-c9dfc94e563a",
+  "authAndTenbotMessagingPassed": true,
+  "noUnexpectedPrivateReadsOrWrites": true,
+  "signedInMessagingBrowserVerified": false,
+  "acceptedLocalUiCandidate": "4c2e1fa7a470ef2a7749ba298be5d87645010000",
+  "scope": "Exact served Messaging/TenBot component bytes and unchanged accepted local UI checks; actual hosted owner HTTP/Auth/inference plus SQL owner/Admin isolation; fresh public desktop/mobile Auth gate. No signed-in hosted browser claim.",
+  "receipts": [
+    {
+      "path": "tendev-served.json",
+      "sha256": "ce90157422a315ff6e9fd2676778c2650c0d039f8f46f47cf5355f24edcf9a47"
+    },
+    {
+      "path": "tendev-public-browser.json",
+      "sha256": "2426dce159392b73be32749b42f2e02745e4a817d4251bf792242091fee36583"
+    },
+    {
+      "path": "edge-real-inference-probe.json",
+      "sha256": "f4f1641b92679fab1429a388d99fc66d573d8ba67491559c68c52068a3aed87a"
+    },
+    {
+      "path": "edge-disabled-probe.json",
+      "sha256": "abe805f641074edc59ddc61c26699039380107535a83ae9806b7a50d8edd6e6f"
+    },
+    {
+      "path": "privacy-rollback.json",
+      "sha256": "f15eb25bed2ce54792c6d46db105ff309912426f24018378d13bf378375ce0c3"
+    },
+    {
+      "path": "admin-ownership-rollback.json",
+      "sha256": "5d4553534b0639f81aba50d6b966473071fc894f1c5342619c8e0da0c9c888a1"
+    },
+    {
+      "path": "edge-source-preservation.json",
+      "sha256": "c27e36047d06622efffae0dcee2382a776ad3a905e2cea0435d2f15265ec0620"
+    }
+  ]
+}

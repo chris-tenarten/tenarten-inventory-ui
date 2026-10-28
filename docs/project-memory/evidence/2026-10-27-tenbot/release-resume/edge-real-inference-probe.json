@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "checkedAt": "2026-10-28T02:52:02.989Z",
+  "mode": "ai",
+  "fallback": false,
+  "sourceCount": 2,
+  "syntheticQuestion": "How do I create a group conversation in Messaging?",
+  "answer": "To create a group conversation in Messaging, open the app, select New group, enter a group name, add at least one other participant, and choose Create group. Only the creator can manage group members or rename the group. Existing members see the full history, while removed members lose access. You cannot add a third person to a personal DM; create a separate group instead.",
+  "sources": [
+    {
+      "title": "Create a group conversation",
+      "route": "/my-work",
+      "status": "deployed"
+    },
+    {
+      "title": "Messaging groups, personal DMs and conversation privacy",
+      "route": "/my-work",
+      "status": "deployed"
+    }
+  ],
+  "usageDelta": {
+    "sharedDayUsed": 1,
+    "sharedMonthUsed": 1,
+    "dayAccountedNeurons": 7.659999999999997,
+    "dayMeasuredInputTokens": 839,
+    "dayMeasuredOutputTokens": 124,
+    "dayUnmeasuredAttempts": 0,
+    "dayCompleted": 1,
+    "dayFailed": 0
+  },
+  "configuredProvider": "dedicated Qwen3 Workers Free credential",
+  "modelRequests": 1,
+  "providerAttempts": 1,
+  "retainedReservations": 1,
+  "syntheticConversationCleared": true,
+  "existingOwnerOnly": true,
+  "ordinaryMessagesTasksRead": false,
+  "credentialOrIdentityEmitted": false,
+  "aiEnabledAfter": true
+}

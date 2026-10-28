@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T03:10:55.316703+00:00",
+  "readOnly": true,
+  "networkCalls": 0,
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "slug": "admin-manage-users",
+  "format": "ESZIP2.3",
+  "registeredModuleCount": 652,
+  "registeredEntrypointMatchesMetadata": true,
+  "registeredEntrypointOccurrences": 1,
+  "module": {
+    "specifier": "admin-manage-users/index.ts",
+    "entryKind": 0,
+    "sourceOffset": 0,
+    "sourceLength": 10284,
+    "sourceMapOffset": 0,
+    "sourceMapLength": 17627,
+    "moduleKind": 0
+  },
+  "actualEntrypointPath": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_023a3001-f733-40da-96dc-1c041f0d01dc_9/source/supabase/functions/admin-manage-users/index.ts",
+  "rawBodySha256": "113a05d9aeaa2d5ae1b24a4fa76300bcb697c2033881b11a5d8e20ddc2583a4f",
+  "rawBodyBytes": 9365423,
+  "compiledSource": {
+    "absoluteOffset": 20946,
+    "bytes": 10284,
+    "sha256": "46de369bc82c6297a0a896d3aeb5e640f3f6dc241a6d135e74edd0cd135cdbd0"
+  },
+  "sourceMap": {
+    "absoluteOffset": 9347796,
+    "bytes": 17627,
+    "sha256": "19d99b8d099d7d5e9591a1ac0ad4c7ed2ec3e80f764a05850c577f6578e5c51f",
+    "version": 3,
+    "sources": [
+      "admin-manage-users/index.ts"
+    ],
+    "sourcesContentCount": 1
+  },
+  "originalSource": {
+    "bytes": 10786,
+    "sha256": "35c6c2cd2f46465b7b7ffa76dbb2daadee5785aa9762d06b3f8a67e480aaf7cf",
+    "canonicalRevision": "178587454fb87aec8b5a76730714ec1b2973ac69",
+    "canonicalPath": "supabase/functions/admin-manage-users/index.ts",
+    "completeByteEquality": true,
+    "normalizationApplied": false,
+    "localImports": [],
+    "externalImports": [
+      "npm:@supabase/supabase-js@2.101.1"
+    ]
+  },
+  "scope": "Complete original source is extracted from the uniquely registered entrypoint source map; compiled source is registered and hashed. This is not a loose source fragment or raw substring match."
+}

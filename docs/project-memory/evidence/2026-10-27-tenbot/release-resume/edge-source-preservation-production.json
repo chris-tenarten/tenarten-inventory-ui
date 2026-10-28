@@ -1,0 +1,238 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T03:22:24.889Z",
+  "metadataCheckedAt": "2026-10-28T03:22:24.892Z",
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "readOnly": true,
+  "networkCallsDuringAssembly": 0,
+  "originalFunctions": 10,
+  "functionsVerified": 11,
+  "sourceEqual": true,
+  "allIdsStatusJwtPreserved": true,
+  "actualFunctions": [
+    {
+      "slug": "monday-material-check",
+      "id": "d733081f-f813-45ef-9317-db933857df3c",
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "51da7c50dd73f6d27bcce0496963035757038fdb4ba849ec25fa07aff7866253",
+      "updated_at": 1776877301777,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_d733081f-f813-45ef-9317-db933857df3c_12/source/index.ts",
+      "import_map": false,
+      "version": 50
+    },
+    {
+      "slug": "generate-purchase-order-pdf",
+      "id": "4800ff21-d1ab-4cd0-a300-266956929ca8",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "214faff2b7df40548ada2221617e583887623e04efd4cbeb8ef91aa22ce39c7b",
+      "updated_at": 1791228851648,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_4800ff21-d1ab-4cd0-a300-266956929ca8_25/source/supabase/functions/generate-purchase-order-pdf/index.ts",
+      "import_map": false,
+      "version": 55
+    },
+    {
+      "slug": "generate-job-transmittal-pdf",
+      "id": "55c0246b-b5a5-4a2e-8d58-18bc9757f1c3",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "40ea701e98e43a935292e92db20cbfcba12ae019c928cbdd78f1b3a133e9c39c",
+      "updated_at": 1791826715052,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_55c0246b-b5a5-4a2e-8d58-18bc9757f1c3_13/source/supabase/functions/generate-job-transmittal-pdf/index.ts",
+      "import_map": false,
+      "version": 43
+    },
+    {
+      "slug": "admin-manage-users",
+      "id": "023a3001-f733-40da-96dc-1c041f0d01dc",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "2620bfe6b2b38edb77cb0da785bbff5cdb2c5a44e03341ba1ac193cc8c960131",
+      "updated_at": 1791920740914,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_023a3001-f733-40da-96dc-1c041f0d01dc_9/source/supabase/functions/admin-manage-users/index.ts",
+      "import_map": false,
+      "version": 39
+    },
+    {
+      "slug": "generate-proposal-pdf",
+      "id": "0c25a597-ca3f-4dfe-9007-ae76ea14bce1",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "988676cea2e736c03178637d7749ba0d58521a945fe2dc1088c5e5809f0a89ab",
+      "updated_at": 1793126468699,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_0c25a597-ca3f-4dfe-9007-ae76ea14bce1_38/source/.tmp-intake-graduation-release/tendev/supabase/functions/generate-proposal-pdf/index.ts",
+      "import_map": true,
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_0c25a597-ca3f-4dfe-9007-ae76ea14bce1_38/source/.tmp-intake-graduation-release/tendev/supabase/functions/generate-proposal-pdf/deno.json",
+      "version": 43
+    },
+    {
+      "slug": "generate-sample-pdf",
+      "id": "aca8265a-5cc1-4dd8-b4df-e28a4b6e524e",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "aa2e1230c73f925ab0147a035d8e1a0b64d1d2e1523707b21a5f78d4aa497c61",
+      "updated_at": 1793126218064,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_aca8265a-5cc1-4dd8-b4df-e28a4b6e524e_50/source/.tmp-intake-graduation-release/tendev/supabase/functions/generate-sample-pdf/index.ts",
+      "import_map": true,
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_aca8265a-5cc1-4dd8-b4df-e28a4b6e524e_50/source/.tmp-intake-graduation-release/tendev/supabase/functions/generate-sample-pdf/deno.json",
+      "version": 55
+    },
+    {
+      "slug": "cleanup-messaging-drafts",
+      "id": "cdc0b169-61b3-4e9e-9217-347b2f961f72",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "02ce8b6f40df6f742d0929fca59c1284bc76fa50103b6c1d7208d760cc72046b",
+      "updated_at": 1790354803313,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_cdc0b169-61b3-4e9e-9217-347b2f961f72_1/source/.tmp-messaging-operations/deploy/supabase/functions/cleanup-messaging-drafts/index.ts",
+      "import_map": true,
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_cdc0b169-61b3-4e9e-9217-347b2f961f72_1/source/.tmp-messaging-operations/deploy/supabase/functions/cleanup-messaging-drafts/deno.json",
+      "version": 31
+    },
+    {
+      "slug": "admin-delete-messaging-message",
+      "id": "3486ee84-dced-45f1-baa9-786a961de0e7",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "28f075c71aa3a5b485b5a4ed02f4ffef1b5cf285eeea4cf766ae35321f4af631",
+      "updated_at": 1790356288851,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_3486ee84-dced-45f1-baa9-786a961de0e7_1/source/.tmp-messaging-admin/deploy/supabase/functions/admin-delete-messaging-message/index.ts",
+      "import_map": false,
+      "version": 31
+    },
+    {
+      "slug": "send-web-push-tendev",
+      "id": "0248da3c-43fe-44e5-84f9-71f35422c401",
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "b5a3c4867566f9826b20331fe35ce82f15c4fd6d03d1fbf54385e9e418375b6e",
+      "updated_at": 1792686537496,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_0248da3c-43fe-44e5-84f9-71f35422c401_27/source/supabase/functions/send-web-push-tendev/index.ts",
+      "import_map": true,
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_0248da3c-43fe-44e5-84f9-71f35422c401_27/source/supabase/functions/send-web-push-tendev/deno.json",
+      "version": 32
+    },
+    {
+      "slug": "send-web-push-tenops",
+      "id": "3449d184-907b-4a78-bb1c-e94f095643ee",
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "ezbr_sha256": "9f04c2cf8de4acfe635786080f4a41aa3a59f7d1c920b628e43e2e33b545be4b",
+      "updated_at": 1792686541630,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_3449d184-907b-4a78-bb1c-e94f095643ee_16/source/supabase/functions/send-web-push-tenops/index.ts",
+      "import_map": true,
+      "import_map_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_3449d184-907b-4a78-bb1c-e94f095643ee_16/source/supabase/functions/send-web-push-tenops/deno.json",
+      "version": 21
+    },
+    {
+      "slug": "tenbot",
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "ezbr_sha256": "5f4891cb8b185826cf9b14d5002a0b97d79f29a077a4380cd850f48b5d7d008b",
+      "updated_at": 1793155540667,
+      "entrypoint_path": "file:///tmp/user_fn_vxdxjhazkqhpkwdqtobp_49ff50b8-45db-490a-ac29-a1426659589e_1/source/supabase/functions/tenbot/index.ts",
+      "import_map": false,
+      "version": 5
+    }
+  ],
+  "checks": [
+    {
+      "slug": "monday-material-check",
+      "version": 50,
+      "ezbr_sha256": "51da7c50dd73f6d27bcce0496963035757038fdb4ba849ec25fa07aff7866253",
+      "sourceEqual": true,
+      "method": "historical ezbr identity"
+    },
+    {
+      "slug": "generate-purchase-order-pdf",
+      "version": 55,
+      "ezbr_sha256": "214faff2b7df40548ada2221617e583887623e04efd4cbeb8ef91aa22ce39c7b",
+      "sourceEqual": true,
+      "method": "historical ezbr identity"
+    },
+    {
+      "slug": "generate-job-transmittal-pdf",
+      "version": 43,
+      "ezbr_sha256": "40ea701e98e43a935292e92db20cbfcba12ae019c928cbdd78f1b3a133e9c39c",
+      "sourceEqual": true,
+      "method": "historical ezbr identity"
+    },
+    {
+      "slug": "cleanup-messaging-drafts",
+      "version": 31,
+      "ezbr_sha256": "02ce8b6f40df6f742d0929fca59c1284bc76fa50103b6c1d7208d760cc72046b",
+      "sourceEqual": true,
+      "method": "historical ezbr identity"
+    },
+    {
+      "slug": "admin-delete-messaging-message",
+      "version": 31,
+      "ezbr_sha256": "28f075c71aa3a5b485b5a4ed02f4ffef1b5cf285eeea4cf766ae35321f4af631",
+      "sourceEqual": true,
+      "method": "historical ezbr identity"
+    },
+    {
+      "slug": "generate-proposal-pdf",
+      "version": 43,
+      "ezbr_sha256": "988676cea2e736c03178637d7749ba0d58521a945fe2dc1088c5e5809f0a89ab",
+      "rawBodySha256": "69df4ebf75c503e5c7d2649448ac28e4977c39b2fb0ad6324ae4c8955c77cb2f",
+      "sourceEqual": true,
+      "method": "exact accepted raw bundle"
+    },
+    {
+      "slug": "generate-sample-pdf",
+      "version": 55,
+      "ezbr_sha256": "aa2e1230c73f925ab0147a035d8e1a0b64d1d2e1523707b21a5f78d4aa497c61",
+      "rawBodySha256": "d4a0716c73b1fda161baaee8dc5bac9812c3ebdf53a18f50db356ef68802e163",
+      "sourceEqual": true,
+      "method": "exact accepted raw bundle"
+    },
+    {
+      "slug": "send-web-push-tendev",
+      "version": 32,
+      "ezbr_sha256": "b5a3c4867566f9826b20331fe35ce82f15c4fd6d03d1fbf54385e9e418375b6e",
+      "rawBodySha256": "402fb6811aadd1d1a6f39318d40f99ba8840ab95f4bf398b7140c81cec9bdbc1",
+      "decodedBodySha256": "8a52d32bc5f7a93e4ff31def90ac6f8d87a92441bf33b663fa6b8adf5af1eba3",
+      "sourceEqual": true,
+      "method": "exact accepted decoded body hash (historical method)"
+    },
+    {
+      "slug": "send-web-push-tenops",
+      "version": 21,
+      "ezbr_sha256": "9f04c2cf8de4acfe635786080f4a41aa3a59f7d1c920b628e43e2e33b545be4b",
+      "rawBodySha256": "f0987dc67ee1c7a44af90941f4dcd1cb57bd294e34ce94aa42e215c9fa082aca",
+      "decodedBodySha256": "6d421fbd0be1b667e65ef820d4aa3001126cf17513b8f14e1cbbb64cd50802b9",
+      "sourceEqual": true,
+      "method": "exact accepted decoded body hash (historical method)"
+    },
+    {
+      "slug": "tenbot",
+      "version": 5,
+      "ezbr_sha256": "5f4891cb8b185826cf9b14d5002a0b97d79f29a077a4380cd850f48b5d7d008b",
+      "rawBodySha256": "3610a2c10ddfbbf227a2a32834b50d364556d97f19ac9c91cfc5602b09300f1a",
+      "sourceEqual": true,
+      "method": "exact initial TenBot deployed bundle"
+    },
+    {
+      "slug": "admin-manage-users",
+      "version": 39,
+      "ezbr_sha256": "2620bfe6b2b38edb77cb0da785bbff5cdb2c5a44e03341ba1ac193cc8c960131",
+      "rawBodySha256": "113a05d9aeaa2d5ae1b24a4fa76300bcb697c2033881b11a5d8e20ddc2583a4f",
+      "sourceSha256": "35c6c2cd2f46465b7b7ffa76dbb2daadee5785aa9762d06b3f8a67e480aaf7cf",
+      "extractionReceiptSha256": "14563da8dcd987ca668b6362c7f12ede3aeed0afed49a69d8fc678cb94128c8f",
+      "sourceEqual": true,
+      "method": "registered ESZIP2.3 entrypoint source-map original equals canonical Oct13; no local imports"
+    }
+  ],
+  "versionInterpretation": "All eleven exact source/config identities preserved; each version advanced exactly once for the authorized Production-origin secret update.",
+  "configurationEvidence": "Five historical full function configurations are compared by release gate. Other registered entrypoints, current JWT/import maps and accepted body graphs are pinned; CLI secrets-set sends only project secrets, not function configuration/source updates. Subsequent actual metadata must exactly match this source-verified snapshot.",
+  "limitations": [
+    "Admin October12 code hash superseded by accepted October13 complete entrypoint source-map original, not a loose source fragment.",
+    "WebPush preserves the historical decoded-body SHA method; current raw hashes are additionally pinned.",
+    "Source proof and actual live metadata comparison are separate gates."
+  ],
+  "previousReceiptSha256": "c27e36047d06622efffae0dcee2382a776ad3a905e2cea0435d2f15265ec0620",
+  "productionOriginSecretRefreshVerified": true
+}

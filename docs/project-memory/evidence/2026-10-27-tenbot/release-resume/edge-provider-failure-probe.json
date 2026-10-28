@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "checkedAt": "2026-10-28T02:49:03.788Z",
+  "mode": "guide",
+  "fallback": true,
+  "sourceCount": 1,
+  "syntheticQuestion": "How do I create a group conversation in Messaging?",
+  "answer": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+  "sources": [
+    {
+      "title": "Create a group conversation",
+      "route": "/my-work",
+      "status": "deployed"
+    }
+  ],
+  "usageDelta": {
+    "sharedDayUsed": 1,
+    "sharedMonthUsed": 1,
+    "dayAccountedNeurons": 43,
+    "dayMeasuredInputTokens": 0,
+    "dayMeasuredOutputTokens": 0,
+    "dayUnmeasuredAttempts": 1,
+    "dayCompleted": 0,
+    "dayFailed": 1
+  },
+  "configuredProvider": "deliberately invalid credential, expected REST authorization failure",
+  "modelRequests": 0,
+  "providerAttempts": 1,
+  "retainedReservations": 1,
+  "syntheticConversationCleared": true,
+  "existingOwnerOnly": true,
+  "ordinaryMessagesTasksRead": false,
+  "credentialOrIdentityEmitted": false,
+  "aiEnabledAfter": false
+}

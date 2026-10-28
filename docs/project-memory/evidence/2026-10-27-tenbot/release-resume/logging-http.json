@@ -1,0 +1,68 @@
+{
+  "at": "2026-10-28T00:28:10.655Z",
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "checksPassed": true,
+  "passed": true,
+  "fixtureCleaned": true,
+  "serviceOnlyGrant": true,
+  "authenticatedDeniedByGrant": true,
+  "actualAuthenticatedDenial": "passed after current Auth session validation",
+  "observations": [
+    {
+      "at": "2026-10-28T00:28:24.636Z",
+      "markerCount": 0,
+      "durationCount": 29,
+      "genericErrorCount": 0
+    },
+    {
+      "at": "2026-10-28T00:28:31.182Z",
+      "markerCount": 0,
+      "durationCount": 29,
+      "genericErrorCount": 0
+    },
+    {
+      "at": "2026-10-28T00:28:37.435Z",
+      "markerCount": 0,
+      "durationCount": 29,
+      "genericErrorCount": 0
+    },
+    {
+      "at": "2026-10-28T00:28:43.844Z",
+      "markerCount": 0,
+      "durationCount": 39,
+      "genericErrorCount": 1
+    },
+    {
+      "at": "2026-10-28T00:28:50.239Z",
+      "markerCount": 0,
+      "durationCount": 39,
+      "genericErrorCount": 1
+    }
+  ],
+  "noPrivateRecordReads": true,
+  "noModelCalls": true,
+  "effectiveSettings": {
+    "pgaudit.log": "none",
+    "log_duration": "on",
+    "pgaudit.role": "",
+    "log_statement": "none",
+    "log_error_verbosity": "default",
+    "pgaudit.log_parameter": "off",
+    "log_min_duration_sample": "-1",
+    "log_min_error_statement": "panic",
+    "log_parameter_max_length": "0",
+    "log_min_duration_statement": "-1",
+    "log_transaction_sample_rate": "0",
+    "auto_explain.log_min_duration": "-1",
+    "log_parameter_max_length_on_error": "0",
+    "auto_explain.log_parameter_max_length": "0"
+  },
+  "sixSettingsEffective": true,
+  "anonymousDenied": true,
+  "slowDurationMs": 11299,
+  "genericErrorHttpStatus": 400,
+  "markerAbsent": true,
+  "durationDiagnosticsPresent": true,
+  "genericErrorDiagnosticsPresent": true,
+  "cleanedAt": "2026-10-28T00:31:19.680Z"
+}

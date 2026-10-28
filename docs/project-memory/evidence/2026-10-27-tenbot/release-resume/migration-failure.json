@@ -1,0 +1,15 @@
+{
+  "phase": "verification-guard",
+  "postgresCode": "42702",
+  "cause": "PL/pgSQL record c conflicts with pg_class alias c in final verification guard.",
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "failedSqlSha256": "6e007b539ae8d3014b7c66f30d4372f54ce1cd27f76fa663673717988f9f59a1",
+  "transactionRolledBack": true,
+  "evidence": "migration-reconciliation.json",
+  "appliedMigrations": 0,
+  "tenbotTables": 0,
+  "tenbotFunctions": 0,
+  "tenbotEdgeDeployed": false,
+  "inferenceActivated": false,
+  "hostedRetryPerformed": false
+}

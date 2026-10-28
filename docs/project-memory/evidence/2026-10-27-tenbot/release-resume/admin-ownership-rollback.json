@@ -1,0 +1,22 @@
+{
+  "adminCapabilityConfirmed": true,
+  "adminCrossOwnerDenied": true,
+  "checks": [
+    "current existing owner has manageUsers under authenticated caller role",
+    "other existing actor creates and reads only own synthetic exchange",
+    "Admin cannot load, Clear or directly read other owner synthetic history",
+    "other owner retains exact synthetic exchange and clears it; transaction rolls back"
+  ],
+  "deniedAdminClearPreservedOwnerHistory": true,
+  "identitiesReturned": false,
+  "otherOwnerPositiveHistory": true,
+  "passed": true,
+  "privateBusinessOrMessagingReads": false,
+  "roleSimulation": true,
+  "rollbackOnly": true,
+  "syntheticOwnerClearSucceeded": true,
+  "twoHttpAccounts": false,
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "checkedAt": "2026-10-28T02:49:29.542Z",
+  "sqlSha256": "0caea90a71195a66a390823aeb659e2b9f064d26ad6c6098da740b35b8f70af1"
+}

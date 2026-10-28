@@ -1,0 +1,72 @@
+{
+  "readOnly": true,
+  "checkedAt": "2026-10-28T02:31:31.527659+00:00",
+  "loggingProbeAbsent": true,
+  "tenbotFunctions": 0,
+  "tenbotMigrations": [],
+  "tenbotTables": 0,
+  "tenbotEdgePresent": false,
+  "unrelatedFunctions": [
+    {
+      "slug": "monday-material-check",
+      "version": 45,
+      "status": "ACTIVE",
+      "verify_jwt": false
+    },
+    {
+      "slug": "generate-purchase-order-pdf",
+      "version": 50,
+      "status": "ACTIVE",
+      "verify_jwt": true
+    },
+    {
+      "slug": "generate-job-transmittal-pdf",
+      "version": 38,
+      "status": "ACTIVE",
+      "verify_jwt": true
+    },
+    {
+      "slug": "admin-manage-users",
+      "version": 34,
+      "status": "ACTIVE",
+      "verify_jwt": true
+    },
+    {
+      "slug": "generate-proposal-pdf",
+      "version": 38,
+      "status": "ACTIVE",
+      "verify_jwt": true
+    },
+    {
+      "slug": "generate-sample-pdf",
+      "version": 50,
+      "status": "ACTIVE",
+      "verify_jwt": true
+    },
+    {
+      "slug": "cleanup-messaging-drafts",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true
+    },
+    {
+      "slug": "admin-delete-messaging-message",
+      "version": 26,
+      "status": "ACTIVE",
+      "verify_jwt": true
+    },
+    {
+      "slug": "send-web-push-tendev",
+      "version": 27,
+      "status": "ACTIVE",
+      "verify_jwt": false
+    },
+    {
+      "slug": "send-web-push-tenops",
+      "version": 16,
+      "status": "ACTIVE",
+      "verify_jwt": false
+    }
+  ],
+  "inferenceActivated": false
+}

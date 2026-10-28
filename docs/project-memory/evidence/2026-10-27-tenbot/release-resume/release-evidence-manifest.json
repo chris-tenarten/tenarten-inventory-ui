@@ -1,0 +1,263 @@
+{
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "finalHostedCheckedAt": "2026-10-28T03:39:12.611Z",
+  "status": "Executed TenDev then TenOps; documentation-only receipt",
+  "files": [
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration.json",
+      "sha256": "36a9df8ac757217724f0fb51071de4dfd3d85e43ca7e5061c195d6fdcba2a3fb",
+      "sourceSha256": "36a9df8ac757217724f0fb51071de4dfd3d85e43ca7e5061c195d6fdcba2a3fb",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-postcheck.json",
+      "sha256": "ec2951999ad4a7a35950635927ed3271a9069fe0a71a43ea033fbeae722567fb",
+      "sourceSha256": "ec2951999ad4a7a35950635927ed3271a9069fe0a71a43ea033fbeae722567fb",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-corrected-local-verification.json",
+      "sha256": "2fde99e3ac25d4e450dbf934bd1bbc1cc05340adc8e80d53035aeb862dffb1ec",
+      "sourceSha256": "2fde99e3ac25d4e450dbf934bd1bbc1cc05340adc8e80d53035aeb862dffb1ec",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-corrected-independent-review.json",
+      "sha256": "898a9ecada2b7e2baa7f9c749a92c1d09f1218c7a0f5f6dcaf81d7c5f820d79e",
+      "sourceSha256": "898a9ecada2b7e2baa7f9c749a92c1d09f1218c7a0f5f6dcaf81d7c5f820d79e",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-failure.json",
+      "sha256": "8bfae07458832aa729b1c0f33b29a1c877cd813d9419d7778282750d26fe996c",
+      "sourceSha256": "8bfae07458832aa729b1c0f33b29a1c877cd813d9419d7778282750d26fe996c",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-reconciliation.json",
+      "sha256": "26091094e17e75a5503122cb2fd2b64df5a51b7a998036b1bade2962857a38e9",
+      "sourceSha256": "26091094e17e75a5503122cb2fd2b64df5a51b7a998036b1bade2962857a38e9",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-verifier-correction.json",
+      "sha256": "d18165f64682eac358f8882c7ba6aef958892fbb2b5877c574ab0097c8e72c99",
+      "sourceSha256": "d18165f64682eac358f8882c7ba6aef958892fbb2b5877c574ab0097c8e72c99",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/privacy-rollback.json",
+      "sha256": "f15eb25bed2ce54792c6d46db105ff309912426f24018378d13bf378375ce0c3",
+      "sourceSha256": "f15eb25bed2ce54792c6d46db105ff309912426f24018378d13bf378375ce0c3",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/admin-ownership-rollback.json",
+      "sha256": "5d4553534b0639f81aba50d6b966473071fc894f1c5342619c8e0da0c9c888a1",
+      "sourceSha256": "5d4553534b0639f81aba50d6b966473071fc894f1c5342619c8e0da0c9c888a1",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-disabled-probe.json",
+      "sha256": "abe805f641074edc59ddc61c26699039380107535a83ae9806b7a50d8edd6e6f",
+      "sourceSha256": "abe805f641074edc59ddc61c26699039380107535a83ae9806b7a50d8edd6e6f",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/logging-http.json",
+      "sha256": "29faf752329ee0766b9e9de064a950d8ba61939e9028ad86d09818e681da5e75",
+      "sourceSha256": "29faf752329ee0766b9e9de064a950d8ba61939e9028ad86d09818e681da5e75",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-content-log-aggregate.json",
+      "sha256": "13c450858961b6eda4df2d9f3742b5969aca7496d206aeb459cf6c5943859dec",
+      "sourceSha256": "13c450858961b6eda4df2d9f3742b5969aca7496d206aeb459cf6c5943859dec",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-provider-failure-probe.json",
+      "sha256": "6a0df137393592a96a2bcde53d17fe435353a6a1a3b665caa0434476af999656",
+      "sourceSha256": "6a0df137393592a96a2bcde53d17fe435353a6a1a3b665caa0434476af999656",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-real-inference-probe.json",
+      "sha256": "f4f1641b92679fab1429a388d99fc66d573d8ba67491559c68c52068a3aed87a",
+      "sourceSha256": "f4f1641b92679fab1429a388d99fc66d573d8ba67491559c68c52068a3aed87a",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-independent-review.json",
+      "sha256": "6b885cab80f37cef7e2865c8e31f223efffcb2c27d5c3684326e1c572ea01068",
+      "sourceSha256": "6b885cab80f37cef7e2865c8e31f223efffcb2c27d5c3684326e1c572ea01068",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-source-preservation.json",
+      "sha256": "c27e36047d06622efffae0dcee2382a776ad3a905e2cea0435d2f15265ec0620",
+      "sourceSha256": "c27e36047d06622efffae0dcee2382a776ad3a905e2cea0435d2f15265ec0620",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-source-preservation-production.json",
+      "sha256": "7c778496b6ea252797cbbda589e241a6c26485fd494d23f8d10348e3243dd6ee",
+      "sourceSha256": "7c778496b6ea252797cbbda589e241a6c26485fd494d23f8d10348e3243dd6ee",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-admin-extraction.json",
+      "sha256": "14563da8dcd987ca668b6362c7f12ede3aeed0afed49a69d8fc678cb94128c8f",
+      "sourceSha256": "14563da8dcd987ca668b6362c7f12ede3aeed0afed49a69d8fc678cb94128c8f",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/pages-edge-preservation-independent-review.json",
+      "sha256": "0a29de010eacda6f097662096af9b15718937c2a11e3b3554fd83283ef776d87",
+      "sourceSha256": "0a29de010eacda6f097662096af9b15718937c2a11e3b3554fd83283ef776d87",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/push-dev-command.json",
+      "sha256": "2ade176ba46aa1e80e0409965b6b26a34200af7b9acf971d2a5405a8313b1ca1",
+      "sourceSha256": "2ade176ba46aa1e80e0409965b6b26a34200af7b9acf971d2a5405a8313b1ca1",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/deploy-tendev-command.json",
+      "sha256": "1bb2cb8c6566f7b612629aa9fac35ee479c922aa5b39533c400c4195f1c2d350",
+      "sourceSha256": "1bb2cb8c6566f7b612629aa9fac35ee479c922aa5b39533c400c4195f1c2d350",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tendev-served.json",
+      "sha256": "ce90157422a315ff6e9fd2676778c2650c0d039f8f46f47cf5355f24edcf9a47",
+      "sourceSha256": "ce90157422a315ff6e9fd2676778c2650c0d039f8f46f47cf5355f24edcf9a47",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tendev-public-browser.json",
+      "sha256": "2426dce159392b73be32749b42f2e02745e4a817d4251bf792242091fee36583",
+      "sourceSha256": "2426dce159392b73be32749b42f2e02745e4a817d4251bf792242091fee36583",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tendev-acceptance.json",
+      "sha256": "ecb4edfc161a1a775b1077bf783e1bf9a63d77cda7519c1853f758efdcc85560",
+      "sourceSha256": "ecb4edfc161a1a775b1077bf783e1bf9a63d77cda7519c1853f758efdcc85560",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenbot-hosted-security-tendev.json",
+      "sha256": "004739b07eb72660d05f432967a0bb780cc38c56ee1fdae2b4430a97b80c53f3",
+      "sourceSha256": "004739b07eb72660d05f432967a0bb780cc38c56ee1fdae2b4430a97b80c53f3",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-production-origin.json",
+      "sha256": "8868b42648a04b7621f1e1d6e55af7f4fa5a88939a1bcf8ce2e40d8244033edd",
+      "sourceSha256": "8868b42648a04b7621f1e1d6e55af7f4fa5a88939a1bcf8ce2e40d8244033edd",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tendev-build.json",
+      "sha256": "5988f13f6df6ddb1e76eb567ab250834118aa19751b4db2015d4e454be7df82d",
+      "sourceSha256": "5988f13f6df6ddb1e76eb567ab250834118aa19751b4db2015d4e454be7df82d",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenops-build.json",
+      "sha256": "5ba9f8b16232232a9e2bc2d593e5e970ac39c583513b4b9f98a786a0996426d1",
+      "sourceSha256": "5ba9f8b16232232a9e2bc2d593e5e970ac39c583513b4b9f98a786a0996426d1",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/provider-free-plan-summary.json",
+      "sha256": "95dfc3f4e239fd8e94cee4289e35b77494f5b18f00980f43a002a83c3e74b413",
+      "sourceSha256": null,
+      "derived": true
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/final-hosted-check.json",
+      "sha256": "57c348884f6f5115d4bf0bdbd1f487153a80e49b07b360c555d218e815082f41",
+      "sourceSha256": "57c348884f6f5115d4bf0bdbd1f487153a80e49b07b360c555d218e815082f41",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/push-main-command.json",
+      "sha256": "f9daba948ea5ecfe0c2a5f2ce57fe188f9cf2693a64cc452a4e93c2a6126a725",
+      "sourceSha256": "f9daba948ea5ecfe0c2a5f2ce57fe188f9cf2693a64cc452a4e93c2a6126a725",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/deploy-tenops-command.json",
+      "sha256": "63164642cee0c378ec151a21aae1a90edd683026440e0c621b187e431a0796bd",
+      "sourceSha256": "63164642cee0c378ec151a21aae1a90edd683026440e0c621b187e431a0796bd",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenops-served.json",
+      "sha256": "99d0dd103daaa096613246c0e18eaa5804a6e7376d50be603d65ac8a0b3dfc56",
+      "sourceSha256": "99d0dd103daaa096613246c0e18eaa5804a6e7376d50be603d65ac8a0b3dfc56",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenops-public-browser.json",
+      "sha256": "0fd62f03b44910840516d66bb98b65953e2f811164e43daa419ee6a3c69f3279",
+      "sourceSha256": "0fd62f03b44910840516d66bb98b65953e2f811164e43daa419ee6a3c69f3279",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenbot-hosted-security-tenops.json",
+      "sha256": "1306847487fca8b7c5b768fd09c405bed472ef664500e843dc2977ce93c2abca",
+      "sourceSha256": "1306847487fca8b7c5b768fd09c405bed472ef664500e843dc2977ce93c2abca",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/production-origin-probe.json",
+      "sha256": "a698da83fadc7166bbd96c35f2936a4cf370e26f3cdcb31aa4c15bfe70d2965f",
+      "sourceSha256": "a698da83fadc7166bbd96c35f2936a4cf370e26f3cdcb31aa4c15bfe70d2965f",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/logging-hosted-applied-v3.json",
+      "sha256": "5be0a7cc241e5086a6ae3f7b599d947837aae552ddf84efd7940a9799166d52c",
+      "sourceSha256": "5be0a7cc241e5086a6ae3f7b599d947837aae552ddf84efd7940a9799166d52c",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/provider/usage-before.json",
+      "sha256": "8177d06f8f67492fa644d59d236aaf766d0c2b9c2e2d1805de395691ab1bf7e3",
+      "sourceSha256": "8177d06f8f67492fa644d59d236aaf766d0c2b9c2e2d1805de395691ab1bf7e3",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/provider/usage-after.json",
+      "sha256": "5ccf1b022db0a0f6e9adc72d56c2b28857cbd22f1749fe6bac5a1dc618215a58",
+      "sourceSha256": "5ccf1b022db0a0f6e9adc72d56c2b28857cbd22f1749fe6bac5a1dc618215a58",
+      "derived": false
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/applied-atomic-transaction.sql",
+      "sha256": "3bf5671216c97da0c9ee45ba3e9c9f63e752609bf90d06a55844f9f051c223b5",
+      "archiveOnly": true
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/schema-postcheck.sql",
+      "sha256": "9f3986da056f0c5aceb4067b61c6d6dba0667281e313c45b6843a2f7b772ca42",
+      "archiveOnly": true
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/applied-api-logging-profile.sql",
+      "sha256": "2246e2f69d4b39fc3389413ce26ea0c5b9dded592a010fdfba52650a9270ef91",
+      "archiveOnly": true
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/original-api-logging-restore-reference.sql",
+      "sha256": "7b47249bd31d58d3bb022773ee815aa04a8c649f0daf31f1503a37d30b4430ff",
+      "archiveOnly": true
+    }
+  ],
+  "exclusions": "No credentials, private SQL with actor IDs, private bundles, environment files, raw logs or employee/private business content. Public synthetic question/answer retained.",
+  "sqlNotice": "Historical applied transaction/configuration and postcheck archives; four migrations are already committed. Do not reapply. Logging restoration reference is not an instruction to restore unsafe argument logging."
+}

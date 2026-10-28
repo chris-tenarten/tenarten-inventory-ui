@@ -1,0 +1,255 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T03:28:23.507Z",
+  "target": "tenops",
+  "sha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "tree": "bc65dd072cad0d81201177c349a99f0a205f1c7e",
+  "deployment": "502d6282-713b-42dd-a5f6-a71f6c585245",
+  "created": "2026-10-28T03:26:11.247036Z",
+  "canonicalUrl": "https://tenops.pages.dev",
+  "configDigest": "f52ea907ffd36211ab1fdf4c71f9d75665506b841697f33fe533642a92155629",
+  "aiEnabled": true,
+  "verifiedAssets": 47,
+  "assistantChunks": 3,
+  "verified": [
+    {
+      "route": "/",
+      "sha256": "20172b6865967e9c42c5032128eb668e98c82c2d7e70ce461761427dc4a5526c",
+      "bytes": 16754
+    },
+    {
+      "route": "/my-work",
+      "sha256": "78b780a32f43928cee0e2805da1db541b9cd60a0789925cffdcd99aab96997e7",
+      "bytes": 15987
+    },
+    {
+      "route": "/settings",
+      "sha256": "25fe8e21cd782125cd253254acf17cc85aaf26c6b00be6388144c7c8b3c33bd8",
+      "bytes": 16088
+    },
+    {
+      "route": "/pre-production",
+      "sha256": "c5f50a697ce96ebfd6a14c74e770c1d67930c3bed305e80202b1349caea812a7",
+      "bytes": 17206
+    },
+    {
+      "route": "/samples",
+      "sha256": "d935bfd71761e7ab4c6d0c4c0ba0abe57de95003924eb8d81d43211b8a679f0c",
+      "bytes": 16675
+    },
+    {
+      "route": "/proposals",
+      "sha256": "0e9f712c634f0e3bfe7d034f6ca3192e65ddaac4b7fba7a19ebe98e58375b9fc",
+      "bytes": 16412
+    },
+    {
+      "route": "/inventory",
+      "sha256": "31ded0e3e92230ad8d1f6b11298247651d0b23b7ab4c2d5d85141ff27c337ae2",
+      "bytes": 15989
+    },
+    {
+      "route": "/tenbot",
+      "sha256": "507a2f809d4f4a17d3889e1238647c5a6f23fd9fac9d74b9a0d60a9803e7cb06",
+      "bytes": 15841
+    },
+    {
+      "route": "/manifest.webmanifest",
+      "sha256": "f24cfc0cd69f7f52f309ef3b6b4e98510e22c75b45c0a79bf5924e570fba5654",
+      "bytes": 439
+    },
+    {
+      "route": "/sw.js",
+      "sha256": "cc79b86fa2fa1f492d0b83eef7ae0de0f6c0741ea972287faadc64ae624f9a07",
+      "bytes": 1588
+    },
+    {
+      "route": "/_next/static/chunks/51ee20cd-14f78c894e6bc5d3.js",
+      "sha256": "dea12d7f6357c0c5dcf45269186d8501fe2c4276640f74d3c65006c4fb043759",
+      "bytes": 199868
+    },
+    {
+      "route": "/_next/static/chunks/8922-c1f11f6021f891a1.js",
+      "sha256": "966cd327cbbf05e3148769ea4f23bf26e0831988c80e366d0aeb1eec40a98d59",
+      "bytes": 222401
+    },
+    {
+      "route": "/_next/static/chunks/main-app-ce918aa6e23bde77.js",
+      "sha256": "8b5e4fe254b3714533d6341e09e685cd4961e42daf9973f1f182eab9481a5031",
+      "bytes": 528
+    },
+    {
+      "route": "/_next/static/chunks/218171cc-f18cd5b2bf1c9400.js",
+      "sha256": "1f73266de5d05ffae731aedadd483bdd1b46fe0643c93c0f87f141173a90e24e",
+      "bytes": 52990
+    },
+    {
+      "route": "/_next/static/chunks/5085-e8f39c8ca7199321.js",
+      "sha256": "28097874ddcdbecf07b637010f7984d4c9b7e3f0ffe6424cc5760b00fc752e0c",
+      "bytes": 161440
+    },
+    {
+      "route": "/_next/static/chunks/3323-f2bc8ef7ed0d6dc9.js",
+      "sha256": "0a955566103d4a9fdc2df28727bbeba58f24007cae0972c24c0d1193f0bdc94e",
+      "bytes": 8734
+    },
+    {
+      "route": "/_next/static/chunks/4588-73e056d482706e31.js",
+      "sha256": "add272c2da2e8c282adeb437aca44b3ead9ca72db68f185f412bae240ffe78ca",
+      "bytes": 14067
+    },
+    {
+      "route": "/_next/static/chunks/8776-5c68f3c1b2024981.js",
+      "sha256": "064c3efe2c2b597602929a5b2bd97f253cf9f8de46bde9e5883925d0d33a4bc7",
+      "bytes": 10185
+    },
+    {
+      "route": "/_next/static/chunks/4489-7bab4ab7e3ba16d2.js",
+      "sha256": "1f7573be0e8710b1f0d701c14607a3cb73f8d2cd9e08bf19b8e8b59920a7dca5",
+      "bytes": 16176
+    },
+    {
+      "route": "/_next/static/chunks/4218-3ed2ca968d556250.js",
+      "sha256": "682c65adabead06ca66f2bf07cd54636995414bb90cadfe9cb30bb6beb6fabce",
+      "bytes": 20677
+    },
+    {
+      "route": "/_next/static/chunks/app/layout-433f61911b58728c.js",
+      "sha256": "0412f26c142cea88bca6a50707447d3c5bc42b4ff7a0e8d93f14a10c6e5a1bc0",
+      "bytes": 90685
+    },
+    {
+      "route": "/_next/static/chunks/3351-ac27fd587068a0a0.js",
+      "sha256": "99787188ad7b39af2906396df35df8ea536075cd36cf9aa7d5ab66c185cadec6",
+      "bytes": 11284
+    },
+    {
+      "route": "/_next/static/chunks/462-46fffd2c4ec7c7bf.js",
+      "sha256": "0e2cc73a0b0fbd13def30207f60125675baecfc905f0b6aad551a3a5f078dc27",
+      "bytes": 10822
+    },
+    {
+      "route": "/_next/static/chunks/9459-8d22b62df1278920.js",
+      "sha256": "8f375aac5e995868e86a76215ad14dec43fe9f507171758ecb708c8fbce588e3",
+      "bytes": 19495
+    },
+    {
+      "route": "/_next/static/chunks/1182-5a662b8ba1f805c0.js",
+      "sha256": "3f0aafb0031df972f982c3856ea04493a59f5a4a254c6ee0c9169fbbb9fd8a33",
+      "bytes": 13456
+    },
+    {
+      "route": "/_next/static/chunks/8835-8087e615b83eff3c.js",
+      "sha256": "f4abae7778085e00cadd623a9ff2c8935c31739b70525fd6b954df5404498cf3",
+      "bytes": 13204
+    },
+    {
+      "route": "/_next/static/chunks/7692-2ab2b4c91b541fd1.js",
+      "sha256": "f23eb0e78b6b1f9f4fec057944bc6d250c572d865ad3c7e0452b5d854ea661f3",
+      "bytes": 31724
+    },
+    {
+      "route": "/_next/static/chunks/4024-40383e3697b49594.js",
+      "sha256": "e98d5d027a01afd52bf2779f452a4d32d1148a75e1c77968132130bd697728d8",
+      "bytes": 27144
+    },
+    {
+      "route": "/_next/static/chunks/5065-52aed6486f173716.js",
+      "sha256": "1cebb27002b89d046764d52f4ddaf8b279ccc308c205bd074781922dacaab358",
+      "bytes": 11983
+    },
+    {
+      "route": "/_next/static/chunks/1019-8954792a056c7e6f.js",
+      "sha256": "cc9f39c2df2301060b0d141e1c435c0dddefc642ca4767276afd18f49e24169b",
+      "bytes": 11942
+    },
+    {
+      "route": "/_next/static/chunks/app/page-7bf7a21f4d6e5b98.js",
+      "sha256": "5e2bb7ec58022bcd7bd16111a7780b0b538e2d6dd79acdbba1dae62caceb62a0",
+      "bytes": 382500
+    },
+    {
+      "route": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+      "bytes": 112594
+    },
+    {
+      "route": "/_next/static/chunks/webpack-33feec19dde0c575.js",
+      "sha256": "fa118215b2acb48c3570219de4ec5b1cfcad505f9d6fd4f6d4968ef6509a3185",
+      "bytes": 5289
+    },
+    {
+      "route": "/_next/static/chunks/6339-f46872db9227d41d.js",
+      "sha256": "62e7164d7617a81d60741a932333c1ef0d750301d08bc5dbc89897bfc97604ec",
+      "bytes": 8487
+    },
+    {
+      "route": "/_next/static/chunks/app/my-work/page-b6d2e4266cbc076a.js",
+      "sha256": "781475f105bb76240d919614919bb3573f2da7e8bf052013f9b8968197d28a9d",
+      "bytes": 65685
+    },
+    {
+      "route": "/_next/static/chunks/app/settings/page-dc7f8996666bb5b6.js",
+      "sha256": "4b471c3110c409ce018ea78f84e3876968cba0fe43a719791117746c0345518f",
+      "bytes": 53231
+    },
+    {
+      "route": "/_next/static/chunks/app/pre-production/layout-5ce28f4ca00b277c.js",
+      "sha256": "82fbd94977992131f792c3d60dd01f8414901c596a7d619c4bad4c742eb163a0",
+      "bytes": 693
+    },
+    {
+      "route": "/_next/static/chunks/7049-e54d3164b3fa4d1d.js",
+      "sha256": "cede882fc6ca2ae8daee4197fceee2a65fe170cdc9ba8cb3e9211daf6806436e",
+      "bytes": 7502
+    },
+    {
+      "route": "/_next/static/chunks/8737-6a29b36ed262aed5.js",
+      "sha256": "f568df8abb232e24f82db3444ecba120a287c8ae5c6b25caf1a43712e5af3b5b",
+      "bytes": 45980
+    },
+    {
+      "route": "/_next/static/chunks/app/pre-production/page-c7d40ecb082ed375.js",
+      "sha256": "70c3e1e37a624a6fa11101cd59ffbc5cfbe46ef1715039ed51db7af2908b0b34",
+      "bytes": 47263
+    },
+    {
+      "route": "/_next/static/chunks/2487-ebb6f711b8d32f79.js",
+      "sha256": "77027e6eec93583eadc0f525bcdedb25d2edc31c31f38bd2222e3f516bac775c",
+      "bytes": 23715
+    },
+    {
+      "route": "/_next/static/chunks/app/samples/page-971ce2944aa8f778.js",
+      "sha256": "df12bfcb4aa5ab27de01ddc91b6952617fe990d382b2234d308a0d9e7508299c",
+      "bytes": 181818
+    },
+    {
+      "route": "/_next/static/chunks/6892-de536420cdd7d3b7.js",
+      "sha256": "bcf225029114e3c47e932e044cfc3de9beb4e7dc3bbd3fa475f931b29b32fd2a",
+      "bytes": 6007
+    },
+    {
+      "route": "/_next/static/chunks/app/proposals/page-8ed2f70718814e49.js",
+      "sha256": "d1af68299c8357dd0853052aa59d4b9f55ef7cd9d8be7d61d56463f68aca42e5",
+      "bytes": 77554
+    },
+    {
+      "route": "/_next/static/chunks/app/inventory/page-3f96654f5b862860.js",
+      "sha256": "32a10d2cd1cb2756fccc2686a1d9d05316157343741b58ab68371a359ac98faf",
+      "bytes": 119152
+    },
+    {
+      "route": "/_next/static/chunks/app/tenbot/page-06ca77304a3cb471.js",
+      "sha256": "6a2a7263bd7281e95f37e17cc87e60677d79c70cce4e2995ab985460cfffe2f2",
+      "bytes": 868
+    },
+    {
+      "route": "/_next/static/chunks/1269.fc87d6ef856ec639.js",
+      "sha256": "7d6e9ef0a1912623e5fb2a6ff7fd4421888fbbd15dabc05e77c13ea93e6d6000",
+      "bytes": 80649
+    }
+  ],
+  "brandingCorrect": true,
+  "configPreserved": true,
+  "swHeadersCorrect": true,
+  "scope": "Read-only static artifact verification; signed-in employee acceptance is a separate root-pinned receipt"
+}

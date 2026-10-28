@@ -1,0 +1,33 @@
+{
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "verifiedAt": "2026-10-28T00:06:33.065Z",
+  "status": "active",
+  "expiresOn": "2027-01-26T05:59:59Z",
+  "modelCatalogVerified": true,
+  "credentialEmitted": false,
+  "freePlan": {
+    "method": "Fresh authenticated dashboard reload",
+    "verifiedAt": "2026-10-27T23:52:18.678Z",
+    "currentPlan": "Free $0"
+  },
+  "paidUpgrade": false,
+  "creditsPurchase": false,
+  "finalUsageCostTelemetry": "provider/usage-after.json: one request / 7.658895492553711 Neurons; Workers Free; no paid activation",
+  "scope": "Provider metadata and positive authenticated Free plan proof only; no credential, token ID, account identifier, permission policy, session or private path is copied. Neuron usage is not dollar-charge proof.",
+  "sourceReceipts": [
+    {
+      "name": "provider-verification.json",
+      "sha256": "d4f9514424fd7c279485e29ffd09150433c78a23c4c41fea8f2dab0ff426885e"
+    },
+    {
+      "name": "provisioning-receipt.json",
+      "sha256": "83a0a5dfc5346ce95e8e142c702bbee4e15e66fde36116215791deca64d0810f"
+    }
+  ],
+  "tokenPermissions": [
+    "Workers AI Read",
+    "Workers AI Write"
+  ],
+  "billingScope": false,
+  "rotateBeforeExpiry": "2027-01-26"
+}

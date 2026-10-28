@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "readOnly": true,
+  "aggregateOnly": true,
+  "rawLogRowsOrMessagesRetrieved": false,
+  "privateContentQueried": false,
+  "credentialsInQuery": false,
+  "identitiesReturned": false,
+  "modelCalls": 0,
+  "hostedMutations": 0,
+  "managementRequests": 1,
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "start": "2026-10-28T02:47:00.000Z",
+  "end": "2026-10-28T02:51:04.982Z",
+  "syntheticPublicQuestion": "How do I create a group conversation in Messaging?",
+  "querySha256": "10652a30af447396031a12d5d87286a9d7f771acb4ae9fb5cb3089be2123d894",
+  "limit": "One bounded release window, exact synthetic public question only. This does not establish unknown upstream provider-body retention policies.",
+  "counts": {
+    "scanned_event_count": 673,
+    "event_message_count": 0,
+    "log_attributes_count": 0,
+    "any_count": 0
+  },
+  "checkedAt": "2026-10-28T02:51:05.971Z",
+  "action": "Public synthetic question absent from both searched log fields."
+}

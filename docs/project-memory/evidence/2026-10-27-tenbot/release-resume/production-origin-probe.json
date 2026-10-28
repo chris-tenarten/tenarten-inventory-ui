@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T03:23:54.716Z",
+  "releaseSha": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "checks": [
+    {
+      "origin": "https://tendev.pages.dev",
+      "options": 204,
+      "authenticatedAdminAggregate": 200,
+      "privateContentRead": false
+    },
+    {
+      "origin": "https://tenops.pages.dev",
+      "options": 204,
+      "authenticatedAdminAggregate": 200,
+      "privateContentRead": false
+    }
+  ],
+  "inferenceCalls": 0,
+  "privateContentRead": false,
+  "aggregateUsage": {
+    "dayStart": "2026-10-28T00:00:00+00:00",
+    "dayFailed": 1,
+    "dayResetAt": "2026-10-29T00:00:00+00:00",
+    "monthStart": "2026-10-01T00:00:00+00:00",
+    "dayCompleted": 1,
+    "policyVersion": 2,
+    "sharedDayUsed": 2,
+    "dayNeuronLimit": 8000,
+    "sharedDayLimit": 300,
+    "sharedMonthUsed": 2,
+    "monthNeuronLimit": 240000,
+    "sharedMonthLimit": 6000,
+    "sharedDayRemaining": 298,
+    "dayAccountedNeurons": 50.66,
+    "sharedMonthRemaining": 5998,
+    "dayUnmeasuredAttempts": 1,
+    "monthAccountedNeurons": 50.66,
+    "perAccountMinuteLimit": 6,
+    "dayMeasuredInputTokens": 839,
+    "dayMeasuredOutputTokens": 124
+  }
+}
