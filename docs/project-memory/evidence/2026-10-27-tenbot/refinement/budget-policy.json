@@ -1,0 +1,24 @@
+{
+  "status": "implemented and verified only in disposable local PostgreSQL",
+  "migration": "20261027140000_tenbot_measured_free_pool.sql",
+  "oldPolicy": {"sharedDayAttempts":20,"monthlyReservationUsd":0.2,"reservationUsdPerAttempt":0.01,"maximumMonthlyAttempts":20},
+  "diagnosis": "Day and month exhausted because both permitted only 20 attempts, independent of Cloudflare's actual free allocation. Uncertain failures also permanently consumed pilot reservations.",
+  "newPolicy": {"sharedDayAttempts":300,"sharedMonthAttempts":6000,"perAccountMinuteAttempts":6,"dayNeuronBudget":8000,"monthNeuronBudget":240000,"cloudflareFreeDayNeurons":10000,"accountHeadroomNeurons":2000},
+  "requestReservation": "Model-aware worst-case Neurons derived from bounded UTF-8 request bytes plus chat framing and maximum output. Actual provider token telemetry reconciles token-derived estimated Neurons. Missing telemetry retains the full reservation.",
+  "actualVsEstimated": "Cloudflare account-reported Neurons are actual analytics and may lag. Internal token-derived Neurons are estimates. Neither old USD reservations nor internal estimates are invoices or paid activation.",
+  "analyticsGuard": {"reason":"Cloudflare analytics API cost budget rejected per-request polling despite low inference Neurons","verifiedCacheTtlMs":300000,"sameUtcDayRequired":true,"minimumAccountHeadroomNeurons":2000,"journal":"Private process-shared file with atomic directory lock; reserves bounded cost before dispatch, settles only provider-known usage, retains unknown charges and conservatively double-counts completed charges after account refresh","failedRefreshCooldownMs":300000,"staleOrCorruptState":"fail closed to direct fallback","staleLockAutoRemoval":false},
+  "preservationAtMigration": {"historicalAttempts":20,"completed":12,"failed":8,"historicalReservationUsd":0.2,"unmeasuredAttempts":20,"conservativeAccountedNeurons":4000,"newDayAttemptsRemaining":280,"newMonthAttemptsRemaining":5980},
+  "verification": {
+    "command": "node --import tsx scripts/verify-tenbot.mts",
+    "result": "passed",
+    "checks": ["89 existing workflow examples", "request-scoped metering for generated success, output rejection and provider failure", "historical row preservation", "old RPC service grants revoked", "feedback authorization and privacy unchanged", "token-rate reconciliation and tampered low cost rejection", "shared request limits", "atomic day/month Neuron limits", "concurrent competition for final slot", "independent account burst limits", "UTC reset", "administrator-only aggregate access"],
+    "localRefreshCommand": "node --import tsx scripts/start-tenbot-review.mts --refresh-only",
+    "localRefreshResult": "passed; all20 historical rows preserved",
+    "liveAdapterCapCommand": "node --import tsx scripts/verify-tenbot.mts --pilot-local-only",
+    "liveAdapterCapResult": "passed with new running adapter; all temporary300-cap rows removed, original20 historical rows preserved, no additional model invocation",
+    "lintAndDiffCheck": "passed for owned changed source",
+    "realInferenceCallsByBudgetVerifier":0,
+    "cacheVerification":"75 existing binding/privacy/model/cache cases passed with injected clock, temporary files and all network calls forbidden; TTL/day rollover, retained unknown usage, headroom, conservative refresh, concurrent lock, stale lock and corrupted journal covered",
+    "hostedMigrationsApplied":0
+  }
+}

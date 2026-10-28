@@ -1,0 +1,84 @@
+{
+  "status": "STOPPED_BEFORE_HOSTED_MUTATION",
+  "at": "2026-10-27T23:42:11.056893+00:00",
+  "accepted": "4c2e1fa7a470ef2a7749ba298be5d87645010000",
+  "remoteMain": "178587454fb87aec8b5a76730714ec1b2973ac69",
+  "remoteDev": "178587454fb87aec8b5a76730714ec1b2973ac69",
+  "deployedRuntime": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+  "authorization": "Chris authorized accepted candidate release and ordered a stop for genuine release-gate failures; no bypass. Separate Advisory context unavailable.",
+  "blockers": [
+    {
+      "kind": "accepted-runtime-compatibility",
+      "finding": "Hosted Edge returns 429/502/503 errors after AI quota/provider/grounding failures; only local review adapter retries authorized direct guidance with a null provider. UI shows error/retry instead of accepted automatic guide fallback.",
+      "method": "Exact committed source call-chain review, independently confirmed against existing handler and local-adapter verifier contracts; no hosted TenBot function exists, so no failed hosted HTTP request is claimed.",
+      "paths": [
+        "supabase/functions/_shared/tenbot-core.ts",
+        "supabase/functions/_shared/tenbot-handler.ts",
+        "supabase/functions/tenbot/index.ts",
+        "src/modules/tenbot/TenbotWorkspace.tsx",
+        "scripts/start-tenbot-review.mts",
+        "scripts/verify-tenbot.mts"
+      ]
+    },
+    {
+      "kind": "hosted-provider-configuration",
+      "finding": "Required dedicated scoped hosted Workers AI token is not configured or found in the narrow existing credential search. Human Wrangler OAuth remains local-only.",
+      "freePlanVerified": true
+    }
+  ],
+  "unresolvedPrivacyGates": [
+    "Potential slow-query argument logging: auto_explain.log_min_duration=10000 ms, sample_rate=1, parameter_max_length=-1; relevant API role override not observed. No log-content read or leak observed.",
+    "Actual PostgREST/Edge logging and HTTP authenticated owner-isolation checks remain unverified."
+  ],
+  "migrationPrerequisitesPassed": true,
+  "migrationsApplied": [],
+  "tenbotFunctionDeployed": false,
+  "tenbotSecretsConfigured": false,
+  "inferenceActivated": false,
+  "modelCalls": 0,
+  "incrementalInferenceCostUsd": 0,
+  "upgradeOrPurchase": false,
+  "newDeploymentIds": [],
+  "existingDeployments": {
+    "tendev": "60a6ba08-2ef3-4dd6-9b25-d68bb9016101",
+    "tenops": "4bd400e3-dc15-47d1-8e50-adf595b4c6c9"
+  },
+  "actions": {
+    "push": false,
+    "hostedMutation": false,
+    "migrationApply": false,
+    "paidActivation": false,
+    "deployment": false,
+    "build": false,
+    "broadTests": false,
+    "sourceCorrection": false,
+    "newWorktree": false
+  },
+  "sourceHashes": [
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "95da5bc87b96e14d1079d99cceedd6db0387748bead4bf9301a317a2fc750abe"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "20b2b62343c40f61ea6c1d1b79a5fb43beeb79ed17903058a1b133881eed6d90"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "fa6fa6024597cd6665856e53a242b506e12330ab439edcebb60d870df80039b8"
+    },
+    {
+      "path": "scripts/start-tenbot-review.mts",
+      "sha256": "9e3d47a6cfcc2d20233096bd074cb4ec76545a808bda0c28b090d318725495e8"
+    },
+    {
+      "path": "scripts/verify-tenbot.mts",
+      "sha256": "170597dd4b5a8dcb8488e4f71eec80b97ef8308225e80e889d3856cb63aefa9e"
+    }
+  ],
+  "resumeRequirements": [
+    "Authorize/accept narrow hosted fallback correction with no model retry, preserved metering/auth/owner history and focused actual-hosted-entry regression.",
+    "Provision dedicated account-scoped Workers AI Read/Edit token via private authorized flow; never paste credentials in chat or deploy cached human OAuth.",
+    "Resolve hosted logging gate, establish authorized safe synthetic HTTP session probes, then refresh drift/Free proof and resume ordered migrations/deployments."
+  ]
+}

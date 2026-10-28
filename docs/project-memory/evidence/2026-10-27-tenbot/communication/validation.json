@@ -1,0 +1,54 @@
+{
+  "status": "implemented locally; pending Product review",
+  "branch": "dev",
+  "tenbotBase": "14a9e67",
+  "concurrentIntakePreserved": "5a7159c",
+  "authority": [
+    "Conversational UX refinement",
+    "Shared usage pool steering",
+    "Exact Manpower incorrect-match correction"
+  ],
+  "risk": "Tier3 / focused Testing Level3",
+  "tests": {
+    "core": "passed: permissions, provenance, deterministic primary, prose bounds/grounding, protected rules, known negative/no-guide no-inference decisions",
+    "retrieval": "exact Manpower regression and module/record-only negatives; all8 previous primary matches retained",
+    "binding": "28 mock cases and private-input projection; network prohibited",
+    "database": "existing disposable full verifier passed shared two-user pool, last-slot contention, burst/monthly/UTC gates, admin aggregates and existing feedback paths",
+    "localAdapter": "final shared-pool/fallback and ledger preservation passed; no inference",
+    "browser": "14 focused groups passed using captured real answers and synthetic Messaging/fallback fixtures; zero inference",
+    "typescript": "passed",
+    "eslint": "passed; Edge files no-ignore",
+    "productionBuild": "passed using local fixture environment",
+    "independentReview": "creator/delivery-prose bypasses corrected; shared-pool/admin and retrieval review passed"
+  },
+  "aggregate": {
+    "dayStart": "2026-10-27T00:00:00+00:00",
+    "dayFailed": 6,
+    "dayResetAt": "2026-10-28T00:00:00+00:00",
+    "monthStart": "2026-10-01T00:00:00+00:00",
+    "dayCompleted": 10,
+    "sharedDayUsed": 16,
+    "sharedDayLimit": 20,
+    "monthReservedUsd": 0.16,
+    "sharedDayRemaining": 4,
+    "perAccountMinuteLimit": 6,
+    "monthlyBudgetUsd": 0.2
+  },
+  "cloudflare": {
+    "checkedAt": "2026-10-27T18:02:12.156Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 56.17753557488322,
+    "reportedRequests": 12,
+    "nominalRemainingNeurons": 9943.822464425117
+  },
+  "paidActivation": false,
+  "hostedMigration": false,
+  "deployment": false,
+  "localMigration": "20261027130000_tenbot_shared_usage_pool.sql applied only to disposable tenops-tenbot-review",
+  "limitations": [
+    "Guide corpus remains small; no verified Manpower entry, no claim the actual module lacks filtering",
+    "Model sees canonical topic/excerpt/module, not raw intent or multi-turn history",
+    "Vocabulary/critical-rule guard is not a semantic truth proof; reported real answers human-reviewed",
+    "Physical iPhone keyboard/notification delivery and hosted RLS not newly verified"
+  ]
+}

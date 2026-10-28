@@ -1,0 +1,131 @@
+{
+  "at": "2026-10-27T17:08:33.392Z",
+  "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+  "outputs": [
+    {
+      "question": "How do I create a group conversation?",
+      "status": 200,
+      "durationMs": 2549,
+      "answer": {
+        "mode": "ai",
+        "message": "Here is the verified guidance I found.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging groups and replies · released October 22"
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "Can I share a Job inside a message?",
+      "status": 200,
+      "durationMs": 2608,
+      "answer": {
+        "mode": "ai",
+        "message": "Here is the verified guidance I found.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "share-job",
+            "title": "Share a Job in a message",
+            "status": "unknown",
+            "guidance": "I cannot verify a dedicated Share Job control in Messaging. Tell me what Job context you want to share and I can help draft a suggestion. Do not paste private Job records here.",
+            "path": "",
+            "route": null,
+            "source": "Messaging capability review · October 27"
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "How do I enable iPhone notifications?",
+      "status": 200,
+      "durationMs": 2549,
+      "answer": {
+        "mode": "ai",
+        "message": "Here is the verified guidance I found.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "notifications",
+            "title": "Enable phone notifications",
+            "status": "deployed",
+            "guidance": "On iPhone, open TenOps in Safari, choose Share → Add to Home Screen, then open the Home Screen app. In Settings, find device notifications and choose Enable notifications on this device. Allow the system permission prompt. If permission was denied, allow notifications in iPhone Settings and retry. Device registration does not guarantee that every notification will be presented.",
+            "path": "Settings → device notifications",
+            "route": "/settings",
+            "source": "Device notification guide · reliability release October 22"
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "Can I estimate lead times from a Blend Sheet?",
+      "status": 200,
+      "durationMs": 2156,
+      "answer": {
+        "mode": "ai",
+        "message": "Here is the verified guidance I found.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "material-lead",
+            "title": "Material requirements and lead-time guidance",
+            "status": "local",
+            "guidance": "This capability is implemented in a local candidate and has not been released to employees. Do not rely on it as an available TenOps workflow. Supplier lead-time guidance remains subject to verified inputs and Product acceptance.",
+            "path": "",
+            "route": null,
+            "source": "Intake candidate · pending Product acceptance"
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "question": "How do I find an existing customer's Jobs?",
+      "status": 200,
+      "durationMs": 2024,
+      "answer": {
+        "mode": "ai",
+        "message": "Here is the verified guidance I found.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "customer-history",
+            "title": "Find a customer’s previous Jobs",
+            "status": "deployed",
+            "guidance": "Open Contacts and search for the beginning of the customer’s company name. Choose Linked Jobs beside that customer, then select a Job to open it. This shows only visible Production Jobs linked to that directory customer. Historical customer text and Bid names do not establish a link; Proposal customer details are independent snapshots.",
+            "path": "Contacts → Search customers → Linked Jobs → select a Job",
+            "route": "/contacts",
+            "source": "Contacts guide · deployed release verified October 22"
+          }
+        ],
+        "summary": null
+      }
+    }
+  ]
+}

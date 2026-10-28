@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "status": "implemented-local-dev-pending-Product-review",
+  "baseCommit": "40dac7816a4f1ac49874f41d2650e579c73a076c",
+  "authorization": "Chris: TENBOT — PRIVACY GATE CORRECTION, superseded in policy by TENBOT — PRIVACY POLICY CLARIFICATION; local dev commit only",
+  "tier": 3,
+  "testingLevel": "focused 3",
+  "gate": "PASS_LOCAL_UNDER_CLARIFIED_POLICY",
+  "privacyRegression": {
+    "passed": true,
+    "policy": "Explicit user text permitted; no independent private-record retrieval; authenticated owner history and deliberate feedback sharing",
+    "checks": [
+      "forward correction preserves nonempty predecessor feedback history and usage ledger",
+      "explicitly submitted ordinary-word/business/message text is processed and stored only in own assistant history",
+      "submitted business dates and quoted names remain usable without a blanket sensitive-text ban",
+      "other-account Admin and inactive cannot load append or clear owner conversation",
+      "foreign ids and caller-forged prior turns rejected before inference",
+      "follow-up context comes from server-owned turns and never crosses account boundaries",
+      "configured-provider invalid AI summary rejected without persistence",
+      "valid generated summary saved only after deliberate confirmation; private chat is not attached",
+      "rejected handler/direct-RPC feedback does not persist or appear in PostgreSQL error logs",
+      "private history tables deny direct access and service role cannot execute history RPC",
+      "injection cannot select private records or forge citations; service has only metering and write-only assistant-turn operations",
+      "stale turn writes rejected and Clear assistant chat deletes owner history"
+    ],
+    "checkCount": 12,
+    "providerRequests": 7,
+    "externalModelCalls": 0,
+    "realPostgreSQL": true,
+    "realCloudflareSerializer": true,
+    "rejectedInputAbsentFromDatabaseLogs": true,
+    "migration": "20261027150000_tenbot_private_conversations.sql",
+    "sourceHashes": [
+      {
+        "path": "supabase/functions/_shared/tenbot-handler.ts",
+        "sha256": "20b2b62343c40f61ea6c1d1b79a5fb43beeb79ed17903058a1b133881eed6d90"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-core.ts",
+        "sha256": "fd9f60ddb0edce8df9b891bf1c9ea303e1a251df6b30e8ef89eff25f177b191a"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-privacy.ts",
+        "sha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf"
+      }
+    ],
+    "limits": [
+      "No perfect semantic private-content detection claimed",
+      "PostgreSQL SET ROLE/JWT-sub fixture, not full HTTP Auth transport",
+      "No hosted schema/log configuration audit; infrastructure configured to log all statements/parameters remains a release concern",
+      "Permitted chat text intentionally persists in owner-scoped bounded history and may be processed by the configured provider"
+    ]
+  },
+  "ordinaryPreservation": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "isolated fixture created; TenBot leaves ordinary Auth/RBAC/Messaging/Tasks metadata byte-for-byte unchanged",
+        "sha256": "f14ac16d844265fb142db943c35a945285c64054690a70642e5c3f05fdd1475f"
+      },
+      {
+        "name": "new migration leaves ordinary Auth/RBAC/Messaging/Tasks metadata unchanged",
+        "sha256": "f14ac16d844265fb142db943c35a945285c64054690a70642e5c3f05fdd1475f"
+      },
+      {
+        "name": "actual ordinary participants retain DM/group access and private/shared task visibility"
+      },
+      {
+        "name": "unrelated member/admin/inactive cannot read DM/group/private/shared tasks by table or content RPC; no routine admin content bypass"
+      },
+      {
+        "name": "service_role retains inherent private Messaging/Tasks table access through canonical grants plus BYPASSRLS",
+        "boundary": "This is a privileged key risk, not a TenBot retrieval permission; handler must never route these reads."
+      },
+      {
+        "name": "removed group member loses historical group message access"
+      },
+      {
+        "name": "ordinary read-only business/task/Messaging write restrictions remain enforced"
+      }
+    ],
+    "denialCount": 2,
+    "ordinaryMetadataUnchanged": true,
+    "hosted": false
+  },
+  "workflowRegression": {
+    "passed": true,
+    "command": "./node_modules/.bin/tsx scripts/verify-tenbot.mts",
+    "workflowExamples": 89,
+    "generatedChunks": 16,
+    "releasePinnedFiles": 37,
+    "postgreSQL": "forward preservation, revocation, feedback, token/Neuron reconciliation, atomic shared limits, concurrency, burst and UTC reset; administrator aggregates"
+  },
+  "bindingRegression": {
+    "passed": true,
+    "command": "./node_modules/.bin/tsx scripts/verify-tenbot-ai-binding.mts",
+    "cases": 59,
+    "inference": "mock only"
+  },
+  "browserRegression": {
+    "passed": true,
+    "command": "node scripts/verify-tenbot-browser.mjs --privacy-only",
+    "origin": "http://localhost:3000",
+    "assertionCount": 12,
+    "checks": [
+      "provider disclosure visible; explicit pasted text sends without automatic employee-message retrieval",
+      "follow-up sends only conversation ID and fixed module label",
+      "feedback fields do not inherit private chat; deliberate confirmation required",
+      "Clear assistant chat clears server handle and display; next ask starts fresh",
+      "mobile controls remain usable and private Messaging content stays out of requests",
+      "synthetic account switch discards the previous owner conversation and its pending response",
+      "provider disclosure visible; explicit pasted text sends without automatic employee-message retrieval",
+      "follow-up sends only conversation ID and fixed module label",
+      "feedback fields do not inherit private chat; deliberate confirmation required",
+      "Clear assistant chat clears server handle and display; next ask starts fresh",
+      "mobile controls remain usable and private Messaging content stays out of requests",
+      "synthetic account switch discards the previous owner conversation and its pending response"
+    ],
+    "externalModelCalls": 0,
+    "fixture": "synthetic Admin/restricted accounts; no HTTP Auth/RLS assertion inferred from replay",
+    "rawRequestEvidenceIncluded": false
+  },
+  "completion": {
+    "typescript": "passed: ./node_modules/.bin/tsc --noEmit",
+    "targetedEslint": "passed: 16 changed source/verifier files, --no-ignore includes Edge",
+    "diffCheck": "passed",
+    "productionBuild": "passed: npm run build -- --webpack; localhost-only review data source",
+    "newRealInferenceCalls": 0
+  },
+  "knowledgePackage": {
+    "path": "/private/tmp/tenops-knowledge-20261027/tenops-knowledge-20261027.zip",
+    "sha256": "63c356867c92eaac60256610b90cf177afa77629b595c94099a3b885e62522c4",
+    "records": 96,
+    "unchanged": true,
+    "integratedByThisCorrection": false,
+    "previousPrivacyInspection": "passed, no quarantine"
+  },
+  "migration": {
+    "file": "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+    "applied": "disposable/local review PostgreSQL only",
+    "hosted": false
+  },
+  "sourceHashes": [
+    {
+      "path": "scripts/start-tenbot-review.mts",
+      "sha256": "9e3d47a6cfcc2d20233096bd074cb4ec76545a808bda0c28b090d318725495e8"
+    },
+    {
+      "path": "scripts/support/tenbot-ai-pilot.mjs",
+      "sha256": "158dad1fa5231daf260d9aae8f271bad700c41c0b788dbf987f93d5ca1c3fb9c"
+    },
+    {
+      "path": "scripts/tenbot-ai/worker.ts",
+      "sha256": "821cbc842ca427f75e580ee931d4dec9153bab743fb0537728aeef69b1399256"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/manifest.mjs",
+      "sha256": "6809d492984ce8c2df333d0cfabff78076bfb6557391774760e82fd7e5f29761"
+    },
+    {
+      "path": "scripts/verify-tenbot-ai-binding.mts",
+      "sha256": "70d496fa82ed0bb75972714fb777b49e571c754dd92bc7513da0b735245ee0b6"
+    },
+    {
+      "path": "scripts/verify-tenbot-browser.mjs",
+      "sha256": "bdc6929c9bea9b93306cf9a9089a6280d4792ed62c7212c59a4d7882e15dd196"
+    },
+    {
+      "path": "scripts/verify-tenbot-privacy.mts",
+      "sha256": "ccb6e9daaf2833fa6037e1e39e1fca311011b291127be5565ba13f7d4843bf03"
+    },
+    {
+      "path": "scripts/verify-tenbot.mts",
+      "sha256": "fdd2ab281704cd5fa4453ee24a43fda96551d10c55f613ac25f4c0ed92a4ea7f"
+    },
+    {
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "sha256": "fc790752e1188a358249c8bd06950ab8c8133e5c4e8c5079520cd48d6bdf2662"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "77d4722725611173c5015e9a5d3147bb90cd71f82ed83296ef1e21d02187b84a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "sha256": "fd9f60ddb0edce8df9b891bf1c9ea303e1a251df6b30e8ef89eff25f177b191a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "20b2b62343c40f61ea6c1d1b79a5fb43beeb79ed17903058a1b133881eed6d90"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "sha256": "3a31e34896f01d0b6723e2a134c7967066c03b4a5cc17ff84cd16dfe55e9fd39"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "sha256": "49e79da0c26f077b75908f701ab69b4593bd3112c632ca47a260b1a621dab779"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-privacy.ts",
+      "sha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "95da5bc87b96e14d1079d99cceedd6db0387748bead4bf9301a317a2fc750abe"
+    },
+    {
+      "path": "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+      "sha256": "81652bd3e335d2fe29d5b26012727eabaed765dc7950e2979b7fd2891ee53b3b"
+    }
+  ],
+  "sourceProvenance": {
+    "currentDeployedKnowledgeRelease": "bc628bd",
+    "oldGateEvidence": "/private/tmp/tenops-privacy-gate-20261027/PRIVACY_GATE.md",
+    "oldFailureReceiptPreserved": true,
+    "correctionEvidence": "/private/tmp/tenops-privacy-correction-20261027"
+  },
+  "reviewSurfaces": {
+    "application": "http://localhost:3000/my-work → Messaging → TenBot",
+    "adapterPort": 55593,
+    "existingPort3000Preserved": true
+  },
+  "limits": [
+    "No perfect semantic private-content detection claimed",
+    "PostgreSQL SET ROLE/JWT-sub fixture, not full HTTP Auth transport",
+    "No hosted schema/log configuration audit; infrastructure configured to log all statements/parameters remains a release concern",
+    "Permitted chat text intentionally persists in owner-scoped bounded history and may be processed by the configured provider",
+    "Eight-hour logical expiry with lazy owner cleanup; infrastructure backups are outside this guarantee",
+    "Malformed transport/type coercion before SQL functions and hosted SQL/parameter logging require release preflight",
+    "Service-role key inherently has privileged access elsewhere; TenBot adapter allows fixed metering/write-only assistant operations, never private reads",
+    "No full hosted GoTrue/PostgREST, provider-retention or hosted-diagnostic audit performed"
+  ],
+  "actions": {
+    "hostedChanges": false,
+    "push": false,
+    "deployment": false,
+    "paidActivation": false,
+    "ordinaryMessagingTasksAuthRbacChanged": false
+  },
+  "integrationInstructions": [
+    "Product reviews this local correction and clarified gate before any release",
+    "Do not add private-record retrieval tools or merge the independent 96-record package automatically",
+    "Retain current static retrieval/inference integration; apply any later knowledge update through the existing versioned generator and privacy/provenance checks",
+    "Hosted migration/configuration/deployment and provider activation require a separately approved exact boundary and transport/logging preflight"
+  ]
+}

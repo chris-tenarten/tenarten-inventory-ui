@@ -25,7 +25,9 @@
     "verify:planning": "node scripts/verify-planning.mjs",
     "verify:early-access": "node scripts/verify-early-access.mjs",
     "verify:theme": "node scripts/verify-theme.mjs",
-    "verify:dev-branding": "node scripts/verify-dev-branding.mjs"
+    "verify:dev-branding": "node scripts/verify-dev-branding.mjs",
+    "tenbot:knowledge": "node scripts/generate-tenbot-knowledge.mjs",
+    "verify:tenbot-knowledge": "node scripts/generate-tenbot-knowledge.mjs --check"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",

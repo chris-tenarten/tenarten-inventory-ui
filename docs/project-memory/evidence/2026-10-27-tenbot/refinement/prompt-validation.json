@@ -1,0 +1,407 @@
+{
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "inferenceContract": "knowledge-v4",
+  "promptSha256": "c164ea79659ff2d015af6bb4c461ed81f1d06918d3b4dde0937dd57912c2b238",
+  "outputs": [
+    {
+      "id": "rework",
+      "contextSource": null,
+      "infrastructureCorrection": false,
+      "completionRun": false,
+      "finalCandidateReview": false,
+      "promptValidation": true,
+      "question": "How do I initiate Rework for a Job?",
+      "context": [
+        "Current module: Production"
+      ],
+      "input": {
+        "question": "how do i initiate rework for a job",
+        "context": [
+          "Current module: Production"
+        ],
+        "excerpts": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking."
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Account decision: available. Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "production-rework-create",
+          "knowledge-rework"
+        ],
+        "answer": "To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake/return date. Only one rework cycle can be active at a time.",
+        "summary": "Open the job, select 'Create Rework,' provide details, and confirm."
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake/return date. Only one rework cycle can be active at a time.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+            "path": "Production → Job → Create Rework",
+            "route": "/",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative.",
+              "The original lifecycle remains on jobs; Rework never overwrites its status or planned dates.",
+              "Only one Rework can be active for a Job, while completed and cancelled cycles remain historical."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1873,
+      "providerDurationMs": 1561,
+      "usage": [
+        {
+          "at": "2026-10-27T20:50:22.269Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 995,
+          "usage": {
+            "prompt_tokens": 810,
+            "completion_tokens": 93,
+            "total_tokens": 903
+          },
+          "estimatedNeurons": 6.581,
+          "reservedNeurons": 41
+        }
+      ],
+      "at": "2026-10-27T20:50:22.339Z",
+      "ledgerBefore": {
+        "attempts": 56,
+        "completed": 43,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4789.093,
+        "inputTokens": 26218,
+        "outputTokens": 3074
+      },
+      "ledgerAfter": {
+        "attempts": 57,
+        "completed": 44,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4795.674,
+        "inputTokens": 27028,
+        "outputTokens": 3167
+      }
+    },
+    {
+      "id": "rework-followup",
+      "prior": "rework",
+      "contextSource": "prompt-validation.json",
+      "infrastructureCorrection": false,
+      "completionRun": false,
+      "finalCandidateReview": false,
+      "promptValidation": true,
+      "question": "What if I cannot see that button?",
+      "context": [
+        "Current module: Production",
+        "Conversation context:\nEmployee: How do I initiate Rework for a Job?\nTenBot: To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake/return date. Only one rework cycle can be active at a time."
+      ],
+      "input": {
+        "question": "what if i cannot see that button",
+        "context": [
+          "Current module: Production",
+          "Conversation context:\nEmployee: how do i initiate rework for a job\nTenBot: to initiate rework for a job open the completed and unarchived production job then select choose a reason describe the rework scope and enter the intake return date only one rework cycle can be active at a time"
+        ],
+        "excerpts": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking."
+          },
+          {
+            "id": "production-rework-status",
+            "title": "Complete or cancel Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can update the active Rework lifecycle. Open its Job in Production, open Details, change Production status to Complete or Cancelled, then choose Save changes. Save other Job-detail changes separately before changing Rework status. This updates the active Rework cycle, not the original Production lifecycle. Completed or cancelled Rework is historical and cannot be changed. Existing Rework history remains attached to the same Job."
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Account decision: available. Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "production-rework-create",
+          "knowledge-rework"
+        ],
+        "answer": "If you cannot see the 'Create Rework' button, ensure the job is complete, unarchived, and has no active rework cycle. Check if you have the necessary permissions as an authorized business writer. If the issue persists, verify the job's state and rework eligibility.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "If you cannot see the 'Create Rework' button, ensure the job is complete, unarchived, and has no active rework cycle. Check if you have the necessary permissions as an authorized business writer. If the issue persists, verify the job's state and rework eligibility.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+            "path": "Production → Job → Create Rework",
+            "route": "/",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative.",
+              "The original lifecycle remains on jobs; Rework never overwrites its status or planned dates.",
+              "Only one Rework can be active for a Job, while completed and cancelled cycles remain historical."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1598,
+      "providerDurationMs": 1262,
+      "usage": [
+        {
+          "at": "2026-10-27T20:50:33.293Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1260,
+          "usage": {
+            "prompt_tokens": 984,
+            "completion_tokens": 80,
+            "total_tokens": 1064
+          },
+          "estimatedNeurons": 6.989,
+          "reservedNeurons": 45
+        }
+      ],
+      "at": "2026-10-27T20:50:33.396Z",
+      "ledgerBefore": {
+        "attempts": 57,
+        "completed": 44,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4795.674,
+        "inputTokens": 27028,
+        "outputTokens": 3167
+      },
+      "ledgerAfter": {
+        "attempts": 58,
+        "completed": 45,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4802.663,
+        "inputTokens": 28012,
+        "outputTokens": 3247
+      }
+    },
+    {
+      "id": "share-job",
+      "contextSource": null,
+      "infrastructureCorrection": false,
+      "completionRun": false,
+      "finalCandidateReview": false,
+      "promptValidation": true,
+      "question": "Can I share a Job directly in Messaging?",
+      "context": [
+        "Current module: My Work"
+      ],
+      "input": {
+        "question": "can i share a job directly in messaging",
+        "context": [
+          "Current module: My Work"
+        ],
+        "excerpts": [
+          {
+            "id": "share-job",
+            "title": "Share a Job in a message",
+            "status": "unknown",
+            "guidance": "Account decision: unverified. I cannot verify a native Share Job control or Job card in Messaging. This is a documentation limit, not proof that the feature is absent. Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send. Creating a group by itself does not share a Job. Keep private Job records out of TenBot."
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A native Share Job control or Job card is not verified; missing documentation does not prove absence. Supported ordinary communication is to type the appropriate Job reference as message text, or choose Attach for an authorized file, then choose Send. Creating a group alone does not share a Job. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "share-job",
+          "knowledge-messaging"
+        ],
+        "answer": "You cannot directly share a job via a native 'Share Job' control in Messaging. However, you can type the job reference as text in a message or attach a file you're authorized to share. Creating a group alone does not share a job. Keep private job records out of Messaging.",
+        "summary": "You can share job details by typing the reference or attaching files, but there's no native 'Share Job' feature."
+      },
+      "error": "TenBot could not verify the Messaging privacy wording.",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "share-job",
+            "title": "Share a Job in a message",
+            "status": "unknown",
+            "guidance": "I cannot verify a native Share Job control or Job card in Messaging. This is a documentation limit, not proof that the feature is absent. Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send. Creating a group by itself does not share a Job. Keep private Job records out of TenBot.",
+            "path": "",
+            "route": null,
+            "source": "Messaging capability review · October 27",
+            "availability": "unverified",
+            "constraints": [
+              "I cannot verify a native Share Job control or Job card in Messaging.",
+              "This is a documentation limit, not proof that the feature is absent.",
+              "Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send.",
+              "Creating a group by itself does not share a Job.",
+              "Keep private Job records out of TenBot."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "I cannot verify a native Share Job control or Job card in Messaging. This is a documentation limit, not proof that the feature is absent. Ordinary text and attachments are supported in conversations you are authorized to access: type the appropriate Job reference as message text, or choose Attach for a file you are allowed to share, then choose Send. Creating a group by itself does not share a Job. Keep private Job records out of TenBot."
+        ],
+        "suggestionAllowed": false,
+        "fallback": true
+      },
+      "providerInvoked": true,
+      "durationMs": 1732,
+      "providerDurationMs": 1278,
+      "usage": [
+        {
+          "at": "2026-10-27T20:50:44.606Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1275,
+          "usage": {
+            "prompt_tokens": 773,
+            "completion_tokens": 102,
+            "total_tokens": 875
+          },
+          "estimatedNeurons": 6.684,
+          "reservedNeurons": 40
+        }
+      ],
+      "at": "2026-10-27T20:50:44.865Z",
+      "ledgerBefore": {
+        "attempts": 58,
+        "completed": 45,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4802.663,
+        "inputTokens": 28012,
+        "outputTokens": 3247
+      },
+      "ledgerAfter": {
+        "attempts": 59,
+        "completed": 45,
+        "failed": 14,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4809.347,
+        "inputTokens": 28785,
+        "outputTokens": 3349
+      }
+    }
+  ],
+  "analyticsBefore": {
+    "unavailable": true,
+    "reason": "Verified allowance cache expired; provider must refresh before inference"
+  },
+  "analyticsAfter": {
+    "checkedAt": "2026-10-27T20:50:20.710Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 663.1158392382786,
+    "reportedRequests": 48,
+    "nominalRemainingNeurons": 9336.884160761721,
+    "cached": true,
+    "cacheExpiresAt": "2026-10-27T20:55:20.710Z",
+    "guardJournalNeurons": 483.28200000000004,
+    "guardedRemainingNeurons": 6853.602160761722
+  },
+  "ledgerBefore": {
+    "attempts": 56,
+    "completed": 43,
+    "failed": 13,
+    "legacyReservedUsd": 0.2,
+    "accountedNeurons": 4789.093,
+    "inputTokens": 26218,
+    "outputTokens": 3074
+  },
+  "startedAt": "2026-10-27T20:50:20.353Z",
+  "ledgerAfter": {
+    "attempts": 59,
+    "completed": 45,
+    "failed": 14,
+    "legacyReservedUsd": 0.2,
+    "accountedNeurons": 4809.347,
+    "inputTokens": 28785,
+    "outputTokens": 3349
+  },
+  "finishedAt": "2026-10-27T20:50:44.987Z"
+}

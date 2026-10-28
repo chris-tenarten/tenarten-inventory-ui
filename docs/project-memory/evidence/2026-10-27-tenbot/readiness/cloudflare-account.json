@@ -1,0 +1,16 @@
+{
+  "readOnly": true,
+  "inferenceRequests": 0,
+  "usage": {
+    "checkedAt": "2026-10-27T23:12:42.426Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 811.808162922971,
+    "reportedRequests": 66,
+    "nominalRemainingNeurons": 9188.191837077029
+  },
+  "selectedModel": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "selectedModelListed": true,
+  "currentWorkersFreePlanMachineVerified": false,
+  "planVerificationLimit": "Account subscription endpoint denied existing OAuth token (403).",
+  "currentAccountHardCeiling": "Official Workers Free limit is 10000 Neurons/day with errors after quota; actual current plan requires fresh verified evidence before activation."
+}

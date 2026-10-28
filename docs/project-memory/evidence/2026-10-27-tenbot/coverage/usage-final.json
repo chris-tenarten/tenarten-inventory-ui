@@ -1,0 +1,31 @@
+{
+  "cloudflare": {
+    "ready": true,
+    "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+    "plan": "Workers Free",
+    "planEvidence": "Chris confirmed in Billing dashboard",
+    "freePlanConfirmedAt": "2026-10-27T17:06:00.714Z",
+    "checkedAt": "2026-10-27T19:53:22.930Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 97.04287436231971,
+    "reportedRequests": 16,
+    "nominalRemainingNeurons": 9902.95712563768,
+    "caps": {
+      "totalDay": 20,
+      "perMinute": 6,
+      "monthlyUsd": 0.2,
+      "neuronHeadroom": 2000,
+      "conservativeNeuronsPerRequest": 200
+    }
+  },
+  "localLedger": {
+    "attempts": 20,
+    "reservedUsd": 0.2,
+    "completed": 12,
+    "failed": 8,
+    "sharedDayLimit": 20,
+    "monthlyBudgetUsd": 0.2,
+    "remainingReservations": 0
+  },
+  "note": "Analytics account-shared and potentially delayed; reservation units are not actual billed spend. No reset/refund/bypass."
+}

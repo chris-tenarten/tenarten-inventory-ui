@@ -1,0 +1,266 @@
+{
+  "outputs": [
+    {
+      "id": "manpower",
+      "question": "how do i filter by jobs in manpower reporting",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "manpower-job-filter",
+            "title": "Filter Manpower Reporting by Job",
+            "status": "deployed",
+            "guidance": "Employees with business-write access can filter labor by Production Job. Open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates. Search and filters are not exhaustive until all available history is loaded. Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production.",
+            "path": "Reporting → Manpower Reporting → Job labor review",
+            "route": "/manpower-reporting",
+            "source": "Manpower Reporting guide · released workflow verified October 27",
+            "availability": "available",
+            "constraints": [
+              "Employees with business-write access can filter labor by Production Job.",
+              "Use Clear job filter or All reporting groups to reset.",
+              "Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates.",
+              "Search and filters are not exhaustive until all available history is loaded.",
+              "Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "rework",
+      "question": "how do i initiate a rework for a job?",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "manpower-denied",
+      "question": "how do i filter by jobs in manpower reporting",
+      "denied": true,
+      "answer": {
+        "mode": "verified",
+        "message": "Filter Manpower Reporting by Job exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+        "resolution": "permission-denied",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [],
+        "summary": null,
+        "notices": [
+          "Filter Manpower Reporting by Job exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access."
+        ],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "rework-denied",
+      "question": "how do i initiate a rework for a job?",
+      "denied": true,
+      "answer": {
+        "mode": "verified",
+        "message": "Initiate Job Rework exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+        "resolution": "permission-denied",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [],
+        "summary": null,
+        "notices": [
+          "Initiate Job Rework exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access."
+        ],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "planning-unavailable",
+      "question": "How do I add a Planning phase to a Job?",
+      "answer": {
+        "mode": "verified",
+        "message": "Planning Phases and Items support Job coordination, but Planning is not enabled in the verified Production application. Its tab and Timeline overlays are unavailable in that deployment. I cannot give live navigation steps for these controls. Please check with Product before relying on a Planning workflow.",
+        "resolution": "unavailable",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "planning-phase",
+            "title": "Planning Phases",
+            "status": "deployed",
+            "guidance": "Planning Phases and Items support Job coordination, but Planning is not enabled in the verified Production application. Its tab and Timeline overlays are unavailable in that deployment. I cannot give live navigation steps for these controls. Please check with Product before relying on a Planning workflow.",
+            "path": "",
+            "route": null,
+            "source": "Planning deployment availability",
+            "availability": "unavailable",
+            "constraints": [
+              "Planning Phases and Items support Job coordination, but Planning is not enabled in the verified Production application.",
+              "I cannot give live navigation steps for these controls."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "Planning Phases and Items support Job coordination, but Planning is not enabled in the verified Production application. Its tab and Timeline overlays are unavailable in that deployment. I cannot give live navigation steps for these controls. Please check with Product before relying on a Planning workflow."
+        ],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "inventory-stock",
+      "question": "How do I record stock Intake in Inventory?",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "inventory-stock-movement",
+            "title": "Record Inventory stock intake or outtake",
+            "status": "deployed",
+            "guidance": "Employees with business-write access can record stock movements. Open Inventory → Current Inventory → Record Stock. Choose Intake or Outtake, enter Your Name and material lines with positive quantities, units and matching lot details, then Record Intake Lines or Record Outtake Lines. Intake adds to a matching lot or creates one; Outtake draws from matching lots and cannot exceed available matching stock. Each line updates Inventory immediately and creates an Activity transaction. For one lot, open its material group, select the lot, use Stock Movement, enter quantity and optional Reason / Note, then Record Intake or Record Outtake. Inventory Intake means a stock movement, not the Pre-Production Intake workspace.",
+            "path": "Inventory → Current Inventory → Record Stock → Intake or Outtake → Record Intake Lines or Record Outtake Lines",
+            "route": "/inventory",
+            "source": "Inventory guide · released workflow verified October 27",
+            "availability": "available",
+            "constraints": [
+              "Employees with business-write access can record stock movements.",
+              "Intake adds to a matching lot or creates one; Outtake draws from matching lots and cannot exceed available matching stock.",
+              "Inventory Intake means a stock movement, not the Pre-Production Intake workspace."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "sample-create",
+      "question": "How do I create and save a Sample?",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "sample-save",
+            "title": "Create and save a Sample formula",
+            "status": "deployed",
+            "guidance": "Employees with operational access and business-write permission can build and save a working Sample formula without requiring a Production Job. Open Toolbox → Tools → Sample Form Generator and choose New Sample. Select a Resin System in Formulation setup, review and apply the configured profile when prompted, and complete the Sample and formulation details. Choose Save Sample; an existing draft uses Save Changes. Resolve resin-identity conflicts before saving. Suggested Color Plate numbers are assigned when saved; unusual or conflicting identifiers require review. Saving a draft does not generate a Sample Work Order.",
+            "path": "Toolbox → Tools → Sample Form Generator → New Sample → Save Sample",
+            "route": "/samples",
+            "source": "Samples workflow guide · deployed application",
+            "availability": "available",
+            "constraints": [
+              "Employees with operational access and business-write permission can build and save a working Sample formula without requiring a Production Job.",
+              "Saving a draft does not generate a Sample Work Order."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "proposal-denied",
+      "question": "How do I issue a Proposal?",
+      "denied": true,
+      "answer": {
+        "mode": "verified",
+        "message": "Issue a Proposal or revise an issued Proposal exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+        "resolution": "permission-denied",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [],
+        "summary": null,
+        "notices": [
+          "Issue a Proposal or revise an issued Proposal exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access."
+        ],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "id": "unsupported-feature-request",
+      "question": "Please draft a feature request for weekly recurring My Work tasks.",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "recurring",
+            "title": "Recurring tasks",
+            "status": "unknown",
+            "guidance": "The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product.",
+            "path": "",
+            "route": null,
+            "source": "Deployed capability review · October 27",
+            "availability": "unverified",
+            "constraints": [
+              "The TenOps Guide does not have enough verified information to confirm recurring tasks.",
+              "This does not mean the feature is unavailable."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "The TenOps Guide does not have enough verified information to confirm recurring tasks. This does not mean the feature is unavailable. Please check with Product."
+        ],
+        "suggestionAllowed": true
+      }
+    }
+  ]
+}

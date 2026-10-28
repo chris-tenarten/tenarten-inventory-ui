@@ -1,0 +1,78 @@
+{
+  "recordedAt": "2026-10-27T23:28:53.563984+00:00",
+  "purpose": "Selected sanitized final readiness evidence; raw task artifacts retained in private/tmp",
+  "files": [
+    {
+      "name": "cloudflare-account.json",
+      "sha256": "7fa2d740d03b4d98774011c2070dd3aa719d604e29ddfb8d2fce998b5c1bd27b"
+    },
+    {
+      "name": "final-account-preflight.json",
+      "sha256": "387c5e734797a185a0b6eb43b8254d3255c9f8bf6fb0a13d08a5ef8ead237a31"
+    },
+    {
+      "name": "final-local-usage.json",
+      "sha256": "ca159f8c92453ca82235fdf21ab2ca28fd92d745387d49167161b7d42345e073"
+    },
+    {
+      "name": "hosted-config.json",
+      "sha256": "6815960dd4c7f3f0af3c97b25ea04d6cb9032a1471e340666c23337899e4c855"
+    },
+    {
+      "name": "hosted-database.json",
+      "sha256": "7b7cea97b0faac0b9b597714d2d94a9bf1d436ef39e7a619e3be58fd858c889d"
+    },
+    {
+      "name": "inference-preflight.json",
+      "sha256": "5bf9977c7b3d7e53c873bc0570f02caf316fd86ba38735e6ed20433575f836fd"
+    },
+    {
+      "name": "inference-results.json",
+      "sha256": "538111f0d6b4acab6a8c125e7322619feeecbeafad84a5cf219400e86719faf9"
+    },
+    {
+      "name": "inference-summary.json",
+      "sha256": "a01b8de96a98b6af55cb24aadd8aed02a8d3458a521a4409f1fe07e9852f88ec"
+    },
+    {
+      "name": "knowledge-reconciliation-results.json",
+      "sha256": "8e54d2ffb1a5bf4e8de5c77b371ee1973894cfd15c6fe737f9a3035f37769826"
+    },
+    {
+      "name": "package-source-audit.json",
+      "sha256": "14c7e0fdc12dc2dd90724b0a37d4a917ab9453c17f0f79c3b75028d98a93c33e"
+    },
+    {
+      "name": "privacy-results.json",
+      "sha256": "42c2bbffeb9833636673fb2cfc5e09c97111911993273b7881f38665ffe1283c"
+    },
+    {
+      "name": "privacy-review.json",
+      "sha256": "e81f649e323303c18f23b9d3d7c9c5f89e3684949197da48affadf1e6e0fa30a"
+    },
+    {
+      "name": "privacy-source-review.json",
+      "sha256": "e4692f6ac613a8639703af2957a9c52032fc2b4a12ebf5897c9ffd571be39f23"
+    },
+    {
+      "name": "release-boundary.json",
+      "sha256": "3d30530ef95e423aa52428bac47d2af859d20226dc2748fd230c7dddafc58bdc"
+    },
+    {
+      "name": "unsupported-recheck.json",
+      "sha256": "08ea16655f5f3f11e8745766de966882808ee539c5a3c789de799604512c4235"
+    },
+    {
+      "name": "unsupported-refresh-fallback.json",
+      "sha256": "7a2387a6f5994b76e06315a9b3dfb45141569e627028483a892cb04e1f105d95"
+    },
+    {
+      "name": "unsupported-review.json",
+      "sha256": "2f2f3a91a6fb3c3ff1ba7b69bead4d63425c06850cb7675cd7357cd2963670f8"
+    },
+    {
+      "name": "validation.json",
+      "sha256": "17824d7b4d98541cbdf86664a4e83a968587247972bbc44850443962857b644d"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-27T17:54:52.716Z",
+  "status": 401,
+  "errors": [
+    {
+      "code": 10000,
+      "message": "Authentication error"
+    }
+  ],
+  "credentialExpiry": "2026-10-27T17:50:06.718Z"
+}

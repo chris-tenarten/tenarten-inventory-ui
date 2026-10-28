@@ -1,0 +1,45 @@
+{
+  "mode": "ai",
+  "message": "To initiate Rework, open a completed, unarchived Production Job and select 'Create Rework.' Choose a Reason, describe the Rework Scope, and enter the Intake/Return Date. Only one Rework cycle can be active at a time. Rework preserves the original Job's status and dates.",
+  "resolution": "available",
+  "snapshot": {
+    "revision": "bc628bd",
+    "verifiedAt": "2026-10-27"
+  },
+  "sources": [
+    {
+      "id": "production-rework-create",
+      "title": "Initiate Job Rework",
+      "status": "deployed",
+      "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+      "path": "Production \u2192 completed Job \u2192 Create Rework \u2192 Create Rework",
+      "route": "/production",
+      "source": "Job Rework guide",
+      "availability": "available",
+      "constraints": [
+        "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+        "The Job must be complete, unarchived and have no active Rework cycle.",
+        "Only one Rework cycle can be active at a time.",
+        "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+      ]
+    },
+    {
+      "id": "knowledge-rework",
+      "title": "Production Rework lifecycle and requirements",
+      "status": "deployed",
+      "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+      "path": "Production \u2192 Job \u2192 Create Rework",
+      "route": "/",
+      "source": "TenOps verified application knowledge",
+      "availability": "available",
+      "constraints": [
+        "Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative.",
+        "The original lifecycle remains on jobs; Rework never overwrites its status or planned dates.",
+        "Only one Rework can be active for a Job, while completed and cancelled cycles remain historical."
+      ]
+    }
+  ],
+  "summary": null,
+  "notices": [],
+  "suggestionAllowed": false
+}

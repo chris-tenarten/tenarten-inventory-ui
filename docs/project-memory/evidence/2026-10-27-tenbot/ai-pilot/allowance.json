@@ -1,0 +1,37 @@
+{
+  "initial": {
+    "ready": true,
+    "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+    "plan": "Workers Free",
+    "planEvidence": "Chris confirmed in Billing dashboard",
+    "freePlanConfirmedAt": "2026-10-27T17:06:00.714Z",
+    "checkedAt": "2026-10-27T17:06:01.399Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 0,
+    "reportedRequests": 0,
+    "nominalRemainingNeurons": 10000,
+    "caps": {
+      "perUserDay": 12,
+      "totalDay": 20,
+      "perMinute": 6,
+      "monthlyUsd": 0.2,
+      "neuronHeadroom": 2000,
+      "conservativeNeuronsPerRequest": 200
+    }
+  },
+  "after": {
+    "checkedAt": "2026-10-27T17:10:57.156Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 21.429814087226987,
+    "reportedRequests": 5,
+    "nominalRemainingNeurons": 9978.570185912773
+  },
+  "analyticsCaveat": "Account-shared usage may lag; Workers Free rejects usage above its daily allocation. No paid plan or credits activated.",
+  "afterBrowser": {
+    "checkedAt": "2026-10-27T17:15:54.115Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 25.04873846657574,
+    "reportedRequests": 6,
+    "nominalRemainingNeurons": 9974.951261533424
+  }
+}

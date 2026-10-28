@@ -1,0 +1,547 @@
+{
+  "startedAt": "2026-10-27T23:17:26.890Z",
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "syntheticOnly": true,
+  "origin": "http://localhost:3000",
+  "beforeUsage": {
+    "dayStart": "2026-10-27T00:00:00+00:00",
+    "dayFailed": 15,
+    "dayResetAt": "2026-10-28T00:00:00+00:00",
+    "monthStart": "2026-10-01T00:00:00+00:00",
+    "dayCompleted": 59,
+    "policyVersion": 2,
+    "sharedDayUsed": 74,
+    "dayNeuronLimit": 8000,
+    "sharedDayLimit": 300,
+    "sharedMonthUsed": 74,
+    "monthNeuronLimit": 240000,
+    "sharedMonthLimit": 6000,
+    "sharedDayRemaining": 226,
+    "dayAccountedNeurons": 4937.804,
+    "sharedMonthRemaining": 5926,
+    "dayUnmeasuredAttempts": 24,
+    "monthAccountedNeurons": 4937.804,
+    "perAccountMinuteLimit": 6,
+    "dayMeasuredInputTokens": 45916,
+    "dayMeasuredOutputTokens": 4964
+  },
+  "outputs": [
+    {
+      "label": "rework",
+      "question": "how do i initiate a rework for a job?",
+      "status": 200,
+      "durationMs": 1610,
+      "answer": {
+        "mode": "ai",
+        "message": "To initiate a rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake/return date. Ensure no active rework cycle exists. Rework remains on the same job and does not alter its original status or dates.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+            "path": "Production → Job → Create Rework",
+            "route": "/",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative.",
+              "The original lifecycle remains on jobs; Rework never overwrites its status or planned dates.",
+              "Only one Rework can be active for a Job, while completed and cancelled cycles remain historical."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "label": "rework-before-complete",
+      "question": "Can I do that before the Job is complete?",
+      "status": 200,
+      "durationMs": 355,
+      "answer": {
+        "mode": "verified",
+        "message": "No. Rework requires the Job to be complete, unarchived, and have no active Rework cycle. You cannot initiate Rework before the Job is complete.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "label": "rework-missing-control",
+      "question": "What if I cannot see that button?",
+      "status": 200,
+      "durationMs": 2016,
+      "answer": {
+        "mode": "ai",
+        "message": "If you cannot see the 'Create Rework' button, ensure the Job is complete, unarchived, and has no active Rework cycle. Only one Rework cycle can be active at a time. Check if you have the necessary permissions to initiate Rework. If the issue persists, verify if the button is available in your current module or if there are any restrictions on your account.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "production-rework-status",
+            "title": "Complete or cancel Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can update the active Rework lifecycle. Open its Job in Production, open Details, change Production status to Complete or Cancelled, then choose Save changes. Save other Job-detail changes separately before changing Rework status. This updates the active Rework cycle, not the original Production lifecycle. Completed or cancelled Rework is historical and cannot be changed. Existing Rework history remains attached to the same Job.",
+            "path": "Production → active Rework Job → Details → Production status → Save changes",
+            "route": "/production",
+            "source": "Job Rework lifecycle guide",
+            "availability": "available",
+            "constraints": [
+              "This updates the active Rework cycle, not the original Production lifecycle.",
+              "Completed or cancelled Rework is historical and cannot be changed.",
+              "Existing Rework history remains attached to the same Job."
+            ]
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+            "path": "Production → Job → Create Rework",
+            "route": "/",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative.",
+              "The original lifecycle remains on jobs; Rework never overwrites its status or planned dates.",
+              "Only one Rework can be active for a Job, while completed and cancelled cycles remain historical."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "label": "group",
+      "question": "How do I create a group conversation?",
+      "status": 200,
+      "durationMs": 1543,
+      "answer": {
+        "mode": "ai",
+        "message": "To create a group conversation, open Messaging from the app header, choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can manage the group. Adding a third person to a personal DM is not supported; create a separate group instead.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging groups and replies · released October 22",
+            "availability": "available",
+            "constraints": [
+              "Only the creator can rename the group or add/remove participants.",
+              "Current members share the full history; removed members lose access.",
+              "Previously signed attachment links may remain usable for up to ten minutes."
+            ]
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A native Share Job control or Job card is not verified; missing documentation does not prove absence. Supported ordinary communication is to type the appropriate Job reference as message text, or choose Attach for an authorized file, then choose Send. Creating a group alone does not share a Job. Official TenOps system notices retain separate authority. TenBot does not independently retrieve employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation.",
+              "Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied.",
+              "A native Share Job control or Job card is not verified; missing documentation does not prove absence.",
+              "Creating a group alone does not share a Job.",
+              "TenBot does not independently retrieve employee Messaging records.",
+              "- My Work and Inbox are participant/private domains.",
+              "Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "label": "group-followup",
+      "question": "Can I add someone to my existing DM instead?",
+      "status": 200,
+      "durationMs": 1123,
+      "answer": {
+        "mode": "ai",
+        "message": "You cannot add a third person to a personal DM. Create a new group instead. The old DM remains private, and its history is not copied into the group.",
+        "resolution": "partial",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging privacy contract · released October 22",
+            "availability": "partial",
+            "constraints": [
+              "Partially: you can start a new group, but you cannot add a third person to a personal DM.",
+              "The old DM stays private and its history is not copied into the group."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [
+          "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group."
+        ],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "label": "historical-import",
+      "question": "How do I import a historical Sample from Excel?",
+      "status": 200,
+      "durationMs": 2683,
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "workflow-historical-import",
+            "title": "Transcribe a historical Sample while retaining its original",
+            "status": "deployed",
+            "guidance": "Open Historical Sample import, choose an original Excel workbook or PDF and one sheet or page, then Extract for review. Review warnings and extracted values, correct details and add missing material rows. Choose Retain original & save Transcribed Sample. Historical numbers remain unchanged; no new number is allocated. Open the saved Sample to review its Resin System, geometry and quantities in the existing editor and save changes. Missing Batch or yield values remain unresolved. Transcription does not verify the formulation. Compatibility with populated historical Excel files remains a release acceptance limitation.",
+            "path": "Samples → Historical Sample import",
+            "route": "/samples",
+            "source": "TenOps verified workflow guide",
+            "availability": "available",
+            "constraints": [
+              "Open Historical Sample import, choose an original Excel workbook or PDF and one sheet or page, then Extract for review.",
+              "Historical numbers remain unchanged; no new number is allocated.",
+              "Transcription does not verify the formulation.",
+              "Compatibility with populated historical Excel files remains a release acceptance limitation."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": true
+      }
+    },
+    {
+      "label": "intake-convert",
+      "question": "How do I convert a Won Bid to Production?",
+      "status": 200,
+      "durationMs": 2049,
+      "answer": {
+        "mode": "ai",
+        "message": "To convert a Won Bid to Production, first save the Won status and Deposit Received Date. Then, in the Projected Production Window, select 'Convert to Production.' Choose 'Plan in Production Later' if you want to leave the Job unscheduled. If you need to set new dates, ensure you have Production scheduling permission. Confirm the conversion, and then open the Production Job. Note that the Job number is optional and not automatically assigned. The original Bid and documents remain intact.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "workflow-intake-convert",
+            "title": "Convert an eligible Bid into one Production Job",
+            "status": "deployed",
+            "guidance": "Save Won status and Deposit Received Date, then save or discard remaining Bid edits and finish pending file cleanup. In Projected Production Window, choose Convert to Production. Choose Plan in Production Later to leave the Job unscheduled. Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission. Job number is optional and is not allocated automatically. Choose Confirm conversion, then Open Production Job. The handoff creates or returns exactly one canonical Job; retrying does not create another. Accepted scope, formulation verification and material assessment are not prerequisites. Existing Bid and issued-document history remain intact; Production then owns operational scheduling.",
+            "path": "Intake → Bid → Overview → Projected Production Window → Convert to Production",
+            "route": "/pre-production",
+            "source": "TenOps verified workflow guide",
+            "availability": "available",
+            "constraints": [
+              "Committing dates through Carry Forward or Set New Dates additionally requires Production scheduling permission.",
+              "Job number is optional and is not allocated automatically.",
+              "The handoff creates or returns exactly one canonical Job; retrying does not create another.",
+              "Accepted scope, formulation verification and material assessment are not prerequisites.",
+              "Existing Bid and issued-document history remain intact; Production then owns operational scheduling."
+            ]
+          },
+          {
+            "id": "knowledge-intake",
+            "title": "Intake Bids, related records and Production handoff",
+            "status": "deployed",
+            "guidance": "The Intake graduation runtime is released. Ordinary Bid activity does not require governing documents or manufacturing inputs. Won plus a recorded deposit is the conversion gate; conversion additionally requires Production Job creation permission. Committed carried/new dates require Production scheduling permission. One Bid creates/links one canonical Production Job; no pseudo Job or automatic Job number is fabricated. Author once in Samples, reference in Intake, calculate in shared services, execute in Production. The Bid Inspector has contextual Tools for the established generators and read-only Related Records showing associated Proposals, Samples, existing accepted/retained revisions and the canonical converted Job. Employees need not designate governing documents or complete material-planning fields for ordinary Bid activity. Quantities, formulations and manufacturing inputs stay in their existing owning workflows; existing version provenance and immutable handoff remain compatible. Historical Sample originals and verified revisions are retained; imported shop quantities do not become Batch authority automatically. Shared material assessment reuses Inventory, catalog and purchasing context without creating reservations or orders. Won + recorded deposit remains the conversion gate; missing references, material shortages and planning fields are advisory. See the scoped contract and Current State for implementation/release status.",
+            "path": "Intake → Bid → Overview / Updates / Files / Tools",
+            "route": "/pre-production",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Ordinary Bid activity does not require governing documents or manufacturing inputs.",
+              "Won plus a recorded deposit is the conversion gate; conversion additionally requires Production Job creation permission.",
+              "Committed carried/new dates require Production scheduling permission.",
+              "The Bid Inspector has contextual Tools for the established generators and read-only Related Records showing associated Proposals, Samples, existing accepted/retained revisions and the canonical converted Job.",
+              "Employees need not designate governing documents or complete material-planning fields for ordinary Bid activity.",
+              "Historical Sample originals and verified revisions are retained; imported shop quantities do not become Batch authority automatically."
+            ]
+          },
+          {
+            "id": "knowledge-intake-timeline",
+            "title": "Intake projected windows and combined Timeline",
+            "status": "deployed",
+            "guidance": "Intake projected windows and its Timeline are available, distinct from disabled Production Phase/Item Planning. A projected window does not reserve Production capacity or set a Proposal due date. Use Save projected window to persist authorized edits. Production-only combined Timeline is read-only in Intake; committed scheduling belongs to Production.",
+            "path": "Intake → Timeline / Bid → Projected Production Window",
+            "route": "/pre-production",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "A projected window does not reserve Production capacity or set a Proposal due date.",
+              "Production-only combined Timeline is read-only in Intake; committed scheduling belongs to Production."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    },
+    {
+      "label": "unsupported",
+      "question": "Can TenOps automatically file payroll taxes from Manpower Reporting?",
+      "status": 200,
+      "durationMs": 1415,
+      "answer": {
+        "mode": "ai",
+        "message": "TenOps does not automatically file payroll taxes from Manpower Reporting. Employees with business-write access can record labor in Manpower Reporting, but payroll tax filing is a separate process outside of this module. No automated tax filing functionality is described in the provided sources.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "knowledge-manpower",
+            "title": "Manpower Reporting work identity and filters",
+            "status": "deployed",
+            "guidance": "Job dropdown filtering uses business-write-gated controls in the released UI. Read-only accounts retain search/authorized deep-link review. Reporting groups are not Jobs. Manpower Reporting records labor by reporting group, work date, worker, task, work identity, AM hours, PM hours, notes, and attribution. Persistent reporting groups organize entry and review; they are not jobs. Work identity is either a Production job or temporary label, never both. Workers and tasks are stable references with display order and active state. Historical references are deactivated rather than deleted. Total hours derive from AM plus PM and are not stored. Client-side search covers group, date, worker, task, job name/number, temporary label, notes, and entered-by. Search changes displayed rows and totals without changing persistence or ordering.",
+            "path": "Manpower Reporting → Job / Search",
+            "route": "/manpower-reporting",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Read-only accounts retain search/authorized deep-link review.",
+              "Reporting groups are not Jobs.",
+              "Persistent reporting groups organize entry and review; they are not jobs.",
+              "Work identity is either a Production job or temporary label, never both.",
+              "Historical references are deactivated rather than deleted.",
+              "Total hours derive from AM plus PM and are not stored."
+            ]
+          },
+          {
+            "id": "manpower-record-labor",
+            "title": "Record labor in Manpower Reporting",
+            "status": "deployed",
+            "guidance": "Employees with business-write access can record labor. Open Reporting → Manpower Reporting. Clear search, Job and product filters before creating an empty group. Choose New Group, name it and Create, or expand an existing group and choose Add New Line. Complete work date, active Product Category, Worker, Task, Job or temporary work label, and AM/PM hours, then Add Entry. Hours must be nonnegative and total no more than 24 per entry. Split hours into separate lines for different products. A temporary work label is not a Production Job link; its hours do not appear in Production until linked. Clear filters before changing a whole group’s Job.",
+            "path": "Reporting → Manpower Reporting → New Group or Add New Line → Add Entry",
+            "route": "/manpower-reporting",
+            "source": "Manpower Reporting guide · released workflow verified October 27",
+            "availability": "available",
+            "constraints": [
+              "Employees with business-write access can record labor.",
+              "Hours must be nonnegative and total no more than 24 per entry.",
+              "A temporary work label is not a Production Job link; its hours do not appear in Production until linked."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      }
+    }
+  ],
+  "newMeasuredCalls": [
+    {
+      "at": "2026-10-27T23:17:28.613Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1205,
+      "usage": {
+        "prompt_tokens": 905,
+        "completion_tokens": 112,
+        "total_tokens": 1017
+      },
+      "estimatedNeurons": 7.599,
+      "reservedNeurons": 44
+    },
+    {
+      "at": "2026-10-27T23:17:52.936Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 990,
+      "usage": {
+        "prompt_tokens": 1157,
+        "completion_tokens": 106,
+        "total_tokens": 1263
+      },
+      "estimatedNeurons": 8.582,
+      "reservedNeurons": 49
+    },
+    {
+      "at": "2026-10-27T23:18:05.495Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1114,
+      "usage": {
+        "prompt_tokens": 842,
+        "completion_tokens": 122,
+        "total_tokens": 964
+      },
+      "estimatedNeurons": 7.613,
+      "reservedNeurons": 43
+    },
+    {
+      "at": "2026-10-27T23:18:17.603Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 650,
+      "usage": {
+        "prompt_tokens": 721,
+        "completion_tokens": 48,
+        "total_tokens": 769
+      },
+      "estimatedNeurons": 4.798,
+      "reservedNeurons": 39
+    },
+    {
+      "at": "2026-10-27T23:18:30.745Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1266,
+      "usage": {
+        "prompt_tokens": 1442,
+        "completion_tokens": 126,
+        "total_tokens": 1568
+      },
+      "estimatedNeurons": 10.51,
+      "reservedNeurons": 58
+    },
+    {
+      "at": "2026-10-27T23:18:44.389Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 1356,
+      "usage": {
+        "prompt_tokens": 1342,
+        "completion_tokens": 154,
+        "total_tokens": 1496
+      },
+      "estimatedNeurons": 10.9,
+      "reservedNeurons": 57
+    },
+    {
+      "at": "2026-10-27T23:18:56.778Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 909,
+      "usage": {
+        "prompt_tokens": 1511,
+        "completion_tokens": 72,
+        "total_tokens": 1583
+      },
+      "estimatedNeurons": 9.183,
+      "reservedNeurons": 59
+    }
+  ],
+  "afterUsage": {
+    "dayStart": "2026-10-27T00:00:00+00:00",
+    "dayFailed": 16,
+    "dayResetAt": "2026-10-28T00:00:00+00:00",
+    "monthStart": "2026-10-01T00:00:00+00:00",
+    "dayCompleted": 65,
+    "policyVersion": 2,
+    "sharedDayUsed": 81,
+    "dayNeuronLimit": 8000,
+    "sharedDayLimit": 300,
+    "sharedMonthUsed": 81,
+    "monthNeuronLimit": 240000,
+    "sharedMonthLimit": 6000,
+    "sharedDayRemaining": 219,
+    "dayAccountedNeurons": 4996.989,
+    "sharedMonthRemaining": 5919,
+    "dayUnmeasuredAttempts": 24,
+    "monthAccountedNeurons": 4996.989,
+    "perAccountMinuteLimit": 6,
+    "dayMeasuredInputTokens": 53836,
+    "dayMeasuredOutputTokens": 5704
+  },
+  "finishedAt": "2026-10-27T23:18:57.099Z",
+  "measuredSummary": {
+    "calls": 7,
+    "inputTokens": 7920,
+    "outputTokens": 740,
+    "tokenDerivedEstimatedNeurons": 59.184999999999995
+  }
+}

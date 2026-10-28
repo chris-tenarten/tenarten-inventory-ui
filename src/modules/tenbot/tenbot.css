@@ -1,0 +1,9 @@
+/* Shared Messaging viewport support, including the TenBot conversation. */
+.tenbot-scroll { overscroll-behavior: contain; overflow-y: auto; overflow-x: hidden; min-height: 0; scrollbar-gutter: stable; }
+@media (max-width:767px), (max-width:1023px) and (pointer:coarse) {
+ .tenops-communication-overlay {
+  top: var(--communication-visible-top,0px); bottom: auto;
+  height: var(--communication-visible-height,100dvh); padding: 0;
+ }
+ .tenops-communication-panel { height: 100%; max-height: 100%; border-radius: 0; padding-top: env(safe-area-inset-top); }
+}

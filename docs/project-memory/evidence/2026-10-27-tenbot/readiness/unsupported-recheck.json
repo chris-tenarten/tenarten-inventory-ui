@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-27T23:27:42.479029+00:00",
+  "question": "Can TenOps automatically file payroll taxes from Manpower Reporting?",
+  "origin": "http://localhost:3000",
+  "status": 200,
+  "durationMs": 1466,
+  "response": {
+    "mode": "verified",
+    "message": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+    "resolution": "documentation-missing",
+    "snapshot": {
+      "revision": "bc628bd",
+      "verifiedAt": "2026-10-27"
+    },
+    "sources": [],
+    "summary": null,
+    "notices": [],
+    "suggestionAllowed": false
+  },
+  "newMeasuredCalls": [
+    {
+      "at": "2026-10-27T23:26:45.497Z",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "durationMs": 976,
+      "usage": {
+        "prompt_tokens": 1511,
+        "completion_tokens": 72,
+        "total_tokens": 1583
+      },
+      "estimatedNeurons": 9.183,
+      "reservedNeurons": 59
+    }
+  ],
+  "passed": true,
+  "interpretation": "After fresh allowance preflight, one actual Qwen response was metered. Final candidate returned deterministic documentation-missing with no sources or feature prompt, not generated answer prose. Earlier pre-dispatch direct fallback is retained separately."
+}

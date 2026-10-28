@@ -1,0 +1,339 @@
+{
+  "at": "2026-10-27T23:39:00.839Z",
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "readOnly": true,
+  "noPrivateRecordReads": true,
+  "accepted": "4c2e1fa7a470ef2a7749ba298be5d87645010000",
+  "migrations": [
+    {
+      "file": "20261027120000_tenbot_feedback_usage.sql",
+      "version": "20261027120000",
+      "sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15",
+      "matchesAccepted": true
+    },
+    {
+      "file": "20261027130000_tenbot_shared_usage_pool.sql",
+      "version": "20261027130000",
+      "sha256": "b007ee3a5234876709c5d82c3269d78921a613815940df59669f5ce78548c435",
+      "matchesAccepted": true
+    },
+    {
+      "file": "20261027140000_tenbot_measured_free_pool.sql",
+      "version": "20261027140000",
+      "sha256": "3985d2912af54957c35f36bbb61374b4ff334f950bdc436da393b0aaa5c6bcaf",
+      "matchesAccepted": true
+    },
+    {
+      "file": "20261027150000_tenbot_private_conversations.sql",
+      "version": "20261027150000",
+      "sha256": "81652bd3e335d2fe29d5b26012727eabaed765dc7950e2979b7fd2891ee53b3b",
+      "matchesAccepted": true
+    }
+  ],
+  "database": {
+    "appUsersColumns": [
+      {
+        "name": "user_id",
+        "notNull": true,
+        "type": "uuid"
+      },
+      {
+        "name": "display_name",
+        "notNull": true,
+        "type": "text"
+      },
+      {
+        "name": "is_active",
+        "notNull": true,
+        "type": "boolean"
+      }
+    ],
+    "appUsersUserIdUnique": true,
+    "at": "2026-10-27T23:39:02.041117+00:00",
+    "authUid": true,
+    "databaseRoleLogging": [
+      {
+        "database": "all",
+        "role": "supabase_admin",
+        "setting": "log_statement=none"
+      },
+      {
+        "database": "all",
+        "role": "supabase_auth_admin",
+        "setting": "log_statement=none"
+      },
+      {
+        "database": "all",
+        "role": "supabase_storage_admin",
+        "setting": "log_statement=none"
+      }
+    ],
+    "functions": [],
+    "genRandomUuid": true,
+    "ledger": [],
+    "logging": [
+      {
+        "name": "auto_explain.log_analyze",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.log_buffers",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.log_format",
+        "setting": "text",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.log_level",
+        "setting": "log",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.log_min_duration",
+        "setting": "10000",
+        "source": "configuration file",
+        "unit": "ms"
+      },
+      {
+        "name": "auto_explain.log_nested_statements",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.log_parameter_max_length",
+        "setting": "-1",
+        "source": "default",
+        "unit": "B"
+      },
+      {
+        "name": "auto_explain.log_settings",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.log_timing",
+        "setting": "on",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.log_triggers",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.log_verbose",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.log_wal",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "auto_explain.sample_rate",
+        "setting": "1",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "log_duration",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "log_min_duration_sample",
+        "setting": "-1",
+        "source": "default",
+        "unit": "ms"
+      },
+      {
+        "name": "log_min_duration_statement",
+        "setting": "-1",
+        "source": "default",
+        "unit": "ms"
+      },
+      {
+        "name": "log_min_error_statement",
+        "setting": "error",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "log_min_messages",
+        "setting": "warning",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "log_parameter_max_length",
+        "setting": "-1",
+        "source": "default",
+        "unit": "B"
+      },
+      {
+        "name": "log_parameter_max_length_on_error",
+        "setting": "0",
+        "source": "default",
+        "unit": "B"
+      },
+      {
+        "name": "log_statement",
+        "setting": "ddl",
+        "source": "configuration file",
+        "unit": null
+      },
+      {
+        "name": "log_statement_sample_rate",
+        "setting": "1",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "log_statement_stats",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log",
+        "setting": "none",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log_catalog",
+        "setting": "on",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log_client",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log_level",
+        "setting": "log",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log_parameter",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log_parameter_max_size",
+        "setting": "0",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log_relation",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log_rows",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log_statement",
+        "setting": "on",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.log_statement_once",
+        "setting": "off",
+        "source": "default",
+        "unit": null
+      },
+      {
+        "name": "pgaudit.role",
+        "setting": "",
+        "source": "default",
+        "unit": null
+      }
+    ],
+    "predecessors": [
+      {
+        "authenticated": true,
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definer": true,
+        "digest": "ae6b0fa1f2e5e1655b79014a0e50266f",
+        "owner": "postgres",
+        "signature": "has_app_capability(text)"
+      },
+      {
+        "authenticated": true,
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definer": true,
+        "digest": "e3db326eaa5105820560ec6927445ee5",
+        "owner": "postgres",
+        "signature": "has_proposal_access()"
+      }
+    ],
+    "publicSchemaCreate": true,
+    "relations": [],
+    "role": "postgres",
+    "roles": [
+      "anon",
+      "authenticated",
+      "postgres",
+      "service_role"
+    ],
+    "serverVersion": "17.6"
+  },
+  "prerequisitesPassed": true,
+  "management": {
+    "postgres": {
+      "verified": true,
+      "loggingSettings": {},
+      "availableFieldNames": []
+    },
+    "postgrest": {
+      "verified": false,
+      "error": "Management API 404"
+    },
+    "functions": {
+      "verified": true,
+      "tenbot": []
+    },
+    "secrets": {
+      "verified": true,
+      "tenbotPresence": {
+        "TENBOT_ALLOWED_ORIGINS": false,
+        "TENBOT_AI_ENABLED": false,
+        "TENBOT_CF_ACCOUNT_ID": false,
+        "TENBOT_CF_AI_TOKEN": false,
+        "TENBOT_CF_MODEL": false
+      }
+    }
+  }
+}

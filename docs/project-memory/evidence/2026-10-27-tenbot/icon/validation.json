@@ -1,0 +1,26 @@
+{
+  "tier": 1,
+  "testingLevel": 1,
+  "base": "7effce0",
+  "reference": "Product-approved attached advisory image: white-outline rotary tool, short bit and sparkle, TenOps navy circle",
+  "changes": [
+    "Shared decorative scalable TenbotAvatar SVG",
+    "Only three existing Messaging avatar sites: recent list, conversation list, active header"
+  ],
+  "validation": {
+    "node scripts/verify-tenbot-browser.mjs --icon-only": "passed5focusedrenderinggroups;desktoprecent/full/sidebar,mobilelist/header,existinglight/darkappearance,actual24/32/36SVG;0assistantcalls/0employeesends/0pageerrors",
+    "TypeScript": "passedfinalNextbuild",
+    "targeted ESLint": "passedcomponent,three-siteintegrationfiles,focusedverifier",
+    "git diff --check": "passed",
+    "safe localhost npm run build -- --webpack": "passed"
+  },
+  "visualReview": "Actual desktop/mobile light/dark screenshots and size sheet inspected; no clipping; normal employee initials and accepted layout unchanged",
+  "preserved": [
+    "Other icons/branding",
+    "Conversation layout and compact composer",
+    "Sources and privacy disclosure",
+    "Feedback/permissions/history",
+    "Qwen3/knowledge/budgets"
+  ],
+  "scope": "No new schema/hosted mutation/migration, inference, worktree, push or deployment. Existing localhost3000server preserved. Unrelated dirty records not staged."
+}

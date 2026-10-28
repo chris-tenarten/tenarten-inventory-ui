@@ -1,0 +1,11 @@
+{
+  "runtime": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+  "asset": "https://tenops.pages.dev/_next/static/chunks/app/page-2e217c373a1b0ff3.js",
+  "exactReleasedArtifactMatch": true,
+  "sha256": "607484363e40adab26995d5a9a8f0604d99666b4f01c751915aa706ab4776077",
+  "publicPlanningFlagInput": "",
+  "planningEnabled": false,
+  "contract": "isPlanningEnabled(value) returns value === true string",
+  "source": "src/modules/planning/timeline-model.mjs; ProductionJobInspector.tsx:62,750",
+  "checkedAt": "2026-10-27"
+}

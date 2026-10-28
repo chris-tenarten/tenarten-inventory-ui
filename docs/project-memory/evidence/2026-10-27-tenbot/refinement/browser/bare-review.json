@@ -1,0 +1,535 @@
+{
+  "origin": "http://localhost:3000",
+  "path": "/my-work",
+  "requestInterceptions": 0,
+  "authFixturesInjectedByVerifier": false,
+  "sends": 0,
+  "inferenceCalls": 0,
+  "at": "2026-10-27T20:57:56.663Z",
+  "passed": true,
+  "virtualThreadVisible": true,
+  "composerEnabled": true,
+  "pageErrors": [],
+  "networkRequests": [
+    {
+      "method": "GET",
+      "url": "/my-work"
+    },
+    {
+      "method": "GET",
+      "url": "/tenarten-logo-gold-welcome.webp"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/css/15f74ee999edbd3d.css"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/css/1dc2a417be313375.css"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/webpack-83d85f43d714fe0d.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/4bd1b696-e356ca5ba0218e27.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/3794-9ffa06e59c1b6f5c.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/main-app-5e5e095768961c2f.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/44530001-f17eb3e5d513c546.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/4508-678095592b72f6f2.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/8500-f62a38ff68ab7f42.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/8437-f59c6bc63dc76521.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/1855-05fd2e72d895c73d.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/133-cf3e8b3434a7bb49.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/6653-3e03ecbda3cd6809.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/layout-b16646f5949dd491.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/605-fd7653b71ad845b5.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/my-work/page-c51b5d1a836179e4.js"
+    },
+    {
+      "method": "GET",
+      "url": "/logo.png"
+    },
+    {
+      "method": "HEAD",
+      "url": "/"
+    },
+    {
+      "method": "GET",
+      "url": "/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/css/9611c0b375fc73f6.css"
+    },
+    {
+      "method": "GET",
+      "url": "/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/__next._index.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/__next.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/7386-46ef733b876c6a4b.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/9578-4ccbb1cfc7e5e3b6.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/9271-944a7cf9eab3d179.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/1394-c5fa65cfc3d344cf.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/4671-c38a73823dbb3510.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/5962-e2a35dd64305c9b4.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/2872-546b148d9f02112e.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/7541-6f28e4f093c3951a.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/4615-9acb3e77d6ce3059.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/page-be58d284ed31ef2d.js"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/get_my_app_access"
+    },
+    {
+      "method": "GET",
+      "url": "/tenarten-logo-steel-welcome.webp"
+    },
+    {
+      "method": "GET",
+      "url": "/tenarten-logo-terrazzo-welcome.webp"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/ensure_my_welcome_notification"
+    },
+    {
+      "method": "HEAD",
+      "url": "/catalog"
+    },
+    {
+      "method": "HEAD",
+      "url": "/contacts"
+    },
+    {
+      "method": "HEAD",
+      "url": "/transmittals"
+    },
+    {
+      "method": "HEAD",
+      "url": "/purchasing"
+    },
+    {
+      "method": "GET",
+      "url": "/catalog/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/contacts/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/transmittals/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/purchasing/__next._tree.txt"
+    },
+    {
+      "method": "HEAD",
+      "url": "/proposals"
+    },
+    {
+      "method": "HEAD",
+      "url": "/samples"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/get_my_account_preferences"
+    },
+    {
+      "method": "HEAD",
+      "url": "/activity"
+    },
+    {
+      "method": "HEAD",
+      "url": "/inventory"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/list_my_work_task_groups"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/list_my_work_tasks"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/list_my_work_task_group_memberships"
+    },
+    {
+      "method": "GET",
+      "url": "/rest/v1/work_task_attachments"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/list_my_work_conversations_v12"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/list_my_account_notification_history"
+    },
+    {
+      "method": "GET",
+      "url": "/proposals/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/samples/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/activity/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/inventory/__next._tree.txt"
+    },
+    {
+      "method": "HEAD",
+      "url": "/inventory"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/css/009e8344dd0776ae.css"
+    },
+    {
+      "method": "HEAD",
+      "url": "/material-usage"
+    },
+    {
+      "method": "HEAD",
+      "url": "/manpower-reporting"
+    },
+    {
+      "method": "HEAD",
+      "url": "/pre-production"
+    },
+    {
+      "method": "GET",
+      "url": "/inventory/__next._tree.txt"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/list_my_account_notification_history"
+    },
+    {
+      "method": "GET",
+      "url": "/material-usage/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/manpower-reporting/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/pre-production/__next._tree.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/catalog/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/catalog/__next.catalog.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/css/d12f0aca13423a71.css"
+    },
+    {
+      "method": "GET",
+      "url": "/catalog/__next.catalog.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/css/6faf42657f96bc11.css"
+    },
+    {
+      "method": "GET",
+      "url": "/contacts/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/contacts/__next.contacts.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/contacts/__next.contacts.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/catalog/page-8a90bd25889cd74a.js"
+    },
+    {
+      "method": "GET",
+      "url": "/transmittals/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/transmittals/__next.transmittals.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/transmittals/__next.transmittals.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/contacts/page-765b7bf6599b5d5f.js"
+    },
+    {
+      "method": "GET",
+      "url": "/purchasing/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/purchasing/__next.purchasing.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/purchasing/__next.purchasing.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/transmittals/page-4ae69d76a2c1deed.js"
+    },
+    {
+      "method": "GET",
+      "url": "/proposals/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/proposals/__next.proposals.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/proposals/__next.proposals.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/2087-19a869ca06db4ee4.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/purchasing/page-9c5cf8432e810873.js"
+    },
+    {
+      "method": "GET",
+      "url": "/samples/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/samples/__next.samples.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/samples/__next.samples.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/my-work/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/8301-359377db3431bbf2.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/proposals/page-9706188248872942.js"
+    },
+    {
+      "method": "GET",
+      "url": "/my-work/__next.my-work.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/my-work/__next.my-work.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/9392-0ffb474fd6f415bf.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/8569-e1a7dff59a17a802.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/samples/page-16242975c3341fc8.js"
+    },
+    {
+      "method": "GET",
+      "url": "/activity/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/activity/__next.activity.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/activity/__next.activity.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/inventory/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/inventory/__next.inventory.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/inventory/__next.inventory.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/activity/page-e14cabf01d15d344.js"
+    },
+    {
+      "method": "GET",
+      "url": "/material-usage/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/material-usage/__next.material-usage.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/material-usage/__next.material-usage.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/inventory/page-7e5eff67b1a56958.js"
+    },
+    {
+      "method": "GET",
+      "url": "/manpower-reporting/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/manpower-reporting/__next.manpower-reporting.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/manpower-reporting/__next.manpower-reporting.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/material-usage/page-a9c32ef4aa6b26f8.js"
+    },
+    {
+      "method": "GET",
+      "url": "/pre-production/__next._head.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/pre-production/__next.pre-production.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/pre-production/__next.pre-production.__PAGE__.txt"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/manpower-reporting/page-05653c0b90c6e7c5.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/pre-production/layout-69224963ca9e06d8.js"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/app/pre-production/page-13597b6f70c32fc5.js"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/list_my_work_conversations_v12"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/list_my_work_inbox_recipients"
+    },
+    {
+      "method": "GET",
+      "url": "/_next/static/chunks/5593.d7c564a2d4b09280.js"
+    },
+    {
+      "method": "POST",
+      "url": "/rest/v1/rpc/list_my_work_message_page_v12"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "origin": "http://localhost:3000",
+  "errors": [],
+  "liveAiRequests": 1,
+  "liveAnswer": {
+    "mode": "ai",
+    "message": "Here is the verified guidance I found.",
+    "snapshot": {
+      "revision": "f8f78c5",
+      "verifiedAt": "2026-10-27"
+    },
+    "sources": [
+      {
+        "id": "group",
+        "title": "Create a group conversation",
+        "status": "deployed",
+        "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+        "path": "Messaging → New group",
+        "route": "/my-work",
+        "source": "Messaging groups and replies · released October 22"
+      }
+    ],
+    "summary": null
+  },
+  "replays": [
+    {
+      "kind": "captured real evaluation replay",
+      "question": "How do I find an existing customer's Jobs?",
+      "source": "evaluation.json"
+    },
+    {
+      "kind": "synthetic guide fallback",
+      "question": "Group guidance while AI is unavailable"
+    }
+  ],
+  "checked": [
+    "persistent launcher on My Work",
+    "nonmodal desktop panel containment",
+    "guide provenance and released workflow",
+    "allowlisted module context without query or record identifier",
+    "one real remote AI group response",
+    "simple guide attribution with internal metadata hidden",
+    "chat and unfinished question survive minimize/reopen",
+    "captured customer answer renders Contacts link",
+    "conversation retained through actual Contacts route change",
+    "390px mobile panel and launcher containment above navigation",
+    "captured customer answer mobile presentation",
+    "synthetic fallback copy and guide attribution"
+  ],
+  "networkOrigins": [
+    "http://localhost:3000",
+    "http://localhost:55593"
+  ]
+}

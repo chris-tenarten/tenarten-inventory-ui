@@ -1,0 +1,52 @@
+{
+  "at": "2026-10-27T17:53:39.668Z",
+  "method": "same answer/provider and actual locked local reservation RPC; public workflow prompts only; no automatic retry",
+  "rows": [
+    {
+      "question": "How do I find an existing customer's Jobs?",
+      "durationMs": 535,
+      "error": "TenBot AI is unavailable. Please retry later; the rest of TenOps is available.",
+      "providerError": "Cloudflare verification unavailable",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "customer-history",
+            "title": "Find a customer’s previous Jobs",
+            "status": "deployed",
+            "guidance": "Open Contacts and search for the beginning of the customer’s company name. Choose Linked Jobs beside that customer, then select a Job to open it. This shows only visible Production Jobs linked to that directory customer. Historical customer text and Bid names do not establish a link; Proposal customer details are independent snapshots.",
+            "path": "Contacts → Search customers → Linked Jobs → select a Job",
+            "route": "/contacts",
+            "source": "Contacts guide · deployed release verified October 22",
+            "availability": "available",
+            "constraints": [
+              "This shows only visible Production Jobs linked to that directory customer.",
+              "Historical customer text and Bid names do not establish a link; Proposal customer details are independent snapshots."
+            ]
+          },
+          {
+            "id": "dm",
+            "title": "Add someone to a personal DM",
+            "status": "deployed",
+            "guidance": "Partially: you can start a new group, but you cannot add a third person to a personal DM. Create a new group instead. The old DM stays private and its history is not copied into the group.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging privacy contract · released October 22",
+            "availability": "partial",
+            "constraints": [
+              "Partially: you can start a new group, but you cannot add a third person to a personal DM.",
+              "The old DM stays private and its history is not copied into the group."
+            ]
+          }
+        ],
+        "summary": null,
+        "fallback": true
+      }
+    }
+  ]
+}

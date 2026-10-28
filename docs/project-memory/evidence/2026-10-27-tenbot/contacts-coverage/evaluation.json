@@ -1,0 +1,79 @@
+{
+  "kind": "deterministic current-core guide/permission/documentation fixtures, not live inference",
+  "outputs": [
+    {
+      "id": "customer-edit",
+      "question": "how do i edit a saved customers details",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information.",
+            "path": "Toolbox → Resources → Contacts → Search customers → customer name → Customer Inspector → Save Changes",
+            "route": "/contacts",
+            "source": "Contacts guide · released October 20",
+            "availability": "available",
+            "constraints": [
+              "Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes."
+            ]
+          }
+        ],
+        "summary": null
+      }
+    },
+    {
+      "id": "customer-denied-write",
+      "question": "how do i edit a saved customers details",
+      "answer": {
+        "mode": "verified",
+        "message": "Edit a saved customer’s details exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+        "resolution": "permission-denied",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [],
+        "summary": null
+      }
+    },
+    {
+      "id": "customer-denied-edit",
+      "question": "how do i edit a saved customers details",
+      "answer": {
+        "mode": "verified",
+        "message": "Edit a saved customer’s details exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+        "resolution": "permission-denied",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [],
+        "summary": null
+      }
+    },
+    {
+      "id": "manpower",
+      "question": "how do i filter by jobs in manpower reporting",
+      "answer": {
+        "mode": "verified",
+        "message": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "f8f78c5",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [],
+        "summary": null
+      }
+    }
+  ]
+}

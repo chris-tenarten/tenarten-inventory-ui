@@ -1,0 +1,569 @@
+{
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "inferenceContract": "knowledge-v3",
+  "outputs": [
+    {
+      "id": "rework",
+      "infrastructureCorrection": false,
+      "question": "How do I initiate Rework for a Job?",
+      "context": [
+        "Current module: Production"
+      ],
+      "input": {
+        "question": "how do i initiate rework for a job",
+        "context": [
+          "Current module: Production"
+        ],
+        "excerpts": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking."
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Account decision: available. Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "production-rework-create",
+          "knowledge-rework"
+        ],
+        "answer": "To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake or return date. Only one rework cycle can be active at a time. Rework remains on the same job and does not change its original status or dates.",
+        "summary": "Open the job, select 'Create Rework,' provide details, and confirm."
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake or return date. Only one rework cycle can be active at a time. Rework remains on the same job and does not change its original status or dates.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel",
+            "path": "Production → Job → Create Rework",
+            "route": "/",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative.",
+              "The original lifecycle remains on jobs; Rework never overwrites its status or planned dates.",
+              "Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 2239,
+      "providerDurationMs": 1905,
+      "usage": [
+        {
+          "at": "2026-10-27T20:33:17.450Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1902,
+          "usage": {
+            "prompt_tokens": 709,
+            "completion_tokens": 110,
+            "total_tokens": 819
+          },
+          "estimatedNeurons": 6.632,
+          "reservedNeurons": 38
+        }
+      ],
+      "at": "2026-10-27T20:33:17.538Z",
+      "ledgerBefore": {
+        "attempts": 40,
+        "completed": 29,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4621.312,
+        "inputTokens": 14784,
+        "outputTokens": 1765
+      },
+      "ledgerAfter": {
+        "attempts": 41,
+        "completed": 30,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4627.944,
+        "inputTokens": 15493,
+        "outputTokens": 1875
+      }
+    },
+    {
+      "id": "rework-followup",
+      "prior": "rework",
+      "infrastructureCorrection": false,
+      "question": "What if I cannot see that button?",
+      "context": [
+        "Current module: Production",
+        "Conversation context:\nEmployee: How do I initiate Rework for a Job?\nTenBot: To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake or return date. Only one rework cycle can be active at a time. Rework remains on the same job and does not change its original status or dates."
+      ],
+      "input": {
+        "question": "what if i cannot see that button",
+        "context": [
+          "Current module: Production",
+          "Conversation context:\nEmployee: how do i initiate rework for a job\nTenBot: to initiate rework for a job open the completed and unarchived production job then select choose a reason describe the rework scope and enter the intake or return date only one rework cycle can be active at a time rework remains on the same job and does not change its original status or dates"
+        ],
+        "excerpts": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking."
+          },
+          {
+            "id": "production-rework-status",
+            "title": "Complete or cancel Job Rework",
+            "status": "deployed",
+            "guidance": "Account decision: available. Authorized business writers can update the active Rework lifecycle. Open its Job in Production, open Details, change Production status to Complete or Cancelled, then choose Save changes. Save other Job-detail changes separately before changing Rework status. This updates the active Rework cycle, not the original Production lifecycle. Completed or cancelled Rework is historical and cannot be changed. Existing Rework history remains attached to the same Job."
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Account decision: available. Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "production-rework-create",
+          "knowledge-rework"
+        ],
+        "answer": "If you cannot see the 'Create Rework' button, ensure the job is complete, unarchived, and has no active rework cycle. The button appears only when these conditions are met. Check the job details and try again.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "If you cannot see the 'Create Rework' button, ensure the job is complete, unarchived, and has no active rework cycle. The button appears only when these conditions are met. Check the job details and try again.",
+        "resolution": "documentation-missing",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "production-rework-create",
+            "title": "Initiate Job Rework",
+            "status": "deployed",
+            "guidance": "Authorized business writers can create Rework for a completed Production Job. Open the Job in Production and select Create Rework. Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework. The Job must be complete, unarchived and have no active Rework cycle. Only one Rework cycle can be active at a time. Rework remains on the same canonical Job and preserves original Production status and dates. Scope is a whole-Job description, not structured piece or Color Plate tracking.",
+            "path": "Production → completed Job → Create Rework → Create Rework",
+            "route": "/production",
+            "source": "Job Rework guide",
+            "availability": "available",
+            "constraints": [
+              "Choose a Reason, describe Rework Scope / Work Required, enter Intake / Return Date, then select Create Rework.",
+              "The Job must be complete, unarchived and have no active Rework cycle.",
+              "Only one Rework cycle can be active at a time.",
+              "Scope is a whole-Job description, not structured piece or Color Plate tracking."
+            ]
+          },
+          {
+            "id": "knowledge-rework",
+            "title": "Production Rework lifecycle and requirements",
+            "status": "deployed",
+            "guidance": "Rework belongs to an existing canonical Production Job. Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative. TenOps models Rework as a lifecycle belonging to one canonical commercial Production Job. The Job number, customer, commercial values, documents, attachments, Purchase Orders, Transmittals, and Job Updates remain job-scoped. The original lifecycle remains on jobs; Rework never overwrites its status or planned dates. Only one Rework can be active for a Job, while completed and cancelled cycles remain historical. Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel",
+            "path": "Production → Job → Create Rework",
+            "route": "/",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Only one active Rework is allowed; eligible Job states and the actual Create Rework action remain authoritative.",
+              "The original lifecycle remains on jobs; Rework never overwrites its status or planned dates.",
+              "Only one Rework can be active for a Job, while completed and cancelled cycles remain historical.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Quality / QC · Shipping / Handling Damage · Customer Change · Other · Production · Create Rework · Reason · Rework Scope / Work Required · Intake / Return Date · Cancel"
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1555,
+      "providerDurationMs": 1111,
+      "usage": [
+        {
+          "at": "2026-10-27T20:33:28.091Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1107,
+          "usage": {
+            "prompt_tokens": 900,
+            "completion_tokens": 70,
+            "total_tokens": 970
+          },
+          "estimatedNeurons": 6.296,
+          "reservedNeurons": 43
+        }
+      ],
+      "at": "2026-10-27T20:33:28.195Z",
+      "ledgerBefore": {
+        "attempts": 41,
+        "completed": 30,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4627.944,
+        "inputTokens": 15493,
+        "outputTokens": 1875
+      },
+      "ledgerAfter": {
+        "attempts": 42,
+        "completed": 31,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4634.24,
+        "inputTokens": 16393,
+        "outputTokens": 1945
+      }
+    },
+    {
+      "id": "manpower",
+      "infrastructureCorrection": false,
+      "question": "How do I filter Manpower Reporting by Job?",
+      "context": [
+        "Current module: Manpower Reporting"
+      ],
+      "input": {
+        "question": "how do i filter manpower reporting by job",
+        "context": [
+          "Current module: Manpower Reporting"
+        ],
+        "excerpts": [
+          {
+            "id": "manpower-job-filter",
+            "title": "Filter Manpower Reporting by Job",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees with business-write access can filter labor by Production Job. Open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates. Search and filters are not exhaustive until all available history is loaded. Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production."
+          },
+          {
+            "id": "knowledge-manpower",
+            "title": "Manpower Reporting work identity and filters",
+            "status": "deployed",
+            "guidance": "Account decision: available. Job dropdown filtering uses business-write-gated controls in the released UI. Read-only accounts retain search/authorized deep-link review. Reporting groups are not Jobs. Manpower Reporting records labor by reporting group, work date, worker, task, work identity, AM hours, PM hours, notes, and attribution. Persistent reporting groups organize entry and review; they are not jobs. Work identity is either a Production job or temporary label, never both. Workers and tasks are stable references with display order and active state. Historical references are deactivated rather than deleted. Total hours derive from AM plus PM and are not stored. Client-side search covers group, date, worker, task, job name/number, temporary label, notes, and entered-by. Search changes displayed rows and totals without changing persistence or ordering. Static source interface text (labels do not establish a click sequence or additional permissions): Not Linked to Production · Edit group name · Reporting group name · Save · Cancel · Add · + Add · Name · Order · Status · Actions · Active · Edit · Preserved label from an imported or unlinked labor entry. · Imported Label · Choose Production job · + Replace imported label · Back · Enter imported or unlinked label · Production Job · + Add temporary job label · Product Category · Notes · Saved · Error · Retry · Deselect all · Reporting Group · Bulk Product Category · Worker · Task · Operations Reporting · Manpower Reporting · Record shop labor by job, worker, task, and work date. · Manpower Settings · Refresh · Close settings · Manpower vocabularies · Job labor review · All reporting groups · Selected Production job · Search manpower · Clear filters before creating an empty group · New Group · Create · Clear job filter · Product Category filter · All Products · Uncategorized · Clear filters to create an empty group or change a whole group’s Job. · Choose one Product Category per line. Split hours across separate lines when labor belongs to different products. · Retry older groups · Retry period · Retry reporting · Add New Line · This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline. · This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked. · Empty group selected · Clear selection · Delete Empty Group · Select · Work Date · Job · AM Hours · PM Hours · Total · New"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "manpower-job-filter",
+          "knowledge-manpower"
+        ],
+        "answer": "To filter manpower reporting by job, open 'Manpower Reporting' and select a 'Job' from the 'Job labor review' dropdown. This will narrow the view to labor related to that specific job. You can use the 'Clear job filter' option to reset. Read-only users can search or use deep links but cannot change the job selection. Product Category filters can further narrow results.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To filter manpower reporting by job, open 'Manpower Reporting' and select a 'Job' from the 'Job labor review' dropdown. This will narrow the view to labor related to that specific job. You can use the 'Clear job filter' option to reset. Read-only users can search or use deep links but cannot change the job selection. Product Category filters can further narrow results.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "manpower-job-filter",
+            "title": "Filter Manpower Reporting by Job",
+            "status": "deployed",
+            "guidance": "Employees with business-write access can filter labor by Production Job. Open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates. Search and filters are not exhaustive until all available history is loaded. Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production.",
+            "path": "Reporting → Manpower Reporting → Job labor review",
+            "route": "/manpower-reporting",
+            "source": "Manpower Reporting guide · released workflow verified October 27",
+            "availability": "available",
+            "constraints": [
+              "Employees with business-write access can filter labor by Production Job.",
+              "Use Clear job filter or All reporting groups to reset.",
+              "Analytics use the selected reporting period; reporting rows are loaded complete groups with all their dates.",
+              "Search and filters are not exhaustive until all available history is loaded.",
+              "Read-only accounts cannot change the current Job labor review selector, but can use Search manpower or open a Job’s Current Hours link from Production."
+            ]
+          },
+          {
+            "id": "knowledge-manpower",
+            "title": "Manpower Reporting work identity and filters",
+            "status": "deployed",
+            "guidance": "Job dropdown filtering uses business-write-gated controls in the released UI. Read-only accounts retain search/authorized deep-link review. Reporting groups are not Jobs. Manpower Reporting records labor by reporting group, work date, worker, task, work identity, AM hours, PM hours, notes, and attribution. Persistent reporting groups organize entry and review; they are not jobs. Work identity is either a Production job or temporary label, never both. Workers and tasks are stable references with display order and active state. Historical references are deactivated rather than deleted. Total hours derive from AM plus PM and are not stored. Client-side search covers group, date, worker, task, job name/number, temporary label, notes, and entered-by. Search changes displayed rows and totals without changing persistence or ordering. Static source interface text (labels do not establish a click sequence or additional permissions): Not Linked to Production · Edit group name · Reporting group name · Save · Cancel · Add · + Add · Name · Order · Status · Actions · Active · Edit · Preserved label from an imported or unlinked labor entry. · Imported Label · Choose Production job · + Replace imported label · Back · Enter imported or unlinked label · Production Job · + Add temporary job label · Product Category · Notes · Saved · Error · Retry · Deselect all · Reporting Group · Bulk Product Category · Worker · Task · Operations Reporting · Manpower Reporting · Record shop labor by job, worker, task, and work date. · Manpower Settings · Refresh · Close settings · Manpower vocabularies · Job labor review · All reporting groups · Selected Production job · Search manpower · Clear filters before creating an empty group · New Group · Create · Clear job filter · Product Category filter · All Products · Uncategorized · Clear filters to create an empty group or change a whole group’s Job. · Choose one Product Category per line. Split hours across separate lines when labor belongs to different products. · Retry older groups · Retry period · Retry reporting · Add New Line · This manpower group is linked to the Production job. Labor recorded here contributes to the Current Hours shown in the Production Pipeline. · This manpower group is not linked to a Production job. Labor recorded here will not appear in Production until a job is linked. · Empty group selected · Clear selection · Delete Empty Group · Select · Work Date · Job · AM Hours · PM Hours · Total · New",
+            "path": "Manpower Reporting → Job / Search",
+            "route": "/manpower-reporting",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Read-only accounts retain search/authorized deep-link review.",
+              "Reporting groups are not Jobs.",
+              "Persistent reporting groups organize entry and review; they are not jobs.",
+              "Work identity is either a Production job or temporary label, never both.",
+              "Historical references are deactivated rather than deleted.",
+              "Total hours derive from AM plus PM and are not stored.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Not Linked to Production · Edit group name · Reporting group name · Save · Cancel · Add · + Add · Name · Order · Status · Actions · Active · Edit · Preserved label from an imported or unlinked labor entry.",
+              "· Imported Label · Choose Production job · + Replace imported label · Back · Enter imported or unlinked label · Production Job · + Add temporary job label · Product Category · Notes · Saved · Error · Retry · Deselect all · Reporting Group · Bulk Product Category · Worker · Task · Operations Reporting · Manpower Reporting · Record shop labor by job, worker, task, and work date.",
+              "· Manpower Settings · Refresh · Close settings · Manpower vocabularies · Job labor review · All reporting groups · Selected Production job · Search manpower · Clear filters before creating an empty group · New Group · Create · Clear job filter · Product Category filter · All Products · Uncategorized · Clear filters to create an empty group or change a whole group’s Job.",
+              "· This manpower group is not linked to a Production job.",
+              "Labor recorded here will not appear in Production until a job is linked."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1532,
+      "providerDurationMs": 1166,
+      "usage": [
+        {
+          "at": "2026-10-27T20:33:39.513Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1163,
+          "usage": {
+            "prompt_tokens": 1032,
+            "completion_tokens": 101,
+            "total_tokens": 1133
+          },
+          "estimatedNeurons": 7.851,
+          "reservedNeurons": 47
+        }
+      ],
+      "at": "2026-10-27T20:33:39.602Z",
+      "ledgerBefore": {
+        "attempts": 42,
+        "completed": 31,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4634.24,
+        "inputTokens": 16393,
+        "outputTokens": 1945
+      },
+      "ledgerAfter": {
+        "attempts": 43,
+        "completed": 32,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4642.091,
+        "inputTokens": 17425,
+        "outputTokens": 2046
+      }
+    },
+    {
+      "id": "customer",
+      "infrastructureCorrection": false,
+      "question": "How do I edit an existing customer?",
+      "context": [
+        "Current module: Contacts"
+      ],
+      "input": {
+        "question": "how do i edit an existing customer",
+        "context": [
+          "Current module: Contacts"
+        ],
+        "excerpts": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information."
+          },
+          {
+            "id": "knowledge-contacts",
+            "title": "Shared Contacts and Customer Inspector",
+            "status": "deployed",
+            "guidance": "Account decision: available. Saved customer editing requires existing business-write and customer-detail editing permissions. Future selections use updated directory values; existing Jobs/issued Proposals retain their captured values. Customer search and Linked Jobs are available separately with operational-read access. Static source interface text (labels do not establish a click sequence or additional permissions): Manage Customer List · Close · Search customers · Search managed customers · No customers found. · Previous · Next · + Add New Customer · Cancel · Customer / Company Name * · Customer / Company Name · Additional Information (Optional) · Saved contact (optional) · Saved contact · None / enter a new contact · Previous contacts · Next contacts · Contact Name · Phone Number · Email Address · Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information. · Lead/Admin access is required to edit or remove a saved customer. · Remove From List · Back to list"
+          }
+        ],
+        "draft": false
+      },
+      "error": "TenBot AI is unavailable. Please retry later; the rest of TenOps is available.",
+      "providerFailure": "Cloudflare verification unavailable (HTTP 200; Rate limiter budget depleted. Please try again after 5 minutes. Refer to this page for more details about rate limits: https://developers.cloudflare.com/analytics/graphql-api/limits/)",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information.",
+            "path": "Toolbox → Resources → Contacts → Search customers → customer name → Customer Inspector → Save Changes",
+            "route": "/contacts",
+            "source": "Contacts guide · released October 20",
+            "availability": "available",
+            "constraints": [
+              "Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes.",
+              "Existing Jobs and Proposals keep their captured information."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": true
+      },
+      "providerInvoked": true,
+      "durationMs": 963,
+      "providerDurationMs": 369,
+      "usage": [],
+      "at": "2026-10-27T20:33:50.397Z",
+      "ledgerBefore": {
+        "attempts": 43,
+        "completed": 32,
+        "failed": 11,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4642.091,
+        "inputTokens": 17425,
+        "outputTokens": 2046
+      },
+      "ledgerAfter": {
+        "attempts": 44,
+        "completed": 32,
+        "failed": 12,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4681.091,
+        "inputTokens": 17425,
+        "outputTokens": 2046
+      }
+    },
+    {
+      "id": "group",
+      "infrastructureCorrection": false,
+      "question": "How do I create a group conversation?",
+      "context": [
+        "Current module: My Work"
+      ],
+      "input": {
+        "question": "how do i create a group conversation",
+        "context": [
+          "Current module: My Work"
+        ],
+        "excerpts": [
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes."
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A dedicated Share Job control is not verified; do not invent it. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+          }
+        ],
+        "draft": false
+      },
+      "error": "TenBot AI is unavailable. Please retry later; the rest of TenOps is available.",
+      "providerFailure": "Free allowance verification cooling down; use direct search",
+      "answer": {
+        "mode": "guide",
+        "message": "Here is guidance from the TenOps Guide.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging groups and replies · released October 22",
+            "availability": "available",
+            "constraints": [
+              "Only the creator can rename the group or add/remove participants.",
+              "Current members share the full history; removed members lose access.",
+              "Previously signed attachment links may remain usable for up to ten minutes."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false,
+        "fallback": true
+      },
+      "providerInvoked": true,
+      "durationMs": 391,
+      "providerDurationMs": 1,
+      "usage": [],
+      "at": "2026-10-27T20:34:01.207Z",
+      "ledgerBefore": {
+        "attempts": 44,
+        "completed": 32,
+        "failed": 12,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4681.091,
+        "inputTokens": 17425,
+        "outputTokens": 2046
+      },
+      "ledgerAfter": {
+        "attempts": 45,
+        "completed": 32,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4717.091,
+        "inputTokens": 17425,
+        "outputTokens": 2046
+      }
+    }
+  ],
+  "analyticsBefore": {
+    "checkedAt": "2026-10-27T20:28:45.817Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 200.10762912407517,
+    "reportedRequests": 23,
+    "nominalRemainingNeurons": 9799.892370875925,
+    "cached": true,
+    "cacheExpiresAt": "2026-10-27T20:33:45.817Z",
+    "guardJournalNeurons": 370.247,
+    "guardedRemainingNeurons": 7429.645370875925
+  },
+  "analyticsAfter": null,
+  "ledgerBefore": {
+    "attempts": 40,
+    "completed": 29,
+    "failed": 11,
+    "legacyReservedUsd": 0.2,
+    "accountedNeurons": 4621.312,
+    "inputTokens": 14784,
+    "outputTokens": 1765
+  },
+  "startedAt": "2026-10-27T20:33:15.173Z"
+}

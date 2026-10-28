@@ -1,0 +1,48 @@
+{
+  "riskTier": 3,
+  "testingLevel": 3,
+  "scope": "Existing virtual system conversation UI integration and owner privacy; no schema or policy change",
+  "localOnly": true,
+  "realInferenceCalls": 0,
+  "passed": [
+    "existing deterministic TenBot core/handler/source/permission regressions",
+    "final localhost:3000 conversation browser: 18 checks",
+    "application TypeScript",
+    "targeted ESLint",
+    "browser verifier syntax",
+    "final local Production webpack export",
+    "git diff --check",
+    "independent scoped sender/privacy/late-response review"
+  ],
+  "unchangedContracts": [
+    "recipient/participant-scoped system history and RLS",
+    "trusted official sender/publication keys",
+    "employee Messaging/group/typing/attachment APIs",
+    "notification/Web Push delivery",
+    "inference provider/projection/grounding",
+    "shared day pool/account burst/monthly/free ceiling and fallback"
+  ],
+  "inspectedMigrations": [
+    "20260831_018_durable_release_communications.sql",
+    "20261022120000_messaging_groups_replies.sql"
+  ],
+  "coverage": [
+    "pending thread switch",
+    "pending account switch with new profile held",
+    "current auth/session ownership binding",
+    "official notice body and attachment UI",
+    "only persisted official IDs in read receipts",
+    "read-only assistant access without Messaging write",
+    "Enter/Shift+Enter/mobile Send hint/IME/repeat/empty/duplicate",
+    "503 retry without duplicate turn",
+    "inline confirmed feature submission/admin aggregates",
+    "Contacts and Manpower exact regressions"
+  ],
+  "limitations": [
+    "synthetic browser Auth/RPC/session data",
+    "no hosted changes or new RLS mutation certification",
+    "no new real-model evaluation",
+    "no physical mobile keyboard/Web Push delivery test",
+    "assistant transcript retains bounded in-session memory-only persistence"
+  ]
+}

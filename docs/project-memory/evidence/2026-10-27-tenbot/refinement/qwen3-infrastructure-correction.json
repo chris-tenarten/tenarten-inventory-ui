@@ -1,0 +1,289 @@
+{
+  "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+  "inferenceContract": "knowledge-v3",
+  "outputs": [
+    {
+      "id": "customer",
+      "contextSource": null,
+      "infrastructureCorrection": true,
+      "completionRun": false,
+      "question": "How do I edit an existing customer?",
+      "context": [
+        "Current module: Contacts"
+      ],
+      "input": {
+        "question": "how do i edit an existing customer",
+        "context": [
+          "Current module: Contacts"
+        ],
+        "excerpts": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information."
+          },
+          {
+            "id": "knowledge-contacts",
+            "title": "Shared Contacts and Customer Inspector",
+            "status": "deployed",
+            "guidance": "Account decision: available. Saved customer editing requires existing business-write and customer-detail editing permissions. Future selections use updated directory values; existing Jobs/issued Proposals retain their captured values. Customer search and Linked Jobs are available separately with operational-read access. Static source interface text (labels do not establish a click sequence or additional permissions): Manage Customer List · Close · Search customers · Search managed customers · No customers found. · Previous · Next · + Add New Customer · Cancel · Customer / Company Name * · Customer / Company Name · Additional Information (Optional) · Saved contact (optional) · Saved contact · None / enter a new contact · Previous contacts · Next contacts · Contact Name · Phone Number · Email Address · Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information. · Lead/Admin access is required to edit or remove a saved customer. · Remove From List · Back to list"
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "customer-edit",
+          "knowledge-contacts"
+        ],
+        "answer": "To edit an existing customer, go to Toolbox → Resources → Contacts. Search for the customer's company name, then select it to open Customer Inspector. Edit the Customer/Company Name or expand Additional Information to edit Contact Name, Phone Number, or Email Address. Choose Save Changes. Note: Lead/Admin access is required to edit a customer. Existing Jobs and Proposals will retain their captured information, while future selections will use the updated details.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To edit an existing customer, go to Toolbox → Resources → Contacts. Search for the customer's company name, then select it to open Customer Inspector. Edit the Customer/Company Name or expand Additional Information to edit Contact Name, Phone Number, or Email Address. Choose Save Changes. Note: Lead/Admin access is required to edit a customer. Existing Jobs and Proposals will retain their captured information, while future selections will use the updated details.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "customer-edit",
+            "title": "Edit a saved customer’s details",
+            "status": "deployed",
+            "guidance": "Open Toolbox → Resources → Contacts. Search for the beginning of the customer’s company name, then select the company name to open Customer Inspector. Edit Customer / Company Name, or expand Additional Information (Optional) to edit Contact Name, Phone Number or Email Address. Choose Save Changes. Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes. Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information.",
+            "path": "Toolbox → Resources → Contacts → Search customers → customer name → Customer Inspector → Save Changes",
+            "route": "/contacts",
+            "source": "Contacts guide · released October 20",
+            "availability": "available",
+            "constraints": [
+              "Lead/Admin access is required to edit a saved customer; read-only accounts cannot save changes.",
+              "Existing Jobs and Proposals keep their captured information."
+            ]
+          },
+          {
+            "id": "knowledge-contacts",
+            "title": "Shared Contacts and Customer Inspector",
+            "status": "deployed",
+            "guidance": "Saved customer editing requires existing business-write and customer-detail editing permissions. Future selections use updated directory values; existing Jobs/issued Proposals retain their captured values. Customer search and Linked Jobs are available separately with operational-read access. Static source interface text (labels do not establish a click sequence or additional permissions): Manage Customer List · Close · Search customers · Search managed customers · No customers found. · Previous · Next · + Add New Customer · Cancel · Customer / Company Name * · Customer / Company Name · Additional Information (Optional) · Saved contact (optional) · Saved contact · None / enter a new contact · Previous contacts · Next contacts · Contact Name · Phone Number · Email Address · Saved changes apply to future selections. Existing Jobs and Proposals keep their captured information. · Lead/Admin access is required to edit or remove a saved customer. · Remove From List · Back to list",
+            "path": "Toolbox → Resources → Contacts → Customer Inspector",
+            "route": "/contacts",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Saved customer editing requires existing business-write and customer-detail editing permissions.",
+              "Customer search and Linked Jobs are available separately with operational-read access.",
+              "Static source interface text (labels do not establish a click sequence or additional permissions): Manage Customer List · Close · Search customers · Search managed customers · No customers found.",
+              "Existing Jobs and Proposals keep their captured information.",
+              "· Lead/Admin access is required to edit or remove a saved customer."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 2202,
+      "providerDurationMs": 1904,
+      "usage": [
+        {
+          "at": "2026-10-27T20:37:32.467Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1901,
+          "usage": {
+            "prompt_tokens": 698,
+            "completion_tokens": 108,
+            "total_tokens": 806
+          },
+          "estimatedNeurons": 6.52,
+          "reservedNeurons": 39
+        }
+      ],
+      "at": "2026-10-27T20:37:32.542Z",
+      "ledgerBefore": {
+        "attempts": 45,
+        "completed": 32,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4717.091,
+        "inputTokens": 17425,
+        "outputTokens": 2046
+      },
+      "ledgerAfter": {
+        "attempts": 46,
+        "completed": 33,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4723.611,
+        "inputTokens": 18123,
+        "outputTokens": 2154
+      }
+    },
+    {
+      "id": "group",
+      "contextSource": null,
+      "infrastructureCorrection": true,
+      "completionRun": false,
+      "question": "How do I create a group conversation?",
+      "context": [
+        "Current module: My Work"
+      ],
+      "input": {
+        "question": "how do i create a group conversation",
+        "context": [
+          "Current module: My Work"
+        ],
+        "excerpts": [
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Account decision: available. Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes."
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Account decision: available. Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A dedicated Share Job control is not verified; do not invent it. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+          }
+        ],
+        "draft": false
+      },
+      "raw": {
+        "ids": [
+          "group",
+          "knowledge-messaging"
+        ],
+        "answer": "To create a group conversation, open Messaging from the app header, choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can manage the group. Adding a third person to a personal DM is not supported; create a separate group instead.",
+        "summary": ""
+      },
+      "answer": {
+        "mode": "ai",
+        "message": "To create a group conversation, open Messaging from the app header, choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can manage the group. Adding a third person to a personal DM is not supported; create a separate group instead.",
+        "resolution": "available",
+        "snapshot": {
+          "revision": "bc628bd",
+          "verifiedAt": "2026-10-27"
+        },
+        "sources": [
+          {
+            "id": "group",
+            "title": "Create a group conversation",
+            "status": "deployed",
+            "guidance": "Open Messaging from the app header. Choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "Messaging groups and replies · released October 22",
+            "availability": "available",
+            "constraints": [
+              "Only the creator can rename the group or add/remove participants.",
+              "Current members share the full history; removed members lose access.",
+              "Previously signed attachment links may remain usable for up to ten minutes."
+            ]
+          },
+          {
+            "id": "knowledge-messaging",
+            "title": "Messaging groups, personal DMs and conversation privacy",
+            "status": "deployed",
+            "guidance": "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation. Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied. A dedicated Share Job control is not verified; do not invent it. Official TenOps system notices retain separate authority. TenBot receives no employee Messaging records. - My Work and Inbox are participant/private domains. Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries.",
+            "path": "Messaging → New group",
+            "route": "/my-work",
+            "source": "TenOps verified application knowledge",
+            "availability": "available",
+            "constraints": [
+              "Employees can create creator-managed groups, send messages and attachments, and reply within an authorized conversation.",
+              "Adding a third person to an existing personal DM is not supported: create a separate group; old DM history stays private and is not copied.",
+              "A dedicated Share Job control is not verified; do not invent it.",
+              "- My Work and Inbox are participant/private domains.",
+              "Task estimated effort supports workload views; attachments and typing/Realtime authorization preserve private boundaries."
+            ]
+          }
+        ],
+        "summary": null,
+        "notices": [],
+        "suggestionAllowed": false
+      },
+      "providerInvoked": true,
+      "durationMs": 1395,
+      "providerDurationMs": 1110,
+      "usage": [
+        {
+          "at": "2026-10-27T20:37:42.953Z",
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "durationMs": 1107,
+          "usage": {
+            "prompt_tokens": 605,
+            "completion_tokens": 79,
+            "total_tokens": 684
+          },
+          "estimatedNeurons": 5.206,
+          "reservedNeurons": 36
+        }
+      ],
+      "at": "2026-10-27T20:37:43.048Z",
+      "ledgerBefore": {
+        "attempts": 46,
+        "completed": 33,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4723.611,
+        "inputTokens": 18123,
+        "outputTokens": 2154
+      },
+      "ledgerAfter": {
+        "attempts": 47,
+        "completed": 34,
+        "failed": 13,
+        "legacyReservedUsd": 0.2,
+        "accountedNeurons": 4728.817,
+        "inputTokens": 18728,
+        "outputTokens": 2233
+      }
+    }
+  ],
+  "analyticsBefore": {
+    "checkedAt": "2026-10-27T20:36:35.849Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 583.2733099414036,
+    "reportedRequests": 36,
+    "nominalRemainingNeurons": 9416.726690058596,
+    "cached": true,
+    "cacheExpiresAt": "2026-10-27T20:41:35.849Z",
+    "guardJournalNeurons": 391.026,
+    "guardedRemainingNeurons": 7025.700690058597
+  },
+  "analyticsAfter": {
+    "checkedAt": "2026-10-27T20:36:35.849Z",
+    "dayStart": "2026-10-27T00:00:00.000Z",
+    "reportedNeurons": 583.2733099414036,
+    "reportedRequests": 36,
+    "nominalRemainingNeurons": 9416.726690058596,
+    "cached": true,
+    "cacheExpiresAt": "2026-10-27T20:41:35.849Z",
+    "guardJournalNeurons": 402.752,
+    "guardedRemainingNeurons": 7013.974690058596
+  },
+  "ledgerBefore": {
+    "attempts": 45,
+    "completed": 32,
+    "failed": 13,
+    "legacyReservedUsd": 0.2,
+    "accountedNeurons": 4717.091,
+    "inputTokens": 17425,
+    "outputTokens": 2046
+  },
+  "startedAt": "2026-10-27T20:37:30.222Z",
+  "ledgerAfter": {
+    "attempts": 47,
+    "completed": 34,
+    "failed": 13,
+    "legacyReservedUsd": 0.2,
+    "accountedNeurons": 4728.817,
+    "inputTokens": 18728,
+    "outputTokens": 2233
+  },
+  "finishedAt": "2026-10-27T20:37:43.173Z"
+}

@@ -1,0 +1,1823 @@
+{
+  "readOnly": true,
+  "checkedAt": "2026-10-27T23:37:21.870186+00:00",
+  "canonicalMainAndDev": "178587454fb87aec8b5a76730714ec1b2973ac69",
+  "runtime": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+  "acceptedCandidate": "4c2e1fa7a470ef2a7749ba298be5d87645010000",
+  "manifestPath": "docs/project-memory/evidence/2026-10-27-tenbot/readiness/release-boundary.json",
+  "manifestSha256": "3d30530ef95e423aa52428bac47d2af859d20226dc2748fd230c7dddafc58bdc",
+  "manifestCount": 33,
+  "allSelectedHashesMatch": true,
+  "allSelectedWorkingBytesMatch": true,
+  "latestCanonicalRuntimeEqualsBc": true,
+  "sourceDivergences": [
+    "package.json",
+    "scripts/generate-tenbot-knowledge.mjs",
+    "scripts/start-tenbot-ai-pilot.mjs",
+    "scripts/start-tenbot-review.mts",
+    "scripts/support/tenbot-ai-pilot.mjs",
+    "scripts/tenbot-ai/worker.ts",
+    "scripts/tenbot-ai/wrangler.jsonc",
+    "scripts/tenbot-knowledge/external-reconciliation.json",
+    "scripts/tenbot-knowledge/manifest.mjs",
+    "scripts/verify-tenbot-ai-binding.mts",
+    "scripts/verify-tenbot-browser.mjs",
+    "scripts/verify-tenbot-privacy.mts",
+    "scripts/verify-tenbot.mts",
+    "src/app/client-layout-shell.tsx",
+    "src/app/tenbot/page.tsx",
+    "src/components/GlobalMessaging.tsx",
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/my-work/inbox.ts",
+    "src/modules/tenbot/TenbotAvatar.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/events.ts",
+    "src/modules/tenbot/tenbot.css",
+    "supabase/functions/_shared/tenbot-core.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-knowledge.ts",
+    "supabase/functions/_shared/tenbot-models.ts",
+    "supabase/functions/_shared/tenbot-privacy.ts",
+    "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+    "supabase/functions/tenbot/index.ts",
+    "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+    "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+    "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+    "supabase/migrations/20261027150000_tenbot_private_conversations.sql"
+  ],
+  "omittedCandidateWhitespaceOnly": [
+    "src/app/client-layout-shell.tsx"
+  ],
+  "allOtherDivergences": {
+    "docs/README.md": {
+      "baseline": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9ae83eb127972da5d4e2eebffe6b2ffa98c88b95"
+      },
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "91aaf7facd7a731a41834166c213bf9e934cce87"
+      }
+    },
+    "docs/project-memory/2026-10-27-tenbot-candidate.md": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0d1216a9a8e26e7dae7a89b224a81adf2899470e"
+      }
+    },
+    "docs/project-memory/2026-10-27-tenbot-privacy-correction.md": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "4cb324d80ba294cafb2481be7b3e67c74a9ff89c"
+      }
+    },
+    "docs/project-memory/CURRENT_STATE.md": {
+      "baseline": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b25e94ccf2e4fd0246054aef1bb4328f12c358c7"
+      },
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "979f96168bfab57fdd7031ca92d03543638297b3"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot-privacy-correction.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "138403bd5a0ac4192a9a366ba765fabae83f772d"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/allowance.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "cb19b54c9f3d760138993fa9fb7e00e4ed452285"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "6969fa5b6f3513d9785ef2c8cedc99ef5dcd7fab"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/desktop-real-ai.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b8b479877c06ca51180e8358e11a6f27d901d47f"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/evaluation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9f97f20615ca803a807a552a7dfd4e3165749356"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/mobile-customer-replay.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "83d2258ad634a69272abfc01c44d42456b194ad3"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/mobile-guide-fallback.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "87b160d2e4b0519db4d6f45f47548fd0a618a26d"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9815459e2175dbf327bbb9b9a09a57c2eafa8e01"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e4d5079a70d4f28b0c54bc2e0dbe42b0b021215f"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/administrator-usage.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "70d4f1adf5f5c3a941098d6fee0455099e922cc6"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "8155f0b74f41b5f37e18a73f656cf61a78c96799"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/desktop-communication.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a545055fab317171429370de2a876d25415e089a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/desktop-natural-prose.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e5c6ddf87070dbf42f093a27f430fb7478f5b34a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/diagnostic-customer-only.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a9006a2e9a6e603615be42b7625df061d129e6f6"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/diagnostic-evaluation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f656b230daa3c1d8eaa37332517fd2647c536bce"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/evaluation-initial.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b8794074d11c266bd88df61918609c4d5d0c76d0"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/evaluation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d2318220de7a247f80607e334b7d31c9c75e0d98"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/manpower-unknown-guide.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9bd34611593803b1b78550f18a559f02f99251c0"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/mobile-communication.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "6cd9fcc76f305933241cd6ed0a7a155d84e8798b"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/mobile-keyboard-viewport.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2d8671f219bac0448398a0413a237f8d926591ca"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/usage-diagnostic.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "af9f0155af395411491270c414355a349a7cba74"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/usage-final.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "77d06bcae0619c732f2b426aa589bef09e75676e"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "cf6c9b1be468b1497696ce87797ae10ef4223aa0"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/api-regression.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1b5c1b357b2c7b630366e1a2c4f08eb18ecac0da"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "47b34e3d378ea25edfde4b731b8af4400a1f9945"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/desktop-customer-edit.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "c56170713d21f132522a9820d21d81f8cd416986"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/desktop-customer-permission.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e604464a9cfe2278611af9df56d22518177239cd"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/evaluation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d2a235dbef56ae5ef90b4de258dd9bf81d8f5293"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/mobile-customer-edit.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1cfec5a478ceb89b66410685ec5bbab1fac4b6d5"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "60aef0a2e5fd702e08d3fa7b910b29fe26988fda"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "17616b2d67e0873db9155b3262f01f78f4f0c239"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/desktop-tenbot-conversation.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "c5c29c26f661e88642ecb0e6e075678657d4c0a6"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/mobile-keyboard-conversation.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "972f81ffcc41537de6752e184abf1e51655776e4"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/mobile-tenbot-conversation.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9e09cb523611f231a8e91f3788425ba55e5ebd37"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "fe212420e507de6e7916c2bb6990f6176aa4712a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/api-regression.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1f9d8966952627b2e44324c4d370fde8d9f087f1"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5122844e71e47776b565026b274e2c20dd6fafb8"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/content-review.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "acabf079a3430ade2611dce59ece5a54d9f9334f"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/conversation-quality-review.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e2b01b50da51fe9fff038bb6279c1b6aa5a28414"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/conversations.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9d5e4cafbb676f306a69f2ff14e296b9a3a862f0"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/core-review.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f6abae0d67ec98c43ec7359d08e4ca57997170d5"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/desktop-conversational-sources.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bf10d7d9d38bc33b7e92c3298c2bd81687f57d65"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/evaluation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "216745e13363b4e0ffc9c9f33ef112d7e9f24a2f"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/mobile-conversational-followup.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e9eb31c3b49ed527dea9c5febe9ec6e25f8b8414"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/mobile-keyboard-conversation.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "972f81ffcc41537de6752e184abf1e51655776e4"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/mobile-workflow-guidance.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a75d202292da309fa0a3e1d2025d9de88ad9ea66"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/planning-availability.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "957851c86c4421214026f90db342297f5070f6d6"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/source-files-proof.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d94880b3005093b4fca6b60c26f1e2b0e432d643"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/usage-final.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2c09d9a6f1fca83293148afe6ddb39570c308169"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "316e20f8a3a8a964da6f1790841808f7579bc18b"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/desktop-feedback.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "46dcf5962309b60e203d70750a914a95ff6f880e"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2a24d41b0f608c7e475d8d00c31232e9dc9025e0"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/desktop-floating-draft.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "3f280559c0005c5e1088b9b7701c6700ea681b68"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/desktop-floating-guide.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "63f166bad79d3622efe290baf5c0b6ce275fd5fd"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/mobile-guide.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1cca355855d250784fba6cd668d192c376d8f8c7"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/mobile-keyboard-viewport.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "55482804e7fcbe0a3f0406ec69d4cbf073ac1197"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f93ab9fd312007555497512d1c681187ca33daa4"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/avatar-sizes.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a8281e29632b687a2fdca17765233bb5b581d95b"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "45906a0ef3d0918cf7638a57e984d55943028f56"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/build.log": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "c7aa6f647ca92f88ece5cc1b447e379b9ae16e84"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/desktop-conversation-dark.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "492ea786bbc66ae63a122d34b8e5c25593280984"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/desktop-conversation-light.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "6e9cc03e6fcd8309641ea69f9a88b5e2dba895c7"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/desktop-recent-menu-light.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "42dc999e4a9279418be46afc0f5694836ee14997"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/mobile-conversation-dark.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b9f14ca700af7b46bd7565f4fd0309278252648d"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/mobile-conversation-list-light.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ab0b009696e7424f93ccc46b4e643f59793e5e1a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "193d2b1687e7b4084ace31c55dfa250ee401993e"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/metadata/metadata-desktop.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "18a317398b5883921210ccd499c7f5da854a33af"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/metadata/metadata-mobile.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "85c44678006d92c2bd72660c6b092996d1234cf3"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/metadata/metadata-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e5e490ddab2a93923e3986bc9af9052f62f2a512"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/mobile-guide.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f3b03810ca5f12edc1518adcb561452cb2d3de1d"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7155ad49c7eb90ec5052dedd858fc90199f5f397"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/desktop-compact-sources.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "cfea2ce665f4a6755d1d6054fb37061cd3cfe91f"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/desktop-conversation-menu.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "79f93883492c84d9482c0e9ee0db8fe8a27efe00"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/desktop-multiline-composer.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "122f35c0efda6efb67cb8499bf373b6df6fa155f"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/desktop-privacy-details.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1a14338aa6f93cbc09b2bbe2ebf5070039807f02"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/mobile-compact-sources.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5068ceedc32a403a2da289df9fb4bed8d5fa9142"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/mobile-source-detail.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "183f6211760a5470ae97090edaac6050adc395cf"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/mobile-verified-rework-eligibility.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a35f8fe5d36002eaf896ed3babde748ac7b54588"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/build.log": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "cc28a270ae9c61e54f9c9a82d84ca7ee4b8c480a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/corrected-rework-first.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0b06116d73bb8285e6ff9c32810bae7c0714a855"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/corrected-rework-followup.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1e14e051e551f5db0efb2cb371350ba6890a967a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/final-decision.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1d855325503e1aacc739b5367e066cad884658d4"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/privacy-browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1da2a050f870f19959d5aa04bceb1970e7ed1e1b"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/real-rework.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0c575a9b7fbd3c8e1dae9dcacaffbf0c4264993d"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "3d098c4939948035eb4368f3588e8c4e0a6886a2"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/cloudflare-account.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1104f56a9c1f89f4ae1f118e3047f04e9c3c34d1"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/evidence-manifest.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "349ab806043f08d4dd0d7ff4f289b1cbe7e64eeb"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/final-account-preflight.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "6ba62008888625472e3166ff88534cf6eb4de330"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/final-local-usage.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d58a8bc13cfc22218e60a11a6d6739fcfd2f720a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/hosted-config.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "8326ace81f872dbb9fd7ff74faa5e80e087de733"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/hosted-database.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "41b2fc42cca11aec5c267c6065a90d44ef505ede"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/inference-preflight.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "35e8a66e3e5bda5eaff5017d45d47c3bc16134d3"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/inference-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "c93e47aea5f9205db1030c150132462ed7dcf621"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/inference-summary.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "54bc6c5c352338db759a11a3215b0f1265ef72a7"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/knowledge-reconciliation-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "dfd3381dc59479dd5279ae6b741e6ad6aee62835"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/package-source-audit.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "4c8abbd22cf2cef8cfd1343245445225b0339557"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/privacy-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "37793c9a7393077953a003932b57df6cc08b477e"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/privacy-review.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e0cae7987b52e2f94eae378705afaff08e752980"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/privacy-source-review.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "451e97ceeeb1343d8ff519077716c9a7f8860b51"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/release-boundary.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7fc4a88424efc19b0b911abb8fddc2e36fb5a402"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/unsupported-recheck.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "95c889528523328042d1104ae2d14681ac14e33a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/unsupported-refresh-fallback.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "100f35a8d03b0baf5928740d2d5ac69f9748706c"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/unsupported-review.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ccf4e5a53b5f1df6f6c9a4e897db20862a7e946e"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "3bf95f51eb6efc1c3af478cebe25d6c7bebf3da8"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser-fixtures.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d6207debd7663cbf3ffda83a9c17e18031ed983c"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/bare-review.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1fe06b7dbcd93c78ff34d003cbb26c2c52131f87"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/bare-review.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a8b202f0a827d48b689dedd844fc6db42143dd93"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/browser-results.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "da3d0533794b836824380c9df9bcb69373cbb0f3"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/desktop-conversational-sources.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "8ac19d5610289594faf95ad99d1d406b7818c362"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/live-ui-answer.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5103420fa365cbe818836cd09f4bc2f0f8aaae49"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/mobile-conversational-followup.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2792c6136226bdf9cee1e836d744720a075ee25a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/mobile-keyboard-conversation.png": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "972f81ffcc41537de6752e184abf1e51655776e4"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/budget-policy.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "630c5518a2d38b0f42bc09122f58a2d9b6eeb98a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/build.log": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0c5fbde8ede7af6f8523dade11f1cc8c4d2af8e0"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/candidate-quality.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ed8d4ff0a5107ea4230d8be7d0e7f12bf808524a"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/comparison.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bcbbce4b49f145e92acdf3618ab00be49e24ff46"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/final-review.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "21a881a34eb1680ec2f7a0d73c0895a7bba2b23c"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/guard-input-after.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "76a47df653f40aa60d3c18210fb6ef0a28d207f0"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/guard-input-before.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "76a47df653f40aa60d3c18210fb6ef0a28d207f0"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama31-infrastructure-correction.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9029dcb485fc91a6f75b68af005951e1305b639e"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama31-merged.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1e3dfbb0993df986761ad07897285c230fca5afe"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama31.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9540bada452ffa98b8d5d70396d240efbaa2585b"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama33-merged.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7328a7c373481b061b190b145340a12c236447a8"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama33.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a9c0f9434249dfdb6811abfaaa1734ee9ea80c56"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/production-runtime.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "30d37f17839b117a6c0778d795b7faa1ce995b5f"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/prompt-validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "c8b5dc7278909187f7313dd486846d47947a2f0d"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/quality-rubric.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "49b3f14cc35945cc5864a24e57afc2771ec1dd7f"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/qwen3-completion.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0828f0ae5ef8e289426e7e03d008a5bb5fa3423b"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/qwen3-infrastructure-correction.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7534ad5f879920784bb1c1e9b59c43377d3fc4d8"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/qwen3-merged.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a759272e74188e6fdc1c600613135b6ff4ab6df5"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/qwen3.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "06343d2e1d664d00aaabba94e0e95aedffb11020"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/selected-model.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f445c912b571571fe79f3e96035cebe35a29bbae"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/share-job-guard-replay.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2f54174e25d276c14ba2ab8e8ec848bffbd90b4c"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/usage-final.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2ec4a73fedb867163d12a84d36b06f4f6a5ddb1f"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7ee55d4a707a46d43b88bb80b32523fbc086c65d"
+      }
+    },
+    "docs/project-memory/evidence/2026-10-27-tenbot/validation.json": {
+      "baseline": null,
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7c13b5a30c3698ab0d69855544dd90da9823f642"
+      }
+    },
+    "docs/project/ENGINEERING_EXECUTION_STANDARD.md": {
+      "baseline": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7f124e8c0dc1fd019601de39ae9169d059be5053"
+      },
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "38dcc04a47513a7398bb17d24f8c6f772f208a5a"
+      }
+    },
+    "docs/project/PROJECT_MANIFEST.md": {
+      "baseline": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f60d776dca6f9fbf40888b6cb55b5a5dc4fbd9a3"
+      },
+      "candidate": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "213e75d7ee4ae0620c2721f89641d3a1f5b4fa6d"
+      }
+    }
+  },
+  "protectedBaselinePaths": 262,
+  "protectedViolations": [],
+  "proposedSourceChangesExactlyApproved": true,
+  "patchSha256": "8ce1d00e06c1a1e73b9c296da8883f9f467ae4263c47f9ddc42f5f9fe806ad84",
+  "normalIndexBeforeSha256": "d4f4053046face2188491c4e5462fe080d3595afe1c90fcc8dbbe86e52abd135",
+  "files": [
+    {
+      "path": "package.json",
+      "baseline": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bda1424f9e3ac8f0c479c2d15efece9b2a1e3e98"
+      },
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0083b1c912b502b1ab63a23df223cc357fba17de"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0083b1c912b502b1ab63a23df223cc357fba17de"
+      },
+      "sha256": "268ae147717f6fc98efa373a5fa6d9e69a26279b484f0fe16b8a97f85d70d9c9",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d179f373a4cd96ba102e4e8a48cd74d033c5c699"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d179f373a4cd96ba102e4e8a48cd74d033c5c699"
+      },
+      "sha256": "13b52ecd5021808275c8fc65dc7e7213c73a25a8ddc8cbe21e970c9c03de6c17",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/start-tenbot-ai-pilot.mjs",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5a5897c2c6d83bd32ababe9ea65d82b3bfbb7907"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5a5897c2c6d83bd32ababe9ea65d82b3bfbb7907"
+      },
+      "sha256": "a9597f0502e8ce7d0e2ea6b70f36711a7137c7dad334b76220fc2e1c0ce3fcef",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/start-tenbot-review.mts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "101937ba8f5c9129742bbffbda27edbffe53b8e2"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "101937ba8f5c9129742bbffbda27edbffe53b8e2"
+      },
+      "sha256": "9e3d47a6cfcc2d20233096bd074cb4ec76545a808bda0c28b090d318725495e8",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/support/tenbot-ai-pilot.mjs",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bcd50d1a6a2a1a8fca8906c9e02da39062e1b879"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bcd50d1a6a2a1a8fca8906c9e02da39062e1b879"
+      },
+      "sha256": "158dad1fa5231daf260d9aae8f271bad700c41c0b788dbf987f93d5ca1c3fb9c",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/tenbot-ai/worker.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ceb0932df75bc6fea5dfb05711ebf27b369b9b81"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ceb0932df75bc6fea5dfb05711ebf27b369b9b81"
+      },
+      "sha256": "821cbc842ca427f75e580ee931d4dec9153bab743fb0537728aeef69b1399256",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/tenbot-ai/wrangler.jsonc",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "db548a48f89574b1ff01894adb3775a9f1130ab4"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "db548a48f89574b1ff01894adb3775a9f1130ab4"
+      },
+      "sha256": "17b01a224484febf244f3c0cd6f42f478514550e57dd044e7947af08af32a749",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/tenbot-knowledge/external-reconciliation.json",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "745eaddeb188ab6bd5186853672ea4f36b69792c"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "745eaddeb188ab6bd5186853672ea4f36b69792c"
+      },
+      "sha256": "3e7572f2c00ddd32e43302e2c729386827acb0496b86700367e7f99028e671fe",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/tenbot-knowledge/manifest.mjs",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d8b4e283e4bbef03a8bf8ee52cc7d7eaea44a9e7"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d8b4e283e4bbef03a8bf8ee52cc7d7eaea44a9e7"
+      },
+      "sha256": "6809d492984ce8c2df333d0cfabff78076bfb6557391774760e82fd7e5f29761",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/verify-tenbot-ai-binding.mts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "3309328d6b6ac3347483b2885b0605a2f4418c75"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "3309328d6b6ac3347483b2885b0605a2f4418c75"
+      },
+      "sha256": "70d496fa82ed0bb75972714fb777b49e571c754dd92bc7513da0b735245ee0b6",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/verify-tenbot-browser.mjs",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a5068569f1510264f4d719a70a2d0498bf178e41"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a5068569f1510264f4d719a70a2d0498bf178e41"
+      },
+      "sha256": "7539b58f2a6216329d069d965083b95f8b4f03d1f16793447939c7c6bfad2813",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/verify-tenbot-privacy.mts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f6b5d2a61ece3313ea45e43cea4e8c83e29cb6aa"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f6b5d2a61ece3313ea45e43cea4e8c83e29cb6aa"
+      },
+      "sha256": "22f44ef15ae2c612a43382309b9d5f1ca6d111f605ff2344d1ef255025926b7b",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "scripts/verify-tenbot.mts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "213b082014489ebdc2b861931d88fc2071e2853e"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "213b082014489ebdc2b861931d88fc2071e2853e"
+      },
+      "sha256": "170597dd4b5a8dcb8488e4f71eec80b97ef8308225e80e889d3856cb63aefa9e",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "src/app/tenbot/page.tsx",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9b709f1a499194a810534c91b5a7e0e487124cc9"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9b709f1a499194a810534c91b5a7e0e487124cc9"
+      },
+      "sha256": "b2e9407c974c6a35e04b06ccb1f7e042ab7c6aca454bebfdfe1ce71a420f2dae",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "src/components/GlobalMessaging.tsx",
+      "baseline": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "4a39cebb722b351940bcbbd4ab45b5242cda406b"
+      },
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9fcf7df84cd60ff7e45324afc154c9f718b1a82b"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9fcf7df84cd60ff7e45324afc154c9f718b1a82b"
+      },
+      "sha256": "b754f6cffedfbdd53375bd5ecc9eb7d44f099b2437347c7619bdcc5a826617a0",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "baseline": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1e2fe3d86211d6819f0b38170e305ee4142764bf"
+      },
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ec56f09b87d4b7dbeb2e47265a50858cad107aad"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ec56f09b87d4b7dbeb2e47265a50858cad107aad"
+      },
+      "sha256": "86d9d1c4cc0a2638b8e1398012a6655e47629c9b3c686074d742e132d8b2e97f",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "src/modules/my-work/inbox.ts",
+      "baseline": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "861408c38127504072dbb15477b143e52bbb5ec9"
+      },
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+      },
+      "sha256": "526e3e995d1f845b0e76ca4e341da0d1dff624fffe440ccb2dde8bb4aaeb41ac",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "src/modules/tenbot/TenbotAvatar.tsx",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e32a0b77d9dc06001619c6cd79c220da6c523a00"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e32a0b77d9dc06001619c6cd79c220da6c523a00"
+      },
+      "sha256": "5c77c0f6d588ca238465d387a0defa2326d8f0d83dd372f134424006744eeaf5",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "688a13f05135f0ed77d281e96d134ab80ca4748c"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "688a13f05135f0ed77d281e96d134ab80ca4748c"
+      },
+      "sha256": "fa6fa6024597cd6665856e53a242b506e12330ab439edcebb60d870df80039b8",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "src/modules/tenbot/events.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f3bdcaaeafecc513dda10cd41f9d7e924569645e"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f3bdcaaeafecc513dda10cd41f9d7e924569645e"
+      },
+      "sha256": "b265b46dad8e9267a64e4bdcc5aa3570d1a232fab2b8247e4f845bf1a4f771ec",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "src/modules/tenbot/tenbot.css",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a25764d66723d0f2a55c490807e0da47bae0b8be"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a25764d66723d0f2a55c490807e0da47bae0b8be"
+      },
+      "sha256": "7f9cdddc9eca6fb58d84321c593b719d59cc40c18e0a587c7415ce8fc020f586",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b17a89e8cea0a95c11f820cbf1cd278fc1caa67f"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b17a89e8cea0a95c11f820cbf1cd278fc1caa67f"
+      },
+      "sha256": "149e36d922e47972cfba9349b8e89a2da2f733fe214b8902a519a46ac9630aca",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "79e8ffd5aaef6a2b7c8cc6cbe21650d5345aaae8"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "79e8ffd5aaef6a2b7c8cc6cbe21650d5345aaae8"
+      },
+      "sha256": "20b2b62343c40f61ea6c1d1b79a5fb43beeb79ed17903058a1b133881eed6d90",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "208dcdf72bebb34c780418ac94d6c0e1db12b185"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "208dcdf72bebb34c780418ac94d6c0e1db12b185"
+      },
+      "sha256": "3a31e34896f01d0b6723e2a134c7967066c03b4a5cc17ff84cd16dfe55e9fd39",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "60ff64570c6e2ec0a1b333b0467fce64266266fc"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "60ff64570c6e2ec0a1b333b0467fce64266266fc"
+      },
+      "sha256": "70670a4f5bee4ac950e382fae48893eb74a7ee034d4632a582ffba4a5fc3671b",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-models.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "286c1971e1c7f527c0cdf398c55eff628aeee8f9"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "286c1971e1c7f527c0cdf398c55eff628aeee8f9"
+      },
+      "sha256": "cbf127a0692b07053021e72e4331ced03ecf820e35b12a851a18554d813e915f",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-privacy.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bdd4ec1ddeb90994f5ad6a24cf09c1713c519066"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bdd4ec1ddeb90994f5ad6a24cf09c1713c519066"
+      },
+      "sha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "66c8b1f7186923b9ccf5a973b5ee03a2bd323f60"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "66c8b1f7186923b9ccf5a973b5ee03a2bd323f60"
+      },
+      "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "33023a48b5dbe668a74d12046795610c178ed35b"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "33023a48b5dbe668a74d12046795610c178ed35b"
+      },
+      "sha256": "95da5bc87b96e14d1079d99cceedd6db0387748bead4bf9301a317a2fc750abe",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f9998e6752f5d028aa2f46fa33f93a79464b0e05"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f9998e6752f5d028aa2f46fa33f93a79464b0e05"
+      },
+      "sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d890020047817ec0a83524a32487f7ccf1f49196"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d890020047817ec0a83524a32487f7ccf1f49196"
+      },
+      "sha256": "b007ee3a5234876709c5d82c3269d78921a613815940df59669f5ce78548c435",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a62a2c1c2b43b3a3319a5c24b6df88c633134a26"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a62a2c1c2b43b3a3319a5c24b6df88c633134a26"
+      },
+      "sha256": "3985d2912af54957c35f36bbb61374b4ff334f950bdc436da393b0aaa5c6bcaf",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    },
+    {
+      "path": "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+      "baseline": null,
+      "accepted": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bcfd783848f2f29db99e4ee0399c457f3e5383d7"
+      },
+      "expectedRelease": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bcfd783848f2f29db99e4ee0399c457f3e5383d7"
+      },
+      "sha256": "81652bd3e335d2fe29d5b26012727eabaed765dc7950e2979b7fd2891ee53b3b",
+      "matchesAcceptedReadinessHash": true,
+      "changesBaseline": true,
+      "workingBytesMatchAccepted": true
+    }
+  ]
+}

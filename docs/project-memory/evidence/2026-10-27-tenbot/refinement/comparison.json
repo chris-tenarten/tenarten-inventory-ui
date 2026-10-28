@@ -1,0 +1,348 @@
+{
+  "actualModelCalls": 27,
+  "infraFailuresChargedSeparately": 4,
+  "tokenDerivedNeurons": 532.637,
+  "chosenRecommendation": "qwen3",
+  "models": [
+    {
+      "alias": "llama31",
+      "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+      "actualCalls": 9,
+      "originalInfrastructureFailures": 2,
+      "acceptedByGuardAtCapture": 8,
+      "inputTokens": 7315,
+      "outputTokens": 1053,
+      "tokenDerivedNeurons": 128.302,
+      "medianBindingMs": 8199,
+      "meanBindingMs": 8401,
+      "minBindingMs": 4889,
+      "maxBindingMs": 12724,
+      "recommendation": "Useful but slower; ambiguous unsupported sharing alternative and one harmless navigation-word guard rejection.",
+      "turns": [
+        {
+          "id": "rework",
+          "question": "How do I initiate Rework for a Job?",
+          "modelAnswer": "To initiate rework for a job in Production, open the job, select Create Rework, choose a Reason, describe the Rework Scope/Work Required, enter the Intake/Return Date, and select Create Rework. The job must be complete, unarchived, and have no active rework cycle. Only one rework cycle can be active at a time.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 6284,
+          "tokenDerivedNeurons": 12.706,
+          "review": "Complete supported creation steps and prerequisites."
+        },
+        {
+          "id": "rework-followup",
+          "question": "What if I cannot see that button?",
+          "modelAnswer": "If you can't see the 'Create Rework' button, ensure the job is complete, unarchived, and has no active rework cycle. Check the job's status and details to confirm it meets these conditions. If the issue persists, try refreshing the page or contacting your administrator for assistance.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 6733,
+          "tokenDerivedNeurons": 15.313,
+          "review": "Resolves prior button and prerequisites; omits explicit business-write check; generic refresh/admin advice."
+        },
+        {
+          "id": "manpower",
+          "question": "How do I filter Manpower Reporting by Job?",
+          "modelAnswer": "To filter manpower reporting by job, go to Reporting > Manpower Reporting, select the Job in the Job labor review, and then use the Clear job filter or All reporting groups to reset. If you have business-write access, you can also use the Product Category filter to narrow down products. If you're a read-only account, you can use Search manpower or open a Job’s Current Hours link from Production.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 8199,
+          "tokenDerivedNeurons": 17.313,
+          "review": "Correct Job labor review selector/reset/read-only alternatives; exhaustive-history caveat remains server-owned."
+        },
+        {
+          "id": "customer",
+          "question": "How do I edit an existing customer?",
+          "modelAnswer": "To edit an existing customer, open Toolbox → Resources → Contacts, search for the customer's company name, select the company name, and open Customer Inspector. From there, you can edit the Customer/Company Name, or expand Additional Information to edit Contact Name, Phone Number, or Email Address. Click Save Changes to apply the changes. Note that Lead/Admin access is required to edit a saved customer, and saved changes apply to future selections, but existing Jobs and Proposals retain their captured information.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 9632,
+          "tokenDerivedNeurons": 13.025,
+          "review": "Complete navigation, fields, Save Changes, Lead/Admin and captured-history boundaries."
+        },
+        {
+          "id": "group",
+          "question": "How do I create a group conversation?",
+          "modelAnswer": "To create a group conversation, open Messaging from the app header, choose New group, enter a group name, select at least one other participant, and choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history, while removed members lose access.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 4889,
+          "tokenDerivedNeurons": 10.699,
+          "review": "Correct creation, creator management and membership-history limits."
+        },
+        {
+          "id": "group-followup",
+          "question": "Can I add someone to my existing DM instead?",
+          "modelAnswer": "You can't add someone to an existing DM, but you can create a new group conversation and add the person to that. To do this, open Messaging from the app header, choose New group, enter a group name, select the person you want to add, and choose Create group. The old DM will remain private and its history won't be copied into the group.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 7403,
+          "tokenDerivedNeurons": 14.774,
+          "review": "Correct separate-group alternative; existing DM/history preserved."
+        },
+        {
+          "id": "sample-bid",
+          "question": "How do I attach a Sample to a Bid?",
+          "modelAnswer": "To attach a sample to a bid, open the Intake module and select the bid. Then, go to Tools and choose 'Open related Samples'. From there, select 'Existing standalone Sample' and click 'Link Sample'. If you want to create a new sample, choose 'Create Sample' in the Bid's Tools, which will retain the bid, customer, and project context. You can also use the Sample editor to save a draft with bid context.",
+          "guardedModeAtCapture": "guide",
+          "originalError": "TenBot could not verify the answer wording.",
+          "providerBindingMs": 12724,
+          "tokenDerivedNeurons": 20.577,
+          "review": "Correct released link/create paths, but originally rejected because harmless word module was outside navigation vocabulary. Restrictions remain source-owned."
+        },
+        {
+          "id": "share-job",
+          "question": "Can I share a Job directly in Messaging?",
+          "modelAnswer": "The feature to share a job directly in Messaging is unverified, so it's not confirmed to be available. You can check with Product for more information. As an alternative, you can create a separate group to share the job with others, but the old personal DM history will remain private and won't be copied.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 10550,
+          "tokenDerivedNeurons": 10.463,
+          "review": "Misleading alternative: create a separate group to share the Job, without a verified Job-sharing workflow."
+        },
+        {
+          "id": "lead-times",
+          "question": "Can TenOps estimate material lead times?",
+          "modelAnswer": "TenOps can estimate material lead times by combining exact saved Sample or issued Blend authority, reviewed Inventory mappings, catalog supplier evidence, and documented manual lead-time estimates. However, this is not automatic lead-time prediction and does not promise a Production date. Available stock, reservations, incoming ETAs, and shortages remain distinct, and unknown evidence stays unknown. To get an estimate, you can use the retained material-assessment services, but you will need to ask Product about the employee-facing assessment-button workflow, as the current Bid Inspector does not expose the retained material-assessment editor.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 9193,
+          "tokenDerivedNeurons": 13.432,
+          "review": "Correct manual/source-based assessment and explicit current-Bid-editor uncertainty; technical and lengthy."
+        }
+      ],
+      "evidence": [
+        "llama31.json",
+        "llama31-infrastructure-correction.json"
+      ]
+    },
+    {
+      "alias": "llama33",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "actualCalls": 9,
+      "originalInfrastructureFailures": 0,
+      "acceptedByGuardAtCapture": 9,
+      "inputTokens": 7469,
+      "outputTokens": 712,
+      "tokenDerivedNeurons": 345.01,
+      "medianBindingMs": 2372,
+      "meanBindingMs": 2560,
+      "minBindingMs": 1541,
+      "maxBindingMs": 4671,
+      "recommendation": "Fast and useful on eight turns; unacceptable affirmative Job-sharing claim despite dedicated-control caveat.",
+      "turns": [
+        {
+          "id": "rework",
+          "question": "How do I initiate Rework for a Job?",
+          "modelAnswer": "To initiate rework for a job, open the completed Job in Production, select Create Rework, choose a Reason, describe the Rework Scope and Work Required, enter the Intake/Return Date, then select Create Rework. The Job must be complete, unarchived, and have no active Rework cycle.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 2963,
+          "tokenDerivedNeurons": 36.334,
+          "review": "Complete creation steps/prerequisites."
+        },
+        {
+          "id": "rework-followup",
+          "question": "What if I cannot see that button?",
+          "modelAnswer": "If you cannot see the Create Rework button, ensure the job is complete, unarchived, and has no active rework cycle. Check your permissions as only authorized business writers can create rework. Verify the job status and details to confirm it meets the requirements for rework initiation.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 2072,
+          "tokenDerivedNeurons": 40.831,
+          "review": "Strong own-context resolution with explicit business-write gate."
+        },
+        {
+          "id": "manpower",
+          "question": "How do I filter Manpower Reporting by Job?",
+          "modelAnswer": "To filter manpower reporting by job, open Reporting → Manpower Reporting, then choose the Job in Job labor review. Use Clear job filter or All reporting groups to reset. After selecting a Job, Product Category filter narrows products. Employees with business-write access can filter labor by Production Job, while read-only accounts can use Search manpower or open a Job’s Current Hours link from Production.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 2396,
+          "tokenDerivedNeurons": 47.405,
+          "review": "Complete selector/reset/category and read-only alternatives."
+        },
+        {
+          "id": "customer",
+          "question": "How do I edit an existing customer?",
+          "modelAnswer": "To edit an existing customer, open Toolbox → Resources → Contacts, search for the customer's company name, and select it to open Customer Inspector. Edit the customer details, then choose Save Changes. You need Lead/Admin access to edit a saved customer.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 2619,
+          "tokenDerivedNeurons": 32.559,
+          "review": "Useful concise steps; details expansion and captured-history caveat omitted from prose, retained in sources."
+        },
+        {
+          "id": "group",
+          "question": "How do I create a group conversation?",
+          "modelAnswer": "To create a group conversation, open Messaging, choose New group, enter a group name, select at least one participant, and choose Create group. Only the creator can rename or manage participants. Current members see the full history, while removed members lose access.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 2169,
+          "tokenDerivedNeurons": 30.078,
+          "review": "Correct creation and membership/history boundaries."
+        },
+        {
+          "id": "group-followup",
+          "question": "Can I add someone to my existing DM instead?",
+          "modelAnswer": "You cannot add someone to your existing personal DM. Instead, create a new group conversation by opening Messaging, choosing New group, entering a group name, selecting at least one participant, and choosing Create group.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 4671,
+          "tokenDerivedNeurons": 36.692,
+          "review": "Correct separate-group alternative, but old-DM history boundary relies on deterministic notice/source."
+        },
+        {
+          "id": "sample-bid",
+          "question": "How do I attach a Sample to a Bid?",
+          "modelAnswer": "To attach a sample to a bid, open Intake, select the bid, and choose Open related Samples in Tools. Then, select an existing standalone sample and choose Link Sample. Alternatively, you can create a new sample by choosing Create Sample in the bid's Tools, which will retain the bid, customer, and project context. Save the sample to link it to the bid.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 2372,
+          "tokenDerivedNeurons": 52.961,
+          "review": "Correct link/create paths; reassignment/generated-document restrictions rely on source caveats."
+        },
+        {
+          "id": "share-job",
+          "question": "Can I share a Job directly in Messaging?",
+          "modelAnswer": "You can share a job in a message, but the TenOps Guide does not have enough verified information to confirm a dedicated Share Job control in Messaging. You can check with Product for more information.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 1541,
+          "tokenDerivedNeurons": 30.801,
+          "review": "Unverified affirmative You can share a job in a message is unacceptable."
+        },
+        {
+          "id": "lead-times",
+          "question": "Can TenOps estimate material lead times?",
+          "modelAnswer": "TenOps can estimate material lead times partially through released material-assessment services, which combine saved Sample or Blend authority, reviewed Inventory mappings, and supplier evidence. However, this is not an automatic prediction and does not promise a Production date.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 2233,
+          "tokenDerivedNeurons": 37.349,
+          "review": "Correct partial service/manual-evidence assessment, no automatic forecast/promised date; employee UI boundary relies on deterministic notice."
+        }
+      ],
+      "evidence": [
+        "llama33.json"
+      ]
+    },
+    {
+      "alias": "qwen3",
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "actualCalls": 9,
+      "originalInfrastructureFailures": 2,
+      "acceptedByGuardAtCapture": 9,
+      "inputTokens": 7344,
+      "outputTokens": 832,
+      "tokenDerivedNeurons": 59.325,
+      "medianBindingMs": 1163,
+      "meanBindingMs": 1338,
+      "minBindingMs": 813,
+      "maxBindingMs": 1902,
+      "recommendation": "Best practical candidate in this small sample: accurate supported-portion sharing answer, clear DM distinction, complete customer/Sample guidance, low latency. Remaining scope/completeness limitations retained.",
+      "turns": [
+        {
+          "id": "rework",
+          "question": "How do I initiate Rework for a Job?",
+          "modelAnswer": "To initiate rework for a job, open the completed and unarchived Production Job, then select 'Create Rework.' Choose a reason, describe the rework scope, and enter the intake or return date. Only one rework cycle can be active at a time. Rework remains on the same job and does not change its original status or dates.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 1902,
+          "tokenDerivedNeurons": 6.632,
+          "review": "Useful creation explanation and canonical/history boundaries, but omits final Create Rework confirmation."
+        },
+        {
+          "id": "rework-followup",
+          "question": "What if I cannot see that button?",
+          "modelAnswer": "If you cannot see the 'Create Rework' button, ensure the job is complete, unarchived, and has no active rework cycle. The button appears only when these conditions are met. Check the job details and try again.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 1107,
+          "tokenDerivedNeurons": 6.296,
+          "review": "Resolves prior button and prerequisites, but omits possible access check."
+        },
+        {
+          "id": "manpower",
+          "question": "How do I filter Manpower Reporting by Job?",
+          "modelAnswer": "To filter manpower reporting by job, open 'Manpower Reporting' and select a 'Job' from the 'Job labor review' dropdown. This will narrow the view to labor related to that specific job. You can use the 'Clear job filter' option to reset. Read-only users can search or use deep links but cannot change the job selection. Product Category filters can further narrow results.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 1163,
+          "tokenDerivedNeurons": 7.851,
+          "review": "Correct selector/reset/read-only restriction; Reporting menu and exact Current Hours alternative omitted."
+        },
+        {
+          "id": "customer",
+          "question": "How do I edit an existing customer?",
+          "modelAnswer": "To edit an existing customer, go to Toolbox → Resources → Contacts. Search for the customer's company name, then select it to open Customer Inspector. Edit the Customer/Company Name or expand Additional Information to edit Contact Name, Phone Number, or Email Address. Choose Save Changes. Note: Lead/Admin access is required to edit a customer. Existing Jobs and Proposals will retain their captured information, while future selections will use the updated details.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 1901,
+          "tokenDerivedNeurons": 6.52,
+          "review": "Complete route/field/save/Lead/Admin and captured-history explanation."
+        },
+        {
+          "id": "group",
+          "question": "How do I create a group conversation?",
+          "modelAnswer": "To create a group conversation, open Messaging from the app header, choose New group, enter a group name, select at least one other participant, then choose Create group. Only the creator can manage the group. Adding a third person to a personal DM is not supported; create a separate group instead.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 1107,
+          "tokenDerivedNeurons": 5.206,
+          "review": "Correct create workflow and creator management; history limits rely on source caveats."
+        },
+        {
+          "id": "group-followup",
+          "question": "Can I add someone to my existing DM instead?",
+          "modelAnswer": "You cannot add a third person to an existing personal DM. To include more people, create a new group conversation instead. The original DM remains private and its history is not copied into the group.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 993,
+          "tokenDerivedNeurons": 5.708,
+          "review": "Clear cannot add to old DM, separate group and private history boundary."
+        },
+        {
+          "id": "sample-bid",
+          "question": "How do I attach a Sample to a Bid?",
+          "modelAnswer": "To attach a sample to a bid, open the bid in Intake, go to Tools, and select 'Open related Samples.' Choose an existing standalone sample and click 'Link Sample.' If you need to create a new sample, select 'Create Sample' in the Bid’s Tools. This will start a new sample with the bid's context. Note that a sample already linked to another bid cannot be moved. Existing documents are not changed by linking.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 1651,
+          "tokenDerivedNeurons": 9.247,
+          "review": "Strong exact released link path, standalone restriction and immutable generated-document boundary."
+        },
+        {
+          "id": "share-job",
+          "question": "Can I share a Job directly in Messaging?",
+          "modelAnswer": "The ability to directly share a job in messaging is unverified. While you can send messages and attachments in authorized conversations, there is no confirmed dedicated 'Share Job' control in Messaging. Check with Product for more details. Do not paste private job records.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 813,
+          "tokenDerivedNeurons": 4.874,
+          "review": "Best calibrated uncertainty: dedicated control unverified, ordinary messages/attachments supported, no record paste."
+        },
+        {
+          "id": "lead-times",
+          "question": "Can TenOps estimate material lead times?",
+          "modelAnswer": "TenOps can estimate material lead times using saved Sample or issued Blend authority, reviewed mappings, and documented manual estimates. However, it does not automatically predict lead times from a Blend Sheet or guarantee a Production date. The current system does not support an employee-facing assessment workflow or automatic updates to stock, reservations, or orders. You may need to consult Product for further details on the assessment process.",
+          "guardedModeAtCapture": "ai",
+          "originalError": null,
+          "providerBindingMs": 1401,
+          "tokenDerivedNeurons": 6.991,
+          "review": "Correct source/manual-estimate/no-forecast/no-date/no-mutation content; broad no employee-facing workflow wording should remain scoped to current Bid editor and unverified workflow beyond it."
+        }
+      ],
+      "evidence": [
+        "qwen3.json",
+        "qwen3-infrastructure-correction.json",
+        "qwen3-completion.json"
+      ]
+    }
+  ],
+  "measurementNotes": [
+    "Neurons in per-model totals are token-rate estimates from actual binding input/output token telemetry, not direct per-request Cloudflare neuron billing.",
+    "Account GraphQL telemetry is separate and can lag. Each raw stage preserves the verified checkedAt/cache anchor.",
+    "Original four pre-AI verification failures were retained and charged; only explicitly authorized infrastructure corrections were made. No model-quality or guard rejection was retried.",
+    "Own-conversation followups use each model actual prior answer, including the corrected Qwen group answer.",
+    "A single cohort of nine turns per model does not establish statistical reliability."
+  ]
+}

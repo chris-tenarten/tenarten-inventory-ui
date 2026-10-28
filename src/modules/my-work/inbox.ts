@@ -35,6 +35,13 @@ type InboxMessageRow = {
 };
 
 export type ConversationSummary={groupId?:string;creatorUserId?:string;memberIds?:string[];userId:string;name:string;role:string;unread:number;latest:{id:string;createdAt:string;body:string}};
+// Presentation only: the existing virtual system peer remains separate from
+// employee accounts, group membership and protected release-delivery records.
+export function tenbotConversations(rows:ConversationSummary[],available:boolean):ConversationSummary[]{
+  const conversations=rows.map(row=>isTenOpsSystemInboxUser(row.userId)?{...row,name:"TenBot",role:"TenOps guidance"}:row);
+  if(available&&!rows.some(row=>isTenOpsSystemInboxUser(row.userId)))conversations.unshift({userId:TENOPS_SYSTEM_INBOX_USER_ID,name:"TenBot",role:"TenOps guidance",unread:0,latest:{id:"",createdAt:"",body:"Ask about TenOps workflows"}});
+  return conversations;
+}
 export async function loadConversationSummaries():Promise<ConversationSummary[]>{
   const {data,error}=await supabase.rpc("list_my_work_conversations_v12");if(error)throw error;return data??[];
 }
