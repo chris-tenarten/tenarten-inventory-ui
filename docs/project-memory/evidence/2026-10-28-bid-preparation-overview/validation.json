@@ -1,0 +1,93 @@
+{
+  "date": "2026-10-28",
+  "status": "implemented locally; pending Product acceptance",
+  "riskTier": 2,
+  "testingLevel": 2,
+  "base": {
+    "branch": "dev",
+    "localSha": "72841ee43b80fb8c0a9d5f5a1361642c8b80e513",
+    "remoteMainAndDev": "4941d0fd537b4cee3f9419a85b10b7f9fe6dfedb",
+    "note": "Selective TenBot release retained the local development history; pre-existing runtime-source difference is shell whitespace only."
+  },
+  "sourceSha256": {
+    "src/modules/pre-production/BidTools.tsx": "ca5f996caf81cd35dce295c0678dcee7c5b72a28014c46fa775c3f59e3899c04",
+    "src/modules/pre-production/BidWorkspace.tsx": "8d167425d5a8a03b78e968380284ff333ceef0af1a6c680bc309102b14ba15ad",
+    "scripts/verify-intake-materials-browser.mjs": "b0dae53b0272a5cc5acd5e046cf9317e5fe7ad7ba4d994e2cd2f969640166aaa",
+    "scripts/support/bid-preparation-browser.mjs": "495788d3bc6d359059f3347918a5252af83fb0dbb937ccf289c38decb6fc7255"
+  },
+  "validation": [
+    {
+      "command": "node scripts/verify-intake-materials-browser.mjs --bid-preparation",
+      "result": "passed eight focused browser groups; see browser details"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "result": "passed after optimized export completed"
+    },
+    {
+      "command": "npx eslint src/modules/pre-production/BidTools.tsx src/modules/pre-production/BidWorkspace.tsx",
+      "result": "passed"
+    },
+    {
+      "command": "npx eslint scripts/verify-intake-materials-browser.mjs scripts/support/bid-preparation-browser.mjs",
+      "result": "passed"
+    },
+    {
+      "command": "node --check scripts/verify-intake-materials-browser.mjs; node --check scripts/support/bid-preparation-browser.mjs",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "command": "NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000 NEXT_PUBLIC_SUPABASE_ANON_KEY=local-review-public-key NEXT_PUBLIC_RBAC_MODE=enforced RBAC_ENFORCED=true NEXT_PUBLIC_DEV_BRANDING=false npm run build -- --webpack",
+      "result": "passed optimized Production export; local backend configuration only"
+    },
+    {
+      "check": "Independent scoped source/diff/evidence review and desktop/mobile visual review",
+      "result": "passed; no blocking findings"
+    }
+  ],
+  "browser": {
+    "passed": true,
+    "origin": "http://localhost:3000",
+    "profileVerification": "Browser capability simulations over disposable local Admin fixture; no hosted or SQL actor certification",
+    "preparationBid": "f935656f-efb9-49d9-bdc6-bb1189985bba",
+    "conversionBid": "d3f6cae9-c0b9-498c-8e6d-b392a448adda",
+    "proposalId": "0380be04-5155-4d6c-9fb0-455e84827277",
+    "sampleId": "ea55050c-4bca-4fe1-8f5c-be7b8931daf3",
+    "jobId": "9ebdded6-0d7f-44ac-9a79-df0520e5f7ae",
+    "checks": [
+      "Desktop Overview placement, four unchanged Bid URLs, no Tools tab, keyboard focus and tab return",
+      "Both related actions open the established Bid-filtered libraries",
+      "Canonical Proposal creation/save retains Bid relationship, customer/project and no Production Job",
+      "Canonical Sample UI creation/save propagates context; reused local formulation generates an actual new Sample Work Order PDF",
+      "Created records appear in Inspector and both libraries; preparation creates no pseudo Job",
+      "Admin/Guest, denied Proposal and read-only visibility; failed Proposal RPC closes access and Overview reopen recovers (UI profile simulations, no hosted/RLS claim)",
+      "390px mobile single-column actions, 44px minimum targets, no horizontal overflow and Overview return",
+      "Active/Won/deposit/saved-edit guards unchanged; document-free unscheduled conversion creates one canonical unnumbered Job and reload preserves association; original Bid untouched"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  "screenshots": [
+    "desktop.png",
+    "mobile.png"
+  ],
+  "fixture": {
+    "origin": "http://localhost:3000",
+    "pid": 77605,
+    "container": "tenops-intake-review-77605",
+    "rawArtifacts": "/private/tmp/tenops-intake-materials-review/bid-preparation-20261028",
+    "disposition": "existing server retained for Product review; fresh preparation and conversion Bids are synthetic; original review Bid unchanged"
+  },
+  "reviewUrl": "http://localhost:3000/pre-production?bid=f935656f-efb9-49d9-bdc6-bb1189985bba",
+  "limits": [
+    "Capability profiles are browser simulations over the existing disposable Admin fixture, not hosted/RLS actor certification.",
+    "Physical iPhone review remains manual.",
+    "Failed startup-wait/native-selector/assertion checkpoints are retained in raw artifacts; final focused run passed with no application correction.",
+    "Release-pinned TenBot Tools breadcrumbs remain unchanged until a separately authorized UX release/knowledge refresh."
+  ],
+  "authorizationBoundary": "Local dev commit only. No schema/API/migration, hosted mutation, push or deployment."
+}
