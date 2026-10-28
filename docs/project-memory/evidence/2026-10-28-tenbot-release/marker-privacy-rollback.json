@@ -1,0 +1,28 @@
+{
+  "adminCapabilityConfirmed": true,
+  "adminCrossOwnerDenied": true,
+  "authenticatedOwnerPositive": true,
+  "checkCount": 5,
+  "checks": [
+    "verified authenticated owner loads only exact synthetic live marker; direct table reads and append denied",
+    "verified current operational caller cannot load, Clear or directly read separate Admin synthetic marker history",
+    "separate existing Admin retains exact own marker; cannot load, Clear or directly read verified caller history",
+    "service cannot read/Clear history and rejects wrong-owner/stale append; retained synthetic content remains marker-only",
+    "each authenticated owner clears only own synthetic exchange; all transaction work rolls back without identity sequence use"
+  ],
+  "directHistoryReadsDenied": true,
+  "existingPrivateHistoryRead": false,
+  "foreignOwnerDenied": true,
+  "identitiesReturned": false,
+  "passed": true,
+  "privateBusinessOrMessagingReads": false,
+  "roleSimulation": true,
+  "rollbackOnly": true,
+  "schemaFunctionGrantChanges": false,
+  "sequenceUsed": false,
+  "syntheticMarkerOnly": true,
+  "twoHttpAccounts": false,
+  "sha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "checkedAt": "2026-10-28T16:21:23.001Z",
+  "sqlSha256": "1aef11d0448e9bf42b4912a0c7537c6295627862af91840e767acfe0be4c2f89"
+}

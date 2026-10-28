@@ -1,0 +1,52 @@
+{
+  "passed": false,
+  "checkedAt": "2026-10-28T16:24:24.024Z",
+  "sha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "phase": "disabled",
+  "target": "tendev",
+  "origin": "https://tendev.pages.dev",
+  "checks": [
+    "existing HTTP Auth",
+    "requesting caller operational capability",
+    "missingJWT denied",
+    "invalidJWT denied",
+    "unlistedOrigin denied",
+    "callerreplayedhistory denied",
+    "unowned followup denied before facts",
+    "new synthetic owner conversation",
+    "ask200 no-store",
+    "read-only history guidance",
+    "synthetic owner clear",
+    "new synthetic owner conversation",
+    "ask200 no-store",
+    "synthetic owner clear"
+  ],
+  "answers": [
+    {
+      "question": "How do I inspect old stock movements without recording a new movement?",
+      "mode": "guide",
+      "tool": null,
+      "complete": null,
+      "fallback": false,
+      "elapsedMs": 12158,
+      "sourceIds": [
+        "inventory-activity"
+      ],
+      "publicWorkflowAnswer": "Here is guidance from the TenOps Guide."
+    },
+    {
+      "question": "Specific caller-visible Job status",
+      "mode": "operational",
+      "tool": "find_jobs",
+      "complete": false,
+      "fallback": false,
+      "elapsedMs": 6236,
+      "sourceIds": []
+    }
+  ],
+  "syntheticConversationsCleared": true,
+  "ordinaryMessagesOrTasksRead": false,
+  "businessWrites": 0,
+  "identitiesOrCredentialsEmitted": false,
+  "error": "specificJob deterministic authorized evidence"
+}

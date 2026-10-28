@@ -1,0 +1,74 @@
+{
+  "passed": false,
+  "checkedAt": "2026-10-28T16:31:11.402Z",
+  "sha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "phase": "enabled",
+  "target": "tendev",
+  "origin": "https://tendev.pages.dev",
+  "checks": [
+    "existing HTTP Auth",
+    "requesting caller operational capability",
+    "new synthetic owner conversation",
+    "ask200 no-store",
+    "realQwen or verified workflow fallback",
+    "group procedure grounded",
+    "synthetic owner clear",
+    "new synthetic owner conversation",
+    "ask200 no-store",
+    "specificJob real hosted path",
+    "live turns retain only server lookup markers",
+    "ask200 no-store",
+    "qualified readiness or safe fact fallback",
+    "live turns retain only server lookup markers",
+    "ask200 no-store",
+    "real labor followup",
+    "synthetic owner clear"
+  ],
+  "answers": [
+    {
+      "question": "How do I create a group conversation in Messaging?",
+      "mode": "ai",
+      "tool": null,
+      "complete": null,
+      "fallback": false,
+      "elapsedMs": 7470,
+      "sourceIds": [
+        "group",
+        "knowledge-messaging"
+      ],
+      "publicWorkflowAnswer": "To create a group conversation in Messaging: 1. Open Messaging from the app header. 2. Choose New group. 3. Enter a group name. 4. Select at least one other participant. 5. Choose Create group. Only the creator can rename the group or add/remove participants. Current members share the full history; removed members lose access. Previously signed attachment links may remain usable for up to ten minutes."
+    },
+    {
+      "question": "Specific caller-visible Job status",
+      "mode": "operational",
+      "tool": "get_job_summary",
+      "complete": true,
+      "fallback": true,
+      "elapsedMs": 4488,
+      "sourceIds": []
+    },
+    {
+      "question": "Is that Job ready to start?",
+      "mode": "operational-ai",
+      "tool": "get_job_summary",
+      "complete": true,
+      "fallback": false,
+      "elapsedMs": 2819,
+      "sourceIds": []
+    },
+    {
+      "question": "How many recorded labor hours does that Job have?",
+      "mode": "operational-ai",
+      "tool": "get_job_labor_summary",
+      "complete": true,
+      "fallback": false,
+      "elapsedMs": 2758,
+      "sourceIds": []
+    }
+  ],
+  "syntheticConversationsCleared": true,
+  "ordinaryMessagesOrTasksRead": false,
+  "businessWrites": 0,
+  "identitiesOrCredentialsEmitted": false,
+  "error": "live turns retain only server lookup markers"
+}

@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-10-28T16:26:19.591Z",
+  "inferenceCalls": 0,
+  "syntheticHistoryCleared": true,
+  "results": [
+    {
+      "label": "canonical-uuid",
+      "status": 200,
+      "elapsedMs": 2708,
+      "region": "us-east-2",
+      "mode": "operational",
+      "tool": "get_job_summary",
+      "complete": true,
+      "notices": [
+        "Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers."
+      ]
+    },
+    {
+      "label": "exact-number",
+      "status": 200,
+      "elapsedMs": 1855,
+      "region": "us-east-2",
+      "mode": "operational",
+      "tool": "get_job_summary",
+      "complete": true,
+      "notices": [
+        "Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers."
+      ]
+    }
+  ]
+}

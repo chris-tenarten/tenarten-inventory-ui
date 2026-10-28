@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-28T16:17:54.688Z",
+  "passed": true,
+  "releaseSha": "c3f39e5e1b1c8de0800c0c342f4fad6f91c7194d",
+  "securityAndLedgerVerified": true,
+  "versions": [
+    "20261027120000",
+    "20261027130000",
+    "20261027140000",
+    "20261027150000"
+  ],
+  "originalReadOnlySqlHash": "9f3986da056f0c5aceb4067b61c6d6dba0667281e313c45b6843a2f7b772ca42",
+  "adaptedReadOnlySqlHash": "fc9752b861613fa08535c53958cbfab53c76ca69e4f4e5d30818036ce6139fd8",
+  "onlyObsoleteInitialEmptyTableCheckRemoved": true,
+  "newMigrations": [],
+  "appliedMigrations": 0,
+  "existingDataNotReadOrCleared": true,
+  "receiptNote": "Initial-install empty-table expectation was removed only; existing populated tables were preserved. Prior read-only probe aborted without changes."
+}

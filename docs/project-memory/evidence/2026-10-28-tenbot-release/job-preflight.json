@@ -1,0 +1,213 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-28T16:12:22.834Z",
+  "fiveToolsCallerJwt": true,
+  "anonymousFactsDenied": true,
+  "toolChecks": [
+    {
+      "tool": "find_jobs",
+      "status": "ok",
+      "complete": true,
+      "elapsedMs": 1759
+    },
+    {
+      "tool": "get_job_summary",
+      "status": "ok",
+      "complete": true,
+      "elapsedMs": 1822
+    },
+    {
+      "tool": "get_job_planning",
+      "status": "ok",
+      "complete": true,
+      "elapsedMs": 699
+    },
+    {
+      "tool": "get_job_labor_summary",
+      "status": "ok",
+      "complete": true,
+      "elapsedMs": 944
+    },
+    {
+      "tool": "get_production_overview",
+      "status": "ok",
+      "complete": true,
+      "elapsedMs": 778
+    }
+  ],
+  "plans": [
+    {
+      "label": "exact-uuid",
+      "executionMs": 0.078,
+      "planningMs": 0.839,
+      "nodes": [
+        {
+          "node": "Index Only Scan",
+          "relation": "jobs",
+          "index": "jobs_pkey",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1
+        }
+      ]
+    },
+    {
+      "label": "exact-name-number",
+      "executionMs": 5.383,
+      "planningMs": 2.028,
+      "nodes": [
+        {
+          "node": "Limit",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        },
+        {
+          "node": "Sort",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        },
+        {
+          "node": "Seq Scan",
+          "relation": "jobs",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        }
+      ]
+    },
+    {
+      "label": "substring-search",
+      "executionMs": 2.352,
+      "planningMs": 0.698,
+      "nodes": [
+        {
+          "node": "Limit",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        },
+        {
+          "node": "Sort",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        },
+        {
+          "node": "Seq Scan",
+          "relation": "jobs",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        }
+      ]
+    },
+    {
+      "label": "overview",
+      "executionMs": 1.27,
+      "planningMs": 0.655,
+      "nodes": [
+        {
+          "node": "Limit",
+          "estimatedRows": 42,
+          "actualRows": 45,
+          "loops": 1
+        },
+        {
+          "node": "Sort",
+          "estimatedRows": 42,
+          "actualRows": 45,
+          "loops": 1
+        },
+        {
+          "node": "Seq Scan",
+          "relation": "jobs",
+          "estimatedRows": 42,
+          "actualRows": 45,
+          "loops": 1
+        }
+      ]
+    },
+    {
+      "label": "active-rework",
+      "executionMs": 0.073,
+      "planningMs": 0.753,
+      "nodes": [
+        {
+          "node": "Limit",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        },
+        {
+          "node": "Sort",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        },
+        {
+          "node": "Seq Scan",
+          "relation": "production_rework_cycles",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        }
+      ]
+    },
+    {
+      "label": "bounded-labor",
+      "executionMs": 0.812,
+      "planningMs": 10.371,
+      "nodes": [
+        {
+          "node": "Limit",
+          "estimatedRows": 2,
+          "actualRows": 0,
+          "loops": 1
+        },
+        {
+          "node": "Sort",
+          "estimatedRows": 2,
+          "actualRows": 0,
+          "loops": 1
+        },
+        {
+          "node": "Index Scan",
+          "relation": "manpower_entries",
+          "index": "manpower_entries_job_date_idx",
+          "estimatedRows": 2,
+          "actualRows": 0,
+          "loops": 1
+        }
+      ]
+    },
+    {
+      "label": "unresolved-update-count",
+      "executionMs": 1.232,
+      "planningMs": 11.197,
+      "nodes": [
+        {
+          "node": "Aggregate",
+          "estimatedRows": 1,
+          "actualRows": 1,
+          "loops": 1
+        },
+        {
+          "node": "Seq Scan",
+          "relation": "job_updates",
+          "estimatedRows": 1,
+          "actualRows": 0,
+          "loops": 1
+        }
+      ]
+    }
+  ],
+  "privateDataReturnedToConsole": false,
+  "providerCalls": 0,
+  "recordWrites": 0,
+  "limits": [
+    "Actual HTTP caller JWT tool preflight, plus authenticated-role SQL plans; not an Edge deployment result.",
+    "One existing visible Job chosen; identifiers/full facts retained privately only."
+  ]
+}
