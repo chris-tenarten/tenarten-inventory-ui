@@ -1540,7 +1540,16 @@ export function matchGuides(question:string){
  const explicitModules=moduleNames.filter(([module,pattern])=>pattern.test(query)&&!(module==='intake'&&stockIntake)).map(([module])=>module);
  const moduleWords=new Set(moduleNames.flatMap(([,pattern])=>query.match(pattern)?.[0].match(/[a-z]+/g)||[]));
  const words=[...new Set(query.match(/[a-z]+/g)||[])].filter(w=>w.length>1&&!stop.has(w));
- return registry.filter(e=>explicitModules.every(module=>e.modules.includes(module)))
+ // A transfer question can also ask about its Proposal/Sample relationships.
+ // Those clauses must not exclude the authoritative Bid handoff procedure.
+ // Keep this explicit intent narrow; unrelated shared module words still use
+ // the strict intersection below, including unsupported-action protection.
+ const bidToProduction=/\bbids?\b/.test(query)&&(
+  /\b(?:get|move|put|bring|take|convert|hand off)\s+(?:it|that|this|(?:(?:a|the|my|our|this|that|won|existing)\s+)*bids?)\s+(?:into|to)\s+(?:(?:a|the)\s+)?production\b/.test(query)
+  ||/\bbid\s+(?:conversion|handoff)\s+(?:into|to)\s+(?:the\s+)?production\b/.test(query));
+ const procedure=bidToProduction?registry.filter(e=>e.id==='workflow-intake-convert'
+  &&words.filter(word=>specificActions.has(word)).every(word=>e.terms.split(' ').includes(word))):[];
+ const strict=registry.filter(e=>explicitModules.every(module=>e.modules.includes(module)))
   // Each required group needs one exact token: editing words and field names
   // alone must not turn unrelated Job/account questions into Contacts advice.
   .filter(e=>!e.requiredTerms||e.requiredTerms.every(group=>group.some(word=>words.includes(word))))
@@ -1550,6 +1559,7 @@ export function matchGuides(question:string){
   .filter(({matches})=>matches.some(word=>!genericRecordWords.has(word)&&!moduleWords.has(word)))
   .map(item=>({...item,score:item.matches.reduce((score,word)=>score+(genericRecordWords.has(word)||moduleWords.has(word)?0:genericActionWords.has(word)?1:3),0)}))
   .sort((a,b)=>b.score-a.score).map(x=>x.e);
+ return [...new Map([...procedure,...strict].map(entry=>[entry.id,entry])).values()];
 }
 export function retrieve(question:string,permissions:Set<string>){return matchGuides(question).filter(entry=>hasGuidePermission(entry,permissions)).slice(0,3);}
 
@@ -1618,11 +1628,14 @@ export function conversationGuides(question:string,context:string[]=[]):Capabili
    .filter(item=>item.score>=3).sort((a,b)=>b.score-a.score).map(item=>item.entry);
  };
  const current=dependent?matchGuides(question):conversationMatches(question);
+ // Conversion starts with saving the existing Bid. Reuse its verified edit
+ // procedure rather than infer a Save control from broad interface labels.
+ const prerequisites=current[0]?.id==='workflow-intake-convert'?registry.filter(entry=>entry.id==='workflow-intake-bid'):[];
  const broad=generated(question).filter(entry=>!current.length||current.some(workflow=>dependent
   ?workflow.modules.every(module=>entry.modules.includes(module))
   :workflow.modules.some(module=>entry.modules.includes(module))));
  const fallback=current.length?[]:related(question);
  // Exact workflows come first when known; broader release-pinned sources add
  // facts for intent interpretation and synthesis without changing direct search.
- return [...new Map([...current,...broad.slice(0,current.length?2:3),...fallback].map(entry=>[entry.id,entry])).values()].slice(0,4);
+ return [...new Map([...current,...prerequisites,...broad.slice(0,current.length?(prerequisites.length?1:2):3),...fallback].map(entry=>[entry.id,entry])).values()].slice(0,4);
 }

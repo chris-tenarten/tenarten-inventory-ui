@@ -32,6 +32,91 @@ const manpowerQuestion='how do i filter by jobs in manpower reporting';
 const reworkQuestion='how do i initiate a rework for a job?';
 const customerEditQuestion='how do i edit a saved customers details';
 const entry=(id:string)=>{const found=registry.find(candidate=>candidate.id===id);assert(found,id);return found;};
+if(process.argv.includes('--workflow-fidelity-only')){
+ const question='we just won a bid for a terrazzo job. how do i get it into production, and what happens to the proposal and sample records?';
+ const conversion=entry('workflow-intake-convert');
+ const prose='Open Intake, select the Bid, and go to Overview. Save Won status and Deposit Received Date with Save Bid, then finish pending edits and file cleanup. In Projected Production Window, choose Convert to Production. Choose Plan in Production Later to leave it unscheduled, or Carry Forward / Set New Dates if you have scheduling permission. Choose Confirm conversion, then Open Production Job. This creates or returns one canonical Job. The Bid and linked Proposals and Samples remain preserved; issued documents are not rewritten or automatically moved onto the Job.';
+ const variants=[question,'How do I get a won Bid into Production?','How do I move the Bid to Production and retain the Proposal and Sample records?','How do I convert a Won Bid to Production?'];
+ for(const text of variants){
+  assert.equal(resolveInput({question:text}).directEntries[0]?.id,conversion.id,text);
+  assert.equal(conversationGuides(text)[0]?.id,conversion.id,text);
+  const direct=await answer({question:text},all,null,reserve);
+  assert.equal(direct.mode,'guide');assert.equal(direct.sources[0]?.id,conversion.id);
+  assert(direct.sources.some(source=>source.id==='workflow-intake-bid'));
+  assert(direct.sources.some(source=>source.id==='knowledge-intake'));
+ }
+ const output=await answer({question},all,fixture({ids:[conversion.id,'knowledge-intake'],answer:prose},input=>{
+  assert.equal(input.excerpts[0].id,conversion.id);
+  assert(input.excerpts[0].guidance.includes(conversion.path),'Provider needs the verified entry point, not just source text');
+  assert(input.excerpts.some(source=>source.id==='workflow-intake-bid'&&/Save Bid/.test(source.guidance)),'Include the existing prerequisite save procedure');
+  assert(input.excerpts.some(source=>source.id==='knowledge-intake'&&/Proposals|Samples/i.test(source.guidance)));
+ }),reserve);
+ assert.equal(output.mode,'ai');assert.equal(output.message,prose);
+ for(const bad of [
+  {ids:['knowledge-intake'],answer:'Create a Production Job and keep the Proposal and Sample records linked to the Bid.'},
+  {ids:[conversion.id],answer:'Create a Production Job and keep the Proposal and Sample records linked to the Bid.'},
+  {ids:[conversion.id],answer:prose.replace('Deposit Received Date','the project name')},
+  {ids:[conversion.id],answer:prose.replace('Save Bid','the Save button')},
+  {ids:[conversion.id],answer:prose+' The Proposal and Sample records are no longer managed in Intake.'},
+ ])await assert.rejects(answer({question},all,fixture(bad),reserve),/could not verify/i);
+ assert.equal((await answer({question},all,fixture({ids:[conversion.id],answer:prose.replace('Save Bid','save the Bid').replace('Confirm conversion','Confirm the conversion').replace('Open Production Job','Open the Production Job')}),reserve)).mode,'ai');
+ for(const permission of conversion.additionalPermissions||[]){
+  const allowed=new Set([...all].filter(item=>item!==permission));
+  const direct=await answer({question},allowed,null,reserve);
+  assert.equal(direct.resolution,'permission-denied',permission);
+  assert(!direct.sources.some(source=>source.id===conversion.id));
+  await answer({question},allowed,fixture({ids:[],answer:'Your account does not have permission to convert the Bid. Ask an administrator to review your access.'},input=>{
+   const source=input.excerpts.find(source=>source.id===conversion.id);assert(source);
+   assert.match(source.guidance,/permission denied/);assert(!source.guidance.includes(conversion.path));
+   assert.doesNotMatch(source.guidance,/Deposit Received Date|Confirm conversion/);
+  }),reserve);
+ }
+ const history=[`Conversation context:\nEmployee: ${question}\nTenBot: ${prose}`];
+ assert.equal(resolveInput({question:'Can I leave it unscheduled?'},history).directEntries[0]?.id,conversion.id);
+ for(const text of ['Can I convert a Bid to Production without a deposit?','How do I get a Bid into Production without a deposit?','How can I tell whether my Bid is eligible for Production conversion?']){
+  const eligibility=await answer({question:text},all,fixture({ids:[conversion.id],answer:'No. Conversion requires Won status and a recorded Deposit Received Date.'}),reserve);
+  assert.equal(eligibility.mode,'ai','Prerequisite questions must not be forced into a full procedure');
+ }
+ for(const text of ['How do I convert Sample quantities to a Production Batch for a Bid?','How do I convert a Proposal to PDF for a Bid in Production?']){
+  assert.notEqual(resolveInput({question:text}).directEntries[0]?.id,conversion.id,text);
+ }
+ const withoutSchedule=new Set([...all].filter(permission=>permission!=='scheduleProduction'));
+ assert(hasGuidePermission(conversion,withoutSchedule));
+ for(const text of ['How do I export a Bid to Production?','How do I automate Bid conversion to Production?'])assert(!retrieve(text,all).some(source=>source.id===conversion.id),text);
+ for(const [text,id] of [[manpowerQuestion,'manpower-job-filter'],[reworkQuestion,'production-rework-create'],[customerEditQuestion,'customer-edit']] as const){
+  assert.equal(resolveInput({question:text}).directEntries[0]?.id,id);
+ }
+ assert.equal(entry('share-job').status,'unknown');
+ assert(!conversationGuides('How do I attach a Sample to a Bid?').some(source=>source.id===conversion.id));
+ for(const failure of ['quota','provider','procedure'] as const){
+  const calls:string[]=[];let inferenceCalls=0;
+  const caller=async(name:string)=>{
+   calls.push(name);
+   return {data:name==='tenbot_load_conversation'?{ok:true,id:'00000000-0000-4000-8000-000000000777',ownerId:admin,version:0,turns:[]}:true,error:null};
+  };
+  const service=async(name:string,args?:Record<string,unknown>)=>{
+   calls.push(name);
+   if(name==='tenbot_reserve_usage'&&failure==='quota')return {data:null,error:{message:'Fixture shared quota reached'}};
+   if(name==='tenbot_finish_usage')assert.equal(args?.p_outcome,'failed');
+   return {data:name==='tenbot_reserve_usage'?'fixture-reservation':true,error:null};
+  };
+  const provider:InferenceProvider={name:'focused fixture',reserveEstimate:()=>({model:'@cf/qwen/qwen3-30b-a3b-fp8',neurons:250}),infer:async()=>{
+   inferenceCalls++;if(failure==='provider')throw Error('Fixture provider unavailable');
+   return {ids:[conversion.id],answer:'Create a Production Job and retain the source Bid.'};
+  }};
+  const result=await actualHandleTenbot({action:'ask',question},admin,caller,service,provider);
+  assert('mode' in result&&'sources' in result);
+  assert.equal(result.mode,'guide');assert.equal('fallback' in result&&result.fallback,true);
+  assert.equal(result.sources[0]?.id,conversion.id);
+  assert.equal(calls.filter(name=>name==='tenbot_load_conversation').length,1);
+  assert.equal(calls.filter(name=>name==='tenbot_append_conversation_turn').length,1);
+  assert.equal(calls.filter(name=>name==='tenbot_reserve_usage').length,1);
+  assert.equal(inferenceCalls,failure==='quota'?0:1);
+  assert(calls.every(name=>['has_app_capability','has_proposal_access','tenbot_load_conversation','tenbot_reserve_usage','tenbot_append_conversation_turn','tenbot_finish_usage'].includes(name)));
+ }
+ console.log('Workflow fidelity: exact/adjacent conversion retrieval, authoritative procedure, permission redaction, eligibility, fallback and module regressions passed (no database/model calls).');
+ process.exit(0);
+}
 for(const action of ['delete','remove','export','import','predict','forecast','automate','sync','train','invite','approve']){
  assert.match(projectConversation(`How do I ${action} a group conversation?`,[]).question,new RegExp(`\\b${action}\\b`),'Unsupported action intent must survive privacy filtering');
 }
