@@ -23,3 +23,20 @@ export function progressiveResponse(url,tables,cap=137){
  }
  return wave2Response(url,copy,cap);
 }
+
+// Same capped, complete-group fixture, with retrieval priority deliberately unlike
+// reporting-date order and recent edits on an older report and its linked Job.
+export function manpowerDefaultViewFixture() {
+ const tables=progressiveManpowerFixture(),groups=tables.manpower_reporting_groups;
+ groups[0].display_name='07/01/2026 Recently edited older report';
+ groups[0].updated_at='2026-10-29T12:00:00Z';
+ groups[8].display_name='10/28/2026 Historical batch entered later';
+ groups[8].updated_at='2026-08-01T12:00:00Z';
+ groups[1009].display_name='Undated earlier batch';groups[1009].created_at='2026-10-25T12:00:00Z';
+ groups[1010].display_name='Undated newer batch';groups[1010].created_at='2026-10-27T12:00:00Z';
+ groups[1011].display_name='02/31/2026 Invalid date';
+ for(const row of tables.manpower_entries)if(row.reporting_group_id===groups[0].id)row.updated_at='2026-10-29T12:00:00Z';
+ tables.manpower_entries[0].work_date='2026-10-13';tables.manpower_entries[1].work_date='2026-10-15';
+ tables.jobs[0].updated_at='2026-10-29T12:00:00Z';
+ return tables;
+}

@@ -6,7 +6,7 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {wave2Tables,uuid,stamp} from './support/wave2-fixture.mjs';
 import {session as wave4Session} from './support/wave4-fixture.mjs';
-import {progressiveManpowerFixture as wave4Fixture,progressiveResponse as wave2Response} from './support/manpower-progressive-fixture.mjs';
+import {progressiveManpowerFixture as wave4Fixture,manpowerDefaultViewFixture,progressiveResponse as wave2Response} from './support/manpower-progressive-fixture.mjs';
 import {blendFixtures} from './support/production-blend-fixtures.mts';
 import {renderSampleWorkOrder} from '../supabase/functions/generate-sample-pdf/index.ts';
 import {emptyProposalEstimateInputs,proposalEstimateDefaultAssumptions} from '../src/modules/proposals/estimate-defaults';
@@ -23,7 +23,7 @@ const snake=k=>k.replace(/[A-Z]/g,c=>'_'+c.toLowerCase()),camel=k=>k.replace(/_(
 const toRow=s=>({...Object.fromEntries(Object.entries(s).map(([k,v])=>[snake(k),v])),formulation_state:s.formulation,blend_rows:s.blendRows.map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[snake(k),v]))),working_versions:[],issued_documents:[]});
 const working=row=>({...Object.fromEntries(Object.entries(row).map(([k,v])=>[camel(k),v])),formulation:row.formulation_state,blendRows:row.blend_rows.map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[camel(k),v])))});
 function reset(){
- const w2=wave2Tables(),w4=wave4Fixture();tables={...w2,...w4,...Object.fromEntries(['proposals','proposal_lines','proposal_estimates','purchase_orders','purchase_order_lines','purchase_order_issuances','vendor_catalog','vendor_catalog_v2','vendors','vendor_contacts','job_updates','job_attachments','material_usage_reports','material_usage_lines','bid_proposal_relationships'].map(k=>[k,w2[k]])),jobs:[...w2.jobs,...w4.jobs]};
+ const w2=wave2Tables(),w4=process.env.MANPOWER_DEFAULT_VIEW_REVIEW==='true'?manpowerDefaultViewFixture():wave4Fixture();tables={...w2,...w4,...Object.fromEntries(['proposals','proposal_lines','proposal_estimates','purchase_orders','purchase_order_lines','purchase_order_issuances','vendor_catalog','vendor_catalog_v2','vendors','vendor_contacts','job_updates','job_attachments','material_usage_reports','material_usage_lines','bid_proposal_relationships'].map(k=>[k,w2[k]])),jobs:[...w2.jobs,...w4.jobs]};
  snapshot.jobId=w4.jobs[0].id;snapshot.jobNumber=w4.jobs[0].job_number;samples=[toRow(snapshot)];
  const p=snapshot.formulation.profile;tables.sample_operational_profiles=[{id:uuid(710030),revision:1,name:'Local captured Resin System',sort_order:1,is_active:true,chip_density:Number(p.defaultChipDensityLbCft),dry_pool_rate:Number(p.dryPoolOzPerCft),filler_rate:Number(p.defaultFillerOzPerCft),resin_rate:Number(p.resinFlOzPerCft),resin_parts:Number(p.resinParts),hardener_parts:Number(p.hardenerParts),batch_contract:p.batchContract,batch_chip_target_lb:Number(p.batchChipTargetLb),batch_reference_thickness_in:Number(p.batchReferenceThicknessIn),description:'Existing synthetic captured formulation'}];
  messages=peers.map((p,i)=>({id:uuid(910000+i),sender_user_id:p.user_id,sender_name:p.display_name,recipient_user_id:owner,recipient_name:'Integrated Review',body:'Synthetic integrated conversation '+i,created_at:stamp,read_at:null,attachments:[]}));
@@ -40,7 +40,7 @@ const server=createServer(async(req,res)=>{
   if(req.headers.host!==`localhost:${port}`||(req.headers.origin&&req.headers.origin!==origin))return send(403,{message:'Local origin only'});
   const url=new URL(req.url,origin),name=url.pathname.split('/').at(-1);let raw='';for await(const part of req){raw+=part;if(raw.length>4*1024*1024)return send(413,{});}const body=raw?JSON.parse(raw):{};
   if(url.pathname==='/__review/state')return send(200,{mode:hosted?'hosted-read-only':'synthetic',calls,control,hostedBusinessWrites:0});
-  if(!hosted&&url.pathname==='/__review/control'){if(body.reset)reset();control=body;return send(200,true);}
+  if(!hosted&&url.pathname==='/__review/control'){if(body.reset)reset();if(body.defaultViewFixture)Object.assign(tables,manpowerDefaultViewFixture());control=body;return send(200,true);}
   if(/^\/(auth|rest|functions|storage|realtime)\//.test(url.pathname)){
    const call={name,method:req.method,path:url.pathname+url.search,started:Date.now()};calls.push(call);
    if(hosted){
@@ -104,7 +104,9 @@ const server=createServer(async(req,res)=>{
   if(!['GET','HEAD'].includes(req.method)||url.pathname.startsWith('/api/')||url.pathname.startsWith('/__'))return send(403,{message:'No unsupported operations'});
   const root=path.resolve(process.env.PERFORMANCE_REVIEW_EXPORT_ROOT||'out'),relative=decodeURIComponent(url.pathname).replace(/^\/+/, '')||'index';const file=[relative,relative+'.html',path.join(relative,'index.html')].map(p=>path.resolve(root,p)).find(p=>p.startsWith(root+path.sep)&&existsSync(p)&&statSync(p).isFile());if(!file)return send(404,{});
   let content=readFileSync(file);const ext=path.extname(file);if(ext==='.html'){
-   const inject=hosted?'<style>body::before{content:"HOSTED READ-ONLY REVIEW · Unsupported reads and all business writes are blocked";position:fixed;bottom:0;right:0;z-index:9999;background:#fef9c3;padding:6px;font:11px system-ui;pointer-events:none}</style>':`<script>if(!localStorage.getItem('sb-localhost-auth-token'))localStorage.setItem('sb-localhost-auth-token',${JSON.stringify(JSON.stringify(session()))});sessionStorage.setItem('tenops.welcomeHeroPlayed:${owner}','true');</script>`;
+   const populatedReview=!hosted&&url.pathname==='/manpower-reporting'&&url.searchParams.get('review')==='populated';
+   if(populatedReview){reset();control={historyDelay:60,delays:{manpower_entries:20}};}
+   const inject=hosted?'<style>body::before{content:"HOSTED READ-ONLY REVIEW · Unsupported reads and all business writes are blocked";position:fixed;bottom:0;right:0;z-index:9999;background:#fef9c3;padding:6px;font:11px system-ui;pointer-events:none}</style>':`<script>if(${populatedReview}||!localStorage.getItem('sb-localhost-auth-token'))localStorage.setItem('sb-localhost-auth-token',${JSON.stringify(JSON.stringify(session()))});sessionStorage.setItem('tenops.welcomeHeroPlayed:${owner}','true');</script>`;
    content=Buffer.from(content.toString().replace('</head>',inject+'</head>'));
   }
   res.writeHead(200,{...security,'content-type':({'.html':'text/html','.js':'application/javascript','.css':'text/css','.txt':'text/plain','.png':'image/png','.svg':'image/svg+xml','.woff2':'font/woff2'})[ext]||'application/octet-stream'});res.end(content);
