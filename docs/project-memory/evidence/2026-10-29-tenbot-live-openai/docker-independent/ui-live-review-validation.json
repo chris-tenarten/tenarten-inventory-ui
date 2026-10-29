@@ -1,0 +1,29 @@
+{
+  "status": "pass",
+  "date": "2026-10-29",
+  "command": "./node_modules/.bin/tsx scripts/verify-tenbot-live-review.mts",
+  "mode": "offline UI rendering and approval lifecycle only; no browser image-compression or model-quality claim",
+  "groups": 8,
+  "checks": [
+    "approval requires explicit confirmation of the current reviewed revision/hash",
+    "quantity, catalog identity, unit, Job, exclusion and metadata edits invalidate approval",
+    "editing does not mutate the server-owned draft or its hash",
+    "review UI exposes canonical catalog choices, positive quantity, units, Job and explicit approval",
+    "held lines and missing metadata remain visible and cannot be approved initially",
+    "successful simulation is explicitly distinguished from Production and on-hand inventory",
+    "unsafe formats and excessive originals fail before any browser image processing or upload",
+    "PDF intake refuses silent page truncation and bounds portrait/landscape rendering"
+  ],
+  "lint": {
+    "status": "pass",
+    "command": "./node_modules/.bin/eslint src/modules/tenbot/TenbotWorkspace.tsx src/modules/tenbot/ReceivalDraftReview.tsx src/modules/tenbot/live-review.ts scripts/verify-tenbot-live-review.mts"
+  },
+  "diffCheck": "pass for modified TenbotWorkspace.tsx; new files independently inspected",
+  "typecheck": "Latest full check pending root-owned concurrent benchmark helper completion; owned PDF code corrected for installed pdfjs6 DocumentInitParameters and rechecked.",
+  "pdfDelta": "Single-page PDF <=12MB uses existing bundled pdfjs legacy worker, bounded local canvas rendering and JPEG compression <=90KB/1024 pixels. No offline OCR or PDF text extraction. Actual browser/render/inference validation remains root-owned.",
+  "clearDelta": "Uploaded attachments are cleared through an owner-bound server action even before the first ask/conversation exists; local bytes/state clear only after success.",
+  "inferenceCalls": 0,
+  "databaseWrites": 0,
+  "dockerCalls": 0,
+  "serversStarted": 0
+}

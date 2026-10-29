@@ -1,0 +1,202 @@
+{
+  "passed": false,
+  "coreInferenceAndRenderedAnswerPassed": true,
+  "mode": "Real Terra through localhost Messaging; no database writes",
+  "actualAnswer": "Choose Save all changes. You\u2019ll still need to explicitly confirm the save; opening the confirmation does not save the dates. I won\u2019t save anything for you.",
+  "network": {
+    "receipts": [
+      {
+        "model": "gpt-6.1-terra",
+        "label": "localhost-agent",
+        "startedAt": "2026-10-29T18:28:43.340Z",
+        "reservedUsd": 0.02613375,
+        "transportTimings": [
+          {
+            "pacingWaitMs": 0,
+            "fetchToHeadersMs": 1634,
+            "metadataParseMs": 4
+          }
+        ],
+        "httpStatus": 200,
+        "requestId": "req_89f8edfde56d4fc094d4a31861414dd7",
+        "apiModel": "gpt-6.1-terra",
+        "apiStatus": "completed",
+        "serviceTier": "default",
+        "rawUsage": {
+          "input_tokens": 1162,
+          "input_tokens_details": {
+            "cache_write_tokens": 1159,
+            "cache_write_tokens_details": {
+              "ttl_12h_tokens": 0,
+              "ttl_30m_tokens": 1159
+            },
+            "cached_tokens": 0
+          },
+          "output_tokens": 25,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 1187
+        },
+        "accountedUsd": 0.00157675,
+        "costMeasured": true,
+        "durationMs": 1649,
+        "calls": [
+          {
+            "id": "call_WVKJ6cLc0S4Sk4t0r9RqGL27",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "search_workflow_knowledge"
+              ]
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 1162,
+          "cachedInputTokens": 0,
+          "outputTokens": 25,
+          "costUsd": 0.00157675,
+          "reservedUsd": 0.02613375
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "localhost-agent",
+        "startedAt": "2026-10-29T18:28:44.990Z",
+        "reservedUsd": 0.02977875,
+        "transportTimings": [
+          {
+            "pacingWaitMs": 851,
+            "fetchToHeadersMs": 1691,
+            "metadataParseMs": 2
+          }
+        ],
+        "httpStatus": 200,
+        "requestId": "req_42a383314bfe4765a2f6b0a4479ece70",
+        "apiModel": "gpt-6.1-terra",
+        "apiStatus": "completed",
+        "serviceTier": "default",
+        "rawUsage": {
+          "input_tokens": 1652,
+          "input_tokens_details": {
+            "cache_write_tokens": 1649,
+            "cache_write_tokens_details": {
+              "ttl_12h_tokens": 0,
+              "ttl_30m_tokens": 1649
+            },
+            "cached_tokens": 0
+          },
+          "output_tokens": 28,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 1680
+        },
+        "accountedUsd": 0.00220425,
+        "costMeasured": true,
+        "durationMs": 2547,
+        "calls": [
+          {
+            "id": "call_OOHqQ9WJJUkKIArAs2us5pnJ",
+            "name": "search_workflow_knowledge",
+            "arguments": {
+              "query": "Production Timeline Review changes proposed dates save confirmation"
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 1652,
+          "cachedInputTokens": 0,
+          "outputTokens": 28,
+          "costUsd": 0.00220425,
+          "reservedUsd": 0.02977875
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "localhost-agent",
+        "startedAt": "2026-10-29T18:28:47.544Z",
+        "reservedUsd": 0.0388725,
+        "transportTimings": [
+          {
+            "pacingWaitMs": 798,
+            "fetchToHeadersMs": 3077,
+            "metadataParseMs": 2
+          }
+        ],
+        "httpStatus": 200,
+        "requestId": "req_774d9637de214f00bfedf65972c547b6",
+        "apiModel": "gpt-6.1-terra",
+        "apiStatus": "completed",
+        "serviceTier": "default",
+        "rawUsage": {
+          "input_tokens": 2947,
+          "input_tokens_details": {
+            "cache_write_tokens": 1295,
+            "cache_write_tokens_details": {
+              "ttl_12h_tokens": 0,
+              "ttl_30m_tokens": 1295
+            },
+            "cached_tokens": 1649
+          },
+          "output_tokens": 93,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 3040
+        },
+        "accountedUsd": 0.0021692,
+        "costMeasured": true,
+        "durationMs": 3882,
+        "calls": [],
+        "final": {
+          "answer": "Choose Save all changes. You\u2019ll still need to explicitly confirm the save; opening the confirmation does not save the dates. I won\u2019t save anything for you.",
+          "observations": [],
+          "inferences": [],
+          "recommendations": [
+            {
+              "text": "Choose Save all changes, then explicitly confirm if you want to save the proposed dates.",
+              "evidence_ids": [
+                "e1"
+              ]
+            }
+          ],
+          "questions": [],
+          "completed_actions": []
+        },
+        "usage": {
+          "inputTokens": 2947,
+          "cachedInputTokens": 1649,
+          "outputTokens": 93,
+          "costUsd": 0.0021692,
+          "reservedUsd": 0.0388725
+        }
+      }
+    ],
+    "journal": {
+      "reservedOrSpentUsd": 0.15425995000000015,
+      "attempts": 81,
+      "settled": 81
+    },
+    "fatalReason": null
+  },
+  "journalBefore": {
+    "reservedOrSpentUsd": 0.14830975,
+    "attempts": 78,
+    "settled": 78
+  },
+  "journalAfter": {
+    "reservedOrSpentUsd": 0.15425995000000015,
+    "attempts": 81,
+    "settled": 81
+  },
+  "costUsd": 0.005950200000000155,
+  "failure": "Post-screenshot page.evaluate cleanup fetch did not return; stopped only verifier PID55760. Separate actual localhost Clear request returned200 in40ms. No further inference occurred.",
+  "unverified": "Original browser cleanup/replay assertion did not finish.",
+  "screenshots": [
+    "desktop-conversation.png",
+    "mobile-conversation.png"
+  ],
+  "productionWrites": 0
+}

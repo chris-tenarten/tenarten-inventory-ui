@@ -1,0 +1,13 @@
+{
+  "pid": 48519,
+  "port": 55596,
+  "origin": "http://localhost:3000",
+  "mode": "authenticated-receivals",
+  "model": "gpt-6.1-terra",
+  "target": "tenops-permission-review / loopback55481",
+  "callerAuth": "getUser on every request; no fixture JWTs or privileged key",
+  "executionEnabled": false,
+  "databaseBackedTestsPassed": false,
+  "productionRequests": 0,
+  "budgetJournal": "/private/tmp/tenops-tenbot-agent-poc/openai-budget.json"
+}

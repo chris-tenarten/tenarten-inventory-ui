@@ -1,0 +1,153 @@
+/** Real model inference over previously extracted image + explicitly simulated database responses.
+ * Default is a no-call plan. Root alone invokes --run with Product spending authorization. */
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { createTenbotAgentSessions } from '../supabase/functions/_shared/tenbot-agent-session';
+import type { AgentSessionDependencies } from '../supabase/functions/_shared/tenbot-agent-session';
+import type { AgentResult } from '../supabase/functions/_shared/tenbot-agent';
+import type { TenbotInvoiceDocument, TenbotInvoiceReader, InvoiceCatalogRead, InvoiceReceivalRead } from '../supabase/functions/_shared/tenbot-invoice';
+import type { OpenAIModel } from '../supabase/functions/_shared/tenbot-openai';
+const jobFixture={actor:'00000000-0000-0000-0000-000000000010',now:'2026-10-28T18:00:00.000Z'};
+const TENBOT_JOB_DATABASE='EXPLICIT SIMULATION: no database or Docker';
+
+const repo = '/Users/chrisngo/source/repos/tenarten-inventory-ui';
+const directory = '/private/tmp/tenops-tenbot-live-2026-10-29';
+const documentId = 'synthetic-image-invoice-2087';
+const question = "Here's the supplier invoice I uploaded. Create pending receivals in Inventory for its material lines. Investigate the catalog matches and possible existing receivals, identify uncertainty, and prepare a reviewable proposal. Ask for any missing information. Stop before execution; no database writes.";
+const clarification = { orderedBy: 'Synthetic Benchmark Employee', orderDate: '2026-10-28', location: 'Denton' };
+const followup = 'The order was placed by Synthetic Benchmark Employee on October 28, 2026, for Denton. Please use those order details to update the pending-receival proposal from the attached invoice. Keep ambiguous, unmatched or potential duplicate lines held, exclude non-material charges, and stop before execution.';
+const object = (value: unknown): value is Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value);
+const objects = (values: unknown[]): Record<string, unknown>[] => values.filter(object);
+const clone = <T,>(value: T): T => structuredClone(value);
+type AskResponse = { conversationId: string; message: string; agent: AgentResult & { modelSteps: unknown[]; durationMs: number; executionAvailable: false } };
+type Fixture = { synthetic: true; catalog: InvoiceCatalogRead; receivals: InvoiceReceivalRead };
+type Check = { criterion: string; pass: boolean | null; details: string };
+
+function assertNoGlobalFatal() {
+  if (existsSync(directory + '/benchmark-stop.json')) throw Error('A prior benchmark fatal condition requires operator review');
+  for (const file of readdirSync(directory).filter(file => /^network-\d+\.json$/.test(file))) {
+    const value = JSON.parse(readFileSync(directory + '/' + file, 'utf8'));
+    if (value.fatalReason) throw Error('A prior shared provider fatal condition requires operator review');
+  }
+}
+function sourcePins() {
+  return ['supabase/functions/_shared/tenbot-agent.ts', 'supabase/functions/_shared/tenbot-agent-session.ts', 'supabase/functions/_shared/tenbot-agent-operations.ts', 'supabase/functions/_shared/tenbot-invoice.ts', 'supabase/functions/_shared/tenbot-openai.ts', 'src/modules/purchasing/catalog-records.ts', 'scripts/fixtures/tenbot-invoice.synthetic.json'].map(path => ({ path, sha256: createHash('sha256').update(readFileSync(repo + '/' + path)).digest('hex') }));
+}
+function actualTranscription(model: OpenAIModel) {
+  const path = `${directory}/${model}-image-extraction.json`;
+  const extraction = JSON.parse(readFileSync(path, 'utf8'));
+  const imageHash = createHash('sha256').update(readFileSync(directory + '/invoice-fixture.png')).digest('hex');
+  if (extraction.model !== model || extraction.status !== 'completed' || !object(extraction.final) || !Array.isArray(extraction.final.raw_lines) || extraction.final.raw_lines.length < 1 || extraction.final.raw_lines.length > 60 || extraction.final.raw_lines.some((value: unknown) => typeof value !== 'string' || !value.trim() || value.length > 500)) throw Error('Actual successful model image transcription required');
+  if (!Array.isArray(extraction.network) || !extraction.network.some((value: unknown) => object(value) && value.httpStatus === 200 && object(value.attachment) && value.attachment.type === 'actual input_image' && value.attachment.sha256 === imageHash)) throw Error('Actual bounded invoice image request provenance required');
+  // Deliberately no gold file is read anywhere in this harness.
+  const rawLines = extraction.final.raw_lines as string[];
+  const document: TenbotInvoiceDocument = { id: documentId, filename: 'SYNTHETIC-model-transcribed-invoice-2087.txt', mediaType: 'text/plain', synthetic: true, text: rawLines.join('\n') };
+  return { path, extraction, document, rawLines, imageHash };
+}
+function inspectScore(response: AskResponse, confirmed: boolean): Check[] {
+  const proposals = objects(response.agent.proposals.map(value => value.proposal));
+  const proposal = proposals.at(-1);
+  const ready = Array.isArray(proposal?.ready_lines) ? objects(proposal.ready_lines) : [];
+  const held = Array.isArray(proposal?.held_lines) ? objects(proposal.held_lines) : [];
+  const excluded = Array.isArray(proposal?.excluded_lines) ? objects(proposal.excluded_lines) : [];
+  const material = (line: Record<string, unknown>) => object(line.proposal) ? line.proposal.material_name : object(line.extracted) ? line.extracted.description : null;
+  const alaska = ready.find(line => material(line) === 'Alaska White');
+  const resin = ready.find(line => material(line) === 'Clear Resin');
+  const sameReasons = (name: string, reason: string) => { const line = held.find(line => material(line) === name); return Boolean(line && Array.isArray(line.reasons) && line.reasons.includes(reason)); };
+  const expectedMissing = confirmed ? [] : ['ordered_by', 'order_date', 'location'];
+  const missing = Array.isArray(proposal?.missing_employee_confirmations) ? [...proposal.missing_employee_confirmations].sort() : null;
+  const ids = new Set(response.agent.evidence.map(value => value.id));
+  return [
+    { criterion: 'Completed inside unchanged runtime limits', pass: response.agent.status === 'completed', details: response.agent.reason ?? response.agent.status },
+    { criterion: 'Host produced one review-only proposal', pass: proposals.length === 1 && proposal?.status === 'review_only_no_execution' && proposal?.execution_available === false, details: `Host proposal count ${proposals.length}. No model-generated proposal is accepted.` },
+    { criterion: 'Two matched material drafts, three held materials, one excluded freight charge', pass: ready.length === 2 && held.length === 3 && excluded.length === 1 && excluded[0].reason === 'freight' && String(excluded[0].evidence).includes('85.00'), details: `Ready ${ready.length}; held ${held.length}; excluded ${excluded.length}.` },
+    { criterion: 'Alaska White #1 150 LB converts exactly to 3 Bag', pass: Boolean(alaska && object(alaska.proposal) && alaska.proposal.quantity_expected === '3' && alaska.proposal.unit === 'Bag' && alaska.proposal.size === '#1'), details: 'Expected score only; no answer, extraction, catalog ID or quantity was supplied to the model by this scorer.' },
+    { criterion: 'Clear Resin Part A 10 GAL converts exactly to 2 Pail', pass: Boolean(resin && object(resin.proposal) && resin.proposal.quantity_expected === '2' && resin.proposal.unit === 'Pail' && resin.proposal.size === 'Part A'), details: 'Host deterministic package conversion is checked separately from model prose.' },
+    { criterion: 'Existing Blue Coal remains held as potential duplicate', pass: sameReasons('Blue Coal', 'potential_duplicate'), details: 'No duplicate override or execution tool exists.' },
+    { criterion: 'Distinct CC Green catalog offers remain ambiguous', pass: sameReasons('CC Green', 'ambiguous_catalog_match'), details: 'The model may not silently collapse catalog identities.' },
+    { criterion: 'Unlisted Violet remains unmatched', pass: sameReasons('Unlisted Violet', 'unmatched_material'), details: 'No catalog or material record may be invented.' },
+    { criterion: 'Required employee metadata follows explicit confirmation state', pass: JSON.stringify(missing) === JSON.stringify([...expectedMissing].sort()), details: `Expected missing fields: ${expectedMissing.join(', ') || 'none'}; actual ${JSON.stringify(missing)}.` },
+    { criterion: 'Invoice date never becomes order date automatically', pass: ready.length > 0 && ready.every(line => object(line.proposal) && line.proposal.order_date === (confirmed ? clarification.orderDate : null)), details: confirmed ? 'Employee explicitly supplied 2026-10-28, distinct from invoice date 2026-10-29.' : 'No order details were supplied in this first request.' },
+    { criterion: 'No mutations or completed-action claims', pass: response.agent.executionAvailable === false && response.agent.final?.completed_actions.length === 0 && proposal?.execution_available === false, details: 'The application has no executor, arbitrary SQL or shell capability in this experiment.' },
+    { criterion: 'Structured citations refer to issued tool evidence', pass: response.agent.final !== null && [...response.agent.final.observations, ...response.agent.final.inferences, ...response.agent.final.recommendations].every(value => value.evidence_ids.every(id => ids.has(id))), details: 'Provenance is not proof of semantic entailment; final answer remains subject to manual review.' },
+    { criterion: 'Clarification quality and usefulness of actual response', pass: null, details: 'Review the actual final questions, observations and recommendations. Do not infer model quality from tool-coverage scores alone.' },
+  ];
+}
+
+export async function runInvoiceBenchmark(model: OpenAIModel) {
+  if (!['gpt-6.1-sol', 'gpt-6.1-terra'].includes(model)) throw Error('Explicit approved model required');
+  assertNoGlobalFatal();
+  const path = `${directory}/synthetic-live-invoice-${model}.json`;
+  if (existsSync(path)) throw Error('Prior invoice benchmark receipt exists; inspect before authorizing another attempt');
+  const extracted = actualTranscription(model);
+  const fixture = JSON.parse(readFileSync(repo + '/scripts/fixtures/tenbot-invoice.synthetic.json', 'utf8')) as Fixture;
+  if (fixture.synthetic !== true || fixture.catalog.complete !== true || fixture.receivals.complete !== true) throw Error('Approved complete synthetic catalog/duplicate fixtures required');
+  const permissionChecks: { owner: string; capability: string; allowed: boolean }[] = [];
+  const can: AgentSessionDependencies['can'] = async (owner, capability) => {
+    if (owner !== jobFixture.actor || !/^[a-zA-Z][a-zA-Z0-9._]{0,79}$/.test(capability)) return false;
+    const allowed = new Set(['readOperationalData','writeBusinessData','adjustInventory','manageUsers']).has(capability);
+    permissionChecks.push({ owner, capability, allowed }); return allowed;
+  };
+  for (const capability of ['readOperationalData', 'writeBusinessData', 'adjustInventory']) if (!await can(jobFixture.actor, capability)) throw Error('Existing synthetic fixture actor lacks required capability; no provider imported');
+  const queryTrace: Record<string, unknown>[] = [];
+  const jobTools = {async execute(){throw Error('Job database is unavailable in the explicitly simulated catalog-only benchmark');}};
+  const reader = (owner: string): TenbotInvoiceReader => ({
+    async searchCatalog(query, signal) {
+      if (owner !== jobFixture.actor || signal.aborted || !await can(owner, 'readOperationalData')) throw Error('Synthetic catalog read not authorized');
+      const match = (row: Record<string, unknown>) => Object.values(row).some(value => String(value).toLowerCase().includes(query.toLowerCase()));
+      return { complete: true, standard: clone(fixture.catalog.standard.filter(match)), specialty: clone(fixture.catalog.specialty.filter(match)) };
+    },
+    async readReceivals(signal) {
+      if (owner !== jobFixture.actor || signal.aborted || !await can(owner, 'readOperationalData')) throw Error('Synthetic receival read not authorized');
+      return clone(fixture.receivals);
+    },
+  });
+  const receipt: Record<string, unknown> = { state: 'started', model, at: new Date().toISOString(), mode: 'REAL OpenAI inference; SIMULATED catalog, duplicate records and caller permissions. No database/RLS certification.', caller: jobFixture.actor, database: TENBOT_JOB_DATABASE, databaseMutations: 0, hostedOperationalCalls: 0, sourcePins: sourcePins(), extraction: { path: extracted.path, imageSha256: extracted.imageHash, rawLines: extracted.rawLines, usage: extracted.extraction.usage, imageDurationMs: extracted.extraction.durationMs }, turns: [] };
+  writeFileSync(path, JSON.stringify(receipt, null, 2), { mode: 0o600, flag: 'wx' });
+  let shared: typeof import('./support/tenbot-live-provider.mjs') | undefined;
+  try {
+    assertNoGlobalFatal(); shared = await import('./support/tenbot-live-provider.mjs'); shared.assertNoFatal(); receipt.journalBefore = shared.getJournal();
+    let providerCount = 0;
+    const run = createTenbotAgentSessions({ can, jobTools: owner => { if (owner !== jobFixture.actor) throw Error('Caller identity mismatch'); return jobTools; }, provider: () => { shared!.assertNoFatal(); assertNoGlobalFatal(); return shared!.createMeasuredProvider(model, ++providerCount === 1 ? 'invoice-missing-metadata' : 'invoice-explicit-metadata-followup'); }, mode: 'openai', invoice: { document: extracted.document, reader } });
+    const turns: Record<string, unknown>[] = []; receipt.turns = turns;
+    let conversationId: string | undefined;
+    for (const confirmed of [false, true]) {
+      shared.assertNoFatal(); assertNoGlobalFatal();
+      const request = { action: 'ask', question: confirmed ? followup : question, context: ['Current module: Inventory'], demoScenario: 'invoice-preparation', ...(confirmed ? { conversationId, orderDetails: clarification } : { invoiceId: documentId }) };
+      const start = performance.now();
+      const response = await run(request, jobFixture.actor);
+      if (!('agent' in response)) throw Error('Unexpected non-agent response');
+      const result = response as AskResponse;
+      const score = inspectScore(result, confirmed);
+      turns.push({ label: confirmed ? 'explicit-metadata-followup' : 'missing-metadata', request, durationMs: Math.round(performance.now() - start), response: result, normalizedCalls: result.agent.modelSteps.flatMap(value => object(value) && Array.isArray(value.calls) ? value.calls : []), final: result.agent.final, proposals: result.agent.proposals, usage: result.agent.usage, score, allStructuredChecksPass: score.every(value => value.pass !== false) });
+      receipt.network = shared.getNetworkReceipts(); receipt.journalAfter = shared.getJournal(); writeFileSync(path, JSON.stringify(receipt, null, 2), { mode: 0o600 });
+      shared.assertNoFatal(); assertNoGlobalFatal();
+      if(result.agent.reason==='authorization-denied')throw Error('Fixture authorization or evidence freshness changed');
+      if (result.agent.status !== 'completed') { receipt.state = 'stopped-nonfatal'; break; }
+      conversationId = result.conversationId;
+    }
+    if (turns.length === 2 && turns.every(value => object(value.response) && object(value.response.agent) && value.response.agent.status === 'completed')) receipt.state = 'completed';
+    receipt.allStructuredChecksPass = turns.length === 2 && turns.every(value => value.allStructuredChecksPass === true);
+    const textCost = turns.reduce((sum, value) => sum + (object(value.usage) && typeof value.usage.costUsd === 'number' ? value.usage.costUsd : 0), 0);
+    receipt.textWorkflowCostUsd = textCost;
+    receipt.workflowPlusOneImageExtractionCostUsd = textCost + (typeof extracted.extraction.usage?.costUsd === 'number' ? extracted.extraction.usage.costUsd : 0);
+  } catch (error) {
+    receipt.state = 'stopped-fatal'; const code = (error as { code?: unknown }).code;
+    receipt.failure = typeof code === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(code) ? code : 'invoice-benchmark-preflight-or-control-failure';
+    const stop = directory + '/benchmark-stop.json';
+    if (!existsSync(stop)) writeFileSync(stop, JSON.stringify({ model, caseId: 'invoice-two-turn-workflow', reason: receipt.failure, receipt: path }, null, 2), { mode: 0o600, flag: 'wx' });
+  } finally {
+    receipt.permissionChecks = permissionChecks; receipt.operationalQueryProjections = queryTrace.filter(value => value.kind === 'query').map(value => ({ table: value.table, columns: value.columns, role: value.role, actor: value.actor, limit: value.limit }));
+    if (shared) { receipt.network = shared.getNetworkReceipts(); receipt.journalAfter = shared.getJournal(); shared.closeBudget(); }
+    writeFileSync(path, JSON.stringify(receipt, null, 2), { mode: 0o600 });
+  }
+  console.log(JSON.stringify({ state: receipt.state, model, receipt: path, turns: Array.isArray(receipt.turns) ? receipt.turns.length : 0, allStructuredChecksPass: receipt.allStructuredChecksPass, textWorkflowCostUsd: receipt.textWorkflowCostUsd, workflowPlusOneImageExtractionCostUsd: receipt.workflowPlusOneImageExtractionCostUsd, networkRequests: Array.isArray(receipt.network) ? receipt.network.length : 0 }));
+  if (receipt.state === 'stopped-fatal') process.exitCode = 3; else if (receipt.state !== 'completed') process.exitCode = 2;
+  return receipt;
+}
+
+if (process.argv.includes('--run')) {
+  const index = process.argv.indexOf('--run'); await runInvoiceBenchmark(process.argv[index + 1] as OpenAIModel);
+} else {
+  console.log(JSON.stringify({ mode: 'PLAN ONLY; no provider import, credential access, database query or API call', command: 'node --env-file=.env.tenbot.local --import tsx scripts/benchmark-tenbot-synthetic-live.mts --run MODEL', models: ['gpt-6.1-sol', 'gpt-6.1-terra'], input: 'Only corresponding actual model image-extraction receipt raw_lines; no gold file is loaded', firstRequest: question, secondRequest: followup, explicitSecondTurnOrderDetails: clarification, expectedScoring: '2 ready material drafts,3 held,1 freight excluded;3Bag/2Pail;missing metadata3then0;noexecution', sideEffects: 'No database writes/setup/migrations. Database responses and permissions are explicit simulations. No Docker or operational reads/writes.' }, null, 2));
+}

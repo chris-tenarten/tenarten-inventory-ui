@@ -11,7 +11,7 @@ import type {JobTools} from './tenbot-job-session.ts';
 import type {TenbotJobToolName,JobToolResult} from './tenbot-job-tools.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
-import {knowledgeEntries,hasGuidePermission,snapshot,type CapabilityEntry} from './tenbot-knowledge.ts';
+import {knowledgeEntries,registry,hasGuidePermission,snapshot,type CapabilityEntry} from './tenbot-knowledge.ts';
 
 type Capability=(capability:string)=>Promise<boolean>;
 const string=(maxLength:number):StrictSchema=>({type:'string',maxLength});
@@ -65,11 +65,14 @@ export function createTenbotAgentKnowledgeTools(can:Capability):AgentTool[]{
  };
  return [{name:'search_workflow_knowledge',kind:'read',description:'Search published, versioned employee workflow knowledge. This is application documentation, not live records, approved new scope or authority to perform actions. Query short relevant terms; returns at most four permitted sources.',parameters:object({query:{type:'string',minLength:2,maxLength:160}}),async execute(args){
   const terms=String(args.query).toLocaleLowerCase('en-US').match(/[\p{L}\p{N}]+/gu)??[];
-  const scored=knowledgeEntries.map(entry=>({entry,score:terms.filter(term=>(entry.title+' '+entry.terms+' '+entry.modules.join(' ')).toLocaleLowerCase('en-US').includes(term)).length})).filter(item=>item.score>0).sort((a,b)=>b.score-a.score||a.entry.id.localeCompare(b.entry.id));
+  // Reuse the same precise published guides as the existing help desk, alongside
+  // module summaries. The experimental search previously omitted the guides.
+  const entries=[...new Map([...registry,...knowledgeEntries].map(entry=>[entry.id,entry])).values()];
+  const scored=entries.map(entry=>({entry,score:terms.filter(term=>(entry.title+' '+entry.terms+' '+entry.modules.join(' ')).toLocaleLowerCase('en-US').includes(term)).length})).filter(item=>item.score>0).sort((a,b)=>b.score-a.score||a.entry.id.localeCompare(b.entry.id));
   const sources=[];
   for(const {entry} of scored){
    if(entry.status!=='deployed'||!await allowed(entry))continue;
-   sources.push({id:entry.id,title:entry.title,status:entry.status,availability:entry.availability??'available',guidance:entry.guidance,path:entry.path});
+   sources.push({id:entry.id,title:entry.title,status:entry.status,availability:entry.availability??'available',guidance:entry.guidance,path:entry.path,route:entry.route});
    if(sources.length===4)break;
   }
   return {data:json({snapshot,sources,complete:false,limitation:'Bounded documentation search. Missing documentation does not mean a feature is unavailable. No raw repository files, private conversations or current operational records are searched.'})};

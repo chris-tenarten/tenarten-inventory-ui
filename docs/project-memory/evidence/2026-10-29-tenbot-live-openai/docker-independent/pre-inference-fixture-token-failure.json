@@ -1,0 +1,17 @@
+{
+  "state": "failed",
+  "mode": "REAL OpenAI inference; SIMULATED local records and permissions",
+  "origin": "http://localhost:3000",
+  "endpoint": "http://localhost:55595",
+  "serverModel": "gpt-6.1-terra",
+  "checks": [],
+  "responses": [],
+  "requests": [],
+  "errors": [],
+  "journalBefore": {
+    "reservedOrSpentUsd": 0.09875914999999999,
+    "attempts": 44,
+    "settled": 44
+  },
+  "failure": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('dialog', { name: 'Inbox', exact: true }).locator('[aria-label=\"Local agent experiment controls\"]')\nExpected substring: \"Live OpenAI reasoning · Simulated local records · No Production writes\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByRole('dialog', { name: 'Inbox', exact: true }).locator('[aria-label=\"Local agent experiment controls\"]')\n"
+}

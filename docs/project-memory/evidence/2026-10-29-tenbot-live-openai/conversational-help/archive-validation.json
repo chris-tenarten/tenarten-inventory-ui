@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "at": "2026-10-29T18:38:19.626Z",
+  "checks": [
+    "JSON key-like credential/bearer/JWT pattern scan found no match; no credential file was read",
+    "Default benchmark plan ran in scratch cwd containing only archived qwen-comparison.json and no original QA paths",
+    "Archived historical subset returned byte-equivalent JSON values in fallback mode",
+    "Targeted ESLint passed for benchmark-tenbot-conversation.mts"
+  ],
+  "inferenceCalls": 0,
+  "databaseCalls": 0,
+  "originalQaPathsModifiedOrStaged": false
+}

@@ -1,0 +1,47 @@
+{
+  "investigatedAt": "2026-10-29T17:59:35.912725+00:00",
+  "mode": "Static configuration and existing process/listener metadata only; prior bounded protocol evidence reused without endpoint retries.",
+  "priorBoundedChecks": {
+    "path": "/private/tmp/tenops-tenbot-agent-poc/isolated-supabase-discovery.json",
+    "sha256": "4be170d5f60ba73826cbfc0b5d2bf9e368cbc956b5d3fb5105c53575d89991da",
+    "authTimeoutMs": 4006,
+    "postgrestTimeoutMs": 4003,
+    "postgresHandshakeTimeoutMs": 4004,
+    "postgresCredentialsSent": false,
+    "sqlExecuted": false
+  },
+  "existingTarget": {
+    "projectId": "tenops-permission-review",
+    "configPath": ".tmp-permission-supabase/supabase/config.toml",
+    "configSha256": "0e701ca217922746c9446f5d034c06c4645740fcd83f29f23f6011c2d573a764",
+    "apiPort": 55481,
+    "postgresPort": 55482,
+    "postgresMajorVersion": 17,
+    "listenerPid": 3105,
+    "listenerOwner": "/Applications/Docker.app/Contents/MacOS/com.docker.backend",
+    "listenerObservation": "Both API and PostgreSQL listener sockets are owned by the Docker Desktop backend, not native Supabase or PostgreSQL processes."
+  },
+  "explanation": {
+    "established": "TCP forwarding listeners remain open in Docker Desktop while Auth HTTP, REST HTTP and PostgreSQL protocol handshakes do not respond. This fixture depends on the same unresponsive Docker backend; an accepting TCP socket is not service readiness.",
+    "notEstablished": "The precise fault inside the Docker VM or its containers (hung services, VM networking, filesystem or daemon) cannot be distinguished from host listener metadata without Docker repair or container access, which is deferred.",
+    "notApprovalTimeout": "The preserved checks reached actual loopback sockets after network approval and then each hit the explicit 4-second protocol timeout. This evidence is not a Codex approval/review timeout.",
+    "notCredentialFailure": "The PostgreSQL check stopped before credentials or SQL; HTTP checks timed out before an authentication response. Existing receipt already records eight synthetic role fixtures and mode-0600 credentials without recording secrets."
+  },
+  "alternativeDiscovery": {
+    "nativePostgresOnPath": false,
+    "nativePgCtlOnPath": false,
+    "nativePsqlOnPath": false,
+    "supabaseCliOnPath": false,
+    "standardNativePgBinarySearch": "No postgres/pg_ctl/postmaster found under /opt/homebrew/{bin,opt}, /usr/local/{bin,opt}, /Applications, /Applications/Postgres.app or /Library/PostgreSQL.",
+    "otherObservedPostgresListener": "Port 55582 is also owned by com.docker.backend; no native PostgreSQL listener observed.",
+    "hostedTarget": "Previously identified shared Production/TenDev target remains excluded; no new hosted request or org-wide project discovery performed."
+  },
+  "result": "No responsive isolated real database is available through the configured existing infrastructure. Continue local canonical integration with real write gate disabled until isolated authentication, RLS, revocation, transactional rollback, concurrency/idempotency and audit tests pass.",
+  "dockerCommands": 0,
+  "supabaseEndpointRetries": 0,
+  "credentialsRead": 0,
+  "apiInferenceCalls": 0,
+  "writesToOperationalDatabases": 0,
+  "servicesProvisioned": 0,
+  "configurationChanges": 0
+}

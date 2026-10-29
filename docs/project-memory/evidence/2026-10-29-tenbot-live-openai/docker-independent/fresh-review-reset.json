@@ -1,0 +1,28 @@
+{
+  "phase": "fresh-simulated-review-ready",
+  "oldPid": 40275,
+  "archivedModelReceipts": 11,
+  "journalSha256": "d27ad1b709b0cc6f004b827f332dc2edc2f0477573e8dae38b2a5f60609bd6bc",
+  "journal": {
+    "reservedOrSpentUsd": 0.11924075000000003,
+    "attempts": 55,
+    "settled": 55
+  },
+  "productionWrites": 0,
+  "reason": "Fresh Product manual review: retire only completed in-memory simulated rows, preserve all evidence and budget",
+  "oldServerStopped": true,
+  "journalUnchanged": true,
+  "onlyEmptyOwnedLockRemoved": true,
+  "scope": "Completed local simulated memory only; no database/Production reset",
+  "newPid": 43440,
+  "simulatedPendingCount": 0,
+  "localhostStatus": 200,
+  "adapterStatus": 200,
+  "additionalInferenceCalls": 0,
+  "journalAfter": {
+    "reservedOrSpentUsd": 0.11924075000000003,
+    "attempts": 55,
+    "settled": 55
+  },
+  "spendingAuthorized": true
+}

@@ -1,0 +1,216 @@
+{
+  "generatedAt": "2026-10-29T17:59:12.989Z",
+  "mode": "Offline analysis of prior real OpenAI calls with simulated database/tool results. No new inference or service requests.",
+  "pins": [
+    {
+      "path": "/Users/chrisngo/source/repos/tenarten-inventory-ui/docs/project-memory/evidence/2026-10-29-tenbot-live-openai/docker-independent/synthetic-live-invoice-gpt-6.1-sol.json",
+      "sha256": "efe507774f16d34d7e1ded98457563331b05cb3cd3fb69c50912604b8de57945"
+    },
+    {
+      "path": "/Users/chrisngo/source/repos/tenarten-inventory-ui/docs/project-memory/evidence/2026-10-29-tenbot-live-openai/docker-independent/synthetic-live-invoice-gpt-6.1-terra.json",
+      "sha256": "8f50784e677e87a84b99ce80cb2426866fdacacd0ded678869b4dcd0b4a37072"
+    },
+    {
+      "path": "/Users/chrisngo/source/repos/tenarten-inventory-ui/docs/project-memory/evidence/2026-10-29-tenbot-live-openai/docker-independent/browser-report.json",
+      "sha256": "ecf509121f052ff90a596e15acccb9c4b615e65cf6f5703b4dbc067605dcf1ab"
+    }
+  ],
+  "sourcePins": [
+    {
+      "path": "scripts/support/tenbot-live-provider.mts",
+      "sha256": "292e160370e775f5f874609052811bbebbd334fbbe470cc0f592ce84987b3388"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "e93f3cfea74e461425e7acdb53fd50b7f14badfe80909ffa83969ef0d8848f23"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+    }
+  ],
+  "turns": [
+    {
+      "model": "gpt-6.1-sol",
+      "label": "missing-metadata",
+      "turnWallMs": 37055,
+      "agentWallMs": 37051,
+      "inferenceCalls": 10,
+      "toolCalls": 9,
+      "toolSequence": [
+        "discover_capabilities",
+        "read_invoice",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "check_receival_duplicates",
+        "prepare_pending_receivals"
+      ],
+      "providerWallMs": 37029,
+      "providerShareOfAgentPercent": 99.9406,
+      "simulatedToolWallMs": 17,
+      "runtimeResidualMs": 5,
+      "lastStructuredAnswerRequestMs": 11141,
+      "lastStructuredAnswerOutputTokens": 700,
+      "cadenceFloorBeforeLastRequestMs": 22500,
+      "inputTokensAcrossCalls": 43161,
+      "cachedInputTokensAcrossCalls": 35389,
+      "cachedInputPercent": 81.993,
+      "outputTokensAcrossCalls": 1241,
+      "measuredCostUsd": 0.03536390000000002
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "explicit-metadata-followup",
+      "turnWallMs": 30504,
+      "agentWallMs": 30501,
+      "inferenceCalls": 10,
+      "toolCalls": 9,
+      "toolSequence": [
+        "discover_capabilities",
+        "read_invoice",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "check_receival_duplicates",
+        "prepare_pending_receivals"
+      ],
+      "providerWallMs": 30489,
+      "providerShareOfAgentPercent": 99.9607,
+      "simulatedToolWallMs": 8,
+      "runtimeResidualMs": 4,
+      "lastStructuredAnswerRequestMs": 7439,
+      "lastStructuredAnswerOutputTokens": 506,
+      "cadenceFloorBeforeLastRequestMs": 22500,
+      "inputTokensAcrossCalls": 44239,
+      "cachedInputTokensAcrossCalls": 39133,
+      "cachedInputPercent": 88.4581,
+      "outputTokensAcrossCalls": 1047,
+      "measuredCostUsd": 0.0271333
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "missing-metadata",
+      "turnWallMs": 31304,
+      "agentWallMs": 31301,
+      "inferenceCalls": 10,
+      "toolCalls": 9,
+      "toolSequence": [
+        "discover_capabilities",
+        "read_invoice",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "check_receival_duplicates",
+        "prepare_pending_receivals"
+      ],
+      "providerWallMs": 31273,
+      "providerShareOfAgentPercent": 99.9105,
+      "simulatedToolWallMs": 23,
+      "runtimeResidualMs": 5,
+      "lastStructuredAnswerRequestMs": 7662,
+      "lastStructuredAnswerOutputTokens": 510,
+      "cadenceFloorBeforeLastRequestMs": 22500,
+      "inputTokensAcrossCalls": 43260,
+      "cachedInputTokensAcrossCalls": 35461,
+      "cachedInputPercent": 81.9718,
+      "outputTokensAcrossCalls": 1078,
+      "measuredCostUsd": 0.016904299999999994
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "explicit-metadata-followup",
+      "turnWallMs": 28873,
+      "agentWallMs": 28869,
+      "inferenceCalls": 10,
+      "toolCalls": 9,
+      "toolSequence": [
+        "discover_capabilities",
+        "read_invoice",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "check_receival_duplicates",
+        "prepare_pending_receivals"
+      ],
+      "providerWallMs": 28860,
+      "providerShareOfAgentPercent": 99.9688,
+      "simulatedToolWallMs": 6,
+      "runtimeResidualMs": 3,
+      "lastStructuredAnswerRequestMs": 5959,
+      "lastStructuredAnswerOutputTokens": 347,
+      "cadenceFloorBeforeLastRequestMs": 22500,
+      "inputTokensAcrossCalls": 44239,
+      "cachedInputTokensAcrossCalls": 39133,
+      "cachedInputPercent": 88.4581,
+      "outputTokensAcrossCalls": 888,
+      "measuredCostUsd": 0.012771650000000013
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "unfamiliar-raster-pdf",
+      "turnWallMs": 32541,
+      "agentWallMs": 32541,
+      "inferenceCalls": 10,
+      "toolCalls": 9,
+      "toolSequence": [
+        "discover_capabilities",
+        "read_invoice",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "search_catalog",
+        "check_receival_duplicates",
+        "prepare_pending_receivals"
+      ],
+      "providerWallMs": 32524,
+      "providerShareOfAgentPercent": 99.9478,
+      "simulatedToolWallMs": 10,
+      "runtimeResidualMs": 7,
+      "lastStructuredAnswerRequestMs": 5768,
+      "lastStructuredAnswerOutputTokens": 396,
+      "cadenceFloorBeforeLastRequestMs": 22500,
+      "inputTokensAcrossCalls": 46399,
+      "cachedInputTokensAcrossCalls": 37947,
+      "cachedInputPercent": 81.7841,
+      "outputTokensAcrossCalls": 1103,
+      "measuredCostUsd": 0.01796984999999998
+    }
+  ],
+  "pdfExtraction": {
+    "model": "gpt-6.1-terra",
+    "providerWallMs": 4514,
+    "usage": {
+      "inputTokens": 1278,
+      "cachedInputTokens": 0,
+      "outputTokens": 183,
+      "costUsd": 0.00251175,
+      "reservedUsd": 0.012855
+    },
+    "imageSha256": "228e6b29e03168fe05b6278ef46396d2ded476d4a13c740f05c810b4fd736515"
+  },
+  "interpretation": {
+    "dominantMeasuredComponent": "Serial provider.step wall time exceeds 99.9% of each recorded agent turn; simulated tool execution totals only 6–23 ms. These are not live database latency measurements.",
+    "cadence": "The local measured-provider wrapper enforces at least 2500 ms between request starts. Ten serial inference calls impose at least 22500 ms before the last request can start. It does not add 2500 ms to every call.",
+    "timingLimit": "Provider wall time includes reservation, request construction/serialization, explicit pacing, transport, OpenAI processing/output, body reading/parsing and local accounting. Existing receipts have no fetch-sent/first-byte/body-finished/pacing timers; exact API/server versus pacing time cannot be recovered.",
+    "output": "Final structured answers use 347–700 output tokens and take 5768–11141 ms measured inside provider.step. This observation does not isolate output-token generation from other provider latency.",
+    "context": "The whole instructions/tool schemas/history are serialized again on each request (store:false; no response-id chain). Context grows from about 1.3k to 6.5–7.1k input tokens per call, totaling 43k–46k per turn; 81.8–88.5% are recorded cache hits. Prompt caching reduces billed input cost, not serial round trips.",
+    "concurrency": "parallel_tool_calls:false and the runtime await each call. Five independent invoice-line catalog searches therefore took five inference rounds. This is a general runtime setting, not a measured database query bottleneck."
+  },
+  "focusedRecommendations": [
+    "Add non-secret timing counters for pacingMs, requestSentAt, responseHeadersAt and bodyFinishedAt before asserting a precise OpenAI server latency or optimization gain.",
+    "A narrowly scoped batch catalog-search capability for multiple invoice lines could reduce serial model round trips while preserving per-line server validation, caller-scoped queries and bounded result sizes; validate before adoption.",
+    "Treat reducing the experimental 2500 ms pacing as a separate, rate-limit-aware change. Preserve the cumulative reservation ledger, fail-closed API failures and bounded calls; do not advertise an unmeasured speedup.",
+    "Do not broaden optimization work or change models based on this five-turn sample."
+  ],
+  "callsMadeByProfiler": 0
+}

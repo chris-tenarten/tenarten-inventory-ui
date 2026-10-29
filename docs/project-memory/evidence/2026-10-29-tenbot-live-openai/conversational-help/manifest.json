@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "archivedAt": "2026-10-29T18:37:29.675Z",
+  "mode": "Actual Terra inference and published knowledge; synthetic caller grants; no hosted/database/operational writes",
+  "sourceReceiptPinsPreserved": true,
+  "originalSevenTurnSemanticVerdict": "6 PASS / 1 PARTIAL / 0 FAIL",
+  "focusedConfirmationCorrectionSemanticVerdict": "PASS",
+  "initialCorrectionBrowserStatus": "Core inference/rendered answer passed; cleanup stalled; whole-browser passed=false preserved",
+  "retryCorrectionBrowserStatus": "passed=true; Clear200 and replay403 before further inference",
+  "costs": {
+    "sevenTurnUsd": 0.02906899999999999,
+    "initialCorrectionUsd": 0.005950200000000155,
+    "retryCorrectionUsd": 0.0010166000000000064,
+    "conversationPhaseUsd": 0.03603580000000015,
+    "cumulativeExperimentUsd": 0.15527655000000015,
+    "cumulativeLimitUsd": 5,
+    "attempts": 84,
+    "settled": 84
+  },
+  "freshQwenHeadToHead": false,
+  "secretScan": "No API-key-like string, non-fixture bearer credential or complete JWT pattern found in copied JSON; screenshots copied from synthetic localhost browser tests. No credential file was read.",
+  "sourcePinsAtArchiveTime": [
+    {
+      "path": "scripts/benchmark-tenbot-conversation.mts",
+      "sha256": "c66f685cd1b20734b783071cdcc3c8632b7f1552a1ce317dc986d08b58185b77"
+    },
+    {
+      "path": "scripts/verify-tenbot-conversation-browser.mjs",
+      "sha256": "eeee22393193f58965f963f6ae713989f81cbef2fd6a830468bd47d4bddd6990"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent-session.mts",
+      "sha256": "9ec6912fdbba9fc2af1bf0801b84dcb217e02002b56ce7dc6f243deaddd7f2d1"
+    },
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "8fb99bff59619947a22d950bbc4a5668ae79b37c36cb7c227e4f389d7953202d"
+    },
+    {
+      "path": "scripts/start-tenbot-receival-review.mts",
+      "sha256": "b2999cb8d3c3cbb704f1ccae5be02c6fe00eadcbda9b5b47d981ad94e518473c"
+    },
+    {
+      "path": "scripts/support/tenbot-live-provider.mts",
+      "sha256": "187c7ba3c6dd6a8119fb5ca3be6f1f2c3de77d45bdc86fff1bbdd447f61195bb"
+    },
+    {
+      "path": "scripts/support/tenbot-live-demo.mts",
+      "sha256": "2171a3769f9d7c5e68b30a3950cf1c4576ab3145d6b4acda0bed808d71afcdb6"
+    },
+    {
+      "path": "scripts/support/tenbot-receival-agent.mts",
+      "sha256": "4d428e06b301097b645e04535b72176c4d7c947f35c766ecd2abf42789c78928"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "4d796334776c24e04cb4f09db904e24fcc5f4b32651e188b80ea2c2c3389f603"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "de1bfd168266c475911d7b76c729631d6adf4084386b47bc3a5651163fcd75f0"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "c21d0777a2138bad93b878408f0ad31366293d5285cc476153a78c0823eb8814"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "cffbc5bad0e77321e0c79acfc7b65ab926c3ae38312080de50226c643789666a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "sha256": "b0cf509ab069ac138c013f137a6933cf584f01ef2d11321a451c034bc0687f64"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+    }
+  ],
+  "files": [
+    {
+      "path": "budget-ledger-after-conversation.json",
+      "bytes": 82,
+      "sha256": "cfde4cfd897a562d4afc704bc380b5f3418a3d08abe631e39535992704fa43cd"
+    },
+    {
+      "path": "confirmation-first-browser/desktop-conversation.png",
+      "bytes": 141575,
+      "sha256": "e1ae3ff6199e69c6f44e3c142048c09bd0391f27479560b2a5e90791a0de43b7"
+    },
+    {
+      "path": "confirmation-first-browser/mobile-conversation.png",
+      "bytes": 77622,
+      "sha256": "fa58aa19b6652aca928f636cbadadadc2ecc729cbdcd249a5e5303331230de70"
+    },
+    {
+      "path": "confirmation-first-browser/report.json",
+      "bytes": 6169,
+      "sha256": "4621ec0e11d99107f451f7329fd75f596f683fafeac970f8aab2e124098f61b0"
+    },
+    {
+      "path": "confirmation-retry-browser/core-result.json",
+      "bytes": 13385,
+      "sha256": "578d00b48ddffde1dc90567c31db38fe28c7517f25ced0dd6abcb16dc6bdfab9"
+    },
+    {
+      "path": "confirmation-retry-browser/desktop-conversation.png",
+      "bytes": 139629,
+      "sha256": "dce04acb4bbfc87816157bc6262de5d35366c934b9c12a9cf81ec1c40689d8fb"
+    },
+    {
+      "path": "confirmation-retry-browser/mobile-conversation.png",
+      "bytes": 73907,
+      "sha256": "1e36c298cc5b7a85cf7fbed9c1832c73969c218cdd47eed1f05900b334da1fef"
+    },
+    {
+      "path": "confirmation-retry-browser/report.json",
+      "bytes": 20568,
+      "sha256": "30e1e7e4b21a551807accbc0661124d088b70b1c0f954dfdf06b75bc7ddc2979"
+    },
+    {
+      "path": "confirmation-semantic-review.json",
+      "bytes": 2474,
+      "sha256": "01c4e8b7476e95e9a3b507d9f63c1b8f1d60af4b9ff2e1b7d0aecd81d126780a"
+    },
+    {
+      "path": "conversation-live-gpt-6.1-terra.json",
+      "bytes": 320481,
+      "sha256": "8845ec8438cca228f3909b00056597a7a13d72289e08881d61011e24d6f33e55"
+    },
+    {
+      "path": "conversation-semantic-review.json",
+      "bytes": 11399,
+      "sha256": "0a05a3e24127cac1ded171dc4a0fdeedcc39d8ddb4f6cc101378a4d9a2325f16"
+    },
+    {
+      "path": "qwen-comparison.json",
+      "bytes": 10399,
+      "sha256": "73c56c9899bdf1607ab747edf5446016d5ee03464fd806a1219f53b7fa586b24"
+    },
+    {
+      "path": "archive-validation.json",
+      "bytes": 539,
+      "sha256": "53e372b4a85f3f8f2921acfe67d83f44e7dbc1306668bad2215e7411824a60b9"
+    },
+    {
+      "path": "confirmation-retry-browser/final-presentation.json",
+      "bytes": 528,
+      "sha256": "a17c70b8a8e981cdf4b74b107716fff8881045eef5cd905c5bcdce7c326567d7"
+    },
+    {
+      "path": "confirmation-retry-browser/final-desktop-presentation.png",
+      "bytes": 126582,
+      "sha256": "224b6ad148420727b81c3c2c5949e00dcb70858f2f12e391afb6135630dd1175"
+    },
+    {
+      "path": "confirmation-retry-browser/final-mobile-presentation.png",
+      "bytes": 72323,
+      "sha256": "453eef9ac1defca94716038317ad3cb2e3bcfaca5698d1b2bb066441275ebc78"
+    },
+    {
+      "path": "final-authenticated-browser-validation.json",
+      "bytes": 1167,
+      "sha256": "a684cd2832942b7891bde7a4346d22349c5554c19df74b1fdbd03fa43fedea33"
+    },
+    {
+      "path": "final-authenticated-desktop-blocked.png",
+      "bytes": 143448,
+      "sha256": "0af19ba1ab04e2b05e5d3150a7dd129a2b7ca595b6a25b5a6d4e33c01525b384"
+    },
+    {
+      "path": "final-authenticated-mobile-blocked.png",
+      "bytes": 85462,
+      "sha256": "3ecbdd79a723471cec7c5b193269028b16413dec10079185391b4b84cff7bb1f"
+    }
+  ],
+  "sourcePinBoundary": {
+    "original": "Seven-turn source pins are preserved inside conversation-live-gpt-6.1-terra.json. Its final-step omission remains PARTIAL.",
+    "correction": "Retry source pins are preserved inside confirmation-retry-browser/report.json. The focused correction passed with explicit confirmation.",
+    "postInference": "Archive-time pins are a separate source snapshot. Any subsequent UI evidence/notice presentation adjustment uses recorded model responses for browser validation and must not be described as new inference.",
+    "comparison": [
+      {
+        "path": "supabase/functions/_shared/tenbot-agent.ts",
+        "sevenTurnSha256": "e613327df1eabd3932d6e600c76f5acf976b6a94e5232b7495754ba9ac34dab6",
+        "correctionRetrySha256": "de1bfd168266c475911d7b76c729631d6adf4084386b47bc3a5651163fcd75f0",
+        "changedSinceSevenTurn": true
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "sevenTurnSha256": "c21d0777a2138bad93b878408f0ad31366293d5285cc476153a78c0823eb8814",
+        "correctionRetrySha256": "c21d0777a2138bad93b878408f0ad31366293d5285cc476153a78c0823eb8814",
+        "changedSinceSevenTurn": false
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+        "sevenTurnSha256": "cffbc5bad0e77321e0c79acfc7b65ab926c3ae38312080de50226c643789666a",
+        "correctionRetrySha256": "cffbc5bad0e77321e0c79acfc7b65ab926c3ae38312080de50226c643789666a",
+        "changedSinceSevenTurn": false
+      },
+      {
+        "path": "scripts/support/tenbot-live-demo.mts",
+        "sevenTurnSha256": null,
+        "correctionRetrySha256": "bed1e4081d712649f166fd5fb1a71f9c5a7ebdc80bc83b221abe8c534f4b96ce",
+        "changedSinceSevenTurn": null
+      },
+      {
+        "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "sevenTurnSha256": null,
+        "correctionRetrySha256": "13eff1c92927bf10860847a43ed23121dfe8661f2ff0e1fb1d58f1744a6e972f",
+        "changedSinceSevenTurn": null
+      }
+    ]
+  },
+  "finalPresentationValidation": {
+    "source": "confirmation-retry-browser/final-presentation.json",
+    "mode": "Recorded actual Terra response injected only for final UI presentation validation. Zero new inference; no database/Auth/security-execution claim.",
+    "passed": true,
+    "inferenceCalls": 0,
+    "journalUnchanged": true,
+    "changedPresentation": "Structured evidence is available on demand instead of repeating claims in the main answer; no image-interpretation notice appears without an attachment.",
+    "sourcePinBoundary": "Original actual model receipts retain their own executed-source pins. finalCandidateSourcePins describes the later local source after the recorded-response UI check and is not retroactive model-validation evidence."
+  },
+  "finalCandidateSourcePins": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "de1bfd168266c475911d7b76c729631d6adf4084386b47bc3a5651163fcd75f0"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "c21d0777a2138bad93b878408f0ad31366293d5285cc476153a78c0823eb8814"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "cffbc5bad0e77321e0c79acfc7b65ab926c3ae38312080de50226c643789666a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "fe9a1a9fe50b836b5eb3e318a400ca5b3b04fb73e8f5259972fb61ddaac6241a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "sha256": "b0cf509ab069ac138c013f137a6933cf584f01ef2d11321a451c034bc0687f64"
+    },
+    {
+      "path": "scripts/support/tenbot-live-provider.mts",
+      "sha256": "187c7ba3c6dd6a8119fb5ca3be6f1f2c3de77d45bdc86fff1bbdd447f61195bb"
+    },
+    {
+      "path": "scripts/support/tenbot-invoice-attachment.mts",
+      "sha256": "e0f2ecfaa265f5e11d002a83d6ce9300673c29efd47ccebe6afa810248614c5f"
+    },
+    {
+      "path": "scripts/support/tenbot-live-demo.mts",
+      "sha256": "2171a3769f9d7c5e68b30a3950cf1c4576ab3145d6b4acda0bed808d71afcdb6"
+    },
+    {
+      "path": "scripts/support/tenbot-receival-agent.mts",
+      "sha256": "4d428e06b301097b645e04535b72176c4d7c947f35c766ecd2abf42789c78928"
+    },
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "8fb99bff59619947a22d950bbc4a5668ae79b37c36cb7c227e4f389d7953202d"
+    },
+    {
+      "path": "scripts/start-tenbot-receival-review.mts",
+      "sha256": "b2999cb8d3c3cbb704f1ccae5be02c6fe00eadcbda9b5b47d981ad94e518473c"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "4d796334776c24e04cb4f09db904e24fcc5f4b32651e188b80ea2c2c3389f603"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "sha256": "49008dee90fe197f6cfe152649fff7daf968b8f2a9e98a036ee780ca7b85ffbd"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "acde015f50a6ef365217c9b65ebe8dad5bedd78746672e0dbc1d75a49ea04795"
+    },
+    {
+      "path": "scripts/benchmark-tenbot-conversation.mts",
+      "sha256": "c66f685cd1b20734b783071cdcc3c8632b7f1552a1ce317dc986d08b58185b77"
+    },
+    {
+      "path": "scripts/verify-tenbot-conversation-browser.mjs",
+      "sha256": "eeee22393193f58965f963f6ae713989f81cbef2fd6a830468bd47d4bddd6990"
+    },
+    {
+      "path": "scripts/verify-tenbot-conversation-render.mjs",
+      "sha256": "6984457bec448af0237ec4a859212c794047d981e2c2ac47660db08e80d2a141"
+    }
+  ],
+  "finalCandidateSourcePinsCapturedAt": "2026-10-29T18:40:21.519Z",
+  "finalAuthenticatedBrowserValidation": {
+    "source": "final-authenticated-browser-validation.json",
+    "passed": true,
+    "boundary": "Exact final local build, blocked authenticated-receival UI only; no inference or database-backed Auth/RLS/transaction claim. Earlier actual model and database-blocker receipts remain unchanged.",
+    "screenshots": [
+      "final-authenticated-desktop-blocked.png",
+      "final-authenticated-mobile-blocked.png"
+    ]
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "at": "2026-10-29T17:08:32.266316+00:00",
+  "status": "bounded tooling implemented locally; Docker remains unresponsive",
+  "sourceHead": "f5b1ce8736932859d193fe0ac8f601afb1d15bb9",
+  "fixedSourcePins": [
+    {
+      "path": "scripts/support/tenbot-fixture-health.mjs",
+      "sha256": "fc303ead6944f34c094c233092bb55a232faed34bb2dde4f8a868c5620b8c98a"
+    },
+    {
+      "path": "scripts/verify-tenbot-fixture-health.mjs",
+      "sha256": "92c0dd66f637254c996cd5122c7fa4625e9ee6ccc0e5e4dfb5f9e0f59689d51c"
+    },
+    {
+      "path": "scripts/check-tenbot-fixture.mjs",
+      "sha256": "cd6929c6b0fe245a1c1877d61b66dee65275269d8c5c61e1185018a0c8d9099a"
+    },
+    {
+      "path": "scripts/support/tenbot-job-database.mjs",
+      "sha256": "bd8f0fbb34d2ac8777e46b59743ff391b8ccb1c599c5d1497957ab39db28ca8c"
+    },
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "3a90bc414dd12bbf8f94d5ba2d138994ccc0fe97e84ffd48641ea64b96af4b55"
+    }
+  ],
+  "actualReadOnlyCheck": {
+    "command": "node scripts/check-tenbot-fixture.mjs",
+    "approvedOutsideSandbox": true,
+    "exitCode": 2,
+    "output": {
+      "status": "blocked",
+      "code": "docker-unresponsive",
+      "message": "Docker command exceeded its local process deadline; fixture state is unknown.",
+      "phase": "daemon-info",
+      "elapsedMs": 5009,
+      "inferenceCalls": 0,
+      "databaseMutations": 0
+    },
+    "note": "A later SQL-permission diagnostic correction does not change the daemon branch exercised by this run."
+  },
+  "validation": {
+    "offlineVerifier": {
+      "command": "node scripts/verify-tenbot-fixture-health.mjs",
+      "passed": true,
+      "groups": 22,
+      "execution": "implementation worker; root did not duplicate"
+    },
+    "syntax": "pass",
+    "targetedEslint": "pass",
+    "narrowStrictTypes": "pass: agent review adapter and both scratch benchmark harnesses",
+    "independentReview": "pass; SQL permission classification and negative readiness text corrected",
+    "diffCheck": "pass"
+  },
+  "bounds": {
+    "dockerCliTimeoutMs": 5000,
+    "killSignal": "SIGKILL (only own spawned CLI)",
+    "postgresReadinessTimeoutSeconds": 3,
+    "aggregateAgentDeadlineCertified": false
+  },
+  "fixtureReady": false,
+  "fixtureAuthorizationVerified": false,
+  "startupOrReseedAttempted": false,
+  "sharedHelperUnchanged": true,
+  "credential": {
+    "touched": false,
+    "regularFile": true,
+    "ownerOnlyMode": "600",
+    "gitIgnored": true,
+    "gitTracked": false,
+    "spendingAuthorized": false,
+    "secretIncluded": false
+  },
+  "preservedLedger": {
+    "reservedOrSpentUsd": 0.0065860000000000085,
+    "attempts": 4,
+    "settled": 4
+  },
+  "experimentCapUsd": 5,
+  "additionalInferenceCalls": 0,
+  "operationalDatabaseWrites": 0,
+  "dockerRestart": false,
+  "dockerConfigurationChanged": false,
+  "globalCodexConfigurationEdited": false,
+  "commitPushOrDeployment": false,
+  "nextCommand": "node scripts/check-tenbot-fixture.mjs after Docker responsiveness is restored"
+}

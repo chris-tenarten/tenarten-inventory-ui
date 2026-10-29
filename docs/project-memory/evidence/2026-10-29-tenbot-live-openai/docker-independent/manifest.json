@@ -1,0 +1,388 @@
+{
+  "status": "safe evidence archive; original historical evidence preserved",
+  "scope": "Actual Sol/Terra inference and actual browser PDF-raster-to-image inference over explicitly SIMULATED operational records/permissions. No database/RLS or Production write certification.",
+  "gitHeadAtArchive": "f5b1ce8736932859d193fe0ac8f601afb1d15bb9",
+  "budgetSnapshot": {
+    "reservedOrSpentUsd": 0.11924075000000003,
+    "attempts": 55,
+    "settled": 55
+  },
+  "budgetSnapshotScope": "55 settled cumulative attempts; snapshot copied without ledger reset or modification. Authoritative journal stays in task scratch.",
+  "artifacts": [
+    {
+      "path": "synthetic-live-invoice-gpt-6.1-sol.json",
+      "sha256": "efe507774f16d34d7e1ded98457563331b05cb3cd3fb69c50912604b8de57945",
+      "bytes": 190203,
+      "source": "/private/tmp/tenops-tenbot-live-2026-10-29/synthetic-live-invoice-gpt-6.1-sol.json"
+    },
+    {
+      "path": "synthetic-live-invoice-gpt-6.1-terra.json",
+      "sha256": "8f50784e677e87a84b99ce80cb2426866fdacacd0ded678869b4dcd0b4a37072",
+      "bytes": 184497,
+      "source": "/private/tmp/tenops-tenbot-live-2026-10-29/synthetic-live-invoice-gpt-6.1-terra.json"
+    },
+    {
+      "path": "browser-report.json",
+      "sha256": "ecf509121f052ff90a596e15acccb9c4b615e65cf6f5703b4dbc067605dcf1ab",
+      "bytes": 101032,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/live-browser/report.json"
+    },
+    {
+      "path": "desktop-approved.png",
+      "sha256": "a5ad207ba492215c1375e86a61b63e2c282f9628d9284d2c9855f902aed3cdbd",
+      "bytes": 12453,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/live-browser/desktop-approved.png"
+    },
+    {
+      "path": "mobile-approved.png",
+      "sha256": "c83711fc6d49e68aa3b322808aeebc95961d1a0002809f28a3eab5545120b561",
+      "bytes": 68753,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/live-browser/mobile-approved.png"
+    },
+    {
+      "path": "pdf-render-preview.png",
+      "sha256": "b03760ba5eaa435e03280c39faf559f8551c599268c33abeb383e7aa14acb57a",
+      "bytes": 81406,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/live-browser/pdf-render-preview.png"
+    },
+    {
+      "path": "pre-inference-adapter-uuid-failure.json",
+      "sha256": "672c34962d05c5b9f75c023876aee5a8d34126dd26ab847e16463a4210c7a8af",
+      "bytes": 2109,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/live-browser/pre-inference-adapter-uuid-failure.json"
+    },
+    {
+      "path": "pre-inference-fixture-token-failure.json",
+      "sha256": "649d371b81c827666a000f8cf5b4ae1c0c29c122670bef05e6bea9186d46ec16",
+      "bytes": 914,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/live-browser/pre-inference-fixture-token-failure.json"
+    },
+    {
+      "path": "backend-live-review-validation.json",
+      "sha256": "5a37cf60ef209aaf0299f6ea899c2aedcd6ef81e37ba082f83db8bfdbc1c0464",
+      "bytes": 3778,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/backend-live-review-validation.json"
+    },
+    {
+      "path": "ui-live-review-validation.json",
+      "sha256": "04b21b403b52543f82e89d8b5e1659102d161aca10834efc5b073daa9525348d",
+      "bytes": 2024,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/ui-live-review-validation.json"
+    },
+    {
+      "path": "http-live-review-validation.json",
+      "sha256": "4aef7e5c51c0a15b8f02fdf9aca8a45d5ee9b33aa14dfd3244b504335f8941d4",
+      "bytes": 316,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/http-live-review-validation.json"
+    },
+    {
+      "path": "isolated-supabase-discovery.json",
+      "sha256": "4be170d5f60ba73826cbfc0b5d2bf9e368cbc956b5d3fb5105c53575d89991da",
+      "bytes": 2116,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/isolated-supabase-discovery.json"
+    },
+    {
+      "path": "budget-ledger-final.json",
+      "sha256": "d27ad1b709b0cc6f004b827f332dc2edc2f0477573e8dae38b2a5f60609bd6bc",
+      "bytes": 82,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/openai-budget.json"
+    },
+    {
+      "path": "benchmark-tenbot-synthetic-live.mts.txt",
+      "sha256": "0cf6779e04b66a190ae3087918930760d0d5ddc0dd62cfbb3b36706d3e4a6ab1",
+      "bytes": 18442,
+      "source": "/Users/chrisngo/source/repos/tenarten-inventory-ui/scripts/benchmark-tenbot-synthetic-live.mts"
+    },
+    {
+      "path": "tenbot-live-provider.mts.txt",
+      "sha256": "292e160370e775f5f874609052811bbebbd334fbbe470cc0f592ce84987b3388",
+      "bytes": 9294,
+      "source": "/Users/chrisngo/source/repos/tenarten-inventory-ui/scripts/support/tenbot-live-provider.mts"
+    },
+    {
+      "path": "tenbot-live-demo.mts.txt",
+      "sha256": "e9c264091a1f5ee3a68ae2803da5f86ba77a784050534ba85f33a6d3afc05081",
+      "bytes": 26426,
+      "source": "/Users/chrisngo/source/repos/tenarten-inventory-ui/scripts/support/tenbot-live-demo.mts"
+    },
+    {
+      "path": "verify-tenbot-live-browser.mjs.txt",
+      "sha256": "14d4c7e8d88a78fdaa6777cdfabb5ad5c021decdd3157229b87a50773b43cc11",
+      "bytes": 11339,
+      "source": "/Users/chrisngo/source/repos/tenarten-inventory-ui/scripts/verify-tenbot-live-browser.mjs"
+    },
+    {
+      "path": "server-before-fresh-review.json",
+      "sha256": "8f68f50176cf7c496be6a2293fdba8b2bff8b19b860e6e437a8467cdd3f59891",
+      "bytes": 1059,
+      "source": "/private/tmp/tenops-tenbot-agent-poc/server.json"
+    },
+    {
+      "path": "network-live-40275.json",
+      "sha256": "fc47f6c00d263b2802f5639bf493898b51068612f9685d49d58a10f2a9697ba0",
+      "bytes": 19237,
+      "source": "/private/tmp/tenops-tenbot-live-2026-10-29/network-live-40275.json"
+    },
+    {
+      "path": "fresh-review-reset.json",
+      "bytes": 884,
+      "sha256": "3433461871ff29b1f5e5d99b61161426f874ec1c15b92572c491fdba95a7ce61",
+      "source": "/private/tmp/tenops-tenbot-agent-poc/fresh-review-reset.json"
+    },
+    {
+      "path": "server-fresh-review.json",
+      "bytes": 1059,
+      "sha256": "0ef1fd46ba89c84ef0d50bb7aafcca2204d3448b87d4cb2b7dcaefca5e593a9e",
+      "source": "/private/tmp/tenops-tenbot-agent-poc/server.json"
+    },
+    {
+      "path": "final-local-readiness.json",
+      "bytes": 1195,
+      "sha256": "092cb03245a1a48b60b28786ec6ceb45b075a0a0751f12e3cf13fd4a9d8bfa99",
+      "source": "Root final local evidence and metadata checks"
+    }
+  ],
+  "receiptSourcePins": [
+    {
+      "artifact": "synthetic-live-invoice-gpt-6.1-sol.json",
+      "recordedSourcePins": [
+        {
+          "path": "supabase/functions/_shared/tenbot-agent.ts",
+          "sha256": "e93f3cfea74e461425e7acdb53fd50b7f14badfe80909ffa83969ef0d8848f23"
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+          "sha256": "9b3d65a3b7339bc8bf10626aa5b129bdac4eacd41e1b424aec817d676a47f91a"
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+          "sha256": "60c8d2238d583906d6a138c25978aa677722c0962602431fe0ac57c72a3030cb"
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-invoice.ts",
+          "sha256": "839ed4feb77067721e161694accc8ee5653f8a998b2f12c3e7f27ed6ee9800cc"
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-openai.ts",
+          "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+        },
+        {
+          "path": "src/modules/purchasing/catalog-records.ts",
+          "sha256": "7190bf30a6a1649f645c617ffdb897e58fc30973896f30eff330a219584a76b6"
+        },
+        {
+          "path": "scripts/fixtures/tenbot-invoice.synthetic.json",
+          "sha256": "d19a442169c8dc3c9a5226fc5a4055aad365889ed8415923411ac4420cd76de8"
+        }
+      ],
+      "currentMatch": [
+        {
+          "path": "supabase/functions/_shared/tenbot-agent.ts",
+          "matchesCurrentArchiveTimeSource": true
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+          "matchesCurrentArchiveTimeSource": false
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+          "matchesCurrentArchiveTimeSource": true
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-invoice.ts",
+          "matchesCurrentArchiveTimeSource": false
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-openai.ts",
+          "matchesCurrentArchiveTimeSource": true
+        },
+        {
+          "path": "src/modules/purchasing/catalog-records.ts",
+          "matchesCurrentArchiveTimeSource": true
+        },
+        {
+          "path": "scripts/fixtures/tenbot-invoice.synthetic.json",
+          "matchesCurrentArchiveTimeSource": true
+        }
+      ]
+    },
+    {
+      "artifact": "synthetic-live-invoice-gpt-6.1-terra.json",
+      "recordedSourcePins": [
+        {
+          "path": "supabase/functions/_shared/tenbot-agent.ts",
+          "sha256": "e93f3cfea74e461425e7acdb53fd50b7f14badfe80909ffa83969ef0d8848f23"
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+          "sha256": "9b3d65a3b7339bc8bf10626aa5b129bdac4eacd41e1b424aec817d676a47f91a"
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+          "sha256": "60c8d2238d583906d6a138c25978aa677722c0962602431fe0ac57c72a3030cb"
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-invoice.ts",
+          "sha256": "839ed4feb77067721e161694accc8ee5653f8a998b2f12c3e7f27ed6ee9800cc"
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-openai.ts",
+          "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+        },
+        {
+          "path": "src/modules/purchasing/catalog-records.ts",
+          "sha256": "7190bf30a6a1649f645c617ffdb897e58fc30973896f30eff330a219584a76b6"
+        },
+        {
+          "path": "scripts/fixtures/tenbot-invoice.synthetic.json",
+          "sha256": "d19a442169c8dc3c9a5226fc5a4055aad365889ed8415923411ac4420cd76de8"
+        }
+      ],
+      "currentMatch": [
+        {
+          "path": "supabase/functions/_shared/tenbot-agent.ts",
+          "matchesCurrentArchiveTimeSource": true
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+          "matchesCurrentArchiveTimeSource": false
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+          "matchesCurrentArchiveTimeSource": true
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-invoice.ts",
+          "matchesCurrentArchiveTimeSource": false
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-openai.ts",
+          "matchesCurrentArchiveTimeSource": true
+        },
+        {
+          "path": "src/modules/purchasing/catalog-records.ts",
+          "matchesCurrentArchiveTimeSource": true
+        },
+        {
+          "path": "scripts/fixtures/tenbot-invoice.synthetic.json",
+          "matchesCurrentArchiveTimeSource": true
+        }
+      ]
+    }
+  ],
+  "currentSourcePinsAtArchive": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "e93f3cfea74e461425e7acdb53fd50b7f14badfe80909ffa83969ef0d8848f23"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "ea9d60ff2caa6de02fc888116826bf5a63da26dafb0b4bcc187fddcf52277ff3"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "f797c38b168e564221783a1565a17326e9a3cf00afec24f6739d3f2e1e3c1835"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "60c8d2238d583906d6a138c25978aa677722c0962602431fe0ac57c72a3030cb"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "caac87ed601af5a86048b3b739df69e81cf854a5bd10414b1c4c805f61f30204"
+    },
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "8fb99bff59619947a22d950bbc4a5668ae79b37c36cb7c227e4f389d7953202d"
+    },
+    {
+      "path": "scripts/start-manpower-progressive-review.mts",
+      "sha256": "dff69a006cdc645a55e5bea0adde86461f4cba3969dc7734267c70a6732ad141"
+    },
+    {
+      "path": "scripts/support/tenbot-live-demo.mts",
+      "sha256": "e9c264091a1f5ee3a68ae2803da5f86ba77a784050534ba85f33a6d3afc05081"
+    },
+    {
+      "path": "scripts/support/tenbot-live-provider.mts",
+      "sha256": "292e160370e775f5f874609052811bbebbd334fbbe470cc0f592ce84987b3388"
+    },
+    {
+      "path": "scripts/benchmark-tenbot-synthetic-live.mts",
+      "sha256": "0cf6779e04b66a190ae3087918930760d0d5ddc0dd62cfbb3b36706d3e4a6ab1"
+    },
+    {
+      "path": "src/modules/inventory/pending-receival-contract.ts",
+      "sha256": "db2375b6b6045ef739a482f9a71fb911e7e45b41be70a7d2d9f5d0493078403e"
+    },
+    {
+      "path": "src/app/inventory/page.tsx",
+      "sha256": "dbd15bf34c6f167fd3fb08e1ca1536cccf0895adeca33a4cd9fbdf910d599461"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "83d06f67cb1228a815860513f26ce20b041da8e92111f77de07e771c31edfdd9"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "sha256": "5d7e57b304064210d710a2e048ff8d096a9cb7efd2af3af1cc93403997192e12"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "e08bcbb2cfedcd49af9c2483d06f8c773a738351f3434445eec8894ec696f2fe"
+    },
+    {
+      "path": "scripts/fixtures/tenbot-invoice-live-demo.pdf",
+      "sha256": "e1cf5a9c958e61923fa30fb45afa19eeac525d2adeca7ad46f4aabcb3e7845b4"
+    }
+  ],
+  "secretReview": {
+    "result": "No obvious API secrets, raw bearer/Authorization values, access/refresh tokens or encrypted provider continuations found in copied JSON/text.",
+    "jsonAndTextArtifactsScanned": 19,
+    "screenshotsVisuallyInspected": 3,
+    "unsafeExclusions": [],
+    "notCopied": [
+      "Credential/environment files",
+      "Unrelated scratch/historical artifacts",
+      "Broad failure screenshot that was not requested"
+    ],
+    "limits": "Focused obvious-secret screening, not a proof that arbitrary text contains no sensitive information. All visible document/operational data in selected evidence is synthetic."
+  },
+  "archivedHarnessScope": "Text snapshots only (.mts.txt/.mjs.txt); source and scratch paths remain explicit. They are not application entrypoints and must not be run without current Product authorization, live budget/credential checks and correct simulation boundaries.",
+  "mutationsByArchiving": "Only this new evidence subdirectory was created; no source, credential, ledger, existing historical artifact, API or database mutation.",
+  "serverBeforeFreshReview": {
+    "artifact": "server-before-fresh-review.json",
+    "pid": 40275,
+    "networkArtifact": "network-live-40275.json",
+    "completedMeasuredRequests": 11,
+    "fatalReason": null,
+    "scope": "Exact pre-reset server/receipt snapshots; no runtime or spending change by archiver."
+  },
+  "archiveIntegrityVerification": {
+    "passed": true,
+    "hashedArtifacts": 22,
+    "allRecordedBytesAndHashesMatch": true,
+    "copiedJSONParses": true,
+    "scope": "Archive integrity only; no inference, Docker, credential or application validation rerun."
+  },
+  "finalValidationReportedByRoot": {
+    "source": "Parent implementation agent reported these completed checks; archiver did not duplicate them.",
+    "wholeApplicationTypeScript": "tsc --noEmit passed",
+    "targetedESLint": "New/changed local TenBot UI/backend/provider/scripts passed",
+    "sharedModuleESLint": "Explicit --no-ignore on changed shared invoice/session modules passed",
+    "gitDiffCheck": "passed",
+    "optimizedLocalExport": "Passed before final scripts-only fixes; parent reports no subsequent application changes.",
+    "productionDeployment": false
+  },
+  "freshReview": {
+    "receipt": "fresh-review-reset.json",
+    "server": "server-fresh-review.json",
+    "additionalInferenceCalls": 0,
+    "budgetLedgerUnchanged": true,
+    "onlySimulationMemoryRetired": true
+  }
+}

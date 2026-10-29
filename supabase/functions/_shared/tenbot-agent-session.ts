@@ -1,5 +1,6 @@
-// Server-owned local experiment state. Never retains live answers or tool results
-// between requests. The hosted entry point does not construct this dependency.
+// Server-owned local experiment state. Never retains operational answers or tool
+// results between requests. Only bounded, source-checked knowledge-only dialogue
+// may survive for a walkthrough. The hosted entry point does not construct this dependency.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import {runTenbotAgent,type AgentProvider,type AgentStep,type JsonValue} from './tenbot-agent.ts';
@@ -15,6 +16,9 @@ import {resolveInput,TenbotError} from './tenbot-core.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import type {JobTools} from './tenbot-job-session.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
+// @ts-ignore -- explicit extensions for Edge compatibility.
+import {knowledgeEntries,registry,hasGuidePermission,snapshot,type CapabilityEntry} from './tenbot-knowledge.ts';
 
 export type AgentDemoScenario='job-investigation'|'invoice-preparation'|'tool-recovery';
 export type AgentSessionDependencies={
@@ -25,10 +29,18 @@ export type AgentSessionDependencies={
  invoice:{document:TenbotInvoiceDocument;reader(owner:string):TenbotInvoiceReader};
  now?:()=>number;
 };
-type Session={owner:string;touched:number;questions:string[];jobIds:string[];invoiceAttached:boolean;confirmation:InvoiceConfirmation;busy:boolean};
+type KnowledgeProof={id:string;digest:string};
+type GuidanceTurn={question:string;answer:string;sources:KnowledgeProof[]};
+type Session={owner:string;touched:number;questions:string[];guidance:GuidanceTurn[];jobIds:string[];invoiceAttached:boolean;confirmation:InvoiceConfirmation;busy:boolean};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const record=(value:unknown):value is Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const json=(value:unknown)=>JSON.parse(JSON.stringify(value)) as JsonValue;
+const publishedSource=(entry:CapabilityEntry)=>({id:entry.id,title:entry.title,status:entry.status,availability:entry.availability??'available',guidance:entry.guidance,path:entry.path,route:entry.route});
+async function sourceDigest(source:unknown,version:unknown){
+ const bytes=new TextEncoder().encode(JSON.stringify({snapshot:version,source}));
+ const digest=await crypto.subtle.digest('SHA-256',bytes);
+ return Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
+}
 export function createTenbotAgentSessions(deps:AgentSessionDependencies){
  const sessions=new Map<string,Session>(),now=deps.now??Date.now;
  return async(body:Record<string,unknown>,owner:string)=>{
@@ -60,12 +72,12 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
   if(!session){
    // Bound in-memory owner sessions; do not evict another account's active work.
    if(sessions.size>=100)throw new TenbotError('Local experiment session limit reached.',429);
-   session={owner,touched:now(),questions:[],jobIds:[],invoiceAttached:false,confirmation:{},busy:false};
+   session={owner,touched:now(),questions:[],guidance:[],jobIds:[],invoiceAttached:false,confirmation:{},busy:false};
   }
   const id=typeof supplied==='string'?supplied:crypto.randomUUID();sessions.set(id,session);
   session.touched=now();session.busy=true;
   try{
-   if(body.invoiceId!==undefined)session.invoiceAttached=true;
+   if(body.invoiceId!==undefined){session.invoiceAttached=true;session.guidance=[];}
    if(details)session.confirmation={...session.confirmation,...details};
    const can=(capability:string)=>deps.can(owner,capability);
    const job=createTenbotAgentJobTools(deps.jobTools(owner));
@@ -78,8 +90,33 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    for(const tool of invoice)if(tool.kind==='prepare'){
     const execute=tool.execute;tool.execute=async(args,context)=>{const value=await execute(args,context);prepared=true;return value;};
    }
-   const knowledgeGrants=new Set<string>();
-   const tools=[...job.tools,...createTenbotAgentKnowledgeTools(async capability=>{const allowed=await can(capability);if(allowed)knowledgeGrants.add(capability);return allowed;}),...invoice.filter(tool=>tool.kind==='read'||mayPrepare)];
+   const knowledgeGrants=new Set<string>(),knowledgeProofs=new Map<string,KnowledgeProof>();
+   const proofIsCurrent=async(proof:KnowledgeProof)=>{
+    const entry=[...new Map([...registry,...knowledgeEntries].map(item=>[item.id,item])).values()].find(item=>item.id===proof.id);
+    if(!entry||entry.status!=='deployed'||await sourceDigest(publishedSource(entry),snapshot)!==proof.digest)return false;
+    const permissions=new Set<string>();
+    for(const capability of [entry.permission,...entry.additionalPermissions??[]])if(await can(capability)){permissions.add(capability);knowledgeGrants.add(capability);}
+    return hasGuidePermission(entry,permissions);
+   };
+   // Reauthorize and compare sources before any old assistant prose reaches a model.
+   const retainedGuidance:GuidanceTurn[]=[];
+   const checkedSources=new Map<string,boolean>();
+   for(const turn of session.guidance){
+    let current=true;for(const proof of turn.sources){const key=proof.id+':'+proof.digest;if(!checkedSources.has(key))checkedSources.set(key,await proofIsCurrent(proof));if(!checkedSources.get(key)){current=false;break;}}
+    if(current)retainedGuidance.push(turn);
+   }
+   session.guidance=retainedGuidance;
+   const knowledge=createTenbotAgentKnowledgeTools(async capability=>{const allowed=await can(capability);if(allowed)knowledgeGrants.add(capability);return allowed;});
+   for(const tool of knowledge){
+    const execute=tool.execute;tool.execute=async(args,context)=>{
+     const value=await execute(args,context);
+     if(record(value.data)&&Array.isArray(value.data.sources))for(const source of value.data.sources){
+      if(record(source)&&typeof source.id==='string')knowledgeProofs.set(source.id,{id:source.id,digest:await sourceDigest(source,value.data.snapshot)});
+     }
+     return value;
+    };
+   }
+   const tools=[...job.tools,...knowledge,...invoice.filter(tool=>tool.kind==='read'||mayPrepare)];
    const provider=deps.provider(scenario as AgentDemoScenario);
    const modelSteps:{calls:AgentStep['calls'];final?:JsonValue;usage:AgentStep['usage'];durationMs:number}[]=[];
    const measured:AgentProvider={name:provider.name,model:provider.model,async step(request){
@@ -88,14 +125,24 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     return step;
    }};
    const before=now();
-   const retainedContext=session.questions.slice(-3).map(previous=>({question:previous,answer:'Previous live answer omitted. Reauthorize and reread all operational facts. Canonical lookup seeds: '+session!.jobIds.join(', ')}));
-   if(session.invoiceAttached)retainedContext.push({question:'Employee explicitly attached '+deps.invoice.document.filename,answer:'Synthetic text only. Order details explicitly supplied by this employee: '+JSON.stringify(session.confirmation)+'. Invoice date is not order date. Missing fields remain unknown.'});
+   const retainedContext=session.questions.slice(-3).map(previous=>{
+    const turn=[...session!.guidance].reverse().find(item=>item.question===previous);
+    return {question:previous,answer:turn?'Prior assistant workflow guidance, retained only as conversation context. Re-fetch current knowledge and cite newly issued evidence IDs before giving guidance: '+turn.answer:'Previous live answer omitted. Reauthorize and reread all operational facts. Canonical lookup seeds: '+session!.jobIds.join(', ')};
+   });
+   if(session.invoiceAttached)retainedContext.push({question:'Employee explicitly attached '+deps.invoice.document.filename,answer:(deps.invoice.document.extraction?'Actual OpenAI image preprocessing produced this transcription. Check read_invoice extraction provenance and compare it against the original image. ':'Synthetic text fixture only. ')+'Order details explicitly supplied by this employee: '+JSON.stringify(session.confirmation)+'. Invoice date is not order date. Missing fields remain unknown.'});
    const result=await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,async authorize(check){
     if(!await can('readOperationalData'))return false;
+    // Do not retransmit retained guidance after a grant/version changes mid-turn.
+    if(check.phase==='before_model'){
+     const proofs=new Map(session!.guidance.flatMap(turn=>turn.sources).map(proof=>[proof.id+':'+proof.digest,proof]));
+     for(const proof of proofs.values())if(!await proofIsCurrent(proof))return false;
+    }
     if(check.tool==='prepare_pending_receivals'&&(!await can('writeBusinessData')||!await can('adjustInventory')))return false;
     if(check.phase==='publish'){
      if(inconsistentInvoice)return false;
      for(const capability of knowledgeGrants)if(!await can(capability))return false;
+     const proofs=new Map([...knowledgeProofs.values(),...session!.guidance.flatMap(turn=>turn.sources)].map(proof=>[proof.id+':'+proof.digest,proof]));
+     for(const proof of proofs.values())if(!await proofIsCurrent(proof))return false;
      if(prepared&&(!await can('writeBusinessData')||!await can('adjustInventory')))return false;
      if(!await job.fresh())return false;
      const deadline=new AbortController(),timer=setTimeout(()=>deadline.abort(),4000);
@@ -106,6 +153,14 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     return true;
    }});
    session.questions=[...session.questions,question].slice(-3);
+   // Failed/attempted operational tools make a turn ineligible even if no result
+   // was published. No invoice, live-record prose, tool payload or provider-native
+   // continuation is retained as assistant conversation memory.
+   // The new prose can depend on every old source that reached this model, not
+   // only the newly cited source. Preserve transitive provenance or discard it.
+   const ancestry=new Map([...session.guidance.flatMap(turn=>turn.sources),...knowledgeProofs.values()].map(proof=>[proof.id+':'+proof.digest,proof]));
+   const knowledgeOnly=result.status==='completed'&&result.final!==null&&!session.invoiceAttached&&result.proposals.length===0&&knowledgeProofs.size>0&&ancestry.size<=12&&result.evidence.length>0&&result.evidence.every(item=>item.tool==='search_workflow_knowledge')&&result.trace.every(item=>item.event!=='tool'||item.name==='discover_capabilities'||item.name==='search_workflow_knowledge');
+   session.guidance=knowledgeOnly?[...session.guidance,{question,answer:result.final!.answer,sources:[...ancestry.values()]}].slice(-3):[];
    // IDs are lookup seeds only; future requests receive no retained facts/prose.
    session.jobIds=[...new Set(result.evidence.flatMap(item=>{
     if(!record(item.data)||!record(item.data.data))return [];

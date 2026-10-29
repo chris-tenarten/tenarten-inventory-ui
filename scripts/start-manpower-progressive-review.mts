@@ -13,7 +13,7 @@ import {emptyProposalEstimateInputs,proposalEstimateDefaultAssumptions} from '..
 import {calculateProposalEstimate} from '../src/modules/proposals/estimate-calculations';
 import {PREFIX,CSP,planRequest,forwardHeaders} from './support/read-only-review-guard.mjs';
 const port=Number(process.env.PERFORMANCE_REVIEW_PORT||3355),origin=`http://localhost:${port}`,hosted=process.argv.includes('--hosted-read-only'),owner=uuid(900021);
-const session=(id=owner,version=1)=>wave4Session(id,version);
+const session=(id=owner,version=1)=>{const value=wave4Session(id,version);if(!hosted&&process.env.TENBOT_LOCAL_AGENT_REVIEW==='true')value.access_token=value.access_token.replace(/\.local-only$/,'.local');return value;};
 const source=hosted?Object.fromEntries(readFileSync('/Users/chrisngo/source/repos/tenarten-inventory-ui/.env.local','utf8').split('\n').filter(l=>/^NEXT_PUBLIC_SUPABASE_(URL|ANON_KEY)=/.test(l)).map(l=>{const at=l.indexOf('=');return[l.slice(0,at),l.slice(at+1).trim().replace(/^(["'])(.*)\1$/,'$2')];})):{};
 if(hosted&&(!/^https:\/\/[a-z0-9]+\.supabase\.co\/?$/.test(source.NEXT_PUBLIC_SUPABASE_URL)||!source.NEXT_PUBLIC_SUPABASE_ANON_KEY))throw Error('Existing hosted public configuration required.');
 let tables,samples,messages,notices,calls=[],control={},next=980000;
@@ -33,7 +33,9 @@ mkdirSync('output/integration',{recursive:true});
 let renderer=readFileSync('supabase/functions/generate-proposal-pdf/index.ts','utf8').replace("'npm:@supabase/supabase-js@2.101.1'","'@supabase/supabase-js'").replace("'npm:pdf-lib@1.17.1'","'pdf-lib'").replace(/^const allowed = .*$/m,`const allowed = [${JSON.stringify(origin)}];`);
 renderer=renderer.replace(/from '([.][^']+)'/g,(_,file)=>`from '${pathToFileURL(path.resolve('supabase/functions/generate-proposal-pdf',file)).href}'`);
 writeFileSync('output/integration/proposal-renderer.mts','// @ts-nocheck -- existing local renderer adapter\n'+renderer);const {render:renderProposal}=await import(pathToFileURL(path.resolve('output/integration/proposal-renderer.mts')).href);
-const security={'cache-control':'no-store','referrer-policy':'no-referrer','content-security-policy':hosted?CSP.replaceAll('ws://localhost:3000',`ws://localhost:${port}`):"default-src 'self'; connect-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'"};
+// Explicit synthetic-only opt-in for the existing TenBot loopback review adapter.
+const localAgentConnect=!hosted&&process.env.TENBOT_LOCAL_AGENT_REVIEW==='true'?' http://localhost:55595 http://localhost:55596':'';
+const security={'cache-control':'no-store','referrer-policy':'no-referrer','content-security-policy':hosted?CSP.replaceAll('ws://localhost:3000',`ws://localhost:${port}`):`default-src 'self'; connect-src 'self' blob:${localAgentConnect}; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'`};
 const server=createServer(async(req,res)=>{
  const send=(status,value,headers={})=>{res.writeHead(status,{...security,'content-type':'application/json',...headers});res.end(Buffer.isBuffer(value)||value instanceof Uint8Array?value:JSON.stringify(value));};
  try{
@@ -106,9 +108,10 @@ const server=createServer(async(req,res)=>{
   let content=readFileSync(file);const ext=path.extname(file);if(ext==='.html'){
    const populatedReview=!hosted&&url.pathname==='/manpower-reporting'&&url.searchParams.get('review')==='populated';
    if(populatedReview){reset();control={historyDelay:60,delays:{manpower_entries:20}};}
-   const inject=hosted?'<style>body::before{content:"HOSTED READ-ONLY REVIEW · Unsupported reads and all business writes are blocked";position:fixed;bottom:0;right:0;z-index:9999;background:#fef9c3;padding:6px;font:11px system-ui;pointer-events:none}</style>':`<script>if(${populatedReview}||!localStorage.getItem('sb-localhost-auth-token'))localStorage.setItem('sb-localhost-auth-token',${JSON.stringify(JSON.stringify(session()))});sessionStorage.setItem('tenops.welcomeHeroPlayed:${owner}','true');</script>`;
+   const agentReview=!hosted&&process.env.TENBOT_LOCAL_AGENT_REVIEW==='true'&&url.searchParams.get('tenbotExperiment')==='1';
+   const inject=hosted?'<style>body::before{content:"HOSTED READ-ONLY REVIEW · Unsupported reads and all business writes are blocked";position:fixed;bottom:0;right:0;z-index:9999;background:#fef9c3;padding:6px;font:11px system-ui;pointer-events:none}</style>':`<script>if(${populatedReview||agentReview}||!localStorage.getItem('sb-localhost-auth-token'))localStorage.setItem('sb-localhost-auth-token',${JSON.stringify(JSON.stringify(session()))});sessionStorage.setItem('tenops.welcomeHeroPlayed:${owner}','true');</script>`;
    content=Buffer.from(content.toString().replace('</head>',inject+'</head>'));
   }
-  res.writeHead(200,{...security,'content-type':({'.html':'text/html','.js':'application/javascript','.css':'text/css','.txt':'text/plain','.png':'image/png','.svg':'image/svg+xml','.woff2':'font/woff2'})[ext]||'application/octet-stream'});res.end(content);
+  res.writeHead(200,{...security,'content-type':({'.html':'text/html','.js':'application/javascript','.mjs':'application/javascript','.css':'text/css','.txt':'text/plain','.png':'image/png','.svg':'image/svg+xml','.woff2':'font/woff2'})[ext]||'application/octet-stream'});res.end(content);
  }catch(error){send(502,{message:hosted?'Read-only review unavailable; no fallback':error.message});}
 });server.on('upgrade',(_req,socket)=>socket.destroy());server.listen(port,'localhost',()=>console.log(`${origin} — ${hosted?'guarded hosted reads; normal sign-in; unsupported scenarios blocked':'one integrated application, synthetic data only'}`));

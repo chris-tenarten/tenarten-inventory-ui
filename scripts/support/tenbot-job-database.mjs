@@ -1,7 +1,8 @@
 // Local-only Job-tool fixture and strict Supabase-shaped SQL bridge. Never hosted.
 // Reuses the existing TenBot review container without resetting feedback/history/usage.
 import {readFileSync} from 'node:fs';
-import {sql,literal} from './intake-materials-database.mjs';
+import {literal} from './intake-materials-database.mjs';
+import {sql} from './tenbot-fixture-health.mjs';
 
 export const TENBOT_JOB_DATABASE='tenops-tenbot-review';
 const uuid=n=>`10282026-0000-4000-8000-${String(n).padStart(12,'0')}`;

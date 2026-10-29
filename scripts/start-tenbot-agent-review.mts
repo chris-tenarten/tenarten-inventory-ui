@@ -10,10 +10,16 @@ import {createTenbotJobTools} from '../supabase/functions/_shared/tenbot-job-too
 import {createOpenAIProvider,OPENAI_EXPERIMENT_PRICING,type OpenAIModel} from '../supabase/functions/_shared/tenbot-openai';
 import type {TenbotInvoiceDocument} from '../supabase/functions/_shared/tenbot-invoice';
 import {createScriptedTenbotAgentProvider} from './support/tenbot-agent-scripted.mjs';
-import {TENBOT_JOB_DATABASE,jobFixture,createTenbotJobCaller} from './support/tenbot-job-database.mjs';
-import {sql,literal,admin} from './support/intake-materials-database.mjs';
 
+if(process.argv.includes('--synthetic-live'))await startSyntheticLive();else await startExisting();
+
+async function startExisting(){
+const {TENBOT_JOB_DATABASE,jobFixture,createTenbotJobCaller}=await import('./support/tenbot-job-database.mjs');
+const {literal,admin}=await import('./support/intake-materials-database.mjs');
+const {sql,assertTenbotFixtureReady}=await import('./support/tenbot-fixture-health.mjs');
 const port=55595,origin='http://localhost:3000',directory='/private/tmp/tenops-tenbot-agent-poc';
+// Reuse only. A daemon/fixture failure must never trigger setup, reseeding or inference.
+assertTenbotFixtureReady();
 mkdirSync(directory,{recursive:true});
 const useOpenAI=process.argv.includes('--openai');
 const selected=process.argv.find(arg=>arg.startsWith('--model='))?.slice(8)??'gpt-6.1-sol';
@@ -75,3 +81,36 @@ server.listen(port,'::1',()=>{
  writeFileSync(directory+'/server.json',JSON.stringify({pid:process.pid,port,origin,container:TENBOT_JOB_DATABASE,mode:useOpenAI?'openai':'offline-scripted',model:useOpenAI?model:'scripted-fixture',keyConfigured:Boolean(key),spendingAuthorized,authorizedBudgetUsd:spendingAuthorized?requested:0,existingPortsPreserved:[3000,55593,55594],databaseWrites:false,sourceHashes},null,2));
  console.log('Local TenBot agent experiment ready at '+origin+'/my-work?tenbotExperiment=1; '+(useOpenAI?'OpenAI configured; spending gate '+String(spendingAuthorized):'SCRIPTED transport only; no inference calls.'));
 });
+}
+
+async function startSyntheticLive(){
+ const model=(process.argv.find(arg=>arg.startsWith('--model='))?.slice(8)??'gpt-6.1-sol') as OpenAIModel;
+ const requested=Number(process.argv.find(arg=>arg.startsWith('--authorized-budget-usd='))?.slice(24)??'0');
+ if(!['gpt-6.1-sol','gpt-6.1-terra'].includes(model)||requested<=0||requested>5||!Number.isFinite(requested)||!(process.env.TENBOT_OPENAI_API_KEY||'').trim()||process.env.TENBOT_OPENAI_SPEND_AUTHORIZED!=='true')throw Error('Explicit local model, server credential and authorized spending gate are required.');
+ // This branch imports no Docker fixture helper and constructs no database client.
+ const provider=await import('./support/tenbot-live-provider.mjs');
+ const {createTenbotLiveDemo}=await import('./support/tenbot-live-demo.mjs');
+ const {default:sharp}=await import('sharp');
+ const directory='/private/tmp/tenops-tenbot-agent-poc',origin='http://localhost:3000',port=55595;
+ const fixture=JSON.parse(readFileSync('scripts/fixtures/tenbot-invoice.synthetic.json','utf8'));
+ if(fixture.synthetic!==true||fixture.catalog.complete!==true||fixture.receivals.complete!==true)throw Error('Approved complete simulated catalog and receival fixtures required.');
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+ const capabilities=new Set(['readOperationalData','writeBusinessData','adjustInventory','manageUsers']);
+ const handler=createTenbotLiveDemo({model,catalog:fixture.catalog,receivals:fixture.receivals,can:async(owner,capability)=>uuid.test(owner)&&capabilities.has(capability),createProvider:(label,attachment)=>provider.createMeasuredProvider(model,label,attachment),remainingUsd:()=>Math.max(0,Math.min(requested,5)-provider.getJournal().reservedOrSpentUsd),assertNoFatal:provider.assertNoFatal,async validateAttachment(attachment){
+  try{const metadata=await sharp(attachment.bytes,{limitInputPixels:1048576}).metadata();if(!metadata.width||!metadata.height||metadata.width>1024||metadata.height>1024||metadata.pages&&metadata.pages>1||metadata.format!==(attachment.mediaType==='image/png'?'png':'jpeg'))throw Error();}catch{throw new TenbotError('Use a valid single-frame PNG or JPEG image within the displayed limits.');}
+ }});
+ const server=createServer(async(req,res)=>{
+  const headers={'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'authorization,content-type','Access-Control-Allow-Methods':'POST,OPTIONS'};
+  const send=(status:number,body:unknown)=>res.writeHead(status,headers).end(JSON.stringify(body));
+  if(req.headers.origin!==origin)return send(403,{error:'Exact localhost review origin required.'});
+  if(req.method==='OPTIONS'){res.writeHead(204,headers).end();return;}
+  if(req.method!=='POST')return send(405,{error:'POST required.'});
+  let owner='';try{const token=(req.headers.authorization||'').replace(/^Bearer /,'');const parts=token.split('.');const claims=JSON.parse(Buffer.from(parts[1]??'','base64url').toString());if(parts.length!==3||parts[2]!=='local'||!uuid.test(claims.sub))throw Error();owner=claims.sub;}catch{return send(401,{error:'Existing simulated localhost session required; no hosted authentication is claimed.'});}
+  try{let raw='';for await(const chunk of req){raw+=chunk;if(Buffer.byteLength(raw)>145000)return send(413,{error:'Local attachment/request limit exceeded.'});}const body:unknown=JSON.parse(raw);if(!body||typeof body!=='object'||Array.isArray(body))throw new TenbotError('Invalid local simulation request.');return send(200,await handler(body as Record<string,unknown>,owner));}
+  catch(error){return send(error instanceof TenbotError?error.status:503,{error:error instanceof TenbotError?error.message:'Local simulation stopped safely. No hosted records or on-hand stock were changed.'});}
+ });
+ const sourceHashes=['scripts/start-tenbot-agent-review.mts','scripts/support/tenbot-live-demo.mts','scripts/support/tenbot-live-provider.mts','src/modules/inventory/pending-receival-contract.ts'].map(path=>({path,sha256:createHash('sha256').update(readFileSync(path)).digest('hex')}));
+ const shutdown=()=>server.close(()=>{provider.closeBudget();process.exit(0);});
+ process.once('SIGINT',shutdown);process.once('SIGTERM',shutdown);
+ mkdirSync(directory,{recursive:true});server.listen(port,'::1',()=>{writeFileSync(directory+'/server.json',JSON.stringify({pid:process.pid,port,origin,mode:'synthetic-live',model,keyConfigured:true,spendingAuthorized:true,authorizedBudgetUsd:requested,simulation:true,recordSource:'SIMULATED local memory only',databaseWrites:false,dockerRequired:false,approvalScope:'In-memory simulated pending rows only; no on-hand changes',sourceHashes},null,2));console.log('TenBot actual OpenAI / SIMULATED local records demo at '+origin+'/my-work?tenbotExperiment=1');});
+}

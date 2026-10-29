@@ -1,0 +1,61 @@
+{
+  "investigatedAt": "2026-10-29T17:36:42.407Z",
+  "scope": "existing isolated infrastructure discovery only",
+  "target": {
+    "projectId": "tenops-permission-review",
+    "apiOrigin": "http://127.0.0.1:55481",
+    "postgresEndpoint": "127.0.0.1:55482",
+    "loopbackOnly": true,
+    "configurationSource": ".tmp-permission-supabase/supabase/config.toml",
+    "credentialSource": ".tmp-permission-review/config.json",
+    "credentialFileMode": "600",
+    "syntheticActorRolesAvailable": 8,
+    "allActorCredentialFieldsPresent": true,
+    "secretValuesRecorded": false
+  },
+  "checks": [
+    {
+      "name": "sandbox-local-network",
+      "outcome": "EPERM; retried with loopback-only network approval"
+    },
+    {
+      "name": "auth-health",
+      "path": "/auth/v1/health",
+      "timeoutMs": 4000,
+      "elapsedMs": 4006,
+      "outcome": "TimeoutError"
+    },
+    {
+      "name": "postgrest-schema",
+      "path": "/rest/v1/",
+      "timeoutMs": 4000,
+      "elapsedMs": 4003,
+      "outcome": "TimeoutError"
+    },
+    {
+      "name": "postgres-protocol-handshake",
+      "port": 55482,
+      "timeoutMs": 4000,
+      "elapsedMs": 4004,
+      "outcome": "protocol-timeout",
+      "credentialsSent": false,
+      "sqlExecuted": false
+    }
+  ],
+  "conclusion": "Existing loopback listeners do not establish a responsive Supabase environment. Auth, REST and PostgreSQL protocol do not respond within four seconds, so no real authentication/RLS/approval/transaction validation is currently available through this fixture.",
+  "notTested": [
+    "sign-in",
+    "pending_receivals schema presence",
+    "RLS policies",
+    "approval enforcement",
+    "canonical receival transaction/idempotency"
+  ],
+  "dockerCommands": 0,
+  "apiInferenceCalls": 0,
+  "operationalWrites": 0,
+  "hostedRequests": 0,
+  "accountsCreated": 0,
+  "configurationChanges": 0,
+  "productionTargetExcluded": true,
+  "nextSafePath": "Continue explicitly labelled simulated-database local demonstration; restore existing isolated service responsiveness separately, then rerun bounded Auth/schema checks before any real fixture writes."
+}

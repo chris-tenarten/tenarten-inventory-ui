@@ -6,6 +6,7 @@ import type { AgentFinal, AgentProvider, AgentResult, AgentStep, AgentStepReques
 import type { InvoiceCatalogRead, InvoiceReceivalRead, TenbotInvoiceDocument, TenbotInvoiceReader } from '../supabase/functions/_shared/tenbot-invoice';
 import type { JobTools } from '../supabase/functions/_shared/tenbot-job-session';
 import type { JobToolResult } from '../supabase/functions/_shared/tenbot-job-tools';
+import { registry } from '../supabase/functions/_shared/tenbot-knowledge';
 
 // Pure local doubles: no server, hosted client, credentials, API, SQL or database.
 type Fixture = { document: TenbotInvoiceDocument; catalog: InvoiceCatalogRead; receivals: InvoiceReceivalRead };
@@ -28,6 +29,9 @@ function jobResult(hours = 12.5): JobToolResult {
   return { tool: 'get_job_labor_summary', version: 'tenbot-job-read.v1', status: 'ok', observed_at: '2026-10-28T12:00:00Z', read_started_at: '2026-10-28T12:00:00Z', read_completed_at: '2026-10-28T12:00:00Z', timezone: 'America/Chicago', filters: {}, consistency: 'best_effort_multi_query', units: { total_hours: 'hours' }, sources: [], unknowns: [], complete: true, truncated: false, data: { job: { job_id: jobId, job_number: 'SYN-1', name: 'SYNTHETIC_PRIVATE_JOB_NAME', customer: null, reference: 'SYN-1', archived: false, original: { status: 'in_production', planned_start: null, planned_end: null, updated_at: '2026-10-28T12:00:00Z' }, effective: { lifecycle: 'original', rework_cycle_id: null, sequence_number: null, status: 'in_production', planned_start: null, planned_end: null, updated_at: '2026-10-28T12:00:00Z' }, material_status: 'unknown', requested_delivery_date: null, readiness: { state: 'not_scheduled', label: 'Not Scheduled', missing_fields: ['planned_start', 'planned_end'] } }, period: { start_date: '2026-10-01', end_date: '2026-10-28' }, total_hours: hours, entry_count: 1, original_or_unclassified_hours: hours, reworks: [], daily: [{ date: '2026-10-28', hours }], latest_work_date: '2026-10-28' } };
 }
 const jobSequence = (): Sequence => [discover('get_job_labor_summary'), step([call('labor', 'get_job_labor_summary', { job_id: jobId, start_date: '2026-10-01', end_date: '2026-10-28' })]), step([], final(['e1']))];
+const guidanceAnswer='Open Messaging from the app header and choose New group. Tell me when you are there.';
+const guidanceFinal=(answer=guidanceAnswer):AgentFinal=>({answer,observations:[{text:'The verified entry point is Messaging → New group.',evidence_ids:['e1']}],inferences:[],recommendations:[],questions:[],completed_actions:[]});
+const knowledgeSequence=(answer=guidanceAnswer):Sequence=>[discover('search_workflow_knowledge'),step([call('knowledge','search_workflow_knowledge',{query:'create group conversation'})]),step([],guidanceFinal(answer))];
 const sourceRef = (line: number) => `${fixture.document.id}:L${line}`;
 function invoiceSequence(): Sequence {
   return [
@@ -135,6 +139,105 @@ await check('session history retains owner questions and lookup seeds, never liv
   const nextContext = JSON.stringify(h.seen[1][0].history);
   assert.ok(nextContext.includes(jobId)); assert.ok(nextContext.includes('Previous live answer omitted'));
   assert.ok(!nextContext.includes('SYNTHETIC_PRIVATE_TOOL_FINDING')); assert.ok(!nextContext.includes('SYNTHETIC_PRIVATE_JOB_NAME')); assert.ok(!nextContext.includes('SYNTHETIC_OPAQUE_NATIVE_CONTENT'));
+});
+await check('precise published workflow sources and exact canonical routes are available beside module summaries',async()=>{
+  const h=harness({sequences:knowledgeSequence});
+  const response=await ask(h.run,{question:'Walk me through creating a group conversation.'});
+  assert.equal(response.agent.status,'completed');
+  const evidence=response.agent.evidence[0].data as {sources:{id:string;path:string;route:string|null}[]};
+  const group=evidence.sources.find(source=>source.id==='group');
+  assert.ok(group);assert.equal(group.route,'/my-work');assert.equal(group.path,'Messaging → New group');
+});
+await check('knowledge-only walkthrough retains bounded owner dialogue but requires fresh current-turn evidence',async()=>{
+  let turn=0;
+  const h=harness({sequences:()=>knowledgeSequence(++turn===1?guidanceAnswer:'Enter a group name, then select at least one other participant.')});
+  const first=await ask(h.run,{question:'Walk me through creating a group conversation.'});
+  const second=await ask(h.run,{conversationId:first.conversationId,question:'Where is that?'});
+  assert.equal(second.agent.status,'completed');
+  const retained=JSON.stringify(h.seen[1][0].history);
+  assert.ok(retained.includes(guidanceAnswer));assert.ok(retained.includes('conversation context'));assert.ok(retained.includes('newly issued evidence IDs'));
+  assert.ok(!retained.includes('SYNTHETIC_OPAQUE_NATIVE_CONTENT'));assert.equal(second.agent.evidence[0].tool,'search_workflow_knowledge');
+  await ask(h.run,{conversationId:first.conversationId,question:'Done. What next?'});
+  assert.ok(JSON.stringify(h.seen[2][0].history).includes('Enter a group name, then select'));
+});
+await check('old workflow prose cannot substitute for new evidence and true clarification can remain tool-free',async()=>{
+  let turn=0;
+  const h=harness({sequences:()=>++turn===1?knowledgeSequence():[step([],guidanceFinal())]});
+  const first=await ask(h.run,{question:'Walk me through a group conversation.'});
+  const second=await ask(h.run,{conversationId:first.conversationId,question:'What next?'});
+  assert.equal(second.agent.status,'provider-unavailable');assert.equal(second.agent.reason,'unknown-evidence');assert.equal(second.agent.final,null);
+  const missing=harness({sequences:()=>[step([],{...guidanceFinal(),observations:[]})]});
+  const ungrounded=await ask(missing.run,{question:'Where is New group?'});
+  assert.equal(ungrounded.agent.reason,'missing-workflow-evidence');
+  const clarification=harness({sequences:()=>[step([],final())]});
+  assert.equal((await ask(clarification.run,{question:'Help me with that.'})).agent.status,'completed');
+});
+await check('revoked source permission drops prior guidance before any model context is built',async()=>{
+  let allowed=true;
+  const h=harness({can:async(_owner,capability)=>capability!=='messaging.write'||allowed,sequences:knowledgeSequence});
+  const first=await ask(h.run,{question:'Walk me through creating a group conversation.'});
+  assert.equal(first.agent.status,'completed');allowed=false;
+  await ask(h.run,{conversationId:first.conversationId,question:'Where is that?'});
+  assert.ok(!JSON.stringify(h.seen[1][0].history).includes(guidanceAnswer));
+});
+await check('a changed published source drops prior guidance and a mid-turn source change blocks publication',async()=>{
+  const source=registry.find(entry=>entry.id==='group')!;const original=source.guidance;
+  try{
+    const h=harness({sequences:knowledgeSequence});
+    const first=await ask(h.run,{question:'Walk me through creating a group conversation.'});
+    source.guidance=original+' Synthetic source revision.';
+    await ask(h.run,{conversationId:first.conversationId,question:'What next?'});
+    assert.ok(!JSON.stringify(h.seen[1][0].history).includes(guidanceAnswer));
+    source.guidance=original;
+    const altered=harness({sequences:()=>[...knowledgeSequence().slice(0,-1),()=>{source.guidance=original+' Changed during model response.';return step([],guidanceFinal());}]});
+    const response=await ask(altered.run,{question:'How do I start a group?'});
+    assert.equal(response.agent.reason,'authorization-denied');assert.equal(response.agent.final,null);assert.deepEqual(response.agent.evidence,[]);
+  }finally{source.guidance=original;}
+});
+await check('derived walkthrough answers retain ancestor permissions and cannot survive their revocation',async()=>{
+  let turn=0,allowed=true;
+  const h=harness({can:async(_owner,capability)=>capability!=='messaging.write'||allowed,sequences:()=>{
+    if(++turn===1)return knowledgeSequence();
+    return [discover('search_workflow_knowledge'),step([call('knowledge','search_workflow_knowledge',{query:'pending receivals inventory'})]),step([],guidanceFinal('SYNTHETIC_DERIVED_GUIDANCE_FROM_PRIOR_SOURCE'))];
+  }});
+  const first=await ask(h.run,{question:'Walk me through creating a group conversation.'});
+  const second=await ask(h.run,{conversationId:first.conversationId,question:'Also how do pending receivals work?'});
+  assert.equal(second.agent.status,'completed');assert.ok(JSON.stringify(h.seen[1][0].history).includes(guidanceAnswer));
+  const sources=(second.agent.evidence[0].data as {sources:{id:string}[]}).sources;
+  assert.ok(!sources.some(source=>source.id==='group'));
+  allowed=false;
+  await ask(h.run,{conversationId:first.conversationId,question:'What next?'});
+  const context=JSON.stringify(h.seen[2][0].history);
+  assert.ok(!context.includes(guidanceAnswer));assert.ok(!context.includes('SYNTHETIC_DERIVED_GUIDANCE_FROM_PRIOR_SOURCE'));
+});
+await check('permission revocation during a turn stops the next retransmission of retained prose',async()=>{
+  let turn=0,allowed=true;
+  const h=harness({can:async(_owner,capability)=>capability!=='messaging.write'||allowed,sequences:()=>++turn===1?knowledgeSequence():[()=>{allowed=false;return discover('search_workflow_knowledge');},step([],guidanceFinal())]});
+  const first=await ask(h.run,{question:'Walk me through creating a group conversation.'});
+  const second=await ask(h.run,{conversationId:first.conversationId,question:'What next?'});
+  assert.equal(second.agent.reason,'authorization-denied');assert.equal(h.seen[1].length,1);assert.equal(second.agent.final,null);assert.deepEqual(second.agent.evidence,[]);
+});
+await check('mixed operational and failed operational attempts clear knowledge-only prose memory',async()=>{
+  for(const failed of [false,true]){
+    let turn=0;
+    const h=harness({sequences:()=>{
+      if(++turn===1)return knowledgeSequence();
+      if(turn===3)return knowledgeSequence('Open Messaging to begin a new conversation.');
+      return [discover('search_workflow_knowledge','get_job_summary'),step([call('knowledge','search_workflow_knowledge',{query:'create group conversation'})]),step([call('job','get_job_summary',failed?{job_id:jobId,sql:'forbidden'}:{job_id:jobId})]),step([],guidanceFinal('SYNTHETIC_MIXED_OPERATIONAL_ANSWER'))];
+    }});
+    const first=await ask(h.run,{question:'Walk me through creating a group conversation.'});
+    await ask(h.run,{conversationId:first.conversationId,question:'Also investigate this Job.'});
+    await ask(h.run,{conversationId:first.conversationId,question:'What next?'});
+    const retained=JSON.stringify(h.seen[2][0].history);
+    assert.ok(!retained.includes(guidanceAnswer));assert.ok(!retained.includes('SYNTHETIC_MIXED_OPERATIONAL_ANSWER'));
+  }
+});
+await check('knowledge walkthrough prose cannot cross owners or survive clear',async()=>{
+  const h=harness({sequences:knowledgeSequence});const first=await ask(h.run,{question:'Walk me through creating a group conversation.'});
+  await assert.rejects(ask(h.run,{conversationId:first.conversationId,question:'What next?'},other),/Conversation unavailable/);
+  await h.run({action:'clear',conversationId:first.conversationId},owner);
+  await ask(h.run,{question:'What next?'});
+  assert.ok(!JSON.stringify(h.seen[1][0].history).includes(guidanceAnswer));
 });
 await check('final Job revocation clears result artifacts and measured model candidate prose', async () => {
   let reads = 0;

@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtDate": "2026-10-29",
+  "reviewer": "Independent conversation-evaluation agent; manually reviewed actual answers, structured claims, issued evidence and retrieved guidance after the root-run completed.",
+  "sourceReceipt": "/private/tmp/tenops-tenbot-live-2026-10-29/conversation-live-gpt-6.1-terra.json",
+  "inferencePerformedByReviewer": false,
+  "databaseAccessPerformedByReviewer": false,
+  "scope": "Seven actual Terra help turns, three synthetic employee conversations, existing release-pinned knowledge. This is not a fresh Qwen head-to-head, full help corpus audit, real Auth/RLS validation or operational execution test.",
+  "overall": {
+    "semanticVerdict": "PARTIAL",
+    "turnCounts": {
+      "PASS": 6,
+      "PARTIAL": 1,
+      "FAIL": 0
+    },
+    "supportedObservedResults": [
+      "The direct state question receives an immediate No and a short verified navigation answer; it is not forced into a walkthrough.",
+      "The manual Pending Receivals walkthrough advances from expanding the section to + Pending Receival, then answers the employee's form question without restarting.",
+      "The Production conversation shifts to the new module, adapts to the employee's reported Timeline progress and correctly distinguishes staged dates from saved dates.",
+      "Every offered UI label and navigation path in the seven employee-visible answers is supported by that turn's retrieved published knowledge.",
+      "There are no claimed actual record reads, schedule changes, pending-receival creations or completed actions; no operational executor was attempted.",
+      "The final Save all changes answer correctly identifies the next button but omits the documented explicit employee confirmation that must still occur. This prevents an unqualified seven-turn semantic pass."
+    ],
+    "unsupportedClaimsObserved": [],
+    "releaseRecommendation": "Retain the bounded grounded conversation path in the local candidate, with an explicit confirmation-preservation correction before claiming complete walkthrough fidelity. Preserve the final partial result as evidence; no broad benchmark expansion is warranted."
+  },
+  "turns": [
+    {
+      "conversation": "direct-inventory",
+      "id": "pending-versus-on-hand",
+      "verdict": "PASS",
+      "directVersusWalkthrough": "PASS: directly answers No, then gives concise Current Inventory navigation without a required dialogue.",
+      "contextProgression": "Not applicable: isolated direct question.",
+      "grounding": "PASS: expected versus on-hand distinction and partial-receipt balance are supported by knowledge-inventory / inventory-pending-receive in e1; Current Inventory, Search current stock, groups and lots are supported by inventory-stock-search in e2.",
+      "exactLabelsRoutes": "PASS: Inventory → Current Inventory → Search current stock; no fabricated URL or route.",
+      "permissions": "PASS within synthetic allowed-capability scope; no claim of additional grant or real authorization validation.",
+      "guidanceVersusActions": "PASS: instructions only; no current stock quantities or actual inspection claimed.",
+      "unknownHandling": "Not elicited: no absent live fact is asserted and no unnecessary question is asked."
+    },
+    {
+      "conversation": "inventory-walkthrough",
+      "id": "begin-manual-pending",
+      "verdict": "PASS",
+      "directVersusWalkthrough": "PASS: one immediate employee step, then an invitation to continue.",
+      "contextProgression": "PASS: starts from the stated Inventory page and honors manual entry without an attachment.",
+      "grounding": "PASS: expanding Pending Receivals is supported by inventory-pending-create in e2.",
+      "exactLabelsRoutes": "PASS: Pending Receivals.",
+      "permissions": "PASS within synthetic allowed-capability scope; no invented grant or irrelevant denial.",
+      "guidanceVersusActions": "PASS: asks employee to expand; does not claim it opened the section or created a draft.",
+      "unknownHandling": "Not elicited; correctly does not demand an invoice."
+    },
+    {
+      "conversation": "inventory-walkthrough",
+      "id": "expanded-pending",
+      "verdict": "PASS",
+      "directVersusWalkthrough": "PASS: provides only the next button and a short continuation invitation.",
+      "contextProgression": "PASS: accepts that the section is expanded and does not repeat the prior step.",
+      "grounding": "PASS: + Pending Receival is supported by inventory-pending-create in e1.",
+      "exactLabelsRoutes": "PASS: + Pending Receival.",
+      "permissions": "PASS within synthetic allowed-capability scope; no additional authorization claim.",
+      "guidanceVersusActions": "PASS: employee must choose the button; no claimed execution.",
+      "unknownHandling": "Not elicited; no unnecessary clarification."
+    },
+    {
+      "conversation": "inventory-walkthrough",
+      "id": "form-question",
+      "verdict": "PASS",
+      "directVersusWalkthrough": "PASS: answers the employee's required-fields and stock-transition questions, then offers the current form-entry step.",
+      "contextProgression": "PASS: preserves the open manual Pending Receival form context without the question naming it again.",
+      "grounding": "PASS: Vendor, Ordered By, Order Date, positive expected quantity, optional ETA/location/pallet/notes, submission label and no-on-hand distinction all match inventory-pending-create in e1.",
+      "exactLabelsRoutes": "PASS: Vendor; Ordered By; Order Date; Add Pending Receivals.",
+      "permissions": "PASS within synthetic allowed-capability scope; no claim that all employees can mutate Inventory.",
+      "guidanceVersusActions": "PASS: saving is explained conditionally, and the employee is asked to enter details; no record creation is claimed.",
+      "unknownHandling": "Not elicited: actual supplier, quantities, order date and catalog records were not requested or invented."
+    },
+    {
+      "conversation": "timeline-conversation",
+      "id": "begin-reschedule",
+      "verdict": "PASS",
+      "directVersusWalkthrough": "PASS: one immediate step instead of the whole scheduling guide.",
+      "contextProgression": "PASS: establishes the new Production workflow and does not carry over Inventory instructions.",
+      "grounding": "PASS: opening the Job in Production is supported by production-schedule in e1.",
+      "exactLabelsRoutes": "PASS: Production / Job; no unsupported click sequence or new route.",
+      "permissions": "PASS within synthetic write-capability scope; no unsupported assertion of scheduling permission.",
+      "guidanceVersusActions": "PASS: tells the employee to open the Job; does not retrieve or modify one.",
+      "unknownHandling": "Not elicited: appropriately avoids asking for a specific Job when only procedural help is needed."
+    },
+    {
+      "conversation": "timeline-conversation",
+      "id": "drag-save-question",
+      "verdict": "PASS",
+      "directVersusWalkthrough": "PASS: immediately answers No, then supplies the next review step.",
+      "contextProgression": "PASS: adapts to reported drag progress; does not restart at opening Production or the Job.",
+      "grounding": "PASS: drag release stages rather than saves, and Review changes follows, supported by production-schedule and knowledge-timeline in e1.",
+      "exactLabelsRoutes": "PASS: Review changes.",
+      "permissions": "PASS within synthetic allowed-capability scope; no new grant inferred.",
+      "guidanceVersusActions": "PASS: explicitly says dates are not saved; no actual state inspection or mutation claimed.",
+      "unknownHandling": "Not elicited: responds to reported progress without treating it as independently verified saved data."
+    },
+    {
+      "conversation": "timeline-conversation",
+      "id": "review-next-step",
+      "verdict": "PARTIAL",
+      "directVersusWalkthrough": "PASS: provides the exact next button concisely rather than repeating the guide.",
+      "contextProgression": "PASS: accepts that Review changes is open and advances to Save all changes.",
+      "grounding": "PARTIAL: next-button instruction is supported by production-schedule in e1. However, knowledge-timeline in the same issued evidence explicitly requires approval and confirmation. The answer omits that remaining employee confirmation despite the gold criterion checking it.",
+      "exactLabelsRoutes": "PASS: Save all changes.",
+      "permissions": "PASS within synthetic allowed-capability scope; no new grant inferred.",
+      "guidanceVersusActions": "PASS: 'I won’t save anything for you' and empty completed_actions preserve the no-execution boundary. It does not claim dates actually saved.",
+      "unknownHandling": "Not elicited; no unnecessary clarification.",
+      "deficiency": "Missing safety-relevant confirmation detail, not an observed unauthorized action or an invented button.",
+      "focusedCorrection": "Preserve explicit employee confirmation when guiding a mutation's final save step, for example: Choose Save all changes, then review and confirm the save yourself. Avoid forcing the whole guide or inferring approval from conversation."
+    }
+  ],
+  "crossCuttingLimits": [
+    "No denied-permission employee conversation was included; permission reauthorization is covered by separate deterministic tests, not certified by these allowed-role model conversations.",
+    "Missing documentation, unknown live facts, tool failures and unsupported feature claims were not deliberately elicited in this seven-turn help set. Do not claim general unknown/error-recovery coverage from these results.",
+    "The walkthrough tests use employee-reported progress; they do not establish that actual UI navigation or saves occurred.",
+    "Seven turns over two modules establish representative local behavior only; no whole-helpdesk quality or overall provider superiority claim is supported."
+  ],
+  "historicalQwenComparison": {
+    "freshHeadToHead": false,
+    "originalEvidence": "October 28 assessment-final.json, runtime 6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c. Q31 declined the documented pending/on-hand distinction; Q08 incorrectly claimed drag release saved immediately. These are historical defects, not current Production conclusions.",
+    "reconciledEvidence": "October 28 actual-answers.json, base ee2baa6, knowledge-v7+jobs-v2. Q07 actual Qwen prose gives most of the full guide in 2533 ms. Q08 is already a correct deterministic No in 365 ms with no model call. Q32 actual Qwen omitted required receiving labels/bounds; final validation rejected the captured output and returned the whole verified guide without new inference.",
+    "supportedComparison": "Actual Terra answers adapt their length and next step to explicit employee requests in this set; the historical Q07 raw response is more excerpt-like. Current reconciled Q08 is already correct and faster than these actual Terra turns, so no Terra speed/factuality win is claimed for Q08. Q32 is adjacent evidence of validator fallback granularity and was not freshly retested here.",
+    "rootCauseLimit": "The old defects include retrieval/intent routing and answer-validation behavior. This evidence does not isolate model quality as their sole cause or establish that guide fallback can be removed."
+  },
+  "sourceReceiptSha256": "8845ec8438cca228f3909b00056597a7a13d72289e08881d61011e24d6f33e55"
+}

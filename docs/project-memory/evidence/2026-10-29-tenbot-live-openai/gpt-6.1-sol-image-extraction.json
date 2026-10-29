@@ -1,0 +1,111 @@
+{
+  "model": "gpt-6.1-sol",
+  "mode": "actual OpenAI input_image extraction; no offline OCR or gold text in prompt",
+  "at": "2026-10-29T16:44:49.762Z",
+  "status": "completed",
+  "durationMs": 3696,
+  "final": {
+    "raw_lines": [
+      "SYNTHETIC / TEST DATA ONLY",
+      "Terrazzo & Marble Supply",
+      "INVOICE",
+      "Supplier: Terrazzo & Marble Supply",
+      "Invoice: SYN-INV-2087",
+      "Invoice date: 2026-10-29",
+      "Bill to: Tenarten",
+      "Synthetic account",
+      "MATERIALS ORDERED",
+      "LINE | SKU | MATERIAL / DESCRIPTION | SIZE / PART | QTY | UNIT",
+      "1 | AW-1 | Alaska White | #1 | 150 | LB",
+      "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+      "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+      "4 | GREEN | CC Green | #1 | 2 | Bag",
+      "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+      "Freight / Delivery charge | $85.00",
+      "Material quantities are listed separately from freight.",
+      "NOT A REAL INVOICE — DO NOT POST OR PAY"
+    ]
+  },
+  "usage": {
+    "inputTokens": 989,
+    "cachedInputTokens": 0,
+    "outputTokens": 213,
+    "costUsd": 0.004108,
+    "reservedUsd": 0.0259975
+  },
+  "network": [
+    {
+      "model": "gpt-6.1-sol",
+      "label": "synthetic-image-extraction",
+      "startedAt": "2026-10-29T16:44:49.764Z",
+      "reservedUsd": 0.2759975,
+      "attachment": {
+        "type": "actual input_image",
+        "sha256": "98ee71810a8df51640c0105f09c8690f9bcb5c8946ff9a15733bf379c7e8f4f2",
+        "bytes": 66968,
+        "width": 768,
+        "height": 920,
+        "extraReservedInputTokens": 100000
+      },
+      "httpStatus": 200,
+      "requestId": "req_69c1514716e046b9886027a9877760b6",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 989,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 0
+          },
+          "cached_tokens": 0
+        },
+        "output_tokens": 213,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1202
+      },
+      "accountedUsd": 0.004108,
+      "costMeasured": true,
+      "durationMs": 3696,
+      "calls": [],
+      "final": {
+        "raw_lines": [
+          "SYNTHETIC / TEST DATA ONLY",
+          "Terrazzo & Marble Supply",
+          "INVOICE",
+          "Supplier: Terrazzo & Marble Supply",
+          "Invoice: SYN-INV-2087",
+          "Invoice date: 2026-10-29",
+          "Bill to: Tenarten",
+          "Synthetic account",
+          "MATERIALS ORDERED",
+          "LINE | SKU | MATERIAL / DESCRIPTION | SIZE / PART | QTY | UNIT",
+          "1 | AW-1 | Alaska White | #1 | 150 | LB",
+          "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+          "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+          "4 | GREEN | CC Green | #1 | 2 | Bag",
+          "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+          "Freight / Delivery charge | $85.00",
+          "Material quantities are listed separately from freight.",
+          "NOT A REAL INVOICE — DO NOT POST OR PAY"
+        ]
+      },
+      "usage": {
+        "inputTokens": 989,
+        "cachedInputTokens": 0,
+        "outputTokens": 213,
+        "costUsd": 0.004108,
+        "reservedUsd": 0.0259975
+      }
+    }
+  ],
+  "journal": {
+    "reservedOrSpentUsd": 0.004531000000000007,
+    "attempts": 3,
+    "settled": 3
+  }
+}

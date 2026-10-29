@@ -1,0 +1,81 @@
+{
+  "at": "2026-10-29T16:55:05.916986+00:00",
+  "status": "partial-live-evaluation; operational-tool phase blocked before inference",
+  "sourceHead": "f5b1ce8736932859d193fe0ac8f601afb1d15bb9",
+  "acceptedExperimentalCandidate": "0bb928e",
+  "serviceTier": "default (Standard)",
+  "actualApiRequests": 4,
+  "actualModelToolCalls": 0,
+  "totalMeasuredTokenBasedCostUsd": 0.006586,
+  "costBasis": "Actual returned usage times published Standard token prices; not a reconciled billing statement. No cache-write/cached/reasoning tokens reported.",
+  "cumulativeLedger": {
+    "reservedOrSpentUsd": 0.0065860000000000085,
+    "attempts": 4,
+    "settled": 4
+  },
+  "ledgerPath": "/private/tmp/tenops-tenbot-agent-poc/openai-budget.json",
+  "budgetCapUsd": 5,
+  "remainingAuthorizationUsd": 4.993414,
+  "spendingAuthorizedAtStop": false,
+  "documentSha256": "98ee71810a8df51640c0105f09c8690f9bcb5c8946ff9a15733bf379c7e8f4f2",
+  "operationalDatabaseWrites": 0,
+  "hostedConfigurationChanges": 0,
+  "productionProvider": "Qwen unchanged",
+  "actualCases": [
+    "Sol authenticated structured smoke",
+    "Terra authenticated structured smoke",
+    "Sol actual synthetic input_image transcription",
+    "Terra actual same-image transcription"
+  ],
+  "blockedCases": [
+    "Autonomous Job tool selection and sequencing",
+    "Multi-step Job investigation",
+    "Multi-turn operational reasoning",
+    "Novel Job/catalog investigation",
+    "Catalog matching and duplicate/ambiguity handling",
+    "Structured pending-receival preparation",
+    "Live tool/provider error recovery"
+  ],
+  "blocker": {
+    "kind": "local infrastructure",
+    "details": "Docker daemon did not respond to an independent docker ps within 10 seconds. Existing fixture can() preflight hung in synchronous docker exec before provider import. SQL statement_timeout cannot bound an unresponsive Docker transport.",
+    "fixture": "tenops-tenbot-review",
+    "substitutions": false,
+    "remediation": "Restore Docker and the existing isolated fixture; add a wall-clock timeout for the local fixture subprocess. No restart, reseed or permission bypass performed."
+  },
+  "comparison": [
+    {
+      "model": "gpt-6.1-sol",
+      "smokeLatencyMs": 2971,
+      "smokeInputTokens": 61,
+      "smokeOutputTokens": 16,
+      "smokeCostUsd": 0.000282,
+      "imageLatencyMs": 3696,
+      "imageInputTokens": 989,
+      "imageOutputTokens": 213,
+      "imageCostUsd": 0.004108,
+      "imageExactLines": 18,
+      "allFiveMaterialRowsExact": true
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "smokeLatencyMs": 1802,
+      "smokeInputTokens": 61,
+      "smokeOutputTokens": 16,
+      "smokeCostUsd": 0.000141,
+      "imageLatencyMs": 4186,
+      "imageInputTokens": 990,
+      "imageOutputTokens": 213,
+      "imageCostUsd": 0.002055,
+      "imageExactLines": 18,
+      "allFiveMaterialRowsExact": true
+    }
+  ],
+  "limitations": [
+    "One clean synthetic PNG per model, one attempt each; no real phone photo or PDF tested.",
+    "No completed operational task; image transcription cost is not full receival-task cost.",
+    "No fresh Qwen calls or equivalent live head-to-head operational comparison.",
+    "Local fixture authorization is not hosted caller-JWT/RLS certification."
+  ],
+  "boundary": "Stop for Product review; no commit, push, deployment, migration or application-source change."
+}

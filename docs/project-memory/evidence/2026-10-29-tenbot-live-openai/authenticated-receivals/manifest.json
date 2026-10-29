@@ -1,0 +1,169 @@
+{
+  "archivedAt": "2026-10-29T18:14:44.833151+00:00",
+  "status": "Implemented locally; Product review only. No hosted operational writes, migration application, push or deployment.",
+  "evidenceFiles": {
+    "authenticated-desktop-blocked.png": {
+      "sha256": "45e9b6807a7d30ef7107f612bf2305469b125412125600b2651e0f441771ef24",
+      "bytes": 143387
+    },
+    "authenticated-mobile-blocked.png": {
+      "sha256": "29b34c568ea90ae0827ac111efe211534cc64b3d3c4c867a8e877e64c509f46b",
+      "bytes": 86328
+    },
+    "browser-first-assertion-failure.json": {
+      "sha256": "1b41210a0a69c7a710fe7d9703885fd7bf9f1204690606ccd5153e8d345beed6",
+      "bytes": 368
+    },
+    "browser-validation.json": {
+      "sha256": "9d3dc7aaf81a5448813d3e0ac9a01be01956ec4a88ca1c0b4293699be57ccf9b",
+      "bytes": 1167
+    },
+    "budget-ledger-snapshot.json": {
+      "sha256": "d27ad1b709b0cc6f004b827f332dc2edc2f0477573e8dae38b2a5f60609bd6bc",
+      "bytes": 82
+    },
+    "isolated-database-diagnosis.json": {
+      "sha256": "0fbb5198a9a6b2c96866a20488124adeec704bf38aca2aeb0a01c1cca40fa82b",
+      "bytes": 3290
+    },
+    "latency-profile.json": {
+      "sha256": "04bb6bff6e1f5c8b5a8a92a37a1a092eb373f53f31b3a75bdb3ac3872e192cf1",
+      "bytes": 9066
+    },
+    "server.json": {
+      "sha256": "acc7c284c4b5612b765aed59a5bc86c7f071fef3eb269cecf58c01a443f89139",
+      "bytes": 444
+    },
+    "validation.json": {
+      "sha256": "3346de235e655d15b0b8b64b23f2080381d95e0038628fab31550bc8841dde1f",
+      "bytes": 1333
+    }
+  },
+  "sourcePins": {
+    "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql": {
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc",
+      "bytes": 36190
+    },
+    "src/modules/inventory/invoice-receival-service.ts": {
+      "sha256": "15c4a7ee6005d08f83ded1c6731171265f79ce389ccbcf7b76f41872b4ddb657",
+      "bytes": 6256
+    },
+    "src/modules/inventory/pending-receival-contract.ts": {
+      "sha256": "db2375b6b6045ef739a482f9a71fb911e7e45b41be70a7d2d9f5d0493078403e",
+      "bytes": 2086
+    },
+    "scripts/support/tenbot-receival-agent.mts": {
+      "sha256": "7d42fae4d92091936677f9ee9bafe814ca744a5e21faca8be38efbe72afdf71f",
+      "bytes": 16535
+    },
+    "scripts/start-tenbot-receival-review.mts": {
+      "sha256": "b2999cb8d3c3cbb704f1ccae5be02c6fe00eadcbda9b5b47d981ad94e518473c",
+      "bytes": 5082
+    },
+    "scripts/support/tenbot-invoice-attachment.mts": {
+      "sha256": "e0f2ecfaa265f5e11d002a83d6ce9300673c29efd47ccebe6afa810248614c5f",
+      "bytes": 3773
+    },
+    "src/modules/tenbot/TenbotWorkspace.tsx": {
+      "sha256": "967e41b63850aef454a84e86d33a529ea418ac5249969b563501f9118df33e1e",
+      "bytes": 47279
+    },
+    "src/modules/tenbot/ReceivalDraftReview.tsx": {
+      "sha256": "49008dee90fe197f6cfe152649fff7daf968b8f2a9e98a036ee780ca7b85ffbd",
+      "bytes": 8277
+    },
+    "src/modules/tenbot/live-review.ts": {
+      "sha256": "cf5f80b2306a9c943c7cdc122466de9ddf40a10085dd57df2d4947a30b19acd1",
+      "bytes": 9780
+    },
+    "scripts/profile-tenbot-latency.mjs": {
+      "sha256": "09144ebb061444524a0160c79a95a9a06af6d672d0ac4ced5d7a7622a96b6b71",
+      "bytes": 6419
+    },
+    "scripts/support/tenbot-live-provider.mts": {
+      "sha256": "187c7ba3c6dd6a8119fb5ca3be6f1f2c3de77d45bdc86fff1bbdd447f61195bb",
+      "bytes": 9795
+    },
+    "scripts/verify-invoice-receival-contract.mts": {
+      "sha256": "49bc03aaa5af85110d04f05f0d40705dacf4e2a65462d49057c782bb98a87233",
+      "bytes": 8915
+    },
+    "scripts/verify-tenbot-receival-agent.mts": {
+      "sha256": "53060d32bcb497c335f6ce8eceb2e8ca688aa411b7b39a2721a01aaa8e1e877b",
+      "bytes": 15249
+    },
+    "scripts/verify-tenbot-receival-browser.mjs": {
+      "sha256": "513b677242a6247563867bcb36281a3722600933fa8aa08ddfab056676323ea0",
+      "bytes": 4479
+    },
+    "scripts/verify-tenbot-live-review.mts": {
+      "sha256": "20ae6803656158fc77c27039a683a97fa164bb85fa132d96c120b3aa9ec39f80",
+      "bytes": 10660
+    },
+    "supabase/functions/_shared/tenbot-invoice.ts": {
+      "sha256": "fe9a1a9fe50b836b5eb3e318a400ca5b3b04fb73e8f5259972fb61ddaac6241a",
+      "bytes": 28524
+    },
+    "supabase/functions/_shared/tenbot-agent-session.ts": {
+      "sha256": "f797c38b168e564221783a1565a17326e9a3cf00afec24f6739d3f2e1e3c1835",
+      "bytes": 10810
+    }
+  },
+  "validation": {
+    "actualBrowser": {
+      "groups": 6,
+      "passed": true,
+      "scope": "Real localhost browser and HTTP failure gates with a synthetic browser session. No real database request, inference or write was attempted."
+    },
+    "reportedOfflineChecks": {
+      "canonicalStaticContractGroups": 13,
+      "controllerGroups": 11,
+      "uiGroups": 11,
+      "invoiceGroups": 20,
+      "sessionGroups": 16,
+      "scope": "Reported by parent implementation task; these are offline/static/injected-service checks, not PostgreSQL execution or RLS proof."
+    },
+    "reportedWholeAppTypeScript": "passed",
+    "reportedLocalOptimizedBuild": "passed",
+    "targetedLintAndFinalDiffCheck": "Passed before additional conversational Product requirement; subsequent candidate validation recorded separately.",
+    "receipt": "validation.json"
+  },
+  "boundaries": {
+    "actualModelInferenceThisPhase": 0,
+    "existingRealModelEvidence": "Earlier sibling docker-independent receipts retain actual Sol/Terra and PDF/image inference; this archive adds no live model or real database success claim.",
+    "catalogAndExecution": "New authenticated caller-scoped canonical integration implemented; real execution defaults disabled until database-backed tests pass. Prior in-memory demo remains separately labeled historical proof of agentic capability.",
+    "databaseAuthRlsTransactionsVerified": false,
+    "migrationApplied": false,
+    "pendingReceivalsActuallyCreated": 0,
+    "productionOperationalWrites": 0,
+    "dockerRetries": 0,
+    "newSupabaseEndpointRetries": 0,
+    "newInferenceCalls": 0,
+    "credentialValuesArchived": false,
+    "personalChatgptContextAccess": false
+  },
+  "mandatoryReleaseGates": [
+    "Restore or identify responsive existing isolated Supabase without Production writes.",
+    "Apply proposed narrow migration only to an approved isolated environment and verify syntax, grants, policies and canonical schema compatibility.",
+    "Verify real caller JWT authentication, RBAC/RLS isolation and permission revocation at approval and commit.",
+    "Verify immutable draft hash/revision approval, expiry, replay, cross-caller rejection and document identity checks against real PostgreSQL.",
+    "Verify all-or-none transaction rollback, concurrent duplicate/idempotency behavior, durable audit provenance and actual created record IDs.",
+    "Verify pending rows do not increase on-hand Inventory and rerun actual authenticated localhost lifecycle against disposable records."
+  ],
+  "spending": {
+    "ledgerNeverReset": true,
+    "cumulativeCapUsd": 5,
+    "snapshot": {
+      "reservedOrSpentUsd": 0.11924075000000003,
+      "attempts": 55,
+      "settled": 55
+    },
+    "additionalSpendThisPhaseUsd": 0
+  },
+  "secretScan": {
+    "selectedJsonTextFilesScanned": true,
+    "openaiKeysBearersJwtsPrivateKeysEncryptedContinuationOrCredentialAssignmentsFound": false,
+    "envFilesRead": false
+  },
+  "sourcePinScope": "Exact authenticated-receival phase source at archive time. Additional conversational Product requirement follows; do not rewrite these historical hashes."
+}

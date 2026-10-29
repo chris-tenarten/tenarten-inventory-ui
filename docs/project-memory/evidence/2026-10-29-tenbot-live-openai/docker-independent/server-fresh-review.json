@@ -1,0 +1,33 @@
+{
+  "pid": 43440,
+  "port": 55595,
+  "origin": "http://localhost:3000",
+  "mode": "synthetic-live",
+  "model": "gpt-6.1-terra",
+  "keyConfigured": true,
+  "spendingAuthorized": true,
+  "authorizedBudgetUsd": 5,
+  "simulation": true,
+  "recordSource": "SIMULATED local memory only",
+  "databaseWrites": false,
+  "dockerRequired": false,
+  "approvalScope": "In-memory simulated pending rows only; no on-hand changes",
+  "sourceHashes": [
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "8fb99bff59619947a22d950bbc4a5668ae79b37c36cb7c227e4f389d7953202d"
+    },
+    {
+      "path": "scripts/support/tenbot-live-demo.mts",
+      "sha256": "e9c264091a1f5ee3a68ae2803da5f86ba77a784050534ba85f33a6d3afc05081"
+    },
+    {
+      "path": "scripts/support/tenbot-live-provider.mts",
+      "sha256": "292e160370e775f5f874609052811bbebbd334fbbe470cc0f592ce84987b3388"
+    },
+    {
+      "path": "src/modules/inventory/pending-receival-contract.ts",
+      "sha256": "db2375b6b6045ef739a482f9a71fb911e7e45b41be70a7d2d9f5d0493078403e"
+    }
+  ]
+}

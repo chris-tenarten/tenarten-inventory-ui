@@ -1,0 +1,135 @@
+{
+  "comparison": "Historical actual Qwen outputs and validation receipts only; no fresh Qwen call, same-prompt head-to-head, or overall model superiority is claimed.",
+  "initial": {
+    "date": "2026-10-28",
+    "path": "docs/project-memory/evidence/2026-10-28-tenbot-independent-qa/assessment-final.json",
+    "sha256": "afc916b06510937ea7d54a8c5a83816dd570293432ddf8b98be8d4ef8f9754fa",
+    "runtimeRevision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+    "rows": [
+      {
+        "id": "Q07",
+        "question": "New topic: how do I move a Production Job to different planned dates on the Timeline?",
+        "actual": "To move a Production Job to different planned dates on the Timeline, open the Job and adjust its bar in the Timeline or enter new Planned start and finish dates in Details. Review the changes, then select Save all changes. Ensure the finish date is on or after the start date. Staged changes require explicit confirmation to save.",
+        "verdict": "PASS",
+        "finding": "Correct staged dates, Save all changes, finish/start ordering and explicit confirmation."
+      },
+      {
+        "id": "Q08",
+        "question": "So letting go of the bar saves it right away?",
+        "actual": "Letting go of the bar in the Timeline saves the changes immediately. You can adjust the bar or enter new dates in Details, then select Save all changes. The changes are staged and saved upon confirmation. If you discard, the original dates are restored.",
+        "verdict": "FAIL",
+        "finding": "First sentence explicitly claims drag release saves immediately, contradicting the released staged workflow, its own later sentences and Q07. A later caveat does not repair the affirmative opening."
+      },
+      {
+        "id": "Q30",
+        "question": "Switching to Inventory: how do I find current stock, and is a material-group total the same as one lot?",
+        "actual": "To find current stock, go to Inventory → Current Inventory and use the search function. A material-group total is not the same as one lot; a material group may contain multiple lots, and each lot has its own details. The table shows a combined total, but individual lots can be selected for specific information.\n\nMaterial requirements, supply evidence and lead-time boundaries exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+        "verdict": "PARTIAL",
+        "finding": "Current Inventory/group-versus-lot explanation is correct. An unrelated material-assessment denial adds noise and can imply stock review needs Proposal access, though no such grant is actually given or bypassed."
+      },
+      {
+        "id": "Q31",
+        "question": "Does a Pending Receival already count as on-hand stock?",
+        "actual": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+        "verdict": "FAIL",
+        "finding": "Does not answer a documented state distinction: pending incoming material is not on-hand stock. The response is honest uncertainty, not a hallucination."
+      },
+      {
+        "id": "Q32",
+        "question": "How would an authorized receiver record only part of an incoming line?",
+        "actual": "An authorized receiver cannot record only part of an incoming line through a Pending Receival. Pending Receivals represent full incoming material and must be received in their entirety. Partial receipts are not supported in the current workflow.\n\nAdd or edit a Pending Receival exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.\n\nMaterial requirements, supply evidence and lead-time boundaries exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+        "verdict": "FAIL",
+        "finding": "Falsely states partial receipts are unsupported and full-line receiving is required. Released UI accepts any positive quantity within the remainder. Current-account denial of pending creation/material assessment does not establish absence for an authorized receiver."
+      }
+    ]
+  },
+  "reconciled": {
+    "date": "2026-10-28",
+    "path": "docs/project-memory/evidence/2026-10-28-tenbot-qa-reconciliation/actual-answers.json",
+    "sha256": "e9b65e6a71bd59eebc650f75c49741736e636d92443298d1269fbb3db7bad8d2",
+    "base": "ee2baa6",
+    "inferenceContract": "knowledge-v7+jobs-v2",
+    "rows": [
+      {
+        "id": "Q32",
+        "question": "How would an authorized receiver record only part of an incoming line?",
+        "rawModelAnswer": "An authorized receiver can record only part of an incoming line by opening Inventory → Pending Receivals, selecting the line, and choosing Receive. Enter the quantity received and confirm. The entered quantity is added to Inventory, while the remaining quantity stays pending. The reservation and other details remain intact. This process requires Inventory-receiving and business-write access.",
+        "mode": "ai",
+        "fallback": false,
+        "message": "An authorized receiver can record only part of an incoming line by opening Inventory → Pending Receivals, selecting the line, and choosing Receive. Enter the quantity received and confirm. The entered quantity is added to Inventory, while the remaining quantity stays pending. The reservation and other details remain intact. This process requires Inventory-receiving and business-write access.",
+        "providerInvoked": true,
+        "durationMs": 1733,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 1031,
+          "outputTokens": 116,
+          "estimatedNeurons": 8.304
+        }
+      },
+      {
+        "id": "Q07",
+        "question": "New topic: how do I move a Production Job to different planned dates on the Timeline?",
+        "rawModelAnswer": "To move a Production Job to different planned dates on the Timeline: Open the Job in Production → Job → Details → Planned start/Planned finish. Adjust the dates or drag the bar in the Timeline. Review changes, then choose Save all changes. Ensure finish is on or after start. Save ordinary Inspector details first if prompted. Red scheduling errors block saving; warnings do not. Discard all restores the saved dates. A stale or failed save retains proposals for review.",
+        "mode": "ai",
+        "fallback": false,
+        "message": "To move a Production Job to different planned dates on the Timeline: Open the Job in Production → Job → Details → Planned start/Planned finish. Adjust the dates or drag the bar in the Timeline. Review changes, then choose Save all changes. Ensure finish is on or after start. Save ordinary Inspector details first if prompted. Red scheduling errors block saving; warnings do not. Discard all restores the saved dates. A stale or failed save retains proposals for review.",
+        "providerInvoked": true,
+        "durationMs": 2533,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 1283,
+          "outputTokens": 132,
+          "estimatedNeurons": 9.957
+        }
+      },
+      {
+        "id": "Q08",
+        "question": "So letting go of the bar saves it right away?",
+        "mode": "verified",
+        "fallback": false,
+        "message": "No. Releasing a Timeline drag only stages proposed dates. Review changes, then choose Save all changes and confirm the save. Discard all restores the saved dates.",
+        "providerInvoked": false,
+        "durationMs": 365,
+        "usage": null
+      }
+    ],
+    "partialReceivingFinalValidation": [
+      {
+        "id": "Q32",
+        "noNewInference": true,
+        "rejected": "TenBot could not verify the workflow wording.",
+        "direct": {
+          "mode": "guide",
+          "message": "Here is guidance from the TenOps Guide.",
+          "resolution": "available",
+          "snapshot": {
+            "revision": "bc628bd",
+            "verifiedAt": "2026-10-27"
+          },
+          "sources": [
+            {
+              "id": "inventory-pending-receive",
+              "title": "Receive pending material into Inventory",
+              "status": "deployed",
+              "guidance": "Employees with Inventory-receiving and business-write access can receive incoming material. Open Inventory → Pending Receivals, expand the section and choose Receive on an outstanding line. Enter Received By and Quantity received now, then Confirm Receive. Quantity must be positive and no greater than the remaining amount. Only that quantity enters Inventory; the balance stays pending and the existing reservation carries through. If the result is uncertain, keep the dialog open and retry the same quantity there. Receive selected receives the full remaining quantities of selected rows. Undo latest receipt is a separate Inventory-adjustment action and is blocked if the received stock changed.",
+              "path": "Inventory → Pending Receivals → Receive → Confirm Receive",
+              "route": "/inventory",
+              "source": "Inventory guide · released workflow verified October 27",
+              "availability": "available",
+              "constraints": [
+                "Employees with Inventory-receiving and business-write access can receive incoming material.",
+                "Quantity must be positive and no greater than the remaining amount.",
+                "Only that quantity enters Inventory; the balance stays pending and the existing reservation carries through.",
+                "If the result is uncertain, keep the dialog open and retry the same quantity there."
+              ]
+            }
+          ],
+          "summary": null,
+          "notices": [],
+          "suggestionAllowed": false
+        }
+      }
+    ]
+  },
+  "interpretation": "Q08 originally contradicted staged saving; reconciliation now answers No deterministically. Q31 originally declined a documented state distinction, while reconciliation corrected its source/state guard. Q32 is an adjacent un-retested example: actual Qwen partial-receiving prose omitted required labels/bounds and final validation returned the whole verified guide. Existing routing/retrieval and validators contributed; failures are not attributed solely to the model."
+}

@@ -1,0 +1,53 @@
+{
+  "at": "2026-10-29T17:04:30.900424+00:00",
+  "scope": "Read-only Docker timeout investigation; no inference or Docker configuration change",
+  "classification": "Docker API unresponsive while Docker Desktop/backend processes and a listening Unix socket are present",
+  "codexApprovalReview": {
+    "result": "Approved commands executed; no approval/review timeout or rejection in this investigation",
+    "distinction": "Time waiting for tool approval is outside the measured child-process elapsed time. An approval timeout before execution supplies no Docker-health result."
+  },
+  "sandboxProbe": {
+    "dockerClientVersion": "27.4.0",
+    "context": "desktop-linux",
+    "endpoint": "unix:///Users/chrisngo/.docker/run/docker.sock",
+    "daemonInfoExitCode": 0,
+    "stderrClassification": "operation not permitted connecting to Docker socket; sandbox restriction, not daemon availability evidence"
+  },
+  "approvedOutsideSandbox": {
+    "daemonInfo": {
+      "timeoutMs": 5000,
+      "elapsedMs": 5008,
+      "result": "subprocess-timeout"
+    },
+    "unixSocketConnect": {
+      "elapsedMs": 0,
+      "result": "accepted"
+    },
+    "dockerPing": {
+      "timeoutMs": 3000,
+      "elapsedMs": 3001,
+      "result": "response-timeout"
+    },
+    "dockerDesktopAndBackendProcessesPresent": true
+  },
+  "fixtureStartup": {
+    "result": "Not reached; daemon readiness failed first",
+    "container": "tenops-tenbot-review",
+    "startupAttempted": false,
+    "reseedOrMigrationsAttempted": false
+  },
+  "configurationChanges": {
+    "globalCodexPermissions": false,
+    "dockerConfiguration": false,
+    "dockerRestart": false
+  },
+  "inferenceCalls": 0,
+  "spendingAuthorized": false,
+  "cumulativeCapUsd": 5,
+  "ledgerAtStart": {
+    "reservedOrSpentUsd": 0.0065860000000000085,
+    "attempts": 4,
+    "settled": 4
+  },
+  "requiredRecovery": "Recover Docker Desktop API responsiveness, then run node scripts/check-tenbot-fixture.mjs with permitted socket access. Do not initialize/reseed the existing fixture as a substitute."
+}

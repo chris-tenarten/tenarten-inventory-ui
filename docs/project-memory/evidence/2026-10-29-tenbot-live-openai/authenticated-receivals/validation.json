@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "tier": 3,
+  "level": "Focused Level 3; real database gates incomplete",
+  "scope": "Authenticated receival integration checks completed before additional conversational Product requirement; later conversational validation supersedes current source pins where changed",
+  "checks": {
+    "canonicalOfflineStatic": 13,
+    "controllerOfflineWiring": 11,
+    "uiOfflineLifecycle": 11,
+    "invoiceOfflineRegression": 20,
+    "sessionOfflineRegression": 16,
+    "actualLocalHttpBrowserFailureGates": 6
+  },
+  "wholeAppTypeScript": "passed, including optimized build",
+  "targetedEslint": "passed; explicit no-ignore for shared modules",
+  "diffCheck": "passed",
+  "productionModeLocalExport": {
+    "passed": true,
+    "webpackSeconds": 7.0,
+    "typeCheckSeconds": 6.8,
+    "staticPages": 24
+  },
+  "independentSecurityReview": "passed after focused corrections; static only",
+  "databaseBackedValidation": false,
+  "migrationApplied": false,
+  "realExecutionEnabled": false,
+  "newInferenceCalls": 0,
+  "cumulativeBudget": {
+    "reservedOrSpentUsd": 0.11924075,
+    "attempts": 55,
+    "settled": 55
+  },
+  "correctedValidationFailures": [
+    "New offline verifier fixture inference TypeScript error corrected before successful build",
+    "Browser assertion region corrected without application change"
+  ]
+}

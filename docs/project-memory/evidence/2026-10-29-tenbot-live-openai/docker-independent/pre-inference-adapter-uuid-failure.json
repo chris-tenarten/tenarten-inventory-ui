@@ -1,0 +1,30 @@
+{
+  "state": "failed",
+  "mode": "REAL OpenAI inference; SIMULATED local records and permissions",
+  "origin": "http://localhost:3000",
+  "endpoint": "http://localhost:55595",
+  "serverModel": "gpt-6.1-terra",
+  "checks": [],
+  "responses": [
+    {
+      "action": "status",
+      "status": 401,
+      "body": {
+        "error": "Existing simulated localhost session required; no hosted authentication is claimed."
+      }
+    }
+  ],
+  "requests": [
+    {
+      "origin": "http://localhost:55595",
+      "action": "status"
+    }
+  ],
+  "errors": [],
+  "journalBefore": {
+    "reservedOrSpentUsd": 0.09875914999999999,
+    "attempts": 44,
+    "settled": 44
+  },
+  "failure": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('dialog', { name: 'Inbox', exact: true }).locator('[aria-label=\"Local agent experiment controls\"]')\nExpected substring: \"Live OpenAI reasoning · Simulated local records · No Production writes\"\nReceived string:    \"Local agent experiment · Synthetic data · No executionOffline mode uses explicitly selected scripted test responses. OpenAI requires server credentials and separate spending authorization. Existing Production Qwen is unchanged.Checking the local experiment…Scripted test scenarioJob investigationInvoice preparationTool failure recoveryAttach synthetic invoice\"\nTimeout: 5000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByRole('dialog', { name: 'Inbox', exact: true }).locator('[aria-label=\"Local agent experiment controls\"]')\n    14 × locator resolved to <details aria-label=\"Local agent experiment controls\" class=\"rounded border border-amber-200 bg-amber-50 p-2 text-xs\">…</details>\n       - unexpected value \"Local agent experiment · Synthetic data · No executionOffline mode uses explicitly selected scripted test responses. OpenAI requires server credentials and separate spending authorization. Existing Production Qwen is unchanged.Checking the local experiment…Scripted test scenarioJob investigationInvoice preparationTool failure recoveryAttach synthetic invoice\"\n"
+}

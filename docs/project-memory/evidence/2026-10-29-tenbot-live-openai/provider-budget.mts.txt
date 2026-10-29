@@ -1,0 +1,80 @@
+import {readFileSync,writeFileSync,mkdirSync,renameSync,rmdirSync,existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {createOpenAIProvider,OPENAI_EXPERIMENT_PRICING,type OpenAIModel} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/_shared/tenbot-openai.ts';
+import {AgentStepError,type AgentProvider,type AgentStepRequest} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/_shared/tenbot-agent.ts';
+const directory='/private/tmp/tenops-tenbot-live-2026-10-29',shared='/private/tmp/tenops-tenbot-agent-poc';
+mkdirSync(directory,{recursive:true});mkdirSync(shared,{recursive:true});
+const lock=shared+'/openai-budget.lock';mkdirSync(lock);
+const path=shared+'/openai-budget.json';
+type Journal={reservedOrSpentUsd:number;attempts:number;settled:number};
+let initial=existsSync(path)?readFileSync(path,'utf8'):undefined;
+const journal:Journal=initial===undefined?{reservedOrSpentUsd:0,attempts:0,settled:0}:JSON.parse(initial);
+let fatalReason:string|null=null,closed=false,lastRequest=0,busy=false;
+const receipts:Record<string,unknown>[]=[];
+const key=process.env.TENBOT_OPENAI_API_KEY||'';
+if(key.length<16||process.env.TENBOT_OPENAI_SPEND_AUTHORIZED!=='true')throw Error('Credential or spending gate unavailable');
+function validateJournal(){if(!Number.isFinite(journal.reservedOrSpentUsd)||journal.reservedOrSpentUsd<0||journal.reservedOrSpentUsd>5||!Number.isSafeInteger(journal.attempts)||journal.attempts<0||!Number.isSafeInteger(journal.settled)||journal.settled<0||journal.settled>journal.attempts)throw Error('Invalid preserved budget journal');}
+validateJournal();
+const serverPath=shared+'/server.json';if(existsSync(serverPath)&&JSON.parse(readFileSync(serverPath,'utf8')).spendingAuthorized!==false)throw Error('Another adapter may spend; stop');
+function save(){
+ if((existsSync(path)?readFileSync(path,'utf8'):undefined)!==initial){fatalReason='concurrent-budget-writer';throw Error('Concurrent journal change');}
+ const temporary=path+'.next';if(existsSync(temporary)){fatalReason='budget-recovery-required';throw Error('Existing journal recovery file');}
+ const serialized=JSON.stringify(journal,null,2);writeFileSync(temporary,serialized,{mode:0o600,flag:'wx'});renameSync(temporary,path);initial=serialized;
+}
+function publish(){writeFileSync(directory+'/network-'+process.pid+'.json',JSON.stringify({receipts,journal,fatalReason},null,2),{mode:0o600});}
+export function assertNoFatal(){if(fatalReason||closed)throw Error(fatalReason||'Budget closed');}
+export function getJournal(){return {...journal};}
+export function getNetworkReceipts(){return structuredClone(receipts);}
+export function closeBudget(){if(!closed){publish();rmdirSync(lock);closed=true;}}
+process.once('exit',()=>{try{closeBudget();}catch{/* Retain ambiguous lock rather than enabling another writer. */}});
+export function createMeasuredProvider(model:OpenAIModel,label:string,attachmentPath?:string):AgentProvider{
+ assertNoFatal();if(!['gpt-6.1-sol','gpt-6.1-terra'].includes(model))throw Error('Model not approved');
+ let image:Buffer|undefined;
+ if(attachmentPath){image=readFileSync(attachmentPath);if(image.length>90000||image.readUInt32BE(0)!==0x89504e47||image.readUInt32BE(16)>1024||image.readUInt32BE(20)>1024)throw Error('Bounded synthetic PNG required');}
+ let activeReceipt:Record<string,unknown>|undefined;
+ const provider=createOpenAIProvider({model,apiKey:key,spendingAuthorized:true,pricing:OPENAI_EXPERIMENT_PRICING[model],
+  async reserveBudget(usd){
+   assertNoFatal();validateJournal();
+   // Text transport reserves its byte/framing/output bound. The isolated image
+   // preprocessing call additionally reserves 100,000 input tokens at the pinned
+   // cache-write rate; no image is silently added to an unreserved text request.
+   const extra=image?100000*OPENAI_EXPERIMENT_PRICING[model].cacheWritePerMillion/1000000:0;
+   const held=usd+extra;
+   if(!Number.isFinite(held)||held<=0||journal.reservedOrSpentUsd+held>5){fatalReason='cumulative-budget-cap';publish();throw Error('Cumulative $5 budget unavailable');}
+   journal.reservedOrSpentUsd+=held;journal.attempts++;save();if(activeReceipt)activeReceipt.reservedUsd=held;
+   let finished=false;
+   return {settle(actual?:number){
+    if(finished)return;
+    if(actual!==undefined){if(!Number.isFinite(actual)||actual<0||actual>held){fatalReason='reservation-bound-failure';publish();throw Error('Invalid settlement bound');}journal.reservedOrSpentUsd+=actual-held;journal.settled++;}
+    finished=true;save();if(activeReceipt){activeReceipt.accountedUsd=actual??held;activeReceipt.costMeasured=actual!==undefined;}publish();
+   }};
+  },
+  async fetcher(url,init){
+   assertNoFatal();if(String(url)!=='https://api.openai.com/v1/responses')throw Error('Unexpected network endpoint');
+   // Limit throughput below the configured 30 RPM. No automatic benchmark
+   // continuation occurs after an API access/rate/spend or usage-accounting error.
+   const delay=Math.max(0,lastRequest+2500-Date.now());if(delay)await new Promise(resolve=>setTimeout(resolve,delay));assertNoFatal();
+   const request=JSON.parse(String(init?.body));request.service_tier='default';
+   if(image&&Buffer.byteLength(JSON.stringify(request))>100000)throw Error('Image prompt text exceeds reserved input bound');
+   if(image){
+    const last=request.input.filter((item:Record<string,unknown>)=>item.role==='user').at(-1);if(!last||typeof last.content!=='string')throw Error('Attachment request must have a plain employee prompt');
+    last.content=[{type:'input_text',text:last.content},{type:'input_image',image_url:'data:image/png;base64,'+image.toString('base64'),detail:'high'}];
+    if(activeReceipt)activeReceipt.attachment={type:'actual input_image',sha256:createHash('sha256').update(image).digest('hex'),bytes:image.length,width:image.readUInt32BE(16),height:image.readUInt32BE(20),extraReservedInputTokens:100000};
+   }
+   if(Buffer.byteLength(JSON.stringify(request))>180000)throw Error('Augmented request too large');
+   lastRequest=Date.now();const response=await fetch(url,{...init,body:JSON.stringify(request)});
+   if(response.status>=400&&response.status<500)fatalReason='api-access-request-rate-or-spend-failure';
+   if(activeReceipt){activeReceipt.httpStatus=response.status;activeReceipt.requestId=response.headers.get('x-request-id');}
+   try{const payload=await response.clone().json();
+    if(response.ok){if(activeReceipt){activeReceipt.apiModel=payload.model;activeReceipt.apiStatus=payload.status;activeReceipt.serviceTier=payload.service_tier;activeReceipt.rawUsage=payload.usage;}if(payload.service_tier!=='default')fatalReason='unexpected-service-tier';}
+    else{const safe=(value:unknown)=>typeof value==='string'&&/^[a-zA-Z0-9_-]{1,100}$/.test(value)?value:null;if(activeReceipt)activeReceipt.apiError={type:safe(payload.error?.type),code:safe(payload.error?.code)};if(response.status>=400&&response.status<500)fatalReason='api-access-request-rate-or-spend-failure';}
+   }catch{if(activeReceipt)activeReceipt.responseMetadataUnavailable=true;}
+   publish();return response;
+  }});
+ return {name:provider.name,model:provider.model,async step(request:AgentStepRequest){
+  assertNoFatal();if(busy){fatalReason='concurrent-provider-step';throw new AgentStepError('concurrent-provider-step');}busy=true;const row:Record<string,unknown>={model,label,startedAt:new Date().toISOString()};receipts.push(row);activeReceipt=row;const start=performance.now();
+  try{const step=await provider.step(request);row.durationMs=Math.round(performance.now()-start);row.calls=step.calls;row.final=step.final;row.usage=step.usage;publish();assertNoFatal();return step;}
+  catch(error){row.durationMs=Math.round(performance.now()-start);row.providerFailure=(error as {code?:string}).code??'local-failure';row.usage=(error as {usage?:unknown}).usage;if(['missing-provider-usage','invalid-usage','request-budget-unavailable'].includes(String(row.providerFailure)))fatalReason='usage-or-budget-control-failure';publish();throw error;}
+  finally{activeReceipt=undefined;busy=false;}
+ }};
+}

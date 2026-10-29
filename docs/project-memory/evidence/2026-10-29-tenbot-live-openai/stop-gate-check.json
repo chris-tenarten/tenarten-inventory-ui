@@ -1,0 +1,9 @@
+{
+  "credentialLoadedByExistingProvider": true,
+  "spendingAuthorized": false,
+  "gateResult": "spending-not-authorized",
+  "networkAttempts": 0,
+  "reservationAttempts": 0,
+  "secretPrinted": false,
+  "scope": "Local disabled-spending gate check only; not an additional API call."
+}

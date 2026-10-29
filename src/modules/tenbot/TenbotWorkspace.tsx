@@ -5,6 +5,8 @@ import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {MoreHorizontal} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
+import {ReceivalDraftReview} from './ReceivalDraftReview';
+import {localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
 type Answer={conversationId?:string;mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean;operational?:{observedAt:string|null;complete:boolean;truncated:boolean;facts:{id:string;text:string}[];refreshable:boolean}};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
@@ -12,16 +14,17 @@ type Feedback={id:string;submitter_name:string;status:string;created_at:string;d
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;sharedMonthLimit:number;sharedMonthUsed:number;sharedMonthRemaining:number;perAccountMinuteLimit:number;dayNeuronLimit:number;dayAccountedNeurons:number;monthNeuronLimit:number;monthAccountedNeurons:number;dayMeasuredInputTokens:number;dayMeasuredOutputTokens:number;dayUnmeasuredAttempts:number};
 type AgentClaim={text:string;evidence_ids:string[]};
 type AgentView={mode:'offline-scripted'|'openai';provider:string;model:string;status:string;durationMs:number;executionAvailable:false;final:{observations:AgentClaim[];inferences:AgentClaim[];recommendations:AgentClaim[];questions:string[];completed_actions:[]}|null;proposals:{evidenceId:string;tool:string;proposal:Record<string,unknown>}[];evidence:{id:string;tool:string;data:unknown}[];trace:{event:string;name?:string;outcome:string;durationMs:number}[];usage:{inputTokens:number;outputTokens:number;costUsd:number;reservedUsd:number}};
-type ExperimentalAnswer=Answer&{agent?:AgentView};
+type ExperimentalAnswer=Answer&{agent?:AgentView;localDemo?:{simulation:boolean;draft:LocalReceivalDraft|null;attachment?:{id:string;filename:string;mediaType:string}}};
 const objectValue=(value:unknown):Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{};
 const rowsValue=(value:unknown):Record<string,unknown>[]=>Array.isArray(value)?value.map(objectValue):[];
 const displayValue=(value:unknown)=>value===null||value===undefined||value===''?'—':String(value);
-function AgentReview({agent}:{agent:AgentView}){
+const knowledgeAnswer=(agent:AgentView)=>agent.evidence.length>0&&agent.evidence.every(item=>item.tool==='search_workflow_knowledge')&&agent.proposals.length===0;
+function AgentReview({agent,liveDemo=false,simulation=true}:{agent:AgentView;liveDemo?:boolean;simulation?:boolean}){
  return <section aria-label="Experimental operational answer" className="space-y-3 border-t border-slate-200 pt-3">
-  <p className="rounded bg-amber-50 p-2 text-xs text-amber-900">{agent.mode==='offline-scripted'?'Scripted transport demonstration · no model inference':'Local OpenAI experiment'} · No execution capability</p>
+  <p className="rounded bg-amber-50 p-2 text-xs text-amber-900">{liveDemo?simulation?'Live OpenAI reasoning · Simulated local records · No Production writes':'Local OpenAI candidate · Caller-scoped TenOps records · Review required':<>{agent.mode==='offline-scripted'?'Scripted transport demonstration · no model inference':'Local OpenAI experiment'} · No execution capability</>}</p>
   {([['observations','Recorded observations'],['inferences','Interpretations'],['recommendations','Suggested next steps']] as const).map(([key,label])=>agent.final?.[key].length?<section key={key}><p className="font-medium">{label}</p><ul className="list-disc space-y-1 pl-5">{agent.final[key].map((claim,index)=><li key={index}>{claim.text} <span className="text-xs text-slate-500">({claim.evidence_ids.join(', ')})</span></li>)}</ul></section>:null)}
   {agent.final?.questions.length?<section><p className="font-medium">Information needed</p><ul className="list-disc space-y-1 pl-5">{agent.final.questions.map((question,index)=><li key={index}>{question}</li>)}</ul></section>:null}
-  {agent.proposals.map(({evidenceId,proposal})=>{
+  {!liveDemo&&agent.proposals.map(({evidenceId,proposal})=>{
    const ready=rowsValue(proposal.ready_lines),held=rowsValue(proposal.held_lines),excluded=rowsValue(proposal.excluded_lines),missing=Array.isArray(proposal.missing_employee_confirmations)?proposal.missing_employee_confirmations:[];
    return <section key={evidenceId} aria-label="Pending receival proposals" className="space-y-2 rounded border border-slate-300 p-3">
     <p className="font-semibold">Pending receival proposals · Review only</p><p>{displayValue(proposal.supplier)} · {displayValue(proposal.document_reference)}</p>
@@ -33,10 +36,10 @@ function AgentReview({agent}:{agent:AgentView}){
     <p className="text-xs font-medium">No rows created. Employee approval and a separately authorized execution service would be required.</p>
    </section>;
   })}
-  <p className="text-xs font-medium">Completed database actions: none.</p>
+  <p className="text-xs font-medium">{liveDemo?simulation?'Production database actions: none.':'This model response does not authorize or complete database actions.':'Completed database actions: none.'}</p>
   <details className="text-xs text-slate-600"><summary className="min-h-9 cursor-pointer py-2">Experiment evidence and measurements</summary>
    <p>{agent.provider} · {agent.model} · {agent.status}</p><p>Elapsed {(agent.durationMs/1000).toFixed(2)} s · {agent.trace.filter(row=>row.event==='tool').length} tool attempts · {agent.usage.inputTokens} input / {agent.usage.outputTokens} output tokens · ${agent.usage.costUsd.toFixed(4)} accounted</p>
-   <p>Scripted timings measure local orchestration only. Source references support provenance; free prose and interpretations still require review.</p>
+   <p>{agent.mode==='offline-scripted'?'Scripted timings measure local orchestration only. ':'Measured model inference and local tool time. '}Source references support provenance; free prose and interpretations still require review.</p>
    {agent.evidence.map(item=><details key={item.id} className="border-t py-1"><summary className="min-h-9 cursor-pointer py-2">{item.id} · {item.tool}</summary><pre className="max-h-72 overflow-auto whitespace-pre-wrap break-all text-[10px]">{JSON.stringify(item.data,null,2)}</pre></details>)}
   </details>
  </section>;
@@ -53,9 +56,9 @@ async function invoke<T>(body:Record<string,unknown>,owner:string):Promise<T>{
  const localFixture=typeof window!=='undefined'&&window.location.origin==='http://localhost:3000'&&sessionData.session?.access_token.endsWith('.local');
  // The owner-scoped controller selects this mode once. Route changes must not
  // silently send experimental questions to the ordinary Qwen adapter.
- const {localAgentExperiment,...payload}=body;
- const experiment=localFixture&&localAgentExperiment===true;
- const endpoint=experiment?'http://localhost:55595':process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL||(localFixture?'http://localhost:55593':undefined);
+ const {localAgentExperiment,localReceivalExecution,...payload}=body;
+ const experiment=typeof window!=='undefined'&&window.location.origin==='http://localhost:3000'&&localAgentExperiment===true;
+ const endpoint=experiment?(localReceivalExecution===true?'http://localhost:55596':'http://localhost:55595'):process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL||(localFixture?'http://localhost:55593':undefined);
  if(endpoint&&typeof window!=='undefined'&&window.location.hostname==='localhost'){
  const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${sessionData.session?.access_token||''}`},body:JSON.stringify(payload),signal:AbortSignal.timeout(experiment?100000:35000)});const value=await r.json();if(!r.ok)throw new Error(value.error||'TenBot unavailable.');return value;
  }
@@ -99,8 +102,14 @@ export function useTenbotConversation():TenbotConversation{
  const [notice,setNotice]=useState(''),[showFeedback,setShowFeedback]=useState(false);
  const [items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState('');
  const [usage,setUsage]=useState<Usage|null>(null),[usageError,setUsageError]=useState('');
- const [experiment,setExperiment]=useState(false),[demoScenario,setDemoScenario]=useState('job-investigation'),[invoiceAttached,setInvoiceAttached]=useState(false);
+ const [experiment,setExperiment]=useState(false),[authenticatedExperiment,setAuthenticatedExperiment]=useState(false),[demoScenario,setDemoScenario]=useState('job-investigation'),[invoiceAttached,setInvoiceAttached]=useState(false);
  const [orderDetails,setOrderDetails]=useState({orderedBy:'',orderDate:'',location:''});
+ const [experimentStatus,setExperimentStatus]=useState<LocalDemoStatus|null>(null),[syntheticConfirmed,setSyntheticConfirmed]=useState(false);
+ const [attachment,setAttachment]=useState<LocalAttachment|null>(null),[attachmentPreview,setAttachmentPreview]=useState('');
+ const [attachmentOrigin,setAttachmentOrigin]=useState<{originalFilename:string;renderedPdf:boolean}|null>(null);
+ const [receivalDraft,setReceivalDraft]=useState<LocalReceivalDraft|null>(null),[localApproval,setLocalApproval]=useState<LocalApproval|null>(null);
+ const authenticatedReceivals=experiment&&authenticatedExperiment;
+ const liveDemo=experiment&&(authenticatedExperiment||experimentStatus?.mode==='synthetic-live'||experimentStatus?.mode==='authenticated-receivals');
  const [notes,setNotes]=useState<Record<string,string>>({});
  const lock=useRef(false),sequence=useRef(0);
  const conversation=useRef<{owner:string;id?:string}>({owner});
@@ -116,13 +125,13 @@ export function useTenbotConversation():TenbotConversation{
  const accessFingerprint=JSON.stringify(auth.profile);
  const currentAccess=useRef(accessFingerprint);currentAccess.current=accessFingerprint;
  useEffect(()=>{
-  let current=true;setExperiment(false);setInvoiceAttached(false);setOrderDetails({orderedBy:'',orderDate:'',location:''});
-  void supabase.auth.getSession().then(({data})=>{if(current&&data.session?.user.id===owner)setExperiment(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotExperiment')==='1'&&Boolean(data.session.access_token.endsWith('.local')));});
+  let current=true;setExperiment(false);setAuthenticatedExperiment(false);setExperimentStatus(null);setInvoiceAttached(false);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
+  void supabase.auth.getSession().then(async({data})=>{if(!current||data.session?.user.id!==owner)return;const authenticated=Boolean(data.session.access_token),enabled=localAgentExperimentRequested(window.location.origin,window.location.search,authenticated),receivals=localReceivalCandidateRequested(window.location.origin,window.location.search,authenticated);setExperiment(enabled);setAuthenticatedExperiment(receivals);if(enabled){try{const status=await invoke<LocalDemoStatus>({action:'status',localAgentExperiment:true,localReceivalExecution:receivals},owner);if(receivals&&(status.mode!=='authenticated-receivals'||status.simulation!==false))throw new Error('The authenticated receivals server returned an incompatible mode.');if(current&&currentOwner.current===owner)setExperimentStatus(status);}catch(error){if(current)setError(receivals?`Authenticated database unavailable; writes disabled. ${error instanceof Error?error.message:'Reopen TenBot after the isolated database is available.'}`:'The local experiment is unavailable. Reopen TenBot after its server is ready.');}}});
   return()=>{current=false;};
  },[owner]);
  useEffect(()=>{
   // Live facts have no client persistence or reusable response cache.
-  liveTurn.current=null;setMessages([]);
+  liveTurn.current=null;setMessages([]);setReceivalDraft(null);setLocalApproval(null);setAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);
  },[owner,available,accessFingerprint]);
  useEffect(()=>{
   const invalidate=()=>setMessages(turns=>turns.map(turn=>turn.answer?.operational||turn.answer?.agent?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
@@ -154,7 +163,7 @@ export function useTenbotConversation():TenbotConversation{
  const request=async<T,>(body:Record<string,unknown>)=>{
   const chat=body.action==='ask'||body.action==='draft';
   try{
-   const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&conversation.current.id?{conversationId:conversation.current.id}:{}),...(experiment?{localAgentExperiment:true}:{})},owner);
+   const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&conversation.current.id?{conversationId:conversation.current.id}:{}),...(experiment?{localAgentExperiment:true,localReceivalExecution:authenticatedExperiment}:{})},owner);
    if(chat&&conversation.current.owner===owner&&result.conversationId)conversation.current.id=result.conversationId;
    return result;
   }catch(e){
@@ -166,6 +175,7 @@ export function useTenbotConversation():TenbotConversation{
  function finish(){lock.current=false;setBusy(false);}
  async function send(question:string):Promise<boolean>{
   const current=question.trim();
+  if(experiment&&!experimentStatus){setError('The local experiment is not ready. Reopen TenBot after its server is ready.');return false;}
   if(!current||current.length>1200||!begin())return false;
   const requestAccess=currentAccess.current;
   setNotice('');
@@ -176,10 +186,11 @@ export function useTenbotConversation():TenbotConversation{
   liveTurn.current=null;
   setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7).map(item=>item.answer?.operational||item.answer?.agent?{...item,answer:null,error:'Live Job facts are refreshed for each request.'}:item),turn]);
   try{
-   const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(experiment?{demoScenario,...(invoiceAttached?{invoiceId:'synthetic-invoice-1042'}:{}),orderDetails}:{})});
+   const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(liveDemo?{...(attachment?{attachmentId:attachment.attachmentId}:{}),orderDetails}:experiment?{demoScenario,...(invoiceAttached?{invoiceId:'synthetic-invoice-1042'}:{}),orderDetails}:{})});
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
    if(response.operational)liveTurn.current={id:turn.id,owner};
    if((response.operational||response.agent)&&(!foreground.current||document.visibilityState!=='visible'))return true;
+   if(liveDemo){setReceivalDraft(response.localDemo?.draft??null);setLocalApproval(null);}
    setMessages(m=>m.map(item=>item.id===turn.id?{...item,answer:response,answeredAt:new Date().toISOString()}:item));
    return true;
   }catch(e){
@@ -205,8 +216,8 @@ export function useTenbotConversation():TenbotConversation{
  async function clear(){
   if(!begin())return;
   try{
-   if(conversation.current.id)await request({action:'clear',conversationId:conversation.current.id});
-   conversation.current={owner};setMessages([]);setDraft(null);setError('');setNotice('');
+   if(conversation.current.id||attachment)await request({action:'clear',...(conversation.current.id?{conversationId:conversation.current.id}:{}),...(attachment?{attachmentId:attachment.attachmentId}:{})});
+   conversation.current={owner};setMessages([]);setDraft(null);setError('');setNotice('');setAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setSyntheticConfirmed(false);
   }catch{setError('TenBot could not clear this conversation. Retry.');}finally{finish();}
  }
  async function refreshFeedback(status:string,module:string){
@@ -225,6 +236,36 @@ export function useTenbotConversation():TenbotConversation{
   try{await request({action:'review',id,status,note:notes[id]||''});await refreshFeedback(filter,moduleFilter);}
   catch(e){setError(e instanceof Error?e.message:'Review failed.');}finally{finish();}
  }
+ async function uploadInvoice(file:File){
+  if(!liveDemo||!syntheticConfirmed||!experimentStatus||!begin())return;
+  const requestAccess=currentAccess.current;
+  try{
+   const prepared=await prepareInvoiceImage(file,experimentStatus.maxAttachmentBytes);
+   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
+   const uploaded=await request<LocalAttachment>({action:'upload',syntheticConfirmed:true,attachment:{filename:prepared.filename,mediaType:prepared.mediaType,dataBase64:prepared.dataBase64}});
+   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
+   setAttachment(uploaded);setAttachmentPreview(prepared.preview);setAttachmentOrigin({originalFilename:prepared.originalFilename,renderedPdf:prepared.renderedPdf});setReceivalDraft(null);setLocalApproval(null);setMessages([]);conversation.current={owner};
+   setNotice(`${prepared.originalFilename} attached${prepared.renderedPdf?' · PDF page rendered for actual OpenAI vision; no offline OCR':prepared.resized?' · image resized for the local demo':''}. Ask TenBot to investigate it.`);
+  }catch(e){setError(e instanceof Error?e.message:'The attachment could not be uploaded.');}finally{finish();}
+ }
+ async function saveReceivalReview(edits:LocalRowEdit[],details:LocalOrderDetails){
+  if(!liveDemo||!receivalDraft||!begin())return;
+  const requestAccess=currentAccess.current;
+  try{
+   const value=await request<{draft:LocalReceivalDraft;simulation:boolean}>({action:'review',draftId:receivalDraft.id,revision:receivalDraft.revision,edits,orderDetails:details});
+   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
+   setReceivalDraft(value.draft);setLocalApproval(null);setOrderDetails(details);setNotice(value.simulation?'Draft changes reviewed. Check the current lines before approving simulated entries.':value.draft.durableDraftId&&value.draft.durableHash?'This exact draft was saved for durable server review. Check all current lines before approval.':'Draft changes reviewed. Durable database review remains required before execution.');
+  }catch(e){setError(e instanceof Error?e.message:'The draft could not be reviewed.');}finally{finish();}
+ }
+ async function approveReceivalReview(current:LocalReceivalDraft){
+  if(!liveDemo||!experimentStatus||receivalExecutionBlock(current,experimentStatus)||receivalDraft?.id!==current.id||receivalDraft.revision!==current.revision||receivalDraft.hash!==current.hash||!current.canApprove||!begin())return;
+  const requestAccess=currentAccess.current;
+  try{
+   const value=await request<LocalApproval>({action:'approve',draftId:current.id,revision:current.revision,hash:current.hash,...(!current.simulation?{durableDraftId:current.durableDraftId,durableHash:current.durableHash}:{}),confirmation:true});
+   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
+   setReceivalDraft(value.draft);setLocalApproval(value);setNotice(value.simulation?'Simulated pending receivals approved locally. No Production records were written.':`${value.idempotent?value.receivals.length:value.createdCount} pending receivals ${value.idempotent?'already created':'created'} through your authorized TenOps access. Review the returned record IDs below.`);
+  }catch(e){setError(e instanceof Error?e.message:'The pending entries could not be approved.');}finally{finish();}
+ }
  const entries:AssistantEntry[]=available?messages.flatMap(m=>[{id:`assistant-question-${m.id}`,createdAt:m.createdAt,content:<article className="relative mb-3 ml-auto max-w-[88%] rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
     <div className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-800">{m.question}</div>
     <time className="mt-1 block text-[10px] text-slate-400">{messageTime(m.createdAt)}</time>
@@ -233,7 +274,7 @@ export function useTenbotConversation():TenbotConversation{
     {m.answer?<>
      {m.answer.mode==='guide'?<p className="text-xs text-slate-500">{m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."}</p>:null}
      <p data-tenbot-answer className="whitespace-pre-wrap break-words leading-relaxed text-slate-800">{m.answer.mode==='guide'&&m.answer.sources[0]?guideText(m.answer.sources[0]):m.answer.message}</p>
-     {m.answer.agent?<AgentReview agent={m.answer.agent}/>:null}
+     {m.answer.agent?knowledgeAnswer(m.answer.agent)?<details className="text-xs text-slate-600"><summary className="min-h-9 cursor-pointer py-2">Sources and evidence</summary><AgentReview agent={m.answer.agent} liveDemo={liveDemo} simulation={!authenticatedReceivals}/></details>:<AgentReview agent={m.answer.agent} liveDemo={liveDemo} simulation={!authenticatedReceivals}/>:null}
      {[...new Set(m.answer.notices)].filter(note=>!m.answer?.message.includes(note)&&!(m.answer?.mode==='guide'&&m.answer.sources[0]&&guideText(m.answer.sources[0]).includes(note))).map(note=><p key={note} className="text-xs text-slate-600">{note}</p>)}
      {!m.answer.sources.length&&m.answer.mode==='guide'?<p>The TenOps Guide does not have enough verified information to confirm that workflow. Please check with Product.</p>:null}
      {m.answer.sources.length?<details data-tenbot-sources className="text-xs">
@@ -266,24 +307,40 @@ export function useTenbotConversation():TenbotConversation{
    <div className="absolute right-0 z-30 mt-1 min-w-52 rounded-md border border-slate-300 bg-white p-1 shadow-lg">
     {offerSuggestion&&!experiment?<button type="button" disabled={busy} onClick={()=>{closeMenu();void makeDraft(question);}} className="block min-h-11 w-full rounded px-3 text-left text-sm hover:bg-slate-50 disabled:opacity-50">Draft a feature suggestion</button>:null}
     {reviewAllowed&&!experiment?<button type="button" disabled={busy} aria-expanded={showFeedback} onClick={()=>{closeMenu();setShowFeedback(value=>!value);if(!showFeedback)void load();}} className="block min-h-11 w-full rounded px-3 text-left text-sm hover:bg-slate-50 disabled:opacity-50">Product feedback</button>:null}
-    {messages.length||draft?<button type="button" disabled={busy} onClick={()=>{closeMenu();void clear();}} className="block min-h-11 w-full rounded px-3 text-left text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50">Clear assistant chat</button>:null}
-    {!offerSuggestion&&!reviewAllowed&&!messages.length&&!draft?<p className="px-3 py-2 text-xs text-slate-500">Ask TenBot to start a conversation.</p>:null}
+    {messages.length||draft||attachment||receivalDraft?<button type="button" disabled={busy} onClick={()=>{closeMenu();void clear();}} className="block min-h-11 w-full rounded px-3 text-left text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50">Clear assistant chat</button>:null}
+    {!offerSuggestion&&!reviewAllowed&&!messages.length&&!draft&&!attachment&&!receivalDraft?<p className="px-3 py-2 text-xs text-slate-500">Ask TenBot to start a conversation.</p>:null}
    </div>
   </details>;
  };
  const disclosure=<details className="text-[10px] text-slate-500">
-  <summary className="w-fit min-h-9 cursor-pointer py-2">AI may process your text and recent TenBot turns · Privacy details</summary>
-  <p className="pb-2 text-xs leading-relaxed">When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live answers are refreshed for each request and are not saved in assistant history. TenBot does not independently read private messages, personal tasks or financial information. Other private TenBot history expires after eight hours without a new turn.</p>
+  <summary className="w-fit min-h-9 cursor-pointer py-2">{liveDemo?'OpenAI processes your submitted image and requests · Local experiment details':'AI may process your text and recent TenBot turns · Privacy details'}</summary>
+  <p className="pb-2 text-xs leading-relaxed">{authenticatedReceivals?'This local candidate sends only the approved test attachment image, submitted questions and narrowly authorized catalog/Job tool results to OpenAI. Documents are untrusted input and cannot grant permissions or approve actions. A one-page PDF is rendered locally without OCR or text extraction. Reads use your authenticated TenOps access. Review and explicit approval are separate from model reasoning; execution remains disabled until database-backed release gates pass. No personal ChatGPT context is connected.':liveDemo?'This local demo sends the approved synthetic attachment image and questions you submit to OpenAI for actual inference. A one-page PDF is rendered locally into an image without offline OCR or text extraction. Operational records, catalog matches and approved pending entries are simulated locally. No Production records are read or written, and real database authorization/RLS is not validated by this demonstration.':'When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live answers are refreshed for each request and are not saved in assistant history. TenBot does not independently read private messages, personal tasks or financial information. Other private TenBot history expires after eight hours without a new turn.'}</p>
  </details>;
  const controls=():ReactNode=>{
   if(!available)return null;
   return <div className="space-y-3" data-tenbot-controls>
-   {experiment?<details className="rounded border border-amber-200 bg-amber-50 p-2 text-xs" aria-label="Local agent experiment controls"><summary className="min-h-9 cursor-pointer py-2 font-medium">Local agent experiment · Synthetic data · No execution</summary>
-    <p>Offline mode uses explicitly selected scripted test responses. OpenAI requires server credentials and separate spending authorization. Existing Production Qwen is unchanged.</p>
-    <label className="mt-2 block">Scripted test scenario<select aria-label="Scripted test scenario" disabled={busy} value={demoScenario} onChange={event=>setDemoScenario(event.target.value)} className="min-h-11 w-full rounded border bg-white p-2"><option value="job-investigation">Job investigation</option><option value="invoice-preparation">Invoice preparation</option><option value="tool-recovery">Tool failure recovery</option></select></label>
-    <button type="button" disabled={busy} onClick={()=>setInvoiceAttached(true)} className="mt-2 min-h-11 rounded border bg-white px-3">{invoiceAttached?'Synthetic invoice attached':'Attach synthetic invoice'}</button>
-    {invoiceAttached?<div className="mt-2 space-y-2"><p>SYNTHETIC-supplier-invoice-1042.txt. Text fixture only; no photo/PDF interpretation is claimed.</p><p>Enter reviewed order details for this draft. Leave unknown values blank. These fields do not approve database writes.</p>{([['orderedBy','Ordered by'],['orderDate','Order date'],['location','Destination location']] as const).map(([key,label])=><label key={key} className="block">{label}<input aria-label={label} type={key==='orderDate'?'date':'text'} maxLength={120} value={orderDetails[key]} onChange={event=>setOrderDetails(value=>({...value,[key]:event.target.value}))} className="min-h-11 w-full rounded border bg-white p-2"/></label>)}</div>:null}
+   {experiment?<details open={authenticatedReceivals||attachment||receivalDraft?true:undefined} className="rounded border border-amber-200 bg-amber-50 p-2 text-xs" aria-label="Local agent experiment controls"><summary className="min-h-9 cursor-pointer py-2 font-medium">{authenticatedReceivals?'Local receivals candidate · Authentication required · Execution disabled':liveDemo?'TenBot local agent · Conversational help and optional invoice preparation':'Local agent experiment · Synthetic data · No execution'}</summary>
+    {liveDemo?<div className="space-y-3">
+     <p>{authenticatedReceivals?'Ask a TenOps question directly, or ask for a walkthrough one step at a time. You can also attach an approved synthetic invoice for investigation using your authorized records. Document content never counts as employee approval.':'Ask a TenOps question directly, or ask for a walkthrough one step at a time. Optionally attach an approved synthetic invoice. OpenAI provides actual reasoning; operational records and any approved pending receivals are local simulations.'}</p>
+     {authenticatedReceivals&&experimentStatus?.executionEnabled!==true?<p role="status" className="rounded border border-amber-300 bg-white p-2">{experimentStatus?.blockedReason||'Real execution is disabled until database-backed release gates pass.'}</p>:null}
+     <label className="flex min-h-11 items-start gap-2 py-2"><input type="checkbox" className="mt-1" disabled={busy} checked={syntheticConfirmed} onChange={event=>setSyntheticConfirmed(event.target.checked)}/>I confirm this attachment contains approved synthetic test data.</label>
+     <label className="block">Invoice photo or one-page PDF<input aria-label="Invoice image" type="file" accept="image/png,image/jpeg,application/pdf" disabled={busy||!syntheticConfirmed||!experimentStatus||experimentStatus.canPrepare===false} className="mt-1 block min-h-11 w-full min-w-0 rounded border bg-white p-2 text-xs" onChange={event=>{const file=event.currentTarget.files?.[0];event.currentTarget.value='';if(file)void uploadInvoice(file);}}/></label>
+     <p className="text-xs text-slate-600">PNG, JPEG or one-page PDF, up to 12 MB. Images are prepared locally to fit the 90 KB, 1024 × 1024 demo limit. Review the preview for legibility.</p>
+     {attachment?<details className="rounded border border-amber-200 bg-white p-2"><summary className="min-h-11 cursor-pointer py-2">Invoice attachment · {attachmentOrigin?.originalFilename||attachment.filename}</summary>{attachmentOrigin?.renderedPdf?<p className="mb-2 text-xs text-slate-600">PDF page rendered for actual OpenAI vision; no offline OCR.</p>:null}{attachmentPreview?<>
+      {/* Native image preserves an owner-local data URL without remote optimization. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={attachmentPreview} alt={`Uploaded test invoice: ${attachment.filename}`} className="mx-auto max-h-[32rem] max-w-full object-contain"/>
+     </>:null}<p className="mt-2 text-xs text-slate-600">This is the image sent for interpretation. Only your submitted attachment is used.</p></details>:null}
+     {attachment&&!receivalDraft?<div className="space-y-2"><p>Optional order details · leave unknown values blank. Invoice date does not automatically supply the order date.</p>{([['orderedBy','Ordered by'],['orderDate','Order date'],['location','Destination location']] as const).map(([key,label])=><label key={key} className="block">{label}<input aria-label={label} disabled={busy} type={key==='orderDate'?'date':'text'} maxLength={120} value={orderDetails[key]} onChange={event=>setOrderDetails(value=>({...value,[key]:event.target.value}))} className="min-h-11 w-full rounded border bg-white p-2"/></label>)}</div>:null}
+    </div>:<>
+     <p>Offline mode uses explicitly selected scripted test responses. OpenAI requires server credentials and separate spending authorization. Existing Production Qwen is unchanged.</p>
+     {!experimentStatus?<p role="status" className="mt-2">Checking the local experiment…</p>:null}
+     <label className="mt-2 block">Scripted test scenario<select aria-label="Scripted test scenario" disabled={busy||!experimentStatus} value={demoScenario} onChange={event=>setDemoScenario(event.target.value)} className="min-h-11 w-full rounded border bg-white p-2"><option value="job-investigation">Job investigation</option><option value="invoice-preparation">Invoice preparation</option><option value="tool-recovery">Tool failure recovery</option></select></label>
+     <button type="button" disabled={busy||!experimentStatus} onClick={()=>setInvoiceAttached(true)} className="mt-2 min-h-11 rounded border bg-white px-3">{invoiceAttached?'Synthetic invoice attached':'Attach synthetic invoice'}</button>
+     {invoiceAttached?<div className="mt-2 space-y-2"><p>SYNTHETIC-supplier-invoice-1042.txt. Text fixture only; no photo/PDF interpretation is claimed.</p><p>Enter reviewed order details for this draft. Leave unknown values blank. These fields do not approve database writes.</p>{([['orderedBy','Ordered by'],['orderDate','Order date'],['location','Destination location']] as const).map(([key,label])=><label key={key} className="block">{label}<input aria-label={label} disabled={busy} type={key==='orderDate'?'date':'text'} maxLength={120} value={orderDetails[key]} onChange={event=>setOrderDetails(value=>({...value,[key]:event.target.value}))} className="min-h-11 w-full rounded border bg-white p-2"/></label>)}</div>:null}
+    </>}
    </details>:null}
+   {liveDemo&&receivalDraft&&experimentStatus?<ReceivalDraftReview key={`${receivalDraft.id}:${receivalDraft.revision}:${receivalDraft.hash}:${receivalDraft.status}`} draft={receivalDraft} status={experimentStatus} busy={busy} approval={localApproval} onDetails={setOrderDetails} onReview={saveReceivalReview} onApprove={approveReceivalReview}/>:null}
    {error?<p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
    {notice?<p role="status" className="rounded bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
    {draft?<form ref={draftForm} onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3 rounded-lg border bg-white p-3" aria-label="Feature suggestion draft">
@@ -315,5 +372,5 @@ export function useTenbotConversation():TenbotConversation{
    </section>:null}
   </div>;
  };
- return {available,busy,send,history,entries,controls,menu,disclosure,activityKey:`${messages.length}:${messages.at(-1)?.id??0}:${busy}:${drafting}:${showFeedback}:${error}:${notice}`};
+ return {available,busy,send,history,entries,controls,menu,disclosure,activityKey:`${messages.length}:${messages.at(-1)?.id??0}:${busy}:${drafting}:${showFeedback}:${error}:${notice}:${attachment?.attachmentId??''}:${receivalDraft?.id??''}:${receivalDraft?.revision??''}:${receivalDraft?.status??''}`};
 }

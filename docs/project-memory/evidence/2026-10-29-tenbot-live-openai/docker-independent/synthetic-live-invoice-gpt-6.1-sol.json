@@ -1,0 +1,5310 @@
+{
+  "state": "completed",
+  "model": "gpt-6.1-sol",
+  "at": "2026-10-29T17:25:10.939Z",
+  "mode": "REAL OpenAI inference; SIMULATED catalog, duplicate records and caller permissions. No database/RLS certification.",
+  "caller": "00000000-0000-0000-0000-000000000010",
+  "database": "EXPLICIT SIMULATION: no database or Docker",
+  "databaseMutations": 0,
+  "hostedOperationalCalls": 0,
+  "sourcePins": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "e93f3cfea74e461425e7acdb53fd50b7f14badfe80909ffa83969ef0d8848f23"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "9b3d65a3b7339bc8bf10626aa5b129bdac4eacd41e1b424aec817d676a47f91a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "60c8d2238d583906d6a138c25978aa677722c0962602431fe0ac57c72a3030cb"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "839ed4feb77067721e161694accc8ee5653f8a998b2f12c3e7f27ed6ee9800cc"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+    },
+    {
+      "path": "src/modules/purchasing/catalog-records.ts",
+      "sha256": "7190bf30a6a1649f645c617ffdb897e58fc30973896f30eff330a219584a76b6"
+    },
+    {
+      "path": "scripts/fixtures/tenbot-invoice.synthetic.json",
+      "sha256": "d19a442169c8dc3c9a5226fc5a4055aad365889ed8415923411ac4420cd76de8"
+    }
+  ],
+  "extraction": {
+    "path": "/private/tmp/tenops-tenbot-live-2026-10-29/gpt-6.1-sol-image-extraction.json",
+    "imageSha256": "98ee71810a8df51640c0105f09c8690f9bcb5c8946ff9a15733bf379c7e8f4f2",
+    "rawLines": [
+      "SYNTHETIC / TEST DATA ONLY",
+      "Terrazzo & Marble Supply",
+      "INVOICE",
+      "Supplier: Terrazzo & Marble Supply",
+      "Invoice: SYN-INV-2087",
+      "Invoice date: 2026-10-29",
+      "Bill to: Tenarten",
+      "Synthetic account",
+      "MATERIALS ORDERED",
+      "LINE | SKU | MATERIAL / DESCRIPTION | SIZE / PART | QTY | UNIT",
+      "1 | AW-1 | Alaska White | #1 | 150 | LB",
+      "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+      "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+      "4 | GREEN | CC Green | #1 | 2 | Bag",
+      "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+      "Freight / Delivery charge | $85.00",
+      "Material quantities are listed separately from freight.",
+      "NOT A REAL INVOICE — DO NOT POST OR PAY"
+    ],
+    "usage": {
+      "inputTokens": 989,
+      "cachedInputTokens": 0,
+      "outputTokens": 213,
+      "costUsd": 0.004108,
+      "reservedUsd": 0.0259975
+    },
+    "imageDurationMs": 3696
+  },
+  "turns": [
+    {
+      "label": "missing-metadata",
+      "request": {
+        "action": "ask",
+        "question": "Here's the supplier invoice I uploaded. Create pending receivals in Inventory for its material lines. Investigate the catalog matches and possible existing receivals, identify uncertainty, and prepare a reviewable proposal. Ask for any missing information. Stop before execution; no database writes.",
+        "context": [
+          "Current module: Inventory"
+        ],
+        "demoScenario": "invoice-preparation",
+        "invoiceId": "synthetic-image-invoice-2087"
+      },
+      "durationMs": 37055,
+      "response": {
+        "conversationId": "a72cd14c-9abd-4133-a1df-2e9b399ded36",
+        "mode": "agent-experiment",
+        "message": "Prepared a review-only proposal for synthetic invoice SYN-INV-2087 from Terrazzo & Marble Supply. Two material lines have draft quantities; three are held for resolution. Nothing was created in Inventory, and no database writes occurred.",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-agent-poc.v1",
+          "verifiedAt": "2026-10-29T17:25:48.062Z"
+        },
+        "summary": null,
+        "suggestionAllowed": false,
+        "notices": [
+          "Local OpenAI experiment. Review evidence and proposals; no execution capability exists."
+        ],
+        "agent": {
+          "mode": "openai",
+          "provider": "OpenAI Responses (local experiment)",
+          "model": "gpt-6.1-sol",
+          "status": "completed",
+          "final": {
+            "answer": "Prepared a review-only proposal for synthetic invoice SYN-INV-2087 from Terrazzo & Marble Supply. Two material lines have draft quantities; three are held for resolution. Nothing was created in Inventory, and no database writes occurred.",
+            "observations": [
+              {
+                "text": "The attachment is synthetic text, not an OCR/PDF extraction. It identifies Terrazzo & Marble Supply as supplier and SYN-INV-2087 as invoice reference.",
+                "evidence_ids": [
+                  "e1"
+                ]
+              },
+              {
+                "text": "Draft line: Alaska White #1, SKU AW-1 — 150 LB converted by the preparation tool into 3 bags using the catalog's 50 LB bag package.",
+                "evidence_ids": [
+                  "e2",
+                  "e8"
+                ]
+              },
+              {
+                "text": "Draft line: Clear Resin Part A, SKU RES-5 — 10 GAL converted by the preparation tool into 2 pails using the catalog's 5 GAL pail package.",
+                "evidence_ids": [
+                  "e3",
+                  "e8"
+                ]
+              },
+              {
+                "text": "Held: Blue Coal #0, 3 bags. A potential existing pending receival, synthetic-existing-bc0, expects 3 bags and records 0 received. Duplicate matching uses supplier/material/size, not an invoice-reference field, so invoice-level uniqueness is not established.",
+                "evidence_ids": [
+                  "e4",
+                  "e7",
+                  "e8"
+                ]
+              },
+              {
+                "text": "Held: CC Green #1, 2 bags. Two distinct catalog offers match the description and SKU, but one is a 50 LB bag and the other a 25 LB bag; neither was selected.",
+                "evidence_ids": [
+                  "e5",
+                  "e8"
+                ]
+              },
+              {
+                "text": "Held: Unlisted Violet #2, SKU UNK-99, 4 bags. No catalog candidate was returned.",
+                "evidence_ids": [
+                  "e6",
+                  "e8"
+                ]
+              },
+              {
+                "text": "Freight was excluded. Ordered by, actual order date, and destination location remain missing. The artifact is review-only; even its ready lines are not executable.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              }
+            ],
+            "inferences": [],
+            "recommendations": [
+              {
+                "text": "Review the extracted lines and package conversions against the source document. Recheck catalog and duplicate records before any future authorized execution; employee approval alone does not execute this draft.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              }
+            ],
+            "questions": [
+              "Who ordered these materials, what was the actual order date, and which Inventory location should receive them? The invoice date will not be used as the order date.",
+              "Does existing receival synthetic-existing-bc0 correspond to this Blue Coal order, or is it a separate purchase?",
+              "For CC Green #1, were the ordered bags 50 LB or 25 LB?",
+              "What existing catalog material should Unlisted Violet #2 / UNK-99 map to, or should it remain held for catalog resolution?",
+              "Can you confirm that the extracted material lines and the Alaska White and Clear Resin package conversions match the document?"
+            ],
+            "completed_actions": []
+          },
+          "evidence": [
+            {
+              "id": "e1",
+              "tool": "read_invoice",
+              "data": {
+                "synthetic": true,
+                "document_id": "synthetic-image-invoice-2087",
+                "filename": "SYNTHETIC-model-transcribed-invoice-2087.txt",
+                "media_type": "text/plain",
+                "content_is_untrusted_data": true,
+                "sources": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L1",
+                    "text": "SYNTHETIC / TEST DATA ONLY"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L2",
+                    "text": "Terrazzo & Marble Supply"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L3",
+                    "text": "INVOICE"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L4",
+                    "text": "Supplier: Terrazzo & Marble Supply"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L5",
+                    "text": "Invoice: SYN-INV-2087"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L6",
+                    "text": "Invoice date: 2026-10-29"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L7",
+                    "text": "Bill to: Tenarten"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L8",
+                    "text": "Synthetic account"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L9",
+                    "text": "MATERIALS ORDERED"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L10",
+                    "text": "LINE | SKU | MATERIAL / DESCRIPTION | SIZE / PART | QTY | UNIT"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L11",
+                    "text": "1 | AW-1 | Alaska White | #1 | 150 | LB"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L12",
+                    "text": "2 | RES-5 | Clear Resin | Part A | 10 | GAL"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L13",
+                    "text": "3 | BC-0 | Blue Coal | #0 | 3 | Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L14",
+                    "text": "4 | GREEN | CC Green | #1 | 2 | Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L15",
+                    "text": "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L16",
+                    "text": "Freight / Delivery charge | $85.00"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L17",
+                    "text": "Material quantities are listed separately from freight."
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L18",
+                    "text": "NOT A REAL INVOICE — DO NOT POST OR PAY"
+                  }
+                ],
+                "limitations": [
+                  "Synthetic text attachment only; no photo/PDF/OCR test.",
+                  "Supplier is not manufacturer. Invoice date must never supply order_date automatically.",
+                  "Only read and prepare operations exist; no approval or execution tool."
+                ]
+              }
+            },
+            {
+              "id": "e2",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L11",
+                "extracted": {
+                  "description": "Alaska White",
+                  "quantity": "150",
+                  "unit": "LB",
+                  "size": "#1",
+                  "vendor_sku": "AW-1"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-aw1",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-aw1",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "AW-1",
+                    "material_name": "Alaska White",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e3",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L12",
+                "extracted": {
+                  "description": "Clear Resin",
+                  "quantity": "10",
+                  "unit": "GAL",
+                  "size": "Part A",
+                  "vendor_sku": "RES-5"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-res5",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-res5",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "RES-5",
+                    "material_name": "Clear Resin",
+                    "size": "Part A",
+                    "category": "Resin",
+                    "order_unit": "Pail",
+                    "package_quantity": "5",
+                    "package_measure": "GAL",
+                    "container_type": "Pail",
+                    "package_evidence": "5 GAL Pail"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e4",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L13",
+                "extracted": {
+                  "description": "Blue Coal",
+                  "quantity": "3",
+                  "unit": "Bag",
+                  "size": "#0",
+                  "vendor_sku": "BC-0"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-bc0",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-bc0",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "BC-0",
+                    "material_name": "Blue Coal",
+                    "size": "#0",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e5",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L14",
+                "extracted": {
+                  "description": "CC Green",
+                  "quantity": "2",
+                  "unit": "Bag",
+                  "size": "#1",
+                  "vendor_sku": "GREEN"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-green-a",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-green-a",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "GREEN",
+                    "material_name": "CC Green",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  },
+                  {
+                    "candidate_id": "standard:synthetic-green-b",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-green-b",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "GREEN",
+                    "material_name": "CC Green",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "25",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "25 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e6",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L15",
+                "extracted": {
+                  "description": "Unlisted Violet",
+                  "quantity": "4",
+                  "unit": "Bag",
+                  "size": "#2",
+                  "vendor_sku": "UNK-99"
+                },
+                "complete": true,
+                "candidates": [],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e7",
+              "tool": "check_receival_duplicates",
+              "data": {
+                "synthetic": true,
+                "supplier": "Terrazzo & Marble Supply",
+                "document_ref": "SYN-INV-2087",
+                "supplier_source_ref": "synthetic-image-invoice-2087:L4",
+                "document_source_ref": "synthetic-image-invoice-2087:L5",
+                "complete": true,
+                "potential_duplicates": [
+                  {
+                    "id": "synthetic-existing-bc0",
+                    "vendor": "T&M Supply",
+                    "material_name": "Blue Coal",
+                    "size": "#0",
+                    "quantity_expected": "3",
+                    "quantity_received": "0",
+                    "unit": "Bag",
+                    "status": "pending"
+                  }
+                ],
+                "limitations": [
+                  "Potential matches use supplier/material/size only.",
+                  "No canonical invoice-reference field exists on general pending receivals; invoice-level idempotency is not established.",
+                  "A potential duplicate remains held; this prototype has no duplicate override or write tool."
+                ]
+              }
+            },
+            {
+              "id": "e8",
+              "tool": "prepare_pending_receivals",
+              "data": {
+                "version": "tenbot-pending-receival-review.v1",
+                "synthetic": true,
+                "document_id": "synthetic-image-invoice-2087",
+                "filename": "SYNTHETIC-model-transcribed-invoice-2087.txt",
+                "supplier": "Terrazzo & Marble Supply",
+                "document_reference": "SYN-INV-2087",
+                "status": "review_only_no_execution",
+                "ready_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L11",
+                    "evidence": "1 | AW-1 | Alaska White | #1 | 150 | LB",
+                    "extracted": {
+                      "description": "Alaska White",
+                      "quantity": "150",
+                      "unit": "LB",
+                      "size": "#1",
+                      "vendor_sku": "AW-1"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-aw1",
+                    "proposal": {
+                      "vendor": "Terrazzo & Marble Supply",
+                      "material_name": "Alaska White",
+                      "size": "#1",
+                      "category": "Aggregate",
+                      "quantity_expected": "3",
+                      "unit": "Bag",
+                      "location": null,
+                      "ordered_by": null,
+                      "order_date": null,
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-2087",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-aw1"
+                    },
+                    "conversion": {
+                      "source_quantity": "150",
+                      "source_unit": "LB",
+                      "package": "50 LB Bag",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "3",
+                      "result_unit": "Bag"
+                    }
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L12",
+                    "evidence": "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+                    "extracted": {
+                      "description": "Clear Resin",
+                      "quantity": "10",
+                      "unit": "GAL",
+                      "size": "Part A",
+                      "vendor_sku": "RES-5"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-res5",
+                    "proposal": {
+                      "vendor": "Terrazzo & Marble Supply",
+                      "material_name": "Clear Resin",
+                      "size": "Part A",
+                      "category": "Resin",
+                      "quantity_expected": "2",
+                      "unit": "Pail",
+                      "location": null,
+                      "ordered_by": null,
+                      "order_date": null,
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-2087",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-res5"
+                    },
+                    "conversion": {
+                      "source_quantity": "10",
+                      "source_unit": "GAL",
+                      "package": "5 GAL Pail",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "2",
+                      "result_unit": "Pail"
+                    }
+                  }
+                ],
+                "held_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L13",
+                    "evidence": "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+                    "extracted": {
+                      "description": "Blue Coal",
+                      "quantity": "3",
+                      "unit": "Bag",
+                      "size": "#0",
+                      "vendor_sku": "BC-0"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-bc0",
+                    "reasons": [
+                      "potential_duplicate"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L14",
+                    "evidence": "4 | GREEN | CC Green | #1 | 2 | Bag",
+                    "extracted": {
+                      "description": "CC Green",
+                      "quantity": "2",
+                      "unit": "Bag",
+                      "size": "#1",
+                      "vendor_sku": "GREEN"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material",
+                      "ambiguous_catalog_match"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L15",
+                    "evidence": "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+                    "extracted": {
+                      "description": "Unlisted Violet",
+                      "quantity": "4",
+                      "unit": "Bag",
+                      "size": "#2",
+                      "vendor_sku": "UNK-99"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material"
+                    ]
+                  }
+                ],
+                "excluded_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L16",
+                    "reason": "freight",
+                    "evidence": "Freight / Delivery charge | $85.00"
+                  }
+                ],
+                "missing_employee_confirmations": [
+                  "ordered_by",
+                  "order_date",
+                  "location"
+                ],
+                "employee_confirmation_source": "authenticated_owner_session",
+                "other_document_source_refs": [
+                  "synthetic-image-invoice-2087:L1",
+                  "synthetic-image-invoice-2087:L2",
+                  "synthetic-image-invoice-2087:L3",
+                  "synthetic-image-invoice-2087:L6",
+                  "synthetic-image-invoice-2087:L7",
+                  "synthetic-image-invoice-2087:L8",
+                  "synthetic-image-invoice-2087:L9",
+                  "synthetic-image-invoice-2087:L10",
+                  "synthetic-image-invoice-2087:L17",
+                  "synthetic-image-invoice-2087:L18"
+                ],
+                "limitations": [
+                  "Model extraction completeness still requires employee review against the document.",
+                  "Invoice date is not order date. No manufacturer substitutes for supplier.",
+                  "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+                  "No rows were created. No execution capability exists."
+                ],
+                "approval_required_before_any_future_execution": true,
+                "execution_available": false
+              }
+            }
+          ],
+          "proposals": [
+            {
+              "evidenceId": "e8",
+              "tool": "prepare_pending_receivals",
+              "proposal": {
+                "version": "tenbot-pending-receival-review.v1",
+                "synthetic": true,
+                "document_id": "synthetic-image-invoice-2087",
+                "filename": "SYNTHETIC-model-transcribed-invoice-2087.txt",
+                "supplier": "Terrazzo & Marble Supply",
+                "document_reference": "SYN-INV-2087",
+                "status": "review_only_no_execution",
+                "ready_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L11",
+                    "evidence": "1 | AW-1 | Alaska White | #1 | 150 | LB",
+                    "extracted": {
+                      "description": "Alaska White",
+                      "quantity": "150",
+                      "unit": "LB",
+                      "size": "#1",
+                      "vendor_sku": "AW-1"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-aw1",
+                    "proposal": {
+                      "vendor": "Terrazzo & Marble Supply",
+                      "material_name": "Alaska White",
+                      "size": "#1",
+                      "category": "Aggregate",
+                      "quantity_expected": "3",
+                      "unit": "Bag",
+                      "location": null,
+                      "ordered_by": null,
+                      "order_date": null,
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-2087",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-aw1"
+                    },
+                    "conversion": {
+                      "source_quantity": "150",
+                      "source_unit": "LB",
+                      "package": "50 LB Bag",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "3",
+                      "result_unit": "Bag"
+                    }
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L12",
+                    "evidence": "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+                    "extracted": {
+                      "description": "Clear Resin",
+                      "quantity": "10",
+                      "unit": "GAL",
+                      "size": "Part A",
+                      "vendor_sku": "RES-5"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-res5",
+                    "proposal": {
+                      "vendor": "Terrazzo & Marble Supply",
+                      "material_name": "Clear Resin",
+                      "size": "Part A",
+                      "category": "Resin",
+                      "quantity_expected": "2",
+                      "unit": "Pail",
+                      "location": null,
+                      "ordered_by": null,
+                      "order_date": null,
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-2087",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-res5"
+                    },
+                    "conversion": {
+                      "source_quantity": "10",
+                      "source_unit": "GAL",
+                      "package": "5 GAL Pail",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "2",
+                      "result_unit": "Pail"
+                    }
+                  }
+                ],
+                "held_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L13",
+                    "evidence": "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+                    "extracted": {
+                      "description": "Blue Coal",
+                      "quantity": "3",
+                      "unit": "Bag",
+                      "size": "#0",
+                      "vendor_sku": "BC-0"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-bc0",
+                    "reasons": [
+                      "potential_duplicate"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L14",
+                    "evidence": "4 | GREEN | CC Green | #1 | 2 | Bag",
+                    "extracted": {
+                      "description": "CC Green",
+                      "quantity": "2",
+                      "unit": "Bag",
+                      "size": "#1",
+                      "vendor_sku": "GREEN"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material",
+                      "ambiguous_catalog_match"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L15",
+                    "evidence": "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+                    "extracted": {
+                      "description": "Unlisted Violet",
+                      "quantity": "4",
+                      "unit": "Bag",
+                      "size": "#2",
+                      "vendor_sku": "UNK-99"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material"
+                    ]
+                  }
+                ],
+                "excluded_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L16",
+                    "reason": "freight",
+                    "evidence": "Freight / Delivery charge | $85.00"
+                  }
+                ],
+                "missing_employee_confirmations": [
+                  "ordered_by",
+                  "order_date",
+                  "location"
+                ],
+                "employee_confirmation_source": "authenticated_owner_session",
+                "other_document_source_refs": [
+                  "synthetic-image-invoice-2087:L1",
+                  "synthetic-image-invoice-2087:L2",
+                  "synthetic-image-invoice-2087:L3",
+                  "synthetic-image-invoice-2087:L6",
+                  "synthetic-image-invoice-2087:L7",
+                  "synthetic-image-invoice-2087:L8",
+                  "synthetic-image-invoice-2087:L9",
+                  "synthetic-image-invoice-2087:L10",
+                  "synthetic-image-invoice-2087:L17",
+                  "synthetic-image-invoice-2087:L18"
+                ],
+                "limitations": [
+                  "Model extraction completeness still requires employee review against the document.",
+                  "Invoice date is not order date. No manufacturer substitutes for supplier.",
+                  "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+                  "No rows were created. No execution capability exists."
+                ],
+                "approval_required_before_any_future_execution": true,
+                "execution_available": false
+              }
+            }
+          ],
+          "trace": [
+            {
+              "event": "model",
+              "round": 1,
+              "outcome": "received",
+              "durationMs": 2832,
+              "usage": {
+                "inputTokens": 1265,
+                "cachedInputTokens": 0,
+                "outputTokens": 35,
+                "costUsd": 0.003511,
+                "reservedUsd": 0.0535875
+              }
+            },
+            {
+              "event": "tool",
+              "round": 1,
+              "name": "discover_capabilities",
+              "outcome": "ok",
+              "durationMs": 0
+            },
+            {
+              "event": "model",
+              "round": 2,
+              "outcome": "received",
+              "durationMs": 1828,
+              "usage": {
+                "inputTokens": 3230,
+                "cachedInputTokens": 0,
+                "outputTokens": 14,
+                "costUsd": 0.0082135,
+                "reservedUsd": 0.0808775
+              }
+            },
+            {
+              "event": "tool",
+              "round": 2,
+              "name": "read_invoice",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 3,
+              "outcome": "received",
+              "durationMs": 2920,
+              "usage": {
+                "inputTokens": 3852,
+                "cachedInputTokens": 3227,
+                "outputTokens": 55,
+                "costUsd": 0.0024337,
+                "reservedUsd": 0.0873175
+              }
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 2
+            },
+            {
+              "event": "model",
+              "round": 4,
+              "outcome": "received",
+              "durationMs": 3050,
+              "usage": {
+                "inputTokens": 4098,
+                "cachedInputTokens": 3849,
+                "outputTokens": 54,
+                "costUsd": 0.0015459,
+                "reservedUsd": 0.090485
+              }
+            },
+            {
+              "event": "tool",
+              "round": 4,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 0
+            },
+            {
+              "event": "model",
+              "round": 5,
+              "outcome": "received",
+              "durationMs": 2378,
+              "usage": {
+                "inputTokens": 4345,
+                "cachedInputTokens": 4095,
+                "outputTokens": 54,
+                "costUsd": 0.001573,
+                "reservedUsd": 0.093685
+              }
+            },
+            {
+              "event": "tool",
+              "round": 5,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 6,
+              "outcome": "received",
+              "durationMs": 2414,
+              "usage": {
+                "inputTokens": 4590,
+                "cachedInputTokens": 4342,
+                "outputTokens": 52,
+                "costUsd": 0.0015727,
+                "reservedUsd": 0.096825
+              }
+            },
+            {
+              "event": "tool",
+              "round": 6,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 9
+            },
+            {
+              "event": "model",
+              "round": 7,
+              "outcome": "received",
+              "durationMs": 5612,
+              "usage": {
+                "inputTokens": 4906,
+                "cachedInputTokens": 4587,
+                "outputTokens": 55,
+                "costUsd": 0.0018047,
+                "reservedUsd": 0.1009625
+              }
+            },
+            {
+              "event": "tool",
+              "round": 7,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 8,
+              "outcome": "received",
+              "durationMs": 1999,
+              "usage": {
+                "inputTokens": 5069,
+                "cachedInputTokens": 4903,
+                "outputTokens": 66,
+                "costUsd": 0.0015638,
+                "reservedUsd": 0.1031875
+              }
+            },
+            {
+              "event": "tool",
+              "round": 8,
+              "name": "check_receival_duplicates",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 9,
+              "outcome": "received",
+              "durationMs": 2855,
+              "usage": {
+                "inputTokens": 5323,
+                "cachedInputTokens": 5066,
+                "outputTokens": 156,
+                "costUsd": 0.0027076,
+                "reservedUsd": 0.106475
+              }
+            },
+            {
+              "event": "tool",
+              "round": 9,
+              "name": "prepare_pending_receivals",
+              "outcome": "ok",
+              "durationMs": 2
+            },
+            {
+              "event": "model",
+              "round": 10,
+              "outcome": "received",
+              "durationMs": 11141,
+              "usage": {
+                "inputTokens": 6483,
+                "cachedInputTokens": 5320,
+                "outputTokens": 700,
+                "costUsd": 0.010438,
+                "reservedUsd": 0.11929
+              }
+            }
+          ],
+          "usage": {
+            "inputTokens": 43161,
+            "cachedInputTokens": 35389,
+            "outputTokens": 1241,
+            "costUsd": 0.03536390000000002,
+            "reservedUsd": 0.9326924999999999
+          },
+          "modelSteps": [
+            {
+              "calls": [
+                {
+                  "id": "call_0re47bvesclkpSuOE2QElThA",
+                  "name": "discover_capabilities",
+                  "arguments": {
+                    "names": [
+                      "read_invoice",
+                      "search_catalog",
+                      "check_receival_duplicates",
+                      "prepare_pending_receivals"
+                    ]
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 1265,
+                "cachedInputTokens": 0,
+                "outputTokens": 35,
+                "costUsd": 0.003511,
+                "reservedUsd": 0.0535875
+              },
+              "durationMs": 2832
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_QqTLULN6UDs6tFfj78UxMQIq",
+                  "name": "read_invoice",
+                  "arguments": {}
+                }
+              ],
+              "usage": {
+                "inputTokens": 3230,
+                "cachedInputTokens": 0,
+                "outputTokens": 14,
+                "costUsd": 0.0082135,
+                "reservedUsd": 0.0808775
+              },
+              "durationMs": 1828
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_laj6JgvjUveBSd9zEb5kEwlF",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L11",
+                    "description": "Alaska White",
+                    "quantity": "150",
+                    "unit": "LB",
+                    "size": "#1",
+                    "vendor_sku": "AW-1"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 3852,
+                "cachedInputTokens": 3227,
+                "outputTokens": 55,
+                "costUsd": 0.0024337,
+                "reservedUsd": 0.0873175
+              },
+              "durationMs": 2920
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_CD5y3HI6yNab76ErEZNMVu3i",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L12",
+                    "description": "Clear Resin",
+                    "quantity": "10",
+                    "unit": "GAL",
+                    "size": "Part A",
+                    "vendor_sku": "RES-5"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 4098,
+                "cachedInputTokens": 3849,
+                "outputTokens": 54,
+                "costUsd": 0.0015459,
+                "reservedUsd": 0.090485
+              },
+              "durationMs": 3050
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_OAvEobjdnqXIYePt2rZq8rik",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L13",
+                    "description": "Blue Coal",
+                    "quantity": "3",
+                    "unit": "Bag",
+                    "size": "#0",
+                    "vendor_sku": "BC-0"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 4345,
+                "cachedInputTokens": 4095,
+                "outputTokens": 54,
+                "costUsd": 0.001573,
+                "reservedUsd": 0.093685
+              },
+              "durationMs": 2378
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_UXrq8krp2uXYwH0AxdRsUDE1",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L14",
+                    "description": "CC Green",
+                    "quantity": "2",
+                    "unit": "Bag",
+                    "size": "#1",
+                    "vendor_sku": "GREEN"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 4590,
+                "cachedInputTokens": 4342,
+                "outputTokens": 52,
+                "costUsd": 0.0015727,
+                "reservedUsd": 0.096825
+              },
+              "durationMs": 2414
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_yvjguw4LFrKlUhMgDJ7cBw5K",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L15",
+                    "description": "Unlisted Violet",
+                    "quantity": "4",
+                    "unit": "Bag",
+                    "size": "#2",
+                    "vendor_sku": "UNK-99"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 4906,
+                "cachedInputTokens": 4587,
+                "outputTokens": 55,
+                "costUsd": 0.0018047,
+                "reservedUsd": 0.1009625
+              },
+              "durationMs": 5612
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_YKR7H9LCpaC4PWN1xDdkquzC",
+                  "name": "check_receival_duplicates",
+                  "arguments": {
+                    "supplier": "Terrazzo & Marble Supply",
+                    "supplier_source_ref": "synthetic-image-invoice-2087:L4",
+                    "document_ref": "SYN-INV-2087",
+                    "document_source_ref": "synthetic-image-invoice-2087:L5"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 5069,
+                "cachedInputTokens": 4903,
+                "outputTokens": 66,
+                "costUsd": 0.0015638,
+                "reservedUsd": 0.1031875
+              },
+              "durationMs": 1999
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_1n7BiBKUfl7u0PYQh7VmDlfG",
+                  "name": "prepare_pending_receivals",
+                  "arguments": {
+                    "selections": [
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L11",
+                        "candidate_id": "standard:synthetic-aw1"
+                      },
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L12",
+                        "candidate_id": "standard:synthetic-res5"
+                      },
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L13",
+                        "candidate_id": "standard:synthetic-bc0"
+                      },
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L14",
+                        "candidate_id": null
+                      },
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L15",
+                        "candidate_id": null
+                      }
+                    ],
+                    "exclusions": [
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L16",
+                        "reason": "freight"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 5323,
+                "cachedInputTokens": 5066,
+                "outputTokens": 156,
+                "costUsd": 0.0027076,
+                "reservedUsd": 0.106475
+              },
+              "durationMs": 2855
+            },
+            {
+              "calls": [],
+              "final": {
+                "answer": "Prepared a review-only proposal for synthetic invoice SYN-INV-2087 from Terrazzo & Marble Supply. Two material lines have draft quantities; three are held for resolution. Nothing was created in Inventory, and no database writes occurred.",
+                "observations": [
+                  {
+                    "text": "The attachment is synthetic text, not an OCR/PDF extraction. It identifies Terrazzo & Marble Supply as supplier and SYN-INV-2087 as invoice reference.",
+                    "evidence_ids": [
+                      "e1"
+                    ]
+                  },
+                  {
+                    "text": "Draft line: Alaska White #1, SKU AW-1 — 150 LB converted by the preparation tool into 3 bags using the catalog's 50 LB bag package.",
+                    "evidence_ids": [
+                      "e2",
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "Draft line: Clear Resin Part A, SKU RES-5 — 10 GAL converted by the preparation tool into 2 pails using the catalog's 5 GAL pail package.",
+                    "evidence_ids": [
+                      "e3",
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "Held: Blue Coal #0, 3 bags. A potential existing pending receival, synthetic-existing-bc0, expects 3 bags and records 0 received. Duplicate matching uses supplier/material/size, not an invoice-reference field, so invoice-level uniqueness is not established.",
+                    "evidence_ids": [
+                      "e4",
+                      "e7",
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "Held: CC Green #1, 2 bags. Two distinct catalog offers match the description and SKU, but one is a 50 LB bag and the other a 25 LB bag; neither was selected.",
+                    "evidence_ids": [
+                      "e5",
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "Held: Unlisted Violet #2, SKU UNK-99, 4 bags. No catalog candidate was returned.",
+                    "evidence_ids": [
+                      "e6",
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "Freight was excluded. Ordered by, actual order date, and destination location remain missing. The artifact is review-only; even its ready lines are not executable.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  }
+                ],
+                "inferences": [],
+                "recommendations": [
+                  {
+                    "text": "Review the extracted lines and package conversions against the source document. Recheck catalog and duplicate records before any future authorized execution; employee approval alone does not execute this draft.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  }
+                ],
+                "questions": [
+                  "Who ordered these materials, what was the actual order date, and which Inventory location should receive them? The invoice date will not be used as the order date.",
+                  "Does existing receival synthetic-existing-bc0 correspond to this Blue Coal order, or is it a separate purchase?",
+                  "For CC Green #1, were the ordered bags 50 LB or 25 LB?",
+                  "What existing catalog material should Unlisted Violet #2 / UNK-99 map to, or should it remain held for catalog resolution?",
+                  "Can you confirm that the extracted material lines and the Alaska White and Clear Resin package conversions match the document?"
+                ],
+                "completed_actions": []
+              },
+              "usage": {
+                "inputTokens": 6483,
+                "cachedInputTokens": 5320,
+                "outputTokens": 700,
+                "costUsd": 0.010438,
+                "reservedUsd": 0.11929
+              },
+              "durationMs": 11140
+            }
+          ],
+          "durationMs": 37051,
+          "invoiceAttached": true,
+          "executionAvailable": false
+        }
+      },
+      "normalizedCalls": [
+        {
+          "id": "call_0re47bvesclkpSuOE2QElThA",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "read_invoice",
+              "search_catalog",
+              "check_receival_duplicates",
+              "prepare_pending_receivals"
+            ]
+          }
+        },
+        {
+          "id": "call_QqTLULN6UDs6tFfj78UxMQIq",
+          "name": "read_invoice",
+          "arguments": {}
+        },
+        {
+          "id": "call_laj6JgvjUveBSd9zEb5kEwlF",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L11",
+            "description": "Alaska White",
+            "quantity": "150",
+            "unit": "LB",
+            "size": "#1",
+            "vendor_sku": "AW-1"
+          }
+        },
+        {
+          "id": "call_CD5y3HI6yNab76ErEZNMVu3i",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L12",
+            "description": "Clear Resin",
+            "quantity": "10",
+            "unit": "GAL",
+            "size": "Part A",
+            "vendor_sku": "RES-5"
+          }
+        },
+        {
+          "id": "call_OAvEobjdnqXIYePt2rZq8rik",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L13",
+            "description": "Blue Coal",
+            "quantity": "3",
+            "unit": "Bag",
+            "size": "#0",
+            "vendor_sku": "BC-0"
+          }
+        },
+        {
+          "id": "call_UXrq8krp2uXYwH0AxdRsUDE1",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L14",
+            "description": "CC Green",
+            "quantity": "2",
+            "unit": "Bag",
+            "size": "#1",
+            "vendor_sku": "GREEN"
+          }
+        },
+        {
+          "id": "call_yvjguw4LFrKlUhMgDJ7cBw5K",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L15",
+            "description": "Unlisted Violet",
+            "quantity": "4",
+            "unit": "Bag",
+            "size": "#2",
+            "vendor_sku": "UNK-99"
+          }
+        },
+        {
+          "id": "call_YKR7H9LCpaC4PWN1xDdkquzC",
+          "name": "check_receival_duplicates",
+          "arguments": {
+            "supplier": "Terrazzo & Marble Supply",
+            "supplier_source_ref": "synthetic-image-invoice-2087:L4",
+            "document_ref": "SYN-INV-2087",
+            "document_source_ref": "synthetic-image-invoice-2087:L5"
+          }
+        },
+        {
+          "id": "call_1n7BiBKUfl7u0PYQh7VmDlfG",
+          "name": "prepare_pending_receivals",
+          "arguments": {
+            "selections": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L11",
+                "candidate_id": "standard:synthetic-aw1"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L12",
+                "candidate_id": "standard:synthetic-res5"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L13",
+                "candidate_id": "standard:synthetic-bc0"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L14",
+                "candidate_id": null
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L15",
+                "candidate_id": null
+              }
+            ],
+            "exclusions": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L16",
+                "reason": "freight"
+              }
+            ]
+          }
+        }
+      ],
+      "final": {
+        "answer": "Prepared a review-only proposal for synthetic invoice SYN-INV-2087 from Terrazzo & Marble Supply. Two material lines have draft quantities; three are held for resolution. Nothing was created in Inventory, and no database writes occurred.",
+        "observations": [
+          {
+            "text": "The attachment is synthetic text, not an OCR/PDF extraction. It identifies Terrazzo & Marble Supply as supplier and SYN-INV-2087 as invoice reference.",
+            "evidence_ids": [
+              "e1"
+            ]
+          },
+          {
+            "text": "Draft line: Alaska White #1, SKU AW-1 — 150 LB converted by the preparation tool into 3 bags using the catalog's 50 LB bag package.",
+            "evidence_ids": [
+              "e2",
+              "e8"
+            ]
+          },
+          {
+            "text": "Draft line: Clear Resin Part A, SKU RES-5 — 10 GAL converted by the preparation tool into 2 pails using the catalog's 5 GAL pail package.",
+            "evidence_ids": [
+              "e3",
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: Blue Coal #0, 3 bags. A potential existing pending receival, synthetic-existing-bc0, expects 3 bags and records 0 received. Duplicate matching uses supplier/material/size, not an invoice-reference field, so invoice-level uniqueness is not established.",
+            "evidence_ids": [
+              "e4",
+              "e7",
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: CC Green #1, 2 bags. Two distinct catalog offers match the description and SKU, but one is a 50 LB bag and the other a 25 LB bag; neither was selected.",
+            "evidence_ids": [
+              "e5",
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: Unlisted Violet #2, SKU UNK-99, 4 bags. No catalog candidate was returned.",
+            "evidence_ids": [
+              "e6",
+              "e8"
+            ]
+          },
+          {
+            "text": "Freight was excluded. Ordered by, actual order date, and destination location remain missing. The artifact is review-only; even its ready lines are not executable.",
+            "evidence_ids": [
+              "e8"
+            ]
+          }
+        ],
+        "inferences": [],
+        "recommendations": [
+          {
+            "text": "Review the extracted lines and package conversions against the source document. Recheck catalog and duplicate records before any future authorized execution; employee approval alone does not execute this draft.",
+            "evidence_ids": [
+              "e8"
+            ]
+          }
+        ],
+        "questions": [
+          "Who ordered these materials, what was the actual order date, and which Inventory location should receive them? The invoice date will not be used as the order date.",
+          "Does existing receival synthetic-existing-bc0 correspond to this Blue Coal order, or is it a separate purchase?",
+          "For CC Green #1, were the ordered bags 50 LB or 25 LB?",
+          "What existing catalog material should Unlisted Violet #2 / UNK-99 map to, or should it remain held for catalog resolution?",
+          "Can you confirm that the extracted material lines and the Alaska White and Clear Resin package conversions match the document?"
+        ],
+        "completed_actions": []
+      },
+      "proposals": [
+        {
+          "evidenceId": "e8",
+          "tool": "prepare_pending_receivals",
+          "proposal": {
+            "version": "tenbot-pending-receival-review.v1",
+            "synthetic": true,
+            "document_id": "synthetic-image-invoice-2087",
+            "filename": "SYNTHETIC-model-transcribed-invoice-2087.txt",
+            "supplier": "Terrazzo & Marble Supply",
+            "document_reference": "SYN-INV-2087",
+            "status": "review_only_no_execution",
+            "ready_lines": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L11",
+                "evidence": "1 | AW-1 | Alaska White | #1 | 150 | LB",
+                "extracted": {
+                  "description": "Alaska White",
+                  "quantity": "150",
+                  "unit": "LB",
+                  "size": "#1",
+                  "vendor_sku": "AW-1"
+                },
+                "catalog_candidate_id": "standard:synthetic-aw1",
+                "proposal": {
+                  "vendor": "Terrazzo & Marble Supply",
+                  "material_name": "Alaska White",
+                  "size": "#1",
+                  "category": "Aggregate",
+                  "quantity_expected": "3",
+                  "unit": "Bag",
+                  "location": null,
+                  "ordered_by": null,
+                  "order_date": null,
+                  "status": "pending",
+                  "quantity_received": "0",
+                  "source_document_reference": "SYN-INV-2087",
+                  "catalog_source": "standard",
+                  "catalog_item_id": "synthetic-aw1"
+                },
+                "conversion": {
+                  "source_quantity": "150",
+                  "source_unit": "LB",
+                  "package": "50 LB Bag",
+                  "operation": "exact_division_by_catalog_package",
+                  "result_quantity": "3",
+                  "result_unit": "Bag"
+                }
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L12",
+                "evidence": "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+                "extracted": {
+                  "description": "Clear Resin",
+                  "quantity": "10",
+                  "unit": "GAL",
+                  "size": "Part A",
+                  "vendor_sku": "RES-5"
+                },
+                "catalog_candidate_id": "standard:synthetic-res5",
+                "proposal": {
+                  "vendor": "Terrazzo & Marble Supply",
+                  "material_name": "Clear Resin",
+                  "size": "Part A",
+                  "category": "Resin",
+                  "quantity_expected": "2",
+                  "unit": "Pail",
+                  "location": null,
+                  "ordered_by": null,
+                  "order_date": null,
+                  "status": "pending",
+                  "quantity_received": "0",
+                  "source_document_reference": "SYN-INV-2087",
+                  "catalog_source": "standard",
+                  "catalog_item_id": "synthetic-res5"
+                },
+                "conversion": {
+                  "source_quantity": "10",
+                  "source_unit": "GAL",
+                  "package": "5 GAL Pail",
+                  "operation": "exact_division_by_catalog_package",
+                  "result_quantity": "2",
+                  "result_unit": "Pail"
+                }
+              }
+            ],
+            "held_lines": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L13",
+                "evidence": "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+                "extracted": {
+                  "description": "Blue Coal",
+                  "quantity": "3",
+                  "unit": "Bag",
+                  "size": "#0",
+                  "vendor_sku": "BC-0"
+                },
+                "catalog_candidate_id": "standard:synthetic-bc0",
+                "reasons": [
+                  "potential_duplicate"
+                ]
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L14",
+                "evidence": "4 | GREEN | CC Green | #1 | 2 | Bag",
+                "extracted": {
+                  "description": "CC Green",
+                  "quantity": "2",
+                  "unit": "Bag",
+                  "size": "#1",
+                  "vendor_sku": "GREEN"
+                },
+                "catalog_candidate_id": null,
+                "reasons": [
+                  "unmatched_material",
+                  "ambiguous_catalog_match"
+                ]
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L15",
+                "evidence": "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+                "extracted": {
+                  "description": "Unlisted Violet",
+                  "quantity": "4",
+                  "unit": "Bag",
+                  "size": "#2",
+                  "vendor_sku": "UNK-99"
+                },
+                "catalog_candidate_id": null,
+                "reasons": [
+                  "unmatched_material"
+                ]
+              }
+            ],
+            "excluded_lines": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L16",
+                "reason": "freight",
+                "evidence": "Freight / Delivery charge | $85.00"
+              }
+            ],
+            "missing_employee_confirmations": [
+              "ordered_by",
+              "order_date",
+              "location"
+            ],
+            "employee_confirmation_source": "authenticated_owner_session",
+            "other_document_source_refs": [
+              "synthetic-image-invoice-2087:L1",
+              "synthetic-image-invoice-2087:L2",
+              "synthetic-image-invoice-2087:L3",
+              "synthetic-image-invoice-2087:L6",
+              "synthetic-image-invoice-2087:L7",
+              "synthetic-image-invoice-2087:L8",
+              "synthetic-image-invoice-2087:L9",
+              "synthetic-image-invoice-2087:L10",
+              "synthetic-image-invoice-2087:L17",
+              "synthetic-image-invoice-2087:L18"
+            ],
+            "limitations": [
+              "Model extraction completeness still requires employee review against the document.",
+              "Invoice date is not order date. No manufacturer substitutes for supplier.",
+              "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+              "No rows were created. No execution capability exists."
+            ],
+            "approval_required_before_any_future_execution": true,
+            "execution_available": false
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 43161,
+        "cachedInputTokens": 35389,
+        "outputTokens": 1241,
+        "costUsd": 0.03536390000000002,
+        "reservedUsd": 0.9326924999999999
+      },
+      "score": [
+        {
+          "criterion": "Completed inside unchanged runtime limits",
+          "pass": true,
+          "details": "completed"
+        },
+        {
+          "criterion": "Host produced one review-only proposal",
+          "pass": true,
+          "details": "Host proposal count 1. No model-generated proposal is accepted."
+        },
+        {
+          "criterion": "Two matched material drafts, three held materials, one excluded freight charge",
+          "pass": true,
+          "details": "Ready 2; held 3; excluded 1."
+        },
+        {
+          "criterion": "Alaska White #1 150 LB converts exactly to 3 Bag",
+          "pass": true,
+          "details": "Expected score only; no answer, extraction, catalog ID or quantity was supplied to the model by this scorer."
+        },
+        {
+          "criterion": "Clear Resin Part A 10 GAL converts exactly to 2 Pail",
+          "pass": true,
+          "details": "Host deterministic package conversion is checked separately from model prose."
+        },
+        {
+          "criterion": "Existing Blue Coal remains held as potential duplicate",
+          "pass": true,
+          "details": "No duplicate override or execution tool exists."
+        },
+        {
+          "criterion": "Distinct CC Green catalog offers remain ambiguous",
+          "pass": true,
+          "details": "The model may not silently collapse catalog identities."
+        },
+        {
+          "criterion": "Unlisted Violet remains unmatched",
+          "pass": true,
+          "details": "No catalog or material record may be invented."
+        },
+        {
+          "criterion": "Required employee metadata follows explicit confirmation state",
+          "pass": true,
+          "details": "Expected missing fields: ordered_by, order_date, location; actual [\"location\",\"order_date\",\"ordered_by\"]."
+        },
+        {
+          "criterion": "Invoice date never becomes order date automatically",
+          "pass": true,
+          "details": "No order details were supplied in this first request."
+        },
+        {
+          "criterion": "No mutations or completed-action claims",
+          "pass": true,
+          "details": "The application has no executor, arbitrary SQL or shell capability in this experiment."
+        },
+        {
+          "criterion": "Structured citations refer to issued tool evidence",
+          "pass": true,
+          "details": "Provenance is not proof of semantic entailment; final answer remains subject to manual review."
+        },
+        {
+          "criterion": "Clarification quality and usefulness of actual response",
+          "pass": null,
+          "details": "Review the actual final questions, observations and recommendations. Do not infer model quality from tool-coverage scores alone."
+        }
+      ],
+      "allStructuredChecksPass": true
+    },
+    {
+      "label": "explicit-metadata-followup",
+      "request": {
+        "action": "ask",
+        "question": "The order was placed by Synthetic Benchmark Employee on October 28, 2026, for Denton. Please use those order details to update the pending-receival proposal from the attached invoice. Keep ambiguous, unmatched or potential duplicate lines held, exclude non-material charges, and stop before execution.",
+        "context": [
+          "Current module: Inventory"
+        ],
+        "demoScenario": "invoice-preparation",
+        "conversationId": "a72cd14c-9abd-4133-a1df-2e9b399ded36",
+        "orderDetails": {
+          "orderedBy": "Synthetic Benchmark Employee",
+          "orderDate": "2026-10-28",
+          "location": "Denton"
+        }
+      },
+      "durationMs": 30504,
+      "response": {
+        "conversationId": "a72cd14c-9abd-4133-a1df-2e9b399ded36",
+        "mode": "agent-experiment",
+        "message": "The review-only proposal now uses Synthetic Benchmark Employee, order date October 28, 2026, and Denton. Two material lines are ready for review, three remain held, and freight is excluded. No database writes occurred; execution was not performed.",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-agent-poc.v1",
+          "verifiedAt": "2026-10-29T17:26:18.570Z"
+        },
+        "summary": null,
+        "suggestionAllowed": false,
+        "notices": [
+          "Local OpenAI experiment. Review evidence and proposals; no execution capability exists."
+        ],
+        "agent": {
+          "mode": "openai",
+          "provider": "OpenAI Responses (local experiment)",
+          "model": "gpt-6.1-sol",
+          "status": "completed",
+          "final": {
+            "answer": "The review-only proposal now uses Synthetic Benchmark Employee, order date October 28, 2026, and Denton. Two material lines are ready for review, three remain held, and freight is excluded. No database writes occurred; execution was not performed.",
+            "observations": [
+              {
+                "text": "The proposal for Terrazzo & Marble Supply invoice SYN-INV-2087 includes all confirmed order details; no employee confirmations remain missing.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              },
+              {
+                "text": "Ready for review: Alaska White #1 — 3 bags, converted by the preparation service from 150 LB using 50 LB bags; Clear Resin Part A — 2 pails, converted from 10 GAL using 5 GAL pails.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              },
+              {
+                "text": "Held: Blue Coal #0, 3 bags, because of a potential existing receival; CC Green #1, 2 bags, because two catalog offers differ in package size; Unlisted Violet #2, 4 bags, because no catalog match was found.",
+                "evidence_ids": [
+                  "e5",
+                  "e6",
+                  "e7",
+                  "e8"
+                ]
+              },
+              {
+                "text": "The $85 freight/delivery charge is excluded. The artifact is review-only, requires approval before any future execution, and created no rows.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              }
+            ],
+            "inferences": [
+              {
+                "text": "The Blue Coal match does not establish that this invoice was already entered: duplicate checking uses supplier/material/size, not a canonical invoice-reference field.",
+                "evidence_ids": [
+                  "e7"
+                ]
+              }
+            ],
+            "recommendations": [
+              {
+                "text": "Review the draft against the synthetic attachment. Keep held lines excluded from execution; catalog and duplicate checks must be refreshed before any future authorized execution.",
+                "evidence_ids": [
+                  "e8"
+                ]
+              }
+            ],
+            "questions": [
+              "For CC Green #1, is the intended package a 50 LB bag or a 25 LB bag?",
+              "Can you provide the correct catalog reference for Unlisted Violet #2?",
+              "Does the existing pending Blue Coal #0 receival correspond to this order?"
+            ],
+            "completed_actions": []
+          },
+          "evidence": [
+            {
+              "id": "e1",
+              "tool": "read_invoice",
+              "data": {
+                "synthetic": true,
+                "document_id": "synthetic-image-invoice-2087",
+                "filename": "SYNTHETIC-model-transcribed-invoice-2087.txt",
+                "media_type": "text/plain",
+                "content_is_untrusted_data": true,
+                "sources": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L1",
+                    "text": "SYNTHETIC / TEST DATA ONLY"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L2",
+                    "text": "Terrazzo & Marble Supply"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L3",
+                    "text": "INVOICE"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L4",
+                    "text": "Supplier: Terrazzo & Marble Supply"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L5",
+                    "text": "Invoice: SYN-INV-2087"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L6",
+                    "text": "Invoice date: 2026-10-29"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L7",
+                    "text": "Bill to: Tenarten"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L8",
+                    "text": "Synthetic account"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L9",
+                    "text": "MATERIALS ORDERED"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L10",
+                    "text": "LINE | SKU | MATERIAL / DESCRIPTION | SIZE / PART | QTY | UNIT"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L11",
+                    "text": "1 | AW-1 | Alaska White | #1 | 150 | LB"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L12",
+                    "text": "2 | RES-5 | Clear Resin | Part A | 10 | GAL"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L13",
+                    "text": "3 | BC-0 | Blue Coal | #0 | 3 | Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L14",
+                    "text": "4 | GREEN | CC Green | #1 | 2 | Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L15",
+                    "text": "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L16",
+                    "text": "Freight / Delivery charge | $85.00"
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L17",
+                    "text": "Material quantities are listed separately from freight."
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L18",
+                    "text": "NOT A REAL INVOICE — DO NOT POST OR PAY"
+                  }
+                ],
+                "limitations": [
+                  "Synthetic text attachment only; no photo/PDF/OCR test.",
+                  "Supplier is not manufacturer. Invoice date must never supply order_date automatically.",
+                  "Only read and prepare operations exist; no approval or execution tool."
+                ]
+              }
+            },
+            {
+              "id": "e2",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L11",
+                "extracted": {
+                  "description": "Alaska White",
+                  "quantity": "150",
+                  "unit": "LB",
+                  "size": "#1",
+                  "vendor_sku": "AW-1"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-aw1",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-aw1",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "AW-1",
+                    "material_name": "Alaska White",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e3",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L12",
+                "extracted": {
+                  "description": "Clear Resin",
+                  "quantity": "10",
+                  "unit": "GAL",
+                  "size": "Part A",
+                  "vendor_sku": "RES-5"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-res5",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-res5",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "RES-5",
+                    "material_name": "Clear Resin",
+                    "size": "Part A",
+                    "category": "Resin",
+                    "order_unit": "Pail",
+                    "package_quantity": "5",
+                    "package_measure": "GAL",
+                    "container_type": "Pail",
+                    "package_evidence": "5 GAL Pail"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e4",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L13",
+                "extracted": {
+                  "description": "Blue Coal",
+                  "quantity": "3",
+                  "unit": "Bag",
+                  "size": "#0",
+                  "vendor_sku": "BC-0"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-bc0",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-bc0",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "BC-0",
+                    "material_name": "Blue Coal",
+                    "size": "#0",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e5",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L14",
+                "extracted": {
+                  "description": "CC Green",
+                  "quantity": "2",
+                  "unit": "Bag",
+                  "size": "#1",
+                  "vendor_sku": "GREEN"
+                },
+                "complete": true,
+                "candidates": [
+                  {
+                    "candidate_id": "standard:synthetic-green-a",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-green-a",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "GREEN",
+                    "material_name": "CC Green",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "50",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "50 LB Bag"
+                  },
+                  {
+                    "candidate_id": "standard:synthetic-green-b",
+                    "catalog_source": "standard",
+                    "catalog_item_id": "synthetic-green-b",
+                    "supplier": "T&M Supply",
+                    "vendor_sku": "GREEN",
+                    "material_name": "CC Green",
+                    "size": "#1",
+                    "category": "Aggregate",
+                    "order_unit": "Bag",
+                    "package_quantity": "25",
+                    "package_measure": "LB",
+                    "container_type": "Bag",
+                    "package_evidence": "25 LB Bag"
+                  }
+                ],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e6",
+              "tool": "search_catalog",
+              "data": {
+                "synthetic": true,
+                "source_ref": "synthetic-image-invoice-2087:L15",
+                "extracted": {
+                  "description": "Unlisted Violet",
+                  "quantity": "4",
+                  "unit": "Bag",
+                  "size": "#2",
+                  "vendor_sku": "UNK-99"
+                },
+                "complete": true,
+                "candidates": [],
+                "note": "Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred."
+              }
+            },
+            {
+              "id": "e7",
+              "tool": "check_receival_duplicates",
+              "data": {
+                "synthetic": true,
+                "supplier": "Terrazzo & Marble Supply",
+                "document_ref": "SYN-INV-2087",
+                "supplier_source_ref": "synthetic-image-invoice-2087:L4",
+                "document_source_ref": "synthetic-image-invoice-2087:L5",
+                "complete": true,
+                "potential_duplicates": [
+                  {
+                    "id": "synthetic-existing-bc0",
+                    "vendor": "T&M Supply",
+                    "material_name": "Blue Coal",
+                    "size": "#0",
+                    "quantity_expected": "3",
+                    "quantity_received": "0",
+                    "unit": "Bag",
+                    "status": "pending"
+                  }
+                ],
+                "limitations": [
+                  "Potential matches use supplier/material/size only.",
+                  "No canonical invoice-reference field exists on general pending receivals; invoice-level idempotency is not established.",
+                  "A potential duplicate remains held; this prototype has no duplicate override or write tool."
+                ]
+              }
+            },
+            {
+              "id": "e8",
+              "tool": "prepare_pending_receivals",
+              "data": {
+                "version": "tenbot-pending-receival-review.v1",
+                "synthetic": true,
+                "document_id": "synthetic-image-invoice-2087",
+                "filename": "SYNTHETIC-model-transcribed-invoice-2087.txt",
+                "supplier": "Terrazzo & Marble Supply",
+                "document_reference": "SYN-INV-2087",
+                "status": "review_only_no_execution",
+                "ready_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L11",
+                    "evidence": "1 | AW-1 | Alaska White | #1 | 150 | LB",
+                    "extracted": {
+                      "description": "Alaska White",
+                      "quantity": "150",
+                      "unit": "LB",
+                      "size": "#1",
+                      "vendor_sku": "AW-1"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-aw1",
+                    "proposal": {
+                      "vendor": "Terrazzo & Marble Supply",
+                      "material_name": "Alaska White",
+                      "size": "#1",
+                      "category": "Aggregate",
+                      "quantity_expected": "3",
+                      "unit": "Bag",
+                      "location": "Denton",
+                      "ordered_by": "Synthetic Benchmark Employee",
+                      "order_date": "2026-10-28",
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-2087",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-aw1"
+                    },
+                    "conversion": {
+                      "source_quantity": "150",
+                      "source_unit": "LB",
+                      "package": "50 LB Bag",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "3",
+                      "result_unit": "Bag"
+                    }
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L12",
+                    "evidence": "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+                    "extracted": {
+                      "description": "Clear Resin",
+                      "quantity": "10",
+                      "unit": "GAL",
+                      "size": "Part A",
+                      "vendor_sku": "RES-5"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-res5",
+                    "proposal": {
+                      "vendor": "Terrazzo & Marble Supply",
+                      "material_name": "Clear Resin",
+                      "size": "Part A",
+                      "category": "Resin",
+                      "quantity_expected": "2",
+                      "unit": "Pail",
+                      "location": "Denton",
+                      "ordered_by": "Synthetic Benchmark Employee",
+                      "order_date": "2026-10-28",
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-2087",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-res5"
+                    },
+                    "conversion": {
+                      "source_quantity": "10",
+                      "source_unit": "GAL",
+                      "package": "5 GAL Pail",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "2",
+                      "result_unit": "Pail"
+                    }
+                  }
+                ],
+                "held_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L13",
+                    "evidence": "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+                    "extracted": {
+                      "description": "Blue Coal",
+                      "quantity": "3",
+                      "unit": "Bag",
+                      "size": "#0",
+                      "vendor_sku": "BC-0"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-bc0",
+                    "reasons": [
+                      "potential_duplicate"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L14",
+                    "evidence": "4 | GREEN | CC Green | #1 | 2 | Bag",
+                    "extracted": {
+                      "description": "CC Green",
+                      "quantity": "2",
+                      "unit": "Bag",
+                      "size": "#1",
+                      "vendor_sku": "GREEN"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material",
+                      "ambiguous_catalog_match"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L15",
+                    "evidence": "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+                    "extracted": {
+                      "description": "Unlisted Violet",
+                      "quantity": "4",
+                      "unit": "Bag",
+                      "size": "#2",
+                      "vendor_sku": "UNK-99"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material"
+                    ]
+                  }
+                ],
+                "excluded_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L16",
+                    "reason": "freight",
+                    "evidence": "Freight / Delivery charge | $85.00"
+                  }
+                ],
+                "missing_employee_confirmations": [],
+                "employee_confirmation_source": "authenticated_owner_session",
+                "other_document_source_refs": [
+                  "synthetic-image-invoice-2087:L1",
+                  "synthetic-image-invoice-2087:L2",
+                  "synthetic-image-invoice-2087:L3",
+                  "synthetic-image-invoice-2087:L6",
+                  "synthetic-image-invoice-2087:L7",
+                  "synthetic-image-invoice-2087:L8",
+                  "synthetic-image-invoice-2087:L9",
+                  "synthetic-image-invoice-2087:L10",
+                  "synthetic-image-invoice-2087:L17",
+                  "synthetic-image-invoice-2087:L18"
+                ],
+                "limitations": [
+                  "Model extraction completeness still requires employee review against the document.",
+                  "Invoice date is not order date. No manufacturer substitutes for supplier.",
+                  "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+                  "No rows were created. No execution capability exists."
+                ],
+                "approval_required_before_any_future_execution": true,
+                "execution_available": false
+              }
+            }
+          ],
+          "proposals": [
+            {
+              "evidenceId": "e8",
+              "tool": "prepare_pending_receivals",
+              "proposal": {
+                "version": "tenbot-pending-receival-review.v1",
+                "synthetic": true,
+                "document_id": "synthetic-image-invoice-2087",
+                "filename": "SYNTHETIC-model-transcribed-invoice-2087.txt",
+                "supplier": "Terrazzo & Marble Supply",
+                "document_reference": "SYN-INV-2087",
+                "status": "review_only_no_execution",
+                "ready_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L11",
+                    "evidence": "1 | AW-1 | Alaska White | #1 | 150 | LB",
+                    "extracted": {
+                      "description": "Alaska White",
+                      "quantity": "150",
+                      "unit": "LB",
+                      "size": "#1",
+                      "vendor_sku": "AW-1"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-aw1",
+                    "proposal": {
+                      "vendor": "Terrazzo & Marble Supply",
+                      "material_name": "Alaska White",
+                      "size": "#1",
+                      "category": "Aggregate",
+                      "quantity_expected": "3",
+                      "unit": "Bag",
+                      "location": "Denton",
+                      "ordered_by": "Synthetic Benchmark Employee",
+                      "order_date": "2026-10-28",
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-2087",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-aw1"
+                    },
+                    "conversion": {
+                      "source_quantity": "150",
+                      "source_unit": "LB",
+                      "package": "50 LB Bag",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "3",
+                      "result_unit": "Bag"
+                    }
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L12",
+                    "evidence": "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+                    "extracted": {
+                      "description": "Clear Resin",
+                      "quantity": "10",
+                      "unit": "GAL",
+                      "size": "Part A",
+                      "vendor_sku": "RES-5"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-res5",
+                    "proposal": {
+                      "vendor": "Terrazzo & Marble Supply",
+                      "material_name": "Clear Resin",
+                      "size": "Part A",
+                      "category": "Resin",
+                      "quantity_expected": "2",
+                      "unit": "Pail",
+                      "location": "Denton",
+                      "ordered_by": "Synthetic Benchmark Employee",
+                      "order_date": "2026-10-28",
+                      "status": "pending",
+                      "quantity_received": "0",
+                      "source_document_reference": "SYN-INV-2087",
+                      "catalog_source": "standard",
+                      "catalog_item_id": "synthetic-res5"
+                    },
+                    "conversion": {
+                      "source_quantity": "10",
+                      "source_unit": "GAL",
+                      "package": "5 GAL Pail",
+                      "operation": "exact_division_by_catalog_package",
+                      "result_quantity": "2",
+                      "result_unit": "Pail"
+                    }
+                  }
+                ],
+                "held_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L13",
+                    "evidence": "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+                    "extracted": {
+                      "description": "Blue Coal",
+                      "quantity": "3",
+                      "unit": "Bag",
+                      "size": "#0",
+                      "vendor_sku": "BC-0"
+                    },
+                    "catalog_candidate_id": "standard:synthetic-bc0",
+                    "reasons": [
+                      "potential_duplicate"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L14",
+                    "evidence": "4 | GREEN | CC Green | #1 | 2 | Bag",
+                    "extracted": {
+                      "description": "CC Green",
+                      "quantity": "2",
+                      "unit": "Bag",
+                      "size": "#1",
+                      "vendor_sku": "GREEN"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material",
+                      "ambiguous_catalog_match"
+                    ]
+                  },
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L15",
+                    "evidence": "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+                    "extracted": {
+                      "description": "Unlisted Violet",
+                      "quantity": "4",
+                      "unit": "Bag",
+                      "size": "#2",
+                      "vendor_sku": "UNK-99"
+                    },
+                    "catalog_candidate_id": null,
+                    "reasons": [
+                      "unmatched_material"
+                    ]
+                  }
+                ],
+                "excluded_lines": [
+                  {
+                    "source_ref": "synthetic-image-invoice-2087:L16",
+                    "reason": "freight",
+                    "evidence": "Freight / Delivery charge | $85.00"
+                  }
+                ],
+                "missing_employee_confirmations": [],
+                "employee_confirmation_source": "authenticated_owner_session",
+                "other_document_source_refs": [
+                  "synthetic-image-invoice-2087:L1",
+                  "synthetic-image-invoice-2087:L2",
+                  "synthetic-image-invoice-2087:L3",
+                  "synthetic-image-invoice-2087:L6",
+                  "synthetic-image-invoice-2087:L7",
+                  "synthetic-image-invoice-2087:L8",
+                  "synthetic-image-invoice-2087:L9",
+                  "synthetic-image-invoice-2087:L10",
+                  "synthetic-image-invoice-2087:L17",
+                  "synthetic-image-invoice-2087:L18"
+                ],
+                "limitations": [
+                  "Model extraction completeness still requires employee review against the document.",
+                  "Invoice date is not order date. No manufacturer substitutes for supplier.",
+                  "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+                  "No rows were created. No execution capability exists."
+                ],
+                "approval_required_before_any_future_execution": true,
+                "execution_available": false
+              }
+            }
+          ],
+          "trace": [
+            {
+              "event": "model",
+              "round": 1,
+              "outcome": "received",
+              "durationMs": 1450,
+              "usage": {
+                "inputTokens": 1372,
+                "cachedInputTokens": 1149,
+                "outputTokens": 35,
+                "costUsd": 0.0010209,
+                "reservedUsd": 0.0549875
+              }
+            },
+            {
+              "event": "tool",
+              "round": 1,
+              "name": "discover_capabilities",
+              "outcome": "ok",
+              "durationMs": 0
+            },
+            {
+              "event": "model",
+              "round": 2,
+              "outcome": "received",
+              "durationMs": 2403,
+              "usage": {
+                "inputTokens": 3337,
+                "cachedInputTokens": 1739,
+                "outputTokens": 14,
+                "costUsd": 0.004307399999999999,
+                "reservedUsd": 0.0822775
+              }
+            },
+            {
+              "event": "tool",
+              "round": 2,
+              "name": "read_invoice",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 3,
+              "outcome": "received",
+              "durationMs": 2810,
+              "usage": {
+                "inputTokens": 3959,
+                "cachedInputTokens": 3334,
+                "outputTokens": 55,
+                "costUsd": 0.0024444000000000002,
+                "reservedUsd": 0.0887175
+              }
+            },
+            {
+              "event": "tool",
+              "round": 3,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 4,
+              "outcome": "received",
+              "durationMs": 3082,
+              "usage": {
+                "inputTokens": 4205,
+                "cachedInputTokens": 3956,
+                "outputTokens": 54,
+                "costUsd": 0.0015566,
+                "reservedUsd": 0.091885
+              }
+            },
+            {
+              "event": "tool",
+              "round": 4,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 5,
+              "outcome": "received",
+              "durationMs": 1795,
+              "usage": {
+                "inputTokens": 4452,
+                "cachedInputTokens": 4202,
+                "outputTokens": 54,
+                "costUsd": 0.0015837,
+                "reservedUsd": 0.095085
+              }
+            },
+            {
+              "event": "tool",
+              "round": 5,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 6,
+              "outcome": "received",
+              "durationMs": 3687,
+              "usage": {
+                "inputTokens": 4697,
+                "cachedInputTokens": 4449,
+                "outputTokens": 52,
+                "costUsd": 0.0015834,
+                "reservedUsd": 0.098225
+              }
+            },
+            {
+              "event": "tool",
+              "round": 6,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 7,
+              "outcome": "received",
+              "durationMs": 1672,
+              "usage": {
+                "inputTokens": 5013,
+                "cachedInputTokens": 4694,
+                "outputTokens": 55,
+                "costUsd": 0.0018154,
+                "reservedUsd": 0.1023625
+              }
+            },
+            {
+              "event": "tool",
+              "round": 7,
+              "name": "search_catalog",
+              "outcome": "ok",
+              "durationMs": 1
+            },
+            {
+              "event": "model",
+              "round": 8,
+              "outcome": "received",
+              "durationMs": 2521,
+              "usage": {
+                "inputTokens": 5176,
+                "cachedInputTokens": 5010,
+                "outputTokens": 66,
+                "costUsd": 0.0015745,
+                "reservedUsd": 0.1045875
+              }
+            },
+            {
+              "event": "tool",
+              "round": 8,
+              "name": "check_receival_duplicates",
+              "outcome": "ok",
+              "durationMs": 0
+            },
+            {
+              "event": "model",
+              "round": 9,
+              "outcome": "received",
+              "durationMs": 3630,
+              "usage": {
+                "inputTokens": 5430,
+                "cachedInputTokens": 5173,
+                "outputTokens": 156,
+                "costUsd": 0.0027183000000000003,
+                "reservedUsd": 0.107875
+              }
+            },
+            {
+              "event": "tool",
+              "round": 9,
+              "name": "prepare_pending_receivals",
+              "outcome": "ok",
+              "durationMs": 2
+            },
+            {
+              "event": "model",
+              "round": 10,
+              "outcome": "received",
+              "durationMs": 7439,
+              "usage": {
+                "inputTokens": 6598,
+                "cachedInputTokens": 5427,
+                "outputTokens": 506,
+                "costUsd": 0.0085287,
+                "reservedUsd": 0.120805
+              }
+            }
+          ],
+          "usage": {
+            "inputTokens": 44239,
+            "cachedInputTokens": 39133,
+            "outputTokens": 1047,
+            "costUsd": 0.0271333,
+            "reservedUsd": 0.9468075
+          },
+          "modelSteps": [
+            {
+              "calls": [
+                {
+                  "id": "call_A7hlpRhgbq5TNQ4wCNruLGx9",
+                  "name": "discover_capabilities",
+                  "arguments": {
+                    "names": [
+                      "read_invoice",
+                      "search_catalog",
+                      "check_receival_duplicates",
+                      "prepare_pending_receivals"
+                    ]
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 1372,
+                "cachedInputTokens": 1149,
+                "outputTokens": 35,
+                "costUsd": 0.0010209,
+                "reservedUsd": 0.0549875
+              },
+              "durationMs": 1450
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_64NL9oUtclqkcbDlsw2QVqRp",
+                  "name": "read_invoice",
+                  "arguments": {}
+                }
+              ],
+              "usage": {
+                "inputTokens": 3337,
+                "cachedInputTokens": 1739,
+                "outputTokens": 14,
+                "costUsd": 0.004307399999999999,
+                "reservedUsd": 0.0822775
+              },
+              "durationMs": 2403
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_pPRQJMC7jBjrp12ZqrBR5usH",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L11",
+                    "description": "Alaska White",
+                    "quantity": "150",
+                    "unit": "LB",
+                    "size": "#1",
+                    "vendor_sku": "AW-1"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 3959,
+                "cachedInputTokens": 3334,
+                "outputTokens": 55,
+                "costUsd": 0.0024444000000000002,
+                "reservedUsd": 0.0887175
+              },
+              "durationMs": 2810
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_rQ5Bd4a1qG7KBRWobmPdHAE7",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L12",
+                    "description": "Clear Resin",
+                    "quantity": "10",
+                    "unit": "GAL",
+                    "size": "Part A",
+                    "vendor_sku": "RES-5"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 4205,
+                "cachedInputTokens": 3956,
+                "outputTokens": 54,
+                "costUsd": 0.0015566,
+                "reservedUsd": 0.091885
+              },
+              "durationMs": 3081
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_M5o5pYQqcywiiueSwhueLbGc",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L13",
+                    "description": "Blue Coal",
+                    "quantity": "3",
+                    "unit": "Bag",
+                    "size": "#0",
+                    "vendor_sku": "BC-0"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 4452,
+                "cachedInputTokens": 4202,
+                "outputTokens": 54,
+                "costUsd": 0.0015837,
+                "reservedUsd": 0.095085
+              },
+              "durationMs": 1794
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_EWxEQWoaXpyOxCZOZf0pF4UL",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L14",
+                    "description": "CC Green",
+                    "quantity": "2",
+                    "unit": "Bag",
+                    "size": "#1",
+                    "vendor_sku": "GREEN"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 4697,
+                "cachedInputTokens": 4449,
+                "outputTokens": 52,
+                "costUsd": 0.0015834,
+                "reservedUsd": 0.098225
+              },
+              "durationMs": 3686
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_scrzvF4k38jfPOEcdqmRL1vv",
+                  "name": "search_catalog",
+                  "arguments": {
+                    "source_ref": "synthetic-image-invoice-2087:L15",
+                    "description": "Unlisted Violet",
+                    "quantity": "4",
+                    "unit": "Bag",
+                    "size": "#2",
+                    "vendor_sku": "UNK-99"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 5013,
+                "cachedInputTokens": 4694,
+                "outputTokens": 55,
+                "costUsd": 0.0018154,
+                "reservedUsd": 0.1023625
+              },
+              "durationMs": 1672
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_lnnZNn1HfBElVckOnkl3hTPy",
+                  "name": "check_receival_duplicates",
+                  "arguments": {
+                    "supplier": "Terrazzo & Marble Supply",
+                    "supplier_source_ref": "synthetic-image-invoice-2087:L4",
+                    "document_ref": "SYN-INV-2087",
+                    "document_source_ref": "synthetic-image-invoice-2087:L5"
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 5176,
+                "cachedInputTokens": 5010,
+                "outputTokens": 66,
+                "costUsd": 0.0015745,
+                "reservedUsd": 0.1045875
+              },
+              "durationMs": 2521
+            },
+            {
+              "calls": [
+                {
+                  "id": "call_JYpnoH6ibnSxOFYntx8tOWmm",
+                  "name": "prepare_pending_receivals",
+                  "arguments": {
+                    "selections": [
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L11",
+                        "candidate_id": "standard:synthetic-aw1"
+                      },
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L12",
+                        "candidate_id": "standard:synthetic-res5"
+                      },
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L13",
+                        "candidate_id": "standard:synthetic-bc0"
+                      },
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L14",
+                        "candidate_id": null
+                      },
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L15",
+                        "candidate_id": null
+                      }
+                    ],
+                    "exclusions": [
+                      {
+                        "source_ref": "synthetic-image-invoice-2087:L16",
+                        "reason": "freight"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 5430,
+                "cachedInputTokens": 5173,
+                "outputTokens": 156,
+                "costUsd": 0.0027183000000000003,
+                "reservedUsd": 0.107875
+              },
+              "durationMs": 3630
+            },
+            {
+              "calls": [],
+              "final": {
+                "answer": "The review-only proposal now uses Synthetic Benchmark Employee, order date October 28, 2026, and Denton. Two material lines are ready for review, three remain held, and freight is excluded. No database writes occurred; execution was not performed.",
+                "observations": [
+                  {
+                    "text": "The proposal for Terrazzo & Marble Supply invoice SYN-INV-2087 includes all confirmed order details; no employee confirmations remain missing.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "Ready for review: Alaska White #1 — 3 bags, converted by the preparation service from 150 LB using 50 LB bags; Clear Resin Part A — 2 pails, converted from 10 GAL using 5 GAL pails.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "Held: Blue Coal #0, 3 bags, because of a potential existing receival; CC Green #1, 2 bags, because two catalog offers differ in package size; Unlisted Violet #2, 4 bags, because no catalog match was found.",
+                    "evidence_ids": [
+                      "e5",
+                      "e6",
+                      "e7",
+                      "e8"
+                    ]
+                  },
+                  {
+                    "text": "The $85 freight/delivery charge is excluded. The artifact is review-only, requires approval before any future execution, and created no rows.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  }
+                ],
+                "inferences": [
+                  {
+                    "text": "The Blue Coal match does not establish that this invoice was already entered: duplicate checking uses supplier/material/size, not a canonical invoice-reference field.",
+                    "evidence_ids": [
+                      "e7"
+                    ]
+                  }
+                ],
+                "recommendations": [
+                  {
+                    "text": "Review the draft against the synthetic attachment. Keep held lines excluded from execution; catalog and duplicate checks must be refreshed before any future authorized execution.",
+                    "evidence_ids": [
+                      "e8"
+                    ]
+                  }
+                ],
+                "questions": [
+                  "For CC Green #1, is the intended package a 50 LB bag or a 25 LB bag?",
+                  "Can you provide the correct catalog reference for Unlisted Violet #2?",
+                  "Does the existing pending Blue Coal #0 receival correspond to this order?"
+                ],
+                "completed_actions": []
+              },
+              "usage": {
+                "inputTokens": 6598,
+                "cachedInputTokens": 5427,
+                "outputTokens": 506,
+                "costUsd": 0.0085287,
+                "reservedUsd": 0.120805
+              },
+              "durationMs": 7439
+            }
+          ],
+          "durationMs": 30501,
+          "invoiceAttached": true,
+          "executionAvailable": false
+        }
+      },
+      "normalizedCalls": [
+        {
+          "id": "call_A7hlpRhgbq5TNQ4wCNruLGx9",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "read_invoice",
+              "search_catalog",
+              "check_receival_duplicates",
+              "prepare_pending_receivals"
+            ]
+          }
+        },
+        {
+          "id": "call_64NL9oUtclqkcbDlsw2QVqRp",
+          "name": "read_invoice",
+          "arguments": {}
+        },
+        {
+          "id": "call_pPRQJMC7jBjrp12ZqrBR5usH",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L11",
+            "description": "Alaska White",
+            "quantity": "150",
+            "unit": "LB",
+            "size": "#1",
+            "vendor_sku": "AW-1"
+          }
+        },
+        {
+          "id": "call_rQ5Bd4a1qG7KBRWobmPdHAE7",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L12",
+            "description": "Clear Resin",
+            "quantity": "10",
+            "unit": "GAL",
+            "size": "Part A",
+            "vendor_sku": "RES-5"
+          }
+        },
+        {
+          "id": "call_M5o5pYQqcywiiueSwhueLbGc",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L13",
+            "description": "Blue Coal",
+            "quantity": "3",
+            "unit": "Bag",
+            "size": "#0",
+            "vendor_sku": "BC-0"
+          }
+        },
+        {
+          "id": "call_EWxEQWoaXpyOxCZOZf0pF4UL",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L14",
+            "description": "CC Green",
+            "quantity": "2",
+            "unit": "Bag",
+            "size": "#1",
+            "vendor_sku": "GREEN"
+          }
+        },
+        {
+          "id": "call_scrzvF4k38jfPOEcdqmRL1vv",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L15",
+            "description": "Unlisted Violet",
+            "quantity": "4",
+            "unit": "Bag",
+            "size": "#2",
+            "vendor_sku": "UNK-99"
+          }
+        },
+        {
+          "id": "call_lnnZNn1HfBElVckOnkl3hTPy",
+          "name": "check_receival_duplicates",
+          "arguments": {
+            "supplier": "Terrazzo & Marble Supply",
+            "supplier_source_ref": "synthetic-image-invoice-2087:L4",
+            "document_ref": "SYN-INV-2087",
+            "document_source_ref": "synthetic-image-invoice-2087:L5"
+          }
+        },
+        {
+          "id": "call_JYpnoH6ibnSxOFYntx8tOWmm",
+          "name": "prepare_pending_receivals",
+          "arguments": {
+            "selections": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L11",
+                "candidate_id": "standard:synthetic-aw1"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L12",
+                "candidate_id": "standard:synthetic-res5"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L13",
+                "candidate_id": "standard:synthetic-bc0"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L14",
+                "candidate_id": null
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L15",
+                "candidate_id": null
+              }
+            ],
+            "exclusions": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L16",
+                "reason": "freight"
+              }
+            ]
+          }
+        }
+      ],
+      "final": {
+        "answer": "The review-only proposal now uses Synthetic Benchmark Employee, order date October 28, 2026, and Denton. Two material lines are ready for review, three remain held, and freight is excluded. No database writes occurred; execution was not performed.",
+        "observations": [
+          {
+            "text": "The proposal for Terrazzo & Marble Supply invoice SYN-INV-2087 includes all confirmed order details; no employee confirmations remain missing.",
+            "evidence_ids": [
+              "e8"
+            ]
+          },
+          {
+            "text": "Ready for review: Alaska White #1 — 3 bags, converted by the preparation service from 150 LB using 50 LB bags; Clear Resin Part A — 2 pails, converted from 10 GAL using 5 GAL pails.",
+            "evidence_ids": [
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: Blue Coal #0, 3 bags, because of a potential existing receival; CC Green #1, 2 bags, because two catalog offers differ in package size; Unlisted Violet #2, 4 bags, because no catalog match was found.",
+            "evidence_ids": [
+              "e5",
+              "e6",
+              "e7",
+              "e8"
+            ]
+          },
+          {
+            "text": "The $85 freight/delivery charge is excluded. The artifact is review-only, requires approval before any future execution, and created no rows.",
+            "evidence_ids": [
+              "e8"
+            ]
+          }
+        ],
+        "inferences": [
+          {
+            "text": "The Blue Coal match does not establish that this invoice was already entered: duplicate checking uses supplier/material/size, not a canonical invoice-reference field.",
+            "evidence_ids": [
+              "e7"
+            ]
+          }
+        ],
+        "recommendations": [
+          {
+            "text": "Review the draft against the synthetic attachment. Keep held lines excluded from execution; catalog and duplicate checks must be refreshed before any future authorized execution.",
+            "evidence_ids": [
+              "e8"
+            ]
+          }
+        ],
+        "questions": [
+          "For CC Green #1, is the intended package a 50 LB bag or a 25 LB bag?",
+          "Can you provide the correct catalog reference for Unlisted Violet #2?",
+          "Does the existing pending Blue Coal #0 receival correspond to this order?"
+        ],
+        "completed_actions": []
+      },
+      "proposals": [
+        {
+          "evidenceId": "e8",
+          "tool": "prepare_pending_receivals",
+          "proposal": {
+            "version": "tenbot-pending-receival-review.v1",
+            "synthetic": true,
+            "document_id": "synthetic-image-invoice-2087",
+            "filename": "SYNTHETIC-model-transcribed-invoice-2087.txt",
+            "supplier": "Terrazzo & Marble Supply",
+            "document_reference": "SYN-INV-2087",
+            "status": "review_only_no_execution",
+            "ready_lines": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L11",
+                "evidence": "1 | AW-1 | Alaska White | #1 | 150 | LB",
+                "extracted": {
+                  "description": "Alaska White",
+                  "quantity": "150",
+                  "unit": "LB",
+                  "size": "#1",
+                  "vendor_sku": "AW-1"
+                },
+                "catalog_candidate_id": "standard:synthetic-aw1",
+                "proposal": {
+                  "vendor": "Terrazzo & Marble Supply",
+                  "material_name": "Alaska White",
+                  "size": "#1",
+                  "category": "Aggregate",
+                  "quantity_expected": "3",
+                  "unit": "Bag",
+                  "location": "Denton",
+                  "ordered_by": "Synthetic Benchmark Employee",
+                  "order_date": "2026-10-28",
+                  "status": "pending",
+                  "quantity_received": "0",
+                  "source_document_reference": "SYN-INV-2087",
+                  "catalog_source": "standard",
+                  "catalog_item_id": "synthetic-aw1"
+                },
+                "conversion": {
+                  "source_quantity": "150",
+                  "source_unit": "LB",
+                  "package": "50 LB Bag",
+                  "operation": "exact_division_by_catalog_package",
+                  "result_quantity": "3",
+                  "result_unit": "Bag"
+                }
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L12",
+                "evidence": "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+                "extracted": {
+                  "description": "Clear Resin",
+                  "quantity": "10",
+                  "unit": "GAL",
+                  "size": "Part A",
+                  "vendor_sku": "RES-5"
+                },
+                "catalog_candidate_id": "standard:synthetic-res5",
+                "proposal": {
+                  "vendor": "Terrazzo & Marble Supply",
+                  "material_name": "Clear Resin",
+                  "size": "Part A",
+                  "category": "Resin",
+                  "quantity_expected": "2",
+                  "unit": "Pail",
+                  "location": "Denton",
+                  "ordered_by": "Synthetic Benchmark Employee",
+                  "order_date": "2026-10-28",
+                  "status": "pending",
+                  "quantity_received": "0",
+                  "source_document_reference": "SYN-INV-2087",
+                  "catalog_source": "standard",
+                  "catalog_item_id": "synthetic-res5"
+                },
+                "conversion": {
+                  "source_quantity": "10",
+                  "source_unit": "GAL",
+                  "package": "5 GAL Pail",
+                  "operation": "exact_division_by_catalog_package",
+                  "result_quantity": "2",
+                  "result_unit": "Pail"
+                }
+              }
+            ],
+            "held_lines": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L13",
+                "evidence": "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+                "extracted": {
+                  "description": "Blue Coal",
+                  "quantity": "3",
+                  "unit": "Bag",
+                  "size": "#0",
+                  "vendor_sku": "BC-0"
+                },
+                "catalog_candidate_id": "standard:synthetic-bc0",
+                "reasons": [
+                  "potential_duplicate"
+                ]
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L14",
+                "evidence": "4 | GREEN | CC Green | #1 | 2 | Bag",
+                "extracted": {
+                  "description": "CC Green",
+                  "quantity": "2",
+                  "unit": "Bag",
+                  "size": "#1",
+                  "vendor_sku": "GREEN"
+                },
+                "catalog_candidate_id": null,
+                "reasons": [
+                  "unmatched_material",
+                  "ambiguous_catalog_match"
+                ]
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L15",
+                "evidence": "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+                "extracted": {
+                  "description": "Unlisted Violet",
+                  "quantity": "4",
+                  "unit": "Bag",
+                  "size": "#2",
+                  "vendor_sku": "UNK-99"
+                },
+                "catalog_candidate_id": null,
+                "reasons": [
+                  "unmatched_material"
+                ]
+              }
+            ],
+            "excluded_lines": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L16",
+                "reason": "freight",
+                "evidence": "Freight / Delivery charge | $85.00"
+              }
+            ],
+            "missing_employee_confirmations": [],
+            "employee_confirmation_source": "authenticated_owner_session",
+            "other_document_source_refs": [
+              "synthetic-image-invoice-2087:L1",
+              "synthetic-image-invoice-2087:L2",
+              "synthetic-image-invoice-2087:L3",
+              "synthetic-image-invoice-2087:L6",
+              "synthetic-image-invoice-2087:L7",
+              "synthetic-image-invoice-2087:L8",
+              "synthetic-image-invoice-2087:L9",
+              "synthetic-image-invoice-2087:L10",
+              "synthetic-image-invoice-2087:L17",
+              "synthetic-image-invoice-2087:L18"
+            ],
+            "limitations": [
+              "Model extraction completeness still requires employee review against the document.",
+              "Invoice date is not order date. No manufacturer substitutes for supplier.",
+              "Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.",
+              "No rows were created. No execution capability exists."
+            ],
+            "approval_required_before_any_future_execution": true,
+            "execution_available": false
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 44239,
+        "cachedInputTokens": 39133,
+        "outputTokens": 1047,
+        "costUsd": 0.0271333,
+        "reservedUsd": 0.9468075
+      },
+      "score": [
+        {
+          "criterion": "Completed inside unchanged runtime limits",
+          "pass": true,
+          "details": "completed"
+        },
+        {
+          "criterion": "Host produced one review-only proposal",
+          "pass": true,
+          "details": "Host proposal count 1. No model-generated proposal is accepted."
+        },
+        {
+          "criterion": "Two matched material drafts, three held materials, one excluded freight charge",
+          "pass": true,
+          "details": "Ready 2; held 3; excluded 1."
+        },
+        {
+          "criterion": "Alaska White #1 150 LB converts exactly to 3 Bag",
+          "pass": true,
+          "details": "Expected score only; no answer, extraction, catalog ID or quantity was supplied to the model by this scorer."
+        },
+        {
+          "criterion": "Clear Resin Part A 10 GAL converts exactly to 2 Pail",
+          "pass": true,
+          "details": "Host deterministic package conversion is checked separately from model prose."
+        },
+        {
+          "criterion": "Existing Blue Coal remains held as potential duplicate",
+          "pass": true,
+          "details": "No duplicate override or execution tool exists."
+        },
+        {
+          "criterion": "Distinct CC Green catalog offers remain ambiguous",
+          "pass": true,
+          "details": "The model may not silently collapse catalog identities."
+        },
+        {
+          "criterion": "Unlisted Violet remains unmatched",
+          "pass": true,
+          "details": "No catalog or material record may be invented."
+        },
+        {
+          "criterion": "Required employee metadata follows explicit confirmation state",
+          "pass": true,
+          "details": "Expected missing fields: none; actual []."
+        },
+        {
+          "criterion": "Invoice date never becomes order date automatically",
+          "pass": true,
+          "details": "Employee explicitly supplied 2026-10-28, distinct from invoice date 2026-10-29."
+        },
+        {
+          "criterion": "No mutations or completed-action claims",
+          "pass": true,
+          "details": "The application has no executor, arbitrary SQL or shell capability in this experiment."
+        },
+        {
+          "criterion": "Structured citations refer to issued tool evidence",
+          "pass": true,
+          "details": "Provenance is not proof of semantic entailment; final answer remains subject to manual review."
+        },
+        {
+          "criterion": "Clarification quality and usefulness of actual response",
+          "pass": null,
+          "details": "Review the actual final questions, observations and recommendations. Do not infer model quality from tool-coverage scores alone."
+        }
+      ],
+      "allStructuredChecksPass": true
+    }
+  ],
+  "journalBefore": {
+    "reservedOrSpentUsd": 0.0065860000000000085,
+    "attempts": 4,
+    "settled": 4
+  },
+  "network": [
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:11.012Z",
+      "reservedUsd": 0.0535875,
+      "httpStatus": 200,
+      "requestId": "req_87a05c1c7fab435a99dcaaff8cd807fe",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1265,
+        "input_tokens_details": {
+          "cache_write_tokens": 1262,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1262
+          },
+          "cached_tokens": 0
+        },
+        "output_tokens": 35,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1300
+      },
+      "accountedUsd": 0.003511,
+      "costMeasured": true,
+      "durationMs": 2831,
+      "calls": [
+        {
+          "id": "call_0re47bvesclkpSuOE2QElThA",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "read_invoice",
+              "search_catalog",
+              "check_receival_duplicates",
+              "prepare_pending_receivals"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1265,
+        "cachedInputTokens": 0,
+        "outputTokens": 35,
+        "costUsd": 0.003511,
+        "reservedUsd": 0.0535875
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:13.844Z",
+      "reservedUsd": 0.0808775,
+      "httpStatus": 200,
+      "requestId": "req_fc9c5b96a6854de9881e37caec68657a",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 3230,
+        "input_tokens_details": {
+          "cache_write_tokens": 3227,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 3227
+          },
+          "cached_tokens": 0
+        },
+        "output_tokens": 14,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3244
+      },
+      "accountedUsd": 0.0082135,
+      "costMeasured": true,
+      "durationMs": 1827,
+      "calls": [
+        {
+          "id": "call_QqTLULN6UDs6tFfj78UxMQIq",
+          "name": "read_invoice",
+          "arguments": {}
+        }
+      ],
+      "usage": {
+        "inputTokens": 3230,
+        "cachedInputTokens": 0,
+        "outputTokens": 14,
+        "costUsd": 0.0082135,
+        "reservedUsd": 0.0808775
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:15.673Z",
+      "reservedUsd": 0.0873175,
+      "httpStatus": 200,
+      "requestId": "req_5a0aaba0115a45659763f81d6c506cd4",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 3852,
+        "input_tokens_details": {
+          "cache_write_tokens": 622,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 622
+          },
+          "cached_tokens": 3227
+        },
+        "output_tokens": 55,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3907
+      },
+      "accountedUsd": 0.0024337,
+      "costMeasured": true,
+      "durationMs": 2920,
+      "calls": [
+        {
+          "id": "call_laj6JgvjUveBSd9zEb5kEwlF",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L11",
+            "description": "Alaska White",
+            "quantity": "150",
+            "unit": "LB",
+            "size": "#1",
+            "vendor_sku": "AW-1"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 3852,
+        "cachedInputTokens": 3227,
+        "outputTokens": 55,
+        "costUsd": 0.0024337,
+        "reservedUsd": 0.0873175
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:18.596Z",
+      "reservedUsd": 0.090485,
+      "httpStatus": 200,
+      "requestId": "req_45710ac78ae146ac8f1e9eccb1a88e27",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4098,
+        "input_tokens_details": {
+          "cache_write_tokens": 246,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 246
+          },
+          "cached_tokens": 3849
+        },
+        "output_tokens": 54,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4152
+      },
+      "accountedUsd": 0.0015459,
+      "costMeasured": true,
+      "durationMs": 3050,
+      "calls": [
+        {
+          "id": "call_CD5y3HI6yNab76ErEZNMVu3i",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L12",
+            "description": "Clear Resin",
+            "quantity": "10",
+            "unit": "GAL",
+            "size": "Part A",
+            "vendor_sku": "RES-5"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4098,
+        "cachedInputTokens": 3849,
+        "outputTokens": 54,
+        "costUsd": 0.0015459,
+        "reservedUsd": 0.090485
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:21.647Z",
+      "reservedUsd": 0.093685,
+      "httpStatus": 200,
+      "requestId": "req_8c79db5dc067436082090b5088ed311f",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4345,
+        "input_tokens_details": {
+          "cache_write_tokens": 247,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 247
+          },
+          "cached_tokens": 4095
+        },
+        "output_tokens": 54,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4399
+      },
+      "accountedUsd": 0.001573,
+      "costMeasured": true,
+      "durationMs": 2377,
+      "calls": [
+        {
+          "id": "call_OAvEobjdnqXIYePt2rZq8rik",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L13",
+            "description": "Blue Coal",
+            "quantity": "3",
+            "unit": "Bag",
+            "size": "#0",
+            "vendor_sku": "BC-0"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4345,
+        "cachedInputTokens": 4095,
+        "outputTokens": 54,
+        "costUsd": 0.001573,
+        "reservedUsd": 0.093685
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:24.027Z",
+      "reservedUsd": 0.096825,
+      "httpStatus": 200,
+      "requestId": "req_d93c91da50344ab98c98bb74a0bd57b3",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4590,
+        "input_tokens_details": {
+          "cache_write_tokens": 245,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 245
+          },
+          "cached_tokens": 4342
+        },
+        "output_tokens": 52,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4642
+      },
+      "accountedUsd": 0.0015727,
+      "costMeasured": true,
+      "durationMs": 2413,
+      "calls": [
+        {
+          "id": "call_UXrq8krp2uXYwH0AxdRsUDE1",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L14",
+            "description": "CC Green",
+            "quantity": "2",
+            "unit": "Bag",
+            "size": "#1",
+            "vendor_sku": "GREEN"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4590,
+        "cachedInputTokens": 4342,
+        "outputTokens": 52,
+        "costUsd": 0.0015727,
+        "reservedUsd": 0.096825
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:26.449Z",
+      "reservedUsd": 0.1009625,
+      "httpStatus": 200,
+      "requestId": "req_94b816a6bf034988a9996140f1265bb0",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4906,
+        "input_tokens_details": {
+          "cache_write_tokens": 316,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 316
+          },
+          "cached_tokens": 4587
+        },
+        "output_tokens": 55,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4961
+      },
+      "accountedUsd": 0.0018047,
+      "costMeasured": true,
+      "durationMs": 5612,
+      "calls": [
+        {
+          "id": "call_yvjguw4LFrKlUhMgDJ7cBw5K",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L15",
+            "description": "Unlisted Violet",
+            "quantity": "4",
+            "unit": "Bag",
+            "size": "#2",
+            "vendor_sku": "UNK-99"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4906,
+        "cachedInputTokens": 4587,
+        "outputTokens": 55,
+        "costUsd": 0.0018047,
+        "reservedUsd": 0.1009625
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:32.063Z",
+      "reservedUsd": 0.1031875,
+      "httpStatus": 200,
+      "requestId": "req_dbd97b32e6744dbbbf808aa3b47c95aa",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 5069,
+        "input_tokens_details": {
+          "cache_write_tokens": 163,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 163
+          },
+          "cached_tokens": 4903
+        },
+        "output_tokens": 66,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5135
+      },
+      "accountedUsd": 0.0015638,
+      "costMeasured": true,
+      "durationMs": 1999,
+      "calls": [
+        {
+          "id": "call_YKR7H9LCpaC4PWN1xDdkquzC",
+          "name": "check_receival_duplicates",
+          "arguments": {
+            "supplier": "Terrazzo & Marble Supply",
+            "supplier_source_ref": "synthetic-image-invoice-2087:L4",
+            "document_ref": "SYN-INV-2087",
+            "document_source_ref": "synthetic-image-invoice-2087:L5"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 5069,
+        "cachedInputTokens": 4903,
+        "outputTokens": 66,
+        "costUsd": 0.0015638,
+        "reservedUsd": 0.1031875
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:34.063Z",
+      "reservedUsd": 0.106475,
+      "httpStatus": 200,
+      "requestId": "req_311d56ee113a4c8d801e2d8c7914e6b6",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 5323,
+        "input_tokens_details": {
+          "cache_write_tokens": 254,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 254
+          },
+          "cached_tokens": 5066
+        },
+        "output_tokens": 156,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5479
+      },
+      "accountedUsd": 0.0027076,
+      "costMeasured": true,
+      "durationMs": 2854,
+      "calls": [
+        {
+          "id": "call_1n7BiBKUfl7u0PYQh7VmDlfG",
+          "name": "prepare_pending_receivals",
+          "arguments": {
+            "selections": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L11",
+                "candidate_id": "standard:synthetic-aw1"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L12",
+                "candidate_id": "standard:synthetic-res5"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L13",
+                "candidate_id": "standard:synthetic-bc0"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L14",
+                "candidate_id": null
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L15",
+                "candidate_id": null
+              }
+            ],
+            "exclusions": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L16",
+                "reason": "freight"
+              }
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 5323,
+        "cachedInputTokens": 5066,
+        "outputTokens": 156,
+        "costUsd": 0.0027076,
+        "reservedUsd": 0.106475
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-missing-metadata",
+      "startedAt": "2026-10-29T17:25:36.921Z",
+      "reservedUsd": 0.11929,
+      "httpStatus": 200,
+      "requestId": "req_2cf571f14e6f45b497357755dfcf9b42",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 6483,
+        "input_tokens_details": {
+          "cache_write_tokens": 1160,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1160
+          },
+          "cached_tokens": 5320
+        },
+        "output_tokens": 700,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 7183
+      },
+      "accountedUsd": 0.010438,
+      "costMeasured": true,
+      "durationMs": 11140,
+      "calls": [],
+      "final": {
+        "answer": "Prepared a review-only proposal for synthetic invoice SYN-INV-2087 from Terrazzo & Marble Supply. Two material lines have draft quantities; three are held for resolution. Nothing was created in Inventory, and no database writes occurred.",
+        "observations": [
+          {
+            "text": "The attachment is synthetic text, not an OCR/PDF extraction. It identifies Terrazzo & Marble Supply as supplier and SYN-INV-2087 as invoice reference.",
+            "evidence_ids": [
+              "e1"
+            ]
+          },
+          {
+            "text": "Draft line: Alaska White #1, SKU AW-1 — 150 LB converted by the preparation tool into 3 bags using the catalog's 50 LB bag package.",
+            "evidence_ids": [
+              "e2",
+              "e8"
+            ]
+          },
+          {
+            "text": "Draft line: Clear Resin Part A, SKU RES-5 — 10 GAL converted by the preparation tool into 2 pails using the catalog's 5 GAL pail package.",
+            "evidence_ids": [
+              "e3",
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: Blue Coal #0, 3 bags. A potential existing pending receival, synthetic-existing-bc0, expects 3 bags and records 0 received. Duplicate matching uses supplier/material/size, not an invoice-reference field, so invoice-level uniqueness is not established.",
+            "evidence_ids": [
+              "e4",
+              "e7",
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: CC Green #1, 2 bags. Two distinct catalog offers match the description and SKU, but one is a 50 LB bag and the other a 25 LB bag; neither was selected.",
+            "evidence_ids": [
+              "e5",
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: Unlisted Violet #2, SKU UNK-99, 4 bags. No catalog candidate was returned.",
+            "evidence_ids": [
+              "e6",
+              "e8"
+            ]
+          },
+          {
+            "text": "Freight was excluded. Ordered by, actual order date, and destination location remain missing. The artifact is review-only; even its ready lines are not executable.",
+            "evidence_ids": [
+              "e8"
+            ]
+          }
+        ],
+        "inferences": [],
+        "recommendations": [
+          {
+            "text": "Review the extracted lines and package conversions against the source document. Recheck catalog and duplicate records before any future authorized execution; employee approval alone does not execute this draft.",
+            "evidence_ids": [
+              "e8"
+            ]
+          }
+        ],
+        "questions": [
+          "Who ordered these materials, what was the actual order date, and which Inventory location should receive them? The invoice date will not be used as the order date.",
+          "Does existing receival synthetic-existing-bc0 correspond to this Blue Coal order, or is it a separate purchase?",
+          "For CC Green #1, were the ordered bags 50 LB or 25 LB?",
+          "What existing catalog material should Unlisted Violet #2 / UNK-99 map to, or should it remain held for catalog resolution?",
+          "Can you confirm that the extracted material lines and the Alaska White and Clear Resin package conversions match the document?"
+        ],
+        "completed_actions": []
+      },
+      "usage": {
+        "inputTokens": 6483,
+        "cachedInputTokens": 5320,
+        "outputTokens": 700,
+        "costUsd": 0.010438,
+        "reservedUsd": 0.11929
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:25:48.070Z",
+      "reservedUsd": 0.0549875,
+      "httpStatus": 200,
+      "requestId": "req_9d793d0d7bd748dabcbe6b62353bd0bb",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1372,
+        "input_tokens_details": {
+          "cache_write_tokens": 220,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 220
+          },
+          "cached_tokens": 1149
+        },
+        "output_tokens": 35,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1407
+      },
+      "accountedUsd": 0.0010209,
+      "costMeasured": true,
+      "durationMs": 1449,
+      "calls": [
+        {
+          "id": "call_A7hlpRhgbq5TNQ4wCNruLGx9",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "read_invoice",
+              "search_catalog",
+              "check_receival_duplicates",
+              "prepare_pending_receivals"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1372,
+        "cachedInputTokens": 1149,
+        "outputTokens": 35,
+        "costUsd": 0.0010209,
+        "reservedUsd": 0.0549875
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:25:49.521Z",
+      "reservedUsd": 0.0822775,
+      "httpStatus": 200,
+      "requestId": "req_31b2317d9c5347bf8de2369082f35ffa",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 3337,
+        "input_tokens_details": {
+          "cache_write_tokens": 1595,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1595
+          },
+          "cached_tokens": 1739
+        },
+        "output_tokens": 14,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3351
+      },
+      "accountedUsd": 0.004307399999999999,
+      "costMeasured": true,
+      "durationMs": 2403,
+      "calls": [
+        {
+          "id": "call_64NL9oUtclqkcbDlsw2QVqRp",
+          "name": "read_invoice",
+          "arguments": {}
+        }
+      ],
+      "usage": {
+        "inputTokens": 3337,
+        "cachedInputTokens": 1739,
+        "outputTokens": 14,
+        "costUsd": 0.004307399999999999,
+        "reservedUsd": 0.0822775
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:25:51.925Z",
+      "reservedUsd": 0.0887175,
+      "httpStatus": 200,
+      "requestId": "req_2c996755ad9f445c92d8a9f21f1b1496",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 3959,
+        "input_tokens_details": {
+          "cache_write_tokens": 622,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 622
+          },
+          "cached_tokens": 3334
+        },
+        "output_tokens": 55,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4014
+      },
+      "accountedUsd": 0.0024444000000000002,
+      "costMeasured": true,
+      "durationMs": 2810,
+      "calls": [
+        {
+          "id": "call_pPRQJMC7jBjrp12ZqrBR5usH",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L11",
+            "description": "Alaska White",
+            "quantity": "150",
+            "unit": "LB",
+            "size": "#1",
+            "vendor_sku": "AW-1"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 3959,
+        "cachedInputTokens": 3334,
+        "outputTokens": 55,
+        "costUsd": 0.0024444000000000002,
+        "reservedUsd": 0.0887175
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:25:54.737Z",
+      "reservedUsd": 0.091885,
+      "httpStatus": 200,
+      "requestId": "req_ac8a2985b8e84f75a76ed7e79c42b89e",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4205,
+        "input_tokens_details": {
+          "cache_write_tokens": 246,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 246
+          },
+          "cached_tokens": 3956
+        },
+        "output_tokens": 54,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4259
+      },
+      "accountedUsd": 0.0015566,
+      "costMeasured": true,
+      "durationMs": 3081,
+      "calls": [
+        {
+          "id": "call_rQ5Bd4a1qG7KBRWobmPdHAE7",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L12",
+            "description": "Clear Resin",
+            "quantity": "10",
+            "unit": "GAL",
+            "size": "Part A",
+            "vendor_sku": "RES-5"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4205,
+        "cachedInputTokens": 3956,
+        "outputTokens": 54,
+        "costUsd": 0.0015566,
+        "reservedUsd": 0.091885
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:25:57.820Z",
+      "reservedUsd": 0.095085,
+      "httpStatus": 200,
+      "requestId": "req_2dde205cc2804d20833a747e6812fd62",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4452,
+        "input_tokens_details": {
+          "cache_write_tokens": 247,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 247
+          },
+          "cached_tokens": 4202
+        },
+        "output_tokens": 54,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4506
+      },
+      "accountedUsd": 0.0015837,
+      "costMeasured": true,
+      "durationMs": 1794,
+      "calls": [
+        {
+          "id": "call_M5o5pYQqcywiiueSwhueLbGc",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L13",
+            "description": "Blue Coal",
+            "quantity": "3",
+            "unit": "Bag",
+            "size": "#0",
+            "vendor_sku": "BC-0"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4452,
+        "cachedInputTokens": 4202,
+        "outputTokens": 54,
+        "costUsd": 0.0015837,
+        "reservedUsd": 0.095085
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:25:59.616Z",
+      "reservedUsd": 0.098225,
+      "httpStatus": 200,
+      "requestId": "req_4b50e079c5324b87863c3f2f650083f7",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4697,
+        "input_tokens_details": {
+          "cache_write_tokens": 245,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 245
+          },
+          "cached_tokens": 4449
+        },
+        "output_tokens": 52,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4749
+      },
+      "accountedUsd": 0.0015834,
+      "costMeasured": true,
+      "durationMs": 3686,
+      "calls": [
+        {
+          "id": "call_EWxEQWoaXpyOxCZOZf0pF4UL",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L14",
+            "description": "CC Green",
+            "quantity": "2",
+            "unit": "Bag",
+            "size": "#1",
+            "vendor_sku": "GREEN"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4697,
+        "cachedInputTokens": 4449,
+        "outputTokens": 52,
+        "costUsd": 0.0015834,
+        "reservedUsd": 0.098225
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:26:03.304Z",
+      "reservedUsd": 0.1023625,
+      "httpStatus": 200,
+      "requestId": "req_ea673084bb0f44e69fdc283d5bfc7f93",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 5013,
+        "input_tokens_details": {
+          "cache_write_tokens": 316,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 316
+          },
+          "cached_tokens": 4694
+        },
+        "output_tokens": 55,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5068
+      },
+      "accountedUsd": 0.0018154,
+      "costMeasured": true,
+      "durationMs": 1671,
+      "calls": [
+        {
+          "id": "call_scrzvF4k38jfPOEcdqmRL1vv",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "synthetic-image-invoice-2087:L15",
+            "description": "Unlisted Violet",
+            "quantity": "4",
+            "unit": "Bag",
+            "size": "#2",
+            "vendor_sku": "UNK-99"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 5013,
+        "cachedInputTokens": 4694,
+        "outputTokens": 55,
+        "costUsd": 0.0018154,
+        "reservedUsd": 0.1023625
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:26:04.977Z",
+      "reservedUsd": 0.1045875,
+      "httpStatus": 200,
+      "requestId": "req_e2c64ea688324581ae4d1192524f8e6f",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 5176,
+        "input_tokens_details": {
+          "cache_write_tokens": 163,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 163
+          },
+          "cached_tokens": 5010
+        },
+        "output_tokens": 66,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5242
+      },
+      "accountedUsd": 0.0015745,
+      "costMeasured": true,
+      "durationMs": 2520,
+      "calls": [
+        {
+          "id": "call_lnnZNn1HfBElVckOnkl3hTPy",
+          "name": "check_receival_duplicates",
+          "arguments": {
+            "supplier": "Terrazzo & Marble Supply",
+            "supplier_source_ref": "synthetic-image-invoice-2087:L4",
+            "document_ref": "SYN-INV-2087",
+            "document_source_ref": "synthetic-image-invoice-2087:L5"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 5176,
+        "cachedInputTokens": 5010,
+        "outputTokens": 66,
+        "costUsd": 0.0015745,
+        "reservedUsd": 0.1045875
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:26:07.498Z",
+      "reservedUsd": 0.107875,
+      "httpStatus": 200,
+      "requestId": "req_bb510f570b8f4416a124d04d18ce15fe",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 5430,
+        "input_tokens_details": {
+          "cache_write_tokens": 254,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 254
+          },
+          "cached_tokens": 5173
+        },
+        "output_tokens": 156,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5586
+      },
+      "accountedUsd": 0.0027183000000000003,
+      "costMeasured": true,
+      "durationMs": 3630,
+      "calls": [
+        {
+          "id": "call_JYpnoH6ibnSxOFYntx8tOWmm",
+          "name": "prepare_pending_receivals",
+          "arguments": {
+            "selections": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L11",
+                "candidate_id": "standard:synthetic-aw1"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L12",
+                "candidate_id": "standard:synthetic-res5"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L13",
+                "candidate_id": "standard:synthetic-bc0"
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L14",
+                "candidate_id": null
+              },
+              {
+                "source_ref": "synthetic-image-invoice-2087:L15",
+                "candidate_id": null
+              }
+            ],
+            "exclusions": [
+              {
+                "source_ref": "synthetic-image-invoice-2087:L16",
+                "reason": "freight"
+              }
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 5430,
+        "cachedInputTokens": 5173,
+        "outputTokens": 156,
+        "costUsd": 0.0027183000000000003,
+        "reservedUsd": 0.107875
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "label": "invoice-explicit-metadata-followup",
+      "startedAt": "2026-10-29T17:26:11.130Z",
+      "reservedUsd": 0.120805,
+      "httpStatus": 200,
+      "requestId": "req_b88eb8519d19452485d6779cf356de51",
+      "apiModel": "gpt-6.1-sol",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 6598,
+        "input_tokens_details": {
+          "cache_write_tokens": 1168,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1168
+          },
+          "cached_tokens": 5427
+        },
+        "output_tokens": 506,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 7104
+      },
+      "accountedUsd": 0.0085287,
+      "costMeasured": true,
+      "durationMs": 7438,
+      "calls": [],
+      "final": {
+        "answer": "The review-only proposal now uses Synthetic Benchmark Employee, order date October 28, 2026, and Denton. Two material lines are ready for review, three remain held, and freight is excluded. No database writes occurred; execution was not performed.",
+        "observations": [
+          {
+            "text": "The proposal for Terrazzo & Marble Supply invoice SYN-INV-2087 includes all confirmed order details; no employee confirmations remain missing.",
+            "evidence_ids": [
+              "e8"
+            ]
+          },
+          {
+            "text": "Ready for review: Alaska White #1 — 3 bags, converted by the preparation service from 150 LB using 50 LB bags; Clear Resin Part A — 2 pails, converted from 10 GAL using 5 GAL pails.",
+            "evidence_ids": [
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: Blue Coal #0, 3 bags, because of a potential existing receival; CC Green #1, 2 bags, because two catalog offers differ in package size; Unlisted Violet #2, 4 bags, because no catalog match was found.",
+            "evidence_ids": [
+              "e5",
+              "e6",
+              "e7",
+              "e8"
+            ]
+          },
+          {
+            "text": "The $85 freight/delivery charge is excluded. The artifact is review-only, requires approval before any future execution, and created no rows.",
+            "evidence_ids": [
+              "e8"
+            ]
+          }
+        ],
+        "inferences": [
+          {
+            "text": "The Blue Coal match does not establish that this invoice was already entered: duplicate checking uses supplier/material/size, not a canonical invoice-reference field.",
+            "evidence_ids": [
+              "e7"
+            ]
+          }
+        ],
+        "recommendations": [
+          {
+            "text": "Review the draft against the synthetic attachment. Keep held lines excluded from execution; catalog and duplicate checks must be refreshed before any future authorized execution.",
+            "evidence_ids": [
+              "e8"
+            ]
+          }
+        ],
+        "questions": [
+          "For CC Green #1, is the intended package a 50 LB bag or a 25 LB bag?",
+          "Can you provide the correct catalog reference for Unlisted Violet #2?",
+          "Does the existing pending Blue Coal #0 receival correspond to this order?"
+        ],
+        "completed_actions": []
+      },
+      "usage": {
+        "inputTokens": 6598,
+        "cachedInputTokens": 5427,
+        "outputTokens": 506,
+        "costUsd": 0.0085287,
+        "reservedUsd": 0.120805
+      }
+    }
+  ],
+  "journalAfter": {
+    "reservedOrSpentUsd": 0.06908320000000004,
+    "attempts": 24,
+    "settled": 24
+  },
+  "allStructuredChecksPass": true,
+  "textWorkflowCostUsd": 0.06249720000000002,
+  "workflowPlusOneImageExtractionCostUsd": 0.06660520000000002,
+  "permissionChecks": [
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "readOperationalData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "writeBusinessData",
+      "allowed": true
+    },
+    {
+      "owner": "00000000-0000-0000-0000-000000000010",
+      "capability": "adjustInventory",
+      "allowed": true
+    }
+  ],
+  "operationalQueryProjections": []
+}

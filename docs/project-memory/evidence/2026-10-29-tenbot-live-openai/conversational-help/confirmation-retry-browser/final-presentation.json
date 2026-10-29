@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "mode": "UI presentation only; recorded actual Terra response injected, no new inference/DB/Auth claim",
+  "checks": [
+    "Conversation remains primary; optional invoice controls closed",
+    "Main actual answer shown without repeated structured claims",
+    "Published evidence remains available on demand",
+    "No image-interpretation claim without attachment",
+    "Contained mobile presentation"
+  ],
+  "intercepted": [
+    "status",
+    "ask"
+  ],
+  "inferenceCalls": 0,
+  "journalUnchanged": true
+}

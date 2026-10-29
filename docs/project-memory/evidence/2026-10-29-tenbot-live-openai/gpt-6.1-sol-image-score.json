@@ -1,0 +1,16 @@
+{
+  "model": "gpt-6.1-sol",
+  "actualImageInput": true,
+  "exactLines": 18,
+  "exactNormalizedLines": 18,
+  "goldLines": 18,
+  "actualLines": 18,
+  "allMaterialCellsExact": true,
+  "supplierPresent": true,
+  "referencePresent": true,
+  "invoiceDatePresent": true,
+  "freight85Present": true,
+  "noOfflineOcr": true,
+  "catalogMatchingTested": false,
+  "pendingReceivalPreparationTested": false
+}

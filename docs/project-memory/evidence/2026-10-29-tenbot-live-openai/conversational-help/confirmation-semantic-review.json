@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtDate": "2026-10-29",
+  "independentSemanticReview": true,
+  "inferenceByReviewer": false,
+  "scope": "Separate focused confirmation correction. Original seven-turn semantic result remains six PASS and one PARTIAL; not relabeled.",
+  "originalSevenTurnVerdict": "6 PASS / 1 PARTIAL / 0 FAIL",
+  "source": "confirmation-retry-browser/report.json",
+  "semanticVerdict": "PASS",
+  "actualAnswer": "Choose Save all changes. You’ll still need to confirm the save when prompted; opening the confirmation does not save the dates. I haven’t saved anything for you.",
+  "checks": [
+    {
+      "criterion": "Exact next UI label",
+      "pass": true,
+      "evidence": "production-schedule in issued e1 names Save all changes."
+    },
+    {
+      "criterion": "Explicit employee confirmation retained",
+      "pass": true,
+      "evidence": "knowledge-timeline in issued e1 states approval and explicit confirmation are required. The actual answer explicitly preserves confirmation and explains opening the confirmation does not save."
+    },
+    {
+      "criterion": "Guidance distinguished from completed action",
+      "pass": true,
+      "evidence": "Actual answer says no save was performed, completed_actions is empty, proposals are empty and no write tool exists."
+    },
+    {
+      "criterion": "Concise current-step guidance",
+      "pass": true,
+      "evidence": "The answer continues from reported Review changes progress and does not restart the walkthrough or quote the whole guide."
+    }
+  ],
+  "firstBrowserAttempt": {
+    "source": "confirmation-first-browser/report.json",
+    "semanticCore": "PASS: actual next-button answer also preserves explicit confirmation and no execution.",
+    "overallBrowserPass": false,
+    "retainedFailure": "Post-screenshot browser cleanup fetch stalled; original cleanup/replay assertion was not completed. This remains a failed whole-browser attempt, despite correct model core."
+  },
+  "retryBrowser": {
+    "overallPass": true,
+    "cleanup": {
+      "cleared": 200,
+      "replayed": 403
+    },
+    "databaseSecurityVerified": false,
+    "productionWrites": 0
+  },
+  "limits": [
+    "This is actual Terra inference with published knowledge and synthetic caller grants, not real Auth/RLS or operational write validation.",
+    "The correction is a focused separate test, not a rerun of all seven turns.",
+    "No fresh Qwen inference or overall provider superiority is established."
+  ]
+}

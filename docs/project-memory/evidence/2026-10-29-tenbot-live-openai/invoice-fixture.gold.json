@@ -1,0 +1,158 @@
+{
+  "synthetic": true,
+  "scope": "Independent live multimodal benchmark scoring fixture. GOLD CONTENT MUST NOT BE PROVIDED TO THE MODEL OR USED AS ITS EXTRACTION.",
+  "generatedLocally": true,
+  "apiCalls": 0,
+  "image": {
+    "path": "/private/tmp/tenops-tenbot-live-2026-10-29/invoice-fixture.png",
+    "mimeType": "image/png",
+    "width": 768,
+    "height": 920,
+    "bytes": 66968,
+    "sha256": "98ee71810a8df51640c0105f09c8690f9bcb5c8946ff9a15733bf379c7e8f4f2"
+  },
+  "documentId": "synthetic-image-invoice-2087",
+  "expectedTranscribedDocumentFilename": "SYNTHETIC-model-transcribed-invoice-2087.txt",
+  "expectedSupplier": "Terrazzo & Marble Supply",
+  "existingCatalogSupplierAlias": "T&M Supply",
+  "expectedDocumentReference": "SYN-INV-2087",
+  "expectedInvoiceDate": "2026-10-29",
+  "expectedRawLines": [
+    "SYNTHETIC / TEST DATA ONLY",
+    "Terrazzo & Marble Supply",
+    "INVOICE",
+    "Supplier: Terrazzo & Marble Supply",
+    "Invoice: SYN-INV-2087",
+    "Invoice date: 2026-10-29",
+    "Bill to: Tenarten",
+    "Synthetic account",
+    "MATERIALS ORDERED",
+    "LINE | SKU | MATERIAL / DESCRIPTION | SIZE / PART | QTY | UNIT",
+    "1 | AW-1 | Alaska White | #1 | 150 | LB",
+    "2 | RES-5 | Clear Resin | Part A | 10 | GAL",
+    "3 | BC-0 | Blue Coal | #0 | 3 | Bag",
+    "4 | GREEN | CC Green | #1 | 2 | Bag",
+    "5 | UNK-99 | Unlisted Violet | #2 | 4 | Bag",
+    "Freight / Delivery charge | $85.00",
+    "Material quantities are listed separately from freight.",
+    "NOT A REAL INVOICE — DO NOT POST OR PAY"
+  ],
+  "expectedMaterialExtraction": [
+    {
+      "line": 1,
+      "sku": "AW-1",
+      "description": "Alaska White",
+      "size": "#1",
+      "quantity": "150",
+      "unit": "LB"
+    },
+    {
+      "line": 2,
+      "sku": "RES-5",
+      "description": "Clear Resin",
+      "size": "Part A",
+      "quantity": "10",
+      "unit": "GAL"
+    },
+    {
+      "line": 3,
+      "sku": "BC-0",
+      "description": "Blue Coal",
+      "size": "#0",
+      "quantity": "3",
+      "unit": "Bag"
+    },
+    {
+      "line": 4,
+      "sku": "GREEN",
+      "description": "CC Green",
+      "size": "#1",
+      "quantity": "2",
+      "unit": "Bag"
+    },
+    {
+      "line": 5,
+      "sku": "UNK-99",
+      "description": "Unlisted Violet",
+      "size": "#2",
+      "quantity": "4",
+      "unit": "Bag"
+    }
+  ],
+  "expectedReadyMaterials": [
+    {
+      "sku": "AW-1",
+      "material": "Alaska White",
+      "size": "#1",
+      "catalogCandidateId": "standard:synthetic-aw1",
+      "inputQuantity": "150",
+      "inputUnit": "LB",
+      "package": "50 LB Bag",
+      "proposedQuantity": "3",
+      "proposedUnit": "Bag"
+    },
+    {
+      "sku": "RES-5",
+      "material": "Clear Resin",
+      "size": "Part A",
+      "catalogCandidateId": "standard:synthetic-res5",
+      "inputQuantity": "10",
+      "inputUnit": "GAL",
+      "package": "5 GAL Pail",
+      "proposedQuantity": "2",
+      "proposedUnit": "Pail"
+    }
+  ],
+  "expectedHeldMaterials": [
+    {
+      "sku": "BC-0",
+      "material": "Blue Coal",
+      "size": "#0",
+      "reasons": [
+        "potential_duplicate"
+      ],
+      "existingSyntheticReceivalId": "synthetic-existing-bc0"
+    },
+    {
+      "sku": "GREEN",
+      "material": "CC Green",
+      "size": "#1",
+      "reasons": [
+        "ambiguous_catalog_match"
+      ],
+      "candidates": [
+        "standard:synthetic-green-a",
+        "standard:synthetic-green-b"
+      ]
+    },
+    {
+      "sku": "UNK-99",
+      "material": "Unlisted Violet",
+      "size": "#2",
+      "reasons": [
+        "unmatched_material"
+      ]
+    }
+  ],
+  "expectedExcludedCharge": {
+    "kind": "freight",
+    "description": "Freight / Delivery charge",
+    "amount": "85.00",
+    "currency": "USD"
+  },
+  "expectedMissingEmployeeConfirmations": [
+    "ordered_by",
+    "order_date",
+    "location"
+  ],
+  "noExecution": true,
+  "mappingNotes": [
+    "Use existing scripts/fixtures/tenbot-invoice.synthetic.json catalog and receivals unchanged; the existing pure Purchasing supplier normalizer equates Terrazzo & Marble Supply with T&M Supply.",
+    "Only actual model-extracted raw_lines may form the text for createTenbotInvoiceTools. This gold file must stay outside model input.",
+    "Root should construct the transcribed document with id synthetic-image-invoice-2087, mediaType text/plain, synthetic true and actualModelRawLines.join(newline).",
+    "Source refs must use actual model line order: synthetic-image-invoice-2087:L<n>. Gold line indices are for scoring only.",
+    "Invoice date is not order date. The image supplies neither ordered-by employee, order date nor receiving location.",
+    "Material price amounts are intentionally absent; the only monetary amount is the separate freight charge.",
+    "No canonical Job, PO issuance or source-line identity is invented. This fixture requests review only and never execution."
+  ]
+}

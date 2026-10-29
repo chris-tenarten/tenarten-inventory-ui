@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "verificationTier": 3,
+  "testingLevel": "Focused Level 3; real database gates incomplete",
+  "wholeApplicationTypeScript": "passed",
+  "targetedESLint": "passed",
+  "sharedModuleExplicitNoIgnoreESLint": "passed",
+  "gitDiffCheck": "passed",
+  "optimizedProductionModeLocalExport": "passed before final local scripts-only fixes",
+  "browserGroups": 6,
+  "offlineBackendGroups": 18,
+  "offlineUiGroups": 8,
+  "actualSimulatedHttpGroups": 4,
+  "databaseAuthRlsTransactionsVerified": false,
+  "productionWrites": 0,
+  "additionalInferenceDuringFinalReadinessChecks": 0,
+  "credentialMetadata": {
+    "regularOwnedFile": true,
+    "mode": "600",
+    "gitIgnored": true,
+    "gitTracked": false,
+    "secretValuesRecorded": false
+  },
+  "journal": {
+    "reservedOrSpentUsd": 0.11924075000000003,
+    "attempts": 55,
+    "settled": 55
+  },
+  "journalSha256": "d27ad1b709b0cc6f004b827f332dc2edc2f0477573e8dae38b2a5f60609bd6bc",
+  "manualReview": {
+    "url": "http://localhost:3000/my-work?tenbotExperiment=1",
+    "adapterPort": 55595,
+    "model": "gpt-6.1-terra",
+    "mode": "Actual OpenAI inference / simulated local records only",
+    "freshSimulatedPendingCount": 0
+  }
+}

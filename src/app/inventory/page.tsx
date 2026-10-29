@@ -5,6 +5,7 @@ import SuggestionInput from '@/components/SuggestionInput';
 import { BusinessButton, BusinessSelect, BusinessInput, BusinessTextarea } from '@/components/BusinessWriteControls';
 
 import {loadInventoryRows, loadReceivalRows} from '@/modules/inventory/retrieval';
+import {buildPendingReceivalRow} from '@/modules/inventory/pending-receival-contract';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import {
@@ -1863,37 +1864,31 @@ function AccountInventoryPage() {
         || pendingReceivals.find((receival) => receival.id === editingPendingReceivalId)?.production_job;
       const productionJobId = line.reservationMode === 'canonical' ? line.productionJobId : null;
       const temporaryJobLabel = line.reservationMode === 'temporary' ? line.temporaryJobLabel.trim() : null;
-      const isReserved = Boolean(productionJobId || temporaryJobLabel);
       const reservationLabel = productionJobId && selectedJob
         ? formatProductionJobOption(selectedJob)
         : temporaryJobLabel;
       const earmarkNotes = line.reservationNotes.trim();
 
-      return {
+      return buildPendingReceivalRow({
         vendor: line.vendor.trim() || vendor,
-        material_name: material,
-        size: line.size.trim() || null,
-        category: line.category.trim() || null,
-        quantity_expected: quantity,
-        quantity_received: 0,
-        unit: line.unit.trim() || 'Bags',
-        location: line.location.trim() || 'Denton',
-        pallet_number: line.palletNumber.trim() || null,
-        status: 'pending',
-        ordered_by: orderedBy,
-        order_date: orderDate,
-        received_by: null,
+        material,
+        size: line.size,
+        category: line.category,
+        quantityExpected: quantity,
+        unit: line.unit,
+        location: line.location,
+        palletNumber: line.palletNumber,
+        orderedBy,
+        orderDate,
         eta: pendingReceivalForm.eta || null,
         notes: [line.note.trim(), pendingReceivalForm.note.trim()].filter(Boolean).join('\n\n')
           ? formatNamedNote(orderedBy, [line.note.trim(), pendingReceivalForm.note.trim()].filter(Boolean).join('\n\n'))
           : null,
-        received_at: null,
-        is_earmarked: isReserved,
-        earmarked_job_name: isReserved ? reservationLabel : null,
-        earmark_notes: isReserved && earmarkNotes ? earmarkNotes : null,
-        production_job_id: productionJobId,
-        temporary_job_label: temporaryJobLabel,
-      };
+        productionJobId,
+        temporaryJobLabel,
+        reservationLabel: reservationLabel || null,
+        reservationNotes: earmarkNotes,
+      });
     });
 
     if (editingPendingReceivalId) {

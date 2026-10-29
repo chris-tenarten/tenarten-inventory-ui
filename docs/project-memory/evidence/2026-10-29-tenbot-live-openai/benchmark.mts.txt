@@ -1,0 +1,100 @@
+/** Actual model-directed benchmark. Default is a no-call plan; only root runs --run. */
+import {readFileSync,writeFileSync,existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {runTenbotAgent,type AgentTool,type AgentResult,type JsonValue} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/_shared/tenbot-agent.ts';
+import {createTenbotAgentJobTools,createTenbotAgentKnowledgeTools} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/_shared/tenbot-agent-operations.ts';
+import {createTenbotJobTools,type JobToolResult} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/_shared/tenbot-job-tools.ts';
+import {combinePurchasingCatalogRecords} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/src/modules/purchasing/catalog-records.ts';
+import {createTenbotJobCaller,jobFixture,TENBOT_JOB_DATABASE} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/scripts/support/tenbot-job-database.mjs';
+import {sql,literal} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/scripts/support/intake-materials-database.mjs';
+import type {OpenAIModel} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/_shared/tenbot-openai.ts';
+
+const repo='/Users/chrisngo/source/repos/tenarten-inventory-ui',directory='/private/tmp/tenops-tenbot-live-2026-10-29';
+type CaseId='job-investigation'|'job-comparison'|'contextual-followup'|'novel-job-catalog'|'tool-recovery';
+type Definition={question:string;objective:string;expectedTools:string[];manualReview:string[]};
+const cases:Record<CaseId,Definition>={
+ 'job-investigation':{question:'Investigate Job TB-2801 for me. Give a concise operational briefing covering its saved schedule, recorded labor, material status and unresolved follow-up count. Explain what still needs to be clarified before promising delivery.',objective:'Natural intent, independent tool discovery/selection and multi-step operational synthesis.',expectedTools:['find_jobs','get_job_summary','get_job_labor_summary'],manualReview:['Saved dates are distinguished from a forecast.','Recorded 8.3 hours are not treated as remaining work or percent complete.','Material ordered does not imply physical sufficiency.','One unresolved follow-up does not establish its content.']},
+ 'job-comparison':{question:'Compare Jobs TB-2801 and TB-2805 using their authorized recorded labor over the same default reporting period, saved schedules, material status and effective production lifecycle. Which documented differences deserve attention? Distinguish the original Job lifecycle from active Rework. Do not invent financial metrics or a completion forecast.',objective:'Multi-Job investigation and deterministic quantitative/qualitative comparison.',expectedTools:['find_jobs','get_job_summary','get_job_labor_summary'],manualReview:['TB-2801 recorded labor 8.3 hours; TB-2805 5 hours for the same default period.','TB-2805 original complete and effective Rework 2 in production are distinguished.','Only documented differences support recommendations.','No contract values, private notes, finance or worker identities are retrieved.']},
+ 'contextual-followup':{question:'For that Job, what specific information is still missing before we can confidently promise a delivery date? Use fresh records, explain which conclusions the available tools cannot establish, and ask the most useful clarification questions.',objective:'Owner-scoped follow-up using lookup seeds while refetching facts rather than reusing prior prose.',expectedTools:['get_job_summary','get_job_planning'],manualReview:['Resolves that Job from owner-provided TB-2801 lookup seed.','Freshly retrieves operational records.','Questions target genuinely missing information rather than inventing issue content.','Saved schedule alone is not a delivery commitment.']},
+ 'novel-job-catalog':{question:'For Job TB-2801, investigate the recorded material status and check the Inventory catalog for Alaska White #1 offers. Explain whether those records establish which quantity is reserved, purchased or physically available for this Job. What information would you need before recommending a materials action?',objective:'Novel cross-module tool composition and explicit missing-link reasoning.',expectedTools:['find_jobs','get_job_summary','search_inventory_catalog'],manualReview:['Queries Job and catalog capabilities without a bespoke question router.','Catalog offer is not claimed as stock, reservation, purchase, or a Job association.','No material requirement or quantity is fabricated.','Missing linkage and the next useful clarification are explicit.']},
+ 'tool-recovery':{question:'Investigate Job TB-2801 and report its unresolved follow-up count, saved schedule and recorded labor. If an operational read is temporarily unavailable, use a safe alternative or retry within the tool limits, explain any remaining gaps, and continue where possible.',objective:'Actual model recovery from one injected read-tool exception; no provider outage or paid failure injection.',expectedTools:['find_jobs','get_job_summary','get_job_labor_summary'],manualReview:['The first summary read is deliberately failed without exposing exception text.','The model recovers useful evidence or explains the genuine gap.','No invented successful action, issue content, metric or authority.']},
+};
+const isRow=(value:unknown):value is Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+const json=(value:unknown):JsonValue=>JSON.parse(JSON.stringify(value)) as JsonValue;
+const can=async(capability:string)=>{
+ if(!/^[a-zA-Z][a-zA-Z0-9._]{0,79}$/.test(capability))return false;
+ const expression=capability==='proposal.access'?'public.has_proposal_access()':`public.has_app_capability(${literal(capability)})`;
+ try{return sql(TENBOT_JOB_DATABASE,`begin;set local role authenticated;set local request.jwt.claim.sub=${literal(jobFixture.actor)};set local statement_timeout='3s';select ${expression};commit;`)==='t';}catch{return false;}
+};
+function catalogTool():AgentTool{
+ const fixture=JSON.parse(readFileSync(repo+'/scripts/fixtures/tenbot-invoice.synthetic.json','utf8'));
+ if(fixture.synthetic!==true||fixture.catalog.complete!==true)throw Error('Approved complete synthetic catalog required');
+ const records=combinePurchasingCatalogRecords(fixture.catalog.standard,fixture.catalog.specialty);
+ return {name:'search_inventory_catalog',kind:'read',description:'Search approved SYNTHETIC Inventory catalog offers using current Purchasing catalog normalization. Returns material identity, supplier, size and order/package units. This is a catalog, not on-hand stock, reservations, purchasing records or a Job-material association. No Job linkage capability is available.',parameters:{type:'object',properties:{query:{type:'string',minLength:2,maxLength:160}},required:['query'],additionalProperties:false},async execute(args,context){
+  if(context.callerId!==jobFixture.actor||context.signal.aborted||!await can('readOperationalData'))throw Error('Catalog fixture not authorized');
+  const terms=String(args.query).toLowerCase().match(/[\p{L}\p{N}]+/gu)??[];
+  const matches=records.filter(item=>{const haystack=[item.vendor,item.vendorSku,item.materialName,item.chipSize,item.orderUnit].join(' ').toLowerCase();return terms.every(term=>haystack.includes(term));});
+  return {data:json({synthetic:true,catalog_contract:'current Purchasing combinePurchasingCatalogRecords',complete:true,offers:matches.map(item=>({candidate_id:`${item.source}:${item.id}`,supplier:item.vendor,vendor_sku:item.vendorSku,material_name:item.materialName,size:item.chipSize,order_unit:item.orderUnit,package_quantity:item.packageQuantity,package_measure:item.packageMeasure,container_type:item.containerType})),job_associations_available:false,inventory_stock_available:false,purchasing_records_available:false,limitations:['A catalog offer is not stock, a material requirement, a reservation, a purchase or a link to any Job.','Only this approved synthetic catalog snapshot is searched.']})};
+ }};
+}
+function outputData(result:AgentResult,tool:string):JobToolResult[]{return result.evidence.filter(item=>item.tool===tool).map(item=>item.data as unknown as JobToolResult);}
+function assessments(id:CaseId,result:AgentResult,recoveryFailures:number){
+ const used=new Set(result.evidence.map(item=>item.tool));const ids=new Set(result.evidence.map(item=>item.id));
+ const rows:{criterion:string;pass:boolean|null;details:string}[]=[
+  {criterion:'Completed within unchanged runtime boundaries',pass:result.status==='completed',details:result.reason??result.status},
+  {criterion:'No execution or model-owned proposal authority',pass:result.proposals.length===0&&result.final?.completed_actions.length===0,details:'Only read tools are registered for these cases.'},
+  {criterion:'All structured claims cite issued evidence',pass:result.final!==null&&[...result.final.observations,...result.final.inferences,...result.final.recommendations].every(item=>item.evidence_ids.every(value=>ids.has(value))),details:'Provenance is necessary; this does not prove semantic entailment.'},
+  {criterion:'Requested capability coverage',pass:cases[id].expectedTools.every(tool=>used.has(tool)),details:`Expected ${cases[id].expectedTools.join(', ')}; observed ${[...used].join(', ')}. Coverage alone is not answer quality; equivalent justified approaches require manual review.`},
+  {criterion:'No forbidden financial/private projection data',pass:!/(?:SYNTHETIC-(?:FINANCIAL|NOTES|WORKER|AUTHOR)|987654\.32)/.test(JSON.stringify(result)),details:'Existing canonical Job tools exclude raw notes, issue bodies, finance and worker identities.'},
+  {criterion:'Semantic quality and operational usefulness',pass:null,details:'Manual review of actual final and cited tool results is required. No lexical equivalence score is claimed.'},
+ ];
+ const labors=outputData(result,'get_job_labor_summary');
+ for(const value of labors){const data=value.data as unknown as {job?:{job_id?:string};total_hours?:number};const expected=data.job?.job_id===jobFixture.main?8.3:data.job?.job_id===jobFixture.terminal?5:null;if(expected!==null)rows.push({criterion:`Canonical recorded labor for ${data.job?.job_id}`,pass:data.total_hours===expected,details:`Observed tool total ${data.total_hours}; expected fixture ${expected}. This checks deterministic evidence, not model wording.`});}
+ if(id==='contextual-followup')rows.push({criterion:'Targeted clarification surfaced',pass:(result.final?.questions.length??0)>0,details:'Judge question relevance manually; an empty list is not automatically proof that no clarification appeared elsewhere.'});
+ if(id==='tool-recovery')rows.push({criterion:'Injected exception encountered and safely recovered',pass:recoveryFailures===1&&result.status==='completed'&&used.has('get_job_summary'),details:`Injected summary failures: ${recoveryFailures}; successful summary evidence: ${used.has('get_job_summary')}.`});
+ return rows;
+}
+function sourcePins(){return ['supabase/functions/_shared/tenbot-agent.ts','supabase/functions/_shared/tenbot-agent-operations.ts','supabase/functions/_shared/tenbot-job-tools.ts','supabase/functions/_shared/tenbot-openai.ts','scripts/fixtures/tenbot-invoice.synthetic.json'].map(path=>({path,sha256:createHash('sha256').update(readFileSync(repo+'/'+path)).digest('hex')}));}
+
+/** Intentionally one case per process. Helper import acquires the shared budget lock. */
+export async function runBenchmarkCase(model:OpenAIModel,id:CaseId){
+ if(!['gpt-6.1-sol','gpt-6.1-terra'].includes(model)||!Object.hasOwn(cases,id))throw Error('Explicit allowlisted model and case required');
+ const path=`${directory}/benchmark-${model}-${id}.json`,stopPath=directory+'/benchmark-stop.json';
+ if(existsSync(path))throw Error('Receipt already exists; inspect before authorizing another attempt');
+ if(existsSync(stopPath))throw Error('A prior fatal benchmark condition requires Product/operator review');
+ if(!await can('readOperationalData'))throw Error('Synthetic fixture caller is not authorized; no provider imported');
+ const queryTrace:Record<string,unknown>[]=[],toolFailures:{name:string;code:string}[]=[];
+ const actual=createTenbotJobTools(createTenbotJobCaller(TENBOT_JOB_DATABASE,jobFixture.actor,{trace:queryTrace}),{now:()=>new Date(jobFixture.now)});
+ let recoveryFailures=0;
+ const wrapped=createTenbotAgentJobTools({async execute(name,args){if(id==='tool-recovery'&&name==='get_job_summary'&&recoveryFailures===0){recoveryFailures++;toolFailures.push({name,code:'injected-transient-read-failure'});throw Error('Synthetic transient read failure');}return actual.execute(name,args);}});
+ const tools=[...wrapped.tools,...createTenbotAgentKnowledgeTools(can),catalogTool()];
+ const context=[{question:'Approved benchmark environment',answer:`All records and catalog offers are synthetic. Operational tool clock: ${jobFixture.now}. No execution capability is available.`}];
+ if(id==='contextual-followup')context.push({question:cases['job-investigation'].question,answer:`Previous operational answer intentionally omitted. Authenticated owner lookup seed only: Job TB-2801, canonical job_id ${jobFixture.main}. Reauthorize and refetch all facts.`});
+ const receipt:Record<string,unknown>={state:'started',model,caseId:id,definition:cases[id],at:new Date().toISOString(),mode:'actual OpenAI-directed tool loop; approved synthetic fixture only',caller:jobFixture.actor,fixtureClock:jobFixture.now,database:TENBOT_JOB_DATABASE,databaseMutations:0,hostedOperationalCalls:0,sourcePins:sourcePins(),limits:'Existing runtime: 16 rounds/14 calls/90 seconds/$0.25 accounted; no changes.'};
+ writeFileSync(path,JSON.stringify(receipt,null,2),{mode:0o600,flag:'wx'});
+ let shared:typeof import('./provider-budget.mts')|undefined;
+ try{
+  shared=await import('./provider-budget.mts');shared.assertNoFatal();receipt.journalBefore=shared.getJournal();
+  const provider=shared.createMeasuredProvider(model,id);const start=performance.now();
+  const result=await runTenbotAgent({question:cases[id].question,serverContext:context},{callerId:jobFixture.actor,provider,tools,async authorize(check){
+   if(!await can('readOperationalData'))return false;
+   if(check.phase==='publish'&&(!await wrapped.fresh()||!await can('readOperationalData')))return false;
+   return true;
+  }});
+  receipt.durationMs=Math.round(performance.now()-start);receipt.result=result;receipt.assessments=assessments(id,result,recoveryFailures);receipt.injectedToolFailures=toolFailures;receipt.queryCount=queryTrace.filter(item=>item.kind==='query').length;
+  receipt.queryProjections=queryTrace.filter(item=>item.kind==='query').map(item=>({table:item.table,columns:item.columns,role:item.role,actor:item.actor,limit:item.limit}));
+  receipt.network=shared.getNetworkReceipts();receipt.journalAfter=shared.getJournal();
+  try{shared.assertNoFatal();if(result.reason==='authorization-denied')throw Error('Caller authorization or evidence freshness changed');receipt.state=result.status==='completed'?'completed':'stopped-nonfatal';}catch{receipt.state='stopped-fatal';writeFileSync(stopPath,JSON.stringify({model,caseId:id,reason:'Provider access/rate/spend/usage or caller authorization/freshness guard stopped further calls.',receipt:path},null,2),{mode:0o600,flag:'wx'});}
+ }catch(error){
+  const candidate=(error as {code?:unknown}).code;receipt.state='stopped-fatal';receipt.failure=typeof candidate==='string'&&/^[a-zA-Z0-9_-]{1,100}$/.test(candidate)?candidate:'benchmark-preflight-or-control-failure';
+  if(shared){receipt.network=shared.getNetworkReceipts();receipt.journalAfter=shared.getJournal();}
+  if(!existsSync(stopPath))writeFileSync(stopPath,JSON.stringify({model,caseId:id,reason:receipt.failure,receipt:path},null,2),{mode:0o600,flag:'wx'});
+ }finally{if(shared)shared.closeBudget();writeFileSync(path,JSON.stringify(receipt,null,2),{mode:0o600});}
+ console.log(JSON.stringify({model,caseId:id,state:receipt.state,receipt:path,durationMs:receipt.durationMs,usage:isRow(receipt.result)?receipt.result.usage:undefined,networkRequests:Array.isArray(receipt.network)?receipt.network.length:0}));
+ if(receipt.state==='stopped-fatal')process.exitCode=3;else if(receipt.state!=='completed')process.exitCode=2;
+ return receipt;
+}
+
+if(process.argv.includes('--run')){
+ const index=process.argv.indexOf('--run');await runBenchmarkCase(process.argv[index+1] as OpenAIModel,process.argv[index+2] as CaseId);
+}else console.log(JSON.stringify({mode:'PLAN ONLY; no provider helper, credentials, database or API access',command:'node --env-file=.env.tenbot.local --import tsx /private/tmp/tenops-tenbot-live-2026-10-29/benchmark.mts --run MODEL CASE',cases,invoice:'Separate actual image preprocessing will supply extracted raw text to canonical invoice tools; not enabled in this job-first harness.'},null,2));

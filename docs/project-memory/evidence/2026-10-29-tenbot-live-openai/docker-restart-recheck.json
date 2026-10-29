@@ -1,0 +1,83 @@
+{
+  "at": "2026-10-29T17:15:31.561737+00:00",
+  "request": "Rerun existing bounded fixture preflight after Product reports Docker Desktop restarted; resume paid benchmark only if fixture passes",
+  "status": "blocked before fixture access",
+  "preflightCommand": "node scripts/check-tenbot-fixture.mjs",
+  "approvedOutsideSandbox": true,
+  "preflightAttempts": [
+    {
+      "exitCode": 2,
+      "code": "docker-unresponsive",
+      "phase": "daemon-info",
+      "elapsedMs": 5007
+    },
+    {
+      "exitCode": 2,
+      "code": "docker-unresponsive",
+      "phase": "daemon-info",
+      "elapsedMs": 5006
+    }
+  ],
+  "diagnostics": {
+    "context": "desktop-linux",
+    "endpoint": "unix:///Users/chrisngo/.docker/run/docker.sock",
+    "dockerHostOverridePresent": false,
+    "dockerContextOverridePresent": false,
+    "socketExists": true,
+    "desktopEngineStatus": {
+      "command": "docker desktop status",
+      "timeoutMs": 3000,
+      "result": "subprocess-timeout"
+    },
+    "existingProcesses": [
+      {
+        "pid": 3095,
+        "component": "com.docker.backend",
+        "startedLocal": "2026-10-20 09:29:16"
+      },
+      {
+        "pid": 3105,
+        "component": "com.docker.backend",
+        "startedLocal": "2026-10-20 09:29:16"
+      },
+      {
+        "pid": 3127,
+        "component": "Docker Desktop",
+        "startedLocal": "2026-10-20 09:29:17"
+      }
+    ],
+    "processInterpretation": "Same Desktop/backend processes are present as before. Process dates do not establish whether the internal engine/VM restarted.",
+    "backendLogModifiedAt": "2026-10-29T14:46:03.376913+00:00",
+    "dockerdLogModifiedAt": "2026-10-29T14:51:14.640152+00:00",
+    "logContent": "Only timestamps and fixed diagnostic categories inspected/reported; no raw logs copied."
+  },
+  "classification": {
+    "approvalReview": "No approval/review timeout; approved child checks returned bounded measured failures.",
+    "docker": "Engine API and Desktop engine-status path remain unresponsive from this session. Internal cause unverified.",
+    "fixtureStartup": "Not reached; cannot determine container/PostgreSQL readiness or caller authorization."
+  },
+  "inferenceCalls": 0,
+  "imageTestsRepeated": false,
+  "databaseMutations": 0,
+  "fixtureInitializationOrReseed": false,
+  "dockerRestartPerformedByAgent": false,
+  "dockerConfigurationChanged": false,
+  "globalCodexConfigurationEdited": false,
+  "spendingAuthorized": false,
+  "credentialFileChanged": false,
+  "credentialOwnerOnlyMode": "600",
+  "cumulativeCapUsd": 5,
+  "preservedLedger": {
+    "reservedOrSpentUsd": 0.0065860000000000085,
+    "attempts": 4,
+    "settled": 4
+  },
+  "resumeRequirements": [
+    "Existing bounded checker must pass daemon, container, PostgreSQL and authenticated capability checks.",
+    "Then run the existing read-only Job/agent database verifier before any inference.",
+    "Before invoice benchmark, verify existing actor grants; never elevate permissions.",
+    "Ensure invoice authorization/freshness denial persists a fatal stop latch before live use."
+  ],
+  "productionChanges": false,
+  "deployment": false
+}

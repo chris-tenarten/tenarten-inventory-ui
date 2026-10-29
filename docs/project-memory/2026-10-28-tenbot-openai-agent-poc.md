@@ -1,5 +1,7 @@
 # TenBot optional OpenAI agent proof of concept — October 28, 2026
 
+**Latest follow-up:** The same candidate now includes [conversational help and actual Terra multi-turn results](#conversational-assistant-acceptance-follow-up--october-29-2026). Seven initial turns yielded six semantic passes and one confirmation omission, corrected and rechecked through actual Messaging. Ordinary help stays primary; invoice preparation is optional. The [authenticated receival service](#product-accepted-demonstration-and-authenticated-receival-candidate--october-29-2026) is implemented but its migration remains unapplied and real execution disabled pending database gates. Terra remains experimental, Sol optional, Qwen Production. Cumulative journal: **84 settled / $0.15527655 / $5**. Earlier claims remain historical within their stated boundaries.
+
 **Status: implemented locally; awaiting Product acceptance.** Chris's explicit **TENBOT — OPENAI AGENTIC PROOF OF CONCEPT** request accepts the October 28 benchmark recommendation and authorizes this focused local implementation and local commit. It does not authorize paid calls, hosted changes, a push or deployment. The separate Advisory & Implementation conversation was unavailable; the current explicit request governs. Base: `dev` at `d3f42a7`; candidate: the commit containing this record. No branch/worktree was created.
 
 The candidate provides a provider-independent investigation loop and an optional OpenAI Responses transport within existing TenBot Messaging. It demonstrates authorized multi-tool reads and synthetic invoice drafts. **It does not establish OpenAI reasoning quality:** neither a server API credential nor explicit paid-call authorization was available. All new model transport tests use mocks; the browser demonstration uses an explicitly selected scripted transport. Production remains on Qwen3, with its hosted constructor unchanged.
@@ -139,3 +141,311 @@ Use the same evidence for: natural Job investigation; multi-Job comparison; a no
 Recommend a small Production **read/prepare pilot only after** live results justify the model, real caller-JWT/Inventory RLS and signed-in browser privacy gates pass, attachment policies are approved, shared accounting exists and Chris explicitly authorizes deployment/participants. Keep writes unavailable. No primary migration, broad agent framework, unrestricted source/SQL access or hypothetical business workflow is required to evaluate that step.
 
 **Stop: Product acceptance.** No push, deployment, hosted configuration, paid inference, migrations, Production data, credentials or permissions changed.
+
+## API project configuration — October 29, 2026
+
+Chris authorizes project configuration/documentation and one minimal authentication request within the previously approved **$5 total experiment budget**. The full benchmark and receivals implementation remain stopped until configuration is confirmed. Current checkout: `dev` at `f5b1ce8`, preserving candidate `0bb928e` and unrelated dirty Manpower/Current State/execution-standard work. Separate Advisory context remains unavailable. Tier 3 credential/spending boundary; source and TenOps hosted state are unchanged. No commit/push/deployment or database action performed in this configuration pass.
+
+### Verified Platform settings and remaining controls
+
+Read/saved through the authenticated Chrome accessibility interface after browser automation reported no available browser. No screenshots were taken; UI bindings were reset before any secret was generated. No data-sharing, payment-method, recharge or credit-purchase action was taken.
+
+| Setting | Actual October 29 state |
+| --- | --- |
+| Project | **TenBot**, `proj_e3Qoebc2IckUzl282v3ys6Yl`; project-scoped settings and key form verified. |
+| Billing organization | `org-VLsIrIEaVXJmdUSMqpWRQktO`, identified by its billing link; billing explicitly reports the ChatGPT **Personal account** subscription linked. Organization General separately denies `organization.read`; no role was changed. |
+| Credits | Billing shows **$7.00 available**. Credit Grants: received October 29, **$7.00 / $7.00**, Available, expires **October 31, 2026** (no exact expiration time shown). Usage dashboard: zero requests/tokens and $0.00 October spend for TenBot at inspection. |
+| Processing tier | Standard was already default. Saved and revisited: **Standard only**; Flex/Fast/Ultrafast disabled for this project. The existing server adapter inherits the project tier; no adapter/source change needed. |
+| Model policy | Saved **Allow only selected models**: `gpt-6.1-sol`, `gpt-6.1-terra`. All other current/future models blocked. This verifies settings, not successful API entitlement. |
+| Per-model rate overrides | Saved/revisited for each model: **30 RPM, 100,000 TPM, 10 IPM**, reduced from inherited 5,000 RPM / 1,000,000 TPM / 50,000 IPM. Rate limits are not a dollar cap. |
+| Key lifetime | Existing project maximum **one day** retained and verified in the creation form. No key was created. |
+| Platform spend cap / alerts | **Not configured.** Accessible project Limits exposes only model/rate controls; organization Limits exposes tier/rate controls with no Spend/alert section. General settings deny `organization.read`. No permission expansion or Admin key was attempted. |
+| Authentication / inference | **Not run; $0.00 usage in this pass.** Neither supported API-key environment variable is configured; `.env.tenbot.local` does not exist. No secure key-entry tool is connected. |
+
+An API-organization owner should open TenBot **Project settings → Limits → Spend → Edit spend limit**, if that control is available to their role, set **$5 monthly** and **Enforce a hard limit**, then add notifications at **$2.50, $4 and $5**. If Spend remains absent, resolve its availability with OpenAI Support; do not buy credits or add a payment method to solve a missing control. Keep changes project-scoped. Do not alter other projects or organization-wide spend. [Official spend-limit guidance](https://developers.openai.com/api/docs/guides/spend-limits) distinguishes alerts from enforcement and warns that propagation can permit slight overshoot. A monthly reset also does not reset Chris's lifetime $5 authorization for this experiment.
+
+The existing local adapter's durable reservation journal remains the experiment control: one process, maximum authorized total $5, reservations before fetch, failed/unknown attempts retained, per-request $0.25 cap. Never delete/reset `/private/tmp/tenops-tenbot-agent-poc/openai-budget.json` to gain headroom. It does not control requests made outside that adapter, and is not a distributed Production ledger. A minimal authentication request must also be charged against the same $5 total. See the earlier cost table: roughly $0.0375 Sol / $0.01875 Terra per assumed investigation and $0.1725 / $0.08625 per assumed document draft, including conservative cache writes. Actual completed-task costs remain unmeasured.
+
+### Secure credential handoff
+
+The **unsubmitted** API Keys form is prepared in Chrome: owner **You**, name **TenBot local evaluation 2026-10-29**, project **TenBot**, expiration **1 day**, **Restricted → Model capabilities → Responses (/v1/responses): Write**, all other resources None. The UI reports two selected permissions with that setting. No List models, Files, hosted Agents, administration or other model-endpoint access is needed by the existing adapter. Verify this selection before submitting. The official [scoped-response example](https://developers.openai.com/api/docs/guides/terraform/service-accounts) uses `api.responses.write`; key restrictions cannot grant authority beyond the owner's project role.
+
+The official **OpenAI Developers** plugin was offered as a secure alternative, but remains unconnected; no secure provisioning tool was available in this session. Either enable that connection and verify its secure local destination, or perform the following steps yourself. **Never paste the key into chat.**
+
+1. At [API Keys](https://platform.openai.com/api-keys), verify the prepared project/permissions/expiration and click **Create secret key** yourself. Copy the one-time secret privately. Do not share a screenshot or create an Admin API key.
+2. In your own local **zsh Terminal**, run this from the repository. Paste the secret only at the hidden prompt. The script refuses an existing file/symlink and creates an owner-only dedicated server environment file without touching `.env.local`.
+
+```zsh
+cd /Users/chrisngo/source/repos/tenarten-inventory-ui
+(
+  set +x
+  if [[ -e .env.tenbot.local || -L .env.tenbot.local ]]; then
+    printf 'File already exists; use the rotation procedure.\n' >&2
+    exit 1
+  fi
+  tenbot_local_key=''
+  read -rs 'tenbot_local_key?Paste the TenBot project key (hidden): ' || exit 1
+  printf '\n'
+  [[ -n "$tenbot_local_key" && "$tenbot_local_key" != *[[:space:]]* ]] || exit 1
+  umask 077
+  set -o noclobber
+  printf 'TENBOT_OPENAI_API_KEY=%s\nTENBOT_OPENAI_SPEND_AUTHORIZED=false\n' "$tenbot_local_key" > .env.tenbot.local
+  unset tenbot_local_key
+)
+```
+
+3. Verify only metadata/presence. `.gitignore:40` excludes `.env*`; `git check-ignore -v .env.local .env.tenbot.local` was verified for both paths. Do not `cat` the environment file or put a secret in a command argument, shell history, source, `NEXT_PUBLIC_*`, `next.config`'s `env`, browser storage or a client bundle. Clear the copied secret from your clipboard after entry.
+
+```sh
+git check-ignore -v .env.local .env.tenbot.local
+env -u TENBOT_OPENAI_API_KEY -u OPENAI_API_KEY -u TENBOT_OPENAI_SPEND_AUTHORIZED node --env-file=.env.tenbot.local -e 'const k=process.env.TENBOT_OPENAI_API_KEY; console.log({keyConfigured:typeof k==="string"&&k.length>=16&&!/\s/.test(k),spendingAuthorized:process.env.TENBOT_OPENAI_SPEND_AUTHORIZED==="true"})'
+```
+
+Expected booleans: `keyConfigured:true`, `spendingAuthorized:false`. This check does not authenticate, start a server or make a network request. The standalone runner reads `process.env` at startup; Next's automatic `.env.local` loading does **not** load credentials into it. Future approved runner startup must explicitly use Node `--env-file=.env.tenbot.local --import tsx`, after checking port 55595 ownership. Do not start it with a spending flag during entry/configuration.
+
+4. Report only that local entry is complete. The agent can then perform the already authorized single minimal **Responses** request, with Standard processing, no tools/files/business data, a small output cap and a conservative reservation within the remaining $5. Record model, result, returned token/cache usage, cost and latency; retain failed attempts. A successful boolean presence check or Playground session is not API authentication. A GET-models request would require an extra permission and is unnecessary. Stop after that request for Product review; no full benchmark yet.
+
+### Rotation, monitoring, revocation and Production
+
+- **Rotate/expire:** this experimental key expires after at most one day. Create a new equally restricted project key privately, stop only the task-owned adapter, replace the dedicated file through a local editor with mode `600`, restart with explicit environment loading and the same preserved spending journal, authenticate minimally, then revoke the prior key. Do not retain backup copies containing the secret or force-overwrite unrelated `.env.local`.
+- **Monitor:** [Billing overview](https://platform.openai.com/settings/organization/billing/overview) and **Credit grants** show balance/expiration; [Usage](https://platform.openai.com/usage) filtered to TenBot/key shows token/request/cost records and can be grouped by service tier. Reconcile delayed Platform telemetry with local reservations. The [subscription-credit guide](https://developers.openai.com/api/docs/guides/chatgpt-api-credits) confirms linked promotional credits can fund API usage without adding a payment method; expired/exhausted credits do not authorize purchasing or recharge.
+- **Revoke:** select the named key in API Keys and revoke it; stop the local adapter and remove its dedicated local secret file securely. Revocation should be verified with one controlled request if separately authorized; merely deleting a local file does not revoke the remote key. Never add management permissions to the application key for revocation.
+- **Production remains Qwen.** Any eventual OpenAI deployment requires separate Product acceptance/release authorization, a reviewed dedicated Production project/service identity and server secret store, required privacy/retention and attachment policies, caller-JWT/RBAC/RLS validation, shared atomic spending controls and measured live model results. This key, local unsigned fixture Auth and single-process journal are not Production configuration.
+
+Validation in this pass: actual Platform settings save/revisit; billing/grant/usage inspection; Git-ignore/presence-only local checks; documentation/link/diff review. No application build or broad suite is needed for documentation-only repository changes. **Remaining blockers:** secure project-key entry and actual API authentication; Platform spend/alert controls unavailable in this UI. No claim that the live benchmark or receivals workflow succeeded.
+
+## Authorized live evaluation — October 29, 2026
+
+**Status: partially evaluated live; operational benchmark blocked; stopped for Product review.** Chris's explicit **TENBOT — AUTHORIZE LIVE OPENAI EVALUATION** authorizes inference within the existing **$5 cumulative** experiment cap. This supersedes the earlier credential/authentication blockers and prohibition on live calls, without accepting the candidate for Production. Separate Advisory context remains unavailable. Source: shared `dev` at `f5b1ce8`, containing accepted experimental `0bb928e`; no application source was changed. Risk is Tier 3 for credentials, spending and authorization; focused Level 3 evidence below is partial, not a completed operational/security certification.
+
+### Actual model results
+
+All four calls used the existing server-only `createOpenAIProvider` Responses integration, real API responses and Standard (`service_tier: default`). First Sol authenticated successfully, then Terra. Each returned the requested strict structured output. There were no retries, cached/cache-write tokens or reported reasoning tokens. Costs use **actual returned token usage** and the verified Standard prices above; these are not a reconciled Platform billing statement.
+
+| Model | Actual test | Input / output tokens | Wall time | Token-based cost |
+| --- | --- | ---: | ---: | ---: |
+| Sol | Minimal authenticated structured response | 61 / 16 | 2.971 s | $0.000282 |
+| Terra | Minimal authenticated structured response | 61 / 16 | 1.802 s | $0.000141 |
+| Sol | Synthetic invoice PNG transcription | 989 / 213 | 3.696 s | $0.004108 |
+| Terra | Same invoice PNG transcription | 990 / 213 | 4.186 s | $0.002055 |
+
+Both models transcribed **18/18 lines exactly**, including all five material rows, supplier, invoice reference/date and separate $85 freight. The unfamiliar locally generated image is 768 × 920 pixels, 66,968 bytes, SHA-256 `98ee71810a8df51640c0105f09c8690f9bcb5c8946ff9a15733bf379c7e8f4f2`. The extraction prompt received the actual `input_image` and output schema, **no offline OCR, gold transcription or scripted response**. Independent evidence review recomputed both scores and costs. This is one clean synthetic PNG per model; no PDF, real phone photo, handwriting, adversarial document or robustness distribution was tested.
+
+The image harness adds bounded image input to the existing transport for this isolated experiment. It does not implement attachment upload/vision in TenBot Messaging. The models only transcribed visible information; they were not asked to infer catalog matches or order metadata in this call.
+
+### Operational benchmark blocker and root cause
+
+The first Sol Job investigation stopped in the **existing local fixture permission preflight**, before provider import, any inference reservation or tool-directed model step. `docker exec` did not return; an independent `docker ps` also exceeded a ten-second wall-clock timeout. The fixture helper's synchronous subprocess has no wall-clock timeout ([source](../../scripts/support/sample-batch-database.mjs:7)); PostgreSQL's statement timeout cannot bound an unresponsive Docker transport. This is an infrastructure failure, not evidence of a model, argument-selection or RLS failure.
+
+Only the identified stalled benchmark and its Docker child/probe were terminated. Docker was not restarted, the existing database was not recreated/reseeded, no authorization was mocked, and no tool result was replayed as live evidence. Original review servers were preserved. Terra's database-independent image call then completed normally.
+
+**Not tested live:** autonomous Job tool selection/sequencing, multi-step Job investigation, multi-turn contextual reasoning, novel Job/catalog questions, catalog matching, ambiguity/duplicate handling, missing-information questions, pending-receival preparation and tool/provider failure recovery. There are **zero live model-directed tool calls** and no completed operational task. No new Qwen inference was performed; historical Qwen QA remains contextual evidence, not a comparable head-to-head run. Neither model can yet be selected as TenBot's primary provider on this evidence.
+
+### Spending, privacy and evidence
+
+The shared reservation ledger records **4 attempts, 4 settled, $0.006586 total**; **$4.993414** remains within the original authorization. It was never reset. Sequential server-side reservations occur before fetch, with a single-writer lock, atomic durable updates, a hard cumulative $5 check, unknown attempts retained and actual-usage settlement. The image path additionally reserves a conservative 100,000 input tokens; the agent runtime's separate $0.25 turn limit was not exercised by these standalone image calls. HTTP authorization/model-access and accounting failures stop further calls. Platform alerts are not the enforcement mechanism.
+
+Focused harness review corrected an empty-existing-ledger reset edge case to fail closed and latched HTTP failures before response parsing. No application provider or runtime source correction was made. These local controls are not a distributed Production budget ledger.
+
+At stop, `TENBOT_OPENAI_SPEND_AUTHORIZED` was returned to **false**. `.env.tenbot.local` remains an owned, regular mode-`600`, Git-ignored/untracked file; only metadata/presence was reported. The existing provider loaded the credential and [rejected a disabled-spending step before reservation or fetch](evidence/2026-10-29-tenbot-live-openai/stop-gate-check.json), with zero network attempts. No credential or encrypted continuation is in the evidence. All submitted document data was synthetic; no employee/customer operational content was sent, no operational writes occurred, and existing JWT/RBAC/RLS, hosted Qwen and confidentiality boundaries were unchanged. Actual hosted authorization was not re-certified by this partial run.
+
+[Measured summary](evidence/2026-10-29-tenbot-live-openai/summary.json), [final ledger snapshot](evidence/2026-10-29-tenbot-live-openai/budget-ledger-final.json), [artifact hashes](evidence/2026-10-29-tenbot-live-openai/manifest.json), [synthetic image](evidence/2026-10-29-tenbot-live-openai/invoice-fixture.png), [Sol actual output](evidence/2026-10-29-tenbot-live-openai/gpt-6.1-sol-image-extraction.json) and [Terra actual output](evidence/2026-10-29-tenbot-live-openai/gpt-6.1-terra-image-extraction.json) preserve the receipts, scores and exact structured responses. The same directory archives the isolated harnesses and scoring-only gold. Original task scratch is `/private/tmp/tenops-tenbot-live-2026-10-29`; the authoritative cumulative ledger remains `/private/tmp/tenops-tenbot-agent-poc/openai-budget.json`. Archived harnesses retain explicit scratch paths and are not application entrypoints. Do not run them without checking authorization, credential expiry, fixture health and the preserved ledger.
+
+Focused validation: actual HTTP 200/model identity/usage receipts, image SHA and exact field comparisons, independent spending/evidence review, narrow strict harness type checks, secret-safe file metadata, ledger reconciliation and documentation/link/diff inspection. No application build, mobile/UI validation or full lifecycle suite was run because application source/UI did not change. Operational gates remain incomplete.
+
+### Recommendation and next review boundary
+
+**Retain Qwen as Production provider.** Terra achieved the same narrow extraction at half Sol's token cost; Sol was about half a second faster on this one image. Neither observation establishes agentic superiority. Restore Docker/the existing isolated fixture and add a wall-clock bound to the local fixture subprocess before resuming the same cases. Preserve the ledger and recheck the one-day key/credit expiry. Full cost per completed operational task remains unknown; do not extrapolate the $0.002055–$0.004108 transcription cost into a receivals-task price.
+
+The first proposed approved-write workflow remains **invoice → extract → catalog/duplicate checks → editable pending-receival draft → explicit approval → authorized server execution**. Approval must bind the caller, immutable draft hash, source, canonical catalog/Job identities, quantities and expiry; execution must reauthorize/revalidate, transact, enforce idempotency and audit. Hold ambiguous/unmatched/duplicate lines for review. Create pending entries only, with no on-hand increase or silent catalog creation. Reuse the existing Inventory rules; ordinary invoice creation still needs the separately reviewed transactional service described above. Use the existing PO creation service only for genuine PO issuance/source lines. No executor or approval UI was implemented, and partial extraction success does not authorize it.
+
+**Stop: Product/Architecture review.** No commit, push, deployment, hosted configuration, migration, Production mutation, billing/recharge or personal-context integration was performed in this evaluation.
+
+## Docker timeout investigation and bounded preflight — October 29, 2026
+
+Chris explicitly requests diagnosis before any operational benchmark resumes, distinguishing Codex approval/review, Docker availability and fixture startup. This is a **Tier 2 local tooling correction** with focused script validation; the application, hosted systems and inference policy are unchanged. Separate Advisory context remains unavailable. Shared `dev` remains at `f5b1ce8`; prior dirty work and historical receipts are preserved.
+
+| Boundary | Actual evidence | Conclusion |
+| --- | --- | --- |
+| Codex approval/review | Approved commands executed and produced measured child-process results. Approval wait precedes process execution; no approval rejection or timeout occurred in this investigation. | The measured Docker timeout was not a Codex approval timeout. A future approval timeout before execution would provide no Docker-health result. |
+| Sandbox socket access | Client 27.4.0 and `desktop-linux` context were readable. Initial sandboxed `docker info` printed socket `operation not permitted`, despite exit status zero. | Access restriction is separate from daemon health. A successful exit code alone is insufficient. The read-only health probe was then approved outside the sandbox. |
+| Docker daemon/API | Approved `docker info` timed out after **5.008 s**. The existing Unix socket accepted a connection immediately; `/_ping` returned no response within **3.001 s**. Docker Desktop/backend processes are present. | Docker is installed and listening but its API is **unresponsive**. The underlying internal Docker/VM cause is unverified. |
+| Fixture startup/readiness | Daemon preflight failed first. No container startup, recreation, reseed or migration was attempted. | Fixture state remains unknown; this is not an established PostgreSQL startup timeout. |
+
+The corrected read-only command, **`node scripts/check-tenbot-fixture.mjs`**, exited **2** after **5.009 s** with code **`docker-unresponsive`**, phase **`daemon-info`**, zero inference calls and zero database mutations. It stopped before fixture inspection, PostgreSQL or caller authorization. [Diagnostic receipt](evidence/2026-10-29-tenbot-live-openai/docker-timeout-investigation.json) and [correction validation](evidence/2026-10-29-tenbot-live-openai/docker-timeout-fix-validation.json) retain the exact boundaries.
+
+The small [TenBot-only helper](../../scripts/support/tenbot-fixture-health.mjs) gives every invoked Docker CLI a **five-second OS subprocess timeout**, using `SIGKILL` only on its own spawned CLI. Preflight checks daemon version, existing container state and `pg_isready -t 3`, sequentially; only after success does the checker run a read-only authenticated `readOperationalData` check. No automatic fixture creation/start/reseed fallback exists. Stable redacted error codes distinguish missing CLI, denied Docker access, unavailable daemon connection, unresponsive command, missing/stopped fixture, PostgreSQL not-ready/startup timeout and SQL failures. PostgreSQL permission errors remain SQL failures, not Docker-access errors. Approval decisions occur outside this subprocess helper and are not inferred from its timeouts.
+
+The Job caller, future agent-review startup and the two isolated benchmark harnesses now use the bounded helper; benchmark health checks run before provider import. Existing shared Sample/Blend/Intake helper defaults are unchanged. Already running review servers were not replaced. These are per-subprocess bounds; synchronous execution still does not establish a strict aggregate agent deadline. No application or Production runtime source changed.
+
+Validation: **22 offline process-error/readiness groups pass**, syntax and targeted ESLint pass, narrow strict TypeScript over the agent adapter and both benchmark harnesses passes, independent review passes, and `git diff --check` passes. The actual approved CLI's bounded failure was observed. Full fixture authorization/five-tool/RLS validation remains blocked; no browser, build or operational benchmark success is claimed for this tooling-only change.
+
+**Remaining blocker:** restore Docker Desktop API responsiveness, then rerun the same read-only checker with permitted socket access. A controlled Docker Desktop restart may be needed, but none was performed against the shared fixtures. Once readiness and caller permission pass, use the existing read-only agent database verifier before considering live model calls. Do not run fixture initialization to compensate for a failed health check.
+
+The credential file was untouched and remains owned/mode `600`/Git-ignored, spending remains **false**, and the preserved $5 ledger remains **four settled attempts / $0.006586**. No additional paid inference, global Codex permission/configuration edit, Docker configuration change, commit, push, deployment or database mutation occurred. **Stop: fixture recovery and Product review.**
+
+### Recheck after reported Docker Desktop restart — October 29, 2026
+
+Chris reports restarting Docker Desktop and authorizes benchmark resumption **only if the existing bounded fixture preflight passes**, without repeating successful image tests. Two approved executions of `node scripts/check-tenbot-fixture.mjs`, separated by read-only diagnostics, both exit **2** at **`daemon-info` / `docker-unresponsive`**, after **5.007 s** and **5.006 s**. These are completed subprocess timeouts, not Codex approval/review timeouts.
+
+The selected context remains `desktop-linux` at `unix:///Users/chrisngo/.docker/run/docker.sock`; there is no `DOCKER_HOST` or `DOCKER_CONTEXT` override and the socket exists. The read-only **`docker desktop status`** command also exceeds its three-second bound. The same Desktop/backend processes remain present with October 20 start dates; that observation does not establish whether the internal engine/VM restarted. Limited log inspection found backend/dockerd log modification times of 14:46/14:51 UTC; no raw logs or operational records were copied. [Actual recheck receipt](evidence/2026-10-29-tenbot-live-openai/docker-restart-recheck.json) preserves the diagnostics.
+
+**Specific blocker:** Docker's engine API and Desktop engine-status path remain unresponsive from this session. The check cannot retrieve a server version, so container inspection, PostgreSQL startup/readiness, caller authorization and the read-only agent database verifier are **not reached**. No fixture-level or RLS failure is established. Internal Docker recovery is still required; no destructive cleanup, restart by the agent, configuration change, initialization or reseeding was attempted.
+
+No operational benchmark or image test was run. Spending remains **false**, the credential remains untouched/owner-only/Git-ignored, and the existing $5 ledger is unchanged at **four settled calls / $0.006586**. No additional inference, Production change or deployment occurred. Before a future invoice run, also verify the existing caller's Inventory grants and ensure an authorization/freshness denial creates a fatal benchmark stop latch; those review findings remain unexercised and no permissions were altered. **Stopped before inference: fixture preflight has not passed.**
+
+## Docker-independent live agent and database validation — October 29, 2026
+
+**Implemented locally; awaiting Product review. Not accepted or deployed.** Chris's explicit **UNBLOCK AGENTIC DEVELOPMENT WITHOUT DOCKER** and **UNBLOCK DATABASE VALIDATION** authorize genuine Sol/Terra inference against clearly labeled synthetic records, the real attachment/review UI and investigation of existing isolated infrastructure. They supersede the preceding requirement to wait for Docker. Separate Advisory context remains unavailable; current explicit Product instructions govern. Shared `dev` remains at `f5b1ce8`, including experimental `0bb928e`. Unrelated Manpower/Current State changes are preserved. Risk: **Tier 3 / focused Level 3**, with actual database gates explicitly incomplete.
+
+### Actual inference versus simulated records
+
+| Layer | Evidence and boundary |
+| --- | --- |
+| Model responses | Actual authenticated Sol and Terra Responses API calls, strict outputs and model-directed tool calls. No scripted response substitutes. |
+| First comparison document | Reuses each model's previously successful actual PNG transcription; those successful image calls were not repeated. |
+| New UI document | Unfamiliar raster-only one-page PDF is rendered locally by existing PDF.js to a bounded JPEG, then submitted as actual OpenAI `input_image`. No offline OCR, supplied gold text or native PDF API claim. |
+| Catalog, duplicate records, Job records and permissions | Explicit, synthetic in-memory fixtures. No live business records are read. Existing five Job capability schemas remain available; this run establishes invoice-tool sequencing, not a live Job investigation. |
+| Review and approval | Real localhost UI and server validation against simulated records. Changes bind owner, source, revision/hash and expiry. Approval creates simulated pending rows only. |
+| Auth/RLS and persistence | Unsigned local fixture sessions are not real authentication. No database-backed permission, RLS, durable audit or transaction claim. |
+
+### Side-by-side live comparison
+
+Each model completed two real turns: investigate an invoice missing order metadata, then reconsider it after employee clarification. Each independently selected nine tools per turn: discovery, invoice reading, five catalog searches, duplicate checking and deterministic receival preparation. Ten inference steps per turn include the final synthesis. Inputs, schemas, synthetic records and scoring criteria were identical, except each model used its own actual image transcription.
+
+| Model | Two-turn outcome | Turn latency | Actual API steps | Input / cached / output tokens, both turns | Measured reasoning cost |
+| --- | --- | --- | ---: | ---: | ---: |
+| Sol | All structured checks pass | 37.055 s / 30.504 s | 20 | 87,400 / 74,522 / 2,288 | $0.06249720 |
+| Terra | All structured checks pass | 31.304 s / 28.873 s | 20 | 87,499 / 74,594 / 1,966 | $0.02967595 |
+
+Both prepared **150 LB Alaska White → 3 × 50 LB Bag** and **10 GAL resin → 2 × 5 GAL Pail** through deterministic host calculations. Both held Blue Coal as a potential duplicate, CC Green for ambiguous package offers and Violet for no catalog match, excluded freight, asked for missing order details and kept invoice date separate from order date. Both accepted supplied order metadata on the next turn. Neither claimed completed writes. Sol's prose was more detailed; Terra asked an unnecessary confirmation of a known supplier alias. One invoice/two turns per model is insufficient to establish broad reasoning superiority or a Production primary-provider migration.
+
+The narrower existing image comparison remains 18/18 exact lines for each model. No new Qwen inference was run, so historical QA is not presented as a controlled head-to-head. Multi-step live Job/database reasoning and recovery from real hosted tool failures remain untested.
+
+### Real PDF → editable draft → explicit simulated approval
+
+The new [synthetic PDF fixture](../../scripts/fixtures/tenbot-invoice-live-demo.pdf) contains different invoice metadata, quantities and freight from the earlier image. Its SHA-256 is `e1cf5a9c958e61923fa30fb45afa19eeac525d2adeca7ad46f4aabcb3e7845b4`; it contains a raster image, no selectable invoice text. The actual browser-rendered JPEG was 83,910 bytes / 1,024 × 960, SHA-256 `228e6b29e03168fe05b6278ef46396d2ded476d4a13c740f05c810b4fd736515`.
+
+Terra correctly transcribed supplier, reference/date, five material lines and $55 freight in **4.514 s**, using **1,278 input / 183 output tokens**, costing **$0.00251175**. Its subsequent autonomous investigation took **32.541 s**, ten API steps, **46,399 input / 37,947 cached / 1,103 output tokens**, costing **$0.01796985**. The complete extraction-and-draft task used **11 actual calls / $0.02048160**. These are usage-derived Standard costs, including reported cache-write charges, rather than a reconciled Platform invoice. Cache warmth and small synthetic records limit extrapolation.
+
+The model proposed **250 LB → 5 Bag** and **15 GAL → 3 Pail**, held the same three uncertain lines and excluded freight. Through existing Messaging, the employee supplied order details, excluded held lines, deliberately changed Alaska White to **6 Bag** and associated synthetic canonical Job TB-2801. That six-bag quantity is a human correction, not a model conversion result. An incompatible resin-unit edit was rejected server-side and prevented approval. Saving the corrected units produced a current review hash; another edit cleared the checkbox. Explicit approval of the reviewed revision created exactly two **simulated** pending rows, each with received quantity zero. Replaying the same approval returned the same rows and created zero more. No on-hand balance changed.
+
+Actual desktop and 390 × 844 browser checks passed, including PDF worker loading at the exact localhost origin, draft editing, approval invalidation and idempotent replay. Two earlier pre-inference fixture-wiring failures are retained: `.local-only` versus `.local` test-token mismatch, then a malformed UUID regex. Both failed before model calls. Corrections apply only to the explicitly enabled local fixture. Four subsequent HTTP checks verify missing/malformed fixture sessions and a wrong origin are denied; these are not RLS tests.
+
+### Small reusable implementation
+
+- Existing TenBot Messaging gains local PNG/JPEG/one-page PDF upload, preview and editable receival review. A local-only flag, exact origin and fixture session gate the adapter. The hosted Qwen constructor and Production provider remain unchanged.
+- The provider-independent bounded runtime discovers capabilities and sequences tools. The document preprocessor provides provenance-labeled actual vision transcription; the model then selects catalog and duplicate tools. There is no new invoice-format intent router or agent framework.
+- Existing catalog normalization, supplier/package matching and deterministic conversion remain authoritative. Employees can choose existing materials, quantities, units, exclusions and canonical Job associations. No unmatched catalog item is silently created.
+- `src/modules/inventory/pending-receival-contract.ts` extracts the existing manual Inventory row construction/defaults for shared use. Both existing Inventory creation and the simulator use it. The manual Inventory insertion path remains unchanged; this extraction is **not** a new transactional Production execution service. The existing PO-specific creation service applies only to genuine PO source lines.
+- Local approval rechecks grants, source/catalog/duplicate conditions and expiry, binds owner/revision/hash, prevents unreviewed changes and provides in-memory idempotent receipts/audit. The model has no execution tool, SQL, shell, credentials or unrestricted network authority. The host handles explicit simulated approval separately.
+- All real calls use a shared single-writer server reservation ledger, reserve before fetch, retain unknown reservations, fail closed on access/accounting failures and honor the local spend flag again before each step/fetch. A persistent failure latch stops subsequent inference. This remains a single-process experiment control, not distributed Production accounting.
+
+### Existing isolated database: exact blocker
+
+The existing `tenops-permission-review` configuration and eight complete synthetic-role credential records were found; the credential file is mode `600` and no values were printed. Loopback listeners accept connections at **127.0.0.1:55481** (API) and **55482** (PostgreSQL), but actual Auth health timed out after **4.006 s**, REST/schema after **4.003 s**, and the PostgreSQL protocol handshake after **4.004 s**, before credentials or SQL. This confirms an unresponsive existing service, not a missing-password or model failure. No Docker commands, restart, cleanup, provisioning, migrations, grants or writes were attempted in this workstream.
+
+Alternative existing Auth-QA ports refused connections. The configured shared hosted Supabase project is the released Production/TenDev target and was excluded. No usable existing isolated hosted target was discoverable through configured credentials/tools; that does not establish that no other project exists in the organization. No browser screen access, personal ChatGPT history, new services or billing arrangements were used.
+
+**Mandatory release gates:** restore a responsive existing isolated environment (or Product explicitly designates an existing test project), verify current pending-receival schema and canonical execution contract, then run real caller JWT/RBAC/RLS and cross-account/revocation checks. Before any Production executor, validate a durable approval record bound to exact payload/source/caller/expiry; all-or-none canonical writes; concurrency-safe duplicate prevention and idempotency; durable audit; rollback/failure recovery; received quantity zero and unchanged on-hand inventory. Hosted attachment privacy/retention, cost controls and signed-in mobile validation also require review. Local simulated checks do not satisfy these gates.
+
+### Spending, evidence and manual review
+
+The preserved authoritative journal `/private/tmp/tenops-tenbot-agent-poc/openai-budget.json` records **55 attempts / 55 settled / $0.11924075**; **$4.88075925** remains of the original $5 authorization. This is four earlier smoke/image calls, twenty Sol reasoning calls, twenty Terra reasoning calls and eleven new PDF/demo calls. It was never reset. No unknown holds or fatal stop receipt remain. `.env.tenbot.local` stays owner-owned/mode `600`, Git-ignored/untracked and server-only. Spending is **true** solely for the authorized local experiment; no new billing or hosted settings were enabled. Stop or revoke local spending before unrelated work; preserve the same ledger for any continuation.
+
+Review at [http://localhost:3000/my-work?tenbotExperiment=1](http://localhost:3000/my-work?tenbotExperiment=1), **Messaging → TenBot**, using the existing synthetic review session. The adapter on loopback **55595** explicitly displays **actual OpenAI reasoning / simulated local records / no Production writes**. Attach `scripts/fixtures/tenbot-invoice-live-demo.pdf` and ask “Create pending receivals for the materials listed.” Review held lines, supply employee/order date/location, correct or exclude lines, save the review, then explicitly approve only the simulated entries. Further manual inference consumes the same remaining cap; key/credit expiry can stop it. Current task-owned process metadata is `/private/tmp/tenops-tenbot-agent-poc/server.json`.
+
+The completed browser receipts and two simulated rows were archived before replacing only the task-owned adapter with fresh in-memory state for manual review. Spending was disabled during that transition; all 55 attempts were settled, the journal hash stayed identical and only the old empty owned writer-lock directory was retired after its process stopped. The fresh adapter and app return HTTP 200, simulated pending count is zero, and readiness checks used no inference. No real database was reset. The restarted adapter also closes its budget lock after current requests drain on SIGTERM/SIGINT.
+
+[Docker-independent evidence](evidence/2026-10-29-tenbot-live-openai/docker-independent/manifest.json) preserves actual responses, usage/tool traces, latency, browser/security receipts, screenshots, infrastructure diagnosis, source hashes and the final ledger snapshot. Offline backend (18 groups) and UI lifecycle (eight groups), four actual simulated HTTP checks, six actual browser groups, whole-app TypeScript, targeted ESLint, diff checks and optimized Production-mode local export passed. Focused independent security/evidence review passed. No real database end-to-end authorization or transactional test passed; none is claimed.
+
+**Recommendation:** retain Qwen Production. Use Terra as the optional local receival-preparation candidate: it matched Sol on these limited structured cases for about half the inference cost. Keep Sol available for further difficult-document/reasoning comparison. The smallest next approved-write experiment is this same UI/runtime against a responsive disposable database through reviewed canonical, transactional services, with the mandatory gates above. Do not migrate primary inference or connect this simulator to Production based on these results. No push, deployment, hosted mutation, migration or Production data write occurred. **Stop for Product review.**
+
+## Product-accepted demonstration and authenticated receival candidate — October 29, 2026
+
+Chris's **TENBOT — PRODUCT ACCEPTANCE & REAL RECEIVAL EXECUTION** accepts the preceding demonstration as proof of agentic capability. **Terra is the preferred experimental model, Sol remains the optional challenger, and Qwen remains Production.** This authorization covers the focused local authenticated receival integration and local commit; it does not accept the new database candidate, authorize migration application, activation, hosted operational writes, push or deployment. Separate Advisory context remains unavailable. Base shared dev `f5b1ce8`; unrelated work is preserved. Risk remains **Tier 3 / focused Level 3**, with actual database gates incomplete.
+
+### Infrastructure finding, without retrying stalled services
+
+The existing isolated environment is Docker-backed, not an independent native Supabase installation. PID 3105, `/Applications/Docker.app/Contents/MacOS/com.docker.backend`, owns its API/PostgreSQL forwarding listeners on **55481/55482**. This explains why TCP can connect while Auth, REST and PostgreSQL protocol responses time out. The earlier measured four-second timeouts remain the actual service evidence; no new Docker commands or Supabase endpoint probes were run in this phase. This is a backend service/protocol failure, not an observed credential rejection or Codex approval timeout. The exact internal Docker/VM defect is unverified and maintenance remains deferred.
+
+No native `postgres`, `pg_ctl` or `psql` was found in PATH or standard installed locations, and no usable alternative existing isolated target was discovered. No new service, installation, cost, credential or environment was provisioned. The released shared hosted project remains excluded. A configured listener and eight synthetic credential records do not establish working authentication or RLS.
+
+### Local integration and durable database contract
+
+- `scripts/support/tenbot-receival-agent.mts` uses the existing bounded agent/session runtime, five canonical Job tools and `createCallerInvoiceReader`. Catalog and duplicate reads use fixed, price-free projections through the current employee's client. Request clients/JWTs are not retained between requests. Capabilities `readOperationalData`, `writeBusinessData` and `adjustInventory` are checked before preparation and again before publication.
+- `scripts/start-tenbot-receival-review.mts` accepts only the existing reviewed loopback Supabase target and its public anon key. It verifies `getUser` on every request with a four-second network deadline. Unsigned simulation sessions are rejected before any database request. No service-role or Chris-specific client is constructed. It is a local adapter; the hosted Qwen entrypoint is unchanged.
+- Existing Messaging supports a separate authenticated review path, with no fallback to the accepted simulation or ordinary Qwen. PDF/photo handling remains the accepted one-page PDF/PNG/JPEG path. Content is untrusted evidence and never approval. The persisted SHA identifies the **submitted bounded/rendered image**, not the original PDF byte stream. Source bytes remain ephemeral; attachment retention/privacy policy is still a release gate.
+- `src/modules/inventory/invoice-receival-service.ts` exposes fixed caller-scoped **prepare / get / approve / execute** RPCs. Saving a reviewed edit creates a new immutable database draft. The UI binds both its exact current revision/hash and the normalized durable draft ID/hash; edits clear the approval checkbox. Approval is a separate explicit host action with a fixed confirmation value, not model-generated text or a model capability.
+- The narrow, forward-only **unapplied** migration `20261029210000_invoice_pending_receival_approval.sql` defines immutable owner-scoped drafts, approvals, execution receipts, document claims and audit records. Drafts expire after 30 minutes and approvals after at most ten minutes. Preparation and commit revalidate canonical catalog identity/supplier/unit/quantity/Job links and potential pending duplicates. Canonical supplier/reference plus image identity prevent document reuse across callers; another caller's conflicting claim yields a generic failure without exposing their draft/record IDs.
+- Execution rechecks current employee permissions after waiting, locks relevant resources, validates all lines before insertion, inserts all pending rows in one transaction, and records actual IDs/provenance. Received quantity is zero; no receiving RPC, on-hand table or Inventory transaction is written. Concurrent retries serialize; exact completed receipts reconcile idempotently, even after expiry, while new expired approvals/executions are rejected. Completed reconciliation does not create records, extend expiry or skip current permission checks.
+- A dedicated `NOLOGIN` / `NOBYPASSRLS` role inherits existing authenticated policy membership and owns only the fixed RPCs. Source reads/writes remain subject to existing RLS. Two private no-argument helpers provide bounded membership/resource locks; they cannot return records, accept identities or execute arbitrary SQL. Employee roles are not granted the executor role. New approval/audit tables are not raw client-writable. This role/grant design has static review, **not real database certification**.
+- Canonical manual Inventory row construction/defaults, Purchasing catalog/package/vendor rules and pending-only semantics are reused. There is no existing generic atomic invoice creator to call: the ordinary form inserts sequentially, while the PO creator requires issued PO lineage. The new narrow invoice transaction is necessary; no PO identity is fabricated and no parallel Inventory/on-hand engine is introduced. Bare Bag/Bags and quote/call package fallback were corrected to match Purchasing. Unknown units and measured packages without a container fail closed.
+
+**Execution is off at two boundaries:** the local controller has a literal disabled gate before any approval/execution RPC, and the new database control defaults false with no application mutator. The future result branch rereads returned IDs through the caller and compares every line's expected quantity, received zero, status, vendor, material, size, unit and Job before displaying a verified result. This branch is implemented but unexecuted; no real created IDs are claimed. The SQL has not been applied or parsed by a real database in this session.
+
+### Local review and actual validation
+
+Open [authenticated candidate](http://localhost:3000/my-work?tenbotExperiment=1&tenbotReceivals=1) → **Messaging → TenBot**. Port **55596** is the authenticated adapter; the current synthetic browser session is deliberately rejected, and the interface displays **Authenticated database unavailable; writes disabled**. This state is expected until the existing isolated database and real session are available. It cannot be made writable with a query parameter, model response or request field. The accepted [simulated demonstration](http://localhost:3000/my-work?tenbotExperiment=1) remains separately labeled on **55595**. Port **3000** remains the actual app review origin; only its confirmed task-owned preview was restarted to load the candidate/CSP.
+
+Focused evidence: 13 offline/static canonical-service groups; 11 offline controller/attachment wiring groups; 11 offline UI lifecycle groups; 20 existing invoice and 16 session/privacy regressions; six actual localhost HTTP/browser groups including desktop/390 × 844 containment, rejected unsigned sessions, disabled attachment actions after consent and no provider/simulation fallback. Scripted extraction/database replies in unit tests are labeled test doubles. They are not model or database-security results. Whole-app types, targeted lint, optimized Production-mode local export and diff checks pass; independent static security review found no outstanding blocker after focused corrections. A first browser assertion looked in the wrong region and was corrected without an application change; a transient build type error in the new verifier was corrected before the final successful build.
+
+**Mandatory gates before real execution:** responsive existing disposable Supabase; separately approved migration application; actual role/grant/trigger/RLS compatibility; real JWT identity and owner/cross-account isolation; permission revocation during waits/commit; catalog/Job changes and expiry; multi-line rollback and on-hand invariants; concurrent/repeated/manual insert and hidden-owner document conflicts; approval/receipt replay including expired completed requests; actual returned-ID reconciliation. Current general receivals lack historical invoice identity, so legacy duplicate coverage and conservative material holds require fixture-backed review. Hosted retention, signed-in/mobile behavior and environment activation require separate acceptance. Neither static SQL inspection nor mocked RPC success satisfies these gates.
+
+### Measured latency and spending
+
+The offline profiler reads the prior actual five agent turns without repeating inference. Each turn made ten serial provider calls: discovery, invoice read, five separate catalog searches, duplicate read, preparation and final synthesis. Provider wall time is **99.91–99.97%** of agent runtime; simulated tool execution totals **6–23 ms**. The Terra PDF reasoning turn is **32.541 s**, including **32.524 s** in provider calls and **10 ms** in simulated tools. These measurements do not establish real database latency.
+
+The existing 2.5-second request-start spacing creates a **22.5-second minimum before the tenth request**; it does not add 2.5 seconds to every call. Final structured-answer steps measured **5.768–11.141 s** for 347–700 output tokens. Repeated schema/history input totals about 43k–46k tokens per turn, with 81.8–88.5% cached. Existing receipts combine pacing, transport/API, body parsing and accounting, so exact API processing time cannot be recovered. New non-secret timing counters separately record pacing wait, fetch-to-headers and metadata parsing for a later authorized run. No rate controls, model behavior or tool orchestration were optimized; batch lookup remains a possible later focused change, not an implemented speedup. The existing Responses tool loop remains consistent with [official function-calling guidance](https://developers.openai.com/api/docs/guides/function-calling).
+
+**No new paid calls:** cumulative journal remains **55 settled / $0.11924075 / $5 cap**, with **$4.88075925** remaining. Credential values and the journal are preserved; server-side reservations, failure latch and explicit spend flag remain in force. No credentials, personal ChatGPT context or unrelated private records were exposed. [Authenticated-candidate evidence](evidence/2026-10-29-tenbot-live-openai/authenticated-receivals/manifest.json) contains the diagnosis, latency profile, focused validation, browser screenshots, source pins and unchanged ledger snapshot.
+
+**Implemented locally, real writes disabled; stop for Product review.** No migration application, hosted operational write/configuration change, provisioned service, push or deployment occurred. The prior demonstration is accepted; this new service/SQL candidate still needs acceptance and the database gates above.
+
+## Conversational assistant acceptance follow-up — October 29, 2026
+
+Chris's additional **TENBOT — CONVERSATIONAL ASSISTANT REQUIREMENT** applies to the same local candidate. Ordinary employee help remains the primary Messaging interaction; invoice upload and review are optional controls. Terra remains experimental, Sol optional and Qwen Production. Separate Advisory context is unavailable; the current explicit Product instruction governs. Tier 3 / focused Level 3 continues because the candidate contains the gated persistence contract; this follow-up does not complete its database gates.
+
+### Grounding and contextual conversation
+
+The experimental knowledge capability previously searched only sixteen broad generated module summaries. It now searches those summaries together with the existing precise, published workflow registry, deduplicated and bounded to four permission-filtered results. This exposes already verified UI labels, routes and save/confirmation details without adding new knowledge, an intent router or a broad knowledge audit. The model may synthesize a direct answer or, when requested, provide the next walkthrough step and adapt to employee-reported progress. Guidance is explicitly separate from performed actions.
+
+Server-owned context retains up to three knowledge-only assistant answers, each at most 2,400 characters, within the existing owner-bound one-hour session. It retains no operational answer/tool payload or native provider history across turns. Current permissions and knowledge fingerprints are rechecked before each model step and publication. Transitive source proofs invalidate dependent context after a source change or revocation; the twelve-source bound clears context rather than silently dropping dependencies. Attachments, operational tool attempts, failures and non-knowledge evidence clear retained guidance prose. Caller-replayed history remains rejected. These are deterministic checks; grounding validation was not disabled.
+
+The shared runtime prompt distinguishes direct questions from requested walkthroughs, preserves explicit confirmation steps and forbids claims of unperformed actions. Ordinary help is available to read-authorized employees without requiring Inventory mutation permissions. The main answer stays prominent; repeated structured claims are collapsed under **Sources and evidence**. No attachment is required for help, and the interface does not claim image interpretation when none occurred. Clear removes both visible conversation and underlying server session.
+
+### Actual Terra help evaluation
+
+Seven actual Terra turns used the same bounded runtime and existing published knowledge, with synthetic employee grants and no operational database access. Independent semantic review found **6 PASS / 1 PARTIAL / 0 FAIL**. Structured checks all passed; semantic review caught a detail they did not establish.
+
+| Conversation / turn | Observed result | Wall time | Usage-derived cost |
+| --- | --- | ---: | ---: |
+| Direct pending-versus-on-hand question | Immediate No, concise verified stock navigation; no forced walkthrough | 11.811 s | $0.00750440 |
+| Begin manual Pending Receival walkthrough | One step: expand Pending Receivals | 9.913 s | $0.00444060 |
+| Employee has expanded it | Advances to + Pending Receival | 7.172 s | $0.00307575 |
+| Employee asks about the open form | Contextual required-field answer and pending/on-hand distinction | 8.931 s | $0.00397025 |
+| Begin Production rescheduling walkthrough | Switches workflow; opens the Job as next step | 7.007 s | $0.00311660 |
+| Employee asks whether dragging saved | Direct No; staged dates and Review changes | 7.798 s | $0.00344550 |
+| Employee has reviewed changes | Correct Save all changes label, but omits remaining employee confirmation: **PARTIAL** | 7.568 s | $0.00351590 |
+
+The seven turns made **23 actual API calls / $0.02906900**. The model selected knowledge discovery/search tools itself; no scripted answers were supplied. It did not attempt operational tools, propose a write, invent UI labels, claim completed actions or unnecessarily request clarification. This small allowed-role set does not establish general missing-information/error recovery, denied-role conversational behavior or whole-helpdesk quality.
+
+A focused generic prompt correction preserves documented confirmation when explaining a final save step. Actual Messaging then answered: “Choose Save all changes. You’ll still need to confirm the save when prompted; opening the confirmation does not save the dates. I haven’t saved anything for you.” The first correction used three real calls / **$0.00595020** and rendered correctly at desktop/mobile sizes, but its browser-side cleanup transport stalled. That whole-test failure is preserved, not relabeled a pass. After replacing that verifier transport with bounded requests, the separate retry passed: three real calls / **$0.00101660**, **7.540 s** agent time, Clear HTTP 200 and cleared-session replay HTTP 403 before further inference. The original seven-turn partial remains unchanged.
+
+The retry's provider measurements separate pacing waits (0 / 731 / 635 ms), fetch-to-headers (1,764 / 1,853 / 2,527 ms) and metadata parsing (2 / 3 / 2 ms). This one warm-cache turn does not justify general latency estimates. Final evidence-collapse/optional-upload presentation was checked at desktop and 390 × 844 using the recorded actual response: **five UI checks, zero new inference**. This validates rendering, not another model run.
+
+### Qualified comparison with Qwen
+
+No fresh Qwen head-to-head was run. The archived comparison preserves both older October 28 failures and the later reconciled runtime. Older pending/on-hand uncertainty and immediate-drag-save claims are historical defects, not claims about current Production. In reconciled evidence, Q07's actual Qwen answer is largely a whole-guide excerpt; Q08 is already a correct deterministic No in **365 ms**, faster than these Terra turns. Q32's raw Qwen reply omits necessary receiving labels/bounds, so the verified-guide fallback is protective even though its granularity is broad. It was not freshly retested here.
+
+Terra demonstrates adaptive direct answers and next-step conversation in this limited set. Retrieval coverage, specialized routing and validator granularity also explain prior behavior; these results do not isolate model limitations, justify removing grounding/fallback globally or establish a Production primary-provider change. Keep the experimental natural synthesis path and focused evidence checks; retain current Qwen Production behavior.
+
+### Validation, cost and review boundary
+
+Session/privacy verification passes **25 groups**, bounded runtime/provider checks **33**, controller wiring **12**, canonical contract **13**, UI lifecycle **11** and existing invoice regression **20**, with the previously accepted simulation checks reused. Actual localhost blocked-state HTTP/browser checks pass six groups without inference or database calls. Whole-app types, targeted ESLint, diff checks, optimized Production-mode local export, desktop/mobile presentation and independent static security/evidence review pass. These checks do not establish real authentication, RLS, role compatibility, SQL execution or transaction integrity.
+
+The final preserved cumulative journal is **84 attempts / 84 settled / $0.15527655 of $5**, leaving **$4.84472345**. This conversation phase adds 29 calls / $0.03603580 to the earlier 55-call phase. No successful invoice image/PDF test was repeated. Costs are derived from returned usage and configured Standard pricing, not a reconciled Platform invoice. Server-side reservations and fail-closed accounting remain active; credentials remain owner-only, Git-ignored and server-only. No journal reset, new billing, hosted settings or private ChatGPT context integration occurred.
+
+[Conversation evidence](evidence/2026-10-29-tenbot-live-openai/conversational-help/manifest.json) preserves actual answers/tool traces/usage, independent semantic assessment, the qualified Qwen subset, both correction receipts, desktop/mobile images, source pins and the final ledger. Original execution pins and later presentation-source pins are deliberately separate. Review conversational help at [localhost:3000/my-work?tenbotExperiment=1](http://localhost:3000/my-work?tenbotExperiment=1), **Messaging → TenBot**. Port 55595 uses real Terra with simulated records; additional manual questions consume the same cap. The authenticated path adds `&tenbotReceivals=1`, uses port 55596 and deliberately rejects the synthetic session with its database blocker. Both adapters and the app are retained for review.
+
+**Implemented locally; pending Product acceptance.** The authenticated receival migration remains unapplied and real execution disabled. The mandatory database-backed JWT/RLS, revocation, transaction/rollback, duplicate/concurrency, replay, audit/actual-ID and on-hand gates above remain open. No Docker/Supabase retries, hosted writes/configuration changes, push or deployment occurred. Stop for Product review.

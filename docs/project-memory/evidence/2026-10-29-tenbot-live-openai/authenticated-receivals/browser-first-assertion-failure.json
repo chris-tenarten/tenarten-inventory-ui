@@ -1,0 +1,7 @@
+{
+  "stage": "read-only browser verifier assertion",
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "cause": "Verifier looked for global authentication error inside controls region; actual controls correctly showed execution disabled. Assertion corrected to check global error in Inbox and execution blocker in controls.",
+  "applicationCorrectionRequired": false
+}

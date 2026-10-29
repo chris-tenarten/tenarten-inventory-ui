@@ -1,0 +1,78 @@
+{
+  "syntheticOnly": true,
+  "files": {
+    "budget-ledger-final.json": {
+      "bytes": 83,
+      "sha256": "32d83992312851f6bd2415fbb5f44eddd78b0cfd0fefe28dd69902ba0ae9c6ce"
+    },
+    "gpt-6.1-sol-image-extraction.json": {
+      "bytes": 3472,
+      "sha256": "fa158121aa49ee2d08c8b45b19bfedac6eeeac7d710849ac50b5ca3899d58d79"
+    },
+    "gpt-6.1-sol-image-score.json": {
+      "bytes": 396,
+      "sha256": "16c93a2e55f5fc289121b6a8d9fedcb0d2f2ca3dd4d5a4ac3bdb7808d08b0301"
+    },
+    "gpt-6.1-sol-smoke.json": {
+      "bytes": 1066,
+      "sha256": "7b9e0692224140898b1315b43fe3acd9fb940d647f7d3d722c17974ac55dd36c"
+    },
+    "gpt-6.1-terra-image-extraction.json": {
+      "bytes": 3482,
+      "sha256": "fe8df78edc2fed5cee8cb82397eeb5d6d843d6ba5fa2211b80ba37090cc7502e"
+    },
+    "gpt-6.1-terra-image-score.json": {
+      "bytes": 398,
+      "sha256": "ba2cf85542ff523aa35bd143108ae3d640769176758e6d67245635cbfa65c018"
+    },
+    "gpt-6.1-terra-smoke.json": {
+      "bytes": 1071,
+      "sha256": "107cb9066f91c85707791975f73d044f494da7dd235617590d1ebd83a2fc8761"
+    },
+    "invoice-fixture.generate.mjs": {
+      "bytes": 7161,
+      "sha256": "c58e9dc2b0927ffa7adea197906dd5afbbdecef6222abca74faf013f34ed6921"
+    },
+    "invoice-fixture.gold.json": {
+      "bytes": 4888,
+      "sha256": "ce2ccc464d0930f8840be19beeba6c713f470fdc903f8e793e77260393e7424d"
+    },
+    "invoice-fixture.png": {
+      "bytes": 66968,
+      "sha256": "98ee71810a8df51640c0105f09c8690f9bcb5c8946ff9a15733bf379c7e8f4f2"
+    },
+    "invoice-fixture.schema.json": {
+      "bytes": 307,
+      "sha256": "db294b54b9bdd7b22624a9ddfd2c76463f8bb673ae01e406ea0028eb8b63991a"
+    },
+    "summary.json": {
+      "bytes": 3361,
+      "sha256": "317613a6a10f989486e4d5a7ebf6e21b49385e2207ca90a74cd50ae6250401fb"
+    },
+    "stop-gate-check.json": {
+      "bytes": 284,
+      "sha256": "679f1396bc9eeb34d5b81ade5a8b0c10a77f1be7bb4209610b7bd8c51ad27a72"
+    },
+    "extract-image.mts.txt": {
+      "bytes": 2323,
+      "sha256": "6dceea4f06f1def4dee076b5a0e5bfa2adabd71d56a82d8f993ff3cf00af670a"
+    },
+    "provider-budget.mts.txt": {
+      "bytes": 8111,
+      "sha256": "960ad2d359a28e494d7cc788f597fd85715bd194d5a397d993c13cd42ed5c774"
+    },
+    "invoice-benchmark.mts.txt": {
+      "bytes": 19127,
+      "sha256": "86f4d5ed97a8def750c82b73da81b13ba56f25ec4aa1a44d4bd9c1d40a102322"
+    },
+    "benchmark.mts.txt": {
+      "bytes": 16897,
+      "sha256": "1aa8a3c924f2186ed25846ff9665483200ea7946ef56c5f92c8116aeda3fff4c"
+    },
+    "live-smoke.mts.txt": {
+      "bytes": 5301,
+      "sha256": "408336267aad2d532e48e133a4bf79e0597513d6df0f17d0e54c65eab039090c"
+    }
+  },
+  "archiveNote": "Archived TypeScript scripts use .mts.txt to preserve exact source bytes without compiling evidence as application source."
+}

@@ -1,0 +1,246 @@
+{
+  "actualAnswer": "Choose Save all changes. You’ll still need to confirm the save when prompted; opening the confirmation does not save the dates. I haven’t saved anything for you.",
+  "response": {
+    "conversationId": "903fbe7a-9abd-4653-9a4a-92911a01613c",
+    "mode": "agent-experiment",
+    "message": "Choose Save all changes. You’ll still need to confirm the save when prompted; opening the confirmation does not save the dates. I haven’t saved anything for you.",
+    "sources": [],
+    "snapshot": {
+      "revision": "tenbot-agent-poc.v1",
+      "verifiedAt": "2026-10-29T18:35:50.342Z"
+    },
+    "summary": null,
+    "suggestionAllowed": false,
+    "notices": [
+      "Actual OpenAI reasoning and image transcription; catalog, Jobs, duplicates and pending creation are SIMULATED local records. No hosted database or on-hand stock is changed."
+    ],
+    "agent": {
+      "mode": "openai",
+      "provider": "OpenAI · SIMULATED local records",
+      "model": "gpt-6.1-terra",
+      "status": "completed",
+      "final": {
+        "answer": "Choose Save all changes. You’ll still need to confirm the save when prompted; opening the confirmation does not save the dates. I haven’t saved anything for you.",
+        "observations": [],
+        "inferences": [],
+        "recommendations": [
+          {
+            "text": "Choose Save all changes, then explicitly confirm to save the proposed dates.",
+            "evidence_ids": [
+              "e1"
+            ]
+          }
+        ],
+        "questions": [],
+        "completed_actions": []
+      },
+      "evidence": [
+        {
+          "id": "e1",
+          "tool": "search_workflow_knowledge",
+          "data": {
+            "snapshot": {
+              "revision": "bc628bd",
+              "verifiedAt": "2026-10-27",
+              "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026"
+            },
+            "sources": [
+              {
+                "id": "production-schedule",
+                "title": "Schedule or reschedule a Production Job",
+                "status": "deployed",
+                "availability": "available",
+                "guidance": "Authorized business writers can stage Production schedules. Open a Job and enter both Planned start and Planned finish in Details, or adjust its bar in Timeline. Review changes, then choose Save all changes. Editing dates or releasing a Timeline drag stages the proposal without saving it. Finish must be on or after start. Save ordinary Inspector details first if prompted. Red scheduling errors block saving; warnings do not. Discard all restores the saved dates. A stale or failed save retains proposals for review rather than silently replacing them.",
+                "path": "Production → Job → Details → Planned start / Planned finish → Review changes → Save all changes",
+                "route": "/production"
+              },
+              {
+                "id": "knowledge-timeline",
+                "title": "Production Timeline and staged schedule",
+                "status": "deployed",
+                "availability": "available",
+                "guidance": "Ordinary Production Timeline is available independently of disabled Phase/Item Planning. Staging does not save; approval and explicit confirmation are required. Read-only accounts may view but cannot stage changes. The proposed status bar remains editable, while a neutral dashed ghost identifies its last persisted position. A persistent control above the active view compares saved and proposed dates, days, and labor intensity and provides explicit Save and Discard actions. Table planned dates show the proposal with an unsaved indicator and feed changes into the same staged proposal. Table/Timeline switching and filtering preserve pending Production and Planning changes, while page navigation and browser unload are protected by confirmation. Labor intensity is derived rather than stored. Timeline ranges and their labor denominator both use inclusive calendar days: estimated labor hours divided by every scheduled calendar day. This interim model keeps scheduling honest about possible weekend work without implying that every included weekend is necessarily planned production time. A future shop calendar or job-specific planned-production-day model should replace it. Holiday calendars, workforce capacity, resource leveling, dependency scheduling, and automatic schedule optimization are deferred. Missing, zero, or invalid labor estimates are shown as No labor estimate rather than as zero labor. Static source interface text (labels do not establish a click sequence or additional permissions): Review proposed schedules · Close · Production changes · Revert this job · Planning changes · Revert this Phase · Scheduling feedback",
+                "path": "Production → Timeline → Save All / Discard All",
+                "route": "/"
+              },
+              {
+                "id": "knowledge-samples",
+                "title": "Samples, formulations, Batch and Blend Sheets",
+                "status": "deployed",
+                "availability": "available",
+                "guidance": "Samples and Blend Sheets use the established generator and saved/issued revisions. Production Blend management actions require a separate explicit permission. Imported shop quantities do not automatically establish Batch authority. Only supplied source text establishes a workflow; a control label alone is not a sequence. Static source interface text (labels do not establish a click sequence or additional permissions): Sample Work Order · Working Sheet · Sample Formula Workspace · New Sample · Bid-context Samples · Create a new canonical Sample with this Bid’s Customer and Project, or link an existing standalone Sample. · Existing standalone Sample · Select Sample · Start Sample formulation tutorial · Guide me · Duplicate · Close · Sample actions · Draft saving and document generation have different requirements. · Edit Sample details · Formulation setup · Sample context · Color Plate / Formula # · Suggested by TenOps · editable · assigned when saved · Another Sample uses an equivalent Color Plate identifier. Review before saving. · Date Initiated · Prepared By · Prepared By is required to generate a Sample Work Order. · Approved Date · Bid context · Standalone / no Bid · Notes · Legacy context · Retained historical metadata. Physical dimensions and piece count are set in Sample Plate. · Historical name · Historical size · Historical quantity · Historical additional notes · Retained with this Sample and included in generated documents. Use Notes above for new instructions. · View quantities as · Prepare Sample · Sample Plate · Materials and setup · Resin Supplier · Resin Color / # and the Resin row contain different descriptions. Choose which value to keep in both fields before saving. · Use Resin Color / # for both · Use Resin row for both · Chip Mix · Color / Material · Size · Type · Vendor · Actions · Add Aggregate · Details · Formula Role · Aggregate · Filler · Resin · Hardener · Other · Color · No role-matching results. · No Catalog match. Keep the authored Color as a manual value. · Current formulation Filler (lb) · Enter a nonnegative Filler quantity that leaves a positive Chip Mix. · Restore Profile Default · Edit amount in Prepare Sample. · Documents / History · Recent Documents · Sample Work Order · Sample Work Orders · View · No generated Sample Work Orders yet. · Generated Sample documents are protected from deletion. · Discard · Tenarten Sample Work Order · Save this Sample? · You have unsaved formula changes. Save them, discard them, or keep editing. · Keep Editing",
+                "path": "Samples → Sample Draft Library",
+                "route": "/samples"
+              },
+              {
+                "id": "production-find-job",
+                "title": "Find a Production Job",
+                "status": "deployed",
+                "availability": "available",
+                "guidance": "Authorized operational readers can find the same Production Jobs in Overview, Table or Timeline. Open Production → Production Pipeline and use Search jobs. Search matches project name, customer, Job number, estimate number, work order, color plate and remarks. Select a Job to open its Inspector. Filters can restrict Scheduled/Unscheduled and Production Status; business writers can use Include Archived when looking for archived Jobs. Read-only accounts can search the current visible list. Search and filters change the displayed Jobs, not their saved records.",
+                "path": "Production → Production Pipeline → Search jobs → select a Job",
+                "route": "/production"
+              }
+            ],
+            "complete": false,
+            "limitation": "Bounded documentation search. Missing documentation does not mean a feature is unavailable. No raw repository files, private conversations or current operational records are searched."
+          }
+        }
+      ],
+      "proposals": [],
+      "trace": [
+        {
+          "event": "model",
+          "round": 1,
+          "outcome": "received",
+          "durationMs": 1771,
+          "usage": {
+            "inputTokens": 1162,
+            "cachedInputTokens": 1159,
+            "outputTokens": 25,
+            "costUsd": 0.00018595,
+            "reservedUsd": 0.02613375
+          }
+        },
+        {
+          "event": "tool",
+          "round": 1,
+          "name": "discover_capabilities",
+          "outcome": "ok",
+          "durationMs": 0
+        },
+        {
+          "event": "model",
+          "round": 2,
+          "outcome": "received",
+          "durationMs": 2592,
+          "usage": {
+            "inputTokens": 1652,
+            "cachedInputTokens": 1649,
+            "outputTokens": 28,
+            "costUsd": 0.00022544999999999998,
+            "reservedUsd": 0.02977875
+          }
+        },
+        {
+          "event": "tool",
+          "round": 2,
+          "name": "search_workflow_knowledge",
+          "outcome": "ok",
+          "durationMs": 5
+        },
+        {
+          "event": "model",
+          "round": 3,
+          "outcome": "received",
+          "durationMs": 3171,
+          "usage": {
+            "inputTokens": 2947,
+            "cachedInputTokens": 2944,
+            "outputTokens": 91,
+            "costUsd": 0.0006052000000000001,
+            "reservedUsd": 0.0388725
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 5761,
+        "cachedInputTokens": 5752,
+        "outputTokens": 144,
+        "costUsd": 0.0010165999999999994,
+        "reservedUsd": 0.09478500000000001
+      },
+      "modelSteps": [
+        {
+          "calls": [
+            {
+              "id": "call_Fwuo32BxinDy7Hz1T7XzhXr2",
+              "name": "discover_capabilities",
+              "arguments": {
+                "names": [
+                  "search_workflow_knowledge"
+                ]
+              }
+            }
+          ],
+          "usage": {
+            "inputTokens": 1162,
+            "cachedInputTokens": 1159,
+            "outputTokens": 25,
+            "costUsd": 0.00018595,
+            "reservedUsd": 0.02613375
+          },
+          "durationMs": 1771
+        },
+        {
+          "calls": [
+            {
+              "id": "call_ijLHDk7HRmiwIFjgSKcinZLu",
+              "name": "search_workflow_knowledge",
+              "arguments": {
+                "query": "Production Timeline Review changes proposed dates save confirmation"
+              }
+            }
+          ],
+          "usage": {
+            "inputTokens": 1652,
+            "cachedInputTokens": 1649,
+            "outputTokens": 28,
+            "costUsd": 0.00022544999999999998,
+            "reservedUsd": 0.02977875
+          },
+          "durationMs": 2592
+        },
+        {
+          "calls": [],
+          "final": {
+            "answer": "Choose Save all changes. You’ll still need to confirm the save when prompted; opening the confirmation does not save the dates. I haven’t saved anything for you.",
+            "observations": [],
+            "inferences": [],
+            "recommendations": [
+              {
+                "text": "Choose Save all changes, then explicitly confirm to save the proposed dates.",
+                "evidence_ids": [
+                  "e1"
+                ]
+              }
+            ],
+            "questions": [],
+            "completed_actions": []
+          },
+          "usage": {
+            "inputTokens": 2947,
+            "cachedInputTokens": 2944,
+            "outputTokens": 91,
+            "costUsd": 0.0006052000000000001,
+            "reservedUsd": 0.0388725
+          },
+          "durationMs": 3171
+        }
+      ],
+      "durationMs": 7540,
+      "invoiceAttached": false,
+      "executionAvailable": false
+    },
+    "localDemo": {
+      "simulation": true,
+      "draft": null,
+      "attachment": null
+    }
+  },
+  "requests": [
+    {
+      "origin": "http://localhost:55595",
+      "action": "status"
+    },
+    {
+      "origin": "http://localhost:55595",
+      "action": "ask"
+    }
+  ],
+  "journalBefore": {
+    "reservedOrSpentUsd": 0.15425995000000015,
+    "attempts": 81,
+    "settled": 81
+  }
+}

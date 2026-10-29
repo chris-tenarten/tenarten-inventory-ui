@@ -1,0 +1,73 @@
+{
+  "recordedAt": "2026-10-29T17:33:46.367Z",
+  "mode": "offline-injected-providers-only",
+  "result": "passed",
+  "groups": 18,
+  "names": [
+    "status and upload are non-inference, explicitly simulated and bounded",
+    "upload rejects consent, MIME, extra keys, invalid bytes, oversized dimensions and PDF",
+    "upload is owner bound and can be cleared before any conversation",
+    "injected extraction feeds raw text to canonical invoice tools, with host-owned quantities",
+    "same attachment uses one extraction and prior draft becomes superseded",
+    "malformed extraction and provider failure create no drafts or pending rows",
+    "review is owner bound, exact-row, strict-field and catalog/Job allowlisted",
+    "invalid quantities, units, duplicate and non-material lines stay held",
+    "explicit reviewed catalog selection resolves ambiguity without creating a catalog row",
+    "approval requires current revision/hash, explicit confirmation and valid calendar metadata",
+    "approved simulated pending creation is all-or-none, canonical, audited and idempotent",
+    "new drafts recheck simulated creations for potential duplicate material receipts",
+    "permission revocation blocks review and approval without simulated writes",
+    "expiry is rechecked after the final asynchronous approval authorization",
+    "owner concurrency lock prevents edits or approval during model investigation",
+    "expired attachments and cross-owner conversations are unavailable",
+    "unsupported Production execution and arbitrary fields fail closed",
+    "canonical manual row mapping preserves defaults, earmarks, no received stock and validation"
+  ],
+  "commands": [
+    {
+      "command": "./node_modules/.bin/tsx scripts/verify-tenbot-live-demo.mts",
+      "exitCode": 0,
+      "result": "18 groups passed"
+    },
+    {
+      "command": "./node_modules/.bin/tsc --noEmit --strict --skipLibCheck --target ES2022 --lib ES2022,DOM --module esnext --moduleResolution bundler --esModuleInterop --allowImportingTsExtensions --allowJs scripts/support/tenbot-live-demo.mts scripts/start-tenbot-agent-review.mts scripts/verify-tenbot-live-demo.mts src/modules/inventory/pending-receival-contract.ts",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "command": "./node_modules/.bin/eslint scripts/support/tenbot-live-demo.mts scripts/start-tenbot-agent-review.mts scripts/verify-tenbot-live-demo.mts src/modules/inventory/pending-receival-contract.ts src/app/inventory/page.tsx",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "scripts/support/tenbot-live-demo.mts",
+      "sha256": "e9c264091a1f5ee3a68ae2803da5f86ba77a784050534ba85f33a6d3afc05081"
+    },
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "53fa7e51722dc569473dd9f2b1f1384625bb088251f8273a4c499be68f7d709b"
+    },
+    {
+      "path": "scripts/verify-tenbot-live-demo.mts",
+      "sha256": "d0411110dc0ce5223266cda1d7a44fce7fa8ca9cb5750088856ea0247d7f8cdb"
+    },
+    {
+      "path": "src/modules/inventory/pending-receival-contract.ts",
+      "sha256": "db2375b6b6045ef739a482f9a71fb911e7e45b41be70a7d2d9f5d0493078403e"
+    },
+    {
+      "path": "src/app/inventory/page.tsx",
+      "sha256": "dbd15bf34c6f167fd3fb08e1ca1536cccf0895adeca33a4cd9fbdf910d599461"
+    }
+  ],
+  "apiCalls": 0,
+  "dockerCalls": 0,
+  "databaseWrites": 0,
+  "notes": [
+    "Receipt records already observed command outputs; tests were not rerun to create this record.",
+    "Final lint-only correction removed an unused helper and changed an unmodified variable to const; no behavior changed after the 18-group pass.",
+    "No hosted authorization, live-model correctness, or database behavior is claimed by these offline tests."
+  ]
+}

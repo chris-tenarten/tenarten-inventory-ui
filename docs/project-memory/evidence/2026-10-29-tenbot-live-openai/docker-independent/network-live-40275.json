@@ -1,0 +1,634 @@
+{
+  "receipts": [
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-image-extraction",
+      "startedAt": "2026-10-29T17:44:32.860Z",
+      "reservedUsd": 0.137855,
+      "attachment": {
+        "type": "actual input_image",
+        "sha256": "228e6b29e03168fe05b6278ef46396d2ded476d4a13c740f05c810b4fd736515",
+        "bytes": 83910,
+        "width": 1024,
+        "height": 960,
+        "extraReservedInputTokens": 100000
+      },
+      "httpStatus": 200,
+      "requestId": "req_9f4637762dc04b398de98036ebe426b6",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1278,
+        "input_tokens_details": {
+          "cache_write_tokens": 1275,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1275
+          },
+          "cached_tokens": 0
+        },
+        "output_tokens": 183,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1461
+      },
+      "accountedUsd": 0.00251175,
+      "costMeasured": true,
+      "durationMs": 4514,
+      "calls": [],
+      "final": {
+        "raw_lines": [
+          "T&M SUPPLY    INVOICE",
+          "SYNTHETIC LOCAL DEMONSTRATION",
+          "Supplier: T&M Supply",
+          "Invoice: DEMO-REC-2189",
+          "Invoice date: 2026-10-29",
+          "Bill to: Tenarten — Synthetic test account",
+          "SKU    MATERIAL / SIZE    QUANTITY",
+          "AW-1    Alaska White / #1    250 LB",
+          "RES-5    Clear Resin / Part A    15 GAL",
+          "BC-0    Blue Coal / #0    1 Bag",
+          "GREEN    CC Green / #1    2 Bag",
+          "UNK-99    Unlisted Violet / #2    4 Bag",
+          "Freight / delivery charge: $55.00",
+          "TEST DOCUMENT — DO NOT POST OR PAY",
+          "Order date, ordered-by employee and destination are not supplied."
+        ]
+      },
+      "usage": {
+        "inputTokens": 1278,
+        "cachedInputTokens": 0,
+        "outputTokens": 183,
+        "costUsd": 0.00251175,
+        "reservedUsd": 0.012855
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:44:37.382Z",
+      "reservedUsd": 0.02709625,
+      "httpStatus": 200,
+      "requestId": "req_31070a45a8dc4bdf8bf58cfe5a9f66f0",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1292,
+        "input_tokens_details": {
+          "cache_write_tokens": 1289,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1289
+          },
+          "cached_tokens": 0
+        },
+        "output_tokens": 35,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1327
+      },
+      "accountedUsd": 0.00178925,
+      "costMeasured": true,
+      "durationMs": 1715,
+      "calls": [
+        {
+          "id": "call_MYiCNAqZtd4IUzTZbpflwzGj",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "read_invoice",
+              "search_catalog",
+              "check_receival_duplicates",
+              "prepare_pending_receivals"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1292,
+        "cachedInputTokens": 0,
+        "outputTokens": 35,
+        "costUsd": 0.00178925,
+        "reservedUsd": 0.02709625
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:44:39.099Z",
+      "reservedUsd": 0.0410975,
+      "httpStatus": 200,
+      "requestId": "req_0f93269bbcc44db4afa67ee7acc53265",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 3290,
+        "input_tokens_details": {
+          "cache_write_tokens": 3287,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 3287
+          },
+          "cached_tokens": 0
+        },
+        "output_tokens": 14,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3304
+      },
+      "accountedUsd": 0.00418175,
+      "costMeasured": true,
+      "durationMs": 2352,
+      "calls": [
+        {
+          "id": "call_oLrRCk4peO8e0aVa1fImY7eW",
+          "name": "read_invoice",
+          "arguments": {}
+        }
+      ],
+      "usage": {
+        "inputTokens": 3290,
+        "cachedInputTokens": 0,
+        "outputTokens": 14,
+        "costUsd": 0.00418175,
+        "reservedUsd": 0.0410975
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:44:41.453Z",
+      "reservedUsd": 0.0447825,
+      "httpStatus": 200,
+      "requestId": "req_4aac4c3cc1e84c95be218a9e62992822",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4128,
+        "input_tokens_details": {
+          "cache_write_tokens": 838,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 838
+          },
+          "cached_tokens": 3287
+        },
+        "output_tokens": 68,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4196
+      },
+      "accountedUsd": 0.00155485,
+      "costMeasured": true,
+      "durationMs": 3070,
+      "calls": [
+        {
+          "id": "call_kXa0pw1lm8RXg4bv8MyIHn0A",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L8",
+            "description": "Alaska White",
+            "quantity": "250",
+            "unit": "LB",
+            "size": "#1",
+            "vendor_sku": "AW-1"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4128,
+        "cachedInputTokens": 3287,
+        "outputTokens": 68,
+        "costUsd": 0.00155485,
+        "reservedUsd": 0.0447825
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:44:44.526Z",
+      "reservedUsd": 0.04641125,
+      "httpStatus": 200,
+      "requestId": "req_44203cd6126f4ce6a85e16a1f7ee47db",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4400,
+        "input_tokens_details": {
+          "cache_write_tokens": 272,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 272
+          },
+          "cached_tokens": 4125
+        },
+        "output_tokens": 67,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4467
+      },
+      "accountedUsd": 0.00088425,
+      "costMeasured": true,
+      "durationMs": 2625,
+      "calls": [
+        {
+          "id": "call_0n0VKZJN70xIBJ5iEjnWqmYJ",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L9",
+            "description": "Clear Resin",
+            "quantity": "15",
+            "unit": "GAL",
+            "size": "Part A",
+            "vendor_sku": "RES-5"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4400,
+        "cachedInputTokens": 4125,
+        "outputTokens": 67,
+        "costUsd": 0.00088425,
+        "reservedUsd": 0.04641125
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:44:47.153Z",
+      "reservedUsd": 0.04805625,
+      "httpStatus": 200,
+      "requestId": "req_ebbd2cd6db844748914db86083475096",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4673,
+        "input_tokens_details": {
+          "cache_write_tokens": 273,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 273
+          },
+          "cached_tokens": 4397
+        },
+        "output_tokens": 67,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 4740
+      },
+      "accountedUsd": 0.0008991,
+      "costMeasured": true,
+      "durationMs": 2189,
+      "calls": [
+        {
+          "id": "call_T7CvuWSeyJfSrT9uubMGOc8I",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L10",
+            "description": "Blue Coal",
+            "quantity": "1",
+            "unit": "Bag",
+            "size": "#0",
+            "vendor_sku": "BC-0"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4673,
+        "cachedInputTokens": 4397,
+        "outputTokens": 67,
+        "costUsd": 0.0008991,
+        "reservedUsd": 0.04805625
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:44:49.345Z",
+      "reservedUsd": 0.04967375,
+      "httpStatus": 200,
+      "requestId": "req_f3556d783d814540946298c9c3132225",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 4944,
+        "input_tokens_details": {
+          "cache_write_tokens": 271,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 271
+          },
+          "cached_tokens": 4670
+        },
+        "output_tokens": 65,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5009
+      },
+      "accountedUsd": 0.00090025,
+      "costMeasured": true,
+      "durationMs": 3996,
+      "calls": [
+        {
+          "id": "call_WSGeOLvq5Y58EWvty3nz39at",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L11",
+            "description": "CC Green",
+            "quantity": "2",
+            "unit": "Bag",
+            "size": "#1",
+            "vendor_sku": "GREEN"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 4944,
+        "cachedInputTokens": 4670,
+        "outputTokens": 65,
+        "costUsd": 0.00090025,
+        "reservedUsd": 0.04967375
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:44:53.343Z",
+      "reservedUsd": 0.05179,
+      "httpStatus": 200,
+      "requestId": "req_f9a653f20b994ae6b22bed265ffb7d1c",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 5286,
+        "input_tokens_details": {
+          "cache_write_tokens": 342,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 342
+          },
+          "cached_tokens": 4941
+        },
+        "output_tokens": 68,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5354
+      },
+      "accountedUsd": 0.0010175499999999999,
+      "costMeasured": true,
+      "durationMs": 2166,
+      "calls": [
+        {
+          "id": "call_mVyaqE8JlQyNTTcj3VxWdaVo",
+          "name": "search_catalog",
+          "arguments": {
+            "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L12",
+            "description": "Unlisted Violet",
+            "quantity": "4",
+            "unit": "Bag",
+            "size": "#2",
+            "vendor_sku": "UNK-99"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 5286,
+        "cachedInputTokens": 4941,
+        "outputTokens": 68,
+        "costUsd": 0.0010175499999999999,
+        "reservedUsd": 0.05179
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:44:55.512Z",
+      "reservedUsd": 0.05295,
+      "httpStatus": 200,
+      "requestId": "req_67547eb372d242b9a3d1ec45d2b20798",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 5475,
+        "input_tokens_details": {
+          "cache_write_tokens": 189,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 189
+          },
+          "cached_tokens": 5283
+        },
+        "output_tokens": 89,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5564
+      },
+      "accountedUsd": 0.0009484000000000001,
+      "costMeasured": true,
+      "durationMs": 2427,
+      "calls": [
+        {
+          "id": "call_JDVK23UY20roVtZx51NHI5Bg",
+          "name": "check_receival_duplicates",
+          "arguments": {
+            "supplier": "T&M Supply",
+            "supplier_source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L3",
+            "document_ref": "DEMO-REC-2189",
+            "document_source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L4"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 5475,
+        "cachedInputTokens": 5283,
+        "outputTokens": 89,
+        "costUsd": 0.0009484000000000001,
+        "reservedUsd": 0.05295
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:44:57.942Z",
+      "reservedUsd": 0.05465625,
+      "httpStatus": 200,
+      "requestId": "req_46bed73301c344abae8f5b4cf416c655",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 5775,
+        "input_tokens_details": {
+          "cache_write_tokens": 300,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 300
+          },
+          "cached_tokens": 5472
+        },
+        "output_tokens": 234,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 6009
+      },
+      "accountedUsd": 0.0018215999999999998,
+      "costMeasured": true,
+      "durationMs": 6206,
+      "calls": [
+        {
+          "id": "call_NVQ2usbGF7HjodlIbUH17OvM",
+          "name": "prepare_pending_receivals",
+          "arguments": {
+            "selections": [
+              {
+                "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L8",
+                "candidate_id": "standard:synthetic-aw1"
+              },
+              {
+                "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L9",
+                "candidate_id": "standard:synthetic-res5"
+              },
+              {
+                "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L10",
+                "candidate_id": "standard:synthetic-bc0"
+              },
+              {
+                "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L11",
+                "candidate_id": null
+              },
+              {
+                "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L12",
+                "candidate_id": null
+              }
+            ],
+            "exclusions": [
+              {
+                "source_ref": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L13",
+                "reason": "freight"
+              }
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 5775,
+        "cachedInputTokens": 5472,
+        "outputTokens": 234,
+        "costUsd": 0.0018215999999999998,
+        "reservedUsd": 0.05465625
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "localhost-agent",
+      "startedAt": "2026-10-29T17:45:04.152Z",
+      "reservedUsd": 0.0613475,
+      "httpStatus": 200,
+      "requestId": "req_3ebe4efbb0cc4a8db4b631a9f87dd7ce",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 7136,
+        "input_tokens_details": {
+          "cache_write_tokens": 1361,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1361
+          },
+          "cached_tokens": 5772
+        },
+        "output_tokens": 396,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 7532
+      },
+      "accountedUsd": 0.00397285,
+      "costMeasured": true,
+      "durationMs": 5767,
+      "calls": [],
+      "final": {
+        "answer": "A synthetic, review-only receival draft is available. No records were created; execution is not available in this session.",
+        "observations": [
+          {
+            "text": "The transcription identifies T&M Supply invoice DEMO-REC-2189 as a synthetic test document marked “DO NOT POST OR PAY.” It was produced using OpenAI image preprocessing; the original image still needs comparison.",
+            "evidence_ids": [
+              "e1"
+            ]
+          },
+          {
+            "text": "Draft lines for review: Alaska White #1, 250 LB converted to 5 bags of 50 LB; Clear Resin Part A, 15 GAL converted to 3 pails of 5 GAL. Ordered-by, order date and location are missing.",
+            "evidence_ids": [
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: Blue Coal #0, 1 bag, because an existing pending receival for the same supplier, material and size expects 3 bags. This is only a potential duplicate; invoice-level identity cannot be established.",
+            "evidence_ids": [
+              "e7",
+              "e8"
+            ]
+          },
+          {
+            "text": "Held: CC Green #1, 2 bags, has two catalog offers, one for 50-LB bags and one for 25-LB bags. Unlisted Violet #2, 4 bags, has no catalog candidate. Freight was excluded.",
+            "evidence_ids": [
+              "e5",
+              "e6",
+              "e8"
+            ]
+          }
+        ],
+        "inferences": [],
+        "recommendations": [
+          {
+            "text": "Compare all extracted lines and quantities with the original image, verify the package conversions and investigate the held lines. Recheck catalog and duplicate information before any future execution.",
+            "evidence_ids": [
+              "e1",
+              "e7",
+              "e8"
+            ]
+          }
+        ],
+        "questions": [
+          "Who ordered the materials, what was the order date, and what is the destination location?",
+          "Is the existing Blue Coal receival related to this invoice?",
+          "Which CC Green package applies, and what catalog item should be used for Unlisted Violet?"
+        ],
+        "completed_actions": []
+      },
+      "usage": {
+        "inputTokens": 7136,
+        "cachedInputTokens": 5772,
+        "outputTokens": 396,
+        "costUsd": 0.00397285,
+        "reservedUsd": 0.0613475
+      }
+    }
+  ],
+  "journal": {
+    "reservedOrSpentUsd": 0.11924075000000003,
+    "attempts": 55,
+    "settled": 55
+  },
+  "fatalReason": null
+}

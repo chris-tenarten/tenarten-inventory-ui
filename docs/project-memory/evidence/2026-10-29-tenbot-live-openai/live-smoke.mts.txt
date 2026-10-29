@@ -1,0 +1,51 @@
+import {readFileSync,writeFileSync,mkdirSync,renameSync,rmdirSync,existsSync,statSync} from 'node:fs';
+import {createOpenAIProvider,OPENAI_EXPERIMENT_PRICING,type OpenAIModel} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/_shared/tenbot-openai.ts';
+const model=process.argv[2] as OpenAIModel;
+if(!['gpt-6.1-sol','gpt-6.1-terra'].includes(model))throw Error('Model not approved');
+const directory='/private/tmp/tenops-tenbot-live-2026-10-29',shared='/private/tmp/tenops-tenbot-agent-poc';
+mkdirSync(directory,{recursive:true});mkdirSync(shared,{recursive:true});
+const lock=shared+'/openai-budget.lock';mkdirSync(lock);
+const path=shared+'/openai-budget.json';
+type Journal={reservedOrSpentUsd:number;attempts:number;settled:number};
+let journal:Journal;
+let initial:string|undefined;
+const receipt:Record<string,unknown>={model,mode:'actual OpenAI API authentication smoke; no tools or business data',at:new Date().toISOString(),databaseWrites:0};
+try{
+ initial=existsSync(path)?readFileSync(path,'utf8'):undefined;
+ journal=initial===undefined?{reservedOrSpentUsd:0,attempts:0,settled:0}:JSON.parse(initial);
+ if(!Number.isFinite(journal.reservedOrSpentUsd)||journal.reservedOrSpentUsd<0||journal.reservedOrSpentUsd>5||!Number.isSafeInteger(journal.attempts)||journal.attempts<0||!Number.isSafeInteger(journal.settled)||journal.settled<0||journal.settled>journal.attempts)throw Error('Invalid preserved budget journal');
+ const key=process.env.TENBOT_OPENAI_API_KEY||'';
+ if(key.length<16||process.env.TENBOT_OPENAI_SPEND_AUTHORIZED!=='true')throw Error('Credential or spending gate unavailable');
+ // Existing review adapter cannot reserve money: its construction is immutable/default-off.
+ const serverPath=shared+'/server.json';if(existsSync(serverPath)&&JSON.parse(readFileSync(serverPath,'utf8')).spendingAuthorized!==false)throw Error('Another adapter may spend; stop before inference');
+ const assertUnchanged=()=>{if((existsSync(path)?readFileSync(path,'utf8'):undefined)!==initial)throw Error('Concurrent journal change; stop');};
+ const save=()=>{assertUnchanged();const temporary=path+'.next';if(existsSync(temporary))throw Error('Existing journal recovery file; inspect');const serialized=JSON.stringify(journal,null,2);writeFileSync(temporary,serialized,{mode:0o600,flag:'wx'});renameSync(temporary,path);initial=serialized;};
+ const reserveBudget=async(usd:number)=>{
+  if(!Number.isFinite(usd)||usd<=0||journal.reservedOrSpentUsd+usd>5)throw Error('Cumulative $5 reservation cap unavailable');
+  journal.reservedOrSpentUsd+=usd;journal.attempts++;save();let finished=false;
+  return {settle(actual?:number){if(finished)return;if(actual!==undefined){if(!Number.isFinite(actual)||actual<0)throw Error('Invalid settlement');journal.reservedOrSpentUsd+=actual-usd;journal.settled++;}finished=true;save();}};
+ };
+ let fetchAttempts=0;
+ const provider=createOpenAIProvider({model,apiKey:key,spendingAuthorized:true,pricing:OPENAI_EXPERIMENT_PRICING[model],reserveBudget,
+  async fetcher(url,init){
+   if(++fetchAttempts>1||String(url)!=='https://api.openai.com/v1/responses')throw Error('Unexpected network request');
+   const request=JSON.parse(String(init?.body));request.service_tier='default';
+   const response=await fetch(url,{...init,body:JSON.stringify(request)});
+   receipt.httpStatus=response.status;receipt.requestId=response.headers.get('x-request-id');
+   try{const payload=await response.clone().json();
+    if(response.ok){receipt.apiModel=payload.model;receipt.apiStatus=payload.status;receipt.serviceTier=payload.service_tier;receipt.rawUsage=payload.usage;}
+    else{const safe=(value:unknown)=>typeof value==='string'&&/^[a-zA-Z0-9_-]{1,100}$/.test(value)?value:null;receipt.apiError={type:safe(payload.error?.type),code:safe(payload.error?.code)};}
+   }catch{receipt.responseMetadataUnavailable=true;}
+   return response;
+  }});
+ const start=performance.now();
+ try{
+  const step=await provider.step({instructions:'Authentication smoke test only. Return the structured status ready. Do not call any tools.',history:[{kind:'user',content:'Return status ready.'}],tools:[],finalSchema:{type:'object',properties:{status:{type:'string',enum:['ready']}},required:['status'],additionalProperties:false},signal:AbortSignal.timeout(30000),maxOutputTokens:512,remainingUsd:Math.min(0.25,5-journal.reservedOrSpentUsd),onReserve(){}});
+  receipt.durationMs=Math.round(performance.now()-start);receipt.usage=step.usage;receipt.final=step.final;receipt.toolCalls=step.calls;
+  receipt.success=receipt.httpStatus===200&&receipt.serviceTier==='default'&&JSON.stringify(step.final)==='{"status":"ready"}'&&step.calls.length===0;
+ }catch(error){receipt.durationMs=Math.round(performance.now()-start);receipt.success=false;receipt.providerFailure=(error as {code?:string}).code??'local-failure';receipt.usage=(error as {usage?:unknown}).usage;}
+ receipt.fetchAttempts=fetchAttempts;receipt.cumulativeJournal={...journal};
+ writeFileSync(directory+'/'+model+'-smoke.json',JSON.stringify(receipt,null,2),{mode:0o600});
+ console.log(JSON.stringify(receipt,null,2));if(receipt.success!==true)process.exitCode=2;
+}catch{console.log(JSON.stringify({model,success:false,preflightFailure:true,noFurtherRequests:true}));process.exitCode=3;}
+finally{rmdirSync(lock);}
