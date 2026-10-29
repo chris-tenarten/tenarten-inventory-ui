@@ -1,7 +1,7 @@
 /** An opaque, tab-local locator only. Answer text and operational evidence are
  * never written to browser storage; the server reauthorizes every hydration. */
 export const TENBOT_HISTORY_LOCATOR_KEY='tenops.tenbot.experimental-conversation.v1';
-export type HistoryBinding={owner:string;accessHash:string;mode:'synthetic'|'authenticated'};
+export type HistoryBinding={owner:string;accessHash:string;mode:'synthetic'|'authenticated'|'hosted'};
 type Locator=HistoryBinding&{version:1;conversationId:string;expiresAt:number};
 type StorageLike=Pick<Storage,'getItem'|'setItem'|'removeItem'>;
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

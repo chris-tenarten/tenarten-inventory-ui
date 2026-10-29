@@ -1,0 +1,459 @@
+{
+  "checkedAt": "2026-10-29T21:49:09.970Z",
+  "status": "STOPPED_BEFORE_DEPLOYMENT",
+  "acceptedCandidate": "9f70e38022fe8a6dcbda8246c3a49d20cc11360c",
+  "riskTier": 3,
+  "scope": "Read-only Terra help, walkthroughs, authorized Job Intelligence and history; Qwen fallback; no receival writes",
+  "sourceEvidence": [
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "caac87ed601af5a86048b3b739df69e81cf854a5bd10414b1c4c805f61f30204"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "d299aa59fe0f8b0411bedc8a5f8d95ac5c409779233c9787e92bca9fc8ca150d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "57864bd35aa34bb87fca3161be873a5deefae7e38bfc0bab3cd5286c7a84d07b"
+    },
+    {
+      "path": "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+      "sha256": "3985d2912af54957c35f36bbb61374b4ff334f950bdc436da393b0aaa5c6bcaf"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "b1e60d9abc6d01e58a123ea3c7172f0235815beccc9ccff068719709b92843a0"
+    },
+    {
+      "path": "scripts/support/tenbot-live-provider.mts",
+      "sha256": "187c7ba3c6dd6a8119fb5ca3be6f1f2c3de77d45bdc86fff1bbdd447f61195bb"
+    }
+  ],
+  "blockers": [
+    {
+      "id": "hosted-provider",
+      "reason": "Hosted entry point constructs only Qwen; no accepted OpenAI agent dependency is supplied."
+    },
+    {
+      "id": "distributed-spending",
+      "reason": "Local filesystem $5 ledger is not a distributed hosted control. Existing hosted reservation/settlement contract allowlists Cloudflare models and Neuron accounting only."
+    },
+    {
+      "id": "hosted-history",
+      "reason": "Accepted display history is process-local and localhost-only. Hosted history lacks accepted source/scope proof metadata and cannot preserve it across Edge isolates."
+    },
+    {
+      "id": "fallback-rollout",
+      "reason": "No Terra-to-Qwen hosted dispatcher exists; TenDev and TenOps share one Supabase project and need an explicit staged backend rollout gate."
+    },
+    {
+      "id": "deployment-authentication",
+      "reason": "One read-only Cloudflare project metadata request returned HTTP 401 with the existing cached credential. No retry, permission change or deployment attempted."
+    },
+    {
+      "id": "provider-readiness",
+      "reason": "Hosted OpenAI credential presence, expiration, model access and inference/fallback were not tested after the hard spending and deployment-authentication gates failed."
+    }
+  ],
+  "publicTargets": [
+    {
+      "target": "tendev",
+      "origin": "https://tendev.pages.dev",
+      "recordedDeploymentId": "7ef121ad-e19e-4caf-816d-11d2c590a734",
+      "deploymentIdVerifiedThisRun": false,
+      "recordedRuntimeSha": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "publicBuildMatch": true,
+      "checks": [
+        {
+          "route": "/",
+          "status": 200,
+          "sha256": "049793ea803283f7f1745cb4a34c25f88fa418620c3db42bed8bde9b14504dd6",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "status": 200,
+          "sha256": "c2db6835e4d3828c114363235ad7faf23931c80faf0f81313e3f44342513df82",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/sw.js",
+          "status": 200,
+          "sha256": "cc79b86fa2fa1f492d0b83eef7ae0de0f6c0741ea972287faadc64ae624f9a07",
+          "matchesRecordedBuild": true
+        }
+      ],
+      "assetChecks": [
+        {
+          "route": "/_next/static/css/15f74ee999edbd3d.css",
+          "status": 200,
+          "sha256": "dc31b71c94026cde2d75f752356e2e0a04884842cf0980ccd5b1a0567747f770",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/css/d7957608658f4027.css",
+          "status": 200,
+          "sha256": "8c6ff9c23bd26695c0bbe921659a8a9c000e75bc247a50d31b64a9acb66a8679",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/webpack-1b707cd55ea7f6b3.js",
+          "status": 200,
+          "sha256": "a7a10a5c4e29debfedd8e31d4075f5dcd203f119cafa05fbbe83661da3203db6",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/c1b010ae-8cda3ade643e9bbb.js",
+          "status": 200,
+          "sha256": "c32752bea08f16904ade836e4ba91198718d1431ddd417cac6bff0579a65bd65",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/3714-7946fb603a05859a.js",
+          "status": 200,
+          "sha256": "113f7177b1960b78006677ff403c52fff6e834b92ee30149c8623d6da83a5ca0",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/main-app-a4c21c96cc2bc032.js",
+          "status": 200,
+          "sha256": "6bd1a3c8dc8ce5fa4efa399ad9b9cec216aa79b53ab2ad8c5c7921c549bbdcd8",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/47222212-23f239a5d73d6cfe.js",
+          "status": 200,
+          "sha256": "789ac4751607b9284e5f41e931c258e34f73bc4064085d5b5f57f7866bebb511",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/9384-0204748abe1fb3e0.js",
+          "status": 200,
+          "sha256": "8747482ee69af871645a2a23b20297d8723d36553abdd6bd4eae13c674ae9e30",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/4944-9effc5eca9ed4eed.js",
+          "status": 200,
+          "sha256": "dc26d065e1a9ff48c367e645fe9e8ec0028dc901a80b41d3a8f87b0bb169d505",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/537-7f637a9ccda78a65.js",
+          "status": 200,
+          "sha256": "95db838ac68b7c2a8952765faa1e065c1baf4152a19c9a7ef70cf82e16d75bcf",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/3139-84b1c5c8a35a29d5.js",
+          "status": 200,
+          "sha256": "4a9fe4d59433195ca2e56224e78ed90a9609787384fb0bdd22a299f4666b9eb1",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/6873-ad2c34adfff528fa.js",
+          "status": 200,
+          "sha256": "67955c4c352d441df9fca29f6299c1cacf247879f7b80ef4649f1fb973e87530",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/2560-84b7131ff085d028.js",
+          "status": 200,
+          "sha256": "c1d234440a0c4112fa93582935f89a0b2c70a9ef833d3d6fd0432b6b00990630",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/app/layout-44a9a6242853d871.js",
+          "status": 200,
+          "sha256": "7ba99fdb5aa75f73d458afd4de07f96570ada9759529e9174d4fc060439723ff",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/926-34e9fa653e112405.js",
+          "status": 200,
+          "sha256": "c15d1cb05d121ebe1c0326621ea20ce745f3f62c797f5fe9eab0153a93aedd76",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/434-3e9f1b911e1df5e9.js",
+          "status": 200,
+          "sha256": "fb334a6fd870e0d78ba3555d649b0a327829bd2caa662de9f3a178ba19b1cf49",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/5779-5546161c1fcb7c0d.js",
+          "status": 200,
+          "sha256": "1fe34b9299269d7b0fb3ae2ef65e59c1bb18f6d179a39c548ab06b56fd722eb5",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/4350-fe070c83536aab29.js",
+          "status": 200,
+          "sha256": "26755793fe106345e65b39e9df861c1f907c410cfabc5be15240db68a55e918f",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/5971-04bd28b43a7f14be.js",
+          "status": 200,
+          "sha256": "2c9a97d0b1a360ab4b4c32c59180fb3b1d05ac2e911941c477228b3be8aed321",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/9065-f17f0b18dceb7b02.js",
+          "status": 200,
+          "sha256": "85504d31386f2411eceb12af19c41c616be8aae15e3538b892813d62b486510b",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/4796-d94402c509cd22cd.js",
+          "status": 200,
+          "sha256": "92a9762835994c40e0e5a148b1a41aef5de0e841b28fdff86f2d972f11553982",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/3993-5ba342dd1ad2e0c8.js",
+          "status": 200,
+          "sha256": "23137fe65cdf362b4c1bf037c54a6ca038a87aa1aa7b436b0a3a7705d2879be1",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/5307-ac8741000ac28d3d.js",
+          "status": 200,
+          "sha256": "f9901947c3157f592ff2d06c1ea65062727c58185948b401a75c8ba0efc60d46",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/app/page-d436a08902b7b9e1.js",
+          "status": 200,
+          "sha256": "5203fcd713636f6abe7b52ec9e8398b6da6bd715f4d13cb40af6b49430ef17d3",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/css/9611c0b375fc73f6.css",
+          "status": 200,
+          "sha256": "3c1602937e830228e309d4abd4b495e23b953f8468f04f0499e64c58226b984b",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+          "status": 200,
+          "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+          "matchesRecordedBuild": true
+        }
+      ]
+    },
+    {
+      "target": "tenops",
+      "origin": "https://tenops.pages.dev",
+      "recordedDeploymentId": "6cda75a5-dc37-480c-8027-bd7806176c34",
+      "deploymentIdVerifiedThisRun": false,
+      "recordedRuntimeSha": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "publicBuildMatch": true,
+      "checks": [
+        {
+          "route": "/",
+          "status": 200,
+          "sha256": "725617eaef26d7a5f7cc441157cfaac240664cf850ac7d3a1bf366cc384c79a3",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "status": 200,
+          "sha256": "f24cfc0cd69f7f52f309ef3b6b4e98510e22c75b45c0a79bf5924e570fba5654",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/sw.js",
+          "status": 200,
+          "sha256": "cc79b86fa2fa1f492d0b83eef7ae0de0f6c0741ea972287faadc64ae624f9a07",
+          "matchesRecordedBuild": true
+        }
+      ],
+      "assetChecks": [
+        {
+          "route": "/_next/static/css/15f74ee999edbd3d.css",
+          "status": 200,
+          "sha256": "dc31b71c94026cde2d75f752356e2e0a04884842cf0980ccd5b1a0567747f770",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/css/d7957608658f4027.css",
+          "status": 200,
+          "sha256": "8c6ff9c23bd26695c0bbe921659a8a9c000e75bc247a50d31b64a9acb66a8679",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/webpack-a67effd400d15982.js",
+          "status": 200,
+          "sha256": "4903a1ff55ad95926d4c1045ceddde304694485889546b659ee39d703acc61df",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/c1b010ae-8cda3ade643e9bbb.js",
+          "status": 200,
+          "sha256": "c32752bea08f16904ade836e4ba91198718d1431ddd417cac6bff0579a65bd65",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/3714-7946fb603a05859a.js",
+          "status": 200,
+          "sha256": "113f7177b1960b78006677ff403c52fff6e834b92ee30149c8623d6da83a5ca0",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/main-app-a4c21c96cc2bc032.js",
+          "status": 200,
+          "sha256": "6bd1a3c8dc8ce5fa4efa399ad9b9cec216aa79b53ab2ad8c5c7921c549bbdcd8",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/47222212-23f239a5d73d6cfe.js",
+          "status": 200,
+          "sha256": "789ac4751607b9284e5f41e931c258e34f73bc4064085d5b5f57f7866bebb511",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/9384-0204748abe1fb3e0.js",
+          "status": 200,
+          "sha256": "8747482ee69af871645a2a23b20297d8723d36553abdd6bd4eae13c674ae9e30",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/4944-9effc5eca9ed4eed.js",
+          "status": 200,
+          "sha256": "dc26d065e1a9ff48c367e645fe9e8ec0028dc901a80b41d3a8f87b0bb169d505",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/537-7f637a9ccda78a65.js",
+          "status": 200,
+          "sha256": "95db838ac68b7c2a8952765faa1e065c1baf4152a19c9a7ef70cf82e16d75bcf",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/3139-84b1c5c8a35a29d5.js",
+          "status": 200,
+          "sha256": "4a9fe4d59433195ca2e56224e78ed90a9609787384fb0bdd22a299f4666b9eb1",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/6873-e4d640076a843c8e.js",
+          "status": 200,
+          "sha256": "c02bd25fad73d7aa51ba243b3b7cafd7d4ae5adab02e697839fff52beaad18e8",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/2560-84b7131ff085d028.js",
+          "status": 200,
+          "sha256": "c1d234440a0c4112fa93582935f89a0b2c70a9ef833d3d6fd0432b6b00990630",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/app/layout-a5346d29b1d80a1d.js",
+          "status": 200,
+          "sha256": "8521067edf23faa2aff63cc4d2c87a90f91c7f8fe6e204db12423643c38a40d1",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/926-34e9fa653e112405.js",
+          "status": 200,
+          "sha256": "c15d1cb05d121ebe1c0326621ea20ce745f3f62c797f5fe9eab0153a93aedd76",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/434-3e9f1b911e1df5e9.js",
+          "status": 200,
+          "sha256": "fb334a6fd870e0d78ba3555d649b0a327829bd2caa662de9f3a178ba19b1cf49",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/5779-5546161c1fcb7c0d.js",
+          "status": 200,
+          "sha256": "1fe34b9299269d7b0fb3ae2ef65e59c1bb18f6d179a39c548ab06b56fd722eb5",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/4350-fe070c83536aab29.js",
+          "status": 200,
+          "sha256": "26755793fe106345e65b39e9df861c1f907c410cfabc5be15240db68a55e918f",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/5971-04bd28b43a7f14be.js",
+          "status": 200,
+          "sha256": "2c9a97d0b1a360ab4b4c32c59180fb3b1d05ac2e911941c477228b3be8aed321",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/9065-f17f0b18dceb7b02.js",
+          "status": 200,
+          "sha256": "85504d31386f2411eceb12af19c41c616be8aae15e3538b892813d62b486510b",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/4796-d94402c509cd22cd.js",
+          "status": 200,
+          "sha256": "92a9762835994c40e0e5a148b1a41aef5de0e841b28fdff86f2d972f11553982",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/3993-5ba342dd1ad2e0c8.js",
+          "status": 200,
+          "sha256": "23137fe65cdf362b4c1bf037c54a6ca038a87aa1aa7b436b0a3a7705d2879be1",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/5307-ac8741000ac28d3d.js",
+          "status": 200,
+          "sha256": "f9901947c3157f592ff2d06c1ea65062727c58185948b401a75c8ba0efc60d46",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/app/page-45dc5d8ec363f12f.js",
+          "status": 200,
+          "sha256": "94f463401358e4af8ed502033d11a7ea553c1ffaa380a08d8d15057dcc764282",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/css/9611c0b375fc73f6.css",
+          "status": 200,
+          "sha256": "3c1602937e830228e309d4abd4b495e23b953f8468f04f0499e64c58226b984b",
+          "matchesRecordedBuild": true
+        },
+        {
+          "route": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+          "status": 200,
+          "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+          "matchesRecordedBuild": true
+        }
+      ]
+    }
+  ],
+  "experimentLedger": {
+    "attempts": 361,
+    "settled": 361,
+    "reservedOrSpentUsd": 0.5319376500000005,
+    "capUsd": 5,
+    "addedCalls": 0,
+    "addedCostUsd": 0
+  },
+  "changes": {
+    "applicationSource": false,
+    "credentials": false,
+    "hostedConfiguration": false,
+    "migrations": false,
+    "operationalWrites": false,
+    "inference": false,
+    "push": false,
+    "deployment": false
+  },
+  "validation": {
+    "kind": "Focused source/configuration release preflight and public artifact comparison only",
+    "newBuild": false,
+    "newBroadQa": false,
+    "acceptedQaReused": true,
+    "hostedAuthorizationRevalidated": false,
+    "hostedProviderRevalidated": false
+  }
+}

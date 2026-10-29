@@ -18,6 +18,8 @@ export type OpenAIProviderOptions = {
   /** Atomic server-side reservation must reject when session/month budget is unavailable. Undefined settlement retains the reservation. */
   reserveBudget(usd: number): Promise<BudgetReservation>;
   fetcher?: typeof fetch; timeoutMs?: number;
+  /** Hosted accounting pins both the model and Standard service tier. */
+  requireResponseMetadata?:boolean;
 };
 const encoder = new TextEncoder();
 const ENDPOINT = 'https://api.openai.com/v1/responses';
@@ -38,7 +40,7 @@ export function buildOpenAIRequest(model: OpenAIModel, request: AgentStepRequest
   if (model !== 'gpt-6.1-sol' && model !== 'gpt-6.1-terra') throw new AgentStepError('model-not-allowed');
   if (!Number.isSafeInteger(request.maxOutputTokens) || request.maxOutputTokens < 1 || request.maxOutputTokens > 3000) throw new AgentStepError('invalid-output-budget');
   return {
-    model, store: false, instructions: request.instructions, input: nativeInput(request),
+    model, store: false, service_tier:'default', instructions: request.instructions, input: nativeInput(request),
     reasoning: { effort: 'low' }, include: ['reasoning.encrypted_content'], max_output_tokens: request.maxOutputTokens,
     // Pin the documented default write lifetime; no long-lived explicit breakpoints are accepted from employees.
     prompt_cache_options: { mode: 'implicit', ttl: '30m' },
@@ -112,8 +114,8 @@ export function createOpenAIProvider(options: OpenAIProviderOptions): AgentProvi
   if (options.timeoutMs !== undefined && (!Number.isSafeInteger(options.timeoutMs) || options.timeoutMs <= 0 || options.timeoutMs > 30000)) throw new AgentStepError('invalid-provider-timeout');
   // Copy configuration so later mutation cannot silently authorize spending or alter pricing.
   const model = options.model; const price = { ...options.pricing }; const spendingAuthorized = options.spendingAuthorized === true;
-  const apiKey = options.apiKey; const fetcher = options.fetcher ?? fetch; const reserve = options.reserveBudget; const timeoutMs = options.timeoutMs ?? 25000;
-  return { name: 'OpenAI Responses (local experiment)', model, async step(request) {
+  const apiKey = options.apiKey; const fetcher = options.fetcher ?? fetch; const reserve = options.reserveBudget; const timeoutMs = options.timeoutMs ?? 25000; const requireResponseMetadata=options.requireResponseMetadata===true;
+  return { name: 'OpenAI Responses', model, async step(request) {
     if (!spendingAuthorized) throw new AgentStepError('spending-not-authorized');
     if (typeof apiKey !== 'string' || apiKey.trim().length < 16 || !reserve) throw new AgentStepError('provider-not-configured');
     if (request.signal.aborted) throw new AgentStepError('provider-cancelled');
@@ -134,6 +136,7 @@ export function createOpenAIProvider(options: OpenAIProviderOptions): AgentProvi
       const response = await fetcher(ENDPOINT, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body, signal: controller.signal });
       const raw = await boundedBody(response, controller.signal); let payload: unknown;
       try { payload = JSON.parse(raw); } catch { throw new AgentStepError('invalid-provider-json'); }
+      if(response.ok&&requireResponseMetadata&&(!object(payload)||payload.model!==model||payload.service_tier!=='default'))throw new AgentStepError('unexpected-provider-metadata');
       if (object(payload)) { const actual = measuredUsage(payload.usage, price, reserved); if (actual) { usage = actual; measured = true; } }
       if (!response.ok) throw new AgentStepError('provider-http-error', usage, response.status === 429 || response.status >= 500);
       if (!measured) throw new AgentStepError('missing-provider-usage', usage);

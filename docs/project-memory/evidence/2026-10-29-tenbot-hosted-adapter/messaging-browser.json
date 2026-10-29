@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "desktop",
+      "passed": true,
+      "historyRequests": 3,
+      "inferenceReplayCalls": 0,
+      "experimentalControls": false
+    },
+    {
+      "name": "mobile",
+      "passed": true,
+      "historyRequests": 1,
+      "inferenceReplayCalls": 0,
+      "experimentalControls": false
+    },
+    {
+      "name": "status-recovery",
+      "passed": true,
+      "historyRequests": 1,
+      "inferenceReplayCalls": 0,
+      "experimentalControls": false
+    }
+  ],
+  "mode": "Candidate localhost Messaging, synthetic backend and archived provider transport",
+  "actualInference": false,
+  "actualDatabase": false
+}

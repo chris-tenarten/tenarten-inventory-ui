@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "checks": 11,
+  "names": [
+    "Decimal ceilings preserve fractions and scientific notation without downward rounding",
+    "Configuration and zero reservations fail before any RPC",
+    "Reserve binds authenticated owner, per-turn server ID, model and integer ceiling",
+    "Concurrent per-step reservations receive unique IDs; no model or caller replay IDs accepted",
+    "Unknown reservation response is not retried and cannot dispatch",
+    "Malformed reservation acknowledgement fails closed",
+    "RPC deadline is bounded; uncertain reserve remains un-retried",
+    "Measured settlement passes a conservative integer ceiling and permits idempotent retry",
+    "Undefined settlement retains full reservation; proven pre-dispatch zero is distinct",
+    "Settlement transport errors, conflicting replies and accounting overruns propagate fail closed",
+    "SQL security/activation contract is explicit (static inspection, not SQL execution)"
+  ],
+  "liveDatabase": false,
+  "providerCalls": 0,
+  "hostedCalls": 0,
+  "limitation": "RPC doubles plus SQL static contract checks; run verify-tenbot-openai-metering-database.mjs against an explicitly disposable local PostgreSQL database for real atomicity/role validation."
+}

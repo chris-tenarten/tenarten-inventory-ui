@@ -1,0 +1,22 @@
+{
+  "status": "pass",
+  "groups": 13,
+  "checks": [
+    "claims expose only metadata; proof-bearing raw history loads through service-only RPC",
+    "eligible answer survives a different server instance and history invokes no inference or expiry renewal",
+    "live Job results, questions, lookup seeds and provider-native state are absent from durable history",
+    "cross-owner access and revoked base permission cannot hydrate history",
+    "source proof changes are pruned across instances before display and model context",
+    "concurrent claim refuses a second instance and lease/revision replay cannot commit",
+    "clear invalidates in-flight immutable claim and late completion cannot resurrect a conversation",
+    "provider fallback error is thrown only after lease release; persistence failure never becomes fallback",
+    "one-hour expiry remains strict and hosted requests cannot acquire invoice or execution capabilities",
+    "an account revoked while ask/history commit returns cannot receive an answer or fallback",
+    "source grants revoked during ask/history commit cannot publish source-derived prose",
+    "Job facts changed while durable commit returns are re-read and cannot be published",
+    "schema contracts prohibit raw client state publication and bind service writes to active owner/claim/revision"
+  ],
+  "mode": "offline server/store contract doubles and schema inspection; not hosted JWT/RLS/database certification",
+  "inference_calls": 0,
+  "database_writes": 0
+}

@@ -1,0 +1,13 @@
+{
+  "status": "pass",
+  "groups": 5,
+  "checks": [
+    "tab locator contains only opaque identity/access/mode/expiry metadata",
+    "another owner, changed access or different provider mode cannot reuse the locator",
+    "expiry, malformed IDs and injected content fail closed",
+    "write-restricted storage falls back to the opaque identifier without reviving cleared history",
+    "clearing and malformed JSON never restore a prior locator"
+  ],
+  "inferenceCalls": 0,
+  "databaseRequests": 0
+}

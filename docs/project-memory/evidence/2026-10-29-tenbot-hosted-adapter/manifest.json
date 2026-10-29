@@ -1,0 +1,121 @@
+{
+  "checkedAt": "2026-10-29T22:10:43.344Z",
+  "status": "IMPLEMENTED_LOCALLY_AWAITING_PRODUCT_ACCEPTANCE",
+  "base": "9f70e38022fe8a6dcbda8246c3a49d20cc11360c",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "receipts": [
+    {
+      "script": "verify-tenbot-hosted.mts",
+      "passed": true,
+      "groups": 10
+    },
+    {
+      "script": "verify-tenbot-hosted-history.mts",
+      "passed": true,
+      "groups": 13
+    },
+    {
+      "script": "verify-tenbot-openai-metering.mts",
+      "passed": true,
+      "groups": 11
+    },
+    {
+      "script": "verify-tenbot-agent.mts",
+      "passed": true,
+      "groups": 33
+    },
+    {
+      "script": "verify-tenbot-agent-session.mts",
+      "passed": true,
+      "groups": 33
+    },
+    {
+      "script": "verify-tenbot-history-locator.mts",
+      "passed": true,
+      "groups": 5
+    }
+  ],
+  "sourceEvidence": [
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "a11b20273b1aad77b542a6729ff7cf3a2bb37cde0e6f2c01938df7bba593314c"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "sha256": "483362833b15de5fe985dcbdc3e1d07e57a2bb7576d8447d3be07530ebd3118b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "04f1ef3020b3cf250e2e5a523b6832e5d0f9432ce846fb2b0d4755d19a04a947"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "sha256": "88cb319df74eebb8d745904415527f01559dc329de4780c915b7a62ca74e2a20"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "c4987a87fa128ba1b544909190bcc1c0b5159c56e7726b034e2d360163c7191f"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
+      "sha256": "ba11e374ee20e639a60992f32224695c82dc004eaa802224f21630057e6f17b3"
+    },
+    {
+      "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454"
+    },
+    {
+      "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+      "sha256": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "46fc03a60a538c4dc7ce9b1da01d84f5b5709b33fb81abaf9fc36d48e844293d"
+    },
+    {
+      "path": "src/modules/tenbot/conversation-history.ts",
+      "sha256": "ce5ca9f876b3fb4cbfff060fef2575a28b6c3a85c6c123ad2b0b21963d5d6665"
+    }
+  ],
+  "actualInference": {
+    "model": "gpt-6.1-terra",
+    "turns": 2,
+    "calls": 6,
+    "standardUsageEstimatedUsd": 0.008017850000000104,
+    "latenciesMs": [
+      7979,
+      8144
+    ],
+    "cumulativeLedger": {
+      "reservedOrSpentUsd": 0.5399555000000006,
+      "attempts": 367,
+      "settled": 367
+    },
+    "capUsd": 5,
+    "actualDatabase": false
+  },
+  "boundaries": {
+    "qwenProductionUnchanged": true,
+    "hostedOpenAIEnabled": false,
+    "hostedSecretsConfigured": false,
+    "operationalWriteTools": [],
+    "migrationsApplied": [],
+    "push": false,
+    "deployment": false,
+    "personalContext": false
+  },
+  "releaseGates": [
+    "Owner verifies exact project-key expiration/rotation through secure procedure; hosted OpenAI key absent.",
+    "Real isolated database: migration application, concurrent atomic reservations, role/grant/JWT/RLS, revocation, lease replay and clear/commit races; no isolated target is available.",
+    "Reviewed budget activation carrying at least539956 microUSD plus any later local usage, finite expiry and $5 lifetime cap; freeze independent local spending at cutover.",
+    "Fresh actual hosted Terra and Qwen fallback/read-only Job canaries after separately approved migration/deployment."
+  ],
+  "limitations": [
+    "Database/RPC state in live and browser tests is synthetic; no hosted security or transaction certification.",
+    "Only proven static workflow/scope prose persists; operational facts, questions and lookup seeds are excluded. Operational follow-ups may need a Job reference.",
+    "Qwen fallback retains its existing private legacy context but its display answer is volatile and not restored as proof-checked Terra history.",
+    "One-hour eligible history expiry is logical; expired rows are cleaned on the owner next claiming a session.",
+    "No new live Qwen inference; prior accepted hosted Qwen evidence reused, new fallback control flow tested with synthetic transport."
+  ]
+}

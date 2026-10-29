@@ -1,0 +1,198 @@
+{
+  "passed": true,
+  "actualInference": true,
+  "actualDatabase": false,
+  "mode": "Real Terra read-only session, synthetic RPC storage; not hosted/JWT/RLS certification",
+  "rows": [
+    {
+      "question": "Walk me through creating a group conversation in TenOps, one step at a time.",
+      "answer": {
+        "conversationId": "6bff4503-8ee8-443a-910d-95ad49b54888",
+        "mode": "assistant",
+        "contentScope": "workflow",
+        "message": "First, open Messaging from the app header. Let me know when you’re there.",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-agent-poc.v1",
+          "verifiedAt": "2026-10-29T22:02:55.737Z"
+        },
+        "summary": null,
+        "suggestionAllowed": false,
+        "notices": [],
+        "historyTurnId": "42914c65-499a-43bb-9947-03dda5ff8df8",
+        "createdAt": "2026-10-29T22:02:47.762Z",
+        "answeredAt": "2026-10-29T22:02:55.737Z"
+      },
+      "latencyMs": 7979
+    },
+    {
+      "question": "I have opened New group. What do I do next?",
+      "answer": {
+        "conversationId": "6bff4503-8ee8-443a-910d-95ad49b54888",
+        "mode": "assistant",
+        "contentScope": "workflow",
+        "message": "Enter a group name. Let me know when you’ve done that.",
+        "sources": [],
+        "snapshot": {
+          "revision": "tenbot-agent-poc.v1",
+          "verifiedAt": "2026-10-29T22:03:03.881Z"
+        },
+        "summary": null,
+        "suggestionAllowed": false,
+        "notices": [],
+        "historyTurnId": "ac910708-f078-4dd1-8e6e-32cafe7c7913",
+        "createdAt": "2026-10-29T22:02:55.740Z",
+        "answeredAt": "2026-10-29T22:03:03.881Z"
+      },
+      "latencyMs": 8144
+    }
+  ],
+  "receipts": [
+    {
+      "model": "gpt-6.1-terra",
+      "apiModel": "gpt-6.1-terra",
+      "httpStatus": 200,
+      "serviceTier": "default",
+      "durationMs": 2612,
+      "calls": [
+        {
+          "id": "call_X03UzvsNRTxZygFfrX7MTduq",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "search_workflow_knowledge"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1274,
+        "cachedInputTokens": 0,
+        "outputTokens": 25,
+        "costUsd": 0.00171675,
+        "reservedUsd": 0.027
+      },
+      "accountedUsd": 0.00171675
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "apiModel": "gpt-6.1-terra",
+      "httpStatus": 200,
+      "serviceTier": "default",
+      "durationMs": 3056,
+      "calls": [
+        {
+          "id": "call_fr6mgcvA17JBnXtslQoAvfhf",
+          "name": "search_workflow_knowledge",
+          "arguments": {
+            "query": "create group conversation Messaging"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1818,
+        "cachedInputTokens": 0,
+        "outputTokens": 24,
+        "costUsd": 0.00239175,
+        "reservedUsd": 0.03102125
+      },
+      "accountedUsd": 0.00239175
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "apiModel": "gpt-6.1-terra",
+      "httpStatus": 200,
+      "serviceTier": "default",
+      "durationMs": 2284,
+      "calls": [],
+      "usage": {
+        "inputTokens": 2561,
+        "cachedInputTokens": 1815,
+        "outputTokens": 68,
+        "costUsd": 0.0013625,
+        "reservedUsd": 0.03618
+      },
+      "accountedUsd": 0.0013625
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "apiModel": "gpt-6.1-terra",
+      "httpStatus": 200,
+      "serviceTier": "default",
+      "durationMs": 1872,
+      "calls": [
+        {
+          "id": "call_pd6RAFer6XN51rjDK1r1l41T",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "search_workflow_knowledge"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1335,
+        "cachedInputTokens": 1243,
+        "outputTokens": 25,
+        "costUsd": 0.00030139999999999995,
+        "reservedUsd": 0.02739125
+      },
+      "accountedUsd": 0.00030139999999999995
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "apiModel": "gpt-6.1-terra",
+      "httpStatus": 200,
+      "serviceTier": "default",
+      "durationMs": 2376,
+      "calls": [
+        {
+          "id": "call_DN52YyBk2vvcL1zw2VMPU0Nh",
+          "name": "search_workflow_knowledge",
+          "arguments": {
+            "query": "Messaging create group conversation New group"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1879,
+        "cachedInputTokens": 1313,
+        "outputTokens": 26,
+        "costUsd": 0.0009023999999999999,
+        "reservedUsd": 0.0314125
+      },
+      "accountedUsd": 0.0009023999999999999
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "apiModel": "gpt-6.1-terra",
+      "httpStatus": 200,
+      "serviceTier": "default",
+      "durationMs": 3882,
+      "calls": [],
+      "usage": {
+        "inputTokens": 2624,
+        "cachedInputTokens": 1876,
+        "outputTokens": 63,
+        "costUsd": 0.00134305,
+        "reservedUsd": 0.03658375
+      },
+      "accountedUsd": 0.00134305
+    }
+  ],
+  "restoredTurns": 2,
+  "restorationInferenceCalls": 0,
+  "before": {
+    "reservedOrSpentUsd": 0.5319376500000005,
+    "attempts": 361,
+    "settled": 361
+  },
+  "after": {
+    "reservedOrSpentUsd": 0.5399555000000006,
+    "attempts": 367,
+    "settled": 367
+  },
+  "addedCalls": 6,
+  "addedAccountedUsd": 0.008017850000000104
+}

@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "mode": "Isolated Production-mode build with synthetic public backend; no deployment",
+  "durationMs": 16156,
+  "source": "/private/tmp/tenops-tenbot-hosted-adapter-20261029/source",
+  "output": "/private/tmp/tenops-tenbot-hosted-adapter-20261029/source/out",
+  "envFilesExcluded": true
+}

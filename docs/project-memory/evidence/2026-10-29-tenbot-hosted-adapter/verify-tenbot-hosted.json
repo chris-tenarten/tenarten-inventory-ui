@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "checks": [
+    "Origin rollout keeps TenOps on Qwen while TenDev has the read-only agent",
+    "Terra transport reserves before every call, settles actual usage and restores across new instances without inference",
+    "Spending denial invokes Qwen without any paid dispatch and uses the same authorized conversation",
+    "Provider outage retains uncertain reservations and falls back without copying native context",
+    "Qwen fallback holds the conversation lease against concurrent hydration/ask and releases after legacy append",
+    "Missing/expired key and disabled spend cannot dispatch OpenAI; Qwen remains functional",
+    "Unexpected model/tier metadata retains full reservation and falls back rather than underpricing the response",
+    "Input, access and persistence failures never become provider fallback or paid inference",
+    "Read-only tool discovery cannot expose invoice, catalog preparation, execute, SQL or shell",
+    "Clear deletes durable context and rejects subsequent history without replaying inference"
+  ],
+  "groups": 10,
+  "mode": "Offline hosted construction/Responses transport/RPC doubles",
+  "actualInference": false,
+  "actualDatabase": false
+}

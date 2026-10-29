@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-10-29T22:02:36.038Z",
+  "readOnlyHostedInspection": true,
+  "cloudflare": {
+    "previous401Cause": "Helper read expired cached OAuth token directly without Wrangler refresh",
+    "oldExpiry": "2026-10-29T16:09:03.773Z",
+    "existingOauthRefreshedByWranglerWhoami": true,
+    "newExpiry": "2026-10-29T22:58:06.708Z",
+    "expectedAccountVerified": true,
+    "projectMetadataStatus": 200,
+    "targets": [
+      {
+        "target": "tendev",
+        "deploymentId": "7ef121ad-e19e-4caf-816d-11d2c590a734",
+        "servedSha": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79"
+      },
+      {
+        "target": "tenops",
+        "deploymentId": "6cda75a5-dc37-480c-8027-bd7806176c34",
+        "servedSha": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79"
+      }
+    ]
+  },
+  "supabase": {
+    "existingKeychainManagementCredentialAvailable": true,
+    "secretMetadataStatus": 200,
+    "tenbotSecretNames": [
+      "TENBOT_AI_ENABLED",
+      "TENBOT_ALLOWED_ORIGINS",
+      "TENBOT_CF_ACCOUNT_ID",
+      "TENBOT_CF_AI_TOKEN",
+      "TENBOT_CF_MODEL"
+    ],
+    "openAiSecretPresent": false,
+    "accessibleProjectsStatus": 200,
+    "accessibleProjects": [
+      {
+        "id": "vxdxjhazkqhpkwdqtobp",
+        "name": "tenartenDB",
+        "status": "ACTIVE_HEALTHY",
+        "sharedProductionAndTenDev": true
+      }
+    ],
+    "isolatedHostedTargetDiscovered": false
+  },
+  "openai": {
+    "browserAutomationAvailable": false,
+    "platformAuthenticatedBrowserSession": false,
+    "currentKeyExpiresAtVerified": false,
+    "historicalProjectKeyLifetime": "1 day; historical only",
+    "secretEntryOrProvisioningAttempted": false,
+    "screenCaptureUsed": false,
+    "temporaryBrowserTabClosed": true,
+    "uiBindingsReleased": true
+  },
+  "isolatedDatabase": {
+    "dockerOrUnresponsiveEndpointsRetried": false,
+    "nativeBinariesInStandardPaths": false,
+    "embeddedDatabaseDependencyFound": false,
+    "realDatabaseValidationAvailable": false
+  },
+  "mutations": {
+    "hostedConfig": false,
+    "hostedData": false,
+    "credentialsCreated": false,
+    "authCacheRefreshed": true,
+    "servicesProvisioned": false,
+    "paidInference": false,
+    "deploy": false,
+    "push": false
+  }
+}
