@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "baseCandidate": "ee222c7",
+  "scope": "Receival review UX corrections and header disclosure refinement",
+  "status": "Implemented locally; pending Product review",
+  "riskTier": 2,
+  "testingLevel": 2,
+  "boundary": "Actual localhost UI with intercepted/replayed model and database responses; not live inference, authentication/RLS or transaction certification",
+  "offlineGroups": 15,
+  "browserGroups": 10,
+  "typeScript": "passed including final build",
+  "targetedEslint": "passed",
+  "diffCheck": "passed",
+  "build": "optimized local export passed; 24 pages",
+  "independentReview": "PASS; no source/security blocker",
+  "rootVisualReview": [
+    "desktop proposed catalog details and unit validation",
+    "mobile proposed details, unit feedback and ready/unreviewed states",
+    "exact final subtitle, retained info icon and compact line labels"
+  ],
+  "newCatalogWrites": 0,
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "journalUnchanged": true,
+  "proposalBoundary": "Local unsubmitted state only, separate from receival payload; configured Vendor resolution and explicit approval remain required for any future creation",
+  "executionBoundary": "Existing real writes disabled, migration unapplied and actual database gates remain open",
+  "sourcePins": {
+    "src/modules/tenbot/ReceivalDraftReview.tsx": "4b257b9ffa59dbffe00f1c18128937a015608359a9d42f03bb8019a592174612",
+    "src/modules/tenbot/live-review.ts": "d1ed9e37fa6f9195a269ceb91dc00cc02cd0046ee21591666e6adedfb31a7b41",
+    "src/modules/tenbot/TenbotWorkspace.tsx": "919c1bec14f709e5e6d21e1e5082879b4592fd344f9cdc7454d050c51d85f1b7",
+    "src/modules/my-work/inbox.ts": "9b864de21cd7c6934f85a9b89cd956a873b73f6699e0ab4ef07bf50656d83dc0",
+    "scripts/verify-tenbot-live-review.mts": "9c06cc87d0d2f35d9d5a3d4dd0fb92ef8fc7dd30a4e0b287cab8011f856fbb2e",
+    "scripts/verify-tenbot-receival-review-ux.mjs": "a1a6c62080cf852f00209f9783b7aba0521d5a9be6eccf75e5d68eead0da1acf"
+  },
+  "files": [
+    {
+      "path": "desktop-edited-unreviewed.png",
+      "bytes": 130776,
+      "sha256": "fd7b47f8ae5a3497f7e8861add06f66c8608bdf3721328e5eab01395e6c7a88f"
+    },
+    {
+      "path": "desktop-initial-review.png",
+      "bytes": 135126,
+      "sha256": "e1539403e84547fad8ee8ae189f2d5152e792d354d40046a341cf7b7e959d964"
+    },
+    {
+      "path": "desktop-proposed-material.png",
+      "bytes": 142527,
+      "sha256": "94bb0cc83f1fa09f60bbb5b5a4278a2b457343be157635da421d425c6873c859"
+    },
+    {
+      "path": "desktop-unit-validation.png",
+      "bytes": 128789,
+      "sha256": "1542fbf65ad95b2c587b463fc9ba16ae71ed2198bf8c0886d9c8d98eea383a23"
+    },
+    {
+      "path": "mobile-edited-unreviewed.png",
+      "bytes": 66479,
+      "sha256": "7f69b7c2dce308259c405f9a9c88e741d14cb38a3f9dc9d1a5f668ddeb02a737"
+    },
+    {
+      "path": "mobile-proposed-material.png",
+      "bytes": 65627,
+      "sha256": "368b35d49babc72b927d5883ec40d34fe2a1af7d1837ad7138194f873e598370"
+    },
+    {
+      "path": "mobile-unit-validation.png",
+      "bytes": 67287,
+      "sha256": "5a74b591d0c2e9fb6b31416d5e1e63d95ed682f76a917741351747911763a348"
+    },
+    {
+      "path": "offline-validation.json",
+      "bytes": 1685,
+      "sha256": "b1d09e2d57211991bd00e26ceb5cefb54776fd4d4d46e535da6e7942e34e8537"
+    },
+    {
+      "path": "report.json",
+      "bytes": 3233,
+      "sha256": "08552b210eecca775d4970a9c7888cb59674c0952cd3735344c4a2486327798c"
+    }
+  ]
+}

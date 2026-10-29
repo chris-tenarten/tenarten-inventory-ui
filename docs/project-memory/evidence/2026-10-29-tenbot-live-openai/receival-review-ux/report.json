@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "mode": "Actual localhost UI; saved model receipt and explicitly simulated review transport, zero fresh inference/database actions",
+  "groups": 10,
+  "checks": [
+    "Muted header identifies the AI-assisted TenOps helper; About TenBot AI retains on-demand disclosure without redundant persistent composer processing text",
+    "Each recorded invoice line shows an explicit current state; unmatched Violet and duplicate Blue Coal remain held",
+    "Unmatched line prepares reviewable catalog details locally without inventing a material ID, submitting an RPC, or clearing the catalog hold",
+    "390 px mobile catalog request preserves readable fields and contained controls without horizontal overflow",
+    "Choosing an existing material immediately clears obsolete unmatched/ambiguity validation while preserving unsaved review state",
+    "Quantity and catalog-compatible unit errors name their exact fields and disappear immediately after correction",
+    "Duplicate concern survives unrelated quantity/Job edits; explicit exclusion suppresses obsolete invalid-field feedback without assigning a catalog item",
+    "Review submission contains only canonical receival edits; catalog proposal survives server revision/remount read-only on the excluded line, stays outside payloads, and duplicate remains held after authoritative-response fixture",
+    "Reviewed valid draft permits explicit approval selection; any subsequent receival edit immediately clears approval and disables execution until another server review",
+    "UI profile without manageVendorsCatalog cannot prepare a catalog addition; this is a fixture permission check, not database authorization certification"
+  ],
+  "traces": [
+    {
+      "action": "status",
+      "endpoint": "http://localhost:55595"
+    },
+    {
+      "action": "upload",
+      "endpoint": "http://localhost:55595"
+    },
+    {
+      "action": "ask",
+      "endpoint": "http://localhost:55595"
+    },
+    {
+      "action": "review",
+      "endpoint": "http://localhost:55595"
+    },
+    {
+      "action": "review",
+      "endpoint": "http://localhost:55595"
+    },
+    {
+      "action": "status",
+      "endpoint": "http://localhost:55595"
+    },
+    {
+      "action": "upload",
+      "endpoint": "http://localhost:55595"
+    },
+    {
+      "action": "ask",
+      "endpoint": "http://localhost:55595"
+    }
+  ],
+  "errors": [],
+  "unexpectedNetwork": [],
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "databaseSecurityVerified": false,
+  "operationalWrites": 0,
+  "journalUnchanged": true,
+  "journalSha256": "5eda46898b41d0c7bfc6f74425ed5e76c5e74248a722bdad28b5e6214d6c5f12",
+  "sourcePins": {
+    "src/modules/tenbot/ReceivalDraftReview.tsx": "4b257b9ffa59dbffe00f1c18128937a015608359a9d42f03bb8019a592174612",
+    "src/modules/tenbot/live-review.ts": "d1ed9e37fa6f9195a269ceb91dc00cc02cd0046ee21591666e6adedfb31a7b41",
+    "src/modules/tenbot/TenbotWorkspace.tsx": "919c1bec14f709e5e6d21e1e5082879b4592fd344f9cdc7454d050c51d85f1b7",
+    "src/modules/my-work/inbox.ts": "9b864de21cd7c6934f85a9b89cd956a873b73f6699e0ab4ef07bf50656d83dc0",
+    "scripts/verify-tenbot-receival-review-ux.mjs": "a1a6c62080cf852f00209f9783b7aba0521d5a9be6eccf75e5d68eead0da1acf"
+  }
+}

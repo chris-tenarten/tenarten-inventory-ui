@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { approvalForCurrentReview, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft } from '../src/modules/tenbot/live-review';
+import { approvalForCurrentReview, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft } from '../src/modules/tenbot/live-review';
 import { ReceivalDraftReview } from '../src/modules/tenbot/ReceivalDraftReview';
 
 // Offline UI/lifecycle checks. This never starts a server or invokes a provider.
@@ -39,10 +39,48 @@ await check('review UI exposes canonical catalog choices, positive quantity, uni
   assert.ok(/disabled=""[^>]*>Approve simulated pending receivals/.test(html));
 });
 await check('held lines and missing metadata remain visible and cannot be approved initially', () => {
-  const held = copy(base); held.canApprove = false; held.missingFields = ['ordered_by']; held.rows[0].materialId = null; held.rows[0].reasons = ['ambiguous_catalog_match'];
+  const held = copy(base); held.canApprove = false; held.missingFields = ['ordered_by']; held.orderDetails.orderedBy = ''; held.rows[0].materialId = null; held.rows[0].reasons = ['ambiguous_catalog_match'];
   const html = render(held);
-  for (const text of ['ambiguous catalog match', 'Information needed: ordered by', 'Exclude this line', 'existing catalog material', 'Resolve or exclude held lines']) assert.ok(html.includes(text), text);
+  for (const text of ['Needs catalog match', 'Ordered by is required.', 'Exclude this line', 'existing catalog material', 'Request new catalog material', 'Before approval']) assert.ok(html.includes(text), text);
   assert.equal(approvalForCurrentReview(held, editableRows(held), held.orderDetails, true, false), false);
+});
+await check('current quantity/unit/catalog validation clears corrected field errors without approving unsaved edits', () => {
+  const source = copy(base.rows[0]); source.reasons = ['invalid_quantity', 'incompatible_unit'];
+  const row = editableRows(base)[0]; row.quantity = '0'; row.unit = 'Pail';
+  const invalid = receivalLineValidation(source, row, status);
+  assert.equal(invalid.state, 'Invalid quantity/unit'); assert(invalid.fields.quantity); assert(invalid.fields.unit);
+  row.quantity = '4'; row.unit = 'Bag';
+  const corrected = receivalLineValidation(source, row, status);
+  assert.equal(corrected.state, 'Ready'); assert.deepEqual(corrected.fields, {}); assert.equal(corrected.changed, true);
+  assert.equal(approvalForCurrentReview(base, [row], base.orderDetails, true, false), false);
+  for (const quantity of ['', '-1', 'NaN', 'Infinity', '9'.repeat(400)]) assert(receivalLineValidation(source, {...row, quantity}, status).fields.quantity);
+});
+await check('existing catalog identity resolves current match errors while proposals and unknown IDs do not', () => {
+  const source = {...copy(base.rows[0]), materialId: null, reasons: ['unmatched_material', 'ambiguous_catalog_match']};
+  const row = {...editableRows(base)[0], materialId: null};
+  assert.equal(receivalLineValidation(source, row, status).state, 'Needs catalog match');
+  assert.equal(receivalLineValidation(source, {...row, materialId: 'proposed-not-a-catalog-id'}, status).state, 'Needs catalog match');
+  const resolved = receivalLineValidation(source, {...row, materialId: status.catalog[0].id}, status);
+  assert.equal(resolved.state, 'Ready'); assert.deepEqual(resolved.holds, []);
+});
+await check('duplicate, document conflicts and unknown server holds survive unrelated edits until server review or exclusion', () => {
+  for (const reason of ['potential_duplicate', 'duplicate_draft_line', 'supplier_mismatch', 'invoice_catalog_package_conflict', 'future_server_hold']) {
+    const source = {...copy(base.rows[0]), reasons: [reason]}, row = {...editableRows(base)[0], quantity: '6', jobId: status.jobs[0].id};
+    const held = receivalLineValidation(source, row, status);
+    assert.equal(held.state, 'Needs review'); assert.equal(held.holds.length, 1);
+    const excluded = receivalLineValidation(source, {...row, excluded: true, quantity: '0'}, status);
+    assert.equal(excluded.state, 'Excluded'); assert.deepEqual(excluded.fields, {}); assert.deepEqual(excluded.holds, []);
+  }
+});
+await check('metadata, Job and real decimal bounds name current fields and discard obsolete missing-field snapshots', () => {
+  assert.deepEqual(receivalOrderIssues(base.orderDetails), {});
+  assert.deepEqual(Object.keys(receivalOrderIssues({orderedBy: ' ', orderDate: '2026-02-30', location: ''})).sort(), ['location', 'orderDate', 'orderedBy']);
+  assert(receivalLineValidation(base.rows[0], {...editableRows(base)[0], jobId: 'unknown-job'}, status).fields.jobId);
+  const real = {...status, simulation: false};
+  for (const quantity of ['1000000000', '0.0000001', '01']) assert(receivalLineValidation(base.rows[0], {...editableRows(base)[0], quantity}, real).fields.quantity);
+  assert(!receivalLineValidation(base.rows[0], {...editableRows(base)[0], unit: 'Bags'}, real).fields.unit);
+  const stale = {...copy(base), missingFields: ['ordered_by']};
+  assert(!render(stale).includes('Ordered by is required.'));
 });
 await check('successful simulation is explicitly distinguished from Production and on-hand inventory', () => {
   const approved = { ...copy(base), status: 'approved_simulated' as const };

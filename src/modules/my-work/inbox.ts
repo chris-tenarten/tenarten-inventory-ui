@@ -38,8 +38,8 @@ export type ConversationSummary={groupId?:string;creatorUserId?:string;memberIds
 // Presentation only: the existing virtual system peer remains separate from
 // employee accounts, group membership and protected release-delivery records.
 export function tenbotConversations(rows:ConversationSummary[],available:boolean):ConversationSummary[]{
-  const conversations=rows.map(row=>isTenOpsSystemInboxUser(row.userId)?{...row,name:"TenBot",role:"TenOps guidance"}:row);
-  if(available&&!rows.some(row=>isTenOpsSystemInboxUser(row.userId)))conversations.unshift({userId:TENOPS_SYSTEM_INBOX_USER_ID,name:"TenBot",role:"TenOps guidance",unread:0,latest:{id:"",createdAt:"",body:"Ask about TenOps workflows"}});
+  const conversations=rows.map(row=>isTenOpsSystemInboxUser(row.userId)?{...row,name:"TenBot",role:"AI-assisted TenOps helper"}:row);
+  if(available&&!rows.some(row=>isTenOpsSystemInboxUser(row.userId)))conversations.unshift({userId:TENOPS_SYSTEM_INBOX_USER_ID,name:"TenBot",role:"AI-assisted TenOps helper",unread:0,latest:{id:"",createdAt:"",body:"Ask about TenOps workflows"}});
   return conversations;
 }
 export async function loadConversationSummaries():Promise<ConversationSummary[]>{

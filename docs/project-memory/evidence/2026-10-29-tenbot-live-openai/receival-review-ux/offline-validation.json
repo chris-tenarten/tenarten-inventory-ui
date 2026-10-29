@@ -1,0 +1,24 @@
+{
+  "status": "pass",
+  "mode": "offline UI rendering and approval lifecycle only; no browser image-compression or model-quality claim",
+  "groups": 15,
+  "checks": [
+    "approval requires explicit confirmation of the current reviewed revision/hash",
+    "quantity, catalog identity, unit, Job, exclusion and metadata edits invalidate approval",
+    "editing does not mutate the server-owned draft or its hash",
+    "review UI exposes canonical catalog choices, positive quantity, units, Job and explicit approval",
+    "held lines and missing metadata remain visible and cannot be approved initially",
+    "current quantity/unit/catalog validation clears corrected field errors without approving unsaved edits",
+    "existing catalog identity resolves current match errors while proposals and unknown IDs do not",
+    "duplicate, document conflicts and unknown server holds survive unrelated edits until server review or exclusion",
+    "metadata, Job and real decimal bounds name current fields and discard obsolete missing-field snapshots",
+    "successful simulation is explicitly distinguished from Production and on-hand inventory",
+    "real execution is disabled independently of model readiness and cannot inherit simulation approval",
+    "future real approval requires both durable server identities and unchanged current review",
+    "authenticated candidate opt-in is limited to exact localhost origin and both explicit query flags",
+    "unsafe formats and excessive originals fail before any browser image processing or upload",
+    "PDF intake refuses silent page truncation and bounds portrait/landscape rendering"
+  ],
+  "inferenceCalls": 0,
+  "databaseWrites": 0
+}

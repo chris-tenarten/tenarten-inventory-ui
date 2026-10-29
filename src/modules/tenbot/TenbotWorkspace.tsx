@@ -6,7 +6,7 @@ import {Info,MoreHorizontal,Paperclip,X} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {ReceivalDraftReview} from './ReceivalDraftReview';
-import {localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
+import {localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit,type ProposedCatalogMaterial} from './live-review';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
 type Answer={conversationId?:string;mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean;operational?:{observedAt:string|null;complete:boolean;truncated:boolean;facts:{id:string;text:string}[];refreshable:boolean}};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
@@ -109,6 +109,7 @@ export function useTenbotConversation():TenbotConversation{
  const [selectedAttachment,setSelectedAttachment]=useState<File|null>(null);
  const [attachmentOrigin,setAttachmentOrigin]=useState<{originalFilename:string;renderedPdf:boolean}|null>(null);
  const [receivalDraft,setReceivalDraft]=useState<LocalReceivalDraft|null>(null),[localApproval,setLocalApproval]=useState<LocalApproval|null>(null);
+ const [catalogRequests,setCatalogRequests]=useState<Record<string,ProposedCatalogMaterial>>({});
  const authenticatedReceivals=experiment&&authenticatedExperiment;
  const liveDemo=experiment&&(authenticatedExperiment||experimentStatus?.mode==='synthetic-live'||experimentStatus?.mode==='authenticated-receivals');
  const [notes,setNotes]=useState<Record<string,string>>({});
@@ -139,7 +140,7 @@ export function useTenbotConversation():TenbotConversation{
  },[owner]);
  useEffect(()=>{
   // Live facts have no client persistence or reusable response cache.
-  liveTurn.current=null;setMessages([]);setReceivalDraft(null);setLocalApproval(null);setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);
+  liveTurn.current=null;setMessages([]);setReceivalDraft(null);setLocalApproval(null);setCatalogRequests({});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);
  },[owner,available,accessFingerprint]);
  useEffect(()=>{
   const invalidate=()=>setMessages(turns=>turns.map(turn=>turn.answer?.operational||turn.answer?.agent?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
@@ -206,7 +207,7 @@ export function useTenbotConversation():TenbotConversation{
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
    if(response.operational)liveTurn.current={id:turn.id,owner};
    if((response.operational||response.agent)&&(!foreground.current||document.visibilityState!=='visible'))return true;
-   if(liveDemo){setReceivalDraft(response.localDemo?.draft??null);setLocalApproval(null);}
+   if(liveDemo){setReceivalDraft(response.localDemo?.draft??null);setLocalApproval(null);setCatalogRequests({});}
    setMessages(m=>m.map(item=>item.id===turn.id?{...item,answer:response,answeredAt:new Date().toISOString()}:item));
    return true;
   }catch(e){
@@ -233,7 +234,7 @@ export function useTenbotConversation():TenbotConversation{
   if(!begin())return;
   try{
    if(conversation.current.id||attachment)await request({action:'clear',...(conversation.current.id?{conversationId:conversation.current.id}:{}),...(attachment?{attachmentId:attachment.attachmentId}:{})});
-   conversation.current={owner};setMessages([]);setDraft(null);setError('');setNotice('');setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setSyntheticConfirmed(false);
+   conversation.current={owner};setMessages([]);setDraft(null);setError('');setNotice('');setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setCatalogRequests({});setOrderDetails({orderedBy:'',orderDate:'',location:''});setSyntheticConfirmed(false);
   }catch{setError('TenBot could not clear this conversation. Retry.');}finally{finish();}
  }
  async function refreshFeedback(status:string,module:string){
@@ -260,8 +261,8 @@ export function useTenbotConversation():TenbotConversation{
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
    const uploaded=await request<LocalAttachment>({action:'upload',syntheticConfirmed:true,attachment:{filename:prepared.filename,mediaType:prepared.mediaType,dataBase64:prepared.dataBase64}});
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
-   setAttachment(uploaded);setSelectedAttachment(null);setAttachmentPreview(prepared.preview);setAttachmentOrigin({originalFilename:prepared.originalFilename,renderedPdf:prepared.renderedPdf});setReceivalDraft(null);setLocalApproval(null);setMessages([]);conversation.current={owner};
-   setNotice(`${prepared.originalFilename} attached${prepared.renderedPdf?' · PDF page rendered for actual OpenAI vision; no offline OCR':prepared.resized?' · image resized for the local demo':''}. Ask TenBot to investigate it.`);
+   setAttachment(uploaded);setSelectedAttachment(null);setAttachmentPreview(prepared.preview);setAttachmentOrigin({originalFilename:prepared.originalFilename,renderedPdf:prepared.renderedPdf});setReceivalDraft(null);setLocalApproval(null);setCatalogRequests({});setMessages([]);conversation.current={owner};
+   setNotice(`${prepared.originalFilename} attached.`);
    return uploaded;
   }catch(e){setError(e instanceof Error?e.message:'The attachment could not be uploaded.');}finally{finish();}
  }
@@ -372,7 +373,7 @@ export function useTenbotConversation():TenbotConversation{
      </>:null}<p className="mt-2 text-xs text-slate-600">This is the image sent for interpretation. Only your submitted attachment is used.</p></details>:null}
      {attachment&&!receivalDraft?<details className="text-xs text-slate-600"><summary className="min-h-9 cursor-pointer py-2">Order details (optional)</summary><div className="space-y-2"><p>Leave unknown values blank. Invoice date does not automatically supply the order date.</p>{([['orderedBy','Ordered by'],['orderDate','Order date'],['location','Destination location']] as const).map(([key,label])=><label key={key} className="block">{label}<input aria-label={label} disabled={busy} type={key==='orderDate'?'date':'text'} maxLength={120} value={orderDetails[key]} onChange={event=>setOrderDetails(value=>({...value,[key]:event.target.value}))} className="min-h-11 w-full rounded border bg-white p-2"/></label>)}</div></details>:null}
    </>:null}
-   {liveDemo&&receivalDraft&&experimentStatus?<ReceivalDraftReview key={`${receivalDraft.id}:${receivalDraft.revision}:${receivalDraft.hash}:${receivalDraft.status}`} draft={receivalDraft} status={experimentStatus} busy={busy} approval={localApproval} onDetails={setOrderDetails} onReview={saveReceivalReview} onApprove={approveReceivalReview}/>:null}
+   {liveDemo&&receivalDraft&&experimentStatus?<ReceivalDraftReview key={`${receivalDraft.id}:${receivalDraft.revision}:${receivalDraft.hash}:${receivalDraft.status}`} draft={receivalDraft} status={experimentStatus} busy={busy} approval={localApproval} onDetails={setOrderDetails} onEdit={()=>{setError('');setNotice('');}} onReview={saveReceivalReview} onApprove={approveReceivalReview} canRequestCatalogMaterial={available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')} catalogRequests={catalogRequests} onCatalogRequest={(lineId,value)=>{if(!available||!auth.can('writeBusinessData')||!auth.can('manageVendorsCatalog'))return;setCatalogRequests(requests=>{const next={...requests};if(value)next[lineId]=value;else delete next[lineId];return next;});}}/>:null}
    {error?<p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
    {notice?<p role="status" className="rounded bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
    {draft?<form ref={draftForm} onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3 rounded-lg border bg-white p-3" aria-label="Feature suggestion draft">

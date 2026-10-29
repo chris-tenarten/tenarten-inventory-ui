@@ -1,3 +1,5 @@
+import type {PurchasingCatalogItemInput} from '../purchasing/types';
+
 export type LocalCatalogChoice = { id: string; materialName: string; size: string; unit: string; supplier?: string; packageLabel?: string };
 export type LocalJobChoice = { id: string; label: string };
 export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; canPrepare?: boolean; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
@@ -7,6 +9,63 @@ export type LocalReceivalDraft = { id: string; revision: number; hash: string; s
 export type LocalRowEdit = Pick<LocalDraftRow, 'lineId' | 'materialId' | 'quantity' | 'unit' | 'jobId' | 'excluded'>;
 export type LocalAttachment = { attachmentId: string; filename: string; mediaType: string; expiresAt?: string; simulation: boolean };
 export type LocalApproval = { draft: LocalReceivalDraft; receivals: Record<string, unknown>[]; createdCount: number; simulation: boolean; idempotent: boolean };
+/** Local proposal only. This is deliberately outside the receival RPC payload. */
+export type ProposedCatalogMaterial = Pick<PurchasingCatalogItemInput, 'itemName' | 'vendorSku' | 'materialType' | 'size' | 'unitSize' | 'unitSizeUom' | 'packaging' | 'priceUnit' | 'notes'> & {supplier: string; prepared: boolean};
+export type ReceivalLineValidation = {
+  state: 'Ready' | 'Needs catalog match' | 'Invalid quantity/unit' | 'Excluded' | 'Needs review';
+  fields: Partial<Record<'materialId' | 'quantity' | 'unit' | 'jobId', string>>;
+  holds: string[]; changed: boolean;
+};
+// Advisory display validation follows the existing invoice unit aliases; the
+// caller-authorized server remains responsible for accepting every line.
+export function receivalUnit(value: string): string {
+  const key = value.trim().toLowerCase().replace(/\.$/, '');
+  const groups: [string, string[]][] = [['Bag', ['bag', 'bags']], ['Pail', ['pail', 'pails']], ['Box', ['box', 'boxes']], ['Bucket', ['bucket', 'buckets']], ['Drum', ['drum', 'drums']], ['Case', ['case', 'cases']], ['Tote', ['tote', 'totes']], ['Kit', ['kit', 'kits']], ['Each', ['ea', 'each']], ['LB', ['lb', 'lbs', 'pound', 'pounds']], ['KG', ['kg', 'kilogram', 'kilograms']], ['GAL', ['gal', 'gallon', 'gallons']], ['L', ['l', 'liter', 'liters']], ['OZ', ['oz', 'ounce', 'ounces']]];
+  return groups.find(([, aliases]) => aliases.includes(key))?.[0] || '';
+}
+export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit, status: LocalDemoStatus): ReceivalLineValidation {
+  const changed = JSON.stringify({ materialId: source.materialId, quantity: source.quantity, unit: source.unit, jobId: source.jobId, excluded: source.excluded }) !== JSON.stringify({ materialId: row.materialId, quantity: row.quantity, unit: row.unit, jobId: row.jobId, excluded: row.excluded });
+  if (row.excluded) return { state: 'Excluded', fields: {}, holds: [], changed };
+  const fields: ReceivalLineValidation['fields'] = {}, choice = status.catalog.find(item => item.id === row.materialId);
+  if (!choice) fields.materialId = 'Choose an existing catalog material or prepare a new catalog request. A proposal alone cannot be received.';
+  const quantityPattern = status.simulation ? /^\d+(?:\.\d+)?$/ : /^(?:0|[1-9]\d{0,8})(?:\.\d{1,6})?$/;
+  if (!quantityPattern.test(row.quantity) || !Number.isFinite(Number(row.quantity)) || Number(row.quantity) <= 0) fields.quantity = status.simulation ? 'Expected quantity must be a positive decimal number.' : 'Use a positive quantity with at most 9 whole digits and 6 decimal places.';
+  if (!receivalUnit(row.unit)) fields.unit = 'Enter a supported receival unit.';
+  else if (choice && (!receivalUnit(choice.unit) || (status.simulation ? row.unit.trim().toLowerCase() !== choice.unit.trim().toLowerCase() : receivalUnit(row.unit) !== receivalUnit(choice.unit)))) fields.unit = choice.unit ? `Use ${choice.unit} for this catalog offer; package conversion must be reviewed.` : 'This catalog offer has no supported receival unit. Choose another offer.';
+  if (row.jobId && !status.jobs.some(job => job.id === row.jobId)) fields.jobId = 'Choose an authorized Job from the current list, or General stock.';
+  const holds: string[] = [];
+  const labels: Record<string, string> = {
+    potential_duplicate: 'Potential duplicate receival. Server review is required before approval.',
+    duplicate_draft_line: 'Duplicate material/Job line. Change or exclude it, then save for server review.',
+    duplicate_invoice_material_line: 'Repeated invoice material. Server review is required before approval.',
+    supplier_mismatch: 'Catalog supplier differs from the invoice supplier. Server review is required.',
+    invoice_catalog_material_conflict: 'Invoice description conflicts with the catalog material. Server review is required.',
+    invoice_catalog_package_conflict: 'Invoice packaging conflicts with the catalog offer. Server review is required.',
+    missing_invoice_material_size: 'Invoice material size is missing. Server review is required.',
+    incompatible_unit_or_package: 'Invoice quantity/package conversion needs server review.',
+    non_exact_package_conversion: 'Invoice quantity is not an exact package conversion. Server review is required.',
+    invalid_catalog_package: 'Catalog package details need server review.',
+    non_material_line: 'This is a freight or other non-material line; exclude it from receivals.',
+  };
+  for (const reason of source.reasons) {
+    if (['invalid_quantity', 'incompatible_unit', 'unknown_job'].includes(reason)) continue;
+    if (['unmatched_material', 'ambiguous_catalog_match'].includes(reason)) {
+      if (choice && row.materialId === source.materialId) holds.push('Confirm the exact catalog offer, then save for server review.');
+      continue;
+    }
+    if (reason === 'missing_material_size' && choice?.size) continue;
+    if (reason === 'unknown_catalog_receival_unit') { if (!choice || receivalUnit(choice.unit)) continue; }
+    holds.push(labels[reason] || `Server review required: ${reason.replaceAll('_', ' ')}.`);
+  }
+  return { state: fields.materialId ? 'Needs catalog match' : fields.quantity || fields.unit ? 'Invalid quantity/unit' : fields.jobId || holds.length ? 'Needs review' : 'Ready', fields, holds: [...new Set(holds)], changed };
+}
+export function receivalOrderIssues(details: LocalOrderDetails): Partial<Record<keyof LocalOrderDetails, string>> {
+  const issues: Partial<Record<keyof LocalOrderDetails, string>> = {};
+  if (!details.orderedBy.trim()) issues.orderedBy = 'Ordered by is required.';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(details.orderDate) || !Number.isFinite(Date.parse(details.orderDate)) || new Date(details.orderDate).toISOString().slice(0, 10) !== details.orderDate) issues.orderDate = 'Choose a valid order date.';
+  if (!details.location.trim()) issues.location = 'Destination location is required.';
+  return issues;
+}
 
 export const RECEIVAL_EXECUTION_BLOCKED = 'Real execution is disabled until database-backed release gates pass.';
 export function receivalExecutionBlock(draft: LocalReceivalDraft, status: LocalDemoStatus): string | null {
