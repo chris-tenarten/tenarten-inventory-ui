@@ -10,7 +10,7 @@ import {retrieve,registry,conversationGuides,knowledgeEntries,knowledgeSnapshot,
 import {generatedKnowledge,generatedKnowledgePatches} from '../supabase/functions/_shared/tenbot-knowledge-snapshot';
 import {createTenbotAgentKnowledgeTools,searchPublishedKnowledge} from '../supabase/functions/_shared/tenbot-agent-operations';
 import {publishedKnowledgeSource,knowledgeProofValue} from '../supabase/functions/_shared/tenbot-knowledge';
-import {buildImpactReport,isInfrastructureReviewHeading} from './tenbot-knowledge/release-sync.mjs';
+import {buildImpactReport,isInfrastructureReviewHeading,matchesRecordReview} from './tenbot-knowledge/release-sync.mjs';
 import {workflowSupplement,workflowSupplementSnapshot,workflowSupplementSources} from '../supabase/functions/_shared/tenbot-workflow-supplement';
 import {handleTenbot as actualHandleTenbot} from '../supabase/functions/_shared/tenbot-handler';
 // These pre-existing unit cases isolate capability/metering behavior. Actual
@@ -134,6 +134,85 @@ if(process.argv.includes('--architecture-only')){
   assert(buildImpactReport(records,{changedPaths:['supabase/migrations/new.sql'],acknowledgedInfrastructurePaths:['supabase/migrations/new.sql']}).reviewRequired);
   const bound=[{id:'semantic',relatedRecordIds:[],dependencyBindings:[{path:infrastructure,kind:'semantic'}]}];
   assert(buildImpactReport(bound,{changedPaths:[infrastructure],acknowledgedInfrastructurePaths:[infrastructure]}).reviewRequired);
+ });
+ await check('record reviews bind exact source bytes and full content/authority without clearing neighboring holds',()=>{
+  const change={recordId:'a',path:'src/rules.ts',kind:'semantic',before:'a'.repeat(40),after:'b'.repeat(40)};
+  const record={id:'a',reviewDigest:'c'.repeat(64),relatedRecordIds:['b'],dependencyBindings:[{path:change.path,kind:'semantic'}]};
+  const records=[record,{id:'b',relatedRecordIds:['a'],dependencyBindings:[]}];
+  const review={classification:'record-no-claim-impact',recordId:'a',path:change.path,beforeBlob:change.before,afterBlob:change.after,recordDigest:record.reviewDigest};
+  assert(matchesRecordReview(record,change,review));
+  const resolved=buildImpactReport(records,{changedPaths:[change.path],changedBindings:[change],verifiedRecordReviews:[review]});
+  assert.equal(resolved.status,'reviewed');assert.equal(resolved.reviewRequired,false);
+  assert.deepEqual(resolved.resolvedAffectedRecordIds,['a','b']);assert.deepEqual(resolved.unresolvedAffectedRecordIds,[]);
+  for(const stale of [{...review,beforeBlob:'d'.repeat(40)},{...review,afterBlob:'d'.repeat(40)},{...review,recordDigest:'d'.repeat(64)},{...review,recordId:'b'}]){
+   assert.equal(matchesRecordReview(record,change,stale),false);
+   assert(buildImpactReport(records,{changedBindings:[change],verifiedRecordReviews:[stale]}).reviewRequired);
+  }
+  const held=buildImpactReport(records,{changedBindings:[change],verifiedRecordReviews:[review],sourceReviewHolds:[{recordId:'a',reason:'additional-dependency-changed'}]});
+  assert(held.reviewRequired);assert.deepEqual(held.unresolvedAffectedRecordIds,['a','b']);
+  for(const path of ['supabase/migrations/new.sql','src/lib/rbac.ts','src/components/BusinessWriteControls.tsx','supabase/functions/_shared/rbac.ts','src/../permissions.ts'])assert.equal(matchesRecordReview(record,{...change,path},{...review,path}),false,path);
+  const artifact='supabase/functions/_shared/tenbot-knowledge-snapshot.ts',migration='supabase/migrations/new.sql';
+  const derived=buildImpactReport(records,{changedPaths:[artifact,migration],derivedArtifactPaths:[artifact]});
+  assert(derived.reviewRequired);assert.deepEqual(derived.unclassifiedSensitivePaths,[migration]);assert.deepEqual(derived.derivedArtifactPaths,[artifact]);
+  assert(buildImpactReport(records,{changedPaths:[migration],derivedArtifactPaths:[migration]}).reviewRequired);
+ });
+ await check('committed source-review receipts reject stale helpers, source, grants, prose and invented deployment proof',()=>{
+  // A disposable Git directory borrows only existing read-only objects. Fixture
+  // commits, index changes and generated evidence never touch the shared repo.
+  const fixture=mkdtempSync('/private/tmp/tenbot-source-review-');
+  const env={...process.env};delete env.CF_PAGES_COMMIT_SHA;delete env.TENBOT_KNOWLEDGE_RELEASE_CANDIDATE;
+  const git=(...args:string[])=>execFileSync('git',args,{cwd:fixture,encoding:'utf8',env,stdio:'pipe'}).trim();
+  const baseline=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+  const common=execFileSync('git',['rev-parse','--git-common-dir'],{encoding:'utf8'}).trim();
+  git('init','--quiet');mkdirSync(resolve(fixture,'.git/objects/info'),{recursive:true});
+  writeFileSync(resolve(fixture,'.git/objects/info/alternates'),resolve(common,'objects')+'\n');
+  git('update-ref','refs/heads/fixture',baseline);git('symbolic-ref','HEAD','refs/heads/fixture');git('read-tree',baseline);
+  const artifact='supabase/functions/_shared/tenbot-knowledge-snapshot.ts',reviewsPath='scripts/tenbot-knowledge/source-reviews.json';
+  for(const path of new Set([...knowledgeSnapshot.generationInputs.map(input=>input.path),reviewsPath,artifact])){
+   mkdirSync(dirname(resolve(fixture,path)),{recursive:true});copyFileSync(path,resolve(fixture,path));
+  }
+  symlinkSync(resolve('node_modules'),resolve(fixture,'node_modules'));
+  writeFileSync(resolve(fixture,'scripts/tenbot-knowledge/infrastructure-reviews.json'),'[]\n');
+  const putReviews=(value:unknown)=>writeFileSync(resolve(fixture,reviewsPath),JSON.stringify(value));putReviews([]);
+  const invoke=(candidate:string)=>{
+   try{return {text:execFileSync(process.execPath,['scripts/generate-tenbot-knowledge.mjs','--review-release',candidate],{cwd:fixture,encoding:'utf8',env,stdio:'pipe'}),error:''};}
+   catch(caught){const error=caught as {stdout?:string;stderr?:string};return {text:String(error.stdout??''),error:String(error.stderr??'')};}
+  };
+  const initial=JSON.parse(invoke(baseline).text);
+  const id='production-create-job',path='src/modules/production/jobs.ts',helper='supabase/functions/_shared/production-job-facts.mjs';
+  const binding=initial.directlyAffected.find((record:{id:string})=>record.id===id)?.changes.find((change:{path:string})=>change.path===path);
+  assert(binding,'Existing reviewed Production delta is required for the source-review fixture.');
+  const recordDigest=initial.recordReviewDigests.find((record:{recordId:string})=>record.recordId===id).recordDigest;
+  const helperBlob=git('rev-parse',`${baseline}:${helper}`),receiptPath='docs/project-memory/synthetic-source-review.md',heading='## Accepted record source review — synthetic fixture';
+  const section=`${heading}\n\nChris accepts this synthetic source-review fixture.\n\nBusiness meaning, permission policy, lifecycle and effects are unchanged.\n\n${id} ${path} ${binding.before} ${binding.after} ${recordDigest}\n${helper} ${helperBlob}\n`;
+  const stage=(file:string,text:string)=>{
+   const blob=execFileSync('git',['hash-object','-w','--stdin'],{cwd:fixture,input:text,encoding:'utf8',env,stdio:'pipe'}).trim();
+   git('update-index','--add','--cacheinfo',`100644,${blob},${file}`);return blob;
+  };
+  const commit=(parent:string)=>execFileSync('git',['-c','user.name=Synthetic fixture','-c','user.email=fixture@example.invalid','commit-tree',git('write-tree'),'-p',parent],{cwd:fixture,input:'Synthetic source review fixture\n',encoding:'utf8',env,stdio:'pipe'}).trim();
+  stage(receiptPath,section);const accepted=commit(baseline);
+  const review={classification:'record-no-claim-impact',recordId:id,path,beforeBlob:binding.before,afterBlob:binding.after,recordDigest,reviewedCandidate:accepted,receipt:{path:receiptPath,revision:accepted,heading},additionalDependencies:[{path:helper,blob:helperBlob}]};
+  putReviews([review]);let result=JSON.parse(invoke(accepted).text);
+  assert(result.reviewedRecordChanges.some((change:{recordId:string})=>change.recordId===id));assert.deepEqual(result.sourceReviewHolds,[]);
+  putReviews([{...review,reviewedCandidate:baseline}]);assert.match(invoke(accepted).error,/same committed tree/);
+  putReviews([{...review,beforeBlob:'0'.repeat(40)}]);assert.match(invoke(accepted).error,/original semantic source baseline/);
+  putReviews([review]);git('read-tree',accepted);stage(path,git('show',`${accepted}:${path}`)+'\n// changed fixture source\n');
+  result=JSON.parse(invoke(commit(accepted)).text);assert(result.sourceReviewHolds.some((hold:{reason:string})=>hold.reason==='candidate-source-changed'));
+  git('read-tree',accepted);stage(helper,git('show',`${accepted}:${helper}`)+'\n// changed fixture helper\n');
+  result=JSON.parse(invoke(commit(accepted)).text);assert(result.sourceReviewHolds.some((hold:{reason:string})=>hold.reason==='additional-dependency-changed'));
+  const knowledgePath='supabase/functions/_shared/tenbot-knowledge.ts',original=readFileSync(resolve(fixture,knowledgePath),'utf8');
+  const start=original.indexOf('"id": "production-create-job"'),end=original.indexOf('\n },',start);assert(start>=0&&end>start);
+  for(const replacement of [original.slice(start,end).replace(/"permission": "[^"]+"/,'"permission": "changed-fixture-grant"'),original.slice(start,end).replace(/"guidance": "[^"]+"/,'"guidance": "Changed synthetic business claim."')]){
+   assert.notEqual(replacement,original.slice(start,end));writeFileSync(resolve(fixture,knowledgePath),original.slice(0,start)+replacement+original.slice(end));
+   result=JSON.parse(invoke(accepted).text);assert(result.sourceReviewHolds.some((hold:{reason:string})=>hold.reason==='record-content-or-authority-changed'));
+  }
+  writeFileSync(resolve(fixture,knowledgePath),original);
+  const migration='supabase/migrations/20261027120000_tenbot_feedback_usage.sql',released='6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c';
+  const historical={classification:'historical-deployed',path:migration,blob:git('rev-parse',`${released}:${migration}`),release:{revision:released,receipt:{path:'docs/project-memory/2026-10-27-tenbot-candidate.md',revision:'dfdef9d172c5e158a27b815b76f5294afd6c91ad',heading:'## Executed TenBot release — October 27, 2026'}}};
+  putReviews([historical]);result=JSON.parse(invoke(accepted).text);assert(result.historicalDeployedPaths.includes(migration));
+  putReviews([{...historical,release:{...historical.release,receipt:review.receipt}}]);assert.match(invoke(accepted).error,/original executed deployment evidence/);
+  const notApplied='supabase/migrations/20261029220000_tenbot_openai_metering.sql';
+  putReviews([{...historical,path:notApplied,blob:git('rev-parse',`${accepted}:${notApplied}`)}]);assert.match(invoke(accepted).error,/migration application cannot be inferred/);
  });
  await check('source-archive builds verify integrity and cannot substitute for release gates',()=>{
   const archive=mkdtempSync('/private/tmp/tenbot-knowledge-archive-');

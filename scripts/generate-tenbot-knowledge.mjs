@@ -2,7 +2,7 @@
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {existsSync,readFileSync,writeFileSync} from 'node:fs';
-import {resolve} from 'node:path';
+import {basename,resolve} from 'node:path';
 import ts from 'typescript';
 
 const target='supabase/functions/_shared/tenbot-knowledge-snapshot.ts';
@@ -28,6 +28,7 @@ const generationInputPaths=[
  'scripts/generate-tenbot-knowledge.mjs','scripts/tenbot-knowledge/manifest.mjs',
  'scripts/tenbot-knowledge/architecture.mjs','scripts/tenbot-knowledge/release-sync.mjs',
  'scripts/tenbot-knowledge/infrastructure-reviews.json',
+ 'scripts/tenbot-knowledge/source-reviews.json',
  'supabase/functions/_shared/tenbot-knowledge.ts','supabase/functions/_shared/tenbot-workflow-supplement.ts',
  ...capturePaths,
 ].sort();
@@ -87,8 +88,9 @@ if((args.includes('--build-sync')||releaseBuild)&&!hasHistory()){
 const {modules,release,releases,refreshes,infrastructureReviewsPath}=await import('./tenbot-knowledge/manifest.mjs');
 if(infrastructureReviewsPath!=='scripts/tenbot-knowledge/infrastructure-reviews.json')throw Error('Infrastructure reviews must use the fixed reviewed evidence path.');
 const infrastructureReviews=JSON.parse(readFileSync(infrastructureReviewsPath,'utf8'));
+const sourceReviews=JSON.parse(readFileSync('scripts/tenbot-knowledge/source-reviews.json','utf8'));
 const {architectureRecords}=await import('./tenbot-knowledge/architecture.mjs');
-const {buildImpactReport,isInfrastructurePath,isInfrastructureReviewHeading}=await import('./tenbot-knowledge/release-sync.mjs');
+const {buildImpactReport,isInfrastructurePath,isInfrastructureReviewHeading,isRecordReviewPath}=await import('./tenbot-knowledge/release-sync.mjs');
 if((args.includes('--build-sync')||releaseBuild)&&!hasHistory(Object.values(releases))){
  if(buildCandidate||reviewIndex>=0)throw Error('TenBot release preparation requires full reviewed Git history; restore historical objects and run npm run tenbot:knowledge:review-release -- FULL_SHA before release.');
  verifyArtifact();process.exit(0);
@@ -196,13 +198,22 @@ const entries=modules.flatMap(module=>{
 // This also covers precise and supplemental guides in release impact reports.
 function authoredEntries(path){
  const ast=ts.createSourceFile(path,readFileSync(path,'utf8'),ts.ScriptTarget.Latest,true,ts.ScriptKind.TS),result=[];
+ const literal=node=>{
+  if(ts.isStringLiteral(node)||ts.isNumericLiteral(node))return ts.isStringLiteral(node)?node.text:Number(node.text);
+  if(node.kind===ts.SyntaxKind.TrueKeyword)return true;if(node.kind===ts.SyntaxKind.FalseKeyword)return false;if(node.kind===ts.SyntaxKind.NullKeyword)return null;
+  if(ts.isArrayLiteralExpression(node))return node.elements.map(literal);
+  if(ts.isObjectLiteralExpression(node))return Object.fromEntries(node.properties.map(property=>{
+   if(!ts.isPropertyAssignment(property)||!(ts.isIdentifier(property.name)||ts.isStringLiteral(property.name)))throw Error('Authored knowledge metadata must remain literal.');
+   return [property.name.text,literal(property.initializer)];
+  }));
+  throw Error('Authored knowledge metadata must remain literal.');
+ };
  function visit(node){
   if(ts.isObjectLiteralExpression(node)){
    const properties=new Map(node.properties.filter(ts.isPropertyAssignment).map(item=>[item.name.getText(ast).replace(/^['"]|['"]$/g,''),item.initializer]));
    const id=properties.get('id'),files=properties.get('sourceFiles');
    if(id&&ts.isStringLiteral(id)&&files&&ts.isArrayLiteralExpression(files)&&files.elements.every(ts.isStringLiteral)){
-    const fields=Object.fromEntries(['terms','status','availability'].map(key=>{const value=properties.get(key);return [key,value&&ts.isStringLiteral(value)?value.text:undefined];}));
-    result.push({id:id.text,...fields,sourceFiles:files.elements.map(item=>item.text)});
+    result.push(literal(node));
    }
   }
   ts.forEachChild(node,visit);
@@ -254,11 +265,12 @@ const patches=[...pending.values()].map(record=>{
 
 const patchById=new Map(patches.map(patch=>[patch.id,patch]));
 const impactRecords=[...allEntries.values()].map(record=>{
- const patch=patchById.get(record.id);if(patch)return patch;
+ const patch=patchById.get(record.id);if(patch)return {...patch,reviewDigest:digest({...record,...patch})};
  const moduleSpec=modules.find(module=>record.id===`knowledge-${module.id}`||record.id.startsWith(`knowledge-${module.id}-`));
  const interfaces=new Set([...(moduleSpec?.ui??[]),...(moduleSpec?.ranges??[]).map(range=>range.path)]);
  const contracts=new Set(moduleSpec?.contracts??[]);
- return {id:record.id,relatedRecordIds:[],dependencyBindings:record.sourceFiles.map(path=>({...pin(path),kind:interfaces.has(path)&&!contracts.has(path)?'interface':'semantic'}))};
+ const dependencyBindings=record.sourceFiles.map(path=>({...pin(path),kind:interfaces.has(path)&&!contracts.has(path)?'interface':'semantic'}));
+ return {id:record.id,relatedRecordIds:[],dependencyBindings,reviewDigest:digest({...record,dependencyBindings})};
 });
 function verifiedInfrastructureReviews(candidateRevision){
  if(!Array.isArray(infrastructureReviews))throw Error('Infrastructure reviews must be an explicit reviewed manifest list.');
@@ -273,6 +285,43 @@ function verifiedInfrastructureReviews(candidateRevision){
   if(candidateBlob===review.blob)verified.push({...review,receipt:{...proof,revision:receiptRevision}});
  }
  return verified;
+}
+function committedReviewSection(proof){
+ if(!proof||Object.keys(proof).sort().join(',')!=='heading,path,revision'||!/^docs\/[a-zA-Z0-9_/-]+\.md$/.test(proof.path)||proof.path.includes('..')||typeof proof.heading!=='string'||!proof.heading.startsWith('## '))throw Error('Source review requires a scoped committed receipt.');
+ const revision=fullRevision(proof.revision),text=git('show',`${revision}:${proof.path}`),start=text.indexOf(proof.heading);
+ if(start<0)throw Error('Missing committed source-review section.');
+ return text.slice(start).split(/\n## /)[0];
+}
+const pathBlob=(revision,path)=>{try{return git('rev-parse',`${revision}:${path}`).trim();}catch{return null;}};
+function verifiedSourceReviews(candidateRevision){
+ if(!Array.isArray(sourceReviews))throw Error('Source reviews must be an explicit reviewed evidence list.');
+ const records=new Map(impactRecords.map(record=>[record.id,record])),recordReviews=[],historical=[],holds=[];
+ for(const review of sourceReviews){
+  if(review?.classification==='record-no-claim-impact'){
+   const required=['classification','recordId','path','beforeBlob','afterBlob','recordDigest','reviewedCandidate','receipt'];
+   if(required.some(key=>!Object.hasOwn(review,key))||Object.keys(review).some(key=>![...required,'additionalDependencies'].includes(key))||!isRecordReviewPath(review.path)||! /^[a-f0-9]{40}$/.test(review.beforeBlob)||! /^[a-f0-9]{40}$/.test(review.afterBlob)||! /^[a-f0-9]{64}$/.test(review.recordDigest))throw Error('Invalid record-specific source review.');
+   const record=records.get(review.recordId),binding=record?.dependencyBindings.find(binding=>binding.path===review.path&&binding.kind==='semantic');
+   if(!binding||binding.blob!==review.beforeBlob)throw Error('Record review does not match the original semantic source baseline.');
+   const section=committedReviewSection(review.receipt),words=review.receipt.heading.toLowerCase().split(/[^a-z]+/);
+   if(!['accepted','record','source','review'].every(word=>words.includes(word))||!/(?:^|\n)\s*(?:\*\*)?Chris (?:explicitly )?(?:accepts|approves)\b/i.test(section)||!/(?:^|\n)\s*(?:\*\*)?Business meaning, permission policy, lifecycle,? and effects are unchanged\b/i.test(section)||![review.recordId,review.path,review.beforeBlob,review.afterBlob,review.recordDigest].every(value=>section.includes(value)))throw Error('Record source review requires explicit acceptance and exact record, content/authority and source-byte evidence.');
+   // The receipt commits the reviewed source tree. Its own SHA cannot appear in
+   // its text; bind both references to that same commit instead of a self-hash.
+   const reviewedCandidate=fullRevision(review.reviewedCandidate);
+   if(reviewedCandidate!==fullRevision(review.receipt.revision))throw Error('Record source review and accepted source bytes must belong to the same committed tree.');
+   if(pathBlob(reviewedCandidate,review.path)!==review.afterBlob)throw Error('Reviewed candidate does not contain the accepted source bytes.');
+   const dependencies=review.additionalDependencies??[];
+   if(!Array.isArray(dependencies)||dependencies.length>20||dependencies.some(dependency=>!dependency||Object.keys(dependency).sort().join(',')!=='blob,path'||typeof dependency.path!=='string'||dependency.path.includes('..')||!isRecordReviewPath(dependency.path)||! /^[a-f0-9]{40}$/.test(dependency.blob)))throw Error('Invalid additional record-review dependencies.');
+   for(const dependency of dependencies)if(pathBlob(reviewedCandidate,dependency.path)!==dependency.blob||![dependency.path,dependency.blob].every(value=>section.includes(value)))throw Error('Additional source dependencies must be accepted at their exact reviewed bytes.');
+   const mismatch=record.reviewDigest!==review.recordDigest?'record-content-or-authority-changed':pathBlob(candidateRevision,review.path)!==review.afterBlob?'candidate-source-changed':dependencies.some(dependency=>pathBlob(candidateRevision,dependency.path)!==dependency.blob)?'additional-dependency-changed':null;
+   if(mismatch)holds.push({recordId:review.recordId,path:review.path,reason:mismatch});else recordReviews.push(review);
+  }else if(review?.classification==='historical-deployed'){
+   if(Object.keys(review).sort().join(',')!=='blob,classification,path,release'||typeof review.path!=='string'||review.path.includes('..')||! /^(?:src\/|supabase\/)/.test(review.path)||! /^[a-f0-9]{40}$/.test(review.blob)||!review.release||Object.keys(review.release).sort().join(',')!=='receipt,revision')throw Error('Invalid historical deployed-source review.');
+   const deployedRevision=fullRevision(review.release.revision),section=committedReviewSection(review.release.receipt);
+   if(!review.release.receipt.heading.startsWith('## Executed ')||!section.includes(deployedRevision)||!/TenDev/.test(section)||!/TenOps/.test(section)||!/deploy(?:ed|ment)|released to/i.test(section)||/^supabase\/migrations\//.test(review.path)&&!section.includes(basename(review.path))||pathBlob(deployedRevision,review.path)!==review.blob)throw Error('Historical source requires original executed deployment evidence and exact released bytes; migration application cannot be inferred from repository presence.');
+   if(pathBlob(candidateRevision,review.path)===review.blob)historical.push(review);else holds.push({path:review.path,reason:'historical-deployed-source-changed'});
+  }else throw Error('Unknown source-review classification.');
+ }
+ return {recordReviews,historical,holds};
 }
 const architectureDigest=digest(patches),sourceCount=new Set(entries.flatMap(entry=>entry.provenance.map(binding=>binding.path))).size;
 const snapshot={schemaVersion:1,revision,verifiedAt:release.verifiedAt,receipt:release.receipt,receiptRevision:baseRelease.receiptRevision,generator:'scripts/generate-tenbot-knowledge.mjs',entryCount:entries.length,sourceCount,
@@ -293,7 +342,14 @@ if(selectedReview){
  }
  const changedPaths=[...new Set([...releaseProofs.values()].flatMap(boundary=>git('diff','--name-only',boundary.revision,candidateRevision).trim().split('\n').filter(Boolean)))];
  const infrastructureReviewEvidence=verifiedInfrastructureReviews(candidateRevision);
- const report={...buildImpactReport(impactRecords,{candidateRevision,changedPaths,changedBindings,acknowledgedInfrastructurePaths:infrastructureReviewEvidence.map(review=>review.path)}),infrastructureReviewEvidence};
+ const sourceReviewEvidence=verifiedSourceReviews(candidateRevision);
+ // Generated output cannot acknowledge its own blob through an input list: that
+ // would be self-referential. Exact recomputation proves only this derived file;
+ // every independent source, semantic-record and migration hold still applies.
+ const candidateArtifact=pathBlob(candidateRevision,target),expectedArtifact=createHash('sha1').update(`blob ${Buffer.byteLength(output,'utf8')}\0`).update(output).digest('hex');
+ const derivedArtifactPaths=candidateArtifact===expectedArtifact?[target]:[];
+ const report={...buildImpactReport(impactRecords,{candidateRevision,changedPaths,changedBindings,acknowledgedInfrastructurePaths:infrastructureReviewEvidence.map(review=>review.path),verifiedRecordReviews:sourceReviewEvidence.recordReviews,historicalDeployedPaths:sourceReviewEvidence.historical.map(review=>review.path),derivedArtifactPaths,sourceReviewHolds:sourceReviewEvidence.holds}),infrastructureReviewEvidence,sourceReviewEvidence,
+  recordReviewDigests:impactRecords.map(record=>({recordId:record.id,recordDigest:record.reviewDigest}))};
  console.log(JSON.stringify(report,null,2));
  if(report.reviewRequired){process.exitCode=1;}else if(releaseBuild){console.log('Committed knowledge and nominated candidate tree match exactly; no source rewrite or deployed-pin advance.');}
 }else if(args.includes('--check')){

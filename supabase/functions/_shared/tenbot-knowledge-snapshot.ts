@@ -49,7 +49,7 @@ export const knowledgeSnapshot = {
   "generationInputs": [
     {
       "path": "scripts/generate-tenbot-knowledge.mjs",
-      "sha256": "6f49cbbc8657064b7fb5190990694d49bbb8d36b26f9d105731ad9befc00d273"
+      "sha256": "9c5443c4363d37bb4a650bd9c0ab90031d5ee50cc52d3047e9e019c41478b1b7"
     },
     {
       "path": "scripts/tenbot-knowledge/architecture.mjs",
@@ -57,7 +57,7 @@ export const knowledgeSnapshot = {
     },
     {
       "path": "scripts/tenbot-knowledge/infrastructure-reviews.json",
-      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      "sha256": "bf42f35089ddb33e60e050c58ca8de83e06c34745ac477e938b17884ed14d8af"
     },
     {
       "path": "scripts/tenbot-knowledge/manifest.mjs",
@@ -69,7 +69,11 @@ export const knowledgeSnapshot = {
     },
     {
       "path": "scripts/tenbot-knowledge/release-sync.mjs",
-      "sha256": "d4a39a0a735d8751959c97323c907cdfdf5e8e10ef6789628c6c20293b8d2222"
+      "sha256": "46a80fbb2ec447c6d94754262a1942b1ae601217af456a7911225b900cd34276"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/source-reviews.json",
+      "sha256": "e6d5adbb48760bf6c62917541784603cfa28342a06ed890ebe17f66a20887a8c"
     },
     {
       "path": "supabase/functions/_shared/tenbot-knowledge.ts",
@@ -80,7 +84,7 @@ export const knowledgeSnapshot = {
       "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec"
     }
   ],
-  "artifactDigest": "b523fd3133398b53b513172f65e440f95ea855622fb19e1755f03680adf829be"
+  "artifactDigest": "9a8721a947187c82796600973edc6db8fbc80f85df5059185deede188d741b97"
 } as const;
 export const generatedKnowledge = [
   {
