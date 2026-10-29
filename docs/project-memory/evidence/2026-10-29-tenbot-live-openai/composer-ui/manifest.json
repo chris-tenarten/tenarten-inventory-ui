@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "baseCandidate": "d4e31328d3376f5aeb28c044547e8cd4375fd525",
+  "scope": "Combined Product composer attachment, minimal privacy disclosure and restrained experiment presentation correction",
+  "status": "Implemented locally; pending Product review",
+  "riskTier": 2,
+  "testingLevel": 2,
+  "mode": "Actual localhost UI/native picker/browser PDF and image preparation; agent responses intercepted or replayed; no new inference or database certification",
+  "browserGroups": 14,
+  "actualBlockedStateGroups": 6,
+  "typeScript": "passed including final optimized local build",
+  "targetedEslint": "passed",
+  "diffCheck": "passed",
+  "build": "optimized local export passed; 24 pages",
+  "independentReview": "PASS; no security/flow blocker",
+  "rootVisualReview": [
+    "desktop clean composer and text answer",
+    "mobile text answer and attachment review",
+    "mobile exact privacy popup"
+  ],
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "journalUnchanged": true,
+  "remainingReleaseGates": "Existing authenticated database gates remain open; migration unapplied; real execution disabled",
+  "sourcePins": {
+    "src/modules/tenbot/TenbotWorkspace.tsx": "099354303152dd52052d98caffed29d9aab2410034464f81f9ca72b8faa6c78c",
+    "src/modules/tenbot/ReceivalDraftReview.tsx": "1c1591cfcbba4c8af01306673041b74f2c7ae8351d162a43e44322562ac0cd01",
+    "src/modules/my-work/InboxDialog.tsx": "7b5ee1bc64c4c0c3a864c48be9e10a9b9e843e187d8dd09a169ab4363fdf4b30",
+    "scripts/verify-tenbot-composer-attachment.mjs": "1c5dab6ecf6f7d3bb34f1b20ea48a182578e9eda0fd9d20e35c7aa968f05e316",
+    "scripts/verify-tenbot-live-browser.mjs": "fccf5eb74b99920c5d9af3924ed3a79a744bbaa52fcfcc2501109da134814efe",
+    "scripts/verify-tenbot-receival-browser.mjs": "095c2084c1988149a59f23eedc1544a08816c0707eaf9f96ecf9f94a1000d021"
+  },
+  "files": [
+    {
+      "path": "actual-blocked-state.json",
+      "bytes": 1167,
+      "sha256": "a5bbda2e2a15ef6b99bc08d6ee5e2b147ede21befff2a6342ea6e29878e8062d"
+    },
+    {
+      "path": "desktop-clean-composer.png",
+      "bytes": 71977,
+      "sha256": "5533471603979c744cef172cfcff75264c0b34462a5b7bf8b9db80d812948136"
+    },
+    {
+      "path": "desktop-pdf-attachment.png",
+      "bytes": 126526,
+      "sha256": "db5afb6bbef5c28e054c4b775533259871ab3b3101e9963b7a832814458eb7c3"
+    },
+    {
+      "path": "desktop-privacy-info.png",
+      "bytes": 131334,
+      "sha256": "7d45b552093c08ff7d9b340f46264c400f356d13c18c3e8c332658d28ef69740"
+    },
+    {
+      "path": "desktop-text-help.png",
+      "bytes": 109526,
+      "sha256": "de382c9794df78bf0378665429e2582952cf576a546b9908193bc28637d0a245"
+    },
+    {
+      "path": "mobile-clean-composer.png",
+      "bytes": 24961,
+      "sha256": "639825adfd51ff679e7d9ac1ed9cc744e2f06036e9195608ec7369f4989f99de"
+    },
+    {
+      "path": "mobile-pdf-attachment.png",
+      "bytes": 69389,
+      "sha256": "a228d946eabef1b7731c610ca3d78f1c5165057e54fe333b48d2be78ae6accdb"
+    },
+    {
+      "path": "mobile-privacy-info.png",
+      "bytes": 74624,
+      "sha256": "2867f59e4afa540baef7ec4bb5cb8fb6e21534ed6570dc012d3f9b499f746fb2"
+    },
+    {
+      "path": "mobile-text-help.png",
+      "bytes": 59136,
+      "sha256": "950aa0dbc4fbd3be47c3a5bef3ebab1ad15382eaca871369b6fb5173e0ea6c5e"
+    },
+    {
+      "path": "report.json",
+      "bytes": 4968,
+      "sha256": "9a7ba3121a71dd3386fddbd747dc2b131f81aaf13ffe9418dff2fe7e12d2df8d"
+    }
+  ]
+}

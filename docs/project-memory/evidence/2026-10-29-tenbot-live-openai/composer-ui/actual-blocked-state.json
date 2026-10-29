@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "mode": "Actual browser and localhost HTTP failure gates only; no real JWT/RLS/transaction or inference claim",
+  "groups": 6,
+  "checks": [
+    "missing auth rejected by actual loopback HTTP adapter before database authentication",
+    "fixture auth rejected by actual loopback HTTP adapter before database authentication",
+    "wrong origin rejected by actual loopback HTTP adapter before database authentication",
+    "Authenticated candidate shows exact real-database blocker, disables attachment actions, and never falls back to simulation or Qwen",
+    "Actual mobile Messaging remains contained with its execution blocker visible",
+    "No model calls, external requests or reservation-ledger changes"
+  ],
+  "requests": [
+    {
+      "origin": "http://localhost:55596",
+      "method": "POST",
+      "action": "status"
+    }
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "journal": {
+    "reservedOrSpentUsd": 0.16182535000000015,
+    "attempts": 90,
+    "settled": 90
+  },
+  "journalSha256": "c47aadb56e37d97478f168cba4860b42b571e08a5ef721954c1976979dd20fcd",
+  "databaseRequests": 0,
+  "inferenceCalls": 0,
+  "productionWrites": 0
+}

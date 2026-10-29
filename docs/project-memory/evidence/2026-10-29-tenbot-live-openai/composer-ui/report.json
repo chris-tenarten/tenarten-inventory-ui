@@ -1,0 +1,123 @@
+{
+  "passed": true,
+  "mode": "Actual localhost UI/native picker/image/PDF preparation; ALL experimental HTTP transport simulated or replayed from committed actual-response receipts",
+  "groups": 14,
+  "checks": [
+    "Initial desktop/mobile composer stays clean with neutral white Local experiment settings collapsed",
+    "Header info icon replaces persistent composer privacy copy; exact Product disclosure and further details open on demand, close outside, and support keyboard/Escape without dismissing Messaging",
+    "Visible 44 px composer paperclip opens native picker with experiment panel closed; filename/remove work before upload; consent blocks Send",
+    "image/png: selected filename precedes upload; real browser preparation generates bounded decoded image; Send sequences upload then ask with exact returned attachment ID",
+    "image/jpeg: selected filename precedes upload; real browser preparation generates bounded decoded image; Send sequences upload then ask with exact returned attachment ID",
+    "application/pdf: selected filename precedes upload; real browser preparation generates bounded decoded image; Send sequences upload then ask with exact returned attachment ID",
+    "Invoice reply diagnostics/settings remain collapsed while relevant attachment preview and editable draft remain visible outside them",
+    "390 px mobile layout contains filename, paperclip, Message and Send without horizontal document overflow",
+    "Mobile privacy popup displays exact disclosure inside viewport and closes with Escape",
+    "Text-only conversation remains direct and sends no attachment ID or upload",
+    "Upload failure preserves selected filename/question and makes no ask/inference request",
+    "Read-only preparation gate disables picker while preserving text-only help",
+    "Authenticated database failure keeps composer picker disabled and never falls back to simulated provider",
+    "Nonexperimental TenBot has no new picker; ordinary Messaging unchanged by source inspection (fixture has no peer)"
+  ],
+  "traces": [
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "status"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "upload",
+      "filename": "composer-synthetic-invoice.png",
+      "mediaType": "image/png",
+      "byteSize": 80262,
+      "width": 960,
+      "height": 900,
+      "sha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "ask",
+      "attachmentId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "status"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "upload",
+      "filename": "composer-synthetic-invoice.jpg",
+      "mediaType": "image/jpeg",
+      "byteSize": 85008,
+      "width": 1024,
+      "height": 960,
+      "sha256": "846c9c1c323c248467faf9b636123ca011e575ecf66e753168b43a5553238c86"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "ask",
+      "attachmentId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "status"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "upload",
+      "filename": "composer-synthetic-invoice-page1.jpg",
+      "mediaType": "image/jpeg",
+      "byteSize": 83910,
+      "width": 1024,
+      "height": 960,
+      "sha256": "228e6b29e03168fe05b6278ef46396d2ded476d4a13c740f05c810b4fd736515"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "ask",
+      "attachmentId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "status"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "ask",
+      "attachmentId": null
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "status"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "upload"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "status"
+    },
+    {
+      "endpoint": "http://localhost:55595",
+      "action": "ask",
+      "attachmentId": null
+    },
+    {
+      "endpoint": "http://localhost:55596",
+      "action": "status"
+    }
+  ],
+  "errors": [],
+  "unexpectedNetwork": [],
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "databaseSecurityVerified": false,
+  "operationalWrites": 0,
+  "journalUnchanged": true,
+  "journalSha256": "c47aadb56e37d97478f168cba4860b42b571e08a5ef721954c1976979dd20fcd",
+  "sourcePins": {
+    "src/modules/tenbot/TenbotWorkspace.tsx": "099354303152dd52052d98caffed29d9aab2410034464f81f9ca72b8faa6c78c",
+    "src/modules/my-work/InboxDialog.tsx": "7b5ee1bc64c4c0c3a864c48be9e10a9b9e843e187d8dd09a169ab4363fdf4b30",
+    "src/modules/tenbot/live-review.ts": "acde015f50a6ef365217c9b65ebe8dad5bedd78746672e0dbc1d75a49ea04795"
+  }
+}

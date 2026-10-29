@@ -21,8 +21,9 @@ try{
  const controls=panel.getByLabel('Local agent experiment controls',{exact:true});await expect(controls).toBeVisible();
  await expect(controls).toContainText('Real execution is disabled until database-backed release gates pass.');
  await expect(panel).toContainText('Authenticated database unavailable; writes disabled.');
- await controls.getByRole('checkbox',{name:'I confirm this attachment contains approved synthetic test data.'}).check();
- await expect(controls.getByLabel('Invoice image',{exact:true})).toBeDisabled();
+ const composer=panel.locator('[data-messaging-composer]');
+ await expect(composer.getByRole('button',{name:'Attach PDF or image',exact:true})).toBeDisabled();
+ await expect(composer.locator('input[type=file]')).toBeDisabled();
  assert(!requests.some(r=>r.origin!==endpoint));assert(requests.some(r=>r.origin===endpoint&&r.action==='status'));assert(!requests.some(r=>['ask','upload','review','approve'].includes(r.action)));
  checks.push('Authenticated candidate shows exact real-database blocker, disables attachment actions, and never falls back to simulation or Qwen');
  await page.screenshot({path:directory+'/authenticated-desktop-blocked.png'});
