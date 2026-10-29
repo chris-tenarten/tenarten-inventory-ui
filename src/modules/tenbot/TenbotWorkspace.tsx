@@ -18,6 +18,7 @@ type ExperimentalAnswer=Answer&{agent?:AgentView;localDemo?:{simulation:boolean;
 const objectValue=(value:unknown):Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{};
 const rowsValue=(value:unknown):Record<string,unknown>[]=>Array.isArray(value)?value.map(objectValue):[];
 const displayValue=(value:unknown)=>value===null||value===undefined||value===''?'—':String(value);
+const inactiveResponse='TenBot finished while TenOps was inactive. Ask again to refresh this answer. No action was approved.';
 const answerNotices=(answer:Answer)=>[...new Set(answer.notices)].filter(note=>!answer.message.includes(note)&&!(answer.mode==='guide'&&answer.sources[0]&&guideText(answer.sources[0]).includes(note))).map(note=><p key={note} className="text-xs text-slate-600">{note}</p>);
 function AgentReview({agent,liveDemo=false,simulation=true,diagnostics=false}:{agent:AgentView;liveDemo?:boolean;simulation?:boolean;diagnostics?:boolean}){
  return <section aria-label="Experimental operational answer" className="space-y-3 border-t border-slate-200 pt-3">
@@ -204,8 +205,11 @@ export function useTenbotConversation():TenbotConversation{
   try{
    const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(liveDemo?{...(turnAttachment?{attachmentId:turnAttachment.attachmentId}:{}),orderDetails}:experiment?{demoScenario:'job-investigation',orderDetails}:{})});
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
+   if((response.operational||response.agent)&&(!foreground.current||document.visibilityState!=='visible')){
+    setMessages(m=>m.map(item=>item.id===turn.id?{...item,error:inactiveResponse}:item));
+    return true;
+   }
    if(response.operational)liveTurn.current={id:turn.id,owner};
-   if((response.operational||response.agent)&&(!foreground.current||document.visibilityState!=='visible'))return true;
    if(liveDemo){setReceivalDraft(response.localDemo?.draft??null);setLocalApproval(null);}
    setMessages(m=>m.map(item=>item.id===turn.id?{...item,answer:response,answeredAt:new Date().toISOString()}:item));
    return true;
@@ -320,7 +324,7 @@ export function useTenbotConversation():TenbotConversation{
       <div className="space-y-1 border-t border-slate-100 pt-2">{m.answer.operational.facts.map(fact=><p key={fact.id}>{fact.text}</p>)}</div>
       {m.answer.operational.truncated?<p>Some records could not be included. Incomplete totals are not presented as exact.</p>:null}
      </details>:null}
-    </>:m.error?.startsWith('Live Job facts')?<p className="text-xs text-slate-500">Ask again to refresh this live answer.</p>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">Working…</p>}
+    </>:m.error===inactiveResponse?<p role="status" className="text-slate-600">{m.error}</p>:m.error?.startsWith('Live Job facts')?<p className="text-xs text-slate-500">Ask again to refresh this live answer.</p>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">{busy?'Working…':'No answer was displayed. Ask again to retry.'}</p>}
     {m.answeredAt?<time className="block text-[10px] text-slate-400">{messageTime(m.answeredAt)}</time>:null}
    </article>}]):[];
  const history=available?<div role="log" aria-label="TenBot conversation" aria-live="polite">{entries.map(entry=><div key={entry.id}>{entry.content}</div>)}</div>:null;

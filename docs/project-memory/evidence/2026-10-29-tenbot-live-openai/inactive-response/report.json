@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "groups": 3,
+  "checks": [
+    "blur: deferred response ends in a neutral terminal message, discards hidden facts/draft, makes no focus retry, and accepts explicit foreground Send",
+    "hidden: deferred response ends in a neutral terminal message, discards hidden facts/draft, makes no focus retry, and accepts explicit foreground Send",
+    "Provider failure ends Working and clears busy without publishing a draft or operational facts"
+  ],
+  "traces": [
+    {
+      "variant": "blur",
+      "action": "status"
+    },
+    {
+      "variant": "blur",
+      "action": "ask"
+    },
+    {
+      "variant": "blur",
+      "action": "ask"
+    },
+    {
+      "variant": "hidden",
+      "action": "status"
+    },
+    {
+      "variant": "hidden",
+      "action": "ask"
+    },
+    {
+      "variant": "hidden",
+      "action": "ask"
+    },
+    {
+      "variant": "provider-failure",
+      "action": "status"
+    },
+    {
+      "variant": "provider-failure",
+      "action": "ask"
+    }
+  ],
+  "errors": [],
+  "unexpectedNetwork": [],
+  "mode": "Actual localhost desktop/mobile UI; deferred saved response envelopes, no model or database test",
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "journalUnchanged": true,
+  "journalSha256": "a15a0c997967552b8b4341651b9b0df3b367f550f5fc47286b23d6e9921d7d49",
+  "sourcePins": {
+    "src/modules/tenbot/TenbotWorkspace.tsx": "783a572f10ed903c33e537207a01850511ba87e1bc7195afae16e16c4b1fb224",
+    "scripts/verify-tenbot-inactive-turn.mjs": "9e3c52021fcb68619f6e0ff7858ef57f445b4403509fdd16a55cbe0270d14a42"
+  }
+}
