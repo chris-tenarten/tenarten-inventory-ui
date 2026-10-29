@@ -1,0 +1,393 @@
+{
+  "mode": "Actual simulator approval with offline extraction and scripted model transport; no fresh inference or database write",
+  "inferenceCalls": 0,
+  "result": {
+    "draft": {
+      "id": "bcb61748-3aa3-4aa5-a69e-98dc6086ab03",
+      "revision": 7,
+      "hash": "509a421d7b684f9d82bfa97669ca5b130d22db71f5c124fc65c8f6a8ad4e2529",
+      "status": "approved_simulated",
+      "simulation": true,
+      "attachmentId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c",
+      "orderDetails": {
+        "orderedBy": "Synthetic Review Employee",
+        "orderDate": "2026-10-29",
+        "location": "Denton"
+      },
+      "missingFields": [],
+      "canApprove": false,
+      "rows": [
+        {
+          "lineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L5",
+          "sourceText": "Item 1 | AW-1 | Alaska White | #1 | 100 LB",
+          "materialId": "standard:synthetic-aw1",
+          "materialName": "Alaska White",
+          "size": "#1",
+          "quantity": "2",
+          "unit": "Bag",
+          "jobId": null,
+          "excluded": false,
+          "reasons": [],
+          "duplicateReview": null,
+          "duplicateAcknowledgement": null,
+          "catalogRequest": null
+        },
+        {
+          "lineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L9",
+          "sourceText": "Item 5 | RES-5 | Clear Resin | Part A | 5 GAL",
+          "materialId": "standard:synthetic-res5",
+          "materialName": "Clear Resin",
+          "size": "Part A",
+          "quantity": "1",
+          "unit": "Pail",
+          "jobId": null,
+          "excluded": false,
+          "reasons": [],
+          "duplicateReview": null,
+          "duplicateAcknowledgement": null,
+          "catalogRequest": null
+        },
+        {
+          "lineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L6",
+          "sourceText": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag",
+          "materialId": "standard:synthetic-bc0",
+          "materialName": "Blue Coal",
+          "size": "#0",
+          "quantity": "3",
+          "unit": "Bag",
+          "jobId": null,
+          "excluded": false,
+          "reasons": [],
+          "duplicateReview": {
+            "fingerprint": "b3490ff194ec048a59548d948974f5f345722a7122a0e2c8f320160f36a05ebc",
+            "matches": [
+              {
+                "recordId": "synthetic-existing-bc0",
+                "recordFingerprint": "25a6d4f3c2fc1eeb28c1b5245fd231edce937446fe78ada250957c91a9a5bda6",
+                "source": "fixture",
+                "supplier": "T&M Supply",
+                "status": "pending",
+                "materialName": "Blue Coal",
+                "size": "#0",
+                "quantityExpected": "3",
+                "quantityReceived": "0",
+                "unit": "Bag",
+                "documentReference": null,
+                "classification": "possible",
+                "reason": "The material matches an existing receival, but this record does not establish the same invoice or source line."
+              }
+            ],
+            "canAcknowledge": true,
+            "acknowledged": true
+          },
+          "duplicateAcknowledgement": "b3490ff194ec048a59548d948974f5f345722a7122a0e2c8f320160f36a05ebc",
+          "catalogRequest": null
+        },
+        {
+          "lineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L7",
+          "sourceText": "Item 3 | GREEN | CC Green | #1 | 2 Bag",
+          "materialId": "standard:synthetic-green-a",
+          "materialName": "CC Green",
+          "size": "#1",
+          "quantity": "2",
+          "unit": "Bag",
+          "jobId": null,
+          "excluded": false,
+          "reasons": [],
+          "duplicateReview": null,
+          "duplicateAcknowledgement": null,
+          "catalogRequest": null
+        },
+        {
+          "lineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L8",
+          "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+          "materialId": null,
+          "materialName": "Unlisted Violet",
+          "size": "#2",
+          "quantity": "4",
+          "unit": "Bag",
+          "jobId": null,
+          "excluded": false,
+          "reasons": [],
+          "duplicateReview": null,
+          "duplicateAcknowledgement": null,
+          "catalogRequest": {
+            "supplier": "T&M Supply",
+            "itemName": "Unlisted Violet",
+            "vendorSku": "UNK-99",
+            "materialType": "chip",
+            "size": "#2",
+            "unitSize": "50",
+            "unitSizeUom": "LB",
+            "packaging": "Bag",
+            "priceUnit": "Bag",
+            "notes": "Edited catalog operation needs new exact approval.",
+            "prepared": true
+          }
+        },
+        {
+          "lineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L10",
+          "sourceText": "Freight | Delivery charge | $85.00",
+          "materialId": null,
+          "materialName": null,
+          "size": null,
+          "quantity": "",
+          "unit": "",
+          "jobId": null,
+          "excluded": true,
+          "reasons": [],
+          "duplicateReview": null,
+          "duplicateAcknowledgement": null,
+          "catalogRequest": null
+        }
+      ],
+      "reviewed": true,
+      "provenance": {
+        "supplier": "T&M Supply",
+        "documentReference": "SYN-INV-1042",
+        "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7"
+      },
+      "catalogApprovalRequired": false
+    },
+    "receivals": [
+      {
+        "id": "simulated-18394a42-b121-4863-83b1-ce51a54079f4",
+        "simulation": true,
+        "catalogId": "standard:synthetic-aw1",
+        "sourceLineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L5",
+        "provenance": {
+          "supplier": "T&M Supply",
+          "documentReference": "SYN-INV-1042",
+          "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7",
+          "sourceText": "Item 1 | AW-1 | Alaska White | #1 | 100 LB"
+        },
+        "vendor": "T&M Supply",
+        "material_name": "Alaska White",
+        "size": "#1",
+        "category": "Aggregate",
+        "quantity_expected": 2,
+        "quantity_received": 0,
+        "unit": "Bag",
+        "location": "Denton",
+        "pallet_number": null,
+        "status": "pending",
+        "ordered_by": "Synthetic Review Employee",
+        "order_date": "2026-10-29",
+        "received_by": null,
+        "eta": null,
+        "notes": "SIMULATED LOCAL DEMO · SYN-INV-1042",
+        "received_at": null,
+        "is_earmarked": false,
+        "earmarked_job_name": null,
+        "earmark_notes": null,
+        "production_job_id": null,
+        "temporary_job_label": null
+      },
+      {
+        "id": "simulated-263d49e2-d2e6-414b-a955-ce1b44290540",
+        "simulation": true,
+        "catalogId": "standard:synthetic-res5",
+        "sourceLineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L9",
+        "provenance": {
+          "supplier": "T&M Supply",
+          "documentReference": "SYN-INV-1042",
+          "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7",
+          "sourceText": "Item 5 | RES-5 | Clear Resin | Part A | 5 GAL"
+        },
+        "vendor": "T&M Supply",
+        "material_name": "Clear Resin",
+        "size": "Part A",
+        "category": "Resin",
+        "quantity_expected": 1,
+        "quantity_received": 0,
+        "unit": "Pail",
+        "location": "Denton",
+        "pallet_number": null,
+        "status": "pending",
+        "ordered_by": "Synthetic Review Employee",
+        "order_date": "2026-10-29",
+        "received_by": null,
+        "eta": null,
+        "notes": "SIMULATED LOCAL DEMO · SYN-INV-1042",
+        "received_at": null,
+        "is_earmarked": false,
+        "earmarked_job_name": null,
+        "earmark_notes": null,
+        "production_job_id": null,
+        "temporary_job_label": null
+      },
+      {
+        "id": "simulated-fa2a97e7-bec9-4d94-8f1f-350139417394",
+        "simulation": true,
+        "catalogId": "standard:synthetic-bc0",
+        "sourceLineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L6",
+        "provenance": {
+          "supplier": "T&M Supply",
+          "documentReference": "SYN-INV-1042",
+          "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7",
+          "sourceText": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag"
+        },
+        "vendor": "T&M Supply",
+        "material_name": "Blue Coal",
+        "size": "#0",
+        "category": "Aggregate",
+        "quantity_expected": 3,
+        "quantity_received": 0,
+        "unit": "Bag",
+        "location": "Denton",
+        "pallet_number": null,
+        "status": "pending",
+        "ordered_by": "Synthetic Review Employee",
+        "order_date": "2026-10-29",
+        "received_by": null,
+        "eta": null,
+        "notes": "SIMULATED LOCAL DEMO · SYN-INV-1042",
+        "received_at": null,
+        "is_earmarked": false,
+        "earmarked_job_name": null,
+        "earmark_notes": null,
+        "production_job_id": null,
+        "temporary_job_label": null
+      },
+      {
+        "id": "simulated-7558aaa2-78b4-4ed9-a50f-4b852bc85c18",
+        "simulation": true,
+        "catalogId": "standard:synthetic-green-a",
+        "sourceLineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L7",
+        "provenance": {
+          "supplier": "T&M Supply",
+          "documentReference": "SYN-INV-1042",
+          "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7",
+          "sourceText": "Item 3 | GREEN | CC Green | #1 | 2 Bag"
+        },
+        "vendor": "T&M Supply",
+        "material_name": "CC Green",
+        "size": "#1",
+        "category": "Aggregate",
+        "quantity_expected": 2,
+        "quantity_received": 0,
+        "unit": "Bag",
+        "location": "Denton",
+        "pallet_number": null,
+        "status": "pending",
+        "ordered_by": "Synthetic Review Employee",
+        "order_date": "2026-10-29",
+        "received_by": null,
+        "eta": null,
+        "notes": "SIMULATED LOCAL DEMO · SYN-INV-1042",
+        "received_at": null,
+        "is_earmarked": false,
+        "earmarked_job_name": null,
+        "earmark_notes": null,
+        "production_job_id": null,
+        "temporary_job_label": null
+      },
+      {
+        "id": "simulated-4ba29d86-80be-40dd-8a75-b86a45257b3c",
+        "simulation": true,
+        "catalogId": null,
+        "catalogOperationSourceLineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L8",
+        "sourceLineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L8",
+        "provenance": {
+          "supplier": "T&M Supply",
+          "documentReference": "SYN-INV-1042",
+          "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7",
+          "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag"
+        },
+        "vendor": "T&M Supply",
+        "material_name": "Unlisted Violet",
+        "size": "#2",
+        "category": "chip",
+        "quantity_expected": 4,
+        "quantity_received": 0,
+        "unit": "Bag",
+        "location": "Denton",
+        "pallet_number": null,
+        "status": "pending",
+        "ordered_by": "Synthetic Review Employee",
+        "order_date": "2026-10-29",
+        "received_by": null,
+        "eta": null,
+        "notes": "SIMULATED LOCAL DEMO · SYN-INV-1042",
+        "received_at": null,
+        "is_earmarked": false,
+        "earmarked_job_name": null,
+        "earmark_notes": null,
+        "production_job_id": null,
+        "temporary_job_label": null
+      }
+    ],
+    "catalogAdditions": [
+      {
+        "simulation": true,
+        "sourceLineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L8",
+        "catalogId": null,
+        "material": {
+          "supplier": "T&M Supply",
+          "itemName": "Unlisted Violet",
+          "vendorSku": "UNK-99",
+          "materialType": "chip",
+          "size": "#2",
+          "unitSize": "50",
+          "unitSizeUom": "LB",
+          "packaging": "Bag",
+          "priceUnit": "Bag",
+          "notes": "Edited catalog operation needs new exact approval.",
+          "prepared": true
+        },
+        "provenance": {
+          "supplier": "T&M Supply",
+          "documentReference": "SYN-INV-1042",
+          "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7",
+          "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag"
+        }
+      }
+    ],
+    "createdCount": 5,
+    "catalogCreatedCount": 1,
+    "simulation": true,
+    "idempotent": false,
+    "audit": [
+      {
+        "at": "2026-10-29T20:04:58.365Z",
+        "owner": "0467f3ab-8814-4b38-93e5-759594931380",
+        "action": "approved_simulated",
+        "draftId": "bcb61748-3aa3-4aa5-a69e-98dc6086ab03",
+        "revision": 7,
+        "hash": "509a421d7b684f9d82bfa97669ca5b130d22db71f5c124fc65c8f6a8ad4e2529",
+        "rowCount": 5,
+        "catalogAdditionCount": 1,
+        "provenance": {
+          "supplier": "T&M Supply",
+          "documentReference": "SYN-INV-1042",
+          "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7"
+        },
+        "duplicateAcknowledgements": [
+          {
+            "lineId": "attachment-983c142c-faaa-4bad-bc5d-3dc2cf74d91c:L6",
+            "fingerprint": "b3490ff194ec048a59548d948974f5f345722a7122a0e2c8f320160f36a05ebc",
+            "matches": [
+              {
+                "recordId": "synthetic-existing-bc0",
+                "recordFingerprint": "25a6d4f3c2fc1eeb28c1b5245fd231edce937446fe78ada250957c91a9a5bda6",
+                "source": "fixture",
+                "supplier": "T&M Supply",
+                "status": "pending",
+                "materialName": "Blue Coal",
+                "size": "#0",
+                "quantityExpected": "3",
+                "quantityReceived": "0",
+                "unit": "Bag",
+                "documentReference": null,
+                "classification": "possible",
+                "reason": "The material matches an existing receival, but this record does not establish the same invoice or source line."
+              }
+            ]
+          }
+        ],
+        "onHandChanged": false
+      }
+    ],
+    "onHandChanged": false
+  }
+}

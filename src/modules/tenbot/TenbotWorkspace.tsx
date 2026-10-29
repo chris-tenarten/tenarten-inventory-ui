@@ -6,7 +6,7 @@ import {Info,MoreHorizontal,Paperclip,X} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {ReceivalDraftReview} from './ReceivalDraftReview';
-import {localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
+import {localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,receivalReviewNotice,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
 type Answer={conversationId?:string;mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean;operational?:{observedAt:string|null;complete:boolean;truncated:boolean;facts:{id:string;text:string}[];refreshable:boolean}};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
@@ -270,15 +270,18 @@ export function useTenbotConversation():TenbotConversation{
    setError('Combined catalog-material and pending-receival creation is not available in the authenticated review. This proposal can only be reviewed and approved in the simulated local experiment; no records were created.');
    setLocalApproval(null);return;
   }
+  if(authenticatedReceivals&&edits.some(row=>!row.excluded&&row.duplicateAcknowledgement)){
+   setError('Duplicate acknowledgement is available only for simulated review. Real duplicate protection cannot be overridden here.');setLocalApproval(null);return;
+  }
   if(!liveDemo||!receivalDraft||!begin())return;
   const requestAccess=currentAccess.current;
   try{
    // The real service accepts only existing-material edits. Proposal metadata,
    // including explicit nulls and excluded local requests, stays outside its RPC.
-   const reviewedEdits=authenticatedReceivals?edits.map(row=>{const existing={...row};delete existing.catalogRequest;return existing;}):edits;
+   const reviewedEdits=authenticatedReceivals?edits.map(row=>{const existing={...row};delete existing.catalogRequest;delete existing.duplicateAcknowledgement;return existing;}):edits;
    const value=await request<{draft:LocalReceivalDraft;simulation:boolean}>({action:'review',draftId:receivalDraft.id,revision:receivalDraft.revision,edits:reviewedEdits,orderDetails:details});
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
-   setReceivalDraft(value.draft);setLocalApproval(null);setOrderDetails(details);setNotice(value.simulation?'Draft changes reviewed. Check the current lines before approving simulated entries.':value.draft.durableDraftId&&value.draft.durableHash?'This exact draft was saved for durable server review. Check all current lines before approval.':'Draft changes reviewed. Durable database review remains required before execution.');
+   setReceivalDraft(value.draft);setLocalApproval(null);setOrderDetails(value.draft.orderDetails);setNotice(value.simulation&&experimentStatus?receivalReviewNotice(value.draft,{...experimentStatus,canCreateCatalog:available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')&&experimentStatus.canCreateCatalog!==false}):value.draft.durableDraftId&&value.draft.durableHash?'This exact draft was saved for durable server review. Check all current lines before approval.':'Draft changes reviewed. Durable database review remains required before execution.');
   }catch(e){setError(e instanceof Error?e.message:'The draft could not be reviewed.');}finally{finish();}
  }
  async function approveReceivalReview(current:LocalReceivalDraft){
@@ -370,7 +373,7 @@ export function useTenbotConversation():TenbotConversation{
      </>:null}<p className="mt-2 text-xs text-slate-600">This is the image sent for interpretation. Only your submitted attachment is used.</p></details>:null}
      {attachment&&!receivalDraft?<details className="text-xs text-slate-600"><summary className="min-h-9 cursor-pointer py-2">Order details (optional)</summary><div className="space-y-2"><p>Leave unknown values blank. Invoice date does not automatically supply the order date.</p>{([['orderedBy','Ordered by'],['orderDate','Order date'],['location','Destination location']] as const).map(([key,label])=><label key={key} className="block">{label}<input aria-label={label} disabled={busy} type={key==='orderDate'?'date':'text'} maxLength={120} value={orderDetails[key]} onChange={event=>setOrderDetails(value=>({...value,[key]:event.target.value}))} className="min-h-11 w-full rounded border bg-white p-2"/></label>)}</div></details>:null}
    </>:null}
-   {liveDemo&&receivalDraft&&experimentStatus?<ReceivalDraftReview key={`${receivalDraft.id}:${receivalDraft.revision}:${receivalDraft.hash}:${receivalDraft.status}`} draft={receivalDraft} status={experimentStatus} busy={busy} approval={localApproval} onDetails={setOrderDetails} onEdit={()=>{setError('');setNotice('');}} onReview={saveReceivalReview} onApprove={approveReceivalReview} canRequestCatalogMaterial={available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')}/>:null}
+   {liveDemo&&receivalDraft&&experimentStatus?<ReceivalDraftReview key={`${receivalDraft.id}:${receivalDraft.revision}:${receivalDraft.hash}:${receivalDraft.status}`} draft={receivalDraft} status={experimentStatus} busy={busy} approval={localApproval} onDetails={setOrderDetails} onEdit={()=>{setError('');setNotice('');}} onReview={saveReceivalReview} onApprove={approveReceivalReview} canRequestCatalogMaterial={available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')} canAcknowledgeDuplicates={available&&auth.can('writeBusinessData')&&auth.can('adjustInventory')}/>:null}
    {error?<p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
    {notice?<p role="status" className="rounded bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
    {draft?<form ref={draftForm} onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3 rounded-lg border bg-white p-3" aria-label="Feature suggestion draft">

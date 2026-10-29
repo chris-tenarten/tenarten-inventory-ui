@@ -1,0 +1,125 @@
+{
+  "passed": true,
+  "groups": 9,
+  "checks": [
+    "Ordinary Messaging composer and PDF/photo attachment control remain available; employee experiment dropdown is absent",
+    "Complete proposed Violet material clears the catalog-match hold without inventing an ID or excluding the line",
+    "Actual simulator HTTP review removes stale Violet holds, names only genuine blockers, and disables redundant clean resaves",
+    "Actual matching-record evidence and explicit separate-order acknowledgement are server-validated before combined simulated approval becomes available",
+    "Editing duplicate-sensitive quantity clears acknowledgement and final approval, requires fresh evidence/review, and prevents reuse of the old reviewed hash",
+    "Catalog edits invalidate exact final approval while unrelated validated duplicate evidence remains scoped to its line; desktop and 390 px mobile remain contained",
+    "Actual simulator approval creates five included pending-memory receipts plus one linked catalog-memory receipt and audits the duplicate acknowledgement; no operational records or on-hand stock change",
+    "Caller without catalog capability can save a reviewable request but actual simulator requires authorized catalog approval",
+    "A second preparation of the committed synthetic invoice yields confirmed duplicates; the UI offers no acknowledgement and actual handler rejects a forced prior fingerprint"
+  ],
+  "traces": [
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "approve",
+      "status": 200
+    },
+    {
+      "caseId": "ebc612cd-1043-4da5-a24b-1abf6f19e9dd",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "ebc612cd-1043-4da5-a24b-1abf6f19e9dd",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "ebc612cd-1043-4da5-a24b-1abf6f19e9dd",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "ebc612cd-1043-4da5-a24b-1abf6f19e9dd",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "06ba0f38-6341-40cb-9044-b57e07f34799",
+      "action": "review",
+      "status": 409
+    }
+  ],
+  "errors": [],
+  "unexpectedNetwork": [],
+  "mode": "Actual localhost UI and simulator handlers over bounded disposable HTTP; extraction and model transport use existing offline fixtures, not fresh inference or database security validation",
+  "simulatedTransportSteps": 24,
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "databaseSecurityVerified": false,
+  "journalUnchanged": true,
+  "journalSha256": "f9cfa746dfd2497ce68a2a2b41c441d698933025fdcc37901e86bc771c72d2cb",
+  "sourcePins": {
+    "scripts/support/tenbot-live-demo.mts": "f270f6d1a3a3394f166fc594e4b9b5644621aa12061b3cc16fbba03f86f1d046",
+    "scripts/support/tenbot-agent-scripted.mts": "fee1f781a3234e88f555139df326cc59554c4329c6251ff46c99b1f6254058e8",
+    "src/modules/tenbot/ReceivalDraftReview.tsx": "d4c2f7ffefe4cb5e5a2037b1e4f9a86af1364c27ea1cdcc1f4e8f61755df5762",
+    "src/modules/tenbot/live-review.ts": "f0cda48b640d165d096e7d1e209fc66f4fee046bd79feef4fd1e3298eb16591a",
+    "src/modules/tenbot/TenbotWorkspace.tsx": "2c7c758353045ad783846e04277d43539c4fbd2abaf3e33da427179c800e1ed5",
+    "scripts/verify-tenbot-combined-receival-browser.mjs": "62cab05b299f4844b891cb282a088da15c25a05624df508a94aeb804fff4f1d6"
+  }
+}

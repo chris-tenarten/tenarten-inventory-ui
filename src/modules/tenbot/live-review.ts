@@ -4,10 +4,12 @@ export type LocalCatalogChoice = { id: string; materialName: string; size: strin
 export type LocalJobChoice = { id: string; label: string };
 export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; canPrepare?: boolean; canCreateCatalog?: boolean; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
 export type LocalOrderDetails = { orderedBy: string; orderDate: string; location: string };
-export type LocalDraftRow = { lineId: string; sourceText: string; materialId: string | null; materialName: string | null; size: string | null; quantity: string; unit: string; jobId: string | null; excluded: boolean; reasons: string[]; catalogRequest?: ProposedCatalogMaterial | null };
+export type LocalDuplicateMatch = {recordId: string; source: 'fixture' | 'simulated'; supplier: string; status: string; materialName: string; size: string; quantityExpected: string; quantityReceived?: string; unit: string; documentReference: string | null; classification: 'possible' | 'confirmed'; recordFingerprint?: string; reason?: string};
+export type LocalDuplicateReview = {fingerprint: string; matches: LocalDuplicateMatch[]; canAcknowledge: boolean; acknowledged: boolean};
+export type LocalDraftRow = { lineId: string; sourceText: string; materialId: string | null; materialName: string | null; size: string | null; quantity: string; unit: string; jobId: string | null; excluded: boolean; reasons: string[]; catalogRequest?: ProposedCatalogMaterial | null; duplicateReview?: LocalDuplicateReview | null; duplicateAcknowledgement?: string | null };
 export type LocalInvoiceProvenance = {supplier: string; documentReference: string; attachmentSha256: string};
-export type LocalReceivalDraft = { id: string; revision: number; hash: string; status: 'review_required' | 'approved_simulated' | 'created'; simulation: boolean; attachmentId: string; orderDetails: LocalOrderDetails; missingFields: string[]; canApprove: boolean; rows: LocalDraftRow[]; durableDraftId?: string; durableHash?: string; executionEnabled?: boolean; blockReason?: string; provenance?: LocalInvoiceProvenance; catalogApprovalRequired?: boolean };
-export type LocalRowEdit = Pick<LocalDraftRow, 'lineId' | 'materialId' | 'quantity' | 'unit' | 'jobId' | 'excluded' | 'catalogRequest'>;
+export type LocalReceivalDraft = { id: string; revision: number; hash: string; status: 'review_required' | 'approved_simulated' | 'created'; simulation: boolean; attachmentId: string; orderDetails: LocalOrderDetails; missingFields: string[]; canApprove: boolean; rows: LocalDraftRow[]; durableDraftId?: string; durableHash?: string; executionEnabled?: boolean; blockReason?: string; provenance?: LocalInvoiceProvenance; catalogApprovalRequired?: boolean; reviewed?: boolean };
+export type LocalRowEdit = Pick<LocalDraftRow, 'lineId' | 'materialId' | 'quantity' | 'unit' | 'jobId' | 'excluded' | 'catalogRequest' | 'duplicateAcknowledgement'>;
 export type LocalAttachment = { attachmentId: string; filename: string; mediaType: string; expiresAt?: string; simulation: boolean };
 export type LocalCatalogAddition = {simulation: true; sourceLineId: string; catalogId: null; material: ProposedCatalogMaterial; provenance: LocalInvoiceProvenance & {sourceText: string}};
 export type LocalApproval = { draft: LocalReceivalDraft; receivals: Record<string, unknown>[]; catalogAdditions?: LocalCatalogAddition[]; createdCount: number; simulation: boolean; idempotent: boolean };
@@ -45,7 +47,7 @@ export function receivalUnit(value: string): string {
   return groups.find(([, aliases]) => aliases.includes(key))?.[0] || '';
 }
 export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit, status: LocalDemoStatus): ReceivalLineValidation {
-  const changed = JSON.stringify({ materialId: source.materialId, quantity: source.quantity, unit: source.unit, jobId: source.jobId, excluded: source.excluded, catalogRequest: source.catalogRequest || null }) !== JSON.stringify({ materialId: row.materialId, quantity: row.quantity, unit: row.unit, jobId: row.jobId, excluded: row.excluded, catalogRequest: row.catalogRequest || null });
+  const changed = reviewRowChanged(source,row);
   if (row.excluded) return { state: 'Excluded', fields: {}, holds: [], changed };
   const fields: ReceivalLineValidation['fields'] = {}, choice = status.catalog.find(item => item.id === row.materialId);
   const proposal = !row.materialId ? row.catalogRequest : null, proposalIssues = proposal ? catalogRequestIssues(proposal) : {};
@@ -62,7 +64,9 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
   if (completeProposal && !status.simulation) holds.push('Combined catalog and receival execution is unavailable on the real-data path. No write will run.');
   if (completeProposal && status.canCreateCatalog === false) holds.push('Catalog creation requires review and approval by an employee with Manage vendors and catalog permission.');
   const labels: Record<string, string> = {
-    potential_duplicate: 'Potential duplicate receival. Server review is required before approval.',
+    potential_duplicate: source.duplicateReview?.canAcknowledge ? 'Review the matching receival evidence below. Acknowledge a separate order, or exclude this line.' : 'A potential duplicate needs evidence review. Exclude the line if it is the same order; saving alone cannot resolve it.',
+    confirmed_duplicate: 'This invoice/material already has a simulated receival. Exclude this line; acknowledgement cannot create it again.',
+    confirmed_catalog_duplicate: 'A catalog addition for this material or SKU was already simulated. Use the earlier approved result or exclude this repeated proposal; acknowledgement cannot create it again.',
     duplicate_draft_line: 'Duplicate material/Job line. Change or exclude it, then save for server review.',
     duplicate_invoice_material_line: 'Repeated invoice material. Server review is required before approval.',
     duplicate_catalog_request: 'This new material is proposed more than once. Combine or exclude the duplicate, then save for server review.',
@@ -70,7 +74,7 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
     existing_catalog_match: 'This material already exists in the catalog. Select the existing offer instead of creating it again.',
     incomplete_catalog_request: 'Complete and prepare the new material details, then save for server review.',
     catalog_request_conflicts_with_match: 'Choose either the existing catalog material or the proposed new material, then save for review.',
-    supplier_mismatch: 'Catalog supplier differs from the invoice supplier. Server review is required.',
+    supplier_mismatch: 'The selected or proposed supplier differs from the invoice. Correct the supplier/material or exclude this line.',
     invoice_catalog_material_conflict: 'Invoice description conflicts with the catalog material. Server review is required.',
     invoice_catalog_package_conflict: 'Invoice packaging conflicts with the catalog offer. Server review is required.',
     missing_invoice_material_size: 'Invoice material size is missing. Server review is required.',
@@ -79,16 +83,20 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
     invalid_catalog_package: 'Catalog package details need server review.',
     non_material_line: 'This is a freight or other non-material line; exclude it from receivals.',
   };
+  if (source.duplicateReview?.matches.length && source.duplicateReview.matches.every(match=>match.classification==='possible') && !(source.duplicateReview.acknowledged && row.duplicateAcknowledgement === source.duplicateReview.fingerprint && !changed)) holds.push(labels.potential_duplicate);
+  if (source.duplicateReview?.matches.some(match=>match.classification==='confirmed')) holds.push(labels.confirmed_duplicate);
   for (const reason of source.reasons) {
     if (['invalid_quantity', 'incompatible_unit', 'unknown_job'].includes(reason)) continue;
     if (reason === 'incomplete_catalog_request' && completeProposal) continue;
     if (reason === 'catalog_request_conflicts_with_match' && !(row.materialId && row.catalogRequest)) continue;
-    if (['unmatched_material', 'ambiguous_catalog_match'].includes(reason)) {
+    if (reason === 'potential_duplicate' && source.duplicateReview?.acknowledged && row.duplicateAcknowledgement === source.duplicateReview.fingerprint && !changed) continue;
+    if (['unmatched_material', 'ambiguous_catalog_match', 'review_required'].includes(reason)) {
       if (completeProposal) continue;
       if (choice && row.materialId === source.materialId) holds.push('Confirm the exact catalog offer, then save for server review.');
       continue;
     }
-    if (reason === 'missing_material_size' && choice?.size) continue;
+    if (reason === 'missing_material_size' && (choice?.size || completeProposal && proposal?.size)) continue;
+    if (reason === 'missing_invoice_material_size' && completeProposal && proposal?.size) continue;
     if (reason === 'unknown_catalog_receival_unit') { if (!choice || receivalUnit(choice.unit)) continue; }
     holds.push(labels[reason] || `Server review required: ${reason.replaceAll('_', ' ')}.`);
   }
@@ -118,14 +126,27 @@ export function localReceivalCandidateRequested(origin: string, search: string, 
   return localAgentExperimentRequested(origin, search, authenticated) && new URLSearchParams(search).get('tenbotReceivals') === '1';
 }
 
-const normalizedEdits = (rows: LocalRowEdit[]): LocalRowEdit[] => rows.map(({ lineId, materialId, quantity, unit, jobId, excluded, catalogRequest }) => ({ lineId, materialId, quantity, unit, jobId, excluded, ...(catalogRequest ? {catalogRequest: {...catalogRequest}} : {}) }));
+const normalizedEdits = (rows: LocalRowEdit[]): LocalRowEdit[] => rows.map(({ lineId, materialId, quantity, unit, jobId, excluded, catalogRequest, duplicateAcknowledgement }) => ({ lineId, materialId, quantity, unit, jobId, excluded, ...(catalogRequest ? {catalogRequest: {...catalogRequest}} : {}), ...(duplicateAcknowledgement ? {duplicateAcknowledgement} : {}) }));
+export function reviewRowChanged(source: LocalRowEdit, row: LocalRowEdit) { return JSON.stringify(normalizedEdits([source])) !== JSON.stringify(normalizedEdits([row])); }
 export const editableRows = (draft: LocalReceivalDraft): LocalRowEdit[] => normalizedEdits(draft.rows);
 export function reviewChanged(draft: LocalReceivalDraft, edits: LocalRowEdit[], details: LocalOrderDetails) {
   return JSON.stringify(editableRows(draft)) !== JSON.stringify(normalizedEdits(edits)) || JSON.stringify(draft.orderDetails) !== JSON.stringify(details);
 }
+export function receivalReviewNotice(draft: LocalReceivalDraft, status: LocalDemoStatus): string {
+  const concerns = Object.values(receivalOrderIssues(draft.orderDetails));
+  for (const [index, row] of draft.rows.entries()) {
+    const validation = receivalLineValidation(row, row, status);
+    const messages = [...Object.values(validation.fields), ...validation.holds];
+    if (messages.length) concerns.push(`Line ${index + 1} (${row.materialName || 'Invoice line'}): ${messages.join(' ')}`);
+  }
+  if (!draft.rows.some(row => !row.excluded)) concerns.push('Include at least one receival line.');
+  if (concerns.length) return `Review saved. Action still required: ${concerns.join(' ')}`;
+  if (draft.canApprove) return `Review complete. Confirm the exact lines below to enable ${draft.simulation ? 'simulated ' : ''}approval.`;
+  return draft.blockReason || 'The server did not mark this draft ready for approval. No action was approved; reopen the draft or report this review result.';
+}
 export function approvalForCurrentReview(draft: LocalReceivalDraft, edits: LocalRowEdit[], details: LocalOrderDetails, checked: boolean, busy: boolean) {
   const executionReady = draft.simulation || draft.executionEnabled === true && Boolean(draft.durableDraftId && draft.durableHash);
-  return executionReady && draft.status === 'review_required' && draft.canApprove && Boolean(draft.hash) && Number.isSafeInteger(draft.revision) && draft.revision > 0 && checked && !busy && !reviewChanged(draft, edits, details);
+  return executionReady && draft.reviewed !== false && draft.status === 'review_required' && draft.canApprove && Boolean(draft.hash) && Number.isSafeInteger(draft.revision) && draft.revision > 0 && checked && !busy && !reviewChanged(draft, edits, details);
 }
 
 function dataUrl(blob: Blob): Promise<string> {

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { approvalForCurrentReview, catalogRequestIssues, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft, type ProposedCatalogMaterial } from '../src/modules/tenbot/live-review';
+import { approvalForCurrentReview, catalogRequestIssues, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, receivalReviewNotice, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft, type ProposedCatalogMaterial } from '../src/modules/tenbot/live-review';
 import { ReceivalDraftReview } from '../src/modules/tenbot/ReceivalDraftReview';
 
 // Offline UI/lifecycle checks. This never starts a server or invokes a provider.
@@ -98,6 +98,31 @@ await check('new materials remain reviewable requests without catalog permission
   assert(/disabled=""[^>]*>Approve simulated catalog and receivals/.test(html));
   const real=receivalLineValidation(draft.rows[0],editableRows(draft)[0],{...status,simulation:false,canCreateCatalog:true});
   assert(real.holds.some(hold=>hold.includes('Combined catalog and receival execution is unavailable')));
+});
+await check('possible duplicate evidence requires server-validated acknowledgement and edits invalidate it', () => {
+  const draft=copy(base); draft.reviewed=true; draft.canApprove=false;
+  const source=draft.rows[0];source.reasons=['potential_duplicate'];source.duplicateReview={fingerprint:'a'.repeat(64),canAcknowledge:true,acknowledged:false,matches:[{recordId:'synthetic-existing',source:'fixture',supplier:'T&M Supply',status:'pending',materialName:source.materialName!,size:source.size!,quantityExpected:'3',quantityReceived:'0',unit:'Bag',documentReference:null,classification:'possible'}]};
+  const edits=editableRows(draft);edits[0].duplicateAcknowledgement=source.duplicateReview.fingerprint;
+  assert.equal(approvalForCurrentReview(draft,edits,draft.orderDetails,true,false),false);
+  assert(receivalLineValidation(source,edits[0],status).holds.length);
+  assert(receivalReviewNotice(draft,status).includes('Line 1 (Alaska White): Review the matching receival evidence'));
+  source.duplicateAcknowledgement=source.duplicateReview.fingerprint;source.duplicateReview.acknowledged=true;source.reasons=[];draft.canApprove=true;
+  assert.equal(receivalLineValidation(source,editableRows(draft)[0],status).state,'Ready');
+  assert(receivalReviewNotice(draft,status).startsWith('Review complete.'));
+  assert.equal(approvalForCurrentReview(draft,editableRows(draft),draft.orderDetails,true,false),true);
+  const changed=editableRows(draft);changed[0].quantity='7';changed[0].duplicateAcknowledgement=null;
+  assert.equal(approvalForCurrentReview(draft,changed,draft.orderDetails,true,false),false);
+  assert(receivalLineValidation(source,changed[0],status).holds.length);
+  const html=render(draft);for(const text of ['Duplicate evidence for line 1','3 Bag expected','No invoice reference recorded.','Separate-order acknowledgement validated by the server.'])assert(html.includes(text),text);
+});
+await check('confirmed duplicate cannot be cleared by an acknowledgement and review notice names genuine catalog holds', () => {
+  const draft=copy(base);const source=draft.rows[0];source.duplicateAcknowledgement='f'.repeat(64);source.duplicateReview={fingerprint:'f'.repeat(64),canAcknowledge:false,acknowledged:false,matches:[{recordId:'simulated-existing',source:'simulated',supplier:'T&M Supply',status:'pending',materialName:source.materialName!,size:source.size!,quantityExpected:'3',unit:'Bag',documentReference:'SYN-INV',classification:'confirmed'}]};
+  assert(receivalLineValidation(source,editableRows(draft)[0],status).holds.some(reason=>reason.includes('already has a simulated receival')));
+  assert(render(draft).includes('Confirmed duplicate'));
+  const violet=copy(base);violet.rows[0]={...violet.rows[0],materialId:null,materialName:'Unlisted Violet',catalogRequest:copy(proposed),reasons:['unmatched_material','missing_material_size','review_required']};
+  assert.equal(receivalLineValidation(violet.rows[0],editableRows(violet)[0],{...status,canCreateCatalog:true}).state,'Ready');
+  assert(!receivalReviewNotice(violet,{...status,canCreateCatalog:true}).includes('Action still required'));
+  assert(receivalReviewNotice(violet,{...status,canCreateCatalog:false}).includes('Manage vendors and catalog'));
 });
 await check('duplicate, document conflicts and unknown server holds survive unrelated edits until server review or exclusion', () => {
   for (const reason of ['potential_duplicate', 'duplicate_draft_line', 'supplier_mismatch', 'invoice_catalog_package_conflict', 'future_server_hold']) {
