@@ -1,0 +1,1445 @@
+{
+  "mode": "Actual Terra inference with exact independent-QA prompts; server-owned synthetic grant fixtures; no database accesses or writes",
+  "baseline": {
+    "reservedOrSpentUsd": 0.4915112999999999,
+    "attempts": 314,
+    "settled": 314
+  },
+  "ledgerAfter": {
+    "reservedOrSpentUsd": 0.5018118999999999,
+    "attempts": 323,
+    "settled": 323
+  },
+  "results": [
+    {
+      "id": "C02",
+      "topic": "Proposal walkthrough",
+      "role": "local-admin",
+      "grantedCapabilities": [
+        "writeBusinessData",
+        "messaging.write",
+        "production_blend.manage",
+        "sample_labels.generate",
+        "readOperationalData",
+        "accessIntake",
+        "viewIntake",
+        "createProductionJob",
+        "editProductionJobRoutine",
+        "editProductionJobDetails",
+        "archiveProductionJob",
+        "scheduleProduction",
+        "manageProductionRework",
+        "modifyPlanning",
+        "managePhaseLibrary",
+        "manageManpowerProductCategories",
+        "postJobUpdate",
+        "editJobUpdate",
+        "deleteJobUpdate",
+        "assignJobUpdate",
+        "resolveJobUpdate",
+        "uploadSupportingFiles",
+        "deleteSupportingFiles",
+        "createPurchaseOrderDraft",
+        "issuePurchaseOrder",
+        "previewOperationalDocuments",
+        "issueTransmittal",
+        "receiveInventory",
+        "adjustInventory",
+        "manageVendorsCatalog",
+        "accessDevelopmentEnvironment",
+        "manageUsers",
+        "manageRolesPermissions",
+        "proposal.access"
+      ],
+      "turns": [
+        {
+          "question": "The Proposal draft opened. Do I need a Production Job before I can issue it?",
+          "wallMs": 11501,
+          "costUsd": 0.003542599999999896,
+          "apiCalls": 3,
+          "response": {
+            "conversationId": "394e744d-c7e7-4ad0-b5c8-0472a60806ce",
+            "mode": "agent-experiment",
+            "contentScope": "workflow",
+            "message": "No. A Proposal can exist and be issued without a Production Job. Proposal access is required independently of Job or Bid access.",
+            "sources": [],
+            "snapshot": {
+              "revision": "tenbot-agent-poc.v1",
+              "verifiedAt": "2026-10-29T21:04:46.755Z"
+            },
+            "summary": null,
+            "suggestionAllowed": false,
+            "notices": [
+              "Local OpenAI experiment. Review evidence and proposals; no execution capability exists."
+            ],
+            "agent": {
+              "mode": "openai",
+              "provider": "OpenAI Responses (local experiment)",
+              "model": "gpt-6.1-terra",
+              "status": "completed",
+              "final": {
+                "answer": "No. A Proposal can exist and be issued without a Production Job. Proposal access is required independently of Job or Bid access.",
+                "observations": [
+                  {
+                    "text": "A Proposal can exist and be issued without a Production Job; Proposal access requires an explicit grant or administrator access independently of Job or Bid access.",
+                    "evidence_ids": [
+                      "e1"
+                    ]
+                  }
+                ],
+                "inferences": [],
+                "recommendations": [],
+                "questions": [],
+                "completed_actions": []
+              },
+              "evidence": [
+                {
+                  "id": "e1",
+                  "tool": "search_workflow_knowledge",
+                  "data": {
+                    "snapshot": {
+                      "revision": "bc628bd+bid-5e28d254+manpower-ae50e0fc",
+                      "verifiedAt": "2026-10-29",
+                      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026"
+                    },
+                    "sources": [
+                      {
+                        "id": "knowledge-proposals",
+                        "title": "Proposal drafts, issuance and historical revisions",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "Proposal access requires an existing explicit grant or administrator access, independently of access to a Job or Bid. Issued snapshots remain historical; later customer edits and context do not rewrite them. - Proposal and Transmittal document domains are implemented. Job-linked LoTs derive identity from canonical Job Numbers; explicitly standalone LoTs remain unlinked and require a manual document number. Issued artifacts are historical snapshots and must not be silently rewritten after later Job/Bid relationships change. Static source interface text (labels do not establish a click sequence or additional permissions): Proposal Generator · Commercial tools · Estimating Defaults · Close · Proposal history · Link existing standalone Proposal · Select Proposal · Proposal history unavailable. · REVISED · Create Revision · Back to history · Proposal workspace sections · Internal Estimate · Customer Proposal · This legacy issued Proposal predates the V2 internal Estimate snapshot. Its issued customer document remains unchanged. · Issued customer Proposals and internal Estimate snapshots are immutable. Create a revision to make changes. · Preview PDF",
+                        "path": "Proposals → Proposal Generator",
+                        "route": "/proposals"
+                      },
+                      {
+                        "id": "knowledge-blend",
+                        "title": "Production Batch and Blend planning",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "Production Blend planning requires the separate explicit Production Blend management grant as well as operational-read and business-write access. Use the existing Samples formulation and Plan Production Blend workflow. Saved Sample, working Batch plan and issued Blend revisions remain distinct; issuing a document does not imply Inventory mutation or a promised lead time. Controls alone do not establish additional workflow steps. Static source interface text (labels do not establish a click sequence or additional permissions): Production Batch basis · Production formulation · Production material authority · Recent Documents · Blend Sheet · Newest sheet appears above. · Legacy history · Production Blend Sheet · Production planning · Back to formulation · Configure the material requirement, then generate the shop sheet. · Save this Sample before planning Production. · Formulation version · Current saved formulation · Apply current profile defaults and save this formulation before planning Production. · Review Resin System · Load formulation · 1 — Production requirement · ADJD Batches · Final production batches. Drives Resin, Hardener and Filler. · Calculated Chips: · 2 — Chip adjustment · ADJ (lb) · Additional chips added to the calculated Batch requirement. · Total Chips Required · Final chip quantity to prepare after ADJ. · 3 — Blend staging · Blend Size (lb) · Chip mix staged in one Blend or super sack. · CHIP BLENDS · Blend units produced from the total chip requirement. · Bags of this aggregate in one nominal Blend. · Actual total material required for this plan. · View calculation details · Last generated · No generated Blend Sheets yet. · View generated sheets in Documents",
+                        "path": "Samples → Plan Production Blend",
+                        "route": "/samples"
+                      },
+                      {
+                        "id": "knowledge-intake",
+                        "title": "Intake Bids, related records and Production handoff",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "Open Intake and select the Bid, then open Overview. Bid Preparation contains Create Proposal, Create Sample, Open related Proposals and Open related Samples; there is no Tools tab. Create Sample starts a new canonical Sample in the established generator with this Bid, Customer and Project context. Save the Sample there. Open related Samples opens Bid-context Samples, where Existing standalone Sample → Link Sample links an existing standalone Sample. A Sample linked to another Bid cannot be reassigned by this action. Creating or linking Samples requires the existing Intake, operational-read and business-write permissions. Create Proposal opens the established Proposal Generator with this Bid attached; Proposal access is independently required in addition to Intake and business-write permission. A Proposal can exist and be issued without a Production Job. Existing generated documents retain their historical contents.",
+                        "path": "Intake → Bid → Overview → Bid Preparation",
+                        "route": "/pre-production"
+                      },
+                      {
+                        "id": "knowledge-production",
+                        "title": "Production workspace and canonical Jobs",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "Read-only navigation facts. Job creation, edits and scheduling additionally require business-write permission. Phase and Item Planning is not enabled in the verified deployed build. Project name is the only required field. Production Pipeline now presents three synchronized views over the same canonical job records: - Overview is the default operational view and summarizes identity, customer, shared status badges, delivery, schedule, readiness, labor, and attached-file counts without horizontal scrolling. - Table preserves dense inline editing, compact centered headers, and sticky Job/Project columns for bulk review. Existing attachment counts appear beside the Project name and open the inspector at Attachments; a separate Files column is unnecessary. - Timeline supports direct schedule planning and includes a separate Not Scheduled section whose Complete setup action opens the shared inspector at planned dates. Planning completeness is derived in one shared helper. Jobs without both planned dates are Not Scheduled. Scheduled jobs missing a job number, requested delivery, labor estimate, or customer are Planning Needed; otherwise they are Planning Complete. This guidance is independent of material readiness and Production status and does not indicate that a job can begin or has no blockers. Static source interface text (labels do not establish a click sequence or additional permissions): Not Started · On Deck · In Production · On Hold · Shipped · Complete · Cancelled · Dashboard mode · Dashboard · Production Pipeline · Production reporting · Use the table to manage the Production Pipeline and the Timeline to plan scheduled work. · New Job · View · Overview · Table · Timeline · Search jobs... · Sort · Filters · Schedule · Scheduled · Unscheduled · Production Status · Include Archived · Clear Filters · Refresh jobs · Attachment and Job Update indicators are unavailable. Refresh to retry; Job details remain available. · Labor and material summaries could not be loaded completely. Refresh to retry; Job details remain available. · All active jobs scheduled · Active Jobs · Showing · Scheduling — Priority · No production schedule · Needs Attention · No other Production items need attention. · Review changes · Discard all · Save all changes · Save the open Inspector job details first. Proposed dates will remain staged. · Production · Production Job Created · The Production Job was created successfully. · This Production Job will not appear on the Timeline until it has been scheduled. · Return to Production · Open Timeline to Schedule Job · Preliminary Timeline approval · Lock approval · Changed by · — Recorded name for this change · Reason / notes · (optional) · Cancel · Confirm and save",
+                        "path": "Production → Overview / Table / Timeline",
+                        "route": "/"
+                      }
+                    ],
+                    "access_limited": false,
+                    "complete": false,
+                    "limitation": "Bounded permission-filtered documentation search. If access_limited is true, some matching guidance is outside this caller’s current grants; do not describe it as undocumented or conclude the feature is unavailable. No raw repository files, private conversations or current operational records are searched."
+                  }
+                }
+              ],
+              "proposals": [],
+              "trace": [
+                {
+                  "event": "model",
+                  "round": 1,
+                  "outcome": "received",
+                  "durationMs": 1653,
+                  "usage": {
+                    "inputTokens": 1275,
+                    "cachedInputTokens": 1243,
+                    "outputTokens": 25,
+                    "costUsd": 0.0002264,
+                    "reservedUsd": 0.02696875
+                  }
+                },
+                {
+                  "event": "tool",
+                  "round": 1,
+                  "name": "discover_capabilities",
+                  "outcome": "ok",
+                  "durationMs": 0
+                },
+                {
+                  "event": "model",
+                  "round": 2,
+                  "outcome": "received",
+                  "durationMs": 2625,
+                  "usage": {
+                    "inputTokens": 1819,
+                    "cachedInputTokens": 1313,
+                    "outputTokens": 26,
+                    "costUsd": 0.0008273999999999999,
+                    "reservedUsd": 0.03099
+                  }
+                },
+                {
+                  "event": "tool",
+                  "round": 2,
+                  "name": "search_workflow_knowledge",
+                  "outcome": "ok",
+                  "durationMs": 17
+                },
+                {
+                  "event": "model",
+                  "round": 3,
+                  "outcome": "received",
+                  "durationMs": 7199,
+                  "usage": {
+                    "inputTokens": 3347,
+                    "cachedInputTokens": 1816,
+                    "outputTokens": 97,
+                    "costUsd": 0.0024888,
+                    "reservedUsd": 0.04178375
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 6441,
+                "cachedInputTokens": 4372,
+                "outputTokens": 148,
+                "costUsd": 0.0035426000000000008,
+                "reservedUsd": 0.09974250000000001
+              },
+              "modelSteps": [
+                {
+                  "calls": [
+                    {
+                      "id": "call_oBKiUGif2RUOxkiUgj2B2beh",
+                      "name": "discover_capabilities",
+                      "arguments": {
+                        "names": [
+                          "search_workflow_knowledge"
+                        ]
+                      }
+                    }
+                  ],
+                  "usage": {
+                    "inputTokens": 1275,
+                    "cachedInputTokens": 1243,
+                    "outputTokens": 25,
+                    "costUsd": 0.0002264,
+                    "reservedUsd": 0.02696875
+                  },
+                  "durationMs": 1653
+                },
+                {
+                  "calls": [
+                    {
+                      "id": "call_1QFSGh4RLgWqW8hKxesIL0tu",
+                      "name": "search_workflow_knowledge",
+                      "arguments": {
+                        "query": "proposal issue production job required draft"
+                      }
+                    }
+                  ],
+                  "usage": {
+                    "inputTokens": 1819,
+                    "cachedInputTokens": 1313,
+                    "outputTokens": 26,
+                    "costUsd": 0.0008273999999999999,
+                    "reservedUsd": 0.03099
+                  },
+                  "durationMs": 2625
+                },
+                {
+                  "calls": [],
+                  "final": {
+                    "answer": "No. A Proposal can exist and be issued without a Production Job. Proposal access is required independently of Job or Bid access.",
+                    "observations": [
+                      {
+                        "text": "A Proposal can exist and be issued without a Production Job; Proposal access requires an explicit grant or administrator access independently of Job or Bid access.",
+                        "evidence_ids": [
+                          "e1"
+                        ]
+                      }
+                    ],
+                    "inferences": [],
+                    "recommendations": [],
+                    "questions": [],
+                    "completed_actions": []
+                  },
+                  "usage": {
+                    "inputTokens": 3347,
+                    "cachedInputTokens": 1816,
+                    "outputTokens": 97,
+                    "costUsd": 0.0024888,
+                    "reservedUsd": 0.04178375
+                  },
+                  "durationMs": 7198
+                }
+              ],
+              "durationMs": 11498,
+              "invoiceAttached": false,
+              "executionAvailable": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "C05",
+      "topic": "Inventory distinction",
+      "role": "local-admin",
+      "grantedCapabilities": [
+        "writeBusinessData",
+        "messaging.write",
+        "production_blend.manage",
+        "sample_labels.generate",
+        "readOperationalData",
+        "accessIntake",
+        "viewIntake",
+        "createProductionJob",
+        "editProductionJobRoutine",
+        "editProductionJobDetails",
+        "archiveProductionJob",
+        "scheduleProduction",
+        "manageProductionRework",
+        "modifyPlanning",
+        "managePhaseLibrary",
+        "manageManpowerProductCategories",
+        "postJobUpdate",
+        "editJobUpdate",
+        "deleteJobUpdate",
+        "assignJobUpdate",
+        "resolveJobUpdate",
+        "uploadSupportingFiles",
+        "deleteSupportingFiles",
+        "createPurchaseOrderDraft",
+        "issuePurchaseOrder",
+        "previewOperationalDocuments",
+        "issueTransmittal",
+        "receiveInventory",
+        "adjustInventory",
+        "manageVendorsCatalog",
+        "accessDevelopmentEnvironment",
+        "manageUsers",
+        "manageRolesPermissions",
+        "proposal.access"
+      ],
+      "turns": [
+        {
+          "question": "Are Pending Receivals already counted as available on-hand inventory? How do I record a partial delivery?",
+          "wallMs": 9512,
+          "costUsd": 0.0033159000000000383,
+          "apiCalls": 3,
+          "response": {
+            "conversationId": "0c6ff488-b948-4be4-ac52-47971a93044c",
+            "mode": "agent-experiment",
+            "contentScope": "workflow",
+            "message": "No. Pending Receivals are incoming material, not available on-hand inventory. Only the quantity received enters Inventory.\n\nTo record a partial delivery, open Inventory → Pending Receivals, expand the section, and choose Receive on the outstanding line. Enter Received By and the Quantity received now, then select Confirm Receive. The quantity must be positive and no greater than the remaining amount; the balance stays pending, and any existing reservation carries through.\n\nYou need Inventory-receiving and business-write access. Don’t use Receive selected for a partial delivery: it receives the full remaining quantities of the selected rows.",
+            "sources": [],
+            "snapshot": {
+              "revision": "tenbot-agent-poc.v1",
+              "verifiedAt": "2026-10-29T21:04:56.269Z"
+            },
+            "summary": null,
+            "suggestionAllowed": false,
+            "notices": [
+              "Local OpenAI experiment. Review evidence and proposals; no execution capability exists."
+            ],
+            "agent": {
+              "mode": "openai",
+              "provider": "OpenAI Responses (local experiment)",
+              "model": "gpt-6.1-terra",
+              "status": "completed",
+              "final": {
+                "answer": "No. Pending Receivals are incoming material, not available on-hand inventory. Only the quantity received enters Inventory.\n\nTo record a partial delivery, open Inventory → Pending Receivals, expand the section, and choose Receive on the outstanding line. Enter Received By and the Quantity received now, then select Confirm Receive. The quantity must be positive and no greater than the remaining amount; the balance stays pending, and any existing reservation carries through.\n\nYou need Inventory-receiving and business-write access. Don’t use Receive selected for a partial delivery: it receives the full remaining quantities of the selected rows.",
+                "observations": [
+                  {
+                    "text": "Pending Receivals are incoming material, not on-hand availability; received quantities enter Inventory and any remaining balance stays pending.",
+                    "evidence_ids": [
+                      "e1"
+                    ]
+                  },
+                  {
+                    "text": "Receiving requires Inventory-receiving and business-write access; Receive selected receives full remaining quantities of selected rows.",
+                    "evidence_ids": [
+                      "e1"
+                    ]
+                  }
+                ],
+                "inferences": [],
+                "recommendations": [
+                  {
+                    "text": "For a partial delivery, use Receive on the outstanding line, enter Received By and Quantity received now, and select Confirm Receive.",
+                    "evidence_ids": [
+                      "e1"
+                    ]
+                  }
+                ],
+                "questions": [],
+                "completed_actions": []
+              },
+              "evidence": [
+                {
+                  "id": "e1",
+                  "tool": "search_workflow_knowledge",
+                  "data": {
+                    "snapshot": {
+                      "revision": "bc628bd+bid-5e28d254+manpower-ae50e0fc",
+                      "verifiedAt": "2026-10-29",
+                      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026"
+                    },
+                    "sources": [
+                      {
+                        "id": "inventory-pending-receive",
+                        "title": "Receive pending material into Inventory",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "Employees with Inventory-receiving and business-write access can receive incoming material. Open Inventory → Pending Receivals, expand the section and choose Receive on an outstanding line. Enter Received By and Quantity received now, then Confirm Receive. Quantity must be positive and no greater than the remaining amount. Only that quantity enters Inventory; the balance stays pending and the existing reservation carries through. If the result is uncertain, keep the dialog open and retry the same quantity there. Receive selected receives the full remaining quantities of selected rows. Undo latest receipt is a separate Inventory-adjustment action and is blocked if the received stock changed.",
+                        "path": "Inventory → Pending Receivals → Receive → Confirm Receive",
+                        "route": "/inventory"
+                      },
+                      {
+                        "id": "knowledge-inventory",
+                        "title": "Inventory balances, reservations and receiving",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "Viewing is distinct from mutation. Receiving additionally requires receiving permission and business-write permission; adjustments require Inventory adjustment permission and business-write permission. Reservations and movements follow existing write/RLS checks. Incoming stock is not on-hand availability. Pending Receivals represent incoming material. A receival can be unrestricted, linked to a canonical Production job, or assigned a temporary work label. Canonical and temporary reservation identities are mutually exclusive. Receiving preserves material identity, quantity history, location, pallet, notes, and reservation identity. Inventory aggregation includes reservation identity so unrestricted and job-reserved stock never merge incorrectly. Pending Receivals open collapsed with an attention-oriented count. Inventory Activity is transaction history. Catalog is a supporting reference tool.",
+                        "path": "Inventory → Pending Receivals / Inventory Activity",
+                        "route": "/inventory"
+                      },
+                      {
+                        "id": "knowledge-purchasing",
+                        "title": "Purchase Order drafts, issuance, PDFs and receiving projection",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "These are generic workflow descriptions; no live financial records or prices are included. Issued documents are immutable and PDF failure does not undo issuance. Pending Receivals creation is explicit after permanent PDF generation; incoming material does not become Inventory until receiving. Phase 1 supports New Purchase Order, draft search/filtering, structured per-line Chip or Resin classification, deterministic line totals and subtotal, save, reopen, and edit. One material-agnostic PO may contain any combination of Chip and Resin lines. The optional PO-level Production Job is a convenience default for the common single-job PO. Linking it snapshots Job Reference and Job Number, defaults a blank Date Requested from the job's requested delivery date, and assigns only currently unassigned lines. It does not overwrite deliberate dates or line assignments, so multi-job POs remain supported. Ship To, Payment Terms, and Authorized By are editable document snapshots rather than fields inferred from Production. Catalog selection proposes identity and packaging defaults without locking fields. Catalog price is labeled potentially outdated and is never applied without an operator action. Changing material preserves a manually entered price for review. Historical pricing will prefer explainable recent issued matches; no average or fabricated history is used. A saved, automatically numbered Draft may be issued after confirmation. Retrying the same revision returns the same issuance rather than producing a duplicate. Stock POs may issue without a Production Job. After issuance succeeds, the editor requests permanent PDF generation. Issuance is never rolled back when document generation fails. The issued record exposes Pending, Generating, Generated, or Failed state; Failed generation retains its error and can be retried. Generated files are opened or downloaded from the original private Storage object. After the permanent document is generated, an operator may review eligible immutable snapshot lines and project selected lines into Pending Receivals. Material, size, category, quantity, unit, ETA, and location remain reviewable operational values. ETA starts blank because the PO requested date cannot reliably prove expected material arrival. Creation is explicit, transactional, and idempotent per issuance line; previously created lines remain visible and only remaining lines can be created. Manual Pending Receival creation and receiving remain independent.",
+                        "path": "Purchasing → New Purchase Order",
+                        "route": "/purchasing"
+                      },
+                      {
+                        "id": "workflow-po-receivals",
+                        "title": "Project issued Purchase Order lines into Pending Receivals",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "Open the issued PO after its permanent PDF is generated. Under Pending Receivals, choose Create Pending Receivals or Create Remaining Lines. Select eligible remaining lines and review material, size or category, ordered quantity and unit, ETA and location, then confirm creation. Existing created lines remain locked to prevent duplicates. ETA starts blank because requested delivery is not material arrival. Captured allocation intent locks the associated material, quantity and unit. Use View Pending Receivals to continue in Inventory; incoming rows become on-hand stock only after receiving. Existing issue, Inventory-adjustment and business-write permissions are required.",
+                        "path": "Issued PO → Pending Receivals → Create Pending Receivals / Create Remaining Lines",
+                        "route": "/purchasing"
+                      }
+                    ],
+                    "access_limited": false,
+                    "complete": false,
+                    "limitation": "Bounded permission-filtered documentation search. If access_limited is true, some matching guidance is outside this caller’s current grants; do not describe it as undocumented or conclude the feature is unavailable. No raw repository files, private conversations or current operational records are searched."
+                  }
+                }
+              ],
+              "proposals": [],
+              "trace": [
+                {
+                  "event": "model",
+                  "round": 1,
+                  "outcome": "received",
+                  "durationMs": 1528,
+                  "usage": {
+                    "inputTokens": 1278,
+                    "cachedInputTokens": 1275,
+                    "outputTokens": 25,
+                    "costUsd": 0.00019175,
+                    "reservedUsd": 0.027005
+                  }
+                },
+                {
+                  "event": "tool",
+                  "round": 1,
+                  "name": "discover_capabilities",
+                  "outcome": "ok",
+                  "durationMs": 1
+                },
+                {
+                  "event": "model",
+                  "round": 2,
+                  "outcome": "received",
+                  "durationMs": 2833,
+                  "usage": {
+                    "inputTokens": 1822,
+                    "cachedInputTokens": 1819,
+                    "outputTokens": 29,
+                    "costUsd": 0.00023894999999999998,
+                    "reservedUsd": 0.03102625
+                  }
+                },
+                {
+                  "event": "tool",
+                  "round": 2,
+                  "name": "search_workflow_knowledge",
+                  "outcome": "ok",
+                  "durationMs": 5
+                },
+                {
+                  "event": "model",
+                  "round": 3,
+                  "outcome": "received",
+                  "durationMs": 5141,
+                  "usage": {
+                    "inputTokens": 3031,
+                    "cachedInputTokens": 1819,
+                    "outputTokens": 256,
+                    "costUsd": 0.0028851999999999997,
+                    "reservedUsd": 0.03967
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 6131,
+                "cachedInputTokens": 4913,
+                "outputTokens": 310,
+                "costUsd": 0.003315899999999999,
+                "reservedUsd": 0.09770124999999999
+              },
+              "modelSteps": [
+                {
+                  "calls": [
+                    {
+                      "id": "call_AH6Ab0nFll02qM1iw2U3f6EK",
+                      "name": "discover_capabilities",
+                      "arguments": {
+                        "names": [
+                          "search_workflow_knowledge"
+                        ]
+                      }
+                    }
+                  ],
+                  "usage": {
+                    "inputTokens": 1278,
+                    "cachedInputTokens": 1275,
+                    "outputTokens": 25,
+                    "costUsd": 0.00019175,
+                    "reservedUsd": 0.027005
+                  },
+                  "durationMs": 1528
+                },
+                {
+                  "calls": [
+                    {
+                      "id": "call_E26HdZmGO2n1lwHjbn5x1ZM3",
+                      "name": "search_workflow_knowledge",
+                      "arguments": {
+                        "query": "Pending Receivals available on hand inventory partial delivery"
+                      }
+                    }
+                  ],
+                  "usage": {
+                    "inputTokens": 1822,
+                    "cachedInputTokens": 1819,
+                    "outputTokens": 29,
+                    "costUsd": 0.00023894999999999998,
+                    "reservedUsd": 0.03102625
+                  },
+                  "durationMs": 2833
+                },
+                {
+                  "calls": [],
+                  "final": {
+                    "answer": "No. Pending Receivals are incoming material, not available on-hand inventory. Only the quantity received enters Inventory.\n\nTo record a partial delivery, open Inventory → Pending Receivals, expand the section, and choose Receive on the outstanding line. Enter Received By and the Quantity received now, then select Confirm Receive. The quantity must be positive and no greater than the remaining amount; the balance stays pending, and any existing reservation carries through.\n\nYou need Inventory-receiving and business-write access. Don’t use Receive selected for a partial delivery: it receives the full remaining quantities of the selected rows.",
+                    "observations": [
+                      {
+                        "text": "Pending Receivals are incoming material, not on-hand availability; received quantities enter Inventory and any remaining balance stays pending.",
+                        "evidence_ids": [
+                          "e1"
+                        ]
+                      },
+                      {
+                        "text": "Receiving requires Inventory-receiving and business-write access; Receive selected receives full remaining quantities of selected rows.",
+                        "evidence_ids": [
+                          "e1"
+                        ]
+                      }
+                    ],
+                    "inferences": [],
+                    "recommendations": [
+                      {
+                        "text": "For a partial delivery, use Receive on the outstanding line, enter Received By and Quantity received now, and select Confirm Receive.",
+                        "evidence_ids": [
+                          "e1"
+                        ]
+                      }
+                    ],
+                    "questions": [],
+                    "completed_actions": []
+                  },
+                  "usage": {
+                    "inputTokens": 3031,
+                    "cachedInputTokens": 1819,
+                    "outputTokens": 256,
+                    "costUsd": 0.0028851999999999997,
+                    "reservedUsd": 0.03967
+                  },
+                  "durationMs": 5141
+                }
+              ],
+              "durationMs": 9509,
+              "invoiceAttached": false,
+              "executionAvailable": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "C06",
+      "topic": "Purchasing",
+      "role": "local-admin",
+      "grantedCapabilities": [
+        "writeBusinessData",
+        "messaging.write",
+        "production_blend.manage",
+        "sample_labels.generate",
+        "readOperationalData",
+        "accessIntake",
+        "viewIntake",
+        "createProductionJob",
+        "editProductionJobRoutine",
+        "editProductionJobDetails",
+        "archiveProductionJob",
+        "scheduleProduction",
+        "manageProductionRework",
+        "modifyPlanning",
+        "managePhaseLibrary",
+        "manageManpowerProductCategories",
+        "postJobUpdate",
+        "editJobUpdate",
+        "deleteJobUpdate",
+        "assignJobUpdate",
+        "resolveJobUpdate",
+        "uploadSupportingFiles",
+        "deleteSupportingFiles",
+        "createPurchaseOrderDraft",
+        "issuePurchaseOrder",
+        "previewOperationalDocuments",
+        "issueTransmittal",
+        "receiveInventory",
+        "adjustInventory",
+        "manageVendorsCatalog",
+        "accessDevelopmentEnvironment",
+        "manageUsers",
+        "manageRolesPermissions",
+        "proposal.access"
+      ],
+      "turns": [
+        {
+          "question": "I issued a Purchase Order but some material arrived short. What should I do in TenOps, and does issuing the PO itself increase stock?",
+          "wallMs": 11046,
+          "costUsd": 0.003442100000000059,
+          "apiCalls": 3,
+          "response": {
+            "conversationId": "8c3845b2-c02a-4fdf-b695-99eab50836de",
+            "mode": "agent-experiment",
+            "contentScope": "workflow",
+            "message": "Issuing the PO does not increase stock. Material enters Inventory only when it is received.\n\nFor a short delivery, open Inventory → Pending Receivals, expand the section, and choose Receive on the outstanding line. Enter Received By and the quantity that actually arrived, then select Confirm Receive. Only that quantity enters Inventory; the balance stays pending. Avoid Receive selected for a partial delivery, because it receives the full remaining quantities of selected rows.\n\nIf the PO line is not yet in Pending Receivals, the permanent PO PDF must first be generated, after which an operator can review and explicitly create the eligible pending receival. Receiving requires Inventory-receiving and business-write access.",
+            "sources": [],
+            "snapshot": {
+              "revision": "tenbot-agent-poc.v1",
+              "verifiedAt": "2026-10-29T21:05:07.316Z"
+            },
+            "summary": null,
+            "suggestionAllowed": false,
+            "notices": [
+              "Local OpenAI experiment. Review evidence and proposals; no execution capability exists."
+            ],
+            "agent": {
+              "mode": "openai",
+              "provider": "OpenAI Responses (local experiment)",
+              "model": "gpt-6.1-terra",
+              "status": "completed",
+              "final": {
+                "answer": "Issuing the PO does not increase stock. Material enters Inventory only when it is received.\n\nFor a short delivery, open Inventory → Pending Receivals, expand the section, and choose Receive on the outstanding line. Enter Received By and the quantity that actually arrived, then select Confirm Receive. Only that quantity enters Inventory; the balance stays pending. Avoid Receive selected for a partial delivery, because it receives the full remaining quantities of selected rows.\n\nIf the PO line is not yet in Pending Receivals, the permanent PO PDF must first be generated, after which an operator can review and explicitly create the eligible pending receival. Receiving requires Inventory-receiving and business-write access.",
+                "observations": [
+                  {
+                    "text": "PO issuance does not put incoming material into Inventory; pending receivals are explicitly created after permanent PDF generation.",
+                    "evidence_ids": [
+                      "e1"
+                    ]
+                  },
+                  {
+                    "text": "Receiving a partial quantity adds only that quantity to Inventory and leaves the balance pending. Receive selected receives full remaining quantities. Receiving requires Inventory-receiving and business-write access.",
+                    "evidence_ids": [
+                      "e1"
+                    ]
+                  }
+                ],
+                "inferences": [],
+                "recommendations": [
+                  {
+                    "text": "Use Receive on the outstanding line and confirm the quantity actually received; avoid Receive selected for a partial delivery.",
+                    "evidence_ids": [
+                      "e1"
+                    ]
+                  }
+                ],
+                "questions": [],
+                "completed_actions": []
+              },
+              "evidence": [
+                {
+                  "id": "e1",
+                  "tool": "search_workflow_knowledge",
+                  "data": {
+                    "snapshot": {
+                      "revision": "bc628bd+bid-5e28d254+manpower-ae50e0fc",
+                      "verifiedAt": "2026-10-29",
+                      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026"
+                    },
+                    "sources": [
+                      {
+                        "id": "inventory-pending-receive",
+                        "title": "Receive pending material into Inventory",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "Employees with Inventory-receiving and business-write access can receive incoming material. Open Inventory → Pending Receivals, expand the section and choose Receive on an outstanding line. Enter Received By and Quantity received now, then Confirm Receive. Quantity must be positive and no greater than the remaining amount. Only that quantity enters Inventory; the balance stays pending and the existing reservation carries through. If the result is uncertain, keep the dialog open and retry the same quantity there. Receive selected receives the full remaining quantities of selected rows. Undo latest receipt is a separate Inventory-adjustment action and is blocked if the received stock changed.",
+                        "path": "Inventory → Pending Receivals → Receive → Confirm Receive",
+                        "route": "/inventory"
+                      },
+                      {
+                        "id": "knowledge-inventory",
+                        "title": "Inventory balances, reservations and receiving",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "Viewing is distinct from mutation. Receiving additionally requires receiving permission and business-write permission; adjustments require Inventory adjustment permission and business-write permission. Reservations and movements follow existing write/RLS checks. Incoming stock is not on-hand availability. Pending Receivals represent incoming material. A receival can be unrestricted, linked to a canonical Production job, or assigned a temporary work label. Canonical and temporary reservation identities are mutually exclusive. Receiving preserves material identity, quantity history, location, pallet, notes, and reservation identity. Inventory aggregation includes reservation identity so unrestricted and job-reserved stock never merge incorrectly. Pending Receivals open collapsed with an attention-oriented count. Inventory Activity is transaction history. Catalog is a supporting reference tool.",
+                        "path": "Inventory → Pending Receivals / Inventory Activity",
+                        "route": "/inventory"
+                      },
+                      {
+                        "id": "knowledge-material-assessment",
+                        "title": "Material requirements, supply evidence and lead-time boundaries",
+                        "status": "deployed",
+                        "availability": "partial",
+                        "guidance": "Current Bid Inspector does not mount a material-assessment editor or Refresh read-only availability control. A Blend Sheet does not automatically predict supplier delivery or promise a Production date. Other employee-facing estimator controls cannot be verified from these sources; this does not declare every assessment workflow absent. Released retained scope/material services can calculate requirements from exact saved Sample/issued Blend authority and reviewed quantity/unit mappings. Useful supplier/catalog lead-time evidence or documented manual estimates may support assessment; missing evidence remains unknown. Available stock, own-Job reservations, reservations elsewhere, incoming supply and on-hand shortages remain distinct. No stock, reservation, order or material-status mutation occurs through read-only assessment. Formulations and Blend Sheets are authored in Samples; ask Product about an employee-facing assessment workflow.",
+                        "path": "",
+                        "route": null
+                      },
+                      {
+                        "id": "knowledge-purchasing",
+                        "title": "Purchase Order drafts, issuance, PDFs and receiving projection",
+                        "status": "deployed",
+                        "availability": "available",
+                        "guidance": "These are generic workflow descriptions; no live financial records or prices are included. Issued documents are immutable and PDF failure does not undo issuance. Pending Receivals creation is explicit after permanent PDF generation; incoming material does not become Inventory until receiving. Phase 1 supports New Purchase Order, draft search/filtering, structured per-line Chip or Resin classification, deterministic line totals and subtotal, save, reopen, and edit. One material-agnostic PO may contain any combination of Chip and Resin lines. The optional PO-level Production Job is a convenience default for the common single-job PO. Linking it snapshots Job Reference and Job Number, defaults a blank Date Requested from the job's requested delivery date, and assigns only currently unassigned lines. It does not overwrite deliberate dates or line assignments, so multi-job POs remain supported. Ship To, Payment Terms, and Authorized By are editable document snapshots rather than fields inferred from Production. Catalog selection proposes identity and packaging defaults without locking fields. Catalog price is labeled potentially outdated and is never applied without an operator action. Changing material preserves a manually entered price for review. Historical pricing will prefer explainable recent issued matches; no average or fabricated history is used. A saved, automatically numbered Draft may be issued after confirmation. Retrying the same revision returns the same issuance rather than producing a duplicate. Stock POs may issue without a Production Job. After issuance succeeds, the editor requests permanent PDF generation. Issuance is never rolled back when document generation fails. The issued record exposes Pending, Generating, Generated, or Failed state; Failed generation retains its error and can be retried. Generated files are opened or downloaded from the original private Storage object. After the permanent document is generated, an operator may review eligible immutable snapshot lines and project selected lines into Pending Receivals. Material, size, category, quantity, unit, ETA, and location remain reviewable operational values. ETA starts blank because the PO requested date cannot reliably prove expected material arrival. Creation is explicit, transactional, and idempotent per issuance line; previously created lines remain visible and only remaining lines can be created. Manual Pending Receival creation and receiving remain independent.",
+                        "path": "Purchasing → New Purchase Order",
+                        "route": "/purchasing"
+                      }
+                    ],
+                    "access_limited": false,
+                    "complete": false,
+                    "limitation": "Bounded permission-filtered documentation search. If access_limited is true, some matching guidance is outside this caller’s current grants; do not describe it as undocumented or conclude the feature is unavailable. No raw repository files, private conversations or current operational records are searched."
+                  }
+                }
+              ],
+              "proposals": [],
+              "trace": [
+                {
+                  "event": "model",
+                  "round": 1,
+                  "outcome": "received",
+                  "durationMs": 1333,
+                  "usage": {
+                    "inputTokens": 1286,
+                    "cachedInputTokens": 1283,
+                    "outputTokens": 25,
+                    "costUsd": 0.00019215,
+                    "reservedUsd": 0.02704
+                  }
+                },
+                {
+                  "event": "tool",
+                  "round": 1,
+                  "name": "discover_capabilities",
+                  "outcome": "ok",
+                  "durationMs": 0
+                },
+                {
+                  "event": "model",
+                  "round": 2,
+                  "outcome": "received",
+                  "durationMs": 3281,
+                  "usage": {
+                    "inputTokens": 1830,
+                    "cachedInputTokens": 1827,
+                    "outputTokens": 28,
+                    "costUsd": 0.00023435000000000003,
+                    "reservedUsd": 0.03106125
+                  }
+                },
+                {
+                  "event": "tool",
+                  "round": 2,
+                  "name": "search_workflow_knowledge",
+                  "outcome": "ok",
+                  "durationMs": 3
+                },
+                {
+                  "event": "model",
+                  "round": 3,
+                  "outcome": "received",
+                  "durationMs": 6427,
+                  "usage": {
+                    "inputTokens": 3051,
+                    "cachedInputTokens": 1827,
+                    "outputTokens": 279,
+                    "costUsd": 0.0030156,
+                    "reservedUsd": 0.0399325
+                  }
+                }
+              ],
+              "usage": {
+                "inputTokens": 6167,
+                "cachedInputTokens": 4937,
+                "outputTokens": 332,
+                "costUsd": 0.003442100000000003,
+                "reservedUsd": 0.09803375
+              },
+              "modelSteps": [
+                {
+                  "calls": [
+                    {
+                      "id": "call_nUPGBZOCMQzf5jpjNmzvjKVH",
+                      "name": "discover_capabilities",
+                      "arguments": {
+                        "names": [
+                          "search_workflow_knowledge"
+                        ]
+                      }
+                    }
+                  ],
+                  "usage": {
+                    "inputTokens": 1286,
+                    "cachedInputTokens": 1283,
+                    "outputTokens": 25,
+                    "costUsd": 0.00019215,
+                    "reservedUsd": 0.02704
+                  },
+                  "durationMs": 1333
+                },
+                {
+                  "calls": [
+                    {
+                      "id": "call_yIDjly3n7zqOtVYBRLvPXKWd",
+                      "name": "search_workflow_knowledge",
+                      "arguments": {
+                        "query": "purchase order partial short delivery receive stock issuing"
+                      }
+                    }
+                  ],
+                  "usage": {
+                    "inputTokens": 1830,
+                    "cachedInputTokens": 1827,
+                    "outputTokens": 28,
+                    "costUsd": 0.00023435000000000003,
+                    "reservedUsd": 0.03106125
+                  },
+                  "durationMs": 3281
+                },
+                {
+                  "calls": [],
+                  "final": {
+                    "answer": "Issuing the PO does not increase stock. Material enters Inventory only when it is received.\n\nFor a short delivery, open Inventory → Pending Receivals, expand the section, and choose Receive on the outstanding line. Enter Received By and the quantity that actually arrived, then select Confirm Receive. Only that quantity enters Inventory; the balance stays pending. Avoid Receive selected for a partial delivery, because it receives the full remaining quantities of selected rows.\n\nIf the PO line is not yet in Pending Receivals, the permanent PO PDF must first be generated, after which an operator can review and explicitly create the eligible pending receival. Receiving requires Inventory-receiving and business-write access.",
+                    "observations": [
+                      {
+                        "text": "PO issuance does not put incoming material into Inventory; pending receivals are explicitly created after permanent PDF generation.",
+                        "evidence_ids": [
+                          "e1"
+                        ]
+                      },
+                      {
+                        "text": "Receiving a partial quantity adds only that quantity to Inventory and leaves the balance pending. Receive selected receives full remaining quantities. Receiving requires Inventory-receiving and business-write access.",
+                        "evidence_ids": [
+                          "e1"
+                        ]
+                      }
+                    ],
+                    "inferences": [],
+                    "recommendations": [
+                      {
+                        "text": "Use Receive on the outstanding line and confirm the quantity actually received; avoid Receive selected for a partial delivery.",
+                        "evidence_ids": [
+                          "e1"
+                        ]
+                      }
+                    ],
+                    "questions": [],
+                    "completed_actions": []
+                  },
+                  "usage": {
+                    "inputTokens": 3051,
+                    "cachedInputTokens": 1827,
+                    "outputTokens": 279,
+                    "costUsd": 0.0030156,
+                    "reservedUsd": 0.0399325
+                  },
+                  "durationMs": 6427
+                }
+              ],
+              "durationMs": 11046,
+              "invoiceAttached": false,
+              "executionAvailable": false
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "sourcePins": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "6c3b802f94a4ed8fd605d66eba21ab728570cd3aabcecc5611fe5e338304d4f8"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "a49aee6e6b0d8687b3e0bc0a518aabd8454b85bca0a70a46b33b71f608016a13"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "f5695caffb6fe7be8ef467f7197b0d4fafe522f7f20246c791ac42de4d162717"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+      "sha256": "05357a3e9fcd54d52b20c2f173dea9acae3e1912e4d565afad3cbc2508e4345b"
+    },
+    {
+      "path": "scripts/reconcile-tenbot-conversation.mts",
+      "sha256": "8d32b76752f5e89a77d7962baf016d422b9a11764afb077addb8d22f9494d49b"
+    }
+  ],
+  "networkReceipts": [
+    {
+      "model": "gpt-6.1-terra",
+      "label": "qa-reconciliation-local-admin",
+      "startedAt": "2026-10-29T21:04:35.258Z",
+      "reservedUsd": 0.02696875,
+      "transportTimings": [
+        {
+          "pacingWaitMs": 0,
+          "fetchToHeadersMs": 1639,
+          "metadataParseMs": 4
+        }
+      ],
+      "httpStatus": 200,
+      "requestId": "req_3cc3819675344086870343ebc4574857",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1275,
+        "input_tokens_details": {
+          "cache_write_tokens": 29,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 29
+          },
+          "cached_tokens": 1243
+        },
+        "output_tokens": 25,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1300
+      },
+      "accountedUsd": 0.0002264,
+      "costMeasured": true,
+      "durationMs": 1652,
+      "calls": [
+        {
+          "id": "call_oBKiUGif2RUOxkiUgj2B2beh",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "search_workflow_knowledge"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1275,
+        "cachedInputTokens": 1243,
+        "outputTokens": 25,
+        "costUsd": 0.0002264,
+        "reservedUsd": 0.02696875
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "qa-reconciliation-local-admin",
+      "startedAt": "2026-10-29T21:04:36.911Z",
+      "reservedUsd": 0.03099,
+      "transportTimings": [
+        {
+          "pacingWaitMs": 849,
+          "fetchToHeadersMs": 1771,
+          "metadataParseMs": 2
+        }
+      ],
+      "httpStatus": 200,
+      "requestId": "req_b46224621f464870bf3c81427399ae4d",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1819,
+        "input_tokens_details": {
+          "cache_write_tokens": 503,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 503
+          },
+          "cached_tokens": 1313
+        },
+        "output_tokens": 26,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1845
+      },
+      "accountedUsd": 0.0008273999999999999,
+      "costMeasured": true,
+      "durationMs": 2625,
+      "calls": [
+        {
+          "id": "call_1QFSGh4RLgWqW8hKxesIL0tu",
+          "name": "search_workflow_knowledge",
+          "arguments": {
+            "query": "proposal issue production job required draft"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1819,
+        "cachedInputTokens": 1313,
+        "outputTokens": 26,
+        "costUsd": 0.0008273999999999999,
+        "reservedUsd": 0.03099
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "qa-reconciliation-local-admin",
+      "startedAt": "2026-10-29T21:04:39.555Z",
+      "reservedUsd": 0.04178375,
+      "transportTimings": [
+        {
+          "pacingWaitMs": 706,
+          "fetchToHeadersMs": 6485,
+          "metadataParseMs": 2
+        }
+      ],
+      "httpStatus": 200,
+      "requestId": "req_fdc20f43cf1f412094ab12676c2986a7",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 3347,
+        "input_tokens_details": {
+          "cache_write_tokens": 1528,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1528
+          },
+          "cached_tokens": 1816
+        },
+        "output_tokens": 97,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3444
+      },
+      "accountedUsd": 0.0024888,
+      "costMeasured": true,
+      "durationMs": 7197,
+      "calls": [],
+      "final": {
+        "answer": "No. A Proposal can exist and be issued without a Production Job. Proposal access is required independently of Job or Bid access.",
+        "observations": [
+          {
+            "text": "A Proposal can exist and be issued without a Production Job; Proposal access requires an explicit grant or administrator access independently of Job or Bid access.",
+            "evidence_ids": [
+              "e1"
+            ]
+          }
+        ],
+        "inferences": [],
+        "recommendations": [],
+        "questions": [],
+        "completed_actions": []
+      },
+      "usage": {
+        "inputTokens": 3347,
+        "cachedInputTokens": 1816,
+        "outputTokens": 97,
+        "costUsd": 0.0024888,
+        "reservedUsd": 0.04178375
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "qa-reconciliation-local-admin",
+      "startedAt": "2026-10-29T21:04:46.761Z",
+      "reservedUsd": 0.027005,
+      "transportTimings": [
+        {
+          "pacingWaitMs": 0,
+          "fetchToHeadersMs": 1521,
+          "metadataParseMs": 2
+        }
+      ],
+      "httpStatus": 200,
+      "requestId": "req_a23c2808d1624940ab0ed5a3fbd43268",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1278,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 0
+          },
+          "cached_tokens": 1275
+        },
+        "output_tokens": 25,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1303
+      },
+      "accountedUsd": 0.00019175,
+      "costMeasured": true,
+      "durationMs": 1527,
+      "calls": [
+        {
+          "id": "call_AH6Ab0nFll02qM1iw2U3f6EK",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "search_workflow_knowledge"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1278,
+        "cachedInputTokens": 1275,
+        "outputTokens": 25,
+        "costUsd": 0.00019175,
+        "reservedUsd": 0.027005
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "qa-reconciliation-local-admin",
+      "startedAt": "2026-10-29T21:04:48.289Z",
+      "reservedUsd": 0.03102625,
+      "transportTimings": [
+        {
+          "pacingWaitMs": 973,
+          "fetchToHeadersMs": 1853,
+          "metadataParseMs": 2
+        }
+      ],
+      "httpStatus": 200,
+      "requestId": "req_733d8b36d1ab4c5ba78ef19168583b0c",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1822,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 0
+          },
+          "cached_tokens": 1819
+        },
+        "output_tokens": 29,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1851
+      },
+      "accountedUsd": 0.00023894999999999998,
+      "costMeasured": true,
+      "durationMs": 2833,
+      "calls": [
+        {
+          "id": "call_E26HdZmGO2n1lwHjbn5x1ZM3",
+          "name": "search_workflow_knowledge",
+          "arguments": {
+            "query": "Pending Receivals available on hand inventory partial delivery"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1822,
+        "cachedInputTokens": 1819,
+        "outputTokens": 29,
+        "costUsd": 0.00023894999999999998,
+        "reservedUsd": 0.03102625
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "qa-reconciliation-local-admin",
+      "startedAt": "2026-10-29T21:04:51.127Z",
+      "reservedUsd": 0.03967,
+      "transportTimings": [
+        {
+          "pacingWaitMs": 637,
+          "fetchToHeadersMs": 4500,
+          "metadataParseMs": 1
+        }
+      ],
+      "httpStatus": 200,
+      "requestId": "req_5a3c9908ad2f494c9e916a4df94eeee0",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 3031,
+        "input_tokens_details": {
+          "cache_write_tokens": 1209,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1209
+          },
+          "cached_tokens": 1819
+        },
+        "output_tokens": 256,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3287
+      },
+      "accountedUsd": 0.0028851999999999997,
+      "costMeasured": true,
+      "durationMs": 5141,
+      "calls": [],
+      "final": {
+        "answer": "No. Pending Receivals are incoming material, not available on-hand inventory. Only the quantity received enters Inventory.\n\nTo record a partial delivery, open Inventory → Pending Receivals, expand the section, and choose Receive on the outstanding line. Enter Received By and the Quantity received now, then select Confirm Receive. The quantity must be positive and no greater than the remaining amount; the balance stays pending, and any existing reservation carries through.\n\nYou need Inventory-receiving and business-write access. Don’t use Receive selected for a partial delivery: it receives the full remaining quantities of the selected rows.",
+        "observations": [
+          {
+            "text": "Pending Receivals are incoming material, not on-hand availability; received quantities enter Inventory and any remaining balance stays pending.",
+            "evidence_ids": [
+              "e1"
+            ]
+          },
+          {
+            "text": "Receiving requires Inventory-receiving and business-write access; Receive selected receives full remaining quantities of selected rows.",
+            "evidence_ids": [
+              "e1"
+            ]
+          }
+        ],
+        "inferences": [],
+        "recommendations": [
+          {
+            "text": "For a partial delivery, use Receive on the outstanding line, enter Received By and Quantity received now, and select Confirm Receive.",
+            "evidence_ids": [
+              "e1"
+            ]
+          }
+        ],
+        "questions": [],
+        "completed_actions": []
+      },
+      "usage": {
+        "inputTokens": 3031,
+        "cachedInputTokens": 1819,
+        "outputTokens": 256,
+        "costUsd": 0.0028851999999999997,
+        "reservedUsd": 0.03967
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "qa-reconciliation-local-admin",
+      "startedAt": "2026-10-29T21:04:56.270Z",
+      "reservedUsd": 0.02704,
+      "transportTimings": [
+        {
+          "pacingWaitMs": 0,
+          "fetchToHeadersMs": 1327,
+          "metadataParseMs": 2
+        }
+      ],
+      "httpStatus": 200,
+      "requestId": "req_7a7214bba15f4baca74a9cb1b094db01",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1286,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 0
+          },
+          "cached_tokens": 1283
+        },
+        "output_tokens": 25,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1311
+      },
+      "accountedUsd": 0.00019215,
+      "costMeasured": true,
+      "durationMs": 1332,
+      "calls": [
+        {
+          "id": "call_nUPGBZOCMQzf5jpjNmzvjKVH",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "search_workflow_knowledge"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1286,
+        "cachedInputTokens": 1283,
+        "outputTokens": 25,
+        "costUsd": 0.00019215,
+        "reservedUsd": 0.02704
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "qa-reconciliation-local-admin",
+      "startedAt": "2026-10-29T21:04:57.603Z",
+      "reservedUsd": 0.03106125,
+      "transportTimings": [
+        {
+          "pacingWaitMs": 1167,
+          "fetchToHeadersMs": 2108,
+          "metadataParseMs": 2
+        }
+      ],
+      "httpStatus": 200,
+      "requestId": "req_d56e0f69138642898bf2c3091ac357f5",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 1830,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 0
+          },
+          "cached_tokens": 1827
+        },
+        "output_tokens": 28,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1858
+      },
+      "accountedUsd": 0.00023435000000000003,
+      "costMeasured": true,
+      "durationMs": 3281,
+      "calls": [
+        {
+          "id": "call_yIDjly3n7zqOtVYBRLvPXKWd",
+          "name": "search_workflow_knowledge",
+          "arguments": {
+            "query": "purchase order partial short delivery receive stock issuing"
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1830,
+        "cachedInputTokens": 1827,
+        "outputTokens": 28,
+        "costUsd": 0.00023435000000000003,
+        "reservedUsd": 0.03106125
+      }
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "label": "qa-reconciliation-local-admin",
+      "startedAt": "2026-10-29T21:05:00.889Z",
+      "reservedUsd": 0.0399325,
+      "transportTimings": [
+        {
+          "pacingWaitMs": 384,
+          "fetchToHeadersMs": 6037,
+          "metadataParseMs": 1
+        }
+      ],
+      "httpStatus": 200,
+      "requestId": "req_09e2d82e10af43f1b500a96d22c5f067",
+      "apiModel": "gpt-6.1-terra",
+      "apiStatus": "completed",
+      "serviceTier": "default",
+      "rawUsage": {
+        "input_tokens": 3051,
+        "input_tokens_details": {
+          "cache_write_tokens": 1221,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 1221
+          },
+          "cached_tokens": 1827
+        },
+        "output_tokens": 279,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3330
+      },
+      "accountedUsd": 0.0030156,
+      "costMeasured": true,
+      "durationMs": 6425,
+      "calls": [],
+      "final": {
+        "answer": "Issuing the PO does not increase stock. Material enters Inventory only when it is received.\n\nFor a short delivery, open Inventory → Pending Receivals, expand the section, and choose Receive on the outstanding line. Enter Received By and the quantity that actually arrived, then select Confirm Receive. Only that quantity enters Inventory; the balance stays pending. Avoid Receive selected for a partial delivery, because it receives the full remaining quantities of selected rows.\n\nIf the PO line is not yet in Pending Receivals, the permanent PO PDF must first be generated, after which an operator can review and explicitly create the eligible pending receival. Receiving requires Inventory-receiving and business-write access.",
+        "observations": [
+          {
+            "text": "PO issuance does not put incoming material into Inventory; pending receivals are explicitly created after permanent PDF generation.",
+            "evidence_ids": [
+              "e1"
+            ]
+          },
+          {
+            "text": "Receiving a partial quantity adds only that quantity to Inventory and leaves the balance pending. Receive selected receives full remaining quantities. Receiving requires Inventory-receiving and business-write access.",
+            "evidence_ids": [
+              "e1"
+            ]
+          }
+        ],
+        "inferences": [],
+        "recommendations": [
+          {
+            "text": "Use Receive on the outstanding line and confirm the quantity actually received; avoid Receive selected for a partial delivery.",
+            "evidence_ids": [
+              "e1"
+            ]
+          }
+        ],
+        "questions": [],
+        "completed_actions": []
+      },
+      "usage": {
+        "inputTokens": 3051,
+        "cachedInputTokens": 1827,
+        "outputTokens": 279,
+        "costUsd": 0.0030156,
+        "reservedUsd": 0.0399325
+      }
+    }
+  ],
+  "databaseSecurityCertified": false
+}

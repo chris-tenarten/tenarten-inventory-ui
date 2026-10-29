@@ -1,0 +1,35 @@
+{
+  "command": "./node_modules/.bin/tsx scripts/verify-tenbot-invoice.mts",
+  "exitCode": 0,
+  "elapsedMs": 177,
+  "result": {
+    "status": "pass",
+    "mode": "offline deterministic contract validation; no model or OCR test",
+    "groups": 20,
+    "checks": [
+      "raw synthetic attachment, not pre-extracted model answers",
+      "independent exact quantity conversion, holds ambiguity/unmatched/duplicates, excludes freight",
+      "missing metadata is explicit; invoice date and reader identity never become order metadata",
+      "owner/session binding and read-first evidence boundary",
+      "malformed, negative, zero and invented positive quantities rejected",
+      "SKU/size prefixes cannot impersonate complete source identities",
+      "supplier and full invoice reference require their own labeled evidence",
+      "no arbitrary rows, SQL, actor metadata or fabricated candidate IDs in prepare",
+      "every registered line reviewed exactly once; no forged or repeated refs",
+      "material lines cannot be hidden as freight; freight cannot enter material preparation",
+      "catalog completeness, row identity uniqueness and financial-field projection",
+      "incomplete duplicate checks never establish absence",
+      "tool errors recover by re-reading; failed refresh invalidates older duplicate evidence",
+      "a new catalog extraction invalidates the earlier duplicate snapshot",
+      "incompatible units, missing invoice sizes and supplier mismatch remain held",
+      "nonterminating package divisions are held rather than rounded",
+      "explicit invoice package conflicts are held even when SKU and container unit match",
+      "a matching SKU cannot silently override a conflicting invoice material description",
+      "no executor is discoverable and approval language never expands capabilities",
+      "caller read adapter fixes tables/projections, quotes search grammar and refuses incomplete counts"
+    ],
+    "database_writes": 0,
+    "inference_calls": 0
+  },
+  "stderr": ""
+}

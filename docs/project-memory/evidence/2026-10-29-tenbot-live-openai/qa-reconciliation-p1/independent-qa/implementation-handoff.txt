@@ -1,0 +1,22 @@
+TENBOT AGENTIC POC — INDEPENDENT QA HANDOFF
+Candidate: dev 2967a968c315ff4491203cbab07e7325c3629c24
+Status: QA findings for Product review; no implementation, migration, push or deployment authorization is implied.
+Evidence: /private/tmp/tenbot-independent-qa-20261029/QA-report.html
+
+1. P1 — Correct package quantities before further receival release consideration.
+Actual Terra extraction read 150 LB Alaska White and 10 GAL resin correctly. Duplicate-held lines lost calculated conversions and became raw 150/LB and 10/GAL. Independent actual-simulator reproduction changed only units, acknowledged legitimate separate-order evidence, and obtained canApprove=true for 150 Bag / 10 Pail. Correct values are 3 Bag / 2 Pail. No unsafe approval was sent.
+Retain immutable source quantity/unit plus independently validated catalog conversion on held as well as ready lines. Recompute when the catalog offer changes. A unit-only correction must not silently reinterpret a measured quantity as a package count. Preserve deliberate employee edits, approval invalidation and duplicate checks.
+Acceptance: duplicate-held and ambiguous-offer 150 LB→3 Bag / 10 GAL→2 Pail remain correct through review, edits and acknowledgement; add a focused regression for the demonstrated failure.
+Reproduction: security/held-package-conversion.json. Cause: tenbot-invoice.ts:276/286; tenbot-live-demo.mts:147/116/193/206.
+
+2. P1 — Restore useful, current conversational help.
+The actual local run resolved 8/14 help goals; practical workflows/investigations resolved 5/10. Local UI advertises admin, but the adapter omits Intake, Proposal and receiving grants, filtering existing guides. Align the review adapter with the intended caller's actual permissions; test allowed and denied roles without broadening employee access. Do not describe permission-filtered guidance as undocumented.
+Refresh verified knowledge for Bid → Overview → Bid Preparation → Create Sample and current Manpower sorts. Preserve owner-scoped, source-checked help through follow-ups/blur while keeping operational freshness/revocation controls. Allow useful runtime-capability refusals to survive validation: C14's correct refusal was replaced by missing-workflow-evidence.
+Acceptance: repeat only C01/C02/C05/C06/C08/C14 and the help-history scenario, with exact UI paths, honest access limits, no invented action and no extra clarification when evidence suffices.
+
+3. P2 — Meet the brief invoice-review target, subject to Product acceptance.
+Clean five-line offline review needed no corrections but still required Save review + checkbox + Approve; it rendered 34 fields over 2,093 desktop / 2,732 mobile pixels. Ready lines reorder source items, and excluded freight retains a full form. The live two-line task required seven field edits, including three values accurately transcribed from the document, plus two duplicate acknowledgements and two review saves.
+Show compact ready/excluded summaries with traceable source order; expand only the relevant exception/edit controls. Prefill reliable document values with provenance for explicit review. Make safe exclusion of unresolved lines clear. Move redundant review validation behind the single explicit final approval where feasible; retain server validation, permissions, exact-payload approval, expiry and atomicity. Do not silently drop held lines or weaken security.
+Acceptance: clean five-line actual-inference case reaches an accurate brief review and one explicit approval without re-entry; exception corrections remain scoped and invalidate approval correctly.
+
+Next milestone: a corrected local candidate for Product acceptance, preserving current Qwen Production. No real-write release yet. Before activation, independently prove real JWT/RLS/role compatibility, durable approval and supersession/revocation, atomic catalog-plus-receival creation with rollback, concurrent duplicate prevention and idempotency, durable audit and caller-visible returned-record reconciliation. Current combined catalog/acknowledgement behavior is simulator-only; the unapplied existing-catalog SQL does not establish that contract. Test that older unexecuted approvals become unusable after edits.

@@ -1,0 +1,43 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {createTenbotLiveDemo,type DemoDraft} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/scripts/support/tenbot-live-demo.mts';
+import {createScriptedTenbotAgentProvider} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/scripts/support/tenbot-agent-scripted.mts';
+import {emptyUsage,type AgentProvider} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/supabase/functions/_shared/tenbot-agent.ts';
+const root='/Users/chrisngo/source/repos/tenarten-inventory-ui';
+const fixture=JSON.parse(readFileSync(root+'/scripts/fixtures/tenbot-invoice.synthetic.json','utf8'));
+const rawLines=fixture.document.text.replace('Alaska White | #1 | 100 LB','Alaska White | #1 | 150 LB').replace('Clear Resin | Part A | 5 GAL','Clear Resin | Part A | 10 GAL').split('\n');
+const receivals={complete:true,rows:[
+ {id:'offline-existing-aw',vendor:'T&M Supply',material_name:'Alaska White',size:'#1',quantity_expected:'3',quantity_received:'0',unit:'Bag',status:'pending'},
+ {id:'offline-existing-res',vendor:'T&M Supply',material_name:'Clear Resin',size:'Part A',quantity_expected:'2',quantity_received:'0',unit:'Pail',status:'pending'}]};
+const owner='10282026-0000-4000-8000-000000000021';
+const png='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aLmQAAAAASUVORK5CYII=';
+let extractionDoubleCalls=0,reasoningDoubleCalls=0;
+const handler=createTenbotLiveDemo({model:'offline-injected-transport',catalog:fixture.catalog,receivals,can:async()=>true,remainingUsd:()=>5,assertNoFatal(){},now:()=>Date.parse('2026-10-29T15:00:00Z'),createProvider(_label,attachment){
+ if(attachment)return {name:'OFFLINE extraction double; no OCR or network',model:'offline',async step(){extractionDoubleCalls++;return {calls:[],continuation:[],usage:emptyUsage(),final:{raw_lines:rawLines}};}} as AgentProvider;
+ const provider=createScriptedTenbotAgentProvider('invoice-preparation');return {...provider,async step(request){reasoningDoubleCalls++;return provider.step(request);}};
+}});
+const requests:string[]=[];
+async function invoke(body:Record<string,unknown>){requests.push(String(body.action));return handler(body,owner) as Promise<any>;}
+const uploaded=await invoke({action:'upload',syntheticConfirmed:true,attachment:{filename:'offline-synthetic.png',mediaType:'image/png',dataBase64:png}});
+const answer=await invoke({action:'ask',attachmentId:uploaded.attachmentId,question:'Prepare pending receivals from this synthetic invoice.',orderDetails:fixture.confirmedMetadataExample});
+const initial:DemoDraft=answer.localDemo.draft;
+assert(initial,'actual simulator must publish a draft from offline injected provider');
+const isTarget=(row:any)=>row.materialId==='standard:synthetic-aw1'||row.materialId==='standard:synthetic-res5';
+const initialTargets=initial.rows.filter(isTarget);
+assert.deepEqual(initialTargets.map(row=>[row.materialId,row.quantity,row.unit]),[['standard:synthetic-aw1','150','LB'],['standard:synthetic-res5','10','GAL']]);
+assert(initialTargets.every(row=>row.reasons.includes('potential_duplicate')));
+const reviewedEdits=initial.rows.map(row=>({lineId:row.lineId,materialId:row.materialId,quantity:row.quantity,unit:row.materialId==='standard:synthetic-aw1'?'Bag':row.materialId==='standard:synthetic-res5'?'Pail':row.unit,jobId:row.jobId,excluded:!isTarget(row),catalogRequest:row.catalogRequest??null,duplicateAcknowledgement:null}));
+const afterUnitEdit=await invoke({action:'review',draftId:initial.id,revision:initial.revision,edits:reviewedEdits,orderDetails:fixture.confirmedMetadataExample});
+assert.equal(afterUnitEdit.draft.canApprove,false);
+assert(afterUnitEdit.draft.rows.filter(isTarget).every((row:any)=>row.duplicateReview?.canAcknowledge));
+const acknowledgedEdits=afterUnitEdit.draft.rows.map((row:any)=>({lineId:row.lineId,materialId:row.materialId,quantity:row.quantity,unit:row.unit,jobId:row.jobId,excluded:row.excluded,catalogRequest:row.catalogRequest??null,duplicateAcknowledgement:isTarget(row)?row.duplicateReview.fingerprint:null}));
+const final=await invoke({action:'review',draftId:initial.id,revision:afterUnitEdit.draft.revision,edits:acknowledgedEdits,orderDetails:fixture.confirmedMetadataExample});
+assert.equal(final.draft.canApprove,true,'DEFECT reproduced: unit-only correction plus valid separate-order acknowledgements marks raw mass/volume counts ready as package counts');
+assert.deepEqual(final.draft.rows.filter(isTarget).map((row:any)=>[row.materialId,row.quantity,row.unit,row.reasons]),[['standard:synthetic-aw1','150','Bag',[]],['standard:synthetic-res5','10','Pail',[]]]);
+const status=await invoke({action:'status'});assert.equal(status.simulatedPendingCount,0);assert(!requests.includes('approve'));
+const proposal=answer.agent.proposals.find((p:any)=>p.tool==='prepare_pending_receivals').proposal;
+const path=root+'/supabase/functions/_shared/tenbot-invoice.ts';
+const receipt={candidate:'2967a968c315ff4491203cbab07e7325c3629c24',mode:'Narrow independent OFFLINE reproduction using actual simulator, canonical tools and existing scripted transport fixture; no inference, OCR, network, active adapter, SQL, database or approval call',reproduced:true,requests,apiCalls:0,databaseWrites:0,simulatedPendingCreated:status.simulatedPendingCount,extractionDoubleCalls,reasoningDoubleCalls,expectedCanonical:[{material:'Alaska White',source:'150 LB',package:'50 LB Bag',quantity:'3',unit:'Bag'},{material:'Clear Resin',source:'10 GAL',package:'5 GAL Pail',quantity:'2',unit:'Pail'}],initialHeldTargetRows:initialTargets,canonicalPreparationHeldLines:proposal.held_lines.filter((r:any)=>['standard:synthetic-aw1','standard:synthetic-res5'].includes(r.catalog_candidate_id)),unitOnlyEditPayload:reviewedEdits,afterUnitOnlyEdit:afterUnitEdit.draft,afterSeparateOrderAcknowledgements:final.draft,sourceSha256:createHash('sha256').update(readFileSync(path)).digest('hex'),explanation:'Canonical preparation computes exact package conversion, but held_lines omits normalized proposal/conversion and keeps only raw extracted quantity/unit. Simulator fromProposal therefore initializes held rows with raw values. Review accepts any positive quantity matching the edited catalog order unit and never replays conversion against source. Duplicate acknowledgement then clears the final hold.'};
+const out='/private/tmp/tenbot-independent-qa-20261029/security/held-package-conversion.json';writeFileSync(out,JSON.stringify(receipt,null,2)+'\n');
+console.log(JSON.stringify({reproduced:true,evidence:out,canApprove:final.draft.canApprove,readyRows:final.draft.rows.filter(isTarget).map((r:any)=>({material:r.materialName,quantity:r.quantity,unit:r.unit})),expectedRows:receipt.expectedCanonical,apiCalls:0,approvalCalls:0,simulatedPendingCreated:0},null,2));

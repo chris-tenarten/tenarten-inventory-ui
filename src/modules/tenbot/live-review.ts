@@ -1,15 +1,16 @@
 import type {PurchasingCatalogItemInput} from '../purchasing/types';
 import {samePurchasingVendor} from '../purchasing/catalog-records';
+import {invoiceQuantityIssues, type InvoiceQuantityBasis, type InvoiceSourceQuantity} from '../inventory/invoice-quantity';
 
-export type LocalCatalogChoice = { id: string; materialName: string; size: string; unit: string; supplier?: string; packageLabel?: string };
+export type LocalCatalogChoice = { id: string; materialName: string; size: string; unit: string; supplier?: string; packageLabel?: string; packageQuantity?: string; packageMeasure?: string; containerType?: string };
 export type LocalJobChoice = { id: string; label: string };
 export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; canPrepare?: boolean; canCreateCatalog?: boolean; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
 export type LocalOrderDetails = { orderedBy: string; orderDate: string; location: string };
 export type LocalDuplicateMatch = {recordId: string; source: 'fixture' | 'simulated'; supplier: string; status: string; materialName: string; size: string; quantityExpected: string; quantityReceived?: string; unit: string; documentReference: string | null; classification: 'possible' | 'confirmed'; recordFingerprint?: string; reason?: string};
 export type LocalDuplicateReview = {fingerprint: string; matches: LocalDuplicateMatch[]; canAcknowledge: boolean; acknowledged: boolean};
-export type LocalDraftRow = { lineId: string; sourceText: string; materialId: string | null; materialName: string | null; size: string | null; quantity: string; unit: string; jobId: string | null; excluded: boolean; reasons: string[]; catalogRequest?: ProposedCatalogMaterial | null; duplicateReview?: LocalDuplicateReview | null; duplicateAcknowledgement?: string | null };
+export type LocalDraftRow = { lineId: string; sourceText: string; sourceQuantity?: InvoiceSourceQuantity | null; quantityBasis?: InvoiceQuantityBasis; materialId: string | null; materialName: string | null; size: string | null; quantity: string; unit: string; jobId: string | null; excluded: boolean; reasons: string[]; catalogRequest?: ProposedCatalogMaterial | null; duplicateReview?: LocalDuplicateReview | null; duplicateAcknowledgement?: string | null };
 export type LocalInvoiceProvenance = {supplier: string; documentReference: string; attachmentSha256: string};
-export type LocalReceivalDraft = { id: string; revision: number; hash: string; status: 'review_required' | 'approved_simulated' | 'created'; simulation: boolean; attachmentId: string; orderDetails: LocalOrderDetails; missingFields: string[]; canApprove: boolean; rows: LocalDraftRow[]; durableDraftId?: string; durableHash?: string; executionEnabled?: boolean; blockReason?: string; provenance?: LocalInvoiceProvenance; catalogApprovalRequired?: boolean; reviewed?: boolean };
+export type LocalReceivalDraft = { id: string; revision: number; hash: string; status: 'review_required' | 'approved_simulated' | 'created'; simulation: boolean; attachmentId: string; orderDetails: LocalOrderDetails; orderDetailEvidence?: Partial<Record<keyof LocalOrderDetails,{sourceRef:string;value:string}>>; missingFields: string[]; canApprove: boolean; rows: LocalDraftRow[]; durableDraftId?: string; durableHash?: string; executionEnabled?: boolean; blockReason?: string; provenance?: LocalInvoiceProvenance; catalogApprovalRequired?: boolean; reviewed?: boolean };
 export type LocalRowEdit = Pick<LocalDraftRow, 'lineId' | 'materialId' | 'quantity' | 'unit' | 'jobId' | 'excluded' | 'catalogRequest' | 'duplicateAcknowledgement'>;
 export type LocalAttachment = { attachmentId: string; filename: string; mediaType: string; expiresAt?: string; simulation: boolean };
 export type LocalCatalogAddition = {simulation: true; sourceLineId: string; catalogId: null; material: ProposedCatalogMaterial; provenance: LocalInvoiceProvenance & {sourceText: string}};
@@ -67,6 +68,24 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
   const selectedSupplier = proposal?.supplier || choice?.supplier;
   if (invoiceSupplier && selectedSupplier && !samePurchasingVendor(selectedSupplier,invoiceSupplier)) fields.supplier = `Supplier must match the invoice: ${invoiceSupplier}.`;
   const holds: string[] = [];
+  const quantityCheck = invoiceQuantityIssues(source.sourceQuantity, choice ? {orderUnit:choice.unit,packageQuantity:choice.packageQuantity,packageMeasure:choice.packageMeasure,containerType:choice.containerType} : completeProposal && proposal ? {orderUnit:proposal.priceUnit,packageQuantity:proposal.unitSize,packageMeasure:proposal.unitSizeUom,containerType:proposal.packaging} : undefined, row.quantity, row.unit, source.sourceText);
+  const quantityLabels: Record<string,string> = {
+    missing_invoice_quantity_evidence:'Original invoice quantity/unit evidence is missing. Prepare this line again; changing the receival fields cannot replace source evidence.',
+    source_quantity_mismatch:`Invoice evidence requires ${quantityCheck.basis.receivalQuantity} ${quantityCheck.basis.receivalUnit}. Correct the receival quantity; the original invoice is unchanged.`,
+    source_unit_mismatch:`Invoice evidence requires the ${quantityCheck.basis.receivalUnit} receival unit.`,
+    conflicting_source_quantity:'Quantities on this invoice line conflict. Clarify the container count and total material quantity before approval.',
+    source_quantity_is_package_size:'The extracted quantity describes one package, not the invoice total. Clarify this line before approval.',
+    incompatible_unit_or_package:'Invoice and catalog units cannot be converted from verified package evidence. Choose the exact offer or clarify this line.',
+    non_exact_package_conversion:'The invoice total does not convert exactly to the catalog package. Clarify this line before approval.',
+    non_integral_package_count:'The invoice total implies a fractional container. Clarify the container count before approval.',
+    invoice_catalog_package_conflict:'The invoice package size conflicts with the catalog offer. Choose the exact offer or clarify this line.',
+    unknown_catalog_receival_unit:'The catalog offer has no verified receival unit. Choose a supported offer.',
+  };
+  for (const reason of quantityCheck.reasons) {
+    if (reason==='source_quantity_mismatch') fields.quantity=quantityLabels[reason];
+    else if (reason==='source_unit_mismatch') fields.unit=quantityLabels[reason];
+    else holds.push(quantityLabels[reason] || `Quantity evidence needs review: ${reason.replaceAll('_',' ')}.`);
+  }
   if (completeProposal && !status.simulation) holds.push('Combined catalog and receival execution is unavailable on the real-data path. No write will run.');
   if (completeProposal && status.canCreateCatalog === false) holds.push('Catalog creation requires review and approval by an employee with Manage vendors and catalog permission.');
   const labels: Record<string, string> = {
@@ -92,6 +111,7 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
   if (source.duplicateReview?.matches.length && source.duplicateReview.matches.every(match=>match.classification==='possible') && !(source.duplicateReview.acknowledged && row.duplicateAcknowledgement === source.duplicateReview.fingerprint && !changed)) holds.push(labels.potential_duplicate);
   if (source.duplicateReview?.matches.some(match=>match.classification==='confirmed')) holds.push(labels.confirmed_duplicate);
   for (const reason of source.reasons) {
+    if (Object.hasOwn(quantityLabels,reason)) continue; // Recomputed against current edits and offer above.
     if (['invalid_quantity', 'incompatible_unit', 'unknown_job'].includes(reason)) continue;
     if (reason === 'incomplete_catalog_request' && completeProposal) continue;
     if (reason === 'catalog_request_conflicts_with_match' && !(row.materialId && row.catalogRequest)) continue;
@@ -153,7 +173,14 @@ export function receivalReviewNotice(draft: LocalReceivalDraft, status: LocalDem
 }
 export function approvalForCurrentReview(draft: LocalReceivalDraft, edits: LocalRowEdit[], details: LocalOrderDetails, checked: boolean, busy: boolean) {
   const executionReady = draft.simulation || draft.executionEnabled === true && Boolean(draft.durableDraftId && draft.durableHash);
-  return executionReady && draft.reviewed !== false && draft.status === 'review_required' && draft.canApprove && Boolean(draft.hash) && Number.isSafeInteger(draft.revision) && draft.revision > 0 && checked && !busy && !reviewChanged(draft, edits, details);
+  const quantitiesReady = draft.rows.every(row=>{
+    if(row.excluded)return true;
+    const basis=row.quantityBasis;
+    if(!basis?.receivalQuantity || !basis.receivalUnit || basis.reasons.length)return false;
+    const current=invoiceQuantityIssues(row.sourceQuantity,{orderUnit:basis.receivalUnit,packageQuantity:basis.perPackage?.quantity,packageMeasure:basis.perPackage?.unit,containerType:basis.perPackage?.container},row.quantity,row.unit,row.sourceText);
+    return current.basis.receivalQuantity!==null && current.reasons.length===0;
+  });
+  return executionReady && quantitiesReady && draft.reviewed !== false && draft.status === 'review_required' && draft.canApprove && Boolean(draft.hash) && Number.isSafeInteger(draft.revision) && draft.revision > 0 && checked && !busy && !reviewChanged(draft, edits, details);
 }
 
 function dataUrl(blob: Blob): Promise<string> {

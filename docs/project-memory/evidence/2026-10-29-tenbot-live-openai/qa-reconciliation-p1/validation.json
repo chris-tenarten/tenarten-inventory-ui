@@ -1,0 +1,107 @@
+{
+  "riskTier": 3,
+  "testingLevel": 3,
+  "boundary": "Focused quantity, approval, conversation and local browser tests; real database gates remain unverified, real writes disabled.",
+  "checks": [
+    {
+      "command": "node --import tsx scripts/verify-tenbot-quantity.mts",
+      "pass": true,
+      "groups": 10,
+      "evidence": "quantity-backend.json"
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-invoice.mts",
+      "pass": true,
+      "groups": 20,
+      "evidence": "invoice-backend.json"
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-live-demo.mts",
+      "pass": true,
+      "groups": 42,
+      "evidence": "live-demo-prefill-backend.json"
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-receival-agent.mts",
+      "pass": true,
+      "groups": 13,
+      "evidence": "receival-agent-backend.json"
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-live-review.mts",
+      "pass": true,
+      "groups": 22,
+      "verifiedBy": "root tool result, final UI source"
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-agent-session.mts",
+      "pass": true,
+      "groups": 27,
+      "verifiedBy": "conversation worker, including canonical admin/denied grant regression"
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-agent.mts",
+      "pass": true,
+      "groups": 33,
+      "verifiedBy": "conversation worker"
+    },
+    {
+      "command": "node scripts/verify-tenbot-combined-receival-browser.mjs",
+      "pass": true,
+      "groups": 14,
+      "evidence": "browser/report.json"
+    },
+    {
+      "command": "node scripts/verify-tenbot-inactive-turn.mjs",
+      "pass": true,
+      "groups": 5,
+      "evidence": "history/report.json"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "pass": true,
+      "verifiedBy": "root final tool result"
+    },
+    {
+      "command": "targeted ESLint of changed app/support/verifier files",
+      "pass": true,
+      "verifiedBy": "root and workers; Edge shared source excluded by existing config, no new lint exemption"
+    },
+    {
+      "command": "node scripts/build-sample-job-update-review.mjs",
+      "pass": true,
+      "verifiedBy": "root final optimized Next export including TypeScript"
+    },
+    {
+      "command": "git diff --check",
+      "pass": true,
+      "verifiedBy": "root"
+    }
+  ],
+  "correctedSetupFailures": [
+    "Initial concurrent tsc/build raced generated .next types; serialized final TypeScript passes.",
+    "First build found missing .mjs import in new live test harness; corrected and final build passes.",
+    "First live harness sent undefined optional properties to direct handler; rejected400. Preserve first actual vision/reasoning receipt; corrected live rerun passes."
+  ],
+  "restoredRuntimeHttpSmoke": {
+    "simMissingAuth": 401,
+    "realMissingAuth": 401,
+    "wrongOrigin": 403,
+    "databaseRequests": 0,
+    "inferenceCalls": 0
+  },
+  "configuration": {
+    "credentialFileExists": true,
+    "ownerOnly": true,
+    "gitIgnored": true,
+    "secretValuesInspectedOrReturned": false,
+    "credentialFileModifiedByThisTask": false,
+    "spendingCapUsd": 5,
+    "billingOrCredentialChanges": false
+  },
+  "ledger": {
+    "reservedOrSpentUsd": 0.5018118999999999,
+    "attempts": 323,
+    "settled": 323
+  }
+}

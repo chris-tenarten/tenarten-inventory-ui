@@ -1,0 +1,523 @@
+{
+  "candidate": "2967a968c315ff4491203cbab07e7325c3629c24",
+  "mode": "Narrow independent OFFLINE reproduction using actual simulator, canonical tools and existing scripted transport fixture; no inference, OCR, network, active adapter, SQL, database or approval call",
+  "reproduced": true,
+  "requests": [
+    "upload",
+    "ask",
+    "review",
+    "review",
+    "status"
+  ],
+  "apiCalls": 0,
+  "databaseWrites": 0,
+  "simulatedPendingCreated": 0,
+  "extractionDoubleCalls": 1,
+  "reasoningDoubleCalls": 7,
+  "expectedCanonical": [
+    {
+      "material": "Alaska White",
+      "source": "150 LB",
+      "package": "50 LB Bag",
+      "quantity": "3",
+      "unit": "Bag"
+    },
+    {
+      "material": "Clear Resin",
+      "source": "10 GAL",
+      "package": "5 GAL Pail",
+      "quantity": "2",
+      "unit": "Pail"
+    }
+  ],
+  "initialHeldTargetRows": [
+    {
+      "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L5",
+      "sourceText": "Item 1 | AW-1 | Alaska White | #1 | 150 LB",
+      "materialId": "standard:synthetic-aw1",
+      "materialName": "Alaska White",
+      "size": "#1",
+      "quantity": "150",
+      "unit": "LB",
+      "jobId": null,
+      "excluded": false,
+      "reasons": [
+        "incompatible_unit",
+        "potential_duplicate"
+      ],
+      "duplicateReview": {
+        "fingerprint": "7db6f80e5657e827336472d44dd9ab791a648bc220db4de2916f6e3b1d6cc6ef",
+        "matches": [
+          {
+            "recordId": "offline-existing-aw",
+            "recordFingerprint": "495195ee04aa45813ce4f0f20021d37490b2da23334399bbe2c0f393315d1898",
+            "source": "fixture",
+            "supplier": "T&M Supply",
+            "status": "pending",
+            "materialName": "Alaska White",
+            "size": "#1",
+            "quantityExpected": "3",
+            "quantityReceived": "0",
+            "unit": "Bag",
+            "documentReference": null,
+            "classification": "possible",
+            "reason": "The material matches an existing receival, but this record does not establish the same invoice or source line."
+          }
+        ],
+        "canAcknowledge": true,
+        "acknowledged": false
+      },
+      "duplicateAcknowledgement": null
+    },
+    {
+      "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L9",
+      "sourceText": "Item 5 | RES-5 | Clear Resin | Part A | 10 GAL",
+      "materialId": "standard:synthetic-res5",
+      "materialName": "Clear Resin",
+      "size": "Part A",
+      "quantity": "10",
+      "unit": "GAL",
+      "jobId": null,
+      "excluded": false,
+      "reasons": [
+        "incompatible_unit",
+        "potential_duplicate"
+      ],
+      "duplicateReview": {
+        "fingerprint": "d101c3f1f2a5ccd055fa360fb55c08fed58594c33bf31d33af2c60303f42a91d",
+        "matches": [
+          {
+            "recordId": "offline-existing-res",
+            "recordFingerprint": "ac60123f620ec04f74912a22f49120e0457f2f2d0f4c07d5e9eb9f7951d2815c",
+            "source": "fixture",
+            "supplier": "T&M Supply",
+            "status": "pending",
+            "materialName": "Clear Resin",
+            "size": "Part A",
+            "quantityExpected": "2",
+            "quantityReceived": "0",
+            "unit": "Pail",
+            "documentReference": null,
+            "classification": "possible",
+            "reason": "The material matches an existing receival, but this record does not establish the same invoice or source line."
+          }
+        ],
+        "canAcknowledge": true,
+        "acknowledged": false
+      },
+      "duplicateAcknowledgement": null
+    }
+  ],
+  "canonicalPreparationHeldLines": [
+    {
+      "source_ref": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L5",
+      "evidence": "Item 1 | AW-1 | Alaska White | #1 | 150 LB",
+      "extracted": {
+        "description": "Alaska White",
+        "quantity": "150",
+        "unit": "LB",
+        "size": "#1",
+        "vendor_sku": "AW-1"
+      },
+      "catalog_candidate_id": "standard:synthetic-aw1",
+      "reasons": [
+        "potential_duplicate"
+      ]
+    },
+    {
+      "source_ref": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L9",
+      "evidence": "Item 5 | RES-5 | Clear Resin | Part A | 10 GAL",
+      "extracted": {
+        "description": "Clear Resin",
+        "quantity": "10",
+        "unit": "GAL",
+        "size": "Part A",
+        "vendor_sku": "RES-5"
+      },
+      "catalog_candidate_id": "standard:synthetic-res5",
+      "reasons": [
+        "potential_duplicate"
+      ]
+    }
+  ],
+  "unitOnlyEditPayload": [
+    {
+      "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L6",
+      "materialId": "standard:synthetic-bc0",
+      "quantity": "3",
+      "unit": "Bag",
+      "jobId": null,
+      "excluded": true,
+      "catalogRequest": null,
+      "duplicateAcknowledgement": null
+    },
+    {
+      "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L5",
+      "materialId": "standard:synthetic-aw1",
+      "quantity": "150",
+      "unit": "Bag",
+      "jobId": null,
+      "excluded": false,
+      "catalogRequest": null,
+      "duplicateAcknowledgement": null
+    },
+    {
+      "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L7",
+      "materialId": "standard:synthetic-green-a",
+      "quantity": "2",
+      "unit": "Bag",
+      "jobId": null,
+      "excluded": true,
+      "catalogRequest": null,
+      "duplicateAcknowledgement": null
+    },
+    {
+      "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L8",
+      "materialId": null,
+      "quantity": "4",
+      "unit": "Bag",
+      "jobId": null,
+      "excluded": true,
+      "catalogRequest": null,
+      "duplicateAcknowledgement": null
+    },
+    {
+      "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L9",
+      "materialId": "standard:synthetic-res5",
+      "quantity": "10",
+      "unit": "Pail",
+      "jobId": null,
+      "excluded": false,
+      "catalogRequest": null,
+      "duplicateAcknowledgement": null
+    },
+    {
+      "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L10",
+      "materialId": null,
+      "quantity": "",
+      "unit": "",
+      "jobId": null,
+      "excluded": true,
+      "catalogRequest": null,
+      "duplicateAcknowledgement": null
+    }
+  ],
+  "afterUnitOnlyEdit": {
+    "id": "0d787204-b76c-412c-b8c0-6c4c210518b8",
+    "revision": 2,
+    "hash": "fab482629ed6859787f26441ee93d02e8f4e89d69940a729be96b89c894580f5",
+    "status": "review_required",
+    "simulation": true,
+    "attachmentId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34",
+    "orderDetails": {
+      "orderedBy": "Synthetic Employee",
+      "orderDate": "2026-10-26",
+      "location": "Denton"
+    },
+    "missingFields": [],
+    "canApprove": false,
+    "rows": [
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L6",
+        "sourceText": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag",
+        "materialId": "standard:synthetic-bc0",
+        "materialName": "Blue Coal",
+        "size": "#0",
+        "quantity": "3",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": true,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L5",
+        "sourceText": "Item 1 | AW-1 | Alaska White | #1 | 150 LB",
+        "materialId": "standard:synthetic-aw1",
+        "materialName": "Alaska White",
+        "size": "#1",
+        "quantity": "150",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [
+          "potential_duplicate"
+        ],
+        "duplicateReview": {
+          "fingerprint": "9764084fa172bde66f42023a8f34b71493e1ae8d5ad4d1c1310c308018922846",
+          "matches": [
+            {
+              "recordId": "offline-existing-aw",
+              "recordFingerprint": "495195ee04aa45813ce4f0f20021d37490b2da23334399bbe2c0f393315d1898",
+              "source": "fixture",
+              "supplier": "T&M Supply",
+              "status": "pending",
+              "materialName": "Alaska White",
+              "size": "#1",
+              "quantityExpected": "3",
+              "quantityReceived": "0",
+              "unit": "Bag",
+              "documentReference": null,
+              "classification": "possible",
+              "reason": "The material matches an existing receival, but this record does not establish the same invoice or source line."
+            }
+          ],
+          "canAcknowledge": true,
+          "acknowledged": false
+        },
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L7",
+        "sourceText": "Item 3 | GREEN | CC Green | #1 | 2 Bag",
+        "materialId": "standard:synthetic-green-a",
+        "materialName": "CC Green",
+        "size": "#1",
+        "quantity": "2",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": true,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L8",
+        "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": true,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L9",
+        "sourceText": "Item 5 | RES-5 | Clear Resin | Part A | 10 GAL",
+        "materialId": "standard:synthetic-res5",
+        "materialName": "Clear Resin",
+        "size": "Part A",
+        "quantity": "10",
+        "unit": "Pail",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [
+          "potential_duplicate"
+        ],
+        "duplicateReview": {
+          "fingerprint": "714f0d31b1bb2074fe1a1aca2995b6e7fa642bc02a2d751f632f20e90e91fdd0",
+          "matches": [
+            {
+              "recordId": "offline-existing-res",
+              "recordFingerprint": "ac60123f620ec04f74912a22f49120e0457f2f2d0f4c07d5e9eb9f7951d2815c",
+              "source": "fixture",
+              "supplier": "T&M Supply",
+              "status": "pending",
+              "materialName": "Clear Resin",
+              "size": "Part A",
+              "quantityExpected": "2",
+              "quantityReceived": "0",
+              "unit": "Pail",
+              "documentReference": null,
+              "classification": "possible",
+              "reason": "The material matches an existing receival, but this record does not establish the same invoice or source line."
+            }
+          ],
+          "canAcknowledge": true,
+          "acknowledged": false
+        },
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L10",
+        "sourceText": "Freight | Delivery charge | $85.00",
+        "materialId": null,
+        "materialName": null,
+        "size": null,
+        "quantity": "",
+        "unit": "",
+        "jobId": null,
+        "excluded": true,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      }
+    ],
+    "reviewed": true,
+    "provenance": {
+      "supplier": "T&M Supply",
+      "documentReference": "SYN-INV-1042",
+      "attachmentSha256": "0a516683b72f54d018c09a2a1f4cc9d61b0efc016c15fa460f9b3860467c7daa"
+    },
+    "catalogApprovalRequired": false
+  },
+  "afterSeparateOrderAcknowledgements": {
+    "id": "0d787204-b76c-412c-b8c0-6c4c210518b8",
+    "revision": 3,
+    "hash": "8e8e6905df77773cc110bb7111105d458a96fdfe9ded687ebd8283a0e76a5120",
+    "status": "review_required",
+    "simulation": true,
+    "attachmentId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34",
+    "orderDetails": {
+      "orderedBy": "Synthetic Employee",
+      "orderDate": "2026-10-26",
+      "location": "Denton"
+    },
+    "missingFields": [],
+    "canApprove": true,
+    "rows": [
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L6",
+        "sourceText": "Item 2 | BC-0 | Blue Coal | #0 | 3 Bag",
+        "materialId": "standard:synthetic-bc0",
+        "materialName": "Blue Coal",
+        "size": "#0",
+        "quantity": "3",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": true,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L5",
+        "sourceText": "Item 1 | AW-1 | Alaska White | #1 | 150 LB",
+        "materialId": "standard:synthetic-aw1",
+        "materialName": "Alaska White",
+        "size": "#1",
+        "quantity": "150",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "duplicateReview": {
+          "fingerprint": "9764084fa172bde66f42023a8f34b71493e1ae8d5ad4d1c1310c308018922846",
+          "matches": [
+            {
+              "recordId": "offline-existing-aw",
+              "recordFingerprint": "495195ee04aa45813ce4f0f20021d37490b2da23334399bbe2c0f393315d1898",
+              "source": "fixture",
+              "supplier": "T&M Supply",
+              "status": "pending",
+              "materialName": "Alaska White",
+              "size": "#1",
+              "quantityExpected": "3",
+              "quantityReceived": "0",
+              "unit": "Bag",
+              "documentReference": null,
+              "classification": "possible",
+              "reason": "The material matches an existing receival, but this record does not establish the same invoice or source line."
+            }
+          ],
+          "canAcknowledge": true,
+          "acknowledged": true
+        },
+        "duplicateAcknowledgement": "9764084fa172bde66f42023a8f34b71493e1ae8d5ad4d1c1310c308018922846",
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L7",
+        "sourceText": "Item 3 | GREEN | CC Green | #1 | 2 Bag",
+        "materialId": "standard:synthetic-green-a",
+        "materialName": "CC Green",
+        "size": "#1",
+        "quantity": "2",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": true,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L8",
+        "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": true,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L9",
+        "sourceText": "Item 5 | RES-5 | Clear Resin | Part A | 10 GAL",
+        "materialId": "standard:synthetic-res5",
+        "materialName": "Clear Resin",
+        "size": "Part A",
+        "quantity": "10",
+        "unit": "Pail",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "duplicateReview": {
+          "fingerprint": "714f0d31b1bb2074fe1a1aca2995b6e7fa642bc02a2d751f632f20e90e91fdd0",
+          "matches": [
+            {
+              "recordId": "offline-existing-res",
+              "recordFingerprint": "ac60123f620ec04f74912a22f49120e0457f2f2d0f4c07d5e9eb9f7951d2815c",
+              "source": "fixture",
+              "supplier": "T&M Supply",
+              "status": "pending",
+              "materialName": "Clear Resin",
+              "size": "Part A",
+              "quantityExpected": "2",
+              "quantityReceived": "0",
+              "unit": "Pail",
+              "documentReference": null,
+              "classification": "possible",
+              "reason": "The material matches an existing receival, but this record does not establish the same invoice or source line."
+            }
+          ],
+          "canAcknowledge": true,
+          "acknowledged": true
+        },
+        "duplicateAcknowledgement": "714f0d31b1bb2074fe1a1aca2995b6e7fa642bc02a2d751f632f20e90e91fdd0",
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-3b8f4959-bcff-435c-9069-28f31f64fd34:L10",
+        "sourceText": "Freight | Delivery charge | $85.00",
+        "materialId": null,
+        "materialName": null,
+        "size": null,
+        "quantity": "",
+        "unit": "",
+        "jobId": null,
+        "excluded": true,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": null
+      }
+    ],
+    "reviewed": true,
+    "provenance": {
+      "supplier": "T&M Supply",
+      "documentReference": "SYN-INV-1042",
+      "attachmentSha256": "0a516683b72f54d018c09a2a1f4cc9d61b0efc016c15fa460f9b3860467c7daa"
+    },
+    "catalogApprovalRequired": false
+  },
+  "sourceSha256": "fe9a1a9fe50b836b5eb3e318a400ca5b3b04fb73e8f5259972fb61ddaac6241a",
+  "explanation": "Canonical preparation computes exact package conversion, but held_lines omits normalized proposal/conversion and keeps only raw extracted quantity/unit. Simulator fromProposal therefore initializes held rows with raw values. Review accepts any positive quantity matching the edited catalog order unit and never replays conversion against source. Duplicate acknowledgement then clears the final hold."
+}

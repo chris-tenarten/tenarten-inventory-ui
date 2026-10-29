@@ -11,7 +11,10 @@ import type {JobTools} from './tenbot-job-session.ts';
 import type {TenbotJobToolName,JobToolResult} from './tenbot-job-tools.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
-import {knowledgeEntries,registry,hasGuidePermission,snapshot,type CapabilityEntry} from './tenbot-knowledge.ts';
+import {hasGuidePermission,type CapabilityEntry} from './tenbot-knowledge.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
+// @ts-ignore -- Deno requires explicit extensions.
+import {agentKnowledgeEntries,agentKnowledgeSnapshot as snapshot} from './tenbot-agent-knowledge.ts';
 
 type Capability=(capability:string)=>Promise<boolean>;
 const string=(maxLength:number):StrictSchema=>({type:'string',maxLength});
@@ -67,14 +70,21 @@ export function createTenbotAgentKnowledgeTools(can:Capability):AgentTool[]{
   const terms=String(args.query).toLocaleLowerCase('en-US').match(/[\p{L}\p{N}]+/gu)??[];
   // Reuse the same precise published guides as the existing help desk, alongside
   // module summaries. The experimental search previously omitted the guides.
-  const entries=[...new Map([...registry,...knowledgeEntries].map(entry=>[entry.id,entry])).values()];
+  const entries=agentKnowledgeEntries();
   const scored=entries.map(entry=>({entry,score:terms.filter(term=>(entry.title+' '+entry.terms+' '+entry.modules.join(' ')).toLocaleLowerCase('en-US').includes(term)).length})).filter(item=>item.score>0).sort((a,b)=>b.score-a.score||a.entry.id.localeCompare(b.entry.id));
-  const sources=[];
+  const sources=[];let accessLimited=false;
   for(const {entry} of scored){
-   if(entry.status!=='deployed'||!await allowed(entry))continue;
+   if(entry.status!=='deployed')continue;
+   if(!await allowed(entry)){accessLimited=true;continue;}
    sources.push({id:entry.id,title:entry.title,status:entry.status,availability:entry.availability??'available',guidance:entry.guidance,path:entry.path,route:entry.route});
    if(sources.length===4)break;
   }
-  return {data:json({snapshot,sources,complete:false,limitation:'Bounded documentation search. Missing documentation does not mean a feature is unavailable. No raw repository files, private conversations or current operational records are searched.'})};
+  return {data:json({snapshot,sources,access_limited:accessLimited,complete:false,limitation:'Bounded permission-filtered documentation search. If access_limited is true, some matching guidance is outside this caller’s current grants; do not describe it as undocumented or conclude the feature is unavailable. No raw repository files, private conversations or current operational records are searched.'})};
  }}];
+}
+
+/** Host-owned scope evidence. Descriptions disclose no credentials or records. */
+export function createTenbotAgentScopeTool(tools:AgentTool[]):AgentTool{
+ const capabilities=tools.map(tool=>({name:tool.name,kind:tool.kind,description:tool.description}));
+ return {name:'describe_assistant_scope',kind:'read',description:'Explain this assistant’s actual allowlisted read/prepare capabilities and hard limits. Use for requests for SQL, shell, private conversations or execution; this is not evidence for UI walkthroughs or live business facts.',parameters:object({}),async execute(){return {data:json({capabilities,sql:false,shell:false,arbitrary_http:false,private_messages:false,execution:false,completed_actions:[],limitation:'Only listed, separately authorized read and prepare tools are available. No database changes can be performed by this agent. Draft preparation is separate from employee approval and a future authorized execution service.'})};}};
 }

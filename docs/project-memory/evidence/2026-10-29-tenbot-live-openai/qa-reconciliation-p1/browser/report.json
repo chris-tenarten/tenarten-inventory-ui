@@ -1,0 +1,358 @@
+{
+  "passed": true,
+  "measurements": [
+    {
+      "label": "desktop-clean-proposed",
+      "draftHeight": 1219.5625,
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "renderedFieldCount": 4,
+      "lineCards": [
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L5",
+          "state": "Ready",
+          "height": 148.453125,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L6",
+          "state": "Ready",
+          "height": 121.796875,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L7",
+          "state": "Ready",
+          "height": 121.796875,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L8",
+          "state": "Ready",
+          "height": 121.796875,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L9",
+          "state": "Ready",
+          "height": 148.453125,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L10",
+          "state": "Excluded",
+          "height": 121.796875,
+          "renderedFields": 0
+        }
+      ]
+    },
+    {
+      "label": "mobile-clean-proposed",
+      "draftHeight": 1434.53125,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "renderedFieldCount": 4,
+      "lineCards": [
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L5",
+          "state": "Ready",
+          "height": 148.453125,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L6",
+          "state": "Ready",
+          "height": 121.796875,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L7",
+          "state": "Ready",
+          "height": 121.796875,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L8",
+          "state": "Ready",
+          "height": 140.453125,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L9",
+          "state": "Ready",
+          "height": 167.109375,
+          "renderedFields": 0
+        },
+        {
+          "lineId": "attachment-9e9b7b20-0b10-4784-9e4d-7076cf6fe3b2:L10",
+          "state": "Excluded",
+          "height": 121.796875,
+          "renderedFields": 0
+        }
+      ]
+    }
+  ],
+  "groups": 14,
+  "checks": [
+    "Clean five-line actual-handler draft stays in invoice order, shows compact ready/excluded summaries with exact source evidence, and reaches explicit simulated approval with no field edits or redundant review Save",
+    "Exact QA document order labels prefill without employee re-entry or invoice-date substitution; source refs remain reviewable, conflicting date/destination labels stay blank, and final explicit approval is still required",
+    "Duplicate-held 150 LB and 10 GAL preserve immutable source and exact 3 Bag / 2 Pail basis; contradictory 150 Bag / 10 Pail edits immediately block UI review/approval, while corrected source-consistent quantities survive acknowledgement and simulated approval",
+    "Actual handler rejects unsafe simulated approval after forced 150 Bag / 10 Pail edits and valid duplicate acknowledgements, rejects source-evidence injection and stale approval, and commits only corrected 3 Bag / 2 Pail memory receipts",
+    "Ordinary Messaging composer and PDF/photo attachment control remain available; employee experiment dropdown is absent",
+    "Complete proposed Violet material clears the catalog-match hold without inventing an ID or excluding the line",
+    "Actual simulator HTTP review removes stale Violet holds, names only genuine blockers, and disables redundant clean resaves",
+    "Actual matching-record evidence and explicit separate-order acknowledgement are server-validated before combined simulated approval becomes available",
+    "Editing a duplicate-sensitive Job association clears acknowledgement and final approval, requires fresh evidence/review, and prevents reuse of the old reviewed hash",
+    "Invoice supplier prefills the proposed material with known-value suggestions; typed T & M remains unchanged and blocks submission until explicit keyboard-accessible invoice correction clears current feedback and restores the reviewed draft with confirmation still required",
+    "Catalog edits invalidate exact final approval while unrelated validated duplicate evidence remains scoped to its line; desktop and 390 px mobile remain contained",
+    "Actual simulator approval creates five included pending-memory receipts plus one linked catalog-memory receipt and audits the duplicate acknowledgement; no operational records or on-hand stock change",
+    "Caller without catalog capability can save a reviewable request but actual simulator requires authorized catalog approval",
+    "A second preparation of the committed synthetic invoice yields confirmed duplicates; the UI offers no acknowledgement and actual handler rejects a forced prior fingerprint"
+  ],
+  "traces": [
+    {
+      "caseId": "4a0a17bc-7e71-44a2-bba7-9a594a0af75c",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "4a0a17bc-7e71-44a2-bba7-9a594a0af75c",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "4a0a17bc-7e71-44a2-bba7-9a594a0af75c",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "4a0a17bc-7e71-44a2-bba7-9a594a0af75c",
+      "action": "approve",
+      "status": 200
+    },
+    {
+      "caseId": "1dfd2f91-6b04-496e-9f82-9643920d3ad3",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "1dfd2f91-6b04-496e-9f82-9643920d3ad3",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "1dfd2f91-6b04-496e-9f82-9643920d3ad3",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "1dfd2f91-6b04-496e-9f82-9643920d3ad3",
+      "action": "approve",
+      "status": 200
+    },
+    {
+      "caseId": "f7a0091f-76d0-4190-9071-8746d1d68209",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "f7a0091f-76d0-4190-9071-8746d1d68209",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "f7a0091f-76d0-4190-9071-8746d1d68209",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "b01bee8d-995c-4326-b6af-943ec8af52e3",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "b01bee8d-995c-4326-b6af-943ec8af52e3",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "b01bee8d-995c-4326-b6af-943ec8af52e3",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "b01bee8d-995c-4326-b6af-943ec8af52e3",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "b01bee8d-995c-4326-b6af-943ec8af52e3",
+      "action": "approve",
+      "status": 200
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "approve",
+      "status": 409
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "review",
+      "status": 400
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "approve",
+      "status": 409
+    },
+    {
+      "caseId": "55208e3d-28d1-4b06-81a8-e78439f0456c",
+      "action": "approve",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "approve",
+      "status": 200
+    },
+    {
+      "caseId": "40be8399-1a3a-4522-91b1-3c00424e21e7",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "40be8399-1a3a-4522-91b1-3c00424e21e7",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "40be8399-1a3a-4522-91b1-3c00424e21e7",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "40be8399-1a3a-4522-91b1-3c00424e21e7",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "d9035fd6-563f-45ee-8d94-059a57dc9d2b",
+      "action": "review",
+      "status": 409
+    }
+  ],
+  "errors": [],
+  "unexpectedNetwork": [],
+  "mode": "Actual localhost UI and simulator handlers over bounded disposable HTTP; extraction and model transport use existing offline fixtures, not fresh inference or database security validation",
+  "simulatedTransportSteps": 62,
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "databaseSecurityVerified": false,
+  "journalUnchanged": true,
+  "journalSha256": "a4268c826a1c21ca58c1276b6f3c50b5e15907b85e2e920cf87f20dab45928a3",
+  "sourcePins": {
+    "scripts/support/tenbot-live-demo.mts": "89e00c15cc1a4b08dd9bd74e036414c6cae41b315cc40ef3483c3daadda2ebbb",
+    "scripts/support/tenbot-agent-scripted.mts": "fee1f781a3234e88f555139df326cc59554c4329c6251ff46c99b1f6254058e8",
+    "src/modules/inventory/invoice-quantity.ts": "6e694e30d1ad871568bf47a215e52b495fc504bb2de9c376f4b35eff70a5d92c",
+    "supabase/functions/_shared/tenbot-invoice.ts": "14fa64872bf9e581903735c41804da0fff011b9ae5bca790a4c671098b640af4",
+    "src/modules/tenbot/ReceivalDraftReview.tsx": "757c79b9032acde6e9bda887d7e2046f2c4e6a1fe3e3f357db361d1b96397915",
+    "src/modules/tenbot/live-review.ts": "a280364b16a7f7340649973fbd11f144784b3051bf6464e9aed348b5244756dc",
+    "src/modules/tenbot/TenbotWorkspace.tsx": "f596351393b56ce3d0f786816c3896caa0c0de9ace14d4173a84c967673a0107",
+    "scripts/verify-tenbot-combined-receival-browser.mjs": "8a161b9749d1cf6457f6d8479afda918abdad1fe91465811d2b04b1fbdec4d33"
+  }
+}

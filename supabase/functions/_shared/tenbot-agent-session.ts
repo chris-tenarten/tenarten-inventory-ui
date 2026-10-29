@@ -6,7 +6,7 @@
 import {runTenbotAgent,type AgentProvider,type AgentStep,type JsonValue} from './tenbot-agent.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
-import {createTenbotAgentJobTools,createTenbotAgentKnowledgeTools} from './tenbot-agent-operations.ts';
+import {createTenbotAgentJobTools,createTenbotAgentKnowledgeTools,createTenbotAgentScopeTool} from './tenbot-agent-operations.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import {createTenbotInvoiceTools,type TenbotInvoiceDocument,type TenbotInvoiceReader,type InvoiceConfirmation} from './tenbot-invoice.ts';
@@ -18,7 +18,10 @@ import {resolveInput,TenbotError} from './tenbot-core.ts';
 import type {JobTools} from './tenbot-job-session.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
-import {knowledgeEntries,registry,hasGuidePermission,snapshot,type CapabilityEntry} from './tenbot-knowledge.ts';
+import {hasGuidePermission,type CapabilityEntry} from './tenbot-knowledge.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno source
+// @ts-ignore -- explicit extensions for Edge compatibility.
+import {agentKnowledgeEntries,agentKnowledgeSnapshot as snapshot} from './tenbot-agent-knowledge.ts';
 
 export type AgentDemoScenario='job-investigation'|'invoice-preparation'|'tool-recovery';
 export type AgentSessionDependencies={
@@ -92,7 +95,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    }
    const knowledgeGrants=new Set<string>(),knowledgeProofs=new Map<string,KnowledgeProof>();
    const proofIsCurrent=async(proof:KnowledgeProof)=>{
-    const entry=[...new Map([...registry,...knowledgeEntries].map(item=>[item.id,item])).values()].find(item=>item.id===proof.id);
+    const entry=agentKnowledgeEntries().find(item=>item.id===proof.id);
     if(!entry||entry.status!=='deployed'||await sourceDigest(publishedSource(entry),snapshot)!==proof.digest)return false;
     const permissions=new Set<string>();
     for(const capability of [entry.permission,...entry.additionalPermissions??[]])if(await can(capability)){permissions.add(capability);knowledgeGrants.add(capability);}
@@ -117,6 +120,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     };
    }
    const tools=[...job.tools,...knowledge,...invoice.filter(tool=>tool.kind==='read'||mayPrepare)];
+   tools.push(createTenbotAgentScopeTool(tools));
    const provider=deps.provider(scenario as AgentDemoScenario);
    const modelSteps:{calls:AgentStep['calls'];final?:JsonValue;usage:AgentStep['usage'];durationMs:number}[]=[];
    const measured:AgentProvider={name:provider.name,model:provider.model,async step(request){
@@ -168,7 +172,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     return record(jobData.job)&&typeof jobData.job.job_id==='string'&&uuid.test(jobData.job.job_id)?[jobData.job.job_id]:[];
    }))].slice(0,4);
    const message=result.final?.answer??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No experimental answer or draft was published.':'The experimental investigation stopped safely. No database changes were made. Try a narrower request.');
-   return {conversationId:id,mode:'agent-experiment',message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:new Date(now()).toISOString()},summary:null,suggestionAllowed:false,
+   return {conversationId:id,mode:'agent-experiment',contentScope:knowledgeOnly?'workflow':'volatile',message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:new Date(now()).toISOString()},summary:null,suggestionAllowed:false,
     notices:[deps.mode==='offline-scripted'?'Local scripted transport demonstration. This is not an OpenAI or Qwen reasoning result.':'Local OpenAI experiment. Review evidence and proposals; no execution capability exists.'],
     agent:{mode:deps.mode,provider:provider.name,model:provider.model,...result,modelSteps:result.status==='completed'?modelSteps:modelSteps.map(step=>({callCount:step.calls.length,usage:step.usage,durationMs:step.durationMs})),durationMs:now()-before,invoiceAttached:session.invoiceAttached,executionAvailable:false}};
   }finally{session.busy=false;session.touched=now();}

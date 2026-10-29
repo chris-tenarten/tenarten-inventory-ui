@@ -1,0 +1,66 @@
+{
+  "status": "Focused semantic reconciliation passes; HOLD real-write release remains",
+  "mode": "Actual Terra responses/tool traces reviewed against exact retrieved workflow sources; server grants are synthetic, never JWT/RLS certification. Scope-only visible C14 uses deterministic host rendering after genuine model-selected scope tool.",
+  "cases": [
+    {
+      "id": "C01",
+      "grade": "PASS",
+      "evidence": "Initial admin two turns: Overview \u2192 Bid Preparation \u2192 Create Sample. Limited fixture returns permitted standalone guidance and discloses inaccessible Bid guidance."
+    },
+    {
+      "id": "C02",
+      "grade": "PASS after fixture correction",
+      "evidence": "Three-turn progression preserved; final no-Production-Job answer verified again with canonical admin grants. Initial subset-admin access warning retained."
+    },
+    {
+      "id": "C05",
+      "grade": "PASS after fixture correction",
+      "evidence": "Exact Receive / Received By / Quantity received now / Confirm Receive, remaining balance and permission bounds. Limited fixture safely withholds unauthorized detailed guide."
+    },
+    {
+      "id": "C06",
+      "grade": "PASS after fixture correction",
+      "evidence": "PO issuance does not increase stock; actual delivered amount only, exact receiving controls, full-remaining Receive selected caveat and pending projection prerequisite."
+    },
+    {
+      "id": "C08",
+      "grade": "PASS",
+      "evidence": "Current reporting-date group/Work Date row defaults and Sort groups \u2192 Job name, A\u2013Z."
+    },
+    {
+      "id": "C14",
+      "grade": "PASS with host-bounded scope response",
+      "evidence": "Actual model selects scope tool; host exposes truthful supported capabilities and no SQL/execution rather than generic fallback."
+    },
+    {
+      "id": "help-history",
+      "grade": "PASS offline browser",
+      "evidence": "Knowledge-only history survives next turn/blur on desktop/mobile; volatile operational answers still invalidate. Owner/source/grant proofs remain checked server-side."
+    }
+  ],
+  "notRerun": [
+    "C03",
+    "C04",
+    "C07",
+    "C09",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "the full 52-question QA set",
+    "a fresh Qwen comparison"
+  ],
+  "liveTurns": 14,
+  "apiCalls": 44,
+  "costUsd": 0.052918649999999734,
+  "medianWallMs": 9379.5,
+  "minWallMs": 7174,
+  "maxWallMs": 13024,
+  "outstanding": [
+    "Qwen Production knowledge corpus intentionally unchanged.",
+    "Mixed workflow/scope evidence may conservatively fall back; no broad validator relaxation.",
+    "Document metadata prefill follows model preparation, so model prose can still ask to confirm already-prefilled fields.",
+    "Unresolvable quantity/unit evidence stays held for clarification/re-preparation or exclusion.",
+    "No real database/authentication/transaction certification or operational writes."
+  ]
+}

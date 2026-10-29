@@ -20,7 +20,7 @@ const standard:Row[]=(fixture.catalog.standard as Row[]).map((row,index):Row=>({
 const checks:string[]=[];
 async function test(name:string,run:()=>void|Promise<void>){await run();checks.push(name);}
 async function rejected(call:Promise<unknown>,status?:number){await assert.rejects(call,(error:unknown)=>{assert(error instanceof Error);if(status!==undefined)assert.equal((error as Error&{status:number}).status,status);assert(!error.message.includes(png.toString('base64')));return true;});}
-function setup(options:{rawLines?:unknown;providerFailure?:boolean;prepareOwner?:string}={}){
+function setup(options:{rawLines?:unknown;providerFailure?:boolean;prepareOwner?:string;receivals?:Row[]}={}){
  let now=Date.parse('2026-10-29T15:00:00Z'),providers=0,steps=0,extractions=0;
  const denied=new Set<string>(),reads:{table:string;columns:string}[]=[],rpcCalls:{name:string;args:Row}[]=[];
  function callerFor(who:string):ReceivalAgentCaller{
@@ -32,7 +32,7 @@ function setup(options:{rawLines?:unknown;providerFailure?:boolean;prepareOwner?
     eq(){return query;},is(){return query;},not(){return query;},in(){return query;},gte(){return query;},lte(){return query;},or(filter:string){const pattern=filter.match(/\.ilike\.("(?:\\.|[^"])*")/);if(pattern)term=String(JSON.parse(pattern[1])).replace(/^%|%$/g,'').toLowerCase();return query;},order(){return query;},limit(){return query;},
     range(first:number,last:number){start=first;end=last;return query;},abortSignal(signal:AbortSignal){assert(!signal.aborted);return query;},
     then(resolve:(value:{data:Row[];count:number;error:null})=>unknown,reject?:(error:unknown)=>unknown){
-     const source:Row[]=table==='vendor_catalog'?standard:table==='pending_receivals'?fixture.receivals.rows:[];
+     const source:Row[]=table==='vendor_catalog'?standard:table==='pending_receivals'?(options.receivals??fixture.receivals.rows):[];
      const rows=term?source.filter(row=>Object.values(row).some(value=>typeof value==='string'&&value.toLowerCase().includes(term))):source;
      const projected=rows.slice(start,end+1).map(row=>Object.fromEntries(columns.split(',').map(key=>[key,row[key]??null])));
      return Promise.resolve({data:clone(projected),count:rows.length,error:null}).then(resolve,reject);
@@ -109,6 +109,14 @@ await test('scripted reasoning traverses actual read/prepare tools, then exact c
 await test('review requires owner, exact revision/rows and immutable pending-only source identity',async()=>{
  const h=setup(),p=await h.prepared();await rejected(h.invoke({action:'review',draftId:p.draft.id},other),403);await rejected(h.review(p.draft,{revision:0}),409);await rejected(h.review(p.draft,{edits:h.edits(p.draft).slice(1)}),409);
  const invalid=h.edits(p.draft);invalid[0].materialId='arbitrary';await rejected(h.review(p.draft,{edits:invalid}));const freight=h.edits(p.draft);freight.find(row=>row.lineId===p.draft.rows.find(row=>row.reasons.includes('non_material_line'))!.lineId)!.excluded=false;await rejected(h.review(p.draft,{edits:freight}));assert.equal(h.rpcCalls.filter(call=>call.name==='prepare_invoice_receival_draft').length,0);
+});
+await test('P1 authenticated held package quantities retain conversion and reject raw scalars before canonical prepare',async()=>{
+ const receivals=[{...fixture.receivals.rows[0],id:'held-aw',material_name:'Alaska White',size:'#1',quantity_expected:'3'},{...fixture.receivals.rows[0],id:'held-res',material_name:'Clear Resin',size:'Part A',quantity_expected:'2',unit:'Pail'}],rawLines=fixture.document.text.replace('100 LB','150 LB').replace('5 GAL','10 GAL').split('\n'),h=setup({rawLines,receivals}),{draft}=await h.prepared(),target=(row:{materialId:string|null})=>row.materialId?.endsWith(String(standard[0].id))||row.materialId?.endsWith(String(standard[4].id)),targets=draft.rows.filter(target);
+ assert.deepEqual(targets.map(row=>[row.quantity,row.unit,row.sourceQuantity]),[['3','Bag',{quantity:'150',unit:'LB'}],['2','Pail',{quantity:'10',unit:'GAL'}]]);assert(targets.every(row=>row.reasons.includes('potential_duplicate')));
+ const edits=h.edits(draft);for(const row of edits){row.excluded=!target(row);if(target(row))row.quantity=row.materialId!.endsWith(String(standard[0].id))?'150':'10';}
+ await rejected(h.review(draft,{edits}),409);assert.equal(h.rpcCalls.filter(call=>call.name==='prepare_invoice_receival_draft').length,0);
+ for(const injection of [{sourceQuantity:{quantity:'150',unit:'Bag'}},{quantityBasis:{receivalQuantity:'150'}}])await rejected(h.review(draft,{edits:edits.map((row,index)=>index?row:{...row,...injection})}));
+ assert.equal(h.rpcCalls.filter(call=>call.name==='prepare_invoice_receival_draft').length,0);assert(h.rpcCalls.every(call=>!['approve_invoice_receival_draft','execute_invoice_receival_draft'].includes(call.name)));
 });
 await test('permission revocation and a mismatched durable owner cannot publish an approved draft',async()=>{
  const revoked=setup(),a=await revoked.upload();revoked.denied.add('adjustInventory');await rejected(revoked.invoke({action:'ask',attachmentId:a.attachmentId,question:'Prepare invoice.'}),403);assert.equal(revoked.providers(),0);

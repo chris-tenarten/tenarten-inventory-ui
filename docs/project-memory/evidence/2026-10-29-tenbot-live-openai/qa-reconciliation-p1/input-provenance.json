@@ -1,0 +1,36 @@
+{
+  "qaCandidate": "2967a968c315ff4491203cbab07e7325c3629c24",
+  "purpose": "Selected independent QA evidence, preserved unchanged; original full scratch evidence retained. Reproduction script is historical defective-candidate evidence, not current pass verifier.",
+  "inputs": [
+    {
+      "source": "/private/tmp/tenbot-independent-qa-20261029/implementation-handoff.txt",
+      "archived": "independent-qa/implementation-handoff.txt",
+      "sha256": "f4bd2c4b4e2623e7747eb4b232c2fef57b0f8ef3ea232c57466e081f6cb17365"
+    },
+    {
+      "source": "/private/tmp/tenbot-independent-qa-20261029/assessment.json",
+      "archived": "independent-qa/assessment.json",
+      "sha256": "0619f2609c9d788a0fc9a5f7019c728e0f4568e3cffffbaeca2e80f69f291572"
+    },
+    {
+      "source": "/private/tmp/tenbot-independent-qa-20261029/conversation-assessment.json",
+      "archived": "independent-qa/conversation-assessment.json",
+      "sha256": "5f6f417c7d5ec5f1092a83f0466e37d2e3ebcaa2e9bdceabc43b1d05b174de22"
+    },
+    {
+      "source": "/private/tmp/tenbot-independent-qa-20261029/ui-effort-assessment.json",
+      "archived": "independent-qa/ui-effort-assessment.json",
+      "sha256": "da9dde2240fb516ac18d158610306445a636956145880ae8c3d4528e6c2f8894"
+    },
+    {
+      "source": "/private/tmp/tenbot-independent-qa-20261029/security/held-package-conversion.json",
+      "archived": "independent-qa/security/held-package-conversion.json",
+      "sha256": "aa9570374370ffb2f6d1f77a64ea1f0be2d5d96776158f7e179a2d1736a9fcf3"
+    },
+    {
+      "source": "/private/tmp/tenbot-independent-qa-20261029/security/reproduce-held-package-conversion.mts",
+      "archived": "independent-qa/security/reproduce-held-package-conversion.mts.txt",
+      "sha256": "fe81c368a3728526962c20cf4cf4f136835d3aa27671b5e965c5c2bbf693c364"
+    }
+  ]
+}

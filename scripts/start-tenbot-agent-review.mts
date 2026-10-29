@@ -10,6 +10,7 @@ import {createTenbotJobTools} from '../supabase/functions/_shared/tenbot-job-too
 import {createOpenAIProvider,OPENAI_EXPERIMENT_PRICING,type OpenAIModel} from '../supabase/functions/_shared/tenbot-openai';
 import type {TenbotInvoiceDocument} from '../supabase/functions/_shared/tenbot-invoice';
 import {createScriptedTenbotAgentProvider} from './support/tenbot-agent-scripted.mjs';
+import {CAPABILITIES} from '../src/lib/rbac';
 
 if(process.argv.includes('--synthetic-live'))await startSyntheticLive();else await startExisting();
 
@@ -95,7 +96,9 @@ async function startSyntheticLive(){
  const fixture=JSON.parse(readFileSync('scripts/fixtures/tenbot-invoice.synthetic.json','utf8'));
  if(fixture.synthetic!==true||fixture.catalog.complete!==true||fixture.receivals.complete!==true)throw Error('Approved complete simulated catalog and receival fixtures required.');
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
- const capabilities=new Set(['readOperationalData','writeBusinessData','adjustInventory','manageUsers','manageVendorsCatalog']);
+ // Explicit synthetic admin role mirrors the local application's advertised role.
+ // These are fixture grants, never a hosted permission bypass.
+ const capabilities=new Set<string>([...CAPABILITIES,'proposal.access']);
  const handler=createTenbotLiveDemo({model,catalog:fixture.catalog,receivals:fixture.receivals,can:async(owner,capability)=>uuid.test(owner)&&capabilities.has(capability),createProvider:(label,attachment)=>provider.createMeasuredProvider(model,label,attachment),remainingUsd:()=>Math.max(0,Math.min(requested,5)-provider.getJournal().reservedOrSpentUsd),assertNoFatal:provider.assertNoFatal,async validateAttachment(attachment){
   try{const metadata=await sharp(attachment.bytes,{limitInputPixels:1048576}).metadata();if(!metadata.width||!metadata.height||metadata.width>1024||metadata.height>1024||metadata.pages&&metadata.pages>1||metadata.format!==(attachment.mediaType==='image/png'?'png':'jpeg'))throw Error();}catch{throw new TenbotError('Use a valid single-frame PNG or JPEG image within the displayed limits.');}
  }});

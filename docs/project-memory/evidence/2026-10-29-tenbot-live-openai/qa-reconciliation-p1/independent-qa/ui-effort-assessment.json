@@ -1,0 +1,209 @@
+{
+  "status": "Complete; actual localhost browser and actual disposable simulator; offline extraction and scripted provider only",
+  "sourceVerifierUnchanged": true,
+  "combinedBrowserGroups": 10,
+  "combinedJournalUnchanged": true,
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "cleanFive": {
+    "completed": true,
+    "pendingMemoryReceipts": 5,
+    "effortFromProposal": {
+      "scope": "From accurate proposed clean batch; excludes browser file picker OS actions and task launch.",
+      "fieldEdits": 0,
+      "clarificationTurns": 0,
+      "reviewSaveCycles": 1,
+      "finalApprovalCheckboxes": 1,
+      "finalApprovalButtons": 1
+    },
+    "snapshots": [
+      {
+        "label": "desktop-clean-proposed",
+        "viewport": {
+          "width": 1440,
+          "height": 1100
+        },
+        "draftHeight": 2092.78125,
+        "draftWidth": 672,
+        "fieldCount": 34,
+        "renderedFieldCount": 34,
+        "enabledFieldCount": 29,
+        "lineCards": [
+          {
+            "state": "Ready",
+            "height": 271.109375,
+            "label": "Receival line Alaska White",
+            "fields": 5
+          },
+          {
+            "state": "Ready",
+            "height": 271.109375,
+            "label": "Receival line Blue Coal",
+            "fields": 5
+          },
+          {
+            "state": "Ready",
+            "height": 271.109375,
+            "label": "Receival line CC Green",
+            "fields": 5
+          },
+          {
+            "state": "Ready",
+            "height": 271.109375,
+            "label": "Receival line Unlisted Violet",
+            "fields": 5
+          },
+          {
+            "state": "Ready",
+            "height": 271.109375,
+            "label": "Receival line Clear Resin",
+            "fields": 5
+          },
+          {
+            "state": "Excluded",
+            "height": 271.109375,
+            "label": "Receival line Invoice line",
+            "fields": 5
+          }
+        ],
+        "scroll": [
+          {
+            "tag": "DIV",
+            "className": "min-h-0 flex-1 overflow-y-auto py-4 overscroll-contain bg-slate-50/60 px-3 sm:px-5",
+            "scrollHeight": 2523,
+            "clientHeight": 499,
+            "scrollTop": 2024
+          },
+          {
+            "tag": "HTML",
+            "className": "",
+            "scrollHeight": 1108,
+            "clientHeight": 1100,
+            "scrollTop": 0
+          }
+        ]
+      },
+      {
+        "label": "mobile-clean-proposed",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "draftHeight": 2731.6875,
+        "draftWidth": 366,
+        "fieldCount": 34,
+        "renderedFieldCount": 34,
+        "enabledFieldCount": 29,
+        "lineCards": [
+          {
+            "state": "Ready",
+            "height": 341.765625,
+            "label": "Receival line Alaska White",
+            "fields": 5
+          },
+          {
+            "state": "Ready",
+            "height": 341.765625,
+            "label": "Receival line Blue Coal",
+            "fields": 5
+          },
+          {
+            "state": "Ready",
+            "height": 341.765625,
+            "label": "Receival line CC Green",
+            "fields": 5
+          },
+          {
+            "state": "Ready",
+            "height": 360.421875,
+            "label": "Receival line Unlisted Violet",
+            "fields": 5
+          },
+          {
+            "state": "Ready",
+            "height": 360.421875,
+            "label": "Receival line Clear Resin",
+            "fields": 5
+          },
+          {
+            "state": "Excluded",
+            "height": 341.765625,
+            "label": "Receival line Invoice line",
+            "fields": 5
+          }
+        ],
+        "scroll": [
+          {
+            "tag": "DIV",
+            "className": "min-h-0 flex-1 overflow-y-auto py-4 overscroll-contain bg-slate-50/60 px-3 sm:px-5",
+            "scrollHeight": 3259,
+            "clientHeight": 534,
+            "scrollTop": 2024
+          }
+        ]
+      }
+    ]
+  },
+  "exceptionEffort": {
+    "minimumRequiredFieldChanges": 8,
+    "fieldBreakdown": {
+      "violetMaterialTypePackageAmountMeasureContainer": 4,
+      "ambiguousGreenOffer": 1,
+      "employeeOrderMetadataAbsentFromInvoice": 3
+    },
+    "otherInteractions": {
+      "requestNewMaterial": 1,
+      "saveForReview": 2,
+      "separateOrderAcknowledgement": 1,
+      "finalApprovalCheckbox": 1,
+      "approvalButton": 1
+    },
+    "totalInteractionsFromProposal": 14,
+    "additionalChatTurns": 0,
+    "verifierActualReviewSaves": 6,
+    "verifierSaveCaveat": "Six includes deliberate change/revert/notes security regression probes; ordinary first ready state reached after two saves."
+  },
+  "materialUxFindings": [
+    {
+      "finding": "Clean ready lines remain expanded as full forms; excluded freight retains a full card. Final approval is below a 2093 px desktop / 2732 px mobile draft.",
+      "evidence": [
+        "browser-clean-five/desktop-clean-first-line.png",
+        "browser-clean-five/mobile-clean-first-line.png",
+        "browser-clean-five/report.json"
+      ],
+      "priority": "P2 employee effort"
+    },
+    {
+      "finding": "Even an accurate clean batch with complete metadata needs a separate review save before its final explicit approval checkbox/button.",
+      "evidence": [
+        "browser-clean-five/report.json",
+        "browser-clean-five/mobile-clean-review-actions.png"
+      ],
+      "priority": "P2 unnecessary save interaction; preserve exact server validation and final approval"
+    },
+    {
+      "finding": "Exception preparation groups ready lines before held lines, so displayed Line 2 is invoice Item 5, while displayed Line 3 is invoice Item 2.",
+      "evidence": [
+        "browser-combined/actual-handler-responses.json"
+      ],
+      "priority": "P2 review cross-check effort"
+    }
+  ],
+  "preserved": [
+    "Supplier prefills T&M Supply; mismatch is immediate and keyboard correction works.",
+    "Complete Violet details become ready automatically without fabricated catalog ID.",
+    "Potential Blue duplicate is acknowledged separately; confirmed duplicate has no override.",
+    "Quantity edits invalidate duplicate acknowledgement and final approval.",
+    "Catalog notes edits invalidate final approval while unrelated validated duplicate evidence survives.",
+    "No catalog grant permits draft preparation but blocks approval, accurately says no approver request sent.",
+    "Final simulated approval produces exactly five included pending-memory receipts plus one catalog-memory operation; on-hand unchanged.",
+    "Desktop and 390 px mobile remain horizontally contained; composer/attachment controls remain available."
+  ],
+  "limits": [
+    "No real extraction/inference in these tests.",
+    "No JWT/RLS/database certification.",
+    "No timed employee/manual-entry comparison; automated runtime is not employee review time.",
+    "No persistence across reload/switch is asserted beyond existing verifier checks."
+  ]
+}

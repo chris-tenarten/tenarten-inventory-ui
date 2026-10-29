@@ -19,8 +19,9 @@ let lastPage;
 try {
   const probe = await browser.newContext();
   try {const response = await probe.request.get(`${origin}/__review/state`, {timeout: 5000}); assert(response.ok()); assert.equal((await response.json()).mode, 'synthetic');} finally {await probe.close();}
-  for (const variant of ['blur', 'hidden', 'provider-failure']) {
-    const context = await browser.newContext({viewport: variant === 'hidden' ? {width: 390, height: 844} : {width: 1440, height: 1000}});
+  for (const variant of ['blur', 'hidden', 'provider-failure', 'workflow-history', 'workflow-history-mobile']) {
+    const workflowHistory=variant.startsWith('workflow-history');
+    const context = await browser.newContext({viewport: variant === 'hidden'||variant.endsWith('-mobile') ? {width: 390, height: 844} : {width: 1440, height: 1000}});
     const page = await context.newPage(); lastPage = page; page.setDefaultTimeout(8000);
     const calls = []; let asks = 0, release, observed;
     const gate = new Promise(resolve => {release = resolve;}), pending = new Promise(resolve => {observed = resolve;});
@@ -42,8 +43,13 @@ try {
         if (asks === 1) {
           // Exercise both live guards and ensure no operational/draft payload is
           // published when the response arrives in an inactive conversation.
-          result.operational = {complete: true, observedAt: '2026-10-29T12:00:00Z', truncated: false, facts: [{id: 'fixture-hidden', text: marker}]};
-          result.localDemo.draft.rows[0].sourceText = marker;
+          if(workflowHistory){
+            delete result.operational;result.localDemo.draft=null;result.contentScope='workflow';
+            result.agent.evidence=[{id:'e1',tool:'search_workflow_knowledge',data:{sources:[{id:'group',guidance:marker}]}}];
+          }else{
+            result.operational = {complete: true, observedAt: '2026-10-29T12:00:00Z', truncated: false, facts: [{id: 'fixture-hidden', text: marker}]};
+            result.localDemo.draft.rows[0].sourceText = marker;
+          }
         } else {delete result.operational; result.localDemo.draft = null;}
         return route.fulfill({headers, json: result});
       }
@@ -60,11 +66,25 @@ try {
       await input.fill('Investigate this synthetic test request.');
       await composer.getByRole('button', {name: 'Send', exact: true}).click(); await pending;
       await expect(panel.getByText('Working…', {exact: true})).toBeVisible();
-      if (variant === 'blur') await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+      if (variant === 'blur'||workflowHistory) await page.evaluate(() => window.dispatchEvent(new Event('blur')));
       if (variant === 'hidden') await page.evaluate(() => {Object.defineProperty(document, 'visibilityState', {configurable: true, value: 'hidden'}); document.dispatchEvent(new Event('visibilitychange'));});
       release();
       await expect(composer.getByRole('button', {name: 'Attach PDF or image', exact: true})).toBeEnabled();
       await expect(panel.getByText('Working…', {exact: true})).toHaveCount(0);
+      if(workflowHistory){
+        await expect(panel.getByText(marker,{exact:true})).toBeVisible();
+        await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
+        await input.fill('I completed that step. What next?');
+        await composer.getByRole('button',{name:'Send',exact:true}).click();
+        await expect(panel.getByText(retryText,{exact:true})).toBeVisible();
+        await expect(panel.getByText(marker,{exact:true})).toBeVisible();
+        await page.evaluate(()=>window.dispatchEvent(new Event('blur')));
+        await expect(panel.getByText(marker,{exact:true})).toBeVisible();
+        assert.deepEqual(calls,['status','ask','ask']);
+        await page.screenshot({path:`${directory}/${variant}.png`});
+        checks.push(`${variant}: server-classified knowledge-only guidance survives background completion, next turn and blur; no automatic inference or operational refresh`);
+        continue;
+      }
       await expect(panel.getByText(marker, {exact: true})).toHaveCount(0);
       await expect(panel.getByLabel('Editable pending receival draft', {exact: true})).toHaveCount(0);
       if (variant === 'provider-failure') {

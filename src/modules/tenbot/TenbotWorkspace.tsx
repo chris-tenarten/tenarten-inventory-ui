@@ -14,7 +14,10 @@ type Feedback={id:string;submitter_name:string;status:string;created_at:string;d
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;sharedMonthLimit:number;sharedMonthUsed:number;sharedMonthRemaining:number;perAccountMinuteLimit:number;dayNeuronLimit:number;dayAccountedNeurons:number;monthNeuronLimit:number;monthAccountedNeurons:number;dayMeasuredInputTokens:number;dayMeasuredOutputTokens:number;dayUnmeasuredAttempts:number};
 type AgentClaim={text:string;evidence_ids:string[]};
 type AgentView={mode:'offline-scripted'|'openai';provider:string;model:string;status:string;durationMs:number;executionAvailable:false;final:{observations:AgentClaim[];inferences:AgentClaim[];recommendations:AgentClaim[];questions:string[];completed_actions:[]}|null;proposals:{evidenceId:string;tool:string;proposal:Record<string,unknown>}[];evidence:{id:string;tool:string;data:unknown}[];trace:{event:string;name?:string;outcome:string;durationMs:number}[];usage:{inputTokens:number;outputTokens:number;costUsd:number;reservedUsd:number}};
-type ExperimentalAnswer=Answer&{agent?:AgentView;localDemo?:{simulation:boolean;draft:LocalReceivalDraft|null;attachment?:{id:string;filename:string;mediaType:string}}};
+type ExperimentalAnswer=Answer&{contentScope?:'workflow'|'volatile';agent?:AgentView;localDemo?:{simulation:boolean;draft:LocalReceivalDraft|null;attachment?:{id:string;filename:string;mediaType:string}}};
+// Only the server may classify a source-/permission-checked, knowledge-only turn.
+// Missing classification remains volatile for compatibility with older servers.
+const volatileAnswer=(answer:ExperimentalAnswer|null|undefined)=>Boolean(answer?.operational||answer?.agent&&answer.contentScope!=='workflow');
 const objectValue=(value:unknown):Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{};
 const rowsValue=(value:unknown):Record<string,unknown>[]=>Array.isArray(value)?value.map(objectValue):[];
 const displayValue=(value:unknown)=>value===null||value===undefined||value===''?'—':String(value);
@@ -143,7 +146,7 @@ export function useTenbotConversation():TenbotConversation{
   liveTurn.current=null;setMessages([]);setReceivalDraft(null);setLocalApproval(null);setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);
  },[owner,available,accessFingerprint]);
  useEffect(()=>{
-  const invalidate=()=>setMessages(turns=>turns.map(turn=>turn.answer?.operational||turn.answer?.agent?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
+  const invalidate=()=>setMessages(turns=>turns.map(turn=>volatileAnswer(turn.answer)?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
   const refresh=async()=>{
    const live=liveTurn.current,id=conversation.current.id;
    if(!available||!live||live.owner!==owner||!id||!foreground.current||document.visibilityState!=='visible'||liveRefresh.current||lock.current)return;
@@ -201,11 +204,11 @@ export function useTenbotConversation():TenbotConversation{
   const retry=previous?.error&&previous.question===current?previous:undefined;
   const turn:Turn={id:retry?.id??++sequence.current,question:current,createdAt:retry?.createdAt??new Date().toISOString(),answer:null};
   liveTurn.current=null;
-  setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7).map(item=>item.answer?.operational||item.answer?.agent?{...item,answer:null,error:'Live Job facts are refreshed for each request.'}:item),turn]);
+  setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7).map(item=>volatileAnswer(item.answer)?{...item,answer:null,error:'Live Job facts are refreshed for each request.'}:item),turn]);
   try{
    const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(liveDemo?{...(turnAttachment?{attachmentId:turnAttachment.attachmentId}:{}),orderDetails}:experiment?{demoScenario:'job-investigation',orderDetails}:{})});
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
-   if((response.operational||response.agent)&&(!foreground.current||document.visibilityState!=='visible')){
+   if(volatileAnswer(response)&&(!foreground.current||document.visibilityState!=='visible')){
     setMessages(m=>m.map(item=>item.id===turn.id?{...item,error:inactiveResponse}:item));
     return true;
    }

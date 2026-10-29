@@ -1,0 +1,276 @@
+{
+  "base": "2967a968c315ff4491203cbab07e7325c3629c24",
+  "status": "Implemented local candidate; Product acceptance pending. HOLD real-write release remains.",
+  "productAuthority": "Chris current explicit P1 QUANTITY CORRECTION & QA RECONCILIATION; separate Advisory unavailable.",
+  "sourcePins": [
+    {
+      "path": "src/modules/inventory/invoice-quantity.ts",
+      "sha256": "6e694e30d1ad871568bf47a215e52b495fc504bb2de9c376f4b35eff70a5d92c"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "sha256": "757c79b9032acde6e9bda887d7e2046f2c4e6a1fe3e3f357db361d1b96397915"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "a280364b16a7f7340649973fbd11f144784b3051bf6464e9aed348b5244756dc"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "f596351393b56ce3d0f786816c3896caa0c0de9ace14d4173a84c967673a0107"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "14fa64872bf9e581903735c41804da0fff011b9ae5bca790a4c671098b640af4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "6c3b802f94a4ed8fd605d66eba21ab728570cd3aabcecc5611fe5e338304d4f8"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "a49aee6e6b0d8687b3e0bc0a518aabd8454b85bca0a70a46b33b71f608016a13"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "f5695caffb6fe7be8ef467f7197b0d4fafe522f7f20246c791ac42de4d162717"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+      "sha256": "05357a3e9fcd54d52b20c2f173dea9acae3e1912e4d565afad3cbc2508e4345b"
+    },
+    {
+      "path": "scripts/support/tenbot-live-demo.mts",
+      "sha256": "89e00c15cc1a4b08dd9bd74e036414c6cae41b315cc40ef3483c3daadda2ebbb"
+    },
+    {
+      "path": "scripts/support/tenbot-receival-agent.mts",
+      "sha256": "a44bf19aa26e46eb80975376fd107172ac225d4efa6bcc0910ab7a1d84c92beb"
+    },
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "91afb934b45445c80b0732a9d0b01a839d7b96bf47f09881d92f053e9d274bfc"
+    },
+    {
+      "path": "scripts/reconcile-tenbot-quantity-live.mts",
+      "sha256": "da8e1148d211832574fddb94fca192e343e48fde8c93a71e9596bc358c296078"
+    },
+    {
+      "path": "scripts/reconcile-tenbot-conversation.mts",
+      "sha256": "8d32b76752f5e89a77d7962baf016d422b9a11764afb077addb8d22f9494d49b"
+    },
+    {
+      "path": "scripts/verify-tenbot-quantity.mts",
+      "sha256": "0cba2b64f4a3e28da3bf2364a12043697eac588f3e0b0754fd5a0dd506648ec8"
+    },
+    {
+      "path": "scripts/verify-tenbot-live-demo.mts",
+      "sha256": "3f52f6a16f79fa93704b0163acbf195a897536e479cdc35f4da10e5916212717"
+    },
+    {
+      "path": "scripts/verify-tenbot-live-review.mts",
+      "sha256": "8a0386665778adb0f7db2c23067316d38a4829309f3ecf1b586cd7b68d71e911"
+    },
+    {
+      "path": "scripts/verify-tenbot-receival-agent.mts",
+      "sha256": "99775ff92eee4f4f7df7629927474b65c456f10d9a103ecf12ec421564e6125c"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent-session.mts",
+      "sha256": "3c05786d96e36516d4aaa1854eca9784590e5787d778d68ea74ad8e488fc2a04"
+    },
+    {
+      "path": "scripts/verify-tenbot-combined-receival-browser.mjs",
+      "sha256": "8a161b9749d1cf6457f6d8479afda918abdad1fe91465811d2b04b1fbdec4d33"
+    },
+    {
+      "path": "scripts/verify-tenbot-inactive-turn.mjs",
+      "sha256": "52fa4307377c4a63c3ec9e5fe5e066150c91925371c77098ade4738ea874308d"
+    },
+    {
+      "path": "scripts/fixtures/tenbot-invoice-quantity-qa.png",
+      "sha256": "eee82a9f47db1e1aee8c9a65a3934e895be073b6a1c19583605f61c3779ad603"
+    }
+  ],
+  "api": {
+    "provider": "OpenAI",
+    "model": "gpt-6.1-terra",
+    "newCalls": 60,
+    "newUsageDerivedCostUsd": 0.08226244999999982,
+    "cumulative": {
+      "reservedOrSpentUsd": 0.5018118999999999,
+      "attempts": 323,
+      "settled": 323
+    },
+    "capUsd": 5,
+    "remainingUsd": 4.4981881,
+    "costBasis": "Returned usage at existing configured Standard pricing, not reconciled Platform invoice. Includes retained first live harness failure. No new Qwen/provider comparison."
+  },
+  "boundaries": {
+    "realInference": true,
+    "recordResponses": "Synthetic fixtures only",
+    "approvalExecution": "Actual in-memory simulator only",
+    "databaseRequests": 0,
+    "operationalWrites": 0,
+    "hostedChanges": false,
+    "deployment": false,
+    "migrationApplication": false,
+    "qwenProductionChanges": false,
+    "newFramework": false
+  },
+  "reports": {
+    "inputs": "input-provenance.json",
+    "independentReview": "independent-review.json",
+    "validation": "validation.json",
+    "conversationSemantic": "semantic-assessment.json",
+    "quantityLive": "quantity-live.json",
+    "quantityFirstAttempt": "quantity-live-first-harness-attempt.json"
+  },
+  "artifacts": [
+    {
+      "path": "authenticated-review-server.json",
+      "bytes": 443,
+      "sha256": "26a5a625ae0f3e9ec7293f8386d0e5030de3f1443198e802d059ee69b82e3d10"
+    },
+    {
+      "path": "browser/desktop-clean-proposed.png",
+      "bytes": 137740,
+      "sha256": "0cbc1b0bfb8d435a1ac0e33d3a5796a4ed32836484e233f4f40674e3a3f4d004"
+    },
+    {
+      "path": "browser/desktop-held-package-evidence.png",
+      "bytes": 160539,
+      "sha256": "88c3871da7ceab0d6cb7bcc4a4eac2b474c6592617357867f5205bb35d0de049"
+    },
+    {
+      "path": "browser/desktop-order-details-prefilled.png",
+      "bytes": 139625,
+      "sha256": "62a568153ec413bf2e21f1912e62beda1a2487d7732bb39504d9dee9886fc9c4"
+    },
+    {
+      "path": "browser/mobile-clean-proposed.png",
+      "bytes": 66493,
+      "sha256": "21e4f2b2f512dd12746a604ede7df52cf616ac42f5dec25f3b73dd9cb608349b"
+    },
+    {
+      "path": "browser/mobile-conflicting-order-details.png",
+      "bytes": 71488,
+      "sha256": "0b66fd2c76121fbbff618d9bb0c43a159ae2f2187a5ae1057c530f08b177cac0"
+    },
+    {
+      "path": "browser/mobile-held-package-corrected.png",
+      "bytes": 67999,
+      "sha256": "d85b748bd558a82368f83826f569a0519c57354a9c2556390edfc322ffca1957"
+    },
+    {
+      "path": "browser/report.json",
+      "bytes": 11884,
+      "sha256": "23907bee26ba60fcdf79bcecc97a1c000c079cdc7aeb722ddc3d82097ad5fa99"
+    },
+    {
+      "path": "conversations/canonical-admin-correction.json",
+      "bytes": 72764,
+      "sha256": "62f8f02db56abf704985c6dcef9fb61868027e9c583528858c26b38487d0194f"
+    },
+    {
+      "path": "conversations/initial-rerun.json",
+      "bytes": 236886,
+      "sha256": "aae2ffc9530954a9bd34823e71bb5c780081c5e4355401da487eec0f3eac0a6e"
+    },
+    {
+      "path": "history/report.json",
+      "bytes": 2392,
+      "sha256": "1c76de2ed99b481a037977c82b8a1e9a85e871ff3cf67f9e71cb1a22838a4f6e"
+    },
+    {
+      "path": "independent-qa/assessment.json",
+      "bytes": 1432,
+      "sha256": "0619f2609c9d788a0fc9a5f7019c728e0f4568e3cffffbaeca2e80f69f291572"
+    },
+    {
+      "path": "independent-qa/conversation-assessment.json",
+      "bytes": 17077,
+      "sha256": "5f6f417c7d5ec5f1092a83f0466e37d2e3ebcaa2e9bdceabc43b1d05b174de22"
+    },
+    {
+      "path": "independent-qa/implementation-handoff.txt",
+      "bytes": 4217,
+      "sha256": "f4bd2c4b4e2623e7747eb4b232c2fef57b0f8ef3ea232c57466e081f6cb17365"
+    },
+    {
+      "path": "independent-qa/security/held-package-conversion.json",
+      "bytes": 17876,
+      "sha256": "aa9570374370ffb2f6d1f77a64ea1f0be2d5d96776158f7e179a2d1736a9fcf3"
+    },
+    {
+      "path": "independent-qa/security/reproduce-held-package-conversion.mts.txt",
+      "bytes": 6870,
+      "sha256": "fe81c368a3728526962c20cf4cf4f136835d3aa27671b5e965c5c2bbf693c364"
+    },
+    {
+      "path": "independent-qa/ui-effort-assessment.json",
+      "bytes": 7069,
+      "sha256": "da9dde2240fb516ac18d158610306445a636956145880ae8c3d4528e6c2f8894"
+    },
+    {
+      "path": "independent-review.json",
+      "bytes": 6286,
+      "sha256": "b65b98d383a219d4e06478346c8e026e38fd2253590f26607eff42ce0ef4accb"
+    },
+    {
+      "path": "input-provenance.json",
+      "bytes": 1825,
+      "sha256": "df73a2931d4146578f833b1a32a07f43afdf76381dac52952f1be3042a56c155"
+    },
+    {
+      "path": "invoice-backend.json",
+      "bytes": 2021,
+      "sha256": "5e0c67dc5c3f77d6281ef4162a45321c7be0d985845a1f9bcdced1b63ffecbbd"
+    },
+    {
+      "path": "live-demo-backend.json",
+      "bytes": 3954,
+      "sha256": "e0af59e46b4a3667afedb1fd641dfc058795a1d4a765113bb77e4daecf323adf"
+    },
+    {
+      "path": "live-demo-prefill-backend.json",
+      "bytes": 4305,
+      "sha256": "df7a9802633d55d1d5ad5af34a08720f2e3a13560a84a21b8a6089d6c11d5f91"
+    },
+    {
+      "path": "quantity-backend.json",
+      "bytes": 1234,
+      "sha256": "3a4f02507189bc4b645a10f26e2e691c3b73609c323a81c407d1030de5f3d7e6"
+    },
+    {
+      "path": "quantity-live-first-harness-attempt.json",
+      "bytes": 64550,
+      "sha256": "bb43aefee7836ca7bc594e18c7a45c248c0c1bc0c5e0bf091f1b468aca2f45e3"
+    },
+    {
+      "path": "quantity-live.json",
+      "bytes": 114320,
+      "sha256": "7266a4bf361f55d7d3d5b6f7f3f323dd2bf59ea12a326d0dc12ab9123e603093"
+    },
+    {
+      "path": "receival-agent-backend.json",
+      "bytes": 1697,
+      "sha256": "8b1c5fc09c60e4c80f851f8bf21f4c1f4156a0238a9feb6b307c19a382ed62d8"
+    },
+    {
+      "path": "semantic-assessment.json",
+      "bytes": 2899,
+      "sha256": "28c935477c2b5ad33c79307b4e33ccf53f4f9512551ea5e19d6548f5b1886685"
+    },
+    {
+      "path": "sim-review-server.json",
+      "bytes": 1090,
+      "sha256": "eeae5c949607d550b97d8a14ed4b47346aa94ef77d55e9b6cfa260c0c4e21807"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 3349,
+      "sha256": "3bb9cd85f2d7474f5a171a9b588ce18898bf086ce84d39e408c8be54764135df"
+    }
+  ]
+}

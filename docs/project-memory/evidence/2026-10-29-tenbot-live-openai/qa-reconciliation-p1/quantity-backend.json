@@ -1,0 +1,25 @@
+{
+  "command": "./node_modules/.bin/tsx scripts/verify-tenbot-quantity.mts",
+  "exitCode": 0,
+  "elapsedMs": 184,
+  "result": {
+    "status": "pass",
+    "mode": "offline exact quantity/source contract; no extraction or model claim",
+    "groups": 10,
+    "checks": [
+      "150 LB and 10 GAL have independent total, per-container and receival dimensions",
+      "explicit package counts multiply to total material without changing the receival count",
+      "unit-only, quantity-only and alias edits cannot reinterpret total material as package count",
+      "a changed catalog package recomputes expected count from the unchanged invoice total",
+      "incompatible dimensions and unproven physical unit conversions remain held",
+      "fractional derived containers and nonterminating divisions are never silently rounded",
+      "explicit conflicting package evidence survives selection, edits and revalidation",
+      "per-container factors cannot masquerade as total quantities in compound invoice lines",
+      "conflicting count/total assertions hold only their own invoice line",
+      "missing source and malformed package contracts fail closed"
+    ],
+    "inferenceCalls": 0,
+    "databaseWrites": 0
+  },
+  "stderr": ""
+}

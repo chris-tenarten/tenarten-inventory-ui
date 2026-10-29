@@ -1,8 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
-import { combinePurchasingCatalogRecords, parsePurchasingPackage, samePurchasingVendor } from '../../../src/modules/purchasing/catalog-records.ts';
+import { combinePurchasingCatalogRecords, samePurchasingVendor } from '../../../src/modules/purchasing/catalog-records.ts';
 import type { AgentTool, JsonValue, StrictSchema } from './tenbot-agent.ts';
 import type { JobToolCaller, JobToolQuery } from './tenbot-job-tools.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
+// @ts-ignore -- Deno requires explicit .ts imports.
+import { deriveInvoiceQuantity, type InvoiceSourceQuantity } from '../../../src/modules/inventory/invoice-quantity.ts';
 
 /** Employee-supplied transcription is untrusted evidence. The authenticated
  * adapter supplies provenance; read/prepare tools never grant approval or writes. */
@@ -108,35 +111,12 @@ function decimal(value: string): { numerator: bigint; denominator: bigint } {
   const [whole, fraction = ''] = value.split('.');
   return { numerator: BigInt(whole + fraction), denominator: BigInt(10) ** BigInt(fraction.length) };
 }
-function exactDecimal(numerator: bigint, denominator: bigint): string | null {
-  const scale = BigInt(1000000);
-  if (numerator * scale % denominator !== BigInt(0)) return null;
-  const scaled = numerator * scale / denominator;
-  const whole = scaled / scale, fraction = String(scaled % scale).padStart(6, '0').replace(/0+$/, '');
-  return `${whole}${fraction ? `.${fraction}` : ''}`;
-}
-function packageConflict(line: string, candidate: Candidate): boolean {
-  // Reuse Purchasing's package grammar. Looking from each number also finds an
-  // explicit package after a preceding total-weight quantity on the same line.
-  for (const match of line.matchAll(/\d+(?:\.\d+)?/g)) {
-    const pkg = parsePurchasingPackage(line.slice(match.index));
-    // Purchasing preserves unparsed input in `container`. A bare order count
-    // such as "3 Bag" has no measured package size and is not package evidence.
-    if (!pkg.quantity || !pkg.measure || !pkg.container) continue;
-    if (unit(pkg.container) !== unit(candidate.container_type) || unit(pkg.measure) !== unit(candidate.package_measure)) return true;
-    try {
-      const invoiceAmount = decimal(pkg.quantity), catalogAmount = decimal(candidate.package_quantity);
-      if (invoiceAmount.numerator * catalogAmount.denominator !== catalogAmount.numerator * invoiceAmount.denominator) return true;
-    } catch { return true; }
-  }
-  return false;
-}
 function date(value: string) { return /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(`${value}T12:00:00Z`)) && new Date(`${value}T12:00:00Z`).toISOString().slice(0, 10) === value; }
 const textSchema: StrictSchema = { type: 'string', minLength: 1, maxLength: 300 };
 const nullableText: StrictSchema = { anyOf: [textSchema, { type: 'null' }] };
 const schema = (properties: Record<string, StrictSchema>): StrictSchema => ({ type: 'object', properties, required: Object.keys(properties), additionalProperties: false });
 type Candidate = { candidate_id: string; catalog_source: string; catalog_item_id: string; supplier: string; vendor_sku: string; material_name: string; size: string; category: string; order_unit: string; package_quantity: string; package_measure: string; container_type: string; package_evidence: string };
-type Extraction = { source_ref: string; description: string; quantity: string; unit: string; size: string; vendor_sku: string; candidates: Candidate[] };
+type Extraction = { source_ref: string; description: string; quantity: string; unit: string; sourceQuantity: InvoiceSourceQuantity; size: string; vendor_sku: string; candidates: Candidate[] };
 
 export function createTenbotInvoiceTools(options: InvoiceToolOptions): AgentTool[] {
   const { callerId, document, reader } = options;
@@ -183,7 +163,9 @@ export function createTenbotInvoiceTools(options: InvoiceToolOptions): AgentTool
         const description = extractedText(line, args.description), quantity = plain(args.quantity, 40), normalizedUnit = unit(plain(args.unit, 30));
         decimal(quantity);
         const quantityMatches = line.matchAll(new RegExp(`(?:^|[^a-zA-Z0-9.#-])${quantity.replace('.', '\\.')}\\s*(?:\\|\\s*)?([a-zA-Z.]+)(?:\\b|$)`, 'gi'));
-        if (!normalizedUnit || ![...quantityMatches].some(match => unit(match[1]) === normalizedUnit)) return fail('unsupported_invoice_quantity_unit');
+        const sourceMatch = [...quantityMatches].find(match => unit(match[1]) === normalizedUnit);
+        if (!normalizedUnit || !sourceMatch) return fail('unsupported_invoice_quantity_unit');
+        const sourceQuantity = Object.freeze({quantity,unit:sourceMatch[1]});
         const size = extractedText(line, args.size, true), vendorSku = extractedText(line, args.vendor_sku, true);
         extracted.delete(sourceRef); searchGeneration += 1; duplicates = null;
         const result = await reader.searchCatalog(vendorSku || description, context.signal);
@@ -191,7 +173,7 @@ export function createTenbotInvoiceTools(options: InvoiceToolOptions): AgentTool
         if (result.complete !== true) return fail('invoice_read_incomplete');
         const standard = checkedRows(result.standard, standardKeys), specialty = checkedRows(result.specialty, specialtyKeys);
         const candidates = combinePurchasingCatalogRecords(standard, specialty).map(item => ({ candidate_id: `${item.source}:${item.id}`, catalog_source: item.source, catalog_item_id: item.id, supplier: item.vendor, vendor_sku: item.vendorSku, material_name: item.materialName, size: item.chipSize, category: item.classification?.category || item.materialType, order_unit: item.orderUnit || '', package_quantity: item.packageQuantity, package_measure: item.packageMeasure, container_type: item.containerType, package_evidence: item.packageEvidence?.label || '' }));
-        extracted.set(sourceRef, { source_ref: sourceRef, description, quantity, unit: normalizedUnit, size, vendor_sku: vendorSku, candidates });
+        extracted.set(sourceRef, { source_ref: sourceRef, description, quantity, unit: normalizedUnit, sourceQuantity, size, vendor_sku: vendorSku, candidates });
         return { data: { synthetic: document.synthetic, source_ref: sourceRef, extracted: { description, quantity, unit: normalizedUnit, size: size || null, vendor_sku: vendorSku || null }, complete: true, candidates, note: 'Distinct catalog offers retain their own identities. No automatic catalog match, supplier substitution or unit conversion has occurred.' } };
       },
     },
@@ -260,31 +242,23 @@ export function createTenbotInvoiceTools(options: InvoiceToolOptions): AgentTool
           const candidate = item.candidates.find(candidate => candidate.candidate_id === selected.get(ref));
           if (!candidate || !eligible.some(value => value.candidate_id === candidate.candidate_id)) reasons.push('unmatched_material');
           if (eligible.length > 1) reasons.push('ambiguous_catalog_match');
-          let quantityExpected: string | null = null, targetUnit = '';
+          const quantityBasis = deriveInvoiceQuantity(item.sourceQuantity,candidate?{orderUnit:candidate.order_unit||candidate.container_type,packageQuantity:candidate.package_quantity,packageMeasure:candidate.package_measure,containerType:candidate.container_type}:undefined,sources.get(ref)!);
+          const quantityExpected=quantityBasis.receivalQuantity,targetUnit=quantityBasis.receivalUnit||'';
+          reasons.push(...quantityBasis.reasons);
           if (candidate) {
             if (item.vendor_sku && !phrase(item.description, candidate.material_name) && !phrase(candidate.material_name, item.description)) reasons.push('invoice_catalog_material_conflict');
             if (!item.size) reasons.push('missing_invoice_material_size');
             if (!candidate.size) reasons.push('missing_material_size');
-            if (packageConflict(sources.get(ref)!, candidate)) reasons.push('invoice_catalog_package_conflict');
-            const candidateUnit = unit(candidate.order_unit || candidate.container_type);
-            targetUnit = candidateUnit;
-            if (!candidateUnit) reasons.push('unknown_catalog_receival_unit');
-            else if (item.unit === candidateUnit) quantityExpected = item.quantity;
-            else if (item.unit === unit(candidate.package_measure) && candidate.package_quantity && candidateUnit === unit(candidate.container_type)) {
-              try {
-                const amount = decimal(item.quantity), pkg = decimal(candidate.package_quantity);
-                quantityExpected = exactDecimal(amount.numerator * pkg.denominator, amount.denominator * pkg.numerator);
-                if (quantityExpected === null) reasons.push('non_exact_package_conversion');
-              } catch { reasons.push('invalid_catalog_package'); }
-            } else reasons.push('incompatible_unit_or_package');
             if (duplicates.some(row => samePurchasingVendor(strings(row.vendor), metadata!.supplier) && norm(strings(row.material_name)) === norm(candidate.material_name) && norm(strings(row.size)) === norm(candidate.size))) reasons.push('potential_duplicate');
             const identity = `${norm(metadata.supplier)}|${norm(candidate.material_name)}|${norm(candidate.size)}`;
             if (identities.has(identity)) reasons.push('duplicate_invoice_material_line');
             identities.add(identity);
           }
-          const common = { source_ref: ref, evidence: sources.get(ref)!, extracted: { description: item.description, quantity: item.quantity, unit: item.unit, size: item.size || null, vendor_sku: item.vendor_sku || null }, catalog_candidate_id: candidate?.candidate_id ?? null };
-          if (reasons.length || !candidate || quantityExpected === null) held.push({ ...common, reasons });
-          else ready.push({ ...common, proposal: { vendor: metadata.supplier, material_name: candidate.material_name, size: candidate.size, category: candidate.category || null, quantity_expected: quantityExpected, unit: targetUnit, location: location || null, ordered_by: orderedBy || null, order_date: date(orderDate) ? orderDate : null, status: 'pending', quantity_received: '0', source_document_reference: metadata.document_ref, catalog_source: candidate.catalog_source, catalog_item_id: candidate.catalog_item_id }, conversion: item.unit === targetUnit ? null : { source_quantity: item.quantity, source_unit: item.unit, package: candidate.package_evidence, operation: 'exact_division_by_catalog_package', result_quantity: quantityExpected, result_unit: targetUnit } });
+          const common = { source_ref: ref, evidence: sources.get(ref)!, extracted: { description: item.description, quantity: item.quantity, unit: item.unit, size: item.size || null, vendor_sku: item.vendor_sku || null }, sourceQuantity: item.sourceQuantity, quantityBasis, catalog_candidate_id: candidate?.candidate_id ?? null,
+            proposal: candidate&&quantityExpected!==null?{ vendor: metadata.supplier, material_name: candidate.material_name, size: candidate.size, category: candidate.category || null, quantity_expected: quantityExpected, unit: targetUnit, location: location || null, ordered_by: orderedBy || null, order_date: date(orderDate) ? orderDate : null, status: 'pending', quantity_received: '0', source_document_reference: metadata.document_ref, catalog_source: candidate.catalog_source, catalog_item_id: candidate.catalog_item_id }:null,
+            conversion: quantityBasis.calculation==='exact_catalog_package_conversion'?{source_quantity:item.sourceQuantity.quantity,source_unit:item.sourceQuantity.unit,package:candidate?.package_evidence||'',operation:'exact_division_by_catalog_package',result_quantity:quantityExpected,result_unit:targetUnit}:null };
+          if (reasons.length || !candidate || quantityExpected === null) held.push({ ...common, reasons:[...new Set(reasons)] });
+          else ready.push(common);
         }
         const coverage = [...sources.keys()].filter(ref => !extracted.has(ref) && !exclusions.some(item => item.source_ref === ref) && ref !== metadata!.supplier_source_ref && ref !== metadata!.document_source_ref);
         const proposal: JsonValue = { version: 'tenbot-pending-receival-review.v1', synthetic: document.synthetic, document_id: document.id, filename: document.filename, supplier: metadata.supplier, document_reference: metadata.document_ref, status: 'review_only_no_execution', ready_lines: ready, held_lines: held, excluded_lines: exclusions, missing_employee_confirmations: missing, employee_confirmation_source: 'authenticated_owner_session', other_document_source_refs: coverage, limitations: ['Model extraction completeness still requires employee review against the document.', 'Invoice date is not order date. No manufacturer substitutes for supplier.', 'Catalog and duplicate reads are best-effort snapshots and must be rechecked before any future execution.', 'No rows were created. No execution capability exists.'], approval_required_before_any_future_execution: true, execution_available: false };

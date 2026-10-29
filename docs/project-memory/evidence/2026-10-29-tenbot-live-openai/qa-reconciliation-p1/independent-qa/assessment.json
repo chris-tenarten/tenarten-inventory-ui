@@ -1,0 +1,51 @@
+{
+  "candidate": "2967a968c315ff4491203cbab07e7325c3629c24",
+  "recommendation": "HOLD_RELEASE",
+  "conversational": {
+    "pass": 8,
+    "partial": 3,
+    "fail": 3,
+    "conversations": 14,
+    "turns": 20,
+    "practicalGoalsResolved": 5,
+    "practicalGoals": 10
+  },
+  "liveInvoiceCreation": {
+    "uniqueCases": 2,
+    "created": 1,
+    "correctlyBlockedExistingInvoice": 1,
+    "additionalInterruptedHarnessAttempts": 1
+  },
+  "offlineInvoiceCompletion": {
+    "cases": 2,
+    "completed": 2,
+    "modelMode": "scripted/extraction fixture"
+  },
+  "p1": "Held-line package conversion can approve150Bag/10Pail instead of3Bag/2Pail",
+  "inference": {
+    "calls": 105,
+    "settledAdditional": 105,
+    "additionalCostUsd": 0.14311539999999995,
+    "networkMeasuredCostUsd": 0.1431154,
+    "allHttp200": true,
+    "allCostMeasured": true,
+    "modelIds": [
+      "gpt-6.1-terra"
+    ],
+    "cumulative": {
+      "reservedOrSpentUsd": 0.41954945000000005,
+      "attempts": 263,
+      "settled": 263
+    },
+    "additionalCapUsd": 1,
+    "cumulativeCapUsd": 5,
+    "allSettled": true,
+    "credentialBillingProviderSettingsChanged": false,
+    "networkFatalReason": null,
+    "costBasis": "Usage-derived Standard estimates including recorded cache-write accounting, not reconciled Platform billing invoice."
+  },
+  "applicationSourceChanges": false,
+  "hostedChanges": false,
+  "realWrites": 0,
+  "databaseGatesComplete": false
+}

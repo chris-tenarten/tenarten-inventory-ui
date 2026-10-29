@@ -1,0 +1,83 @@
+{
+  "status": "pass for focused local correction; HOLD real-write release remains",
+  "reviewer": "independent P1 delta verification agent",
+  "baseline": "2967a968c315ff4491203cbab07e7325c3629c24",
+  "tier": 3,
+  "evidenceMode": "Actual localhost browser and actual disposable simulator HTTP. Existing scripted reasoning/extraction doubles only; no model inference, OCR, database security certification or operational writes in this verifier.",
+  "tests": [
+    {
+      "command": "node scripts/verify-tenbot-combined-receival-browser.mjs",
+      "passed": true,
+      "groups": 14,
+      "report": "browser/report.json"
+    },
+    {
+      "command": "node scripts/verify-tenbot-inactive-turn.mjs",
+      "passed": true,
+      "groups": 5,
+      "report": "/private/tmp/tenops-tenbot-inactive-response-2026-10-29/report.json"
+    },
+    {
+      "command": "node --check scripts/verify-tenbot-combined-receival-browser.mjs",
+      "passed": true
+    },
+    {
+      "command": "git diff --check -- scripts/verify-tenbot-combined-receival-browser.mjs",
+      "passed": true
+    }
+  ],
+  "securityFindings": [
+    "Actual handler rejects simulated approve of forced 150 Bag / 10 Pail after duplicate acknowledgements with HTTP409; correction produces only 3 Bag / 2 Pail memory receipts.",
+    "Original sourceQuantity cannot be supplied in edit payload (HTTP400); previous revision/hash cannot approve (HTTP409).",
+    "Held and ready rows retain structured source, exact catalog conversion, source text and attachment digest; current offer is recomputed during review and approval.",
+    "Client quantity/unit checks fail immediately, separate from dirty review state; included source contradictions remain blocked.",
+    "Authenticated service integration validates source on review but hard executionValidated=false remains; no new SQL, permissions or execution capability.",
+    "Only completed knowledge-only answers with current source/grant proofs receive workflow scope. Attempted/failed operational tools, invoices and proposals remain volatile; unknown server classification fails closed in client.",
+    "Scope-only capability refusals use host allowlist facts; scope evidence does not permit invented UI or operational claims.",
+    "Narrow optional-agent knowledge overlay matches current Bid Preparation and Manpower labels without modifying Production Qwen corpus.",
+    "Synthetic fixture grants are explicitly isolated and do not certify hosted RBAC/RLS.",
+    "Exact unique document Order date / Ordered by / Destination labels prefill with retained host source refs and participate in the review hash; employee values take precedence and neither inferred invoice date nor conflicting repeated labels supply a value. Prefill never supplies final employee approval."
+  ],
+  "visualReview": [
+    "desktop-clean-proposed.png",
+    "mobile-held-package-corrected.png",
+    "desktop-order-details-prefilled.png",
+    "mobile-conflicting-order-details.png"
+  ],
+  "remainingGates": [
+    "Real caller JWT/RLS, role compatibility, revocation, durable source-bound approval and supersession/replay, atomic catalog/receival commit with rollback, concurrent duplicate/idempotency, durable audit and returned-record reconciliation require safe real database validation.",
+    "Model transcription accuracy is independently assessed by root live inference tests; this verifier cannot establish OCR accuracy.",
+    "Conflicting source quantities remain held rather than allowing employee edits to silently overwrite immutable evidence.",
+    "Mixed workflow/scope evidence may conservatively fall back; focused current C14 refusal supported.",
+    "Document metadata prefill currently happens after model preparation; model questions may still mention metadata that the host has subsequently prefilled. Prefill is host-owned review assistance, not evidence that the model granted approval."
+  ],
+  "sourcePins": {
+    "src/modules/inventory/invoice-quantity.ts": "6e694e30d1ad871568bf47a215e52b495fc504bb2de9c376f4b35eff70a5d92c",
+    "supabase/functions/_shared/tenbot-invoice.ts": "14fa64872bf9e581903735c41804da0fff011b9ae5bca790a4c671098b640af4",
+    "scripts/support/tenbot-live-demo.mts": "89e00c15cc1a4b08dd9bd74e036414c6cae41b315cc40ef3483c3daadda2ebbb",
+    "scripts/support/tenbot-receival-agent.mts": "a44bf19aa26e46eb80975376fd107172ac225d4efa6bcc0910ab7a1d84c92beb",
+    "src/modules/tenbot/live-review.ts": "a280364b16a7f7340649973fbd11f144784b3051bf6464e9aed348b5244756dc",
+    "src/modules/tenbot/ReceivalDraftReview.tsx": "757c79b9032acde6e9bda887d7e2046f2c4e6a1fe3e3f357db361d1b96397915",
+    "supabase/functions/_shared/tenbot-agent.ts": "6c3b802f94a4ed8fd605d66eba21ab728570cd3aabcecc5611fe5e338304d4f8",
+    "supabase/functions/_shared/tenbot-agent-operations.ts": "f5695caffb6fe7be8ef467f7197b0d4fafe522f7f20246c791ac42de4d162717",
+    "supabase/functions/_shared/tenbot-agent-session.ts": "a49aee6e6b0d8687b3e0bc0a518aabd8454b85bca0a70a46b33b71f608016a13",
+    "supabase/functions/_shared/tenbot-agent-knowledge.ts": "05357a3e9fcd54d52b20c2f173dea9acae3e1912e4d565afad3cbc2508e4345b",
+    "src/modules/tenbot/TenbotWorkspace.tsx": "f596351393b56ce3d0f786816c3896caa0c0de9ace14d4173a84c967673a0107",
+    "scripts/start-tenbot-agent-review.mts": "91afb934b45445c80b0732a9d0b01a839d7b96bf47f09881d92f053e9d274bfc",
+    "scripts/verify-tenbot-combined-receival-browser.mjs": "8a161b9749d1cf6457f6d8479afda918abdad1fe91465811d2b04b1fbdec4d33",
+    "scripts/verify-tenbot-inactive-turn.mjs": "52fa4307377c4a63c3ec9e5fe5e066150c91925371c77098ade4738ea874308d"
+  },
+  "independentQaInputPins": {
+    "implementation-handoff.txt": "f4bd2c4b4e2623e7747eb4b232c2fef57b0f8ef3ea232c57466e081f6cb17365",
+    "security/held-package-conversion.json": "aa9570374370ffb2f6d1f77a64ea1f0be2d5d96776158f7e179a2d1736a9fcf3",
+    "ui-effort-assessment.json": "da9dde2240fb516ac18d158610306445a636956145880ae8c3d4528e6c2f8894"
+  },
+  "finalBrowserReceipt": {
+    "groups": 14,
+    "journalUnchanged": true,
+    "paidInferenceCalls": 0,
+    "databaseRequests": 0,
+    "operationalWrites": 0,
+    "prefillCase": "Exact QA two-material gold transcription and matching existing synthetic PNG with explicitly offline model/extraction transport, no employee order details injected."
+  }
+}

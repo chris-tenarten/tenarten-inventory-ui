@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {deriveInvoiceQuantity} from '../src/modules/inventory/invoice-quantity';
 import { createElement } from 'react';
 import { renderToStaticMarkup as renderMarkup } from 'react-dom/server';
 import { approvalForCurrentReview, catalogRequestIssues, completeCatalogRequest, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, receivalReviewNotice, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft, type ProposedCatalogMaterial } from '../src/modules/tenbot/live-review';
@@ -12,8 +13,8 @@ const renderToStaticMarkup=(node:Parameters<typeof renderMarkup>[0])=>renderMark
 
 // Offline UI/lifecycle checks. This never starts a server or invokes a provider.
 const checks: string[] = [];
-const base: LocalReceivalDraft = { id: 'local-draft-1', revision: 2, hash: 'server-reviewed-current-hash', simulation: true, status: 'review_required', attachmentId: 'owner-image-1', orderDetails: { orderedBy: 'Synthetic Employee', orderDate: '2026-10-28', location: 'Denton' }, missingFields: [], canApprove: true, rows: [{ lineId: 'line-1', sourceText: 'AW-1 | Alaska White | #1 | 150 LB', materialId: 'standard:synthetic-aw1', materialName: 'Alaska White', size: '#1', quantity: '3', unit: 'Bag', jobId: null, excluded: false, reasons: [] }] };
-const status: LocalDemoStatus = { mode: 'synthetic-live', simulation: true, maxAttachmentBytes: 90000, mediaTypes: ['image/png', 'image/jpeg'], catalog: [{ id: 'standard:synthetic-aw1', materialName: 'Alaska White', size: '#1', unit: 'Bag', supplier: 'T&M Supply', packageLabel: '50 LB Bag' }, { id: 'standard:green-a', materialName: 'CC Green', size: '#1', unit: 'Bag', supplier: 'T&M Supply', packageLabel: '50 LB Bag' }, { id: 'standard:green-b', materialName: 'CC Green', size: '#1', unit: 'Bag', supplier: 'T&M Supply', packageLabel: '25 LB Bag' }], jobs: [{ id: 'synthetic-job', label: 'SYN-1 — Synthetic Job' }] };
+const base: LocalReceivalDraft = { id: 'local-draft-1', revision: 2, hash: 'server-reviewed-current-hash', simulation: true, status: 'review_required', attachmentId: 'owner-image-1', orderDetails: { orderedBy: 'Synthetic Employee', orderDate: '2026-10-28', location: 'Denton' }, missingFields: [], canApprove: true, rows: [{ lineId: 'line-1', sourceText: 'AW-1 | Alaska White | #1 | 150 LB', sourceQuantity:{quantity:'150',unit:'LB'}, quantityBasis:deriveInvoiceQuantity({quantity:'150',unit:'LB'},{orderUnit:'Bag',packageQuantity:'50',packageMeasure:'LB',containerType:'Bag'}), materialId: 'standard:synthetic-aw1', materialName: 'Alaska White', size: '#1', quantity: '3', unit: 'Bag', jobId: null, excluded: false, reasons: [] }] };
+const status: LocalDemoStatus = { mode: 'synthetic-live', simulation: true, maxAttachmentBytes: 90000, mediaTypes: ['image/png', 'image/jpeg'], catalog: [{ id: 'standard:synthetic-aw1', materialName: 'Alaska White', size: '#1', unit: 'Bag', supplier: 'T&M Supply', packageLabel: '50 LB Bag', packageQuantity:'50', packageMeasure:'LB', containerType:'Bag' }, { id: 'standard:green-a', materialName: 'CC Green', size: '#1', unit: 'Bag', supplier: 'T&M Supply', packageLabel: '50 LB Bag', packageQuantity:'50', packageMeasure:'LB', containerType:'Bag' }, { id: 'standard:green-b', materialName: 'CC Green', size: '#1', unit: 'Bag', supplier: 'T&M Supply', packageLabel: '25 LB Bag', packageQuantity:'25', packageMeasure:'LB', containerType:'Bag' }], jobs: [{ id: 'synthetic-job', label: 'SYN-1 — Synthetic Job' }] };
 const copy = <T,>(value: T): T => structuredClone(value);
 async function check(name: string, action: () => void | Promise<void>) { await action(); checks.push(name); }
 function render(draft = base, currentStatus = status) { return renderToStaticMarkup(createElement(ReceivalDraftReview, { draft, status: currentStatus, busy: false, approval: null, onDetails() {}, async onReview() {}, async onApprove() {} })); }
@@ -37,8 +38,12 @@ await check('editing does not mutate the server-owned draft or its hash', () => 
   const original = JSON.stringify(base), rows = editableRows(base); rows[0].quantity = '99';
   assert.equal(JSON.stringify(base), original); assert.equal(base.hash, 'server-reviewed-current-hash');
 });
-await check('review UI exposes canonical catalog choices, positive quantity, units, Job and explicit approval', () => {
-  const html = render();
+await check('clean review is compact with source conversion and explicit approval; exceptions expose editable fields', () => {
+  const compact=render();
+  for(const label of ['Edit line 1','150 LB ÷ 50 LB per Bag = 3 Bag','Approve simulated pending receivals'])assert(compact.includes(label),label);
+  assert(!compact.includes('Expected quantity for line-1'));
+  const exception=copy(base);exception.rows[0].reasons=['potential_duplicate'];
+  const html = render(exception);
   for (const label of ['Catalog material for line-1', 'Expected quantity for line-1', 'Unit for line-1', 'Production Job for line-1', 'General stock', 'Save changes for review', 'I reviewed these exact lines', 'Approve simulated pending receivals', '50 LB Bag', '25 LB Bag']) assert.ok(html.includes(label), label);
   assert.ok(html.includes('No size') === false);
   assert.ok(!html.includes('Create new material'));
@@ -55,11 +60,27 @@ await check('current quantity/unit/catalog validation clears corrected field err
   const row = editableRows(base)[0]; row.quantity = '0'; row.unit = 'Pail';
   const invalid = receivalLineValidation(source, row, status);
   assert.equal(invalid.state, 'Invalid quantity/unit'); assert(invalid.fields.quantity); assert(invalid.fields.unit);
-  row.quantity = '4'; row.unit = 'Bag';
+  row.quantity = '3'; row.unit = 'Bag';
   const corrected = receivalLineValidation(source, row, status);
-  assert.equal(corrected.state, 'Ready'); assert.deepEqual(corrected.fields, {}); assert.equal(corrected.changed, true);
-  assert.equal(approvalForCurrentReview(base, [row], base.orderDetails, true, false), false);
+  assert.equal(corrected.state, 'Ready'); assert.deepEqual(corrected.fields, {}); assert.equal(corrected.changed, false);
+  assert.equal(approvalForCurrentReview(base, [row], base.orderDetails, true, false), true);
   for (const quantity of ['', '-1', 'NaN', 'Infinity', '9'.repeat(400)]) assert(receivalLineValidation(source, {...row, quantity}, status).fields.quantity);
+});
+await check('source quantities remain immutable and wrong package counts cannot be approved through client review',()=>{
+  const source=copy(base.rows[0]),edits=editableRows(base);edits[0].quantity='150';
+  const before=JSON.stringify(source.sourceQuantity);
+  const wrong=receivalLineValidation(source,edits[0],status);
+  assert.equal(wrong.state,'Invalid quantity/unit');assert(wrong.fields.quantity?.includes('requires 3 Bag'));
+  assert.equal(JSON.stringify(source.sourceQuantity),before);
+  const falselyReady=copy(base);falselyReady.rows[0].quantity='150';
+  assert.equal(approvalForCurrentReview(falselyReady,editableRows(falselyReady),falselyReady.orderDetails,true,false),false);
+  const missing=copy(base);delete missing.rows[0].sourceQuantity;
+  assert(receivalLineValidation(missing.rows[0],editableRows(missing)[0],status).holds.some(reason=>reason.includes('evidence is missing')));
+  assert.equal(approvalForCurrentReview(missing,editableRows(missing),missing.orderDetails,true,false),false);
+  const resin={...source,lineId:'resin',sourceText:'RES-5 Clear Resin Part A 10 GAL',sourceQuantity:{quantity:'10',unit:'GAL'},quantity:'2',unit:'Pail',materialId:'resin'};
+  const resinStatus={...status,catalog:[{id:'resin',materialName:'Clear Resin',size:'Part A',unit:'Pail',packageQuantity:'5',packageMeasure:'GAL',containerType:'Pail'}]};
+  assert.deepEqual(receivalLineValidation(resin,resin,resinStatus).fields,{});
+  assert(receivalLineValidation(resin,{...resin,quantity:'10'},resinStatus).fields.quantity?.includes('requires 2 Pail'));
 });
 await check('existing catalog identity resolves current match errors while fabricated catalog IDs do not', () => {
   const source = {...copy(base.rows[0]), materialId: null, reasons: ['unmatched_material', 'ambiguous_catalog_match']};
@@ -117,7 +138,7 @@ await check('supplier correction uses invoice and known choices without weakenin
   assert.deepEqual(receivalLineValidation(source,corrected,status,'T&M Supply').holds,[]);
   assert.equal(receivalLineValidation(source,corrected,status,'T&M Supply').fields.supplier,undefined);
   assert.equal(completeCatalogRequest({...proposed,unitSize:''}).prepared,false);
-  const draft=copy(base);draft.provenance={supplier:'T&M Supply',documentReference:'SYN',attachmentSha256:'a'.repeat(64)};draft.rows[0]=source;
+  const draft=copy(base);draft.provenance={supplier:'T&M Supply',documentReference:'SYN',attachmentSha256:'a'.repeat(64)};draft.rows[0]={...source,catalogRequest:typo};
   const html=render(draft);assert(html.includes('role="combobox"'));assert(!html.includes('Prepare catalog request'));
   assert.equal(approvalForCurrentReview(draft,[corrected],draft.orderDetails,false,false),false);
 });
@@ -135,7 +156,8 @@ await check('possible duplicate evidence requires server-validated acknowledgeme
   const changed=editableRows(draft);changed[0].quantity='7';changed[0].duplicateAcknowledgement=null;
   assert.equal(approvalForCurrentReview(draft,changed,draft.orderDetails,true,false),false);
   assert(receivalLineValidation(source,changed[0],status).holds.length);
-  const html=render(draft);for(const text of ['Duplicate evidence for line 1','3 Bag expected','No invoice reference recorded.','Separate-order acknowledgement validated by the server.'])assert(html.includes(text),text);
+  const held=copy(draft);held.rows[0].duplicateReview!.acknowledged=false;held.rows[0].duplicateAcknowledgement=null;held.rows[0].reasons=['potential_duplicate'];
+  const html=render(held);for(const text of ['Duplicate evidence for line 1','3 Bag expected','No invoice reference recorded.'])assert(html.includes(text),text);
 });
 await check('confirmed duplicate cannot be cleared by an acknowledgement and review notice names genuine catalog holds', () => {
   const draft=copy(base);const source=draft.rows[0];source.duplicateAcknowledgement='f'.repeat(64);source.duplicateReview={fingerprint:'f'.repeat(64),canAcknowledge:false,acknowledged:false,matches:[{recordId:'simulated-existing',source:'simulated',supplier:'T&M Supply',status:'pending',materialName:source.materialName!,size:source.size!,quantityExpected:'3',unit:'Bag',documentReference:'SYN-INV',classification:'confirmed'}]};
@@ -147,8 +169,8 @@ await check('confirmed duplicate cannot be cleared by an acknowledgement and rev
   assert(receivalReviewNotice(violet,{...status,canCreateCatalog:false}).includes('Manage vendors and catalog'));
 });
 await check('duplicate, document conflicts and unknown server holds survive unrelated edits until server review or exclusion', () => {
-  for (const reason of ['potential_duplicate', 'duplicate_draft_line', 'supplier_mismatch', 'invoice_catalog_package_conflict', 'future_server_hold']) {
-    const source = {...copy(base.rows[0]), reasons: [reason]}, row = {...editableRows(base)[0], quantity: '6', jobId: status.jobs[0].id};
+  for (const reason of ['potential_duplicate', 'duplicate_draft_line', 'supplier_mismatch', 'future_server_hold']) {
+    const source = {...copy(base.rows[0]), reasons: [reason]}, row = {...editableRows(base)[0], quantity: '3', jobId: status.jobs[0].id};
     const held = receivalLineValidation(source, row, status);
     assert.equal(held.state, 'Needs review'); assert.equal(held.holds.length, 1);
     const excluded = receivalLineValidation(source, {...row, excluded: true, quantity: '0'}, status);
