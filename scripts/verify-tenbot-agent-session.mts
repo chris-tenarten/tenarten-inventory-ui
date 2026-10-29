@@ -60,7 +60,9 @@ function harness(options: { sequences?: () => Sequence; can?: AgentSessionDepend
   };
   return { run: createTenbotAgentSessions(deps), seen };
 }
-type AskResponse = { conversationId: string; contentScope:'workflow'|'volatile'; message: string; agent: AgentResult & { modelSteps: unknown[]; executionAvailable: false } };
+type AskResponse = { conversationId: string; contentScope:'workflow'|'scope'|'volatile'; message: string;historyTurnId?:string;createdAt?:string;answeredAt?:string; agent: AgentResult & { modelSteps: unknown[]; executionAvailable: false } };
+type HistoryResponse={conversationId:string;mode:'agent-experiment';turns:{id:string;question:string;createdAt:string;answeredAt:string;answer:{message:string;contentScope:'workflow'|'scope'}}[]};
+const history=async(run:ReturnType<typeof createTenbotAgentSessions>,conversationId:string,actor=owner)=>await run({action:'history',conversationId},actor) as HistoryResponse;
 async function ask(run: ReturnType<typeof createTenbotAgentSessions>, body: Record<string, unknown> = {}, actor = owner): Promise<AskResponse> {
   const response = await run({ action: 'ask', question: 'Investigate this synthetic Job.', context, ...body }, actor);
   assert.ok('agent' in response); return response as AskResponse;
@@ -194,9 +196,84 @@ await check('capability refusals have host evidence and cannot publish invented 
  const h=harness({sequences:()=>[discover('describe_assistant_scope'),step([call('scope','describe_assistant_scope')]),step([],scopeFinal)]});
  const result=await ask(h.run,{question:'Run SQL and mark my Job complete. What can you actually do?'});
  assert.equal(result.agent.status,'completed');assert.ok(result.message.includes('cannot run SQL'));assert.ok(result.message.includes('caller-authorized Jobs'));
- assert.ok(!JSON.stringify(result.agent.final).includes('Secret SQL'));assert.deepEqual(result.agent.final?.completed_actions,[]);assert.equal(result.contentScope,'volatile');
+ assert.ok(!JSON.stringify(result.agent.final).includes('Secret SQL'));assert.deepEqual(result.agent.final?.completed_actions,[]);assert.equal(result.contentScope,'scope');
+ const hydrated=await history(h.run,result.conversationId);
+ assert.equal(hydrated.turns.length,1);assert.equal(hydrated.turns[0].answer.message,result.message);assert.equal(hydrated.turns[0].answer.contentScope,'scope');
+ assert.equal(hydrated.turns[0].id,result.historyTurnId);assert.equal(hydrated.turns[0].createdAt,result.createdAt);assert.equal(hydrated.turns[0].answeredAt,result.answeredAt);
+ assert.equal(h.seen.length,1,'history must not construct another provider');
+ assert.ok(!JSON.stringify(hydrated).includes('Secret SQL'));assert.equal('agent' in hydrated.turns[0].answer,false);assert.ok(!JSON.stringify(hydrated).includes('SYNTHETIC_OPAQUE_NATIVE_CONTENT'));
  const ungrounded=harness({sequences:()=>[step([],{...scopeFinal,observations:[]})]});
  assert.equal((await ask(ungrounded.run,{question:'How do I use that UI?'})).agent.reason,'missing-workflow-evidence');
+});
+await check('scope display history is separate from model memory and a scope clarification is not retained',async()=>{
+ let turn=0;
+ const sequence=[discover('describe_assistant_scope'),step([call('scope','describe_assistant_scope')]),step([],{...final(['e1']),observations:[{text:'Scope only.',evidence_ids:['e1']}],questions:[]})];
+ const h=harness({sequences:()=>++turn===1?sequence:knowledgeSequence()});
+ const first=await ask(h.run,{question:'Can you run SQL?'});
+ await ask(h.run,{conversationId:first.conversationId,question:'Help with Messaging.'});
+ assert.ok(!JSON.stringify(h.seen[1][0].history).includes(first.message));
+ assert.equal((await history(h.run,first.conversationId)).turns.length,2);
+ const clarification=harness({sequences:()=>[discover('describe_assistant_scope'),step([call('scope','describe_assistant_scope')]),step([],final())]});
+ const incomplete=await ask(clarification.run,{question:'Can you do that?'});
+ assert.equal(incomplete.contentScope,'volatile');assert.deepEqual((await history(clarification.run,incomplete.conversationId)).turns,[]);
+});
+await check('hydration retains only completed static display prose and never Job, failed or invoice results',async()=>{
+ for(const invoice of [false,true]){
+  const h=harness({sequences:invoice?invoiceSequence:jobSequence});
+  const response=await ask(h.run,invoice?{invoiceId:fixture.document.id}:{});
+  assert.equal(response.contentScope,'volatile');
+  const before=h.seen.length;assert.deepEqual((await history(h.run,response.conversationId)).turns,[]);assert.equal(h.seen.length,before);
+ }
+ const failed=harness({sequences:()=>[step([],guidanceFinal())]});const response=await ask(failed.run);
+ assert.notEqual(response.agent.status,'completed');assert.deepEqual((await history(failed.run,response.conversationId)).turns,[]);
+});
+await check('history reauthorizes owner, base grant, source permissions, ancestry and changed knowledge before display',async()=>{
+ let allowed=true,readAllowed=true;
+ const h=harness({can:async(_owner,capability)=>capability==='readOperationalData'?readAllowed:capability!=='messaging.write'||allowed,sequences:knowledgeSequence});
+ const first=await ask(h.run,{question:'How do I create a group?'});
+ await assert.rejects(history(h.run,first.conversationId,other),/Conversation unavailable/);
+ readAllowed=false;await assert.rejects(history(h.run,first.conversationId),/not authorized/);readAllowed=true;
+ assert.equal((await history(h.run,first.conversationId)).turns[0].answer.message,first.message);
+ allowed=false;assert.deepEqual((await history(h.run,first.conversationId)).turns,[]);allowed=true;
+ assert.deepEqual((await history(h.run,first.conversationId)).turns,[],'revoked history cannot reappear later');
+ const source=registry.find(entry=>entry.id==='group')!,original=source.guidance;
+ try{
+  const changed=harness({sequences:knowledgeSequence});const answer=await ask(changed.run,{question:'How do I create a group?'});
+  source.guidance=original+' Revised source.';assert.deepEqual((await history(changed.run,answer.conversationId)).turns,[]);
+ }finally{source.guidance=original;}
+ let turn=0,ancestorAllowed=true;
+ const derived=harness({can:async(_owner,capability)=>capability!=='messaging.write'||ancestorAllowed,sequences:()=>++turn===1?knowledgeSequence():[discover('describe_assistant_scope'),step([call('scope','describe_assistant_scope')]),step([],{...final(['e1']),observations:[{text:'Scope.',evidence_ids:['e1']}],questions:[]})]});
+ const initial=await ask(derived.run,{question:'Help with a group.'});const scoped=await ask(derived.run,{conversationId:initial.conversationId,question:'Can you run SQL?'});
+ assert.equal(scoped.contentScope,'scope');ancestorAllowed=false;assert.deepEqual((await history(derived.run,initial.conversationId)).turns,[]);
+});
+await check('history checks source grants again after asynchronous proof checks',async()=>{
+ let hydrate=false,sourceChecks=0;
+ const h=harness({sequences:knowledgeSequence,can:async(_owner,capability)=>capability!=='messaging.write'||!hydrate||++sourceChecks===1});
+ const first=await ask(h.run,{question:'How do I create a group?'});hydrate=true;
+ assert.deepEqual((await history(h.run,first.conversationId)).turns,[]);assert.ok(sourceChecks>=2);
+});
+await check('history is bounded, immutable to a caller, strict-input and does not renew session expiry',async()=>{
+ let clock=Date.parse('2026-10-29T12:00:00Z');
+ const h=harness({now:()=>clock,sequences:knowledgeSequence});let response=await ask(h.run,{question:'Help 0'});
+ for(let index=1;index<10;index++)response=await ask(h.run,{conversationId:response.conversationId,question:`Help ${index}`});
+ const hydrated=await history(h.run,response.conversationId);assert.equal(hydrated.turns.length,8);assert.equal(hydrated.turns[0].question,'Help 2');
+ hydrated.turns[0].answer.message='forged client prose';assert.notEqual((await history(h.run,response.conversationId)).turns[0].answer.message,'forged client prose');
+ await assert.rejects(h.run({action:'history',conversationId:response.conversationId,question:'replay'},owner),/Invalid experimental history/);
+ await assert.rejects(h.run({action:'history'},owner),/Invalid experimental history/);
+ clock+=3599000;assert.equal((await history(h.run,response.conversationId)).turns.length,8);
+ clock+=1001;await assert.rejects(history(h.run,response.conversationId),/Conversation unavailable/);
+});
+await check('history holds the session lock, clear removes it, and successful hydration needs no provider or record reads',async()=>{
+ let blocked=false,release:(()=>void)|undefined,entered:(()=>void)|undefined;
+ const gate=new Promise<void>(resolve=>{release=resolve;}),ready=new Promise<void>(resolve=>{entered=resolve;});
+ const h=harness({sequences:knowledgeSequence,can:async(_owner,capability)=>{if(blocked&&capability==='messaging.write'){entered!();await gate;}return true;},execute:async()=>{throw new Error('History must not read Jobs.');},reader:{async searchCatalog(){throw new Error('History must not read Inventory.');},async readReceivals(){throw new Error('History must not read Receivals.');}}});
+ const first=await ask(h.run,{question:'How do I create a group?'});blocked=true;
+ const pending=history(h.run,first.conversationId);await ready;
+ await assert.rejects(h.run({action:'clear',conversationId:first.conversationId},owner),/Conversation changed/);
+ await assert.rejects(ask(h.run,{conversationId:first.conversationId}),/already running/);
+ await assert.rejects(history(h.run,first.conversationId),/already running/);
+ release!();assert.equal((await pending).turns.length,1);assert.equal(h.seen.length,1);
+ await h.run({action:'clear',conversationId:first.conversationId},owner);await assert.rejects(history(h.run,first.conversationId),/Conversation unavailable/);
 });
 await check('old workflow prose cannot substitute for new evidence and true clarification can remain tool-free',async()=>{
   let turn=0;

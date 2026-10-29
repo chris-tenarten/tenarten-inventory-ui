@@ -1,6 +1,7 @@
 // Server-owned local experiment state. Never retains operational answers or tool
-// results between requests. Only bounded, source-checked knowledge-only dialogue
-// may survive for a walkthrough. The hosted entry point does not construct this dependency.
+// results between requests. Bounded, source-checked knowledge dialogue may survive
+// for a walkthrough. Separately proven static scope/help display history can be
+// rehydrated without inference. The hosted entry point does not construct this dependency.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import {runTenbotAgent,type AgentProvider,type AgentStep,type JsonValue} from './tenbot-agent.ts';
@@ -34,7 +35,9 @@ export type AgentSessionDependencies={
 };
 type KnowledgeProof={id:string;digest:string};
 type GuidanceTurn={question:string;answer:string;sources:KnowledgeProof[]};
-type Session={owner:string;touched:number;questions:string[];guidance:GuidanceTurn[];jobIds:string[];invoiceAttached:boolean;confirmation:InvoiceConfirmation;busy:boolean};
+type DisplayAnswer={conversationId:string;mode:'agent-experiment';contentScope:'workflow'|'scope';message:string;sources:never[];snapshot:{revision:string;verifiedAt:string};summary:null;suggestionAllowed:false;notices:never[]};
+type DisplayTurn={id:string;question:string;createdAt:string;answeredAt:string;answer:DisplayAnswer;sources:KnowledgeProof[];scopeDigest:string};
+type Session={owner:string;touched:number;questions:string[];guidance:GuidanceTurn[];display:DisplayTurn[];jobIds:string[];invoiceAttached:boolean;confirmation:InvoiceConfirmation;busy:boolean};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const record=(value:unknown):value is Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const json=(value:unknown)=>JSON.parse(JSON.stringify(value)) as JsonValue;
@@ -46,11 +49,25 @@ async function sourceDigest(source:unknown,version:unknown){
 }
 export function createTenbotAgentSessions(deps:AgentSessionDependencies){
  const sessions=new Map<string,Session>(),now=deps.now??Date.now;
+ const sourceIsCurrent=async(proof:KnowledgeProof,owner:string)=>{
+  const entry=agentKnowledgeEntries().find(item=>item.id===proof.id);
+  if(!entry||entry.status!=='deployed'||await sourceDigest(publishedSource(entry),snapshot)!==proof.digest)return false;
+  const permissions=new Set<string>();
+  for(const capability of [entry.permission,...entry.additionalPermissions??[]])if(await deps.can(owner,capability))permissions.add(capability);
+  return hasGuidePermission(entry,permissions);
+ };
+ // Registry descriptors and hard limits are host data, not a Job/catalog read.
+ // The same proof is bound to every retained display turn and checked on load.
+ const scopeDigest=async(owner:string)=>{
+  const tools=[...createTenbotAgentJobTools(deps.jobTools(owner)).tools,...createTenbotAgentKnowledgeTools(capability=>deps.can(owner,capability))];
+  const scope=createTenbotAgentScopeTool(tools);
+  return sourceDigest((await scope.execute({}, {callerId:owner,signal:new AbortController().signal})).data,'tenbot-agent-display-scope.v1');
+ };
  return async(body:Record<string,unknown>,owner:string)=>{
   if(!owner||!await deps.can(owner,'readOperationalData'))throw new TenbotError('Your account is not authorized.',403);
   for(const [id,session] of sessions)if(now()-session.touched>3600000&&!session.busy)sessions.delete(id);
   if(Object.keys(body).some(key=>!['action','question','context','conversationId','invoiceId','orderDetails','demoScenario'].includes(key)))throw new TenbotError('Invalid experimental request.');
-  if(!['ask','clear'].includes(String(body.action)))throw new TenbotError('The experiment supports questions and clearing only. No execution action exists.');
+  if(!['ask','clear','history'].includes(String(body.action)))throw new TenbotError('The experiment supports questions, history and clearing only. No execution action exists.');
   const supplied=body.conversationId;
   if(supplied!==undefined&&(typeof supplied!=='string'||!uuid.test(supplied)))throw new TenbotError('Invalid conversation request.');
   let session=typeof supplied==='string'?sessions.get(supplied):undefined;
@@ -59,6 +76,32 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(session?.busy)throw new TenbotError('Conversation changed. Retry after the current request.',409);
    if(typeof supplied==='string')sessions.delete(supplied);
    return {cleared:true};
+  }
+  if(body.action==='history'){
+   if(Object.keys(body).some(key=>!['action','conversationId'].includes(key))||!supplied)throw new TenbotError('Invalid experimental history request.');
+   if(!session)throw new TenbotError('Conversation unavailable. Reopen TenBot and retry.',403);
+   if(session.busy)throw new TenbotError('A request is already running in this conversation.',409);
+   session.busy=true;
+   try{
+    const currentScope=await scopeDigest(owner),retained:DisplayTurn[]=[];
+    for(const turn of session.display){
+     if(turn.scopeDigest!==currentScope)continue;
+     let current=true;for(const proof of turn.sources)if(!await sourceIsCurrent(proof,owner)){current=false;break;}
+     if(current)retained.push(turn);
+    }
+    // Recheck immediately before publication. Hydration never renews expiry,
+    // invokes a provider or resurrects records excluded from display history.
+    const finalScope=await scopeDigest(owner),published:DisplayTurn[]=[];
+    for(const turn of retained){
+     if(turn.scopeDigest!==finalScope)continue;
+     let current=true;for(const proof of turn.sources)if(!await sourceIsCurrent(proof,owner)){current=false;break;}
+     if(current)published.push(turn);
+    }
+    if(!await deps.can(owner,'readOperationalData'))throw new TenbotError('Your account is not authorized.',403);
+    if(now()-session.touched>3600000||sessions.get(supplied as string)!==session)throw new TenbotError('Conversation unavailable. Reopen TenBot and retry.',403);
+    session.display=published;
+    return {conversationId:supplied,mode:'agent-experiment',turns:published.map(({id,question,createdAt,answeredAt,answer})=>({id,question,createdAt,answeredAt,answer:structuredClone(answer)}))};
+   }finally{session.busy=false;}
   }
   // Preserve the existing input/privacy contract without using its intent router.
   const {question}=resolveInput(body);
@@ -75,10 +118,11 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
   if(!session){
    // Bound in-memory owner sessions; do not evict another account's active work.
    if(sessions.size>=100)throw new TenbotError('Local experiment session limit reached.',429);
-   session={owner,touched:now(),questions:[],guidance:[],jobIds:[],invoiceAttached:false,confirmation:{},busy:false};
+   session={owner,touched:now(),questions:[],guidance:[],display:[],jobIds:[],invoiceAttached:false,confirmation:{},busy:false};
   }
   const id=typeof supplied==='string'?supplied:crypto.randomUUID();sessions.set(id,session);
   session.touched=now();session.busy=true;
+  const createdAt=new Date(now()).toISOString();
   try{
    if(body.invoiceId!==undefined){session.invoiceAttached=true;session.guidance=[];}
    if(details)session.confirmation={...session.confirmation,...details};
@@ -96,7 +140,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const knowledgeGrants=new Set<string>(),knowledgeProofs=new Map<string,KnowledgeProof>();
    const proofIsCurrent=async(proof:KnowledgeProof)=>{
     const entry=agentKnowledgeEntries().find(item=>item.id===proof.id);
-    if(!entry||entry.status!=='deployed'||await sourceDigest(publishedSource(entry),snapshot)!==proof.digest)return false;
+    if(!entry||!await sourceIsCurrent(proof,owner))return false;
     const permissions=new Set<string>();
     for(const capability of [entry.permission,...entry.additionalPermissions??[]])if(await can(capability)){permissions.add(capability);knowledgeGrants.add(capability);}
     return hasGuidePermission(entry,permissions);
@@ -164,6 +208,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    // only the newly cited source. Preserve transitive provenance or discard it.
    const ancestry=new Map([...session.guidance.flatMap(turn=>turn.sources),...knowledgeProofs.values()].map(proof=>[proof.id+':'+proof.digest,proof]));
    const knowledgeOnly=result.status==='completed'&&result.final!==null&&!session.invoiceAttached&&result.proposals.length===0&&knowledgeProofs.size>0&&ancestry.size<=12&&result.evidence.length>0&&result.evidence.every(item=>item.tool==='search_workflow_knowledge')&&result.trace.every(item=>item.event!=='tool'||item.name==='discover_capabilities'||item.name==='search_workflow_knowledge');
+   const scopeOnly=result.status==='completed'&&result.final!==null&&!session.invoiceAttached&&result.proposals.length===0&&ancestry.size<=12&&result.evidence.length>0&&result.evidence.every(item=>item.tool==='describe_assistant_scope')&&result.trace.every(item=>item.event!=='tool'||item.name==='discover_capabilities'||item.name==='describe_assistant_scope')&&result.final.questions.length===0&&result.final.observations.length===1&&result.final.observations[0].text===result.final.answer&&result.final.inferences.length===0&&result.final.recommendations.length===0&&result.final.completed_actions.length===0;
    session.guidance=knowledgeOnly?[...session.guidance,{question,answer:result.final!.answer,sources:[...ancestry.values()]}].slice(-3):[];
    // IDs are lookup seeds only; future requests receive no retained facts/prose.
    session.jobIds=[...new Set(result.evidence.flatMap(item=>{
@@ -172,7 +217,14 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     return record(jobData.job)&&typeof jobData.job.job_id==='string'&&uuid.test(jobData.job.job_id)?[jobData.job.job_id]:[];
    }))].slice(0,4);
    const message=result.final?.answer??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No experimental answer or draft was published.':'The experimental investigation stopped safely. No database changes were made. Try a narrower request.');
-   return {conversationId:id,mode:'agent-experiment',contentScope:knowledgeOnly?'workflow':'volatile',message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:new Date(now()).toISOString()},summary:null,suggestionAllowed:false,
+   const answeredAt=new Date(now()).toISOString(),contentScope=knowledgeOnly?'workflow':scopeOnly?'scope':'volatile';
+   let historyTurnId:string|undefined;
+   if(contentScope!=='volatile'){
+    historyTurnId=crypto.randomUUID();
+    const answer:DisplayAnswer={conversationId:id,mode:'agent-experiment',contentScope,message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:answeredAt},summary:null,suggestionAllowed:false,notices:[]};
+    session.display=[...session.display,{id:historyTurnId,question,createdAt,answeredAt,answer,sources:[...ancestry.values()],scopeDigest:await scopeDigest(owner)}].slice(-8);
+   }
+   return {conversationId:id,mode:'agent-experiment',contentScope,message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:answeredAt},summary:null,suggestionAllowed:false,...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{}),
     notices:[deps.mode==='offline-scripted'?'Local scripted transport demonstration. This is not an OpenAI or Qwen reasoning result.':'Local OpenAI experiment. Review evidence and proposals; no execution capability exists.'],
     agent:{mode:deps.mode,provider:provider.name,model:provider.model,...result,modelSteps:result.status==='completed'?modelSteps:modelSteps.map(step=>({callCount:step.calls.length,usage:step.usage,durationMs:step.durationMs})),durationMs:now()-before,invoiceAttached:session.invoiceAttached,executionAvailable:false}};
   }finally{session.busy=false;session.touched=now();}

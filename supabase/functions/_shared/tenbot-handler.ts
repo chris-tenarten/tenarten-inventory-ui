@@ -17,7 +17,7 @@ export function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rp
 export async function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget?:number,jobTools?:JobTools,experimentalAgent?:ExperimentalAgent){
  // Only the local review adapter supplies this dependency. Hosted construction,
  // Qwen metering, normal history and all other actions remain unchanged.
- if(experimentalAgent&&['ask','clear'].includes(String(body.action))){
+ if(experimentalAgent&&['ask','clear','history'].includes(String(body.action))){
   const allowed=await caller('has_app_capability',{p_capability:'readOperationalData'});
   if(allowed.error||allowed.data!==true)throw new TenbotError('Your account is not authorized.',403);
   return experimentalAgent(body,userId);

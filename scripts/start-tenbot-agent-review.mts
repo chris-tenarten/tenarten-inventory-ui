@@ -71,7 +71,7 @@ const server=createServer(async(req,res)=>{
  try{
   let raw='';for await(const chunk of req){raw+=chunk;if(Buffer.byteLength(raw)>16000)return send(413,{error:'Request too large.'});}
   const body:unknown=JSON.parse(raw);if(!body||typeof body!=='object'||Array.isArray(body))throw new TenbotError('Invalid request.');
-  if(!['ask','clear'].includes(String((body as Record<string,unknown>).action)))throw new TenbotError('Only local experimental questions and clearing are available. No execution action exists.');
+  if(!['ask','clear','history'].includes(String((body as Record<string,unknown>).action)))throw new TenbotError('Only local experimental questions, history and clearing are available. No execution action exists.');
   const caller=async(name:string,args:Record<string,unknown>={})=>name==='has_app_capability'&&caps.has(String(args.p_capability))?{data:await capability(admin,String(args.p_capability)),error:null}:{data:null,error:{message:'Not allowed'}};
   const noService=async()=>({data:null,error:{message:'The experiment has no privileged writes.'}});
   return send(200,await handleTenbot(body as Record<string,unknown>,admin,caller,noService,null,undefined,undefined,sessions));

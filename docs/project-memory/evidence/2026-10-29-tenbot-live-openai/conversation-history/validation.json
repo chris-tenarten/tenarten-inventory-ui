@@ -1,0 +1,67 @@
+{
+  "tier": 3,
+  "boundary": "Focused static history/session/privacy correction. No new quantity/receival campaign or live model comparison.",
+  "checks": [
+    {
+      "command": "node --import tsx scripts/verify-tenbot-agent-session.mts",
+      "groups": 33,
+      "pass": true,
+      "receipt": "session-regressions.json"
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-receival-agent.mts",
+      "groups": 14,
+      "pass": true,
+      "verifiedBy": "server implementation agent, actual focused verifier result; no database"
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-history-locator.mts",
+      "groups": 5,
+      "pass": true,
+      "verifiedBy": "root actual final tool result"
+    },
+    {
+      "command": "node scripts/verify-tenbot-history-lifecycle.mjs",
+      "groups": 8,
+      "pass": true,
+      "receipt": "report.json"
+    },
+    {
+      "command": "node scripts/verify-tenbot-inactive-turn.mjs",
+      "groups": 5,
+      "pass": true,
+      "receipt": "inactive-response.json"
+    },
+    {
+      "command": "npx tsc --noEmit --incremental false",
+      "pass": true,
+      "verifiedBy": "server worker; final optimized export also typechecks"
+    },
+    {
+      "command": "targeted ESLint for changed UI/support/verifier files",
+      "pass": true,
+      "verifiedBy": "root and workers; existing config excludes shared Edge files"
+    },
+    {
+      "command": "node scripts/build-sample-job-update-review.mjs",
+      "pass": true,
+      "verifiedBy": "root final optimized export"
+    },
+    {
+      "command": "git diff --check",
+      "pass": true,
+      "verifiedBy": "root"
+    }
+  ],
+  "newInferenceCalls": 0,
+  "newInferenceCostUsd": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "ledgerUnchanged": true,
+  "ledger": {
+    "reservedOrSpentUsd": 0.5319376500000005,
+    "attempts": 361,
+    "settled": 361
+  },
+  "hostedAuthOrDatabaseCertified": false
+}

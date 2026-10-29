@@ -6,6 +6,7 @@ import {Info,MoreHorizontal,Paperclip,X} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {ReceivalDraftReview} from './ReceivalDraftReview';
+import {clearHistoryLocator,historyAccessHash,readHistoryLocator,saveHistoryLocator,type HistoryBinding} from './conversation-history';
 import {localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,receivalReviewNotice,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
 type Answer={conversationId?:string;mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean;operational?:{observedAt:string|null;complete:boolean;truncated:boolean;facts:{id:string;text:string}[];refreshable:boolean}};
@@ -14,10 +15,10 @@ type Feedback={id:string;submitter_name:string;status:string;created_at:string;d
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;sharedMonthLimit:number;sharedMonthUsed:number;sharedMonthRemaining:number;perAccountMinuteLimit:number;dayNeuronLimit:number;dayAccountedNeurons:number;monthNeuronLimit:number;monthAccountedNeurons:number;dayMeasuredInputTokens:number;dayMeasuredOutputTokens:number;dayUnmeasuredAttempts:number};
 type AgentClaim={text:string;evidence_ids:string[]};
 type AgentView={mode:'offline-scripted'|'openai';provider:string;model:string;status:string;durationMs:number;executionAvailable:false;final:{observations:AgentClaim[];inferences:AgentClaim[];recommendations:AgentClaim[];questions:string[];completed_actions:[]}|null;proposals:{evidenceId:string;tool:string;proposal:Record<string,unknown>}[];evidence:{id:string;tool:string;data:unknown}[];trace:{event:string;name?:string;outcome:string;durationMs:number}[];usage:{inputTokens:number;outputTokens:number;costUsd:number;reservedUsd:number}};
-type ExperimentalAnswer=Answer&{contentScope?:'workflow'|'volatile';agent?:AgentView;localDemo?:{simulation:boolean;draft:LocalReceivalDraft|null;attachment?:{id:string;filename:string;mediaType:string}}};
+type ExperimentalAnswer=Answer&{contentScope?:'workflow'|'scope'|'volatile';historyTurnId?:string;createdAt?:string;answeredAt?:string;agent?:AgentView;localDemo?:{simulation:boolean;draft:LocalReceivalDraft|null;attachment?:{id:string;filename:string;mediaType:string}}};
 // Only the server may classify a source-/permission-checked, knowledge-only turn.
 // Missing classification remains volatile for compatibility with older servers.
-const volatileAnswer=(answer:ExperimentalAnswer|null|undefined)=>Boolean(answer?.operational||answer?.agent&&answer.contentScope!=='workflow');
+const volatileAnswer=(answer:ExperimentalAnswer|null|undefined)=>Boolean(answer?.operational||answer?.agent&&!['workflow','scope'].includes(answer.contentScope??''));
 const objectValue=(value:unknown):Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{};
 const rowsValue=(value:unknown):Record<string,unknown>[]=>Array.isArray(value)?value.map(objectValue):[];
 const displayValue=(value:unknown)=>value===null||value===undefined||value===''?'—':String(value);
@@ -85,9 +86,10 @@ function moduleContext(pathname:string):ModuleContext{
   default:return {label:'TenOps',module:'General'};
  }
 }
-type Turn={id:number;question:string;createdAt:string;answeredAt?:string;answer:ExperimentalAnswer|null;error?:string};
+type Turn={id:number|string;question:string;createdAt:string;answeredAt?:string;answer:ExperimentalAnswer|null;error?:string};
+type ExperimentalHistory={conversationId:string;mode:'agent-experiment';turns:{id:string;question:string;createdAt:string;answeredAt:string;answer:ExperimentalAnswer}[]};
 type AssistantEntry={id:string;createdAt:string;content:ReactNode};
-export type TenbotConversation={available:boolean;busy:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;menu:(question:string)=>ReactNode;disclosure:ReactNode;attachmentControl:ReactNode;attachmentStatus:ReactNode;activityKey:string};
+export type TenbotConversation={available:boolean;busy:boolean;restoring:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;menu:(question:string)=>ReactNode;disclosure:ReactNode;attachmentControl:ReactNode;attachmentStatus:ReactNode;activityKey:string};
 const messageTime=(value:string)=>new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date(value));
 const guideText=(source:Source)=>source.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide');
 const sourceStatus=(source:Source)=>source.availability==='unavailable'?'Not enabled':source.availability==='partial'?'Partly available':source.status==='deployed'?'Available':source.status==='local'?'Unreleased':source.status==='planned'?'Planned / deferred':'Unable to verify';
@@ -102,6 +104,7 @@ export function useTenbotConversation():TenbotConversation{
  const currentModule=moduleContext(pathname);
  const [messages,setMessages]=useState<Turn[]>([]);
  const [busy,setBusy]=useState(false),[error,setError]=useState('');
+ const [historyLoading,setHistoryLoading]=useState(false);
  const [draft,setDraft]=useState<Draft|null>(null),[confirmed,setConfirmed]=useState(false);
  const [notice,setNotice]=useState(''),[showFeedback,setShowFeedback]=useState(false);
  const [items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState('');
@@ -118,8 +121,9 @@ export function useTenbotConversation():TenbotConversation{
  const [notes,setNotes]=useState<Record<string,string>>({});
  const lock=useRef(false),sequence=useRef(0);
  const conversation=useRef<{owner:string;id?:string}>({owner});
+ const historyBinding=useRef<HistoryBinding|null>(null),lifecycle=useRef(0);
  const currentOwner=useRef(owner);currentOwner.current=owner;
- const liveTurn=useRef<{id:number;owner:string}|null>(null);
+ const liveTurn=useRef<{id:number|string;owner:string}|null>(null);
  const liveRefresh=useRef(false);
  const foreground=useRef(true);
  if(conversation.current.owner!==owner)conversation.current={owner};
@@ -137,14 +141,42 @@ export function useTenbotConversation():TenbotConversation{
   return()=>window.removeEventListener('pointerdown',closeOutside);
  },[]);
  useEffect(()=>{
-  let current=true;setExperiment(false);setAuthenticatedExperiment(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
-  void supabase.auth.getSession().then(async({data})=>{if(!current||data.session?.user.id!==owner)return;const authenticated=Boolean(data.session.access_token),enabled=localAgentExperimentRequested(window.location.origin,window.location.search,authenticated),receivals=localReceivalCandidateRequested(window.location.origin,window.location.search,authenticated);setExperiment(enabled);setAuthenticatedExperiment(receivals);if(enabled){try{const status=await invoke<LocalDemoStatus>({action:'status',localAgentExperiment:true,localReceivalExecution:receivals},owner);if(receivals&&(status.mode!=='authenticated-receivals'||status.simulation!==false))throw new Error('The authenticated receivals server returned an incompatible mode.');if(current&&currentOwner.current===owner)setExperimentStatus(status);}catch(error){if(current)setError(receivals?`Authenticated database unavailable; writes disabled. ${error instanceof Error?error.message:'Reopen TenBot after the isolated database is available.'}`:'The local experiment is unavailable. Reopen TenBot after its server is ready.');}}});
-  return()=>{current=false;};
- },[owner]);
- useEffect(()=>{
-  // Live facts have no client persistence or reusable response cache.
-  liveTurn.current=null;setMessages([]);setReceivalDraft(null);setLocalApproval(null);setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);
- },[owner,available,accessFingerprint]);
+  let current=true;const generation=++lifecycle.current;
+  const active=()=>current&&generation===lifecycle.current&&currentOwner.current===owner&&currentAccess.current===accessFingerprint;
+  const requested=available&&localAgentExperimentRequested(window.location.origin,window.location.search,true);
+  historyBinding.current=null;if(requested)conversation.current={owner};liveTurn.current=null;
+  setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
+  setHistoryLoading(requested);
+  if(!available){
+   // Pending Auth is not a sign-out. Do not destroy the opaque locator while the
+   // same account is being hydrated during an ordinary component remount.
+   if(auth.ready&&auth.accessStatus!=='pending')clearHistoryLocator();
+  }else void (async()=>{
+   let receivals=false;
+   try{
+    const {data}=await supabase.auth.getSession();if(!active()||data.session?.user.id!==owner)return;
+    const authenticated=Boolean(data.session.access_token),enabled=localAgentExperimentRequested(window.location.origin,window.location.search,authenticated);
+    receivals=localReceivalCandidateRequested(window.location.origin,window.location.search,authenticated);
+    setExperiment(enabled);setAuthenticatedExperiment(receivals);if(!enabled)return;
+    const status=await invoke<LocalDemoStatus>({action:'status',localAgentExperiment:true,localReceivalExecution:receivals},owner);
+    if(receivals&&(status.mode!=='authenticated-receivals'||status.simulation!==false))throw new Error('The authenticated receivals server returned an incompatible mode.');
+    if(!active())return;setExperimentStatus(status);
+    const binding:HistoryBinding={owner,accessHash:await historyAccessHash(accessFingerprint),mode:receivals?'authenticated':'synthetic'};
+    if(!active())return;historyBinding.current=binding;
+    const id=readHistoryLocator(binding);if(!id)return;
+    try{
+     const saved=await invoke<ExperimentalHistory>({action:'history',conversationId:id,localAgentExperiment:true,localReceivalExecution:receivals},owner);
+     if(!active())return;
+     if(saved.conversationId!==id||saved.mode!=='agent-experiment'||!Array.isArray(saved.turns)||saved.turns.length>8||saved.turns.some(turn=>typeof turn.id!=='string'||typeof turn.question!=='string'||typeof turn.createdAt!=='string'||!Number.isFinite(Date.parse(turn.createdAt))||typeof turn.answeredAt!=='string'||!Number.isFinite(Date.parse(turn.answeredAt))||!turn.answer||turn.answer.mode!=='agent-experiment'||!['workflow','scope'].includes(turn.answer.contentScope??'')||typeof turn.answer.message!=='string'||turn.answer.operational||turn.answer.agent||turn.answer.localDemo))throw new Error('Invalid saved conversation.');
+     conversation.current={owner,id};setMessages(saved.turns);
+    }catch{
+     if(active()){clearHistoryLocator();conversation.current={owner};setError('Saved TenBot history is unavailable or no longer authorized. No AI request was repeated.');}
+    }
+   }catch(caught){if(active())setError(receivals?`Authenticated database unavailable; writes disabled. ${caught instanceof Error?caught.message:'Reopen TenBot after the isolated database is available.'}`:'The local experiment is unavailable. Reopen TenBot after its server is ready.');}
+   finally{if(active())setHistoryLoading(false);}
+  })();
+  return()=>{current=false;lifecycle.current=generation+1;};
+ },[owner,available,accessFingerprint,auth.ready,auth.accessStatus]);
  useEffect(()=>{
   const invalidate=()=>setMessages(turns=>turns.map(turn=>volatileAnswer(turn.answer)?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
   const refresh=async()=>{
@@ -174,20 +206,25 @@ export function useTenbotConversation():TenbotConversation{
  const context=()=>[`Current module: ${currentModule.label}`];
  const request=async<T,>(body:Record<string,unknown>)=>{
   const chat=body.action==='ask'||body.action==='draft';
+  const generation=lifecycle.current;
   try{
    const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&conversation.current.id?{conversationId:conversation.current.id}:{}),...(experiment?{localAgentExperiment:true,localReceivalExecution:authenticatedExperiment}:{})},owner);
-   if(chat&&conversation.current.owner===owner&&result.conversationId)conversation.current.id=result.conversationId;
+   if(chat&&generation===lifecycle.current&&conversation.current.owner===owner&&result.conversationId){
+    conversation.current.id=result.conversationId;
+    const binding=historyBinding.current;
+    if(experiment&&binding?.owner===owner)saveHistoryLocator(binding,result.conversationId);
+   }
    return result;
   }catch(e){
-   if(e instanceof Error&&/^Conversation (unavailable|changed)/.test(e.message)&&conversation.current.owner===owner)conversation.current={owner};
+   if(e instanceof Error&&/^Conversation (unavailable|changed)/.test(e.message)&&generation===lifecycle.current&&conversation.current.owner===owner){conversation.current={owner};if(experiment)clearHistoryLocator();}
    throw e;
   }
  };
- function begin(){if(!available||lock.current)return false;lock.current=true;setBusy(true);setError('');return true;}
+ function begin(){if(!available||historyLoading||lock.current)return false;lock.current=true;setBusy(true);setError('');return true;}
  function finish(){lock.current=false;setBusy(false);}
  async function send(question:string):Promise<boolean>{
   const current=question.trim();
-  if(experiment&&!experimentStatus){setError('The local experiment is not ready. Reopen TenBot after its server is ready.');return false;}
+  if(historyLoading||experiment&&!experimentStatus){setError('TenBot is restoring the current conversation. Please wait a moment.');return false;}
   if(!current||current.length>1200||lock.current)return false;
   let turnAttachment=attachment;
   if(selectedAttachment){
@@ -198,6 +235,7 @@ export function useTenbotConversation():TenbotConversation{
   }
   if(!begin())return false;
   const requestAccess=currentAccess.current;
+  const generation=lifecycle.current;
   setNotice('');
   const previous=messages.at(-1);
   // Retrying an unsuccessful send updates that turn instead of duplicating it.
@@ -207,14 +245,14 @@ export function useTenbotConversation():TenbotConversation{
   setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7).map(item=>volatileAnswer(item.answer)?{...item,answer:null,error:'Live Job facts are refreshed for each request.'}:item),turn]);
   try{
    const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(liveDemo?{...(turnAttachment?{attachmentId:turnAttachment.attachmentId}:{}),orderDetails}:experiment?{demoScenario:'job-investigation',orderDetails}:{})});
-   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
+   if(generation!==lifecycle.current||currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
    if(volatileAnswer(response)&&(!foreground.current||document.visibilityState!=='visible')){
     setMessages(m=>m.map(item=>item.id===turn.id?{...item,error:inactiveResponse}:item));
     return true;
    }
    if(response.operational)liveTurn.current={id:turn.id,owner};
    if(liveDemo){setReceivalDraft(response.localDemo?.draft??null);setLocalApproval(null);}
-   setMessages(m=>m.map(item=>item.id===turn.id?{...item,answer:response,answeredAt:new Date().toISOString()}:item));
+   setMessages(m=>m.map(item=>item.id===turn.id?{...item,id:response.historyTurnId??item.id,createdAt:response.createdAt??item.createdAt,answer:response,answeredAt:response.answeredAt??new Date().toISOString()}:item));
    return true;
   }catch(e){
    const failure=e instanceof Error?e.message:'TenBot unavailable.';
@@ -240,7 +278,7 @@ export function useTenbotConversation():TenbotConversation{
   if(!begin())return;
   try{
    if(conversation.current.id||attachment)await request({action:'clear',...(conversation.current.id?{conversationId:conversation.current.id}:{}),...(attachment?{attachmentId:attachment.attachmentId}:{})});
-   conversation.current={owner};setMessages([]);setDraft(null);setError('');setNotice('');setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setSyntheticConfirmed(false);
+   conversation.current={owner};if(experiment)clearHistoryLocator();setMessages([]);setDraft(null);setError('');setNotice('');setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setSyntheticConfirmed(false);
   }catch{setError('TenBot could not clear this conversation. Retry.');}finally{finish();}
  }
  async function refreshFeedback(status:string,module:string){
@@ -267,7 +305,7 @@ export function useTenbotConversation():TenbotConversation{
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
    const uploaded=await request<LocalAttachment>({action:'upload',syntheticConfirmed:true,attachment:{filename:prepared.filename,mediaType:prepared.mediaType,dataBase64:prepared.dataBase64}});
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
-   setAttachment(uploaded);setSelectedAttachment(null);setAttachmentPreview(prepared.preview);setAttachmentOrigin({originalFilename:prepared.originalFilename,renderedPdf:prepared.renderedPdf});setReceivalDraft(null);setLocalApproval(null);setMessages([]);conversation.current={owner};
+   setAttachment(uploaded);setSelectedAttachment(null);setAttachmentPreview(prepared.preview);setAttachmentOrigin({originalFilename:prepared.originalFilename,renderedPdf:prepared.renderedPdf});setReceivalDraft(null);setLocalApproval(null);setMessages([]);conversation.current={owner};clearHistoryLocator();
    setNotice(`${prepared.originalFilename} attached.`);
    return uploaded;
   }catch(e){setError(e instanceof Error?e.message:'The attachment could not be uploaded.');}finally{finish();}
@@ -412,5 +450,5 @@ export function useTenbotConversation():TenbotConversation{
    </section>:null}
   </div>;
  };
- return {available,busy,send,history,entries,controls,menu,disclosure,attachmentControl,attachmentStatus,activityKey:`${messages.length}:${messages.at(-1)?.id??0}:${busy}:${drafting}:${showFeedback}:${error}:${notice}:${attachment?.attachmentId??''}:${receivalDraft?.id??''}:${receivalDraft?.revision??''}:${receivalDraft?.status??''}`};
+ return {available,busy:busy||historyLoading,restoring:historyLoading,send,history,entries,controls,menu,disclosure,attachmentControl,attachmentStatus,activityKey:`${messages.length}:${messages.at(-1)?.id??0}:${busy||historyLoading}:${drafting}:${showFeedback}:${error}:${notice}:${attachment?.attachmentId??''}:${receivalDraft?.id??''}:${receivalDraft?.revision??''}:${receivalDraft?.status??''}`};
 }

@@ -1,0 +1,137 @@
+{
+  "base": "eabac4c462fa6887489d23ffffd322c5eff025ac",
+  "status": "Implemented local candidate, pending Product acceptance. Real-write HOLD unchanged.",
+  "authority": "Chris FINAL CONVERSATION HISTORY CORRECTION; separate Advisory unavailable.",
+  "primaryRegression": "QA C14 completed static capability explanation erased on blur/focus.",
+  "sourcePins": [
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "b1e60d9abc6d01e58a123ea3c7172f0235815beccc9ccff068719709b92843a0"
+    },
+    {
+      "path": "src/modules/tenbot/conversation-history.ts",
+      "sha256": "8fc69eb0fd712116cc19cfa55f2a4ce24349cabc7d82565d169b48fa4435befa"
+    },
+    {
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "sha256": "5348d3aea388adfe6c86381ac85f09b95e5145597c42b34dd191d4e5874c90b7"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "d299aa59fe0f8b0411bedc8a5f8d95ac5c409779233c9787e92bca9fc8ca150d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "c6b3fc9fabf4e5d741de42e592a15b7175dfab1995b14c3bb9b1951a2c2ce984"
+    },
+    {
+      "path": "scripts/support/tenbot-live-demo.mts",
+      "sha256": "ba2e2d13dc12f9e102d7752783936006d0cd57723527ba80bd8a07d4a9166084"
+    },
+    {
+      "path": "scripts/support/tenbot-receival-agent.mts",
+      "sha256": "1de373944b6b6e406b186d48cf686068a374d6f80f230a76b00b8ab9fde12ec9"
+    },
+    {
+      "path": "scripts/start-tenbot-agent-review.mts",
+      "sha256": "a070b036f03fe958331658cc7c48b158853b6d2d2b60626e86c4973de4a85f6f"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent-session.mts",
+      "sha256": "178136c8bc9a9d9194d2cdded9c859dc1d050dfe4e156a4023c9b6bf4ec3e729"
+    },
+    {
+      "path": "scripts/verify-tenbot-receival-agent.mts",
+      "sha256": "8221185240882d069acce9fb4c7ae5bc4fd46026e836ba7fb3acc2b82a35ad38"
+    },
+    {
+      "path": "scripts/verify-tenbot-history-lifecycle.mjs",
+      "sha256": "15cdb0ad7ec52a92c7b68c1e9a75fc2f2be7ee0eb9bb3460790298f85f45739b"
+    },
+    {
+      "path": "scripts/verify-tenbot-history-locator.mts",
+      "sha256": "e3d425dfcb0f92983d518cf1d063b70845b373f3a8e9b6cf2d05539f03ecd998"
+    },
+    {
+      "path": "scripts/fixtures/tenbot-capability-history.synthetic.json",
+      "sha256": "5a6d2b71f590cb74bb25e078cdae1c67abb8b379dbe250a83cdc9ee651ec2b70"
+    }
+  ],
+  "evidenceMode": "Saved actual independent QA Terra C14 transport replay through actual local session/SIM handlers and localhost UI, explicitly offline and zero new inference.",
+  "outcomes": {
+    "browserGroups": 8,
+    "inactiveGroups": 5,
+    "sessionGroups": 33,
+    "controllerGroups": 14,
+    "locatorGroups": 5,
+    "buildTypesLintDiff": "pass",
+    "independentReview": "pass",
+    "newInferenceCalls": 0,
+    "newInferenceCostUsd": 0,
+    "ledgerUnchanged": true,
+    "ledger": {
+      "reservedOrSpentUsd": 0.5319376500000005,
+      "attempts": 361,
+      "settled": 361
+    },
+    "realWritesEnabled": false,
+    "qwenProductionChanged": false,
+    "migrationApplied": false,
+    "pushedOrDeployed": false
+  },
+  "remainingLimits": [
+    "Latest8 static workflow/scope replies only, existing1h in-memory session; adapterrestart or expiry ends history.",
+    "LiveJob/invoice/proposal/tool evidence and approval state remain excluded from history; no stale operational facts restored.",
+    "No hostedJWT/RLS/write-transaction certification. Existing database release gates remain."
+  ],
+  "artifacts": [
+    {
+      "path": "assessment.json",
+      "sha256": "8322717b9cf561cce5fc876903087b9885f2e97d8c9943fba37d308e95e5f27d"
+    },
+    {
+      "path": "authenticated-server.json",
+      "sha256": "c877d88dd4d64513c9034459be2e4bece7c89dccbfbd7dd9b0be56ffe336ef9c"
+    },
+    {
+      "path": "desktop-restored.png",
+      "sha256": "3fc5f1a7badafa697b8f2fbb62314e01f2604071dc192bff8ff6e54131cfdf93"
+    },
+    {
+      "path": "inactive-response.json",
+      "sha256": "d72c37a92e6e22dc49df6df4bbe991df2cd2a9ae9ec35dd99282dccb643a9e65"
+    },
+    {
+      "path": "independent-review.json",
+      "sha256": "140c668362539509372ea1244a4cc9024f65fa3236e90663949f55a998235d8b"
+    },
+    {
+      "path": "input-provenance.json",
+      "sha256": "59fdd102933ba4a28d3b9ec1800c01c59001d61f06c40e16607f07dab32a2757"
+    },
+    {
+      "path": "mobile-restored.png",
+      "sha256": "b3ad8a8873ac3a25f29c8ce78a8d67f66ea162b811bfbfb9a348bfcfbc45f9ee"
+    },
+    {
+      "path": "report.json",
+      "sha256": "2b86dcb5e32c2062a9087642a82c429676c39f922021dc73351f9189f125e80b"
+    },
+    {
+      "path": "scope-history-assessment.json",
+      "sha256": "ccfb33fdb0cee5dd4f79858b82a6121e405cbacd2d70cef249069165a0457e2d"
+    },
+    {
+      "path": "session-regressions.json",
+      "sha256": "d3906df05b12695158d6960c69ad4bffd9d0552666aeddadbaef1682d8612d0b"
+    },
+    {
+      "path": "sim-server.json",
+      "sha256": "e46be151c1c922788f4e7e8334aa1c1cc70aa17735dd2b5210623482cd31ebfa"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "a17631f1317579eb5a9136aeb71e972efc8b13d47f135deb7b7b59f6202a9217"
+    }
+  ]
+}

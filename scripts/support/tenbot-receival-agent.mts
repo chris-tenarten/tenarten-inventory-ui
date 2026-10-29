@@ -61,6 +61,9 @@ export function createAuthenticatedReceivalAgent(deps:Dependencies){
    for(const [id,item] of attachments)if(item.expires<=now())attachments.delete(id);
    for(const [id,item] of reviews)if(item.expires<=now())reviews.delete(id);
    const action=body.action;
+   if(action==='history'){
+    keys(body,['action','conversationId']);const history=await helpSession(body,owner);await authorize(owner);return history;
+   }
    if(action==='status'){
     keys(body,['action']);const reader=createCallerInvoiceReader(caller),catalog=await reader.readCatalog!(AbortSignal.timeout(4000));
     const found=await createTenbotJobTools(caller).execute('find_jobs',{limit:20}),foundData:Row=record(found.data)?found.data:{};if(found.status!=='ok'||!Array.isArray(foundData.jobs))fail('Authorized Job choices are unavailable.',503);
@@ -82,7 +85,7 @@ export function createAuthenticatedReceivalAgent(deps:Dependencies){
     item.session??=createTenbotAgentSessions({mode:'openai',can,jobTools:id=>createTenbotJobTools(client(id)),provider:()=>deps.createProvider('authenticated-invoice-investigation'),invoice:{document:item.document,reader:id=>createCallerInvoiceReader(client(id))},now});
     const result=await item.session({action:'ask',question:body.question,context:body.context,...(body.conversationId?{conversationId:body.conversationId}:{}),invoiceId:item.id,orderDetails:metadata},owner);
     await authorize(owner,true);attached(item.id,owner);
-    const agent=result.agent;if(!agent)fail('The agent did not publish a validated result.',503);
+    const agent='agent' in result?result.agent:undefined;if(!agent)fail('The agent did not publish a validated result.',503);
     const proposals=agent.status==='completed'?array(agent.proposals).map(p=>p.proposal).filter(record):[];
     const value=proposals.find(p=>p.version==='tenbot-pending-receival-review.v1');
     return {...result,notices:['Experimental authenticated TenOps preparation. '+BLOCKED],localDemo:{simulation:false,draft:value?proposal(owner,item,value,metadata,agent.trace):null}};

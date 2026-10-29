@@ -180,6 +180,13 @@ export function createTenbotLiveDemo(deps:Dependencies){
   if(action==='status'){keys(body,['action']);return {mode:'synthetic-live',simulation:true,model:deps.model,recordSource:'SIMULATED in-memory records; no TenOps database',catalog:clone(catalogChoices),jobs:SIMULATED_JOBS.map(({id,label})=>({id,label})),canCreateCatalog:await canCreateCatalog(owner),maxAttachmentBytes:LIVE_DEMO_MAX_BYTES,maxImageDimension:1024,mediaTypes:['image/png','image/jpeg'],approvalScope:'Local simulated catalog additions and pending rows only; no on-hand stock or hosted writes',simulatedPendingCount:pending.length,simulatedCatalogAdditionCount:catalogAdditionReceipts.length};}
   if(busy.has(owner))fail('A local request is already running. Wait before changing or approving its draft.',409);busy.add(owner);
   try{
+   if(action==='history'){
+    keys(body,['action','conversationId']);const current=typeof body.conversationId==='string'?conversationAttachments.get(body.conversationId):undefined;
+    if(!current||current.owner!==owner)fail('The conversation is unavailable for this simulated caller.',403);
+    const handler=current.attachmentId?ownedAttachment(current.attachmentId,owner).handler:defaultSession;
+    if(!handler)fail('Conversation unavailable.',403);
+    const history=await handler({action:'history',conversationId:body.conversationId},owner);await access(owner);return history;
+   }
    if(action==='upload'){
     keys(body,['action','attachment','syntheticConfirmed']);if(body.syntheticConfirmed!==true||!record(body.attachment))fail('Confirm that the attachment contains approved synthetic data.');keys(body.attachment,['filename','mediaType','dataBase64']);
     const filename=plain(body.attachment.filename);const mediaType=body.attachment.mediaType;if(mediaType!=='image/png'&&mediaType!=='image/jpeg')fail('This local demo supports PNG and JPEG images only. PDF interpretation is deferred.');

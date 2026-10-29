@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "groups": 5,
+  "checks": [
+    "blur: deferred response ends in a neutral terminal message, discards hidden facts/draft, makes no focus retry, and accepts explicit foreground Send",
+    "hidden: deferred response ends in a neutral terminal message, discards hidden facts/draft, makes no focus retry, and accepts explicit foreground Send",
+    "Provider failure ends Working and clears busy without publishing a draft or operational facts",
+    "workflow-history: server-classified knowledge-only guidance survives background completion, next turn and blur; no automatic inference or operational refresh",
+    "workflow-history-mobile: server-classified knowledge-only guidance survives background completion, next turn and blur; no automatic inference or operational refresh"
+  ],
+  "traces": [
+    {
+      "variant": "blur",
+      "action": "status"
+    },
+    {
+      "variant": "blur",
+      "action": "ask"
+    },
+    {
+      "variant": "blur",
+      "action": "ask"
+    },
+    {
+      "variant": "hidden",
+      "action": "status"
+    },
+    {
+      "variant": "hidden",
+      "action": "ask"
+    },
+    {
+      "variant": "hidden",
+      "action": "ask"
+    },
+    {
+      "variant": "provider-failure",
+      "action": "status"
+    },
+    {
+      "variant": "provider-failure",
+      "action": "ask"
+    },
+    {
+      "variant": "workflow-history",
+      "action": "status"
+    },
+    {
+      "variant": "workflow-history",
+      "action": "ask"
+    },
+    {
+      "variant": "workflow-history",
+      "action": "ask"
+    },
+    {
+      "variant": "workflow-history-mobile",
+      "action": "status"
+    },
+    {
+      "variant": "workflow-history-mobile",
+      "action": "ask"
+    },
+    {
+      "variant": "workflow-history-mobile",
+      "action": "ask"
+    }
+  ],
+  "errors": [],
+  "unexpectedNetwork": [],
+  "mode": "Actual localhost desktop/mobile UI; deferred saved response envelopes, no model or database test",
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "journalUnchanged": true,
+  "journalSha256": "b50c7be442edea49088cdcb00531b07a63472f9d094b5c99eca362d73bb1e7f4",
+  "sourcePins": {
+    "src/modules/tenbot/TenbotWorkspace.tsx": "b1e60d9abc6d01e58a123ea3c7172f0235815beccc9ccff068719709b92843a0",
+    "scripts/verify-tenbot-inactive-turn.mjs": "52fa4307377c4a63c3ec9e5fe5e066150c91925371c77098ade4738ea874308d"
+  }
+}

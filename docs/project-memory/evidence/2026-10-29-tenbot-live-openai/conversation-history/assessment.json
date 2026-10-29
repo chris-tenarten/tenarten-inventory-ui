@@ -1,0 +1,74 @@
+{
+  "candidate": "eabac4c462fa6887489d23ffffd322c5eff025ac",
+  "status": "FOCUSED_QA_COMPLETE_PRODUCT_REVIEW",
+  "quantityRegression": "PASS",
+  "quantityFocusedChecks": 18,
+  "uiFocusedGroups": 14,
+  "actualAdminAnswerTurns": 10,
+  "actualAdminAnswerTurnsPass": 10,
+  "restrictedGrantAnswerTurns": 2,
+  "restrictedGrantAnswerTurnsPass": 2,
+  "ordinaryWorkflowHistory": "PASS",
+  "remainingP1": [],
+  "remainingP2": [
+    {
+      "id": "scope-history",
+      "reproduction": "Correct C14 capability explanation erased by unchanged-owner/access blur/focus; answerCount1\u21920",
+      "source": "Deliberate volatile classification of describe_assistant_scope-only replies",
+      "releaseRecommendation": "Correct narrow display-history limitation before broad read-only rollout; no broader model memory or relaxed operational freshness."
+    }
+  ],
+  "effort": {
+    "visibleFieldsBefore": 34,
+    "visibleFieldsAfter": 4,
+    "postProposalActionsBefore": 3,
+    "postProposalActionsAfter": 2,
+    "reviewSavesAfter": 0,
+    "fieldEditsAfter": 0,
+    "clarificationTurnsAfter": 0,
+    "humanTimingMeasured": false
+  },
+  "readOnlyReadiness": "Answer goals pass; one P2 history limitation remains. Product review recommended before broad read-only rollout; hosted authorization/provider boundaries not certified here.",
+  "writeReadiness": "HOLD; real execution disabled, migration unapplied, mandatory database gates remain",
+  "inference": {
+    "baseline": {
+      "reservedOrSpentUsd": 0.5018118999999999,
+      "attempts": 323,
+      "settled": 323
+    },
+    "final": {
+      "reservedOrSpentUsd": 0.5319376500000005,
+      "attempts": 361,
+      "settled": 361
+    },
+    "newCalls": 38,
+    "newCostUsd": 0.030125750000000617,
+    "measuredReceiptCostUsd": 0.03012575,
+    "measuredReceipts": 38,
+    "allHttp200": true,
+    "allCostMeasured": true,
+    "modelIds": [
+      "gpt-6.1-terra"
+    ],
+    "adminUI": {
+      "conversations": 6,
+      "turns": 10,
+      "calls": 30,
+      "costUsd": 0.02536800000000039,
+      "medianLatencyMs": 7822.0
+    },
+    "limitedGrant": {
+      "cases": 2,
+      "turns": 2,
+      "calls": 8,
+      "costUsd": 0.004757750000000227
+    },
+    "costBasis": "Usage-derived provider accounting, not a reconciled billing invoice",
+    "singleWriterLedgerRespected": true,
+    "credentialBillingProviderSettingsChanged": false
+  },
+  "sourceOrHostedChanges": false,
+  "trackedDirtyFilesPreserved": true,
+  "databaseRequests": 0,
+  "operationalWrites": 0
+}

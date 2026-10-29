@@ -1,0 +1,167 @@
+{
+  "passed": true,
+  "groups": 8,
+  "checks": [
+    "Desktop: archived QA C14 answer survives blur/focus, hidden/visible, Inbox reopen, switching to a new-message composer and back, module navigation and full reload with authorized history and no new inference",
+    "Desktop: explicit Clear removes the server session and remount pointer without rehydrating cleared text",
+    "Mobile: archived QA C14 answer survives blur/focus, hidden/visible, Inbox reopen, switching to a new-message composer and back, module navigation and full reload with authorized history and no new inference",
+    "Mobile: explicit Clear removes the server session and remount pointer without rehydrating cleared text",
+    "revoked: no completed text is restored or re-inferred; live Job evidence is never returned from display history",
+    "expired: no completed text is restored or re-inferred; live Job evidence is never returned from display history",
+    "owner-changed: no completed text is restored or re-inferred; live Job evidence is never returned from display history",
+    "operational: no completed text is restored or re-inferred; live Job evidence is never returned from display history"
+  ],
+  "traces": [
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "history",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "history",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "history",
+      "status": 200
+    },
+    {
+      "action": "clear",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "history",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "history",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "history",
+      "status": 200
+    },
+    {
+      "action": "clear",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 403
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "history",
+      "status": 403
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "history",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "unexpectedNetwork": [],
+  "mode": "Actual localhost desktop/mobile UI and session/SIM handlers; archived QA Terra transport replay, no fresh inference or database validation",
+  "inferenceCalls": 0,
+  "operationalWrites": 0,
+  "journalUnchanged": true,
+  "journalSha256": "b50c7be442edea49088cdcb00531b07a63472f9d094b5c99eca362d73bb1e7f4",
+  "sourcePins": {
+    "src/modules/tenbot/TenbotWorkspace.tsx": "b1e60d9abc6d01e58a123ea3c7172f0235815beccc9ccff068719709b92843a0",
+    "src/modules/tenbot/conversation-history.ts": "8fc69eb0fd712116cc19cfa55f2a4ce24349cabc7d82565d169b48fa4435befa",
+    "supabase/functions/_shared/tenbot-agent-session.ts": "d299aa59fe0f8b0411bedc8a5f8d95ac5c409779233c9787e92bca9fc8ca150d",
+    "scripts/support/tenbot-live-demo.mts": "ba2e2d13dc12f9e102d7752783936006d0cd57723527ba80bd8a07d4a9166084",
+    "scripts/verify-tenbot-history-lifecycle.mjs": "15cdb0ad7ec52a92c7b68c1e9a75fc2f2be7ee0eb9bb3460790298f85f45739b",
+    "scripts/fixtures/tenbot-capability-history.synthetic.json": "5a6d2b71f590cb74bb25e078cdae1c67abb8b379dbe250a83cdc9ee651ec2b70"
+  }
+}

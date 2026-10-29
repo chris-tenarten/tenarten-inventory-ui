@@ -1,0 +1,73 @@
+{
+  "candidate": "eabac4c462fa6887489d23ffffd322c5eff025ac",
+  "scope": "Narrow source/semantics review of completed C14 capability explanation and parent-recorded blur/focus outcome; no new tests or inference",
+  "judgment": "P2 residual conversation-history/usability limitation; deliberately conservative classification, not recurrence of the corrected ordinary-workflow history defect and not an authorization/privacy failure",
+  "actualEvidence": {
+    "path": "conversations.json",
+    "case": "C14",
+    "status": "completed",
+    "tools": [
+      "discover_capabilities",
+      "describe_assistant_scope"
+    ],
+    "contentScope": "volatile",
+    "afterBlurFocus": {
+      "unchanged": false,
+      "answerCount": 0
+    },
+    "mobileNoOverflow": true
+  },
+  "sourceEvidence": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "line": 166,
+      "fact": "Only successful search_workflow_knowledge-only turns qualify for retained workflow classification."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "line": 175,
+      "fact": "Scope-only reply is emitted as volatile."
+    },
+    {
+      "path": "scripts/verify-tenbot-agent-session.mts",
+      "line": 197,
+      "fact": "Existing test explicitly expects scope-only response to be volatile; current conservative behavior is intentional."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "line": 86,
+      "fact": "Host scope tool describes allowlisted capabilities and hard limits without credentials or private/live records."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "line": 163,
+      "fact": "Scope-only response uses bounded truthful host rendering, preventing scope evidence from laundering invented UI/live claims."
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "line": 149,
+      "fact": "Volatile answer is erased on blur."
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "line": 207,
+      "fact": "Volatile answer is erased on next Send."
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "line": 215,
+      "fact": "Only operational answers register automatic refresh, so erased scope response does not recover."
+    }
+  ],
+  "employeeImpact": "Correct static refusal/capability explanation disappears after switching windows even with unchanged owner/access; employee must ask again to reread it. Existing refresh copy incorrectly treats this capability explanation as live Job facts.",
+  "safeFixBoundary": [
+    "If addressed, preserve only a separately proven scope/refusal-only display class with no invoice attachment, operational evidence, prepared proposal or attempted operational tool access.",
+    "Keep owner/account/access-change clearing and per-request authorization; retained text never grants a capability or substitutes for current tool permission checks.",
+    "Do not treat all agent or mixed answers as durable; retain operational/unknown volatility and current live-record freshness controls.",
+    "Display history preservation can be bounded separately from server model-memory retention; broadening retained operational context is unnecessary."
+  ],
+  "decisionEffect": "Does not reopen original P1 quantity blocker or invalidate ordinary-workflow retention passes; report as narrow remaining P2 item for Product acceptance, not a new real-write/security gate.",
+  "apiCalls": 0,
+  "newTestRuns": 0,
+  "sourceChanges": 0
+}

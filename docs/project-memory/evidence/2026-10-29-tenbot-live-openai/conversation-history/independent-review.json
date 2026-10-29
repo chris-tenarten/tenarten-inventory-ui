@@ -1,0 +1,71 @@
+{
+  "candidateBase": "eabac4c",
+  "scope": "Independent focused diff/evidence review of the final conversation-history correction",
+  "judgment": "PASS for local Product review; no outstanding correction-scope defect",
+  "reviewedAt": "2026-10-29T21:34:09.534Z",
+  "sourcePins": {
+    "src/modules/tenbot/TenbotWorkspace.tsx": "b1e60d9abc6d01e58a123ea3c7172f0235815beccc9ccff068719709b92843a0",
+    "src/modules/tenbot/conversation-history.ts": "8fc69eb0fd712116cc19cfa55f2a4ce24349cabc7d82565d169b48fa4435befa",
+    "src/modules/my-work/InboxDialog.tsx": "5348d3aea388adfe6c86381ac85f09b95e5145597c42b34dd191d4e5874c90b7",
+    "supabase/functions/_shared/tenbot-agent-session.ts": "d299aa59fe0f8b0411bedc8a5f8d95ac5c409779233c9787e92bca9fc8ca150d",
+    "supabase/functions/_shared/tenbot-handler.ts": "c6b3fc9fabf4e5d741de42e592a15b7175dfab1995b14c3bb9b1951a2c2ce984",
+    "scripts/support/tenbot-live-demo.mts": "ba2e2d13dc12f9e102d7752783936006d0cd57723527ba80bd8a07d4a9166084",
+    "scripts/support/tenbot-receival-agent.mts": "1de373944b6b6e406b186d48cf686068a374d6f80f230a76b00b8ab9fde12ec9",
+    "scripts/verify-tenbot-history-lifecycle.mjs": "15cdb0ad7ec52a92c7b68c1e9a75fc2f2be7ee0eb9bb3460790298f85f45739b",
+    "scripts/fixtures/tenbot-capability-history.synthetic.json": "5a6d2b71f590cb74bb25e078cdae1c67abb8b379dbe250a83cdc9ee651ec2b70"
+  },
+  "primaryQaInputPins": {
+    "/private/tmp/tenbot-focused-retest-eabac4c/scope-history-assessment.json": "ccfb33fdb0cee5dd4f79858b82a6121e405cbacd2d70cef249069165a0457e2d",
+    "/private/tmp/tenbot-focused-retest-eabac4c/conversations.json": "9906d84d890012e74f3393989f4e11eea3ffb70bf37728f388e0f0912e831161",
+    "/private/tmp/tenbot-focused-retest-eabac4c/live-focused.cjs": "a3cb8f338b1b973bbd83216ec984165d1c349683781debcfd189d54f77bcdf49"
+  },
+  "rootCause": "Static host-rendered capability explanations were deliberately classified volatile, so blur erased them; component-only state and conversation refs could not hydrate after a genuine remount.",
+  "reviewedBoundaries": [
+    "Only completed host-grounded workflow/scope turns are retained. Attempted operational, mixed, attachment, prepared-action and live Job turns remain excluded.",
+    "Eight minimal display turns, one-hour existing server expiry; hydration does not renew expiry, run model inference, read operational records or issue actions.",
+    "History uses authenticated owner checks and current base grant, versioned source, guide permission and registry proof checks before publication.",
+    "History acquires the existing session lock and rejects concurrent ask/clear; final expiry/session-identity checks prevent publishing removed sessions.",
+    "Browser storage contains only an opaque owner/access-hash/mode-bound locator. Questions, answers, evidence and tool payloads are not persisted there.",
+    "Client lifecycle generation, cleanup, owner and access guards discard stale hydration/ask responses. Pending authentication is distinguished from sign-out.",
+    "Send is disabled while restoring; no ask is reissued on focus, reopening, navigation or remount.",
+    "Production Qwen dispatch, operational freshness guards, real-write gates and inference spending controls remain unchanged."
+  ],
+  "resolvedReviewFindings": [
+    "Added session locking around asynchronous history publication to prevent clear/history race.",
+    "Corrected opaque locator fallback when storage writes are blocked, and reject malformed/extra-field locators."
+  ],
+  "regressionEvidence": {
+    "browser": {
+      "path": "/private/tmp/tenops-tenbot-history-lifecycle-2026-10-29/report.json",
+      "sha256": "2b86dcb5e32c2062a9087642a82c429676c39f922021dc73351f9189f125e80b",
+      "passed": true,
+      "groups": 8,
+      "transport": "Actual SIM/session handlers with archived real QA Terra C14 transport replay; no fresh inference"
+    },
+    "adjacentInactiveGuard": {
+      "path": "/private/tmp/tenops-tenbot-inactive-response-2026-10-29/report.json",
+      "sha256": "d72c37a92e6e22dc49df6df4bbe991df2cd2a9ae9ec35dd99282dccb643a9e65",
+      "passed": true,
+      "groups": 5
+    },
+    "screenshots": [
+      "desktop-restored.png",
+      "mobile-restored.png"
+    ],
+    "visualReview": "Both restored answers visibly retained, normal composer usable and no horizontal overflow",
+    "journalUnchanged": true,
+    "inferenceCalls": 0,
+    "hostedDatabaseValidation": false,
+    "operationalWrites": 0
+  },
+  "harnessCorrections": [
+    "Current disposable Messaging fixture has no Wave Bob peer; navigation tested through actual New message composer and back without sending.",
+    "Changed-owner fixture required its own existing welcome-presentation marker; no application behavior changed."
+  ],
+  "remainingLimitations": [
+    "Experimental server restart or one-hour expiry ends retained history; no inference is automatically repeated.",
+    "Operational/attachment answers remain volatile and are not restored as cached Job evidence.",
+    "No hosted JWT/RLS, transactional write, idempotency or audit certification is claimed; existing real-write release gates remain."
+  ],
+  "outstandingFindings": []
+}

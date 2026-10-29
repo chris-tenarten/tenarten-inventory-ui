@@ -20,7 +20,7 @@ const standard:Row[]=(fixture.catalog.standard as Row[]).map((row,index):Row=>({
 const checks:string[]=[];
 async function test(name:string,run:()=>void|Promise<void>){await run();checks.push(name);}
 async function rejected(call:Promise<unknown>,status?:number){await assert.rejects(call,(error:unknown)=>{assert(error instanceof Error);if(status!==undefined)assert.equal((error as Error&{status:number}).status,status);assert(!error.message.includes(png.toString('base64')));return true;});}
-function setup(options:{rawLines?:unknown;providerFailure?:boolean;prepareOwner?:string;receivals?:Row[]}={}){
+function setup(options:{rawLines?:unknown;providerFailure?:boolean;prepareOwner?:string;receivals?:Row[];scopeOnly?:boolean}={}){
  let now=Date.parse('2026-10-29T15:00:00Z'),providers=0,steps=0,extractions=0;
  const denied=new Set<string>(),reads:{table:string;columns:string}[]=[],rpcCalls:{name:string;args:Row}[]=[];
  function callerFor(who:string):ReceivalAgentCaller{
@@ -50,6 +50,7 @@ function setup(options:{rawLines?:unknown;providerFailure?:boolean;prepareOwner?
  const handler=createAuthenticatedReceivalAgent({model:'offline-transport-double',now:()=>now,remainingUsd:()=>5,assertNoFatal(){},createProvider(_label,image){
   providers++;
   if(image)return {name:'OFFLINE transcription double, not live vision',model:'offline',async step(request){steps++;extractions++;assert.equal(request.tools.length,0);assert.equal(request.maxOutputTokens,1800);assert(request.instructions.includes('untrusted data'));if(options.providerFailure)throw Error('injected offline provider failure');return {calls:[],continuation:[],usage:emptyUsage(),final:{raw_lines:options.rawLines??fixture.document.text.split('\n')}};}} as AgentProvider;
+  if(options.scopeOnly){let index=0;return {name:'OFFLINE scope lifecycle double',model:'offline',async step(){steps++;index++;return {calls:index===1?[{id:'discover',name:'discover_capabilities',arguments:{names:['describe_assistant_scope']}}]:index===2?[{id:'scope',name:'describe_assistant_scope',arguments:{}}]:[],continuation:[],usage:emptyUsage(),...(index===3?{final:{answer:'Explain the bounded scope.',observations:[{text:'No execution.',evidence_ids:['e1']}],inferences:[],recommendations:[],questions:[],completed_actions:[]}}:{})};}} as AgentProvider;}
   const scripted=createScriptedTenbotAgentProvider('invoice-preparation');return {...scripted,async step(request){steps++;return scripted.step(request);}};
  }});
  const invoke=(body:Row,who=owner)=>handler(body,who,callerFor(who)) as Promise<Row>;
@@ -75,6 +76,17 @@ await test('read-only employees retain conversational help without acquiring inv
  assert(answer.agent);assert(h.providers()>0);assert.equal((answer.localDemo as Row).draft,null);
  assert(!h.rpcCalls.some(call=>call.name==='prepare_invoice_receival_draft'));
  await rejected(h.upload(),403);
+});
+await test('authenticated help history is owner-scoped and reauthorizes without inference or business-record reads',async()=>{
+ const h=setup({scopeOnly:true});h.denied.add('writeBusinessData');h.denied.add('adjustInventory');
+ const answer=await h.invoke({action:'ask',question:'Can you run SQL?'});assert.equal(answer.contentScope,'scope');assert.equal(h.reads.length,0);
+ const before=h.providers(),steps=h.steps(),history=await h.invoke({action:'history',conversationId:answer.conversationId});
+ assert.equal((history.turns as Row[]).length,1);assert.equal(((history.turns as Row[])[0].answer as Row).message,answer.message);assert.equal(h.providers(),before);assert.equal(h.steps(),steps);assert.equal(h.reads.length,0);
+ assert(h.rpcCalls.every(call=>call.name==='has_app_capability'));
+ await rejected(h.invoke({action:'history',conversationId:answer.conversationId},other),403);
+ h.denied.add('readOperationalData');await rejected(h.invoke({action:'history',conversationId:answer.conversationId}),403);h.denied.delete('readOperationalData');
+ await h.invoke({action:'clear',conversationId:answer.conversationId});await rejected(h.invoke({action:'history',conversationId:answer.conversationId}),403);
+ assert.equal(h.providers(),before);assert.equal(h.reads.length,0);
 });
 await test('synthetic consent and strict upload fields are required without model calls',async()=>{
  const h=setup();for(const override of [{syntheticConfirmed:false},{syntheticConfirmed:'true'},{unexpected:'value'}])await rejected(h.upload(override));

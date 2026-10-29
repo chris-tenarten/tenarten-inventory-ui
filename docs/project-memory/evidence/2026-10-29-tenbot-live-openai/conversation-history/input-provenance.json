@@ -1,0 +1,17 @@
+{
+  "baseline": "eabac4c462fa6887489d23ffffd322c5eff025ac",
+  "primaryRegression": "IndependentQA C14 correctstaticcapabilityanswer contentScopevolatile erased onblur/focus; remount also losescomponent-onlyconversationidentity.",
+  "inputs": [
+    {
+      "source": "/private/tmp/tenbot-focused-retest-eabac4c/scope-history-assessment.json",
+      "archived": "scope-history-assessment.json",
+      "sha256": "ccfb33fdb0cee5dd4f79858b82a6121e405cbacd2d70cef249069165a0457e2d"
+    },
+    {
+      "source": "/private/tmp/tenbot-focused-retest-eabac4c/assessment.json",
+      "archived": "assessment.json",
+      "sha256": "8322717b9cf561cce5fc876903087b9885f2e97d8c9943fba37d308e95e5f27d"
+    }
+  ],
+  "newInferenceAuthorizedOrUsedByThisCorrection": false
+}
