@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "status": "reviewed-pending-classification-verification-and-product-acceptance",
+  "status": "implemented-validated-locally-pending-product-acceptance",
   "acceptedCandidate": "b11b7574b72dd7ae3186477df075dbca267dc8f7",
   "scope": "Tier 3 focused source/permission/provenance review; no runtime architecture changes",
   "originalAffectedRecordIds": [
@@ -713,5 +713,246 @@
   "databaseCalls": 0,
   "hostedVerification": false,
   "push": false,
-  "deployment": false
+  "deployment": false,
+  "receiptRevision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+  "validatedResolutionCandidate": "d965c95fa715ac2245c90e400735d68cd77398e1",
+  "resolution": {
+    "status": "review-required",
+    "reviewRequired": true,
+    "reviewedSemanticRecordIds": [
+      "dm",
+      "group",
+      "inventory-activity",
+      "inventory-pending-create",
+      "inventory-pending-receive",
+      "inventory-stock-movement",
+      "inventory-stock-reservation",
+      "inventory-stock-search",
+      "knowledge-intake",
+      "knowledge-inventory",
+      "knowledge-manpower",
+      "knowledge-material-assessment",
+      "knowledge-messaging",
+      "knowledge-production",
+      "knowledge-proposals",
+      "manpower-job-filter",
+      "manpower-record-labor",
+      "material-lead",
+      "message-attachments",
+      "message-reply",
+      "production-create-job",
+      "production-files",
+      "production-rework-create",
+      "production-rework-status",
+      "share-job",
+      "workflow-intake-activity",
+      "workflow-intake-bid",
+      "workflow-job-archive",
+      "workflow-message-drafts",
+      "workflow-message-edit",
+      "workflow-monthly-snapshot"
+    ],
+    "resolvedAffectedRecordIds": [
+      "dm",
+      "group",
+      "inventory-activity",
+      "inventory-pending-create",
+      "inventory-pending-receive",
+      "inventory-stock-movement",
+      "inventory-stock-reservation",
+      "inventory-stock-search",
+      "knowledge-blend",
+      "knowledge-intake",
+      "knowledge-inventory",
+      "knowledge-manpower",
+      "knowledge-material-assessment",
+      "knowledge-messaging",
+      "knowledge-production",
+      "knowledge-proposals",
+      "manpower-job-filter",
+      "manpower-record-labor",
+      "material-lead",
+      "message-attachments",
+      "message-reply",
+      "production-create-job",
+      "production-files",
+      "production-rework-create",
+      "production-rework-status",
+      "production-schedule",
+      "proposal-create",
+      "proposal-issue-revise",
+      "sample-bid",
+      "sample-save",
+      "sample-work-order",
+      "share-job",
+      "workflow-intake-activity",
+      "workflow-intake-bid",
+      "workflow-intake-convert",
+      "workflow-job-archive",
+      "workflow-manpower-history",
+      "workflow-material-usage",
+      "workflow-message-drafts",
+      "workflow-message-edit",
+      "workflow-monthly-snapshot",
+      "workflow-po-allocations",
+      "workflow-po-draft",
+      "workflow-po-issue",
+      "workflow-po-receivals"
+    ],
+    "unresolvedAffectedRecordIds": [],
+    "semanticRecordIds": [],
+    "unclassifiedSensitivePaths": [
+      "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "supabase/functions/_shared/tenbot-agent-session.ts",
+      "supabase/functions/_shared/tenbot-agent.ts",
+      "supabase/functions/_shared/tenbot-hosted.ts",
+      "supabase/functions/_shared/tenbot-invoice.ts",
+      "supabase/functions/_shared/tenbot-openai-metering.ts",
+      "supabase/functions/_shared/tenbot-openai.ts",
+      "supabase/functions/tenbot/index.ts",
+      "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "supabase/migrations/20261029221000_tenbot_agent_history.sql"
+    ],
+    "acknowledgedInfrastructurePaths": [
+      "scripts/generate-tenbot-knowledge.mjs",
+      "scripts/tenbot-knowledge/architecture.mjs",
+      "scripts/tenbot-knowledge/manifest.mjs",
+      "scripts/tenbot-knowledge/release-sync.mjs",
+      "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+      "supabase/functions/_shared/tenbot-core.ts",
+      "supabase/functions/_shared/tenbot-handler.ts",
+      "supabase/functions/_shared/tenbot-job-routing.ts",
+      "supabase/functions/_shared/tenbot-job-session.ts",
+      "supabase/functions/_shared/tenbot-job-tools.ts",
+      "supabase/functions/_shared/tenbot-knowledge.ts",
+      "supabase/functions/_shared/tenbot-models.ts",
+      "supabase/functions/_shared/tenbot-privacy.ts",
+      "supabase/functions/_shared/tenbot-workflow-supplement.ts"
+    ],
+    "historicalDeployedPaths": [
+      "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+      "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+      "supabase/migrations/20261027150000_tenbot_private_conversations.sql"
+    ],
+    "derivedArtifactPaths": [
+      "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+    ],
+    "sourceReviewHolds": []
+  },
+  "remainingDecisions": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "New durable owner history and claim/commit/release persistence/service lifecycle; not deployed behavior."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "New assistant-discoverable wrappers and bounded retrieval relative to deployed runtime; existing read executors do not make the whole assistant surface unchanged."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "New retention/publication/persistence and mode-dependent local invoice registration."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "New model-selected orchestration and evidence protocol."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "New Terra rollout, paid accounting, durable history and fallback lifecycle; actual hosted configuration remains a separate gate."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "New explicit employee attachment/catalog/duplicate/preparation capability; local-only and excluded from hosted registry; no model business execution."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "New paid reservation, settlement, uncertainty and policy/accounting effects."
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "New external provider dispatch, cost accounting and continuation contract."
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "New actual hosted dispatcher/RPC allowlist/rollout composition; not unchanged infrastructure."
+    },
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "Unapplied draft/approval/execution and role/RLS contract; excluded from read-only release."
+    },
+    {
+      "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "Paid policy/ledger/concurrency contract; isolated fixture application is not shared Production application or activation."
+    },
+    {
+      "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+      "classification": "substantive-local-candidate-contract",
+      "decision": "hold-for-separate-release-review",
+      "reason": "Owner history/persistence/expiry/lease contract; isolated fixture evidence does not certify shared deployment."
+    }
+  ],
+  "verification": {
+    "architectureSuite": {
+      "status": "pass",
+      "groups": 15,
+      "checks": [
+        "PO projection, partial receipt and on-hand stock retain separate effects",
+        "Material Usage is primary evidence and cannot imply stock deduction",
+        "novel material request retrieves assessment and reservation dependencies",
+        "Rework labor keeps canonical Job attribution and links actual registered reads",
+        "missing output evidence stays explicit and cannot be replaced by plans or labor",
+        "related records independently require all permissions and deny no metadata",
+        "cycles, missing targets, result count and UTF-8 bytes are bounded",
+        "only actual registered tools can be linked; application writes remain guidance-only",
+        "capability checks are memoized only within one bounded search",
+        "employee projection excludes maintenance provenance and rejects malformed semantic data",
+        "mixed releases refresh shared guidance without relabeling the base source pin",
+        "release impact propagates dependencies and holds semantic changes",
+        "record reviews bind exact source bytes and full content/authority without clearing neighboring holds",
+        "committed source-review receipts reject stale helpers, source, grants, prose and invented deployment proof",
+        "source-archive builds verify integrity and cannot substitute for release gates"
+      ],
+      "inference_calls": 0,
+      "database_calls": 0
+    },
+    "knowledgeReproducibility": "pass",
+    "targetedESLint": "pass",
+    "generatorAndImpactSyntax": "pass",
+    "diffCheck": "pass",
+    "independentSourceReview": "no scoped blocker",
+    "sameEmployeeKnowledgeAndReleaseProvenance": "exact generated entries and patches equal b11b757; snapshot maintenance metadata only",
+    "exactCandidateImpactReviewExitCode": 1,
+    "exactCandidateImpactReviewExpectedReason": "12 genuine runtime/migration holds, zero unresolved record impacts",
+    "reusedEvidence": "Existing b11 implementation and focused before/after acceptance receipts; no redundant build/browser/live database/model suite"
+  },
+  "impactReportSha256": "2c9942876127512d417951c474663fe811f11df77191956f5daf9464b7ff4ce0",
+  "rawImpactReportPath": "/private/tmp/tenops-tenbot-architecture-20261029/release-review/resolved-impact.json",
+  "sourceReviewManifest": "scripts/tenbot-knowledge/source-reviews.json",
+  "sourceReviewManifestSha256": "e6d5adbb48760bf6c62917541784603cfa28342a06ed890ebe17f66a20887a8c",
+  "readiness": "Knowledge claims/source decisions are validated locally for next TenBot inclusion. Entire dev candidate remains review-required for twelve separate substantive runtime/migration paths; no release authorization."
 }
