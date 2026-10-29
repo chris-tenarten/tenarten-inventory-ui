@@ -1,0 +1,415 @@
+{
+  "date": "2026-10-29",
+  "status": "evaluation-complete-pending-product-acceptance",
+  "productDecision": "b11b757 accepted as local architecture-knowledge implementation candidate",
+  "candidate": "b11b7574b72dd7ae3186477df075dbca267dc8f7",
+  "before": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+  "scope": "Offline deterministic same-query retrieval comparison; no model-quality or hosted proof",
+  "existingArchitectureGroups": 13,
+  "sameQueries": 14,
+  "beforeAfterPermissionProfileRuns": 140,
+  "toolRegistryVariants": 42,
+  "coverageAssertions": [
+    "PO chain includes allocation, projection and actual receipt sources",
+    "PO projection cannot increase stock",
+    "Only actual received quantity enters Inventory",
+    "Material Usage moves fourth to first",
+    "Material Usage has no automatic stock decrement",
+    "Novel request gains both assessment and reservation sources",
+    "Assessment separates general, own-Job, other reservations and incoming stock",
+    "Assessment cannot reserve, order, receive or promise delivery",
+    "Rework labor guide moves third to first",
+    "Rework attribution keeps Job identity and separates original labor",
+    "Bid conversion retrieves zero-or-one canonical Job and saved Won/deposit gate",
+    "Bid conversion retrieves independent Proposal and Sample relationships",
+    "Issued Proposal and Sample history retained independently of Job context",
+    "Current shared Bid/Manpower records equal current agent records",
+    "No static evaluation executed a live read or inference"
+  ],
+  "coverageAssertionsPassed": true,
+  "results": [
+    {
+      "id": "po-chain",
+      "query": "purchase order pending receivals inventory on hand",
+      "beforeIds": [
+        "knowledge-purchasing",
+        "workflow-po-receivals",
+        "inventory-pending-create",
+        "knowledge-inventory"
+      ],
+      "afterIds": [
+        "workflow-po-receivals",
+        "knowledge-purchasing",
+        "inventory-pending-receive",
+        "workflow-po-allocations"
+      ],
+      "beforeBytes": 6329,
+      "afterBytes": 11546
+    },
+    {
+      "id": "material-usage",
+      "query": "material usage consumes quantity automatically deduct inventory",
+      "beforeIds": [
+        "inventory-pending-receive",
+        "inventory-stock-movement",
+        "inventory-stock-search",
+        "workflow-material-usage"
+      ],
+      "afterIds": [
+        "workflow-material-usage",
+        "inventory-pending-receive",
+        "inventory-stock-movement",
+        "inventory-stock-search"
+      ],
+      "beforeBytes": 4176,
+      "afterBytes": 8157
+    },
+    {
+      "id": "assessment-reservation",
+      "query": "Calculate Bid shortages reserve stock order balance promise customer delivery date",
+      "beforeIds": [
+        "knowledge-inventory",
+        "workflow-intake-bid",
+        "customer-edit",
+        "inventory-pending-create"
+      ],
+      "afterIds": [
+        "knowledge-inventory",
+        "knowledge-material-assessment",
+        "inventory-stock-reservation",
+        "workflow-intake-convert"
+      ],
+      "beforeBytes": 4025,
+      "afterBytes": 11215
+    },
+    {
+      "id": "rework-labor",
+      "query": "original Rework labor attribution hours",
+      "beforeIds": [
+        "knowledge-manpower",
+        "knowledge-rework",
+        "manpower-record-labor",
+        "manpower-job-filter"
+      ],
+      "afterIds": [
+        "manpower-record-labor",
+        "production-rework-create",
+        "production-rework-status",
+        "knowledge-production"
+      ],
+      "beforeBytes": 4676,
+      "afterBytes": 11558
+    },
+    {
+      "id": "bid-production",
+      "query": "convert won Bid deposit Sample Proposal schedule Job",
+      "beforeIds": [
+        "knowledge-intake",
+        "workflow-intake-convert",
+        "knowledge-proposals",
+        "knowledge-sample-bid"
+      ],
+      "afterIds": [
+        "knowledge-intake",
+        "workflow-intake-convert",
+        "sample-bid",
+        "production-schedule"
+      ],
+      "beforeBytes": 5328,
+      "afterBytes": 9770
+    },
+    {
+      "id": "document-history",
+      "query": "Proposal without Production Job link Bid later issued PDF historical snapshot",
+      "beforeIds": [
+        "knowledge-proposals",
+        "workflow-intake-convert",
+        "knowledge-intake",
+        "knowledge-sample-bid"
+      ],
+      "afterIds": [
+        "proposal-issue-revise",
+        "knowledge-proposals",
+        "sample-bid",
+        "workflow-intake-convert"
+      ],
+      "beforeBytes": 5328,
+      "afterBytes": 10110
+    },
+    {
+      "id": "bid-preparation",
+      "query": "Intake Bid create Sample",
+      "beforeIds": [
+        "knowledge-intake",
+        "knowledge-sample-bid",
+        "sample-bid",
+        "workflow-intake-bid"
+      ],
+      "afterIds": [
+        "knowledge-sample-bid",
+        "sample-bid",
+        "knowledge-intake",
+        "workflow-intake-convert"
+      ],
+      "beforeBytes": 4641,
+      "afterBytes": 10180
+    },
+    {
+      "id": "manpower-order",
+      "query": "Manpower default sort groups Reporting date newest first",
+      "beforeIds": [
+        "knowledge-manpower",
+        "workflow-manpower-history",
+        "manpower-record-labor",
+        "manpower-job-filter"
+      ],
+      "afterIds": [
+        "knowledge-manpower",
+        "workflow-manpower-history",
+        "manpower-record-labor",
+        "manpower-job-filter"
+      ],
+      "beforeBytes": 4903,
+      "afterBytes": 8725
+    },
+    {
+      "id": "receipt-undo",
+      "query": "receive half pending receival undo receipt after outtake retry",
+      "beforeIds": [
+        "inventory-pending-receive",
+        "knowledge-inventory",
+        "inventory-pending-create",
+        "knowledge-purchasing"
+      ],
+      "afterIds": [
+        "inventory-pending-receive",
+        "knowledge-inventory",
+        "workflow-po-receivals",
+        "inventory-activity"
+      ],
+      "beforeBytes": 6315,
+      "afterBytes": 8171
+    },
+    {
+      "id": "reservation-supply",
+      "query": "Bid material assessment own Job reservations other reservations incoming shortage",
+      "beforeIds": [
+        "knowledge-material-assessment",
+        "inventory-stock-reservation",
+        "knowledge-inventory",
+        "inventory-pending-create"
+      ],
+      "afterIds": [
+        "knowledge-material-assessment",
+        "inventory-pending-receive",
+        "workflow-intake-convert",
+        "inventory-stock-search"
+      ],
+      "beforeBytes": 4805,
+      "afterBytes": 10698
+    },
+    {
+      "id": "missing-output",
+      "query": "daily production completed output remaining work",
+      "beforeIds": [
+        "knowledge-blend",
+        "knowledge-rework",
+        "production-rework-create",
+        "knowledge-production"
+      ],
+      "afterIds": [
+        "my-work-complete",
+        "knowledge-blend",
+        "knowledge-production",
+        "knowledge-rework"
+      ],
+      "beforeBytes": 7339,
+      "afterBytes": 9399
+    },
+    {
+      "id": "data-ownership",
+      "query": "Job reporting group task schedule document inventory relationships",
+      "beforeIds": [
+        "knowledge-manpower",
+        "manpower-record-labor",
+        "workflow-manpower-history",
+        "inventory-stock-reservation"
+      ],
+      "afterIds": [
+        "manpower-record-labor",
+        "knowledge-manpower",
+        "workflow-manpower-history",
+        "knowledge-production"
+      ],
+      "beforeBytes": 5071,
+      "afterBytes": 12530
+    },
+    {
+      "id": "private-request",
+      "query": "administrator read everyone's private task notes messages",
+      "beforeIds": [
+        "knowledge-messaging",
+        "my-work-create",
+        "workflow-task-files",
+        "knowledge-manpower"
+      ],
+      "afterIds": [
+        "my-work-create",
+        "workflow-task-files",
+        "knowledge-messaging",
+        "message-reply"
+      ],
+      "beforeBytes": 4488,
+      "afterBytes": 4355
+    },
+    {
+      "id": "receipt-lineage",
+      "query": "pending receival purchase order line exact inventory lot receipt reversal constraints",
+      "beforeIds": [
+        "knowledge-purchasing",
+        "workflow-po-receivals",
+        "inventory-pending-create",
+        "inventory-pending-receive"
+      ],
+      "afterIds": [
+        "workflow-po-receivals",
+        "knowledge-purchasing",
+        "inventory-pending-receive",
+        "workflow-po-allocations"
+      ],
+      "beforeBytes": 6136,
+      "afterBytes": 11546
+    }
+  ],
+  "freshness": [
+    {
+      "id": "sample-bid",
+      "beforeSharedPath": "Intake \u2192 Bid \u2192 Tools \u2192 Open related Samples \u2192 Existing standalone Sample \u2192 Link Sample",
+      "afterSharedPath": "Intake \u2192 Bid \u2192 Overview \u2192 Bid Preparation",
+      "beforeSharedWasCurrent": false,
+      "beforeAgentWasCurrent": true,
+      "afterPathsAgree": true,
+      "releaseBoundary": {
+        "id": "bidPreparation",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "verifiedAt": "2026-10-28",
+        "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+        "receiptAnchor": "executed-bid-preparation-release--october-28-2026",
+        "receiptSha256": "067fb9fca89e5238fc16985ea82023672da728da1f127b6153304c1ec5084eb1",
+        "receiptKind": "committed",
+        "receiptRevision": "d3f42a76eaa3bc4d9bfe9fbd048d8ef61355efb8"
+      }
+    },
+    {
+      "id": "knowledge-sample-bid",
+      "beforeSharedPath": "Intake \u2192 Bid \u2192 Tools \u2192 Open related Samples",
+      "afterSharedPath": "Intake \u2192 Bid \u2192 Overview \u2192 Bid Preparation",
+      "beforeSharedWasCurrent": false,
+      "beforeAgentWasCurrent": true,
+      "afterPathsAgree": true,
+      "releaseBoundary": {
+        "id": "bidPreparation",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "verifiedAt": "2026-10-28",
+        "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+        "receiptAnchor": "executed-bid-preparation-release--october-28-2026",
+        "receiptSha256": "067fb9fca89e5238fc16985ea82023672da728da1f127b6153304c1ec5084eb1",
+        "receiptKind": "committed",
+        "receiptRevision": "d3f42a76eaa3bc4d9bfe9fbd048d8ef61355efb8"
+      }
+    },
+    {
+      "id": "knowledge-intake",
+      "beforeSharedPath": "Intake \u2192 Bid \u2192 Overview / Updates / Files / Tools",
+      "afterSharedPath": "Intake \u2192 Bid \u2192 Overview \u2192 Bid Preparation",
+      "beforeSharedWasCurrent": false,
+      "beforeAgentWasCurrent": true,
+      "afterPathsAgree": true,
+      "releaseBoundary": {
+        "id": "bidPreparation",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "verifiedAt": "2026-10-28",
+        "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+        "receiptAnchor": "executed-bid-preparation-release--october-28-2026",
+        "receiptSha256": "067fb9fca89e5238fc16985ea82023672da728da1f127b6153304c1ec5084eb1",
+        "receiptKind": "committed",
+        "receiptRevision": "d3f42a76eaa3bc4d9bfe9fbd048d8ef61355efb8"
+      }
+    },
+    {
+      "id": "knowledge-manpower",
+      "beforeSharedPath": "Manpower Reporting \u2192 Job / Search",
+      "afterSharedPath": "Manpower Reporting \u2192 Sort groups",
+      "beforeSharedWasCurrent": false,
+      "beforeAgentWasCurrent": true,
+      "afterPathsAgree": true,
+      "releaseBoundary": {
+        "id": "manpower",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "verifiedAt": "2026-10-29",
+        "receipt": "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+        "receiptAnchor": "executed-approved-priority-release--october-29-2026",
+        "receiptSha256": "5dc0a02e04e0a9c4cf3ed5878f662df94b224b1b8cc633d36698df9f31b93027",
+        "receiptKind": "captured-working-receipt",
+        "receiptCapture": "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+        "receiptCaptureSha256": "683ff3132cc63820e85e016822b3fdae07937cf4e90e61810709fe2e64e2d421",
+        "originWorkingSha256": "1e304bda4180e2fd4b366a2fc7e474e837ac8099d9e237e56478a755156b48c5"
+      }
+    },
+    {
+      "id": "workflow-manpower-history",
+      "beforeSharedPath": "Manpower Reporting \u2192 analytics / expanded reporting groups",
+      "afterSharedPath": "Manpower Reporting \u2192 Sort groups",
+      "beforeSharedWasCurrent": false,
+      "beforeAgentWasCurrent": true,
+      "afterPathsAgree": true,
+      "releaseBoundary": {
+        "id": "manpower",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "verifiedAt": "2026-10-29",
+        "receipt": "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+        "receiptAnchor": "executed-approved-priority-release--october-29-2026",
+        "receiptSha256": "5dc0a02e04e0a9c4cf3ed5878f662df94b224b1b8cc633d36698df9f31b93027",
+        "receiptKind": "captured-working-receipt",
+        "receiptCapture": "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+        "receiptCaptureSha256": "683ff3132cc63820e85e016822b3fdae07937cf4e90e61810709fe2e64e2d421",
+        "originWorkingSha256": "1e304bda4180e2fd4b366a2fc7e474e837ac8099d9e237e56478a755156b48c5"
+      }
+    }
+  ],
+  "actualRegisteredJobTools": [
+    "find_jobs",
+    "get_job_summary",
+    "get_job_planning",
+    "get_job_labor_summary",
+    "get_production_overview"
+  ],
+  "scopeExecution": false,
+  "remainingGaps": [
+    {
+      "case": "reservation-supply",
+      "description": "Dedicated reservation guide drops out of four results, though assessment retains own/other/general/incoming distinctions."
+    },
+    {
+      "case": "missing-output",
+      "description": "Unrelated task-completion guide ranks first; correct unverified-output limitation is present at rank three."
+    }
+  ],
+  "readiness": "Knowledge content is suitable to accompany the next TenBot release after semantic/source review holds are resolved; not release-cleared as-is.",
+  "releaseReview": {
+    "status": "review-required",
+    "affectedRecords": 45,
+    "semanticRecords": 31,
+    "dependentRecords": 14,
+    "unclassifiedSensitivePaths": 31,
+    "acknowledgments": 0
+  },
+  "sourceChanges": false,
+  "inferenceCalls": 0,
+  "databaseCalls": 0,
+  "hostedChecks": false,
+  "push": false,
+  "deployment": false,
+  "rawComparisonSha256": "c1dbfd86d3ca60b469174cf45f41c1af77163b6fb9998cb2c5941d7e6e0af44d",
+  "rawComparisonPath": "/private/tmp/tenops-tenbot-architecture-20261029/acceptance/before-after.json"
+}

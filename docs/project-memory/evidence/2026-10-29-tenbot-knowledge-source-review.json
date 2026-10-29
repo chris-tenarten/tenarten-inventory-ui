@@ -1,0 +1,717 @@
+{
+  "date": "2026-10-29",
+  "status": "reviewed-pending-classification-verification-and-product-acceptance",
+  "acceptedCandidate": "b11b7574b72dd7ae3186477df075dbca267dc8f7",
+  "scope": "Tier 3 focused source/permission/provenance review; no runtime architecture changes",
+  "originalAffectedRecordIds": [
+    "dm",
+    "group",
+    "inventory-activity",
+    "inventory-pending-create",
+    "inventory-pending-receive",
+    "inventory-stock-movement",
+    "inventory-stock-reservation",
+    "inventory-stock-search",
+    "knowledge-blend",
+    "knowledge-intake",
+    "knowledge-inventory",
+    "knowledge-manpower",
+    "knowledge-material-assessment",
+    "knowledge-messaging",
+    "knowledge-production",
+    "knowledge-proposals",
+    "manpower-job-filter",
+    "manpower-record-labor",
+    "material-lead",
+    "message-attachments",
+    "message-reply",
+    "production-create-job",
+    "production-files",
+    "production-rework-create",
+    "production-rework-status",
+    "production-schedule",
+    "proposal-create",
+    "proposal-issue-revise",
+    "sample-bid",
+    "sample-save",
+    "sample-work-order",
+    "share-job",
+    "workflow-intake-activity",
+    "workflow-intake-bid",
+    "workflow-intake-convert",
+    "workflow-job-archive",
+    "workflow-manpower-history",
+    "workflow-material-usage",
+    "workflow-message-drafts",
+    "workflow-message-edit",
+    "workflow-monthly-snapshot",
+    "workflow-po-allocations",
+    "workflow-po-draft",
+    "workflow-po-issue",
+    "workflow-po-receivals"
+  ],
+  "directRecordIds": [
+    "dm",
+    "group",
+    "inventory-activity",
+    "inventory-pending-create",
+    "inventory-pending-receive",
+    "inventory-stock-movement",
+    "inventory-stock-reservation",
+    "inventory-stock-search",
+    "knowledge-intake",
+    "knowledge-inventory",
+    "knowledge-manpower",
+    "knowledge-material-assessment",
+    "knowledge-messaging",
+    "knowledge-production",
+    "knowledge-proposals",
+    "manpower-job-filter",
+    "manpower-record-labor",
+    "material-lead",
+    "message-attachments",
+    "message-reply",
+    "production-create-job",
+    "production-files",
+    "production-rework-create",
+    "production-rework-status",
+    "share-job",
+    "workflow-intake-activity",
+    "workflow-intake-bid",
+    "workflow-job-archive",
+    "workflow-message-drafts",
+    "workflow-message-edit",
+    "workflow-monthly-snapshot"
+  ],
+  "dependentRecordIds": [
+    "knowledge-blend",
+    "production-schedule",
+    "proposal-create",
+    "proposal-issue-revise",
+    "sample-bid",
+    "sample-save",
+    "sample-work-order",
+    "workflow-intake-convert",
+    "workflow-manpower-history",
+    "workflow-material-usage",
+    "workflow-po-allocations",
+    "workflow-po-draft",
+    "workflow-po-issue",
+    "workflow-po-receivals"
+  ],
+  "recordBindingReviews": [
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "dm",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "recordDigest": "bc307fd6417f038fcff168d590a4ad46b7107ea36665e67a71fc5a6d55c16910"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "group",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "recordDigest": "6e87c76817da022ca9355b2d1596ae9548df742613d915c75db6b4e88e293e9b"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "inventory-activity",
+      "path": "src/app/client-layout-shell.tsx",
+      "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+      "afterBlob": "b6c799e95b190432f9866a0cd868873fb8afc19e",
+      "recordDigest": "40628496c5ba32a1eea471262593f20502117e2629e604af970dd5168be60436"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "inventory-pending-create",
+      "path": "src/app/inventory/page.tsx",
+      "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+      "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+      "recordDigest": "240867443b00f8f12d50578963ff6337c5a38701c9d5833f7ea0f2a384c70a00",
+      "additionalDependencies": [
+        {
+          "path": "src/modules/inventory/pending-receival-contract.ts",
+          "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "inventory-pending-receive",
+      "path": "src/app/inventory/page.tsx",
+      "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+      "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+      "recordDigest": "53015734080f00d2a16f67984ef72f44b1de3a4695be5bfd831f423704e1257f",
+      "additionalDependencies": [
+        {
+          "path": "src/modules/inventory/pending-receival-contract.ts",
+          "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "inventory-stock-movement",
+      "path": "src/app/inventory/page.tsx",
+      "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+      "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+      "recordDigest": "2b74456d88bd763a77940da9ff284938b21aa4288bd834465677bae46dfc1f36",
+      "additionalDependencies": [
+        {
+          "path": "src/modules/inventory/pending-receival-contract.ts",
+          "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "inventory-stock-reservation",
+      "path": "src/app/inventory/page.tsx",
+      "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+      "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+      "recordDigest": "1d52c259c505a87b45313a6fcd635126f64e40c375a6dcd906fb8f4b9893fdd0",
+      "additionalDependencies": [
+        {
+          "path": "src/modules/inventory/pending-receival-contract.ts",
+          "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "inventory-stock-search",
+      "path": "src/app/inventory/page.tsx",
+      "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+      "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+      "recordDigest": "44a865f03fe5a8de7fb098f235ecb62650d7d20e1cd621308bb7e010353f4c8a",
+      "additionalDependencies": [
+        {
+          "path": "src/modules/inventory/pending-receival-contract.ts",
+          "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "inventory-stock-search",
+      "path": "src/app/client-layout-shell.tsx",
+      "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+      "afterBlob": "b6c799e95b190432f9866a0cd868873fb8afc19e",
+      "recordDigest": "44a865f03fe5a8de7fb098f235ecb62650d7d20e1cd621308bb7e010353f4c8a"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-intake",
+      "path": "docs/project/PROJECT_MANIFEST.md",
+      "beforeBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+      "afterBlob": "6a9d628b69c4d63efe54eaeb7e856ccaee514ce1",
+      "recordDigest": "6eebc3395a57b2b125424104a692d384e305f72b3508c9202f6fa0883eaa2c75"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-inventory",
+      "path": "docs/project/PROJECT_MANIFEST.md",
+      "beforeBlob": "f60d776dca6f9fbf40888b6cb55b5a5dc4fbd9a3",
+      "afterBlob": "6a9d628b69c4d63efe54eaeb7e856ccaee514ce1",
+      "recordDigest": "1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-inventory",
+      "path": "src/app/inventory/page.tsx",
+      "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+      "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+      "recordDigest": "1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb",
+      "additionalDependencies": [
+        {
+          "path": "src/modules/inventory/pending-receival-contract.ts",
+          "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-manpower",
+      "path": "docs/project/PROJECT_MANIFEST.md",
+      "beforeBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+      "afterBlob": "6a9d628b69c4d63efe54eaeb7e856ccaee514ce1",
+      "recordDigest": "6d557cf15630455f3739be6975e8ac8b35052deeda56bb44f0688afc6bb83389"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-material-assessment",
+      "path": "src/modules/pre-production/BidWorkspace.tsx",
+      "beforeBlob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+      "afterBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+      "recordDigest": "711a09a3950fee7bcfc9248e691ed44799a4eca55e1e30e02972b0d95bdac768"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-messaging",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+      "afterBlob": "1d91b7de380c2d149c58aacaaf37d86ddd9de5ee",
+      "recordDigest": "868e7190ae61c7e32e9963edf4669636cddd31a1cdb9a670af98713e8eb33a9c"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-production",
+      "path": "src/modules/production/jobs.ts",
+      "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "recordDigest": "15c097dff11ee0cdb20b012788135361a2df622852a4a8f6939b32f91da866f8",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/production-job-facts.mjs",
+          "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-production",
+      "path": "src/modules/production/readiness.ts",
+      "beforeBlob": "4b7ca6addfa9c1a18505c7a20a6dbad996c89cc4",
+      "afterBlob": "669ae55ad57d6908d370c80cf88d02596192d8ae",
+      "recordDigest": "15c097dff11ee0cdb20b012788135361a2df622852a4a8f6939b32f91da866f8",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/production-job-facts.mjs",
+          "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-proposals",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+      "afterBlob": "1d91b7de380c2d149c58aacaaf37d86ddd9de5ee",
+      "recordDigest": "64bc5848f3e589dea04a8aab52b77794bfba2379db835c1e8731746d262bb792"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "manpower-job-filter",
+      "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+      "beforeBlob": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+      "afterBlob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+      "recordDigest": "1287c0fb1b17e84a4df57887b7b1570dc460849bb4593330f25583afe26b430f",
+      "additionalDependencies": [
+        {
+          "path": "src/modules/manpower/group-presentation.ts",
+          "blob": "52b23bba2a4a31d71f2c29318d3dfa6f3fd41da5"
+        },
+        {
+          "path": "src/modules/manpower/progressive-history.ts",
+          "blob": "b0a4e31f9221aa9ffe6e387b3ecddfbd1d92061d"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "manpower-job-filter",
+      "path": "src/app/client-layout-shell.tsx",
+      "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+      "afterBlob": "b6c799e95b190432f9866a0cd868873fb8afc19e",
+      "recordDigest": "1287c0fb1b17e84a4df57887b7b1570dc460849bb4593330f25583afe26b430f"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "manpower-record-labor",
+      "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+      "beforeBlob": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+      "afterBlob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+      "recordDigest": "60bbb13fa7e82f1e0fbcbdb33420276866307834954eb37f5954dbd4b437baa8",
+      "additionalDependencies": [
+        {
+          "path": "src/modules/manpower/group-presentation.ts",
+          "blob": "52b23bba2a4a31d71f2c29318d3dfa6f3fd41da5"
+        },
+        {
+          "path": "src/modules/manpower/progressive-history.ts",
+          "blob": "b0a4e31f9221aa9ffe6e387b3ecddfbd1d92061d"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "manpower-record-labor",
+      "path": "src/modules/manpower/product-reporting.ts",
+      "beforeBlob": "3f0f326c8fdc9622368fdc7d43441620faf48adc",
+      "afterBlob": "6e1c8e1dc5faa6f2ddd70b0f829213a1d89512df",
+      "recordDigest": "60bbb13fa7e82f1e0fbcbdb33420276866307834954eb37f5954dbd4b437baa8",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/labor-hours.mjs",
+          "blob": "594074c854e1e5055d282d5df2a945de294a059b"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "material-lead",
+      "path": "src/modules/pre-production/BidWorkspace.tsx",
+      "beforeBlob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+      "afterBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+      "recordDigest": "80483da0f04efda329d35f1b24ae82ceecf47e89a7823f11b6e62466e2c3aadb"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "message-attachments",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "recordDigest": "a6855e912e9f78b26d9305924519b1c0cf53f27dd4459f7694d551a0bd454282"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "message-reply",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "recordDigest": "065244fc9a7c4116d49cc1b1d89b058d01632ebc41fbfff3cb2c31433eae01c7"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "production-create-job",
+      "path": "src/modules/production/jobs.ts",
+      "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "recordDigest": "5f1f6f2f5539a17bacd8d2c488ac6c9a87ee4517d9957e85d015d3d1e53ac334",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/production-job-facts.mjs",
+          "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "production-files",
+      "path": "src/modules/production/jobs.ts",
+      "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "recordDigest": "970d1eaf2c7aff7405a5c5b1f8a480cd5a7211aab878ba31adb72f59e2db4a9b",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/production-job-facts.mjs",
+          "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "production-rework-create",
+      "path": "src/modules/production/rework.ts",
+      "beforeBlob": "fb52a37c850a83d1a726697b0a38f397cf45e7b9",
+      "afterBlob": "03bb7afec7d28e45d515540d265d5c42efa49fef",
+      "recordDigest": "51f7f06429e436454c467fc3ac4e5f8f7185ec8c592a0042ea544aa7ad6808a8",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/production-job-facts.mjs",
+          "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "production-rework-status",
+      "path": "src/modules/production/jobs.ts",
+      "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "recordDigest": "1241dd4b127390ccffd8e3a27da8fc9915eef99bdcbcf9ad3ce3a6d60e4d1b08",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/production-job-facts.mjs",
+          "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "share-job",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "recordDigest": "fc4df7a747c85087a62ad91cf7b8e7988ed857a445366406ea9704549dde436b"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "workflow-intake-activity",
+      "path": "src/modules/pre-production/BidWorkspace.tsx",
+      "beforeBlob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+      "afterBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+      "recordDigest": "5c97e8780799027ed513bcbd06d9563f08b29c6aec77734345cfde7db7a978ae"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "workflow-intake-bid",
+      "path": "src/app/client-layout-shell.tsx",
+      "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+      "afterBlob": "b6c799e95b190432f9866a0cd868873fb8afc19e",
+      "recordDigest": "8c83d76ba135c143b4afe613e9c7aa72f10997692cb350a9571e20fbef2dc5f7"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "workflow-intake-bid",
+      "path": "src/modules/pre-production/BidWorkspace.tsx",
+      "beforeBlob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+      "afterBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+      "recordDigest": "8c83d76ba135c143b4afe613e9c7aa72f10997692cb350a9571e20fbef2dc5f7"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "workflow-job-archive",
+      "path": "src/modules/production/components/MonthlySnapshot.tsx",
+      "beforeBlob": "7e63b670be0fd694060e7b2d9a3ca87f8003d422",
+      "afterBlob": "dcd2631990dfc1b5093c2cba73411d45e67b9746",
+      "recordDigest": "2da50786e6d7bb5e2f085ab58e864b6f0270a88351c45909306559353e6c7af2",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/production-job-facts.mjs",
+          "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "workflow-job-archive",
+      "path": "src/modules/production/jobs.ts",
+      "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "recordDigest": "2da50786e6d7bb5e2f085ab58e864b6f0270a88351c45909306559353e6c7af2",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/production-job-facts.mjs",
+          "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+        }
+      ]
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "workflow-message-drafts",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "recordDigest": "2dfa7d12fe043f2e664cfb790afe5e42f079aece85a86c3d9e1649367db51cae"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "workflow-message-edit",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "recordDigest": "7dcffd764fbb864982286711333092b30d6f73fccb0c195797a8bc1a60791628"
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "workflow-monthly-snapshot",
+      "path": "src/modules/production/components/MonthlySnapshot.tsx",
+      "beforeBlob": "7e63b670be0fd694060e7b2d9a3ca87f8003d422",
+      "afterBlob": "dcd2631990dfc1b5093c2cba73411d45e67b9746",
+      "recordDigest": "6a55318c26ae3d63aa2110333afc0a71346fe0a53c761a071c6c70765c7f1fef",
+      "additionalDependencies": [
+        {
+          "path": "supabase/functions/_shared/production-job-facts.mjs",
+          "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+        }
+      ]
+    }
+  ],
+  "pathDecisions": {
+    "src/app/client-layout-shell.tsx": [
+      "interface-only",
+      "Only a blank line changed; referenced module navigation and grants are unchanged.",
+      []
+    ],
+    "src/app/inventory/page.tsx": [
+      "internal-only",
+      "Existing manual receival mapping and required validation extracted unchanged; receipt, stock movement, reservations, search and permission checks unchanged. New local invoice operations are not represented as released.",
+      [
+        "src/modules/inventory/pending-receival-contract.ts"
+      ]
+    ],
+    "docs/project/PROJECT_MANIFEST.md": [
+      "documentation-no-claim-impact",
+      "Referenced Inventory/Manpower/Intake paragraphs are identical. Added paid-provider policy concerns separate held runtime; the Inventory-era Bid Preparation placement change is already represented by released scoped patches.",
+      []
+    ],
+    "src/modules/pre-production/BidWorkspace.tsx": [
+      "released-presentation-no-claim-impact",
+      "Tools moved into Overview Bid Preparation in executed 5e28d254; patched current guides already describe this. Referenced Bid creation, Updates/Files and material-assessment limitations and grants are unchanged.",
+      []
+    ],
+    "docs/project-memory/CURRENT_STATE.md": [
+      "documentation-no-claim-impact",
+      "Only dated status/receipt additions; selected Proposal/Transmittal and private My Work/Inbox facts are identical. Historical statuses do not override the later executed-release sections.",
+      []
+    ],
+    "src/modules/production/jobs.ts": [
+      "internal-only",
+      "Existing effective Rework overlay extracted with unchanged status/dates; added original-lifecycle fields support existing reads without new business actions.",
+      [
+        "supabase/functions/_shared/production-job-facts.mjs"
+      ]
+    ],
+    "src/modules/production/readiness.ts": [
+      "internal-only",
+      "Reexports identical planning-completeness helper and labels; material status remains separate.",
+      [
+        "supabase/functions/_shared/production-job-facts.mjs"
+      ]
+    ],
+    "src/modules/manpower/ManpowerWorkspace.tsx": [
+      "released-presentation-no-claim-impact",
+      "Reporting-date default and loaded-group sorts already refreshed at ae50e0fc. Existing Job filters, saving, attribution and grants are unchanged.",
+      [
+        "src/modules/manpower/group-presentation.ts",
+        "src/modules/manpower/progressive-history.ts"
+      ]
+    ],
+    "src/modules/manpower/product-reporting.ts": [
+      "internal-only",
+      "Same separate AM/PM rounding to integer hundredths extracted to shared labor helper.",
+      [
+        "supabase/functions/_shared/labor-hours.mjs"
+      ]
+    ],
+    "src/modules/production/rework.ts": [
+      "internal-only",
+      "Reexports identical terminal states and active-cycle predicate.",
+      [
+        "supabase/functions/_shared/production-job-facts.mjs"
+      ]
+    ],
+    "src/modules/production/components/MonthlySnapshot.tsx": [
+      "internal-only",
+      "Reuses identical active/terminal status arrays; no archive, reporting-period or calculation change.",
+      [
+        "supabase/functions/_shared/production-job-facts.mjs"
+      ]
+    ],
+    "src/modules/my-work/InboxDialog.tsx": [
+      "released-assistant-composition-no-claim-impact",
+      "Added assistant rendering/composer and mobile layout. Ordinary employee group/DM/reply/attachment/draft/edit actions, participation rules and historical privacy claims remain unchanged; no independent private-content retrieval.",
+      []
+    ]
+  },
+  "documentationParagraphChecks": [
+    {
+      "recordId": "knowledge-intake",
+      "paragraphs": [
+        {
+          "prefix": "Chris's October 27 Product reconciliation supersedes",
+          "exactlyEqual": true
+        }
+      ]
+    },
+    {
+      "recordId": "knowledge-manpower",
+      "paragraphs": [
+        {
+          "prefix": "Manpower Reporting records labor",
+          "exactlyEqual": true
+        },
+        {
+          "prefix": "Persistent reporting groups organize",
+          "exactlyEqual": true
+        },
+        {
+          "prefix": "Total hours derive from AM plus PM",
+          "exactlyEqual": true
+        }
+      ]
+    },
+    {
+      "recordId": "knowledge-inventory",
+      "paragraphs": [
+        {
+          "prefix": "Pending Receivals represent incoming material.",
+          "exactlyEqual": true
+        },
+        {
+          "prefix": "Receiving preserves material identity,",
+          "exactlyEqual": true
+        },
+        {
+          "prefix": "Pending Receivals open collapsed",
+          "exactlyEqual": true
+        }
+      ]
+    },
+    {
+      "recordId": "knowledge-messaging",
+      "paragraphs": [
+        {
+          "prefix": "- My Work and Inbox are participant/private domains.",
+          "exactlyEqual": true
+        }
+      ]
+    },
+    {
+      "recordId": "knowledge-proposals",
+      "paragraphs": [
+        {
+          "prefix": "- Proposal and Transmittal document domains are implemented.",
+          "exactlyEqual": true
+        }
+      ]
+    }
+  ],
+  "infrastructurePaths": [
+    "scripts/generate-tenbot-knowledge.mjs",
+    "scripts/tenbot-knowledge/architecture.mjs",
+    "scripts/tenbot-knowledge/manifest.mjs",
+    "scripts/tenbot-knowledge/release-sync.mjs",
+    "supabase/functions/_shared/tenbot-core.ts",
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-job-session.ts",
+    "supabase/functions/_shared/tenbot-job-tools.ts",
+    "supabase/functions/_shared/tenbot-models.ts",
+    "supabase/functions/_shared/tenbot-privacy.ts",
+    "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+    "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+    "supabase/functions/_shared/tenbot-knowledge.ts",
+    "supabase/functions/_shared/tenbot-handler.ts"
+  ],
+  "historicalDeployedPaths": [
+    "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+    "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+    "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+    "supabase/migrations/20261027150000_tenbot_private_conversations.sql"
+  ],
+  "deterministicArtifactPath": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+  "remainingHeldPaths": [
+    "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-openai-metering.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/tenbot/index.ts",
+    "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+    "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+    "supabase/migrations/20261029221000_tenbot_agent_history.sql"
+  ],
+  "expectedResolution": {
+    "resolvedAffectedRecords": 45,
+    "recordBindings": 38,
+    "infrastructurePaths": 14,
+    "historicalPaths": 4,
+    "derivedArtifactPaths": 1,
+    "remainingPaths": 12
+  },
+  "employeeKnowledgeContentChanged": false,
+  "permissionOrExecutionAuthorityAdded": false,
+  "sourceReleasePinsAdvanced": false,
+  "inferenceCalls": 0,
+  "databaseCalls": 0,
+  "hostedVerification": false,
+  "push": false,
+  "deployment": false
+}
