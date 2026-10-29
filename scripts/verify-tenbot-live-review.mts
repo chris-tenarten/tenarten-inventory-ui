@@ -1,8 +1,14 @@
 import assert from 'node:assert/strict';
 import { createElement } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
-import { approvalForCurrentReview, catalogRequestIssues, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, receivalReviewNotice, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft, type ProposedCatalogMaterial } from '../src/modules/tenbot/live-review';
-import { ReceivalDraftReview } from '../src/modules/tenbot/ReceivalDraftReview';
+import { renderToStaticMarkup as renderMarkup } from 'react-dom/server';
+import { approvalForCurrentReview, catalogRequestIssues, completeCatalogRequest, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, receivalReviewNotice, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft, type ProposedCatalogMaterial } from '../src/modules/tenbot/live-review';
+// Existing SuggestionInput retains its AuthProvider restriction. SSR effects do
+// not run; these dummy public values load it without any real session/network.
+process.env.NEXT_PUBLIC_SUPABASE_URL='http://localhost:3000';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY='local-test-only';
+const {ReceivalDraftReview}=await import('../src/modules/tenbot/ReceivalDraftReview');
+const {AuthProvider}=await import('../src/lib/auth');
+const renderToStaticMarkup=(node:Parameters<typeof renderMarkup>[0])=>renderMarkup(createElement(AuthProvider,null,node));
 
 // Offline UI/lifecycle checks. This never starts a server or invokes a provider.
 const checks: string[] = [];
@@ -94,10 +100,26 @@ await check('new materials remain reviewable requests without catalog permission
   const denied=receivalLineValidation(draft.rows[0],editableRows(draft)[0],{...status,canCreateCatalog:false});
   assert.equal(denied.state,'Needs review'); assert.equal(denied.holds.length,1); assert.deepEqual(denied.fields,{});
   const html=render(draft,{...status,canCreateCatalog:false});
-  for(const text of ['Request for an authorized employee','Simulated catalog material + pending receival','catalog creation and dependent pending receivals','1 catalog material + 1 pending receivals']) assert(html.includes(text),text);
+  for(const text of ['Draft only','Not sent to an approver','Simulated catalog material + pending receival','catalog creation and dependent pending receivals','1 catalog material + 1 pending receivals']) assert(html.includes(text),text);
   assert(/disabled=""[^>]*>Approve simulated catalog and receivals/.test(html));
   const real=receivalLineValidation(draft.rows[0],editableRows(draft)[0],{...status,simulation:false,canCreateCatalog:true});
   assert(real.holds.some(hold=>hold.includes('Combined catalog and receival execution is unavailable')));
+});
+await check('supplier correction uses invoice and known choices without weakening server identity or approval', () => {
+  const source={...copy(base.rows[0]),materialId:null,catalogRequest:copy(proposed),reasons:['supplier_mismatch']};
+  const typo=completeCatalogRequest({...proposed,supplier:'T & M',prepared:false});
+  assert.equal(typo.supplier,'T & M','Preparation must not silently map a supplier');
+  assert(catalogRequestIssues(typo,'T&M Supply').supplier?.includes('Invoice supplier is T&M Supply'));
+  const wrong={...editableRows(base)[0],materialId:null,catalogRequest:typo};
+  assert.equal(receivalLineValidation(source,wrong,status,'T&M Supply').fields.supplier,'Supplier must match the invoice: T&M Supply.');
+  const corrected={...wrong,catalogRequest:completeCatalogRequest({...typo,supplier:'T&M Supply'})};
+  assert.equal(corrected.catalogRequest.prepared,true);
+  assert.deepEqual(receivalLineValidation(source,corrected,status,'T&M Supply').holds,[]);
+  assert.equal(receivalLineValidation(source,corrected,status,'T&M Supply').fields.supplier,undefined);
+  assert.equal(completeCatalogRequest({...proposed,unitSize:''}).prepared,false);
+  const draft=copy(base);draft.provenance={supplier:'T&M Supply',documentReference:'SYN',attachmentSha256:'a'.repeat(64)};draft.rows[0]=source;
+  const html=render(draft);assert(html.includes('role="combobox"'));assert(!html.includes('Prepare catalog request'));
+  assert.equal(approvalForCurrentReview(draft,[corrected],draft.orderDetails,false,false),false);
 });
 await check('possible duplicate evidence requires server-validated acknowledgement and edits invalidate it', () => {
   const draft=copy(base); draft.reviewed=true; draft.canApprove=false;

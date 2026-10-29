@@ -1,4 +1,5 @@
 import type {PurchasingCatalogItemInput} from '../purchasing/types';
+import {samePurchasingVendor} from '../purchasing/catalog-records';
 
 export type LocalCatalogChoice = { id: string; materialName: string; size: string; unit: string; supplier?: string; packageLabel?: string };
 export type LocalJobChoice = { id: string; label: string };
@@ -17,15 +18,16 @@ export type LocalApproval = { draft: LocalReceivalDraft; receivals: Record<strin
 export type ProposedCatalogMaterial = Pick<PurchasingCatalogItemInput, 'itemName' | 'vendorSku' | 'materialType' | 'size' | 'unitSize' | 'unitSizeUom' | 'packaging' | 'priceUnit' | 'notes'> & {supplier: string; prepared: boolean};
 export type ReceivalLineValidation = {
   state: 'Ready' | 'Needs catalog match' | 'Invalid quantity/unit' | 'Excluded' | 'Needs review';
-  fields: Partial<Record<'materialId' | 'quantity' | 'unit' | 'jobId', string>>;
+  fields: Partial<Record<'materialId' | 'supplier' | 'quantity' | 'unit' | 'jobId', string>>;
   holds: string[]; changed: boolean;
 };
-export function catalogRequestIssues(value: ProposedCatalogMaterial): Partial<Record<keyof ProposedCatalogMaterial, string>> {
+export function catalogRequestIssues(value: ProposedCatalogMaterial, invoiceSupplier?: string): Partial<Record<keyof ProposedCatalogMaterial, string>> {
   const issues: Partial<Record<keyof ProposedCatalogMaterial, string>> = {};
   for (const key of ['supplier','itemName','vendorSku','materialType','size','unitSize','unitSizeUom','packaging','priceUnit','notes'] as const) {
     if (typeof value[key] !== 'string' || value[key].length > (key === 'notes' ? 1200 : 160) || /[\u0000-\u001f\u007f]/.test(value[key])) issues[key] = 'Use bounded plain text for this catalog field.';
   }
   if (!value.supplier?.trim()) issues.supplier = 'Supplier is required.';
+  else if (invoiceSupplier && !samePurchasingVendor(value.supplier,invoiceSupplier)) issues.supplier = `Invoice supplier is ${invoiceSupplier}. Choose that supplier for this proposal.`;
   if (!value.itemName?.trim()) issues.itemName = 'Material name is required.';
   if (!['chip','resin','pigment','filler','other'].includes(value.materialType)) issues.materialType = 'Choose a material type.';
   if (value.materialType === 'chip' && !value.size?.trim()) issues.size = 'Chip size is required.';
@@ -39,6 +41,8 @@ export function catalogRequestIssues(value: ProposedCatalogMaterial): Partial<Re
   }
   return issues;
 }
+/** Completing local fields prepares a proposal, never employee approval. */
+export function completeCatalogRequest(value: ProposedCatalogMaterial): ProposedCatalogMaterial { return {...value,prepared:Object.keys(catalogRequestIssues(value)).length===0}; }
 // Advisory display validation follows the existing invoice unit aliases; the
 // caller-authorized server remains responsible for accepting every line.
 export function receivalUnit(value: string): string {
@@ -46,20 +50,22 @@ export function receivalUnit(value: string): string {
   const groups: [string, string[]][] = [['Bag', ['bag', 'bags']], ['Pail', ['pail', 'pails']], ['Box', ['box', 'boxes']], ['Bucket', ['bucket', 'buckets']], ['Drum', ['drum', 'drums']], ['Case', ['case', 'cases']], ['Tote', ['tote', 'totes']], ['Kit', ['kit', 'kits']], ['Each', ['ea', 'each']], ['LB', ['lb', 'lbs', 'pound', 'pounds']], ['KG', ['kg', 'kilogram', 'kilograms']], ['GAL', ['gal', 'gallon', 'gallons']], ['L', ['l', 'liter', 'liters']], ['OZ', ['oz', 'ounce', 'ounces']]];
   return groups.find(([, aliases]) => aliases.includes(key))?.[0] || '';
 }
-export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit, status: LocalDemoStatus): ReceivalLineValidation {
+export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit, status: LocalDemoStatus, invoiceSupplier?: string): ReceivalLineValidation {
   const changed = reviewRowChanged(source,row);
   if (row.excluded) return { state: 'Excluded', fields: {}, holds: [], changed };
   const fields: ReceivalLineValidation['fields'] = {}, choice = status.catalog.find(item => item.id === row.materialId);
   const proposal = !row.materialId ? row.catalogRequest : null, proposalIssues = proposal ? catalogRequestIssues(proposal) : {};
   const completeProposal = Boolean(proposal?.prepared && !Object.keys(proposalIssues).length);
   if (row.materialId && row.catalogRequest) fields.materialId = 'Choose either an existing catalog material or a proposed new material.';
-  else if (!choice && !completeProposal) fields.materialId = proposal ? 'Complete and prepare the new catalog material details below.' : 'Choose an existing catalog material or prepare its new-material proposal.';
+  else if (!choice && !completeProposal) fields.materialId = proposal ? 'Complete the new catalog material details below.' : 'Choose an existing catalog material or add its new-material details.';
   const quantityPattern = status.simulation ? /^\d+(?:\.\d+)?$/ : /^(?:0|[1-9]\d{0,8})(?:\.\d{1,6})?$/;
   if (!quantityPattern.test(row.quantity) || !Number.isFinite(Number(row.quantity)) || Number(row.quantity) <= 0) fields.quantity = status.simulation ? 'Expected quantity must be a positive decimal number.' : 'Use a positive quantity with at most 9 whole digits and 6 decimal places.';
   if (!receivalUnit(row.unit)) fields.unit = 'Enter a supported receival unit.';
   else if (choice && (!receivalUnit(choice.unit) || (status.simulation ? row.unit.trim().toLowerCase() !== choice.unit.trim().toLowerCase() : receivalUnit(row.unit) !== receivalUnit(choice.unit)))) fields.unit = choice.unit ? `Use ${choice.unit} for this catalog offer; package conversion must be reviewed.` : 'This catalog offer has no supported receival unit. Choose another offer.';
   else if (completeProposal && proposal && receivalUnit(row.unit) !== receivalUnit(proposal.priceUnit)) fields.unit = `Use ${proposal.priceUnit} for the dependent receival.`;
   if (row.jobId && !status.jobs.some(job => job.id === row.jobId)) fields.jobId = 'Choose an authorized Job from the current list, or General stock.';
+  const selectedSupplier = proposal?.supplier || choice?.supplier;
+  if (invoiceSupplier && selectedSupplier && !samePurchasingVendor(selectedSupplier,invoiceSupplier)) fields.supplier = `Supplier must match the invoice: ${invoiceSupplier}.`;
   const holds: string[] = [];
   if (completeProposal && !status.simulation) holds.push('Combined catalog and receival execution is unavailable on the real-data path. No write will run.');
   if (completeProposal && status.canCreateCatalog === false) holds.push('Catalog creation requires review and approval by an employee with Manage vendors and catalog permission.');
@@ -72,7 +78,7 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
     duplicate_catalog_request: 'This new material is proposed more than once. Combine or exclude the duplicate, then save for server review.',
     catalog_sku_conflict: 'This supplier SKU is already associated with another material. Resolve the catalog conflict before approval.',
     existing_catalog_match: 'This material already exists in the catalog. Select the existing offer instead of creating it again.',
-    incomplete_catalog_request: 'Complete and prepare the new material details, then save for server review.',
+    incomplete_catalog_request: 'Complete the new material details, then save for review.',
     catalog_request_conflicts_with_match: 'Choose either the existing catalog material or the proposed new material, then save for review.',
     supplier_mismatch: 'The selected or proposed supplier differs from the invoice. Correct the supplier/material or exclude this line.',
     invoice_catalog_material_conflict: 'Invoice description conflicts with the catalog material. Server review is required.',
@@ -89,6 +95,7 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
     if (['invalid_quantity', 'incompatible_unit', 'unknown_job'].includes(reason)) continue;
     if (reason === 'incomplete_catalog_request' && completeProposal) continue;
     if (reason === 'catalog_request_conflicts_with_match' && !(row.materialId && row.catalogRequest)) continue;
+    if (reason === 'supplier_mismatch' && invoiceSupplier && selectedSupplier) continue; // Current supplier field names the exact remaining mismatch.
     if (reason === 'potential_duplicate' && source.duplicateReview?.acknowledged && row.duplicateAcknowledgement === source.duplicateReview.fingerprint && !changed) continue;
     if (['unmatched_material', 'ambiguous_catalog_match', 'review_required'].includes(reason)) {
       if (completeProposal) continue;
@@ -100,7 +107,7 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
     if (reason === 'unknown_catalog_receival_unit') { if (!choice || receivalUnit(choice.unit)) continue; }
     holds.push(labels[reason] || `Server review required: ${reason.replaceAll('_', ' ')}.`);
   }
-  return { state: fields.materialId ? 'Needs catalog match' : fields.quantity || fields.unit ? 'Invalid quantity/unit' : fields.jobId || holds.length ? 'Needs review' : 'Ready', fields, holds: [...new Set(holds)], changed };
+  return { state: fields.materialId ? 'Needs catalog match' : fields.quantity || fields.unit ? 'Invalid quantity/unit' : fields.jobId || fields.supplier || holds.length ? 'Needs review' : 'Ready', fields, holds: [...new Set(holds)], changed };
 }
 export function receivalOrderIssues(details: LocalOrderDetails): Partial<Record<keyof LocalOrderDetails, string>> {
   const issues: Partial<Record<keyof LocalOrderDetails, string>> = {};
@@ -135,7 +142,7 @@ export function reviewChanged(draft: LocalReceivalDraft, edits: LocalRowEdit[], 
 export function receivalReviewNotice(draft: LocalReceivalDraft, status: LocalDemoStatus): string {
   const concerns = Object.values(receivalOrderIssues(draft.orderDetails));
   for (const [index, row] of draft.rows.entries()) {
-    const validation = receivalLineValidation(row, row, status);
+    const validation = receivalLineValidation(row, row, status, draft.provenance?.supplier);
     const messages = [...Object.values(validation.fields), ...validation.holds];
     if (messages.length) concerns.push(`Line ${index + 1} (${row.materialName || 'Invoice line'}): ${messages.join(' ')}`);
   }

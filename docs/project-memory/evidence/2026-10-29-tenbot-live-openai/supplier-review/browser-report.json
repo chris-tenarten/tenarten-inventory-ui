@@ -1,0 +1,126 @@
+{
+  "passed": true,
+  "groups": 10,
+  "checks": [
+    "Ordinary Messaging composer and PDF/photo attachment control remain available; employee experiment dropdown is absent",
+    "Complete proposed Violet material clears the catalog-match hold without inventing an ID or excluding the line",
+    "Actual simulator HTTP review removes stale Violet holds, names only genuine blockers, and disables redundant clean resaves",
+    "Actual matching-record evidence and explicit separate-order acknowledgement are server-validated before combined simulated approval becomes available",
+    "Editing duplicate-sensitive quantity clears acknowledgement and final approval, requires fresh evidence/review, and prevents reuse of the old reviewed hash",
+    "Invoice supplier prefills the proposed material with known-value suggestions; typed T & M remains unchanged and blocks submission until explicit keyboard-accessible invoice correction clears current feedback and restores the reviewed draft with confirmation still required",
+    "Catalog edits invalidate exact final approval while unrelated validated duplicate evidence remains scoped to its line; desktop and 390 px mobile remain contained",
+    "Actual simulator approval creates five included pending-memory receipts plus one linked catalog-memory receipt and audits the duplicate acknowledgement; no operational records or on-hand stock change",
+    "Caller without catalog capability can save a reviewable request but actual simulator requires authorized catalog approval",
+    "A second preparation of the committed synthetic invoice yields confirmed duplicates; the UI offers no acknowledgement and actual handler rejects a forced prior fingerprint"
+  ],
+  "traces": [
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "approve",
+      "status": 200
+    },
+    {
+      "caseId": "83c24fc8-49aa-4be8-a3cb-4610d8bcec6e",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "83c24fc8-49aa-4be8-a3cb-4610d8bcec6e",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "83c24fc8-49aa-4be8-a3cb-4610d8bcec6e",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "83c24fc8-49aa-4be8-a3cb-4610d8bcec6e",
+      "action": "review",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "status",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "ask",
+      "status": 200
+    },
+    {
+      "caseId": "b3100ac2-cda1-4e81-a33e-b41ea2aa775e",
+      "action": "review",
+      "status": 409
+    }
+  ],
+  "errors": [],
+  "unexpectedNetwork": [],
+  "mode": "Actual localhost UI and simulator handlers over bounded disposable HTTP; extraction and model transport use existing offline fixtures, not fresh inference or database security validation",
+  "simulatedTransportSteps": 24,
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "databaseSecurityVerified": false,
+  "journalUnchanged": true,
+  "journalSha256": "fd3d3c9b78440c3fee2250f540eb7bb7a22b59c3dd70d9cc592d5dfab94b8e55",
+  "sourcePins": {
+    "scripts/support/tenbot-live-demo.mts": "f270f6d1a3a3394f166fc594e4b9b5644621aa12061b3cc16fbba03f86f1d046",
+    "scripts/support/tenbot-agent-scripted.mts": "fee1f781a3234e88f555139df326cc59554c4329c6251ff46c99b1f6254058e8",
+    "src/modules/tenbot/ReceivalDraftReview.tsx": "9a73275e4ecad0639917dd9254cee0ba8800799a0d31d59179240df7b86da2a9",
+    "src/modules/tenbot/live-review.ts": "b49c5358d8092f445f7051c645d1a69aa0fc4dee1fe57a47bbc80011648a2e5d",
+    "src/modules/tenbot/TenbotWorkspace.tsx": "783a572f10ed903c33e537207a01850511ba87e1bc7195afae16e16c4b1fb224",
+    "scripts/verify-tenbot-combined-receival-browser.mjs": "21cfa1836995e5cfa0dcdafae7b9e0b4267be52e8e24f1cd01b59ab124728eaf"
+  }
+}

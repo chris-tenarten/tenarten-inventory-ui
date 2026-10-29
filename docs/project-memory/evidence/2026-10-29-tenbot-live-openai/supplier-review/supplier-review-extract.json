@@ -1,0 +1,243 @@
+{
+  "mode": "Selected actual simulator HTTP review responses with offline extraction/scripted model fixtures; zero new inference or database requests",
+  "reviews": [
+    {
+      "action": "review",
+      "status": 200,
+      "draftRevision": 2,
+      "draftHash": "39b42d19ce6452103f4580b6e5cfb6c3464278fead3980317140df8cacfc712a",
+      "canApprove": false,
+      "violet": {
+        "lineId": "attachment-abd4c21e-cfc7-49f7-a827-87a08156efd1:L8",
+        "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": {
+          "supplier": "T&M Supply",
+          "itemName": "Unlisted Violet",
+          "vendorSku": "UNK-99",
+          "materialType": "chip",
+          "size": "#2",
+          "unitSize": "50",
+          "unitSizeUom": "LB",
+          "packaging": "Bag",
+          "priceUnit": "Bag",
+          "notes": "Synthetic catalog material and dependent receival proposal.",
+          "prepared": true
+        }
+      }
+    },
+    {
+      "action": "review",
+      "status": 200,
+      "draftRevision": 3,
+      "draftHash": "9023844095e90a712a49e67bfe48acd9992ecb617355114020474b583f626878",
+      "canApprove": true,
+      "violet": {
+        "lineId": "attachment-abd4c21e-cfc7-49f7-a827-87a08156efd1:L8",
+        "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": {
+          "supplier": "T&M Supply",
+          "itemName": "Unlisted Violet",
+          "vendorSku": "UNK-99",
+          "materialType": "chip",
+          "size": "#2",
+          "unitSize": "50",
+          "unitSizeUom": "LB",
+          "packaging": "Bag",
+          "priceUnit": "Bag",
+          "notes": "Synthetic catalog material and dependent receival proposal.",
+          "prepared": true
+        }
+      }
+    },
+    {
+      "action": "review",
+      "status": 200,
+      "draftRevision": 4,
+      "draftHash": "c01f123df8f309c200940aa4e9916e6a7a0e3b49a4c9dd59364b8fdbaaf01df2",
+      "canApprove": false,
+      "violet": {
+        "lineId": "attachment-abd4c21e-cfc7-49f7-a827-87a08156efd1:L8",
+        "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": {
+          "supplier": "T&M Supply",
+          "itemName": "Unlisted Violet",
+          "vendorSku": "UNK-99",
+          "materialType": "chip",
+          "size": "#2",
+          "unitSize": "50",
+          "unitSizeUom": "LB",
+          "packaging": "Bag",
+          "priceUnit": "Bag",
+          "notes": "Synthetic catalog material and dependent receival proposal.",
+          "prepared": true
+        }
+      }
+    },
+    {
+      "action": "review",
+      "status": 200,
+      "draftRevision": 5,
+      "draftHash": "a31778aef37d7e25731850ac41f9f20829aeaa7c03e2c2a4fa5e3f570d936779",
+      "canApprove": false,
+      "violet": {
+        "lineId": "attachment-abd4c21e-cfc7-49f7-a827-87a08156efd1:L8",
+        "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": {
+          "supplier": "T&M Supply",
+          "itemName": "Unlisted Violet",
+          "vendorSku": "UNK-99",
+          "materialType": "chip",
+          "size": "#2",
+          "unitSize": "50",
+          "unitSizeUom": "LB",
+          "packaging": "Bag",
+          "priceUnit": "Bag",
+          "notes": "Synthetic catalog material and dependent receival proposal.",
+          "prepared": true
+        }
+      }
+    },
+    {
+      "action": "review",
+      "status": 200,
+      "draftRevision": 6,
+      "draftHash": "838715c837262386908a758efa5876456e7c72f2dafc8ce4d1a80629e259c7d9",
+      "canApprove": true,
+      "violet": {
+        "lineId": "attachment-abd4c21e-cfc7-49f7-a827-87a08156efd1:L8",
+        "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": {
+          "supplier": "T&M Supply",
+          "itemName": "Unlisted Violet",
+          "vendorSku": "UNK-99",
+          "materialType": "chip",
+          "size": "#2",
+          "unitSize": "50",
+          "unitSizeUom": "LB",
+          "packaging": "Bag",
+          "priceUnit": "Bag",
+          "notes": "Synthetic catalog material and dependent receival proposal.",
+          "prepared": true
+        }
+      }
+    },
+    {
+      "action": "review",
+      "status": 200,
+      "draftRevision": 7,
+      "draftHash": "4b2f2807b72f2fbef0e669de6cdb52d6c22a618c6581659dc906e955ad103185",
+      "canApprove": true,
+      "violet": {
+        "lineId": "attachment-abd4c21e-cfc7-49f7-a827-87a08156efd1:L8",
+        "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": {
+          "supplier": "T&M Supply",
+          "itemName": "Unlisted Violet",
+          "vendorSku": "UNK-99",
+          "materialType": "chip",
+          "size": "#2",
+          "unitSize": "50",
+          "unitSizeUom": "LB",
+          "packaging": "Bag",
+          "priceUnit": "Bag",
+          "notes": "Edited catalog operation needs new exact approval.",
+          "prepared": true
+        }
+      }
+    },
+    {
+      "action": "review",
+      "status": 200,
+      "draftRevision": 2,
+      "draftHash": "3b665850f3076778293289061c837dce33a81350a491cdbc3ddf0368f1cc7aa9",
+      "canApprove": false,
+      "violet": {
+        "lineId": "attachment-db21204a-5077-4896-b81c-391c98a4e6cb:L8",
+        "sourceText": "Item 4 | UNK-99 | Unlisted Violet | #2 | 4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "duplicateReview": null,
+        "duplicateAcknowledgement": null,
+        "catalogRequest": {
+          "supplier": "T&M Supply",
+          "itemName": "Unlisted Violet",
+          "vendorSku": "UNK-99",
+          "materialType": "chip",
+          "size": "#2",
+          "unitSize": "50",
+          "unitSizeUom": "LB",
+          "packaging": "Bag",
+          "priceUnit": "Bag",
+          "notes": "Synthetic catalog material and dependent receival proposal.",
+          "prepared": true
+        }
+      }
+    }
+  ]
+}

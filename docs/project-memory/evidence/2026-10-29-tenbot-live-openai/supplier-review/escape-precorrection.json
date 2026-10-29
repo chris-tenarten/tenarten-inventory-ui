@@ -1,0 +1,10 @@
+{
+  "status": "failed before local Escape correction; superseded by final browser-report.json",
+  "cause": "Escape closed the supplier list and propagated to the surrounding Inbox dismissal listener.",
+  "completedChecks": [
+    "Ordinary Messaging composer and PDF/photo attachment control remain available; employee experiment dropdown is absent"
+  ],
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "journalUnchanged": true
+}
