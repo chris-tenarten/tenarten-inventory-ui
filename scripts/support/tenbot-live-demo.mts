@@ -7,16 +7,18 @@ import type {JobToolData,JobToolResult,TenbotJobToolName} from '../../supabase/f
 import type {TenbotInvoiceDocument,InvoiceCatalogRead,InvoiceReceivalRead} from '../../supabase/functions/_shared/tenbot-invoice';
 import {combinePurchasingCatalogRecords,samePurchasingVendor} from '../../src/modules/purchasing/catalog-records';
 import {buildPendingReceivalRow,positiveExpectedQuantity} from '../../src/modules/inventory/pending-receival-contract';
+import {catalogRequestIssues,receivalUnit,type ProposedCatalogMaterial} from '../../src/modules/tenbot/live-review';
 
 export const LIVE_DEMO_MAX_BYTES=90000;
 export type DemoAttachment={bytes:Buffer;mediaType:'image/png'|'image/jpeg'};
 export type DemoOrderDetails={orderedBy:string;orderDate:string;location:string};
-export type DemoDraftRow={lineId:string;sourceText:string;materialId:string|null;materialName:string|null;size:string|null;quantity:string;unit:string;jobId:string|null;excluded:boolean;reasons:string[]};
-export type DemoDraft={id:string;revision:number;hash:string;status:'review_required'|'approved_simulated';simulation:true;attachmentId:string;orderDetails:DemoOrderDetails;missingFields:string[];canApprove:boolean;rows:DemoDraftRow[]};
+export type DemoDraftRow={lineId:string;sourceText:string;materialId:string|null;materialName:string|null;size:string|null;quantity:string;unit:string;jobId:string|null;excluded:boolean;reasons:string[];catalogRequest?:ProposedCatalogMaterial|null};
+type DemoProvenance={supplier:string;documentReference:string;attachmentSha256:string};
+type CatalogAddition={simulation:true;sourceLineId:string;catalogId:null;material:ProposedCatalogMaterial;provenance:DemoProvenance&{sourceText:string}};
+export type DemoDraft={id:string;revision:number;hash:string;status:'review_required'|'approved_simulated';simulation:true;attachmentId:string;orderDetails:DemoOrderDetails;missingFields:string[];canApprove:boolean;rows:DemoDraftRow[];provenance?:DemoProvenance;catalogApprovalRequired?:boolean};
 type Row=Record<string,unknown>;
-type Candidate=ReturnType<typeof combinePurchasingCatalogRecords>[number];
 type StoredAttachment=DemoAttachment&{id:string;owner:string;filename:string;expires:number;document?:TenbotInvoiceDocument;handler?:ReturnType<typeof createTenbotAgentSessions>};
-type StoredDraft={owner:string;expires:number;draft:DemoDraft;supplier:string;documentReference:string;nonMaterial:Set<string>;superseded:boolean;approval?:{receivals:Row[];audit:Row[]}};
+type StoredDraft={owner:string;expires:number;draft:DemoDraft;supplier:string;documentReference:string;nonMaterial:Set<string>;superseded:boolean;approval?:{receivals:Row[];catalogAdditions:CatalogAddition[];audit:Row[]}};
 type Dependencies={model:string;catalog:InvoiceCatalogRead;receivals:InvoiceReceivalRead;can(owner:string,capability:string):Promise<boolean>;createProvider(label:string,attachment?:DemoAttachment):AgentProvider|Promise<AgentProvider>;remainingUsd():number;assertNoFatal():void;validateAttachment?(attachment:DemoAttachment):Promise<void>;now?:()=>number};
 const record=(value:unknown):value is Row=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const rows=(value:unknown):Row[]=>Array.isArray(value)?value.filter(record):[];
@@ -28,6 +30,12 @@ const date=(value:string)=>/^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Da
 function plain(value:unknown,max=180,empty=false){if(typeof value!=='string'||value.length>max||/[\u0000-\u001f\u007f]/.test(value)||!empty&&!value.trim())fail('Complete or shorten the local simulation request.');return value.trim();}
 function keys(value:Row,allowed:string[]){if(Object.keys(value).some(key=>!allowed.includes(key)))fail('Invalid local simulation request fields.');}
 function details(value:unknown):DemoOrderDetails{if(value===undefined)return {orderedBy:'',orderDate:'',location:''};if(!record(value))fail('Invalid reviewed order details.');keys(value,['orderedBy','orderDate','location']);return {orderedBy:plain(value.orderedBy??'',120,true),orderDate:plain(value.orderDate??'',10,true),location:plain(value.location??'',120,true)};}
+function catalogRequest(value:unknown):ProposedCatalogMaterial|null{
+ if(value===undefined||value===null)return null;if(!record(value))fail('Invalid proposed catalog material.');
+ const fields=['supplier','itemName','vendorSku','materialType','size','unitSize','unitSizeUom','packaging','priceUnit','notes'] as const;keys(value,[...fields,'prepared']);
+ if(typeof value.prepared!=='boolean')fail('Mark the proposed material details as prepared for review.');
+ const result={} as ProposedCatalogMaterial;for(const key of fields)result[key]=plain(value[key],key==='notes'?1200:key==='unitSize'?30:['unitSizeUom','packaging','priceUnit'].includes(key)?40:160,true);result.prepared=value.prepared;return result;
+}
 function dimensions(bytes:Buffer,mediaType:DemoAttachment['mediaType']){
  if(mediaType==='image/png'){
   if(bytes.length<24||!bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))||bytes.toString('ascii',12,16)!=='IHDR')fail('The attachment is not a supported PNG image.');
@@ -63,7 +71,7 @@ function simulatedJobs(now:()=>number){return {async execute(name:TenbotJobToolN
 }};}
 
 export function createTenbotLiveDemo(deps:Dependencies){
- const now=deps.now??Date.now,snapshotAt=now(),attachments=new Map<string,StoredAttachment>(),drafts=new Map<string,StoredDraft>(),conversationAttachments=new Map<string,{owner:string;attachmentId:string|null}>(),busy=new Set<string>(),pending:Row[]=[],audit:Row[]=[];
+ const now=deps.now??Date.now,snapshotAt=now(),attachments=new Map<string,StoredAttachment>(),drafts=new Map<string,StoredDraft>(),conversationAttachments=new Map<string,{owner:string;attachmentId:string|null}>(),busy=new Set<string>(),pending:Row[]=[],catalogAdditionReceipts:CatalogAddition[]=[],audit:Row[]=[];
  const catalog=combinePurchasingCatalogRecords(clone(deps.catalog.standard),clone(deps.catalog.specialty));
  const byId=new Map(catalog.map(item=>[`${item.source}:${item.id}`,item]));
  const catalogChoices=catalog.map(item=>({id:`${item.source}:${item.id}`,materialName:item.materialName,size:item.chipSize,unit:item.orderUnit||item.containerType,supplier:item.vendor,packageLabel:item.packageEvidence?.label||[item.packageQuantity,item.packageMeasure,item.containerType].filter(Boolean).join(' ')}));
@@ -71,25 +79,44 @@ export function createTenbotLiveDemo(deps:Dependencies){
  const sessionFor=(document:TenbotInvoiceDocument)=>createTenbotAgentSessions({mode:'openai',can:deps.can,jobTools:()=>simulatedJobs(()=>snapshotAt),provider:()=>{let selected:Promise<AgentProvider>|undefined;return {name:'OpenAI · SIMULATED local records',model:deps.model,async step(request){selected??=Promise.resolve(deps.createProvider('localhost-agent'));const provider=await selected;const result=await provider.step(request);deps.assertNoFatal();return result;}};},invoice:{document,reader:()=>catalogReader()},now});
  const defaultSession=sessionFor({id:'no-attachment',filename:'No attachment',mediaType:'text/plain',synthetic:true,text:'No attachment was submitted.'});
  const access=async(owner:string,write=false)=>{if(!owner||!await deps.can(owner,'readOperationalData')||write&&(!await deps.can(owner,'writeBusinessData')||!await deps.can(owner,'adjustInventory')))fail('Your simulated caller permissions do not allow this operation.',403);};
+ const canCreateCatalog=async(owner:string)=>await deps.can(owner,'writeBusinessData')&&await deps.can(owner,'manageVendorsCatalog');
+ const requiresCatalog=(draft:DemoDraft)=>draft.rows.some(row=>!row.excluded&&Boolean(row.catalogRequest));
+ const catalogAccess=async(owner:string,draft:DemoDraft)=>{if(requiresCatalog(draft)&&!await canCreateCatalog(owner))fail('An authorized employee with catalog-management permission must approve the proposed catalog addition and dependent receival.',403);};
  const ownedAttachment=(id:unknown,owner:string)=>{const item=typeof id==='string'?attachments.get(id):undefined;if(!item||item.owner!==owner||item.expires<=now())return fail('The attachment is unavailable or expired. Attach it again.',403);return item;};
  const ownedDraft=(id:unknown,owner:string)=>{const item=typeof id==='string'?drafts.get(id):undefined;if(!item||item.owner!==owner||item.expires<=now()||item.superseded)return fail('This draft is unavailable or expired. Prepare it again.',403);ownedAttachment(item.draft.attachmentId,owner);return item;};
- const duplicate=(candidate:Candidate,supplier:string)=>[...deps.receivals.rows,...pending].some(item=>samePurchasingVendor(text(item.vendor),supplier)&&norm(item.material_name)===norm(candidate.materialName)&&norm(item.size)===norm(candidate.chipSize)&&item.status!=='cancelled');
- function refresh(stored:StoredDraft,reviewed=false){
+ const duplicate=(materialName:string,size:string|null,supplier:string)=>[...deps.receivals.rows,...pending].some(item=>samePurchasingVendor(text(item.vendor),supplier)&&norm(item.material_name)===norm(materialName)&&norm(item.size)===norm(size)&&item.status!=='cancelled');
+ function refresh(stored:StoredDraft,reviewed=false,canCatalog=true){
   const draft=stored.draft,missing:string[]=[];
   if(!draft.orderDetails.orderedBy)missing.push('ordered_by');if(!date(draft.orderDetails.orderDate))missing.push('order_date');if(!draft.orderDetails.location)missing.push('location');
-  const identities=new Set<string>();
+  const identities=new Set<string>(),proposedCatalogMaterials:ProposedCatalogMaterial[]=[];
   for(const row of draft.rows){
    if(row.excluded){row.reasons=[];continue;}
    const candidate=row.materialId?byId.get(row.materialId):undefined;const reasons:string[]=[];
-   if(!candidate)reasons.push('unmatched_material');
+   const proposed=row.catalogRequest;
+   if(proposed&&row.materialId)reasons.push('catalog_request_conflicts_with_match');
+   if(!candidate&&!proposed)reasons.push('unmatched_material');
    if(stored.nonMaterial.has(row.lineId))reasons.push('non_material_line');
-   if(candidate){row.materialName=candidate.materialName;row.size=candidate.chipSize;if(!samePurchasingVendor(candidate.vendor,stored.supplier))reasons.push('supplier_mismatch');if(norm(row.unit)!==norm(candidate.orderUnit||candidate.containerType))reasons.push('incompatible_unit');if(duplicate(candidate,stored.supplier))reasons.push('potential_duplicate');const key=[norm(candidate.vendor),norm(candidate.materialName),norm(candidate.chipSize),row.jobId||''].join('|');if(identities.has(key))reasons.push('duplicate_draft_line');identities.add(key);}
+   if(candidate){row.materialName=candidate.materialName;row.size=candidate.chipSize;if(!samePurchasingVendor(candidate.vendor,stored.supplier))reasons.push('supplier_mismatch');if(norm(row.unit)!==norm(candidate.orderUnit||candidate.containerType))reasons.push('incompatible_unit');if(duplicate(candidate.materialName,candidate.chipSize,stored.supplier))reasons.push('potential_duplicate');const key=[norm(candidate.vendor),norm(candidate.materialName),norm(candidate.chipSize),row.jobId||''].join('|');if(identities.has(key))reasons.push('duplicate_draft_line');identities.add(key);}
+   if(proposed){
+    if(!proposed.prepared||Object.keys(catalogRequestIssues(proposed)).length)reasons.push('incomplete_catalog_request');
+    if(!samePurchasingVendor(proposed.supplier,stored.supplier))reasons.push('supplier_mismatch');
+    if(!receivalUnit(row.unit)||receivalUnit(row.unit)!==receivalUnit(proposed.priceUnit))reasons.push('incompatible_unit');
+    if(catalog.some(item=>samePurchasingVendor(item.vendor,proposed.supplier)&&norm(item.materialName)===norm(proposed.itemName)&&norm(item.chipSize)===norm(proposed.size)))reasons.push('existing_catalog_match');
+    if(proposed.vendorSku&&catalog.some(item=>samePurchasingVendor(item.vendor,proposed.supplier)&&norm(item.vendorSku)===norm(proposed.vendorSku)))reasons.push('catalog_sku_conflict');
+    const sameProposedMaterial=(other:ProposedCatalogMaterial)=>samePurchasingVendor(other.supplier,proposed.supplier)&&(norm(other.itemName)===norm(proposed.itemName)&&norm(other.size)===norm(proposed.size)||Boolean(proposed.vendorSku)&&norm(other.vendorSku)===norm(proposed.vendorSku));
+    // A catalog operation is unique independently of the dependent Job. Reuse
+    // would require an explicit dependency resolver, so duplicate requests hold.
+    if(proposedCatalogMaterials.some(sameProposedMaterial))reasons.push('duplicate_catalog_request');proposedCatalogMaterials.push(proposed);
+    if(catalogAdditionReceipts.some(item=>sameProposedMaterial(item.material))||duplicate(proposed.itemName,proposed.size,proposed.supplier))reasons.push('potential_duplicate');
+    const key=[norm(proposed.supplier),norm(proposed.itemName),norm(proposed.size),row.jobId||''].join('|');if(identities.has(key))reasons.push('duplicate_draft_line');identities.add(key);
+   }
    if(positiveExpectedQuantity(row.quantity)===null)reasons.push('invalid_quantity');if(row.jobId!==null&&!SIMULATED_JOBS.some(job=>job.id===row.jobId))reasons.push('unknown_job');
    if(!reviewed)for(const reason of row.reasons)if(!reasons.includes(reason))reasons.push(reason);
    row.reasons=reasons;
   }
-  draft.missingFields=missing;draft.canApprove=draft.status==='review_required'&&missing.length===0&&draft.rows.some(row=>!row.excluded)&&draft.rows.every(row=>row.excluded||row.reasons.length===0);
-  draft.hash=createHash('sha256').update(JSON.stringify({owner:stored.owner,id:draft.id,revision:draft.revision,attachmentId:draft.attachmentId,orderDetails:draft.orderDetails,rows:draft.rows})).digest('hex');
+  draft.catalogApprovalRequired=requiresCatalog(draft)&&!canCatalog;
+  draft.missingFields=missing;draft.canApprove=draft.status==='review_required'&&!draft.catalogApprovalRequired&&missing.length===0&&draft.rows.some(row=>!row.excluded)&&draft.rows.every(row=>row.excluded||row.reasons.length===0);
+  draft.hash=createHash('sha256').update(JSON.stringify({owner:stored.owner,id:draft.id,revision:draft.revision,attachmentId:draft.attachmentId,provenance:draft.provenance,orderDetails:draft.orderDetails,rows:draft.rows})).digest('hex');
  }
  function fromProposal(owner:string,item:StoredAttachment,proposal:Row,orderDetails:DemoOrderDetails){
   const nonMaterial=new Set<string>();const draftRows:DemoDraftRow[]=[];
@@ -98,7 +125,7 @@ export function createTenbotLiveDemo(deps:Dependencies){
   for(const line of rows(proposal.excluded_lines)){const id=text(line.source_ref);nonMaterial.add(id);draftRows.push({lineId:id,sourceText:text(line.evidence),materialId:null,materialName:null,size:null,quantity:'',unit:'',jobId:null,excluded:true,reasons:[]});}
   if(!draftRows.length||new Set(draftRows.map(row=>row.lineId)).size!==draftRows.length)fail('The model did not prepare a complete reviewable draft. Retry or clarify the document.');
   for(const previous of drafts.values())if(previous.owner===owner&&previous.draft.attachmentId===item.id&&previous.draft.status!=='approved_simulated')previous.superseded=true;
-  const draft:DemoDraft={id:randomUUID(),revision:1,hash:'',status:'review_required',simulation:true,attachmentId:item.id,orderDetails,missingFields:[],canApprove:false,rows:draftRows};
+  const draft:DemoDraft={id:randomUUID(),revision:1,hash:'',status:'review_required',simulation:true,attachmentId:item.id,orderDetails,missingFields:[],canApprove:false,rows:draftRows,provenance:{supplier:text(proposal.supplier),documentReference:text(proposal.document_reference),attachmentSha256:createHash('sha256').update(item.bytes).digest('hex')}};
   const stored:StoredDraft={owner,expires:item.expires,draft,supplier:text(proposal.supplier),documentReference:text(proposal.document_reference),nonMaterial,superseded:false};refresh(stored);drafts.set(draft.id,stored);audit.push({at:new Date(now()).toISOString(),owner,action:'draft_prepared',draftId:draft.id,revision:draft.revision,hash:draft.hash});return clone(draft);
  }
  async function extract(item:StoredAttachment){
@@ -112,7 +139,7 @@ export function createTenbotLiveDemo(deps:Dependencies){
   if(!isJsonValue(body))fail('Invalid local simulation request.');await access(owner);
   for(const [id,item] of attachments)if(item.expires<=now()&&!busy.has(item.owner))attachments.delete(id);
   const action=body.action;
-  if(action==='status'){keys(body,['action']);return {mode:'synthetic-live',simulation:true,model:deps.model,recordSource:'SIMULATED in-memory records; no TenOps database',catalog:clone(catalogChoices),jobs:SIMULATED_JOBS.map(({id,label})=>({id,label})),maxAttachmentBytes:LIVE_DEMO_MAX_BYTES,maxImageDimension:1024,mediaTypes:['image/png','image/jpeg'],approvalScope:'Local simulated pending rows only; no on-hand stock or hosted writes',simulatedPendingCount:pending.length};}
+  if(action==='status'){keys(body,['action']);return {mode:'synthetic-live',simulation:true,model:deps.model,recordSource:'SIMULATED in-memory records; no TenOps database',catalog:clone(catalogChoices),jobs:SIMULATED_JOBS.map(({id,label})=>({id,label})),canCreateCatalog:await canCreateCatalog(owner),maxAttachmentBytes:LIVE_DEMO_MAX_BYTES,maxImageDimension:1024,mediaTypes:['image/png','image/jpeg'],approvalScope:'Local simulated catalog additions and pending rows only; no on-hand stock or hosted writes',simulatedPendingCount:pending.length,simulatedCatalogAdditionCount:catalogAdditionReceipts.length};}
   if(busy.has(owner))fail('A local request is already running. Wait before changing or approving its draft.',409);busy.add(owner);
   try{
    if(action==='upload'){
@@ -139,23 +166,29 @@ export function createTenbotLiveDemo(deps:Dependencies){
    if(action==='review'){
     keys(body,['action','draftId','revision','edits','orderDetails']);await access(owner,true);const stored=ownedDraft(body.draftId,owner);if(stored.draft.status!=='review_required'||body.revision!==stored.draft.revision)fail('The draft revision changed. Reload the latest review.',409);
     if(!Array.isArray(body.edits)||body.edits.length!==stored.draft.rows.length)fail('Review every current draft line exactly once.');const edits=new Map<string,Row>();
-    for(const edit of body.edits){if(!record(edit))fail('Invalid draft edit.');keys(edit,['lineId','materialId','quantity','unit','jobId','excluded']);const id=plain(edit.lineId,160);if(edits.has(id)||!stored.draft.rows.some(row=>row.lineId===id)||!(edit.materialId===null||typeof edit.materialId==='string'&&byId.has(edit.materialId))||!(edit.jobId===null||typeof edit.jobId==='string'&&SIMULATED_JOBS.some(job=>job.id===edit.jobId))||typeof edit.excluded!=='boolean')fail('Choose only existing simulated materials and Jobs.');plain(edit.quantity,40,true);plain(edit.unit,40,true);edits.set(id,edit);}
-    const next=clone(stored.draft);for(const row of next.rows){const edit=edits.get(row.lineId)!;row.materialId=edit.materialId as string|null;row.quantity=text(edit.quantity).trim();row.unit=text(edit.unit).trim();row.jobId=edit.jobId as string|null;row.excluded=edit.excluded as boolean;}
+    for(const edit of body.edits){if(!record(edit))fail('Invalid draft edit.');keys(edit,['lineId','materialId','quantity','unit','jobId','excluded','catalogRequest']);const id=plain(edit.lineId,160);if(edits.has(id)||!stored.draft.rows.some(row=>row.lineId===id)||!(edit.materialId===null||typeof edit.materialId==='string'&&byId.has(edit.materialId))||!(edit.jobId===null||typeof edit.jobId==='string'&&SIMULATED_JOBS.some(job=>job.id===edit.jobId))||typeof edit.excluded!=='boolean')fail('Choose only existing simulated materials and Jobs, or prepare a new-material request without a catalog ID.');plain(edit.quantity,40,true);plain(edit.unit,40,true);const request=catalogRequest(edit.catalogRequest);if(request&&edit.materialId!==null)fail('Choose either an existing catalog material or a new-material request, never both.');edits.set(id,{...edit,catalogRequest:request});}
+    const next=clone(stored.draft);for(const row of next.rows){const edit=edits.get(row.lineId)!;row.materialId=edit.materialId as string|null;row.quantity=text(edit.quantity).trim();row.unit=text(edit.unit).trim();row.jobId=edit.jobId as string|null;row.excluded=edit.excluded as boolean;row.catalogRequest=edit.catalogRequest as ProposedCatalogMaterial|null;}
     if(body.orderDetails!==undefined)next.orderDetails=details(body.orderDetails);next.revision++;
-    await access(owner,true);stored.draft=next;refresh(stored,true);audit.push({at:new Date(now()).toISOString(),owner,action:'draft_reviewed',draftId:next.id,revision:next.revision,hash:next.hash});return {draft:clone(next),simulation:true};
+    await access(owner,true);const canCatalog=requiresCatalog(next)?await canCreateCatalog(owner):true;ownedDraft(body.draftId,owner);stored.draft=next;refresh(stored,true,canCatalog);audit.push({at:new Date(now()).toISOString(),owner,action:'draft_reviewed',draftId:next.id,revision:next.revision,hash:next.hash,catalogApprovalRequired:next.catalogApprovalRequired});return {draft:clone(next),simulation:true};
    }
    if(action==='approve'){
     keys(body,['action','draftId','revision','hash','confirmation']);if(body.confirmation!==true)fail('Explicit employee confirmation is required.');await access(owner,true);const stored=ownedDraft(body.draftId,owner),draft=stored.draft;
     if(body.revision!==draft.revision||body.hash!==draft.hash)fail('Approval does not match the latest reviewed draft revision and hash.',409);
-    if(stored.approval)return {draft:clone(draft),receivals:clone(stored.approval.receivals),createdCount:0,simulation:true,idempotent:true,audit:clone(stored.approval.audit)};
-    await access(owner,true);ownedDraft(body.draftId,owner);refresh(stored);if(body.hash!==draft.hash||!draft.canApprove)fail('Resolve held lines, duplicate concerns and missing order details before approval.',409);
+    await catalogAccess(owner,draft);
+    if(stored.approval){ownedDraft(body.draftId,owner);return {draft:clone(draft),receivals:clone(stored.approval.receivals),catalogAdditions:clone(stored.approval.catalogAdditions),createdCount:0,catalogCreatedCount:0,simulation:true,idempotent:true,audit:clone(stored.approval.audit)};}
+    await access(owner,true);await catalogAccess(owner,draft);ownedDraft(body.draftId,owner);refresh(stored);if(body.hash!==draft.hash||!draft.canApprove)fail('Resolve held lines, duplicate concerns and missing order details before approval.',409);
+    const additions:CatalogAddition[]=draft.rows.filter(row=>!row.excluded&&row.catalogRequest).map(row=>({simulation:true,sourceLineId:row.lineId,catalogId:null,material:clone(row.catalogRequest!),provenance:{...draft.provenance!,sourceText:row.sourceText}}));
     const created=draft.rows.filter(row=>!row.excluded).map(row=>{
-     const candidate=byId.get(row.materialId!)!,job=SIMULATED_JOBS.find(item=>item.id===row.jobId);
-     return {id:'simulated-'+randomUUID(),simulation:true,...buildPendingReceivalRow({vendor:stored.supplier,material:candidate.materialName,size:candidate.chipSize,category:candidate.classification?.category||candidate.materialType,quantityExpected:positiveExpectedQuantity(row.quantity)!,unit:candidate.orderUnit||candidate.containerType,location:draft.orderDetails.location,palletNumber:'',orderedBy:draft.orderDetails.orderedBy,orderDate:draft.orderDetails.orderDate,eta:null,notes:`SIMULATED LOCAL DEMO · ${stored.documentReference}`,productionJobId:row.jobId,temporaryJobLabel:null,reservationLabel:job?.label??null,reservationNotes:''})};
+     const candidate=row.materialId?byId.get(row.materialId):undefined,request=row.catalogRequest,job=SIMULATED_JOBS.find(item=>item.id===row.jobId);
+     return {id:'simulated-'+randomUUID(),simulation:true,catalogId:request?null:row.materialId,...(request?{catalogOperationSourceLineId:row.lineId}:{}),sourceLineId:row.lineId,provenance:{...draft.provenance!,sourceText:row.sourceText},...buildPendingReceivalRow({vendor:stored.supplier,material:request?.itemName??candidate!.materialName,size:request?.size??candidate!.chipSize,category:request?.materialType??candidate!.classification?.category??candidate!.materialType,quantityExpected:positiveExpectedQuantity(row.quantity)!,unit:request?receivalUnit(request.priceUnit):candidate!.orderUnit||candidate!.containerType,location:draft.orderDetails.location,palletNumber:'',orderedBy:draft.orderDetails.orderedBy,orderDate:draft.orderDetails.orderDate,eta:null,notes:`SIMULATED LOCAL DEMO · ${stored.documentReference}`,productionJobId:row.jobId,temporaryJobLabel:null,reservationLabel:job?.label??null,reservationNotes:''})};
     });
-    // This synchronous, owner-locked commit is local memory only. No database executor exists.
-    pending.push(...created);draft.status='approved_simulated';draft.canApprove=false;const event={at:new Date(now()).toISOString(),owner,action:'approved_simulated',draftId:draft.id,revision:draft.revision,hash:draft.hash,rowCount:created.length,onHandChanged:false};audit.push(event);stored.approval={receivals:clone(created),audit:[clone(event)]};
-    return {draft:clone(draft),receivals:clone(created),createdCount:created.length,simulation:true,idempotent:false,audit:[clone(event)],onHandChanged:false};
+    const approvedDraft=clone(draft);approvedDraft.status='approved_simulated';approvedDraft.canApprove=false;
+    const event={at:new Date(now()).toISOString(),owner,action:'approved_simulated',draftId:draft.id,revision:draft.revision,hash:draft.hash,rowCount:created.length,catalogAdditionCount:additions.length,provenance:clone(draft.provenance),onHandChanged:false};
+    const approval={receivals:clone(created),catalogAdditions:clone(additions),audit:[clone(event)]};
+    const result={draft:clone(approvedDraft),receivals:clone(created),catalogAdditions:clone(additions),createdCount:created.length,catalogCreatedCount:additions.length,simulation:true,idempotent:false,audit:[clone(event)],onHandChanged:false};
+    // Publish both prepared operation arrays together, synchronously under the
+    // owner lock. These are local memory receipts; no database executor exists.
+    pending.push(...created);catalogAdditionReceipts.push(...additions);audit.push(event);stored.draft=approvedDraft;stored.approval=approval;return result;
    }
    if(action==='clear'){
     keys(body,['action','conversationId','attachmentId']);const current=typeof body.conversationId==='string'?conversationAttachments.get(body.conversationId):undefined;if(body.conversationId!==undefined&&(!current||current.owner!==owner))fail('Conversation unavailable.',403);

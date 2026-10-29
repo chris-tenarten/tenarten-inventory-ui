@@ -1,0 +1,86 @@
+{
+  "passed": true,
+  "groups": 7,
+  "checks": [
+    "Ordinary Messaging composer and PDF/photo attachment control remain available; employee experiment dropdown is absent",
+    "Complete proposed Violet material removes catalog-match blocker without an existing or invented ID, exclusion, or immediate submission",
+    "One server-review fixture receives complete catalog details and dependent receival, retains original invoice source/provenance, and enables explicit combined simulated approval",
+    "Editing catalog details immediately invalidates approval, and resaving binds a new revision/hash that includes the changed catalog operation",
+    "Combined proposal remains compact and contained at 390 px without horizontal document overflow",
+    "Explicit approval returns separately labeled simulated catalog addition and four pending rows, including Violet dependency with catalogId null and unchanged on-hand quantities",
+    "Employee without catalog-management capability can prepare and review the request but receives an authorized-employee hold and cannot approve the combined simulated write"
+  ],
+  "traces": [
+    {
+      "action": "status",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": true
+    },
+    {
+      "action": "upload",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": true
+    },
+    {
+      "action": "ask",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": true
+    },
+    {
+      "action": "review",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": true
+    },
+    {
+      "action": "review",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": true
+    },
+    {
+      "action": "approve",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": true
+    },
+    {
+      "action": "status",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": false
+    },
+    {
+      "action": "upload",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": false
+    },
+    {
+      "action": "ask",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": false
+    },
+    {
+      "action": "review",
+      "endpoint": "http://localhost:55595",
+      "catalogPermission": false
+    }
+  ],
+  "errors": [],
+  "unexpectedNetwork": [],
+  "mode": "Actual localhost UI, saved model output, intercepted review/approval fixtures; not a live model or database security test",
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "operationalWrites": 0,
+  "databaseSecurityVerified": false,
+  "journalUnchanged": true,
+  "journalSha256": "aebc2a3ef5a8b2d3a83f29cb77ef96a9667c102fd70687a2c9cb566b64702ec5",
+  "sourcePins": {
+    "src/modules/tenbot/ReceivalDraftReview.tsx": "19ec7696915af2a5a0005b9e7bb7be771597c06a6b575394c78c0704565d701e",
+    "src/modules/tenbot/live-review.ts": "19bcb0ffa1464ac2afcb1692694eab613c2371a6d1624a7cfc057ef4558a5639",
+    "src/modules/tenbot/TenbotWorkspace.tsx": "8dc65fd3876134ff9185249d97d2e00bafad9499f15544f951e15767feec14f2",
+    "scripts/verify-tenbot-combined-receival-browser.mjs": "a518a13713deac5dc5cbf7ec9d17a11e822b5fa78be3777b9872bac430e5f067"
+  },
+  "evidenceMetadataCorrection": {
+    "note": "After successful browser run, corrected hash metadata from JSON-encoded text to raw-file SHA-256. Application files are verified unchanged. No behavior changed or new browser run claimed. sourcePins names the executed verifier version; manifest names the current verifier with corrected hash reporting.",
+    "originalEncodedJournalHash": "f10b9625756fbfdbaf1155b363ca6bb5da8140a52d429fbaa140fe9dbf3af27b",
+    "executedVerifierSha256": "a518a13713deac5dc5cbf7ec9d17a11e822b5fa78be3777b9872bac430e5f067",
+    "currentVerifierSha256": "b38e5ce515625693d5604aa134e07921a307fcbf1e5c604ba46e1c7e17289843"
+  }
+}

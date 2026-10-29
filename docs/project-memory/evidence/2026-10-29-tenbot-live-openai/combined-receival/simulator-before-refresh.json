@@ -1,0 +1,109 @@
+{
+  "server": {
+    "pid": 58585,
+    "port": 55595,
+    "origin": "http://localhost:3000",
+    "mode": "synthetic-live",
+    "model": "gpt-6.1-terra",
+    "keyConfigured": true,
+    "spendingAuthorized": true,
+    "authorizedBudgetUsd": 5,
+    "simulation": true,
+    "recordSource": "SIMULATED local memory only",
+    "databaseWrites": false,
+    "dockerRequired": false,
+    "approvalScope": "In-memory simulated pending rows only; no on-hand changes",
+    "sourceHashes": [
+      {
+        "path": "scripts/start-tenbot-agent-review.mts",
+        "sha256": "8fb99bff59619947a22d950bbc4a5668ae79b37c36cb7c227e4f389d7953202d"
+      },
+      {
+        "path": "scripts/support/tenbot-live-demo.mts",
+        "sha256": "2171a3769f9d7c5e68b30a3950cf1c4576ab3145d6b4acda0bed808d71afcdb6"
+      },
+      {
+        "path": "scripts/support/tenbot-live-provider.mts",
+        "sha256": "187c7ba3c6dd6a8119fb5ca3be6f1f2c3de77d45bdc86fff1bbdd447f61195bb"
+      },
+      {
+        "path": "src/modules/inventory/pending-receival-contract.ts",
+        "sha256": "db2375b6b6045ef739a482f9a71fb911e7e45b41be70a7d2d9f5d0493078403e"
+      }
+    ]
+  },
+  "journal": {
+    "reservedOrSpentUsd": 0.19893055000000007,
+    "attempts": 112,
+    "settled": 112
+  },
+  "status": {
+    "mode": "synthetic-live",
+    "simulation": true,
+    "model": "gpt-6.1-terra",
+    "recordSource": "SIMULATED in-memory records; no TenOps database",
+    "catalog": [
+      {
+        "id": "standard:synthetic-aw1",
+        "materialName": "Alaska White",
+        "size": "#1",
+        "unit": "Bag",
+        "supplier": "T&M Supply",
+        "packageLabel": "50 LB Bag"
+      },
+      {
+        "id": "standard:synthetic-bc0",
+        "materialName": "Blue Coal",
+        "size": "#0",
+        "unit": "Bag",
+        "supplier": "T&M Supply",
+        "packageLabel": "50 LB Bag"
+      },
+      {
+        "id": "standard:synthetic-green-a",
+        "materialName": "CC Green",
+        "size": "#1",
+        "unit": "Bag",
+        "supplier": "T&M Supply",
+        "packageLabel": "50 LB Bag"
+      },
+      {
+        "id": "standard:synthetic-green-b",
+        "materialName": "CC Green",
+        "size": "#1",
+        "unit": "Bag",
+        "supplier": "T&M Supply",
+        "packageLabel": "25 LB Bag"
+      },
+      {
+        "id": "standard:synthetic-res5",
+        "materialName": "Clear Resin",
+        "size": "Part A",
+        "unit": "Pail",
+        "supplier": "T&M Supply",
+        "packageLabel": "5 GAL Pail"
+      }
+    ],
+    "jobs": [
+      {
+        "id": "10282026-0000-4000-8000-000000000101",
+        "label": "SIMULATED · TB-2801 — North Countertops"
+      },
+      {
+        "id": "10282026-0000-4000-8000-000000000105",
+        "label": "SIMULATED · TB-2805 — Rework demonstration"
+      }
+    ],
+    "maxAttachmentBytes": 90000,
+    "maxImageDimension": 1024,
+    "mediaTypes": [
+      "image/png",
+      "image/jpeg"
+    ],
+    "approvalScope": "Local simulated pending rows only; no on-hand stock or hosted writes",
+    "simulatedPendingCount": 0
+  },
+  "inferenceCalls": 0,
+  "databaseWrites": 0,
+  "note": "Pre-refresh simulator status. In-memory draft/approval rows are ephemeral; previous inference/network receipts and spending journal are preserved."
+}

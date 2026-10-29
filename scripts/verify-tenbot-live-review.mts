@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { approvalForCurrentReview, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft } from '../src/modules/tenbot/live-review';
+import { approvalForCurrentReview, catalogRequestIssues, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft, type ProposedCatalogMaterial } from '../src/modules/tenbot/live-review';
 import { ReceivalDraftReview } from '../src/modules/tenbot/ReceivalDraftReview';
 
 // Offline UI/lifecycle checks. This never starts a server or invokes a provider.
@@ -55,13 +55,49 @@ await check('current quantity/unit/catalog validation clears corrected field err
   assert.equal(approvalForCurrentReview(base, [row], base.orderDetails, true, false), false);
   for (const quantity of ['', '-1', 'NaN', 'Infinity', '9'.repeat(400)]) assert(receivalLineValidation(source, {...row, quantity}, status).fields.quantity);
 });
-await check('existing catalog identity resolves current match errors while proposals and unknown IDs do not', () => {
+await check('existing catalog identity resolves current match errors while fabricated catalog IDs do not', () => {
   const source = {...copy(base.rows[0]), materialId: null, reasons: ['unmatched_material', 'ambiguous_catalog_match']};
   const row = {...editableRows(base)[0], materialId: null};
   assert.equal(receivalLineValidation(source, row, status).state, 'Needs catalog match');
   assert.equal(receivalLineValidation(source, {...row, materialId: 'proposed-not-a-catalog-id'}, status).state, 'Needs catalog match');
   const resolved = receivalLineValidation(source, {...row, materialId: status.catalog[0].id}, status);
   assert.equal(resolved.state, 'Ready'); assert.deepEqual(resolved.holds, []);
+});
+const proposed: ProposedCatalogMaterial = {supplier:'T&M Supply',itemName:'Unlisted Violet',vendorSku:'UNK-99',materialType:'chip',size:'#1',unitSize:'50',unitSizeUom:'LB',packaging:'Bag',priceUnit:'Bag',notes:'Verify against original invoice.',prepared:true};
+await check('a complete proposed catalog material resolves an unmatched line without an invented catalog ID', () => {
+  const source = {...copy(base.rows[0]), materialId:null, materialName:'Unlisted Violet', reasons:['unmatched_material','incomplete_catalog_request']};
+  const row = {...editableRows(base)[0], materialId:null, catalogRequest:copy(proposed)};
+  assert.deepEqual(catalogRequestIssues(proposed), {});
+  const validation = receivalLineValidation(source,row,{...status,canCreateCatalog:true});
+  assert.equal(validation.state,'Ready'); assert.deepEqual(validation.fields,{}); assert.deepEqual(validation.holds,[]);
+  assert.equal(row.materialId,null); assert.equal(validation.changed,true);
+  assert(receivalLineValidation(source,{...row,catalogRequest:{...proposed,prepared:false}},status).fields.materialId);
+  assert(receivalLineValidation(source,{...row,catalogRequest:{...proposed,unitSize:''}},status).fields.materialId);
+  assert(receivalLineValidation(source,{...row,materialId:status.catalog[0].id},status).fields.materialId);
+  assert(receivalLineValidation(source,{...row,unit:'Pail'},status).fields.unit);
+});
+await check('all proposed material edits invalidate approval, while explicit null matches omitted request metadata', () => {
+  const draft = copy(base); draft.rows[0].materialId=null; draft.rows[0].catalogRequest=copy(proposed);
+  const rows = editableRows(draft);
+  assert.equal(approvalForCurrentReview(draft,rows,draft.orderDetails,true,false),true);
+  for (const key of ['supplier','itemName','vendorSku','materialType','size','unitSize','unitSizeUom','packaging','priceUnit','notes','prepared'] as const) {
+    const edits=editableRows(draft); const request=edits[0].catalogRequest!;
+    edits[0].catalogRequest={...request,[key]:key==='prepared'?false:`${request[key]} changed`};
+    assert.equal(approvalForCurrentReview(draft,edits,draft.orderDetails,true,false),false,key);
+  }
+  rows[0].catalogRequest!.notes='changed'; assert.equal(draft.rows[0].catalogRequest.notes,proposed.notes);
+  const unchanged=editableRows(base); unchanged[0].catalogRequest=null;
+  assert.equal(reviewChanged(base,unchanged,base.orderDetails),false);
+});
+await check('new materials remain reviewable requests without catalog permission and real combined execution stays blocked', () => {
+  const draft=copy(base); draft.rows[0]={...draft.rows[0],materialId:null,catalogRequest:copy(proposed)};
+  const denied=receivalLineValidation(draft.rows[0],editableRows(draft)[0],{...status,canCreateCatalog:false});
+  assert.equal(denied.state,'Needs review'); assert.equal(denied.holds.length,1); assert.deepEqual(denied.fields,{});
+  const html=render(draft,{...status,canCreateCatalog:false});
+  for(const text of ['Request for an authorized employee','Simulated catalog material + pending receival','catalog creation and dependent pending receivals','1 catalog material + 1 pending receivals']) assert(html.includes(text),text);
+  assert(/disabled=""[^>]*>Approve simulated catalog and receivals/.test(html));
+  const real=receivalLineValidation(draft.rows[0],editableRows(draft)[0],{...status,simulation:false,canCreateCatalog:true});
+  assert(real.holds.some(hold=>hold.includes('Combined catalog and receival execution is unavailable')));
 });
 await check('duplicate, document conflicts and unknown server holds survive unrelated edits until server review or exclusion', () => {
   for (const reason of ['potential_duplicate', 'duplicate_draft_line', 'supplier_mismatch', 'invoice_catalog_package_conflict', 'future_server_hold']) {

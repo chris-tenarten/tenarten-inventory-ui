@@ -95,7 +95,7 @@ async function startSyntheticLive(){
  const fixture=JSON.parse(readFileSync('scripts/fixtures/tenbot-invoice.synthetic.json','utf8'));
  if(fixture.synthetic!==true||fixture.catalog.complete!==true||fixture.receivals.complete!==true)throw Error('Approved complete simulated catalog and receival fixtures required.');
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
- const capabilities=new Set(['readOperationalData','writeBusinessData','adjustInventory','manageUsers']);
+ const capabilities=new Set(['readOperationalData','writeBusinessData','adjustInventory','manageUsers','manageVendorsCatalog']);
  const handler=createTenbotLiveDemo({model,catalog:fixture.catalog,receivals:fixture.receivals,can:async(owner,capability)=>uuid.test(owner)&&capabilities.has(capability),createProvider:(label,attachment)=>provider.createMeasuredProvider(model,label,attachment),remainingUsd:()=>Math.max(0,Math.min(requested,5)-provider.getJournal().reservedOrSpentUsd),assertNoFatal:provider.assertNoFatal,async validateAttachment(attachment){
   try{const metadata=await sharp(attachment.bytes,{limitInputPixels:1048576}).metadata();if(!metadata.width||!metadata.height||metadata.width>1024||metadata.height>1024||metadata.pages&&metadata.pages>1||metadata.format!==(attachment.mediaType==='image/png'?'png':'jpeg'))throw Error();}catch{throw new TenbotError('Use a valid single-frame PNG or JPEG image within the displayed limits.');}
  }});
@@ -112,5 +112,5 @@ async function startSyntheticLive(){
  const sourceHashes=['scripts/start-tenbot-agent-review.mts','scripts/support/tenbot-live-demo.mts','scripts/support/tenbot-live-provider.mts','src/modules/inventory/pending-receival-contract.ts'].map(path=>({path,sha256:createHash('sha256').update(readFileSync(path)).digest('hex')}));
  const shutdown=()=>server.close(()=>{provider.closeBudget();process.exit(0);});
  process.once('SIGINT',shutdown);process.once('SIGTERM',shutdown);
- mkdirSync(directory,{recursive:true});server.listen(port,'::1',()=>{writeFileSync(directory+'/server.json',JSON.stringify({pid:process.pid,port,origin,mode:'synthetic-live',model,keyConfigured:true,spendingAuthorized:true,authorizedBudgetUsd:requested,simulation:true,recordSource:'SIMULATED local memory only',databaseWrites:false,dockerRequired:false,approvalScope:'In-memory simulated pending rows only; no on-hand changes',sourceHashes},null,2));console.log('TenBot actual OpenAI / SIMULATED local records demo at '+origin+'/my-work?tenbotExperiment=1');});
+ mkdirSync(directory,{recursive:true});server.listen(port,'::1',()=>{writeFileSync(directory+'/server.json',JSON.stringify({pid:process.pid,port,origin,mode:'synthetic-live',model,keyConfigured:true,spendingAuthorized:true,authorizedBudgetUsd:requested,simulation:true,recordSource:'SIMULATED local memory only',databaseWrites:false,dockerRequired:false,approvalScope:'In-memory simulated catalog additions and dependent pending rows only; no on-hand changes',sourceHashes},null,2));console.log('TenBot actual OpenAI / SIMULATED local records demo at '+origin+'/my-work?tenbotExperiment=1');});
 }

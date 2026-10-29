@@ -2,20 +2,41 @@ import type {PurchasingCatalogItemInput} from '../purchasing/types';
 
 export type LocalCatalogChoice = { id: string; materialName: string; size: string; unit: string; supplier?: string; packageLabel?: string };
 export type LocalJobChoice = { id: string; label: string };
-export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; canPrepare?: boolean; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
+export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; canPrepare?: boolean; canCreateCatalog?: boolean; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
 export type LocalOrderDetails = { orderedBy: string; orderDate: string; location: string };
-export type LocalDraftRow = { lineId: string; sourceText: string; materialId: string | null; materialName: string | null; size: string | null; quantity: string; unit: string; jobId: string | null; excluded: boolean; reasons: string[] };
-export type LocalReceivalDraft = { id: string; revision: number; hash: string; status: 'review_required' | 'approved_simulated' | 'created'; simulation: boolean; attachmentId: string; orderDetails: LocalOrderDetails; missingFields: string[]; canApprove: boolean; rows: LocalDraftRow[]; durableDraftId?: string; durableHash?: string; executionEnabled?: boolean; blockReason?: string };
-export type LocalRowEdit = Pick<LocalDraftRow, 'lineId' | 'materialId' | 'quantity' | 'unit' | 'jobId' | 'excluded'>;
+export type LocalDraftRow = { lineId: string; sourceText: string; materialId: string | null; materialName: string | null; size: string | null; quantity: string; unit: string; jobId: string | null; excluded: boolean; reasons: string[]; catalogRequest?: ProposedCatalogMaterial | null };
+export type LocalInvoiceProvenance = {supplier: string; documentReference: string; attachmentSha256: string};
+export type LocalReceivalDraft = { id: string; revision: number; hash: string; status: 'review_required' | 'approved_simulated' | 'created'; simulation: boolean; attachmentId: string; orderDetails: LocalOrderDetails; missingFields: string[]; canApprove: boolean; rows: LocalDraftRow[]; durableDraftId?: string; durableHash?: string; executionEnabled?: boolean; blockReason?: string; provenance?: LocalInvoiceProvenance; catalogApprovalRequired?: boolean };
+export type LocalRowEdit = Pick<LocalDraftRow, 'lineId' | 'materialId' | 'quantity' | 'unit' | 'jobId' | 'excluded' | 'catalogRequest'>;
 export type LocalAttachment = { attachmentId: string; filename: string; mediaType: string; expiresAt?: string; simulation: boolean };
-export type LocalApproval = { draft: LocalReceivalDraft; receivals: Record<string, unknown>[]; createdCount: number; simulation: boolean; idempotent: boolean };
-/** Local proposal only. This is deliberately outside the receival RPC payload. */
+export type LocalCatalogAddition = {simulation: true; sourceLineId: string; catalogId: null; material: ProposedCatalogMaterial; provenance: LocalInvoiceProvenance & {sourceText: string}};
+export type LocalApproval = { draft: LocalReceivalDraft; receivals: Record<string, unknown>[]; catalogAdditions?: LocalCatalogAddition[]; createdCount: number; simulation: boolean; idempotent: boolean };
+/** Proposed operation, never an existing catalog identity or a real write. */
 export type ProposedCatalogMaterial = Pick<PurchasingCatalogItemInput, 'itemName' | 'vendorSku' | 'materialType' | 'size' | 'unitSize' | 'unitSizeUom' | 'packaging' | 'priceUnit' | 'notes'> & {supplier: string; prepared: boolean};
 export type ReceivalLineValidation = {
   state: 'Ready' | 'Needs catalog match' | 'Invalid quantity/unit' | 'Excluded' | 'Needs review';
   fields: Partial<Record<'materialId' | 'quantity' | 'unit' | 'jobId', string>>;
   holds: string[]; changed: boolean;
 };
+export function catalogRequestIssues(value: ProposedCatalogMaterial): Partial<Record<keyof ProposedCatalogMaterial, string>> {
+  const issues: Partial<Record<keyof ProposedCatalogMaterial, string>> = {};
+  for (const key of ['supplier','itemName','vendorSku','materialType','size','unitSize','unitSizeUom','packaging','priceUnit','notes'] as const) {
+    if (typeof value[key] !== 'string' || value[key].length > (key === 'notes' ? 1200 : 160) || /[\u0000-\u001f\u007f]/.test(value[key])) issues[key] = 'Use bounded plain text for this catalog field.';
+  }
+  if (!value.supplier?.trim()) issues.supplier = 'Supplier is required.';
+  if (!value.itemName?.trim()) issues.itemName = 'Material name is required.';
+  if (!['chip','resin','pigment','filler','other'].includes(value.materialType)) issues.materialType = 'Choose a material type.';
+  if (value.materialType === 'chip' && !value.size?.trim()) issues.size = 'Chip size is required.';
+  const unit = typeof value.priceUnit === 'string' ? receivalUnit(value.priceUnit) : '';
+  if (!unit) issues.priceUnit = 'A supported order unit is required.';
+  const packageUnit = ['Bag','Pail','Box','Bucket','Drum','Case','Tote','Kit'].includes(unit);
+  if (packageUnit || value.unitSize || value.unitSizeUom || value.packaging) {
+    if (!/^(?:0|[1-9]\d{0,8})(?:\.\d{1,6})?$/.test(value.unitSize) || !(Number(value.unitSize) > 0)) issues.unitSize = 'Package amount must be a positive decimal.';
+    if (!['LB','GAL','KG','OZ','L'].includes(value.unitSizeUom)) issues.unitSizeUom = 'Choose the package measure.';
+    if (!value.packaging?.trim() || packageUnit && receivalUnit(value.packaging) !== unit) issues.packaging = 'Container must match the proposed order unit.';
+  }
+  return issues;
+}
 // Advisory display validation follows the existing invoice unit aliases; the
 // caller-authorized server remains responsible for accepting every line.
 export function receivalUnit(value: string): string {
@@ -24,20 +45,31 @@ export function receivalUnit(value: string): string {
   return groups.find(([, aliases]) => aliases.includes(key))?.[0] || '';
 }
 export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit, status: LocalDemoStatus): ReceivalLineValidation {
-  const changed = JSON.stringify({ materialId: source.materialId, quantity: source.quantity, unit: source.unit, jobId: source.jobId, excluded: source.excluded }) !== JSON.stringify({ materialId: row.materialId, quantity: row.quantity, unit: row.unit, jobId: row.jobId, excluded: row.excluded });
+  const changed = JSON.stringify({ materialId: source.materialId, quantity: source.quantity, unit: source.unit, jobId: source.jobId, excluded: source.excluded, catalogRequest: source.catalogRequest || null }) !== JSON.stringify({ materialId: row.materialId, quantity: row.quantity, unit: row.unit, jobId: row.jobId, excluded: row.excluded, catalogRequest: row.catalogRequest || null });
   if (row.excluded) return { state: 'Excluded', fields: {}, holds: [], changed };
   const fields: ReceivalLineValidation['fields'] = {}, choice = status.catalog.find(item => item.id === row.materialId);
-  if (!choice) fields.materialId = 'Choose an existing catalog material or prepare a new catalog request. A proposal alone cannot be received.';
+  const proposal = !row.materialId ? row.catalogRequest : null, proposalIssues = proposal ? catalogRequestIssues(proposal) : {};
+  const completeProposal = Boolean(proposal?.prepared && !Object.keys(proposalIssues).length);
+  if (row.materialId && row.catalogRequest) fields.materialId = 'Choose either an existing catalog material or a proposed new material.';
+  else if (!choice && !completeProposal) fields.materialId = proposal ? 'Complete and prepare the new catalog material details below.' : 'Choose an existing catalog material or prepare its new-material proposal.';
   const quantityPattern = status.simulation ? /^\d+(?:\.\d+)?$/ : /^(?:0|[1-9]\d{0,8})(?:\.\d{1,6})?$/;
   if (!quantityPattern.test(row.quantity) || !Number.isFinite(Number(row.quantity)) || Number(row.quantity) <= 0) fields.quantity = status.simulation ? 'Expected quantity must be a positive decimal number.' : 'Use a positive quantity with at most 9 whole digits and 6 decimal places.';
   if (!receivalUnit(row.unit)) fields.unit = 'Enter a supported receival unit.';
   else if (choice && (!receivalUnit(choice.unit) || (status.simulation ? row.unit.trim().toLowerCase() !== choice.unit.trim().toLowerCase() : receivalUnit(row.unit) !== receivalUnit(choice.unit)))) fields.unit = choice.unit ? `Use ${choice.unit} for this catalog offer; package conversion must be reviewed.` : 'This catalog offer has no supported receival unit. Choose another offer.';
+  else if (completeProposal && proposal && receivalUnit(row.unit) !== receivalUnit(proposal.priceUnit)) fields.unit = `Use ${proposal.priceUnit} for the dependent receival.`;
   if (row.jobId && !status.jobs.some(job => job.id === row.jobId)) fields.jobId = 'Choose an authorized Job from the current list, or General stock.';
   const holds: string[] = [];
+  if (completeProposal && !status.simulation) holds.push('Combined catalog and receival execution is unavailable on the real-data path. No write will run.');
+  if (completeProposal && status.canCreateCatalog === false) holds.push('Catalog creation requires review and approval by an employee with Manage vendors and catalog permission.');
   const labels: Record<string, string> = {
     potential_duplicate: 'Potential duplicate receival. Server review is required before approval.',
     duplicate_draft_line: 'Duplicate material/Job line. Change or exclude it, then save for server review.',
     duplicate_invoice_material_line: 'Repeated invoice material. Server review is required before approval.',
+    duplicate_catalog_request: 'This new material is proposed more than once. Combine or exclude the duplicate, then save for server review.',
+    catalog_sku_conflict: 'This supplier SKU is already associated with another material. Resolve the catalog conflict before approval.',
+    existing_catalog_match: 'This material already exists in the catalog. Select the existing offer instead of creating it again.',
+    incomplete_catalog_request: 'Complete and prepare the new material details, then save for server review.',
+    catalog_request_conflicts_with_match: 'Choose either the existing catalog material or the proposed new material, then save for review.',
     supplier_mismatch: 'Catalog supplier differs from the invoice supplier. Server review is required.',
     invoice_catalog_material_conflict: 'Invoice description conflicts with the catalog material. Server review is required.',
     invoice_catalog_package_conflict: 'Invoice packaging conflicts with the catalog offer. Server review is required.',
@@ -49,7 +81,10 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
   };
   for (const reason of source.reasons) {
     if (['invalid_quantity', 'incompatible_unit', 'unknown_job'].includes(reason)) continue;
+    if (reason === 'incomplete_catalog_request' && completeProposal) continue;
+    if (reason === 'catalog_request_conflicts_with_match' && !(row.materialId && row.catalogRequest)) continue;
     if (['unmatched_material', 'ambiguous_catalog_match'].includes(reason)) {
+      if (completeProposal) continue;
       if (choice && row.materialId === source.materialId) holds.push('Confirm the exact catalog offer, then save for server review.');
       continue;
     }
@@ -83,9 +118,10 @@ export function localReceivalCandidateRequested(origin: string, search: string, 
   return localAgentExperimentRequested(origin, search, authenticated) && new URLSearchParams(search).get('tenbotReceivals') === '1';
 }
 
-export const editableRows = (draft: LocalReceivalDraft): LocalRowEdit[] => draft.rows.map(({ lineId, materialId, quantity, unit, jobId, excluded }) => ({ lineId, materialId, quantity, unit, jobId, excluded }));
+const normalizedEdits = (rows: LocalRowEdit[]): LocalRowEdit[] => rows.map(({ lineId, materialId, quantity, unit, jobId, excluded, catalogRequest }) => ({ lineId, materialId, quantity, unit, jobId, excluded, ...(catalogRequest ? {catalogRequest: {...catalogRequest}} : {}) }));
+export const editableRows = (draft: LocalReceivalDraft): LocalRowEdit[] => normalizedEdits(draft.rows);
 export function reviewChanged(draft: LocalReceivalDraft, edits: LocalRowEdit[], details: LocalOrderDetails) {
-  return JSON.stringify(editableRows(draft)) !== JSON.stringify(edits) || JSON.stringify(draft.orderDetails) !== JSON.stringify(details);
+  return JSON.stringify(editableRows(draft)) !== JSON.stringify(normalizedEdits(edits)) || JSON.stringify(draft.orderDetails) !== JSON.stringify(details);
 }
 export function approvalForCurrentReview(draft: LocalReceivalDraft, edits: LocalRowEdit[], details: LocalOrderDetails, checked: boolean, busy: boolean) {
   const executionReady = draft.simulation || draft.executionEnabled === true && Boolean(draft.durableDraftId && draft.durableHash);

@@ -1,0 +1,21 @@
+{
+  "status": "pass",
+  "mode": "OFFLINE controller, attachment decode and caller-contract wiring only; scripted extraction/reasoning, simulated SELECT/RPC replies; no JWT/RLS/transaction claim",
+  "groups": 12,
+  "checks": [
+    "missing caller and each required capability fail before provider creation or record reads",
+    "status uses fixed caller-read projections and explicitly disables real execution",
+    "read-only employees retain conversational help without acquiring invoice preparation",
+    "synthetic consent and strict upload fields are required without model calls",
+    "Sharp validates real PNG bytes, MIME, dimensions and deterministic source digest",
+    "uploaded bytes are owner-isolated and clearing before ask prevents all inference",
+    "unknown drafts and attachment expiry fail before inference or canonical prepare",
+    "offline extraction rejects tool calls or malformed output and propagates provider failure safely",
+    "scripted reasoning traverses actual read/prepare tools, then exact canonical draft mapping",
+    "review requires owner, exact revision/rows and immutable pending-only source identity",
+    "permission revocation and a mismatched durable owner cannot publish an approved draft",
+    "exact explicit approval remains host-blocked before approval or execution RPC, including replay"
+  ],
+  "inferenceCalls": 0,
+  "databaseWrites": 0
+}

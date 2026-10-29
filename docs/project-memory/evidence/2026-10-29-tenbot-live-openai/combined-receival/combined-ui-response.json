@@ -1,0 +1,192 @@
+{
+  "draft": {
+    "id": "9b30e90c-ce56-4ff9-b764-6829e5b9e876",
+    "revision": 3,
+    "hash": "06734fc78a1505eafc1bcc174498cd5accca476cbe557675a12be09591d8468f",
+    "status": "approved_simulated",
+    "simulation": true,
+    "attachmentId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d",
+    "orderDetails": {
+      "orderedBy": "Synthetic Review Employee",
+      "orderDate": "2026-10-29",
+      "location": "Denton"
+    },
+    "missingFields": [],
+    "canApprove": false,
+    "rows": [
+      {
+        "lineId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L8",
+        "sourceText": "AW-1    Alaska White / #1    250 LB",
+        "materialId": "standard:synthetic-aw1",
+        "materialName": "Alaska White",
+        "size": "#1",
+        "quantity": "5",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": []
+      },
+      {
+        "lineId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L9",
+        "sourceText": "RES-5    Clear Resin / Part A    15 GAL",
+        "materialId": "standard:synthetic-res5",
+        "materialName": "Clear Resin",
+        "size": "Part A",
+        "quantity": "3",
+        "unit": "Pail",
+        "jobId": null,
+        "excluded": false,
+        "reasons": []
+      },
+      {
+        "lineId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L10",
+        "sourceText": "BC-0    Blue Coal / #0    1 Bag",
+        "materialId": "standard:synthetic-bc0",
+        "materialName": "Blue Coal",
+        "size": "#0",
+        "quantity": "1",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": true,
+        "reasons": []
+      },
+      {
+        "lineId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L11",
+        "sourceText": "GREEN    CC Green / #1    2 Bag",
+        "materialId": "standard:synthetic-green-a",
+        "materialName": "CC Green",
+        "size": "#1",
+        "quantity": "2",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "catalogRequest": null
+      },
+      {
+        "lineId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L12",
+        "sourceText": "UNK-99    Unlisted Violet / #2    4 Bag",
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [],
+        "catalogRequest": {
+          "supplier": "T&M Supply",
+          "itemName": "Unlisted Violet",
+          "vendorSku": "UNK-99",
+          "materialType": "chip",
+          "size": "#2",
+          "unitSize": "50",
+          "unitSizeUom": "LB",
+          "packaging": "Bag",
+          "priceUnit": "Bag",
+          "notes": "Edited catalog details require a new exact review.",
+          "prepared": true
+        }
+      },
+      {
+        "lineId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L13",
+        "sourceText": "Freight / delivery charge: $55.00",
+        "materialId": null,
+        "materialName": null,
+        "size": null,
+        "quantity": "",
+        "unit": "",
+        "jobId": null,
+        "excluded": true,
+        "reasons": []
+      }
+    ],
+    "provenance": {
+      "supplier": "T&M Supply",
+      "documentReference": "DEMO-REC-2189",
+      "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7"
+    },
+    "catalogApprovalRequired": false
+  },
+  "catalogAdditions": [
+    {
+      "simulation": true,
+      "sourceLineId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L12",
+      "catalogId": null,
+      "material": {
+        "supplier": "T&M Supply",
+        "itemName": "Unlisted Violet",
+        "vendorSku": "UNK-99",
+        "materialType": "chip",
+        "size": "#2",
+        "unitSize": "50",
+        "unitSizeUom": "LB",
+        "packaging": "Bag",
+        "priceUnit": "Bag",
+        "notes": "Edited catalog details require a new exact review.",
+        "prepared": true
+      },
+      "provenance": {
+        "supplier": "T&M Supply",
+        "documentReference": "DEMO-REC-2189",
+        "attachmentSha256": "e21f611246812afec4803da5b862d52db3b1c739e953480b6e5a35e81ca238d7",
+        "sourceText": "UNK-99    Unlisted Violet / #2    4 Bag"
+      }
+    }
+  ],
+  "receivals": [
+    {
+      "id": "simulated-ui-fixture-1",
+      "simulation": true,
+      "catalogId": "standard:synthetic-aw1",
+      "material_name": "Alaska White",
+      "size": "#1",
+      "quantity_expected": 5,
+      "quantity_received": 0,
+      "unit": "Bag",
+      "production_job_id": null,
+      "status": "pending"
+    },
+    {
+      "id": "simulated-ui-fixture-2",
+      "simulation": true,
+      "catalogId": "standard:synthetic-res5",
+      "material_name": "Clear Resin",
+      "size": "Part A",
+      "quantity_expected": 3,
+      "quantity_received": 0,
+      "unit": "Pail",
+      "production_job_id": null,
+      "status": "pending"
+    },
+    {
+      "id": "simulated-ui-fixture-3",
+      "simulation": true,
+      "catalogId": "standard:synthetic-green-a",
+      "material_name": "CC Green",
+      "size": "#1",
+      "quantity_expected": 2,
+      "quantity_received": 0,
+      "unit": "Bag",
+      "production_job_id": null,
+      "status": "pending"
+    },
+    {
+      "id": "simulated-ui-fixture-4",
+      "simulation": true,
+      "catalogId": null,
+      "catalogOperationSourceLineId": "attachment-72385adc-c247-4c7b-a8db-baaa41ea899d:L12",
+      "material_name": "Unlisted Violet",
+      "size": "#2",
+      "quantity_expected": 4,
+      "quantity_received": 0,
+      "unit": "Bag",
+      "production_job_id": null,
+      "status": "pending"
+    }
+  ],
+  "createdCount": 4,
+  "simulation": true,
+  "idempotent": false,
+  "onHandChanged": false
+}
