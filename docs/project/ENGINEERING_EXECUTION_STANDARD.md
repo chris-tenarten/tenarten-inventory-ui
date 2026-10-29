@@ -2,6 +2,10 @@
 
 This document governs scoped inspection, implementation, validation and reporting. Follow the authority hierarchy in [AGENTS.md](../../AGENTS.md): Chris and Product/Architecture own intended behavior and acceptance; the [Project Manifest](PROJECT_MANIFEST.md) records durable direction; Git/source and narrowly verified hosted state establish implementation reality.
 
+## TenBot architecture knowledge handoff — October 29, 2026
+
+Chris's **TENBOT — STRUCTURED ARCHITECTURE KNOWLEDGE** accepts the read-only review and authorizes [focused implementation](../project-memory/2026-10-29-tenbot-architecture-knowledge.md) on base `d769ab3`, local dev commit, then Product acceptance. Relayed coordination assigns knowledge/generator/retrieval/verifiers here; the original thread retains hosted Terra/database validation. Reuse existing IDs, grants, sources, tools and suites. Tier 3 focused provenance/privacy/history/release-impact verification; no lifecycle change, migration, new execution authority, paid inference, hosted access, push or deployment. Status: implemented locally, pending Product acceptance. Separate Advisory unavailable; current explicit Chris instructions govern. Preserve unrelated dirty documentation/evidence and hosted release holds.
+
 ## Compact handoff and status
 
 Reuse the relevant existing decision/candidate/release record. Carry only:

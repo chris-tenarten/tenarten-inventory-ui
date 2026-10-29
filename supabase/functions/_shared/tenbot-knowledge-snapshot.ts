@@ -7,7 +7,80 @@ export const knowledgeSnapshot = {
   "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be",
   "generator": "scripts/generate-tenbot-knowledge.mjs",
   "entryCount": 16,
-  "sourceCount": 37
+  "sourceCount": 37,
+  "architectureVersion": 1,
+  "architectureDigest": "65d4ac36b2b0169d6b63b1f7c5d46d746e97fe0550f67d6ba6b9f4e1e3c0a0f2",
+  "patchCount": 16,
+  "releaseBoundaries": [
+    {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    {
+      "id": "bidPreparation",
+      "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+      "verifiedAt": "2026-10-28",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-bid-preparation-release--october-28-2026",
+      "receiptSha256": "067fb9fca89e5238fc16985ea82023672da728da1f127b6153304c1ec5084eb1",
+      "receiptKind": "committed",
+      "receiptRevision": "d3f42a76eaa3bc4d9bfe9fbd048d8ef61355efb8"
+    },
+    {
+      "id": "manpower",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "verifiedAt": "2026-10-29",
+      "receipt": "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+      "receiptAnchor": "executed-approved-priority-release--october-29-2026",
+      "receiptSha256": "5dc0a02e04e0a9c4cf3ed5878f662df94b224b1b8cc633d36698df9f31b93027",
+      "receiptKind": "captured-working-receipt",
+      "receiptCapture": "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+      "receiptCaptureSha256": "683ff3132cc63820e85e016822b3fdae07937cf4e90e61810709fe2e64e2d421",
+      "originWorkingSha256": "1e304bda4180e2fd4b366a2fc7e474e837ac8099d9e237e56478a755156b48c5"
+    }
+  ],
+  "artifactFormatVersion": 1,
+  "generationInputs": [
+    {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "sha256": "6f49cbbc8657064b7fb5190990694d49bbb8d36b26f9d105731ad9befc00d273"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/architecture.mjs",
+      "sha256": "2394787cc80dd451e187105829d3c08b11274b034a0261cd3fe1896fa42afa85"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/infrastructure-reviews.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/manifest.mjs",
+      "sha256": "923b58806536410eb9bc9db64ac241d960bc5431959c3176dea565d1e97e05a5"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+      "sha256": "683ff3132cc63820e85e016822b3fdae07937cf4e90e61810709fe2e64e2d421"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/release-sync.mjs",
+      "sha256": "d4a39a0a735d8751959c97323c907cdfdf5e8e10ef6789628c6c20293b8d2222"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "sha256": "b145b092f1f54c367a0cf03ba0d3543cefa46290da356320a84027869f67599e"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec"
+    }
+  ],
+  "artifactDigest": "b523fd3133398b53b513172f65e440f95ea855622fb19e1755f03680adf829be"
 } as const;
 export const generatedKnowledge = [
   {
@@ -1256,5 +1329,3048 @@ export const generatedKnowledge = [
         "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
       }
     ]
+  }
+];
+export const generatedKnowledgePatches = [
+  {
+    "id": "inventory-pending-receive",
+    "sourceFiles": [
+      "src/app/inventory/page.tsx",
+      "src/components/BusinessWriteControls.tsx",
+      "src/lib/rbac.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260722_001_pending_receival_undo.sql",
+      "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+      "supabase/migrations/20260923160200_partial_pending_receipts.sql"
+    ],
+    "relatedRecordIds": [
+      "workflow-po-receivals",
+      "inventory-stock-reservation",
+      "inventory-activity",
+      "inventory-stock-search",
+      "knowledge-material-assessment"
+    ],
+    "toolNames": [],
+    "architecture": {
+      "entities": [
+        "Pending Receival",
+        "Receipt",
+        "Inventory lot",
+        "Inventory Activity",
+        "Production Job"
+      ],
+      "relationships": [
+        {
+          "from": "Pending Receival",
+          "relation": "may have",
+          "to": "Receipt",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Receipt",
+          "relation": "updates",
+          "to": "Inventory lot"
+        },
+        {
+          "from": "Receipt",
+          "relation": "records history in",
+          "to": "Inventory Activity"
+        }
+      ],
+      "facts": [
+        {
+          "text": "A receipt quantity must be positive and no greater than the remaining expected quantity.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Only the received quantity enters Inventory; any outstanding balance remains pending.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Receiving preserves the canonical Job reservation, temporary reservation or general-stock identity.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "Use an outstanding receival and enter Received By and Quantity received now."
+      ],
+      "effects": [
+        "Updates the received balance, Inventory lot and transaction history together.",
+        "Retains the existing reservation identity in stock and history."
+      ],
+      "approvalRequirements": [
+        "Review the received quantity and choose Confirm Receive.",
+        "Undo latest receipt is a separate Inventory-adjustment action with its own confirmation."
+      ],
+      "limitations": [
+        "If a result is uncertain, keep the dialog open and retry the same quantity there.",
+        "Undo can be blocked when receipt lineage is unavailable or the received stock changed or is no longer fully available.",
+        "Receiving material does not automatically establish that every Job requirement is satisfied."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "src/app/inventory/page.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "sha256": "e0809142b5a9a1e2aaed1b63290f19f61150d47b934aa14e77d0a29ffd6bb14c"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260722_001_pending_receival_undo.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7909d5bf7a7155dfd5f98ec4b5257152cc1503ba",
+        "sha256": "275ac10b1bfa676d5d177299fe9dc16b8ab6c93157950c3211e3cf45f15eeb9a"
+      },
+      {
+        "path": "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "29f5c415b20c7592b375d281c563aa13a825608f",
+        "sha256": "279f581ba29d1bb1c4282aa0831ccfd44c10fc21a3ba8f1f656001aacc0c59d4"
+      },
+      {
+        "path": "supabase/migrations/20260923160200_partial_pending_receipts.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "99a6a44c9c1faf5995160e4f122b947a0f59e285",
+        "sha256": "ece9c0f4980340c45be5445cafdbb447b4e0a68ecb5bceeb52fbfba6f9a09944"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "guidance-only"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/app/inventory/page.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "sha256": "e0809142b5a9a1e2aaed1b63290f19f61150d47b934aa14e77d0a29ffd6bb14c",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260722_001_pending_receival_undo.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7909d5bf7a7155dfd5f98ec4b5257152cc1503ba",
+        "sha256": "275ac10b1bfa676d5d177299fe9dc16b8ab6c93157950c3211e3cf45f15eeb9a",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "29f5c415b20c7592b375d281c563aa13a825608f",
+        "sha256": "279f581ba29d1bb1c4282aa0831ccfd44c10fc21a3ba8f1f656001aacc0c59d4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260923160200_partial_pending_receipts.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "99a6a44c9c1faf5995160e4f122b947a0f59e285",
+        "sha256": "ece9c0f4980340c45be5445cafdbb447b4e0a68ecb5bceeb52fbfba6f9a09944",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "a8c067359dcf1de554e3f1ab25012759c17145a3150fb03b183c8b34a60113aa"
+  },
+  {
+    "id": "inventory-stock-reservation",
+    "sourceFiles": [
+      "src/app/inventory/page.tsx",
+      "src/components/BusinessWriteControls.tsx",
+      "src/lib/rbac.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260714_005_inventory_production_job_reservations.sql",
+      "supabase/migrations/20260721_001_atomic_inventory_reservations.sql"
+    ],
+    "relatedRecordIds": [
+      "inventory-stock-search",
+      "inventory-pending-receive",
+      "workflow-po-allocations",
+      "knowledge-material-assessment",
+      "knowledge-production"
+    ],
+    "toolNames": [
+      "find_jobs"
+    ],
+    "architecture": {
+      "entities": [
+        "Inventory lot",
+        "Production Job",
+        "Temporary reservation",
+        "General stock"
+      ],
+      "relationships": [
+        {
+          "from": "Inventory lot",
+          "relation": "may reserve stock for",
+          "to": "Production Job",
+          "cardinality": "zero-or-one"
+        },
+        {
+          "from": "Production Job",
+          "relation": "may have reserved",
+          "to": "Inventory lot",
+          "cardinality": "one-to-many"
+        }
+      ],
+      "facts": [
+        {
+          "text": "A lot is general stock, reserved for one canonical Job, or reserved under one temporary work label; canonical and temporary reservation identities are mutually exclusive.",
+          "classification": "schema-contract",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Splitting a new reservation requires general stock and a positive quantity no greater than the selected lot quantity.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Stock reserved elsewhere is distinct from stock available for this Job.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "Select the individual lot and the intended canonical Job or temporary label.",
+        "Save material-identity corrections separately before splitting or releasing a reservation."
+      ],
+      "effects": [
+        "A partial reservation separates a reserved lot from the remaining general stock.",
+        "Releasing a reservation returns it to general stock; compatible general lots may merge."
+      ],
+      "approvalRequirements": [
+        "Review the lot, target and quantity, then use the existing Save Details or Return to General Stock action."
+      ],
+      "limitations": [
+        "A temporary reservation label does not create a canonical Job.",
+        "Reservation knowledge does not authorize reallocating another Job’s stock.",
+        "Current balances already separate reservation identities; do not subtract the same reservation twice."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "src/app/inventory/page.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "sha256": "e0809142b5a9a1e2aaed1b63290f19f61150d47b934aa14e77d0a29ffd6bb14c"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260714_005_inventory_production_job_reservations.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "9e814137d3a1ac0ad4f006d57014a53b7a70cc86",
+        "sha256": "2fae6f4c0a8efa64ce3302519776457b15671dfca213d2a37c1b9f303b4f8ee5"
+      },
+      {
+        "path": "supabase/migrations/20260721_001_atomic_inventory_reservations.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "ecb3ca24c7b46a5f8446be76d338c8f228cf47a1",
+        "sha256": "8ceefe9555e995c23f4e67cb17cd690d01649365589ede869bd672bbd49d74b8"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "read-if-registered"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/app/inventory/page.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "sha256": "e0809142b5a9a1e2aaed1b63290f19f61150d47b934aa14e77d0a29ffd6bb14c",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260714_005_inventory_production_job_reservations.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "9e814137d3a1ac0ad4f006d57014a53b7a70cc86",
+        "sha256": "2fae6f4c0a8efa64ce3302519776457b15671dfca213d2a37c1b9f303b4f8ee5",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260721_001_atomic_inventory_reservations.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "ecb3ca24c7b46a5f8446be76d338c8f228cf47a1",
+        "sha256": "8ceefe9555e995c23f4e67cb17cd690d01649365589ede869bd672bbd49d74b8",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "6d2295fbb62d33a690f1081a507704ad1888b679fbadeed7f7360f1389147590"
+  },
+  {
+    "id": "knowledge-intake",
+    "sourceFiles": [
+      "docs/project/PROJECT_MANIFEST.md",
+      "src/app/pre-production/page.tsx",
+      "src/components/BusinessWriteControls.tsx",
+      "src/lib/rbac.ts",
+      "src/modules/intake-materials/related-records.ts",
+      "src/modules/pre-production/BidTools.tsx",
+      "src/modules/pre-production/BidWorkspace.tsx",
+      "src/modules/samples/queries.ts",
+      "supabase/functions/_shared/rbac.ts"
+    ],
+    "terms": "intake bid bids preproduction pre production customer project owner overview tools related records won deposit convert handoff projection timeline proposal sample overview bid preparation create proposal sample",
+    "path": "Intake → Bid → Overview → Bid Preparation",
+    "guidance": "Open Intake and select the Bid, then open Overview. Bid Preparation contains Create Proposal, Create Sample, Open related Proposals and Open related Samples; there is no Tools tab. Create Sample starts a new canonical Sample in the established generator with this Bid, Customer and Project context. Save the Sample there. Open related Samples opens Bid-context Samples, where Existing standalone Sample → Link Sample links an existing standalone Sample. A Sample linked to another Bid cannot be reassigned by this action. Creating or linking Samples requires the existing Intake, operational-read and business-write permissions. Create Proposal opens the established Proposal Generator with this Bid attached; Proposal access is independently required in addition to Intake and business-write permission. A Proposal can exist and be issued without a Production Job. Existing generated documents retain their historical contents.",
+    "source": "TenOps released Bid Preparation · October 28, 2026",
+    "relatedRecordIds": [
+      "sample-bid",
+      "proposal-create",
+      "workflow-intake-convert",
+      "knowledge-material-assessment",
+      "knowledge-production"
+    ],
+    "toolNames": [
+      "find_jobs",
+      "get_job_summary"
+    ],
+    "architecture": {
+      "entities": [
+        "Bid",
+        "Proposal",
+        "Sample",
+        "Production Job"
+      ],
+      "relationships": [
+        {
+          "from": "Bid",
+          "relation": "shows authorized related",
+          "to": "Proposal"
+        },
+        {
+          "from": "Bid",
+          "relation": "shows authorized related",
+          "to": "Sample"
+        },
+        {
+          "from": "Bid",
+          "relation": "may link its converted",
+          "to": "Production Job",
+          "cardinality": "zero-or-one"
+        }
+      ],
+      "facts": [
+        {
+          "text": "Bid Preparation is on Overview and contains the existing Proposal and Sample creation and library actions.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Ordinary Bid activity does not require governing documents, material-planning inputs or a Production Job.",
+          "classification": "product-convention",
+          "verification": "released-source"
+        }
+      ],
+      "preconditions": [],
+      "effects": [
+        "Existing related records and the canonical converted Job remain discoverable through their authorized context."
+      ],
+      "approvalRequirements": [],
+      "limitations": [
+        "Author formulations in Samples and use existing commercial document workflows rather than duplicating them in Intake.",
+        "Material shortages, missing references and planning fields do not replace the saved Won and deposit conversion gate.",
+        "Access to a Bid does not by itself grant access to Proposal content or authorize Production scheduling."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "docs/project/PROJECT_MANIFEST.md",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+        "sha256": "75c1c5c5ca75e9ec8c84cd17a970786ca312904e0b249bb478c641182843043d"
+      },
+      {
+        "path": "src/app/pre-production/page.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "8b57440af397385a08aaec27c5331fd1a05556e0",
+        "sha256": "f9d97b5883fa0615f3025acfc76c84dca728c0f2b61b82322a96521dfbbddb4e"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5"
+      },
+      {
+        "path": "src/modules/intake-materials/related-records.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "af9042a8d3b1b5931c6525298d4ba35a247c01e4",
+        "sha256": "eb17bb6690e551895c1fa94215cfbb785a239e9bb266b52c08a921394d048f75"
+      },
+      {
+        "path": "src/modules/pre-production/BidTools.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "b9b30dbeeb869e670de8a79f25b5505773b593a5",
+        "sha256": "6c2f1cd37c2142cfb809a0840227ae534a495bd5f09ea20ae1ae59016733476b"
+      },
+      {
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "sha256": "8d167425d5a8a03b78e968380284ff333ceef0af1a6c680bc309102b14ba15ad"
+      },
+      {
+        "path": "src/modules/samples/queries.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "d2417e47f62d4ee56472f472fa120a96226e5782",
+        "sha256": "67e87ec4bbb9385e98933aca3323cddc14c41af55d277ef4332788128045cd16"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "bidPreparation",
+      "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+      "verifiedAt": "2026-10-28",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-bid-preparation-release--october-28-2026",
+      "receiptSha256": "067fb9fca89e5238fc16985ea82023672da728da1f127b6153304c1ec5084eb1",
+      "receiptKind": "committed",
+      "receiptRevision": "d3f42a76eaa3bc4d9bfe9fbd048d8ef61355efb8"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-bid-preparation-release--october-28-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "read-if-registered"
+    },
+    "dependencyBindings": [
+      {
+        "path": "docs/project/PROJECT_MANIFEST.md",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+        "sha256": "75c1c5c5ca75e9ec8c84cd17a970786ca312904e0b249bb478c641182843043d",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/app/pre-production/page.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "8b57440af397385a08aaec27c5331fd1a05556e0",
+        "sha256": "f9d97b5883fa0615f3025acfc76c84dca728c0f2b61b82322a96521dfbbddb4e",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/intake-materials/related-records.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "af9042a8d3b1b5931c6525298d4ba35a247c01e4",
+        "sha256": "eb17bb6690e551895c1fa94215cfbb785a239e9bb266b52c08a921394d048f75",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/pre-production/BidTools.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "b9b30dbeeb869e670de8a79f25b5505773b593a5",
+        "sha256": "6c2f1cd37c2142cfb809a0840227ae534a495bd5f09ea20ae1ae59016733476b",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "sha256": "8d167425d5a8a03b78e968380284ff333ceef0af1a6c680bc309102b14ba15ad",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/samples/queries.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "d2417e47f62d4ee56472f472fa120a96226e5782",
+        "sha256": "67e87ec4bbb9385e98933aca3323cddc14c41af55d277ef4332788128045cd16",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "12c542cefb941656b303af23de577dc5248d83527940c5f0d11d7b07c1400f2b"
+  },
+  {
+    "id": "knowledge-manpower",
+    "sourceFiles": [
+      "docs/project/PROJECT_MANIFEST.md",
+      "src/app/manpower-reporting/page.tsx",
+      "src/components/BusinessWriteControls.tsx",
+      "src/lib/rbac.ts",
+      "src/modules/manpower/ManpowerWorkspace.tsx",
+      "src/modules/manpower/group-presentation.ts",
+      "src/modules/manpower/progressive-history.ts",
+      "supabase/functions/_shared/rbac.ts"
+    ],
+    "terms": "manpower reporting labor labour filter job jobs worker task date search hours reporting group temporary label total default order sort groups reporting date job name newest alphabetical",
+    "path": "Manpower Reporting → Sort groups",
+    "guidance": "Manpower Reporting defaults Sort groups to Reporting date, newest first. Groups with a leading reporting date in their name are ordered by that date, newest first; groups without a valid leading date follow, with creation time, name and ID as stable fallbacks. Editing a Job or labor entry does not move its group by modification time. Groups start collapsed. Rows in an expanded group are ordered by Work Date, newest first. To sort by Job name, use Sort groups → Job name, A–Z. Work date, newest first is the other alternative and uses the latest work date in each group. Mixed-Job groups use their alphabetically first Job or work label; empty groups follow. Sorting applies to loaded complete groups, and the order can change while older groups load. Analytics use the selected period; expanded groups retain complete membership across all dates. Wait for All available history loaded before treating search as exhaustive. Search and Product Category filters change displayed rows and totals without changing saved data. Reporting groups are not Jobs.",
+    "source": "TenOps released Manpower ordering · October 29, 2026",
+    "provenance": [
+      {
+        "path": "docs/project/PROJECT_MANIFEST.md",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+        "sha256": "75c1c5c5ca75e9ec8c84cd17a970786ca312904e0b249bb478c641182843043d"
+      },
+      {
+        "path": "src/app/manpower-reporting/page.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "e6715baa82860d92dbf4f7ac300ca59ca416cc3c",
+        "sha256": "bbf92796da7a3a68cc737e7fa98498b8501ef9642b8b559c69bf6397a333f830"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5"
+      },
+      {
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+        "sha256": "7abf39104716cfd5d0e237512c49e8b3959478ce5fea1d27794c5d5b584c2504"
+      },
+      {
+        "path": "src/modules/manpower/group-presentation.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "52b23bba2a4a31d71f2c29318d3dfa6f3fd41da5",
+        "sha256": "402096547c076380fae4083eb6ae80b3f48291a7d0f1b90a814dcd974beec08b"
+      },
+      {
+        "path": "src/modules/manpower/progressive-history.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "b0a4e31f9221aa9ffe6e387b3ecddfbd1d92061d",
+        "sha256": "ae5f55f9a8a05d066d0a08e4fc89d6486d47899ae72178ca966f058968f122b0"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "manpower",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "verifiedAt": "2026-10-29",
+      "receipt": "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+      "receiptAnchor": "executed-approved-priority-release--october-29-2026",
+      "receiptSha256": "5dc0a02e04e0a9c4cf3ed5878f662df94b224b1b8cc633d36698df9f31b93027",
+      "receiptKind": "captured-working-receipt",
+      "receiptCapture": "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+      "receiptCaptureSha256": "683ff3132cc63820e85e016822b3fdae07937cf4e90e61810709fe2e64e2d421",
+      "originWorkingSha256": "1e304bda4180e2fd4b366a2fc7e474e837ac8099d9e237e56478a755156b48c5"
+    },
+    "evidence": "docs/project-memory/2026-10-29-manpower-default-restoration.md#executed-approved-priority-release--october-29-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "guidance-only"
+    },
+    "dependencyBindings": [
+      {
+        "path": "docs/project/PROJECT_MANIFEST.md",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+        "sha256": "75c1c5c5ca75e9ec8c84cd17a970786ca312904e0b249bb478c641182843043d",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/app/manpower-reporting/page.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "e6715baa82860d92dbf4f7ac300ca59ca416cc3c",
+        "sha256": "bbf92796da7a3a68cc737e7fa98498b8501ef9642b8b559c69bf6397a333f830",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+        "sha256": "7abf39104716cfd5d0e237512c49e8b3959478ce5fea1d27794c5d5b584c2504",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/group-presentation.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "52b23bba2a4a31d71f2c29318d3dfa6f3fd41da5",
+        "sha256": "402096547c076380fae4083eb6ae80b3f48291a7d0f1b90a814dcd974beec08b",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/progressive-history.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "b0a4e31f9221aa9ffe6e387b3ecddfbd1d92061d",
+        "sha256": "ae5f55f9a8a05d066d0a08e4fc89d6486d47899ae72178ca966f058968f122b0",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "4f94350d938d12b02bad9f7f13a61fcdec14ae8eb89788c4e51cf59c15c8e5e3"
+  },
+  {
+    "id": "knowledge-material-assessment",
+    "sourceFiles": [
+      "src/components/BusinessWriteControls.tsx",
+      "src/lib/rbac.ts",
+      "src/modules/intake-materials/data.ts",
+      "src/modules/intake-materials/requirements.ts",
+      "src/modules/pre-production/BidWorkspace.tsx",
+      "supabase/functions/_shared/bid-scope-handler.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20261026110000_bid_accepted_scope.sql"
+    ],
+    "relatedRecordIds": [
+      "sample-save",
+      "sample-work-order",
+      "knowledge-blend",
+      "inventory-stock-search",
+      "inventory-stock-reservation",
+      "workflow-po-receivals",
+      "inventory-pending-receive",
+      "workflow-intake-convert"
+    ],
+    "toolNames": [],
+    "architecture": {
+      "entities": [
+        "Material requirement",
+        "Captured Sample or issued Blend",
+        "Reviewed material mapping",
+        "General stock",
+        "Own-Job reservation",
+        "Other reservation",
+        "Incoming supply",
+        "Supplier evidence"
+      ],
+      "relationships": [
+        {
+          "from": "Material requirement",
+          "relation": "derives from",
+          "to": "Captured Sample or issued Blend"
+        },
+        {
+          "from": "Material requirement",
+          "relation": "uses",
+          "to": "Reviewed material mapping"
+        },
+        {
+          "from": "Material assessment",
+          "relation": "distinguishes",
+          "to": "Incoming supply"
+        },
+        {
+          "from": "Material assessment",
+          "relation": "uses",
+          "to": "Supplier evidence"
+        }
+      ],
+      "facts": [
+        {
+          "text": "Requirement calculation uses exact captured formulation authority and reviewed quantity or yield inputs.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Availability assessment requires reviewed material identity and unit-conversion evidence; similar names alone do not establish a match.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "General stock, own-Job reservations, reservations elsewhere and incoming supply remain separate.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Repeated requirements cannot each claim the same shared stock; missing quantities or supplier evidence remain unknown.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "Resolve formulation, material mapping and unit evidence before treating calculated quantities as usable.",
+        "Use supplier/catalog evidence or documented manual estimates for lead-time discussion."
+      ],
+      "effects": [
+        "Existing retained services can derive requirements and read-only shortages from reviewed evidence."
+      ],
+      "approvalRequirements": [
+        "Review unresolved assumptions and evidence in the existing owning workflow; knowledge alone does not approve stock or purchasing actions."
+      ],
+      "limitations": [
+        "These sources do not verify a current employee-facing assessment editor.",
+        "Assessment does not reserve stock, create orders, receive material or change Material Status.",
+        "Incoming supply is not on-hand stock, and an ETA is not a promised Production or customer delivery date.",
+        "Current assistant capabilities must be checked separately; a described business service is not automatically an executable assistant tool."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5"
+      },
+      {
+        "path": "src/modules/intake-materials/data.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "8b84fdda6f961cc022fb8d3f23acc03df7f3ae48",
+        "sha256": "0a380cd9ffc1dbf77a9bfd8db47449ddd76fc541f9e3e808a7534b0320bee8a0"
+      },
+      {
+        "path": "src/modules/intake-materials/requirements.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "70bbe992c1ab006313859153383d7577833f5e88",
+        "sha256": "027ee4cd58e86432edc8be7c8bf24e19ea3f507505099bf341c40702363d3dad"
+      },
+      {
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+        "sha256": "8b74be3c5dfc5be6b4c7216020d36fece3bce28cf64d6eb614eaf08363e090bb"
+      },
+      {
+        "path": "supabase/functions/_shared/bid-scope-handler.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "210206dc23ced4e55b814c8062890d038ac43775",
+        "sha256": "5b43ab9418c28f708fe6405bcf25e161aa3e28a9c000400dce5eff97ff79410e"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20261026110000_bid_accepted_scope.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "6d29daa9c9a0377cefb7226bebd76ec3c9499e06",
+        "sha256": "57fef9390fe54577df2a464f544b1de495494c45800a8594131ce491f1d3da0c"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "partial",
+      "assistant": "guidance-only"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/intake-materials/data.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "8b84fdda6f961cc022fb8d3f23acc03df7f3ae48",
+        "sha256": "0a380cd9ffc1dbf77a9bfd8db47449ddd76fc541f9e3e808a7534b0320bee8a0",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/intake-materials/requirements.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "70bbe992c1ab006313859153383d7577833f5e88",
+        "sha256": "027ee4cd58e86432edc8be7c8bf24e19ea3f507505099bf341c40702363d3dad",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+        "sha256": "8b74be3c5dfc5be6b4c7216020d36fece3bce28cf64d6eb614eaf08363e090bb",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/bid-scope-handler.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "210206dc23ced4e55b814c8062890d038ac43775",
+        "sha256": "5b43ab9418c28f708fe6405bcf25e161aa3e28a9c000400dce5eff97ff79410e",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20261026110000_bid_accepted_scope.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "6d29daa9c9a0377cefb7226bebd76ec3c9499e06",
+        "sha256": "57fef9390fe54577df2a464f544b1de495494c45800a8594131ce491f1d3da0c",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "fc5439e50c293e040b96f72da7a1906317b6a0d703550ed2e1d7e63c2f09cb7b"
+  },
+  {
+    "id": "knowledge-production",
+    "sourceFiles": [
+      "docs/schemas/OPERATIONAL_REPORTING.md",
+      "docs/workflows/DAILY_PRODUCTION.md",
+      "docs/workflows/PRODUCTION_PIPELINE.md",
+      "src/app/page.tsx",
+      "src/components/BusinessWriteControls.tsx",
+      "src/lib/rbac.ts",
+      "src/modules/production/ProductionWorkspace.tsx",
+      "src/modules/production/jobs.ts",
+      "src/modules/production/readiness.ts",
+      "supabase/functions/_shared/rbac.ts"
+    ],
+    "relatedRecordIds": [
+      "workflow-intake-convert",
+      "production-rework-create",
+      "production-schedule",
+      "manpower-record-labor",
+      "workflow-material-usage",
+      "knowledge-material-assessment"
+    ],
+    "toolNames": [
+      "find_jobs",
+      "get_job_summary",
+      "get_job_planning",
+      "get_job_labor_summary",
+      "get_production_overview"
+    ],
+    "architecture": {
+      "entities": [
+        "Production Job",
+        "Planning completeness",
+        "Material Status",
+        "Labor entry",
+        "Material Usage report",
+        "Actual production output"
+      ],
+      "relationships": [
+        {
+          "from": "Production Job",
+          "relation": "may have",
+          "to": "Labor entry",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Production Job",
+          "relation": "may have",
+          "to": "Material Usage report",
+          "cardinality": "one-to-many"
+        }
+      ],
+      "facts": [
+        {
+          "text": "The canonical Production Job connects operational scheduling, labor, material reporting, reservations and documents.",
+          "classification": "product-convention",
+          "verification": "released-source"
+        },
+        {
+          "text": "Planning completeness is separate from Material Status and Production status.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Labor, material consumption and actual output describe different operational facts.",
+          "classification": "product-convention",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [],
+      "effects": [],
+      "approvalRequirements": [],
+      "limitations": [
+        "Planning Complete does not establish that a Job is unblocked or has sufficient materials.",
+        "These sources do not verify an implemented actual-output reporting capability.",
+        "Saved plans, Blend quantities and labor hours do not establish actual units produced.",
+        "Current Job read tools cannot independently establish physical stock sufficiency or promise completion."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "docs/schemas/OPERATIONAL_REPORTING.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "04c7c4a189cdd5ece39b9be391c09e9c9c0a7224",
+        "sha256": "8c9cb48b7b1b64630edebda72a44e1570d57ca7665db2f8de027926b65ba2b01"
+      },
+      {
+        "path": "docs/workflows/DAILY_PRODUCTION.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "69ab94b8cec01e2521faa2e284db4dd0d5255688",
+        "sha256": "43939812520090c3396f0aac7158e9bc7347e22fe4abd25fafd93e57634ad7d4"
+      },
+      {
+        "path": "docs/workflows/PRODUCTION_PIPELINE.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "c1a4a3ab908e0432b5a2f5b6347579b3e2f4d3df",
+        "sha256": "5ab66b3b36ae500696d82d947b391ad46f158bb8c8b8eab877d184cf6db1523f"
+      },
+      {
+        "path": "src/app/page.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "a195bf11712030d7f23b52e5048d93ee7a3c6b03",
+        "sha256": "73e879a4b02f9f27eb600aeb25b61bcfb9f72e02f71eb0fdc9f17c25c0f86e4d"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5"
+      },
+      {
+        "path": "src/modules/production/ProductionWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "b5ad77cf4a4b2a1425743f1628cd1afbcd2c7fbf",
+        "sha256": "6cd2e6b6b86c4e0f32b64202046c7b19f15118e6ec829d8bb0eefdf7b03285e6"
+      },
+      {
+        "path": "src/modules/production/jobs.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+        "sha256": "57e2f002d27a5dc4d6bcd9965d90806ed09cbd39705e934a1bf2c25784394c2e"
+      },
+      {
+        "path": "src/modules/production/readiness.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "4b7ca6addfa9c1a18505c7a20a6dbad996c89cc4",
+        "sha256": "2679f3039c2316db82e7bdf17647db67fad6c2332a35975013baff058d5de83f"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "read-if-registered"
+    },
+    "dependencyBindings": [
+      {
+        "path": "docs/schemas/OPERATIONAL_REPORTING.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "04c7c4a189cdd5ece39b9be391c09e9c9c0a7224",
+        "sha256": "8c9cb48b7b1b64630edebda72a44e1570d57ca7665db2f8de027926b65ba2b01",
+        "kind": "semantic"
+      },
+      {
+        "path": "docs/workflows/DAILY_PRODUCTION.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "69ab94b8cec01e2521faa2e284db4dd0d5255688",
+        "sha256": "43939812520090c3396f0aac7158e9bc7347e22fe4abd25fafd93e57634ad7d4",
+        "kind": "semantic"
+      },
+      {
+        "path": "docs/workflows/PRODUCTION_PIPELINE.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "c1a4a3ab908e0432b5a2f5b6347579b3e2f4d3df",
+        "sha256": "5ab66b3b36ae500696d82d947b391ad46f158bb8c8b8eab877d184cf6db1523f",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/app/page.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "a195bf11712030d7f23b52e5048d93ee7a3c6b03",
+        "sha256": "73e879a4b02f9f27eb600aeb25b61bcfb9f72e02f71eb0fdc9f17c25c0f86e4d",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/production/ProductionWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "b5ad77cf4a4b2a1425743f1628cd1afbcd2c7fbf",
+        "sha256": "6cd2e6b6b86c4e0f32b64202046c7b19f15118e6ec829d8bb0eefdf7b03285e6",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/production/jobs.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+        "sha256": "57e2f002d27a5dc4d6bcd9965d90806ed09cbd39705e934a1bf2c25784394c2e",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/production/readiness.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "4b7ca6addfa9c1a18505c7a20a6dbad996c89cc4",
+        "sha256": "2679f3039c2316db82e7bdf17647db67fad6c2332a35975013baff058d5de83f",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "3ace359154ce58c830ec4f6da8d642de1ab1d6b8b3c8764e9ca4a2925a81be1b"
+  },
+  {
+    "id": "knowledge-sample-bid",
+    "sourceFiles": [
+      "src/app/pre-production/page.tsx",
+      "src/components/BusinessWriteControls.tsx",
+      "src/lib/rbac.ts",
+      "src/modules/pre-production/BidTools.tsx",
+      "src/modules/pre-production/BidWorkspace.tsx",
+      "src/modules/samples/SampleWorkspace.tsx",
+      "src/modules/samples/queries.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260923215900_intake_early_access.sql"
+    ],
+    "terms": "sample samples bid bids attach link existing standalone context create related tools overview bid preparation create proposal sample",
+    "path": "Intake → Bid → Overview → Bid Preparation",
+    "guidance": "Open Intake and select the Bid, then open Overview. Bid Preparation contains Create Proposal, Create Sample, Open related Proposals and Open related Samples; there is no Tools tab. Create Sample starts a new canonical Sample in the established generator with this Bid, Customer and Project context. Save the Sample there. Open related Samples opens Bid-context Samples, where Existing standalone Sample → Link Sample links an existing standalone Sample. A Sample linked to another Bid cannot be reassigned by this action. Creating or linking Samples requires the existing Intake, operational-read and business-write permissions. Create Proposal opens the established Proposal Generator with this Bid attached; Proposal access is independently required in addition to Intake and business-write permission. A Proposal can exist and be issued without a Production Job. Existing generated documents retain their historical contents.",
+    "source": "TenOps released Bid Preparation · October 28, 2026",
+    "provenance": [
+      {
+        "path": "src/app/pre-production/page.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "8b57440af397385a08aaec27c5331fd1a05556e0",
+        "sha256": "f9d97b5883fa0615f3025acfc76c84dca728c0f2b61b82322a96521dfbbddb4e"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5"
+      },
+      {
+        "path": "src/modules/pre-production/BidTools.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "b9b30dbeeb869e670de8a79f25b5505773b593a5",
+        "sha256": "6c2f1cd37c2142cfb809a0840227ae534a495bd5f09ea20ae1ae59016733476b"
+      },
+      {
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "sha256": "8d167425d5a8a03b78e968380284ff333ceef0af1a6c680bc309102b14ba15ad"
+      },
+      {
+        "path": "src/modules/samples/SampleWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "434b7fa3da6d43b0edb6ae9ca60a56bfef53aca7",
+        "sha256": "8fcbd634590a812404e4b8b7bb73e6eed36cf323534a2fc486be1b526f9e9eb7"
+      },
+      {
+        "path": "src/modules/samples/queries.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "d2417e47f62d4ee56472f472fa120a96226e5782",
+        "sha256": "67e87ec4bbb9385e98933aca3323cddc14c41af55d277ef4332788128045cd16"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260923215900_intake_early_access.sql",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "6bbd384c9f4e69d77741ae6427c71a6e0ba7751c",
+        "sha256": "2c31bac9d889aa4ddae27044ef754d67576b7d06a7b29c19f7c9eee1d0d5cb53"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "bidPreparation",
+      "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+      "verifiedAt": "2026-10-28",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-bid-preparation-release--october-28-2026",
+      "receiptSha256": "067fb9fca89e5238fc16985ea82023672da728da1f127b6153304c1ec5084eb1",
+      "receiptKind": "committed",
+      "receiptRevision": "d3f42a76eaa3bc4d9bfe9fbd048d8ef61355efb8"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-bid-preparation-release--october-28-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "guidance-only"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/app/pre-production/page.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "8b57440af397385a08aaec27c5331fd1a05556e0",
+        "sha256": "f9d97b5883fa0615f3025acfc76c84dca728c0f2b61b82322a96521dfbbddb4e",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/pre-production/BidTools.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "b9b30dbeeb869e670de8a79f25b5505773b593a5",
+        "sha256": "6c2f1cd37c2142cfb809a0840227ae534a495bd5f09ea20ae1ae59016733476b",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "sha256": "8d167425d5a8a03b78e968380284ff333ceef0af1a6c680bc309102b14ba15ad",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/samples/SampleWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "434b7fa3da6d43b0edb6ae9ca60a56bfef53aca7",
+        "sha256": "8fcbd634590a812404e4b8b7bb73e6eed36cf323534a2fc486be1b526f9e9eb7",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/samples/queries.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "d2417e47f62d4ee56472f472fa120a96226e5782",
+        "sha256": "67e87ec4bbb9385e98933aca3323cddc14c41af55d277ef4332788128045cd16",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260923215900_intake_early_access.sql",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "6bbd384c9f4e69d77741ae6427c71a6e0ba7751c",
+        "sha256": "2c31bac9d889aa4ddae27044ef754d67576b7d06a7b29c19f7c9eee1d0d5cb53",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "335b6f326360d619b254d1b6d4ac910426c7aa6e2efde7b2b2288cc96204259f"
+  },
+  {
+    "id": "manpower-record-labor",
+    "sourceFiles": [
+      "docs/project-memory/2026-10-20-manpower-progressive-release.md",
+      "src/components/BusinessWriteControls.tsx",
+      "src/lib/rbac.ts",
+      "src/modules/manpower/ManpowerWorkspace.tsx",
+      "src/modules/manpower/product-reporting.ts",
+      "src/modules/manpower/work-target.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260824_002_manpower_rework_attribution.sql"
+    ],
+    "relatedRecordIds": [
+      "workflow-manpower-history",
+      "production-rework-create",
+      "knowledge-production",
+      "workflow-material-usage"
+    ],
+    "toolNames": [
+      "find_jobs",
+      "get_job_labor_summary"
+    ],
+    "architecture": {
+      "entities": [
+        "Reporting group",
+        "Labor entry",
+        "Production Job",
+        "Rework cycle",
+        "Temporary work label",
+        "Product Category"
+      ],
+      "relationships": [
+        {
+          "from": "Reporting group",
+          "relation": "organizes",
+          "to": "Labor entry",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Labor entry",
+          "relation": "may attribute work to",
+          "to": "Production Job",
+          "cardinality": "zero-or-one"
+        },
+        {
+          "from": "Labor entry",
+          "relation": "may attribute work to",
+          "to": "Rework cycle",
+          "cardinality": "zero-or-one"
+        }
+      ],
+      "facts": [
+        {
+          "text": "A reporting group organizes labor entry and is independent of Production Job identity.",
+          "classification": "schema-contract",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "A labor entry identifies a canonical Job or a temporary work label; Rework attribution must belong to the same canonical Job.",
+          "classification": "schema-contract",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Total labor hours are derived from AM plus PM hours; hours must be nonnegative and total no more than 24 per entry.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "Use the existing active Worker, Task and Product Category selections for new entries.",
+        "Choose the appropriate original Job, Rework cycle or temporary work identity."
+      ],
+      "effects": [
+        "Saved labor contributes to reporting under its recorded work identity and date.",
+        "Original or unclassified labor and explicitly attributed Rework labor remain distinguishable."
+      ],
+      "approvalRequirements": [
+        "Review the entry and use Add Entry or the existing edit-save action."
+      ],
+      "limitations": [
+        "A temporary work label does not create a Job or automatically appear in canonical Job labor totals.",
+        "Labor hours do not establish actual output, remaining work or physical material availability."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "docs/project-memory/2026-10-20-manpower-progressive-release.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "525d6f7ed3d2523429593c98c03a95d05b11fa20",
+        "sha256": "0529e7f37404d6cca60fd86f89109d4030df19ba61d2546c1ead8a97bbef5158"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5"
+      },
+      {
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+        "sha256": "7df2c298a3aa6e348e180b8bbf4e48b662b9ff82018708f91fdb799a87ca057f"
+      },
+      {
+        "path": "src/modules/manpower/product-reporting.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "3f0f326c8fdc9622368fdc7d43441620faf48adc",
+        "sha256": "89da66e5cdc2ed30586236db15ab08ddf12ff4bbcd7bea1144cabd7dac5c512c"
+      },
+      {
+        "path": "src/modules/manpower/work-target.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "6a5e8265c92e9a84102365e87463c0ce8ebb06f8",
+        "sha256": "bf7d309c930499a2235c649e4827904d0591866327472edae1c38ce9429cdf4f"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260824_002_manpower_rework_attribution.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "021cac82ecbb62cce0f873abaef07ad74b386b23",
+        "sha256": "00498092d2e60b98d747adf30e556c2c9a45a71df809ae62e94ad0be7fe7529c"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "read-if-registered"
+    },
+    "dependencyBindings": [
+      {
+        "path": "docs/project-memory/2026-10-20-manpower-progressive-release.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "525d6f7ed3d2523429593c98c03a95d05b11fa20",
+        "sha256": "0529e7f37404d6cca60fd86f89109d4030df19ba61d2546c1ead8a97bbef5158",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/lib/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "0a8842933a4e2267679b730dab20b0cb7d7e9a4c",
+        "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+        "sha256": "7df2c298a3aa6e348e180b8bbf4e48b662b9ff82018708f91fdb799a87ca057f",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/product-reporting.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "3f0f326c8fdc9622368fdc7d43441620faf48adc",
+        "sha256": "89da66e5cdc2ed30586236db15ab08ddf12ff4bbcd7bea1144cabd7dac5c512c",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/work-target.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "6a5e8265c92e9a84102365e87463c0ce8ebb06f8",
+        "sha256": "bf7d309c930499a2235c649e4827904d0591866327472edae1c38ce9429cdf4f",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260824_002_manpower_rework_attribution.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "021cac82ecbb62cce0f873abaef07ad74b386b23",
+        "sha256": "00498092d2e60b98d747adf30e556c2c9a45a71df809ae62e94ad0be7fe7529c",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "1916f94a7ac2b9c832c33bdf057494b0fad89e65a1b72838ab5f1b025b82aae4"
+  },
+  {
+    "id": "production-rework-create",
+    "sourceFiles": [
+      "docs/architecture/production-rework.md",
+      "src/modules/production/components/CreateReworkDialog.tsx",
+      "src/modules/production/components/ProductionJobInspector.tsx",
+      "src/modules/production/components/ReworkQuickAction.tsx",
+      "src/modules/production/rework.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260817_003_production_rework_cycles.sql"
+    ],
+    "relatedRecordIds": [
+      "knowledge-production",
+      "manpower-record-labor",
+      "production-rework-status",
+      "production-schedule"
+    ],
+    "toolNames": [
+      "find_jobs",
+      "get_job_summary"
+    ],
+    "architecture": {
+      "entities": [
+        "Production Job",
+        "Original Production lifecycle",
+        "Rework cycle",
+        "Labor entry"
+      ],
+      "relationships": [
+        {
+          "from": "Production Job",
+          "relation": "has historical",
+          "to": "Rework cycle",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Labor entry",
+          "relation": "may identify",
+          "to": "Rework cycle",
+          "cardinality": "zero-or-one"
+        }
+      ],
+      "facts": [
+        {
+          "text": "Rework belongs to the existing canonical Production Job; it does not create another commercial Job.",
+          "classification": "schema-contract",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Only one Rework cycle may be active for a Job at a time.",
+          "classification": "schema-contract",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Active Rework supplies the displayed operational status and schedule while preserving the original Production status and dates.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "The Job must be complete, unarchived and have no active Rework cycle.",
+        "Provide the existing reason, scope and Intake / Return Date."
+      ],
+      "effects": [
+        "The new Rework cycle remains associated with the same Job.",
+        "Commercial documents, Purchase Orders, files and Job Updates remain Job-scoped."
+      ],
+      "approvalRequirements": [
+        "Review the Rework details and choose Create Rework in the existing application."
+      ],
+      "limitations": [
+        "Free-text Rework scope does not establish piece-level or Color Plate-level analytics.",
+        "Viewing Job facts does not authorize creating or changing Rework."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "docs/architecture/production-rework.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "b35109db4b3a00e20d2152d16bf94009596447e3",
+        "sha256": "4257efd63cd5670ad44992188a37aa322e9421c891cefc556b2d45b76cefb966"
+      },
+      {
+        "path": "src/modules/production/components/CreateReworkDialog.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "e536e1d15bc73d30334ab83922bec2cd04d4a25a",
+        "sha256": "516dae242c81952167b56009d96000d732dcb06f1125dd76971962123e82182c"
+      },
+      {
+        "path": "src/modules/production/components/ProductionJobInspector.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "51762b1470af70061c9dbd8844444c195892f345",
+        "sha256": "66160963071a4c2170d9037f7b78e52077d4c6e4be0b1b3fca0d6cb5d9865075"
+      },
+      {
+        "path": "src/modules/production/components/ReworkQuickAction.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "ae173a6b796372305587c57227192b73b29b5adf",
+        "sha256": "28b2e2c05c6b9092968590e83c3c8ad04a19dfa9d74457e68a51d3df0b9246e6"
+      },
+      {
+        "path": "src/modules/production/rework.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "fb52a37c850a83d1a726697b0a38f397cf45e7b9",
+        "sha256": "6eeb7702e74eeb028251f9f5c0dae963b4014c91978fa9bb7346efeb53373413"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260817_003_production_rework_cycles.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "28bccabe4f33b6e607a6ea55846988447534bdf5",
+        "sha256": "99918689083a60d1d340d7ce9894e84385073e1aa57d51fddb826fbc57797cb2"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "read-if-registered"
+    },
+    "dependencyBindings": [
+      {
+        "path": "docs/architecture/production-rework.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "b35109db4b3a00e20d2152d16bf94009596447e3",
+        "sha256": "4257efd63cd5670ad44992188a37aa322e9421c891cefc556b2d45b76cefb966",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/production/components/CreateReworkDialog.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "e536e1d15bc73d30334ab83922bec2cd04d4a25a",
+        "sha256": "516dae242c81952167b56009d96000d732dcb06f1125dd76971962123e82182c",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/production/components/ProductionJobInspector.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "51762b1470af70061c9dbd8844444c195892f345",
+        "sha256": "66160963071a4c2170d9037f7b78e52077d4c6e4be0b1b3fca0d6cb5d9865075",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/production/components/ReworkQuickAction.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "ae173a6b796372305587c57227192b73b29b5adf",
+        "sha256": "28b2e2c05c6b9092968590e83c3c8ad04a19dfa9d74457e68a51d3df0b9246e6",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/production/rework.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "fb52a37c850a83d1a726697b0a38f397cf45e7b9",
+        "sha256": "6eeb7702e74eeb028251f9f5c0dae963b4014c91978fa9bb7346efeb53373413",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260817_003_production_rework_cycles.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "28bccabe4f33b6e607a6ea55846988447534bdf5",
+        "sha256": "99918689083a60d1d340d7ce9894e84385073e1aa57d51fddb826fbc57797cb2",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "c5480976b6e9eef7d1a6638bdc5d018bc695b4a177db5f7c455153262095bdce"
+  },
+  {
+    "id": "proposal-issue-revise",
+    "sourceFiles": [
+      "src/components/ToolboxLauncher.tsx",
+      "src/modules/proposals/ProposalPanel.tsx",
+      "src/modules/proposals/ProposalWorkspace.tsx",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260827_004_proposal_generator_v1.sql",
+      "supabase/migrations/20260908_004_proposal_generator_v2.sql",
+      "supabase/migrations/20261005120000_read_only_messaging_write.sql"
+    ],
+    "relatedRecordIds": [
+      "proposal-create",
+      "sample-bid",
+      "workflow-intake-convert"
+    ],
+    "toolNames": [],
+    "architecture": {
+      "entities": [
+        "Proposal",
+        "Internal Estimate",
+        "Issued revision",
+        "Bid",
+        "Production Job"
+      ],
+      "relationships": [
+        {
+          "from": "Proposal",
+          "relation": "retains historical",
+          "to": "Issued revision",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Proposal",
+          "relation": "may have context from",
+          "to": "Production Job",
+          "cardinality": "zero-or-one"
+        }
+      ],
+      "facts": [
+        {
+          "text": "A Proposal can exist and be issued independently of a Production Job.",
+          "classification": "product-convention",
+          "verification": "released-source"
+        },
+        {
+          "text": "Issuance freezes the customer Proposal and Internal Estimate snapshots.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Changing an issued Proposal uses a new revision draft; the earlier issued document remains unchanged.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "Existing Proposal access is required independently of access to a Job or Bid.",
+        "Review the customer Proposal and Internal Estimate before issuance."
+      ],
+      "effects": [
+        "Creates historical issued content for the reviewed revision."
+      ],
+      "approvalRequirements": [
+        "Choose Issue / Generate PDF and confirm issuance in the existing application."
+      ],
+      "limitations": [
+        "Later customer edits or Bid/Job relationships do not rewrite issued history.",
+        "Knowing Proposal relationships does not grant access to restricted commercial content."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "src/components/ToolboxLauncher.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7c3730de2d29aa386ce718a92e9734c1208ffdf0",
+        "sha256": "80883186c0570d3e2a00b435385fcc10cd8813fa916934b91d92df9b7bdd0a5c"
+      },
+      {
+        "path": "src/modules/proposals/ProposalPanel.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "fbec9cc10906be712bd89989a621c0bee733c898",
+        "sha256": "1b39434bf33e59cb66305132580c3394deaac69298e595892fd06dbdac85ed11"
+      },
+      {
+        "path": "src/modules/proposals/ProposalWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "a99a4a13db3d8d29618b55152c94700f341dd001",
+        "sha256": "669eaeffee59c60df55731ca7b5b32dee6a3b9f4fa4730ffbc376d7c9911ee5e"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260827_004_proposal_generator_v1.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7a3f07164745fc63adcf0324aebffec7336f2b60",
+        "sha256": "5976d6f3df4c1ddb95e6d6113e072308e80a355cef6aec4cdc2500b0cfe4c31c"
+      },
+      {
+        "path": "supabase/migrations/20260908_004_proposal_generator_v2.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "6f329c9e2c06965c4c4f27f5e262b8c4372e3011",
+        "sha256": "bfc44833cf5a7d26e3efe06d200629041c16495dd988b70d07fe7258cdb43a46"
+      },
+      {
+        "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "d4ca85d001babb54acb6895ac5ee34726e4b40ad",
+        "sha256": "b02fcd9f292d381426a3dbae35f0ccab0076a5f91d846931414e96c0b88a22fc"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "guidance-only"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/components/ToolboxLauncher.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7c3730de2d29aa386ce718a92e9734c1208ffdf0",
+        "sha256": "80883186c0570d3e2a00b435385fcc10cd8813fa916934b91d92df9b7bdd0a5c",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/proposals/ProposalPanel.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "fbec9cc10906be712bd89989a621c0bee733c898",
+        "sha256": "1b39434bf33e59cb66305132580c3394deaac69298e595892fd06dbdac85ed11",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/proposals/ProposalWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "a99a4a13db3d8d29618b55152c94700f341dd001",
+        "sha256": "669eaeffee59c60df55731ca7b5b32dee6a3b9f4fa4730ffbc376d7c9911ee5e",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260827_004_proposal_generator_v1.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7a3f07164745fc63adcf0324aebffec7336f2b60",
+        "sha256": "5976d6f3df4c1ddb95e6d6113e072308e80a355cef6aec4cdc2500b0cfe4c31c",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260908_004_proposal_generator_v2.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "6f329c9e2c06965c4c4f27f5e262b8c4372e3011",
+        "sha256": "bfc44833cf5a7d26e3efe06d200629041c16495dd988b70d07fe7258cdb43a46",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "d4ca85d001babb54acb6895ac5ee34726e4b40ad",
+        "sha256": "b02fcd9f292d381426a3dbae35f0ccab0076a5f91d846931414e96c0b88a22fc",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "d7d264c3a1cba7516f4d1098c63189d8b3f7b56e106af6e7f8ab899b4e1689c1"
+  },
+  {
+    "id": "sample-bid",
+    "sourceFiles": [
+      "src/modules/pre-production/BidTools.tsx",
+      "src/modules/pre-production/BidWorkspace.tsx",
+      "src/modules/samples/SampleWorkspace.tsx",
+      "src/modules/samples/queries.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260901_005_sample_color_plate_generator.sql",
+      "supabase/migrations/20260923215900_intake_early_access.sql",
+      "supabase/migrations/20261005120000_read_only_messaging_write.sql"
+    ],
+    "terms": "attach link sample bid samples overview bid preparation create proposal sample",
+    "path": "Intake → Bid → Overview → Bid Preparation",
+    "guidance": "Open Intake and select the Bid, then open Overview. Bid Preparation contains Create Proposal, Create Sample, Open related Proposals and Open related Samples; there is no Tools tab. Create Sample starts a new canonical Sample in the established generator with this Bid, Customer and Project context. Save the Sample there. Open related Samples opens Bid-context Samples, where Existing standalone Sample → Link Sample links an existing standalone Sample. A Sample linked to another Bid cannot be reassigned by this action. Creating or linking Samples requires the existing Intake, operational-read and business-write permissions. Create Proposal opens the established Proposal Generator with this Bid attached; Proposal access is independently required in addition to Intake and business-write permission. A Proposal can exist and be issued without a Production Job. Existing generated documents retain their historical contents.",
+    "source": "TenOps released Bid Preparation · October 28, 2026",
+    "relatedRecordIds": [
+      "knowledge-intake",
+      "sample-save",
+      "sample-work-order",
+      "proposal-create",
+      "workflow-intake-convert"
+    ],
+    "toolNames": [],
+    "architecture": {
+      "entities": [
+        "Bid",
+        "Sample",
+        "Issued Sample document",
+        "Production Job"
+      ],
+      "relationships": [
+        {
+          "from": "Bid",
+          "relation": "may link",
+          "to": "Sample",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Sample",
+          "relation": "may link to",
+          "to": "Bid",
+          "cardinality": "zero-or-one"
+        },
+        {
+          "from": "Sample",
+          "relation": "retains",
+          "to": "Issued Sample document",
+          "cardinality": "one-to-many"
+        }
+      ],
+      "facts": [
+        {
+          "text": "A Sample may exist independently of a Production Job.",
+          "classification": "product-convention",
+          "verification": "released-source"
+        },
+        {
+          "text": "Bid Preparation reuses the existing Proposal and Sample generators and libraries.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Link Sample associates an existing standalone Sample; it does not reassign a Sample already linked to another Bid.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "Use the existing independent Intake, Sample and Proposal permissions for the selected action."
+      ],
+      "effects": [
+        "Create Sample carries Bid, Customer and Project context into the canonical Sample generator.",
+        "Linking context preserves existing issued Sample document contents."
+      ],
+      "approvalRequirements": [
+        "Save a new Sample in the existing generator or explicitly choose Link Sample for an existing standalone Sample."
+      ],
+      "limitations": [
+        "A Bid-context Sample does not fabricate a Production Job.",
+        "Creating or linking a Sample does not establish Production readiness or authorize document access."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "src/modules/pre-production/BidTools.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "b9b30dbeeb869e670de8a79f25b5505773b593a5",
+        "sha256": "6c2f1cd37c2142cfb809a0840227ae534a495bd5f09ea20ae1ae59016733476b"
+      },
+      {
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "sha256": "8d167425d5a8a03b78e968380284ff333ceef0af1a6c680bc309102b14ba15ad"
+      },
+      {
+        "path": "src/modules/samples/SampleWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "434b7fa3da6d43b0edb6ae9ca60a56bfef53aca7",
+        "sha256": "8fcbd634590a812404e4b8b7bb73e6eed36cf323534a2fc486be1b526f9e9eb7"
+      },
+      {
+        "path": "src/modules/samples/queries.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "d2417e47f62d4ee56472f472fa120a96226e5782",
+        "sha256": "67e87ec4bbb9385e98933aca3323cddc14c41af55d277ef4332788128045cd16"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260901_005_sample_color_plate_generator.sql",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "4fa743a629e41277e678118b676c4ab046710b56",
+        "sha256": "d968e570a947b2b8fb1c56e30112a38307602d591b3fb6be53fafbe8ac8b23bf"
+      },
+      {
+        "path": "supabase/migrations/20260923215900_intake_early_access.sql",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "6bbd384c9f4e69d77741ae6427c71a6e0ba7751c",
+        "sha256": "2c31bac9d889aa4ddae27044ef754d67576b7d06a7b29c19f7c9eee1d0d5cb53"
+      },
+      {
+        "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "d4ca85d001babb54acb6895ac5ee34726e4b40ad",
+        "sha256": "b02fcd9f292d381426a3dbae35f0ccab0076a5f91d846931414e96c0b88a22fc"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "bidPreparation",
+      "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+      "verifiedAt": "2026-10-28",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-bid-preparation-release--october-28-2026",
+      "receiptSha256": "067fb9fca89e5238fc16985ea82023672da728da1f127b6153304c1ec5084eb1",
+      "receiptKind": "committed",
+      "receiptRevision": "d3f42a76eaa3bc4d9bfe9fbd048d8ef61355efb8"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-bid-preparation-release--october-28-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "guidance-only"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/modules/pre-production/BidTools.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "b9b30dbeeb869e670de8a79f25b5505773b593a5",
+        "sha256": "6c2f1cd37c2142cfb809a0840227ae534a495bd5f09ea20ae1ae59016733476b",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "sha256": "8d167425d5a8a03b78e968380284ff333ceef0af1a6c680bc309102b14ba15ad",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/samples/SampleWorkspace.tsx",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "434b7fa3da6d43b0edb6ae9ca60a56bfef53aca7",
+        "sha256": "8fcbd634590a812404e4b8b7bb73e6eed36cf323534a2fc486be1b526f9e9eb7",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/samples/queries.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "d2417e47f62d4ee56472f472fa120a96226e5782",
+        "sha256": "67e87ec4bbb9385e98933aca3323cddc14c41af55d277ef4332788128045cd16",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260901_005_sample_color_plate_generator.sql",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "4fa743a629e41277e678118b676c4ab046710b56",
+        "sha256": "d968e570a947b2b8fb1c56e30112a38307602d591b3fb6be53fafbe8ac8b23bf",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260923215900_intake_early_access.sql",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "6bbd384c9f4e69d77741ae6427c71a6e0ba7751c",
+        "sha256": "2c31bac9d889aa4ddae27044ef754d67576b7d06a7b29c19f7c9eee1d0d5cb53",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+        "revision": "5e28d254b8d674ec64ce2ba347c83108366af936",
+        "blob": "d4ca85d001babb54acb6895ac5ee34726e4b40ad",
+        "sha256": "b02fcd9f292d381426a3dbae35f0ccab0076a5f91d846931414e96c0b88a22fc",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "4b2e26634470349f97f299a9dafea0ec169dac8cd5d5d43f85823f3975615495"
+  },
+  {
+    "id": "workflow-intake-convert",
+    "sourceFiles": [
+      "src/modules/pre-production/BidPlanningCard.tsx",
+      "src/modules/pre-production/planning-data.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260923220000_intake_projected_planning.sql",
+      "supabase/migrations/20261026120000_bid_scope_production_handoff.sql"
+    ],
+    "relatedRecordIds": [
+      "knowledge-intake",
+      "sample-bid",
+      "production-create-job",
+      "production-schedule",
+      "knowledge-production"
+    ],
+    "toolNames": [
+      "find_jobs",
+      "get_job_summary"
+    ],
+    "architecture": {
+      "entities": [
+        "Bid",
+        "Production Job",
+        "Accepted scope",
+        "Issued document"
+      ],
+      "relationships": [
+        {
+          "from": "Bid",
+          "relation": "converts to",
+          "to": "Production Job",
+          "cardinality": "zero-or-one"
+        },
+        {
+          "from": "Production Job",
+          "relation": "retains",
+          "to": "Accepted scope",
+          "cardinality": "zero-or-one"
+        }
+      ],
+      "facts": [
+        {
+          "text": "A Bid conversion creates or returns one canonical Production Job; retrying the conversion does not create another.",
+          "classification": "schema-contract",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "The conversion gate is saved Won status and a recorded Deposit Received Date.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Accepted scope, formulation verification and material assessment are not conversion prerequisites.",
+          "classification": "product-convention",
+          "verification": "released-source"
+        }
+      ],
+      "preconditions": [
+        "Save or discard unsaved Bid edits before conversion.",
+        "Committing carried or new dates additionally requires Production scheduling permission."
+      ],
+      "effects": [
+        "The original Bid remains linked to the canonical Job.",
+        "Production owns committed scheduling after conversion.",
+        "A Job number may remain blank; conversion does not allocate one automatically."
+      ],
+      "approvalRequirements": [
+        "Review the handoff choices and choose Confirm conversion in the existing application."
+      ],
+      "limitations": [
+        "A projected Bid window does not reserve Production capacity.",
+        "Conversion does not rewrite previously issued documents or establish material readiness."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "src/modules/pre-production/BidPlanningCard.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "dd657cb5b55a97160c0546c8b0410702373a739e",
+        "sha256": "747c81319bc9d9e62c5bf67172965992ea9221d34377622e191b3b865b17535f"
+      },
+      {
+        "path": "src/modules/pre-production/planning-data.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "f7a84915fb00398482bc483c2f3c6e077608f9a0",
+        "sha256": "a9230a1a79e844a7961d077e4e24b2902635845fd8acdb50b40cf2ff9400267e"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260923220000_intake_projected_planning.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "ed4f77d841d7d35f3f3f038eb07fc5be2301a4ab",
+        "sha256": "bb089eed546ce961cde531635bcbc57659619cd6e98696fbc6b81db397ca07db"
+      },
+      {
+        "path": "supabase/migrations/20261026120000_bid_scope_production_handoff.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "98880b863e5e0794c561b8f6e0bb0a6581a37717",
+        "sha256": "485eb06f150cac1eb0606275a16fa8bf1fdd105674c3e5934ab3f92c34c01d4b"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "read-if-registered"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/modules/pre-production/BidPlanningCard.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "dd657cb5b55a97160c0546c8b0410702373a739e",
+        "sha256": "747c81319bc9d9e62c5bf67172965992ea9221d34377622e191b3b865b17535f",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/pre-production/planning-data.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "f7a84915fb00398482bc483c2f3c6e077608f9a0",
+        "sha256": "a9230a1a79e844a7961d077e4e24b2902635845fd8acdb50b40cf2ff9400267e",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260923220000_intake_projected_planning.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "ed4f77d841d7d35f3f3f038eb07fc5be2301a4ab",
+        "sha256": "bb089eed546ce961cde531635bcbc57659619cd6e98696fbc6b81db397ca07db",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20261026120000_bid_scope_production_handoff.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "98880b863e5e0794c561b8f6e0bb0a6581a37717",
+        "sha256": "485eb06f150cac1eb0606275a16fa8bf1fdd105674c3e5934ab3f92c34c01d4b",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "4214af097c6d7745c930007a87c5bf9dce4db7967597a5c0be4a5645de2ac2d1"
+  },
+  {
+    "id": "workflow-manpower-history",
+    "sourceFiles": [
+      "src/modules/manpower/ManpowerAnalytics.tsx",
+      "src/modules/manpower/ManpowerWorkspace.tsx",
+      "src/modules/manpower/group-presentation.ts",
+      "src/modules/manpower/manpower.ts",
+      "src/modules/manpower/progressive-history.ts",
+      "supabase/functions/_shared/rbac.ts"
+    ],
+    "terms": "manpower reporting history analytics period date dates all complete search filter totals product category group groups labor history exhaustive default order sort groups reporting date job name newest alphabetical",
+    "path": "Manpower Reporting → Sort groups",
+    "guidance": "Manpower Reporting defaults Sort groups to Reporting date, newest first. Groups with a leading reporting date in their name are ordered by that date, newest first; groups without a valid leading date follow, with creation time, name and ID as stable fallbacks. Editing a Job or labor entry does not move its group by modification time. Groups start collapsed. Rows in an expanded group are ordered by Work Date, newest first. To sort by Job name, use Sort groups → Job name, A–Z. Work date, newest first is the other alternative and uses the latest work date in each group. Mixed-Job groups use their alphabetically first Job or work label; empty groups follow. Sorting applies to loaded complete groups, and the order can change while older groups load. Analytics use the selected period; expanded groups retain complete membership across all dates. Wait for All available history loaded before treating search as exhaustive. Search and Product Category filters change displayed rows and totals without changing saved data. Reporting groups are not Jobs.",
+    "source": "TenOps released Manpower ordering · October 29, 2026",
+    "relatedRecordIds": [
+      "manpower-record-labor",
+      "manpower-job-filter",
+      "production-rework-create",
+      "knowledge-production"
+    ],
+    "toolNames": [
+      "find_jobs",
+      "get_job_labor_summary"
+    ],
+    "architecture": {
+      "entities": [
+        "Reporting group",
+        "Labor entry",
+        "Reporting period",
+        "Production Job"
+      ],
+      "relationships": [
+        {
+          "from": "Reporting group",
+          "relation": "retains complete membership of",
+          "to": "Labor entry",
+          "cardinality": "one-to-many"
+        }
+      ],
+      "facts": [
+        {
+          "text": "Reporting groups default to the leading valid reporting date in their name, newest first; editing a Job or labor entry does not sort groups by modification time.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Groups start collapsed and member rows use newest Work Date first.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Analytics use the selected reporting period while expanded groups retain complete membership across their dates.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [],
+      "effects": [
+        "Search, sorting and Product Category filtering change presentation without changing saved labor."
+      ],
+      "approvalRequirements": [],
+      "limitations": [
+        "Sorting covers loaded complete groups, and order may change while older groups load.",
+        "Wait for All available history loaded before treating search as exhaustive.",
+        "Complete labor totals do not imply a complete actual-output history."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "src/modules/manpower/ManpowerAnalytics.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "cd032f4b6c240ec7d3231d51777219540c63ce4a",
+        "sha256": "0ab20c0a69e8e26dfc13a3d9a60de64a8ffdf9e6869976f70b6df741caf8a001"
+      },
+      {
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+        "sha256": "7abf39104716cfd5d0e237512c49e8b3959478ce5fea1d27794c5d5b584c2504"
+      },
+      {
+        "path": "src/modules/manpower/group-presentation.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "52b23bba2a4a31d71f2c29318d3dfa6f3fd41da5",
+        "sha256": "402096547c076380fae4083eb6ae80b3f48291a7d0f1b90a814dcd974beec08b"
+      },
+      {
+        "path": "src/modules/manpower/manpower.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "fb04b98154121ee5e5f1af769bfc7e5e503654fd",
+        "sha256": "44bc34bfc9452c645aec3f5826edb289b179a4e0ca71821277ac6fb278ab5384"
+      },
+      {
+        "path": "src/modules/manpower/progressive-history.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "b0a4e31f9221aa9ffe6e387b3ecddfbd1d92061d",
+        "sha256": "ae5f55f9a8a05d066d0a08e4fc89d6486d47899ae72178ca966f058968f122b0"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "manpower",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "verifiedAt": "2026-10-29",
+      "receipt": "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+      "receiptAnchor": "executed-approved-priority-release--october-29-2026",
+      "receiptSha256": "5dc0a02e04e0a9c4cf3ed5878f662df94b224b1b8cc633d36698df9f31b93027",
+      "receiptKind": "captured-working-receipt",
+      "receiptCapture": "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+      "receiptCaptureSha256": "683ff3132cc63820e85e016822b3fdae07937cf4e90e61810709fe2e64e2d421",
+      "originWorkingSha256": "1e304bda4180e2fd4b366a2fc7e474e837ac8099d9e237e56478a755156b48c5"
+    },
+    "evidence": "docs/project-memory/2026-10-29-manpower-default-restoration.md#executed-approved-priority-release--october-29-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "read-if-registered"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/modules/manpower/ManpowerAnalytics.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "cd032f4b6c240ec7d3231d51777219540c63ce4a",
+        "sha256": "0ab20c0a69e8e26dfc13a3d9a60de64a8ffdf9e6869976f70b6df741caf8a001",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+        "sha256": "7abf39104716cfd5d0e237512c49e8b3959478ce5fea1d27794c5d5b584c2504",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/group-presentation.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "52b23bba2a4a31d71f2c29318d3dfa6f3fd41da5",
+        "sha256": "402096547c076380fae4083eb6ae80b3f48291a7d0f1b90a814dcd974beec08b",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/manpower.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "fb04b98154121ee5e5f1af769bfc7e5e503654fd",
+        "sha256": "44bc34bfc9452c645aec3f5826edb289b179a4e0ca71821277ac6fb278ab5384",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/manpower/progressive-history.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "b0a4e31f9221aa9ffe6e387b3ecddfbd1d92061d",
+        "sha256": "ae5f55f9a8a05d066d0a08e4fc89d6486d47899ae72178ca966f058968f122b0",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "6db58a18d00dc5443346a2902797abf75267edea30d738f00a6c52eafb14990c"
+  },
+  {
+    "id": "workflow-material-usage",
+    "sourceFiles": [
+      "docs/workflows/MATERIAL_USAGE.md",
+      "src/components/BusinessWriteControls.tsx",
+      "src/modules/material-usage/MaterialUsageEditor.tsx",
+      "src/modules/material-usage/MaterialUsageHistory.tsx",
+      "src/modules/material-usage/MaterialUsageWorkspace.tsx",
+      "src/modules/material-usage/actions.ts",
+      "src/modules/material-usage/canonical-job-defaults.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260720_001_material_usage_reporting.sql"
+    ],
+    "relatedRecordIds": [
+      "inventory-stock-movement",
+      "inventory-stock-reservation",
+      "manpower-record-labor",
+      "knowledge-production"
+    ],
+    "toolNames": [],
+    "architecture": {
+      "entities": [
+        "Material Usage report",
+        "Material Usage line",
+        "Production Job",
+        "Temporary work label",
+        "Inventory"
+      ],
+      "relationships": [
+        {
+          "from": "Material Usage report",
+          "relation": "contains ordered",
+          "to": "Material Usage line",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Material Usage report",
+          "relation": "may identify",
+          "to": "Production Job",
+          "cardinality": "zero-or-one"
+        }
+      ],
+      "facts": [
+        {
+          "text": "A report belongs to a canonical Job or an explicitly confirmed temporary work label, never both.",
+          "classification": "schema-contract",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Saving stores the report header and ordered material lines together.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Recording Material Usage does not automatically decrement Inventory or consume a reservation.",
+          "classification": "product-convention",
+          "verification": "released-source"
+        },
+        {
+          "text": "Job Number and Work Order Number remain distinct historical snapshots; a missing Work Order does not fall back to Job Number.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "Choose the work identity and report date.",
+        "Resolve any Color Plate conflict before applying a new Job association."
+      ],
+      "effects": [
+        "Retains the reported materials, quantities, units, authorship and historical work identity.",
+        "All Chip Blend lines share the report Color Plate; other material types do not store it."
+      ],
+      "approvalRequirements": [
+        "Review the report and choose Save Report."
+      ],
+      "limitations": [
+        "Opening a saved report does not refresh historical identifiers from Production.",
+        "Material Usage does not update Production.",
+        "Inventory outtake is a separate existing operation with its own permissions and validation."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "docs/workflows/MATERIAL_USAGE.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "563bc7e922c405767494baad65b1a820b1397c2d",
+        "sha256": "b446b21b29fd13d29cc3405a7043344aa101ff05d0fda85895bab477803c9190"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9"
+      },
+      {
+        "path": "src/modules/material-usage/MaterialUsageEditor.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "66f9db4b1033984ba7c2eae6fa5355fe5bc9a847",
+        "sha256": "22bfe9ccfdffc36c3a30ae6f5dc9c1b1580cfef5c130e923ff22ea7c9ffe4556"
+      },
+      {
+        "path": "src/modules/material-usage/MaterialUsageHistory.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "009a3fe806e65423ef54858e5d044b550782a232",
+        "sha256": "8a74f048450f4abbf5512f072d888dbfb68f8901adae856f3bd2a0b6554f0ddb"
+      },
+      {
+        "path": "src/modules/material-usage/MaterialUsageWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "2a0d8ec55799349b7a611bbb17c178522b79b8bf",
+        "sha256": "1c82effa53ce6fd975dff3f6c93c3e567e66c132964bc03a77b9b89ff9d0e63d"
+      },
+      {
+        "path": "src/modules/material-usage/actions.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "336ad9e4260e7cf3ee7c7f48e0d62bb6ca0f45f6",
+        "sha256": "f9dd9be9c2d48e7faa2b0ba8abb531ef0dde44412e04a0841f2ab6fb814a21d6"
+      },
+      {
+        "path": "src/modules/material-usage/canonical-job-defaults.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "5adb7a7ce4e32e04f172b43a20921c333887aba4",
+        "sha256": "c95fe8c4e10988c81f8b4c20da64592f83101b8e6ec3e4a0f374ef1216340091"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260720_001_material_usage_reporting.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "02bba28e12f7eb1b6d9880dab1a2245b97da094e",
+        "sha256": "4975da7a3949c3973de281524a0672b123d52b0bc6af672450800885a88648f4"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "guidance-only"
+    },
+    "dependencyBindings": [
+      {
+        "path": "docs/workflows/MATERIAL_USAGE.md",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "563bc7e922c405767494baad65b1a820b1397c2d",
+        "sha256": "b446b21b29fd13d29cc3405a7043344aa101ff05d0fda85895bab477803c9190",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/components/BusinessWriteControls.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "cd2aa7035bf47667522fe754784e93006ba243e2",
+        "sha256": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/material-usage/MaterialUsageEditor.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "66f9db4b1033984ba7c2eae6fa5355fe5bc9a847",
+        "sha256": "22bfe9ccfdffc36c3a30ae6f5dc9c1b1580cfef5c130e923ff22ea7c9ffe4556",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/material-usage/MaterialUsageHistory.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "009a3fe806e65423ef54858e5d044b550782a232",
+        "sha256": "8a74f048450f4abbf5512f072d888dbfb68f8901adae856f3bd2a0b6554f0ddb",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/material-usage/MaterialUsageWorkspace.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "2a0d8ec55799349b7a611bbb17c178522b79b8bf",
+        "sha256": "1c82effa53ce6fd975dff3f6c93c3e567e66c132964bc03a77b9b89ff9d0e63d",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/material-usage/actions.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "336ad9e4260e7cf3ee7c7f48e0d62bb6ca0f45f6",
+        "sha256": "f9dd9be9c2d48e7faa2b0ba8abb531ef0dde44412e04a0841f2ab6fb814a21d6",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/material-usage/canonical-job-defaults.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "5adb7a7ce4e32e04f172b43a20921c333887aba4",
+        "sha256": "c95fe8c4e10988c81f8b4c20da64592f83101b8e6ec3e4a0f374ef1216340091",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260720_001_material_usage_reporting.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "02bba28e12f7eb1b6d9880dab1a2245b97da094e",
+        "sha256": "4975da7a3949c3973de281524a0672b123d52b0bc6af672450800885a88648f4",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "174dcac121a6493ec31a73a0e2e12930212f6154236fca107a14e3965e2ec46b"
+  },
+  {
+    "id": "workflow-po-allocations",
+    "sourceFiles": [
+      "src/components/ToolboxLauncher.tsx",
+      "src/modules/purchasing/LineAllocations.tsx",
+      "src/modules/purchasing/allocation-model.ts",
+      "src/modules/purchasing/mutations.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260923160100_po_reservation_allocations.sql"
+    ],
+    "relatedRecordIds": [
+      "workflow-po-draft",
+      "workflow-po-issue",
+      "workflow-po-receivals",
+      "inventory-stock-reservation"
+    ],
+    "toolNames": [
+      "find_jobs"
+    ],
+    "architecture": {
+      "entities": [
+        "Purchase Order",
+        "Purchase Order line",
+        "Job allocation",
+        "Production Job",
+        "General stock"
+      ],
+      "relationships": [
+        {
+          "from": "Purchase Order",
+          "relation": "contains",
+          "to": "Purchase Order line",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Purchase Order line",
+          "relation": "has",
+          "to": "Job allocation",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Job allocation",
+          "relation": "identifies",
+          "to": "Production Job",
+          "cardinality": "one-to-one"
+        }
+      ],
+      "facts": [
+        {
+          "text": "One Purchase Order line can allocate ordered units to multiple canonical Jobs, with at most one allocation per Job on that line.",
+          "classification": "schema-contract",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Allocation quantities must be positive and their total cannot exceed the ordered line quantity.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "The document-level Job context alone does not allocate material.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "Edit allocations on a draft Purchase Order.",
+        "Express allocations in the Purchase Order order unit, rather than package contents."
+      ],
+      "effects": [
+        "Issuance captures the reviewed allocation intent.",
+        "Explicit receival projection preserves Job portions and any general-stock remainder.",
+        "Allocated units become Job-reserved Inventory only when actually received."
+      ],
+      "approvalRequirements": [
+        "Review allocation totals and the remainder, resolve validation errors, then Save Draft."
+      ],
+      "limitations": [
+        "Draft allocations and incoming expectations are not on-hand Inventory.",
+        "Allocating a Purchase Order does not establish supplier arrival or Job readiness."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "src/components/ToolboxLauncher.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7c3730de2d29aa386ce718a92e9734c1208ffdf0",
+        "sha256": "80883186c0570d3e2a00b435385fcc10cd8813fa916934b91d92df9b7bdd0a5c"
+      },
+      {
+        "path": "src/modules/purchasing/LineAllocations.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "1f676464c4a7f3ab944de95f6526bba50af903c1",
+        "sha256": "058f5ebb4f796cac3f7ac954bb5d25835b3fee9d7023c99fa4ecde548837b2d1"
+      },
+      {
+        "path": "src/modules/purchasing/allocation-model.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "dba5e387735db8fd36957737db6010b69d473d5f",
+        "sha256": "4d436771751c663e8fe60bd60f38b11119a889be091a5a9c6305c5bd9ec4a37f"
+      },
+      {
+        "path": "src/modules/purchasing/mutations.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "f7c91409dcbf085f7c316dd1a254e7735721f534",
+        "sha256": "6a9c6d93c55130f854efd8ca362a647ae9a7eb331a7362e551cbfdf0f8a06f95"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260923160100_po_reservation_allocations.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "9329312b215a9078f18d028cf477d2649f46d505",
+        "sha256": "c1b9b459d828c4693fc2a15142a6b9b5738cad9eb755994f4cdd992c9edcb5dd"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "read-if-registered"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/components/ToolboxLauncher.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7c3730de2d29aa386ce718a92e9734c1208ffdf0",
+        "sha256": "80883186c0570d3e2a00b435385fcc10cd8813fa916934b91d92df9b7bdd0a5c",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/purchasing/LineAllocations.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "1f676464c4a7f3ab944de95f6526bba50af903c1",
+        "sha256": "058f5ebb4f796cac3f7ac954bb5d25835b3fee9d7023c99fa4ecde548837b2d1",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/purchasing/allocation-model.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "dba5e387735db8fd36957737db6010b69d473d5f",
+        "sha256": "4d436771751c663e8fe60bd60f38b11119a889be091a5a9c6305c5bd9ec4a37f",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/purchasing/mutations.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "f7c91409dcbf085f7c316dd1a254e7735721f534",
+        "sha256": "6a9c6d93c55130f854efd8ca362a647ae9a7eb331a7362e551cbfdf0f8a06f95",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260923160100_po_reservation_allocations.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "9329312b215a9078f18d028cf477d2649f46d505",
+        "sha256": "c1b9b459d828c4693fc2a15142a6b9b5738cad9eb755994f4cdd992c9edcb5dd",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "6f5ba2ea19f1982fe6215e68994977b7feaed30b03acf8658884931ea3bc8ed3"
+  },
+  {
+    "id": "workflow-po-receivals",
+    "sourceFiles": [
+      "src/components/ToolboxLauncher.tsx",
+      "src/modules/purchasing/PendingReceivalsReviewDialog.tsx",
+      "src/modules/purchasing/PurchaseOrderEditor.tsx",
+      "src/modules/purchasing/mutations.ts",
+      "supabase/functions/_shared/rbac.ts",
+      "supabase/migrations/20260723_008_purchase_order_pending_receivals.sql",
+      "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+      "supabase/migrations/20260923160100_po_reservation_allocations.sql"
+    ],
+    "relatedRecordIds": [
+      "workflow-po-allocations",
+      "workflow-po-issue",
+      "inventory-pending-receive",
+      "inventory-stock-reservation",
+      "knowledge-material-assessment"
+    ],
+    "toolNames": [],
+    "architecture": {
+      "entities": [
+        "Issued Purchase Order",
+        "Permanent Purchase Order PDF",
+        "Pending Receival",
+        "Job allocation",
+        "Inventory"
+      ],
+      "relationships": [
+        {
+          "from": "Issued Purchase Order",
+          "relation": "projects reviewed lines into",
+          "to": "Pending Receival",
+          "cardinality": "one-to-many"
+        },
+        {
+          "from": "Pending Receival",
+          "relation": "preserves",
+          "to": "Job allocation"
+        }
+      ],
+      "facts": [
+        {
+          "text": "Pending Receivals are created explicitly from immutable issued Purchase Order facts after permanent PDF generation.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Already projected source lines are recognized on retry rather than created again.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        },
+        {
+          "text": "Captured allocation intent preserves the issued material, quantity and order unit.",
+          "classification": "operational-rule",
+          "verification": "repository-contract"
+        }
+      ],
+      "preconditions": [
+        "The Purchase Order must be issued and its permanent PDF generated.",
+        "Review the selected remaining lines, ETA and location using the existing permissions."
+      ],
+      "effects": [
+        "Creates incoming queue rows and preserves their issued source and allocation context."
+      ],
+      "approvalRequirements": [
+        "Review the selected lines and confirm Create Pending Receivals or Create Remaining Lines in the existing application."
+      ],
+      "limitations": [
+        "Projection does not receive material or increase on-hand stock.",
+        "Requested delivery is not evidence of material arrival; ETA starts blank.",
+        "The receival workflow does not create a Vendor Invoice domain or promise a delivery date."
+      ]
+    },
+    "provenance": [
+      {
+        "path": "src/components/ToolboxLauncher.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7c3730de2d29aa386ce718a92e9734c1208ffdf0",
+        "sha256": "80883186c0570d3e2a00b435385fcc10cd8813fa916934b91d92df9b7bdd0a5c"
+      },
+      {
+        "path": "src/modules/purchasing/PendingReceivalsReviewDialog.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "122473faa1ec652ec17da4f49f3e2dfb2432d069",
+        "sha256": "9d3d8729b8fd1be90814e97f24615eacc748b9b2d0be572e6c72b6f4c6c4e891"
+      },
+      {
+        "path": "src/modules/purchasing/PurchaseOrderEditor.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "ec8b518634828ee8662446a42c1df4d4938800d2",
+        "sha256": "a711c17209c8b81e39b2147e08ef6baeee3cc97b452e07e7c667922d87e12aa1"
+      },
+      {
+        "path": "src/modules/purchasing/mutations.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "f7c91409dcbf085f7c316dd1a254e7735721f534",
+        "sha256": "6a9c6d93c55130f854efd8ca362a647ae9a7eb331a7362e551cbfdf0f8a06f95"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4"
+      },
+      {
+        "path": "supabase/migrations/20260723_008_purchase_order_pending_receivals.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "749295cbd3ed818649d0e9c637f785ce8c580c21",
+        "sha256": "e30bfb5167c943c088966587d2c6d37901a8d950456b4c8a33b811ccf7b850c6"
+      },
+      {
+        "path": "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "29f5c415b20c7592b375d281c563aa13a825608f",
+        "sha256": "279f581ba29d1bb1c4282aa0831ccfd44c10fc21a3ba8f1f656001aacc0c59d4"
+      },
+      {
+        "path": "supabase/migrations/20260923160100_po_reservation_allocations.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "9329312b215a9078f18d028cf477d2649f46d505",
+        "sha256": "c1b9b459d828c4693fc2a15142a6b9b5738cad9eb755994f4cdd992c9edcb5dd"
+      }
+    ],
+    "releaseBoundary": {
+      "id": "intake",
+      "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+      "verifiedAt": "2026-10-27",
+      "receipt": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+      "receiptAnchor": "executed-intake-release--october-27-2026",
+      "receiptSha256": "10b64da98541c808cb450550378ae5550e1c0f8d50cb0e2ae37fb201f91968fc",
+      "receiptKind": "committed",
+      "receiptRevision": "493b55d812ac1effe6572342e13b00625f99f8be"
+    },
+    "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026",
+    "capabilityAvailability": {
+      "application": "released",
+      "assistant": "guidance-only"
+    },
+    "dependencyBindings": [
+      {
+        "path": "src/components/ToolboxLauncher.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "7c3730de2d29aa386ce718a92e9734c1208ffdf0",
+        "sha256": "80883186c0570d3e2a00b435385fcc10cd8813fa916934b91d92df9b7bdd0a5c",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/purchasing/PendingReceivalsReviewDialog.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "122473faa1ec652ec17da4f49f3e2dfb2432d069",
+        "sha256": "9d3d8729b8fd1be90814e97f24615eacc748b9b2d0be572e6c72b6f4c6c4e891",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/purchasing/PurchaseOrderEditor.tsx",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "ec8b518634828ee8662446a42c1df4d4938800d2",
+        "sha256": "a711c17209c8b81e39b2147e08ef6baeee3cc97b452e07e7c667922d87e12aa1",
+        "kind": "semantic"
+      },
+      {
+        "path": "src/modules/purchasing/mutations.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "f7c91409dcbf085f7c316dd1a254e7735721f534",
+        "sha256": "6a9c6d93c55130f854efd8ca362a647ae9a7eb331a7362e551cbfdf0f8a06f95",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/functions/_shared/rbac.ts",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "041329bfcc710879d2076e210597868fe21087bb",
+        "sha256": "578e05ce14942c0f13e4a0ce0d2c8a8935b57ddca98cc112f09ec7ba205e9dc4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260723_008_purchase_order_pending_receivals.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "749295cbd3ed818649d0e9c637f785ce8c580c21",
+        "sha256": "e30bfb5167c943c088966587d2c6d37901a8d950456b4c8a33b811ccf7b850c6",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "29f5c415b20c7592b375d281c563aa13a825608f",
+        "sha256": "279f581ba29d1bb1c4282aa0831ccfd44c10fc21a3ba8f1f656001aacc0c59d4",
+        "kind": "semantic"
+      },
+      {
+        "path": "supabase/migrations/20260923160100_po_reservation_allocations.sql",
+        "revision": "bc628bdafea374f6a5fd446d7e924ff9d65918bf",
+        "blob": "9329312b215a9078f18d028cf477d2649f46d505",
+        "sha256": "c1b9b459d828c4693fc2a15142a6b9b5738cad9eb755994f4cdd992c9edcb5dd",
+        "kind": "semantic"
+      }
+    ],
+    "recordDigest": "92235e6c2b736207449850a5b3954e1de917578bed5b89702cf9e74cf16ec0d3"
   }
 ];

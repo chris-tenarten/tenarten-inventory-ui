@@ -168,11 +168,11 @@ await check('knowledge-only walkthrough retains bounded owner dialogue but requi
   await ask(h.run,{conversationId:first.conversationId,question:'Done. What next?'});
   assert.ok(JSON.stringify(h.seen[2][0].history).includes('Enter a group name, then select'));
 });
-await check('current release corrections stay in the optional registry and preserve permission filtering',async()=>{
+await check('current release corrections share the published registry and preserve permission filtering',async()=>{
   const corrected=agentKnowledgeEntries();
   assert.ok(corrected.find(entry=>entry.id==='sample-bid')!.guidance.includes('Overview'));
   assert.ok(!corrected.find(entry=>entry.id==='sample-bid')!.guidance.includes('In Tools'));
-  assert.ok(registry.find(entry=>entry.id==='sample-bid')!.guidance.includes('In Tools'),'Production Qwen registry remains unchanged');
+  assert.equal(registry.find(entry=>entry.id==='sample-bid')!.guidance,corrected.find(entry=>entry.id==='sample-bid')!.guidance,'Both paths consume the released correction');
   assert.ok(corrected.find(entry=>entry.id==='workflow-manpower-history')!.guidance.includes('Job name, A–Z'));
   assert.ok(agentKnowledgeSnapshot.revision.includes('ae50e0fc'));
   const adminCapabilities=new Set<string>([...CAPABILITIES,'proposal.access']);
@@ -190,6 +190,33 @@ await check('current release corrections stay in the optional registry and prese
    const limitedData=limited.data as {sources:{id:string}[];access_limited:boolean};
    assert.equal(limitedData.access_limited,true);assert.ok(!limitedData.sources.some(source=>source.id===required));
   }
+});
+await check('structured facts, effects, authority and tool links invalidate retained guidance',async()=>{
+ const source=registry.find(entry=>entry.id==='workflow-material-usage')!;assert(source.architecture);
+ const original=clone(source.architecture),permissions=source.additionalPermissions,toolNames=source.toolNames;
+ const sequence=():Sequence=>[discover('search_workflow_knowledge'),step([call('knowledge','search_workflow_knowledge',{query:'material usage inventory deduction'})]),step([],guidanceFinal('Material Usage records consumption separately from Inventory.'))];
+ try{
+  for(const change of [
+   ()=>{source.architecture={...original,effects:['Changed consumption effect.']};},
+   ()=>{source.architecture={...original,preconditions:['Changed business prerequisite.']};},
+   ()=>{source.architecture={...original,relationships:[{from:'Material Usage report',relation:'changed relationship',to:'Production Job'}]};},
+   ()=>{source.additionalPermissions=[...(permissions??[]),'new-source-grant'];},
+   ()=>{source.toolNames=['get_job_summary'];},
+  ]){
+   source.architecture=clone(original);source.additionalPermissions=permissions;source.toolNames=toolNames;
+   const h=harness({sequences:sequence});const first=await ask(h.run,{question:'Explain Material Usage and Inventory deduction.'});
+   assert.equal(first.contentScope,'workflow');assert.equal((await history(h.run,first.conversationId)).turns.length,1);
+   change();assert.deepEqual((await history(h.run,first.conversationId)).turns,[]);
+  }
+ }finally{source.architecture=original;source.additionalPermissions=permissions;source.toolNames=toolNames;}
+});
+await check('structured source changes during inference block publication',async()=>{
+ const source=registry.find(entry=>entry.id==='workflow-material-usage')!,original=clone(source.architecture!);
+ try{
+  const h=harness({sequences:()=>[discover('search_workflow_knowledge'),step([call('knowledge','search_workflow_knowledge',{query:'material usage inventory deduction'})]),()=>{source.architecture={...original,effects:['Changed during response.']};return step([],guidanceFinal('Material Usage guidance.'));}]});
+  const result=await ask(h.run,{question:'Explain Material Usage.'});assert.equal(result.agent.status,'blocked');
+  assert.deepEqual(result.agent.evidence,[]);assert.equal(result.agent.final,null);
+ }finally{source.architecture=original;}
 });
 await check('capability refusals have host evidence and cannot publish invented UI or actions',async()=>{
  const scopeFinal:AgentFinal={answer:'Unsupported invented UI: click Secret SQL Console.',observations:[{text:'I cannot execute SQL.',evidence_ids:['e1']}],inferences:[],recommendations:[],questions:[],completed_actions:[]};
@@ -411,6 +438,6 @@ await check('expired conversations cannot be revived by a caller-replayed ID', a
 });
 
 const receipt = { status: 'pass', mode: 'offline session/lifecycle/privacy contract tests; no model reasoning or hosted verification', groups: checks.length, checks, inference_calls: 0, database_writes: 0 };
-const directory = '/private/tmp/tenbot-agent-session-poc-2026-10-28'; await mkdir(directory, { recursive: true });
+const directory = process.env.TENBOT_QA_OUTPUT_DIR??'/private/tmp/tenbot-agent-session-poc-2026-10-28'; await mkdir(directory, { recursive: true });
 await writeFile(`${directory}/receipt.json`, JSON.stringify(receipt, null, 2) + '\n');
 console.log(JSON.stringify(receipt, null, 2));

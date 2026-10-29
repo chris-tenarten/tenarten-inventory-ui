@@ -18,7 +18,7 @@ import {resolveInput,TenbotError} from './tenbot-core.ts';
 import type {JobTools} from './tenbot-job-session.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
-import {hasGuidePermission,type CapabilityEntry} from './tenbot-knowledge.ts';
+import {hasGuidePermission,publishedKnowledgeSource,knowledgeProofValue} from './tenbot-knowledge.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import {agentKnowledgeEntries,agentKnowledgeSnapshot as snapshot} from './tenbot-agent-knowledge.ts';
@@ -45,7 +45,6 @@ type Session={owner:string;touched:number;questions:string[];guidance:GuidanceTu
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const record=(value:unknown):value is Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const json=(value:unknown)=>JSON.parse(JSON.stringify(value)) as JsonValue;
-const publishedSource=(entry:CapabilityEntry)=>({id:entry.id,title:entry.title,status:entry.status,availability:entry.availability??'available',guidance:entry.guidance,path:entry.path,route:entry.route});
 async function sourceDigest(source:unknown,version:unknown){
  const bytes=new TextEncoder().encode(JSON.stringify({snapshot:version,source}));
  const digest=await crypto.subtle.digest('SHA-256',bytes);
@@ -67,7 +66,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
  };
  const sourceIsCurrent=async(proof:KnowledgeProof,owner:string)=>{
   const entry=agentKnowledgeEntries().find(item=>item.id===proof.id);
-  if(!entry||entry.status!=='deployed'||await sourceDigest(publishedSource(entry),snapshot)!==proof.digest)return false;
+  if(!entry||entry.status!=='deployed'||await sourceDigest(knowledgeProofValue(entry),snapshot)!==proof.digest)return false;
   const permissions=new Set<string>();
   for(const capability of [entry.permission,...entry.additionalPermissions??[]])if(await deps.can(owner,capability))permissions.add(capability);
   return hasGuidePermission(entry,permissions);
@@ -192,12 +191,20 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     if(current)retainedGuidance.push(turn);
    }
    session.guidance=retainedGuidance;
-   const knowledge=createTenbotAgentKnowledgeTools(async capability=>{const allowed=await can(capability);if(allowed)knowledgeGrants.add(capability);return allowed;});
+   const knowledge=createTenbotAgentKnowledgeTools(can,()=>[...job.tools,...invoice.filter(tool=>tool.kind==='read'||mayPrepare)]);
    for(const tool of knowledge){
     const execute=tool.execute;tool.execute=async(args,context)=>{
      const value=await execute(args,context);
      if(record(value.data)&&Array.isArray(value.data.sources))for(const source of value.data.sources){
-      if(record(source)&&typeof source.id==='string')knowledgeProofs.set(source.id,{id:source.id,digest:await sourceDigest(source,value.data.snapshot)});
+      if(record(source)&&typeof source.id==='string'){
+       const entry=agentKnowledgeEntries().find(item=>item.id===source.id);
+       if(!entry||JSON.stringify(publishedKnowledgeSource(entry))!==JSON.stringify(source))throw new TenbotError('Knowledge evidence changed. Please retry.',409);
+       for(const capability of [entry.permission,...entry.additionalPermissions??[]]){
+        if(!await can(capability))throw new TenbotError('Knowledge access changed. Please retry.',403);
+        knowledgeGrants.add(capability);
+       }
+       knowledgeProofs.set(source.id,{id:source.id,digest:await sourceDigest(knowledgeProofValue(entry,source),value.data.snapshot)});
+      }
      }
      return value;
     };

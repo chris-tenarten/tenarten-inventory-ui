@@ -5,7 +5,7 @@ import {cloudflareProvider,TenbotError} from '../../supabase/functions/_shared/t
 import type {StoredAgentState} from '../../supabase/functions/_shared/tenbot-agent-history-store';
 const archived=JSON.parse(readFileSync(new URL('../fixtures/tenbot-capability-history.synthetic.json',import.meta.url),'utf8'));
 type Conversation={id:string;owner:string;version:number;expires:number;claim:string|null;state:StoredAgentState;turns:{question:string;answer:string}[]};
-export function createHostedTenbotFixture(owner='11111111-1111-4111-8111-111111111111'){
+export function createHostedTenbotFixture(owner='11111111-1111-4111-8111-111111111111',scenario=archived){
  const rows=new Map<string,Conversation>(),reservations=new Map<string,{reserved:number;actual?:number}>();
  const state={allowed:true,groupAllowed:true,budget:true,providerFailure:false,apiModel:'gpt-6.1-terra',serviceTier:'default',commitFailure:false,qwenPause:null as null|(()=>Promise<void>),now:Date.now(),providerCalls:0,qwenCalls:0,jobCalls:0,steps:0,context:[] as unknown[],events:[] as string[]};
  const can=(capability:unknown)=>state.allowed&&(capability!=='messaging.write'||state.groupAllowed);
@@ -64,12 +64,12 @@ export function createHostedTenbotFixture(owner='11111111-1111-4111-8111-1111111
   state.providerCalls++;const request=JSON.parse(String(init?.body));state.context.push(request.input);
   if(request.model!=='gpt-6.1-terra'||request.service_tier!=='default'||request.store!==false)throw Error('Unsafe provider contract');
   if(state.providerFailure)return Response.json({error:{code:'synthetic_outage'}},{status:503});
-  const step=archived.modelSteps[state.steps++%archived.modelSteps.length];
+  const step=scenario.modelSteps[state.steps++%scenario.modelSteps.length];
   return Response.json({status:'completed',model:state.apiModel,service_tier:state.serviceTier,usage:{input_tokens:100,output_tokens:20,total_tokens:120,input_tokens_details:{cached_tokens:0,cache_write_tokens:0}},output:step.calls.length?step.calls.map((c:{id:string;name:string;arguments:unknown})=>({type:'function_call',call_id:c.id,name:c.name,arguments:JSON.stringify(c.arguments)})):[{type:'message',role:'assistant',content:[{type:'output_text',text:JSON.stringify(step.final)}]}]});
  };
  const qwen=cloudflareProvider('fixture-account','fixture-key',async()=>{
   state.qwenCalls++;await state.qwenPause?.();return Response.json({success:true,result:{response:JSON.stringify({ids:['group'],answer:'Open Messaging, choose New group, enter a group name, select another participant, then choose Create group.',summary:''}),usage:{prompt_tokens:110,completion_tokens:20}}});
  });
  const handler=(origin='https://tendev.pages.dev',config={})=>createHostedTenbot({owner,origin,config:{enabled:true,origins:['https://tendev.pages.dev','http://localhost:3000'],apiKey:'fixture-secret-never-real',keyExpiresAt:new Date(state.now+3600000).toISOString(),spendingAuthorized:true,...config},caller,service,jobTools:{async execute(){state.jobCalls++;throw new TenbotError('Synthetic Job access unavailable.',403);}},qwen,fetcher,now:()=>state.now});
- return {handler,state,rows,reservations,owner,archived,caller,service,fetcher};
+ return {handler,state,rows,reservations,owner,archived:scenario,caller,service,fetcher};
 }

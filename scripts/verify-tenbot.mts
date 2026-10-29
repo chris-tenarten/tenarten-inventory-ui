@@ -1,12 +1,16 @@
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,mkdtempSync,mkdirSync,copyFileSync,symlinkSync,writeFileSync} from 'node:fs';
+import {dirname,resolve} from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
 import {execFile,execFileSync} from 'node:child_process';
 import {promisify} from 'node:util';
 import {pilotDirectory} from './support/tenbot-ai-pilot.mjs';
 import {answer,resolveInput,cloudflareProvider,groundedProse,requiredInferencePermissions,type InferenceInput,type InferenceProvider} from '../supabase/functions/_shared/tenbot-core';
-import {retrieve,registry,snapshot,conversationGuides,knowledgeEntries,knowledgeSnapshot,hasGuidePermission} from '../supabase/functions/_shared/tenbot-knowledge';
-import {generatedKnowledge} from '../supabase/functions/_shared/tenbot-knowledge-snapshot';
+import {retrieve,registry,conversationGuides,knowledgeEntries,knowledgeSnapshot,hasGuidePermission} from '../supabase/functions/_shared/tenbot-knowledge';
+import {generatedKnowledge,generatedKnowledgePatches} from '../supabase/functions/_shared/tenbot-knowledge-snapshot';
+import {createTenbotAgentKnowledgeTools,searchPublishedKnowledge} from '../supabase/functions/_shared/tenbot-agent-operations';
+import {publishedKnowledgeSource,knowledgeProofValue} from '../supabase/functions/_shared/tenbot-knowledge';
+import {buildImpactReport,isInfrastructureReviewHeading} from './tenbot-knowledge/release-sync.mjs';
 import {workflowSupplement,workflowSupplementSnapshot,workflowSupplementSources} from '../supabase/functions/_shared/tenbot-workflow-supplement';
 import {handleTenbot as actualHandleTenbot} from '../supabase/functions/_shared/tenbot-handler';
 // These pre-existing unit cases isolate capability/metering behavior. Actual
@@ -32,6 +36,126 @@ const manpowerQuestion='how do i filter by jobs in manpower reporting';
 const reworkQuestion='how do i initiate a rework for a job?';
 const customerEditQuestion='how do i edit a saved customers details';
 const entry=(id:string)=>{const found=registry.find(candidate=>candidate.id===id);assert(found,id);return found;};
+if(process.argv.includes('--architecture-only')){
+ const checks:string[]=[];
+ const check=async(name:string,run:()=>void|Promise<void>)=>{await run();checks.push(name);};
+ const tool=createTenbotAgentKnowledgeTools(async()=>true,()=>[{name:'get_job_labor_summary',kind:'read'},{name:'get_job_summary',kind:'read'}])[0];
+ const search=async(query:string)=>(await tool.execute({query},{callerId:'synthetic-owner',signal:new AbortController().signal})).data as unknown as Awaited<ReturnType<typeof searchPublishedKnowledge>>;
+ await check('PO projection, partial receipt and on-hand stock retain separate effects',async()=>{
+  const result=await search('purchase order pending receivals inventory on hand');
+  assert(result.sources.some(source=>source.id==='workflow-po-receivals'));
+  assert(result.sources.some(source=>source.id==='inventory-pending-receive'));
+  assert.match(JSON.stringify(result.sources),/Only.*quantity|only.*quantity|actually received/i);
+  assert.match(JSON.stringify(result.sources),/does not.*(?:Inventory|stock)|not.*on-hand/i);
+ });
+ await check('Material Usage is primary evidence and cannot imply stock deduction',async()=>{
+  const result=await search('material usage consumes quantity automatically deduct inventory');
+  assert.equal(result.sources[0].id,'workflow-material-usage');
+  assert.match(JSON.stringify(result.sources[0]),/does not.*(?:decrement|deduct|Inventory)|not.*(?:decrement|deduct)/i);
+ });
+ await check('novel material request retrieves assessment and reservation dependencies',async()=>{
+  const result=await search('Calculate Bid shortages reserve stock order balance promise customer delivery date');
+  assert(result.sources.some(source=>source.id==='knowledge-material-assessment'));
+  assert(result.sources.some(source=>source.id==='inventory-stock-reservation'));
+  assert.match(JSON.stringify(result.sources),/unknown|missing evidence/i);
+  assert(result.capability_links.every(link=>!link.execution));
+ });
+ await check('Rework labor keeps canonical Job attribution and links actual registered reads',async()=>{
+  const result=await search('original Rework labor attribution hours');
+  const source=result.sources.find(source=>source.id==='manpower-record-labor');assert(source?.architecture);
+  assert.match(JSON.stringify(source.architecture),/same canonical Job/);
+  assert(result.capability_links.some(link=>link.tools.some(tool=>tool.name==='get_job_labor_summary')));
+ });
+ await check('missing output evidence stays explicit and cannot be replaced by plans or labor',async()=>{
+  const result=await search('daily production completed output remaining work');
+  const production=result.sources.find(source=>source.id==='knowledge-production');assert(production?.architecture);
+  assert.match(production.architecture.limitations.join(' '),/do not establish actual units produced/);
+ });
+ await check('related records independently require all permissions and deny no metadata',async()=>{
+  const seed={...entry('group'),id:'seed',title:'Synthetic bridge',terms:'synthetic bridge',relatedRecordIds:['restricted','cycle','missing']};
+  const denied={...entry('group'),id:'restricted',title:'RESTRICTED_TITLE',guidance:'RESTRICTED_DETAILS',permission:'restricted',terms:'unrelated',relatedRecordIds:['hidden-descendant']};
+  const cycle={...seed,id:'cycle',terms:'unrelated',relatedRecordIds:['seed','restricted']};
+  const descendant={...denied,id:'hidden-descendant'};
+  const result=await searchPublishedKnowledge('synthetic bridge',[seed,denied,cycle,descendant],async source=>source.permission!=='restricted');
+  assert(result.access_limited);assert.deepEqual(result.sources.map(source=>source.id).sort(),['cycle','seed']);
+  assert.doesNotMatch(JSON.stringify(result),/RESTRICTED|hidden-descendant/);
+  await assert.rejects(searchPublishedKnowledge('synthetic bridge',[seed,cycle],async()=>{throw Error('Permission unavailable');}));
+ });
+ await check('cycles, missing targets, result count and UTF-8 bytes are bounded',async()=>{
+  const base=entry('group');
+  const sources=Array.from({length:20},(_,i)=>({...base,id:'bounded-'+i,title:'Synthetic bounded',terms:'synthetic bounded',guidance:'界'.repeat(1800),relatedRecordIds:['bounded-'+((i+1)%20)]}));
+  const result=await searchPublishedKnowledge('synthetic bounded',sources,async()=>true);
+  assert(result.sources.length<=4);assert(result.context_limited);assert.equal(result.complete,false);
+  assert(new TextEncoder().encode(JSON.stringify(result)).byteLength<18000);
+  assert.equal(new Set(result.sources.map(source=>source.id)).size,result.sources.length);
+ });
+ await check('only actual registered tools can be linked; application writes remain guidance-only',async()=>{
+  const source={...entry('group'),toolNames:['get_job_summary','execute_sql','receive_pending_receival']};
+  const result=await searchPublishedKnowledge('create group',[source],async()=>true,[{name:'get_job_summary',kind:'read'}]);
+  assert.deepEqual(result.capability_links[0].tools,[{name:'get_job_summary',kind:'read'}]);
+  assert.equal(result.capability_links[0].execution,false);
+  assert.doesNotMatch(JSON.stringify(result),/execute_sql|receive_pending_receival/);
+ });
+ await check('capability checks are memoized only within one bounded search',async()=>{
+  const counts=new Map<string,number>();
+  const current=createTenbotAgentKnowledgeTools(async name=>{counts.set(name,(counts.get(name)??0)+1);return true;})[0];
+  const run=()=>current.execute({query:'Job labor inventory material reservations'},{callerId:'synthetic-owner',signal:new AbortController().signal});
+  await run();assert([...counts.values()].every(count=>count===1));
+  const before=new Map(counts);await run();for(const [name,count] of counts)assert.equal(count,(before.get(name)??0)+1,'Next searches recheck current grants');
+ });
+ await check('employee projection excludes maintenance provenance and rejects malformed semantic data',async()=>{
+  const result=await search('material usage inventory deduction');
+  assert.doesNotMatch(JSON.stringify(result),/sourceFiles|dependencyBindings|receiptCapture|service_role|relatedRecordIds|recordDigest|supabase\/migrations/);
+  const source=entry('workflow-material-usage'),architecture=source.architecture;assert(architecture);
+  assert.throws(()=>publishedKnowledgeSource({...source,architecture:{...architecture,facts:[{...architecture.facts[0],text:'Read public.private_records with service_role'}]}}));
+  const before=JSON.stringify(knowledgeProofValue(source));
+  assert.notEqual(before,JSON.stringify(knowledgeProofValue({...source,architecture:{...architecture,effects:['Changed operational effect.']}})));
+  assert.notEqual(before,JSON.stringify(knowledgeProofValue({...source,additionalPermissions:['changed-grant']})));
+ });
+ await check('mixed releases refresh shared guidance without relabeling the base source pin',()=>{
+  assert.equal(knowledgeSnapshot.revision,'bc628bdafea374f6a5fd446d7e924ff9d65918bf');
+  assert.match(entry('sample-bid').guidance,/Bid Preparation/);assert.doesNotMatch(entry('sample-bid').path,/Tools/);
+  assert.match(knowledgeEntries.find(source=>source.id==='knowledge-manpower')!.guidance,/Reporting date, newest first/);
+  assert(generatedKnowledgePatches.length>=14);
+  for(const patch of generatedKnowledgePatches){assert.match(patch.recordDigest,/^[a-f0-9]{64}$/);assert(patch.provenance.every(source=>source.revision===patch.releaseBoundary.revision));}
+ });
+ await check('release impact propagates dependencies and holds semantic changes',()=>{
+  const records=[{id:'a',relatedRecordIds:['b'],dependencyBindings:[{path:'src/ui.tsx',kind:'interface'},{path:'src/rules.ts',kind:'semantic'}]},{id:'b',relatedRecordIds:['a'],dependencyBindings:[]}];
+  const unchanged=buildImpactReport(records,{changedPaths:['docs/unrelated.md']});assert.equal(unchanged.status,'unchanged');
+  const deterministic=buildImpactReport(records,{changedPaths:['src/ui.tsx']});assert.equal(deterministic.status,'extraction-refresh-needed');assert.deepEqual(deterministic.dependentRecordIds,['b']);
+  const semantic=buildImpactReport(records,{changedPaths:['src/rules.ts']});assert(semantic.reviewRequired);assert.deepEqual(semantic.affectedRecordIds,['a','b']);
+  assert(buildImpactReport(records,{changedPaths:['supabase/migrations/new.sql']}).reviewRequired);
+  for(const path of ['supabase/functions/_shared/tenbot-agent-session.ts','supabase/functions/_shared/tenbot-hosted.ts','supabase/functions/tenbot/index.ts'])assert(buildImpactReport(records,{changedPaths:[path]}).reviewRequired,path);
+  const infrastructure='supabase/functions/_shared/tenbot-agent-session.ts';
+  assert(isInfrastructureReviewHeading('## Accepted infrastructure review — October 29, 2026'));
+  assert.equal(isInfrastructureReviewHeading('## Unaccepted infrastructure review'),false);
+  for(const path of ['supabase/functions/_shared/rbac.ts','supabase/functions/_shared/bid-scope-handler.ts','supabase/functions/generate-sample-pdf/index.ts'])assert(buildImpactReport(records,{changedPaths:[path]}).reviewRequired,path);
+  assert.equal(buildImpactReport(records,{changedPaths:[infrastructure],acknowledgedInfrastructurePaths:[infrastructure]}).reviewRequired,false);
+  assert(buildImpactReport(records,{changedPaths:['supabase/migrations/new.sql'],acknowledgedInfrastructurePaths:['supabase/migrations/new.sql']}).reviewRequired);
+  const bound=[{id:'semantic',relatedRecordIds:[],dependencyBindings:[{path:infrastructure,kind:'semantic'}]}];
+  assert(buildImpactReport(bound,{changedPaths:[infrastructure],acknowledgedInfrastructurePaths:[infrastructure]}).reviewRequired);
+ });
+ await check('source-archive builds verify integrity and cannot substitute for release gates',()=>{
+  const archive=mkdtempSync('/private/tmp/tenbot-knowledge-archive-');
+  const artifact='supabase/functions/_shared/tenbot-knowledge-snapshot.ts';
+  for(const path of [...knowledgeSnapshot.generationInputs.map(input=>input.path),artifact]){
+   mkdirSync(dirname(resolve(archive,path)),{recursive:true});copyFileSync(path,resolve(archive,path));
+  }
+  symlinkSync(resolve('node_modules'),resolve(archive,'node_modules'));
+  const env={...process.env};delete env.CF_PAGES_COMMIT_SHA;delete env.TENBOT_KNOWLEDGE_RELEASE_CANDIDATE;
+  const run=(mode:string,extra:Partial<NodeJS.ProcessEnv>={})=>execFileSync(process.execPath,['scripts/generate-tenbot-knowledge.mjs',mode],{cwd:archive,encoding:'utf8',env:{...env,...extra},stdio:'pipe'});
+  const before=readFileSync(resolve(archive,artifact),'utf8');assert.match(run('--build-sync'),/packaged knowledge verified/);
+  assert.equal(readFileSync(resolve(archive,artifact),'utf8'),before);
+  assert.throws(()=>run('--build-sync',{TENBOT_KNOWLEDGE_RELEASE_CANDIDATE:knowledgeSnapshot.revision}),/requires full reviewed Git history/);
+  writeFileSync(resolve(archive,artifact),before+'\nthrow new Error("DO_NOT_EVALUATE_ARTIFACT");\n');
+  assert.throws(()=>run('--artifact-check'),error=>error instanceof Error&&/stale or modified/.test(error.message)&&!/DO_NOT_EVALUATE_ARTIFACT/.test(error.message));
+  writeFileSync(resolve(archive,artifact),before);
+  writeFileSync(resolve(archive,'scripts/tenbot-knowledge/architecture.mjs'),readFileSync('scripts/tenbot-knowledge/architecture.mjs','utf8')+'\n// Changed generation input.\n');
+  assert.throws(()=>run('--artifact-check'),/Generation inputs or artifact content differ/);
+ });
+ console.log(JSON.stringify({status:'pass',groups:checks.length,checks,inference_calls:0,database_calls:0}));
+ process.exit(0);
+}
 if(process.argv.includes('--qa-core-only')){
  const qa=JSON.parse(readFileSync('docs/project-memory/evidence/2026-10-28-tenbot-independent-qa/transcript.json','utf8')).turns as {id:string;question:string;actual:string}[];
  const ids:Record<string,string>={Q03:'production-rework-create',Q14:'workflow-manpower-history',Q32:'inventory-pending-receive',Q34:'inventory-activity',Q35:'workflow-po-draft'};
@@ -313,9 +437,9 @@ for(const question of ['How does Calendar payroll export work?','How do I tune t
  assert.deepEqual(conversationGuides(question),[],question);
 }
 const sampleBidSource=entry('sample-bid');
-assert.equal(sampleBidSource.status,'deployed');assert.match(sampleBidSource.guidance,/Existing standalone Sample, then Link Sample/);
-assert.match(sampleBidSource.guidance,/already linked to another Bid cannot/);
-assert.match(sampleBidSource.guidance,/Existing generated documents are not changed/);
+assert.equal(sampleBidSource.status,'deployed');assert.match(sampleBidSource.guidance,/Existing standalone Sample → Link Sample/);
+assert.match(sampleBidSource.guidance,/linked to another Bid cannot be reassigned/);
+assert.match(sampleBidSource.guidance,/Existing generated documents retain their historical contents/);
 assert.equal(entry('material-lead').availability,'partial');
 assert.match(entry('material-lead').guidance,/does not automatically predict supplier delivery/);
 
@@ -383,7 +507,7 @@ for(const expected of registry){
  if(expected.status!=='deployed')assert.equal(expected.route,null);
  for(const sourceFile of expected.sourceFiles){
   assert.ok(readFileSync(sourceFile));
-  execFileSync('git',['cat-file','-e',`${snapshot.revision}:${sourceFile}`],{stdio:'pipe'});
+  execFileSync('git',['cat-file','-e',`${expected.releaseBoundary?.revision??knowledgeSnapshot.revision}:${sourceFile}`],{stdio:'pipe'});
  }
  for(const question of expected.examples){
   assert.equal(retrieve(question,all)[0]?.id,expected.id,question);
@@ -699,8 +823,8 @@ for(const output of [
 ])await assert.rejects(answer({action:'ask',question:groupQuestion},all,fixture(output),reserve),/verify|ungrounded|wording/i);
 assert.equal(groundedProse('Start with the group name, then choose the people you want to talk with. Once you are ready, choose Create group.',entry('group')).startsWith('Start'),true);
 assert.equal(groundedProse(multiProse,[entry('production-rework-create'),entry('manpower-job-filter')]),multiProse);
-const capturedSampleProse="To attach a sample to a bid, open the Intake module and select the bid. Then, go to Tools and choose 'Open related Samples'. From there, select 'Existing standalone Sample' and click 'Link Sample'. If you want to create a new sample, choose 'Create Sample' in the Bid's Tools, which will retain the bid, customer, and project context. You can also use the Sample editor to save a draft with bid context.";
-assert.equal(groundedProse(capturedSampleProse,[entry('sample-bid'),generatedEntry('knowledge-sample-bid'),generatedEntry('knowledge-samples')]),capturedSampleProse);
+const releasedSampleProse="To attach a Sample to a Bid, open Intake and select the Bid. In Overview, use Bid Preparation and choose Open related Samples. Select Existing standalone Sample, then Link Sample. Create Sample starts a new Sample with Bid, Customer and Project context. Existing generated documents retain their historical contents.";
+assert.equal(groundedProse(releasedSampleProse,[entry('sample-bid'),generatedEntry('knowledge-sample-bid'),generatedEntry('knowledge-samples')]),releasedSampleProse);
 const breadcrumbProse='Open the Job in Production, select Create Rework, enter the intake/return date, then select Create Rework. For labor, open Reporting > Manpower Reporting and choose the Job in Job labor review.';
 assert.equal(groundedProse(breadcrumbProse,[entry('production-rework-create'),entry('manpower-job-filter')]),breadcrumbProse);
 const incorrectDmProse='You can add someone to an existing personal DM by creating a new group and inviting the person.';

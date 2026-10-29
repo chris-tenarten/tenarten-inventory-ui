@@ -2,6 +2,10 @@
 
 Dated snapshot: **October 21, 2026, 3:51 p.m. America/Chicago**. Reinspect relevant Git and hosted facts before acting. This is an index of status and evidence, not a transcript or a new source of Product authority. Status meanings and the compact handoff are in the [execution standard](../project/ENGINEERING_EXECUTION_STANDARD.md#compact-handoff-and-status).
 
+## TenBot structured architecture knowledge — October 29 local candidate
+
+Chris accepts the architecture review and authorizes the [focused knowledge extension](2026-10-29-tenbot-architecture-knowledge.md), local dev commit and Product acceptance stop. Thread ownership was relayed before shared integration; hosted Terra infrastructure/database work is separate. Fourteen existing records gain classified relationships, prerequisites, effects, approvals and limitations; sixteen generated patches share released Bid Preparation/Manpower corrections. Related search is bounded and independently permission-checked; actual-registry links grant no execution. Static source proofs include structured facts and authority metadata. Generation retains mixed reviewed release pins, validates source-archive artifacts and holds candidate semantic impacts for review. Tier 3 focused offline/history/browser/type/lint/build evidence belongs to the receipt. **Implemented locally, pending Product acceptance; no migration, paid inference, hosted access, push or deployment.** Existing hosted holds and unrelated dirty work remain preserved; separate Advisory unavailable.
+
 ## Independently verified release boundary
 
 Fresh `git fetch origin --no-prune`, `git ls-remote origin refs/heads/main refs/heads/dev` and local ref inspection agree:
