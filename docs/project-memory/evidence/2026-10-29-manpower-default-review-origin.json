@@ -1,0 +1,14 @@
+{
+  "origin": "http://localhost:3000",
+  "checks": [
+    "Actual Sample library loads",
+    "Complete Proposal library loads (1201 articles)",
+    "Disposable local Proposal creation",
+    "Browser opens Proposal PDF viewer",
+    "Same local preview POST payload returns valid PDF via direct HTTP (861258 bytes, %PDF-1.7)"
+  ],
+  "synthetic": true,
+  "hostedWrites": 0,
+  "captureLimitation": "Chromium Playwright response.body() reported empty for the successful application/pdf request despite the preview opening. The independent same-payload HTTP response confirmed status 200 and valid PDF bytes. The earlier POST-only waiter did not resolve browser capture; no application change made.",
+  "cleanup": "Populated review URL reset after browser closure preparation; disposable fixture state restored."
+}

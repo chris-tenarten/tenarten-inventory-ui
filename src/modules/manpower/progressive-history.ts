@@ -10,15 +10,17 @@ export function groupReportingDate(group: ManpowerReportingGroup): number | null
   const date = new Date(Date.UTC(year, month - 1, day));
   return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day ? date.getTime() : null;
 }
-/** Existing reporting-date/creation/name/id order, frozen when retrieval starts. */
+/** Historical presentation: leading reporting date, then creation/name/id. */
+export function compareReportingGroups(a: ManpowerReportingGroup, b: ManpowerReportingGroup) {
+  const ad = groupReportingDate(a), bd = groupReportingDate(b);
+  if (ad !== null && bd !== null && ad !== bd) return bd - ad;
+  if (ad !== null && bd === null) return -1;
+  if (ad === null && bd !== null) return 1;
+  return b.created_at.localeCompare(a.created_at) || a.display_name.localeCompare(b.display_name) || a.id.localeCompare(b.id);
+}
+/** Retrieval uses the same metadata order, independently of publication priority. */
 export function orderHistoryGroups(groups: ManpowerReportingGroup[]) {
-  return [...groups].sort((a, b) => {
-    const ad = groupReportingDate(a), bd = groupReportingDate(b);
-    if (ad !== null && bd !== null && ad !== bd) return bd - ad;
-    if (ad !== null && bd === null) return -1;
-    if (ad === null && bd !== null) return 1;
-    return b.created_at.localeCompare(a.created_at) || a.display_name.localeCompare(b.display_name) || a.id.localeCompare(b.id);
-  }).map(group => group.id);
+  return [...groups].sort(compareReportingGroups).map(group => group.id);
 }
 export function nextHistoryBatch(ordered: string[], priority: Set<string>, complete: Set<string>) {
   const remaining = ordered.filter(key => !complete.has(key));

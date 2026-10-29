@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';import {writeFileSync} from 'node:fs';
 import {progressiveManpowerFixture,progressiveResponse,uuid} from './support/manpower-progressive-fixture.mjs';
 import {readCompleteGroupBatch,nextHistoryBatch,orderHistoryGroups,UNGROUPED_HISTORY_KEY,HISTORY_GROUP_BATCH_SIZE} from '../src/modules/manpower/progressive-history';
+import {sortReportingGroups} from '../src/modules/manpower/group-presentation';
 const tables=progressiveManpowerFixture(),calls:URL[]=[],checks:string[]=[];
 const original=globalThis.fetch;
 globalThis.fetch=async(input,init)=>{const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);if(init?.signal?.aborted)throw new DOMException('Aborted','AbortError');calls.push(url);const result=progressiveResponse(url,tables,137);return new Response(init?.method==='HEAD'?null:JSON.stringify(result.rows),{status:200,headers:result.headers});};
@@ -20,5 +21,19 @@ try{
  await assert.rejects(readCompleteGroupBatch(async()=>({data:[],count:1,error:null})),/incomplete/);await assert.rejects(readCompleteGroupBatch(async()=>({data:[],count:null,error:null})),/verify/);
  await assert.rejects(readCompleteGroupBatch(async()=>({data:[],count:0,error:{message:'Denied'}})),/Denied/);checks.push('Count drift, duplicate cursor, empty/truncated page, missing count and denial reject before publication');
  const controller=new AbortController();controller.abort();await assert.rejects(loadManpowerGroupFacts(keys,controller.signal));checks.push('Aborted group read rejects');
- writeFileSync('docs/project-memory/evidence/2026-10-20-manpower-progressive-retrieval.json',JSON.stringify({checks,synthetic:true,hostedReads:0,hostedWrites:0,providerCap:137},null,2));console.log(checks.map(check=>'PASS '+check).join('\n'));
+ if(process.env.MANPOWER_DEFAULT_VIEW_CHECK==='true'){
+  const metadata=(id:string,name:string,created:string)=>({id,display_name:name,created_at:created,updated_at:'2026-10-29'});
+  const entry=(date:string,job:string)=>({...tables.manpower_entries[0],work_date:date,job:{...tables.jobs[0],name:job}});
+  const g=[
+   {key:'older',group:metadata('a','07/01/2026 Older','2026-10-29'),label:'Older',entries:[entry('2026-10-28','Zebra')]},
+   {key:'newer',group:metadata('b','10/28/2026 Newer','2026-07-01'),label:'Newer',entries:[entry('2025-01-01','Alpha'),entry('2024-01-01','Zulu')]},
+   {key:'undated-old',group:metadata('c','Undated old','2026-07-01'),label:'Undated old',entries:[]},
+   {key:'undated-new',group:metadata('d','Undated new','2026-10-01'),label:'Undated new',entries:[]},
+   {key:'ungrouped',group:null,label:'Ungrouped entries',entries:[]},
+  ];
+  assert.deepEqual(sortReportingGroups(g,'reporting-date').map(x=>x.key),['newer','older','undated-new','undated-old','ungrouped']);checks.push('Historical reporting-date/default, creation fallback, ungrouped last; recent edits do not override date');
+  assert.deepEqual(sortReportingGroups(g,'work-date').slice(0,2).map(x=>x.key),['older','newer']);checks.push('Work-date uses latest member date across complete membership');
+  assert.deepEqual(sortReportingGroups(g,'job-name').slice(0,2).map(x=>x.key),['newer','older']);assert.equal(g[0].key,'older');checks.push('Job name uses first alphabetical complete-group name, deterministic ties, no input mutation');
+ }
+ writeFileSync(process.env.MANPOWER_DEFAULT_VIEW_CHECK==='true'?'docs/project-memory/evidence/2026-10-29-manpower-default-retrieval.json':'docs/project-memory/evidence/2026-10-20-manpower-progressive-retrieval.json',JSON.stringify({checks,synthetic:true,hostedReads:0,hostedWrites:0,providerCap:137},null,2));console.log(checks.map(check=>'PASS '+check).join('\n'));
 }finally{globalThis.fetch=original;}

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';import {writeFileSync,readFileSync,existsSync} from 'node:fs';import {chromium,expect} from '@playwright/test';
 import {progressiveManpowerFixture,uuid} from './support/manpower-progressive-fixture.mjs';import {session} from './support/wave4-fixture.mjs';
 const origin='http://localhost:3000',browser=await chromium.launch({headless:true}),checks=[],errors=[],external=[],observations=[],only=process.env.PROGRESSIVE_CHECK||'';
-const file='docs/project-memory/evidence/2026-10-20-manpower-progressive-browser.json';
+const file=only.startsWith('Restored')?'docs/project-memory/evidence/2026-10-29-manpower-default-browser.json':'docs/project-memory/evidence/2026-10-20-manpower-progressive-browser.json';
 if(only&&existsSync(file)){const prior=JSON.parse(readFileSync(file));checks.push(...prior.checks);observations.push(...prior.observations);}
 const group=(p,n)=>p.locator(`[data-reporting-group="${uuid(51000+n)}"]`),records=p=>p.getByTestId('reporting-records'),progress=p=>p.getByTestId('history-progress'),search=p=>p.getByRole('searchbox',{name:'Search manpower',exact:true}),total=p=>p.getByTestId('analytics-total');
 const ready=async p=>{await p.goto(origin+'/manpower-reporting');await expect(total(p)).toHaveText('4,503.75 h');await expect(group(p,0)).toHaveAttribute('data-entry-count','157',{timeout:15000});};
@@ -11,6 +11,50 @@ async function run(name,fn){if(only==='remaining'?name.startsWith('Automatic com
  try{await fn({page,context,control,state});if(!checks.includes(name))checks.push(name);console.log('PASS '+name);}catch(e){console.error((await page.locator('body').innerText()).slice(0,1500));throw e;}finally{await context.close();writeFileSync(file,JSON.stringify({origin,checks,observations,pageErrors:errors,external,synthetic:true,hostedWrites:0},null,2));}
 }
 try{
+ for(const mobile of [false,true])await run(`Restored default ${mobile?'mobile':'desktop'}: historical order, collapse, progressive insertion, sorts and batch entry`,async({page,control,state})=>{
+  if(mobile)await page.setViewportSize({width:390,height:844});
+  await control({reset:true,defaultViewFixture:true,historyDelay:50});await ready(page);
+  await expect(page.getByRole('combobox',{name:'Sort groups',exact:true})).toHaveValue('reporting-date');
+  await expect(group(page,0).getByRole('button',{name:/^Expand /})).toBeVisible();
+  await expect(page.getByText('Sorting covers loaded complete groups; order may change as older groups arrive.',{exact:true})).toBeVisible();
+  await group(page,0).getByRole('button',{name:/^Expand /}).click();
+  await expect(group(page,0).locator('tbody input[type="date"]').first()).toHaveValue('2026-10-15');
+  await expect(group(page,0).locator('tbody input[type="date"]').last()).toHaveValue('2024-01-01');
+  const note=group(page,0).getByPlaceholder('Notes',{exact:true}).first();await note.fill('Unsaved batch review draft');
+  await expect(group(page,8)).toHaveAttribute('data-entry-count','1501',{timeout:20000});
+  await expect(page.locator('[data-reporting-group]').first()).toHaveAttribute('data-reporting-group',uuid(51008));
+  await expect(note).toHaveValue('Unsaved batch review draft');await expect(group(page,0).getByRole('button',{name:/^Collapse /})).toBeVisible();
+  await expect(group(page,8).getByRole('button',{name:/^Expand /})).toBeVisible();
+  await expect(group(page,0)).toHaveAttribute('data-total-hours','588.75');await expect(total(page)).toHaveText('4,503.75 h');
+  // Discard only the unsaved synthetic note before moving focus to sort controls.
+  await note.fill('Group 0 record 1');
+  await page.getByRole('combobox',{name:'Sort groups',exact:true}).selectOption('work-date');
+  await expect(page.locator('[data-reporting-group]').first()).toHaveAttribute('data-reporting-group',uuid(51000));
+  await page.getByRole('combobox',{name:'Sort groups',exact:true}).selectOption('job-name');
+  await expect(page.getByText('Mixed-Job groups use their first Job or work label alphabetically; empty groups follow.',{exact:true})).toBeVisible();
+  await page.getByRole('combobox',{name:'Sort groups',exact:true}).selectOption('reporting-date');
+  await expect(progress(page)).toHaveAttribute('data-complete','true',{timeout:60000});await expect(records(page)).toHaveAttribute('data-count','12888');
+  const ids=await page.locator('[data-reporting-group]').evaluateAll(nodes=>nodes.map(n=>n.dataset.reportingGroup));
+  assert.deepEqual(ids.slice(0,3),[uuid(51008),uuid(51001),uuid(51002)]);
+  assert(ids.indexOf(uuid(52010))<ids.indexOf(uuid(52009)));assert.equal(ids.at(-1),'__ungrouped__');
+  await search(page).fill('Historical edit target');await expect(records(page)).toHaveAttribute('data-count','1');await expect(records(page)).toContainText('26-1020');
+  const edited=page.getByPlaceholder('Notes',{exact:true});await edited.fill('Recently edited historical report');const saved=page.waitForResponse(r=>r.request().method()==='PATCH');await page.getByRole('heading',{name:'Manpower Reporting',exact:true}).click();assert.equal((await saved).status(),200);
+  await search(page).fill('');await expect(page.locator('[data-reporting-group]').first()).toHaveAttribute('data-reporting-group',uuid(51008));
+  const requests=(await state()).calls.filter(c=>c.name==='manpower_entries').length;
+  await page.getByRole('combobox',{name:'Sort groups',exact:true}).selectOption('work-date');await page.getByRole('combobox',{name:'Sort groups',exact:true}).selectOption('job-name');await page.getByRole('combobox',{name:'Sort groups',exact:true}).selectOption('reporting-date');
+  assert.equal((await state()).calls.filter(c=>c.name==='manpower_entries').length,requests);
+  await page.getByRole('button',{name:'New Group',exact:true}).click();await page.getByPlaceholder('Reporting group name',{exact:true}).fill('10/29/2026 Marcos review batch');await page.getByRole('button',{name:'Create',exact:true}).click();
+  const created=page.locator('[data-reporting-group]').filter({hasText:'10/29/2026 Marcos review batch'});await expect(created).toHaveAttribute('data-entry-count','0');await expect(created.getByRole('button',{name:'Add Entry',exact:true})).toBeVisible();
+  const draft=created.locator('tbody tr').first();await draft.locator('input[type="date"]').fill('2026-10-16');await draft.getByRole('combobox',{name:'Product Category',exact:true}).selectOption(uuid(50003));
+  const selects=draft.locator('select');await selects.nth(1).selectOption({label:'Fixture Worker'});await selects.nth(2).selectOption({label:'Grinding'});await draft.locator('input[type="number"]').first().fill('2');
+  await created.getByRole('button',{name:'Add Entry',exact:true}).click();await expect(created).toHaveAttribute('data-entry-count','1');await expect(created).toHaveAttribute('data-total-hours','2.00');await expect(created.locator('tbody input[type="date"]').first()).toHaveValue('2026-10-16');
+  await page.screenshot({path:`output/manpower-default-${mobile?'mobile':'desktop'}.png`,fullPage:false});
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),'Page overflows viewport');
+ });
+ await run('Restored default read-only: sorting and search available while writes remain disabled',async({page,control})=>{
+  await control({reset:true,defaultViewFixture:true,readOnly:true,historyDelay:20});await ready(page);
+  const sort=page.getByRole('combobox',{name:'Sort groups',exact:true});await expect(sort).toBeEnabled();await sort.selectOption('work-date');await search(page).fill('Historical edit target');await expect(group(page,8)).toHaveAttribute('data-entry-count','1',{timeout:20000});await expect(page.getByPlaceholder('Notes',{exact:true})).toBeDisabled();await expect(page.getByRole('button',{name:'New Group',exact:true})).toBeDisabled();
+ });
  await run('Automatic complete groups, incremental history, stable scroll/order/expansion and unsaved edits',async({page,control,state})=>{
   await control({historyDelay:15});const start=performance.now();await ready(page);await expect(group(page,0)).toHaveAttribute('data-total-hours','588.75');await expect(page.getByRole('button',{name:'Load complete history',exact:true})).toHaveCount(0);
   const prefix=await page.locator('[data-reporting-group]').evaluateAll(nodes=>nodes.map(node=>node.dataset.reportingGroup));const selectGroup=group(page,0).getByRole('checkbox',{name:/^Select displayed entries/});await selectGroup.check();await expect(group(page,0)).toContainText('157 selected');await selectGroup.uncheck();await group(page,0).getByRole('button',{name:/^Expand /}).click();const note=group(page,0).getByPlaceholder('Notes',{exact:true}).first();await note.fill('Keep unsaved during progressive retrieval');await page.evaluate(()=>window.scrollTo(0,1100));const y=await page.evaluate(()=>window.scrollY), anchorY=(await note.boundingBox()).y;

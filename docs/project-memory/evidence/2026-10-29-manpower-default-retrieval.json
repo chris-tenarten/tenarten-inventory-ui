@@ -1,0 +1,19 @@
+{
+  "checks": [
+    "Complete group metadata above 1000/provider cap",
+    "Cross-period recent group: all 157 members and archived Jobs, exact AM/PM totals",
+    "1501-member group complete with immutable id cursors and capped provider",
+    "Complete ungrouped scope and final counted coverage",
+    "No raw-row offset paging, mutable-date cursor or global history GET",
+    "Recent priority, bounded group batches and ungrouped priority",
+    "Count drift, duplicate cursor, empty/truncated page, missing count and denial reject before publication",
+    "Aborted group read rejects",
+    "Historical reporting-date/default, creation fallback, ungrouped last; recent edits do not override date",
+    "Work-date uses latest member date across complete membership",
+    "Job name uses first alphabetical complete-group name, deterministic ties, no input mutation"
+  ],
+  "synthetic": true,
+  "hostedReads": 0,
+  "hostedWrites": 0,
+  "providerCap": 137
+}

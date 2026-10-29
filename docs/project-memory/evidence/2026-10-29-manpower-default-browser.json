@@ -1,0 +1,13 @@
+{
+  "origin": "http://localhost:3000",
+  "checks": [
+    "Restored default desktop: historical order, collapse, progressive insertion, sorts and batch entry",
+    "Restored default mobile: historical order, collapse, progressive insertion, sorts and batch entry",
+    "Restored default read-only: sorting and search available while writes remain disabled"
+  ],
+  "observations": [],
+  "pageErrors": [],
+  "external": [],
+  "synthetic": true,
+  "hostedWrites": 0
+}

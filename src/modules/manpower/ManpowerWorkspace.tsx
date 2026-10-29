@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth';
 import ProductCategoryManager from './ProductCategoryManager';
 import ProductLaborSummary from './ProductLaborSummary';
 import ManpowerAnalytics from './ManpowerAnalytics';
+import { sortReportingGroups, type GroupSort } from './group-presentation';
 import { useProgressiveHistory } from './useProgressiveHistory';
 import { HISTORY_GROUP_BATCH_SIZE, UNGROUPED_HISTORY_KEY } from './progressive-history';
 import { laborPeriod, localLaborToday, type LaborPeriodDays } from './analytics';
@@ -652,7 +653,7 @@ function AccountManpowerWorkspace() {
   const publishGroupBatch = useCallback((loaded: ManpowerEntry[]) => {
     // Each group is published once. A repeated entry indicates membership moved
     // across batches; stop rather than silently retaining an obsolete identity.
-    setEntries(current => { const seen = new Set(current.map(entry => entry.id)); if (loaded.some(row => seen.has(row.id))) throw new Error('Reporting group membership changed across batches. Refresh reporting.'); return [...current, ...loaded]; });
+    setEntries(current => { const seen = new Set(current.map(entry => entry.id)); if (loaded.some(row => seen.has(row.id))) throw new Error('Reporting group membership changed across batches. Refresh reporting.'); return [...current, ...[...loaded].sort((a, b) => b.work_date.localeCompare(a.work_date) || b.created_at.localeCompare(a.created_at) || a.id.localeCompare(b.id))]; });
   }, [setEntries]);
   const countPublishedEntries = useCallback(() => entrySnapshot.current.length, []);
   const [periodFacts, setPeriodFacts] = useState<ManpowerEntry[] | null>(null);
@@ -672,6 +673,7 @@ function AccountManpowerWorkspace() {
   const [periodError, setPeriodError] = useState('');
   const [periodRetry, setPeriodRetry] = useState(0);
   const [historyView, setHistoryView] = useState(true);
+  const [groupSort, setGroupSort] = useState<GroupSort>('reporting-date');
   const [referenceRevision, setReferenceRevision] = useState(0);
   const loadGeneration = useRef(0);
   const isCurrentHistoryRevision = useCallback((revision: number) => loadGeneration.current === revision, []);
@@ -925,11 +927,9 @@ function AccountManpowerWorkspace() {
       group.entries.push(entry); grouped.set(key, group);
     }
     if (!linkedJobId && !productFilter) for (const group of grouped.values()) group.entries = entriesByGroup.get(group.key) ?? EMPTY_GROUP_ENTRIES;
-    const rank = new Map(history.order.map((key, index) => [key, index]));
-    const sortedGroups = [...grouped.values()].filter(group => history.keys.has(group.key)
+    const sortedGroups = sortReportingGroups([...grouped.values()].filter(group => history.keys.has(group.key)
       && (historyView || group.entries.some(entry => entry.work_date >= period.start && entry.work_date <= period.end))
-      && ((!linkedJobId && !productFilter) || group.entries.length > 0))
-      .sort((a, b) => (rank.get(a.key) ?? Infinity) - (rank.get(b.key) ?? Infinity));
+      && ((!linkedJobId && !productFilter) || group.entries.length > 0)), groupSort);
     if (!normalizedSearch) return sortedGroups;
     return sortedGroups
       .map((group) => ({
@@ -949,7 +949,7 @@ function AccountManpowerWorkspace() {
         ].some((value) => value?.toLocaleLowerCase().includes(normalizedSearch))),
       }))
       .filter((group) => group.entries.length > 0);
-  }, [scopedEntries, entriesByGroup, historyView, history.keys, history.order, period, linkedJobId, productFilter, normalizedSearch, reportingGroups, categories]);
+  }, [scopedEntries, entriesByGroup, historyView, history.keys, groupSort, period, linkedJobId, productFilter, normalizedSearch, reportingGroups, categories]);
 
   function startAddingToGroup(groupId: string, groupEntries: ManpowerEntry[], groupLabel: string) {
     const identities = new Map<string, Pick<Draft, 'workTarget' | 'unlistedLabel'>>();
@@ -1180,11 +1180,18 @@ function AccountManpowerWorkspace() {
         {!loadError && <div className="border border-slate-300 bg-white p-4 text-sm text-slate-600">
           <p>{historyView ? 'All reporting groups' : `Groups with work in ${period.start} – ${period.end}`} · Complete group membership, all dates. Analytics use the selected period. Search and filters apply to loaded complete groups.</p>
           <p role="status" data-testid="history-progress" data-complete={historyReady} className="mt-1 text-xs">{historyReady ? 'All available history loaded' : `${history.order.filter(key => key !== UNGROUPED_HISTORY_KEY).length} of ${reportingGroups.length} reporting groups loaded${history.loading ? ' · Loading older records…' : ''}. Search results are not exhaustive until history is complete.`}</p>
+          <label className="mt-2 flex flex-wrap items-center gap-2 text-xs font-semibold"><span>Sort groups</span><select aria-label="Sort groups" value={groupSort} onChange={event => setGroupSort(event.target.value as GroupSort)} className="h-9 max-w-full border border-slate-400 bg-white px-2">
+            <option value="reporting-date">Reporting date, newest first</option>
+            <option value="work-date">Work date, newest first</option>
+            <option value="job-name">Job name, A–Z</option>
+          </select></label>
+          {!historyReady && <p className="mt-1 text-xs">Sorting covers loaded complete groups; order may change as older groups arrive.</p>}
+          {groupSort === 'job-name' && <p className="mt-1 text-xs">Mixed-Job groups use their first Job or work label alphabetically; empty groups follow.</p>}
           <button type="button" onClick={() => setHistoryView(!historyView)} className="mt-2 min-h-9 border border-slate-400 px-3 font-semibold">{historyView ? 'Selected-period groups only' : 'Show all groups'}</button>
         </div>}
         {history.error && <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{history.error} Already loaded groups remain available. <button type="button" onClick={history.retry} disabled={history.loading} className="underline">Retry older groups</button></div>}
         {currentPeriodError && <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{currentPeriodError} <button type="button" onClick={() => setPeriodRetry(value => value + 1)} className="underline">Retry period</button></div>}
-        <fieldset data-testid="reporting-records" data-count={recordsLoading || currentPeriodError || loadError ? 0 : groups.reduce((count, group) => count + group.entries.length, 0)} className="space-y-3">
+        <fieldset data-testid="reporting-records" data-count={recordsLoading || currentPeriodError || loadError ? 0 : groups.reduce((count, group) => count + group.entries.length, 0)} className="min-w-0 space-y-3">
         {recordsLoading && !loadError ? <div role="status" className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">Loading selected-period entries…</div> : loadError ? <div role="alert" className="border border-red-300 bg-red-50 p-4 text-sm text-red-800">{loadError} <button type="button" onClick={() => void load()} className="underline">Retry reporting</button></div> : currentPeriodError ? null : groups.length === 0 ? <div className="border border-slate-400 bg-white p-8 text-center text-sm text-slate-600">{normalizedSearch || productFilter || linkedJobId ? 'No manpower entries match your filters in this scope.' : history.loading ? 'Completing reporting groups…' : historyView ? 'No reporting groups yet. Create the first group to begin.' : 'No complete groups available in this scope yet.'}</div> : groups.map((group) => {
           const identityEntries = entriesByGroup.get(group.key) ?? [];
           const identityFiltered = Boolean(normalizedSearch || productFilter || linkedJobId);
