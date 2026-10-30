@@ -1424,5 +1424,69 @@
       "revision": "26571267d474e967de638c9913fa561ac211a151",
       "heading": "## Accepted record source review — authenticated canary control status appendix"
     }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-invoice.ts",
+    "blob": "ee676eca7b2f5549cb7036d380c401addf7103de",
+    "sha256": "4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0",
+    "reviewedCandidate": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+      "heading": "## Accepted candidate source review — bounded hosted invoice initialization"
+    },
+    "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "blob": "1f2adbf697091197d4f5607874ea0c2b5a187b2b",
+    "sha256": "687d16b79a249e1b61edd0e469b5e060c90a7ad6fd2fab2e56ec7a12ad69360d",
+    "reviewedCandidate": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+      "heading": "## Accepted candidate source review — bounded hosted invoice initialization"
+    },
+    "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "blob": "8d5c07090caa1e06a47f14b3fc1b2ca081b555f5",
+    "sha256": "05294ec731f6be98bec1389190cf5958cd9093f610c812564dd0776752174766",
+    "reviewedCandidate": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+      "heading": "## Accepted candidate source review — bounded hosted invoice initialization"
+    },
+    "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/tenbot/index.ts",
+    "blob": "f718336df8d2bbf82223285c6ac30105f063ef5f",
+    "sha256": "ce1fdec77b596cf6d6063fff3e0a1d4f631af3d708279205b410ba37fb6dc693",
+    "reviewedCandidate": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+      "heading": "## Accepted candidate source review — bounded hosted invoice initialization"
+    },
+    "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed"
   }
 ]
