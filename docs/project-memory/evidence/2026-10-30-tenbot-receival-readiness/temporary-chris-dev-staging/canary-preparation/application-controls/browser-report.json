@@ -1,0 +1,1648 @@
+{
+  "passed": true,
+  "groups": 8,
+  "checks": [
+    "Default OFF, wrong origins and unauthorized accounts make no Auth/REST requests or mutations",
+    "localhost:3000 review mode loads durable status and keeps every action disabled; mobile containment",
+    "Admin explicit activation uses only fixed expiry/reason; reload and remount recover the exact durable grant with no invoice queries",
+    "Grant state is explicit for Active, Inactive, Expired and Revoked; expired exact-ID revocation and changed-grant confirmation binding remain guarded",
+    "Unknown activation outcome offers no blind retry; explicit durable reconciliation recovers the already persisted grant",
+    "Exact owner recovers the returned receipt and cancels only after SQL OFF plus canonical draft/source/approval/audit checks; one guarded PATCH persists across reload",
+    "Foreign retained source and final-preflight revocation deny cancellation; changed received rows retain their identity with cancellation disabled",
+    "Fresh permission checks, role/account changes, focus revocation and server-duration expiry clear stale controls and confirmations"
+  ],
+  "mode": "Source component and actual client service + Supabase SDK, synthetic Auth/REST responses only; not app-route, hosted RPC/JWT/RLS, grants, database or inference proof.",
+  "sourceHashes": {
+    "src/modules/tenbot/TenbotCanaryControl.tsx": "f53df18998c7864f763a93e93163f0509f1e4db2661e24c6255fd9419fc397be",
+    "src/modules/inventory/tenbot-canary-control.ts": "9a188d667f22eeb3535093b72ac96cb7558e8b712bd7701957e1c3c0a4465da7",
+    "src/modules/inventory/tenbot-canary-access.ts": "7352ee25ce61da18ed879e5a51fd710fe992243861d0127aa1b4e3048f1d7d97",
+    "src/modules/inventory/invoice-receival-service.ts": "4cc9d6fe8164e8fe98026d499d53f5235f18ff44cfa34c46eb472f9ae8c82343",
+    "src/modules/inventory/invoice-receival-attachments.ts": "620cd88fc655ee194622e266fd527ea3fe92dcec2842b43f0c5e6308afac4edb"
+  },
+  "bundleSha256": "cfbc0664029c6f619fa899f68708034fef63739db48882a6b869e7a7505b6c35",
+  "css": {
+    "directory": ".next/static/css",
+    "files": [
+      "009e8344dd0776ae.css",
+      "15f74ee999edbd3d.css",
+      "6faf42657f96bc11.css",
+      "7fff52451dadd398.css",
+      "9611c0b375fc73f6.css",
+      "d12f0aca13423a71.css"
+    ],
+    "sha256": "ef1bec81b3066ab8bd12ecd63c7c493291c2d528a7fe59e600ed1eae152f113c"
+  },
+  "actualDatabase": false,
+  "actualInference": false,
+  "realGrantMutations": 0,
+  "operationalWrites": 0,
+  "externalRequestsForwarded": 0,
+  "portsUsed": [],
+  "mutationRequests": [
+    {
+      "scenario": "admin-activation",
+      "rpc": "activate_tenbot_chris_dev_canary_grant",
+      "args": {
+        "p_expires_at": "2026-10-30T19:10:00.000Z",
+        "p_reason": "Synthetic reviewed canary"
+      }
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "rpc": "revoke_tenbot_chris_dev_canary_grant",
+      "args": {
+        "p_grant_id": "10302026-0000-4000-8000-000000000002",
+        "p_reason": "Close exact synthetic expired grant"
+      }
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "rpc": "activate_tenbot_chris_dev_canary_grant",
+      "args": {
+        "p_expires_at": "2026-10-30T19:10:00.000Z",
+        "p_reason": "Synthetic reviewed canary"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "table": "pending_receivals",
+      "method": "PATCH",
+      "query": {
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "status": "eq.pending",
+        "quantity_expected": "eq.1",
+        "quantity_received": "eq.0",
+        "unit": "eq.Bag",
+        "vendor": "eq.T&M Supply",
+        "material_name": "eq.Alaska White",
+        "size": "eq.#0",
+        "is_earmarked": "eq.false",
+        "production_job_id": "is.null",
+        "temporary_job_label": "is.null",
+        "earmarked_job_name": "is.null",
+        "receipt_inventory_item_id": "is.null",
+        "receipt_transaction_id": "is.null",
+        "received_at": "is.null",
+        "received_by": "is.null",
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by"
+      },
+      "body": {
+        "status": "cancelled"
+      }
+    }
+  ],
+  "traces": [
+    {
+      "scenario": "review-localhost",
+      "kind": "auth"
+    },
+    {
+      "scenario": "review-localhost",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "review-localhost",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "review-localhost",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "review-localhost",
+      "kind": "auth"
+    },
+    {
+      "scenario": "review-localhost",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "review-localhost",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "review-localhost",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "activate_tenbot_chris_dev_canary_grant",
+      "args": {
+        "p_expires_at": "2026-10-30T19:10:00.000Z",
+        "p_reason": "Synthetic reviewed canary"
+      }
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-activation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "revoke_tenbot_chris_dev_canary_grant",
+      "args": {
+        "p_grant_id": "10302026-0000-4000-8000-000000000002",
+        "p_reason": "Close exact synthetic expired grant"
+      }
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-expired-revoke",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-revoke-no-retarget",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "activate_tenbot_chris_dev_canary_grant",
+      "args": {
+        "p_expires_at": "2026-10-30T19:10:00.000Z",
+        "p_reason": "Synthetic reviewed canary"
+      }
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-uncertain-outcome",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "adjustInventory"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_invoice_receival_draft",
+      "args": {
+        "p_draft_id": "10302026-0000-4000-8000-000000000003"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "invoice_receival_approvals",
+      "method": "GET",
+      "query": {
+        "select": "id,draft_id,owner_user_id,content_hash,confirmation,approved_at",
+        "id": "eq.10302026-0000-4000-8000-000000000005",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_invoice_receival_source_for_draft",
+      "args": {
+        "p_draft_id": "10302026-0000-4000-8000-000000000003"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "invoice_receival_audit",
+      "method": "GET",
+      "query": {
+        "select": "id,event,content_hash",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "content_hash": "eq.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "limit": "20"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "adjustInventory"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "PATCH",
+      "query": {
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "status": "eq.pending",
+        "quantity_expected": "eq.1",
+        "quantity_received": "eq.0",
+        "unit": "eq.Bag",
+        "vendor": "eq.T&M Supply",
+        "material_name": "eq.Alaska White",
+        "size": "eq.#0",
+        "is_earmarked": "eq.false",
+        "production_job_id": "is.null",
+        "temporary_job_label": "is.null",
+        "earmarked_job_name": "is.null",
+        "receipt_inventory_item_id": "is.null",
+        "receipt_transaction_id": "is.null",
+        "received_at": "is.null",
+        "received_by": "is.null",
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-cancel",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "auth"
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "auth"
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "adjustInventory"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "get_invoice_receival_draft",
+      "args": {
+        "p_draft_id": "10302026-0000-4000-8000-000000000003"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "table",
+      "table": "invoice_receival_approvals",
+      "method": "GET",
+      "query": {
+        "select": "id,draft_id,owner_user_id,content_hash,confirmation,approved_at",
+        "id": "eq.10302026-0000-4000-8000-000000000005",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "foreign-source",
+      "kind": "rpc",
+      "rpc": "get_invoice_receival_source_for_draft",
+      "args": {
+        "p_draft_id": "10302026-0000-4000-8000-000000000003"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "adjustInventory"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "get_invoice_receival_draft",
+      "args": {
+        "p_draft_id": "10302026-0000-4000-8000-000000000003"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "table",
+      "table": "invoice_receival_approvals",
+      "method": "GET",
+      "query": {
+        "select": "id,draft_id,owner_user_id,content_hash,confirmation,approved_at",
+        "id": "eq.10302026-0000-4000-8000-000000000005",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "get_invoice_receival_source_for_draft",
+      "args": {
+        "p_draft_id": "10302026-0000-4000-8000-000000000003"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "table",
+      "table": "invoice_receival_audit",
+      "method": "GET",
+      "query": {
+        "select": "id,event,content_hash",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "content_hash": "eq.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "limit": "20"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "pre-CAS-revocation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-received-recovery",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "admin-permission-switch",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-permission-switch",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-permission-switch",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-permission-switch",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-permission-switch",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-permission-switch",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-permission-switch",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-role-account-change",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-role-account-change",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-role-account-change",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-role-account-change",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "admin-role-account-change",
+      "kind": "auth"
+    },
+    {
+      "scenario": "admin-role-account-change",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "admin-role-account-change",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "admin-role-account-change",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-focus-revocation",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-server-duration-expiry",
+      "kind": "auth"
+    },
+    {
+      "scenario": "owner-server-duration-expiry",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "owner-server-duration-expiry",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "owner-server-duration-expiry",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "owner-server-duration-expiry",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "owner-server-duration-expiry",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "owner-server-duration-expiry",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    }
+  ],
+  "errors": [],
+  "blockedNetwork": [],
+  "unexpectedNetwork": []
+}

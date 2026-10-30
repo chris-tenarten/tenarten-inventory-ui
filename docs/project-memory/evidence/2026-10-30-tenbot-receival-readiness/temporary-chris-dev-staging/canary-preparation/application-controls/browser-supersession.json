@@ -1,0 +1,13 @@
+{
+  "current": "report.json",
+  "passed": true,
+  "groups": 8,
+  "supersedes": [
+    "initial-sandbox-launch-failure.json",
+    "initial-harness-navigation-failure.json",
+    "failure.json",
+    "passes/initial/report.json"
+  ],
+  "qualification": "Initial attempts stopped before Auth/REST fixture calls or writes. Buffer delivery and an explicit mounted marker corrected only the test harness. No application source changes. The first eight-group pass is preserved in passes/initial; the current pass verifies the explicit grant-state presentation correction.",
+  "latestReceipt": "grant-state-presentation-rerun.json"
+}

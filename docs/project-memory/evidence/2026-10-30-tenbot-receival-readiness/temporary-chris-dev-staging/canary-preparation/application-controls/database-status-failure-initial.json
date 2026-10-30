@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "phase": "rollback-only-status-validation",
+  "httpCalls": 8,
+  "productionRequests": 0,
+  "grantActivations": 0,
+  "operationalWrites": 0,
+  "message": "Missing PostgreSQL result acl"
+}

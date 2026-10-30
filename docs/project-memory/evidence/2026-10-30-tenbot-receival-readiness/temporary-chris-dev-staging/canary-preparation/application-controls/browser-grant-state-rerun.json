@@ -1,0 +1,17 @@
+{
+  "createdAt": "2026-10-30T20:23:24.394318+00:00",
+  "passed": true,
+  "groups": 8,
+  "report": "report.json",
+  "previousPass": "passes/initial/report.json",
+  "previousReportSha256": "50a56e40a1d6c9377bb1c15c279c6165b6d0f46ebbe367e1a148ff15a2a3dfc2",
+  "currentReportSha256": "29ce10acf75cb1f5d9d450912a5f8d80f91bb3464074c5d8801b6ee7f90f9f43",
+  "componentSha256": "f53df18998c7864f763a93e93163f0509f1e4db2661e24c6255fd9419fc397be",
+  "coverageDelta": "Explicit Active, Inactive, Expired and Revoked grant state assertions within the existing eight groups.",
+  "visualReview": "Fresh active and revoked desktop plus cancelled mobile screenshots inspected; containment retained.",
+  "actualDatabase": false,
+  "realGrantMutations": 0,
+  "operationalWrites": 0,
+  "externalRequestsForwarded": 0,
+  "portsUsed": []
+}

@@ -1,0 +1,132 @@
+{
+  "status": "IMPLEMENTED_LOCALLY_VALIDATED_NOT_COMMITTED_OR_STAGED",
+  "authority": "Chris REMOVE BRITTLE CONSOLE DEPENDENCY, October30 2026; implement/validate only; no deployment/grant/canary authorization.",
+  "advisoryContext": "Separate advisory thread unavailable; current explicit Product instruction governs.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "baseDevSha": "eb791e3780fe0172db7bb38be71e2ee1ce1a5aca",
+  "acceptedTenDevRuntimeUnchanged": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "source": [
+    {
+      "path": "src/modules/inventory/tenbot-canary-control.ts",
+      "sha256": "9a188d667f22eeb3535093b72ac96cb7558e8b712bd7701957e1c3c0a4465da7"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotCanaryControl.tsx",
+      "sha256": "f53df18998c7864f763a93e93163f0509f1e4db2661e24c6255fd9419fc397be"
+    },
+    {
+      "path": "src/app/tenbot/canary/page.tsx",
+      "sha256": "ada49a4683255f4884cd33c6bdaab2a071d98bcf0451facc50f80743b266d2ea"
+    },
+    {
+      "path": "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+      "sha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-control.mts",
+      "sha256": "0147b4d036a52d866ab500731ba4639a1650bf893789ebb3d39df46a943a8cc9"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-control-database.mts",
+      "sha256": "9219235fbb5d0533d8cfa2eb48c919bb54b030db484bdf4684f763bf65baff6b"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-control-browser.mjs",
+      "sha256": "3add30d9c723f1e492441958e9db19f89d1d23bf17b2729e9ebac2fb4d2f15e2"
+    }
+  ],
+  "oldAppliedGrantMigrationUnchanged": true,
+  "implementation": {
+    "route": "/tenbot/canary",
+    "default": "off",
+    "localReviewUrl": "http://localhost:3000/tenbot/canary",
+    "flag": "NEXT_PUBLIC_TENBOT_CANARY_CONTROL_MODE",
+    "modes": [
+      "off",
+      "review",
+      "enabled"
+    ],
+    "writesRequire": "enabled plus exact https://tendev.pages.dev plus fresh canonical caller authorization and explicit reviewed-operation confirmation",
+    "admin": "Fixed chris_dev activate/status/exact revoke using existing own-JWT RPCs; no invoice/source/private record read.",
+    "owner": "Own executed draft derives the exact persisted returned record; current provenance/approval/audit plus fixed CAS under existing RLS guard cancellation.",
+    "durableRecovery": "One new fixed-subject read-only status RPC; no local token/receipt locator requirement.",
+    "noGeneralTools": [
+      "No SQL",
+      "No credential extraction",
+      "No employee picker",
+      "No arbitrary grant/record input",
+      "No hosted-secret editor",
+      "No gate-enabling UI",
+      "No model or inference call"
+    ]
+  },
+  "validation": {
+    "clientContracts": {
+      "passed": true,
+      "groups": 12,
+      "mode": "Synthetic client replies; no real mutations."
+    },
+    "browser": {
+      "passed": true,
+      "groups": 8,
+      "mode": "Actual source component/service/SDK; synthetic Auth/RPC and no external forwards. Not hosted JWT/RLS proof.",
+      "desktopMobileVisualPass": true
+    },
+    "postgres": {
+      "passed": true,
+      "groups": 6,
+      "mode": "Real PostgreSQL role-context simulation using Auth-verified synthetic role/sub. Not HTTP access to the unapplied RPC.",
+      "ddlRolledBack": true,
+      "existingStateHashesUnchanged": true,
+      "newRpcHttpProof": false
+    },
+    "typescript": "PASS full noEmit and final build",
+    "targetedLint": "PASS six new code/test files, zero warnings",
+    "diffCheck": "PASS",
+    "build": "PASS npm run build -- --webpack, review mode, mandatory knowledge prebuild retained unchanged",
+    "localHttp": "PASS final rebuilt localhost3000 route HTTP200/review-mode serialized/16 referenced assets present; previous full16asset HTTP smoke retained.",
+    "independentReview": "PASS; two P2s fixed (reviewed grant retargeting; changed-row recovery), no remaining P1/P2",
+    "finalPresentation": "Explicit Active/Inactive/Expired/Revoked states passed final rebuild and same8 browser groups; CSS source hashes match."
+  },
+  "buildLimit": "Default Turbopack stalled in managed sandbox and was bounded/stopped; first Webpack retry overlapped the unreleased old lock while stop approval was pending. Clean single Webpack retries passed. No bundler/global configuration changed; release proof not bypassed.",
+  "writeBoundary": {
+    "sharedMigrationsApplied": 0,
+    "persistentFixtureSchemaChanges": 0,
+    "employeePermissionChanges": 0,
+    "grantActivations": 0,
+    "enrollmentChanges": 0,
+    "operationalWrites": 0,
+    "hostedConfigurationChanges": 0,
+    "inferenceCalls": 0,
+    "deployments": 0,
+    "pushes": 0,
+    "commits": 0,
+    "productionBehaviorChanged": false
+  },
+  "requiredStaging": [
+    "Product accepts/authorizes a focused local commit and selective TenDev source proof; exclude unrelated latency/docs/work.",
+    "After separate migration approval, fresh shared predecessor/ACL compatibility and only220000 read-only status migration. Never reapply receival-write migrations.",
+    "Deploy matching TenDev-only UI with publicmode review initially; preserve all hosted write gatesOFF/enrollmentempty and Qwen/Terra/credentials.",
+    "Verify genuine Admin/self/unrelated caller status via actual authenticated RPC and normal page, including remount recovery; this gateway check is not claimed locally.",
+    "Separately approve enabled TenDev control mode and a fresh funded <=15-minute canary; no automatic grant/gate/enrollment on load.",
+    "Existing fixed owner control-plane procedure still enables/disables SQL+Edge gates; UI does not hold infrastructure credentials. Before owner cancellation operator independently verifies EdgeOFF; canonical revoke disables SQL/removes exact subject enrollment; operator clears/verifies Edge allowlist/expiry."
+  ],
+  "remainingReleaseGates": [
+    "Accepted selective clean-candidate proof/commit",
+    "Separately approved shared read-only migration and TenDev UI staging",
+    "Live authenticated new RPC/UI integration",
+    "Separate Product authorization before any grant/canary"
+  ],
+  "reviewServer": {
+    "origin": "http://localhost:3000",
+    "pid": 79102,
+    "managedSession": 95124,
+    "command": "node tests/support/static-server.mjs",
+    "cwd": "/Users/chrisngo/source/repos/tenarten-inventory-ui",
+    "mode": "review, all actions disabled",
+    "retiredOnlyVerifiedObsoleteServerPid": 79578,
+    "unrelatedProcessesPreserved": true
+  },
+  "notes": "No console installation or browser credential handling used. No broad QA/model/invoice benchmark rerun. Reports contain synthetic fixture identities only, no secrets or raw operational evidence."
+}
