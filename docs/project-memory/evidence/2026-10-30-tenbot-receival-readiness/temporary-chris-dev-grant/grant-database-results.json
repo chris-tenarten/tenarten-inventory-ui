@@ -1,0 +1,97 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:03:31.901Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "syntheticStandInUserId": "3785f6b9-742e-452f-af6c-31613a983633",
+  "testedMigration": {
+    "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+    "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+  },
+  "groups": 8,
+  "checks": [
+    {
+      "name": "default-off grant, genuine JWT identities, unchanged other roles and no direct private grant writes",
+      "durationMs": 1619
+    },
+    {
+      "name": "activation rejects expired, over-15-minute and empty-reason requests without a row",
+      "durationMs": 1806
+    },
+    {
+      "name": "explicit short fixture activation is additive only, immutable and denies at server expiry with no cleanup",
+      "durationMs": 7246
+    },
+    {
+      "name": "only the frozen owned PDF and exact one-material one-bag no-Job payload can be prepared",
+      "durationMs": 3608
+    },
+    {
+      "name": "revocation preserves audit but denies old approval/permit; a new grant cannot revive old authority",
+      "durationMs": 1890
+    },
+    {
+      "name": "concurrent genuine employee approval and Admin revocation serialize; the resulting approval cannot write",
+      "durationMs": 3799
+    },
+    {
+      "name": "expiry during an in-flight canonical commit rolls back pending row, execution and permit consumption",
+      "durationMs": 7999
+    },
+    {
+      "name": "two concurrent exact commits create one pending row and durable idempotent receipt without stock changes",
+      "durationMs": 2872
+    }
+  ],
+  "durationMs": 33666,
+  "httpCalls": 99,
+  "metadataCalls": 5,
+  "actualSignedJwt": true,
+  "sameSignedTokenUsedBeforeAfterExpiryAndRevocation": true,
+  "actualPostgreSQL": true,
+  "actualStorage": true,
+  "realSharedCanaryExecuted": false,
+  "productionRequests": 0,
+  "productionMutations": 0,
+  "paidInferenceCalls": 0,
+  "fixtureGrantActivations": 6,
+  "isolatedCreatedRecordIds": [
+    "972cc379-737e-4cdc-b019-1b1b9c42df1d"
+  ],
+  "sourceId": "edd97a2e-43cc-4734-a5dd-f8ff316417c0",
+  "finalTemporaryGrantInactive": true,
+  "finalPilotAndExecutionOff": true,
+  "finalEnrollmentEmpty": true,
+  "developerRolePreserved": true,
+  "otherProfilesAndGlobalCapabilitiesUnchanged": true,
+  "onHandAndTransactionsUnchanged": true,
+  "originalAndGrantAuditPreserved": true,
+  "cancellationOrder": "Disable agent gates; guarded cancellation with active subject permission; exact grant revoke immediately afterward",
+  "before": {
+    "stock": "fd40258c7ba30c10250877be0e68bf93",
+    "status": true,
+    "pilotOff": true,
+    "grantTable": true,
+    "enrollments": 0,
+    "capabilities": "6f077d632fd64655c4523c14cfe5fd05",
+    "executionOff": true,
+    "transactions": 0,
+    "otherProfiles": "d5106b62f54b4e712d1241506792e342"
+  },
+  "after": {
+    "stock": "fd40258c7ba30c10250877be0e68bf93",
+    "pilotOff": true,
+    "grantAudit": 17,
+    "enrollments": 0,
+    "subjectRole": "developer",
+    "activeGrants": 0,
+    "capabilities": "6f077d632fd64655c4523c14cfe5fd05",
+    "executionOff": true,
+    "transactions": 0,
+    "otherProfiles": "d5106b62f54b4e712d1241506792e342"
+  },
+  "limitations": [
+    "Source transcription is a protected deterministic synthetic fixture, not model extraction.",
+    "No Production/shared grant activation or canary was performed.",
+    "In-flight expiry is forced by an isolated test trigger; canonical authorization/transaction code remains actual migration SQL."
+  ]
+}

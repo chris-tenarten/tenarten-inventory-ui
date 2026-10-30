@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:01:02.507Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "migration": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+  "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86",
+  "durationMs": 1503,
+  "atomicApplication": true,
+  "sameCapabilityFunctionOid": true,
+  "rolesProfilesStockUnchanged": true,
+  "before": {
+    "capOid": "17649",
+    "pilotOff": true,
+    "rolesHash": "6f077d632fd64655c4523c14cfe5fd05",
+    "stockHash": "fd40258c7ba30c10250877be0e68bf93",
+    "enrollments": 0,
+    "executionOff": true,
+    "profilesHash": "c74a4ccdf86a60dff04f9f55b0efc962",
+    "hasGrantTable": false
+  },
+  "after": {
+    "capOid": "17649",
+    "pilotOff": true,
+    "rolesHash": "6f077d632fd64655c4523c14cfe5fd05",
+    "stockHash": "fd40258c7ba30c10250877be0e68bf93",
+    "enrollments": 0,
+    "executionOff": true,
+    "profilesHash": "c74a4ccdf86a60dff04f9f55b0efc962",
+    "hasGrantTable": true
+  },
+  "grantState": {
+    "grantRows": 0,
+    "statusRpc": true,
+    "grantAuditRows": 0,
+    "privateTableWrites": false
+  },
+  "realGrantActivated": false,
+  "sharedProjectAccess": false,
+  "productionMigrationsApplied": 0
+}

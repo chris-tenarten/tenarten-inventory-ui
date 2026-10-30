@@ -1,0 +1,13 @@
+SYNTHETIC TEST INVOICE
+NOT FOR PAYMENT
+Supplier
+T&M Supply
+Invoice reference
+SYN-TENDEV-RECEIVAL-20261030-01
+Invoice date
+2026-10-30
+Material / size / quantity
+Alaska White | #0 | 1 Bag
+Synthetic TenDev validation document. No physical shipment.
+Not a request for payment.
+Synthetic test document   Page 1 of 1

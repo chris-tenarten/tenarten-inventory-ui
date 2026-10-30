@@ -1,0 +1,64 @@
+{
+  "status": "PASS_INDEPENDENT_FOCUSED_SOURCE_REVIEW",
+  "reviewedAt": "2026-10-30T18:10:01.067Z",
+  "riskTier": 3,
+  "validationLevel": 3,
+  "supersedes": {
+    "path": "/private/tmp/tenops-tenbot-chris-dev-grant-20261030/independent-grant-review.json",
+    "finding": "GRANT-UI-01",
+    "priorReceiptPreserved": true,
+    "scope": "Closes only the demonstrated mounted-conversation expiry trap; all prior security checks and disclosed legacy-capability scope still apply."
+  },
+  "correctedSource": {
+    "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+    "sha256": "fd1606337a660ea9a4f79565e2798eb1491a3a9ab86a513e4280e6a4f560d050",
+    "previousSha256": "80f9c447faca4f426d1f217f6b766110a473b9c29eafdc923d4fe83508ecc0a2"
+  },
+  "findingDisposition": {
+    "id": "GRANT-UI-01",
+    "status": "RESOLVED_BY_SOURCE_INSPECTION",
+    "checks": [
+      "expireCanaryAccess invalidates preparation/execution/duplicate-acknowledgement controls and outstanding approval, then clears only local attachment, selected file, preview, original-name context and synthetic confirmation.",
+      "With no attachment selected, a subsequent ordinary text send is not treated as a hosted receival request; the same mounted conversation can use normal authenticated guidance.",
+      "Inactive-canary Clear skips the unauthorized remote source-cleanup call and performs a local reset. It never changes private Storage, original provenance, durable approvals, grants or audit.",
+      "Completed real LocalApproval with created draft/returned record IDs remains visible when expiry/revocation fires; only an explicit later local Clear removes its local view.",
+      "The review key includes the inactive-canary state so a stale confirmation checkbox remounts cleared; server authorization, single-use durable approval and DB expiry remain authoritative.",
+      "No new transport, role/capability bypass, permission activation or service-role business write was introduced by this correction."
+    ]
+  },
+  "securityVerdict": "No remaining concrete security, privacy, grant-race, expiry or confused-deputy blocker found in the exact reviewed local source. This review grants no activation or release authority.",
+  "unchangedSourceChecks": {
+    "migration": {
+      "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86",
+      "unchanged": true
+    },
+    "helper": "7352ee25ce61da18ed879e5a51fd710fe992243861d0127aa1b4e3048f1d7d97",
+    "liveReview": "60370a8df95b638fefd8d00086e51c3859deda4bd457c21417f9056dcd0ddcb5",
+    "hosted": "b63cc99e4b79d648b42318b4f73ad1db3af314ad202fb80002dee7acbf133383",
+    "runtime": "9998a17fe7bb212cafab1a554d55bae33b34ba1360329f044d24fc5d51af5846",
+    "offlineVerifier": "c1509fe6b5f2d3ae75131f34125f41757cfd6a2a2568de3e87c2f1d949534e9d",
+    "databaseVerifier": "9013bea39a7fd1e59e41861f7f8f9e1e69a2f07a8da547c3d99cde70a1faece4"
+  },
+  "reusedEvidence": {
+    "actualFreeDatabaseGroups": 8,
+    "databaseResult": "grant-database-results.json",
+    "offlineRuntimeGroups": 7,
+    "offlineResult": "runtime-offline-results.json",
+    "duplicateDatabaseOrOfflineRunsByReviewer": 0
+  },
+  "limitations": [
+    "This correction review is source inspection only; parent owns the final optimized build and browser real-file-input/render verification with mocked transport.",
+    "Actual Free database results are real signed JWT/PostgreSQL/Storage and concurrency evidence; protected source transcription is deterministic, not fresh model extraction.",
+    "No shared migration, hosted deployment/grant activation, employee approval or live write canary is proven or authorized by this receipt.",
+    "Temporary adjustInventory retains the explicitly disclosed broader canonical manual pending/Undo rights while active; the TenBot source/approval/execution path alone is pinned to the exact invoice/material/1 Bag."
+  ],
+  "reviewerActions": {
+    "sourceEdits": 0,
+    "gitOperations": 0,
+    "networkCalls": 0,
+    "inferenceCalls": 0,
+    "testExecutions": 0,
+    "hostedMutations": 0
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:59:09.173Z",
+  "fixtureProject": "jltgxcfiprocydhbrahz",
+  "onlyFixtureControlPaused": true,
+  "state": {
+    "pilotOff": true,
+    "enrollment": 0,
+    "executionOff": true
+  },
+  "operationalWrites": 0,
+  "grantActivations": 0,
+  "sharedProjectRequests": 0
+}

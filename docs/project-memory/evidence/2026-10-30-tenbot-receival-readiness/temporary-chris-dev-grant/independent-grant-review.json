@@ -1,0 +1,109 @@
+{
+  "status": "FOCUSED_CORRECTION_REQUIRED",
+  "reviewedAt": "2026-10-30T18:07:46.576Z",
+  "riskTier": 3,
+  "validationLevel": 3,
+  "scope": "Independent source and existing-evidence review of the dormant chris_dev-only temporary adjustInventory exception. No application edits, Git operations, network calls, inference or duplicate tests.",
+  "blockers": [
+    {
+      "id": "GRANT-UI-01",
+      "severity": "P2",
+      "kind": "conversation usability",
+      "paths": [
+        "src/modules/tenbot/TenbotWorkspace.tsx:143",
+        "src/modules/tenbot/TenbotWorkspace.tsx:286",
+        "src/modules/tenbot/TenbotWorkspace.tsx:334",
+        "src/modules/tenbot/TenbotWorkspace.tsx:469"
+      ],
+      "finding": "An uploaded canary attachment remains attached after temporary access expires or is revoked. Ordinary text sends then remain routed or blocked as invoice requests. Remove attachment / Clear tries a hosted clear requiring that inactive grant, and its catch does not clear local attachment state. The current mounted conversation cannot return to ordinary guidance without remount/reload.",
+      "sourceReproduction": [
+        "Upload an approved original while the grant is active.",
+        "Expire/revoke the grant; expireCanaryAccess invalidates controls but preserves attachment and hostedReceivals.",
+        "Submit ordinary text: send sees the retained attachment and rejects at the elapsed deadline, or reaches a now-denied hosted invoice action.",
+        "Click attachment X/Clear: clear awaits a hosted attachment clear; authorization rejects; local reset is only in the success branch."
+      ],
+      "requiredCorrection": "Provide a local-only detach/return-to-normal-conversation path after inactive access. Do not bypass source cleanup authorization or remove durable source/audit; preserve returned completed receipt IDs. The ordinary request must no longer carry the expired attachment.",
+      "verificationBasis": "Read-only control-flow inspection; not a new browser test."
+    }
+  ],
+  "securityVerdict": "No concrete privilege, SQL race, privacy, grant-expiry or confused-deputy blocker found in the reviewed migration and server delta. The single UX finding must be resolved before claiming ordinary mounted conversation is unaffected.",
+  "passedSourceChecks": [
+    "Pinned subject UUID 3785f6b9-742e-452f-af6c-31613a983633 and Developer baseline; no role-wide role capability writes or role promotion.",
+    "Grant starts at the database clock, lifetime is >0 and <=900 seconds; identity/lifetime/approval/execution bindings immutable; expired unrevoked grants cannot be extended or overlapped.",
+    "Activation/revocation require authenticated current active non-read-only Admin plus manageRolesPermissions, with Admin profile/capability locks. Service-role/employee/anonymous entry is rejected.",
+    "Canonical has_app_capability retains its OID and all inspected prior profile/role branches; only the pinned subject's active grant adds adjustInventory. Three metadata attestors are exact-body-pinned and use the same effective evaluator.",
+    "Private grant/helper/audit functions and tables are revoked from application roles. Public caller projection is argument-free and returns inactive only for every other caller.",
+    "Exact original SHA256/content type/2877-byte size is constrained at source registration/metadata attestation/source and binding RLS/private Storage owner authorization.",
+    "Immutable payload requires the exact synthetic invoice/reference/supplier, one existing standard catalog material, 1 Bag/package count, no Job/temp label/new catalog or stocking-unit operation.",
+    "Canonical actor locks serialize approval/execution against revocation; actor permission epoch increments invalidate old approvals/permits; a new grant cannot revive earlier authority.",
+    "Grant row FOR UPDATE binds one immutable draft approval and exactly one execution/one returned receival/no catalog IDs. Permit expiry includes the grant's expiry.",
+    "Deferred source/draft/approval/permit/execution authorization rejects in-flight agent transactions that cross database expiry, rolling back dependent changes.",
+    "Revocation turns SQL execution/pilot off, removes only the subject enrollment, preserves permits/grant/source/execution audit; successful completion does not reset funding/reservations.",
+    "Hosted model dispatch refreshes caller-scoped grant before paid reservation/fetch; the model gains no approve/execute/general SQL tool.",
+    "An in-flight committed response can return the durable receipt after adjustment rights end only with fresh caller read permission/RLS; no further mutation is authorized.",
+    "No raw attachment/evidence was added to general conversation history by this delta."
+  ],
+  "disclosedScopeLimit": "Existing adjustInventory is intentionally broader than the exact TenBot canary: while active, canonical manual pending edit/cancel/delete/Undo rights remain available. Only the TenBot/source/approval/execution path is invoice-scoped. This must remain explicit in Product acceptance; it is not a globally invoice-scoped permission grant.",
+  "evidenceReviewed": {
+    "database": "/private/tmp/tenops-tenbot-chris-dev-grant-20261030/grant-database-results.json",
+    "migrationApplication": "/private/tmp/tenops-tenbot-chris-dev-grant-20261030/fixture-migration-application.json",
+    "createdReceipt": "/private/tmp/tenops-tenbot-chris-dev-grant-20261030/grant-created-proof.json",
+    "offlineRuntime": "/private/tmp/tenops-tenbot-chris-dev-grant-20261030/runtime-offline-results.json",
+    "actualDatabaseGroups": 8,
+    "actualSignedJwt": true,
+    "actualStorage": true,
+    "genuineConcurrentHttp": true,
+    "isolatedCreatedReceival": "972cc379-737e-4cdc-b019-1b1b9c42df1d",
+    "finalFixtureState": "One pending receival was guarded-cancelled while the grant remained active; grant/pilot/execution off, enrollment empty, Developer and other profiles/capabilities/stock unchanged; source/audit retained.",
+    "offlineGroups": 7,
+    "limitations": [
+      "Database source transcription is deterministic protected synthetic fixture evidence, not live model extraction.",
+      "Expiry overlap uses an isolated trigger delay; canonical authorization/transaction SQL is real.",
+      "No new hosted employee approval/canary, shared migration/grant activation or hosted browser proof is established here.",
+      "Parent-reported optimized build/TypeScript result is not independently rerun."
+    ]
+  },
+  "reviewedSources": [
+    {
+      "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-access.ts",
+      "sha256": "7352ee25ce61da18ed879e5a51fd710fe992243861d0127aa1b4e3048f1d7d97"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "80f9c447faca4f426d1f217f6b766110a473b9c29eafdc923d4fe83508ecc0a2"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "60370a8df95b638fefd8d00086e51c3859deda4bd457c21417f9056dcd0ddcb5"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "b63cc99e4b79d648b42318b4f73ad1db3af314ad202fb80002dee7acbf133383"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "9998a17fe7bb212cafab1a554d55bae33b34ba1360329f044d24fc5d51af5846"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-runtime.mts",
+      "sha256": "c1509fe6b5f2d3ae75131f34125f41757cfd6a2a2568de3e87c2f1d949534e9d"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-grant-database.mts",
+      "sha256": "9013bea39a7fd1e59e41861f7f8f9e1e69a2f07a8da547c3d99cde70a1faece4"
+    }
+  ],
+  "performedByReviewer": {
+    "networkCalls": 0,
+    "inferenceCalls": 0,
+    "databaseTests": 0,
+    "gitOperations": 0,
+    "sourceEdits": 0,
+    "hostedMutations": 0
+  },
+  "activationAuthority": "None. Implementation/validation only; separate Product approval remains required for shared migration, grant activation, deploy and live write canary."
+}

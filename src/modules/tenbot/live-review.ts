@@ -2,10 +2,11 @@ import type {PurchasingCatalogItemInput} from '../purchasing/types';
 import {samePurchasingVendor} from '../purchasing/catalog-records';
 import {catalogRequestIssues,receivalUnit} from '../../../supabase/functions/_shared/tenbot-invoice-catalog';
 import {invoiceQuantityIssues, type InvoiceQuantityBasis, type InvoiceSourceQuantity} from '../inventory/invoice-quantity';
+import type {TenbotCanaryAccess} from '../inventory/tenbot-canary-access';
 
 export type LocalCatalogChoice = { id: string; materialName: string; size: string; unit: string; supplier?: string; packageLabel?: string; packageQuantity?: string; packageMeasure?: string; containerType?: string };
 export type LocalJobChoice = { id: string; label: string };
-export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; databaseEnvironment?: 'isolated-test'|'restricted-tendev'; requiresPrivateOriginal?:boolean; maxOriginalBytes?:number; canPrepare?: boolean; canCreateCatalog?: boolean; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
+export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; databaseEnvironment?: 'isolated-test'|'restricted-tendev'; requiresPrivateOriginal?:boolean; maxOriginalBytes?:number; canPrepare?: boolean; canCreateCatalog?: boolean; canAcknowledgeDuplicates?:boolean; canaryAccess?:TenbotCanaryAccess; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
 export type LocalOrderDetails = { orderedBy: string; orderDate: string; location: string };
 export type LocalDuplicateMatch = {recordId: string; source: 'fixture' | 'simulated' | 'database' | 'tenops'; supplier: string; status: string; materialName: string; size: string; quantityExpected: string; quantityReceived?: string; unit: string; documentReference: string | null; classification: 'possible' | 'confirmed'; recordFingerprint?: string; reason?: string};
 export type LocalDuplicateReview = {fingerprint: string; matches: LocalDuplicateMatch[]; canAcknowledge: boolean; acknowledged: boolean};

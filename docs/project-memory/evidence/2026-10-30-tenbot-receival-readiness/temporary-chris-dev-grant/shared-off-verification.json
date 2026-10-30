@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:05:36.970Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "readOnlyTransaction": true,
+  "querySha256": "cf97e0c54afaee486d74e65af1bcf6d7eb2942ef17b46b462681ee91518983a1",
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 748026,
+      "remainingMicrousd": 3791930,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "pilot": false,
+    "policy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "profile": {
+      "role": "developer",
+      "active": true,
+      "userId": "3785f6b9-742e-452f-af6c-31613a983633",
+      "readOnly": false
+    },
+    "readOnly": "on",
+    "execution": false,
+    "enrollment": 0,
+    "subjectDrafts": 0,
+    "subjectSources": 0,
+    "subjectApprovals": 0,
+    "baseCapabilityMd5": "7e83083b79c3ba2a1b1b3e01c690386d",
+    "newGrantRpcAbsent": true,
+    "subjectExecutions": 0,
+    "newGrantTableAbsent": true,
+    "globalDeveloperAdjust": 0
+  },
+  "allServerWriteFlagsOff": true,
+  "providerAndOtherSecretDigestsUnchanged": true,
+  "spendingPolicyUnchanged": true,
+  "realGrantActivated": false,
+  "sharedMigrationApplied": false,
+  "operationalBusinessRowsRead": false,
+  "hostedMutations": 0,
+  "inferenceCalls": 0
+}

@@ -1,0 +1,64 @@
+{
+  "status": "implemented locally; dormant; not shared-applied or activated",
+  "migration": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+  "frozenSha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86",
+  "subject": "3785f6b9-742e-452f-af6c-31613a983633",
+  "rolePreserved": "developer",
+  "capability": "adjustInventory",
+  "maximumSeconds": 900,
+  "rpc": {
+    "get_my_tenbot_receival_canary_access": "No arguments. Only authenticated subject gets an active self projection; others active:false. serverNow is supplied. No activation or write authority.",
+    "activate_tenbot_chris_dev_canary_grant": "p_expires_at timestamptz, p_reason text. Authenticated active non-read-only Admin with manageRolesPermissions only. Returns UUID. Begins at current server clock; no future activation, extension, overlap or completed-canary reactivation. Requires SQL write gates OFF and enrollment empty; does not enable them.",
+    "revoke_tenbot_chris_dev_canary_grant": "p_grant_id uuid, p_reason text. Same genuine Admin requirement. Returns {grantId,revoked:true,alreadyRevoked:boolean}. Exact grant only, immutable audit. Actor permission epoch advances; SQL execution/pilot OFF, subject enrollment only removed. Existing permit rows retained but invalidated by current epoch/policy/capability checks."
+  },
+  "scope": {
+    "invoiceSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "byteSize": 2877,
+    "mediaType": "application/pdf",
+    "reference": "SYN-TENDEV-RECEIVAL-20261030-01",
+    "supplier": "T&M Supply",
+    "catalogSource": "standard",
+    "catalogId": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "material": "Alaska White",
+    "size": "#0",
+    "quantityExpected": "1",
+    "unit": "Bag",
+    "noJob": true,
+    "noNewMaterial": true,
+    "stockingUnit": null,
+    "sourceQuantity": "Only numeric 1 package (1 or equivalent trailing-zero decimal), Bag aliases normalized by canonical helper",
+    "constraintPoints": [
+      "Private original registration, owner source RLS/binding RLS and owner Storage authorization branch",
+      "Server-only source-state attestation",
+      "Immutable prepared payload insertion",
+      "Approval binding to one immutable draft per grant",
+      "Exact grant-bounded permit",
+      "One canonical execution/one returned pending ID/zero catalog IDs"
+    ]
+  },
+  "concurrency": [
+    "Owner activation/revocation locks Admin profile FOR SHARE and capability table in SHARE mode, then target actor FOR UPDATE; authority cannot be revoked while waiting and still complete stale.",
+    "Canonical operations retain their target actor FOR SHARE lock; revocation serializes against in-flight approval/execution.",
+    "Private grant row locks bind one approval and one execution; original canonical draft/resource/document locks and uniqueness remain.",
+    "Deferred source/draft/approval/permit/execution constraint triggers recheck grant at commit, rolling back a transaction that crosses expiry."
+  ],
+  "preserved": [
+    "Same has_app_capability function OID; complete pre-existing role/profile branch semantics preserved. No role-wide capability edit.",
+    "Three exact body-pinned source/Storage/permit metadata checks now use the same effective permission evaluator.",
+    "Existing canonical business creation, RLS executor, calculations, duplicate checks, original/provenance and stock behavior are unchanged.",
+    "Existing service-only expired/deleting/unretained source cleanup branch remains unchanged; no employee delete or retained-original bypass was introduced.",
+    "Existing owner-scoped invoice_receival_executions SELECT remains the post-revocation receipt read under current read permission; raw source access is not weakened."
+  ],
+  "cleanupOrder": "After exact idempotency/result proof, turn agent execution OFF if desired, perform guarded same-employee exact-row unreceived cancellation WHILE grant is active, then revoke immediately. Revocation removes adjustInventory, so cancellation afterward must fail. If expiry comes first, stop/report; do not borrow an Admin, silently reactivate or broaden cleanup.",
+  "scopeDisclosure": "The temporary existing adjustInventory capability retains its broader legacy manual pending/Undo semantics while active. TenBot invoice/source/approval/execute authority is independently pinned to the exact approved canary; the model gets no new generic write/SQL capability.",
+  "implementedByThisAgent": {
+    "applicationSourceFiles": 0,
+    "newMigrationFiles": 1,
+    "existingAppliedMigrationEdits": 0,
+    "networkCalls": 0,
+    "grantsActivated": 0,
+    "hostedMigrations": 0,
+    "inferenceCalls": 0,
+    "gitOperations": 0
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "recordedAt": "2026-10-30T18:13:08.218Z",
+  "status": "IMPLEMENTED_AND_ISOLATED_VALIDATED_NOT_RELEASED",
+  "riskTier": 3,
+  "validationLevel": 3,
+  "localHead": "d7a88fceaa656e94470b3d7c6183e345b230a973",
+  "acceptedHostedBaseline": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "existingTouchedFileBaselinesExactlyMatchAccepted": true,
+  "sources": [
+    {
+      "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-access.ts",
+      "sha256": "7352ee25ce61da18ed879e5a51fd710fe992243861d0127aa1b4e3048f1d7d97"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "fd1606337a660ea9a4f79565e2798eb1491a3a9ab86a513e4280e6a4f560d050"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "60370a8df95b638fefd8d00086e51c3859deda4bd457c21417f9056dcd0ddcb5"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "b63cc99e4b79d648b42318b4f73ad1db3af314ad202fb80002dee7acbf133383"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "9998a17fe7bb212cafab1a554d55bae33b34ba1360329f044d24fc5d51af5846"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-runtime.mts",
+      "sha256": "c1509fe6b5f2d3ae75131f34125f41757cfd6a2a2568de3e87c2f1d949534e9d"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-grant-database.mts",
+      "sha256": "9013bea39a7fd1e59e41861f7f8f9e1e69a2f07a8da547c3d99cde70a1faece4"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-browser.mjs",
+      "sha256": "6d22937c9885b277d4e2ce03317520d069d7166bc2520eaf4553d4954261cdb7"
+    }
+  ],
+  "checks": {
+    "realDatabaseGroups": 8,
+    "offlineRuntimeGroups": 7,
+    "browserGroups": 4,
+    "browserMode": "Synthetic intercepted transport only; no database or inference proof",
+    "typescript": "PASS npx tsc --noEmit --incremental false",
+    "targetedEslint": "PASS frontend/verifier and explicit shared Edge checks",
+    "productionBuild": "PASS npm run build -- --webpack; repeated after final UI source correction; normal local prebuild is not selective release proof",
+    "diffCheck": "PASS",
+    "builtArtifactCredentialPatternScan": {
+      "passed": true,
+      "files": 103,
+      "publicSupabaseAnonMatches": 3,
+      "openAISecrets": 0,
+      "privateKeys": 0,
+      "nonPublicJwts": 0,
+      "initialStrictScan": "Stopped on existing public anon JWTs; classified without printing values, then public-anon-aware scan passed."
+    }
+  },
+  "boundaries": {
+    "sharedMigrationApplied": false,
+    "realGrantActivated": false,
+    "realCanaryExecuted": false,
+    "paidInferenceCalls": 0,
+    "inferenceCostUsd": 0,
+    "deployed": false,
+    "pushed": false,
+    "committed": false
+  },
+  "limitations": [
+    "Shared apply, clean selective release proof, hosted Deno/UI smoke, genuine chris_dev participation and explicit funded canary window require separate approval.",
+    "Legacy manual adjustInventory rights are broader than one invoice. Only the TenBot path is pinned to the fixed one-row operation.",
+    "Isolated Auth stand-in uses the same fixed subject UUID under a different isolated issuer; no real employee session was accessed."
+  ]
+}

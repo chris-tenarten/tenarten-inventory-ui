@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "groups": 7,
+  "checks": [
+    "projection is self-scoped, fixed and max15minutes; inactive has no other account metadata",
+    "current owner RPC is fail-closed and ordinary users never call the new projection",
+    "fixed immutable document and one existing Bag reject alternate documents, Jobs, catalog proposals and quantities",
+    "review permits excluded nonmaterial evidence but exactly one included approved operation",
+    "scope mismatch and grant revocation deny before approval, permit or canonical execution",
+    "valid exact scope still uses existing caller approval and business RPC; fixed service only mints metadata",
+    "a committed caller receipt remains readable when temporary adjustment access ends immediately afterward"
+  ],
+  "scope": "Offline projection/runtime exact-scope and revocation wiring only; not real JWT/RLS/transaction validation",
+  "actualInference": false,
+  "actualDatabase": false,
+  "grantActivations": 0,
+  "networkCalls": 0,
+  "productionMutations": 0
+}
