@@ -1,0 +1,46 @@
+[
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+    "blob": "3d2dcab81d82cc1c31fc4751d9a15bec56b40765",
+    "sha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040",
+    "reviewedCandidate": "dd4fbb2e685a45721ccad67e176a806a118fdd33",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "dd4fbb2e685a45721ccad67e176a806a118fdd33",
+      "heading": "## Accepted candidate source review — read-only authenticated canary control"
+    },
+    "acceptedAuthorityRevision": "1258a162557bf22d448bba19bfda1296879e1ef3"
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-messaging",
+    "path": "docs/project-memory/CURRENT_STATE.md",
+    "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+    "afterBlob": "853411b850fe19751b9b813992b288a898ff9157",
+    "recordDigest": "868e7190ae61c7e32e9963edf4669636cddd31a1cdb9a670af98713e8eb33a9c",
+    "reviewedCandidate": "26571267d474e967de638c9913fa561ac211a151",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "26571267d474e967de638c9913fa561ac211a151",
+      "heading": "## Accepted record source review — authenticated canary control status appendix"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-proposals",
+    "path": "docs/project-memory/CURRENT_STATE.md",
+    "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+    "afterBlob": "853411b850fe19751b9b813992b288a898ff9157",
+    "recordDigest": "64bc5848f3e589dea04a8aab52b77794bfba2379db835c1e8731746d262bb792",
+    "reviewedCandidate": "26571267d474e967de638c9913fa561ac211a151",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "26571267d474e967de638c9913fa561ac211a151",
+      "heading": "## Accepted record source review — authenticated canary control status appendix"
+    }
+  }
+]

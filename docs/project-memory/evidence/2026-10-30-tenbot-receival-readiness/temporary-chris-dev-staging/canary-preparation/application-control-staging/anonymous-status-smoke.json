@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T20:40:39.955Z",
+  "realGateway": true,
+  "results": [
+    {
+      "name": "missing-authorization",
+      "status": 401,
+      "code": null,
+      "returnedCanaryData": false
+    },
+    {
+      "name": "public-anonymous-role",
+      "status": 401,
+      "code": "42501",
+      "returnedCanaryData": false
+    }
+  ],
+  "authenticatedEmployeeTests": "Separate genuine UI sessions",
+  "mutations": 0
+}

@@ -1,0 +1,22 @@
+{
+  "preparedAt": "2026-10-30T20:36:06.268Z",
+  "migration": {
+    "path": "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+    "sha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040",
+    "version": "20261030220000",
+    "name": "tenbot_canary_control_status"
+  },
+  "expectedBodyMd5": "cfc73c51d7916ea56c2af4683f395845",
+  "atomicSql": {
+    "file": "apply-status.sql",
+    "sha256": "66cbaaa120b3a183c6bad16e8a028233619ca058f20cb73845a3150d52a571ad"
+  },
+  "readbackSql": {
+    "file": "verify-status-readonly.sql",
+    "sha256": "a06d4e3ddff1e49354d29b561d26ef268803c3865d421e52b0c59dee25dae2d3"
+  },
+  "sourceUnchanged": true,
+  "onlyOneMigration": true,
+  "postgrestReloadIncluded": true,
+  "activationStatements": 0
+}

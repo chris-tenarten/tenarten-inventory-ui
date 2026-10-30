@@ -1,0 +1,59 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T20:48:56.503Z",
+  "method": "Native normal UI through cua_repl; no developer console, token extraction, alternate account or replayed JWT.",
+  "origin": "https://tendev.pages.dev/tenbot/canary",
+  "hostedSha": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+  "admin": {
+    "browser": "Safari",
+    "account": "Chris Ngo / Admin",
+    "realAuthenticatedSdkAndStatusRpc": true,
+    "grantControlsVisible": true,
+    "ownerInvoiceCancellationHidden": true,
+    "confirmationDisabled": true,
+    "activationDisabled": true,
+    "refreshCompleted": true
+  },
+  "owner": {
+    "browser": "Chrome work",
+    "account": "chris developer / Developer",
+    "fixedOwner": "3785f6b9-742e-452f-af6c-31613a983633",
+    "realAuthenticatedSdkAndStatusRpc": true,
+    "adminControlsAbsent": true,
+    "ownerCancellationSection": true,
+    "noCompletedCanaryAvailable": true,
+    "refreshCompleted": true,
+    "inventoryNavigationAndReturnRemount": true
+  },
+  "both": {
+    "mode": "review",
+    "developerBaselineVerified": true,
+    "pilot": false,
+    "execution": false,
+    "enrollment": 0,
+    "grant": null,
+    "expiry": null,
+    "noErrors": true
+  },
+  "adjacent": {
+    "inventoryLoaded": true,
+    "pendingReceivals": 0,
+    "normalMessagingInboxLoaded": true,
+    "tenbotComposerLoaded": true,
+    "header": "AI-assisted TenOps helper",
+    "emptyComposerSendDisabled": true,
+    "inferenceRequests": 0,
+    "sentMessages": 0,
+    "privateHistoryCopied": false
+  },
+  "limits": [
+    "No live grant/expiry/cancellation lifecycle was exercised: prohibited during review staging. Existing isolated evidence retained.",
+    "Hosted negative HTTP checks cover missing/anonymous callers; other signed-in user denial reuses accepted isolated status-function and client evidence.",
+    "Native automation provided no intercepted Auth/RPC transport trace. Role-specific server status and manual refresh completion were observed through the real SDK page."
+  ],
+  "grantCalls": 0,
+  "uploads": 0,
+  "approvals": 0,
+  "operationalWrites": 0,
+  "nativeControlReleased": true
+}
