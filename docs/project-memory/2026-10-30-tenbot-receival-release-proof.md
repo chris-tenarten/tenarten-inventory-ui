@@ -220,3 +220,33 @@ The six source paths are absent from the released knowledge sourceFiles/provenan
 Mandatory full-history, clean-current-candidate, exact committed artifact, zero-hold proof, secret-free build and served-source checks remain required. No migration, secret/config/provider/funding/cleanup update is included. TenOps Pages remains outside this release. Historical revoked grant1 and audit2 remain retained; active grants0/enrollment0/all receival gatesOFF are the required hosted baseline.
 
 An active hosted invoice-init success cannot be claimed under that OFF baseline: existing pilot authorization precedes runtime and chris_dev requires a current grant. An authenticated OFF-state denial is a permission check, not positive invoice initialization; a later active check requires its own explicit authorization. Original rejected HTTP response remains uncaptured and historical exclusive causality is not claimed.
+
+
+## Accepted manual Auth source review — bounded restoration recovery
+
+Chris accepts exact source authority revision `ec62998aba228e615279ae7d6e81f04378e62062` for Auth recovery and canary readiness preparation. This manual review binds the accepted Auth bytes and reused focused validation. It does not authorize deployment, push, infrastructure/configuration work, canary activation, grant/enrollment, provider/funding changes or operational writes. Separate Advisory context is unavailable; Chris's current explicit acceptance governs this bounded preparation. Tier 3 / focused Testing Level 3.
+
+TenDev preparation baseline: `ce157b99e31c227480c479169e0a480a6d509bf1`, tree `3022e01ef5c659e99a54c6103e4717298bafe61b`. Both this baseline and unchanged TenOps baseline `2a3e45c64163968d421d77b5a41a49f5ac469fc2` contain Auth BEFORE blob `e0348f96373847dfb7a7038764da27bf896b50e9`, SHA256 `d8b42e21255414bd0f17ec1eae13921738c90e7ea35faaa7265fd907b52886ec`. Select Auth AFTER blob `59e3baee0c73978c6253f344923bc72d02f4cc05`, SHA256 `c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527`, without adapting those accepted bytes. Production is plan-only and requires a separate candidate rooted in its own baseline; no TenDev experimental pages, Edge runtime or canary control may be promoted through this Auth change.
+
+| Selected path | Accepted SHA256 | Role |
+|---|---|---|
+| src/lib/auth.tsx | c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527 | sole application delta |
+| scripts/verify-auth-resolution-deadlines.mjs | 0813dbaca210dfd14d8a6a53d1c24478e48397f4b4011e8725c3b898daca9ea6 | accepted focused verifier, retained without rerun |
+| scripts/verify-auth-startup-resolution.mjs | 10ff9fce77f9fcb12eea17a7816a5acbdae1f00cf6d10420b817615a154ee73d | accepted focused verifier, retained without rerun |
+
+The AuthProvider adds a 20-second application session-restoration deadline and a 15-second profile-verification deadline. Timeout fails closed, clears verified access, invalidates stale generation results and aborts pending profile work. It preserves persisted SDK authentication and healthy device-binding behavior; genuine later Auth/profile events must revalidate access. This is bounded application recovery from unavailable dependencies, not a claim that Supabase Auth/database availability or the original Safari session has recovered. No manual token/session injection, sign-in bypass or grant/role/policy expansion is included.
+
+The original accepted evidence is retained byte-for-byte with its original scope:
+
+| Evidence | SHA256 | Limit |
+|---|---|---|
+| [Source manifest](evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/source-manifest.json) | 68fe48aeeeac9af09ec3d462210973581c74503bcd7d92d96eb1aca281f01290 | Original accepted source pins from ec62998aba228e615279ae7d6e81f04378e62062 |
+| [Worker validation](evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/worker-validation.json) | c49bf4e221472afa8d4ff5ff19c853359c13f429cb457c5af967d03395124985 | 9 offline groups; synthetic transport/clock; focused types/lint; no genuine hosted Auth proof |
+| [Browser validation](evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/browser-result.json) | 967f34c0c5f313bb4d22b1bce5a59d5c375fb028fcda3a742393d9120b7cbafd | 20 real local-browser groups with intercepted synthetic Auth/profile transport and real timers; no hosted writes |
+| [Original build](evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/build-result.json) | 341b43e0b83689d6085cc42e14866ff68a6d71c7c7d341ca466ffa6fe8c3b25d | Original local mandatory-prebuild Production build; not this selective candidate's proof/build |
+
+Existing relevant validation is reused; source preparation does not rerun it or claim an actual hosted recovery. The original endpoint/health observations remain bounded diagnosis, not evidence of an infrastructure repair or a specific physical cause. Responsive backend health, genuine authenticated callers and fresh bounded OFF-state/funding/duplicate checks remain separate canary-readiness gates. The existing funding cutoff is not extended.
+
+The released knowledge sourceFiles/provenance/dependency bindings contain no `src/lib/auth.tsx` dependency. Current State, Product Manifest, all earlier receipt sections, source-review registry and generated knowledge artifact remain byte-identical to the TenDev baseline. No candidate-source/runtime tuple is added for Auth because the unchanged contract does not support this path. No new record-no-claim-impact statement, registry broadening, snapshot regeneration or release-authority advance is introduced.
+
+This candidate selects only one application file, its two accepted verifiers, these four small JSON receipts and this appendix. Every other application, Edge, migration and configuration path remains at the exact TenDev baseline. The mandatory full-history, clean-current-candidate, exact committed artifact, zero-hold release proof and target-matching build remain required; their results must be recorded separately before any separately authorized release. All seven unrelated dirty files in the shared workspace must remain preserved.
