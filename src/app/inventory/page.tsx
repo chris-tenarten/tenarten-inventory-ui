@@ -583,6 +583,11 @@ function AccountInventoryPage() {
 
   useEffect(() => { void loadData(); }, [loadData]);
   useEffect(() => { void loadPendingReceivals(); }, [loadPendingReceivals, includeReceived]);
+  useEffect(() => {
+    const refresh = () => { void loadPendingReceivals(); };
+    window.addEventListener('tenops:pending-receivals-changed', refresh);
+    return () => window.removeEventListener('tenops:pending-receivals-changed', refresh);
+  }, [loadPendingReceivals]);
 
   const jobChoicesVisible = Boolean(selectedLotId || isPendingReceivalFormOpen ||
     (pendingReceivalsExpanded && selectedPendingReceivalIds.size > 0));

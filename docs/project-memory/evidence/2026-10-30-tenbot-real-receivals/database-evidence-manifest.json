@@ -1,0 +1,111 @@
+{
+  "recordedAt": "2026-10-30T14:08:16.529265+00:00",
+  "scope": "Database/fixture/build subset only; root will add separate live browser evidence.",
+  "files": [
+    {
+      "path": "auth-expiry-new-session-initial.json",
+      "sha256": "60db329ef826b540adc1ff7b6255f3f5e037536be95ce7be3d7b21243b416f0e"
+    },
+    {
+      "path": "auth-expiry-new-session.json",
+      "sha256": "3a1feaf54b78c93ddbdc561d1fd2527650e1d9bb94e6a192499e0d18fc01caa0"
+    },
+    {
+      "path": "auth-expiry-repair.json",
+      "sha256": "9be1c0258aa7932ee0a3a2a195ad4be938181d79ee24dbb684d7392a99e61672"
+    },
+    {
+      "path": "created-record-proof.json",
+      "sha256": "8ef307418964ff0bc3220154736495f4a6032759f796023d5197f562fd5453c4"
+    },
+    {
+      "path": "database-evidence-index.json",
+      "sha256": "b964d078efa07bf9ba0d25430caea0b0cb843627aa7b894b244c630797dd6716"
+    },
+    {
+      "path": "database-evidence-privacy.json",
+      "sha256": "fea2ff26731806f34cb07e840329a4d328b9cb372705e13b2d269b5945fdd566"
+    },
+    {
+      "path": "database-validation-failure-42702.json",
+      "sha256": "627b033b7148ad491074d481012eb3dc9cb46f6b1e7bd71189fdceb96168a41f"
+    },
+    {
+      "path": "database-validation.json",
+      "sha256": "c4b14176ecda38b357b18088058841ead3f1e0076eaf55ef38e6d5496463ea9c"
+    },
+    {
+      "path": "fixture-seed.json",
+      "sha256": "4dcefffd2ca83fef99d6d27b6c29a857669df2a81496c83ca4452e3461123dba"
+    },
+    {
+      "path": "guard-reconciliation.json",
+      "sha256": "4b0861035553741ccd2d80250a799754ea013aceb394e21ab3a71d139588c01f"
+    },
+    {
+      "path": "messaging-scaffold-manifest.json",
+      "sha256": "4aea961c417f27fe8945392e0ec6d214ce2cdcfb3c1706655e9c5bd3f8edb4e6"
+    },
+    {
+      "path": "messaging-scaffold-validation.json",
+      "sha256": "0b774c24b14001f827633c401dfa3a93eed969b7bb2b3cd9c3adbdde1bc7bfa2"
+    },
+    {
+      "path": "messaging-scaffold.sql.txt",
+      "sha256": "5e054f64c52da2d107acd4bc30b9f5a71760282f2831eb969b42580efbd044b7"
+    },
+    {
+      "path": "migration-hashes.json",
+      "sha256": "3d2fdc09f36290aada9773642ba36d3f1a4c90b83e09ad984b01dbe9a7c4fc36"
+    },
+    {
+      "path": "prerequisites-manifest.json",
+      "sha256": "79a6d22dd813528792d4cc0f8e4d47ee13318ec84bb44c2ab8dcd21c40f55c51"
+    },
+    {
+      "path": "prerequisites.sql.txt",
+      "sha256": "8b46e0aead4eaddcfec7ce90546c80ca56f0034af789c83443dbd0e1ef1a26de"
+    },
+    {
+      "path": "preservation-readback.json",
+      "sha256": "c8c9cec01e84cb9c0991ff08661cd067991a9a5a53c2f32900fc2ef23dd67aa2"
+    },
+    {
+      "path": "queue-read-after.json",
+      "sha256": "8eae138aad60ebeaeb2848e5dedf49f898c300cb4e9b9b223d445c6ccf06a12d"
+    },
+    {
+      "path": "queue-read-before.json",
+      "sha256": "bd5fb15a162a230ddfe538d1810a38ad562e5bae5ffe8837a6e5540cd7b6d2ad"
+    },
+    {
+      "path": "queue-read-projection-manifest.json",
+      "sha256": "00659e9ca7e1db8d5cd5ea31da4b1763fd2b17a9c3d77715437c35ab0e74036b"
+    },
+    {
+      "path": "queue-read-projection.sql.txt",
+      "sha256": "14a16875ee273156256ee7341428639ab44bf7749dc67343dbbed21920d7c818"
+    },
+    {
+      "path": "review-build.json",
+      "sha256": "6d3409314c3b23fbd8f8f3322d8ce450bc1d647ec756259221334119e56c37ee"
+    }
+  ],
+  "updatedAt": "2026-10-30T14:57:50.224321+00:00",
+  "supersession": {
+    "initialManifest": "database-evidence-manifest.initial.json",
+    "reason": "Final candidate build and root completion evidence supersede earlier preparation snapshots; initial hash claims remain preserved",
+    "changed": [
+      {
+        "path": "database-evidence-index.json",
+        "supersededSha256": "bc390bf7db8bf80714687cd9dd63bdf4a28ba19ba2124d1e109716173bb76340",
+        "currentSha256": "b964d078efa07bf9ba0d25430caea0b0cb843627aa7b894b244c630797dd6716"
+      },
+      {
+        "path": "review-build.json",
+        "supersededSha256": "51a1280d5754e4d1372408202fa9da6c82f87ddea4d2021469eeda980f1da65d",
+        "currentSha256": "6d3409314c3b23fbd8f8f3322d8ce450bc1d647ec756259221334119e56c37ee"
+      }
+    ]
+  }
+}

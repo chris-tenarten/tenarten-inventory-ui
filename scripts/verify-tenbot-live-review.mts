@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {deriveInvoiceQuantity} from '../src/modules/inventory/invoice-quantity';
 import { createElement } from 'react';
 import { renderToStaticMarkup as renderMarkup } from 'react-dom/server';
-import { approvalForCurrentReview, catalogRequestIssues, completeCatalogRequest, editableRows, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, receivalReviewNotice, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft, type ProposedCatalogMaterial } from '../src/modules/tenbot/live-review';
+import { approvalForCurrentReview, catalogRequestIssues, completeCatalogRequest, editableRows, invalidateReceivalApproval, localAgentExperimentRequested, localReceivalCandidateRequested, prepareInvoiceImage, RECEIVAL_EXECUTION_BLOCKED, receivalExecutionBlock, receivalLineValidation, receivalOrderIssues, receivalReviewNotice, reviewChanged, singlePdfPageScale, type LocalDemoStatus, type LocalReceivalDraft, type ProposedCatalogMaterial } from '../src/modules/tenbot/live-review';
 // Existing SuggestionInput retains its AuthProvider restriction. SSR effects do
 // not run; these dummy public values load it without any real session/network.
 process.env.NEXT_PUBLIC_SUPABASE_URL='http://localhost:3000';
@@ -37,6 +37,22 @@ await check('quantity, catalog identity, unit, Job, exclusion and metadata edits
 await check('editing does not mutate the server-owned draft or its hash', () => {
   const original = JSON.stringify(base), rows = editableRows(base); rows[0].quantity = '99';
   assert.equal(JSON.stringify(base), original); assert.equal(base.hash, 'server-reviewed-current-hash');
+});
+await check('a failed Save cannot revive revoked approval after edits are reverted', () => {
+  const ready:LocalReceivalDraft={...copy(base),simulation:false,executionEnabled:true,reviewed:true,durableDraftId:'exact-server-id',durableHash:'exact-server-hash'};
+  const realStatus:LocalDemoStatus={...status,simulation:false,executionEnabled:true};
+  const edits=editableRows(ready);edits[0].quantity='150';
+  const pending=invalidateReceivalApproval(ready);
+  assert.equal(pending.id,ready.id);assert.equal(pending.revision,ready.revision);assert.equal(pending.hash,ready.hash);assert.equal(pending.status,ready.status);
+  assert.equal(pending.rows,ready.rows,'Save readiness must not remount or rewrite the local editor source');
+  assert.equal(edits[0].quantity,'150','Local edits remain available after a rejected Save');
+  assert.equal(pending.durableDraftId,undefined);assert.equal(pending.durableHash,undefined);assert.equal(pending.canApprove,false);
+  edits[0].quantity='3';
+  assert.equal(reviewChanged(pending,edits,pending.orderDetails),false);
+  assert.equal(approvalForCurrentReview(pending,edits,pending.orderDetails,true,false),false);
+  assert(receivalExecutionBlock(pending,realStatus)?.includes('Save this exact draft'));
+  const revalidated:LocalReceivalDraft={...pending,canApprove:true,reviewed:true,durableDraftId:'fresh-server-id',durableHash:'fresh-server-hash'};
+  assert.equal(approvalForCurrentReview(revalidated,edits,revalidated.orderDetails,true,false),true);
 });
 await check('clean review is compact with source conversion and explicit approval; exceptions expose editable fields', () => {
   const compact=render();
@@ -116,15 +132,25 @@ await check('all proposed material edits invalidate approval, while explicit nul
   const unchanged=editableRows(base); unchanged[0].catalogRequest=null;
   assert.equal(reviewChanged(base,unchanged,base.orderDetails),false);
 });
-await check('new materials remain reviewable requests without catalog permission and real combined execution stays blocked', () => {
+await check('new materials remain reviewable requests without catalog permission and execution still requires server readiness', () => {
   const draft=copy(base); draft.rows[0]={...draft.rows[0],materialId:null,catalogRequest:copy(proposed)};
   const denied=receivalLineValidation(draft.rows[0],editableRows(draft)[0],{...status,canCreateCatalog:false});
   assert.equal(denied.state,'Needs review'); assert.equal(denied.holds.length,1); assert.deepEqual(denied.fields,{});
   const html=render(draft,{...status,canCreateCatalog:false});
   for(const text of ['Draft only','Not sent to an approver','Simulated catalog material + pending receival','catalog creation and dependent pending receivals','1 catalog material + 1 pending receivals']) assert(html.includes(text),text);
   assert(/disabled=""[^>]*>Approve simulated catalog and receivals/.test(html));
-  const real=receivalLineValidation(draft.rows[0],editableRows(draft)[0],{...status,simulation:false,canCreateCatalog:true});
-  assert(real.holds.some(hold=>hold.includes('Combined catalog and receival execution is unavailable')));
+  const realStatus: LocalDemoStatus={...status,mode:'authenticated-receivals',simulation:false,canCreateCatalog:true,executionEnabled:false};
+  const realDraft: LocalReceivalDraft={...draft,simulation:false,executionEnabled:false};
+  const real=receivalLineValidation(realDraft.rows[0],editableRows(realDraft)[0],realStatus);
+  assert.equal(real.state,'Ready'); assert.deepEqual(real.holds,[]);
+  assert(receivalExecutionBlock(realDraft,realStatus));
+  assert.equal(approvalForCurrentReview(realDraft,editableRows(realDraft),realDraft.orderDetails,true,false),false);
+  realStatus.executionEnabled=true;realDraft.executionEnabled=true;realDraft.durableDraftId='server-reviewed-id';realDraft.durableHash='server-reviewed-hash';
+  assert.equal(receivalExecutionBlock(realDraft,realStatus),null);
+  assert.equal(approvalForCurrentReview(realDraft,editableRows(realDraft),realDraft.orderDetails,true,false),true);
+  const changed=editableRows(realDraft);changed[0].quantity='150';
+  assert.equal(approvalForCurrentReview(realDraft,changed,realDraft.orderDetails,true,false),false);
+  assert(receivalLineValidation(realDraft.rows[0],changed[0],realStatus).fields.quantity?.includes('requires 3 Bag'));
 });
 await check('supplier correction uses invoice and known choices without weakening server identity or approval', () => {
   const source={...copy(base.rows[0]),materialId:null,catalogRequest:copy(proposed),reasons:['supplier_mismatch']};
@@ -195,6 +221,24 @@ await check('successful simulation is explicitly distinguished from Production a
   const replay = renderToStaticMarkup(createElement(ReceivalDraftReview, { draft: approved, status, busy: false, approval: { draft: approved, receivals: [{ id: 'existing-1' }, { id: 'existing-2' }], createdCount: 0, simulation: true, idempotent: true }, onDetails() {}, async onReview() {}, async onApprove() {} }));
   assert.ok(replay.includes('2 simulated pending receivals already created'));
 });
+await check('actual execution receipts show server-created identities and the canonical Inventory queue link', () => {
+  const created:LocalReceivalDraft={...copy(base),simulation:false,status:'created',executionEnabled:true,durableDraftId:'server-reviewed-id',durableHash:'server-reviewed-hash'};
+  const realStatus:LocalDemoStatus={...status,mode:'authenticated-receivals',simulation:false,databaseEnvironment:'isolated-test',executionEnabled:true};
+  const html=renderToStaticMarkup(createElement(ReceivalDraftReview,{draft:created,status:realStatus,busy:false,approval:{draft:created,receivals:[{id:'actual-receival-id'}],createdRecordIds:['actual-receival-id'],createdCatalogRecords:[{sourceLineId:'line-1',catalogSource:'standard' as const,catalogId:'actual-catalog-id'}],createdCount:1,simulation:false,idempotent:false},onDetails(){},async onReview(){},async onApprove(){}}));
+  for(const text of ['Isolated test database','1 catalog material(s) and 1 pending receival created','Created pending-receival IDs: actual-receival-id','Created catalog IDs: actual-catalog-id','href="/inventory#pending-receivals"','Creation did not increase on-hand inventory'])assert(html.includes(text),text);
+  assert(!html.includes('simulated pending receival'));
+  assert(!html.includes('Approve and create pending receivals'));
+  const replay=renderToStaticMarkup(createElement(ReceivalDraftReview,{draft:created,status:realStatus,busy:false,approval:{draft:created,receivals:[{id:'actual-receival-id',status:'received',quantity_received:3}],createdCount:0,simulation:false,idempotent:true,notice:'These existing receivals changed after creation. Check their current state in Inventory.'},onDetails(){},async onReview(){},async onApprove(){}}));
+  assert(replay.includes('existing receivals changed after creation'));assert(!replay.includes('Received quantity: 0. On-hand inventory is unchanged'));
+});
+await check('real possible duplicates are reviewable only when the server permits acknowledgement; confirmed duplicates stay blocked',()=>{
+  const draft:LocalReceivalDraft={...copy(base),simulation:false};
+  const source=draft.rows[0];source.reasons=['potential_duplicate'];source.duplicateReview={fingerprint:'d'.repeat(64),canAcknowledge:true,acknowledged:false,matches:[{recordId:'actual-existing-id',source:'database',supplier:'T&M Supply',status:'pending',materialName:source.materialName!,size:source.size!,quantityExpected:'3',quantityReceived:'0',unit:'Bag',documentReference:null,classification:'possible'}]};
+  const html=renderToStaticMarkup(createElement(ReceivalDraftReview,{draft,status:{...status,simulation:false},busy:false,approval:null,canAcknowledgeDuplicates:true,onDetails(){},async onReview(){},async onApprove(){}}));
+  assert(html.includes('Existing pending receival: actual-existing-id'));assert(html.includes('confirm this is a separate order for approval'));
+  source.duplicateReview.canAcknowledge=false;source.duplicateReview.matches[0].classification='confirmed';source.duplicateAcknowledgement=source.duplicateReview.fingerprint;
+  assert(receivalLineValidation(source,editableRows(draft)[0],{...status,simulation:false}).holds.some(hold=>hold.includes('already has a receival')));
+});
 await check('real execution is disabled independently of model readiness and cannot inherit simulation approval', () => {
   const realStatus: LocalDemoStatus = { ...copy(status), mode: 'authenticated-receivals', simulation: false, executionEnabled: false, blockedReason: RECEIVAL_EXECUTION_BLOCKED };
   const realDraft: LocalReceivalDraft = { ...copy(base), simulation: false, executionEnabled: false, blockReason: RECEIVAL_EXECUTION_BLOCKED };
@@ -202,7 +246,7 @@ await check('real execution is disabled independently of model readiness and can
   assert.equal(approvalForCurrentReview(realDraft, editableRows(realDraft), realDraft.orderDetails, true, false), false);
   const html = render(realDraft, realStatus);
   assert.ok(html.includes(RECEIVAL_EXECUTION_BLOCKED));
-  assert.ok(html.includes('disabled=""') && /disabled=""[^>]*>Approve pending receivals/.test(html));
+  assert.ok(html.includes('disabled=""') && /disabled=""[^>]*>Approve and create pending receivals/.test(html));
   assert.ok(!html.includes('Approve simulated pending receivals'));
   assert.ok(!html.includes('pending receivals created'));
   assert.ok(receivalExecutionBlock(base, realStatus));

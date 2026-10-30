@@ -1,0 +1,47 @@
+{
+  "status": "passed pre-commit reconciliation",
+  "baseDev": "85b73182ecfcd8ff99e6f2523d233d1e77b25fdc",
+  "releasedCandidate": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "acceptedKnowledgeSourceMatchesDev": true,
+  "relevantReadOnlyContractsMatchReleasedSource": true,
+  "knowledgeRecordContentUnchanged": "Only generated snapshot proof input hashes/artifact digest differ",
+  "sourceHashesMatched": 18,
+  "evidenceHashesMatched": 38,
+  "newInferenceCalls": 0,
+  "newDatabaseTests": 0,
+  "newProductionMutations": 0,
+  "newBuild": false,
+  "validationReused": "Exact source/evidence match; commit/doc-only pass",
+  "mixedDocs": [
+    {
+      "path": "docs/project-memory/2026-10-28-tenbot-openai-agent-poc.md",
+      "excludedWorkingPrefixSha256": "722a1a48ae7544d1e7085820abb8507faab426557c9f44b87a0d9b62c74d925b",
+      "ownedSection": "## Real pending receival execution \u2014 October 30, 2026"
+    },
+    {
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "excludedWorkingPrefixSha256": "60cc82b328b689f476f2daedcfc45ea7b33189ddf12ece0aa100963140f15704",
+      "ownedSection": "### TenBot real pending receivals \u2014 local isolated candidate, October 30, 2026"
+    },
+    {
+      "path": "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+      "excludedWorkingPrefixSha256": "1425935d4457be62a3b92d830aa2cbfa8fb9beb3d444607b2e35ac119c6b2206",
+      "ownedSection": "## TenBot real pending receival execution handoff \u2014 October 30, 2026"
+    }
+  ],
+  "excluded": [
+    "scripts/verify-tenbot-agent.mts",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "older hosted-release evidence/notes",
+    "architecture/manpower/Web Push work",
+    ".worktrees"
+  ],
+  "authorization": "Chris explicit local dev commit; no push, deployment or Production writes",
+  "remainingReleaseGates": [
+    "Product acceptance of the local write candidate",
+    "Actual shared-schema/RLS and legacy catalog caller compatibility",
+    "Original attachment retention decision if required",
+    "Reviewed hosted write adapter",
+    "Separate Production migrations, write activation and release approval"
+  ]
+}

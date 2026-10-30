@@ -1,0 +1,112 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T14:56:03.619Z",
+  "origin": "http://localhost:3000",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "employeeRole": "Lead (synthetic, non-Admin)",
+  "actualSignedAuth": true,
+  "actualDatabaseRows": [
+    {
+      "id": "5565bd6c-76a4-4d9b-9c0b-a7faf9292951",
+      "status": "pending",
+      "quantity_expected": 5,
+      "quantity_received": 0,
+      "unit": "Bag",
+      "vendor": "T&M Supply",
+      "material_name": "Alaska White",
+      "size": "#1",
+      "production_job_id": null,
+      "notes": "Invoice DEMO-REC-2189; reviewed draft abb28ead-72df-4fe4-b96d-39b55235fb09"
+    },
+    {
+      "id": "826fc754-babb-4b68-baca-4ba15d5f2658",
+      "status": "pending",
+      "quantity_expected": 3,
+      "quantity_received": 0,
+      "unit": "Pail",
+      "vendor": "T&M Supply",
+      "material_name": "Clear Resin",
+      "size": "Part A",
+      "production_job_id": null,
+      "notes": "Invoice DEMO-REC-2189; reviewed draft abb28ead-72df-4fe4-b96d-39b55235fb09"
+    },
+    {
+      "id": "08b7c412-a6a1-480f-b714-983f8c233993",
+      "status": "pending",
+      "quantity_expected": 1,
+      "quantity_received": 0,
+      "unit": "Bag",
+      "vendor": "T&M Supply",
+      "material_name": "Blue Coal",
+      "size": "#0",
+      "production_job_id": null,
+      "notes": "Invoice DEMO-REC-2189; reviewed draft abb28ead-72df-4fe4-b96d-39b55235fb09"
+    },
+    {
+      "id": "6790cb4e-73e5-4f3d-9f96-261ee48ff120",
+      "status": "pending",
+      "quantity_expected": 2,
+      "quantity_received": 0,
+      "unit": "Bag",
+      "vendor": "T&M Supply",
+      "material_name": "CC Green",
+      "size": "#1",
+      "production_job_id": "10302026-0000-4000-8000-000000000201",
+      "notes": "Invoice DEMO-REC-2189; reviewed draft abb28ead-72df-4fe4-b96d-39b55235fb09"
+    },
+    {
+      "id": "a05778c1-88df-43c0-b424-3e45980feaa1",
+      "status": "pending",
+      "quantity_expected": 4,
+      "quantity_received": 0,
+      "unit": "Bag",
+      "vendor": "T&M Supply",
+      "material_name": "Unlisted Violet",
+      "size": "#2",
+      "production_job_id": null,
+      "notes": "Invoice DEMO-REC-2189; reviewed draft abb28ead-72df-4fe4-b96d-39b55235fb09"
+    }
+  ],
+  "actualCreatedCatalog": {
+    "id": "32d185e0-31ca-4783-abf4-c65d752ec7c0",
+    "vendor": "T&M Supply",
+    "item_name": "Unlisted Violet",
+    "vendor_sku": "UNK-99"
+  },
+  "returnedIdsVerified": true,
+  "idempotentHttpReplay": {
+    "passed": true,
+    "createdCount": 0,
+    "sameIds": true
+  },
+  "onHandSentinel": {
+    "id": 901,
+    "quantity": 17,
+    "unit": "Bag"
+  },
+  "inventoryQueue": {
+    "visible": true,
+    "pendingCount": 15,
+    "allFiveMaterialsVisible": true,
+    "refreshEventTriggeredRealRead": true,
+    "readStatuses": [
+      200,
+      200
+    ]
+  },
+  "desktopViewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "mobileViewport": {
+    "width": 390,
+    "height": 844
+  },
+  "mobileOverflow": false,
+  "pageErrors": [],
+  "blockedOrigins": [],
+  "inferenceCallsInThisVerifier": 0,
+  "productionRequests": 0,
+  "productionMutations": 0,
+  "inferenceLedgerUnchanged": true
+}

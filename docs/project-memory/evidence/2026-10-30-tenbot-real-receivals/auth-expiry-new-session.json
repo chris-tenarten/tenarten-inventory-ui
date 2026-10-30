@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "recordedAt": "2026-10-30T14:03:41.370Z",
+  "actualSignedSession": true,
+  "signedExpMinusIatSeconds": 3600,
+  "authGetUserVerified": true,
+  "tokenValuePrintedOrPersisted": false,
+  "syntheticEmployee": true,
+  "configurationMutations": 0,
+  "retried": false
+}

@@ -1,0 +1,125 @@
+{
+  "status": "Actual isolated database, live Terra PDF execution and final localhost browser checks passed",
+  "recordedAt": "2026-10-30T13:57:08.443619+00:00",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "validation": {
+    "actualPostgreSQL": true,
+    "actualSignedAuthJwt": true,
+    "groupsPassed": 14,
+    "authAndPostgrestRequestsInPassedRun": 136,
+    "passedRunDurationMs": 22671,
+    "productionCalls": 0,
+    "productionMutations": 0,
+    "inferenceCalls": 0,
+    "serviceRoleBusinessCalls": 0
+  },
+  "proofBoundaries": {
+    "realDatabaseGates": [
+      "JWT signature and current membership/capability checks",
+      "Canonical catalog and pending-receival permission checks",
+      "Immutable owner-scoped drafts and exact explicit approval",
+      "Source/package quantity validation:150LB ->3Bag and10GAL ->2Pail",
+      "Atomic dependent catalog/pending creation with actual IDs and audit",
+      "Concurrent exact-submit retries and idempotency",
+      "Supersession, explicit revocation and active/capability/read_only revoke-regrant invalidation",
+      "Fresh catalog/Job validation",
+      "Possible duplicate acknowledgement versus confirmed document identity",
+      "Actual PostgreSQL trigger-induced rollback after catalog creation",
+      "NOBYPASSRLS executor honors a restrictive Job policy",
+      "Unchanged on-hand balances, transactions and prior assistant history"
+    ],
+    "canonicalContractProjection": "Initial legacy Catalog/Inventory CREATE TABLE DDL is not present in Git. The isolated tables project canonical application/RPC columns and reservation/quantity contracts; exact shared-Production schema parity is NOT claimed.",
+    "readPolicyProjection": "Source-table read visibility is bounded by real current readOperationalData capability in the synthetic fixture. This does not establish exact Production-table policy parity.",
+    "messagingScaffold": "Empty real PostgreSQL read tables and verbatim released read RPCs support the existing frontend TenBot virtual peer. No real message, send/upload/notification RPC, Storage object or system Auth account was created. This is UI scaffolding, NOT full Messaging certification.",
+    "failureInjection": "The hidden-Job restrictive RLS policy and atomic-failure trigger were real temporary PostgreSQL objects removed afterward; no model/persistence mock substitutes for database gates.",
+    "buildReceipt": "Final candidate snapshot on85b7318 plus14task overlays, including the scoped Inventory refresh listener, passes export/types. The final build receipt supersedes the earlier build snapshot; initial manifest hash retained separately.",
+    "guardApplicationEvidence": "The guard source8f050... is reconciled against the exact installed PostgreSQL wrapper bodies/owners/locks. Initial call-time file hash was not separately recorded; no repeated guard application occurred."
+  },
+  "isolatedState": {
+    "existingSyntheticProfilesPreserved": 4,
+    "newSyntheticAuthIdentities": 4,
+    "totalSyntheticAuthUsers": 8,
+    "originalAssistantHistoryPreserved": true,
+    "storageObjects": 0,
+    "normalMessagingRows": 0,
+    "executionEnabled": "Fixed isolated fixture only after passed validation; no Production activation"
+  },
+  "migrations": [
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc"
+    },
+    {
+      "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7"
+    },
+    {
+      "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63"
+    },
+    {
+      "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441"
+    }
+  ],
+  "checkpoint": {
+    "failure": "First dependent proposal failed42702 due ambiguousvendor reference after the original extension was applied.",
+    "correction": "Append-only forward20261030130000 fixes qualification and includesread_only in permission epochs. Full14groups then passed. Applied earlier migration files were not rewritten."
+  },
+  "remainingReleaseGates": [
+    "Product acceptance of the local candidate",
+    "Narrow compatibility preflight against the actual shared TenOps schema before any future Production migration",
+    "Separate approval for Production migration application, write activation, push or deployment"
+  ],
+  "privacy": {
+    "credentialValuesCopied": false,
+    "rawActorProfilesCopied": false,
+    "privateLogsCopied": false,
+    "environmentFilesCopied": false,
+    "browserSessionOrHeaderValuesCopied": false,
+    "syntheticRecordIdsRetainedForVerification": true
+  },
+  "filesInThisSubset": [
+    "database-validation.json",
+    "migration-hashes.json",
+    "prerequisites-manifest.json",
+    "guard-reconciliation.json",
+    "created-record-proof.json",
+    "messaging-scaffold-manifest.json",
+    "messaging-scaffold-validation.json",
+    "preservation-readback.json",
+    "review-build.json",
+    "database-validation-failure-42702.json",
+    "fixture-seed.json",
+    "prerequisites.sql.txt",
+    "messaging-scaffold.sql.txt",
+    "auth-expiry-repair.json",
+    "auth-expiry-new-session-initial.json",
+    "auth-expiry-new-session.json",
+    "queue-read-before.json",
+    "queue-read-after.json",
+    "queue-read-projection-manifest.json",
+    "queue-read-projection.sql.txt"
+  ],
+  "fixtureAuthSessionRepair": {
+    "reason": "Prior fixture signed-expiration tests set60-secondJWTs, below browser SDK90-second refresh safety window.",
+    "changedFieldOnly": "jwt_exp",
+    "beforeSeconds": 60,
+    "afterSeconds": 3600,
+    "actualNewSignedJwtVerified": true,
+    "authGetUserVerified": true,
+    "propagation": "First immediate sign-in retained60 seconds; one bounded check~55seconds later issued3600. No policy update was repeated.",
+    "unrelatedAuthConfigurationUnchanged": true,
+    "billingOrProductionChanges": false
+  },
+  "inventoryQueueProjectionCompletion": {
+    "before": "Actual signed employee exact frontend SELECT failed400/42703 because receipt_inventory_item_id was absent from the isolated projection.",
+    "change": "Only3nullablecanonicalundo-provenancecolumns copied verbatim from20260722_001_pending_receival_undo.sql; schema cache reloaded.",
+    "after": "Actual signed employee exact frontend SELECT/sort/join returned200,10pendingrows/exactCount10.",
+    "rpcsOrRlsOrGrantsChanged": false,
+    "receivingOrOnHandEnabled": false,
+    "productionCalls": 0,
+    "duplicateEvidenceNote": "Adding nullablecolumns changes whole-row duplicate fingerprints; any already-prepared duplicate review must be freshly revalidated."
+  },
+  "finalBrowserEvidence": "browser-completion.json"
+}

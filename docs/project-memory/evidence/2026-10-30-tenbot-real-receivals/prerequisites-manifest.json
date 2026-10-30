@@ -1,0 +1,98 @@
+{
+  "preparedAt": "2026-10-30",
+  "fixedFixture": "jltgxcfiprocydhbrahz",
+  "sqlSha256": "8b46e0aead4eaddcfec7ce90546c80ca56f0034af789c83443dbd0e1ef1a26de",
+  "fragments": [
+    {
+      "label": "Exact canonical Jobs table and indexes/updated-at trigger",
+      "source": "supabase/migrations/20260713_002_production_mvp_jobs.sql",
+      "sourceSha256": "b50605153914de962f66be352f6a977ee4530a7546aa30574512bea8b8027aea",
+      "fragmentSha256": "da84f74d13b3c3607839a89c85d5f7d20c1e21b816cf479a49f821d39b30b66f",
+      "transformation": "Verbatim bounded source fragment"
+    },
+    {
+      "label": "Exact configured Vendor table/index",
+      "source": "supabase/migrations/20260722_002_purchasing_phase1.sql",
+      "sourceSha256": "8e70e6c125d440aec5178f058446eff622ccb1fddf0ecf32252ee7984330a323",
+      "fragmentSha256": "0e92f7af706675f0480860ef5254a1d439a5d640927df69daa24244529dbc351",
+      "transformation": "Verbatim bounded source fragment"
+    },
+    {
+      "label": "Exact canonical Vendor SKU uniqueness",
+      "source": "supabase/migrations/20260722_005_purchasing_vendor_configuration.sql",
+      "sourceSha256": "d8669419be3c31669306b326a63e60b9d542e868ef376c64d141cccd5087d93b",
+      "fragmentSha256": "b629668396667589e6fa70518efff5eb3ac1521b9cb4a64298469fcb8b693b89",
+      "transformation": "Verbatim bounded source fragment"
+    },
+    {
+      "label": "Exact canonical three reservation identity checks",
+      "source": "supabase/migrations/20260714_005_inventory_production_job_reservations.sql",
+      "sourceSha256": "2fae6f4c0a8efa64ce3302519776457b15671dfca213d2a37c1b9f303b4f8ee5",
+      "fragmentSha256": "9f1ccf39245d007c7850b551fb3543eda306cdc12bd39a9eb0b025e6397db4e6",
+      "transformation": "Verbatim bounded source fragment"
+    },
+    {
+      "label": "Exact canonical catalog truckload constraints",
+      "source": "supabase/migrations/20260723_002_vendor_catalog_truckload_pricing.sql",
+      "sourceSha256": "7d26f3806ef9f67ec8542f6a4febbe7999d3eb8c00b4ec5b7d79c1133cdbfaf9",
+      "fragmentSha256": "61858e38c2ba34870f1ba39753ffaa19857dade23d25a63ef1b77d460ea26cc7",
+      "transformation": "Verbatim bounded source fragment"
+    },
+    {
+      "label": "Canonical catalog business save implementation",
+      "source": "supabase/migrations/20260723_002_vendor_catalog_truckload_pricing.sql",
+      "sourceSha256": "7d26f3806ef9f67ec8542f6a4febbe7999d3eb8c00b4ec5b7d79c1133cdbfaf9",
+      "fragmentSha256": "0f4eebfaec45df757e9a53092788909c79646310fc8d2c3fa30d736b9db8729c",
+      "transformation": "Verbatim function declaration/body; independent owner/ACL specified in fixture"
+    },
+    {
+      "label": "Canonical five-type catalog wrapper",
+      "source": "supabase/migrations/20260917_004_purchase_order_material_taxonomy.sql",
+      "sourceSha256": "69a61e6fcb1d29bf3cb713a4575474c152210eb89f5eae257b8ec608c824fe41",
+      "fragmentSha256": "5b5e001bbff1d89d8f9cf2c2830a0166e0973b197dada3a3bf8c71583ca2511b",
+      "transformation": "Verbatim function declaration/body; independent owner/ACL specified in fixture"
+    },
+    {
+      "label": "Exact current explicit capability requirement",
+      "source": "supabase/migrations/20260818_001_rbac_identity_infrastructure.sql",
+      "sourceSha256": "98fa3ac8e8dfae48511885e79f196a7e053b31f78395698c3875fa92bc9f80d4",
+      "fragmentSha256": "aacc1628c1a3faefbb16f060e085d3b483c64a04dd9c4987e5283d6788d511dd",
+      "transformation": "Verbatim function declaration/body; independent owner/ACL specified in fixture"
+    },
+    {
+      "label": "Exact generic write restriction including readonly users",
+      "source": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+      "sourceSha256": "b02fcd9f292d381426a3dbae35f0ccab0076a5f91d846931414e96c0b88a22fc",
+      "fragmentSha256": "a6c60a61e0dc420ee346410908db06fd10028ad881c046afe090065d60a0341f",
+      "transformation": "Verbatim function declaration/body; independent owner/ACL specified in fixture"
+    },
+    {
+      "label": "Verbatim canonical Pending Receival mutation RLS",
+      "source": "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+      "sourceSha256": "279f581ba29d1bb1c4282aa0831ccfd44c10fc21a3ba8f1f656001aacc0c59d4",
+      "fragmentSha256": "3867f253e3b26139a02c0561dd043fcfc7a042ffd5fa1025c3b15ae001bb471e",
+      "transformation": "Verbatim bounded source fragment"
+    }
+  ],
+  "projectionScope": [
+    "vendor_catalog",
+    "vendor_catalog_v2",
+    "pending_receivals",
+    "inventory_items",
+    "inventory_transactions"
+  ],
+  "projectionSources": [
+    "src/modules/purchasing/catalog-records.ts",
+    "src/modules/inventory/pending-receival-contract.ts",
+    "supabase/migrations/20260714_005_inventory_production_job_reservations.sql",
+    "supabase/migrations/20260723_002_vendor_catalog_truckload_pricing.sql",
+    "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql"
+  ],
+  "limitations": [
+    "Initial legacy Catalog and Inventory CREATE DDL is absent from repository; table definitions project only canonical fields/constraints needed by this integration.",
+    "Read visibility is bounded by real current has_app_capability against synthetic membership; this is not a claim of exact Production-table policy parity.",
+    "No receive/on-hand mutation RPC, PO issuance tables, operational integrations or personal/private data is copied.",
+    "Production compatibility preflight remains a separate release gate."
+  ],
+  "applied": false
+}

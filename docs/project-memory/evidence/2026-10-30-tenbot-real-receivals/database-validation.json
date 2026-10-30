@@ -1,0 +1,95 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "recordedAt": "2026-10-30T13:42:36.971Z",
+  "groupsPassed": 14,
+  "checks": [
+    {
+      "name": "real signed JWTs, current role capabilities, forged/anonymous denials",
+      "durationMs": 2212
+    },
+    {
+      "name": "canonical catalog RPCs independently deny unauthorized and anonymous writes",
+      "durationMs": 989
+    },
+    {
+      "name": "server quantity semantics preserve source and exact 3-bag/2-pail conversions",
+      "durationMs": 795
+    },
+    {
+      "name": "owner isolation, immutable evidence and exact explicit approval binding",
+      "durationMs": 1151
+    },
+    {
+      "name": "dependent catalog creation and pending inserts commit with real IDs, exact source and audit",
+      "durationMs": 719
+    },
+    {
+      "name": "concurrent identical submits and retries return one durable receipt without duplicate writes",
+      "durationMs": 685
+    },
+    {
+      "name": "edits supersede immutable drafts and invalidate previous approval",
+      "durationMs": 734
+    },
+    {
+      "name": "explicit revocation and permission revoke/regrant invalidate existing signed approvals",
+      "durationMs": 5470
+    },
+    {
+      "name": "catalog and Job evidence changes require fresh review before writes",
+      "durationMs": 2312
+    },
+    {
+      "name": "possible duplicate evidence requires exact acknowledgement; confirmed document claim stays authoritative",
+      "durationMs": 1362
+    },
+    {
+      "name": "atomic failure after catalog creation rolls back catalog, pending, claim, execution and audit",
+      "durationMs": 1904
+    },
+    {
+      "name": "catalog and receival capabilities are independent, with current-grant revalidation",
+      "durationMs": 1342
+    },
+    {
+      "name": "RLS hides a restricted synthetic Job from the non-bypass execution role",
+      "durationMs": 1090
+    },
+    {
+      "name": "all pending creations leave on-hand Inventory and transactions byte-for-byte unchanged",
+      "durationMs": 713
+    }
+  ],
+  "migrations": [
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc"
+    },
+    {
+      "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7"
+    },
+    {
+      "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63"
+    },
+    {
+      "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441"
+    }
+  ],
+  "productionMutations": 0,
+  "actualDatabase": true,
+  "actualSignedJwt": true,
+  "inferenceCalls": 0,
+  "serviceRoleBusinessCalls": 0,
+  "httpCalls": 136,
+  "durationMs": 22671,
+  "gate": "Isolated fixture only; enabled for localhost candidate after focused validation",
+  "limitations": [
+    "Canonical table contract projection; full shared-Production schema compatibility remains a release gate.",
+    "Synthetic Auth identities only; no Production customer/employee records.",
+    "RLS hidden-Job and transaction failure are deliberate actual database policies/triggers, removed afterward; not model or persistence mocks."
+  ]
+}

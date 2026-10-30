@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T14:02:46.546Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "reason": "Restore browser-compatible ordinary session lifetime after the previous isolated signed-expired-JWT test policy",
+  "beforeJwtExpSeconds": 60,
+  "afterJwtExpSeconds": 3600,
+  "patchedFields": [
+    "jwt_exp"
+  ],
+  "changedFields": [
+    "jwt_exp"
+  ],
+  "unrelatedConfigurationHashBefore": "c8b64b259007548e3f079c8aecb8c3bedba5e5c61f5afcff8815b58f1d2c9b1c",
+  "unrelatedConfigurationHashAfter": "c8b64b259007548e3f079c8aecb8c3bedba5e5c61f5afcff8815b58f1d2c9b1c",
+  "unchangedSecurityFlags": {
+    "signupDisabled": true,
+    "externalEmailPasswordSigninEnabled": true,
+    "configuredExternalProvidersDisabled": true,
+    "hooksDisabled": true
+  },
+  "productionRequests": 0,
+  "billingOrServiceChanges": false,
+  "businessFunctionsChanged": false,
+  "requests": [
+    {
+      "method": "GET",
+      "status": 200,
+      "durationMs": 310
+    },
+    {
+      "method": "PATCH",
+      "status": 200,
+      "durationMs": 2344
+    },
+    {
+      "method": "GET",
+      "status": 200,
+      "durationMs": 211
+    }
+  ],
+  "newSignedSessionVerification": "PASS: actual signedJWT exp-iat3600 and Auth.getUser verified at2026-10-30T14:03:41.370Z; first immediate60-second token was propagation lag",
+  "credentialValuesExposed": false,
+  "managementCredentialLoadedSecurely": true
+}

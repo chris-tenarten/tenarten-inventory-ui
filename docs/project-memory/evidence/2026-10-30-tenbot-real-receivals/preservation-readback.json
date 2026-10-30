@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "original4ProfilesPreserved": true,
+  "oldAssistantHistoryPreserved": true,
+  "syntheticAuthUsers": 8,
+  "storageObjects": 0,
+  "normalInboxMessages": 0,
+  "executionGate": "enabled only isolated fixture after actual14groups"
+}

@@ -1,0 +1,38 @@
+{
+  "draftId": "efcf1b71-428b-42f2-9525-cd8ddffa9d6f",
+  "hash": "38d55e584061b7f4d7e29a63890dba14f181f68ab13ac429c2dcbbf1a72812fd",
+  "createdRecordIds": [
+    "47ec7e34-d95f-4fe0-8cb9-9f1b2b1b32fa",
+    "37a3f146-a301-4c9a-90cb-1f5fa6fe81f0"
+  ],
+  "createdCatalogRecords": [
+    {
+      "catalogId": "8c23ab1f-f6bd-4a6d-8a7a-35f13f3e85f7",
+      "sourceLineId": "line-2",
+      "catalogSource": "specialty"
+    }
+  ],
+  "returnedRows": [
+    {
+      "id": "47ec7e34-d95f-4fe0-8cb9-9f1b2b1b32fa",
+      "status": "pending",
+      "quantity_expected": 3,
+      "quantity_received": 0,
+      "unit": "Bag",
+      "production_job_id": "cd1a68b7-8ddc-4f68-b119-a8c117186d4a"
+    },
+    {
+      "id": "37a3f146-a301-4c9a-90cb-1f5fa6fe81f0",
+      "status": "pending",
+      "quantity_expected": 4,
+      "quantity_received": 0,
+      "unit": "Bag",
+      "production_job_id": "cd1a68b7-8ddc-4f68-b119-a8c117186d4a"
+    }
+  ],
+  "auditEvents": [
+    "prepared",
+    "approved",
+    "executed"
+  ]
+}

@@ -1,0 +1,7 @@
+begin;set local lock_timeout='2s';set local statement_timeout='5s';
+alter table public.pending_receivals
+  add column if not exists receipt_inventory_item_id bigint references public.inventory_items(id) on delete set null,
+  add column if not exists receipt_transaction_id uuid references public.inventory_transactions(id) on delete set null,
+  add column if not exists receipt_created_inventory_item boolean;
+notify pgrst,'reload schema';
+commit;

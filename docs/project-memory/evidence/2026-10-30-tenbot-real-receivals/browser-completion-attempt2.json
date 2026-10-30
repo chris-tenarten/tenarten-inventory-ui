@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "phase": "completion verifier browser locator",
+  "cause": "Verifier waited for collapsed summary while canonical hash link correctly expanded the queue and showed expanded explanatory text",
+  "correction": "Wait for actual Pending Receivals (15) header regardless of expanded state",
+  "applicationOrDatabaseFailure": false,
+  "inferenceCalls": 0
+}

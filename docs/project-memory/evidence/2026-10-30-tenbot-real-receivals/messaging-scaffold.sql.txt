@@ -1,0 +1,141 @@
+-- Existing fixed isolated fixture ONLY. Empty normal Messaging reads support
+-- the existing TenBot virtual peer; no fake JWT, fake owner or fake persistence.
+-- Not a complete Messaging schema/security certification. No employee messages,
+-- notification delivery, send/upload RPCs, bucket changes or personal data.
+begin;set local lock_timeout='2s';set local statement_timeout='10s';
+do $$begin if to_regclass('public.my_work_messages') is not null then raise exception 'Messaging fixture already exists; inspect rather than replay';end if;end$$;
+create table public.my_work_messages(
+ id uuid primary key default gen_random_uuid(),sender_user_id uuid references public.app_users(user_id),recipient_user_id uuid references public.app_users(user_id),group_id uuid,reply_to_message_id uuid,is_reply boolean not null default false,body text not null default '',job_id uuid references public.jobs(id),read_at timestamptz,created_at timestamptz not null default clock_timestamp(),edited_at timestamptz,delivery_status text not null default 'ready',sender_kind text not null default 'user',system_sender_key text,system_message_key text
+);
+create table public.my_work_message_groups (
+ id uuid primary key default gen_random_uuid(), name text not null check(length(btrim(name)) between 1 and 80),
+ creator_user_id uuid not null references public.app_users(user_id), created_at timestamptz not null default clock_timestamp()
+);
+create table public.my_work_group_members (
+ group_id uuid not null references public.my_work_message_groups(id) on delete cascade,
+ user_id uuid not null references public.app_users(user_id), joined_at timestamptz not null default clock_timestamp(),
+ primary key(group_id,user_id)
+);
+create table public.my_work_group_message_reads (
+ message_id uuid not null references public.my_work_messages(id) on delete cascade,
+ user_id uuid not null references public.app_users(user_id), read_at timestamptz not null default clock_timestamp(), primary key(message_id,user_id)
+);
+
+alter table public.my_work_messages add constraint fixture_message_group_fk foreign key(group_id) references public.my_work_message_groups(id);
+alter table public.my_work_messages add constraint fixture_message_reply_fk foreign key(reply_to_message_id) references public.my_work_messages(id);
+create table public.my_work_message_attachments(id uuid primary key default gen_random_uuid(),message_id uuid not null references public.my_work_messages(id),storage_path text,original_filename text,content_type text,byte_size bigint,created_at timestamptz default clock_timestamp());
+create table public.my_work_attachment_previews(attachment_id uuid primary key references public.my_work_message_attachments(id),ready boolean not null default false,storage_path text,byte_size bigint,width integer,height integer);
+create function public.is_my_work_group_member(p_group uuid,p_user uuid default auth.uid())
+returns boolean language sql stable security definer set search_path=pg_catalog,public as $$
+ select exists(select 1 from public.my_work_group_members gm join public.app_users u on u.user_id=gm.user_id
+ where gm.group_id=p_group and gm.user_id=p_user and u.is_active);
+$$;
+create function public.can_read_my_work_message(p_id uuid)
+returns boolean language sql stable security definer set search_path=pg_catalog,public as $$
+ select exists(select 1 from public.my_work_messages m where m.id=p_id
+ and exists(select 1 from public.app_users where user_id=auth.uid() and is_active)
+ and case when m.group_id is not null then public.is_my_work_group_member(m.group_id,auth.uid()) and (m.delivery_status='ready' or m.sender_user_id=auth.uid())
+ else m.sender_user_id=auth.uid() or (m.recipient_user_id=auth.uid() and m.delivery_status='ready') end);
+$$;
+create function public.is_my_work_group_member_self(p_group uuid)
+returns boolean language sql stable security definer set search_path=pg_catalog,public as $$ select public.is_my_work_group_member(p_group,auth.uid()); $$;
+create function public.list_my_work_message_page_v12(p_peer uuid,p_before_time timestamptz default null,p_before_id uuid default null,p_ids uuid[] default null)
+returns jsonb language sql stable security definer set search_path=pg_catalog,public as $$
+with page as (
+ select m.* from public.my_work_messages m
+ where m.delivery_status='ready'
+ and exists(select 1 from public.app_users where user_id=auth.uid() and is_active)
+ and public.can_read_my_work_message(m.id)
+ and (m.group_id=p_peer or (m.group_id is null and ((m.sender_user_id=auth.uid() and m.recipient_user_id=p_peer) or (m.recipient_user_id=auth.uid() and coalesce(m.sender_user_id,'00000000-0000-0000-0000-000000000001'::uuid)=p_peer))))
+ and (p_ids is null or m.id=any(p_ids[1:40]))
+ and (p_before_time is null or (m.created_at,m.id)<(p_before_time,p_before_id))
+ order by m.created_at desc,m.id desc limit 40
+)
+select coalesce(jsonb_agg(row order by created_at,id),'[]') from (
+ select m.created_at,m.id,jsonb_build_object(
+ 'id',m.id,'sender_user_id',coalesce(m.sender_user_id,'00000000-0000-0000-0000-000000000001'::uuid),
+ 'sender_name',coalesce(s.display_name,'TenOps'),'recipient_user_id',m.recipient_user_id,'recipient_name',r.display_name,
+ 'group_id',m.group_id,'is_reply',m.is_reply,'reply_to_message_id',m.reply_to_message_id,
+ 'reply', (select jsonb_build_object('id',o.id,'senderName',coalesce(u.display_name,'TenOps'),'body',left(o.body,180),'hasAttachments',exists(select 1 from public.my_work_message_attachments where message_id=o.id)) from public.my_work_messages o left join public.app_users u on u.user_id=o.sender_user_id where o.id=m.reply_to_message_id and public.can_read_my_work_message(o.id) and o.delivery_status='ready'),
+ 'body',m.body,'job_id',m.job_id,'job_number',j.job_number,'job_name',j.name,'read_at',case when m.group_id is null then m.read_at else (select read_at from public.my_work_group_message_reads where message_id=m.id and user_id=auth.uid()) end,'created_at',m.created_at,'edited_at',m.edited_at,
+ 'attachments',coalesce((select jsonb_agg(jsonb_build_object('id',a.id,'message_id',a.message_id,'storage_path',a.storage_path,'original_filename',a.original_filename,
+ 'content_type',a.content_type,'byte_size',a.byte_size,'created_at',a.created_at,'preview',case when p.ready then jsonb_build_object('path',p.storage_path,'bytes',p.byte_size,'width',p.width,'height',p.height) else null end) order by a.created_at,a.id)
+ from public.my_work_message_attachments a left join public.my_work_attachment_previews p on p.attachment_id=a.id where a.message_id=m.id),'[]')) as row
+ from page m left join public.app_users s on s.user_id=m.sender_user_id left join public.app_users r on r.user_id=m.recipient_user_id left join public.jobs j on j.id=m.job_id
+) rows;
+$$;
+create function public.list_my_work_conversations_v12() returns jsonb language sql stable security definer set search_path=pg_catalog,public as $$
+with visible as (
+ select m.*,coalesce(m.group_id,case when m.sender_user_id=auth.uid() then m.recipient_user_id else coalesce(m.sender_user_id,'00000000-0000-0000-0000-000000000001'::uuid) end) peer,
+ case when m.group_id is null then m.recipient_user_id=auth.uid() and m.read_at is null else m.sender_user_id<>auth.uid() and not exists(select 1 from public.my_work_group_message_reads r where r.message_id=m.id and r.user_id=auth.uid()) end unread
+ from public.my_work_messages m where m.delivery_status='ready' and public.can_read_my_work_message(m.id)
+), ranked as (
+ select *,row_number() over(partition by peer order by created_at desc,id desc) rank,count(*) filter(where unread) over(partition by peer) unread_count from visible
+), summaries as (
+ select m.peer,m.created_at,m.id,jsonb_build_object('userId',m.peer,'name',coalesce(g.name,u.display_name,'TenOps'),'role',case when g.id is not null then 'Group' else coalesce(u.role,'System') end,
+ 'groupId',g.id,'creatorUserId',g.creator_user_id,'memberIds',case when g.id is not null then (select jsonb_agg(user_id order by user_id) from public.my_work_group_members where group_id=g.id) end,
+ 'unread',m.unread_count,'latest',jsonb_build_object('id',m.id,'createdAt',m.created_at,'body',case when m.body='' then 'Attachment' else left(m.body,180) end)) item
+ from ranked m left join public.app_users u on u.user_id=m.peer left join public.my_work_message_groups g on g.id=m.group_id where rank=1
+ union all
+ select g.id,g.created_at,g.id,jsonb_build_object('userId',g.id,'name',g.name,'role','Group','groupId',g.id,'creatorUserId',g.creator_user_id,
+ 'memberIds',(select jsonb_agg(user_id order by user_id) from public.my_work_group_members where group_id=g.id),'unread',0,'latest',jsonb_build_object('id',g.id,'createdAt',g.created_at,'body','No messages yet'))
+ from public.my_work_message_groups g where public.is_my_work_group_member(g.id) and not exists(select 1 from visible where group_id=g.id)
+)
+select coalesce(jsonb_agg(item order by created_at desc,id desc),'[]') from summaries;
+$$;
+create or replace function public.list_my_work_inbox_recipients()
+returns table(user_id uuid,display_name text,role text)
+language sql stable security definer set search_path=public as $$
+  select candidate.user_id,candidate.display_name,candidate.role
+  from public.app_users candidate
+  cross join lateral (
+    select actor.role from public.app_users actor
+    where actor.user_id=auth.uid() and actor.is_active
+  ) actor
+  where candidate.is_active
+    and candidate.user_id<>auth.uid()
+    and (candidate.role<>'developer' or actor.role='admin')
+  order by lower(candidate.display_name),candidate.user_id;
+$$;
+alter function public.is_my_work_group_member(uuid,uuid) owner to postgres;
+revoke all on function public.is_my_work_group_member(uuid,uuid) from public,anon,authenticated;
+alter function public.can_read_my_work_message(uuid) owner to postgres;
+revoke all on function public.can_read_my_work_message(uuid) from public,anon,authenticated;
+grant execute on function public.can_read_my_work_message(uuid) to authenticated;
+alter function public.is_my_work_group_member_self(uuid) owner to postgres;
+revoke all on function public.is_my_work_group_member_self(uuid) from public,anon,authenticated;
+grant execute on function public.is_my_work_group_member_self(uuid) to authenticated;
+alter function public.list_my_work_message_page_v12(uuid,timestamptz,uuid,uuid[]) owner to postgres;
+revoke all on function public.list_my_work_message_page_v12(uuid,timestamptz,uuid,uuid[]) from public,anon,authenticated;
+grant execute on function public.list_my_work_message_page_v12(uuid,timestamptz,uuid,uuid[]) to authenticated;
+alter function public.list_my_work_conversations_v12() owner to postgres;
+revoke all on function public.list_my_work_conversations_v12() from public,anon,authenticated;
+grant execute on function public.list_my_work_conversations_v12() to authenticated;
+alter function public.list_my_work_inbox_recipients() owner to postgres;
+revoke all on function public.list_my_work_inbox_recipients() from public,anon,authenticated;
+grant execute on function public.list_my_work_inbox_recipients() to authenticated;
+alter table public.my_work_messages enable row level security;
+revoke all on public.my_work_messages from public,anon,authenticated,service_role;
+grant select on public.my_work_messages to authenticated;
+create policy fixture_messaging_read on public.my_work_messages for select to authenticated using(public.can_read_my_work_message(id));
+alter table public.my_work_message_attachments enable row level security;
+revoke all on public.my_work_message_attachments from public,anon,authenticated,service_role;
+grant select on public.my_work_message_attachments to authenticated;
+create policy fixture_messaging_read on public.my_work_message_attachments for select to authenticated using(public.can_read_my_work_message(message_id));
+alter table public.my_work_attachment_previews enable row level security;
+revoke all on public.my_work_attachment_previews from public,anon,authenticated,service_role;
+grant select on public.my_work_attachment_previews to authenticated;
+create policy fixture_messaging_read on public.my_work_attachment_previews for select to authenticated using(exists(select 1 from public.my_work_message_attachments a where a.id=attachment_id and public.can_read_my_work_message(a.message_id)));
+alter table public.my_work_message_groups enable row level security;
+revoke all on public.my_work_message_groups from public,anon,authenticated,service_role;
+grant select on public.my_work_message_groups to authenticated;
+create policy fixture_messaging_read on public.my_work_message_groups for select to authenticated using(public.is_my_work_group_member_self(id));
+alter table public.my_work_group_members enable row level security;
+revoke all on public.my_work_group_members from public,anon,authenticated,service_role;
+grant select on public.my_work_group_members to authenticated;
+create policy fixture_messaging_read on public.my_work_group_members for select to authenticated using(public.is_my_work_group_member_self(group_id));
+alter table public.my_work_group_message_reads enable row level security;
+revoke all on public.my_work_group_message_reads from public,anon,authenticated,service_role;
+grant select on public.my_work_group_message_reads to authenticated;
+create policy fixture_messaging_read on public.my_work_group_message_reads for select to authenticated using(user_id=auth.uid() and public.can_read_my_work_message(message_id));
+notify pgrst,'reload schema';commit;

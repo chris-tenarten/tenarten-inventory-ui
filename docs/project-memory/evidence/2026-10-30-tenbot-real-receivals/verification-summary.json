@@ -1,0 +1,27 @@
+{
+  "tier": 3,
+  "testingLevel": 3,
+  "status": "passed within isolated fixture scope",
+  "realDatabaseGroupsPassed": 14,
+  "databaseHttpRequests": 136,
+  "offlineFocusedGroups": {
+    "canonicalServiceAdapter": 19,
+    "controllerWiring": 18,
+    "clientReviewLifecycle": 25,
+    "liveProviderMetering": 10
+  },
+  "typescriptAndProductionExport": "pass: final candidate overlay build",
+  "targetedEslint": "pass",
+  "gitDiffCheck": "pass",
+  "desktopMobile": "pass: browser-completion.json",
+  "independentSecurityReview": "no new blocker: independent-security-review.json",
+  "liveInferenceCalls": 11,
+  "measuredCostUsd": 0.0243917,
+  "accountedUsd": 0.024396,
+  "uncertainCalls": 0,
+  "productionRequests": 0,
+  "productionMutations": 0,
+  "commitCreated": false,
+  "commitDeferredByProduct": true,
+  "sourceBase": "85b73182ecfcd8ff99e6f2523d233d1e77b25fdc"
+}

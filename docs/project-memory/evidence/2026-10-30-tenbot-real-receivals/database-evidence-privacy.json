@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:57:08.443875+00:00",
+  "method": "Allowlisted JSON structural key checks plus credential/JWT/Bearer pattern scan of every copied artifact; SQL contains source definitions only. Manual review of build, record proof, fixture seed and guard reconciliation.",
+  "copiedArtifactCount": 22,
+  "sensitiveKeyNamesDenied": [
+    "access_token",
+    "anonKey",
+    "apiKey",
+    "api_key",
+    "authorization",
+    "cookie",
+    "password",
+    "refresh_token",
+    "serviceRoleKey",
+    "service_role_key",
+    "set-cookie"
+  ],
+  "privateFilesAndRawActorProfilesExcluded": true,
+  "onlySyntheticOperationalRecordIds": true,
+  "rootBrowserEvidenceNotIncludedInThisScan": true,
+  "fixtureAuthMetadataSecretScan": "PASS; only TTL, safe booleans, HTTP statuses and whole-config equality hashes retained",
+  "queueProjectionEvidenceScan": "PASS; only canonical SQL definitions and synthetic record identifiers retained"
+}

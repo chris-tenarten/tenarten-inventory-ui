@@ -1,0 +1,827 @@
+{
+  "status": "Actual Terra inference and actual isolated database execution completed; final queue/browser refresh check recorded separately",
+  "actualInference": true,
+  "scriptedResponses": false,
+  "databaseResponses": "Real signed employee Auth/PostgREST/PostgreSQL on isolated Free fixture",
+  "model": "gpt-6.1-terra",
+  "document": {
+    "path": "scripts/fixtures/tenbot-invoice-live-demo.pdf",
+    "sha256": "e1cf5a9c958e61923fa30fb45afa19eeac525d2adeca7ad46f4aabcb3e7845b4",
+    "synthetic": true,
+    "processing": "One-page PDF rendered in real browser to JPEG; actual OpenAI vision, no offline OCR; not a native PDF API test"
+  },
+  "vision": {
+    "latencyMs": 4551,
+    "transcription": {
+      "raw_lines": [
+        "T&M SUPPLY",
+        "INVOICE",
+        "SYNTHETIC LOCAL DEMONSTRATION",
+        "Supplier: T&M Supply",
+        "Invoice: DEMO-REC-2189",
+        "Invoice date: 2026-10-29",
+        "Bill to: Tenarten \u2014 Synthetic test account",
+        "SKU  MATERIAL / SIZE  QUANTITY",
+        "AW-1  Alaska White / #1  250 LB",
+        "RES-5  Clear Resin / Part A  15 GAL",
+        "BC-0  Blue Coal / #0  1 Bag",
+        "GREEN  CC Green / #1  2 Bag",
+        "UNK-99  Unlisted Violet / #2  4 Bag",
+        "Freight / delivery charge: $55.00",
+        "TEST DOCUMENT \u2014 DO NOT POST OR PAY",
+        "Order date, ordered-by employee and destination are not supplied."
+      ]
+    }
+  },
+  "investigation": {
+    "answer": "I prepared a review-only draft for T&M Supply invoice DEMO-REC-2189. No receivals were created or executed.\n\n\u2022 Clear Resin, Part A: 3 pails proposed (15 gallons total).\n\u2022 Alaska White #1: 5 bags proposed, held for possible duplicates.\n\u2022 Blue Coal #0: 1 bag proposed, held for a possible duplicate.\n\u2022 CC Green #1: 2 bags held because the catalog has both 25 lb and 50 lb bag options.\n\u2022 Unlisted Violet #2: 4 bags held because no catalog match was found.\n\nFreight was excluded. The duplicate matches are not proof that these are the same invoice. Please also compare the transcription with the original image. This is a synthetic test document marked not to post or pay. Any future execution would require approval and a separate authorized execution service.",
+    "status": "completed",
+    "latencyMs": 31717,
+    "trace": [
+      {
+        "event": "model",
+        "round": 1,
+        "outcome": "received",
+        "durationMs": 1811,
+        "usage": {
+          "inputTokens": 1681,
+          "cachedInputTokens": 0,
+          "outputTokens": 46,
+          "costUsd": 0.0023305,
+          "reservedUsd": 0.0300475
+        }
+      },
+      {
+        "event": "tool",
+        "round": 1,
+        "name": "discover_capabilities",
+        "outcome": "ok",
+        "durationMs": 220
+      },
+      {
+        "event": "model",
+        "round": 2,
+        "outcome": "received",
+        "durationMs": 1557,
+        "usage": {
+          "inputTokens": 3766,
+          "cachedInputTokens": 0,
+          "outputTokens": 14,
+          "costUsd": 0.00477675,
+          "reservedUsd": 0.046795
+        }
+      },
+      {
+        "event": "tool",
+        "round": 2,
+        "name": "read_invoice",
+        "outcome": "ok",
+        "durationMs": 138
+      },
+      {
+        "event": "model",
+        "round": 3,
+        "outcome": "received",
+        "durationMs": 2116,
+        "usage": {
+          "inputTokens": 4717,
+          "cachedInputTokens": 3763,
+          "outputTokens": 73,
+          "costUsd": 0.0017449000000000002,
+          "reservedUsd": 0.050535
+        }
+      },
+      {
+        "event": "tool",
+        "round": 3,
+        "name": "search_catalog",
+        "outcome": "ok",
+        "durationMs": 270
+      },
+      {
+        "event": "model",
+        "round": 4,
+        "outcome": "received",
+        "durationMs": 2070,
+        "usage": {
+          "inputTokens": 5025,
+          "cachedInputTokens": 4714,
+          "outputTokens": 72,
+          "costUsd": 0.0009837000000000001,
+          "reservedUsd": 0.05222125
+        }
+      },
+      {
+        "event": "tool",
+        "round": 4,
+        "name": "search_catalog",
+        "outcome": "ok",
+        "durationMs": 219
+      },
+      {
+        "event": "model",
+        "round": 5,
+        "outcome": "received",
+        "durationMs": 2183,
+        "usage": {
+          "inputTokens": 5334,
+          "cachedInputTokens": 5022,
+          "outputTokens": 72,
+          "costUsd": 0.0010003500000000001,
+          "reservedUsd": 0.05392375
+        }
+      },
+      {
+        "event": "tool",
+        "round": 5,
+        "name": "search_catalog",
+        "outcome": "ok",
+        "durationMs": 229
+      },
+      {
+        "event": "model",
+        "round": 6,
+        "outcome": "received",
+        "durationMs": 2086,
+        "usage": {
+          "inputTokens": 5639,
+          "cachedInputTokens": 5331,
+          "outputTokens": 70,
+          "costUsd": 0.0010008,
+          "reservedUsd": 0.05559875
+        }
+      },
+      {
+        "event": "tool",
+        "round": 6,
+        "name": "search_catalog",
+        "outcome": "ok",
+        "durationMs": 208
+      },
+      {
+        "event": "model",
+        "round": 7,
+        "outcome": "received",
+        "durationMs": 2262,
+        "usage": {
+          "inputTokens": 6043,
+          "cachedInputTokens": 5636,
+          "outputTokens": 73,
+          "costUsd": 0.0011547999999999999,
+          "reservedUsd": 0.05781
+        }
+      },
+      {
+        "event": "tool",
+        "round": 7,
+        "name": "search_catalog",
+        "outcome": "ok",
+        "durationMs": 206
+      },
+      {
+        "event": "model",
+        "round": 8,
+        "outcome": "received",
+        "durationMs": 2487,
+        "usage": {
+          "inputTokens": 6242,
+          "cachedInputTokens": 6040,
+          "outputTokens": 99,
+          "costUsd": 0.00104875,
+          "reservedUsd": 0.05897
+        }
+      },
+      {
+        "event": "tool",
+        "round": 8,
+        "name": "check_receival_duplicates",
+        "outcome": "ok",
+        "durationMs": 214
+      },
+      {
+        "event": "model",
+        "round": 9,
+        "outcome": "received",
+        "durationMs": 4417,
+        "usage": {
+          "inputTokens": 7007,
+          "cachedInputTokens": 6239,
+          "outputTokens": 302,
+          "costUsd": 0.0027811999999999997,
+          "reservedUsd": 0.062565
+        }
+      },
+      {
+        "event": "tool",
+        "round": 9,
+        "name": "prepare_pending_receivals",
+        "outcome": "ok",
+        "durationMs": 758
+      },
+      {
+        "event": "model",
+        "round": 10,
+        "outcome": "received",
+        "durationMs": 5721,
+        "usage": {
+          "inputTokens": 9108,
+          "cachedInputTokens": 7004,
+          "outputTokens": 414,
+          "costUsd": 0.00504945,
+          "reservedUsd": 0.07247625
+        }
+      }
+    ],
+    "rows": [
+      {
+        "lineId": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L9",
+        "sourceText": "AW-1  Alaska White / #1  250 LB",
+        "sourceQuantity": {
+          "quantity": "250",
+          "unit": "LB"
+        },
+        "quantityBasis": {
+          "sourceKind": "material_total",
+          "packageCount": "5",
+          "perPackage": {
+            "quantity": "50",
+            "unit": "LB",
+            "container": "Bag"
+          },
+          "totalMaterial": {
+            "quantity": "250",
+            "unit": "LB"
+          },
+          "receivalQuantity": "5",
+          "receivalUnit": "Bag",
+          "inventoryStockingUnit": null,
+          "calculation": "exact_catalog_package_conversion",
+          "reasons": []
+        },
+        "materialId": "standard:10302026-0000-4000-8000-000000000101",
+        "materialName": "Alaska White",
+        "size": "#1",
+        "quantity": "5",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [
+          "potential_duplicate"
+        ]
+      },
+      {
+        "lineId": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L10",
+        "sourceText": "RES-5  Clear Resin / Part A  15 GAL",
+        "sourceQuantity": {
+          "quantity": "15",
+          "unit": "GAL"
+        },
+        "quantityBasis": {
+          "sourceKind": "material_total",
+          "packageCount": "3",
+          "perPackage": {
+            "quantity": "5",
+            "unit": "GAL",
+            "container": "Pail"
+          },
+          "totalMaterial": {
+            "quantity": "15",
+            "unit": "GAL"
+          },
+          "receivalQuantity": "3",
+          "receivalUnit": "Pail",
+          "inventoryStockingUnit": null,
+          "calculation": "exact_catalog_package_conversion",
+          "reasons": []
+        },
+        "materialId": "standard:10302026-0000-4000-8000-000000000105",
+        "materialName": "Clear Resin",
+        "size": "Part A",
+        "quantity": "3",
+        "unit": "Pail",
+        "jobId": null,
+        "excluded": false,
+        "reasons": []
+      },
+      {
+        "lineId": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L11",
+        "sourceText": "BC-0  Blue Coal / #0  1 Bag",
+        "sourceQuantity": {
+          "quantity": "1",
+          "unit": "Bag"
+        },
+        "quantityBasis": {
+          "sourceKind": "package_count",
+          "packageCount": "1",
+          "perPackage": {
+            "quantity": "50",
+            "unit": "LB",
+            "container": "Bag"
+          },
+          "totalMaterial": {
+            "quantity": "50",
+            "unit": "LB"
+          },
+          "receivalQuantity": "1",
+          "receivalUnit": "Bag",
+          "inventoryStockingUnit": null,
+          "calculation": "source_package_count",
+          "reasons": []
+        },
+        "materialId": "standard:10302026-0000-4000-8000-000000000102",
+        "materialName": "Blue Coal",
+        "size": "#0",
+        "quantity": "1",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [
+          "potential_duplicate"
+        ]
+      },
+      {
+        "lineId": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L12",
+        "sourceText": "GREEN  CC Green / #1  2 Bag",
+        "sourceQuantity": {
+          "quantity": "2",
+          "unit": "Bag"
+        },
+        "quantityBasis": {
+          "sourceKind": "package_count",
+          "packageCount": "2",
+          "perPackage": null,
+          "totalMaterial": null,
+          "receivalQuantity": null,
+          "receivalUnit": null,
+          "inventoryStockingUnit": null,
+          "calculation": "unresolved",
+          "reasons": []
+        },
+        "materialId": null,
+        "materialName": "CC Green",
+        "size": "#1",
+        "quantity": "2",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [
+          "unmatched_material",
+          "ambiguous_catalog_match"
+        ]
+      },
+      {
+        "lineId": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L13",
+        "sourceText": "UNK-99  Unlisted Violet / #2  4 Bag",
+        "sourceQuantity": {
+          "quantity": "4",
+          "unit": "Bag"
+        },
+        "quantityBasis": {
+          "sourceKind": "package_count",
+          "packageCount": "4",
+          "perPackage": null,
+          "totalMaterial": null,
+          "receivalQuantity": null,
+          "receivalUnit": null,
+          "inventoryStockingUnit": null,
+          "calculation": "unresolved",
+          "reasons": []
+        },
+        "materialId": null,
+        "materialName": "Unlisted Violet",
+        "size": "#2",
+        "quantity": "4",
+        "unit": "Bag",
+        "jobId": null,
+        "excluded": false,
+        "reasons": [
+          "unmatched_material"
+        ]
+      },
+      {
+        "lineId": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L14",
+        "sourceText": "Freight / delivery charge: $55.00",
+        "sourceQuantity": null,
+        "quantityBasis": {
+          "sourceKind": "unknown",
+          "packageCount": null,
+          "perPackage": null,
+          "totalMaterial": null,
+          "receivalQuantity": null,
+          "receivalUnit": null,
+          "inventoryStockingUnit": null,
+          "calculation": "unresolved",
+          "reasons": [
+            "missing_invoice_quantity_evidence"
+          ]
+        },
+        "materialId": null,
+        "materialName": null,
+        "size": null,
+        "quantity": "",
+        "unit": "",
+        "jobId": null,
+        "excluded": true,
+        "reasons": [
+          "non_material_line"
+        ]
+      }
+    ]
+  },
+  "inference": {
+    "calls": 11,
+    "usage": {
+      "inputTokens": 55847,
+      "cachedInputTokens": 43749,
+      "outputTokens": 1418,
+      "costUsd": 0.0243917
+    },
+    "accountedCostUsd": 0.024396,
+    "uncertainCalls": 0,
+    "perCall": [
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-vision",
+        "durationMs": 4551,
+        "tokenCountDurationMs": 1177,
+        "countedInputTokens": 1252,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.0025205,
+        "accountedUsd": 0.002521,
+        "calls": [],
+        "usage": {
+          "inputTokens": 1285,
+          "cachedInputTokens": 0,
+          "outputTokens": 183,
+          "costUsd": 0.0025205,
+          "reservedUsd": 0.01292375
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 1810,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.0023305,
+        "accountedUsd": 0.002331,
+        "calls": [
+          {
+            "id": "call_32S914r3N1WKbeacSPKrPd1r",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "read_invoice",
+                "search_catalog",
+                "check_receival_duplicates",
+                "prepare_pending_receivals"
+              ]
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 1681,
+          "cachedInputTokens": 0,
+          "outputTokens": 46,
+          "costUsd": 0.0023305,
+          "reservedUsd": 0.0300475
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 1555,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.00477675,
+        "accountedUsd": 0.004777,
+        "calls": [
+          {
+            "id": "call_nnMVSOyFYGm5FH4mbSFdeOt1",
+            "name": "read_invoice",
+            "arguments": {}
+          }
+        ],
+        "usage": {
+          "inputTokens": 3766,
+          "cachedInputTokens": 0,
+          "outputTokens": 14,
+          "costUsd": 0.00477675,
+          "reservedUsd": 0.046795
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 2115,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.0017449000000000002,
+        "accountedUsd": 0.001745,
+        "calls": [
+          {
+            "id": "call_aIHoGRwvvtnqMC51RnfBylyY",
+            "name": "search_catalog",
+            "arguments": {
+              "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L9",
+              "description": "Alaska White",
+              "quantity": "250",
+              "unit": "LB",
+              "size": "#1",
+              "vendor_sku": "AW-1"
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 4717,
+          "cachedInputTokens": 3763,
+          "outputTokens": 73,
+          "costUsd": 0.0017449000000000002,
+          "reservedUsd": 0.050535
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 2069,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.0009837000000000001,
+        "accountedUsd": 0.000984,
+        "calls": [
+          {
+            "id": "call_qbUEaMDkUEt8ni22CV8yQ5Su",
+            "name": "search_catalog",
+            "arguments": {
+              "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L10",
+              "description": "Clear Resin",
+              "quantity": "15",
+              "unit": "GAL",
+              "size": "Part A",
+              "vendor_sku": "RES-5"
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 5025,
+          "cachedInputTokens": 4714,
+          "outputTokens": 72,
+          "costUsd": 0.0009837000000000001,
+          "reservedUsd": 0.05222125
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 2182,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.0010003500000000001,
+        "accountedUsd": 0.001001,
+        "calls": [
+          {
+            "id": "call_90J41FWuxyOM4LM3Cn2g0WBQ",
+            "name": "search_catalog",
+            "arguments": {
+              "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L11",
+              "description": "Blue Coal",
+              "quantity": "1",
+              "unit": "Bag",
+              "size": "#0",
+              "vendor_sku": "BC-0"
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 5334,
+          "cachedInputTokens": 5022,
+          "outputTokens": 72,
+          "costUsd": 0.0010003500000000001,
+          "reservedUsd": 0.05392375
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 2085,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.0010008,
+        "accountedUsd": 0.001001,
+        "calls": [
+          {
+            "id": "call_TlmP27WIr0569xO3T2CTs1uT",
+            "name": "search_catalog",
+            "arguments": {
+              "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L12",
+              "description": "CC Green",
+              "quantity": "2",
+              "unit": "Bag",
+              "size": "#1",
+              "vendor_sku": "GREEN"
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 5639,
+          "cachedInputTokens": 5331,
+          "outputTokens": 70,
+          "costUsd": 0.0010008,
+          "reservedUsd": 0.05559875
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 2261,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.0011547999999999999,
+        "accountedUsd": 0.001155,
+        "calls": [
+          {
+            "id": "call_CdXThFZXp5KkvDNYtKSKdk0e",
+            "name": "search_catalog",
+            "arguments": {
+              "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L13",
+              "description": "Unlisted Violet",
+              "quantity": "4",
+              "unit": "Bag",
+              "size": "#2",
+              "vendor_sku": "UNK-99"
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 6043,
+          "cachedInputTokens": 5636,
+          "outputTokens": 73,
+          "costUsd": 0.0011547999999999999,
+          "reservedUsd": 0.05781
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 2484,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.00104875,
+        "accountedUsd": 0.001049,
+        "calls": [
+          {
+            "id": "call_UPrukmPR2kHoDUk1DDK7W8ZD",
+            "name": "check_receival_duplicates",
+            "arguments": {
+              "supplier": "T&M Supply",
+              "supplier_source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L4",
+              "document_ref": "DEMO-REC-2189",
+              "document_source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L5"
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 6242,
+          "cachedInputTokens": 6040,
+          "outputTokens": 99,
+          "costUsd": 0.00104875,
+          "reservedUsd": 0.05897
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 4415,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.0027811999999999997,
+        "accountedUsd": 0.002782,
+        "calls": [
+          {
+            "id": "call_FYLhYiuixo0grGvXkLeKwoDy",
+            "name": "prepare_pending_receivals",
+            "arguments": {
+              "selections": [
+                {
+                  "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L9",
+                  "candidate_id": "standard:10302026-0000-4000-8000-000000000101"
+                },
+                {
+                  "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L10",
+                  "candidate_id": "standard:10302026-0000-4000-8000-000000000105"
+                },
+                {
+                  "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L11",
+                  "candidate_id": "standard:10302026-0000-4000-8000-000000000102"
+                },
+                {
+                  "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L12",
+                  "candidate_id": null
+                },
+                {
+                  "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L13",
+                  "candidate_id": null
+                }
+              ],
+              "exclusions": [
+                {
+                  "source_ref": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L14",
+                  "reason": "freight"
+                }
+              ]
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 7007,
+          "cachedInputTokens": 6239,
+          "outputTokens": 302,
+          "costUsd": 0.0027811999999999997,
+          "reservedUsd": 0.062565
+        }
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "label": "authenticated-invoice-investigation",
+        "durationMs": 5719,
+        "tokenCountDurationMs": null,
+        "countedInputTokens": null,
+        "httpStatus": 200,
+        "costMeasured": true,
+        "measuredCostUsd": 0.00504945,
+        "accountedUsd": 0.00505,
+        "calls": [],
+        "usage": {
+          "inputTokens": 9108,
+          "cachedInputTokens": 7004,
+          "outputTokens": 414,
+          "costUsd": 0.00504945,
+          "reservedUsd": 0.07247625
+        }
+      }
+    ]
+  },
+  "employeeClarifications": [
+    "Order metadata entered: Synthetic Receival Employee, 2026-10-30, Denton",
+    "CC Green: employee selected50LBbag and synthetic JobSYN-RCV-00",
+    "Unlisted Violet: employee supplied catalog typechip,50LBbag,SKUUNK-99",
+    "Blue Coal: employee reviewed actual3Bag pending record and acknowledged this invoice as separate order"
+  ],
+  "reviewedOutcome": {
+    "actualPendingReceivals": 5,
+    "actualCatalogItems": 1,
+    "createdRecordIds": [
+      "5565bd6c-76a4-4d9b-9c0b-a7faf9292951",
+      "826fc754-babb-4b68-baca-4ba15d5f2658",
+      "08b7c412-a6a1-480f-b714-983f8c233993",
+      "6790cb4e-73e5-4f3d-9f96-261ee48ff120",
+      "a05778c1-88df-43c0-b424-3e45980feaa1"
+    ],
+    "createdCatalogRecords": [
+      {
+        "catalogId": "32d185e0-31ca-4783-abf4-c65d752ec7c0",
+        "sourceLineId": "attachment-0d7d53f0-1824-4631-83ce-8035490d6c20:L13",
+        "catalogSource": "specialty"
+      }
+    ],
+    "receivedQuantity": 0,
+    "onHandChanged": false,
+    "inventoryUrl": "/inventory#pending-receivals",
+    "simulation": false
+  },
+  "spendingBoundary": {
+    "version": 1,
+    "authorizedMaximumUsd": 0.1,
+    "hostedMaximumUsd": 4,
+    "legacyLocalUsd": 0.5399555000000006,
+    "overallMaximumUsd": 5,
+    "expiresAt": "2026-10-30T23:00:00Z",
+    "reservedOrSpentUsd": 0.024396,
+    "attempts": 11,
+    "settled": 11,
+    "stopped": null
+  },
+  "hostedPolicyChanged": false,
+  "productionRequests": 0,
+  "productionMutations": 0,
+  "credentialsIncluded": false
+}

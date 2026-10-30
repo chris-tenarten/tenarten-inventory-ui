@@ -1,0 +1,25 @@
+{
+  "passed": false,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "recordedAt": "2026-10-30T13:38:21.330Z",
+  "groupsPassed": 4,
+  "checks": [
+    {
+      "name": "real signed JWTs, current role capabilities, forged/anonymous denials",
+      "durationMs": 2290
+    },
+    {
+      "name": "canonical catalog RPCs independently deny unauthorized and anonymous writes",
+      "durationMs": 1006
+    },
+    {
+      "name": "server quantity semantics preserve source and exact 3-bag/2-pail conversions",
+      "durationMs": 830
+    },
+    {
+      "name": "owner isolation, immutable evidence and exact explicit approval binding",
+      "durationMs": 1175
+    }
+  ],
+  "error": "RPC prepare_invoice_receival_draft failed 42702"
+}

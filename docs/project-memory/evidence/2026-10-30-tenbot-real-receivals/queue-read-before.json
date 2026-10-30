@@ -1,0 +1,18 @@
+{
+  "passed": false,
+  "recordedAt": "2026-10-30T14:07:44.383Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "status": 400,
+  "error": {
+    "code": "42703",
+    "message": "column pending_receivals.receipt_inventory_item_id does not exist"
+  },
+  "actualSignedEmployee": true,
+  "source": "src/modules/inventory/retrieval.ts loadReceivalRows exact SELECT and sort contract",
+  "rowCount": 0,
+  "exactCount": null,
+  "allPending": false,
+  "recordIds": [],
+  "productionCalls": 0,
+  "readOnly": true
+}

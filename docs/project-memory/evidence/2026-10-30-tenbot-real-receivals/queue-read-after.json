@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T14:07:48.989Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "status": 200,
+  "error": null,
+  "actualSignedEmployee": true,
+  "source": "src/modules/inventory/retrieval.ts loadReceivalRows exact SELECT and sort contract",
+  "rowCount": 10,
+  "exactCount": 10,
+  "allPending": true,
+  "recordIds": [
+    "10302026-0000-4000-8000-000000000301",
+    "47ec7e34-d95f-4fe0-8cb9-9f1b2b1b32fa",
+    "37a3f146-a301-4c9a-90cb-1f5fa6fe81f0",
+    "4ff297cc-a205-4129-9478-a321ef7ced4e",
+    "047b6ff8-7118-48f8-943a-9b35291b7e15",
+    "dc6ac4ef-46b8-4309-a9e4-3d0cc3991976",
+    "b14a2090-200a-45e8-b611-ddd2e8b1111d",
+    "9258f1af-32fa-4154-9f99-b476250c891d",
+    "d5b1c936-7a2e-4ce2-9f36-b69b740c505d",
+    "e73c59bf-e1ad-48ec-98bd-3dd3b17a7214"
+  ],
+  "productionCalls": 0,
+  "readOnly": true
+}

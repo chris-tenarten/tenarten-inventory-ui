@@ -7,6 +7,8 @@ import {decodeInvoiceAttachment,extractInvoiceDocument} from './support/tenbot-i
 import {createScriptedTenbotAgentProvider} from './support/tenbot-agent-scripted.mjs';
 import {emptyUsage,type AgentProvider} from '../supabase/functions/_shared/tenbot-agent';
 import {editableRows,type LocalReceivalDraft} from '../src/modules/tenbot/live-review';
+import {deriveInvoiceQuantity} from '../src/modules/inventory/invoice-quantity';
+import {combinePurchasingCatalogRecords} from '../src/modules/purchasing/catalog-records';
 
 // OFFLINE WIRING ONLY. Caller SELECT/RPC replies and image transcription are
 // explicit test doubles. No key, environment file, paid provider, server,
@@ -41,9 +43,11 @@ function setup(options:{rawLines?:unknown;providerFailure?:boolean;prepareOwner?
   },async rpc(name:string,args:Row={}){
    rpcCalls.push({name,args:clone(args)});
    if(name==='has_app_capability')return {data:!denied.has(String(args.p_capability)),error:null};
+   if(name==='revoke_invoice_receival_draft')return {data:{draftId:args.p_draft_id,hash:args.p_expected_hash,revoked:true},error:null};
    assert.equal(name,'prepare_invoice_receival_draft','no approval/execution or unrelated RPC is allowed by this offline caller');
-   const lines=(args.p_lines as Row[]).map(line=>{const catalog=standard.find(row=>row.id===line.catalogId);assert(catalog,'prepared line must map to existing fixture catalog');return {...line,vendor:catalog.vendor,material:catalog.item_name,size:catalog.size,category:catalog.category,jobLabel:null,catalogSnapshot:clone(catalog)};});
-   const normalized={document:args.p_document,metadata:args.p_metadata,provenance:args.p_provenance,lines};
+   const offers=combinePurchasingCatalogRecords(standard,[]);
+   const lines=(args.p_lines as Row[]).map(line=>{const catalog=standard.find(row=>row.id===line.catalogId),offer=offers.find(row=>row.id===line.catalogId);assert(catalog&&offer,'prepared line must map to existing fixture catalog');return {...line,vendor:catalog.vendor,material:catalog.item_name,size:catalog.size,category:catalog.category,jobLabel:null,catalogSnapshot:clone(catalog),vendorSnapshot:null,duplicateReview:null,quantityBasis:deriveInvoiceQuantity(line.sourceQuantity as {quantity:string;unit:string},{orderUnit:offer.orderUnit||offer.containerType,packageQuantity:offer.packageQuantity,packageMeasure:offer.packageMeasure,containerType:offer.containerType},String(line.sourceText))};});
+   const normalized={schemaVersion:'invoice-receivals.v2',authorizationVersion:'e'.repeat(64),document:args.p_document,metadata:args.p_metadata,provenance:args.p_provenance,lines};
    return {data:{id:'10282026-0000-4000-8000-000000000301',hash:createHash('sha256').update(JSON.stringify(normalized)).digest('hex'),ownerId:options.prepareOwner??who,expiresAt:new Date(now+3600000).toISOString(),...normalized},error:null};
   }};
  }
@@ -105,7 +109,7 @@ await test('uploaded bytes are owner-isolated and clearing before ask prevents a
  const cleared=await h.invoke({action:'clear',attachmentId:a.attachmentId});assert.equal(cleared.cleared,true);await rejected(h.invoke({action:'ask',attachmentId:a.attachmentId,question:'Read invoice.'}),403);assert.equal(h.providers(),0);
 });
 await test('unknown drafts and attachment expiry fail before inference or canonical prepare',async()=>{
- const h=setup();for(const action of ['review','approve'])await rejected(h.invoke({action,draftId:'unknown'}),403);
+ const h=setup();await rejected(h.invoke({action:'review',draftId:'unknown'}),403);await rejected(h.invoke({action:'approve',draftId:'unknown'}),409);
  const a=await h.upload();h.advance(3600001);await rejected(h.invoke({action:'ask',attachmentId:a.attachmentId,question:'Read invoice.'}),403);assert.equal(h.providers(),0);assert(h.rpcCalls.every(call=>call.name==='has_app_capability'));
 });
 await test('offline extraction rejects tool calls or malformed output and propagates provider failure safely',async()=>{
@@ -121,6 +125,21 @@ await test('scripted reasoning traverses actual read/prepare tools, then exact c
 await test('review requires owner, exact revision/rows and immutable pending-only source identity',async()=>{
  const h=setup(),p=await h.prepared();await rejected(h.invoke({action:'review',draftId:p.draft.id},other),403);await rejected(h.review(p.draft,{revision:0}),409);await rejected(h.review(p.draft,{edits:h.edits(p.draft).slice(1)}),409);
  const invalid=h.edits(p.draft);invalid[0].materialId='arbitrary';await rejected(h.review(p.draft,{edits:invalid}));const freight=h.edits(p.draft);freight.find(row=>row.lineId===p.draft.rows.find(row=>row.reasons.includes('non_material_line'))!.lineId)!.excluded=false;await rejected(h.review(p.draft,{edits:freight}));assert.equal(h.rpcCalls.filter(call=>call.name==='prepare_invoice_receival_draft').length,0);
+});
+await test('a received invalid edit revokes the old durable review before validation and blocks stale approval',async()=>{
+ const h=setup(),p=await h.prepared(),saved=await h.review(p.draft),before=h.rpcCalls.length;
+ const edits=h.edits(saved.draft),included=edits.find(row=>!row.excluded)!;included.quantity=String(Number(included.quantity)+1);
+ await rejected(h.review(saved.draft,{edits}),409);
+ const calls=h.rpcCalls.slice(before).filter(call=>call.name!=='has_app_capability');assert.equal(calls[0]?.name,'revoke_invoice_receival_draft');assert.equal(calls[0]?.args.p_draft_id,saved.draft.durableDraftId);assert(!calls.some(call=>/approve|execute|prepare/.test(call.name)));
+ await rejected(h.invoke({action:'approve',draftId:saved.draft.id,revision:saved.draft.revision,hash:saved.draft.hash,confirmation:true,durableDraftId:saved.draft.durableDraftId,durableHash:saved.draft.durableHash}),409);
+});
+await test('clearing an unexecuted attachment revokes its durable approval before removing local state',async()=>{
+ const h=setup(),p=await h.prepared(),saved=await h.review(p.draft),before=h.rpcCalls.length;
+ await h.invoke({action:'clear',attachmentId:p.attachmentId});const calls=h.rpcCalls.slice(before).filter(call=>call.name!=='has_app_capability');assert.deepEqual(calls.map(call=>call.name),['revoke_invoice_receival_draft']);assert.equal(calls[0].args.p_draft_id,saved.draft.durableDraftId);
+ await rejected(h.review(saved.draft),403);
+});
+await test('execution mode is host configuration and cannot be supplied by a client request',async()=>{
+ const h=setup();await rejected(h.invoke({action:'status',executionEnabled:true}));assert(!h.rpcCalls.some(call=>/approve|execute|prepare/.test(call.name)));assert.equal(h.providers(),0);
 });
 await test('P1 authenticated held package quantities retain conversion and reject raw scalars before canonical prepare',async()=>{
  const receivals=[{...fixture.receivals.rows[0],id:'held-aw',material_name:'Alaska White',size:'#1',quantity_expected:'3'},{...fixture.receivals.rows[0],id:'held-res',material_name:'Clear Resin',size:'Part A',quantity_expected:'2',unit:'Pail'}],rawLines=fixture.document.text.replace('100 LB','150 LB').replace('5 GAL','10 GAL').split('\n'),h=setup({rawLines,receivals}),{draft}=await h.prepared(),target=(row:{materialId:string|null})=>row.materialId?.endsWith(String(standard[0].id))||row.materialId?.endsWith(String(standard[4].id)),targets=draft.rows.filter(target);
@@ -141,6 +160,29 @@ await test('exact explicit approval remains host-blocked before approval or exec
  for(let i=0;i<2;i++)await rejected(h.invoke(body),503);
  assert(h.rpcCalls.every(call=>!['approve_invoice_receival_draft','execute_invoice_receival_draft'].includes(call.name)));
  assert(h.reads.every(read=>!read.columns.includes('on_hand')));
+});
+
+await test('completed receipt retries reconcile later receiving/edits without another write, but initial mismatch and missing IDs fail closed',async()=>{
+ const now=Date.parse('2026-10-30T15:00:00Z'),draftId='10282026-0000-4000-8000-000000000301',recordId='10282026-0000-4000-8000-000000000401',draftHash='d'.repeat(64),catalog=standard[0],offer=combinePurchasingCatalogRecords(standard,[]).find(item=>item.id===catalog.id)!;
+ const sourceQuantity={quantity:'100',unit:'LB'},sourceText='Synthetic material 100 LB (50 LB Bag)';
+ const line={sourceLineId:'retry:L1',catalogSource:'standard',catalogId:String(catalog.id),quantityExpected:'2',unit:'Bag',productionJobId:null,sourceQuantity,sourceText,newMaterial:null,duplicateAcknowledgement:null,vendor:catalog.vendor,material:catalog.item_name,size:catalog.size,category:catalog.category,jobLabel:null,catalogSnapshot:clone(catalog),vendorSnapshot:null,quantityBasis:deriveInvoiceQuantity(sourceQuantity,{orderUnit:offer.orderUnit||offer.containerType,packageQuantity:offer.packageQuantity,packageMeasure:offer.packageMeasure,containerType:offer.containerType},sourceText),duplicateReview:null};
+ const receipt={draftId,hash:draftHash,createdRecordIds:[recordId],createdCatalogRecords:[],idempotent:true,executedAt:new Date(now-1000).toISOString()};
+ const durable={schemaVersion:'invoice-receivals.v2',authorizationVersion:'e'.repeat(64),id:draftId,hash:draftHash,ownerId:owner,expiresAt:new Date(now+3600000).toISOString(),document:{sha256:'a'.repeat(64),supplier:String(catalog.vendor),reference:'OFFLINE-RETRY',documentDate:null},metadata:fixture.confirmedMetadataExample,provenance:{model:'offline',sourceMediaType:'image/png',extractionSha256:'b'.repeat(64),toolTraceSha256:'c'.repeat(64)},lines:[line]};
+ const original={id:recordId,status:'pending',quantity_expected:'2',quantity_received:'0',unit:'Bag',vendor:catalog.vendor,material_name:catalog.item_name,size:catalog.size,production_job_id:null};
+ async function run(rows:Row[],completed=true){
+  const calls:string[]=[];
+  const caller:ReceivalAgentCaller={async rpc(name,args={}){calls.push(name);if(name==='has_app_capability')return {data:true,error:null};if(name==='get_invoice_receival_draft')return {data:{...clone(durable),...(completed?{execution:receipt}:{})},error:null};if(name==='approve_invoice_receival_draft')return {data:{id:'10282026-0000-4000-8000-000000000501',draftId,hash:draftHash,expiresAt:durable.expiresAt},error:null};assert.equal(name,'execute_invoice_receival_draft');assert.equal(args.p_draft_id,draftId);return {data:{...receipt,idempotent:false},error:null};},from(table){assert.equal(table,'pending_receivals');return {select(columns:string){assert(!columns.includes('*'));return {in(column:string,ids:string[]){assert.equal(column,'id');assert.deepEqual(ids,[recordId]);return {abortSignal(signal:AbortSignal){assert(!signal.aborted);return Promise.resolve({data:clone(rows),error:null});}};}};}};}};
+  const handler=createAuthenticatedReceivalAgent({model:'offline-no-inference',now:()=>now,remainingUsd:()=>0,assertNoFatal(){},createProvider(){throw Error('Reconciliation must not infer.');},execution:{enabled:true,databaseEnvironment:'isolated-test'}});
+  const response=handler({action:'approve',draftId:'lost-local-review',revision:2,hash:'f'.repeat(64),durableDraftId:draftId,durableHash:draftHash,confirmation:true},owner,caller) as Promise<Row>;
+  return {response,calls};
+ }
+ for(const changed of [{...original,status:'received',quantity_received:'2'},{...original,quantity_expected:'3',material_name:'Later authorized correction'}]){
+  const r=await run([changed]),result=await r.response;assert.equal(result.idempotent,true);assert.equal(result.createdCount,0);assert.deepEqual(result.createdRecordIds,[recordId]);assert.deepEqual(result.receivals,[changed]);assert(String(result.notice).includes('changed since creation'));assert(!r.calls.some(name=>/^(approve|execute)_invoice_receival/.test(name)));
+ }
+ const fresh=await run([original],false);assert.equal((await fresh.response).createdCount,1);assert.equal(fresh.calls.filter(name=>name==='execute_invoice_receival_draft').length,1);
+ const mismatch=await run([{...original,status:'received',quantity_received:'2'}],false);await rejected(mismatch.response,503);
+ const hidden=await run([]);await rejected(hidden.response,503);assert(!hidden.calls.some(name=>/^(approve|execute)_invoice_receival/.test(name)));
+ const wrong=await run([{...original,id:'10282026-0000-4000-8000-000000000402'}]);await rejected(wrong.response,503);
 });
 
 console.log(JSON.stringify({status:'pass',mode:'OFFLINE controller, attachment decode and caller-contract wiring only; scripted extraction/reasoning, simulated SELECT/RPC replies; no JWT/RLS/transaction claim',groups:checks.length,checks,inferenceCalls:0,databaseWrites:0},null,2));

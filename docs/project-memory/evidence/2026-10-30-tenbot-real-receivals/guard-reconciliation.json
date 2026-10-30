@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "migration": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+  "currentSha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7",
+  "wrapperSourceMd5": [
+    "dac8b463241b21e18fe2c5a748dce28f",
+    "31326f375d8c94cb161c70f63efa0a74"
+  ],
+  "verification": "Exact whole function bodies match current isolated pg_proc.prosrc readback; both wrappers retain postgres owner and actor/capability locks. Original call-time file hash was not separately captured; no repeated guard application."
+}

@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "phase": "completion verifier catalog read",
+  "cause": "Verifier assumed legacy catalog table despite real canonical service correctly returning catalogSource specialty / vendor_catalog_v2",
+  "applicationOrDatabaseFailure": false,
+  "correction": "Use the actual canonical returned catalog source; no app/database or paid inference repeated"
+}

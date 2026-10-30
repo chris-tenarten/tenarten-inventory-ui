@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "configurationRestored": true,
+  "actualSignedSession": true,
+  "expiresInSeconds": 60,
+  "tokenValuePrintedOrPersisted": false,
+  "reason": "First sign-in immediately after configuration PATCH; runtime propagation not yet confirmed"
+}

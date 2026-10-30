@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T14:16:25.223Z",
+  "baseSha": "85b73182ecfcd8ff99e6f2523d233d1e77b25fdc",
+  "source": "/private/tmp/tenops-tenbot-receival-execution-20261030/application-v2",
+  "output": "/private/tmp/tenops-tenbot-receival-execution-20261030/application-v2/out",
+  "overlay": [
+    {
+      "path": "src/app/inventory/page.tsx",
+      "sha256": "a45f77bd6370eaeab9d0e068ee00e320173d7feec5bc95b9dde3832424664af1"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "47642bf7446d35e2176cf3e931d941b5e006a7a19817d7e274b43dac0e1bd79f"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "sha256": "04e4022db6808d3a768cb28f7a58342f1ca4905a08d1d45173597d2c4dc81d1e"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "7dc29102fa6b8a4931075d421708315444dc6ff7cd5cb2e95b6252303e4c9531"
+    },
+    {
+      "path": "src/modules/inventory/invoice-receival-service.ts",
+      "sha256": "41d5fedd68bccc1d07b6f874bc2b49944c260ea66f78d8277d107455b2680d24"
+    },
+    {
+      "path": "scripts/start-tenbot-receival-review.mts",
+      "sha256": "6a00d19cd0c8213ce8aff4adb13d29ea0d0e2539cbfc1b9f5179528c99cbeef3"
+    },
+    {
+      "path": "scripts/support/tenbot-receival-agent.mts",
+      "sha256": "a27432db2ae56c0d8eaa0b8e3cc1f397721272c4496a9f96497565185b012c1c"
+    },
+    {
+      "path": "scripts/support/tenbot-receival-provider.mts",
+      "sha256": "a59333757f873581655ef95106dc19f593c95c883af99e73a0c63d5eb69649ee"
+    },
+    {
+      "path": "scripts/support/tenbot-receival-fixture.mts",
+      "sha256": "2f82b2e1092dcfe0c0231e0a084a10304b78933b8d24434e05f028170646ccd2"
+    },
+    {
+      "path": "scripts/verify-invoice-receival-contract.mts",
+      "sha256": "ff55aeb9d17c10e7f3ae54dfd6e74ef187b78218941d8cd6d6972bdbc4acc982"
+    },
+    {
+      "path": "scripts/verify-tenbot-live-review.mts",
+      "sha256": "f8cd5d90d5527743baa49d1e80f2746d1b3e43323d126a7a65e774ce8d652352"
+    },
+    {
+      "path": "scripts/verify-tenbot-receival-agent.mts",
+      "sha256": "c47ab336a4a2e71667bca8d02907f7a3c935acd1b2cdb82c14a7edeb32f993e3"
+    },
+    {
+      "path": "scripts/verify-tenbot-receival-provider.mts",
+      "sha256": "875da510aeec4d1ac72158acaab2f8ebde1882fb570431a19c8c1577f8be5e7f"
+    },
+    {
+      "path": "scripts/verify-tenbot-receival-database.mts",
+      "sha256": "b5c9fec742798cba963ff1b87f80fbee0a9d79bd0031a24bdfe067763157e170"
+    }
+  ],
+  "durationMs": 13555,
+  "builds": 5,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "productionConnection": false,
+  "openAIKeyAvailableToBuild": false,
+  "envFilesCopied": false,
+  "unrelatedLatencyDeltaExcludedFromApplicationArchive": true,
+  "gitMutations": 0
+}

@@ -1,0 +1,53 @@
+{
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "sqlSha256": "5e054f64c52da2d107acd4bc30b9f5a71760282f2831eb969b42580efbd044b7",
+  "fragments": [
+    {
+      "function": "is_my_work_group_member",
+      "source": "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+      "sourceSha256": "0a8dd986f9cb7f149e819ec2cb9c5c0e15815f9e1e414038167a7d85b7ef2401",
+      "fragmentSha256": "55dc5fb0f2111153c5889fca8673deee10e1aa602a15071b1c81dde9ff3495ab",
+      "transformation": "Verbatim released function body/attributes; read-only UI fixture usage"
+    },
+    {
+      "function": "can_read_my_work_message",
+      "source": "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+      "sourceSha256": "0a8dd986f9cb7f149e819ec2cb9c5c0e15815f9e1e414038167a7d85b7ef2401",
+      "fragmentSha256": "2a6318aa156883344d4b3ba8b6e2bfc2b68baa55bd24dd46809fbd3296556242",
+      "transformation": "Verbatim released function body/attributes; read-only UI fixture usage"
+    },
+    {
+      "function": "is_my_work_group_member_self",
+      "source": "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+      "sourceSha256": "0a8dd986f9cb7f149e819ec2cb9c5c0e15815f9e1e414038167a7d85b7ef2401",
+      "fragmentSha256": "586ef0705896368349725b07af63c99d0c782b544cd5eb91ca44c38387d6b420",
+      "transformation": "Verbatim released function body/attributes; read-only UI fixture usage"
+    },
+    {
+      "function": "list_my_work_message_page_v12",
+      "source": "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+      "sourceSha256": "0a8dd986f9cb7f149e819ec2cb9c5c0e15815f9e1e414038167a7d85b7ef2401",
+      "fragmentSha256": "c532e42c4f27532f4eea868f002040810ff1ac5bddc72fdf3b5291608d9afe99",
+      "transformation": "Verbatim released function body/attributes; read-only UI fixture usage"
+    },
+    {
+      "function": "list_my_work_conversations_v12",
+      "source": "supabase/migrations/20261022120000_messaging_groups_replies.sql",
+      "sourceSha256": "0a8dd986f9cb7f149e819ec2cb9c5c0e15815f9e1e414038167a7d85b7ef2401",
+      "fragmentSha256": "c67e9fe948de0406ab81dff2cab19a505ed40f552719222ea4505d21c65c8871",
+      "transformation": "Verbatim released function body/attributes; read-only UI fixture usage"
+    },
+    {
+      "function": "list_my_work_inbox_recipients",
+      "source": "supabase/migrations/20260831_020_my_work_lifecycle_admin_cleanup.sql",
+      "sourceSha256": "3fbb94900282e8e742083c64a2403d8d69a299328203542ce30472c7b9d00c85",
+      "fragmentSha256": "7fd9a9a2ebea8749d566ca85cfdb8c803ad16cde94c816f8ce91d45b2aff10cd",
+      "transformation": "Verbatim released function body/attributes; read-only UI fixture usage"
+    }
+  ],
+  "emptyTablesOnly": true,
+  "businessFunctionsChanged": false,
+  "scope": "Read-only normal Messaging UI scaffold, not full Messaging release/security proof. TenBot virtual peer comes from existing frontend injection, no System user seeded.",
+  "applied": true,
+  "appliedAt": "2026-10-30T13:44:54.485760+00:00"
+}

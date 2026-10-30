@@ -1,0 +1,16 @@
+{
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "source": "supabase/migrations/20260722_001_pending_receival_undo.sql",
+  "sourceSha256": "275ac10b1bfa676d5d177299fe9dc16b8ab6c93157950c3211e3cf45f15eeb9a",
+  "fragmentSha256": "9277aec5ef14716e12507063ba1f79d4fabedbe5b2481f37da0f8a2a732365d7",
+  "sqlSha256": "14a16875ee273156256ee7341428639ab44bf7749dc67343dbbed21920d7c818",
+  "canonicalColumnsAdded": [
+    "receipt_inventory_item_id",
+    "receipt_transaction_id",
+    "receipt_created_inventory_item"
+  ],
+  "businessRpcsChanged": false,
+  "rlsOrGrantsChanged": false,
+  "productionCalls": 0,
+  "scope": "Complete isolated legacy table projection for existing canonical Inventory queue SELECT only; no receiving implementation or on-hand mutation enabled."
+}

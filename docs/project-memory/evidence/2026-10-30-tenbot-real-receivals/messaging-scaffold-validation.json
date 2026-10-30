@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "recordedAt": "2026-10-30T13:44:50.531Z",
+  "checks": [
+    "list_my_work_conversations_v12",
+    "list_my_work_message_page_v12"
+  ],
+  "realSignedJwt": true,
+  "emptyReads": true,
+  "realMessages": 0,
+  "anonymousDenied": true,
+  "sendingOrNotificationsEnabled": false,
+  "businessFunctionsChanged": false,
+  "fullMessagingCertification": false
+}

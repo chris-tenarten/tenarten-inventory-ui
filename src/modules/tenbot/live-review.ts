@@ -4,17 +4,17 @@ import {invoiceQuantityIssues, type InvoiceQuantityBasis, type InvoiceSourceQuan
 
 export type LocalCatalogChoice = { id: string; materialName: string; size: string; unit: string; supplier?: string; packageLabel?: string; packageQuantity?: string; packageMeasure?: string; containerType?: string };
 export type LocalJobChoice = { id: string; label: string };
-export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; canPrepare?: boolean; canCreateCatalog?: boolean; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
+export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; databaseEnvironment?: 'isolated-test'; canPrepare?: boolean; canCreateCatalog?: boolean; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
 export type LocalOrderDetails = { orderedBy: string; orderDate: string; location: string };
-export type LocalDuplicateMatch = {recordId: string; source: 'fixture' | 'simulated'; supplier: string; status: string; materialName: string; size: string; quantityExpected: string; quantityReceived?: string; unit: string; documentReference: string | null; classification: 'possible' | 'confirmed'; recordFingerprint?: string; reason?: string};
+export type LocalDuplicateMatch = {recordId: string; source: 'fixture' | 'simulated' | 'database' | 'tenops'; supplier: string; status: string; materialName: string; size: string; quantityExpected: string; quantityReceived?: string; unit: string; documentReference: string | null; classification: 'possible' | 'confirmed'; recordFingerprint?: string; reason?: string};
 export type LocalDuplicateReview = {fingerprint: string; matches: LocalDuplicateMatch[]; canAcknowledge: boolean; acknowledged: boolean};
 export type LocalDraftRow = { lineId: string; sourceText: string; sourceQuantity?: InvoiceSourceQuantity | null; quantityBasis?: InvoiceQuantityBasis; materialId: string | null; materialName: string | null; size: string | null; quantity: string; unit: string; jobId: string | null; excluded: boolean; reasons: string[]; catalogRequest?: ProposedCatalogMaterial | null; duplicateReview?: LocalDuplicateReview | null; duplicateAcknowledgement?: string | null };
 export type LocalInvoiceProvenance = {supplier: string; documentReference: string; attachmentSha256: string};
 export type LocalReceivalDraft = { id: string; revision: number; hash: string; status: 'review_required' | 'approved_simulated' | 'created'; simulation: boolean; attachmentId: string; orderDetails: LocalOrderDetails; orderDetailEvidence?: Partial<Record<keyof LocalOrderDetails,{sourceRef:string;value:string}>>; missingFields: string[]; canApprove: boolean; rows: LocalDraftRow[]; durableDraftId?: string; durableHash?: string; executionEnabled?: boolean; blockReason?: string; provenance?: LocalInvoiceProvenance; catalogApprovalRequired?: boolean; reviewed?: boolean };
 export type LocalRowEdit = Pick<LocalDraftRow, 'lineId' | 'materialId' | 'quantity' | 'unit' | 'jobId' | 'excluded' | 'catalogRequest' | 'duplicateAcknowledgement'>;
 export type LocalAttachment = { attachmentId: string; filename: string; mediaType: string; expiresAt?: string; simulation: boolean };
-export type LocalCatalogAddition = {simulation: true; sourceLineId: string; catalogId: null; material: ProposedCatalogMaterial; provenance: LocalInvoiceProvenance & {sourceText: string}};
-export type LocalApproval = { draft: LocalReceivalDraft; receivals: Record<string, unknown>[]; catalogAdditions?: LocalCatalogAddition[]; createdCount: number; simulation: boolean; idempotent: boolean };
+export type LocalCatalogAddition = {sourceLineId: string; material: ProposedCatalogMaterial; provenance: LocalInvoiceProvenance & {sourceText: string}} & ({simulation: true; catalogId: null} | {simulation: false; catalogId: string; catalogSource?: 'standard' | 'specialty'});
+export type LocalApproval = { draft: LocalReceivalDraft; receivals: Record<string, unknown>[]; createdRecordIds?: string[]; createdCatalogRecords?: {sourceLineId: string; catalogSource: 'standard' | 'specialty'; catalogId: string}[]; catalogAdditions?: LocalCatalogAddition[]; createdCount: number; simulation: boolean; idempotent: boolean; notice?: string };
 /** Proposed operation, never an existing catalog identity or a real write. */
 export type ProposedCatalogMaterial = Pick<PurchasingCatalogItemInput, 'itemName' | 'vendorSku' | 'materialType' | 'size' | 'unitSize' | 'unitSizeUom' | 'packaging' | 'priceUnit' | 'notes'> & {supplier: string; prepared: boolean};
 export type ReceivalLineValidation = {
@@ -86,12 +86,11 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
     else if (reason==='source_unit_mismatch') fields.unit=quantityLabels[reason];
     else holds.push(quantityLabels[reason] || `Quantity evidence needs review: ${reason.replaceAll('_',' ')}.`);
   }
-  if (completeProposal && !status.simulation) holds.push('Combined catalog and receival execution is unavailable on the real-data path. No write will run.');
   if (completeProposal && status.canCreateCatalog === false) holds.push('Catalog creation requires review and approval by an employee with Manage vendors and catalog permission.');
   const labels: Record<string, string> = {
     potential_duplicate: source.duplicateReview?.canAcknowledge ? 'Review the matching receival evidence below. Acknowledge a separate order, or exclude this line.' : 'A potential duplicate needs evidence review. Exclude the line if it is the same order; saving alone cannot resolve it.',
-    confirmed_duplicate: 'This invoice/material already has a simulated receival. Exclude this line; acknowledgement cannot create it again.',
-    confirmed_catalog_duplicate: 'A catalog addition for this material or SKU was already simulated. Use the earlier approved result or exclude this repeated proposal; acknowledgement cannot create it again.',
+    confirmed_duplicate: `This invoice/material already has a ${status.simulation ? 'simulated ' : ''}receival. Exclude this line; acknowledgement cannot create it again.`,
+    confirmed_catalog_duplicate: `A catalog addition for this material or SKU was already ${status.simulation ? 'simulated' : 'created'}. Use the earlier approved result or exclude this repeated proposal; acknowledgement cannot create it again.`,
     duplicate_draft_line: 'Duplicate material/Job line. Change or exclude it, then save for server review.',
     duplicate_invoice_material_line: 'Repeated invoice material. Server review is required before approval.',
     duplicate_catalog_request: 'This new material is proposed more than once. Combine or exclude the duplicate, then save for server review.',
@@ -158,6 +157,12 @@ export function reviewRowChanged(source: LocalRowEdit, row: LocalRowEdit) { retu
 export const editableRows = (draft: LocalReceivalDraft): LocalRowEdit[] => normalizedEdits(draft.rows);
 export function reviewChanged(draft: LocalReceivalDraft, edits: LocalRowEdit[], details: LocalOrderDetails) {
   return JSON.stringify(editableRows(draft)) !== JSON.stringify(normalizedEdits(edits)) || JSON.stringify(draft.orderDetails) !== JSON.stringify(details);
+}
+/** A Save attempt can revoke its previous durable review before validation.
+ * Preserve the editor identity/source rows so a rejected Save cannot discard
+ * local edits, or regain stale approval merely by reverting those fields. */
+export function invalidateReceivalApproval(draft: LocalReceivalDraft): LocalReceivalDraft {
+  return {...draft, canApprove: false, reviewed: false, durableDraftId: undefined, durableHash: undefined};
 }
 export function receivalReviewNotice(draft: LocalReceivalDraft, status: LocalDemoStatus): string {
   const concerns = Object.values(receivalOrderIssues(draft.orderDetails));

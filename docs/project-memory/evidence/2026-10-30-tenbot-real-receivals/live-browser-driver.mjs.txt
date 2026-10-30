@@ -1,0 +1,52 @@
+import {createRequire} from 'node:module';
+import fs from 'node:fs';
+import readline from 'node:readline';
+const require=createRequire('/Users/chrisngo/source/repos/tenarten-inventory-ui/package.json');
+const {chromium}=require('playwright'),{createClient}=require('@supabase/supabase-js');
+const dir='/private/tmp/tenops-tenbot-receival-execution-20261030';
+const config=JSON.parse(fs.readFileSync(dir+'/receival-actors.private.json','utf8'));
+if(config.projectRef!=='jltgxcfiprocydhbrahz')throw Error('Wrong fixture');
+const client=createClient(config.url,config.anonKey,{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:(url,init)=>fetch(url,{...init,signal:AbortSignal.timeout(8000)})}});
+const auth=await client.auth.signInWithPassword({email:config.actors.employeeA.email,password:config.actors.employeeA.password});
+if(auth.error||!auth.data.session)throw Error('Fixture employee authentication failed');
+const claims=JSON.parse(Buffer.from(auth.data.session.access_token.split('.')[1],'base64url').toString());console.log(JSON.stringify({tokenTiming:{expiresIn:auth.data.session.expires_in,issuedAt:new Date(claims.iat*1000).toISOString(),expiresAt:new Date(claims.exp*1000).toISOString(),localNow:new Date().toISOString()}}));
+const identity=await client.auth.getUser(auth.data.session.access_token);
+if(identity.error||identity.data.user?.id!==config.actors.employeeA.id)throw Error('Fixture identity mismatch');
+const browser=await chromium.launch({headless:true});
+const context=await browser.newContext({viewport:{width:1440,height:1000}});
+await context.addInitScript(({session})=>{if(!sessionStorage.getItem('fixture-session-initialized')){localStorage.setItem('sb-jltgxcfiprocydhbrahz-auth-token',JSON.stringify(session));sessionStorage.setItem('fixture-session-initialized','true');}},{session:auth.data.session});
+const blocked=[],errors=[],api=[],httpErrors=[];
+await context.route('**/*',async route=>{const u=new URL(route.request().url());if(['localhost','jltgxcfiprocydhbrahz.supabase.co'].includes(u.hostname)||['blob:','data:'].includes(u.protocol))await route.continue();else{blocked.push(u.origin);await route.abort();}});
+const page=await context.newPage();page.setDefaultTimeout(15000);page.on('pageerror',e=>errors.push(e.message));page.on('requestfailed',r=>console.log(JSON.stringify({requestFailed:new URL(r.url()).pathname,failure:r.failure()?.errorText})));page.on('request',r=>{if(r.url().includes('supabase.co'))console.log(JSON.stringify({request:new URL(r.url()).pathname}));});
+page.on('response',async r=>{if(r.url()==='http://localhost:55596/'){let b={};try{b=JSON.parse(r.request().postData()||'{}');}catch{}const data=await r.json().catch(()=>null);api.push({action:b.action,status:r.status(),data});fs.writeFileSync(dir+'/browser-api.private.json',JSON.stringify(api,null,2),{mode:0o600});}else if(r.status()>=400){const u=new URL(r.url());httpErrors.push({path:u.pathname,status:r.status()});}});
+await page.goto('http://localhost:3000/inventory?tenbotExperiment=1&tenbotReceivals=1',{waitUntil:'domcontentloaded'});
+console.log(JSON.stringify({initialText:(await page.locator('body').innerText()).slice(-6000),errors,httpErrors}));await page.screenshot({path:dir+'/initial-browser.png',fullPage:true});await page.getByRole('button',{name:'Messaging',exact:true}).click().catch(async e=>{console.log(JSON.stringify({blocked,errors,httpErrors,text:(await page.locator('body').innerText()).slice(-6000)}));await page.screenshot({path:dir+'/initial-failure.png'});throw e;});await page.getByRole('button',{name:/^TenBot/}).click();await page.getByRole('button',{name:'Attach PDF or image',exact:true}).waitFor({state:'visible'}).catch(async e=>{console.log(JSON.stringify({blocked,errors,httpErrors,api,url:page.url(),text:(await page.locator('body').innerText()).slice(-9000)}));await page.screenshot({path:dir+'/attach-failure.png'});throw e;});
+async function status(){return {text:(await page.locator('body').innerText()).slice(-14000),api:api.map(x=>({action:x.action,status:x.status})),blocked,errors,httpErrors};}
+console.log(JSON.stringify({ready:true,...await status()}));
+const rl=readline.createInterface({input:process.stdin});
+const timer=setTimeout(()=>{console.log(JSON.stringify({stopped:'bounded 20 minute lifetime'}));process.exit(1);},1200000);
+for await(const line of rl){try{const c=JSON.parse(line);let result;
+if(c.action==='extract'){
+ await page.getByLabel('TenBot attachment file',{exact:true}).setInputFiles('/Users/chrisngo/source/repos/tenarten-inventory-ui/scripts/fixtures/tenbot-invoice-live-demo.pdf');
+ await page.getByLabel('I confirm this attachment contains approved synthetic test data.',{exact:true}).check();
+ await page.getByLabel('Message',{exact:true}).fill('Prepare pending receivals for the materials on this invoice. Do not execute until I approve.');
+ const ready=page.waitForResponse(r=>r.url()==='http://localhost:55596/'&&JSON.parse(r.request().postData()||'{}').action==='ask',{timeout:105000});
+ await page.getByRole('button',{name:'Send',exact:true}).click();await ready;
+ await page.getByRole('region',{name:'Editable pending receival draft'}).waitFor({state:'visible',timeout:10000});
+ result=await status();
+}else if(c.action==='fill'){
+ const scope=c.lineId?page.locator(`article[data-line-id="${c.lineId}"]`):page;
+ if(c.expand&&c.lineId){const toggle=scope.getByRole('button',{name:/^(Edit|Hide details for) line/});if(await toggle.getAttribute('aria-expanded')==='false')await toggle.click();}
+ for(const field of c.fields||[]){const el=scope.getByLabel(field.label,{exact:true});if(field.select)await el.selectOption(field.value);else if(field.check!==undefined)await el.setChecked(field.check);else await el.fill(field.value);}
+ if(c.button)await scope.getByRole('button',{name:c.button,exact:true}).click();result=await status();
+}else if(c.action==='save'){
+ const ready=page.waitForResponse(r=>r.url()==='http://localhost:55596/'&&JSON.parse(r.request().postData()||'{}').action==='review',{timeout:35000});await page.getByRole('button',{name:'Save changes for review',exact:true}).click();await ready;await page.waitForTimeout(250);result=await status();
+}else if(c.action==='approve'){
+ await page.getByLabel(/I reviewed these exact lines and approve/).check();
+ const ready=page.waitForResponse(r=>r.url()==='http://localhost:55596/'&&JSON.parse(r.request().postData()||'{}').action==='approve',{timeout:35000});await page.getByRole('button',{name:/^Approve and create/}).click();await ready;await page.waitForTimeout(250);result=await status();
+}else if(c.action==='snapshot'){await page.screenshot({path:dir+'/'+c.name+'.png',fullPage:true});result=await status();
+}else if(c.action==='mobile'){await page.setViewportSize({width:390,height:844});await page.waitForTimeout(250);await page.screenshot({path:dir+'/mobile.png',fullPage:true});result={...await status(),overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)};
+}else if(c.action==='queue'){await page.getByRole('link',{name:'Open pending receivals in Inventory',exact:true}).click();const close=page.getByRole('button',{name:'Close Inbox',exact:true});if(await close.count())await close.click();await page.waitForTimeout(1200);await page.screenshot({path:dir+'/inventory-queue.png',fullPage:true});result=await status();
+}else if(c.action==='status')result=await status();else if(c.action==='stop'){clearTimeout(timer);await browser.close();break;}else throw Error('Unsupported action');
+console.log(JSON.stringify({action:c.action,result}));
+}catch(e){console.log(JSON.stringify({failed:true,message:String(e?.message||e)}));}}
